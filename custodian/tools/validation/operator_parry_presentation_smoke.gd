@@ -197,33 +197,93 @@ func _check_window_sits_on_the_authored_catch(operator: Node) -> void:
 			"%s changed to %.3f; C8 aligns timing and facing only"
 				% [entry[0], float(config.get(entry[0]))]
 		)
-	# Drive the real controller across the boundaries.
+	# The alignment rule itself, evaluated against arbitrary timing rather than
+	# only against whatever is currently configured. Without this the assertions
+	# above can only ever agree with the Resource they read.
+	_assert(
+		_window_fits_authored_catch(windup, active),
+		"the configured window %.5f-%.5f s does not fit the authored catch"
+			% [windup, windup + active]
+	)
+	_assert(
+		not _window_fits_authored_catch(0.02, active),
+		"the pre-C8 window 0.020-0.120 s must NOT fit the authored catch, which "
+			+ "begins at 2/12 = %.5f s; this control is what makes the assertion "
+				% (float(PARRY_CATCH_FIRST_FRAME) / PARRY_FPS)
+			+ "above mean something"
+	)
+	# ...and for the right reason: it opens too early, not because it is too long.
+	_assert(
+		0.02 + active <= catch_close + 0.001,
+		"the pre-C8 control should fail on its opening time, but it also overruns "
+			+ "the catch, so it would fail for two reasons at once"
+	)
+
+	# Drive the real controller across the boundaries, and throw a real incoming
+	# attack at each one. `parry_active` alone says what the controller believes;
+	# only `try_parry_incoming_attack()` says what an attack actually meets.
 	var guard = operator.get("_guard_controller")
 	if guard == null:
 		_assert(false, "the timing case needs the live guard controller")
 		return
-	var samples := {
-		"before the window opens": windup - 0.02,
-		"inside the window": windup + active * 0.5,
-		"after the window closes": windup + active + 0.02,
-	}
-	for label in samples:
+	operator.call("_apply_unarmed_selection")
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	var samples := [
+		["before the window opens", windup - 0.02, false],
+		["inside the window", windup + active * 0.5, true],
+		["after the window closes", windup + active + 0.02, false],
+	]
+	for sample in samples:
+		var label := String(sample[0])
+		var expected: bool = bool(sample[2])
+		# A fresh attempt and a fresh attacker per sample, so the successful
+		# middle case cannot leave a lockout or a staggered attacker behind.
 		guard.call("reset")
 		operator.set("stamina", 100.0)
+		var attacker := Node2D.new()
+		(operator as Node2D).get_parent().add_child(attacker)
+		attacker.global_position = (operator as Node2D).global_position + Vector2(40.0, 0.0)
 		_assert(
 			bool(guard.call("begin_parry")),
 			"%s: the parry attempt must start" % label
 		)
 		var elapsed := 0.0
 		var step := 1.0 / 240.0
-		while elapsed < float(samples[label]) - step * 0.5:
+		while elapsed < float(sample[1]) - step * 0.5:
 			guard.call("tick", step)
 			elapsed += step
-		var expected: bool = String(label) == "inside the window"
 		_assert(
 			bool(guard.get("parry_active")) == expected,
 			"%s (%.3f s): parry_active should be %s" % [label, elapsed, expected]
 		)
+		# Re-assert the guard facing immediately before the hit. The actor
+		# recomputes `aim_direction` from live input on its own frames, and a
+		# drifted guard direction would make `guard_faces_hit()` reject the attack
+		# for a reason that has nothing to do with the timing under test.
+		operator.set("aim_direction", Vector2.RIGHT)
+		operator.set("visual_idle_direction", Vector2.RIGHT)
+		_assert(
+			bool(operator.call("guard_faces_hit", Vector2.LEFT, 0.35, attacker)),
+			"%s: the guard must face the incoming attack, or the timing result is "
+				% label
+				+ "about facing instead"
+		)
+		# The attack travels from the attacker toward the Operator, and goes
+		# through `guard_faces_hit()` exactly as an enemy swing would.
+		var landed: bool = bool(operator.call(
+			"try_parry_incoming_attack",
+			attacker,
+			Vector2.LEFT,
+			{"impact_position": attacker.global_position}
+		))
+		_assert(
+			landed == expected,
+			"%s (%.3f s): a real incoming hit should be parried=%s, got %s"
+				% [label, elapsed, expected, landed]
+		)
+		attacker.queue_free()
+		await process_frame
 	guard.call("reset")
 	await process_frame
 
@@ -298,6 +358,30 @@ func _check_success_faces_the_contact(operator: Node, world: Node) -> void:
 		_assert(
 			facing.dot(stale_aim) < 0.0,
 			"%s: stale aim won the success facing" % label
+		)
+		# The control: what the pre-C8 rule would have drawn. Resolving the same
+		# clip from aim rather than from the contact picks the opposite sector, so
+		# the ownership rule is doing real work here and not merely agreeing with
+		# a direction that happened to match.
+		var aim_sector := String(operator.call(
+			"_resolve_modular_body_animation",
+			"unarmed_parry_success", &"lower_body", stale_aim
+		))
+		var contact_sector := String(operator.call(
+			"_resolve_modular_body_animation",
+			"unarmed_parry_success", &"lower_body", facing
+		))
+		var wrong_sector := "/w/" if label == "east" else "/e/"
+		_assert(
+			aim_sector.contains(wrong_sector),
+			"%s: the stale-aim control should resolve %s, resolved %s"
+				% [label, wrong_sector, aim_sector]
+		)
+		_assert(
+			aim_sector != contact_sector,
+			"%s: the facing control is vacuous -- aim and contact resolve the same "
+				% label
+				+ "sector (%s), so nothing would distinguish the old rule" % aim_sector
 		)
 		# And the real success path must draw that sector.
 		var contact := (operator as Node2D).global_position + attacker_offset * 0.5
@@ -379,4 +463,15 @@ func _collect_bursts(node: Node) -> Array[Node2D]:
 			found.append(child as Node2D)
 		found.append_array(_collect_bursts(child))
 	return found
+
+
+## Does a deterministic window sit inside the frames where the guard is extended?
+##
+## Pure, so it can be asked about timing that is not currently configured. That is
+## the whole point: an assertion that only reads the live Resource agrees with
+## whatever that Resource says, and would have passed just as happily before C8.
+func _window_fits_authored_catch(windup: float, active: float) -> bool:
+	var catch_open := float(PARRY_CATCH_FIRST_FRAME) / PARRY_FPS
+	var catch_close := float(PARRY_CATCH_LAST_FRAME + 1) / PARRY_FPS
+	return windup >= catch_open - 0.001 and windup + active <= catch_close + 0.001
 

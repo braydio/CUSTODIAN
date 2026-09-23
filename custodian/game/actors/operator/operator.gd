@@ -7599,8 +7599,15 @@ func _play_failed_parry_block_hitreact() -> void:
 ## attacker's real position when there is one, because a hit direction can be
 ## degenerate or approximate while a position never is.
 ##
-## Falls back to the committed facing rather than inventing one, so a parry with
-## no attacker and no usable hit direction presents exactly as it does today.
+## Returns `Vector2.ZERO` when neither is usable, which is not a direction but a
+## refusal to supply one: `_play_parry_animation()` then runs its existing
+## aim / visual-idle resolution, exactly as it does today. There is no stored
+## committed parry facing to fall back to, and inventing simulation state purely
+## to make the hierarchy read as three tidy steps would be the wrong trade.
+##
+## The contract is narrower than "the parry always faces the contact": it is that
+## **when a concrete contact direction exists, stale mutable aim cannot override
+## it.**
 func _resolve_parry_contact_facing(
 	attacker: Node2D,
 	hit_direction: Vector2

@@ -750,8 +750,41 @@ success still sends no generic camera impulse. The gate also pins the mechanics
 this slice must not move — refund 6, stagger 0.55, knockback 44, counter 0.45,
 recovery 0.16/0.03, minimum guard 0.04.
 
-Controls: restoring `0.02` fails the alignment assertion; dropping the facing
-override reproduces the east-draws-west inversion in both directions.
+`hit_direction` is the direction the blow travels, which is the convention
+`guard_faces_hit()` already relies on when it negates it.
+
+The documented hierarchy is **attacker position -> `-hit_direction` -> the
+existing presentation-direction fallback**. That third step is not a stored
+"committed parry facing": `_resolve_parry_contact_facing()` returns
+`Vector2.ZERO`, which is a refusal to supply a direction rather than a direction,
+and `_play_parry_animation()` then runs its ordinary aim / visual-idle
+resolution. Adding simulation state purely to make the prose read as three tidy
+steps would be the wrong trade. The contract is narrower and exact: **when a
+concrete contact direction exists, stale mutable aim cannot override it.**
+
+#### C8.1 — what the automated coverage actually proves
+
+The first pass described negative controls that had been run by hand but were not
+in the committed smoke, which claimed more coverage than existed. They are in it
+now, and each is asserted not to be vacuous:
+
+- **Real incoming hits at every boundary.** Each sample runs a fresh attempt with
+  a fresh attacker and then throws an actual
+  `try_parry_incoming_attack()` through `guard_faces_hit()`: refused just before
+  ACTIVE, accepted mid-ACTIVE, refused just after. `parry_active` is still
+  asserted alongside, so the controller's belief and the attack's fate are both
+  covered. The guard facing is re-asserted immediately before each hit, because
+  the actor recomputes `aim_direction` from live input on its own frames and a
+  drifted guard would make a timing test fail for a facing reason.
+- **A pure alignment seam.** `_window_fits_authored_catch(windup, active)` can be
+  asked about timing that is not configured, so the rule is testable rather than
+  merely agreeing with whatever the Resource says. `0.16667 + 0.10` passes,
+  `0.02 + 0.10` fails, and the control additionally asserts the old window fails
+  on its *opening* time rather than by overrunning the catch.
+- **An explicit stale-aim control.** The same success clip is resolved from the
+  stale aim and from the contact, the aim answer is asserted to be the opposite
+  sector, and the two are asserted to differ -- so the case cannot pass by the two
+  directions happening to agree.
 
 **`operator_ranged_ready_input_smoke` hardcoded `0.05` to cross the old windup**
 in three places and correctly broke. It now reads `parry_windup_sec`, as

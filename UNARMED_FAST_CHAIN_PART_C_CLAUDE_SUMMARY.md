@@ -44,9 +44,24 @@ drew the **west** strip and vice versa. Only a confirmed success now supplies a
 `direction_override`, resolved as: valid attacker position → `-hit_direction` →
 committed facing. The attempt stays input-facing.
 
+Documented hierarchy: **attacker position → `-hit_direction` → the existing
+presentation-direction fallback**. That last step is not stored state —
+`_resolve_parry_contact_facing()` returns `Vector2.ZERO`, a refusal rather than a
+direction, and the ordinary aim/visual-idle resolution takes over. The contract is
+narrower and exact: *when a concrete contact direction exists, stale mutable aim
+cannot override it.*
+
 Direction parity asserted: e/n/w open and close within 10 ms despite west being a
 frame longer. Success VFX/SFX/camera policy untouched, and the gate pins refund 6,
 stagger 0.55, knockback 44, counter 0.45.
+
+**C8.1 hardening.** The first pass described negative controls that had been run
+by hand but were not in the committed smoke. They are now, each asserted
+non-vacuous: real `try_parry_incoming_attack()` hits refused before / accepted
+inside / refused after the window; a pure `_window_fits_authored_catch()` seam
+that passes `0.16667 + 0.10` and fails `0.02 + 0.10` specifically on the opening
+time; and a stale-aim control that resolves the opposite sector and is asserted to
+differ from the contact answer.
 
 `operator_ranged_ready_input_smoke` hardcoded `0.05` to cross the old windup in
 three places and correctly broke; it now reads `parry_windup_sec`.
