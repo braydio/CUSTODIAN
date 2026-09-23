@@ -1,12 +1,9 @@
-# Common Vaultwing temporary art baseline
+# Common Vaultwing source art
 
-The South and North strips currently staged in this family were accepted for
-runtime iteration with a known generated gray matte. They are temporary visual
-baseline art, not final alpha-approved production art.
-
-Corrected alpha-clean strips must keep the same semantic source filenames and
-256px frame contracts, then replace these files through the normal Asset V2
-workflow:
+The regenerated South/North strips replaced the temporary matte-bearing
+baseline on 2026-09-23. They retain the same semantic source filenames and
+256px frame contracts. Future corrected art can replace these files through the
+same normal Asset V2 workflow:
 
 1. preserve the replacement candidate under this source-work directory;
 2. stage matching `state__direction.png` files in

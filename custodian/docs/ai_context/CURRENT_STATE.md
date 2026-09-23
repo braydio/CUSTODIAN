@@ -1605,10 +1605,10 @@ and west-mirrored strips through the canonical runtime domain: `glide`, `flap`,
 `dive_windup`, `dive_strike`, `climb_out`, `land`, `takeoff`, `perch_idle`,
 `ground_idle`, `ground_walk`, `bite_attack`, `air_stagger`, `hurt`, and `death`.
 SOUTH now publishes all 14 states and NORTH publishes six ground/perch/reaction
-states. These 20 strips are temporary visual baseline art with a known generated
-gray matte while corrected alpha-clean artwork is prepared. Replacement keeps
-the same semantic filenames and frame contracts through the family inbox and
-targeted Asset V2 ingest; the quarantine remains rollback evidence. The
+states from the regenerated replacement strips. The prior matte-bearing batch
+remains quarantined as rollback evidence; future art replacements keep the same
+semantic filenames and frame contracts through the family inbox and targeted
+Asset V2 ingest. The
 remaining NORTH aerial/transition states are still missing. Visual altitude
 remains presentation-only: the body
 lifts above a persistent ground-projection shadow, scale changes modestly, HIGH
