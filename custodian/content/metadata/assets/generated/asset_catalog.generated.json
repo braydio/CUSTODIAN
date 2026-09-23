@@ -10062,6 +10062,74 @@
           "source_asset": null
         }
       }
+    },
+    "meridian_hardened_floor": {
+      "kind": "tile",
+      "assets": {
+        "base::omni": {
+          "state_id": "base",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_hardened_floor",
+            "tile",
+            "body",
+            "hardened",
+            "meridian_hardened_floor_base_v1_32",
+            "omni"
+          ],
+          "path": "content/tiles/procgen/surfaces/hardened/meridian_hardened_floor_base_v1_32.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            128
+          ],
+          "sha256": "d56c61b4daa5d545b2e0eb4df8324477711467fa1c9816acf22579ae3569c308",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "detail::omni": {
+          "state_id": "detail",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_hardened_floor",
+            "tile",
+            "overlay",
+            "hardened",
+            "meridian_hardened_floor_detail_v1_32",
+            "omni"
+          ],
+          "path": "content/tiles/procgen/surfaces/hardened/meridian_hardened_floor_detail_v1_32.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            64
+          ],
+          "sha256": "7e442d2b5bb24c1925cf39252ca9e2b2db921a4b84161cda9ecf76bcbbd36e95",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "transition::omni": {
+          "state_id": "transition",
+          "direction": "omni",
+          "semantic_identity": [
+            "meridian_hardened_floor",
+            "tile",
+            "overlay",
+            "hardened",
+            "meridian_hardened_floor_transition_v1_32",
+            "omni"
+          ],
+          "path": "content/tiles/procgen/surfaces/hardened/meridian_hardened_floor_transition_v1_32.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            128
+          ],
+          "sha256": "800ff6122c2ae0bf2ebb04c9e13a567ba2f57d10b465911a8114259df54d947d",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

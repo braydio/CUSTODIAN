@@ -18,5 +18,8 @@
     "detail": {"required": true, "layer": "overlay", "action_group": "hardened", "variant": "meridian_hardened_floor_detail_v1_32", "layout": "copy", "frame_width": 256, "frame_height": 64, "frames": 1}
   },
   "aliases": {},
-  "consumers": []
+  "consumers": [
+    {"type": "scene", "path": "res://game/world/procgen/proc_gen_map.tscn"},
+    {"type": "script", "path": "res://game/world/procgen/surfaces/surface_material_overlay.gd"}
+  ]
 }

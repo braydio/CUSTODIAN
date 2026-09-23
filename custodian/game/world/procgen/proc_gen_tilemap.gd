@@ -7430,6 +7430,8 @@ func _resolve_surface_materials() -> void:
 		"counts": (result.get("counts", {}) as Dictionary).duplicate(true),
 		"fingerprint": String(result.get("fingerprint", "")),
 	}
+	if surface_material_overlay != null and surface_material_overlay.has_method("apply_material_map"):
+		surface_material_overlay.call("apply_material_map", _surface_material_by_cell)
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null and observatory.has_method("set_gauge"):
 		for material: StringName in SURFACE_MATERIAL_IDS.ALL:

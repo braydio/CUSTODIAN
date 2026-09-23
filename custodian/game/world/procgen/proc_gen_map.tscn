@@ -8,6 +8,7 @@
 [ext_resource type="Resource" path="res://game/world/procgen/presentation/underlays/endless_forest_underlay.tres" id="forest_underlay_profile"]
 [ext_resource type="Script" uid="uid://d07cq17l8tuey" path="res://game/world/procgen/presentation/procgen_void_cliff_face.gd" id="void_cliff_face_script"]
 [ext_resource type="Resource" path="res://content/procgen/presentation/terrain_stamp_catalog_v1.tres" id="macro_stamp_catalog"]
+[ext_resource type="Script" path="res://game/world/procgen/surfaces/surface_material_overlay.gd" id="5_surface_material_overlay"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
@@ -129,6 +130,7 @@ tile_set = ExtResource("2")
 tile_set = ExtResource("2")
 
 [node name="SurfaceMaterialOverlay" type="TileMapLayer" parent="NavigationRegion2D"]
+script = ExtResource("5_surface_material_overlay")
 z_index = 0
 z_as_relative = false
 tile_set = ExtResource("2")
