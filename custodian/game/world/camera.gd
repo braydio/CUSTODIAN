@@ -808,9 +808,18 @@ func on_attack_windup(is_heavy: bool = false):
 	_hold_state(CameraState.HEAVY_ATTACK if is_heavy else CameraState.COMBAT, heavy_state_hold_time if is_heavy else combat_state_hold_time)
 
 
-func on_attack_impact(direction: Vector2, is_heavy: bool = false):
+## `shake_power` below zero keeps the generic light/heavy amplitudes, which is
+## what every caller that has no authored opinion passes. A confirmed melee
+## contact does have an opinion -- its own `camera_shake_power`, or its attack
+## profile's -- and passes it here rather than being flattened into two numbers.
+##
+## The camera still owns everything about how a shake is applied: the directional
+## push, the combat/heavy state hold, and the duration. Only the amplitude is
+## something the contact is allowed to ask for.
+func on_attack_impact(direction: Vector2, is_heavy: bool = false, shake_power: float = -1.0):
 	apply_attack_push(direction, is_heavy)
-	apply_shake(3.2 if is_heavy else 1.8, 0.15 if is_heavy else 0.08)
+	var amplitude := shake_power if shake_power >= 0.0 else (3.2 if is_heavy else 1.8)
+	apply_shake(amplitude, 0.15 if is_heavy else 0.08)
 	_hold_state(CameraState.HEAVY_ATTACK if is_heavy else CameraState.COMBAT, 0.12 if is_heavy else 0.08)
 
 

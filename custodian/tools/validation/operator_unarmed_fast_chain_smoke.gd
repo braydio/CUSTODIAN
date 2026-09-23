@@ -8,14 +8,22 @@ const EXPECTED_HITSTOP := [0.018, 0.024, 0.032, 0.050]
 const EXPECTED_SHAKE := [0.70, 1.00, 1.45, 2.20]
 
 
-## Stands in for the world camera so the real `_trigger_camera_shake()` can be
-## driven and the power it asks for recorded. `_get_world_camera()` resolves an
-## absolute path and only requires a `shake` method.
+## Stands in for the world camera on the real confirmed-hit path.
+##
+## `_get_world_camera()` resolves an absolute path and the actor only requires an
+## `on_attack_impact` method, so this records exactly what a landed contact asks
+## the camera for: the amplitude, and whether it asked for the heavy push.
 class ShakeProbe extends Node2D:
 	var powers: Array[float] = []
+	var heavies: Array[bool] = []
 
-	func shake(power: float) -> void:
-		powers.append(power)
+	func on_attack_impact(_direction: Vector2, is_heavy: bool = false, shake_power: float = -1.0) -> void:
+		powers.append(shake_power)
+		heavies.append(is_heavy)
+
+	func clear() -> void:
+		powers.clear()
+		heavies.clear()
 
 var _failed := false
 
@@ -356,10 +364,12 @@ func _validate_impact_progression(operator: Node) -> void:
 			"link %d knockback changed; C2 is presentation only" % (index + 1)
 		)
 
-	# Executed, not declarative. The real `_trigger_camera_shake()` and
-	# `_apply_hit_stop()` are driven per link and the values they actually ask for
-	# are measured, which is the only way to catch a parallel table overriding the
-	# profile on the way to the feedback path.
+	# Executed against the live path, not a helper. This used to drive
+	# `_trigger_camera_shake()`, which read the profile correctly and which **no
+	# game code ever called** -- the real confirmed hit goes through
+	# `_on_melee_hit_confirmed()` to `Camera2D.on_attack_impact()`, where the
+	# authored power was being flattened to a generic 1.8. The staircase was true
+	# in configuration and in the test, and false on screen.
 	var probe := ShakeProbe.new()
 	var game_root := Node.new()
 	game_root.name = "GameRoot"
@@ -393,24 +403,42 @@ func _validate_impact_progression(operator: Node) -> void:
 		operator.set("_active_melee_attack_profile", resolved)
 
 		probe.powers.clear()
-		operator.call("_trigger_camera_shake")
+		probe.heavies.clear()
+		operator.set("_hit_stop_active", false)
+		Engine.time_scale = 1.0
+		operator.call("_on_melee_hit_confirmed", {})
 		_assert_true(
 			probe.powers.size() == 1,
-			"link %d should request exactly one shake, saw %d" % [index + 1, probe.powers.size()]
+			"link %d should request exactly one camera impact, saw %d"
+				% [index + 1, probe.powers.size()]
 		)
 		if probe.powers.size() == 1:
 			_assert_true(
 				is_equal_approx(probe.powers[0], EXPECTED_SHAKE[index]),
-				"link %d shook at %.4f, but authored %.4f -- the profile is not "
+				"link %d asked the camera for %.4f, but authored %.4f -- the live "
 					% [index + 1, probe.powers[0], EXPECTED_SHAKE[index]]
-					+ "reaching the feedback path unmodified"
+					+ "confirmed-hit path is not carrying the profile power"
 			)
+			_assert_true(
+				probe.powers[0] > 0.0,
+				"link %d fell back to the camera's generic amplitude" % (index + 1)
+			)
+			_assert_true(
+				not probe.heavies[0],
+				"a fast link should not request the heavy camera push"
+			)
+		await create_timer(maxf(0.08, profile.hit_stop_duration * 2.0)).timeout
+		_assert_true(
+			is_equal_approx(Engine.time_scale, 1.0),
+			"link %d hit stop did not restore time scale, left %.4f"
+				% [index + 1, Engine.time_scale]
+		)
 
 		# The duration cannot be timed: a headless process frame is ~6 ms and the
 		# links differ by 4-8 ms, so a wall-clock measurement would not tell the
 		# authored staircase from a flattened one. It is read from the resolution
 		# seam the apply path itself uses instead.
-		var hit_stop: Dictionary = operator.call("_resolve_melee_hit_stop")
+		var hit_stop: Dictionary = operator.call("_resolve_melee_contact_feedback", {})
 		_assert_true(
 			is_equal_approx(float(hit_stop["duration"]), EXPECTED_HITSTOP[index]),
 			"link %d resolves a %.4f s hit stop, but authored %.4f -- the profile "
@@ -423,21 +451,14 @@ func _validate_impact_progression(operator: Node) -> void:
 				% [index + 1, float(hit_stop["scale"]), profile.hit_stop_scale]
 		)
 
-		# And the apply path must really consume what the seam resolves.
+		# And the confirmed-hit path must really stop time at the authored scale.
 		operator.set("_hit_stop_active", false)
 		Engine.time_scale = 1.0
-		operator.call("_apply_hit_stop")
+		operator.call("_on_melee_hit_confirmed", {})
 		_assert_true(
 			is_equal_approx(Engine.time_scale, profile.hit_stop_scale),
-			"link %d hit stop set time scale to %.4f, expected the authored %.4f"
+			"link %d confirmed hit set time scale to %.4f, expected the authored %.4f"
 				% [index + 1, Engine.time_scale, profile.hit_stop_scale]
-		)
-		# Let the real timer expire so the suite does not continue time-scaled.
-		await create_timer(maxf(0.08, profile.hit_stop_duration * 2.0)).timeout
-		_assert_true(
-			is_equal_approx(Engine.time_scale, 1.0),
-			"link %d hit stop did not restore time scale, left %.4f"
-				% [index + 1, Engine.time_scale]
 		)
 	Engine.time_scale = 1.0
 	game_root.queue_free()
@@ -706,4 +727,3 @@ func _install_live_carry(operator: Node) -> void:
 	operator.call(
 		"_begin_attack_drive", UNARMED.fast_chain_attack_profiles[1], Vector2.RIGHT
 	)
-

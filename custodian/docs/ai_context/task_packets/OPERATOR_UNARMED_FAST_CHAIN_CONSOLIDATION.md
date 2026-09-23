@@ -482,11 +482,15 @@ Fusing resolve and apply is precisely what let a parallel table hide in the
 middle for as long as nothing could see it.
 
 Coverage in `operator_unarmed_fast_chain`: the authored values and their
-monotonicity, damage and knockback asserted flat, the real
-`_trigger_camera_shake()` driven against a stub camera and the power it asks for
-measured, the resolved hit stop read from the seam the apply path uses, and
-`_apply_hit_stop()` confirmed to move `Engine.time_scale` to the authored scale
-and restore it.
+monotonicity, damage and knockback asserted flat, the resolved hit stop read from
+the seam the apply path uses, and the confirmed-hit path driven against a stub
+camera with the power it asks for measured.
+
+**Superseded in part by C7.** This section originally drove
+`_trigger_camera_shake()`, which read the profile correctly and which no game code
+called. The camera half of C2 was therefore proven against an orphan and was false
+on screen until C7 put the authored power on the live confirmed-hit path. The
+hitstop half was and remains correct.
 
 Controlled from both directions, as the packet asked: flattening the four links
 to one generic impact value fails it in fourteen places, and restoring the two
@@ -620,6 +624,77 @@ the pop.
   instead. The restart case asserts the real consumption rather than a flag this
   chain does not use.
 
+### C7 — contact-owned melee feedback (done)
+
+Two notions of "the active contact" existed. `_apply_melee_hitbox_tick()` resolved
+the right one locally and already used it for damage, posture, knockback, dedupe
+and enemy reaction identity. But `_sync_melee_hitbox_window_from_animation()`
+separately left `_active_melee_contact` holding whichever contact its scan saw
+**last**, and the confirmed-hit path read that global. One update crossing two
+contacts therefore shipped `cut_01`'s damage with `cut_02`'s hitstop and heavy
+camera.
+
+`_on_melee_hit_confirmed()` now takes the contact that landed and resolves
+everything from it once, through a single hierarchy in
+`_resolve_melee_contact_feedback()`:
+
+    authored contact override -> active MeleeAttackProfile -> legacy actor fallback
+
+`_active_melee_contact` survives only as the window scan's bookkeeping record; it
+is no longer read by any feedback path.
+
+**The second hole was larger than the first.** `_trigger_camera_shake()` read the
+profile's `camera_shake_power` correctly -- and **no game code called it**. The
+live confirmed hit went to `Camera2D.on_attack_impact(direction, is_heavy)`, which
+flattened every melee impact to `3.2 if is_heavy else 1.8`. So the C2 staircase
+was true in the profiles, true in its test, and false on screen; C2's own
+coverage was proving an orphan. The helper is deleted, `on_attack_impact` takes an
+optional authored amplitude, and the Fists coverage now drives the live path.
+
+Measured on the live path, per link:
+
+| link | camera asked for | hit stop |
+|---|---|---|
+| fast_01 | 0.70 | 0.018 |
+| fast_02 | 1.00 | 0.024 |
+| fast_03 | 1.45 | 0.032 |
+| fast_04 | 2.20 | 0.050 |
+
+**Vigil was preserved, not retuned.** Making the profile authoritative would have
+dropped `cut_02` from the 3.2 it ships at to the profile's 1.5. Both cuts now
+carry an explicit `camera_shake_power` derived from current shipped output --
+`cut_01` 1.8, `cut_02` 3.2 -- so the finisher looks exactly as it does today while
+the generic path becomes profile-driven. Every other authored value is untouched.
+
+Controls, all three of them biting:
+
+- Re-reading feedback from the global fails the skipped-frame case: `cut_01`
+  fires at 3.2 with the heavy push.
+- Passing -1.0 to the camera instead of the authored power fails the Fists case in
+  eight places, each naming the generic fallback.
+- Calling `_on_melee_hit_confirmed()` per target instead of per contact fails the
+  multi-target case: 3 camera requests for one contact, and 2 then 4 across the
+  finisher.
+
+Coverage: the Vigil gate gained a skipped-frame case that crosses runtime frames 4
+and 8 in one update -- the existing finisher case polls them separately, which is
+precisely why it never caught this -- plus multi-target and miss controls. The
+Fists gate drives real confirmed contacts against a camera probe.
+
+Two things worth recording about building it. The Fists fixture could not open its
+own hitbox: `enable_hitbox()` early-returns on a stale `_melee_hitbox_active`, and
+`frame_changed` reruns the window scan, which closes the box on any frame that
+authors no contact. Rather than fight that, the multi-target and miss controls use
+the Vigil harness, which lands hits through the real scan. And an early version of
+the Fists case died on a missing method and **still reported "passed"**, because
+the harness prints its own result -- the case was rewritten so its assertions
+actually run.
+
+`_melee_duration`'s wrong-clock cadence defect from C6 was left untouched, as
+instructed.
+
+### Remaining Part C steps
 ### Remaining Part C steps
 
-C7 contact-owned feedback, then C8 parry alignment.
+C8 parry alignment. Then a Part C closeout for the `_melee_duration`
+wrong-clock defect C6 uncovered.

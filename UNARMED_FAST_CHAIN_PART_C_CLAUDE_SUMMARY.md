@@ -12,10 +12,39 @@ C3  attack-drive continuity             DONE
 C4  early input forgiveness             DONE
 C2  per-link impact progression         DONE
 C5  chain movement continuity           DONE
-C6  Fast 04 posture settle              DONE   <- this pass
-C7  contact-owned feedback              next
-C8  parry alignment                     pending
+C6  Fast 04 posture settle              DONE
+C7  contact-owned feedback              DONE   <- this pass
+C8  parry alignment                     next
 ```
+
+## C7 — contact-owned melee feedback
+
+Two notions of "the active contact" existed. The hitbox tick resolved the right
+one locally and used it for damage, posture, knockback, dedupe and reaction
+identity — but the confirmed-hit path re-read the global `_active_melee_contact`,
+which held whichever contact the window scan saw **last**. One update crossing two
+contacts shipped `cut_01`'s damage with `cut_02`'s hitstop and heavy camera.
+
+`_on_melee_hit_confirmed(contact)` now takes the contact that landed, resolved
+once through one hierarchy: **authored contact override → active
+`MeleeAttackProfile` → legacy fallback**. The global survives only as the scan's
+bookkeeping and is read by no feedback path.
+
+**The second hole was bigger.** `_trigger_camera_shake()` read the profile power
+correctly and **no game code called it**. The live hit went to
+`Camera2D.on_attack_impact(direction, is_heavy)` → `3.2 if is_heavy else 1.8`. So
+the C2 staircase was true in the profiles, true in its test, and false on screen —
+C2 had been proving an orphan. The helper is deleted, the camera takes an optional
+authored amplitude, and Fists now measures **0.70 / 1.00 / 1.45 / 2.20** on the
+live path.
+
+Vigil was preserved rather than retuned: making the profile authoritative would
+have dropped `cut_02` from 3.2 to 1.5, so both cuts carry explicit powers derived
+from shipped output (1.8 / 3.2).
+
+Three controls, all biting: the global re-read fails the skipped-frame case; a
+-1.0 camera power fails Fists in eight places; per-target confirmation fails the
+multi-target case.
 
 ## C6 — terminal Fast 04 posture settle
 

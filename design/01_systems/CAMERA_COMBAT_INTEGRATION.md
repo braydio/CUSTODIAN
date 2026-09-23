@@ -6,16 +6,38 @@
 
 ## Current State
 
-### What's Working
-- Camera has basic shake method (`shake(power)`)
-- Operator calls `_trigger_camera_shake()` on hit confirmation
-- Separate hitstop applied via `_apply_hit_stop()`
+> **Updated by Part C7 (contact-owned melee feedback).** Everything below this
+> line describes live runtime. The proposal sections that follow are kept for the
+> parts not yet built, and each now says whether it has landed. The old claim that
+> `_trigger_camera_shake()` is the confirmed-hit path was stale: that function had
+> no game caller at all and has been removed.
 
-### What's Missing
-- No camera state transitions on attack windup/impact
-- No frame-aware reactions (same shake regardless of which frame hit)
-- No sync between hitstop duration and camera intensity
-- No push/zoom effects on attacks (uses simple offset only)
+### What's live
+- A confirmed melee contact runs
+  `_apply_melee_hitbox_tick()` -> `_on_melee_hit_confirmed(contact)` ->
+  `Camera2D.on_attack_impact(direction, is_heavy, shake_power)`.
+- The **contact that landed owns its own feedback.** It is passed down rather than
+  re-read from actor state, so an update that crosses two authored contacts -- the
+  Vigil finisher crossing `cut_01` and `cut_02` -- cannot give one contact's hit
+  the other's hitstop or camera.
+- Amplitude resolves through one hierarchy, in
+  `_resolve_melee_contact_feedback()`: **authored contact override ->
+  active `MeleeAttackProfile` -> legacy actor fallback.** A `shake_power` below
+  zero means nothing authored one, and the camera keeps its generic light/heavy
+  amplitude.
+- `camera_heavy` remains the semantic signal for the heavy push and the state
+  hold. It is no longer the sole authority over how hard the screen moves.
+- Camera state transitions on impact (`COMBAT` / `HEAVY_ATTACK`) and the
+  directional attack push are live, in `apply_attack_push()` and `_hold_state()`.
+- Hitstop is applied by the actor through `_apply_hit_stop()`, from the same
+  resolved contact feedback.
+
+### What's still missing
+- Frame-aware reaction *within* a contact: authored contacts differentiate, but
+  two frames of the same contact do not.
+- Sync between hitstop duration and camera intensity -- they are resolved
+  together and applied independently.
+- Zoom compression on heavy attacks.
 
 ---
 
@@ -31,7 +53,13 @@
 
 ## Code Changes Required
 
-### 1. Update Operator — Replace `_trigger_camera_shake()`
+### 1. Update Operator — Replace `_trigger_camera_shake()` — **LANDED (C7, in part)**
+
+> `_trigger_camera_shake()` is gone and the confirmed-hit path carries an
+> authored `shake_power`. The `hit_data`-style richer payload sketched below is
+> **not** built; the resolved feedback dictionary carries scale, duration, shake
+> power and `camera_heavy` only.
+
 
 **File:** `custodian/entities/operator/operator.gd`
 
@@ -140,7 +168,12 @@ func _update_shake(delta: float):
 
 ---
 
-### 3. Update `on_attack_impact` in CameraController
+### 3. Update `on_attack_impact` in CameraController — **LANDED (C7)**
+
+> The optional `shake_power` argument below is live, defaulting to -1.0 so every
+> existing caller -- enemy attacks, the guard break, paired executions -- keeps
+> the generic light/heavy amplitude without changing.
+
 
 **File:** `custodian/scenes/camera.gd`
 
@@ -276,7 +309,7 @@ _is_melee_hit_frame_active() checks weapon hit_windows
     ↓ (on hit frame)
 _on_melee_hit_confirmed()
     ↓
-_trigger_camera_reaction()  ← NEW: replaces _trigger_camera_shake()
+_on_melee_hit_confirmed(contact)  ← LANDED (C7): the contact that hit owns its feedback
     ↓
 _get_hit_frame_data(frame, is_heavy)  ← Frame-aware values
     ↓

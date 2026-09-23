@@ -40,6 +40,22 @@ var _errors: Array[String] = []
 var _fixture_root: Node2D
 
 
+## Records what a confirmed contact actually asks the camera for.
+class ImpactProbe:
+	extends Node2D
+
+	var powers: Array[float] = []
+	var heavies: Array[bool] = []
+
+	func on_attack_impact(_direction: Vector2, is_heavy: bool = false, shake_power: float = -1.0) -> void:
+		powers.append(shake_power)
+		heavies.append(is_heavy)
+
+	func clear() -> void:
+		powers.clear()
+		heavies.clear()
+
+
 class DaggerTarget:
 	extends CharacterBody2D
 
@@ -79,6 +95,10 @@ func _run() -> void:
 	await _validate_two_contact_finisher(operator)
 	await _validate_open_space_drive(operator)
 	await _validate_wall_truncation(operator)
+	# Last of the operator-scoped cases: it puts a physics body in the arena, and
+	# a body that outlives its case truncates the drive measurements above.
+	await _validate_skipped_frame_contact_ownership(operator)
+	await _validate_multi_target_and_miss(operator)
 	await _validate_cancellation_paths()
 
 	operator.queue_free()
@@ -747,3 +767,249 @@ func _assert_close(
 			"%s (%.4f != %.4f)"
 			% [message, actual, expected]
 		)
+
+
+## C7: when one update crosses both authored contacts, each must carry its own
+## feedback.
+##
+## The existing finisher case polls runtime frames 4 and 8 separately, which is
+## exactly why it never caught this: the bug only appears when a single update
+## crosses both. `_sync_melee_hitbox_window_from_animation()` left
+## `_active_melee_contact` holding whichever contact it saw *last*, and the
+## confirmed-hit path read that global, so `cut_01` could land its own damage and
+## knockback while borrowing `cut_02`'s hitstop and heavy camera.
+func _validate_skipped_frame_contact_ownership(operator: Node) -> void:
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+	var probe := ImpactProbe.new()
+	var game_root := Node.new()
+	game_root.name = "GameRoot"
+	var world := Node.new()
+	world.name = "World"
+	probe.name = "Camera2D"
+	world.add_child(probe)
+	game_root.add_child(world)
+	get_root().add_child(game_root)
+	await process_frame
+	_assert(
+		operator.call("_get_world_camera") == probe,
+		"the impact probe must be the camera the actor resolves"
+	)
+
+	var target := DaggerTarget.new()
+	var shape := CollisionShape2D.new()
+	var circle := CircleShape2D.new()
+	circle.radius = 10.0
+	shape.shape = circle
+	target.add_child(shape)
+	target.global_position = Vector2(45.0, 0.0)
+	_fixture_root.add_child(target)
+
+	(operator as Node2D).global_position = Vector2.ZERO
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("_melee_fast_combo_step", 2)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("stamina", 100.0)
+	operator.call("_start_fast_attack")
+	var sprite := operator.get("animated_sprite") as AnimatedSprite2D
+	sprite.pause()
+
+	# One update, both contacts: the clock jumps from before cut_01 to cut_02.
+	operator.set("_melee_prev_animation_frame", 3)
+	sprite.set_frame_and_progress(8, 0.0)
+	operator.call("_sync_melee_hitbox_window_from_animation")
+	var pending: Array = operator.get("_pending_melee_contact_frames")
+	_assert(
+		pending.has(4) and pending.has(8),
+		"the skipped-frame case requires one update to cross both contacts, queued %s"
+			% str(pending)
+	)
+	operator.call("enable_hitbox")
+	await physics_frame
+	await physics_frame
+
+	# Drain exactly as `_update_melee_attack()` does.
+	probe.clear()
+	operator.call("_apply_melee_hitbox_tick", 4)
+	var after_cut_01 := probe.powers.size()
+	operator.call("_apply_melee_hitbox_tick", 8)
+
+	_assert(
+		target.damages.size() == 2,
+		"the skipped-frame drain should land both contacts once, landed %d"
+			% target.damages.size()
+	)
+	if target.damages.size() == 2:
+		_assert_close(target.damages[0], 5.04, "cut_01 damage is not 36% of 14")
+		_assert_close(target.damages[1], 8.96, "cut_02 damage is not 64% of 14")
+	_assert(
+		target.impact_kinds == [
+			"vigil_dagger_fast_03:cut_01", "vigil_dagger_fast_03:cut_02"
+		],
+		"the skipped-frame drain lost contact identity, got %s" % str(target.impact_kinds)
+	)
+	if target.impact_forces.size() == 2:
+		_assert(
+			target.impact_forces[0] < target.impact_forces[1] * 0.2,
+			"cut_01 displaced the target like the payoff cut"
+		)
+
+	# The part the old test could not see: feedback per contact, in order.
+	_assert(
+		after_cut_01 == 1 and probe.powers.size() == 2,
+		"each contact should ask the camera exactly once, saw %d then %d"
+			% [after_cut_01, probe.powers.size()]
+	)
+	if probe.powers.size() == 2:
+		_assert_close(probe.powers[0], 1.8, "cut_01 did not carry its own camera power")
+		_assert_close(probe.powers[1], 3.2, "cut_02 did not carry its own camera power")
+		_assert(
+			not probe.heavies[0],
+			"cut_01 requested the heavy camera push, which belongs to cut_02"
+		)
+		_assert(probe.heavies[1], "cut_02 lost its heavy camera push")
+
+	# Hitstop is resolved through the same function the live path calls, with the
+	# same argument. It cannot be observed twice through `Engine.time_scale`,
+	# because the first contact's stop is still running when the second lands.
+	var window := DAGGER_DEFINITION.hit_windows.get("vigil_dagger_fast_03", {}) as Dictionary
+	var cut_01 := operator.call("_get_melee_contact_for_frame", 4, window) as Dictionary
+	var cut_02 := operator.call("_get_melee_contact_for_frame", 8, window) as Dictionary
+	var feedback_01 := operator.call("_resolve_melee_contact_feedback", cut_01) as Dictionary
+	var feedback_02 := operator.call("_resolve_melee_contact_feedback", cut_02) as Dictionary
+	_assert_close(float(feedback_01["scale"]), 0.55, "cut_01 hit stop scale drifted")
+	_assert_close(float(feedback_01["duration"]), 0.022, "cut_01 hit stop duration drifted")
+	_assert_close(float(feedback_02["scale"]), 0.30, "cut_02 hit stop scale drifted")
+	_assert_close(float(feedback_02["duration"]), 0.043, "cut_02 hit stop duration drifted")
+	_assert(
+		not bool(feedback_01["camera_heavy"]) and bool(feedback_02["camera_heavy"]),
+		"the two cuts must not share a camera mode"
+	)
+
+	target.queue_free()
+	game_root.queue_free()
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+	await process_frame
+
+
+## C7: one semantic contact is one attacker-side feedback event, and a whiff is
+## no feedback event at all.
+##
+## Per-target effects stay per target -- two enemies inside one cut take two lots
+## of damage and two reactions -- but the camera and the hitstop belong to the
+## contact. Doubling them because two enemies stood together is the classic
+## version of this bug, and the miss control is what stops the fix from becoming
+## "always fire feedback".
+func _validate_multi_target_and_miss(operator: Node) -> void:
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+	var probe := ImpactProbe.new()
+	var game_root := Node.new()
+	game_root.name = "GameRoot"
+	var world := Node.new()
+	world.name = "World"
+	probe.name = "Camera2D"
+	world.add_child(probe)
+	game_root.add_child(world)
+	get_root().add_child(game_root)
+	await process_frame
+
+	var targets: Array[DaggerTarget] = []
+	for offset in [Vector2(45.0, -9.0), Vector2(45.0, 9.0)]:
+		var target := DaggerTarget.new()
+		var shape := CollisionShape2D.new()
+		var circle := CircleShape2D.new()
+		circle.radius = 10.0
+		shape.shape = circle
+		target.add_child(shape)
+		_fixture_root.add_child(target)
+		target.global_position = offset
+		targets.append(target)
+
+	(operator as Node2D).global_position = Vector2.ZERO
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("_melee_fast_combo_step", 2)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("stamina", 100.0)
+	operator.call("_start_fast_attack")
+	var sprite := operator.get("animated_sprite") as AnimatedSprite2D
+	sprite.pause()
+	sprite.set_frame_and_progress(4, 0.0)
+	operator.call("_sync_melee_hitbox_window_from_animation")
+	operator.call("enable_hitbox")
+	await physics_frame
+	await physics_frame
+
+	probe.clear()
+	operator.set("_hit_stop_active", false)
+	Engine.time_scale = 1.0
+	operator.call("_apply_melee_hitbox_tick", 4)
+
+	var struck := 0
+	for target in targets:
+		if target.damages.size() > 0:
+			struck += 1
+	_assert(
+		struck == 2,
+		"the multi-target case needs both targets inside one contact, struck %d" % struck
+	)
+	for index in targets.size():
+		_assert(
+			targets[index].damages.size() == 1,
+			"target %d should take the contact exactly once, took %d"
+				% [index + 1, targets[index].damages.size()]
+		)
+		_assert(
+			targets[index].impact_kinds == ["vigil_dagger_fast_03:cut_01"],
+			"target %d lost its per-target reaction identity, got %s"
+				% [index + 1, str(targets[index].impact_kinds)]
+		)
+	_assert(
+		probe.powers.size() == 1,
+		"two overlapping targets must not double the camera impact, saw %d requests"
+			% probe.powers.size()
+	)
+	if probe.powers.size() == 1:
+		_assert_close(probe.powers[0], 1.8, "the multi-target contact lost cut_01's camera power")
+	_assert(
+		bool(operator.get("_hit_stop_active")),
+		"a confirmed contact should have stopped time once"
+	)
+	await create_timer(0.12).timeout
+	_assert(
+		is_equal_approx(Engine.time_scale, 1.0),
+		"multi-target hit stop did not restore the time scale, left %.4f" % Engine.time_scale
+	)
+
+	# Miss control: the same staged contact with nothing in reach.
+	for target in targets:
+		target.global_position = Vector2(4000.0, 0.0)
+	await physics_frame
+	await physics_frame
+	probe.clear()
+	operator.set("_hit_stop_active", false)
+	Engine.time_scale = 1.0
+	operator.call("_apply_melee_hitbox_tick", 8)
+	_assert(
+		probe.powers.is_empty(),
+		"a whiff must not ask the camera for a confirmed-contact impact, asked %s"
+			% str(probe.powers)
+	)
+	_assert(
+		not bool(operator.get("_hit_stop_active")),
+		"a whiff must not stop time"
+	)
+	_assert(
+		is_equal_approx(Engine.time_scale, 1.0),
+		"a whiff left the time scale at %.4f" % Engine.time_scale
+	)
+	for target in targets:
+		_assert(
+			target.damages.size() <= 1,
+			"a whiff spawned target contact feedback"
+		)
+
+	for target in targets:
+		target.queue_free()
+	game_root.queue_free()
+	operator.call("_interrupt_active_combat_for_damage_reaction")
+	await process_frame
+

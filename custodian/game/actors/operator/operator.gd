@@ -7469,7 +7469,7 @@ func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 		if obs != null:
 			obs.perf_span_end(&"operator_melee_audio", audio_started)
 	if hit_count > 0:
-		_on_melee_hit_confirmed()
+		_on_melee_hit_confirmed(active_contact)
 		print("MELEE HIT: ", hit_count, " target(s), damage=", _melee_damage_current)
 	elif not _melee_miss_sfx_played:
 		_melee_miss_sfx_played = true
@@ -8911,6 +8911,11 @@ func _sync_melee_hitbox_window_from_animation() -> void:
 		if not contact.is_empty():
 			best_contact = contact
 	_melee_prev_animation_frame = frame
+	# Kept as the window scan's record of the last contact crossed, for hitbox
+	# bookkeeping and telemetry. It is deliberately NOT the feedback authority any
+	# more: `_apply_melee_hitbox_tick()` resolves the contact that actually landed
+	# and hands it to `_on_melee_hit_confirmed()`, because a scan that crosses two
+	# contacts in one update can only keep one of them here.
 	_active_melee_contact = best_contact
 	_active_melee_contact_id = StringName(
 		_active_melee_contact.get("id", "default")
@@ -9370,25 +9375,25 @@ func _estimate_node_contact_radius(target: Node, fallback_radius: float = 12.0) 
 	return fallback_radius
 
 
-func _on_melee_hit_confirmed() -> void:
+## Feedback for a confirmed contact, owned by that contact.
+##
+## `contact` is the one `_apply_melee_hitbox_tick()` resolved for the frame that
+## actually landed, passed down rather than re-read from actor state. The global
+## `_active_melee_contact` holds whichever contact was crossed *last* during a
+## window scan, so when one update crosses two -- Vigil Fast 03 crossing `cut_01`
+## and `cut_02` -- reading it here let `cut_01`'s damage ship with `cut_02`'s
+## hitstop and camera. The contact that caused the hit owns its own feedback.
+##
+## Fires once per confirmed contact event, not once per overlapping target: two
+## enemies inside one fist is one screen shake.
+func _on_melee_hit_confirmed(contact: Dictionary = {}) -> void:
+	var feedback := _resolve_melee_contact_feedback(contact)
 	_notify_camera_attack_impact(
 		_melee_forward,
-		bool(_active_melee_contact.get(
-			"camera_heavy",
-			_melee_attack_kind == "heavy"
-		))
+		bool(feedback["camera_heavy"]),
+		float(feedback["camera_shake_power"])
 	)
-	_apply_hit_stop()
-
-
-func _trigger_camera_shake() -> void:
-	var camera = _get_world_camera()
-	if camera and camera.has_method("shake"):
-		var power: float = _active_melee_attack_profile.camera_shake_power if _active_melee_attack_profile != null else melee_heavy_camera_shake_power
-		if _active_melee_attack_profile == null:
-			if _melee_attack_kind == "fast":
-				power = melee_fast_camera_shake_power
-		camera.call("shake", power if power > 0.0 else melee_camera_shake_power)
+	_apply_hit_stop(feedback)
 
 
 func _notify_camera_attack_windup(is_heavy: bool) -> void:
@@ -9397,10 +9402,14 @@ func _notify_camera_attack_windup(is_heavy: bool) -> void:
 		camera.call("on_attack_windup", is_heavy)
 
 
-func _notify_camera_attack_impact(direction: Vector2, is_heavy: bool) -> void:
+func _notify_camera_attack_impact(
+	direction: Vector2,
+	is_heavy: bool,
+	shake_power: float = -1.0
+) -> void:
 	var camera = _get_world_camera()
 	if camera and camera.has_method("on_attack_impact"):
-		camera.call("on_attack_impact", direction, is_heavy)
+		camera.call("on_attack_impact", direction, is_heavy, shake_power)
 
 
 func _notify_camera_damage_taken(hit_direction: Vector2) -> void:
@@ -9413,31 +9422,39 @@ func _get_world_camera() -> Node:
 	return get_node_or_null("/root/GameRoot/World/Camera2D")
 
 
-## The hit stop this contact should apply, resolved but not yet applied.
+## Everything a confirmed contact asks the presentation layer for, resolved once.
 ##
-## `MeleeAttackProfile` is the authority: for a fast chain the active profile is
-## the current link's, so the authored per-link staircase arrives here intact.
-## The actor-level exports are the fallback for a contact with no profile, and an
-## `_active_melee_contact` entry -- a paired execution, for instance -- still wins
-## over both.
+## One hierarchy, applied to every value, so nothing is authored in one place and
+## read from another:
 ##
-## Split out of `_apply_hit_stop()` so the resolved values can be read without
-## also stopping time. They were previously unreadable, because resolving and
-## applying were one function, and a hardcoded per-step duration table sat
-## between the profile and the timer for exactly as long as nothing could see it.
-func _resolve_melee_hit_stop() -> Dictionary:
+##     authored contact override
+##         -> active MeleeAttackProfile
+##             -> legacy actor fallback (no profile at all)
+##
+## For a fast chain the active profile is the current link's, so the authored
+## per-link staircase arrives intact; a contact that names its own value -- Vigil
+## Fast 03's two cuts do -- still wins over it.
+##
+## `camera_shake_power` resolves to -1.0 when nothing authors one, which is how
+## the camera is told to keep its own generic light/heavy amplitude. `camera_heavy`
+## stays a semantic signal for the heavy push and state hold; it is no longer the
+## sole authority over how hard the screen moves.
+##
+## Resolving is separate from applying so these values can be read without also
+## stopping time. That separation is not cosmetic: a hardcoded per-step duration
+## table once sat between the profile and the timer for exactly as long as nothing
+## could see it.
+func _resolve_melee_contact_feedback(contact: Dictionary = {}) -> Dictionary:
 	var configured_scale: float = _active_melee_attack_profile.hit_stop_scale if _active_melee_attack_profile != null else melee_heavy_hit_stop_scale
 	var configured_duration: float = _active_melee_attack_profile.hit_stop_duration if _active_melee_attack_profile != null else melee_heavy_hit_stop_duration
+	var configured_shake: float = _active_melee_attack_profile.camera_shake_power if _active_melee_attack_profile != null else -1.0
 	if _active_melee_attack_profile == null:
 		if _melee_attack_kind == "fast":
 			configured_scale = melee_fast_hit_stop_scale
 			configured_duration = melee_fast_hit_stop_duration
-	configured_scale = float(
-		_active_melee_contact.get("hit_stop_scale", configured_scale)
-	)
-	configured_duration = float(
-		_active_melee_contact.get("hit_stop_duration", configured_duration)
-	)
+	configured_scale = float(contact.get("hit_stop_scale", configured_scale))
+	configured_duration = float(contact.get("hit_stop_duration", configured_duration))
+	configured_shake = float(contact.get("camera_shake_power", configured_shake))
 	return {
 		"scale": clamp(
 			configured_scale if configured_scale > 0.0 else melee_hit_stop_scale,
@@ -9449,15 +9466,23 @@ func _resolve_melee_hit_stop() -> Dictionary:
 			if configured_duration > 0.0
 			else melee_hit_stop_duration
 		),
+		"camera_shake_power": configured_shake if configured_shake > 0.0 else -1.0,
+		"camera_heavy": bool(
+			contact.get("camera_heavy", _melee_attack_kind == "heavy")
+		),
 	}
 
 
-func _apply_hit_stop() -> void:
+func _apply_hit_stop(feedback: Dictionary = {}) -> void:
 	if _hit_stop_active:
 		return
 	_hit_stop_active = true
 	var previous_scale := Engine.time_scale
-	var resolved := _resolve_melee_hit_stop()
+	var resolved := (
+		feedback
+		if feedback.has("scale")
+		else _resolve_melee_contact_feedback()
+	)
 	Engine.time_scale = min(previous_scale, float(resolved["scale"]))
 	await get_tree().create_timer(float(resolved["duration"]), true, false, true).timeout
 	Engine.time_scale = previous_scale
