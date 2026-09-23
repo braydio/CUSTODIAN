@@ -6,6 +6,7 @@ const EXPECTED_FRAMES := [6, 6, 7, 8]
 const EXPECTED_CONTACTS := [3, 3, 3, 4]
 const EXPECTED_HITSTOP := [0.018, 0.024, 0.032, 0.050]
 const EXPECTED_SHAKE := [0.70, 1.00, 1.45, 2.20]
+const EXPECTED_DURATIONS := [0.30, 0.32, 0.37, 0.52]
 
 
 ## Stands in for the world camera on the real confirmed-hit path.
@@ -98,6 +99,7 @@ func _run() -> void:
 	await _validate_early_input_forgiveness(operator)
 	await _validate_impact_progression(operator)
 	await _validate_chain_drive_continuity(operator, root)
+	await _validate_gameplay_duration_ownership(operator)
 
 	operator.queue_free()
 	if _failed:
@@ -438,6 +440,8 @@ func _validate_impact_progression(operator: Node) -> void:
 		# links differ by 4-8 ms, so a wall-clock measurement would not tell the
 		# authored staircase from a flattened one. It is read from the resolution
 		# seam the apply path itself uses instead.
+		operator.set("_melee_attack_kind", "fast")
+		operator.set("_active_melee_attack_profile", resolved)
 		var hit_stop: Dictionary = operator.call("_resolve_melee_contact_feedback", {})
 		_assert_true(
 			is_equal_approx(float(hit_stop["duration"]), EXPECTED_HITSTOP[index]),
@@ -452,6 +456,10 @@ func _validate_impact_progression(operator: Node) -> void:
 		)
 
 		# And the confirmed-hit path must really stop time at the authored scale.
+		# Re-assert the link profile first: the wait above yields real frames, and
+		# a link whose gameplay duration has elapsed clears it on completion.
+		operator.set("_melee_attack_kind", "fast")
+		operator.set("_active_melee_attack_profile", resolved)
 		operator.set("_hit_stop_active", false)
 		Engine.time_scale = 1.0
 		operator.call("_on_melee_hit_confirmed", {})
@@ -727,3 +735,128 @@ func _install_live_carry(operator: Node) -> void:
 	operator.call(
 		"_begin_attack_drive", UNARMED.fast_chain_attack_profiles[1], Vector2.RIGHT
 	)
+
+
+## The authored chain target owns the gameplay length of a link.
+##
+## `_start_fast_attack()` used to set `_melee_duration` from
+## `_get_current_melee_animation_duration()`, which reads `animated_sprite`
+## unconditionally. For a modular chain that renderer is hidden and holds whatever
+## clip was last put on it, so **every** link measured the same 0.667 s -- the
+## length of an unrelated leftover -- while the visible links ran 0.30 / 0.32 /
+## 0.37 / 0.52 s. The gameplay phase matched none of them.
+func _validate_gameplay_duration_ownership(operator: Node) -> void:
+	operator.call("_apply_unarmed_selection")
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	for facing in [Vector2.RIGHT, Vector2.LEFT]:
+		var sector := "e" if facing.x > 0.0 else "w"
+		for index in range(4):
+			_start_link(operator, index, facing)
+			await process_frame
+			operator.call("_update_animation")
+			await process_frame
+
+			# A. the real start path, not the helper in isolation.
+			_assert_true(
+				is_equal_approx(float(operator.get("_melee_duration")), EXPECTED_DURATIONS[index]),
+				"%s link %d gameplay duration is %.4f, authored %.2f"
+					% [sector, index + 1, float(operator.get("_melee_duration")), EXPECTED_DURATIONS[index]]
+			)
+
+			# C. and the visible clock must describe the same swing.
+			var clock := operator.call("_presentation_clock_sprite") as AnimatedSprite2D
+			_assert_true(clock != null, "%s link %d needs a visible clock" % [sector, index + 1])
+			if clock != null:
+				_assert_true(
+					String(clock.animation).contains("attack/fast_0%d" % (index + 1)),
+					"%s link %d clock is %s" % [sector, index + 1, clock.animation]
+				)
+				_assert_true(
+					absf(_visible_duration(clock) - EXPECTED_DURATIONS[index]) <= 0.005,
+					"%s link %d draws for %.4f s against an authored %.2f s"
+						% [sector, index + 1, _visible_duration(clock), EXPECTED_DURATIONS[index]]
+				)
+			_end_link(operator)
+
+	# B. The wrong-clock control. Put a real, registered animation of a materially
+	# different length on the hidden legacy body and prove it no longer leaks.
+	var legacy := operator.get("animated_sprite") as AnimatedSprite2D
+	_assert_true(legacy != null, "the wrong-clock control needs the legacy renderer")
+	if legacy != null and legacy.sprite_frames != null:
+		var decoy := StringName("")
+		for candidate in legacy.sprite_frames.get_animation_names():
+			var frames := legacy.sprite_frames.get_frame_count(candidate)
+			var speed := legacy.sprite_frames.get_animation_speed(candidate)
+			if speed > 0.0 and absf(float(frames) / speed - EXPECTED_DURATIONS[3]) > 0.15:
+				decoy = candidate
+				break
+		_assert_true(
+			not String(decoy).is_empty(),
+			"the control needs a registered legacy animation unlike the Fast 04 target"
+		)
+		if not String(decoy).is_empty():
+			_start_link(operator, 3, Vector2.RIGHT)
+			legacy.animation = decoy
+			legacy.speed_scale = 1.0
+			var decoy_duration := _visible_duration(legacy)
+			_assert_true(
+				absf(decoy_duration - EXPECTED_DURATIONS[3]) > 0.05,
+				"the control is vacuous: the decoy clip is %.3f s, near the %.2f s target"
+					% [decoy_duration, EXPECTED_DURATIONS[3]]
+			)
+			# Restart the link with the decoy already in place, which is exactly the
+			# state the old code measured.
+			_end_link(operator)
+			_start_link(operator, 3, Vector2.RIGHT)
+			_assert_true(
+				is_equal_approx(float(operator.get("_melee_duration")), EXPECTED_DURATIONS[3]),
+				"a %.3f s clip on the hidden legacy body moved Fast 04's gameplay "
+					% decoy_duration
+					+ "duration to %.4f; the authored %.2f must own it"
+						% [float(operator.get("_melee_duration")), EXPECTED_DURATIONS[3]]
+			)
+			_end_link(operator)
+
+	# F. Armed chains author no durations and must keep their existing path.
+	for definition_path in [
+		"res://game/actors/operator/vigil_pattern_dagger_definition.tres",
+		"res://game/actors/operator/sword_cleaver_definition.tres",
+	]:
+		var definition = load(definition_path)
+		if definition == null:
+			continue
+		_assert_true(
+			definition.fast_chain_presentation_durations.is_empty(),
+			"%s now authors chain durations; the armed fallback assumption is stale"
+				% definition_path.get_file()
+		)
+	operator.call("_apply_unarmed_selection")
+	await process_frame
+
+
+func _start_link(operator: Node, index: int, facing: Vector2) -> void:
+	operator.set("aim_direction", facing)
+	operator.set("_melee_forward", facing)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("stamina", 100.0)
+	operator.call("_clear_attack_buffer")
+	operator.set("_melee_fast_combo_step", index)
+	operator.call("_start_fast_attack")
+
+
+func _end_link(operator: Node) -> void:
+	operator.set("_melee_active", false)
+	operator.set("_melee_attack_kind", "")
+
+
+func _visible_duration(sprite: AnimatedSprite2D) -> float:
+	if sprite == null or sprite.sprite_frames == null:
+		return 0.0
+	if not sprite.sprite_frames.has_animation(sprite.animation):
+		return 0.0
+	var fps := sprite.sprite_frames.get_animation_speed(sprite.animation)
+	var units := 0.0
+	for frame in range(sprite.sprite_frames.get_frame_count(sprite.animation)):
+		units += sprite.sprite_frames.get_frame_duration(sprite.animation, frame)
+	return units / maxf(fps * maxf(sprite.speed_scale, 0.0001), 0.0001)
+

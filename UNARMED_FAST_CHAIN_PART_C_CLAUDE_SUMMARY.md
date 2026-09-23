@@ -4,18 +4,65 @@ Branch `main`. This file is overwritten as Part C advances; it is not a changelo
 Full derivation lives in
 `custodian/docs/ai_context/task_packets/OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`.
 
-## Status
+## Status — **PART C CLOSED**
 
 ```
-C1  subtle Fists target assistance      DONE
-C3  attack-drive continuity             DONE
-C4  early input forgiveness             DONE
-C2  per-link impact progression         DONE
-C5  chain movement continuity           DONE
-C6  Fast 04 posture settle              DONE
-C7  contact-owned feedback              DONE
-C8  parry alignment                     DONE   <- this pass
+C1    subtle Fists target assistance      DONE
+C2    per-link impact progression         DONE
+C3    attack-drive continuity             DONE
+C4    early input forgiveness             DONE
+C5    chain movement continuity           DONE
+C6    Fast 04 terminal posture settle     DONE
+C7    contact-owned melee feedback        DONE
+C8    parry timing + contact facing       DONE
+C8.1  parry validation hardening          DONE
+FINAL gameplay-duration closeout          DONE
 ```
+
+## Final timing ownership
+
+For an authored Fists link, `fast_chain_presentation_durations[step]` is the
+single source for **both** the visible speed scale and `_melee_duration`.
+Everything frame-sensitive — queue and commit windows, swing cues, the hit-window
+scan, `frame_changed`, `animation_finished`, the chain's presentation frame —
+reads `_presentation_clock_sprite()`. `animated_sprite` is a renderer, never a
+clock, for any modular chain.
+
+## Final closeout — gameplay duration
+
+`_start_fast_attack()` set `_melee_duration` from
+`_get_current_melee_animation_duration()`, which reads `animated_sprite`
+unconditionally — hidden during a modular chain and holding whatever clip was last
+put on it.
+
+| link | authored | visible | pre-fix duration | post-fix duration | cooldown |
+|---|---|---|---|---|---|
+| fast_01 | 0.30 | 0.300 | **0.6667** | 0.3000 | 0.46 |
+| fast_02 | 0.32 | 0.320 | **0.6667** | 0.3200 | 0.42 |
+| fast_03 | 0.37 | 0.370 | **0.6667** | 0.3700 | 0.52 |
+| fast_04 | 0.52 | 0.520 | **0.6667** | 0.5200 | **0.56** |
+
+Every link had the same gameplay length, matching none of them — and not even
+stably: the same links measured 0.360 s in a different state, which is how a
+focused test could pass while a tier run disagreed. Identical east and west after
+the fix.
+
+Ownership is capability-based, not by weapon: the Vigil dagger and Sword-Cleaver
+author no chain durations and keep the existing path, asserted directly so the
+gate fails if that ever changes. Nothing was retuned — Fast 04's repeat gate falls
+from ~0.71 to 0.56 purely because it stopped inheriting a foreign clip.
+
+Control: reverting to `_get_current_melee_animation_duration()` fails the gate in
+nine places, all four links collapsing to one wrong value.
+
+## Regression seal
+
+17 focused Operator combat gates green, changed set 37/37, actor tier 54/55.
+
+Known and outside Part C: `lootable_corpse_beacon` nondeterminism (no reference to
+any Operator combat path), and `grunt_parry_crit_reaction_smoke.gd`, which is
+unregistered and red on critical-execution FX registration, verified identical
+against pre-C8 runtime.
 
 ## C8 — parry timing and contact facing
 
@@ -304,14 +351,3 @@ travelled distance measured, settling is checked for snap-back, opposing input i
 checked not to reverse a committed step, and a target at the edge of each link's
 own acquire ring is asserted to resolve extra drive. Negative control: zeroing
 link 1's distance and bonus fails it in six places.
-
-## Part C is not closed
-
-One closeout item remains: the modular Fists `_melee_duration` wrong-clock defect
-from C6 — the gameplay phase length is measured from `animated_sprite`, which
-during a modular chain shows an unrelated leftover clip. Then the C1-C8 regression
-set is the seal.
-
-Also found during C8 and out of its scope: `grunt_parry_crit_reaction_smoke.gd` is
-unregistered and red on critical-execution FX registration, verified identical
-against HEAD.

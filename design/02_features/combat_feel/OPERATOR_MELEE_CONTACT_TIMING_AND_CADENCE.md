@@ -1,9 +1,30 @@
 # Operator Melee Contact Timing And Cadence
 
-Status: approved design, implementation pending
+> **HISTORICAL — SUPERSEDED. This is not current implementation authority.**
+>
+> This was the approved plan that Part C (C1–C8.1 plus the duration closeout)
+> was built from, and it has been overtaken by what shipped. It still describes
+> the retired `runtime/modules/new_operator` paths, the old three-phase Fists
+> fast attack with 3/3/3 phase art, provisional timing targets, and defects that
+> Part C has since resolved. Read it for the rationale, not for the numbers.
+>
+> Current authority:
+> - `custodian/docs/ai_context/task_packets/OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`
+>   — the Part C record, with measurements and per-slice evidence.
+> - `custodian/docs/ai_context/CURRENT_STATE.md` — live runtime description.
+>
+> What shipped instead of the plan below, in one paragraph: Fists is a four-link
+> authored chain (6/6/7/8 frames, contacts at runtime 3/3/3/4) whose authored
+> `fast_chain_presentation_durations` of 0.30 / 0.32 / 0.37 / 0.52 s own both the
+> visible speed scale and the gameplay phase length. Every frame-sensitive part of
+> the chain follows `_presentation_clock_sprite()`, never the hidden legacy body.
+> Impact feedback is owned by the contact that landed. Attack drive carries across
+> chain seams within the authored distance budget.
+
+Status: historical design record, superseded by Part C
 Owner: gameplay/combat
 Runtime target: Godot 4 (`custodian/`)
-Last updated: 2026-08-15
+Last updated: 2026-08-15 (superseded 2026-09-23)
 
 ## Purpose
 

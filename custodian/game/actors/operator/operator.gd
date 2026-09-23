@@ -6839,11 +6839,7 @@ func _start_fast_attack() -> void:
 			_melee_attack_key,
 			fallback_name
 		)
-		_melee_duration = _get_current_melee_animation_duration(
-			0.45,
-			0.24,
-			0.85
-		)
+		_melee_duration = _resolve_fast_chain_gameplay_duration()
 		_lock_melee_cooldown(_melee_duration + 0.04)
 		match _melee_attack_key:
 			"vigil_dagger_fast_01":
@@ -8854,6 +8850,33 @@ func _get_melee_animation_speed_scale(attack_key: String) -> float:
 	if attack_key.begins_with("melee_fast") or attack_key.begins_with("unarmed_fast"):
 		return max(0.1, melee_fast_animation_speed_scale)
 	return 1.0
+
+
+## How long the gameplay phase of an authored fast-chain link lasts.
+##
+## When the weapon authors `fast_chain_presentation_durations`, that value is the
+## answer. It is already the authority for the *visible* link -- the modular
+## strip is speed-scaled to hit exactly that target -- so using anything else here
+## is two clocks describing one swing.
+##
+## The something else it used to use was
+## `_get_current_melee_animation_duration()`, which reads `animated_sprite`
+## unconditionally. For a modular Fists chain that renderer is hidden and holds
+## whatever clip was last put on it, so the gameplay length of a punch depended on
+## an unrelated leftover animation: C6 measured Fast 04 at 0.667 s in one state and
+## 0.360 s in another, against an authored target of 0.520 s. Every other
+## frame-sensitive part of the chain -- queue and commit timing, swing cues, the
+## hit-window scan, `frame_changed`, `animation_finished` -- already follows
+## `_presentation_clock_sprite()`; this was the last split brain.
+##
+## Capability-based rather than by weapon: a chain that authors no durations, as
+## the Vigil dagger and the Sword-Cleaver do not, keeps the existing
+## animation-measured path untouched.
+func _resolve_fast_chain_gameplay_duration() -> float:
+	var authored := _get_fast_chain_presentation_duration(-1.0)
+	if authored > 0.0:
+		return authored
+	return _get_current_melee_animation_duration(0.45, 0.24, 0.85)
 
 
 func _get_current_melee_animation_duration(fallback_duration: float, min_duration: float, max_duration: float) -> float:

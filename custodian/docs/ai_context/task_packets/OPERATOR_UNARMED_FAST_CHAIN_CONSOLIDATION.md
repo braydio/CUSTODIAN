@@ -797,14 +797,97 @@ critical-execution FX registration, which this slice is told not to touch and
 which would need assets. Recorded for its own slice rather than registered while
 red.
 
-### Remaining Part C steps
+### Final closeout — gameplay duration ownership (done)
 
-**Part C is not closed.** One closeout item remains: the modular Fists
-`_melee_duration` wrong-clock defect C6 uncovered, where the gameplay phase length
-is measured from `animated_sprite` — an unrelated leftover legacy clip during a
-modular chain. Observed at 0.667 s in one state and 0.360 s in another against a
-0.520 s finisher. After that, the C1-C8 regression set is the Part C seal.
+The last split brain. `_start_fast_attack()` set `_melee_duration` from
+`_get_current_melee_animation_duration()`, which reads `animated_sprite`
+unconditionally. For a modular Fists chain that renderer is hidden and holds
+whatever clip was last put on it, so the gameplay length of a punch was decided
+by an unrelated leftover. C6 found it; this closes it.
 
-Also open, found during C8 and out of its scope:
-`grunt_parry_crit_reaction_smoke.gd` is unregistered and red on critical-execution
-FX registration.
+Measured before, driving the real start path:
+
+| link | authored target | visible clip | pre-fix `_melee_duration` | pre-fix cooldown |
+|---|---|---|---|---|
+| fast_01 | 0.30 | 0.300 | **0.6667** | 0.693 |
+| fast_02 | 0.32 | 0.320 | **0.6667** | 0.693 |
+| fast_03 | 0.37 | 0.370 | **0.6667** | 0.693 |
+| fast_04 | 0.52 | 0.520 | **0.6667** | 0.693 |
+
+Every link had the *same* gameplay length, matching none of them, because they
+were all measuring one leftover 8-frame clip at 12 FPS. And it was not even
+stable: the same links measured 0.360 s in a different state, which is how a
+focused test could pass and a tier run disagree.
+
+After, with `_resolve_fast_chain_gameplay_duration()`:
+
+| link | `_melee_duration` | visible clock | authored target | cooldown |
+|---|---|---|---|---|
+| fast_01 | 0.3000 | 0.3000 | 0.30 | 0.46 |
+| fast_02 | 0.3200 | 0.3200 | 0.32 | 0.42 |
+| fast_03 | 0.3700 | 0.3700 | 0.37 | 0.52 |
+| fast_04 | 0.5200 | 0.5200 | 0.52 | **0.56** |
+
+Identical east and west. The three quantities now agree by construction: the
+authored target drives the visible speed scale and the gameplay phase from the
+same number.
+
+Cooldowns were verified against live runtime rather than assumed, and match the
+predicted `max(duration + 0.04, profile minimum)`: 0.46 / 0.42 / 0.52 / 0.56.
+Nothing was retuned to reach them — Fast 04's repeat gate falls from roughly 0.71
+to 0.56 purely because it stopped inheriting a foreign clip's length.
+
+Ownership is capability-based, not by weapon: a chain that authors
+`fast_chain_presentation_durations` uses them, and one that does not — the Vigil
+dagger and the Sword-Cleaver author none — keeps the existing animation-measured
+path untouched. The gate asserts that assumption directly, so it fails if an armed
+weapon ever starts authoring durations.
+
+Coverage in `operator_unarmed_fast_chain`: the real start path for all four links
+in both sectors, the visible clock recomputed from frame count, per-frame
+durations and speed scale and asserted to agree within 5 ms, and a wrong-clock
+control that puts a real registered animation of a materially different length on
+the hidden legacy body and proves Fast 04's duration does not move. Reverting to
+`_get_current_melee_animation_duration()` fails the gate in nine places, with all
+four links collapsing to one wrong value.
+
+## Part C is closed
+
+| slice | state |
+|---|---|
+| C1 subtle Fists target assistance | DONE |
+| C2 per-link impact progression | DONE |
+| C3 attack-drive continuity | DONE |
+| C4 early input forgiveness | DONE |
+| C5 chain movement continuity | DONE |
+| C6 Fast 04 terminal posture settle | DONE |
+| C7 contact-owned melee feedback | DONE |
+| C8 parry timing and contact facing | DONE |
+| C8.1 parry validation hardening | DONE |
+| final gameplay-duration closeout | DONE |
+
+**Final timing ownership, explicitly.** For an authored Fists link,
+`fast_chain_presentation_durations[step]` is the single source for both the
+visible speed scale and `_melee_duration`. Everything frame-sensitive — queue and
+commit windows, swing cues, the hit-window scan, `frame_changed`,
+`animation_finished`, and the chain's own presentation frame — reads
+`_presentation_clock_sprite()`. `animated_sprite` is a renderer, never a clock,
+for any modular chain.
+
+Regression seal, all green: operator_unarmed_fast_chain, operator_unarmed_posture,
+operator_attack_phase_cadence, operator_modular_fast_attack,
+operator_armed_melee_body_visibility, operator_vigil_dagger,
+operator_sword_cleaver, operator_parry_presentation, operator_guard_flow,
+operator_ranged_ready_input, operator_modular_defense_ranged,
+operator_melee_soft_targeting, operator_melee_point_blank,
+operator_body_pair_canonical, operator_visual_ownership,
+combat_exchange_commitment, operator_architecture_debt. Changed set 37/37, actor
+tier 54/55.
+
+### Known issues outside Part C
+
+- `lootable_corpse_beacon` is nondeterministic and unrelated; it has no reference
+  to any Operator combat path.
+- `grunt_parry_crit_reaction_smoke.gd` is unregistered and red on
+  `operator_critical_execution_fx_{s,e,w}` registration, verified identical
+  against pre-C8 runtime. It needs paired-execution FX work and its own slice.
