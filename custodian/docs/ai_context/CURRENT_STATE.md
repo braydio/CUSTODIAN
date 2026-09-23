@@ -1604,10 +1604,8 @@ The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 and west-mirrored strips through the canonical runtime domain: `glide`, `flap`,
 `dive_windup`, `dive_strike`, `climb_out`, `land`, `takeoff`, `perch_idle`,
 `ground_idle`, `ground_walk`, `bite_attack`, `air_stagger`, `hurt`, and `death`.
-SOUTH is now 14/14 alpha-approved through the regenerated replacement batches.
-NORTH is now 13/14 after the latest regenerated replacement batch; every state
-except `air_stagger` is published, with `air_stagger_n` the sole remaining
-North source. The prior matte-bearing batch and rejected generation masters
+SOUTH and NORTH are now both 14/14 alpha-approved through the regenerated
+replacement batches. The prior matte-bearing batch and rejected generation masters
 remain quarantined as rollback evidence. Future art replacements keep the same
 semantic filenames and frame contracts through the family inbox and targeted
 Asset V2 ingest. Visual altitude

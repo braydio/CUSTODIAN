@@ -10039,6 +10039,27 @@
           "sha256": "17001283581e5f794892587ec7a5e8db24d8f21afd41c7feea906507f98aa730",
           "provenance": "authored",
           "source_asset": null
+        },
+        "air_stagger::n": {
+          "state_id": "air_stagger",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "reaction",
+            "air_stagger",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__air_stagger__n__5f__256.png",
+          "frames": 5,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "9176ca5c742c63d7d42d45ddbef34eeb43d02e842f0b13bc58c6e54c10e54c18",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     }

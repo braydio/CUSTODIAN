@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260923T200645Z_13463916",
+  "timestamp": "2026-09-23T20:06:45.438492+00:00",
+  "family": "ambient_vaultwing_common",
+  "kind": "ambient_creature",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/air_stagger__n.png",
+      "sha256": "ff210dbccfa9bf5c8e699aaa77111f471a01af0c6614a370ba178f7012017ccd"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "air_stagger",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "air_stagger",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__air_stagger__n__5f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9176ca5c742c63d7d42d45ddbef34eeb43d02e842f0b13bc58c6e54c10e54c18",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
