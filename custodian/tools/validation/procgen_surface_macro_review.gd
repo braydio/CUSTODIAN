@@ -25,6 +25,7 @@ func _run() -> void:
 		"operator_reference_px": [OPERATOR_SIZE.x, OPERATOR_SIZE.y],
 		"profiles": [],
 	}
+	var failures := PackedStringArray()
 	for profile: TerrainStampProfile in CATALOG.stamps:
 		if profile.family_id != &"procgen_surface_rocky_upland":
 			continue
@@ -41,6 +42,13 @@ func _run() -> void:
 			push_error("procgen surface macro review failed to save %s" % filename)
 			quit(1)
 			return
+		var semantic_cells: Array[Vector2i] = profile.solid_mask_cells + profile.walkable_overlay_cells
+		var semantic_bounds := _cell_bounds(semantic_cells)
+		var probe_bounds := _cell_bounds(profile.reveal_probe_cells)
+		if profile.reveal_probe_cells.size() < 5 or profile.reveal_probe_cells.size() > 9:
+			failures.append("%s reveal probe count is outside 5-9" % profile.stamp_id)
+		if probe_bounds.size.x * 2 < semantic_bounds.size.x or probe_bounds.size.y * 2 < semantic_bounds.size.y:
+			failures.append("%s reveal probes do not span the semantic contact footprint" % profile.stamp_id)
 		report.profiles.append({
 			"stamp_id": String(profile.stamp_id),
 			"review": filename,
@@ -49,15 +57,34 @@ func _run() -> void:
 			"solid_mask_cells": profile.solid_mask_cells.size(),
 			"walkable_overlay_cells": profile.walkable_overlay_cells.size(),
 			"reveal_probe_cells": profile.reveal_probe_cells.size(),
+			"semantic_bounds": _rect_json(semantic_bounds),
+			"probe_bounds": _rect_json(probe_bounds),
+			"pivot_px": [profile.pivot_px.x, profile.pivot_px.y],
 		})
+	report["failures"] = failures
 	var report_file := FileAccess.open(output_path.path_join("review_manifest.json"), FileAccess.WRITE)
 	if report_file == null:
 		push_error("procgen surface macro review could not write manifest")
 		quit(1)
 		return
 	report_file.store_string(JSON.stringify(report, "  ") + "\n")
-	print("procgen_surface_macro_review: PASS profiles=%d output=%s" % [report.profiles.size(), output_path])
-	quit(0 if report.profiles.size() == 10 else 1)
+	print("procgen_surface_macro_review: %s profiles=%d output=%s" % ["PASS" if failures.is_empty() else "FAIL", report.profiles.size(), output_path])
+	quit(0 if report.profiles.size() == 10 and failures.is_empty() else 1)
+
+
+func _cell_bounds(cells: Array[Vector2i]) -> Rect2i:
+	if cells.is_empty():
+		return Rect2i()
+	var minimum := cells[0]
+	var maximum := cells[0]
+	for cell: Vector2i in cells:
+		minimum = Vector2i(mini(minimum.x, cell.x), mini(minimum.y, cell.y))
+		maximum = Vector2i(maxi(maximum.x, cell.x), maxi(maximum.y, cell.y))
+	return Rect2i(minimum, maximum - minimum + Vector2i.ONE)
+
+
+func _rect_json(rect: Rect2i) -> Array[int]:
+	return [rect.position.x, rect.position.y, rect.size.x, rect.size.y]
 
 
 func _draw_grid(image: Image) -> void:

@@ -74,17 +74,18 @@ func _generate_and_capture(seed_value: int) -> Dictionary:
 		has_cliff = has_cliff or stamp_id.contains("cliff") or stamp_id.contains("corner")
 		has_ground = has_ground or stamp_id.contains("shelf") or stamp_id.contains("scree")
 	var accepted := chasm_count > 0 and has_cliff and has_ground
+	var route_audit := map.debug_run_route_playability_audit()
+	accepted = accepted and bool(route_audit.get("ok", false))
 	if not accepted:
 		var rejected_ids: Array[String] = []
 		for placement: Dictionary in surface:
 			rejected_ids.append(String(placement.get("stamp_id", "")))
 		print("surface_review reject seed=%d chasm=%d surface=%s" % [seed_value, chasm_count, str(rejected_ids)])
-		for region: Dictionary in plan.get("regions", []):
-			if String(region.get("kind_name", "")) in ["mountain_wall", "rocky_upland_floor"]:
-				print("surface_review region kind=%s biome=%s cells=%d" % [String(region.get("kind_name", "")), String(region.get("biome_id", "")), (region.get("cells", []) as Array).size()])
+		print("surface_review rejections=%s" % str(plan.get("rejection_counts", {})))
 		viewport.queue_free()
 		await process_frame
 		return {"accepted": false, "seed": seed_value, "chasm_count": chasm_count, "surface_count": surface.size()}
+	print("surface_review accepted seed=%d chasm=%d surface=%s" % [seed_value, chasm_count, str(surface.map(func(placement: Dictionary) -> String: return String(placement.get("stamp_id", ""))))])
 
 	var camera := Camera2D.new()
 	camera.enabled = true
@@ -102,8 +103,18 @@ func _generate_and_capture(seed_value: int) -> Dictionary:
 		viewport.queue_free()
 		return {"accepted": false, "seed": seed_value, "save_error": error_string(save_error)}
 	var stamp_ids: Array[String] = []
+	var placement_report: Array[Dictionary] = []
 	for placement: Dictionary in surface:
 		stamp_ids.append(String(placement.get("stamp_id", "")))
+		placement_report.append({
+			"stamp_id": String(placement.get("stamp_id", "")),
+			"origin_cell": _vector2i_json(placement.get("origin_cell", Vector2i.ZERO)),
+			"anchor_cell": _vector2i_json(placement.get("anchor_cell", Vector2i.ZERO)),
+			"visual_footprint": _rect2i_json(placement.get("visual_footprint", Rect2i())),
+			"solid_cell_count": (placement.get("solid_cells", []) as Array).size(),
+			"overlay_cell_count": (placement.get("overlay_cells", []) as Array).size(),
+			"reveal_probe_count": (placement.get("reveal_probe_cells", []) as Array).size(),
+		})
 	var result := {
 		"accepted": true,
 		"seed": seed_value,
@@ -111,7 +122,9 @@ func _generate_and_capture(seed_value: int) -> Dictionary:
 		"chasm_count": chasm_count,
 		"surface_count": surface.size(),
 		"surface_stamp_ids": stamp_ids,
-		"route_audit": map.debug_run_route_playability_audit(),
+		"surface_placements": placement_report,
+		"route_audit": route_audit,
+		"rejection_counts": plan.get("rejection_counts", {}),
 		"fingerprint": String(plan.get("fingerprint", "")),
 	}
 	viewport.queue_free()
@@ -142,3 +155,11 @@ func _write_manifest(result: Dictionary) -> void:
 	var file := FileAccess.open(OUTPUT_DIR.path_join("review_manifest.json"), FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify(result, "  ") + "\n")
+
+
+func _vector2i_json(value: Vector2i) -> Array[int]:
+	return [value.x, value.y]
+
+
+func _rect2i_json(value: Rect2i) -> Array[int]:
+	return [value.position.x, value.position.y, value.size.x, value.size.y]

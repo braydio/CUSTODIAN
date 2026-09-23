@@ -229,7 +229,7 @@ composition target. Baselines may not be approved automatically.
 
 ## Deferred Beyond V1 Architecture
 
-- production rocky-upland art and its explicit masks/pivots;
+- additional rocky-upland vocabulary beyond the live ten-state production family;
 - FRONT-band actor occlusion behavior;
 - non-rocky biome catalogs;
 - performance tuning informed by production texture/node counts;

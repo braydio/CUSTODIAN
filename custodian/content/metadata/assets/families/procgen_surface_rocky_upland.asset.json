@@ -28,5 +28,46 @@
     "scree_overlay_01": {"required": true, "layer": "body", "action_group": "rocky_upland", "variant": "scree_overlay_01", "layout": "copy", "frame_width": 512, "frame_height": 256, "frames": 1}
   },
   "aliases": {},
-  "consumers": []
+  "consumers": [
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_cliff_mass_south_01.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_cliff_mass_south_02.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_cliff_mass_east_01.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_cliff_mass_west_01.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_cliff_corner_se_01.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_cliff_corner_sw_01.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_shelf_large_01.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_shelf_large_02.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/granite_shelf_small_01.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/surface/rocky_upland/scree_overlay_01.tres"
+    }
+  ]
 }

@@ -7470,6 +7470,10 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 	for placement: Dictionary in _macro_presentation_plan.get("placements", []):
 		if not bool(placement.get("claims_dressing_clearance", false)):
 			continue
+		if int(placement.get("placement_domain", TerrainStampProfile.PlacementDomain.SURFACE)) == TerrainStampProfile.PlacementDomain.SURFACE:
+			for cell: Vector2i in placement.get("presentation_cells", []):
+				_macro_presentation_dressing_clearance_cells[cell] = true
+			continue
 		for cell: Vector2i in placement.get("solid_cells", []):
 			_macro_presentation_dressing_clearance_cells[cell] = true
 		for cell: Vector2i in placement.get("overlay_cells", []):

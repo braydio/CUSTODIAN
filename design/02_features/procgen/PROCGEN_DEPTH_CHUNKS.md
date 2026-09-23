@@ -39,7 +39,7 @@ TOTAL                     16 runtime depth-chunk assets
 
 The old statement that Wetland and Rocky Upland should not be generated yet is obsolete. Those six biome assets plus the new Woodland overgrown-works asset have already been normalized and successfully ingested through Asset Pipeline V2.
 
-The baseline and follow-on libraries are presentation-bound as CHASM/BACK visual-only underlays. Playable SURFACE macro composition remains a separate future slice.
+The baseline and follow-on libraries are presentation-bound as CHASM/BACK visual-only underlays. Rocky Upland now also consumes its separate ten-state playable SURFACE macro family; other biome SURFACE composition remains a separate future slice.
 
 ---
 
@@ -917,4 +917,4 @@ FOLLOW-ON 7
   Wetland/Rocky/overgrown selection integrated
 ```
 
-**Current next step:** playable SURFACE macro composition remains the next world-presentation slice. No new art generation or Asset V2 ingest is required for the completed depth binding.
+**Current next step:** harden and review the live Rocky Upland SURFACE family, then proceed to semantic surface materials. No new art generation or Asset V2 ingest is required for the completed depth binding.

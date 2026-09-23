@@ -4,6 +4,7 @@ const COMPOSER := preload("res://game/world/procgen/presentation/procgen_macro_p
 const CATALOG := preload("res://game/world/procgen/presentation/terrain_stamp_catalog.gd")
 const PROFILE := preload("res://game/world/procgen/presentation/terrain_stamp_profile.gd")
 const PLACER := preload("res://game/world/procgen/presentation/terrain_stamp_placer.gd")
+const REGION_EXTRACTOR := preload("res://game/world/procgen/presentation/terrain_region_extractor.gd")
 const MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const MAP_SCRIPT := preload("res://game/world/procgen/proc_gen_tilemap.gd")
 const PRODUCTION_CATALOG := preload("res://content/procgen/presentation/terrain_stamp_catalog_v1.tres")
@@ -44,6 +45,7 @@ func _init() -> void:
 	_validate_production_surface_profiles()
 	_validate_domain_budgets_and_surface_overlap()
 	_validate_surface_biome_isolation()
+	_validate_region_biome_ownership(composer)
 
 	var empty_catalog := CATALOG.new() as TerrainStampCatalog
 	var fallback := composer.build_plan(context, empty_catalog)
@@ -277,12 +279,23 @@ func _validate_domain_budgets_and_surface_overlap() -> void:
 	offset_surface.footprint_size_cells = Vector2i(8, 8)
 	offset_surface.solid_mask_cells = []
 	offset_surface.walkable_overlay_cells = [Vector2i(3, 4)]
-	offset_surface.reveal_probe_cells = [Vector2i(3, 4)]
+	offset_surface.reveal_probe_cells = [Vector2i(3, 4), Vector2i(4, 4)]
 	var offset_catalog := CATALOG.new() as TerrainStampCatalog
 	offset_catalog.stamps = [offset_surface]
 	var offset_plan: Dictionary = placer.build_plan(17, [overlap_regions[0]], offset_catalog, context, 1)
 	_require((offset_plan.placements as Array).size() == 1, "offset SURFACE semantic anchor did not place")
 	_require((offset_plan.placements[0] as Dictionary).origin_cell == surface_cell - Vector2i(3, 4), "SURFACE origin did not align its semantic mask to the region anchor")
+	var protected_footprint_context := context.duplicate(true)
+	protected_footprint_context.protected_cells = {surface_cell + Vector2i(1, 0): true}
+	var protected_footprint_plan: Dictionary = placer.build_plan(17, [overlap_regions[0]], offset_catalog, protected_footprint_context, 1)
+	_require((protected_footprint_plan.placements as Array).is_empty(), "giant SURFACE footprint crossed a protected route outside its semantic mask")
+	_require(int(protected_footprint_plan.rejection_counts.get("protected_presentation_footprint", 0)) > 0, "protected visual-footprint rejection was not observable")
+	for claim_key: String in ["required_cells", "reserved_cells", "ingress_clearance_cells"]:
+		var claim_context := context.duplicate(true)
+		claim_context[claim_key] = {surface_cell: true}
+		var claim_plan: Dictionary = placer.build_plan(17, [overlap_regions[0]], offset_catalog, claim_context, 1)
+		_require((claim_plan.placements as Array).is_empty(), "SURFACE semantic cell crossed %s" % claim_key)
+		_require(int(claim_plan.rejection_counts.get("protected_surface_claim", 0)) > 0 or int(claim_plan.rejection_counts.get("protected_presentation_footprint", 0)) > 0, "%s claim rejection was not observable" % claim_key)
 
 	var legacy_context := context.duplicate(true)
 	legacy_context.erase("max_stamps_by_domain")
@@ -298,6 +311,51 @@ func _validate_surface_biome_isolation() -> void:
 	_require(catalog.filter_profiles(PackedStringArray(["procgen_surface_rocky_upland"]), &"mountain_wall", &"rocky_upland").size() == 1, "rocky surface family is unavailable to rocky_upland")
 	for biome: StringName in [&"scrubland", &"woodland", &"wetland"]:
 		_require(catalog.filter_profiles(PackedStringArray(["procgen_surface_rocky_upland"]), &"mountain_wall", biome).is_empty(), "rocky surface family leaked into %s" % biome)
+
+
+func _validate_region_biome_ownership(composer: ProcgenMacroPresentationComposer) -> void:
+	var extractor := REGION_EXTRACTOR.new() as TerrainMacroRegionExtractor
+	var wall_cells := [Vector2i(4, 4), Vector2i(5, 4), Vector2i(6, 4), Vector2i(7, 4)]
+	var floors := {Vector2i(4, 5): true, Vector2i(5, 5): true, Vector2i(6, 5): true, Vector2i(7, 5): true}
+	var biome_map := {
+		Vector2i(4, 5): &"woodland", Vector2i(5, 5): &"woodland",
+		Vector2i(6, 5): &"wetland", Vector2i(7, 5): &"wetland",
+	}
+	var context := {
+		"terrain_result": {"regions": [{"kind_name": "mountain_wall", "cells": wall_cells}], "traversal_by_cell": {}},
+		"floor_cells": floors, "biome_id_by_cell": biome_map,
+		"map_bounds": Rect2i(Vector2i.ZERO, Vector2i(16, 16)),
+		"protected_cells": {}, "required_cells": {}, "reserved_cells": {}, "ingress_clearance_cells": {},
+		"region_kind_by_cell": {}, "chasm_cells": {},
+	}
+	var regions := extractor.extract(context)
+	_require(regions.size() == 2, "mountain wall was not split into biome-consistent components")
+	for region: Dictionary in regions:
+		if String(region.get("kind_name", "")) != "mountain_wall":
+			continue
+		_require(StringName(region.get("biome_id", &"")) != &"rocky_upland", "non-rocky mountain wall was hardcoded to rocky_upland")
+	var surface := PRODUCTION_CATALOG.get_profile(&"granite_cliff_mass_south_01")
+	var catalog := CATALOG.new() as TerrainStampCatalog
+	catalog.stamps = [surface]
+	var woodland_region: Dictionary = {}
+	for region: Dictionary in regions:
+		if region.get("biome_id", &"") == &"woodland":
+			woodland_region = region
+	_require(not woodland_region.is_empty(), "woodland mountain wall component was not emitted")
+	var wall_authority: Dictionary = {}
+	for cell: Vector2i in wall_cells:
+		wall_authority[cell] = true
+	var plan_context := {
+		"seed": 41, "max_stamps": 1, "map_bounds": Rect2i(Vector2i.ZERO, Vector2i(64, 64)),
+		"floor_cells": {}, "wall_cells": wall_authority, "chasm_cells": {},
+		"terrain_result": {"traversal_by_cell": {}, "regions": [woodland_region]}, "biome_id_by_cell": biome_map,
+		"protected_cells": {}, "required_cells": {}, "reserved_cells": {}, "ingress_clearance_cells": {},
+		"region_kind_by_cell": {}, "families": PackedStringArray(["procgen_surface_rocky_upland"]),
+		"families_by_biome": {&"woodland": PackedStringArray(["procgen_surface_rocky_upland"])},
+		"min_region_cells_by_biome": {&"woodland": 0},
+	}
+	var plan := composer.build_plan(plan_context, catalog)
+	_require((plan.placements as Array).is_empty(), "woodland mountain wall received Rocky Upland SURFACE art")
 
 
 func _validate_production_surface_profiles() -> void:
@@ -323,6 +381,7 @@ func _validate_production_surface_profiles() -> void:
 		_require(not profile.allow_flip_h, "surface profile permits horizontal flip %s" % stamp_id)
 		_require(profile.reveal_probe_cells.size() >= 5 and profile.reveal_probe_cells.size() <= 9, "surface profile reveal probe count is outside 5-9 %s" % stamp_id)
 		_require(not profile.resolved_reveal_probe_cells().is_empty(), "surface profile has no reveal probes %s" % stamp_id)
+		_require(profile.solid_mask_cells.size() + profile.walkable_overlay_cells.size() >= 10, "surface profile regressed to a placeholder-scale semantic mask %s" % stamp_id)
 		if cliff_ids.has(stamp_id):
 			_require(profile.allowed_region_kinds == PackedStringArray(["mountain_wall"]), "cliff profile has wrong region kind %s" % stamp_id)
 			_require(profile.depth_band == TerrainStampProfile.DepthBand.BACK, "cliff profile has wrong depth band %s" % stamp_id)

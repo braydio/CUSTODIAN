@@ -12,6 +12,8 @@ const NEIGHBORS: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, 
 func extract(context: Dictionary) -> Array[Dictionary]:
 	var regions: Array[Dictionary] = []
 	var terrain_result: Dictionary = context.get("terrain_result", {})
+	var floor_cells: Dictionary = context.get("floor_cells", {})
+	var biome_by_cell: Dictionary = context.get("biome_id_by_cell", {})
 	for raw_region: Variant in terrain_result.get("regions", []):
 		var data := _region_dictionary(raw_region)
 		if String(data.get("kind_name", "")) != "mountain_wall":
@@ -19,10 +21,9 @@ func extract(context: Dictionary) -> Array[Dictionary]:
 		var cells := _sorted_cells(data.get("cells", []))
 		if cells.is_empty():
 			continue
-		regions.append(_make_region("mountain_wall", &"rocky_upland", cells))
+		for component: Dictionary in _split_mountain_wall_components(cells, biome_by_cell, floor_cells):
+			regions.append(_make_region("mountain_wall", StringName(component.get("biome_id", &"")), component.get("cells", [])))
 
-	var floor_cells: Dictionary = context.get("floor_cells", {})
-	var biome_by_cell: Dictionary = context.get("biome_id_by_cell", {})
 	var remaining: Dictionary = {}
 	for key: Variant in floor_cells.keys():
 		if not key is Vector2i:
@@ -115,6 +116,62 @@ func _make_region(kind_name: String, biome_id: StringName, raw_cells: Variant) -
 		"cell_count": cells.size(),
 		"anchor_candidates": cells.duplicate(),
 	}
+
+
+func _split_mountain_wall_components(cells: Array[Vector2i], biome_by_cell: Dictionary, floor_cells: Dictionary) -> Array[Dictionary]:
+	var biome_cells: Dictionary = {}
+	for cell: Vector2i in cells:
+		var biome := _mountain_cell_biome(cell, biome_by_cell, floor_cells)
+		if biome == &"":
+			continue
+		if not biome_cells.has(biome):
+			biome_cells[biome] = {}
+		(biome_cells[biome] as Dictionary)[cell] = true
+	var components: Array[Dictionary] = []
+	var biome_keys: Array[StringName] = []
+	for key: Variant in biome_cells.keys():
+		biome_keys.append(StringName(key))
+	biome_keys.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	for biome: StringName in biome_keys:
+		var remaining: Dictionary = biome_cells[biome]
+		while not remaining.is_empty():
+			var start := _sorted_cells(remaining.keys())[0]
+			var queue: Array[Vector2i] = [start]
+			var component_cells: Array[Vector2i] = []
+			remaining.erase(start)
+			while not queue.is_empty():
+				var cell: Vector2i = queue.pop_front()
+				component_cells.append(cell)
+				for delta: Vector2i in NEIGHBORS:
+					var neighbor := cell + delta
+					if remaining.has(neighbor):
+						remaining.erase(neighbor)
+						queue.append(neighbor)
+			components.append({"biome_id": biome, "cells": _sorted_cells(component_cells)})
+	return components
+
+
+func _mountain_cell_biome(cell: Vector2i, biome_by_cell: Dictionary, floor_cells: Dictionary) -> StringName:
+	var direct := StringName(biome_by_cell.get(cell, &""))
+	var counts: Dictionary = {}
+	for delta: Vector2i in NEIGHBORS:
+		var neighbor := cell + delta
+		if not floor_cells.has(neighbor):
+			continue
+		var biome := StringName(biome_by_cell.get(neighbor, &""))
+		if biome != &"":
+			counts[biome] = int(counts.get(biome, 0)) + 1
+	if counts.is_empty():
+		return direct
+	var candidates: Array[StringName] = []
+	for key: Variant in counts.keys():
+		candidates.append(StringName(key))
+	candidates.sort_custom(func(a: StringName, b: StringName) -> bool:
+		var ac := int(counts[a])
+		var bc := int(counts[b])
+		return ac > bc or (ac == bc and String(a) < String(b))
+	)
+	return candidates[0]
 
 
 func _is_walkable(cell: Vector2i, terrain_result: Dictionary) -> bool:

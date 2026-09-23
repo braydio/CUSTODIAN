@@ -75,7 +75,7 @@ func build_plan(
 					if selected_domain == TerrainStampProfile.PlacementDomain.SURFACE:
 						occupied_surface[cell] = true
 				if selected_domain == TerrainStampProfile.PlacementDomain.SURFACE:
-					for cell: Vector2i in selected["overlay_cells"]:
+					for cell: Vector2i in selected["presentation_cells"]:
 						occupied_surface[cell] = true
 				for cell: Vector2i in selected["chasm_cells"]:
 					occupied_chasm[cell] = true
@@ -124,12 +124,14 @@ func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector
 	var overlay := _mapped_cells(profile.walkable_overlay_cells, profile.footprint_size_cells, origin, flip_h)
 	var probes := _mapped_cells(profile.resolved_reveal_probe_cells(), profile.footprint_size_cells, origin, flip_h)
 	var chasm := _mapped_rect(profile.chasm_core_rect, profile.footprint_size_cells, origin, flip_h)
+	var presentation := _surface_presentation_cells(profile, origin, flip_h)
 	var bounds: Rect2i = context.get("map_bounds", Rect2i())
 	var wall_cells: Dictionary = context.get("wall_cells", {})
 	var floor_cells: Dictionary = context.get("floor_cells", {})
 	var terrain: Dictionary = context.get("terrain_result", {})
 	var traversal: Dictionary = terrain.get("traversal_by_cell", {})
 	var protected: Dictionary = context.get("protected_cells", {})
+	var biome_by_cell: Dictionary = context.get("biome_id_by_cell", {})
 	var chasm_cells: Dictionary = context.get("chasm_cells", {})
 	if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM:
 		for cell: Vector2i in chasm:
@@ -137,16 +139,26 @@ func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector
 			if _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_chasm"}
 			if not chasm_cells.has(cell): return {"valid": false, "reason": "chasm_semantic_mismatch"}
 			if occupied_chasm.has(cell): return {"valid": false, "reason": "chasm_presentation_overlap"}
+	else:
+		for cell: Vector2i in presentation:
+			if not bounds.has_point(cell):
+				continue
+			if _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_presentation_footprint"}
+			if occupied_surface.has(cell): return {"valid": false, "reason": "surface_presentation_overlap"}
 	for cell: Vector2i in solid:
 		if not bounds.has_point(cell): return {"valid": false, "reason": "outside_map"}
-		if protected.has(cell): return {"valid": false, "reason": "protected_solid"}
+		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_surface_claim"}
+		if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM and protected.has(cell): return {"valid": false, "reason": "protected_solid"}
 		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and occupied_surface.has(cell): return {"valid": false, "reason": "surface_presentation_overlap"}
 		if occupied.has(cell): return {"valid": false, "reason": "solid_overlap"}
 		if not wall_cells.has(cell) and not String(traversal.get(cell, "")).to_lower() in ["blocked", "ledge", "drop"]:
 			return {"valid": false, "reason": "solid_semantic_mismatch"}
 	for cell: Vector2i in overlay:
 		if not bounds.has_point(cell): return {"valid": false, "reason": "outside_map"}
+		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_surface_claim"}
 		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and occupied_surface.has(cell): return {"valid": false, "reason": "surface_presentation_overlap"}
+		if profile.required_biome != &"" and StringName(biome_by_cell.get(cell, profile.required_biome)) != profile.required_biome:
+			return {"valid": false, "reason": "semantic_biome_mismatch"}
 		if not floor_cells.has(cell) or not String(traversal.get(cell, "walkable")).to_lower() in ["walkable", "ramp", "stair"]:
 			return {"valid": false, "reason": "overlay_semantic_mismatch"}
 	return {
@@ -162,6 +174,7 @@ func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector
 		"solid_cells": solid,
 		"overlay_cells": overlay,
 		"chasm_cells": chasm,
+		"presentation_cells": presentation,
 		"reveal_probe_cells": probes,
 		"visual_footprint": Rect2i(origin, profile.footprint_size_cells),
 		"flip_h": flip_h,
@@ -182,6 +195,18 @@ func _mapped_rect(rect: Rect2i, size: Vector2i, origin: Vector2i, flip_h: bool) 
 		for x: int in range(rect.position.x, rect.end.x):
 			cells.append(Vector2i(x, y))
 	return _mapped_cells(cells, size, origin, flip_h)
+
+
+func _surface_presentation_cells(profile: TerrainStampProfile, origin: Vector2i, flip_h: bool) -> Array[Vector2i]:
+	if profile.placement_domain != TerrainStampProfile.PlacementDomain.SURFACE:
+		return []
+	var local_cells: Dictionary = {}
+	for cell: Vector2i in profile.solid_mask_cells + profile.walkable_overlay_cells + profile.resolved_reveal_probe_cells():
+		local_cells[cell] = true
+	var authored_cells: Array[Vector2i] = []
+	for cell: Vector2i in local_cells:
+		authored_cells.append(cell)
+	return _mapped_cells(authored_cells, profile.footprint_size_cells, origin, flip_h)
 
 
 func _mapped_cells(cells: Array[Vector2i], size: Vector2i, origin: Vector2i, flip_h: bool) -> Array[Vector2i]:
@@ -216,7 +241,7 @@ func _normalize_placements(values: Variant) -> Array:
 		var entry := value.duplicate(true)
 		entry["placement_domain"] = int(entry.get("placement_domain", TerrainStampProfile.PlacementDomain.SURFACE))
 		for key in ["origin_cell", "anchor_cell", "visual_footprint"]: entry[key] = str(entry.get(key))
-		for key in ["solid_cells", "overlay_cells", "chasm_cells", "reveal_probe_cells"]:
+		for key in ["solid_cells", "overlay_cells", "chasm_cells", "presentation_cells", "reveal_probe_cells"]:
 			var strings: Array[String] = []
 			for cell: Variant in entry.get(key, []): strings.append(str(cell))
 			strings.sort()
