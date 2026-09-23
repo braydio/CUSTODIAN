@@ -70,9 +70,17 @@ func get_active_count() -> int:
 	return _spawned.size()
 
 
-func despawn_all() -> void:
+func reset_for_world() -> void:
+	despawn_all("world_reset")
+	for marker_variant in get_tree().get_nodes_in_group("vaultwing_spawn_marker"):
+		var marker := marker_variant as Node
+		if marker != null and marker.has_meta("vaultwing_spawned"):
+			marker.set_meta("vaultwing_spawned", false)
+
+func despawn_all(reason: String = "explicit_cleanup") -> void:
 	for creature in _spawned:
 		if is_instance_valid(creature):
+			_log_event(&"vaultwing_despawned", {"reason": reason, "position": creature.global_position})
 			creature.queue_free()
 	_spawned.clear()
 	_obs_set_gauge("active_vaultwings", 0)
@@ -85,7 +93,10 @@ func _active_count() -> int:
 
 func _prune_spawned() -> void:
 	_spawned = _spawned.filter(func(creature: Node) -> bool:
-		return is_instance_valid(creature) and not creature.is_queued_for_deletion()
+		if not is_instance_valid(creature) or creature.is_queued_for_deletion():
+			_log_event(&"vaultwing_despawned", {"reason": "runtime_removal"})
+			return false
+		return true
 	)
 	_obs_set_gauge("active_vaultwings", _spawned.size())
 

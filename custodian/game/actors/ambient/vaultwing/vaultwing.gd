@@ -86,8 +86,10 @@ func has_action(action: StringName) -> bool:
 
 func take_damage(amount: float, _hit_strength := 0, _reaction_damage := -1.0) -> Dictionary:
 	var before := health
-	if _dead or health <= 0.0 or (behavior != null and behavior.band == VaultwingBehaviorController.Band.HIGH):
-		return _damage_result(0.0, false, before)
+	if _dead or health <= 0.0:
+		return _damage_result(0.0, false, before, false)
+	if behavior != null and behavior.band == VaultwingBehaviorController.Band.HIGH:
+		return _damage_result(0.0, true, before, true)
 	var applied := minf(maxf(0.0, amount), health)
 	health = maxf(0.0, health - applied)
 	if behavior != null: behavior.notify_damage(applied)
@@ -99,13 +101,16 @@ func set_band_interaction(next_band: int) -> void:
 	if grounded:
 		collision_layer = _original_collision_layer
 		collision_mask = _original_collision_mask
+	elif next_band == VaultwingBehaviorController.Band.ATTACK:
+		collision_layer = _original_collision_layer
+		collision_mask = 0
 	else:
 		collision_layer = 0
 		collision_mask = 0
 
 func receive_enemy_hit(amount: float, _hit_kind: StringName = &"melee", _attacker_team: String = "enemy", _attacker: Node2D = null, _hit_direction: Vector2 = Vector2.ZERO, _guard_stamina_cost_override: float = -1.0, _attack_context: Dictionary = {}) -> Dictionary:
 	if _dead or (behavior != null and behavior.band == VaultwingBehaviorController.Band.HIGH):
-		return _damage_result(0.0, false, health)
+		return _damage_result(0.0, not _dead, health, true)
 	return take_damage(amount)
 
 func die() -> void:
@@ -124,13 +129,14 @@ func apply_visual_altitude(value: float) -> void:
 	shadow.scale = Vector2.ONE * lerpf(1.0, 0.62, altitude)
 	shadow.color = Color(0.04, 0.05, 0.07, lerpf(0.72, 0.22, altitude))
 
-func _damage_result(applied: float, was_alive: bool, before: float) -> Dictionary:
+func _damage_result(applied: float, was_alive: bool, before: float, rejected := false) -> Dictionary:
 	return {
 		"applied_damage": applied, "damage_applied": applied,
 		"target_was_alive": was_alive, "target_health_before": before,
 		"target_health_after": health, "lethal": _dead or health <= 0.0,
-		"blocked": false, "eligible_hostile": true, "passive": false,
-		"structure": false, "deflected": false, "invulnerable": false,
+		"blocked": rejected, "eligible_hostile": true, "passive": false,
+		"invulnerable": rejected,
+		"structure": false, "deflected": false,
 	}
 
 func _log_event(event_name: StringName, payload: Dictionary) -> void:

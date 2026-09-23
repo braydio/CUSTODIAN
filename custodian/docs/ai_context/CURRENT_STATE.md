@@ -1591,7 +1591,7 @@ implementation authority.
 
 # Vaultwing Wild Predator Slice A Closeout (2026-09-23)
 
-The Common Vaultwing Slice A runtime is now closed out under
+The Common Vaultwing Slice A runtime is closed out under
 `game/actors/ambient/vaultwing/`. `VaultwingBehaviorController` owns deterministic
 HIGH/ATTACK/GROUND/PERCHED behavior, patrol, interest, committed dive windup and
 strike, climb-out, landing/takeoff, aerial stagger, damage, retreat, and death.

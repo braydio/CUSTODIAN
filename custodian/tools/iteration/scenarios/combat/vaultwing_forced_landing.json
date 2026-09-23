@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "combat/vaultwing_forced_landing",
+  "description": "A ranged interruption forces an airborne Vaultwing into a grounded vulnerability window.",
+  "scene": "res://tools/validation/fixtures/vaultwing_wild_moment.tscn",
+  "seed": 4402,
+  "duration_ticks": 150,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 30, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 149, "contact_sheet_ticks": [0, 20, 34, 48, 72, 120], "required_keyframes": true, "background": "opaque"},
+  "setup": {"remove_nodes": [], "roles": {"fixture": {"node_path": "."}, "vaultwing": {"node_path": "Vaultwing"}, "operator": {"node_path": "Operator"}}, "spawns": [], "properties": [], "processing": [], "fixture": {"id": "vaultwing_forced_landing", "config": {}}},
+  "timeline": [{"tick": 10, "action": "fixture_command", "name": "start_dive"}, {"tick": 45, "action": "fixture_command", "name": "interrupt_dive"}, {"tick": 145, "action": "finish"}],
+  "probes": [{"id": "landing", "role": "fixture", "fields": ["vaultwing_state", "vaultwing_band", "air_stagger_seen", "grounded_seen"], "ticks": [20, 48, 72, 120], "required": true}],
+  "assertions": [{"type": "role_exists", "role": "vaultwing", "severity": "error"}, {"type": "probe_compare", "probe": "landing", "tick": 48, "field": "air_stagger_seen", "op": "eq", "value": true, "severity": "error"}, {"type": "probe_compare", "probe": "landing", "tick": 120, "field": "grounded_seen", "op": "eq", "value": true, "severity": "error"}, {"type": "no_unreleased_inputs", "severity": "error"}],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["landing"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["combat", "vaultwing", "forced_landing"]
+}

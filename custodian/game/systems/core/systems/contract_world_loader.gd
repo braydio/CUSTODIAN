@@ -32,6 +32,7 @@ class_name ContractWorldLoader
 @export var ambient_enemy_spawner_path: NodePath = NodePath("/root/GameRoot/AmbientEnemySpawner")
 @export var place_vaultwing_markers_from_contract: bool = true
 @export var vaultwing_spawner_path: NodePath = NodePath("/root/GameRoot/VaultwingSpawner")
+@export_range(4, 24, 1) var vaultwing_perch_spacing_tiles: int = 10
 @export_range(0, 6, 1) var ambient_enemy_camp_count: int = 2
 @export_range(8, 96, 1) var ambient_enemy_min_distance_tiles: int = 26
 @export_range(8, 128, 1) var ambient_enemy_camp_spacing_tiles: int = 44
@@ -275,6 +276,9 @@ func _request_ambient_spawner_refresh() -> void:
 		spawner.call("spawn_from_markers")
 
 func _place_vaultwing_markers(level_data: Dictionary, map_instance: Node) -> void:
+	var spawner := get_node_or_null(vaultwing_spawner_path)
+	if spawner != null and spawner.has_method("reset_for_world"):
+		spawner.call("reset_for_world")
 	for existing in get_tree().get_nodes_in_group("generated_vaultwing_marker"):
 		if existing is Node and is_instance_valid(existing): (existing as Node).queue_free()
 	var candidates := _build_ambient_enemy_candidate_tiles(level_data, map_instance)
@@ -285,14 +289,26 @@ func _place_vaultwing_markers(level_data: Dictionary, map_instance: Node) -> voi
 	spawn_marker.add_to_group("generated_vaultwing_marker")
 	map_instance.add_child(spawn_marker)
 	spawn_marker.global_position = _tile_to_world(map_instance, candidates[0])
-	for index in mini(2, candidates.size()):
+	var perch_candidates: Array = []
+	for candidate in candidates:
+		if candidate.distance_to(candidates[0]) < vaultwing_perch_spacing_tiles:
+			continue
+		var spaced := true
+		for prior in perch_candidates:
+			if candidate.distance_to(prior) < vaultwing_perch_spacing_tiles:
+				spaced = false
+				break
+		if spaced:
+			perch_candidates.append(candidate)
+		if perch_candidates.size() >= 2:
+			break
+	for index in perch_candidates.size():
 		var perch := Marker2D.new()
 		perch.name = "VaultwingPerch_%02d" % index
 		perch.add_to_group("vaultwing_perch")
 		perch.add_to_group("generated_vaultwing_marker")
 		map_instance.add_child(perch)
-		perch.global_position = _tile_to_world(map_instance, candidates[index])
-	var spawner := get_node_or_null(vaultwing_spawner_path)
+		perch.global_position = _tile_to_world(map_instance, perch_candidates[index])
 	if spawner != null and spawner.has_method("spawn_from_markers"):
 		spawner.call_deferred("spawn_from_markers")
 

@@ -23,6 +23,11 @@ DIRECTIONS = {"n", "s", "e", "w"}
 def main() -> int:
     failures: list[str] = []
     family = json.loads(FAMILY.read_text(encoding="utf-8"))
+    if family.get("kind") != "ambient_creature":
+        failures.append("family kind must be ambient_creature")
+    runtime = family.get("runtime", {})
+    if runtime.get("owner") != "vaultwing_common":
+        failures.append("family runtime owner must be vaultwing_common")
     states = family.get("states", {})
     expected_actions = set(states)
     strips = sorted(RUNTIME.rglob("*.png"))
@@ -44,6 +49,8 @@ def main() -> int:
             failures.append(f"{path.name}: action is absent from family contract")
             continue
         declared = int(states[action].get("frames", 0))
+        if layer != states[action].get("layer") or group != states[action].get("action_group"):
+            failures.append(f"{path.name}: layer/action_group do not match family metadata")
         if frames_i != declared:
             failures.append(f"{path.name}: filename {frames_i}f != family {declared}f")
         image = Image.open(path)
@@ -60,13 +67,17 @@ def main() -> int:
             cell = alpha[:, index * 256:(index + 1) * 256]
             if int((cell > 8).sum()) == 0:
                 failures.append(f"{path.name}: frame {index} is empty")
+            else:
+                ys, xs = np.where(cell > 8)
+                if xs.min() == 0 or ys.min() == 0 or xs.max() == 255 or ys.max() == 255:
+                    failures.append(f"{path.name}: frame {index} touches cell edge; possible wrong-grid/clip")
     if len(strips) != 56:
         failures.append(f"expected 56 canonical strips, found {len(strips)}")
     for action in sorted(expected_actions):
         for direction in sorted(DIRECTIONS):
             if (action, direction) not in by_action_direction:
                 failures.append(f"missing {action}::{direction}")
-    for path in [CUSTODIAN / "game/actors/ambient/vaultwing", CUSTODIAN / "game/systems/spawning/vaultwing_spawner.gd"]:
+    for path in [CUSTODIAN / "game/actors/ambient/vaultwing", CUSTODIAN / "game/systems/spawning/vaultwing_spawner.gd", CUSTODIAN / "game/scenes"]:
         for script in ([path] if path.is_file() else list(path.rglob("*.gd"))):
             text = script.read_text(encoding="utf-8")
             if "asset_drop/inbox" in text or "asset_drop/source_work" in text:

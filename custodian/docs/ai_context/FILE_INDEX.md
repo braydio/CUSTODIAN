@@ -1127,8 +1127,12 @@ Last updated: 2026-09-23
   Replacements preserve semantic filenames/frame contracts and flow through
   targeted family ingest; prior matte-bearing inputs remain quarantined.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
-  runtime smoke covering flight bands, dive commitment, stagger, retreat/death,
-  presentation fallback, and missing-art initialization.
+  runtime smoke covering flight bands, attack-window contact, dive commitment,
+  live-player stagger persistence, retreat, death, presentation fallback, and
+  missing-art initialization.
+- `custodian/tools/iteration/scenarios/combat/vaultwing_{dive_readability,forced_landing}.json`
+  plus `custodian/tools/validation/fixtures/vaultwing_wild_moment.*` — focused
+  Moment Forge review fixtures for committed dives and forced landing.
 ## World Environment V1
 
 - `design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md` — implementation authority.

@@ -20,12 +20,18 @@ func _init() -> void:
 	var perch := Marker2D.new(); perch.name = "VaultwingPerch"; perch.add_to_group("vaultwing_perch"); perch.position = Vector2(620, 0); world.add_child(perch)
 	var spawner := SPAWNER_SCRIPT.new(); spawner.name = "VaultwingSpawner"; spawner.vaultwing_container_path = NodePath("/root/GameRoot/World/Ambient"); spawner.max_active_vaultwings = 1; root_node.add_child(spawner)
 	await physics_frame
-	var count := spawner.spawn_from_markers()
-	if count != 1 or spawner.get_active_count() != 1: failures.append("marker spawn did not create exactly one Vaultwing")
+	await process_frame
+	var count := spawner.get_active_count()
+	if count != 1: failures.append("marker spawn did not create exactly one Vaultwing")
 	var duplicate_count := spawner.spawn_from_markers()
 	if duplicate_count != 0 or spawner.get_active_count() != 1: failures.append("duplicate marker processing created another Vaultwing")
 	if ambient.get_child_count() != 1: failures.append("Vaultwing was not placed under World/Ambient")
-	if perch.get_parent() == null: failures.append("perch marker was not available")
+	if perch.get_parent() == null or marker.global_position.distance_to(perch.global_position) < 10.0: failures.append("perch marker was not distinct from spawn marker")
+	spawner.reset_for_world()
+	await process_frame
+	var replacement_count := spawner.spawn_from_markers()
+	if replacement_count != 1 or spawner.get_active_count() != 1:
+		failures.append("world reset did not permit a clean replacement population count=%d active=%d consumed=%s" % [replacement_count, spawner.get_active_count(), str(marker.get_meta("vaultwing_spawned", false))])
 	spawner.despawn_all()
 	print("CUSTODIAN_TEST_RESULT_JSON:" + JSON.stringify({"schema":"custodian.headless_test.result.v1","test":"vaultwing_world_spawn_smoke","passed":failures.is_empty(),"failures":failures}))
 	quit(0 if failures.is_empty() else 1)

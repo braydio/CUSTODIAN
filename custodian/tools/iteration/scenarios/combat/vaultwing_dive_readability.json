@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "combat/vaultwing_dive_readability",
+  "description": "A committed Vaultwing dive remains dodgeable after the operator sidesteps.",
+  "scene": "res://tools/validation/fixtures/vaultwing_wild_moment.tscn",
+  "seed": 4401,
+  "duration_ticks": 150,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 30, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 149, "contact_sheet_ticks": [0, 20, 32, 48, 72, 120], "required_keyframes": true, "background": "opaque"},
+  "setup": {"remove_nodes": [], "roles": {"fixture": {"node_path": "."}, "vaultwing": {"node_path": "Vaultwing"}, "operator": {"node_path": "Operator"}}, "spawns": [], "properties": [], "processing": [], "fixture": {"id": "vaultwing_dive_readability", "config": {}}},
+  "timeline": [{"tick": 10, "action": "fixture_command", "name": "start_dive"}, {"tick": 42, "action": "fixture_command", "name": "sidestep_operator"}, {"tick": 145, "action": "finish"}],
+  "probes": [{"id": "dive", "role": "fixture", "fields": ["vaultwing_state", "vaultwing_band", "dive_committed", "operator_moved_after_commit", "climb_out_seen"], "ticks": [20, 42, 72, 120], "required": true}],
+  "assertions": [{"type": "role_exists", "role": "vaultwing", "severity": "error"}, {"type": "role_exists", "role": "operator", "severity": "error"}, {"type": "probe_compare", "probe": "dive", "tick": 42, "field": "dive_committed", "op": "eq", "value": true, "severity": "error"}, {"type": "probe_compare", "probe": "dive", "tick": 42, "field": "operator_moved_after_commit", "op": "eq", "value": true, "severity": "error"}, {"type": "probe_compare", "probe": "dive", "tick": 120, "field": "climb_out_seen", "op": "eq", "value": true, "severity": "error"}, {"type": "no_unreleased_inputs", "severity": "error"}],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["dive"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["combat", "vaultwing", "dive", "readability"]
+}

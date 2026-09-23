@@ -43,6 +43,8 @@ func _run() -> void:
 	await _check_damage(actor)
 	await _check_spatial_attacks()
 	await _check_state_guards(actor)
+	await _check_attack_band_and_live_player_stagger()
+	await _check_ground_retreat()
 	_check_asset_contract()
 	actor.queue_free()
 
@@ -134,6 +136,39 @@ func _check_spatial_attacks() -> void:
 	for _i in 80: await physics_frame
 	if target.hits != 1: _fail("spatial dive did not produce exactly one contact hit")
 	attacker.queue_free(); target.queue_free()
+	await process_frame
+
+func _check_attack_band_and_live_player_stagger() -> void:
+	var actor := SCENE.instantiate() as Node2D
+	root.add_child(actor)
+	var player := Node2D.new()
+	player.name = "LivePlayer"
+	player.add_to_group("player")
+	root.add_child(player)
+	actor.request_dive(Vector2(200.0, 0.0), player)
+	await physics_frame
+	if actor.get_altitude_band_name() != &"attack": _fail("dive did not enter ATTACK band")
+	if actor.collision_layer == 0: _fail("ATTACK Vaultwing is not projectile-targetable")
+	if actor.collision_mask != 0: _fail("ATTACK Vaultwing still body-collides with world")
+	actor.take_damage(20.0)
+	if actor.get_state_name() != &"air_stagger": _fail("live-player damage cancelled AIR_STAGGER")
+	for _i in 40: await physics_frame
+	if actor.get_altitude_band_name() not in [&"ground", &"high"]: _fail("AIR_STAGGER did not recover")
+	player.queue_free(); actor.queue_free()
+	await process_frame
+
+func _check_ground_retreat() -> void:
+	var actor := SCENE.instantiate() as Node2D
+	root.add_child(actor)
+	actor.request_land()
+	for _i in 30: await physics_frame
+	if actor.get_altitude_band_name() == &"high":
+		_fail("request_land did not produce grounded state")
+	actor.take_damage(110.0)
+	if actor.get_state_name() != &"takeoff": _fail("ground low-health retreat skipped TAKEOFF")
+	for _i in 80: await physics_frame
+	if actor.get_state_name() == &"takeoff": _fail("retreat remained in TAKEOFF")
+	actor.queue_free()
 	await process_frame
 
 func _check_asset_contract() -> void:

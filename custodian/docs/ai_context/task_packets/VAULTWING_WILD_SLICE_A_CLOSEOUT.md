@@ -6,8 +6,8 @@
 - Files: Vaultwing actor/controller/profile, Vaultwing spawner, contract world marker bridge, `game.tscn`, validation, and current-state documentation.
 - Constraints: preserve Asset V2 art and semantic presentation; no bonding, companion commands, mounting, generic enemy refactor, or sprite regeneration.
 - Acceptance: spatial dive/bite contact, committed dive direction, HIGH interaction policy, organic player/noise interest, real perch/retreat paths, production `World/Ambient` spawning, 56-strip contract smoke, runtime/world-spawn validation.
-- Completed: runtime/profile/spawner closeout work, 56/56 art contract, focused runtime/world-spawn validation, and production marker wiring.
-- Deferred: Vaultwing production SFX, bonding/companions, mounting, and Moment Forge capture scenarios; gameplay hooks are ready, but authored Vaultwing SFX and a dedicated visual capture fixture remain follow-ups.
+- Completed: runtime/profile/spawner closeout work, interaction hardening, 56/56 art contract, focused runtime/world-spawn validation, production marker wiring, and the dive-readability/forced-landing Moment Forge scenarios.
+- Deferred: Vaultwing production SFX, bonding/companions, and mounting. Authored Vaultwing SFX remains the presentation follow-up.
 
 ## Ownership And Timing
 

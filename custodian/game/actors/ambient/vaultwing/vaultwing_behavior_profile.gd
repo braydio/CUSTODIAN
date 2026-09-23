@@ -23,3 +23,6 @@ class_name VaultwingBehaviorProfile
 @export var perch_approach_radius := 48.0
 @export var low_health_ratio := 0.25
 @export var perch_dwell_seconds := 1.2
+@export var perch_alert_seconds := 0.35
+@export var failed_engagement_seconds := 2.8
+@export var perch_min_spacing := 256.0
