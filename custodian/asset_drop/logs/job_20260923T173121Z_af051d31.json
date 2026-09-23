@@ -1,0 +1,182 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260923T173121Z_af051d31",
+  "timestamp": "2026-09-23T17:31:21.240344+00:00",
+  "family": "ambient_vaultwing_common",
+  "kind": "ambient_creature",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/death__s.png",
+      "sha256": "1a34463a95350998f4a1163b27d27b8a6f0f3c0f4e34bf5e687ae5b3ed538613"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/dive_strike__s.png",
+      "sha256": "c15ed9627fa8f38cc4981c0fc653fdc1dacc9fe44b55966c29ab44db5a6d8fd5"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/dive_windup__s.png",
+      "sha256": "9e27c72023478e40613a9f7007b110087bfac805f810883aaa72a2fac14bde3e"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/ground_idle__s.png",
+      "sha256": "d2629d659c6e0be0a60057bfe7cc6ff19c4b76852810250e14bc0d727f61dede"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/ground_walk__s.png",
+      "sha256": "f7d4b541268a8f348e85f8f96a0bb64eb0bc996f277e44852b90ddacce0266eb"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/hurt__s.png",
+      "sha256": "728e00fc10bbb701c5bac59ca90b920cce8a3df07c63b836ec7eb5a8c5d38474"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/perch_idle__s.png",
+      "sha256": "0d69bc5ddd8080b00dae58985c701b4c3443c9dea4ddba9e08fd499edd972a15"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "death",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "death",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__death__s__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "6c7abe54de3cf21fde8ca850eb9fd4f7a24849d94108e66f953d20ce6be499cc",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "dive_strike",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "attack",
+        "dive_strike",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__dive_strike__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "21b4943fe64a7b549545ca4b3a18e02b32c1cec8ec9ebd628a3b7cd736230875",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "dive_windup",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "attack",
+        "dive_windup",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__dive_windup__s__4f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3a23128bc362a0ba6ccb97dfb9c4129e481d5419a24b620840d7134ae6c75286",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "ground_idle",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "locomotion",
+        "ground_idle",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_idle__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "3b2054a23034e0b08652e5d90e90eae6f360f7324246dac77444d39754290a96",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "ground_walk",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "locomotion",
+        "ground_walk",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/locomotion/vaultwing_common__body__locomotion__ground_walk__s__8f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "033db5f14950d0f8d0fcb7d2ba8b6f8c5f66e9249323d38b6c6d2820f07e2b72",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "hurt",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "reaction",
+        "hurt",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/reaction/vaultwing_common__body__reaction__hurt__s__4f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "462cf2b026d2e7d5b696ee5f3d36330cd3c248118b57ef586e21de45f4f542df",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "perch_idle",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "perch",
+        "perch_idle",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/perch/vaultwing_common__body__perch__perch_idle__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1f632902164134d6e3405cc984a23e623111e3902c8ba42fa9ffa27903cadc29",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

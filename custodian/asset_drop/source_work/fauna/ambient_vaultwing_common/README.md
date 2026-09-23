@@ -1,9 +1,11 @@
 # Common Vaultwing source art
 
-The regenerated South/North strips replaced the temporary matte-bearing
-baseline on 2026-09-23. They retain the same semantic source filenames and
-256px frame contracts. Future corrected art can replace these files through the
-same normal Asset V2 workflow:
+The regenerated South replacements are now mixed: seven states were accepted
+on 2026-09-23, while `bite_attack_s`, `glide_s`, and the unprovided South
+states retain the temporary baseline. North remains on its prior temporary
+baseline. All source files retain their semantic names and 256px contracts.
+Future corrected art can replace any state through the same normal Asset V2
+workflow:
 
 1. preserve the replacement candidate under this source-work directory;
 2. stage matching `state__direction.png` files in
@@ -15,4 +17,5 @@ same normal Asset V2 workflow:
 The original matte-bearing inputs remain preserved under
 `custodian/asset_drop/unresolved/ambient_vaultwing_south_north_20260922/` as
 rollback and comparison evidence. Do not delete that quarantine when replacing
-these temporary strips.
+these temporary strips. The rejected `vw_3`/`vw_7` masters are preserved under
+`custodian/asset_drop/unresolved/vaultwing_south_partial_20260923/`.
