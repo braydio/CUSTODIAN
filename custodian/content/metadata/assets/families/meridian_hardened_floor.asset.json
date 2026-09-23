@@ -1,0 +1,22 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "meridian_hardened_floor",
+  "kind": "tile",
+  "runtime": {
+    "domain": "tiles/procgen/surfaces/hardened",
+    "owner": "meridian_hardened_floor",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{variant}.png"
+  },
+  "canvas": {"width": 256, "height": 128},
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "base": {"required": true, "layer": "body", "action_group": "hardened", "variant": "meridian_hardened_floor_base_v1_32", "layout": "copy", "frame_width": 256, "frame_height": 128, "frames": 1},
+    "transition": {"required": true, "layer": "overlay", "action_group": "hardened", "variant": "meridian_hardened_floor_transition_v1_32", "layout": "copy", "frame_width": 256, "frame_height": 128, "frames": 1},
+    "detail": {"required": true, "layer": "overlay", "action_group": "hardened", "variant": "meridian_hardened_floor_detail_v1_32", "layout": "copy", "frame_width": 256, "frame_height": 64, "frames": 1}
+  },
+  "aliases": {},
+  "consumers": []
+}

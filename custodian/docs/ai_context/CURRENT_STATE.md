@@ -1629,3 +1629,14 @@ of authored solid and walkable-overlay cells. The catalog contains 26 profiles:
 16 CHASM/BACK depth profiles and 10 Rocky Upland SURFACE profiles. Only the
 Rocky Upland biome enables `procgen_surface_rocky_upland`; broader biome SURFACE
 families and the remaining Rocky Upland material/cluster vocabulary are deferred.
+
+Surface Materials V1 now resolves deterministic presentation-only material
+identities for final floor cells after terrain/biome authority and before
+floor-value clustering. Authored/reserved surfaces, bridges, industrial and
+civic hardstands, roads/paths, wet ground, Rocky Upland natural rock, and
+natural-soft fallback have explicit precedence. `ProcGenTilemap` exports the
+material map, summary, and fingerprint; constructed and authored cells are
+excluded from generic floor-value clusters. The empty
+`SurfaceMaterialOverlay` is collision/navigation-free and ready for Meridian
+hardstand art. `meridian_hardened_floor` is registered as an Asset V2 contract
+but remains SOURCE_PENDING because its three production atlases are absent.

@@ -4,6 +4,11 @@ Status: implementation
 
 Last updated: 2026-09-08
 
+Surface Materials V1 is a separate implementation slice governed by
+`SURFACE_MATERIALS_V1.md`. It classifies final floor presentation before
+macro composition without changing the macro stamp subsystem or gameplay
+authority.
+
 ## Purpose
 
 Track the migration from visibly cell-first procgen rendering toward a

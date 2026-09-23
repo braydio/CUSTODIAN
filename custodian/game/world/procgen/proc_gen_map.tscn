@@ -11,7 +11,7 @@
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
-[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop", "void_cliff_face", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap", "macro_presentation_back", "macro_presentation_ground", "macro_presentation_front")]
+[node name="ProcGenMap" type="Node2D" unique_id=531661722 node_paths=PackedStringArray("procgen_node", "floor_tilemap", "walls_tilemap", "nav_region", "depth_backdrop", "void_cliff_face", "nonwalkable_surface_base_tilemap", "nonwalkable_surface_overlay_tilemap", "surface_material_overlay", "macro_presentation_back", "macro_presentation_ground", "macro_presentation_front")]
 scale = Vector2(1, 1)
 script = ExtResource("1")
 procgen_node = NodePath("ProcGen2")
@@ -22,6 +22,7 @@ depth_backdrop = NodePath("DepthBackdrop")
 void_cliff_face = NodePath("VoidCliffFace")
 nonwalkable_surface_base_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceBase")
 nonwalkable_surface_overlay_tilemap = NodePath("NavigationRegion2D/NonWalkableSurfaceOverlay")
+surface_material_overlay = NodePath("NavigationRegion2D/SurfaceMaterialOverlay")
 macro_presentation_back = NodePath("NavigationRegion2D/TerrainPresentationBack")
 macro_presentation_ground = NodePath("NavigationRegion2D/TerrainPresentationGround")
 macro_presentation_front = NodePath("NavigationRegion2D/TerrainPresentationFront")
@@ -126,6 +127,13 @@ tile_set = ExtResource("2")
 
 [node name="Floor" type="TileMapLayer" parent="NavigationRegion2D" unique_id=1495522250]
 tile_set = ExtResource("2")
+
+[node name="SurfaceMaterialOverlay" type="TileMapLayer" parent="NavigationRegion2D"]
+z_index = 0
+z_as_relative = false
+tile_set = ExtResource("2")
+collision_enabled = false
+navigation_enabled = false
 
 [node name="TerrainPresentationGround" type="Node2D" parent="NavigationRegion2D"]
 z_index = 0

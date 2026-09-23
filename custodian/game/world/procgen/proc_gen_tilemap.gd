@@ -18,6 +18,8 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
+const SURFACE_MATERIAL_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/surface_material_resolver.gd")
+const SURFACE_MATERIAL_IDS := preload("res://game/world/procgen/surfaces/surface_material_ids.gd")
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
 )
@@ -219,6 +221,7 @@ enum WorldShapeMode {
 @export var void_cliff_face: ProcgenVoidCliffFace
 @export var nonwalkable_surface_base_tilemap: TileMapLayer
 @export var nonwalkable_surface_overlay_tilemap: TileMapLayer
+@export var surface_material_overlay: TileMapLayer
 @export var macro_presentation_back: Node2D
 @export var macro_presentation_ground: Node2D
 @export var macro_presentation_front: Node2D
@@ -477,6 +480,8 @@ var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
 var _generated_wall_cells: Dictionary = {}
 var _surface_kind_by_cell: Dictionary = {}
+var _surface_material_by_cell: Dictionary = {}
+var _surface_material_summary: Dictionary = {}
 var _chasm_cells: Dictionary = {}
 var _ocean_cells: Dictionary = {}
 var _sundered_keep_coastline_parent: Node2D = null
@@ -814,6 +819,8 @@ func _ready() -> void:
 
 	if not nav_region:
 		nav_region = find_child("NavigationRegion2D", true, false) as NavigationRegion2D
+	if not surface_material_overlay:
+		surface_material_overlay = find_child("SurfaceMaterialOverlay", true, false) as TileMapLayer
 
 	_ensure_elevation_map()
 	if shadow_system == null:
@@ -851,6 +858,10 @@ func _cache_procgen_major_visual_items() -> void:
 		nonwalkable_surface_overlay_tilemap = map_root.get_node_or_null(
 			"NavigationRegion2D/NonWalkableSurfaceOverlay"
 		) as TileMapLayer
+	if surface_material_overlay == null:
+		surface_material_overlay = map_root.get_node_or_null(
+			"NavigationRegion2D/SurfaceMaterialOverlay"
+		) as TileMapLayer
 
 
 func set_procgen_major_visuals_visible(enabled: bool) -> void:
@@ -863,6 +874,7 @@ func set_procgen_major_visuals_visible(enabled: bool) -> void:
 		walls_tilemap,
 		nonwalkable_surface_base_tilemap,
 		nonwalkable_surface_overlay_tilemap,
+		surface_material_overlay,
 	]:
 		var canvas_item := item as CanvasItem
 		if canvas_item != null:
@@ -908,6 +920,7 @@ func get_procgen_render_isolation_status() -> Dictionary:
 		"depth_backdrop_enabled": depth_backdrop == null or depth_backdrop.visible,
 		"nonwalkable_base_enabled": nonwalkable_surface_base_tilemap == null or nonwalkable_surface_base_tilemap.visible,
 		"nonwalkable_overlay_enabled": nonwalkable_surface_overlay_tilemap == null or nonwalkable_surface_overlay_tilemap.visible,
+		"surface_material_overlay_enabled": surface_material_overlay == null or surface_material_overlay.visible,
 		"runtime_wall_collision_enabled": _runtime_wall_collision_isolation_enabled,
 		"wall_shadows_enabled": _wall_shadow_isolation_enabled,
 	}
@@ -1317,6 +1330,9 @@ func _fill_tilemaps() -> void:
 	_build_biome_field()
 	_marks["biome_final_semantics"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
+	_resolve_surface_materials()
+	_marks["surface_materials"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 
 	if not generation_evaluation_mode:
 		_apply_floor_value_clusters(
@@ -1593,6 +1609,15 @@ func _is_floor_value_cluster_cell_safe(
 			or _path_centerline_tiles.has(cell):
 		return false
 	if _is_combat_readability_floor_tile(cell):
+		return false
+	var surface_material := get_surface_material_at_tile(cell)
+	if surface_material in [
+		SURFACE_MATERIAL_IDS.HARDENED_CIVIC,
+		SURFACE_MATERIAL_IDS.HARDENED_INDUSTRIAL,
+		SURFACE_MATERIAL_IDS.RUINED_ROAD,
+		SURFACE_MATERIAL_IDS.BRIDGE,
+		SURFACE_MATERIAL_IDS.AUTHORED_LANDMARK,
+	]:
 		return false
 	var source_id := floor_tilemap.get_cell_source_id(cell)
 	if not variant_sources.has(source_id):
@@ -5466,6 +5491,10 @@ func _find_or_create_world_progress_marker_parent() -> Node2D:
 
 func _clear_world_progression_runtime() -> void:
 	_surface_kind_by_cell.clear()
+	_surface_material_by_cell.clear()
+	_surface_material_summary.clear()
+	if surface_material_overlay != null:
+		surface_material_overlay.clear()
 	_chasm_cells.clear()
 	_ocean_cells.clear()
 	_surface_claim_cells.clear()
@@ -5598,6 +5627,7 @@ func debug_get_runtime_authoring_fingerprint() -> Dictionary:
 		"road_centerline": _road_centerline_tiles.duplicate(true),
 		"foliage": _foliage_nodes.duplicate(true),
 		"surface": _surface_kind_by_cell.duplicate(true),
+		"surface_material": _surface_material_by_cell.duplicate(true),
 		"health": get_runtime_health_snapshot(),
 	}
 
@@ -7362,6 +7392,60 @@ func _build_biome_field() -> void:
 	if observatory != null and observatory.has_method("set_gauge"):
 		for biome_id in BIOME_PROFILES:
 			observatory.call("set_gauge", "procgen_biome_%s_cells" % biome_id, int(counts.get(StringName(biome_id), 0)))
+
+
+func _resolve_surface_materials() -> void:
+	var region_kinds: Dictionary = {}
+	var region_data: Dictionary = {}
+	var authored_cells: Dictionary = {}
+	for value: Variant in _generated_floor_cells.keys():
+		if not value is Vector2i:
+			continue
+		var cell := value as Vector2i
+		var data := get_region_data_at_tile(cell)
+		region_data[cell] = data
+		var region_type := get_region_type_at_tile(cell)
+		region_kinds[cell] = region_type
+		var lowered := region_type.to_lower()
+		if lowered.contains("authored") or lowered.contains("story_room") or lowered.begins_with("faction_"):
+			authored_cells[cell] = true
+	var resolver := SURFACE_MATERIAL_RESOLVER_SCRIPT.new()
+	var result: Dictionary = resolver.resolve({
+		"floor_cells": _generated_floor_cells,
+		"wall_cells": _generated_wall_cells,
+		"chasm_cells": _chasm_cells,
+		"biome_by_cell": _biome_id_by_cell,
+		"region_kind_by_cell": region_kinds,
+		"region_data_by_cell": region_data,
+		"parking_cells": _parking_zone_tiles,
+		"road_cells": _main_road_tiles,
+		"path_cells": _path_centerline_tiles,
+		"bridge_cells": _last_terrain_result.get("bridge_cells", {}) as Dictionary,
+		"reserved_cells": _macro_reserved_cells(),
+		"authored_cells": authored_cells,
+	})
+	_surface_material_by_cell = (result.get("material_by_cell", {}) as Dictionary).duplicate(true)
+	_surface_material_summary = {
+		"schema": "custodian.procgen_surface_materials.v1",
+		"counts": (result.get("counts", {}) as Dictionary).duplicate(true),
+		"fingerprint": String(result.get("fingerprint", "")),
+	}
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("set_gauge"):
+		for material: StringName in SURFACE_MATERIAL_IDS.ALL:
+			observatory.call("set_gauge", "procgen_surface_material_%s_cells" % material, int(_surface_material_summary.counts.get(material, 0)))
+
+
+func get_surface_material_at_tile(tile: Vector2i) -> StringName:
+	return StringName(_surface_material_by_cell.get(tile, &""))
+
+
+func debug_get_surface_material_map() -> Dictionary:
+	return _surface_material_by_cell.duplicate(true)
+
+
+func debug_get_surface_material_summary() -> Dictionary:
+	return _surface_material_summary.duplicate(true)
 
 
 func get_biome_id_at_tile(tile: Vector2i) -> StringName:
@@ -10763,6 +10847,8 @@ func get_level_data() -> Dictionary:
 		"terrain_builder": _get_terrain_builder_level_data(),
 		"biome_id_by_cell": _biome_id_by_cell.duplicate(true),
 		"biome_summary": _biome_summary.duplicate(true),
+		"surface_material_by_cell": _surface_material_by_cell.duplicate(true),
+		"surface_materials": _surface_material_summary.duplicate(true),
 		"macro_presentation": _macro_presentation_summary.duplicate(true),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
