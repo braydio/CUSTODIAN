@@ -9574,7 +9574,7 @@
             256,
             256
           ],
-          "sha256": "6d3cc0d7949d6ab115c97bf85115b8e5fc8719e856a0c9d28dd72304013e6b39",
+          "sha256": "86ae4f02bbaeb458a45ce414c52c6ef2763613d8d456e57f46ee0c710ceb4e8f",
           "provenance": "authored",
           "source_asset": null
         },
@@ -9784,7 +9784,7 @@
             256,
             256
           ],
-          "sha256": "2ad942a63a5d8c859dcc53bb6ba3e767bab15710427e4cd7896e388c6a3de90b",
+          "sha256": "fd12ce28ccac03a93c8288e35cb59231c13420518071d81d3f0209771871a6db",
           "provenance": "authored",
           "source_asset": null
         },
@@ -9847,7 +9847,7 @@
             256,
             256
           ],
-          "sha256": "3f064671a8bb82430f3c03b37ea0f2cf46ab43b9dea1f82371640197a3433c91",
+          "sha256": "78f39f740ec1d32ddc2702dde61acbb52e325e50e604d61bd64db87d0f6101d4",
           "provenance": "authored",
           "source_asset": null
         },
@@ -9890,6 +9890,153 @@
             256
           ],
           "sha256": "448d06e6f9beb3631dfc4c197fa3cadf00e9e64a0a957f779d86126b1f3a992d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "climb_out::n": {
+          "state_id": "climb_out",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "flight",
+            "climb_out",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__climb_out__n__6f__256.png",
+          "frames": 6,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "84a9501e3565f21b95a2e236805ef74b0f6f77fc8a96c482c12083dc1cc4f642",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "dive_strike::n": {
+          "state_id": "dive_strike",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "attack",
+            "dive_strike",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__dive_strike__n__6f__256.png",
+          "frames": 6,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "af3f0c1dc8d2e6245189ae1fb12ff88132546f01ecc60632c2d8d74e7fef9853",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "dive_windup::n": {
+          "state_id": "dive_windup",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "attack",
+            "dive_windup",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/attack/vaultwing_common__body__attack__dive_windup__n__4f__256.png",
+          "frames": 4,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "2584bcfad0b9ac0c515348391d8be650be9c089eae7f1f2dde213e20a129c0b7",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "flap::n": {
+          "state_id": "flap",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "flight",
+            "flap",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__flap__n__8f__256.png",
+          "frames": 8,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "dd82b8433f1abaed5b61b0a7269233d25328310d3bf846ef574c6b73e7a19c9a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "glide::n": {
+          "state_id": "glide",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "flight",
+            "glide",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/flight/vaultwing_common__body__flight__glide__n__6f__256.png",
+          "frames": 6,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "51c8e66e763888b173f2c0d8917b851f89d2c5fc3b45ed5831b1324ac813f2e7",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "land::n": {
+          "state_id": "land",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "transition",
+            "land",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/transition/vaultwing_common__body__transition__land__n__8f__256.png",
+          "frames": 8,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "8d6980d241e0bc0e09b3b490d66f0db989e4c187e6fe0433c0e57f42c235139e",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "takeoff::n": {
+          "state_id": "takeoff",
+          "direction": "n",
+          "semantic_identity": [
+            "vaultwing_common",
+            "ambient_creature",
+            "body",
+            "transition",
+            "takeoff",
+            "n"
+          ],
+          "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/transition/vaultwing_common__body__transition__takeoff__n__8f__256.png",
+          "frames": 8,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "17001283581e5f794892587ec7a5e8db24d8f21afd41c7feea906507f98aa730",
           "provenance": "authored",
           "source_asset": null
         }

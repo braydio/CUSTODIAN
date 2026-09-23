@@ -1,9 +1,9 @@
 # Common Vaultwing source art
 
-The regenerated South replacements are now complete at 14/14. North has three
-alpha-approved replacements (`ground_idle`, `ground_walk`, `bite_attack`),
-while `perch_idle`, `hurt`, and `death` remain on the temporary baseline. All
-source files retain their semantic names and 256px contracts.
+The regenerated South replacements are complete at 14/14. North is now 13/14:
+the regenerated batch covers every state except `air_stagger`, which remains
+the sole missing North source. All source files retain their semantic names and
+256px contracts.
 Future corrected art can replace any state through the same normal Asset V2
 workflow:
 

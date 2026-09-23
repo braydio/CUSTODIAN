@@ -1113,8 +1113,8 @@ Last updated: 2026-08-20
   generic enemy camps.
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
   — Asset V2 family contract for the 256px Common Vaultwing states; EAST/WEST
-  are complete, SOUTH is 14/14 alpha-approved, and NORTH has three
-  alpha-approved replacements while three North states remain temporary.
+  are complete, SOUTH is 14/14 alpha-approved, and NORTH is 13/14 with only
+  `air_stagger_n` still missing.
   Replacements preserve semantic filenames/frame contracts and flow through
   targeted family ingest; prior matte-bearing inputs remain quarantined.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
