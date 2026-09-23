@@ -21,7 +21,18 @@ extends Resource
 
 @export_group("Parry")
 @export var minimum_guard_time := 0.04
-@export var parry_windup_time := 0.02
+## Two authored frames at the parry strip's 12 FPS.
+##
+## `unarmed/defense/parry_01` spends frame 0 on anticipation and frame 1 raising
+## the guard; the guard is only fully extended across frames 2-3, which is the
+## visible catch. At 0.02 the active window ran 0.020-0.120 s and closed 47 ms
+## before that extension even began, so gameplay caught what the art was still
+## winding up for. Opening at 2/12 s puts the whole 0.10 s window inside the
+## extended-guard frames.
+##
+## This is the art used as evidence for a deterministic value, not as authority:
+## nothing at runtime reads an animation frame to decide whether a parry lands.
+@export var parry_windup_time := 0.16667
 @export var parry_active_time := 0.10
 @export var parry_recovery_time := 0.16
 @export var parry_success_recovery_time := 0.03

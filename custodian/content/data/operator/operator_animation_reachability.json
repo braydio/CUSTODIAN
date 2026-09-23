@@ -848,8 +848,8 @@
       "profile": "unarmed",
       "group": "defense",
       "action": "parry_01",
-      "status": "DORMANT",
-      "reason": "C2a evidence 2026-09-12: the earlier reason claimed no consumer references a bare parry_01 window animation. Three sites in _get_parry_attempt_remaining_duration resolve the legacy clip 'unarmed_parry' to measure the parry attempt window, so a consumer does exist (proof source C, runtime call context). Still DORMANT because that consumer reads compatibility frames until the renderers are rebound.",
+      "status": "LIVE",
+      "reason": "C8 evidence 2026-09-23: superseded the C2a reason, which said the consumer still read compatibility frames pending renderer rebinding. _play_modular_unarmed_parry() resolves and plays the canonical unarmed/defense/parry_01/{e,n,w}/{lower_body,upper_body} identities for the guard-triggered attempt and for parry success, verified in operator_parry_presentation_smoke by reading the presented animation. _get_parry_attempt_remaining_duration() also prefers the modular clip and keeps the legacy 'unarmed_parry' read only as a maxf fallback, so the legacy clips below are residual rather than authoritative (proof source C, runtime call context).",
       "legacy_clips": [
         "unarmed_parry",
         "unarmed_parry_fx"
@@ -888,7 +888,7 @@
         "unarmed_parry_success_01": "A",
         "unarmed_parry_success_01_fx": "D"
       },
-      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2). The legacy clip unarmed_parry_success_01_fx was mis-published — its west sourced parry_recovery_01 art and its east sourced interaction/success_01 — and is NOT preservation authority. Successful parry presents this action. interaction/success_01 is DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for parry-success presentation. Authored e/w; the caller preserves the historical left/right selection (x < 0 -> w, otherwise e) as presentation policy, not as selector behaviour."
+      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2). The legacy clip unarmed_parry_success_01_fx was mis-published \u2014 its west sourced parry_recovery_01 art and its east sourced interaction/success_01 \u2014 and is NOT preservation authority. Successful parry presents this action. interaction/success_01 is DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for parry-success presentation. Authored e/w; the caller preserves the historical left/right selection (x < 0 -> w, otherwise e) as presentation policy, not as selector behaviour."
     },
     {
       "profile": "unarmed",

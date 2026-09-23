@@ -693,8 +693,85 @@ actually run.
 `_melee_duration`'s wrong-clock cadence defect from C6 was left untouched, as
 instructed.
 
-### Remaining Part C steps
+### C8 — parry timing and contact facing (done)
+
+**Measured first.** Per-frame from the canonical strips, not from filenames:
+
+| sector | frames | upper-body pixels | forward reach | FX pixels |
+|---|---|---|---|---|
+| e | 5 @ 12 FPS | 889 / 959 / 1198 / **1308** / 854 | 18 / 24 / **41** / **41** / 21 | 0 / 28 / 38 / 40 / 107 |
+| n | 5 @ 12 FPS | 869 / 880 / **1066** / 1033 / 883 | flat | 0 / 100 / **218** / 136 / 0 |
+| w | 6 @ 12 FPS | identical to east for frames 0-4, plus one settle frame | | |
+
+Frame 0 is anticipation, frame 1 raises the guard, and the guard is only fully
+extended across **frames 2-3** — east peaks in both pixel count and forward reach
+there, north peaks in FX and body there. East's frame-4 FX spike of 107 is the
+deflection spark on the follow-through, after the catch. The west strip is the
+east strip plus one settle frame, which is presentation tail only.
+
+So the visible catch is **0.167 s to 0.333 s**.
+
+**Pre-fix, the gameplay window was 0.020 s to 0.120 s** — entirely inside the
+anticipation and the start of the guard rising, closing 47 ms *before* the guard
+was extended at all. Gameplay was catching what the art was still winding up for.
+
+`parry_windup_time` moves from 0.02 to **0.16667**, two authored frames, putting
+the whole window at 0.167-0.267 s inside the extended-guard frames.
+`parry_active_time` stays at 0.10: this slice aligns the window, it does not
+resize the forgiveness. The art is evidence for a deterministic value, not
+authority — nothing at runtime reads a frame to decide whether a parry lands.
+
+This is a real feel change worth stating plainly: a parry must now be pressed
+about 167 ms before the blow instead of 20 ms, which makes it a read rather than
+a reflex. That is what the authored animation has always depicted.
+
+**Direction parity** is by construction, since the window is config-owned, and is
+asserted: e / n / w open and close within 10 ms of each other at a 1/240 s step
+despite west being a frame longer.
+
+**Facing.** `guard_faces_hit()` validated a specific incoming attack, and then
+`_play_parry_animation()` re-read `_get_attack_aim_direction()` to choose the
+sector. With aim disagreeing with the attacker, an east contact drew the **west**
+strip and a west contact drew the **east** one — reproduced exactly by the control.
+`_play_parry_animation()` now takes an optional `direction_override`, and only a
+confirmed success supplies one, resolved by `_resolve_parry_contact_facing()`:
+
+    valid attacker position -> -hit_direction -> committed facing
+
+`hit_direction` is the direction the blow travels, which is the convention
+`guard_faces_hit()` already relies on when it negates it. The attempt itself stays
+input-facing, which is right: nothing has happened yet, and aim is the player's
+stated intent. This is C7's principle applied again — once reality hands over an
+exact event, stop re-reading a looser mutable approximation.
+
+Success VFX, SFX and camera policy are untouched: the contact spark, the 0.6-scale
+burst and the positional SFX still land on `hit_data.impact_position`, and parry
+success still sends no generic camera impulse. The gate also pins the mechanics
+this slice must not move — refund 6, stagger 0.55, knockback 44, counter 0.45,
+recovery 0.16/0.03, minimum guard 0.04.
+
+Controls: restoring `0.02` fails the alignment assertion; dropping the facing
+override reproduces the east-draws-west inversion in both directions.
+
+**`operator_ranged_ready_input_smoke` hardcoded `0.05` to cross the old windup**
+in three places and correctly broke. It now reads `parry_windup_sec`, as
+`operator_guard_flow_smoke` already did.
+
+**`grunt_parry_crit_reaction_smoke.gd` is unregistered and failing**, on
+`operator_critical_execution_fx_{s,e,w} should be registered`. Verified identical
+against HEAD runtime, so it is pre-existing and unrelated: it concerns paired
+critical-execution FX registration, which this slice is told not to touch and
+which would need assets. Recorded for its own slice rather than registered while
+red.
+
 ### Remaining Part C steps
 
-C8 parry alignment. Then a Part C closeout for the `_melee_duration`
-wrong-clock defect C6 uncovered.
+**Part C is not closed.** One closeout item remains: the modular Fists
+`_melee_duration` wrong-clock defect C6 uncovered, where the gameplay phase length
+is measured from `animated_sprite` — an unrelated leftover legacy clip during a
+modular chain. Observed at 0.667 s in one state and 0.360 s in another against a
+0.520 s finisher. After that, the C1-C8 regression set is the Part C seal.
+
+Also open, found during C8 and out of its scope:
+`grunt_parry_crit_reaction_smoke.gd` is unregistered and red on critical-execution
+FX registration.

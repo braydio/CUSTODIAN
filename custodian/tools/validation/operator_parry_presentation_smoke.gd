@@ -8,6 +8,14 @@ extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 
+## The authored parry strip, measured rather than assumed. Frame 0 is
+## anticipation and frame 1 raises the guard; the guard is only fully extended
+## across frames 2-3, which is where an incoming blow can be caught.
+const PARRY_FPS := 12.0
+const PARRY_CATCH_FIRST_FRAME := 2
+const PARRY_CATCH_LAST_FRAME := 3
+const PARRY_SECTOR_FRAMES := {"e": 5, "n": 5, "w": 6}
+
 var _failed := false
 
 
@@ -91,6 +99,11 @@ func _run() -> void:
 		"each parry success call must spawn exactly one presentation burst"
 	)
 
+	await _check_window_sits_on_the_authored_catch(operator)
+	await _check_direction_parity(operator)
+	await _check_success_faces_the_contact(operator, world)
+	await _check_failed_parry_keeps_the_attempt(operator)
+
 	game_root.queue_free()
 	await process_frame
 	if _failed:
@@ -128,3 +141,242 @@ func _assert(value: bool, message: String) -> void:
 		return
 	_failed = true
 	push_error(message)
+
+
+## The deterministic parry window must sit on the visible catch.
+##
+## Nothing here makes the animation gameplay authority -- the runtime never reads
+## a frame to decide whether a parry lands. The art is evidence, and this asserts
+## that the config-owned numbers were chosen from it: the whole active window has
+## to fall inside the frames where the guard is actually extended.
+##
+## Measured from the canonical strips. FX is absent on frame 0, appears as the
+## guard rises on frame 1, and the upper body reaches its widest extent across
+## frames 2-3 before the follow-through:
+##
+##     e  5f  upper px 889 / 959 / 1198 / 1308 / 854   reach 18 / 24 / 41 / 41 / 21
+##     n  5f  fx px      0 / 100 /  218 /  136 /   0
+##     w  6f  identical to e for 0-4, plus one settle frame
+func _check_window_sits_on_the_authored_catch(operator: Node) -> void:
+	var config = operator.get("guard_config")
+	if config == null:
+		_assert(false, "the timing case needs the guard config")
+		return
+	var windup: float = config.parry_windup_time
+	var active: float = config.parry_active_time
+	var catch_open := float(PARRY_CATCH_FIRST_FRAME) / PARRY_FPS
+	var catch_close := float(PARRY_CATCH_LAST_FRAME + 1) / PARRY_FPS
+
+	_assert(
+		windup >= catch_open - 0.001,
+		"the parry window opens at %.3f s, before the guard is extended at %.3f s"
+			% [windup, catch_open]
+	)
+	_assert(
+		windup + active <= catch_close + 0.001,
+		"the parry window closes at %.3f s, after the catch ends at %.3f s"
+			% [windup + active, catch_close]
+	)
+	# The forgiveness window itself is not part of this alignment.
+	_assert(
+		is_equal_approx(active, 0.10),
+		"C8 aligns the window, it does not resize it; active is %.3f s" % active
+	)
+	# Alignment is not rebalancing. These are the values the slice must not move.
+	for entry in [
+		["parry_success_stamina_refund", 6.0],
+		["parry_enemy_stagger_time", 0.55],
+		["parry_enemy_knockback", 44.0],
+		["counter_window_time", 0.45],
+		["parry_recovery_time", 0.16],
+		["parry_success_recovery_time", 0.03],
+		["minimum_guard_time", 0.04],
+	]:
+		_assert(
+			is_equal_approx(float(config.get(entry[0])), float(entry[1])),
+			"%s changed to %.3f; C8 aligns timing and facing only"
+				% [entry[0], float(config.get(entry[0]))]
+		)
+	# Drive the real controller across the boundaries.
+	var guard = operator.get("_guard_controller")
+	if guard == null:
+		_assert(false, "the timing case needs the live guard controller")
+		return
+	var samples := {
+		"before the window opens": windup - 0.02,
+		"inside the window": windup + active * 0.5,
+		"after the window closes": windup + active + 0.02,
+	}
+	for label in samples:
+		guard.call("reset")
+		operator.set("stamina", 100.0)
+		_assert(
+			bool(guard.call("begin_parry")),
+			"%s: the parry attempt must start" % label
+		)
+		var elapsed := 0.0
+		var step := 1.0 / 240.0
+		while elapsed < float(samples[label]) - step * 0.5:
+			guard.call("tick", step)
+			elapsed += step
+		var expected: bool = String(label) == "inside the window"
+		_assert(
+			bool(guard.get("parry_active")) == expected,
+			"%s (%.3f s): parry_active should be %s" % [label, elapsed, expected]
+		)
+	guard.call("reset")
+	await process_frame
+
+
+## The six-frame west strip must not buy a longer or later gameplay window.
+func _check_direction_parity(operator: Node) -> void:
+	var guard = operator.get("_guard_controller")
+	var config = operator.get("guard_config")
+	if guard == null or config == null:
+		_assert(false, "the parity case needs the live guard controller")
+		return
+	_assert(
+		int(PARRY_SECTOR_FRAMES["w"]) != int(PARRY_SECTOR_FRAMES["e"]),
+		"the parity case is vacuous unless the sectors really differ in length"
+	)
+	var timings := {}
+	for facing in {"e": Vector2.RIGHT, "n": Vector2.UP, "w": Vector2.LEFT}:
+		guard.call("reset")
+		operator.set("stamina", 100.0)
+		operator.set("aim_direction", {"e": Vector2.RIGHT, "n": Vector2.UP, "w": Vector2.LEFT}[facing])
+		operator.set("visual_idle_direction", operator.get("aim_direction"))
+		_assert(bool(guard.call("begin_parry")), "%s parry must start" % facing)
+		var elapsed := 0.0
+		var step := 1.0 / 240.0
+		var opened := -1.0
+		var closed := -1.0
+		while elapsed < 1.0:
+			guard.call("tick", step)
+			elapsed += step
+			if opened < 0.0 and bool(guard.get("parry_active")):
+				opened = elapsed
+			elif opened >= 0.0 and closed < 0.0 and not bool(guard.get("parry_active")):
+				closed = elapsed
+				break
+		timings[facing] = [opened, closed]
+	guard.call("reset")
+	var reference: Array = timings["e"]
+	for facing in timings:
+		var measured: Array = timings[facing]
+		_assert(
+			absf(float(measured[0]) - float(reference[0])) <= 0.01
+				and absf(float(measured[1]) - float(reference[1])) <= 0.01,
+			"%s opened/closed at %.3f/%.3f against east %.3f/%.3f; art length leaked into simulation"
+				% [facing, measured[0], measured[1], reference[0], reference[1]]
+		)
+	await process_frame
+
+
+## A confirmed parry answers the contact, not whatever aim reads a frame later.
+func _check_success_faces_the_contact(operator: Node, world: Node) -> void:
+	# The shipped scene equips the Vigil dagger, and `_play_modular_unarmed_parry()`
+	# refuses a non-unarmed profile, so without this the case measures the legacy
+	# fallback instead of the canonical parry sectors.
+	operator.call("_apply_unarmed_selection")
+	var attacker := Node2D.new()
+	world.add_child(attacker)
+	for label in ["east", "west"]:
+		var attacker_offset := Vector2(60.0, 0.0) if label == "east" else Vector2(-60.0, 0.0)
+		# Aim deliberately disagrees with the incoming attacker.
+		var stale_aim := Vector2.LEFT if label == "east" else Vector2.RIGHT
+		attacker.global_position = (operator as Node2D).global_position + attacker_offset
+		operator.set("aim_direction", stale_aim)
+		operator.set("visual_idle_direction", stale_aim)
+		var hit_direction := -attacker_offset.normalized()
+		var facing := operator.call(
+			"_resolve_parry_contact_facing", attacker, hit_direction
+		) as Vector2
+		_assert(
+			facing.dot(attacker_offset.normalized()) > 0.9,
+			"%s: the confirmed parry should face the attacker, resolved %s" % [label, facing]
+		)
+		_assert(
+			facing.dot(stale_aim) < 0.0,
+			"%s: stale aim won the success facing" % label
+		)
+		# And the real success path must draw that sector.
+		var contact := (operator as Node2D).global_position + attacker_offset * 0.5
+		var before := _collect_bursts(world)
+		operator.call(
+			"guard_apply_parry_success", attacker, hit_direction,
+			{"impact_position": contact}
+		)
+		# Read before yielding: the next `_update_animation()` hands the body back
+		# to whatever owns it, so the success pose is only on screen right now.
+		var lower := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
+		var expected_sector := "/e/" if label == "east" else "/w/"
+		_assert(
+			String(lower.animation).contains(expected_sector),
+			"%s: success body drew %s, expected the %s sector"
+				% [label, lower.animation, expected_sector]
+		)
+		# The world effects must still land on the real contact point. The burst
+		# from this call is the one that was not there a moment ago.
+		var fresh := _collect_bursts(world)
+		var spawned: Node2D = null
+		for node in fresh:
+			if not before.has(node):
+				spawned = node
+				break
+		_assert(spawned != null, "%s: success must spawn its own burst" % label)
+		if spawned != null:
+			_assert(
+				spawned.global_position.distance_to(contact) <= 1.0,
+				"%s: success burst moved off the contact point, %s vs %s"
+					% [label, spawned.global_position, contact]
+			)
+		await process_frame
+	attacker.queue_free()
+	await process_frame
+
+
+## A parry that never catches anything keeps its original attempt.
+func _check_failed_parry_keeps_the_attempt(operator: Node) -> void:
+	var guard = operator.get("_guard_controller")
+	if guard == null:
+		return
+	operator.call("_apply_unarmed_selection")
+	guard.call("reset")
+	operator.set("stamina", 100.0)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	_assert(bool(guard.call("begin_parry")), "the failed-parry case needs an attempt")
+	# Read before yielding, for the same reason as the success case.
+	var lower := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
+	var attempt := String(lower.animation)
+	_assert(
+		attempt.contains("defense/parry_01"),
+		"the attempt should draw the authored parry strip, drew %s" % attempt
+	)
+	var config = operator.get("guard_config")
+	var elapsed := 0.0
+	while elapsed < float(config.parry_windup_time) + float(config.parry_active_time) + 0.05:
+		guard.call("tick", 1.0 / 240.0)
+		elapsed += 1.0 / 240.0
+	_assert(
+		not bool(guard.get("parry_active")),
+		"an unanswered parry must close its window"
+	)
+	_assert(
+		String(lower.animation) == attempt,
+		"an unanswered parry reoriented its attempt, %s -> %s" % [attempt, lower.animation]
+	)
+	guard.call("reset")
+	await process_frame
+
+
+func _collect_bursts(node: Node) -> Array[Node2D]:
+	var found: Array[Node2D] = []
+	for child in node.get_children():
+		var script := child.get_script() as Script
+		if child is Node2D and script != null \
+		and String(script.resource_path).contains("parry_success_burst_vfx"):
+			found.append(child as Node2D)
+		found.append_array(_collect_bursts(child))
+	return found
+

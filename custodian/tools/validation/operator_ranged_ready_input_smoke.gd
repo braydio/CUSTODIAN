@@ -339,7 +339,13 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(bool(operator.call("_try_start_parry")), "primary while guarding should start parry windup")
 	_assert_true(operator.get("_parry_phase") == &"windup", "parry should begin in windup")
 	_assert_true(operator.get("_block_phase") == &"parry", "block state should host parry without converting it to guard entry")
-	operator.call("_update_parry_guard_timers", 0.05)
+	# Read the windup rather than hardcoding it. C8 moved it from 0.02 s to two
+	# authored frames (0.16667 s) so the active window lands on the visible catch,
+	# and a literal here would only ever encode whatever it used to be.
+	operator.call(
+		"_update_parry_guard_timers",
+		float(operator.get("parry_windup_sec")) + 0.001
+	)
 	_assert_true(operator.get("_parry_phase") == &"active", "parry should become active after windup")
 	_assert_true(bool(operator.get("_parry_active")), "parry active flag should be true during the active window")
 	operator.call("_update_parry_guard_timers", float(operator.get("parry_active_sec")) + 0.01)
@@ -359,7 +365,10 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	operator.call("_update_parry_guard_timers", float(operator.get("parry_recovery_sec")) + 0.01)
 	operator.set("_guard_held_timer", float(operator.get("parry_min_guard_time_sec")))
 	_assert_true(bool(operator.call("_try_start_parry")), "fresh guard press should allow parry after a missed recovery")
-	operator.call("_update_parry_guard_timers", 0.05)
+	operator.call(
+		"_update_parry_guard_timers",
+		float(operator.get("parry_windup_sec")) + 0.001
+	)
 	_assert_true(operator.get("_parry_phase") == &"active", "fresh parry should become active after missed recovery setup")
 
 	var attacker := ParryProbeAttacker.new()
@@ -413,7 +422,10 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	operator.call("_start_guard_from_secondary")
 	operator.set("_guard_held_timer", float(operator.get("parry_min_guard_time_sec")))
 	_assert_true(bool(operator.call("_try_start_parry")), "fresh guard press should allow a second parry")
-	operator.call("_update_parry_guard_timers", 0.05)
+	operator.call(
+		"_update_parry_guard_timers",
+		float(operator.get("parry_windup_sec")) + 0.001
+	)
 	var held_block_attacker := ParryProbeAttacker.new()
 	root.add_child(held_block_attacker)
 	held_block_attacker.global_position = operator.global_position + Vector2.RIGHT * 32.0

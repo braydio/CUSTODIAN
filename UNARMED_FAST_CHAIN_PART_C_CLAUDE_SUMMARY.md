@@ -13,9 +13,43 @@ C4  early input forgiveness             DONE
 C2  per-link impact progression         DONE
 C5  chain movement continuity           DONE
 C6  Fast 04 posture settle              DONE
-C7  contact-owned feedback              DONE   <- this pass
-C8  parry alignment                     next
+C7  contact-owned feedback              DONE
+C8  parry alignment                     DONE   <- this pass
 ```
+
+## C8 — parry timing and contact facing
+
+**Measured first.** Frame 0 is anticipation, frame 1 raises the guard, and the
+guard is only fully extended across **frames 2-3** — east peaks at 1308 upper-body
+pixels and 41px reach there, north peaks at 218 FX pixels there. East's frame-4 FX
+spike is the deflection spark *after* the catch. West is east plus one settle
+frame.
+
+Visible catch: **0.167-0.333 s**. Pre-fix gameplay window: **0.020-0.120 s** —
+entirely in the wind-up, closing 47 ms before the guard was even extended.
+
+`parry_windup_time` 0.02 → **0.16667** (two authored frames), putting the whole
+window at 0.167-0.267 s inside the extended-guard frames. `parry_active_time`
+stays 0.10 — this aligns the window, it does not resize the forgiveness. Nothing
+at runtime reads an animation frame; the art is evidence for a deterministic
+value.
+
+Worth stating plainly: a parry must now be pressed ~167 ms before the blow instead
+of 20 ms, which makes it a read rather than a reflex. That is what the animation
+has always depicted.
+
+**Facing.** `guard_faces_hit()` validated a specific attack, then
+`_play_parry_animation()` re-read aim — so with aim disagreeing, an east contact
+drew the **west** strip and vice versa. Only a confirmed success now supplies a
+`direction_override`, resolved as: valid attacker position → `-hit_direction` →
+committed facing. The attempt stays input-facing.
+
+Direction parity asserted: e/n/w open and close within 10 ms despite west being a
+frame longer. Success VFX/SFX/camera policy untouched, and the gate pins refund 6,
+stagger 0.55, knockback 44, counter 0.45.
+
+`operator_ranged_ready_input_smoke` hardcoded `0.05` to cross the old windup in
+three places and correctly broke; it now reads `parry_windup_sec`.
 
 ## C7 — contact-owned melee feedback
 
@@ -255,3 +289,14 @@ travelled distance measured, settling is checked for snap-back, opposing input i
 checked not to reverse a committed step, and a target at the edge of each link's
 own acquire ring is asserted to resolve extra drive. Negative control: zeroing
 link 1's distance and bonus fails it in six places.
+
+## Part C is not closed
+
+One closeout item remains: the modular Fists `_melee_duration` wrong-clock defect
+from C6 — the gameplay phase length is measured from `animated_sprite`, which
+during a modular chain shows an unrelated leftover clip. Then the C1-C8 regression
+set is the seal.
+
+Also found during C8 and out of its scope: `grunt_parry_crit_reaction_smoke.gd` is
+unregistered and red on critical-execution FX registration, verified identical
+against HEAD.

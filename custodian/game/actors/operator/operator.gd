@@ -7591,6 +7591,30 @@ func _play_failed_parry_block_hitreact() -> void:
 	_obs_log(&"player_failed_parry_hitreact", {"position": global_position, "health": current_health})
 
 
+## Which way a confirmed parry faces.
+##
+## `hit_direction` is the direction the blow travels, attacker to target -- that is
+## the convention `guard_faces_hit()` already relies on when it negates it to get
+## "toward the attacker". So the facing is toward the attacker, resolved from the
+## attacker's real position when there is one, because a hit direction can be
+## degenerate or approximate while a position never is.
+##
+## Falls back to the committed facing rather than inventing one, so a parry with
+## no attacker and no usable hit direction presents exactly as it does today.
+func _resolve_parry_contact_facing(
+	attacker: Node2D,
+	hit_direction: Vector2
+) -> Vector2:
+	if attacker != null and is_instance_valid(attacker):
+		var toward_attacker := global_position.direction_to(attacker.global_position)
+		if toward_attacker.length_squared() > 0.001:
+			return toward_attacker
+	var incoming_from := -hit_direction
+	if incoming_from.length_squared() > 0.001:
+		return incoming_from.normalized()
+	return Vector2.ZERO
+
+
 func guard_apply_parry_success(attacker: Node2D, hit_direction: Vector2, hit_data: Dictionary) -> void:
 	var contact_position := global_position
 	if hit_data.get("impact_position") is Vector2:
@@ -7619,7 +7643,10 @@ func guard_apply_parry_success(attacker: Node2D, hit_direction: Vector2, hit_dat
 		elif not defers_to_falcon_reversal and attacker.has_method("apply_melee_impact"):
 			attacker.call("apply_melee_impact", "parry", away_from_operator, parry_enemy_knockback)
 
-	_play_parry_animation(&"unarmed_parry_success")
+	_play_parry_animation(
+		&"unarmed_parry_success",
+		_resolve_parry_contact_facing(attacker, hit_direction)
+	)
 	_spawn_parry_contact_spark(contact_position)
 	_spawn_parry_success_fx(contact_position)
 	_play_parry_success_sound(contact_position)
@@ -7646,8 +7673,20 @@ func _spawn_parry_contact_spark(contact_position: Vector2) -> void:
 	spark.global_position = contact_position
 
 
-func _play_parry_animation(base_animation: StringName) -> void:
-	var direction := _get_attack_aim_direction()
+## `direction_override` lets a caller that already knows the answer supply it.
+##
+## The attempt itself is input-facing, which is right: nothing has happened yet
+## and aim is the player's stated intent. A *confirmed* parry is different --
+## `guard_faces_hit()` has just validated a specific incoming attack -- so the
+## success pose answers that contact rather than whatever aim happens to read one
+## frame later. Without the override the old behaviour is unchanged.
+func _play_parry_animation(
+	base_animation: StringName,
+	direction_override: Vector2 = Vector2.ZERO
+) -> void:
+	var direction := direction_override
+	if direction.length_squared() <= 0.001:
+		direction = _get_attack_aim_direction()
 	if direction.length_squared() <= 0.001:
 		direction = visual_idle_direction
 	if direction.length_squared() <= 0.001:
