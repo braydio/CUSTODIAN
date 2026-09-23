@@ -18,7 +18,7 @@
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
 reciprocity, and runtime-vs-fiction lifecycle terminology.
 
-Last updated: 2026-08-20
+Last updated: 2026-09-23
 
 ## Map + AI Coherence
 
@@ -1114,6 +1114,12 @@ Last updated: 2026-08-20
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.
+- `custodian/game/actors/ambient/vaultwing/vaultwing_behavior_profile.tres` —
+  Slice A tuning authority for patrol, attacks, perching, retreat, and perception.
+- `custodian/tools/validation/vaultwing_asset_contract_smoke.py` — 56-strip
+  published Asset V2 geometry, alpha, naming, and semantic coverage contract.
+- `custodian/tools/validation/vaultwing_world_spawn_smoke.gd` — production
+  container, marker, population-cap, and duplicate-marker spawn seam smoke.
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
   — Asset V2 family contract for the 256px Common Vaultwing states; EAST/WEST,
   SOUTH, and NORTH are complete at 14/14, with historical matte-bearing inputs

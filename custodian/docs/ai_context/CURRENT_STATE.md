@@ -1589,15 +1589,17 @@ baseline clip by clip instead of accepting any single PNG, and both
 validation manifest. `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md` is the
 implementation authority.
 
-# Vaultwing Wild Predator Foundation (2026-09-22)
+# Vaultwing Wild Predator Slice A Closeout (2026-09-23)
 
-The Common Vaultwing Slice A foundation is now present under
+The Common Vaultwing Slice A runtime is now closed out under
 `game/actors/ambient/vaultwing/`. `VaultwingBehaviorController` owns deterministic
 HIGH/ATTACK/GROUND/PERCHED behavior, patrol, interest, committed dive windup and
 strike, climb-out, landing/takeoff, aerial stagger, damage, retreat, and death.
-The actor owns health/combat API and reuses the shared ambient semantic
-presentation controller. No bonding, companion commands, or mounting are
-implemented.
+The actor owns health/combat API, spatial contact gating, and the shared ambient
+semantic presentation controller. Production `World/Ambient` spawning and
+deterministic generated spawn/perch markers are wired. No bonding, companion
+commands, or mounting are implemented. Vaultwing-specific production SFX remains
+an explicit presentation follow-up.
 
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored
@@ -1612,7 +1614,8 @@ Asset V2 ingest. Visual altitude
 remains presentation-only: the body
 lifts above a persistent ground-projection shadow, scale changes modestly, HIGH
 flight may leave the body above the camera, and body/shadow convergence is part
-of the dive telegraph. Focused validation is registered as `vaultwing_runtime`.
+of the dive telegraph. Focused validation includes `vaultwing_runtime`,
+`vaultwing_asset_contract`, and `vaultwing_world_spawn`.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.

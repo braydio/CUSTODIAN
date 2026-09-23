@@ -1,6 +1,8 @@
 # Common Vaultwing source art
 
-The regenerated South and North replacements are complete at 14/14. All source
+The regenerated South and North replacements are complete at 14/14. The wild
+Slice A runtime closeout is implemented with production marker/spawner wiring,
+spatial attacks, perching, retreat, and focused validation. All source
 files retain their semantic names and 256px contracts.
 Future corrected art can replace any state through the same normal Asset V2
 workflow:

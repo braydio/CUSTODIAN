@@ -16,6 +16,10 @@ const VAULTWING_SCENE := preload("res://game/actors/ambient/vaultwing/vaultwing.
 
 var _spawned: Array[Node] = []
 
+func _ready() -> void:
+	add_to_group("vaultwing_spawn_scheduler")
+	call_deferred("spawn_from_markers")
+
 
 func spawn_from_markers() -> int:
 	if vaultwing_scene == null or max_active_vaultwings <= 0:
@@ -30,10 +34,14 @@ func spawn_from_markers() -> int:
 		var marker := marker_variant as Node2D
 		if marker == null or marker.is_queued_for_deletion():
 			continue
+		if bool(marker.get_meta("vaultwing_spawned", false)):
+			continue
 		if player != null and marker.global_position.distance_to(player.global_position) < min_distance_from_player_start_px:
 			continue
 		if spawn_at(marker.global_position, seed_value + created):
+			marker.set_meta("vaultwing_spawned", true)
 			created += 1
+	_obs_set_gauge("active_vaultwings", _active_count())
 	return created
 
 
@@ -53,6 +61,7 @@ func spawn_at(spawn_position: Vector2, creature_seed: int = seed_value) -> Vault
 	creature.set_perch_positions(_perch_positions())
 	_spawned.append(creature)
 	_log_event(&"vaultwing_spawned", {"seed": creature_seed, "position": spawn_position})
+	_obs_set_gauge("active_vaultwings", _spawned.size())
 	return creature
 
 
@@ -66,6 +75,7 @@ func despawn_all() -> void:
 		if is_instance_valid(creature):
 			creature.queue_free()
 	_spawned.clear()
+	_obs_set_gauge("active_vaultwings", 0)
 
 
 func _active_count() -> int:
@@ -77,6 +87,7 @@ func _prune_spawned() -> void:
 	_spawned = _spawned.filter(func(creature: Node) -> bool:
 		return is_instance_valid(creature) and not creature.is_queued_for_deletion()
 	)
+	_obs_set_gauge("active_vaultwings", _spawned.size())
 
 
 func _perch_positions() -> Array[Vector2]:
@@ -104,3 +115,8 @@ func _log_event(event_name: StringName, payload: Dictionary) -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null and observatory.has_method("log_event"):
 		observatory.call("log_event", event_name, payload)
+
+func _obs_set_gauge(gauge_name: String, value: Variant) -> void:
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory != null and observatory.has_method("set_gauge"):
+		observatory.call("set_gauge", gauge_name, value)

@@ -1,6 +1,6 @@
 # CUSTODIAN — VAULTWING CREATURE, PREDATION, AND BOND SYSTEM
 
-**Status:** design locked / Slice A implemented; EAST/WEST/SOUTH/NORTH baseline published
+**Status:** design locked / wild Slice A gameplay-runtime closeout implemented; EAST/WEST/SOUTH/NORTH art baseline published; production Vaultwing SFX pending
 **Feature family:** ambient ecology / hostile fauna / companion progression  
 **Initial creature:** Common Vaultwing  
 **Runtime identity:** `vaultwing_common`  

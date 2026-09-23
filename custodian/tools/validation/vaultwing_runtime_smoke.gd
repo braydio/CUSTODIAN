@@ -8,6 +8,12 @@ const SCENE := preload("res://game/actors/ambient/vaultwing/vaultwing.tscn")
 const SPAWNER_SCRIPT := preload("res://game/systems/spawning/vaultwing_spawner.gd")
 const STEP := 1.0 / 60.0
 
+class DummyTarget extends StaticBody2D:
+	var hits := 0
+	func receive_enemy_hit(amount: float, _kind: StringName = &"melee", _team: String = "enemy", _attacker: Node2D = null, _direction: Vector2 = Vector2.ZERO, _guard: float = -1.0, _context: Dictionary = {}) -> Dictionary:
+		hits += 1
+		return {"applied_damage": amount}
+
 var _failures: PackedStringArray = PackedStringArray()
 
 func _init() -> void:
@@ -35,6 +41,8 @@ func _run() -> void:
 	await _check_spawn_authority()
 	await _check_dive(actor)
 	await _check_damage(actor)
+	await _check_spatial_attacks()
+	await _check_state_guards(actor)
 	_check_asset_contract()
 	actor.queue_free()
 
@@ -90,17 +98,43 @@ func _check_dive(actor: Node) -> void:
 
 func _check_damage(actor: Node) -> void:
 	var before: float = actor.health
+	actor.request_dive(Vector2(120.0, 0.0))
+	await physics_frame
 	var result: Dictionary = actor.take_damage(20.0)
 	if float(result.get("applied_damage", 0.0)) != 20.0: _fail("Vaultwing did not accept valid damage")
 	if actor.health >= before: _fail("Vaultwing health did not decrease")
-	actor.request_dive(Vector2(120.0, 0.0))
-	await physics_frame
 	actor.take_damage(30.0)
 	if actor.get_state_name() != &"air_stagger": _fail("large aerial interruption did not enter AIR_STAGGER")
 	for _i in 60: await physics_frame
 	if actor.get_altitude_band_name() not in [&"ground", &"high"]: _fail("air stagger did not reach a grounded/high recovery")
 	actor.take_damage(9999.0)
 	if not bool(actor.get("_dead")): _fail("lethal damage did not terminate Vaultwing")
+
+func _check_state_guards(actor: Node) -> void:
+	var dead_state: StringName = actor.get_state_name()
+	if dead_state != &"dead": _fail("lethal damage did not leave Vaultwing DEAD")
+	actor.request_dive(Vector2.ZERO)
+	if actor.get_state_name() != dead_state: _fail("DEAD Vaultwing accepted request_dive")
+	var high := SCENE.instantiate() as Node2D
+	root.add_child(high)
+	await physics_frame
+	var blocked: Dictionary = high.take_damage(10.0)
+	if float(blocked.get("applied_damage", 0.0)) != 0.0: _fail("HIGH Vaultwing accepted ordinary damage")
+	high.queue_free()
+
+func _check_spatial_attacks() -> void:
+	var attacker := SCENE.instantiate() as Node2D
+	root.add_child(attacker)
+	attacker.global_position = Vector2.ZERO
+	var target := DummyTarget.new()
+	target.position = Vector2(92.0, 0.0)
+	var shape := CollisionShape2D.new(); var circle := CircleShape2D.new(); circle.radius = 10.0; shape.shape = circle
+	target.add_child(shape); root.add_child(target)
+	attacker.request_dive(target.global_position, target)
+	for _i in 80: await physics_frame
+	if target.hits != 1: _fail("spatial dive did not produce exactly one contact hit")
+	attacker.queue_free(); target.queue_free()
+	await process_frame
 
 func _check_asset_contract() -> void:
 	var file := FileAccess.open("res://content/metadata/assets/families/ambient_vaultwing_common.asset.json", FileAccess.READ)

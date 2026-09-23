@@ -20,18 +20,21 @@ var presentation := PRESENTATION.new()
 var behavior: VaultwingBehaviorController
 var facing_direction := Vector2.RIGHT
 var _dead := false
+var _original_collision_layer := 1
+var _original_collision_mask := 1
 
 func _ready() -> void:
 	add_to_group("ambient_creature")
 	add_to_group("hostile_fauna")
 	add_to_group("vaultwing")
+	_original_collision_layer = collision_layer
+	_original_collision_mask = collision_mask
 	if ANIMATION_SET.has_method("rescan_runtime"):
 		ANIMATION_SET.rescan_runtime()
 	presentation.setup(ANIMATION_SET, body_sprite)
 	behavior = CONTROLLER_SCRIPT.new()
 	add_child(behavior)
 	behavior.configure(self)
-	_log_event(&"vaultwing_spawned", {})
 
 func _physics_process(delta: float) -> void:
 	if _dead or not behavior_enabled: return
@@ -83,13 +86,27 @@ func has_action(action: StringName) -> bool:
 
 func take_damage(amount: float, _hit_strength := 0, _reaction_damage := -1.0) -> Dictionary:
 	var before := health
-	if _dead or health <= 0.0:
+	if _dead or health <= 0.0 or (behavior != null and behavior.band == VaultwingBehaviorController.Band.HIGH):
 		return _damage_result(0.0, false, before)
 	var applied := minf(maxf(0.0, amount), health)
 	health = maxf(0.0, health - applied)
 	if behavior != null: behavior.notify_damage(applied)
 	if health <= 0.0: die()
 	return _damage_result(applied, true, before)
+
+func set_band_interaction(next_band: int) -> void:
+	var grounded := next_band == VaultwingBehaviorController.Band.GROUND or next_band == VaultwingBehaviorController.Band.PERCHED
+	if grounded:
+		collision_layer = _original_collision_layer
+		collision_mask = _original_collision_mask
+	else:
+		collision_layer = 0
+		collision_mask = 0
+
+func receive_enemy_hit(amount: float, _hit_kind: StringName = &"melee", _attacker_team: String = "enemy", _attacker: Node2D = null, _hit_direction: Vector2 = Vector2.ZERO, _guard_stamina_cost_override: float = -1.0, _attack_context: Dictionary = {}) -> Dictionary:
+	if _dead or (behavior != null and behavior.band == VaultwingBehaviorController.Band.HIGH):
+		return _damage_result(0.0, false, health)
+	return take_damage(amount)
 
 func die() -> void:
 	if _dead: return
