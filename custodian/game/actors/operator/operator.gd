@@ -451,8 +451,18 @@ var build_target: Node = null  # WallBlueprint we're building
 var movement_direction := Vector2.DOWN  # Direction player is moving (for walk animations)
 var visual_idle_direction := Vector2.DOWN
 var arrow_aim_enabled: bool = false
+## Slice D: raw player input has exactly one owner, and it is not this file.
+## `_input` is the frame sampled at the top of the fixed tick; every gameplay read
+## below goes through it, so a replay, an AI or a vehicle can supply intent
+## without pretending to be a keyboard. See `operator/input/`.
+var _input_router: OperatorInputRouter = null
+var _aim_controller: OperatorAimController = null
+var _input_frame: OperatorInputFrame = OperatorInputFrame.neutral()
+## Set by `process_input()` when something else is driving this actor. The next
+## fixed tick consumes and clears it, so control reverts the moment the external
+## driver stops supplying frames.
+var _external_control_frame: OperatorInputFrame = null
 @export_range(0.0, 1.0, 0.01) var controller_aim_deadzone := 0.25
-var _last_controller_aim_direction := Vector2.ZERO
 var stamina: float = 100.0
 var is_sprinting: bool = false
 var is_sneaking: bool = false
@@ -1452,15 +1462,15 @@ func _process(delta):
 	_sync_primary_ranged_weapon_frame_to_upper()
 	if _dodge_charge_active:
 		return
-	if Input.is_action_just_pressed("build"):
+	if _input_frame.just_pressed(&"build"):
 		if _try_terminal_deploy_or_pickup():
 			return
 	var is_repairing := false
-	if Input.is_action_pressed("repair"):
+	if _input_frame.pressed(&"repair"):
 		is_repairing = _try_repair(delta)
 	if is_repairing:
 		return
-	if Input.is_action_pressed("build"):
+	if _input_frame.pressed(&"build"):
 		_try_build(delta)
 	_handle_attack_input()
 	if _wants_block():
@@ -1479,6 +1489,9 @@ func _input(event: InputEvent) -> void:
 
 
 func _physics_process(delta):
+	# The fixed tick is the simulation spine, and it opens by deciding what the
+	# player asked for. Everything below reads that one frozen frame.
+	_sample_input_frame()
 	apply_debug_resource_overrides()
 	_advance_integrity_reclaim(delta)
 	if _engagement_tracker != null:
@@ -1553,13 +1566,13 @@ func _physics_process(delta):
 			visual_idle_direction = input_direction
 
 	var moving = input_direction != Vector2.ZERO
-	var wants_sprint := Input.is_action_pressed("sprint")
+	var wants_sprint := _input_frame.pressed(&"sprint")
 	var was_sprinting := is_sprinting
 	if _sprint_exhausted and stamina >= stamina_max:
 		_sprint_exhausted = false
 	var can_start_sprint := stamina > stamina_sprint_gate
 	is_sprinting = moving and wants_sprint and not _is_block_state_active() and not _has_attack_movement_modifier() and not _sprint_exhausted and (was_sprinting or can_start_sprint)
-	is_sneaking = moving and InputMap.has_action("sneak") and Input.is_action_pressed("sneak") and not is_sprinting and not _has_attack_movement_modifier()
+	is_sneaking = moving and _input_frame.pressed(&"sneak") and not is_sprinting and not _has_attack_movement_modifier()
 	var movement_profile := get_current_combat_profile()
 	var active_move_speed := SPEED * sprint_multiplier if is_sprinting else SPEED
 	if _field_patch_active:
@@ -1639,7 +1652,7 @@ func _physics_process(delta):
 			_regenerate_stamina(stamina_regen_per_second * 5.0 * delta, &"traversal")
 
 	# DEBUG: Press J to damage nearest sector
-	if Input.is_key_pressed(KEY_J):
+	if OperatorInputRouter.debug_key_pressed(KEY_J):
 		_damage_nearest_sector(10.0)
 
 
@@ -1734,30 +1747,37 @@ func debug_print_stuck_report() -> Dictionary:
 	return provider.call("debug_print_stuck_report", global_position)
 
 
+## Resolve which way the Operator is aiming. Simulation, so it belongs to the
+## fixed tick.
+##
+## The source policy -- retained controller direction, keyboard override, mouse
+## only while the mouse is live -- is `OperatorAimController`. `aim_direction`
+## remains the public resolved result other systems read; it is not a second
+## state machine, because nothing else writes it from input.
+func _resolve_aim() -> void:
+	if _aim_controller == null:
+		_aim_controller = OperatorAimController.new()
+	var resolved := _aim_controller.resolve(
+		_input_frame,
+		arrow_aim_enabled,
+		movement_direction,
+		visual_idle_direction,
+		aim_direction,
+		_get_world_mouse_position() - global_position
+	)
+	aim_direction = resolved["aim"]
+	if bool(resolved["facing_changed"]):
+		visual_idle_direction = resolved["facing"]
+
+
 func _update_aim():
-	if _is_gamepad_input_active():
-		var controller_aim := _get_controller_aim_direction()
-		if controller_aim != Vector2.ZERO:
-			_last_controller_aim_direction = controller_aim
-		if _last_controller_aim_direction == Vector2.ZERO:
-			_last_controller_aim_direction = (
-				movement_direction.normalized()
-				if movement_direction.length_squared() > 0.0001
-				else visual_idle_direction.normalized()
-			)
-		if _last_controller_aim_direction == Vector2.ZERO:
-			_last_controller_aim_direction = Vector2.RIGHT
-		aim_direction = _last_controller_aim_direction
-		visual_idle_direction = _last_controller_aim_direction
-	elif arrow_aim_enabled:
-		var keyboard_aim := _get_keyboard_aim_direction()
-		if keyboard_aim != Vector2.ZERO:
-			aim_direction = keyboard_aim
-			visual_idle_direction = keyboard_aim
-	else:
-		var mouse_aim_vector := _get_world_mouse_position() - global_position
-		if mouse_aim_vector.length_squared() > 0.0001:
-			aim_direction = mouse_aim_vector.normalized()
+	_resolve_aim()
+	_apply_aim_presentation()
+
+
+## Weapon socket and barrel orientation. Presentation: it derives from the
+## resolved aim and mutates no simulation state.
+func _apply_aim_presentation() -> void:
 	_apply_dynamic_weapon_socket_layout()
 	var weapon_display_angle := _get_ranged_weapon_socket_rotation(aim_direction)
 	
@@ -5657,7 +5677,7 @@ func _find_terrain_ballistics_provider() -> Node:
 func _handle_attack_input() -> void:
 	if _field_patch_active:
 		return
-	if InputMap.has_action(&"drone_issue_guard_order") and Input.is_action_pressed(&"drone_issue_guard_order"):
+	if _input_frame.pressed(&"drone_issue_guard_order"):
 		return
 	if _is_block_state_active():
 		_try_queue_parry_counter_from_block()
@@ -6045,32 +6065,23 @@ func _try_queue_parry_counter_from_block() -> void:
 
 
 func _is_attack_primary_just_pressed() -> bool:
-	return Input.is_action_just_pressed("fire_primary") \
-		or Input.is_action_just_pressed("attack_primary") \
-		or Input.is_action_just_pressed("attack") \
-		or Input.is_action_just_pressed("melee_attack")
+	return _input_frame.just_pressed_any(OperatorInputRouter.PRIMARY_ATTACK)
 
 
 func _is_attack_primary_pressed() -> bool:
-	return Input.is_action_pressed("fire_primary") \
-		or Input.is_action_pressed("attack_primary") \
-		or Input.is_action_pressed("attack") \
-		or Input.is_action_pressed("melee_attack")
+	return _input_frame.pressed_any(OperatorInputRouter.PRIMARY_ATTACK)
 
 
 func _is_attack_secondary_just_pressed() -> bool:
-	return Input.is_action_just_pressed("aim_hold") \
-		or Input.is_action_just_pressed("attack_secondary") \
-		or Input.is_action_just_pressed("heavy_attack")
+	return _input_frame.just_pressed_any(OperatorInputRouter.SECONDARY_PRESS)
 
 
 func _is_attack_secondary_chord_just_pressed() -> bool:
-	return Input.is_action_just_pressed("heavy_attack")
+	return _input_frame.just_pressed(&"heavy_attack")
 
 
 func _is_attack_secondary_pressed() -> bool:
-	return Input.is_action_pressed("aim_hold") \
-		or Input.is_action_pressed("attack_secondary")
+	return _input_frame.pressed_any(OperatorInputRouter.SECONDARY_HOLD)
 
 
 func _get_offhand_secondary_mode() -> StringName:
@@ -6336,7 +6347,7 @@ func _is_ranged_ready_active() -> bool:
 func _get_requested_attack_kind(intent: String = "") -> String:
 	if not intent.is_empty():
 		return _attack_kind_from_intent(intent)
-	var wants_heavy := Input.is_action_pressed("heavy_attack")
+	var wants_heavy := _input_frame.pressed(&"heavy_attack")
 	if not wants_heavy:
 		return "fast"
 	if heavy_attack_blocked_while_sprinting and is_sprinting:
@@ -9563,16 +9574,16 @@ func _handle_weapon_switch():
 
 
 func _handle_loadout_toggle_input() -> void:
-	if Input.is_action_just_pressed("toggle_unarmed"):
+	if _input_frame.just_pressed(&"toggle_unarmed"):
 		request_toggle_unarmed()
-	if Input.is_action_just_pressed("cycle_next_weapon"):
+	if _input_frame.just_pressed(&"cycle_next_weapon"):
 		request_cycle_weapon(1)
-	if Input.is_action_just_pressed("cycle_prev_weapon"):
+	if _input_frame.just_pressed(&"cycle_prev_weapon"):
 		request_cycle_weapon(-1)
 
 
 func _handle_aim_input_toggle() -> void:
-	if Input.is_action_just_pressed("toggle_aim_input_mode"):
+	if _input_frame.just_pressed(&"toggle_aim_input_mode"):
 		arrow_aim_enabled = not arrow_aim_enabled
 
 
@@ -9593,7 +9604,7 @@ func _handle_field_patch_interrupt_input() -> void:
 	if _is_attack_primary_just_pressed() or _is_attack_secondary_chord_just_pressed():
 		cancel_field_patch(&"attack")
 		return
-	if Input.is_action_just_pressed("build") or Input.is_action_just_pressed("repair"):
+	if _input_frame.just_pressed_any([&"build", &"repair"]):
 		cancel_field_patch(&"field_work")
 
 
@@ -9996,27 +10007,15 @@ func _handle_reload_input() -> void:
 
 
 func _is_action_just_pressed_any(action_names: Array) -> bool:
-	for action_name in action_names:
-		var normalized_name := StringName(str(action_name))
-		if InputMap.has_action(normalized_name) and Input.is_action_just_pressed(normalized_name):
-			return true
-	return false
+	return _input_frame.just_pressed_any(action_names)
 
 
 func _is_action_pressed_any(action_names: Array) -> bool:
-	for action_name in action_names:
-		var normalized_name := StringName(str(action_name))
-		if InputMap.has_action(normalized_name) and Input.is_action_pressed(normalized_name):
-			return true
-	return false
+	return _input_frame.pressed_any(action_names)
 
 
 func _is_action_just_released_any(action_names: Array) -> bool:
-	for action_name in action_names:
-		var normalized_name := StringName(str(action_name))
-		if InputMap.has_action(normalized_name) and Input.is_action_just_released(normalized_name):
-			return true
-	return false
+	return _input_frame.just_released_any(action_names)
 
 
 func _handle_dodge_input(delta: float = 0.0) -> void:
@@ -12733,7 +12732,7 @@ func _sync_fake_elevation_visual_state() -> void:
 func _wants_block() -> bool:
 	if not _is_melee_loadout_active() or _is_terminal_open():
 		return false
-	if Input.is_action_pressed("block"):
+	if _input_frame.pressed(&"block"):
 		return true
 	return _get_offhand_secondary_mode() == &"parry_guard" \
 		and _is_attack_secondary_pressed() \
@@ -12775,27 +12774,7 @@ func _load_optional_texture(path: String, fallback: Texture2D) -> Texture2D:
 
 
 func _has_active_idle_input() -> bool:
-	return Input.is_action_pressed("move_left") \
-		or Input.is_action_pressed("move_right") \
-		or Input.is_action_pressed("move_up") \
-		or Input.is_action_pressed("move_down") \
-		or Input.is_action_pressed("aim_left") \
-		or Input.is_action_pressed("aim_right") \
-		or Input.is_action_pressed("aim_up") \
-		or Input.is_action_pressed("aim_down") \
-		or Input.is_action_pressed("attack") \
-		or Input.is_action_pressed("attack_primary") \
-		or Input.is_action_pressed("fire_primary") \
-		or Input.is_action_pressed("attack_secondary") \
-		or Input.is_action_pressed("aim_hold") \
-		or Input.is_action_pressed("dodge") \
-		or Input.is_action_pressed("toggle_unarmed") \
-		or Input.is_action_pressed("reload_weapon") \
-		or Input.is_action_pressed("reload") \
-		or Input.is_action_pressed("block") \
-		or Input.is_action_pressed("interact") \
-		or Input.is_action_pressed("repair") \
-		or Input.is_action_pressed("sprint") \
+	return _input_frame.has_any_activity() \
 		or _melee_active \
 		or _reload_active \
 		or _melee_recovery_active
@@ -14002,33 +13981,38 @@ func _update_stealth_noise_snapshot(moving: bool) -> void:
 		stealth_visibility_mult = 0.9
 
 
+## Facade over the frame. The sampling that used to live here is in
+## `OperatorInputRouter`, which normalises and deadzones before anyone sees it.
 func _get_move_input_vector() -> Vector2:
-	var move_input := Vector2(
-		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
-		Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-	)
-	if move_input.length_squared() <= 0.0001:
-		return Vector2.ZERO
-	if move_input.length() > 1.0:
-		return move_input.normalized()
-	return move_input
+	return _input_frame.move
 
 
 func _get_controller_aim_direction() -> Vector2:
-	var aim_input := Vector2(
-		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
-		Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
-	)
-	if aim_input.length() < controller_aim_deadzone:
-		return Vector2.ZERO
-	return aim_input.normalized()
+	return _input_frame.controller_aim
 
 
+## `InputPromptService` stays the one device-family authority; this asks it
+## rather than sniffing devices a second time.
 func _is_gamepad_input_active() -> bool:
 	var prompt_service := get_node_or_null("/root/InputPromptService")
 	return prompt_service != null \
 		and prompt_service.has_method("is_gamepad_active") \
 		and bool(prompt_service.call("is_gamepad_active"))
+
+
+## Build this tick's input frame. The one place the Operator acquires intent.
+func _sample_input_frame() -> void:
+	if _input_router == null:
+		_input_router = OperatorInputRouter.new()
+	if _external_control_frame != null:
+		_input_frame = _input_router.adopt(_external_control_frame)
+		_external_control_frame = null
+		return
+	_input_frame = _input_router.sample(
+		_is_gamepad_input_active(),
+		controller_aim_deadzone,
+		_get_world_mouse_position()
+	)
 
 
 func _is_aiming_for_facing() -> bool:
@@ -14038,21 +14022,24 @@ func _is_aiming_for_facing() -> bool:
 
 
 func _get_keyboard_aim_direction() -> Vector2:
-	var aim_input := Vector2(
-		Input.get_action_strength("aim_right") - Input.get_action_strength("aim_left"),
-		Input.get_action_strength("aim_down") - Input.get_action_strength("aim_up")
-	)
-	if aim_input.length_squared() <= 0.0001:
-		return Vector2.ZERO
-	return aim_input.normalized()
+	return _input_frame.keyboard_aim
+
+
+## The direction the aim controller is holding for the gamepad, read-only.
+##
+## Exposed rather than mirrored: this file no longer keeps its own copy, because
+## two places remembering the same stick is how they disagree.
+func _retained_controller_aim() -> Vector2:
+	return Vector2.ZERO if _aim_controller == null else _aim_controller.last_controller_aim
 
 
 func _get_attack_aim_direction() -> Vector2:
 	if _is_gamepad_input_active():
 		if aim_direction.length_squared() > 0.0001:
 			return aim_direction.normalized()
-		if _last_controller_aim_direction.length_squared() > 0.0001:
-			return _last_controller_aim_direction.normalized()
+		var retained := _retained_controller_aim()
+		if retained.length_squared() > 0.0001:
+			return retained.normalized()
 		return Vector2.RIGHT
 	if arrow_aim_enabled:
 		var keyboard_aim := _get_keyboard_aim_direction()
@@ -15000,11 +14987,21 @@ func can_be_controlled() -> bool:
 	return is_alive() and not _is_dead and not _is_terminal_open()
 
 
-## ControllableActor interface implementation
+## ControllableActor interface implementation.
+##
+## Intent from a replay, an AI, a possession system or a vehicle. It is stored
+## rather than applied: the next fixed tick adopts it as that tick's input frame,
+## so externally supplied control converges with local input *before* any gameplay
+## decision is made. There is deliberately no second path -- an injected frame is
+## read by exactly the same code that reads a keyboard.
+##
+## Supplying no frame on a tick hands control straight back to local input.
 func process_input(input_vector: Vector2, aim_vector: Vector2, is_firing: bool) -> void:
-	# Operator handles its own input natively via _physics_process
-	# This method exists for interface compliance but operator uses native input
-	pass
+	_external_control_frame = OperatorInputRouter.from_control_intent(
+		input_vector,
+		aim_vector,
+		is_firing
+	)
 
 func _damage_nearest_sector(amount: float):
 	var sectors = []
@@ -15133,7 +15130,7 @@ func _is_terminal_carry_active() -> bool:
 
 
 func _handle_interact_input():
-	if not Input.is_action_just_pressed("interact"):
+	if not _input_frame.just_pressed(&"interact"):
 		return
 	if _is_terminal_open():
 		return

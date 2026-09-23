@@ -91,30 +91,38 @@ func _validate_hold_release_input(operator: Node) -> void:
 	_reset_dodge(operator)
 	operator.set("stamina", 100.0)
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	await process_frame
 	Input.action_press("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	_assert(bool(operator.get("_dodge_charge_active")), "dodge press should begin charge detection")
 	operator.call("_handle_dodge_input", 0.32)
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	_assert(bool(operator.get("_dodge_active")), "release should execute a dodge")
 	_assert(operator.get("_active_dodge_profile") == &"committed", "0.32 second hold should execute committed roll")
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 
 
 func _validate_tap_release_input(operator: Node) -> void:
 	_reset_dodge(operator)
 	operator.set("stamina", 100.0)
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	await process_frame
 	Input.action_press("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	_assert(bool(operator.get("_dodge_active")), "tap release should execute a dodge")
 	_assert(operator.get("_active_dodge_profile") == &"tap", "short press/release should preserve tap dodge")
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 
 
 func _reset_dodge(operator: Node) -> void:

@@ -79,19 +79,24 @@ func _validate_input_buffer_window(operator: Node) -> void:
 	operator.call("_try_start_dodge_with_profile", Vector2.RIGHT, &"tap")
 	operator.set("_dodge_timer", float(operator.get("_active_dodge_duration")) - 0.05)
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	await process_frame
 	Input.action_press("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	_assert(not bool(operator.get("_dodge_chain_buffered")), "press before 0.10 seconds must not buffer a chain")
 	_assert(not bool(operator.get("_dodge_charge_active")), "dodge press during active movement must never begin another charge")
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	await process_frame
 	operator.set("_dodge_timer", float(operator.get("_active_dodge_duration")) - 0.12)
 	Input.action_press("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	_assert(bool(operator.get("_dodge_chain_buffered")), "press during the latter active half must buffer a chain")
 	_assert(not bool(operator.get("_dodge_charge_active")), "held chain input must be treated as a tap continuation")
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 
 
 func _validate_charged_chain_and_redirect(operator: Node) -> void:

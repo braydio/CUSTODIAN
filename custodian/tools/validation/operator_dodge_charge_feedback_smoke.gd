@@ -30,6 +30,7 @@ func _run() -> void:
 	await _validate_hud_copy(world)
 
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	operator.queue_free()
 	await process_frame
 	if _errors.is_empty():
@@ -74,6 +75,7 @@ func _validate_charge_presentation(operator: Node, feedback: Node) -> void:
 	_assert(is_zero_approx(float(status.get("ratio", -1.0))), "initial charge ratio must be zero")
 
 	Input.action_press("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.05)
 	var meter := feedback.get_node("MeterSprite") as Sprite2D
 	_assert(not meter.visible, "tap-length holds must remain visually clean")
@@ -88,6 +90,7 @@ func _validate_charge_presentation(operator: Node, feedback: Node) -> void:
 	_assert((feedback.get_node("ReadySprite") as Sprite2D).visible, "ready transition must play the latch strip once")
 
 	Input.action_release("dodge")
+	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	_assert(bool(operator.get("_dodge_active")), "release must preserve the ordinary dodge execution")
 	_assert((feedback.get_node("ReleaseSprite") as Sprite2D).visible, "release must start the origin burst")
