@@ -97,6 +97,7 @@ visible = false
 z_index = -1
 position = Vector2(0, -18)
 offset = Vector2(0, 0)
+sprite_frames = ExtResource("39_canonical_runtime_frames")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1317416612]
 position = Vector2(0, -18)

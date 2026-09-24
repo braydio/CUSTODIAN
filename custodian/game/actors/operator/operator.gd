@@ -149,33 +149,6 @@ const DAMAGE_TAKEN_SOUND: AudioStream = preload("res://content/audio/sfx/combat/
 const DODGE_FAST_ATTACK_FRAME_COUNT := 11
 const DODGE_FAST_ATTACK_FPS := 20.0
 const DODGE_FAST_ATTACK_HIT_FRAME := 4
-const MELEE_FAST_CHAIN_FPS := 17.0
-const MELEE_FAST_CHAIN_FX_SHEETS := {
-	&"melee_2h_fast_1_fx_right": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01_legacy_7f7c22c3/operator__fx__melee_1h__attack__fast_01_legacy_7f7c22c3__e__10f__96.png",
-		"frames": 10,
-	},
-	&"melee_2h_fast_1_fx_left": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01_legacy_3865ae8b/operator__fx__melee_1h__attack__fast_01_legacy_3865ae8b__w__10f__96.png",
-		"frames": 10,
-	},
-	&"melee_2h_fast_2_fx_right": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02_legacy_c1da49f3/operator__fx__melee_1h__attack__fast_02_legacy_c1da49f3__e__8f__96.png",
-		"frames": 8,
-	},
-	&"melee_2h_fast_2_fx_left": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02_legacy_04ab0f51/operator__fx__melee_1h__attack__fast_02_legacy_04ab0f51__w__8f__96.png",
-		"frames": 8,
-	},
-	&"melee_2h_fast_3_fx_right": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_7010c688/operator__fx__melee_1h__attack__fast_03_legacy_7010c688__e__8f__96.png",
-		"frames": 8,
-	},
-	&"melee_2h_fast_3_fx_left": {
-		"path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_99791341/operator__fx__melee_1h__attack__fast_03_legacy_99791341__w__8f__96.png",
-		"frames": 8,
-	},
-}
 
 enum AttackPhase {
 	NONE,
@@ -403,20 +376,6 @@ var last_fire_cooldown := 0.0
 @export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
 @export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png"
 @export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_aim_raise/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_aim_raise__omni__1f__288x96.png"
-@export_group("Knight Test Skin", "knight_test")
-@export var knight_test_skin_enabled: bool = false
-@export_dir var knight_test_sprite_dir := "res://dev/test_sprites/Knight"
-@export var knight_test_frame_size: Vector2i = Vector2i(128, 128)
-@export_range(1, 32, 1) var knight_test_frame_columns: int = 15
-@export_range(0, 7, 1) var knight_test_row_up_left: int = 0
-@export_range(0, 7, 1) var knight_test_row_up: int = 1
-@export_range(0, 7, 1) var knight_test_row_up_right: int = 2
-@export_range(0, 7, 1) var knight_test_row_right: int = 3
-@export_range(0, 7, 1) var knight_test_row_down_right: int = 4
-@export_range(0, 7, 1) var knight_test_row_down: int = 5
-@export var knight_test_sprite_position: Vector2 = Vector2(0, -18)
-@export var knight_test_sprite_offset: Vector2 = Vector2.ZERO
-@export var knight_test_sprite_scale: Vector2 = Vector2.ONE
 @export_group("", "")
 @export var primary_weapon_definition = null
 @export var melee_weapon_definition = null
@@ -810,11 +769,8 @@ var _modular_damage_reaction_animation: StringName = &""
 var _modular_damage_reaction_upper_animation: StringName = &""
 var _modular_damage_reaction_head_animation: StringName = &""
 var _modular_damage_reaction_sector: StringName = &"s"
-var _production_body_frames: SpriteFrames = null
 var _default_melee_overlay_frames: SpriteFrames = null
 var _default_melee_fx_frames: SpriteFrames = null
-var _knight_test_frames: SpriteFrames = null
-var _knight_test_skin_active: bool = false
 var _modular_lower_action_animation: StringName = &""
 var _modular_upper_action_animation: StringName = &""
 var _modular_upper_fx_action_animation: StringName = &""
@@ -922,19 +878,12 @@ const DODGE_STEP_ANIMATION := &"operator_dodge_step"
 const DODGE_RECOVERY_ANIMATION := &"operator_dodge_recovery"
 const DODGE_BACKSTEP_ANIMATION := &"operator_dodge_backstep"
 const DODGE_BACKSTEP_RECOVERY_ANIMATION := &"operator_dodge_backstep_recovery"
-const DODGE_STEP_FX_ANIMATION := &"operator_dodge_step_fx"
-const DODGE_STEP_FX_SHEET_PATH := ""
 ## C2a-R4: canonical identities, published by the runtime spine at the same 9
 ## frames and 25 FPS the actor used to inject from the sheet paths below.
 const DODGE_FULL_NORTH_ANIMATION := &"shared/transition/dodge_01/n/full_body"
 const DODGE_FULL_SOUTH_ANIMATION := &"shared/transition/dodge_01/s/full_body"
 const DODGE_FULL_NORTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png"
 const DODGE_FULL_SOUTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png"
-const DODGE_FULL_NORTH_FX_ANIMATION := &"operator_dodge_full_fx_north"
-const DODGE_FULL_SOUTH_FX_ANIMATION := &"operator_dodge_full_fx_south"
-const DODGE_FULL_NORTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__n__9f__96.png"
-const DODGE_FULL_SOUTH_FX_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__s__9f__96.png"
-const DODGE_FULL_SEQUENCE_FPS := 25.0
 const DODGE_CHARGE_WINDUP_BASE := &"operator_dodge_charge_windup"
 const DODGE_CHAIN_LINK_BASE := &"operator_dodge_chain_link"
 const DODGE_CHAIN_LINK_FPS := 20.0
@@ -980,18 +929,6 @@ const MODULAR_SIDEARM_MUZZLE_OFFSETS := {
 	"up_left": Vector2(-34.0, -17.0),
 	"down_right": Vector2(35.0, -13.0),
 	"down_left": Vector2(-35.0, -13.0),
-}
-const KNIGHT_TEST_ANIMATION_SPECS := {
-	"idle": {"file": "Idle.png", "fps": 8.0, "loop": true},
-	"walk": {"file": "Walk.png", "fps": 10.0, "loop": true},
-	"run": {"file": "Run.png", "fps": 12.0, "loop": true},
-	"melee": {"file": "Melee.png", "fps": 14.0, "loop": false},
-	"melee2": {"file": "Melee2.png", "fps": 14.0, "loop": false},
-	"heavy": {"file": "MeleeSpin.png", "fps": 12.0, "loop": false},
-	"block_start": {"file": "ShieldBlockStart.png", "fps": 10.0, "loop": false},
-	"block_hold": {"file": "ShieldBlockMid.png", "fps": 8.0, "loop": true},
-	"hit": {"file": "TakeDamage.png", "fps": 10.0, "loop": false},
-	"death": {"file": "Die.png", "fps": 10.0, "loop": false},
 }
 
 @onready var health_bar = $HealthBar
@@ -1060,7 +997,6 @@ func _ready():
 	if visual:
 		visual.modulate = Color(1, 1, 1, 1)
 	if animated_sprite:
-		_production_body_frames = animated_sprite.sprite_frames
 
 		animated_sprite.modulate = Color(1.3, 1.3, 1.3, 1)  # Brighten 30%
 		animated_sprite.frame_changed.connect(
@@ -1084,9 +1020,6 @@ func _ready():
 		modular_lower_body_sprite.animation_finished.connect(
 			_on_operator_animation_finished.bind(modular_lower_body_sprite)
 		)
-	if animated_sprite:
-		_ensure_compatibility_overlay_animations()
-		_apply_knight_test_skin_if_requested()
 	if melee_weapon_overlay_sprite != null:
 		_default_melee_overlay_frames = (
 			melee_weapon_overlay_sprite.sprite_frames
@@ -1099,8 +1032,6 @@ func _ready():
 		dodge_fx_back_sprite.visible = false
 		dodge_fx_back_sprite.z_index = -1
 		dodge_fx_back_sprite.modulate = Color(1.0, 1.0, 1.0, DODGE_FX_BACK_ALPHA)
-		if dodge_fx_back_sprite.sprite_frames == null:
-			dodge_fx_back_sprite.sprite_frames = SpriteFrames.new()
 	_register_body_presentation_layers()
 	if modular_cape_sprite:
 		_hide_body_layer(modular_cape_sprite, false)
@@ -1141,53 +1072,6 @@ func _ready():
 	_apply_body_recoil_offset()
 	_sync_fake_elevation_visual_state()
 	update_visuals()
-
-
-func set_knight_test_skin_enabled(enabled: bool) -> bool:
-	knight_test_skin_enabled = enabled
-	_apply_knight_test_skin_if_requested()
-	return _knight_test_skin_active
-
-
-func toggle_knight_test_skin() -> bool:
-	return set_knight_test_skin_enabled(not _knight_test_skin_active)
-
-
-func is_knight_test_skin_active() -> bool:
-	return _knight_test_skin_active
-
-
-func _apply_knight_test_skin_if_requested() -> void:
-	if animated_sprite == null:
-		return
-	if _production_body_frames == null:
-		_production_body_frames = animated_sprite.sprite_frames
-	if knight_test_skin_enabled:
-		if _knight_test_frames == null:
-			_knight_test_frames = _build_knight_test_frames()
-		if _knight_test_frames == null:
-			knight_test_skin_enabled = false
-			_knight_test_skin_active = false
-			return
-		animated_sprite.sprite_frames = _knight_test_frames
-		animated_sprite.position = knight_test_sprite_position
-		animated_sprite.offset = knight_test_sprite_offset
-		animated_sprite.scale = knight_test_sprite_scale
-		_animated_sprite_base_position = animated_sprite.position
-		_hide_custom_operator_visual_layers()
-		_knight_test_skin_active = true
-		update_visuals()
-		return
-	if _knight_test_skin_active and _production_body_frames != null:
-		animated_sprite.sprite_frames = _production_body_frames
-		if use_tiny_rpg_placeholder_soldier:
-			_apply_placeholder_runtime_layout()
-		else:
-			_capture_runtime_visual_base_positions()
-		_refresh_primary_weapon_state()
-	_knight_test_skin_active = false
-
-
 func _hide_custom_operator_visual_layers() -> void:
 	_hide_modular_locomotion_layers()
 	if weapon_sprite:
@@ -1207,127 +1091,6 @@ func _hide_custom_operator_visual_layers() -> void:
 	if melee_fx_overlay_sprite:
 		melee_fx_overlay_sprite.visible = false
 		melee_fx_overlay_sprite.stop()
-
-
-## KNOWN STALE after C2a-R4; scheduled for C2b. Do not "fix" from production.
-##
-## This builds its own `SpriteFrames` under compatibility names (`idle_right`,
-## `unarmed_walk_right`, `melee_2h_heavy_anticipation`, `death`, ...) and swaps it
-## onto `animated_sprite`. Production playback now asks for canonical identities
-## such as `unarmed/locomotion/idle_01/e/full_body`, so while the skin is enabled
-## those requests find nothing and the body does not present. Gameplay is
-## unaffected; this is a dev-only visualisation.
-##
-## It is left stale deliberately. The alternative -- teaching production playback
-## to fall back to compatibility names when the bound resource lacks a canonical
-## identity -- would reintroduce exactly the fallback machinery C2a-R4 removed,
-## for the sake of a test skin. If the skin is still wanted, the fix belongs on
-## this side of the wall: publish the canonical identities it needs into its own
-## resource. Nothing here may mutate `OPERATOR_RUNTIME_FRAMES`.
-##
-## `knight_test_skin_enabled` defaults false, so nothing is broken by default.
-func _build_knight_test_frames() -> SpriteFrames:
-	var frames := SpriteFrames.new()
-	if frames.has_animation(&"default"):
-		frames.remove_animation(&"default")
-	_add_knight_locomotion_animations(frames, "idle", [
-		"idle", "idle_right", "idle_down", "idle_up", "idle_down_right", "idle_up_right",
-		"idle_long", "ranged_2h_stance", "melee_2h_stance", "unarmed_idle",
-		"unarmed_idle_right", "unarmed_idle_down", "unarmed_idle_up", "unarmed_stance", "default",
-	])
-	_add_knight_locomotion_animations(frames, "walk", [
-		"walk_right", "walk_down", "walk_up", "walk_down_right", "walk_up_right",
-		"walk_down_default", "walk_east", "unarmed_walk", "unarmed_walk_right",
-		"unarmed_walk_down", "unarmed_walk_up",
-	])
-	_add_knight_locomotion_animations(frames, "run", [
-		"run_right", "run_down", "run_up", "run_down_right", "run_up_right",
-		"unarmed_run_right", "unarmed_run_down", "unarmed_run_up",
-		"unarmed_run_down_right", "unarmed_run_down_left",
-	])
-	_add_knight_locomotion_animations(frames, "melee", [
-		"melee_2h_fast_1", "melee_2h_fast_1_right", "melee_2h_fast",
-		"melee_2h_fast_right", "unarmed_attack_fast", "unarmed_attack_fast_right",
-		"unarmed_attack_fast_left", "unarmed_attack_fast_down", "unarmed_attack_fast_up",
-		"ranged_2h_fire",
-	])
-	_add_knight_locomotion_animations(frames, "melee2", [
-		"melee_2h_fast_2", "melee_2h_fast_2_right", "unarmed_attack_fast_recovery",
-		"unarmed_attack_fast_recovery_right", "unarmed_attack_fast_recovery_down",
-		"unarmed_attack_fast_recovery_up",
-	])
-	_add_knight_locomotion_animations(frames, "heavy", [
-		"melee_2h_heavy_anticipation", "melee_2h_heavy", "unarmed_attack_heavy",
-		"unarmed_attack_heavy_right", "unarmed_attack_heavy_down", "unarmed_attack_heavy_up",
-	])
-	_add_knight_locomotion_animations(frames, "block_start", ["melee_2h_block_enter", "melee_2h_block_exit"])
-	_add_knight_locomotion_animations(frames, "block_hold", ["melee_2h_block_hold"])
-	_add_knight_locomotion_animations(frames, "hit", ["unarmed_light_hitreact", "unarmed_light_hitreact_down", "hit_recoil"])
-	_add_knight_locomotion_animations(frames, "death", ["death", "unarmed_death"])
-	return frames if frames.get_animation_names().size() > 0 else null
-
-
-func _add_knight_locomotion_animations(frames: SpriteFrames, spec_key: String, names: Array) -> void:
-	var spec: Dictionary = KNIGHT_TEST_ANIMATION_SPECS.get(spec_key, {})
-	if spec.is_empty():
-		return
-	var texture := load("%s/%s" % [knight_test_sprite_dir, String(spec.get("file", ""))]) as Texture2D
-	if texture == null:
-		push_warning("[KnightTestSkin] Missing sheet for %s at %s" % [spec_key, knight_test_sprite_dir])
-		return
-	for name_variant in names:
-		var animation_name := StringName(str(name_variant))
-		var row := _get_knight_test_row_for_animation_name(String(animation_name))
-		_add_knight_sheet_animation(
-			frames,
-			animation_name,
-			texture,
-			row,
-			float(spec.get("fps", 8.0)),
-			bool(spec.get("loop", true))
-		)
-
-
-func _get_knight_test_row_for_animation_name(animation_name: String) -> int:
-	if animation_name.ends_with("_up_right"):
-		return knight_test_row_up_right
-	if animation_name.ends_with("_down_right"):
-		return knight_test_row_down_right
-	if animation_name.ends_with("_up"):
-		return knight_test_row_up
-	if animation_name.ends_with("_down"):
-		return knight_test_row_down
-	if animation_name == "default" or animation_name == "idle" or animation_name == "idle_long":
-		return knight_test_row_down
-	return knight_test_row_right
-
-
-func _add_knight_sheet_animation(
-	frames: SpriteFrames,
-	animation_name: StringName,
-	texture: Texture2D,
-	row: int,
-	fps: float,
-	loop: bool
-) -> void:
-	if frames.has_animation(animation_name):
-		frames.remove_animation(animation_name)
-	frames.add_animation(animation_name)
-	frames.set_animation_speed(animation_name, fps)
-	frames.set_animation_loop(animation_name, loop)
-	var frame_size := knight_test_frame_size
-	var columns: int = maxi(1, knight_test_frame_columns)
-	for column in range(columns):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(
-			column * frame_size.x,
-			clampi(row, 0, 7) * frame_size.y,
-			frame_size.x,
-			frame_size.y
-		)
-		frames.add_frame(animation_name, atlas)
-
 func _draw():
 	if not debug_draw_sockets and not operator_weapon_socket_debug_enabled:
 		return
@@ -10957,8 +10720,17 @@ func _get_full_dodge_animation() -> StringName:
 	return DODGE_FULL_NORTH_ANIMATION if _dodge_direction.y < -0.05 else DODGE_FULL_SOUTH_ANIMATION
 
 
+## The canonical dodge FX identity for the current dodge direction.
+##
+## The dodge FX strip is authored for north and south only; a lateral dodge
+## presents the southern strip mirrored by `flip_h`, which is what the runtime
+## builder this replaced also did. Choosing between the two authored facings is
+## presentation policy and stays here rather than in the selector.
 func _get_full_dodge_fx_animation() -> StringName:
-	return DODGE_FULL_NORTH_FX_ANIMATION if _dodge_direction.y < -0.05 else DODGE_FULL_SOUTH_FX_ANIMATION
+	var sector: StringName = &"n" if _dodge_direction.y < -0.05 else &"s"
+	return _get_operator_animation_selector().resolve_sector(
+		&"shared", &"transition", &"dodge_01", sector, &"fx"
+	)
 
 
 func _is_full_dodge_animation(animation_name: StringName) -> bool:
@@ -10984,9 +10756,8 @@ func _play_dodge_fx(force_restart: bool = false, start_frame: int = 0) -> void:
 	if dodge_fx_back_sprite == null or dodge_fx_back_sprite.sprite_frames == null:
 		return
 	var animation_name := _get_full_dodge_fx_animation()
-	if not dodge_fx_back_sprite.sprite_frames.has_animation(animation_name):
-		animation_name = DODGE_STEP_FX_ANIMATION
-	if not dodge_fx_back_sprite.sprite_frames.has_animation(animation_name):
+	if animation_name.is_empty() \
+	or not _has_playable_sprite_animation(dodge_fx_back_sprite.sprite_frames, animation_name):
 		return
 	dodge_fx_back_sprite.visible = true
 	dodge_fx_back_sprite.z_index = -1
@@ -12536,116 +12307,6 @@ func _update_pending_ranged_shot(delta: float) -> void:
 	_pending_ranged_shot["timer"] = timer
 	if timer <= 0.0:
 		_emit_pending_ranged_shot()
-
-
-## Initialize the compatibility FX and overlay renderers.
-##
-## This used to be `_ensure_runtime_body_animations()`, which forked
-## `animated_sprite.sprite_frames` with `duplicate(true)` and injected legacy
-## full-body clips into the copy. `animated_sprite` now binds the shared canonical
-## runtime SpriteFrames directly, and nothing may mutate that resource -- an
-## injection there would rewrite the spine for every renderer at once. The
-## full-body clips it used to add are published canonically instead: the fast
-## chain retired with its capability probe, the melee stance placeholder retired
-## with it, and ranged fire-walk and the full dodge strips resolve through
-## `RANGED_FIRE_WALK_ANIMATION` and `DODGE_FULL_*_ANIMATION`.
-##
-## What survives is only the melee FX and dodge FX overlays, which are still
-## compatibility renderers with their own resources and belong to a later slice.
-## The name says so, so that nothing reintroduces body mutation here.
-func _ensure_compatibility_overlay_animations() -> void:
-	_ensure_melee_fast_chain_fx_animations()
-	_ensure_dodge_fx_animation()
-
-
-func _ensure_melee_fast_chain_fx_animations() -> void:
-	if melee_fx_overlay_sprite == null:
-		return
-	if melee_fx_overlay_sprite.sprite_frames == null:
-		melee_fx_overlay_sprite.sprite_frames = SpriteFrames.new()
-	var runtime_frames := (
-		melee_fx_overlay_sprite.sprite_frames.duplicate()
-		as SpriteFrames
-	)
-	if runtime_frames == null:
-		return
-	var changed := false
-	for animation_variant: Variant in MELEE_FAST_CHAIN_FX_SHEETS:
-		var animation_name := StringName(animation_variant)
-		var spec := MELEE_FAST_CHAIN_FX_SHEETS[animation_name] as Dictionary
-		var texture := _load_optional_texture(
-			String(spec.get("path", "")),
-			null
-		)
-		if texture == null:
-			continue
-		var frame_count := int(spec.get("frames", 0))
-		var expected_size := Vector2i(96 * frame_count, 96)
-		var actual_size := Vector2i(
-			texture.get_width(),
-			texture.get_height()
-		)
-		if actual_size != expected_size:
-			_obs_warning(
-				"Operator fast-chain FX strip has invalid dimensions",
-				{
-					"animation": String(animation_name),
-					"path": String(spec.get("path", "")),
-					"expected": expected_size,
-					"actual": actual_size,
-				}
-			)
-			continue
-		if runtime_frames.has_animation(animation_name):
-			runtime_frames.remove_animation(animation_name)
-		_add_sheet_animation(
-			runtime_frames,
-			String(animation_name),
-			texture,
-			frame_count,
-			false,
-			MELEE_FAST_CHAIN_FPS
-		)
-		changed = true
-	if changed:
-		melee_fx_overlay_sprite.sprite_frames = runtime_frames
-
-
-func _ensure_optional_sheet_animation(
-	runtime_frames: SpriteFrames,
-	animation_name: StringName,
-	sheet_paths: Array,
-	loop: bool,
-	fps: float
-) -> bool:
-	if runtime_frames.has_animation(animation_name):
-		return false
-	for sheet_path in sheet_paths:
-		var texture: Texture2D = _load_optional_texture(String(sheet_path), null)
-		if texture == null:
-			continue
-		var frame_count: int = max(1, texture.get_width() / 96)
-		_add_sheet_animation(runtime_frames, String(animation_name), texture, frame_count, loop, fps)
-		return true
-	return false
-
-
-func _ensure_dodge_fx_animation() -> void:
-	if dodge_fx_back_sprite == null:
-		return
-	if dodge_fx_back_sprite.sprite_frames == null:
-		dodge_fx_back_sprite.sprite_frames = SpriteFrames.new()
-	var runtime_fx_frames := dodge_fx_back_sprite.sprite_frames.duplicate() as SpriteFrames
-	if runtime_fx_frames == null:
-		return
-	var changed := false
-	changed = _ensure_optional_sheet_animation(runtime_fx_frames, DODGE_FULL_NORTH_FX_ANIMATION, [DODGE_FULL_NORTH_FX_SHEET_PATH], false, DODGE_FULL_SEQUENCE_FPS) or changed
-	changed = _ensure_optional_sheet_animation(runtime_fx_frames, DODGE_FULL_SOUTH_FX_ANIMATION, [DODGE_FULL_SOUTH_FX_SHEET_PATH], false, DODGE_FULL_SEQUENCE_FPS) or changed
-	changed = _ensure_optional_sheet_animation(runtime_fx_frames, DODGE_STEP_FX_ANIMATION, [DODGE_STEP_FX_SHEET_PATH], false, 18.0) or changed
-	if changed:
-		dodge_fx_back_sprite.sprite_frames = runtime_fx_frames
-
-
 func _update_body_recoil(delta: float) -> void:
 	if _body_recoil_offset == Vector2.ZERO:
 		return
@@ -12746,41 +12407,6 @@ func _wants_block() -> bool:
 		and _is_attack_secondary_pressed() \
 		and not _guard_repress_required_after_parry_success \
 		and (_guard_requested_from_secondary or _block_phase in [&"enter", &"hold", &"hitreact"])
-
-
-
-
-
-func _add_sheet_animation(frames: SpriteFrames, animation_name: String, texture: Texture2D, frame_count: int, loop: bool, fps: float) -> void:
-	if texture == null or frame_count <= 0:
-		return
-	if not frames.has_animation(animation_name):
-		frames.add_animation(animation_name)
-	frames.set_animation_loop(animation_name, loop)
-	frames.set_animation_speed(animation_name, fps)
-
-	var frame_width: int = texture.get_width() / frame_count
-	var frame_height: int = texture.get_height()
-	for i in range(frame_count):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(i * frame_width, 0, frame_width, frame_height)
-		frames.add_frame(animation_name, atlas)
-
-
-func _load_optional_texture(path: String, fallback: Texture2D) -> Texture2D:
-	if ResourceLoader.exists(path, "Texture2D"):
-		var imported := load(path)
-		if imported is Texture2D:
-			return imported as Texture2D
-	if not FileAccess.file_exists(path):
-		return fallback
-	var image := Image.load_from_file(ProjectSettings.globalize_path(path))
-	if image != null and not image.is_empty():
-		return ImageTexture.create_from_image(image)
-	return fallback
-
-
 func _has_active_idle_input() -> bool:
 	return _input_frame.has_any_activity() \
 		or _melee_active \
@@ -13009,11 +12635,6 @@ func _get_body_animation_aim_state() -> StringName:
 func _update_primary_weapon_visual(is_firing: bool) -> void:
 	if _is_primary_ranged_aim_presentation_active() or _is_primary_ranged_fire_presentation_active():
 		_hide_legacy_primary_ranged_presentation_for_modular_fire()
-		return
-	if _knight_test_skin_active:
-		_hide_custom_operator_visual_layers()
-		if primary_weapon_socket:
-			primary_weapon_socket.rotation = 0.0
 		return
 	if _is_using_sidearm_ranged():
 		if primary_weapon_socket:

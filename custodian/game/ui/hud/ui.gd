@@ -540,7 +540,6 @@ func _register_devconsole_commands() -> void:
 		_register_devconsole_command(console, "spawn_vaultwing", _devconsole_spawn_vaultwing)
 		_register_devconsole_command(console, "spawn_pursuit_frame", _devconsole_spawn_pursuit_frame)
 		_register_devconsole_command(console, "spawn_savage", _devconsole_spawn_savage)
-		_register_devconsole_command(console, "knight_skin", _devconsole_knight_skin)
 		_register_devconsole_command(console, "ui_status", _devconsole_ui_status)
 		_register_devconsole_command(console, "fab_status", _devconsole_fab_status)
 		_register_devconsole_command(console, "fab_recipes", _devconsole_fab_recipes)
@@ -798,29 +797,6 @@ func _devconsole_force_enemy_steal(args: Array) -> String:
 			enemy.call("force_behavior_steal")
 			count += 1
 	return "Forced steal on %d behavior enemies" % count
-
-func _devconsole_knight_skin(args: Array) -> String:
-	var operator = _get_operator_node()
-	if operator == null:
-		return "Operator not found"
-	if not operator.has_method("set_knight_test_skin_enabled"):
-		return "Operator does not expose Knight test skin controls"
-	var mode := "toggle"
-	if args.size() > 0:
-		mode = str(args[0]).strip_edges().to_lower()
-	match mode:
-		"on", "true", "1", "enable", "enabled":
-			operator.call("set_knight_test_skin_enabled", true)
-		"off", "false", "0", "disable", "disabled":
-			operator.call("set_knight_test_skin_enabled", false)
-		"status":
-			pass
-		"toggle", "":
-			operator.call("toggle_knight_test_skin")
-		_:
-			return "Usage: knight_skin [on|off|toggle|status]"
-	var active := bool(operator.call("is_knight_test_skin_active")) if operator.has_method("is_knight_test_skin_active") else false
-	return "Knight skin: " + ("ON" if active else "OFF")
 
 func _get_operator_node() -> Node:
 	var operator := get_tree().get_first_node_in_group("player")
