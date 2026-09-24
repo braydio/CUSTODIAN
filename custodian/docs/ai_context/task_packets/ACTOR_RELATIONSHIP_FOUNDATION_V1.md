@@ -1,6 +1,6 @@
 # Actor Relationship Foundation V1
 
-- Status: `in_progress`
+- Status: `complete`
 - Authority: `design/04_architecture/ACTOR_RELATIONSHIP_AND_TARGETABILITY.md`
 - Scope: shared allegiance/targetability seam for Vaultwing pre-bond integration.
 - Non-goals: bonding, persistence identity, NPC refactor, faction diplomacy, or asset work.
