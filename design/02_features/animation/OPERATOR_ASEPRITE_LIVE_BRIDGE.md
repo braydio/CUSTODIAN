@@ -264,6 +264,12 @@ optional WebSocket support and address-in-use errors become `UNAVAILABLE`; the
 Workbench browser, editing, review, and publication surfaces continue normally.
 The controller never chooses another port or terminates the conflicting owner.
 
+Live preview export accepts only the bounded composition values `body`, `fx`,
+and `body_fx`. Each is rendered from manifest-authorized layers, remains
+revision-guarded and detached from the document, and writes a mode-specific
+preview artifact. No guide, reference, draft, or arbitrary layer is exposed by
+the command.
+
 Textual's awaited async unmount hook stops the server and bounds WebSocket close
 waiting to one second. It does not close Aseprite, save a sprite, or mutate any
 document. Aseprite remains open and its Packet 2 client quietly retries until a

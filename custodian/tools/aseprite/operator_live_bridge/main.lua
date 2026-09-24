@@ -465,6 +465,10 @@ local function handle_export_preview(message)
   local expected_path = payload.document_path
   local output_path = payload.output_path
   local expected_revision = payload.revision
+  local composition = payload.composition or "body_fx"
+  if composition ~= "body" and composition ~= "fx" and composition ~= "body_fx" then
+    export_result(message, { ok = false, error = "invalid composition" }); return
+  end
   local sprite = app.sprite
   if sprite == nil then
     export_result(message, { ok = false, error = "no active Aseprite document" })
@@ -515,7 +519,7 @@ local function handle_export_preview(message)
   local modified_before = sprite.isModified
   local ok, result = pcall(function()
     local manifest = LivePreview.read_json(manifest_path)
-    return LivePreview.render(sprite, manifest, output_path)
+    return LivePreview.render(sprite, manifest, output_path, composition)
   end)
   if not ok then
     export_result(message, {

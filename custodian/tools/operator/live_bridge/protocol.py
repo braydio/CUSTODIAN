@@ -146,6 +146,9 @@ def _validate_payload(message: Message) -> None:
         if not isinstance(output_path, str) or not output_path:
             raise ProtocolError("command.export_preview requires output_path")
         _nonnegative_int(payload, "revision")
+        mode = payload.get("composition", "body_fx")
+        if mode not in ("body", "fx", "body_fx"):
+            raise ProtocolError("composition must be body, fx, or body_fx")
     elif message.type is MessageType.SELECT_LAYER:
         document_path = payload.get("document_path")
         layer = payload.get("layer")

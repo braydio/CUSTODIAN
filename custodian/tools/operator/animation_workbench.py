@@ -83,7 +83,12 @@ def _baseline(plan, ws):
         src=m.REPO_ROOT/r["source_path"]; dst=base/f"{r['binding_id']}.png"; shutil.copy2(src,dst); r["input_path"]=str(dst.resolve())
 
 def aseprite_run(binary, manifest, mode):
-    subprocess.run([str(binary),"-b","--script-param",f"mode={mode}","--script-param",f"manifest={manifest.resolve()}","--script",str(LUA)],check=True)
+    try:
+        subprocess.run([str(binary),"-b","--script-param",f"mode={mode}","--script-param",f"manifest={manifest.resolve()}","--script",str(LUA)],check=True,capture_output=True,text=True)
+    except subprocess.CalledProcessError as exc:
+        detail = "\n".join(part.strip() for part in (exc.stdout or "", exc.stderr or "") if part and part.strip())
+        message = detail[-4000:] or f"Aseprite exited with status {exc.returncode}"
+        raise m.WorkbenchError("ASEPRITE WORKBENCH EXPORT FAILED\n" + message) from exc
 
 def export_preview(manifest, aseprite=None):
     """Export saved workbench pixels into ignored review cache only."""

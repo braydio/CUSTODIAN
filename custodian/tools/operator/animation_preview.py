@@ -19,6 +19,7 @@ def consume_frame_time(elapsed_sec: float, fps: float) -> tuple[bool, float]:
 
 PreviewSource = Literal["live", "workbench", "canonical", "runtime"]
 ZoomMode = Literal["auto", "1x", "2x", "3x", "fit"]
+CompositionMode = Literal["body", "fx", "body_fx"]
 PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v1"
 SEQUENCE_SCHEMA = "custodian.operator_animation_review_sequence.v1"
 
@@ -209,17 +210,26 @@ def scale_preview_frame(frame: Image.Image, zoom: ZoomMode | int) -> Image.Image
     return rgba.resize((rgba.width * scale, rgba.height * scale), Image.Resampling.NEAREST)
 
 
-def select_presentation_layers(layers: list[PresentationLayer]) -> list[PresentationLayer]:
-    """Select one equivalent authored presentation stack for every source mode."""
+def select_presentation_layers(layers: list[PresentationLayer], mode: CompositionMode = "body_fx") -> list[PresentationLayer]:
+    """Select the manifest-authorized authored stack for a composition mode."""
+    if mode not in ("body", "fx", "body_fx"):
+        raise ValueError(f"unsupported composition mode: {mode}")
     by_name = {layer.name: layer for layer in layers}
+    if mode == "fx":
+        selected = [by_name["fx"]] if "fx" in by_name else []
+        if not selected:
+            raise ValueError("Selected animation has no FX layer")
+        return selected
     selected: list[PresentationLayer] = []
     if {"lower_body", "upper_body"} <= by_name.keys():
         selected.extend((by_name["lower_body"], by_name["upper_body"]))
     elif "full_body" in by_name:
         selected.append(by_name["full_body"])
-    for name in ("head", "cape", "weapon", "fx"):
+    for name in ("head", "cape", "weapon"):
         if name in by_name:
             selected.append(by_name[name])
+    if mode == "body_fx" and "fx" in by_name:
+        selected.append(by_name["fx"])
     if not selected:
         raise ValueError("animation has no authored presentation body or overlay layers")
     return selected
@@ -245,7 +255,7 @@ class AnimationPreviewProvider:
         self.repo_root = Path(repo_root); self.catalog_path = Path(catalog_path)
         self.source_index = source_index; self.workspace_root = Path(workspace_root)
 
-    def _catalog_layers(self, identity: SemanticIdentity) -> list[PresentationLayer]:
+    def _catalog_layers(self, identity: SemanticIdentity, mode: CompositionMode = "body_fx") -> list[PresentationLayer]:
         payload = json.loads(self.catalog_path.read_text())
         entry = payload.get("animations", {}).get(identity.key)
         if not entry:
@@ -255,18 +265,18 @@ class AnimationPreviewProvider:
             raw = str(layer["path"])
             path = self.repo_root / "custodian" / raw.removeprefix("res://") if raw.startswith("res://") else self.repo_root / raw
             rows.append(PresentationLayer(name, path, int(layer["frames"]), tuple(layer["frame_size"])))
-        return select_presentation_layers(rows)
+        return select_presentation_layers(rows, mode)
 
-    def _canonical_layers(self, identity: SemanticIdentity) -> list[PresentationLayer]:
+    def _canonical_layers(self, identity: SemanticIdentity, mode: CompositionMode = "body_fx") -> list[PresentationLayer]:
         rows = []
         for sid, (path, key) in self.source_index().items():
             if sid[0] == "operator" and tuple(sid[2:6]) == (identity.profile, identity.group, identity.action, identity.direction):
                 rows.append(PresentationLayer(str(sid[1]), Path(path), int(key.frames), (int(key.frame_width), int(key.frame_height))))
         if not rows:
             raise ValueError(f"animation absent from canonical source: {identity.key}")
-        return select_presentation_layers(rows)
+        return select_presentation_layers(rows, mode)
 
-    def _workbench_layers(self, identity: SemanticIdentity) -> list[PresentationLayer]:
+    def _workbench_layers(self, identity: SemanticIdentity, mode: CompositionMode = "body_fx") -> list[PresentationLayer]:
         workspace = self.workspace_root / identity.profile / identity.group / identity.action / identity.direction
         manifest_path = workspace / "workbench.json"
         if not manifest_path.exists():
@@ -284,12 +294,12 @@ class AnimationPreviewProvider:
                 rows.append(PresentationLayer(str(binding.get("binding_id", "")), path, int(contract.get("frames", binding.get("frames", 0))), size))
         if not rows:
             raise ValueError(f"workbench has no saved preview export: {identity.key}")
-        return select_presentation_layers(rows)
+        return select_presentation_layers(rows, mode)
 
-    def load(self, identity: SemanticIdentity, source: PreviewSource = "runtime") -> Preview:
+    def load(self, identity: SemanticIdentity, source: PreviewSource = "runtime", mode: CompositionMode = "body_fx") -> Preview:
         if source not in ("workbench", "canonical", "runtime"):
             raise ValueError(f"live preview is not a persisted source: {source}")
-        layers = self._workbench_layers(identity) if source == "workbench" else self._canonical_layers(identity) if source == "canonical" else self._catalog_layers(identity)
+        layers = self._workbench_layers(identity, mode) if source == "workbench" else self._canonical_layers(identity, mode) if source == "canonical" else self._catalog_layers(identity, mode)
         paths = [item.path for item in layers]
         fingerprint = _digest(paths)
         frames, size = composite_layers(layers)

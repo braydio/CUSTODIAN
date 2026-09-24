@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from functools import partial
 import shutil
 import subprocess
@@ -116,6 +117,9 @@ class OperatorWorkbenchApp(App):
         Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", show=False),
         Binding("ctrl+down", "timeline_down", "Move clip right", show=False), Binding("ctrl+s", "timeline_save", "Save sequence", show=False),
         Binding("ctrl+o", "timeline_load", "Load sequence", show=False),
+        Binding("y", "copy_spritesheet", "Copy spritesheet", show=False),
+        Binding("shift+y", "cycle_copy_mode", "Copy mode", show=False),
+        Binding("shift+u", "toggle_superseded", "Superseded", show=False),
         Binding("m", "motion_mode", "Motion mode", show=False), Binding("h", "motion_heading", "Motion heading", show=False),
         Binding("g", "motion_ground", "Motion ground", show=False), Binding("c", "motion_curve", "Motion curve", show=False),
         Binding("d", "motion_distance", "Motion distance", show=False), Binding("shift+l", "motion_loop_cycles", "Motion loop span", show=False),
@@ -517,6 +521,36 @@ class OperatorWorkbenchApp(App):
 
     def action_cursor_down(self) -> None: self._main_widget("#animation-tree", AnimationTree).action_cursor_down()
     def action_cursor_up(self) -> None: self._main_widget("#animation-tree", AnimationTree).action_cursor_up()
+    def action_cycle_copy_mode(self) -> None:
+        modes = ("body", "fx", "body_fx")
+        self.state.copy_mode = modes[(modes.index(self.state.copy_mode) + 1) % len(modes)]
+        self._main_widget("#context-key-bar", ContextKeyBar).set_mode(self.state.mode, self.state.copy_mode, self.state.show_superseded)
+        self._activity(f"Copy mode: {self.state.copy_mode.upper().replace('_', ' + ')}")
+
+    def action_toggle_superseded(self) -> None:
+        self.state.show_superseded = self.service.toggle_superseded()
+        self.run_worker(self._reload_browser(), group="browser", exclusive=True)
+
+    def action_copy_spritesheet(self) -> None:
+        if self.state.selection is None:
+            self._activity("No animation selected", "WARN"); return
+        self.run_worker(self._copy_spritesheet(), group="clipboard", exclusive=True, exit_on_error=False)
+
+    async def _copy_spritesheet(self) -> None:
+        try:
+            live_path = live_frames = live_size = None
+            workbench = self._selected_live_workbench_path()
+            if workbench is not None and self._live_document_matches_selection() and self.live_bridge.snapshot().status is LiveBridgeUIStatus.CONNECTED:
+                await self.live_bridge.export_preview(workbench, self.live_bridge.server.state.document_revision, self.state.copy_mode)
+                live_path = self.live_bridge._live_preview_path(workbench, self.state.copy_mode)
+                manifest = json.loads((workbench.parent / "workbench.json").read_text())
+                live_frames = int(manifest["timeline"]["document_frames"])
+                live_size = (int(manifest["canvas"]["width"]), int(manifest["canvas"]["height"]))
+            result = await self._thread(self.service.copy_spritesheet, self.state.selection, mode=self.state.copy_mode, live_path=live_path, live_frames=live_frames, live_frame_size=live_size)
+            width, height = result["size"]
+            self._activity(f"Copied {result['mode'].upper().replace('_', '+')} · {result['source'].upper()} · {result['identity']} · {result['frames']}f · {width}×{height}", "OK")
+        except Exception as error:
+            self._error(error)
     def action_full_refresh(self) -> None: self.run_worker(self._reload_browser(), group="browser", exclusive=True)
 
     def _set_mode(self, mode: str) -> None:
@@ -524,7 +558,7 @@ class OperatorWorkbenchApp(App):
         self._reset_preview_clock()
         ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode", "motion": "#motion-mode"}
         for name, selector in ids.items(): self._main_widget(selector, Widget).set_class(name != mode, "hidden")
-        self._main_widget("#context-key-bar", ContextKeyBar).set_mode(mode)
+        self._main_widget("#context-key-bar", ContextKeyBar).set_mode(mode, self.state.copy_mode, self.state.show_superseded)
         if mode == "preview": self.run_worker(self._load_preview(), group="preview-image", exclusive=True)
         if mode == "timeline":
             self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)

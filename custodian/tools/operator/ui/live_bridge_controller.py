@@ -162,23 +162,27 @@ class LiveBridgeController:
             payload["layer_id"] = layer_id
         return await self.server.send_command(MessageType.SET_LAYER_VISIBILITY, payload)
 
-    def _live_preview_path(self, workbench_path: Path) -> Path:
+    def _live_preview_path(self, workbench_path: Path, composition: str = "body_fx") -> Path:
         document = self.server.paths.validate_workbench(workbench_path)
         key = hashlib.sha256(str(document).encode("utf-8")).hexdigest()[:16]
-        output = self.server.paths.preview_root / f"{key}.png"
+        suffix = "" if composition == "body_fx" else f"__{composition}"
+        output = self.server.paths.preview_root / f"{key}{suffix}.png"
         output.parent.mkdir(parents=True, exist_ok=True)
         return output
 
-    async def export_preview(self, workbench_path: Path, revision: int) -> int:
+    async def export_preview(self, workbench_path: Path, revision: int, composition: str = "body_fx") -> int:
         if revision < 0:
             raise ValueError("revision must be non-negative")
         document = self.server.paths.validate_workbench(workbench_path)
-        output = self._live_preview_path(document)
-        return await self.server.send_command(MessageType.EXPORT_PREVIEW, {
+        output = self._live_preview_path(document, composition)
+        payload = {
             "document_path": str(document),
             "output_path": str(output),
             "revision": revision,
-        })
+        }
+        if composition != "body_fx":
+            payload["composition"] = composition
+        return await self.server.send_command(MessageType.EXPORT_PREVIEW, payload)
 
     async def start(self) -> None:
         if self._status not in (LiveBridgeUIStatus.STOPPED, LiveBridgeUIStatus.UNAVAILABLE):

@@ -3,9 +3,12 @@ from __future__ import annotations
 
 import json
 import re
+import io
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any, Callable
+from PIL import Image
 
 import animation_frame_contract as frame_contract
 import animation_workbench as workbench
@@ -45,6 +48,19 @@ class WorkbenchService:
         )
         self.sequence_root = self.workspace_root / "sequences"
         self.motion_request_path = self.repo_root / ".ai/operator_animation_workbench/motion_lab_request.json"
+        self.clipboard_root = self.repo_root / ".ai/operator_animation_workbench/clipboard"
+        self.show_superseded = False
+
+    def _reachability_status(self, selection: AnimationSelection) -> str | None:
+        path = self.repo_root / "custodian/content/data/operator/operator_animation_reachability.json"
+        try:
+            rows = json.loads(path.read_text()).get("entries", [])
+        except (OSError, json.JSONDecodeError):
+            return None
+        statuses = [str(row.get("status")) for row in rows if isinstance(row, dict) and all(
+            row.get(key) == value for key, value in (("profile", selection.profile), ("group", selection.group), ("action", selection.action))
+        )]
+        return "SUPERSEDED" if "SUPERSEDED" in statuses else (statuses[0] if statuses else None)
 
     def _index(self):
         return self.model.source_index(self.source_root, self.weapon_root)
@@ -65,8 +81,75 @@ class WorkbenchService:
             clocks = [key.frames for key in visible_keys if key.layer in ("lower_body", "full_body")]
             frames = clocks[0] if clocks else max(key.frames for key in visible_keys)
             completeness, detail = self.classify_layers(layers)
-            records.append(AnimationRecord(AnimationSelection(profile, group, action, direction), frames, layers, completeness, detail))
+            selection = AnimationSelection(profile, group, action, direction)
+            status = self._reachability_status(selection)
+            if status == "SUPERSEDED" and not self.show_superseded:
+                continue
+            if status == "SUPERSEDED":
+                detail = f"SUPERSEDED · {detail}"
+            records.append(AnimationRecord(selection, frames, layers, completeness, detail))
         return records
+
+    def toggle_superseded(self) -> bool:
+        self.show_superseded = not self.show_superseded
+        return self.show_superseded
+
+    @staticmethod
+    def _png_bytes(frames: tuple[Image.Image, ...]) -> bytes:
+        if not frames:
+            raise ValueError("selected animation has no frames")
+        width, height = frames[0].size
+        sheet = Image.new("RGBA", (width * len(frames), height), (0, 0, 0, 0))
+        for index, frame in enumerate(frames):
+            sheet.alpha_composite(frame.convert("RGBA"), (index * width, 0))
+        stream = io.BytesIO(); sheet.save(stream, format="PNG"); return stream.getvalue()
+
+    def copy_spritesheet(self, selection: AnimationSelection, *, mode: str = "body", source: str | None = None, live_path: Path | None = None, live_frames: int | None = None, live_frame_size: tuple[int, int] | None = None) -> dict[str, Any]:
+        """Compose and copy the selected semantic animation without publishing it."""
+        if mode not in ("body", "fx", "body_fx"):
+            raise ValueError(f"unsupported copy mode: {mode}")
+        if source is None:
+            try:
+                requested = "workbench" if (self.workspace(selection) / "workbench.json").exists() else "runtime"
+            except Exception:
+                requested = "runtime"
+        else:
+            requested = source
+        sources = ("workbench", "runtime") if source is None and requested == "workbench" else ((requested,) if requested in ("workbench", "canonical", "runtime") else ("runtime",))
+        error = None
+        preview = None
+        if live_path is not None:
+            if not live_frames or not live_frame_size:
+                raise ValueError("live copy requires a frame contract")
+            preview = self.preview_provider.load_live(animation_preview.SemanticIdentity(
+                selection.profile, selection.group, selection.action, selection.direction,
+            ), live_path, frames=live_frames, frame_size=live_frame_size)
+            requested = "live"
+        for candidate in (() if preview is not None else sources):
+            try:
+                preview = self.preview_provider.load(animation_preview.SemanticIdentity(
+                    selection.profile, selection.group, selection.action, selection.direction,
+                ), candidate, mode)
+                requested = candidate
+                break
+            except (OSError, ValueError, KeyError) as exc:
+                error = exc
+        if preview is None:
+            raise ValueError(f"unable to compose {selection.identity}: {error}")
+        png = self._png_bytes(preview.frames)
+        filename = "__".join((selection.profile, selection.group, selection.action, selection.direction, mode)) + ".png"
+        path = self.clipboard_root / filename
+        path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(png)
+        provider = shutil.which("wl-copy") or shutil.which("xclip")
+        if provider is None:
+            raise RuntimeError(f"Clipboard image provider unavailable. Generated sheet: {path}")
+        command = [provider, "--type", "image/png"] if Path(provider).name == "wl-copy" else [provider, "-selection", "clipboard", "-t", "image/png", "-i"]
+        try:
+            subprocess.run(command, input=png, check=True, cwd=self.repo_root, capture_output=True)
+        except subprocess.CalledProcessError as exc:
+            detail = (exc.stderr or b"").decode(errors="replace").strip()
+            raise RuntimeError(f"clipboard provider failed: {detail or exc}") from exc
+        return {"mode": mode, "source": requested, "identity": selection.identity, "frames": len(preview.frames), "size": (preview.frame_size[0] * len(preview.frames), preview.frame_size[1]), "path": path}
 
     def available_directions(self, selection: AnimationSelection) -> tuple[str, ...]:
         available = {

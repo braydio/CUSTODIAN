@@ -26,6 +26,9 @@ class ContextKeyBar(Static):
     def on_mount(self) -> None:
         self.set_mode("workbench")
 
-    def set_mode(self, mode: str) -> None:
+    def set_mode(self, mode: str, copy_mode: str = "body", show_superseded: bool = False) -> None:
         hint = HINTS.get(mode, HINTS["workbench"])
+        hint += f"   Y Copy {copy_mode.upper().replace('_', '+')}   ⇧Y Cycle Copy"
+        if mode == "workbench":
+            hint += f"   ⇧U {'Show' if not show_superseded else 'Hide'} Superseded"
         self.update(Text(hint, no_wrap=True, overflow="crop"))

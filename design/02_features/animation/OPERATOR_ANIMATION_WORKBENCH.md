@@ -164,6 +164,20 @@ WorkbenchService remains the exclusive UI/backend boundary. Saved-workbench
 preview exports are keyed by the `.aseprite` SHA under the ignored workspace,
 so a changed saved workbench cannot reuse an earlier export.
 
+### Clipboard reference export
+
+The selected semantic animation can be copied as an exact native-resolution
+transparent horizontal PNG with `Y`. `Shift+Y` cycles `BODY`, `FX ONLY`, and
+`BODY + FX`; the mode is process-local and shown in the contextual key bar.
+The export prefers a matching live unsaved Workbench document, then saved
+Workbench/canonical/runtime sources, and also writes the exact bytes beneath
+`.ai/operator_animation_workbench/clipboard/`. Wayland uses `wl-copy --type
+image/png`; X11 falls back to `xclip`. Missing providers are reported with the
+cache path rather than claimed as a successful copy. `Shift+U` reveals or hides
+reachability-classified `SUPERSEDED` browser rows; preserved source art is not
+deleted. Aseprite failures retain their useful script error in the Workbench
+error dialog.
+
 The persistent Aseprite channel is independently specified in
 `OPERATOR_ASEPRITE_LIVE_BRIDGE.md`. The UI owns its stable loopback server
 lifecycle and truthfully reports waiting/connected/unavailable state. Manual

@@ -262,6 +262,14 @@ How to interpret it:
 
 ## Related Runtime Validation
 
+For a ChatGPT-ready Operator visual reference, open the selected animation in
+the Workbench and press `Y`. The default `BODY` copy excludes FX; `Shift+Y`
+cycles `BODY`, `FX ONLY`, and `BODY + FX`. The exact RGBA strip is placed on
+the local image clipboard (`wl-copy` on Wayland or `xclip` on X11) and retained
+under the ignored `.ai/operator_animation_workbench/clipboard/` cache. `Shift+U`
+toggles preserved `SUPERSEDED` browser rows. Aseprite script failures surface
+their underlying message in OPUI.
+
 After modular asset routing or runtime playback changes, use the focused Godot smoke when the change reaches live Operator presentation:
 
 ```bash
