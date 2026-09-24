@@ -7,6 +7,7 @@ class_name Vaultwing
 const PRESENTATION := preload("res://game/actors/ambient/ambient_creature_presentation_controller.gd")
 const ANIMATION_SET := preload("res://game/actors/ambient/vaultwing/vaultwing_animation_set.tres")
 const CONTROLLER_SCRIPT := preload("res://game/actors/ambient/vaultwing/vaultwing_behavior_controller.gd")
+const BOND_STATE_SCRIPT := preload("res://game/actors/ambient/vaultwing/vaultwing_bond_state.gd")
 const ALLEGIANCE_SCRIPT := preload("res://game/actors/core/actor_allegiance_component.gd")
 const RELATIONSHIP_RESOLVER := preload("res://game/systems/combat/actor_relationship_resolver.gd")
 
@@ -25,6 +26,7 @@ var _dead := false
 var _original_collision_layer := 1
 var _original_collision_mask := 1
 var allegiance_component: ActorAllegianceComponent
+var bond_state: Node
 
 func _ready() -> void:
 	add_to_group("ambient_creature")
@@ -44,6 +46,10 @@ func _ready() -> void:
 	behavior = CONTROLLER_SCRIPT.new()
 	add_child(behavior)
 	behavior.configure(self)
+	bond_state = BOND_STATE_SCRIPT.new()
+	bond_state.name = "VaultwingBondState"
+	add_child(bond_state)
+	bond_state.configure(self)
 
 func _physics_process(delta: float) -> void:
 	if _dead or not behavior_enabled: return
@@ -53,6 +59,8 @@ func _physics_process(delta: float) -> void:
 
 func set_ambient_seed(seed_value: int) -> void:
 	if behavior != null: behavior.set_seed(seed_value)
+	if bond_state != null and bond_state.get_stable_creature_id() == &"vaultwing_unassigned":
+		bond_state.configure(self, StringName("vaultwing_%08x" % absi(seed_value)))
 
 func set_home_position(position: Vector2) -> void:
 	if behavior != null: behavior.set_home_position(position)
@@ -117,11 +125,35 @@ func get_allegiance() -> StringName:
 func set_allegiance(next: StringName) -> bool:
 	return allegiance_component.set_allegiance(next) if allegiance_component != null else false
 
+func get_bond_stage() -> StringName:
+	return bond_state.get_stage() if bond_state != null else BOND_STATE_SCRIPT.WILD
+
+func get_stable_creature_id() -> StringName:
+	return bond_state.get_stable_creature_id() if bond_state != null else &""
+
+func offer_bait(bait_id: StringName, feeder: Node2D = null) -> bool:
+	return bond_state != null and bond_state.offer_bait(bait_id, feeder)
+
+func begin_bond_trial() -> bool:
+	return bond_state != null and bond_state.begin_bond_trial()
+
+func complete_bond_trial(bait_id: StringName = &"vaultwing_bait", feeder: Node2D = null) -> bool:
+	return bond_state != null and bond_state.complete_bond_trial(bait_id, feeder)
+
+func to_save_dict() -> Dictionary:
+	return bond_state.to_save_dict() if bond_state != null else {}
+
+func from_save_dict(data: Dictionary) -> bool:
+	return bond_state != null and bond_state.from_save_dict(data)
+
 func is_hostile_to(other: Node) -> bool:
 	return allegiance_component != null and allegiance_component.is_hostile_to(other)
 
 func has_hostile_intent_toward(other: Node) -> bool:
 	return behavior != null and behavior.has_hostile_intent_toward(other)
+
+func is_bonded() -> bool:
+	return bond_state != null and bond_state.is_bonded()
 
 func is_combat_targetable_by(attacker: Node = null, attacker_team: StringName = &"") -> bool:
 	if _dead or get_altitude_band() == VaultwingBehaviorController.Band.HIGH:

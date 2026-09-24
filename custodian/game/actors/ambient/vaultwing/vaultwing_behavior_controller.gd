@@ -64,6 +64,7 @@ func _remember_target(position: Vector2, source: Node2D = null) -> void:
 	target = source
 
 func request_interest(position: Vector2, source: Node2D = null) -> void:
+	if actor != null and actor.has_method("is_bonded") and bool(actor.call("is_bonded")): return
 	if state == State.DEAD or state in [State.DIVE_WINDUP, State.DIVE_STRIKE, State.CLIMB_OUT, State.AIR_STAGGER, State.GROUND_STAGGER, State.LAND, State.TAKEOFF, State.GROUND_ATTACK, State.RETREAT]:
 		_remember_target(position, source)
 		return
@@ -77,7 +78,7 @@ func request_interest(position: Vector2, source: Node2D = null) -> void:
 		_enter(State.GROUND_STALK)
 
 func request_dive(position: Vector2, source: Node2D = null) -> void:
-	if state == State.DEAD or actor == null: return
+	if state == State.DEAD or actor == null or (actor.has_method("is_bonded") and bool(actor.call("is_bonded"))): return
 	_remember_target(position, source)
 	if band == Band.PERCHED:
 		_pending_after_takeoff = &"INTEREST"
@@ -269,6 +270,7 @@ func _presentation_action_for_state() -> StringName:
 
 func _update_player_interest(delta: float) -> void:
 	if state != State.HIGH_PATROL or _engagement_cooldown_remaining > 0.0: return
+	if actor.has_method("is_bonded") and bool(actor.call("is_bonded")): return
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	if player == null: return
 	if actor.global_position.distance_to(player.global_position) <= profile.awareness_radius:

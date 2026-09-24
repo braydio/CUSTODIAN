@@ -1132,8 +1132,12 @@ Last updated: 2026-09-23
   for the Common Vaultwing wild predator, discrete flight bands, bonding,
   companion commands, Asset V2 family, and Slice A acceptance.
 - `custodian/game/actors/ambient/vaultwing/` — Slice A Common Vaultwing actor,
-  deterministic behavior controller, semantic animation set, and scene; bonding
-  and companion state remain deferred.
+  deterministic behavior controller, semantic animation set, scene, and Slice B
+  bond-state authority; companion commands remain deferred.
+- `design/02_features/ambient/VAULTWING_SLICE_B_BONDING.md` and
+  `custodian/tools/validation/vaultwing_bond_smoke.gd` — first same-instance
+  bonding vertical slice covering peaceful feed progression, voluntary trial,
+  bonded allegiance, stable identity, save/restore, and malformed-state rejection.
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.

@@ -1644,6 +1644,14 @@ Vaultwing hostile intent without coupling EngagementTracker to controller
 internals. The next implementation slice is Vaultwing bonding/companion
 progression; production Vaultwing SFX remains a separate presentation follow-up.
 
+Vaultwing Slice B has begun with a same-instance `VaultwingBondState` vertical
+slice. `WILD → OBSERVING → TOLERANT → ACCEPTING → BONDED` progression, semantic
+bait acceptance/rejection, voluntary bond-trial completion, stable creature
+identity, and save/restore dictionaries are live and covered by
+`vaultwing_bond`. Production bait pickups, inventory consumption, commands,
+companion behavior, global save orchestration, and bonding art remain deferred
+until the interaction sequence is validated.
+
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored
 and west-mirrored strips through the canonical runtime domain: `glide`, `flap`,
