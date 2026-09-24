@@ -179,13 +179,13 @@ func _refresh_target() -> void:
 		return
 	var anchor_position := _get_anchor_position()
 	var engage_range := _get_engage_range()
-	if _targeting.is_valid_command_target(command_target):
+	if _targeting.is_valid_command_target(command_target, self):
 		if command_target.global_position.distance_to(anchor_position) <= engage_range:
 			target = command_target
 			return
 	command_target = null
 	_command_target_instance_id = 0
-	if target != null and is_instance_valid(target) and not _targeting.is_invalid_enemy(target):
+	if target != null and is_instance_valid(target) and not _targeting.is_invalid_enemy(target, self):
 		if target.global_position.distance_to(anchor_position) <= engage_range:
 			return
 	target = _targeting.acquire_target_at_position(self, anchor_position, squad_mode, profile, engage_range)

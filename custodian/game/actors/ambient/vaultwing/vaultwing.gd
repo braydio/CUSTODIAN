@@ -120,6 +120,9 @@ func set_allegiance(next: StringName) -> bool:
 func is_hostile_to(other: Node) -> bool:
 	return allegiance_component != null and allegiance_component.is_hostile_to(other)
 
+func has_hostile_intent_toward(other: Node) -> bool:
+	return behavior != null and behavior.has_hostile_intent_toward(other)
+
 func is_combat_targetable_by(attacker: Node = null, attacker_team: StringName = &"") -> bool:
 	if _dead or get_altitude_band() == VaultwingBehaviorController.Band.HIGH:
 		return false

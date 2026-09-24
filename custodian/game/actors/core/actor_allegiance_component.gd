@@ -19,7 +19,9 @@ func get_allegiance() -> StringName:
 	return _allegiance
 
 func set_allegiance(next: StringName) -> bool:
-	var normalized := _normalize(next)
+	if not _is_valid(next):
+		return false
+	var normalized := next
 	if normalized == _allegiance:
 		_sync_legacy_groups()
 		return false
@@ -43,6 +45,9 @@ func _normalize(value: StringName) -> StringName:
 	if value in [HOSTILE, OPERATOR_ALLIED, NEUTRAL]:
 		return value
 	return NEUTRAL
+
+func _is_valid(value: StringName) -> bool:
+	return value in [HOSTILE, OPERATOR_ALLIED, NEUTRAL]
 
 func _sync_legacy_groups() -> void:
 	if _actor == null or not is_instance_valid(_actor):

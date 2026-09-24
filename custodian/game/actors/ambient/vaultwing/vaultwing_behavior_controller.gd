@@ -285,6 +285,19 @@ func _on_noise_emitted(event: Variant) -> void:
 func _has_valid_target() -> bool: return is_instance_valid(target) and target is Node2D
 func _target_in_range(distance: float) -> bool: return _has_valid_target() and actor.global_position.distance_to(target.global_position) <= distance
 
+func has_hostile_intent_toward(other: Node) -> bool:
+	if other == null or not is_instance_valid(other) or not _has_valid_target() or target != other:
+		return false
+	return state in [
+		State.CIRCLE_INTEREST,
+		State.DIVE_WINDUP,
+		State.DIVE_STRIKE,
+		State.CLIMB_OUT,
+		State.GROUND_STALK,
+		State.GROUND_ATTACK,
+		State.PERCH_ALERT,
+	]
+
 func _select_perch() -> bool:
 	if perch_positions.is_empty(): return false
 	selected_perch = perch_positions[_perch_index % perch_positions.size()]; _perch_index += 1; selected_perch_valid = true; return true

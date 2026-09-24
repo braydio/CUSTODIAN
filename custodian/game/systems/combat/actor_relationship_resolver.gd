@@ -14,6 +14,13 @@ static func resolve_allegiance(actor: Node) -> StringName:
 		return OPERATOR_ALLIED
 	if actor.is_in_group("enemy") or actor.is_in_group("enemies"):
 		return HOSTILE
+	var actor_team: Variant = actor.get("team")
+	if actor_team != null:
+		var team := StringName(str(actor_team))
+		if team in [&"player", &"defense", &"turret"]:
+			return OPERATOR_ALLIED
+		if team == &"enemy":
+			return HOSTILE
 	return NEUTRAL
 
 static func are_hostile(attacker: Node, target: Node, attacker_team: StringName = &"") -> bool:

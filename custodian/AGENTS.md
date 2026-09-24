@@ -310,6 +310,7 @@ or asset-authoring tooling outside active gameplay runtime.
 - Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
 - Push completed work to the remote once committed.
 - Do not amend or force-push unless explicitly asked.
+- Write the closing summary to `<TASK_NAME>_CLAUDE_SUMMARY.md` at the **repository root** and push it with the work. Full rule, including why updating `CURRENT_STATE.md` or a task packet does not discharge it, is in the root `AGENTS.md` under "Closing Summary Files".
 
 ## Design Codex Governance
 

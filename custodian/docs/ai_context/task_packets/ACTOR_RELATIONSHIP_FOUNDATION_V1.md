@@ -1,4 +1,4 @@
-# Actor Relationship Foundation V1
+# Actor Relationship Foundation V1 / V1.1
 
 - Status: `complete`
 - Authority: `design/04_architecture/ACTOR_RELATIONSHIP_AND_TARGETABILITY.md`
@@ -15,6 +15,12 @@
 - same-instance allegiance mutation to operator-allied removes hostile targeting;
 - active projectile, turret, drone, and engagement qualification use the resolver;
 - focused relationship and Vaultwing validation pass.
+- neutral projectile compatibility remains unchanged;
+- turret and drone retained targets are revalidated after dynamic relationship
+  or targetability changes;
+- EngagementTracker accepts a semantic hostile-intent hook before legacy
+  Enemy inspection fallback;
+- unsupported allegiance values are rejected without mutating current state.
 
 ## Handoff
 

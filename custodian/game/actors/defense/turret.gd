@@ -117,7 +117,8 @@ func _physics_process(delta: float) -> void:
 	_prune_enemies_in_range()
 	if target == null or not is_instance_valid(target):
 		target = acquire_target()
-	elif target.global_position.distance_to(global_position) > range \
+	elif not _is_target_valid(target) \
+			or target.global_position.distance_to(global_position) > range \
 			or not _has_terrain_line_of_fire(target.global_position):
 		target = acquire_target()
 
@@ -160,6 +161,8 @@ func _prune_enemies_in_range() -> void:
 	enemies_in_range = enemies_in_range.filter(func(enemy: Node2D) -> bool:
 		if enemy == null or not is_instance_valid(enemy):
 			return false
+		if not _is_target_valid(enemy):
+			return false
 		if enemy.has_method("is_passive_enemy") and bool(enemy.call("is_passive_enemy")):
 			return false
 		if enemy.has_method("is_dead") and bool(enemy.is_dead()):
@@ -176,6 +179,8 @@ func acquire_target() -> Node2D:
 
 	for enemy in enemies_in_range:
 		if enemy == null or not is_instance_valid(enemy):
+			continue
+		if not _is_target_valid(enemy):
 			continue
 		if enemy.has_method("is_passive_enemy") and bool(enemy.call("is_passive_enemy")):
 			continue
@@ -198,6 +203,9 @@ func rotate_barrel() -> void:
 
 func shoot(effective_output: float) -> void:
 	if target == null or not is_instance_valid(target):
+		return
+	if not _is_target_valid(target):
+		target = null
 		return
 	if not _has_terrain_line_of_fire(target.global_position):
 		target = null
@@ -239,6 +247,12 @@ func shoot(effective_output: float) -> void:
 		if is_instance_valid(barrel):
 			barrel.scale = Vector2.ONE
 	)
+
+
+func _is_target_valid(candidate: Node2D) -> bool:
+	if candidate == null or not is_instance_valid(candidate):
+		return false
+	return RelationshipResolver.can_target(self, candidate, &"defense")
 
 
 func _play_mech_gunshot(pos: Vector2) -> void:

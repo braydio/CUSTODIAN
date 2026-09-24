@@ -190,6 +190,9 @@ func _has_live_hostile_intent() -> bool:
 	for hostile in get_tree().get_nodes_in_group("enemy"):
 		if not _is_living_hostile(hostile):
 			continue
+		if hostile.has_method("has_hostile_intent_toward"):
+			if bool(hostile.call("has_hostile_intent_toward", operator)):
+				return true
 		var target_variant: Variant = (
 			hostile.get("target") if _has_property(hostile, &"target") else null
 		)

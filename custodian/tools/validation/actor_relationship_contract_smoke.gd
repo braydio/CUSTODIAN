@@ -2,6 +2,7 @@ extends SceneTree
 
 const VAULTWING_SCENE := preload("res://game/actors/ambient/vaultwing/vaultwing.tscn")
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
+const ENEMY_SCENE := preload("res://game/actors/enemies/enemy.tscn")
 const RESOLVER := preload("res://game/systems/combat/actor_relationship_resolver.gd")
 
 var failures: PackedStringArray = PackedStringArray()
@@ -16,6 +17,21 @@ func _run() -> void:
 	player.name = "Player"
 	player.add_to_group("player")
 	root.add_child(player)
+	var ordinary_enemy := ENEMY_SCENE.instantiate()
+	root.add_child(ordinary_enemy)
+	ordinary_enemy.position = Vector2(500.0, 500.0)
+	await process_frame
+	if RESOLVER.resolve_allegiance(ordinary_enemy) != ActorAllegianceComponent.HOSTILE:
+		_fail("legacy Enemy group fallback did not resolve HOSTILE")
+	if not RESOLVER.can_target(player, ordinary_enemy, &"player"):
+		_fail("player cannot target ordinary Enemy through legacy fallback")
+	var neutral_bullet := BULLET_SCENE.instantiate()
+	neutral_bullet.team = "neutral"
+	neutral_bullet.shooter = player
+	root.add_child(neutral_bullet)
+	neutral_bullet.position = Vector2(-500.0, -500.0)
+	if not neutral_bullet.call("_can_hit", ordinary_enemy):
+		_fail("neutral projectile lost legacy permissive targeting")
 	var vaultwing := VAULTWING_SCENE.instantiate()
 	root.add_child(vaultwing)
 	await physics_frame
@@ -45,9 +61,13 @@ func _run() -> void:
 	if vaultwing.health != health_after: _fail("allegiance mutation changed health")
 	if vaultwing.is_in_group("enemy") or not vaultwing.is_in_group("ally"): _fail("allied compatibility groups were not synchronized")
 	if RESOLVER.can_target(player, vaultwing, &"player"): _fail("allied Vaultwing remains targetable by player")
+	if vaultwing.set_allegiance(&"operator_allyed"):
+		_fail("invalid allegiance value was accepted")
+	if vaultwing.get_allegiance() != ActorAllegianceComponent.OPERATOR_ALLIED:
+		_fail("invalid allegiance value changed the current allegiance")
 	vaultwing.set_allegiance(ActorAllegianceComponent.HOSTILE)
 	if not vaultwing.is_in_group("enemy") or vaultwing.is_in_group("ally"): _fail("HOSTILE compatibility restoration failed")
-	vaultwing.queue_free(); bullet.queue_free(); player.queue_free()
+	vaultwing.queue_free(); bullet.queue_free(); neutral_bullet.queue_free(); ordinary_enemy.queue_free(); player.queue_free()
 
 func _fail(message: String) -> void:
 	failures.append(message)

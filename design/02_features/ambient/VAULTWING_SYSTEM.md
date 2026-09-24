@@ -546,9 +546,10 @@ Do not create a second missing-asset tracker. Register the Asset V2 family and
 use the current `asset.py` plan/status/doctor commands rather than inventing
 pipeline commands.
 
-The next implementation slice is **Actor Relationship Foundation V1**, establishing
-shared allegiance/targetability semantics before bonding. After that, proceed to
-**bonding and companion progression**, then companion behavior. Inspect
+The Actor Relationship Foundation V1/V1.1 seam is complete: shared allegiance
+and targetability semantics now precede bonding, while legacy groups remain
+compatibility indexes. The next implementation slice is **bonding and companion
+progression**, then companion behavior. Inspect
 the live dependency graph before choosing exact file ownership. Preserve
 unrelated working-tree changes; keep simulation deterministic; do not expand
 `AmbientCritterManager`; reuse semantic ambient presentation; keep flight as

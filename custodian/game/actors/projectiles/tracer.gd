@@ -125,6 +125,8 @@ func _can_hit(body: Node) -> bool:
 		var collider_team = body.get("team")
 		if collider_team != null and str(collider_team) == team:
 			return false
+	if StringName(team) == &"neutral":
+		return true
 
 	return RelationshipResolver.can_target(shooter, body, StringName(team))
 

@@ -1115,8 +1115,12 @@ Last updated: 2026-09-23
   `custodian/game/systems/combat/actor_relationship_resolver.gd` — compositional
   allegiance state and explicit target qualification used by active combat
   consumers.
-- `custodian/tools/validation/actor_relationship_contract_smoke.gd` — legacy
-  fallback, Vaultwing HIGH/ATTACK targetability, real projectile qualification,
+- `design/04_architecture/ACTOR_RELATIONSHIP_AND_TARGETABILITY.md` — shared
+  allegiance/targetability authority; groups remain migration-compatible
+  discovery indexes rather than pairwise relationship authority.
+- `custodian/tools/validation/actor_relationship_contract_smoke.gd` — ordinary
+  Enemy fallback, neutral-projectile compatibility, Vaultwing HIGH/ATTACK
+  targetability, invalid-allegiance rejection, real projectile qualification,
   and same-instance allegiance mutation coverage.
 
 - `design/02_features/ambient/VAULTWING_SYSTEM.md` — locked design authority

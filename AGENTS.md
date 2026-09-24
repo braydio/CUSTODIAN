@@ -70,6 +70,34 @@ Agents commit completed work without waiting for a per-task instruction.
 - Do not amend or force-push unless explicitly asked.
 - This working tree is shared with other sessions. If unrelated files are dirty alongside yours, commit only your own files so the tree stays reconcilable.
 
+## Closing Summary Files
+
+Every agent writes the summary that normally closes a message to
+`<TASK_NAME>_CLAUDE_SUMMARY.md` at the repo root, and pushes it with the work.
+
+- **Name it after the work slice, not the message.** `C2A_R4_CLAUDE_SUMMARY.md`,
+  `UNARMED_FAST_CHAIN_PART_C_CLAUDE_SUMMARY.md`, `OPERATOR_SLICE_D_CLAUDE_SUMMARY.md`.
+- **One file per task.** Overwrite the previous version as the task advances;
+  never append, never create a second file for the same slice.
+- **Stage it in the same commit as the work it describes.** If the work has
+  already landed, a follow-up commit is the fallback, not the intent.
+- **Keep writing the summary in the reply as well.** The file is in addition to
+  the reply, not instead of it.
+- **It is not a substitute for the authority docs, and they are not a substitute
+  for it.** Updating `CURRENT_STATE.md`, a task packet, `FILE_INDEX.md`, an
+  architecture contract or an ownership map does not discharge this. Those record
+  what the repo now *is*; the summary records what this slice *did* — the
+  measurements, the negative controls, what was deferred, and what went wrong on
+  the way. This distinction is exactly where it tends to get skipped.
+
+**Why:** the work is followed across sessions and machines. A summary that exists
+only in terminal scrollback is gone the moment the session ends or context is
+compacted. In the repo it travels with the branch and is reviewable next to the
+diff.
+
+Say the awkward parts in it. A summary that only records what worked is not worth
+reading next to the diff, which already shows that.
+
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 

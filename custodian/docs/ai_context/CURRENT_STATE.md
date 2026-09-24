@@ -1604,6 +1604,14 @@ post-engagement cooldown prevents immediate repeated dives. No bonding, companio
 commands, or mounting are implemented. Vaultwing-specific production SFX remains
 an explicit presentation follow-up.
 
+Actor Relationship Foundation V1 and its V1.1 seal are complete. The shared
+relationship resolver separates discovery/indexing, allegiance, and dynamic
+targetability; it preserves legacy Enemy/team behavior, invalidates retained
+turret and drone targets when allegiance or targetability changes, and exposes
+Vaultwing hostile intent without coupling EngagementTracker to controller
+internals. The next implementation slice is Vaultwing bonding/companion
+progression; production Vaultwing SFX remains a separate presentation follow-up.
+
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored
 and west-mirrored strips through the canonical runtime domain: `glide`, `flap`,

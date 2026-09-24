@@ -16,13 +16,19 @@ func _init() -> void:
 	root.add_child(root_node)
 	var world := Node2D.new(); world.name = "World"; root_node.add_child(world)
 	var ambient := Node2D.new(); ambient.name = "Ambient"; world.add_child(ambient)
-	var player := Node2D.new(); player.name = "Player"; player.add_to_group("player"); player.position = Vector2(-1000, -1000); world.add_child(player)
+	var player := Node2D.new(); player.name = "Player"; player.add_to_group("player"); player.position = Vector2(640, 640); world.add_child(player)
 	var spawner := SPAWNER_SCRIPT.new(); spawner.name = "VaultwingSpawner"; spawner.vaultwing_container_path = NodePath("/root/GameRoot/World/Ambient"); spawner.max_active_vaultwings = 1; root_node.add_child(spawner)
 	var loader := LOADER_SCRIPT.new(); loader.name = "ContractWorldLoaderFixture"; loader.vaultwing_spawner_path = NodePath("/root/GameRoot/VaultwingSpawner"); loader.process_mode = Node.PROCESS_MODE_DISABLED; root_node.add_child(loader)
 	var candidates: Array[Vector2i] = [Vector2i(20, 20), Vector2i(32, 20), Vector2i(20, 34)]
 	await process_frame
 	loader.place_vaultwing_markers_for_candidates(candidates, world)
 	await physics_frame
+	await process_frame
+	if spawner.get_active_count() != 0:
+		failures.append("spawn marker inside player-start exclusion radius was accepted")
+	player.position = Vector2(-1000, -1000)
+	spawner.reset_for_world()
+	loader.place_vaultwing_markers_for_candidates(candidates, world)
 	await process_frame
 	var generated_spawns: Array[Node] = root.get_tree().get_nodes_in_group("vaultwing_spawn_marker")
 	var generated_perches: Array[Node] = root.get_tree().get_nodes_in_group("vaultwing_perch")
