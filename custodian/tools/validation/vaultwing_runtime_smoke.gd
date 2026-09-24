@@ -35,6 +35,7 @@ func _run() -> void:
 	if not actor.is_in_group("vaultwing"): _fail("actor missing vaultwing group")
 	if not actor.is_in_group("enemy"): _fail("wild Vaultwing missing generic enemy group")
 	if actor.counts_for_wave_cap(): _fail("wild Vaultwing incorrectly counts for enemy wave cap")
+	if actor.get_allegiance() != &"hostile": _fail("wild Vaultwing default allegiance is not HOSTILE")
 	if actor.get_altitude_band_name() != &"high": _fail("initial band is not HIGH")
 	for action in [&"glide", &"flap", &"dive_windup", &"dive_strike", &"climb_out", &"land", &"takeoff", &"perch_idle", &"ground_idle", &"ground_walk", &"bite_attack", &"air_stagger", &"hurt", &"death"]:
 		if not actor.has_action(action): _fail("published Vaultwing action was not discovered: %s" % String(action))
@@ -47,6 +48,13 @@ func _run() -> void:
 	await _check_state_guards(actor)
 	await _check_attack_band_and_live_player_stagger()
 	await _check_ground_retreat()
+	var behavior_id: int = actor.behavior.get_instance_id()
+	var health_before: float = actor.health
+	actor.set_allegiance(&"operator_allied")
+	if actor.is_in_group("enemy") or not actor.is_in_group("ally"): _fail("Vaultwing allegiance compatibility groups did not switch")
+	if actor.behavior.get_instance_id() != behavior_id or actor.health != health_before: _fail("Vaultwing allegiance mutation reset actor state")
+	actor.set_allegiance(&"hostile")
+	if not actor.is_in_group("enemy") or actor.is_in_group("ally"): _fail("Vaultwing allegiance compatibility did not restore")
 	_check_asset_contract()
 	actor.queue_free()
 

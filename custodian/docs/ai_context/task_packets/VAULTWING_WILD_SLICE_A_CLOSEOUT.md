@@ -38,7 +38,7 @@
 
 ## Handoff
 
-- Next action: run focused asset contract, Vaultwing runtime, world-spawn, import, and Moment Forge checks.
+- Next action: complete Actor Relationship Foundation V1, then begin Slice B bonding on the same Vaultwing instance.
 - Best starting files: `vaultwing_behavior_controller.gd`, `vaultwing.gd`, `vaultwing_spawner.gd`, `contract_world_loader.gd`.
 - Validation to run: `vaultwing_asset_contract`, `vaultwing_runtime`, `vaultwing_world_spawn`, Godot import, changed validation, archive-boundary validation.
 - Blockers or open questions: production Vaultwing-specific SFX remains deferred unless suitable authored assets are found.

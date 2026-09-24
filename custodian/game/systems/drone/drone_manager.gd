@@ -5,6 +5,7 @@ const DEFAULT_DRONE_SCENE := preload("res://game/actors/allies/allied_infantry_d
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneSquadStateScript := preload("res://game/systems/drone/drone_squad_state.gd")
 const GUARD_ORDER_MARKER_SCENE := preload("res://game/actors/effects/drone_guard_order_marker.tscn")
+const RelationshipResolver := preload("res://game/systems/combat/actor_relationship_resolver.gd")
 
 @export var operator_path: NodePath = NodePath("../Operator")
 @export var spawn_on_ready: bool = true
@@ -408,9 +409,7 @@ func _is_valid_command_hostile(candidate: Variant) -> bool:
 	if candidate == null or not is_instance_valid(candidate) or not (candidate is Node):
 		return false
 	var candidate_node := candidate as Node
-	if not candidate_node.is_in_group("enemy"):
-		return false
-	if candidate_node.has_method("is_dead") and bool(candidate_node.call("is_dead")):
+	if not RelationshipResolver.can_target(self, candidate_node, &"defense"):
 		return false
 	if candidate_node.has_method("is_passive_enemy") and bool(candidate_node.call("is_passive_enemy")):
 		return false

@@ -7,6 +7,8 @@ class_name Vaultwing
 const PRESENTATION := preload("res://game/actors/ambient/ambient_creature_presentation_controller.gd")
 const ANIMATION_SET := preload("res://game/actors/ambient/vaultwing/vaultwing_animation_set.tres")
 const CONTROLLER_SCRIPT := preload("res://game/actors/ambient/vaultwing/vaultwing_behavior_controller.gd")
+const ALLEGIANCE_SCRIPT := preload("res://game/actors/core/actor_allegiance_component.gd")
+const RELATIONSHIP_RESOLVER := preload("res://game/systems/combat/actor_relationship_resolver.gd")
 
 @export var max_health := 140.0
 @export var health := 140.0
@@ -22,15 +24,18 @@ var facing_direction := Vector2.RIGHT
 var _dead := false
 var _original_collision_layer := 1
 var _original_collision_mask := 1
+var allegiance_component: ActorAllegianceComponent
 
 func _ready() -> void:
 	add_to_group("ambient_creature")
 	add_to_group("hostile_fauna")
 	add_to_group("vaultwing")
-	# Wild Vaultwings participate in the existing hostile-team contract so
-	# ordinary player projectiles, threat queries, and combat read models can
-	# discover them without Vaultwing-specific branches.
-	add_to_group("enemy")
+	# The component owns allegiance; its compatibility adapter adds the legacy
+	# enemy group for wild actors without making that group the authority.
+	allegiance_component = ALLEGIANCE_SCRIPT.new()
+	allegiance_component.name = "ActorAllegiance"
+	add_child(allegiance_component)
+	allegiance_component.configure(self, ActorAllegianceComponent.HOSTILE)
 	_original_collision_layer = collision_layer
 	_original_collision_mask = collision_mask
 	if ANIMATION_SET.has_method("rescan_runtime"):
@@ -105,6 +110,20 @@ func is_dead() -> bool:
 
 func counts_for_wave_cap() -> bool:
 	return false
+
+func get_allegiance() -> StringName:
+	return allegiance_component.get_allegiance() if allegiance_component != null else ActorAllegianceComponent.HOSTILE
+
+func set_allegiance(next: StringName) -> bool:
+	return allegiance_component.set_allegiance(next) if allegiance_component != null else false
+
+func is_hostile_to(other: Node) -> bool:
+	return allegiance_component != null and allegiance_component.is_hostile_to(other)
+
+func is_combat_targetable_by(attacker: Node = null, attacker_team: StringName = &"") -> bool:
+	if _dead or get_altitude_band() == VaultwingBehaviorController.Band.HIGH:
+		return false
+	return RELATIONSHIP_RESOLVER.are_hostile(attacker, self, attacker_team)
 
 func set_band_interaction(next_band: int) -> void:
 	var grounded := next_band == VaultwingBehaviorController.Band.GROUND or next_band == VaultwingBehaviorController.Band.PERCHED

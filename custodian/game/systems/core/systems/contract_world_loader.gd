@@ -282,6 +282,20 @@ func _place_vaultwing_markers(level_data: Dictionary, map_instance: Node) -> voi
 	for existing in get_tree().get_nodes_in_group("generated_vaultwing_marker"):
 		if existing is Node and is_instance_valid(existing): (existing as Node).queue_free()
 	var candidates := _build_ambient_enemy_candidate_tiles(level_data, map_instance)
+	_place_vaultwing_markers_from_candidates(candidates, map_instance, spawner)
+
+## Validation seam for the production marker algorithm. Candidate selection is
+## still owned by the loader; this only lets a bounded fixture supply a
+## deterministic candidate set without recreating marker/spacing logic.
+func place_vaultwing_markers_for_candidates(candidate_tiles: Array[Vector2i], map_instance: Node) -> void:
+	var spawner := get_node_or_null(vaultwing_spawner_path)
+	if spawner != null and spawner.has_method("reset_for_world"):
+		spawner.call("reset_for_world")
+	for existing in get_tree().get_nodes_in_group("generated_vaultwing_marker"):
+		if existing is Node and is_instance_valid(existing): (existing as Node).queue_free()
+	_place_vaultwing_markers_from_candidates(candidate_tiles, map_instance, spawner)
+
+func _place_vaultwing_markers_from_candidates(candidates: Array[Vector2i], map_instance: Node, spawner: Node) -> void:
 	if candidates.is_empty(): return
 	var spawn_marker := Marker2D.new()
 	spawn_marker.name = "VaultwingSpawnMarker"

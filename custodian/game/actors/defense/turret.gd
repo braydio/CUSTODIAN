@@ -9,6 +9,7 @@ enum TurretType {
 }
 
 const BULLET_SCENE := preload("res://game/actors/projectiles/bullet.tscn")
+const RelationshipResolver := preload("res://game/systems/combat/actor_relationship_resolver.gd")
 const MECH_GUNSHOT_SOUND: AudioStream = preload("res://content/audio/sfx/combat/mech_gun_shot_01.wav")
 
 @export var turret_name: String = "Turret"
@@ -137,7 +138,7 @@ func _physics_process(delta: float) -> void:
 func _on_enemy_enter(body: Node) -> void:
 	if not (body is Node2D):
 		return
-	if not body.is_in_group("enemy") and not body.is_in_group("enemies"):
+	if not RelationshipResolver.can_target(self, body, &"defense"):
 		return
 	if body.has_method("is_passive_enemy") and bool(body.call("is_passive_enemy")):
 		return

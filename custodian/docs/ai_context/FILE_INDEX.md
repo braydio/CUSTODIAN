@@ -1108,6 +1108,17 @@ Last updated: 2026-09-23
   authority for behavior, determinism, layers, and the art baseline.
 # Vaultwing Ambient Predator
 
+- `design/04_architecture/ACTOR_RELATIONSHIP_AND_TARGETABILITY.md` — shared
+  allegiance/targetability foundation; groups remain migration-compatible
+  discovery indexes rather than pairwise relationship authority.
+- `custodian/game/actors/core/actor_allegiance_component.gd` and
+  `custodian/game/systems/combat/actor_relationship_resolver.gd` — compositional
+  allegiance state and explicit target qualification used by active combat
+  consumers.
+- `custodian/tools/validation/actor_relationship_contract_smoke.gd` — legacy
+  fallback, Vaultwing HIGH/ATTACK targetability, real projectile qualification,
+  and same-instance allegiance mutation coverage.
+
 - `design/02_features/ambient/VAULTWING_SYSTEM.md` — locked design authority
   for the Common Vaultwing wild predator, discrete flight bands, bonding,
   companion commands, Asset V2 family, and Slice A acceptance.

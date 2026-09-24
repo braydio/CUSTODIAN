@@ -2,6 +2,7 @@ extends Area2D
 
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
 const AttackRejection := preload("res://game/systems/combat/attack_rejection.gd")
+const RelationshipResolver := preload("res://game/systems/combat/actor_relationship_resolver.gd")
 
 @export var speed: float = 760.0
 @export var damage: float = 18.0
@@ -403,22 +404,7 @@ func _can_hit(body: Node) -> bool:
 		if collider_team != null and str(collider_team) == team:
 			return false
 
-	if team == "defense":
-		if body.is_in_group("defense") or body.is_in_group("turret") or body.is_in_group("player"):
-			return false
-		return body.is_in_group("enemy") or body.is_in_group("enemies")
-
-	if team == "enemy":
-		if body.is_in_group("enemy") or body.is_in_group("enemies"):
-			return false
-		return body.is_in_group("player") or body.is_in_group("defense") or body.is_in_group("turret")
-
-	if team == "player":
-		if body.is_in_group("player"):
-			return false
-		return body.is_in_group("enemy") or body.is_in_group("enemies")
-
-	return true
+	return RelationshipResolver.can_target(shooter, body, StringName(team))
 
 
 func _is_world_blocker(body: Node) -> bool:
@@ -426,7 +412,7 @@ func _is_world_blocker(body: Node) -> bool:
 		return false
 	if not (body is StaticBody2D):
 		return false
-	if body.is_in_group("player") or body.is_in_group("enemy") or body.is_in_group("enemies") or body.is_in_group("defense") or body.is_in_group("turret"):
+	if body.is_in_group("player") or body.is_in_group("enemy") or body.is_in_group("enemies") or body.is_in_group("ally") or body.is_in_group("defense") or body.is_in_group("turret") or body.has_method("is_combat_targetable_by"):
 		return false
 	return true
 

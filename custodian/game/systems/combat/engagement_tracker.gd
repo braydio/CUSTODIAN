@@ -1,6 +1,8 @@
 class_name EngagementTracker
 extends Node
 
+const RelationshipResolver := preload("res://game/systems/combat/actor_relationship_resolver.gd")
+
 signal engagement_started
 signal engagement_ended
 signal initiative_resolved(won: bool)
@@ -211,7 +213,7 @@ func _has_live_hostile_intent() -> bool:
 
 
 func _is_living_hostile(target: Node) -> bool:
-	if target == null or not is_instance_valid(target) or not target.is_in_group("enemy"):
+	if target == null or not is_instance_valid(target) or not RelationshipResolver.are_hostile(target, operator, &"enemy"):
 		return false
 	var dead_variant: Variant = (
 		target.get("dead") if _has_property(target, &"dead") else false
