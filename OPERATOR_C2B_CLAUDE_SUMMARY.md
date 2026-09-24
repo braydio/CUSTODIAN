@@ -176,6 +176,29 @@ One authored delta to note if that work happens: the canonical
 (`156x96`), different pixels. The canonical one is the authored-correct choice,
 but it is a change and should land with a regression rather than silently.
 
+### DirectionalAnimationFallback is not a rename away either
+
+Three of its four sites are the nearest-available-sector search, blocked by the
+same runtime mutation as above. The fourth, `vector_to_sector()`, looks like a
+pure function the selector already duplicates -- and swapping it would be a
+behaviour change, not a cleanup. Sampling 20,000 directions around the circle:
+
+```
+DirectionalAnimationFallback.vector_to_sector   OperatorAnimationSelector.vector_to_sector
+  wrapf(angle, 0, TAU), round(), % 8              raw angle(), floor(x + 0.5), posmod()
+  zero test: length_squared() <= 0.0001           zero test: is_zero_approx()
+
+disagreements at exactly -157.5 deg  -> w  vs nw
+disagreements at exactly -112.5 deg  -> nw vs n
+a 0.0001-magnitude vector            -> s  vs e   (different zero thresholds)
+```
+
+Two boundary angles and the near-zero threshold. Small, but this is dodge
+direction selection, and I had just been burned by one equivalence that held on
+disk and failed at runtime. Left alone deliberately; whoever finishes this should
+pick the intended boundary behaviour on purpose rather than inherit whichever
+function survived.
+
 ## Phases not started
 
 Phase 7 (deleting `operator_melee_overlay_frames.tres`,
