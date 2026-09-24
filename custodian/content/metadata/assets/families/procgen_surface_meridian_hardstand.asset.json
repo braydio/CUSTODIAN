@@ -1,0 +1,134 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_surface_meridian_hardstand",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "tiles/procgen_macro/runtime/meridian_hardstand",
+    "owner": "procgen_surface_meridian_hardstand",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{variant}.png"
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "canvas": {"width": 1024, "height": 1024},
+  "states": {
+    "meridian_hardstand_plaza_irregular_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_plaza_irregular_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_hardstand_service_plaza_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_service_plaza_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_hardstand_corner_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_corner_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_hardstand_service_strip_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_service_strip_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 448,
+      "frames": 1
+    },
+    "meridian_hardstand_maintenance_hatch_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_maintenance_hatch_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_hardstand_landing_pad_square_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_landing_pad_square_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_hardstand_landing_pad_octagonal_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_landing_pad_octagonal_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_hardstand_grate_service_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_grate_service_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_hardstand_ruined_transition_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_hardstand_ruined_transition_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "meridian_ruined_roadway_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "meridian_hardstand",
+      "variant": "meridian_ruined_roadway_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/terrain_stamp_catalog_v1.tres"
+    },
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_plaza_irregular_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_service_plaza_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_corner_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_service_strip_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_maintenance_hatch_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_landing_pad_square_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_landing_pad_octagonal_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_grate_service_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_hardstand_ruined_transition_01.tres"},
+    {"type":"resource","path":"res://content/procgen/presentation/surface/meridian_hardstand/meridian_ruined_roadway_01.tres"}
+  ]
+}

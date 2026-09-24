@@ -7512,6 +7512,11 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 		return
 	_ensure_macro_presentation_composer()
 	var protected_cells := _macro_presentation_protected_cells()
+	var surface_claim_cells: Dictionary = {}
+	for source: Dictionary in [_main_road_tiles, _parking_zone_tiles]:
+		for cell: Variant in source.keys():
+			if cell is Vector2i:
+				surface_claim_cells[cell] = true
 	var ingress_cells: Dictionary = {}
 	for rect: Rect2i in _world_ingress_dressing_clearance_rects:
 		for x in range(rect.position.x, rect.end.x):
@@ -7544,8 +7549,12 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 		"required_cells": protected_cells,
 		"reserved_cells": _macro_reserved_cells(),
 		"ingress_clearance_cells": ingress_cells,
+		"surface_claim_cells": surface_claim_cells,
+		"surface_material_by_cell": _surface_material_by_cell,
 		"region_kind_by_cell": region_kind_by_cell,
 		"families_by_biome": families_by_biome,
+		"global_families": PackedStringArray(["procgen_surface_meridian_hardstand"]),
+		"max_stamps_by_family": {&"procgen_surface_meridian_hardstand": 2},
 		"min_region_cells_by_biome": minimums_by_biome,
 	}
 	_macro_presentation_plan = _macro_presentation_composer.build_plan(
@@ -7643,8 +7652,6 @@ func debug_get_macro_presentation_plan() -> Dictionary:
 func _macro_presentation_protected_cells() -> Dictionary:
 	var result: Dictionary = {}
 	for source: Dictionary in [
-		_main_road_tiles,
-		_parking_zone_tiles,
 		_route_playability_result.get("hard_clearance_cells", {}) as Dictionary,
 	]:
 		for cell: Variant in source.keys():

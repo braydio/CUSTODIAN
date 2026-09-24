@@ -1717,12 +1717,13 @@ stamp planning is deterministic and separate from Sprite2D realization;
 presentation roots run under the native-32px, `Vector2.ONE` map root, and streaming gates
 each macro stamp against all live Floor/Walls reveal probes. Macro masks and
 dressing clearances never create collision, navigation, or terrain authority.
-The planner now reserves independent budgets of eight CHASM and six SURFACE
-stamps within a fourteen-stamp overall cap, and SURFACE occupancy is the union
+The planner now reserves independent budgets of eight CHASM and eight SURFACE
+stamps within a sixteen-stamp overall cap, and SURFACE occupancy is the union
 of authored solid and walkable-overlay cells. The catalog contains 26 profiles:
-16 CHASM/BACK depth profiles and 10 Rocky Upland SURFACE profiles. Only the
-Rocky Upland biome enables `procgen_surface_rocky_upland`; broader biome SURFACE
-families and the remaining Rocky Upland material/cluster vocabulary are deferred.
+16 CHASM/BACK depth profiles, 10 Rocky Upland SURFACE profiles, and 10
+biome-independent Meridian Hardstand SURFACE profiles. Meridian is capped at
+two macro stamps per map; only the Rocky Upland biome enables
+`procgen_surface_rocky_upland`.
 
 Surface Materials V1 now resolves deterministic presentation-only material
 identities for final floor cells after terrain/biome authority and before
@@ -1731,6 +1732,8 @@ civic hardstands, roads/paths, wet ground, Rocky Upland natural rock, and
 natural-soft fallback have explicit precedence. `ProcGenTilemap` exports the
 material map, summary, and fingerprint; constructed and authored cells are
 excluded from generic floor-value clusters. The empty
-`SurfaceMaterialOverlay` is collision/navigation-free and ready for Meridian
-hardstand art. `meridian_hardened_floor` is registered as an Asset V2 contract
-but remains SOURCE_PENDING because its three production atlases are absent.
+`SurfaceMaterialOverlay` is collision/navigation-free. The three 32px
+`meridian_hardened_floor` atlases are ingested, and the ten-piece
+`procgen_surface_meridian_hardstand` macro family is registered and bound to
+material-backed presentation regions. Transition/detail atlas rendering is
+not claimed beyond the live floor presentation support.

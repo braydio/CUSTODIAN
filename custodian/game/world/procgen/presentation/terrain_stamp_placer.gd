@@ -19,7 +19,10 @@ func build_plan(
 	var occupied_surface: Dictionary = {}
 	var occupied_chasm: Dictionary = {}
 	var placements_by_domain: Dictionary = {}
+	var placements_by_family: Dictionary = {}
+	var placements_by_stamp: Dictionary = {}
 	var max_stamps_by_domain: Dictionary = context.get("max_stamps_by_domain", {})
+	var max_stamps_by_family: Dictionary = context.get("max_stamps_by_family", {})
 	var normalized_regions: Array[Dictionary] = []
 	for region: Dictionary in regions:
 		normalized_regions.append({
@@ -33,13 +36,23 @@ func build_plan(
 		if placements.size() < max_stamps and catalog != null:
 			var biome_id := StringName(region.get("biome_id", &""))
 			var families_by_biome: Dictionary = context.get("families_by_biome", {})
-			var families: PackedStringArray = families_by_biome.get(biome_id, context.get("families", PackedStringArray()))
+			var families := PackedStringArray()
+			for family: Variant in families_by_biome.get(biome_id, context.get("families", PackedStringArray())):
+				if not families.has(String(family)): families.append(String(family))
+			for family: Variant in context.get("global_families", PackedStringArray()):
+				if not families.has(String(family)): families.append(String(family))
 			var minimums_by_biome: Dictionary = context.get("min_region_cells_by_biome", {})
 			var context_minimum := int(minimums_by_biome.get(biome_id, context.get("min_region_cells", 0)))
 			var profiles := catalog.filter_profiles(families, StringName(region.get("kind_name", "")), StringName(region.get("biome_id", &"")))
 			var candidates: Array[Dictionary] = []
 			for profile: TerrainStampProfile in profiles:
 				var placement_domain := int(profile.placement_domain)
+				if max_stamps_by_family.has(profile.family_id) and int(placements_by_family.get(profile.family_id, 0)) >= int(max_stamps_by_family[profile.family_id]):
+					_count_rejection(rejection_counts, "family_budget_exhausted")
+					continue
+				if int(placements_by_stamp.get(profile.stamp_id, 0)) >= profile.max_instances_per_map:
+					_count_rejection(rejection_counts, "stamp_budget_exhausted")
+					continue
 				if max_stamps_by_domain.has(placement_domain) and int(placements_by_domain.get(placement_domain, 0)) >= int(max_stamps_by_domain[placement_domain]):
 					_count_rejection(rejection_counts, "domain_budget_exhausted")
 					continue
@@ -68,6 +81,8 @@ func build_plan(
 				selected.erase("reason")
 				selected.erase("rank")
 				placements.append(selected)
+				placements_by_family[selected["family_id"]] = int(placements_by_family.get(selected["family_id"], 0)) + 1
+				placements_by_stamp[selected["stamp_id"]] = int(placements_by_stamp.get(selected["stamp_id"], 0)) + 1
 				var selected_domain := int(selected.get("placement_domain", TerrainStampProfile.PlacementDomain.SURFACE))
 				placements_by_domain[selected_domain] = int(placements_by_domain.get(selected_domain, 0)) + 1
 				for cell: Vector2i in selected["solid_cells"]:
@@ -90,6 +105,7 @@ func build_plan(
 		"placements": placements,
 		"fallback_region_ids": fallback_ids,
 		"rejection_counts": _sorted_dictionary(rejection_counts),
+		"placements_by_family": _sorted_dictionary(placements_by_family),
 		"rejections": rejections,
 	}
 	plan["fingerprint"] = plan_fingerprint(plan)
@@ -133,6 +149,7 @@ func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector
 	var protected: Dictionary = context.get("protected_cells", {})
 	var biome_by_cell: Dictionary = context.get("biome_id_by_cell", {})
 	var chasm_cells: Dictionary = context.get("chasm_cells", {})
+	var material_by_cell: Dictionary = context.get("surface_material_by_cell", {})
 	if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM:
 		for cell: Vector2i in chasm:
 			if not bounds.has_point(cell): return {"valid": false, "reason": "chasm_outside_map"}
@@ -144,10 +161,15 @@ func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector
 			if not bounds.has_point(cell):
 				continue
 			if _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_presentation_footprint"}
+			var presentation_claim := _surface_claim_reason(profile, cell, context, material_by_cell)
+			if presentation_claim != "": return {"valid": false, "reason": presentation_claim}
+			if not profile.allowed_surface_materials.is_empty() and not profile.allowed_surface_materials.has(String(material_by_cell.get(cell, &""))): return {"valid": false, "reason": "surface_material_mismatch"}
 			if occupied_surface.has(cell): return {"valid": false, "reason": "surface_presentation_overlap"}
 	for cell: Vector2i in solid:
 		if not bounds.has_point(cell): return {"valid": false, "reason": "outside_map"}
-		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_surface_claim"}
+		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE:
+			var solid_claim := _surface_claim_reason(profile, cell, context, material_by_cell)
+			if solid_claim != "": return {"valid": false, "reason": solid_claim}
 		if profile.placement_domain == TerrainStampProfile.PlacementDomain.CHASM and protected.has(cell): return {"valid": false, "reason": "protected_solid"}
 		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and occupied_surface.has(cell): return {"valid": false, "reason": "surface_presentation_overlap"}
 		if occupied.has(cell): return {"valid": false, "reason": "solid_overlap"}
@@ -155,7 +177,10 @@ func _candidate(profile: TerrainStampProfile, region: Dictionary, anchor: Vector
 			return {"valid": false, "reason": "solid_semantic_mismatch"}
 	for cell: Vector2i in overlay:
 		if not bounds.has_point(cell): return {"valid": false, "reason": "outside_map"}
-		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and _has_presentation_claim(cell, context): return {"valid": false, "reason": "protected_surface_claim"}
+		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE:
+			var overlay_claim := _surface_claim_reason(profile, cell, context, material_by_cell)
+			if overlay_claim != "": return {"valid": false, "reason": overlay_claim}
+			if not profile.allowed_surface_materials.is_empty() and not profile.allowed_surface_materials.has(String(material_by_cell.get(cell, &""))): return {"valid": false, "reason": "surface_material_mismatch"}
 		if profile.placement_domain == TerrainStampProfile.PlacementDomain.SURFACE and occupied_surface.has(cell): return {"valid": false, "reason": "surface_presentation_overlap"}
 		if profile.required_biome != &"" and StringName(biome_by_cell.get(cell, profile.required_biome)) != profile.required_biome:
 			return {"valid": false, "reason": "semantic_biome_mismatch"}
@@ -187,6 +212,17 @@ func _has_presentation_claim(cell: Vector2i, context: Dictionary) -> bool:
 		if (context.get(key, {}) as Dictionary).has(cell):
 			return true
 	return false
+
+
+func _surface_claim_reason(profile: TerrainStampProfile, cell: Vector2i, context: Dictionary, material_by_cell: Dictionary) -> String:
+	if _has_presentation_claim(cell, context):
+		return "protected_surface_claim"
+	var claims: Dictionary = context.get("surface_claim_cells", {})
+	if not claims.has(cell):
+		return ""
+	if profile.allowed_surface_materials.is_empty() or not profile.allowed_surface_materials.has(String(material_by_cell.get(cell, &""))):
+		return "constructed_surface_claim_mismatch"
+	return ""
 
 
 func _mapped_rect(rect: Rect2i, size: Vector2i, origin: Vector2i, flip_h: bool) -> Array[Vector2i]:

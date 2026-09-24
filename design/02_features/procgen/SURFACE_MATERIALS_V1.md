@@ -16,8 +16,14 @@ Only existing floor cells receive a material; walls and chasm remain untyped.
 
 The first presentation seam is `NavigationRegion2D/SurfaceMaterialOverlay`, a
 collision-free and navigation-free `TileMapLayer`. Meridian hardened-floor
-art is a separate Asset Pipeline V2 family and remains `SOURCE_PENDING` until
-all three production atlases are supplied and ingested.
+art is a separate Asset Pipeline V2 family. The three 32px production atlases
+are ingested; this slice adds ten larger Meridian macro compositions over the
+same presentation-only material layer.
+
+The live macro contract is 36 profiles total: 16 CHASM, 10 Rocky Upland
+SURFACE, and 10 Meridian Hardstand SURFACE profiles. Meridian is global,
+material-backed, and capped at two macro stamps per map. Planner budgets are
+eight CHASM, eight SURFACE, and sixteen total stamps.
 
 ## Runtime
 

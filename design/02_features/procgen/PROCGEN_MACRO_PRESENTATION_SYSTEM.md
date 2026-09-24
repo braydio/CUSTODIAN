@@ -126,9 +126,11 @@ realized for one active procgen map.
 
 The first Rocky Upland SURFACE production family is also live: ten authored
 RGBA assets and ten explicit-mask profiles cover cliff/corner, shelf, and scree
-compositions. The terrain stamp catalog now contains 26 profiles total: 16
-CHASM/BACK depth profiles plus 10 Rocky Upland SURFACE profiles. No other biome
-enables this SURFACE family.
+compositions. Meridian Hardstand adds ten material-backed, biome-independent
+SURFACE compositions. The terrain stamp catalog contains 36 profiles total:
+16 CHASM/BACK depth profiles, 10 Rocky Upland SURFACE profiles, and 10 Meridian
+Hardstand SURFACE profiles. Meridian is capped at two stamps per map; planner
+budgets are eight CHASM, eight SURFACE, and sixteen total stamps.
 
 The biome field is built after faction/story geometry, parking, final road
 repair, and the final generated-state capture. It continues to run in candidate

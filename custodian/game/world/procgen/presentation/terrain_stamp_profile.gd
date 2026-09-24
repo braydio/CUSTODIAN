@@ -30,6 +30,8 @@ enum PlacementDomain {
 @export_range(1, 100, 1) var weight: int = 1
 @export var claims_dressing_clearance: bool = true
 @export var allow_flip_h: bool = false
+@export var allowed_surface_materials: PackedStringArray = PackedStringArray()
+@export_range(1, 64, 1) var max_instances_per_map: int = 64
 
 
 func resolved_reveal_probe_cells() -> Array[Vector2i]:

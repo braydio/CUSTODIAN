@@ -1,7 +1,7 @@
 extends SceneTree
 
 const CATALOG := preload("res://content/procgen/presentation/terrain_stamp_catalog_v1.tres")
-const OUTPUT := "res://../reports/procgen_surface_macro_rocky_upland"
+const OUTPUT_ROOT := "res://../reports"
 const CELL_SIZE := 32
 const OPERATOR_SIZE := Vector2i(32, 64)
 const GRID_COLOR := Color(0.82, 0.88, 0.92, 0.28)
@@ -16,60 +16,68 @@ func _init() -> void:
 
 
 func _run() -> void:
-	var output_path := ProjectSettings.globalize_path(OUTPUT)
-	DirAccess.make_dir_recursive_absolute(output_path)
-	var report := {
-		"schema": "custodian.procgen_surface_macro_review.v1",
-		"family_id": "procgen_surface_rocky_upland",
-		"cell_size_px": CELL_SIZE,
-		"operator_reference_px": [OPERATOR_SIZE.x, OPERATOR_SIZE.y],
-		"profiles": [],
-	}
-	var failures := PackedStringArray()
-	for profile: TerrainStampProfile in CATALOG.stamps:
-		if profile.family_id != &"procgen_surface_rocky_upland":
+	var groups := [
+		{"family_id": &"procgen_surface_rocky_upland", "output": "procgen_surface_macro_rocky_upland"},
+		{"family_id": &"procgen_surface_meridian_hardstand", "output": "procgen_surface_macro_meridian_hardstand"},
+	]
+	var all_passed := true
+	for group: Dictionary in groups:
+		var output_path := ProjectSettings.globalize_path("%s/%s" % [OUTPUT_ROOT, group.output])
+		DirAccess.make_dir_recursive_absolute(output_path)
+		var report := {
+			"schema": "custodian.procgen_surface_macro_review.v1",
+			"family_id": String(group.family_id),
+			"cell_size_px": CELL_SIZE,
+			"operator_reference_px": [OPERATOR_SIZE.x, OPERATOR_SIZE.y],
+			"profiles": [],
+		}
+		var failures := PackedStringArray()
+		for profile: TerrainStampProfile in CATALOG.stamps:
+			if profile.family_id != group.family_id:
+				continue
+			var image := profile.texture.get_image().duplicate()
+			image.convert(Image.FORMAT_RGBA8)
+			_draw_grid(image)
+			_draw_cells(image, profile.solid_mask_cells, SOLID_COLOR)
+			_draw_cells(image, profile.walkable_overlay_cells, OVERLAY_COLOR)
+			_draw_probes(image, profile.reveal_probe_cells)
+			_draw_operator_reference(image)
+			var filename := "%s_review.png" % profile.stamp_id
+			var error: Error = image.save_png(output_path.path_join(filename))
+			if error != OK:
+				push_error("procgen surface macro review failed to save %s" % filename)
+				all_passed = false
+				continue
+			var semantic_cells: Array[Vector2i] = profile.solid_mask_cells + profile.walkable_overlay_cells
+			var semantic_bounds := _cell_bounds(semantic_cells)
+			var probe_bounds := _cell_bounds(profile.reveal_probe_cells)
+			if profile.reveal_probe_cells.size() < 5 or profile.reveal_probe_cells.size() > 9:
+				failures.append("%s reveal probe count is outside 5-9" % profile.stamp_id)
+			if probe_bounds.size.x * 2 < semantic_bounds.size.x or probe_bounds.size.y * 2 < semantic_bounds.size.y:
+				failures.append("%s reveal probes do not span the semantic contact footprint" % profile.stamp_id)
+			report.profiles.append({
+				"stamp_id": String(profile.stamp_id),
+				"review": filename,
+				"canvas_px": [profile.canvas_px.x, profile.canvas_px.y],
+				"footprint_cells": [profile.footprint_size_cells.x, profile.footprint_size_cells.y],
+				"solid_mask_cells": profile.solid_mask_cells.size(),
+				"walkable_overlay_cells": profile.walkable_overlay_cells.size(),
+				"reveal_probe_cells": profile.reveal_probe_cells.size(),
+				"semantic_bounds": _rect_json(semantic_bounds),
+				"probe_bounds": _rect_json(probe_bounds),
+				"pivot_px": [profile.pivot_px.x, profile.pivot_px.y],
+			})
+		report["failures"] = failures
+		var report_file := FileAccess.open(output_path.path_join("review_manifest.json"), FileAccess.WRITE)
+		if report_file == null:
+			push_error("procgen surface macro review could not write manifest")
+			all_passed = false
 			continue
-		var image := profile.texture.get_image().duplicate()
-		image.convert(Image.FORMAT_RGBA8)
-		_draw_grid(image)
-		_draw_cells(image, profile.solid_mask_cells, SOLID_COLOR)
-		_draw_cells(image, profile.walkable_overlay_cells, OVERLAY_COLOR)
-		_draw_probes(image, profile.reveal_probe_cells)
-		_draw_operator_reference(image)
-		var filename := "%s_review.png" % profile.stamp_id
-		var error: Error = image.save_png(output_path.path_join(filename))
-		if error != OK:
-			push_error("procgen surface macro review failed to save %s" % filename)
-			quit(1)
-			return
-		var semantic_cells: Array[Vector2i] = profile.solid_mask_cells + profile.walkable_overlay_cells
-		var semantic_bounds := _cell_bounds(semantic_cells)
-		var probe_bounds := _cell_bounds(profile.reveal_probe_cells)
-		if profile.reveal_probe_cells.size() < 5 or profile.reveal_probe_cells.size() > 9:
-			failures.append("%s reveal probe count is outside 5-9" % profile.stamp_id)
-		if probe_bounds.size.x * 2 < semantic_bounds.size.x or probe_bounds.size.y * 2 < semantic_bounds.size.y:
-			failures.append("%s reveal probes do not span the semantic contact footprint" % profile.stamp_id)
-		report.profiles.append({
-			"stamp_id": String(profile.stamp_id),
-			"review": filename,
-			"canvas_px": [profile.canvas_px.x, profile.canvas_px.y],
-			"footprint_cells": [profile.footprint_size_cells.x, profile.footprint_size_cells.y],
-			"solid_mask_cells": profile.solid_mask_cells.size(),
-			"walkable_overlay_cells": profile.walkable_overlay_cells.size(),
-			"reveal_probe_cells": profile.reveal_probe_cells.size(),
-			"semantic_bounds": _rect_json(semantic_bounds),
-			"probe_bounds": _rect_json(probe_bounds),
-			"pivot_px": [profile.pivot_px.x, profile.pivot_px.y],
-		})
-	report["failures"] = failures
-	var report_file := FileAccess.open(output_path.path_join("review_manifest.json"), FileAccess.WRITE)
-	if report_file == null:
-		push_error("procgen surface macro review could not write manifest")
-		quit(1)
-		return
-	report_file.store_string(JSON.stringify(report, "  ") + "\n")
-	print("procgen_surface_macro_review: %s profiles=%d output=%s" % ["PASS" if failures.is_empty() else "FAIL", report.profiles.size(), output_path])
-	quit(0 if report.profiles.size() == 10 and failures.is_empty() else 1)
+		report_file.store_string(JSON.stringify(report, "  ") + "\n")
+		var group_passed: bool = report.profiles.size() == 10 and failures.is_empty()
+		all_passed = all_passed and group_passed
+		print("procgen_surface_macro_review: %s family=%s profiles=%d output=%s" % ["PASS" if group_passed else "FAIL", group.family_id, report.profiles.size(), output_path])
+	quit(0 if all_passed else 1)
 
 
 func _cell_bounds(cells: Array[Vector2i]) -> Rect2i:

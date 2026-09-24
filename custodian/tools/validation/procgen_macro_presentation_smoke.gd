@@ -21,7 +21,7 @@ func _init() -> void:
 	var composer := COMPOSER.new() as ProcgenMacroPresentationComposer
 	var production_report: Dictionary = PRODUCTION_CATALOG.validation_report(true)
 	_require((production_report.rejected as Array).is_empty(), "production macro catalog has rejected profiles")
-	_require((production_report.valid as Array).size() == 26, "production macro catalog does not contain twenty-six profiles")
+	_require((production_report.valid as Array).size() == 36, "production macro catalog does not contain thirty-six profiles")
 	var production_chasm_count := 0
 	var production_surface_count := 0
 	for production_profile: TerrainStampProfile in production_report.valid:
@@ -31,7 +31,7 @@ func _init() -> void:
 		else:
 			production_surface_count += 1
 	_require(production_chasm_count == 16, "production catalog does not retain sixteen CHASM profiles")
-	_require(production_surface_count == 10, "production catalog does not contain ten SURFACE profiles")
+	_require(production_surface_count == 20, "production catalog does not contain twenty SURFACE profiles")
 	var first := composer.build_plan(context, catalog)
 	var second := composer.build_plan(context, catalog)
 	_require(first == second, "same input and seed changed the normalized plan")

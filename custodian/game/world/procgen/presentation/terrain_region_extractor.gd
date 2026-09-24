@@ -51,12 +51,47 @@ func extract(context: Dictionary) -> Array[Dictionary]:
 					queue.append(neighbor)
 		regions.append(_make_region("rocky_upland_floor", &"rocky_upland", component))
 
+	regions.append_array(_extract_surface_material_regions(context))
+
 	regions.append_array(_extract_depth_south_edges(context))
 
 	regions.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return String(a.get("region_id", "")) < String(b.get("region_id", ""))
 	)
 	return regions
+
+
+func _extract_surface_material_regions(context: Dictionary) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var material_by_cell: Dictionary = context.get("surface_material_by_cell", {})
+	var floor_cells: Dictionary = context.get("floor_cells", {})
+	for material_kind: StringName in [&"hardened_civic", &"hardened_industrial", &"ruined_road"]:
+		var remaining: Dictionary = {}
+		for key: Variant in material_by_cell.keys():
+			if key is Vector2i and StringName(material_by_cell[key]) == material_kind and floor_cells.has(key): remaining[key] = true
+		while not remaining.is_empty():
+			var start := _sorted_cells(remaining.keys())[0]
+			var queue: Array[Vector2i] = [start]
+			var component: Array[Vector2i] = []
+			remaining.erase(start)
+			while not queue.is_empty():
+				var cell: Vector2i = queue.pop_front()
+				component.append(cell)
+				for delta: Vector2i in NEIGHBORS:
+					var neighbor := cell + delta
+					if remaining.has(neighbor): remaining.erase(neighbor); queue.append(neighbor)
+			result.append(_make_region("%s_floor" % String(material_kind), &"", component))
+	var boundary: Array[Vector2i] = []
+	for key: Variant in material_by_cell.keys():
+		if not key is Vector2i or not floor_cells.has(key): continue
+		var material := StringName(material_by_cell[key])
+		if material not in [&"hardened_civic", &"hardened_industrial", &"ruined_road"]: continue
+		for delta: Vector2i in NEIGHBORS:
+			if StringName(material_by_cell.get((key as Vector2i) + delta, &"")) in [&"natural_soft", &"natural_rock", &"wet_ground"]:
+				boundary.append(key as Vector2i)
+				break
+	if not boundary.is_empty(): result.append(_make_region("hardstand_natural_boundary", &"", _sorted_cells(boundary)))
+	return result
 
 
 func _extract_depth_south_edges(context: Dictionary) -> Array[Dictionary]:
