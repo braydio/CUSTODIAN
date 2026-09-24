@@ -230,16 +230,29 @@ operator_architecture_debt         PASS   98, baseline refreshed
 operator_runtime_path_audit        PASS   ledger shrunk by the 8 removed PNG paths
 operator_ranged_ready_input        PASS   (after repointing its dodge-FX assertions)
 operator_dodge_fx_canonical        PASS   (new)
-actor tier                         56/56
+actor tier                         all operator tests pass; one pre-existing
+                                          flaky non-operator test (see below)
 changed set                        4/4
 ```
 
-Actor tier: **56 selected, 56 passed** after one fix. The first run was 55/56 --
-`operator_ranged_ready_input` failed on two dodge-FX assertions still written
-against the retired compatibility name `operator_dodge_full_fx_south`. That was a
-real regression from this slice, not a stale test: the assertions were correct
-about the behaviour and wrong about the identity. Repointed at
-`shared/transition/dodge_01/s/fx` and given a frame-count check.
+Actor tier: **57 selected** (56 before this slice added one), **all operator
+tests passing**. Two runs, two different results, and both need reporting.
+
+Run 1 was 55/56. `operator_ranged_ready_input` failed on two dodge-FX assertions
+still written against the retired compatibility name
+`operator_dodge_full_fx_south`. That was a real regression from this slice, not a
+stale test: the assertions were correct about the behaviour and wrong about the
+identity. Repointed at `shared/transition/dodge_01/s/fx` and given a frame-count
+check.
+
+Run 2 was 56/57, failing `lootable_corpse_beacon` -- which had passed in run 1,
+with no change to anything it touches in between. It asserts
+`toast_entries.size() == 2` after a **randomly rolled** corpse loot payload.
+Re-run three times against identical code: FAIL, PASS, PASS. It is a pre-existing
+nondeterministic test, not a regression from this work, and nothing in this slice
+touches loot, toasts, `ResourceLedger` or `VaultManager`. Flagging it rather than
+re-running until green and calling the tier clean -- it should get a seeded roll
+or an assertion that tolerates the empty-type case.
 
 Worth naming: `operator_dodge_flow` passed throughout and proved nothing about
 this, because `_play_dodge_fx()` fails soft -- a missing animation returns
