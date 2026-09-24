@@ -1,13 +1,6 @@
 # CUSTODIAN — Faction Overview
 
-> **MIGRATION HOLD — FACTION REAUTHOR PENDING**
->
-> The Lattice Domain cosmology supersedes assumptions under which this roster
-> was authored. These profiles remain historical design reference until the
-> replacement faction architecture is locked. Do not add new runtime
-> dependencies on this roster during the hold.
-
-> **Status:** Canonical design reference — cross-faction comparison and implementation guide
+> **Status:** Canonical design reference — seven-polity comparison and implementation guide
 > **Doctrine authority:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 > **Supersedes:** MAJOR_FACTION_PROFILES.md (pre-design). Conflicts resolved per FACTION_PROFILES_CORRECTIONS.md and ASH_BELL_AND_DESIGN_GUIDANCE.md.
 
@@ -31,14 +24,16 @@ The player should rarely be told what a faction is. They should learn by seeing 
 
 ## Faction Comparison Table
 
-| Faction | Severing Interpretation | Failure Mode | Gameplay Pressure | Environmental Footprint |
+| Polity family | Continuity answer | Failure Mode | Gameplay Pressure | Environmental Footprint |
 |---------|------------------------|--------------|-------------------|------------------------|
-| **Pale Bell Penitents** | Continuity rupture — closed routes are sacred mercy | Theology mistaken for universal truth | Temporal-perceptual distortion | Listening shrines, nine-station circles, dead speakers, sealed-door altars |
-| **Indexers** | Classification catastrophe — universe became unfiled | False certainty | Corrupted information, mislabeled knowledge | Relabeled rooms, sorted salvage, tagged corpses, altered terminals |
-| **Leaseholders** | Access-chain breach — rightful claims were broken | Dead authority | Route/system denial, locked access | Claim seals, locked doors, impounded goods, legal barricades |
-| **Choir of Provenance** | Continuity contamination — origin must be verified | Purity without mercy | Sealed choices, moral friction | Origin markers, quarantine geometry, sealed imports, sterile zones |
-| **Buried Kins** | Abandonment — help never came | Survival identity as total truth | Defensive habitation, moral hesitation | Repaired homes, ration shelves, domestic life inside dead infrastructure |
-| **Feral Defense Remnants** | None — protocol continued without command | Obsolete procedure | Spatial denial, old automated violence | Patrol routes, warning lights, sealed checkpoints, active turrets |
+| **Fieldworks Compact** | Maintenance and cautious expansion preserve continuity | Expansion hides maintenance debt | Reopen, repair, or reserve capacity | Workshops, field boards, repaired conduits |
+| **Drawdown Councils** | Honest contraction preserves more life than collapse | Triage becomes destiny | Retain, evacuate, or retire services | Evacuation sectors, decommission marks, preserved corridors |
+| **Cordon Service** | Evidence before passage limits reciprocal risk | Emergency authority becomes permanent suspicion | Verify, isolate, or breach | Layered cordons, route histories, decontamination stations |
+| **Charter Authorities** | Durable rights make infrastructure accountable | Standing becomes ownership theater | Invoke, negotiate, or contest claims | Claim boards, access schedules, duty rosters |
+| **Orraic Orders** | Duty may require interrupting the system | Sacrifice becomes doctrine | Rescue, shelter, or hold course | Waystations, refuge routes, field clinics |
+| **Recovery Companies** | Mobile extraction preserves value before routes fail | Salvage strips living systems | Recover, protect, or liquidate | Lift frames, tagged machinery, modular camps |
+| **Witness Assemblies** | Social testimony preserves personhood beyond machine proof | Recognition becomes patronage | Attest, deny, or reconcile identity | Testimony circles, household registers, memorial walls |
+| **Legacy Interdiction Mesh** *(hazard layer)* | None; dead protocols continue | Correct execution without context | Disable, authenticate, reroute | Checkpoints, fields of fire, warning eras |
 
 ---
 
@@ -60,8 +55,8 @@ Do not start with long lore logs. The player should learn factions by walking in
 ## Recommended World Generation Variables
 
 Each generated world should roll:
-- `dominant_faction`
-- `secondary_faction` (optional)
+- `resident_polity`
+- `secondary_polity` (optional)
 - `original_site_function`
 - `collapse_mode`
 - `surviving_truth`
@@ -74,16 +69,20 @@ Faction profiles then modify: prop pools, enemy behaviors, room tags, inspect te
 
 ---
 
-## Faction Profiles
+## Active Polity Profiles
 
-See individual files in this directory for complete faction profiles:
+See individual files in this directory for complete active profiles:
 
-- `PALE_BELL_PENITENTS.md` — Signal ascetics who turn the operational Ash-Bell Unarrival into theology
-- `THE_INDEXERS.md` — Classification invaders who overwrite meaning with taxonomy
-- `THE_LEASEHOLDERS.md` — Armed legal continuity from a dead interstellar bureaucracy
-- `THE_CHOIR_OF_PROVENANCE.md` — Continuity-origin quarantine authority narrowed into extremism
-- `THE_BURIED_KINS.md` — Sealed shelter survivors who kept the lights on
-- `FERAL_DEFENSE_REMNANTS.md` — Broken security enforcing rules no one remembers
+- `FIELDWORKS_COMPACT.md`
+- `DRAWDOWN_COUNCILS.md`
+- `CORDON_SERVICE.md`
+- `CHARTER_AUTHORITIES.md`
+- `ORRAIC_ORDERS.md`
+- `RECOVERY_COMPANIES.md`
+- `WITNESS_ASSEMBLIES.md`
+- `LEGACY_INTERDICTION_MESH.md` — hazard layer, not polity
+
+The prior six-roster files remain retained as historical/tradition references.
 
 ---
 

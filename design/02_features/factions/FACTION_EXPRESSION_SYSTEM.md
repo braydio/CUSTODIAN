@@ -1,5 +1,13 @@
 # Faction Expression System
 
+> **Canon migration:** New runtime contracts use seven polity families:
+> `fieldworks_compact`, `drawdown_councils`, `cordon_service`,
+> `charter_authorities`, `orraic_orders`, `recovery_companies`, and
+> `witness_assemblies`. `legacy_interdiction_mesh` is a `HAZARD_LAYER`, never
+> a polity. Older six-roster IDs and examples below are compatibility/history
+> references only and must not be selected as new canonical faction authority.
+> See `design/02_features/factions/FACTION_IMPLEMENTATION_TRACKER.md`.
+
 **Status:** implementation spec
 **Runtime:** Godot 4.x (`custodian/`)
 **Last updated:** 2026-07-29

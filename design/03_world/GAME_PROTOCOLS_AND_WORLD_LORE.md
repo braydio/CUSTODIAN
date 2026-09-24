@@ -74,7 +74,10 @@ These are canonically true, but their full detail can be expanded later without 
 - Custodians are continuity authority because they operate, inspect, restore, isolate and adjudicate Lattice infrastructure. A Custodian might examine provenance because "Did this reactor come from our continuity?" is an extremely important engineering question — not because correct paperwork makes the reactor real.
 - The Hub is the surviving adjudication layer of the Custodian order.
 - Many surviving cultures are coherent but wrong; they are built on stable misinterpretations of intact machinery and partial records.
-- Major remnant groups include the Indexers, Pale Bell Penitents, Leaseholders, Choir of Provenance, Buried Kins, and Feral Defense Remnants (see `design/03_world/factions/` for complete profiles).
+- Active polity families are the Fieldworks Compact, Drawdown Councils, Cordon
+  Service, Charter Authorities, Orraic Orders, Recovery Companies, and Witness
+  Assemblies. The Legacy Interdiction Mesh is a separately typed hazard layer,
+  not a polity. See `design/03_world/factions/` for complete profiles.
 
 ### Tier 3 — Reserved Mystery
 These must remain ambiguous in player-facing content until deliberately escalated.
@@ -357,32 +360,39 @@ Transit and logistics sites once used to move verified personnel, packets, tools
 
 ---
 
-## Faction Bible
+## Polity and Hazard Bible
 
 > **This section is now a summary.** For complete faction profiles, see `design/03_world/factions/`. For the implementation taxonomy, gameplay boundaries, and behavior contracts, see `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`. For the lore canon framework (Severing, Ash-Bell Unarrival, Null Warrant Office), see `design/03_world/lore/CORE_LORE.md` and `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`.
 
-The six canonical factions are **different answers to the collapse of trustworthy civilization**:
+The seven active polity families are different answers to keeping people and
+infrastructure alive inside persistent Domains:
 
 | Faction | Severing Interpretation | Gameplay Pressure |
 |---|---|---|
-| **Pale Bell Penitents** | Cosmic disclosure — arrival was never guaranteed | Temporal-perceptual distortion |
-| **Indexers** | Classification catastrophe — universe became unfiled | Metadata corruption |
-| **Leaseholders** | Access-chain breach — rightful claims were broken | Access denial |
-| **Choir of Provenance** | Provenance contamination — context detached from things | Quarantine choices |
-| **Buried Kins** | Abandonment — help never came | Relational (conditional polity) |
-| **Feral Defense Remnants** | None — protocol continued without command | Spatial denial (hazard layer) |
+| **Fieldworks Compact** | Maintenance and cautious expansion | Reopen, repair, or reserve capacity |
+| **Drawdown Councils** | Honest contraction preserves life | Retain, evacuate, or retire services |
+| **Cordon Service** | Evidence before passage | Verify, isolate, or breach |
+| **Charter Authorities** | Durable rights make infrastructure accountable | Invoke, negotiate, or contest claims |
+| **Orraic Orders** | Duty may require interrupting systems | Rescue, shelter, or hold course |
+| **Recovery Companies** | Mobile extraction preserves value before route failure | Recover, protect, or liquidate |
+| **Witness Assemblies** | Social testimony preserves personhood | Attest, deny, or reconcile identity |
+| **Legacy Interdiction Mesh** *(hazard layer)* | Dead protocols continue without polity | Disable, authenticate, or reroute |
 
 ### Design rule (repeated from the implementation spec)
 
 Each faction must express its worldview through **environment, behavior, target selection, and system interaction** — not just dialogue. The player should learn what a faction is by walking into a room and noticing what has been done to it.
 
-### Feral Defense note
+### Legacy Interdiction Mesh note
 
-Feral Defense Remnants are classified as a **hazard layer**, not a living polity. They are composable security/automation ecology that can overlay any region. They have no beliefs, no dialogue, and no ideological behavior.
+The Legacy Interdiction Mesh is a **hazard layer**, not a living polity. It is
+composable security/automation ecology that can overlay any region. It has no
+beliefs, citizens, diplomacy, or unified command.
 
-### Buried Kins note
+### Historical labels
 
-The Buried Kins are a **conditional polity**, not a default hostile population. Combat is a failure state. They require relationship tracking and conditional hostility gates before implementation.
+Pale Bell, Indexer, Leaseholder, Choir, Buried Kins, and Feral Defense labels
+may remain in historical records or local traditions. They are not the active
+polity roster and must not be used as new runtime authority.
 
 ### Faction implementation priority
 

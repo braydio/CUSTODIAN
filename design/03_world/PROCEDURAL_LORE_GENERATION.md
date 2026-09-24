@@ -93,7 +93,10 @@ Every generated region should be able to carry a lore payload like this, whether
     "provenance_status": "incomplete",
 
     "post_collapse_reuse": "salvage_nest",
-    "present_ideology": "DEPRECATED PENDING FACTION REDESIGN",
+    "resident_polity": "fieldworks_compact",
+    "secondary_polity": null,
+    "local_traditions": [],
+    "hazard_layers": ["legacy_interdiction_mesh"],
 
     "surviving_truth": "site_once_routed_authenticated_traffic",
     "false_local_interpretation": "relay_chooses_the_worthy",
@@ -125,7 +128,7 @@ First-pass runtime support only needs:
 - region-level payload
 - optional room/template overrides
 - inspect/machine snippet selection using the payload
-- enemy behavior weighting hooks using `present_ideology`
+- enemy behavior weighting hooks using `resident_polity`, local traditions, and hazard layers
 
 ---
 
@@ -281,7 +284,7 @@ Each authored or generated room should eventually be able to expose:
     "original_function": "personnel_intake_facility",
     "damage_signature": "systemic_fire",
     "reuse_signature": "ritual_proving_ground",
-    "occupant_ideology": "pale_bell_penitent",
+    "occupant_polity": "fieldworks_compact",
     "tableau_slots": ["centerpiece", "wall_marker", "floor_scatter"],
     "inspect_pool": "intake_fire_ritual"
 }
@@ -487,7 +490,10 @@ If a shared lore payload resource or dictionary is created, start with this exac
     "original_function": String,
     "collapse_mode": String,
     "post_collapse_reuse": String,
-    "present_ideology": String,
+    "resident_polity": String,
+    "secondary_polity": String,
+    "local_traditions": Array[String],
+    "hazard_layers": Array[String],
     "surviving_truth": String,
     "false_local_interpretation": String,
     "confidence_band": String

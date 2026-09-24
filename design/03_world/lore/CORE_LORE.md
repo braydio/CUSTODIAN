@@ -180,16 +180,29 @@ reality stabilized through agreed history
 
 ## Faction Architecture
 
-> **MIGRATION HOLD — FACTION REAUTHOR PENDING**
+The active canon is organized around seven polity families whose institutions
+make different choices about continuity, maintenance, contraction, safety,
+standing, rescue, and social recognition:
 
-The Lattice Domain cosmology supersedes assumptions under which the current
-faction roster was authored. Existing faction profiles remain historical design
-reference until replacement faction architecture is locked. Do not implement new
-runtime faction dependencies from the faction directory during this hold.
+- Fieldworks Compact
+- Drawdown Councils
+- Cordon Service
+- Charter Authorities
+- Orraic Orders
+- Recovery Companies
+- Witness Assemblies
 
-Continuity physics must not be inferred from retired faction doctrine, and new
-world, scenario, or implementation documents must not treat the former roster as
-newly finalized canon.
+The Legacy Interdiction Mesh is a separately typed `HAZARD_LAYER`, never a
+polity or eighth faction. It is an ecology of surviving automated security and
+credential systems that can overlay any polity, tradition, or unoccupied route.
+
+The former Pale Bell, Indexer, Leaseholder, Choir, Buried Kins, and Feral
+Defense labels remain historical or local traditions where they appear in old
+records. They are not the active roster and must not be used as new runtime
+faction authority. Complete active profiles live under
+`design/03_world/factions/`; gameplay implications are preserved in
+`FACTION_GAMEPLAY_OPPORTUNITIES.md` and implementation sequencing in
+`design/02_features/factions/FACTION_IMPLEMENTATION_TRACKER.md`.
 
 ---
 

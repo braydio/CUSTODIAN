@@ -15,9 +15,9 @@
 6. [Orra Comes Late](#orra-comes-late)
 7. [The Road Out](#the-road-out)
 8. [The Gate of Dust](#the-gate-of-dust)
-9. [The Six Answers](#the-six-answers)
+9. [The Seven Polity Families](#the-seven-polity-families)
 10. [The Hub and the Work](#the-hub-and-the-work)
-11. [Temporary Worlds](#temporary-worlds)
+11. [Persistent Domains](#persistent-domains)
 12. [Why Do Anything](#why-do-anything)
 13. [Reserved Mysteries](#reserved-mysteries)
 14. [Designation](#designation)
@@ -629,7 +629,25 @@ You are political dynamite wearing a human shape.
 
 You walk into societies built on interpretations of abandoned systems, and those systems sometimes recognize **you** instead.
 
-## The Six Answers
+## The Seven Polity Families
+
+The surviving polity families are not enemy classes and do not form a tidy
+ideological roster. They are institutional answers to keeping people and
+infrastructure alive inside persistent Lattice Domains: Fieldworks Compact,
+Drawdown Councils, Cordon Service, Charter Authorities, Orraic Orders,
+Recovery Companies, and Witness Assemblies. Their complete profiles and
+gameplay implications are maintained in `design/03_world/factions/`.
+
+The Legacy Interdiction Mesh is a separate hazard layer. It has no citizens,
+beliefs, diplomacy, or unified command; its dead automated rules can overlay
+any of the seven polity families.
+
+Older records may still name local traditions as Pale Bell Penitents,
+Indexers, Leaseholders, Choir of Provenance, Buried Kins, or Feral Defense
+Remnants. Those names remain useful historical evidence, but they are not the
+active seven-polity canon.
+
+### Historical traditions retained in the record
 
 ### The Indexers
 
@@ -913,9 +931,9 @@ Then leave.
 
 Because the worlds you enter are already dying.
 
-## Temporary Worlds
+## Persistent Domains
 
-Each campaign takes place inside a Lattice Domain.
+Each campaign accesses a persistent Lattice Domain.
 
 A surviving Archive Engine holds a portion of reality coherent.
 
@@ -927,7 +945,8 @@ They may be right from where they stand.
 
 The Archive Engine does not tell them otherwise.
 
-The field has boundaries.
+The field has boundaries, but a campaign visit is not the life or death of the
+Domain itself.
 
 Beyond them waits instability.
 
@@ -935,7 +954,8 @@ The Pale presses against every weak point.
 
 Every restoration consumes capacity.
 
-Every expansion asks the Archive to maintain more territory.
+Every expansion asks the Archive to maintain more territory, while contraction
+can preserve a smaller viable core.
 
 Every recovered fragment allows better calibration.
 
@@ -943,9 +963,10 @@ Every repaired system lets people live longer.
 
 That is the central cruelty of your work.
 
-Success does not save the world.
-
-Success makes there be **more world to lose**.
+Success does not permanently save the world, but it can change the Domain's
+future. A repaired route, retained service, evacuated district, or reopened
+anchor remains part of the Domain state after the temporary CampaignRegion
+instance is torn down.
 
 You restore power.
 
