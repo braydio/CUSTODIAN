@@ -2,7 +2,6 @@ extends SceneTree
 
 const POSTURE_STATE_SCRIPT := preload("res://game/actors/operator/presentation/melee_posture_state.gd")
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
-const CATALOG_FRAMES := preload("res://game/actors/operator/operator_animation_catalog_frames.tres")
 const RUNTIME_FRAMES := preload("res://content/sprites/operator/runtime/operator_runtime_frames.tres")
 
 
@@ -25,39 +24,39 @@ func _init() -> void:
 			assert(RUNTIME_FRAMES.has_animation(weapon_bridge))
 			assert(not RUNTIME_FRAMES.get_animation_loop(weapon_bridge))
 	var operator := OPERATOR_SCENE.instantiate()
-	assert(CATALOG_FRAMES.has_animation("melee_1h/posture/idle_ready_01/e/lower_body"))
+	assert(RUNTIME_FRAMES.has_animation("melee_1h/posture/idle_ready_01/e/lower_body"))
 	for suffix in ["e", "w"]:
 		for layer in ["lower_body", "upper_body"]:
 			var draw_body_animation := "melee_1h/posture/draw_01/%s/%s" % [suffix, layer]
-			assert(CATALOG_FRAMES.has_animation(draw_body_animation), "missing draw body %s %s" % [suffix, layer])
-			assert(CATALOG_FRAMES.get_frame_count(draw_body_animation) == 4)
-			assert(not CATALOG_FRAMES.get_animation_loop(draw_body_animation), "draw body must not loop")
+			assert(RUNTIME_FRAMES.has_animation(draw_body_animation), "missing draw body %s %s" % [suffix, layer])
+			assert(RUNTIME_FRAMES.get_frame_count(draw_body_animation) == 4)
+			assert(not RUNTIME_FRAMES.get_animation_loop(draw_body_animation), "draw body must not loop")
 		var draw_weapon_animation := "melee_1h_dagger/posture/draw_01/%s/weapon" % suffix
-		assert(CATALOG_FRAMES.has_animation(draw_weapon_animation), "missing draw weapon %s" % suffix)
-		assert(CATALOG_FRAMES.get_frame_count(draw_weapon_animation) == 4)
-		assert(not CATALOG_FRAMES.get_animation_loop(draw_weapon_animation), "draw weapon must not loop")
-	assert(CATALOG_FRAMES.get_animation_loop(&"melee_1h/posture/idle_relaxed_01/e/lower_body"))
-	assert(CATALOG_FRAMES.get_animation_loop(&"shared/locomotion/idle_01/s/head"))
-	assert(not CATALOG_FRAMES.get_animation_loop(&"melee_1h/attack/fast_01/e/lower_body"))
-	assert(not CATALOG_FRAMES.get_animation_loop(&"unarmed/reaction/light_hitreact_01/s/full_body"))
-	assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/posture/idle_relaxed_01/e/weapon"))
-	assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/posture/idle_relaxed_01/w/weapon"))
+		assert(RUNTIME_FRAMES.has_animation(draw_weapon_animation), "missing draw weapon %s" % suffix)
+		assert(RUNTIME_FRAMES.get_frame_count(draw_weapon_animation) == 4)
+		assert(not RUNTIME_FRAMES.get_animation_loop(draw_weapon_animation), "draw weapon must not loop")
+	assert(RUNTIME_FRAMES.get_animation_loop(&"melee_1h/posture/idle_relaxed_01/e/lower_body"))
+	assert(RUNTIME_FRAMES.get_animation_loop(&"shared/locomotion/idle_01/s/head"))
+	assert(not RUNTIME_FRAMES.get_animation_loop(&"melee_1h/attack/fast_01/e/lower_body"))
+	assert(not RUNTIME_FRAMES.get_animation_loop(&"unarmed/reaction/light_hitreact_01/s/full_body"))
+	assert(RUNTIME_FRAMES.has_animation("melee_1h_dagger/posture/idle_relaxed_01/e/weapon"))
+	assert(RUNTIME_FRAMES.has_animation("melee_1h_dagger/posture/idle_relaxed_01/w/weapon"))
 	for suffix in ["e", "w"]:
-		assert(CATALOG_FRAMES.has_animation("melee_1h/posture/idle_ready_01/%s/lower_body" % suffix))
-		assert(CATALOG_FRAMES.has_animation("melee_1h/posture/idle_ready_01/%s/upper_body" % suffix))
-		assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/posture/idle_ready_01/%s/weapon" % suffix))
-		assert(CATALOG_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/lower_body" % suffix))
-		assert(CATALOG_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/upper_body" % suffix))
-		assert(CATALOG_FRAMES.has_animation("melee_1h_dagger/locomotion/run_01/%s/weapon" % suffix))
+		assert(RUNTIME_FRAMES.has_animation("melee_1h/posture/idle_ready_01/%s/lower_body" % suffix))
+		assert(RUNTIME_FRAMES.has_animation("melee_1h/posture/idle_ready_01/%s/upper_body" % suffix))
+		assert(RUNTIME_FRAMES.has_animation("melee_1h_dagger/posture/idle_ready_01/%s/weapon" % suffix))
+		assert(RUNTIME_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/lower_body" % suffix))
+		assert(RUNTIME_FRAMES.has_animation("melee_1h/locomotion/run_01/%s/upper_body" % suffix))
+		assert(RUNTIME_FRAMES.has_animation("melee_1h_dagger/locomotion/run_01/%s/weapon" % suffix))
 	for action in ["run_01", "walk_01"]:
 		var expected_frames := 12 if action == "run_01" else 8
 		for layer in ["lower_body", "upper_body"]:
 			var body_animation := "melee_1h/locomotion/%s/s/%s" % [action, layer]
-			assert(CATALOG_FRAMES.has_animation(body_animation), "missing south %s %s" % [action, layer])
-			assert(CATALOG_FRAMES.get_frame_count(body_animation) == expected_frames)
+			assert(RUNTIME_FRAMES.has_animation(body_animation), "missing south %s %s" % [action, layer])
+			assert(RUNTIME_FRAMES.get_frame_count(body_animation) == expected_frames)
 		var weapon_animation := "melee_1h_dagger/locomotion/%s/s/weapon" % action
-		assert(CATALOG_FRAMES.has_animation(weapon_animation), "missing south Vigil %s" % action)
-		assert(CATALOG_FRAMES.get_frame_count(weapon_animation) == expected_frames)
+		assert(RUNTIME_FRAMES.has_animation(weapon_animation), "missing south Vigil %s" % action)
+		assert(RUNTIME_FRAMES.get_frame_count(weapon_animation) == expected_frames)
 	root.add_child(operator)
 	await process_frame
 	# C2a-R3 retired the per-instance SpriteFrames fork and the secondary-catalog
@@ -84,7 +83,7 @@ func _init() -> void:
 		for layer in ["lower_body", "upper_body"]:
 			var draw_animation := StringName("melee_1h/posture/draw_01/%s/%s" % [suffix, layer])
 			var target := lower.sprite_frames if layer == "lower_body" else upper.sprite_frames
-			operator.call("_copy_catalog_animation", CATALOG_FRAMES, target, draw_animation)
+			operator.call("_copy_runtime_animation", RUNTIME_FRAMES, target, draw_animation)
 			assert(target.has_animation(draw_animation))
 	var vigil_definition = operator.get("melee_weapon_definition")
 	assert(vigil_definition != null)

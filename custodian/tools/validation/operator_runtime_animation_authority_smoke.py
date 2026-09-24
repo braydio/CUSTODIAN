@@ -119,6 +119,46 @@ def check_invariants() -> list[str]:
     return failures
 
 
+def check_c2b_invariants() -> list[str]:
+    """C2b: no actor-local animation database, no runtime art loading.
+
+    These are hard invariants rather than migration gates. Each one was true when
+    C2b closed, so a regression is a defect and not remaining debt.
+    """
+    failures: list[str] = []
+
+    retired_catalog = GAME_ROOT / "actors/operator/animations/operator_animation_catalog.gd"
+    if retired_catalog.exists():
+        failures.append("OperatorAnimationCatalog was retired in C2b but the script is back")
+
+    if not OPERATOR_GD.exists():
+        return failures
+    actor = OPERATOR_GD.read_text(encoding="utf-8", errors="ignore")
+
+    # Runtime PNG loading. The generated runtime frames are the art database; an
+    # actor that reaches for a .png at runtime has started a second one.
+    if re.search(r'\bload\(\s*"[^"]*\.png"', actor) or '.png" % ' in actor:
+        failures.append("operator.gd loads PNG art at runtime")
+
+    # Actor-local SpriteFrames. One construction site remains (the per-weapon
+    # melee overlay), and it is recorded in the architecture-debt baseline. More
+    # than one means a new private animation database appeared.
+    constructions = len(re.findall(r"\bSpriteFrames\.new\s*\(", actor))
+    if constructions > 1:
+        failures.append(
+            f"operator.gd constructs {constructions} actor-local SpriteFrames; C2b left exactly 1"
+        )
+
+    # The dodge FX renderer is canonical and must stay bound in the scene rather
+    # than being built from sheets at _ready.
+    scene = (GAME_ROOT / "actors/operator/operator.tscn").read_text(encoding="utf-8", errors="ignore")
+    dodge = scene.split('[node name="DodgeFXBackSprite"')[-1].split("[node ")[0]
+    if "sprite_frames = ExtResource" not in dodge:
+        failures.append("DodgeFXBackSprite no longer binds a SpriteFrames resource in the scene")
+
+    return failures
+
+
 def check_completion_gates() -> list[str]:
     gates: list[str] = []
 
@@ -165,6 +205,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     failures = check_invariants()
+    failures += check_c2b_invariants()
     gates = check_completion_gates()
 
     for failure in failures:

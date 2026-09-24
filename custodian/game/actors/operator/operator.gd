@@ -13,7 +13,6 @@ signal dodge_flow_changed(value: float, direction: Vector2)
 signal integrity_reclaim_changed(status: Dictionary)
 
 const AnimationResolver = preload("res://game/actors/operator/animations/animation_resolver.gd")
-const OperatorAnimationCatalog = preload("res://game/actors/operator/animations/operator_animation_catalog.gd")
 const DirectionalAnimationFallback = preload(
 	"res://game/systems/presentation/directional_animation_fallback.gd"
 )
@@ -59,9 +58,6 @@ const UnarmedPosturePresentationScript = preload(
 )
 const MeleePostureStateScript = preload(
 	"res://game/actors/operator/presentation/melee_posture_state.gd"
-)
-const OPERATOR_ANIMATION_CATALOG_FRAMES := preload(
-	"res://game/actors/operator/operator_animation_catalog_frames.tres"
 )
 const MELEE_POSTURE_CATALOG_ACTIONS: Array[StringName] = [
 	&"draw_01",
@@ -958,7 +954,6 @@ const MODULAR_SIDEARM_MUZZLE_OFFSETS := {
 @onready var weapon_hitbox: Area2D = $HitboxRoot/WeaponHitbox if has_node("HitboxRoot/WeaponHitbox") else null
 @onready var weapon_hitbox_shape: CollisionShape2D = $HitboxRoot/WeaponHitbox/CollisionShape2D if has_node("HitboxRoot/WeaponHitbox/CollisionShape2D") else null
 @onready var weapon_factory: Node = get_node_or_null("/root/GameRoot/World/WeaponDefinitionFactory")
-var _animation_catalog := OperatorAnimationCatalog.new()
 
 func _exit_tree() -> void:
 	_set_ranged_aim_camera_active(false)
@@ -970,8 +965,6 @@ func _ready():
 	add_to_group("player")
 	guard_config = guard_config.duplicate(true) as OperatorGuardConfig
 	_guard_controller.setup(self, guard_config)
-	if not _animation_catalog.load_catalog():
-		push_error("[Operator] generated animation catalog could not be loaded")
 	_engagement_tracker = EngagementTrackerScript.new()
 	_engagement_tracker.name = "EngagementTracker"
 	add_child(_engagement_tracker)
@@ -2284,22 +2277,22 @@ func _install_melee_posture_weapon_frames(
 	var weapon_profile := String(weapon_definition.get_animation_profile())
 	if weapon_profile.is_empty():
 		return
-	var catalog_animations: Array[StringName] = []
+	var canonical_animations: Array[StringName] = []
 	for action in MELEE_POSTURE_CATALOG_ACTIONS:
 		for suffix in ["e", "w"]:
 			var animation := StringName(
 				"%s/posture/%s/%s/weapon" % [weapon_profile, action, suffix]
 			)
-			if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):
-				catalog_animations.append(animation)
+			if OPERATOR_RUNTIME_FRAMES.has_animation(animation):
+				canonical_animations.append(animation)
 	for action in MELEE_LOCOMOTION_CATALOG_DIRECTIONS:
 		for suffix in MELEE_LOCOMOTION_CATALOG_DIRECTIONS[action]:
 			var animation := StringName(
 				"%s/locomotion/%s/%s/weapon" % [weapon_profile, action, suffix]
 			)
-			if OPERATOR_ANIMATION_CATALOG_FRAMES.has_animation(animation):
-				catalog_animations.append(animation)
-	if catalog_animations.is_empty():
+			if OPERATOR_RUNTIME_FRAMES.has_animation(animation):
+				canonical_animations.append(animation)
+	if canonical_animations.is_empty():
 		return
 	var frames: SpriteFrames = melee_weapon_overlay_sprite.sprite_frames
 	if frames == null:
@@ -2307,15 +2300,11 @@ func _install_melee_posture_weapon_frames(
 	else:
 		frames = frames.duplicate(true)
 	melee_weapon_overlay_sprite.sprite_frames = frames
-	for animation in catalog_animations:
-		_copy_catalog_animation(
-			OPERATOR_ANIMATION_CATALOG_FRAMES,
-			frames,
-			animation
-		)
+	for animation in canonical_animations:
+		_copy_runtime_animation(OPERATOR_RUNTIME_FRAMES, frames, animation)
 
 
-func _copy_catalog_animation(source: SpriteFrames, target: SpriteFrames, animation: StringName) -> void:
+func _copy_runtime_animation(source: SpriteFrames, target: SpriteFrames, animation: StringName) -> void:
 	if source == null or target == null or not source.has_animation(animation) or target.has_animation(animation):
 		return
 	target.add_animation(animation)
