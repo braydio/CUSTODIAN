@@ -1,0 +1,2320 @@
+{
+  "schema": "custodian.operator_armed_melee_canonicalization.v1",
+  "canonical_database": "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
+  "summary": {
+    "SAME_PIXELS_DIFFERENT_TIMING": 10,
+    "PRESERVED_SUBRANGE": 2,
+    "EXACT": 4,
+    "NO_CANONICAL_EQUIVALENT": 20
+  },
+  "entries": [
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "full_body",
+      "action": "fast_01",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_body_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_01_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_01/e/full_body",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_01/e/full_body",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/e/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "full_body",
+      "action": "fast_01",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_body_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_01_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_01/w/full_body",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_01/w/full_body",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/w/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "full_body",
+      "action": "fast_02",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_body_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_02_right",
+      "legacy_frames": 8,
+      "legacy_fps": 14.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__e__8f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_02/e/full_body",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_02/e/full_body",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/e/full_body",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "full_body",
+      "action": "fast_02",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_body_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_02_left",
+      "legacy_frames": 8,
+      "legacy_fps": 14.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__w__8f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_02/w/full_body",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_02/w/full_body",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/w/full_body",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "full_body",
+      "action": "fast_03",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_body_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_03_right",
+      "legacy_frames": 9,
+      "legacy_fps": 13.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.5
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_03/e/full_body",
+      "classification": "PRESERVED_SUBRANGE",
+      "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
+      "best_available_match": "melee_1h/attack/fast_03/e/full_body",
+      "best_available_classification": "PRESERVED_SUBRANGE",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/e/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "PRESERVED_SUBRANGE",
+          "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "full_body",
+      "action": "fast_03",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_body_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_03_left",
+      "legacy_frames": 9,
+      "legacy_fps": 13.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.5
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_03/w/full_body",
+      "classification": "PRESERVED_SUBRANGE",
+      "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
+      "best_available_match": "melee_1h/attack/fast_03/w/full_body",
+      "best_available_classification": "PRESERVED_SUBRANGE",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/w/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "PRESERVED_SUBRANGE",
+          "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "weapon",
+      "action": "fast_01",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_melee_overlay_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_01_weapon_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/cosmetic/legacy_operator_weapon_vigil_pattern_dagger_chain_01_e_10f_156x96/vigil_pattern_dagger__weapon__melee_1h_dagger__cosmetic__legacy_operator_weapon_vigil_pattern_dagger_chain_01_e_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/weapon",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/weapon",
+      "best_available_classification": "EXACT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "weapon",
+      "action": "fast_01",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_melee_overlay_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_01_weapon_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/cosmetic/legacy_operator_weapon_vigil_pattern_dagger_chain_01_w_10f_156x96/vigil_pattern_dagger__weapon__melee_1h_dagger__cosmetic__legacy_operator_weapon_vigil_pattern_dagger_chain_01_w_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/weapon",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/weapon",
+      "best_available_classification": "EXACT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "weapon",
+      "action": "fast_02",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_melee_overlay_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_02_weapon_right",
+      "legacy_frames": 8,
+      "legacy_fps": 14.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h_dagger/attack/fast_02/operator__weapon__melee_1h_dagger__attack__fast_02__e__8f__156x96.png"
+      ],
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/weapon",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/weapon",
+      "best_available_classification": "EXACT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/weapon",
+          "canonical_frames": 8,
+          "canonical_fps": 14.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "weapon",
+      "action": "fast_02",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_melee_overlay_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_02_weapon_left",
+      "legacy_frames": 8,
+      "legacy_fps": 14.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h_dagger/attack/fast_02/operator__weapon__melee_1h_dagger__attack__fast_02__w__8f__156x96.png"
+      ],
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/weapon",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/weapon",
+      "best_available_classification": "EXACT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/weapon",
+          "canonical_frames": 8,
+          "canonical_fps": 14.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "weapon",
+      "action": "fast_03",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_melee_overlay_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_03_weapon_right",
+      "legacy_frames": 9,
+      "legacy_fps": 13.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.5
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/cosmetic/legacy_operator_weapon_vigil_pattern_dagger_chain_03_e_10f_156x96/vigil_pattern_dagger__weapon__melee_1h_dagger__cosmetic__legacy_operator_weapon_vigil_pattern_dagger_chain_03_e_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 9 frames vs canonical 9; pixel sequences differ",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/weapon",
+          "canonical_frames": 9,
+          "canonical_fps": 13.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.5
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 9 frames vs canonical 9; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "weapon",
+      "action": "fast_03",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_melee_overlay_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_03_weapon_left",
+      "legacy_frames": 9,
+      "legacy_fps": 13.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.5
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/cosmetic/legacy_operator_weapon_vigil_pattern_dagger_chain_03_w_10f_156x96/vigil_pattern_dagger__weapon__melee_1h_dagger__cosmetic__legacy_operator_weapon_vigil_pattern_dagger_chain_03_w_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 9 frames vs canonical 9; pixel sequences differ",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/weapon",
+          "canonical_frames": 9,
+          "canonical_fps": 13.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.5
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 9 frames vs canonical 9; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "fx",
+      "action": "fast_01",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_fx_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_01_fx_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_01/e/fx",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_01/e/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/e/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "fx",
+      "action": "fast_01",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_fx_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_01_fx_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_01/w/fx",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_01/w/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/w/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "fx",
+      "action": "fast_02",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_fx_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_02_fx_right",
+      "legacy_frames": 8,
+      "legacy_fps": 14.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__e__8f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_02/e/fx",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_02/e/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/e/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "fx",
+      "action": "fast_02",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_fx_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_02_fx_left",
+      "legacy_frames": 8,
+      "legacy_fps": 14.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__w__8f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_02/w/fx",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_02/w/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/w/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "fx",
+      "action": "fast_03",
+      "sector": "e",
+      "legacy_resource": "vigil_pattern_dagger_fx_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_03_fx_right",
+      "legacy_frames": 8,
+      "legacy_fps": 13.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.5
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__fx__melee_1h__attack__fast_03__e__8f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_03/e/fx",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_03/e/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/e/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "vigil_pattern_dagger",
+      "layer": "fx",
+      "action": "fast_03",
+      "sector": "w",
+      "legacy_resource": "vigil_pattern_dagger_fx_frames.tres",
+      "legacy_animation": "vigil_dagger_fast_03_fx_left",
+      "legacy_frames": 8,
+      "legacy_fps": 13.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.5
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__fx__melee_1h__attack__fast_03__w__8f__156x96.png"
+      ],
+      "migration_target": "melee_1h/attack/fast_03/w/fx",
+      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "best_available_match": "melee_1h/attack/fast_03/w/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/w/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": true
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "full_body",
+      "action": "fast_01",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_body_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_01_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_01/e/full_body",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h/attack/fast_01/e/full_body",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/e/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_01/e/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/e/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "full_body",
+      "action": "fast_01",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_body_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_01_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_01/w/full_body",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h/attack/fast_01/w/full_body",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/w/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_01/w/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/w/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "full_body",
+      "action": "fast_02",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_body_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_02_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_02/e/full_body",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_02/e/full_body",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/e/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_02/e/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/e/full_body",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 8; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "full_body",
+      "action": "fast_02",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_body_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_02_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_02/w/full_body",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_02/w/full_body",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/w/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_02/w/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/w/full_body",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 8; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "full_body",
+      "action": "fast_03",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_body_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_03_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_03/e/full_body",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_03/e/full_body",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/e/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_03/e/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/e/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "full_body",
+      "action": "fast_03",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_body_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_03_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_03/w/full_body",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_03/w/full_body",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/w/full_body",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_03/w/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/w/full_body",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "weapon",
+      "action": "fast_01",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_weapon_overlay_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_01_weapon_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/e/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/e/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/e/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_01/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "weapon",
+      "action": "fast_01",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_weapon_overlay_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_01_weapon_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/w/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/w/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/w/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_01/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "weapon",
+      "action": "fast_02",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_weapon_overlay_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_02_weapon_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/e/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/e/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/e/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_02/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "weapon",
+      "action": "fast_02",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_weapon_overlay_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_02_weapon_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/w/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/w/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/w/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_02/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "weapon",
+      "action": "fast_03",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_weapon_overlay_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_03_weapon_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_e_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/e/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/e/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/e/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_03/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/e/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "weapon",
+      "action": "fast_03",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_weapon_overlay_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_03_weapon_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/weapons/sword_cleaver/source/operator/melee_1h_heavy/overrides/cosmetic/legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96/sword_cleaver__weapon__melee_1h_heavy__cosmetic__legacy_operator_weapon_sword_cleaver_chain_01_w_10f_156x96__omni__1f__1560x96.png"
+      ],
+      "migration_target": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/w/weapon",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/w/weapon",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/w/weapon",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_03/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/w/weapon",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "fx",
+      "action": "fast_01",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_fx_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_01_fx_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_01/e/fx",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h/attack/fast_01/e/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/e/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_01/e/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/e/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "fx",
+      "action": "fast_01",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_fx_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_01_fx_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_01/w/fx",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h/attack/fast_01/w/fx",
+      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/w/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_01/w/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_01/w/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
+          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "fx",
+      "action": "fast_02",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_fx_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_02_fx_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_02/e/fx",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_02/e/fx",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/e/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_02/e/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/e/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 8; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "fx",
+      "action": "fast_02",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_fx_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_02_fx_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_02/w/fx",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_02/w/fx",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_02/w/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_02/w/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_02/w/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 8; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "fx",
+      "action": "fast_03",
+      "sector": "e",
+      "legacy_resource": "sword_cleaver_fx_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_03_fx_right",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_03/e/fx",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_03/e/fx",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/e/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_03/e/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/e/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 8; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    },
+    {
+      "weapon_id": "sword_cleaver",
+      "layer": "fx",
+      "action": "fast_03",
+      "sector": "w",
+      "legacy_resource": "sword_cleaver_fx_frames.tres",
+      "legacy_animation": "sword_cleaver_fast_03_fx_left",
+      "legacy_frames": 10,
+      "legacy_fps": 18.0,
+      "legacy_loop": false,
+      "legacy_durations": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "legacy_textures": [
+        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__w__10f__156x96.png"
+      ],
+      "migration_target": "melee_1h_heavy/attack/fast_03/w/fx",
+      "classification": "NO_CANONICAL_EQUIVALENT",
+      "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+      "best_available_match": "melee_1h_heavy/attack/fast_03/w/fx",
+      "best_available_classification": "NO_CANONICAL_EQUIVALENT",
+      "candidates": [
+        {
+          "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_03/w/fx",
+          "classification": "IDENTITY_ABSENT",
+          "note": "not published in the canonical database"
+        },
+        {
+          "canonical_identity": "melee_1h_heavy/attack/fast_03/w/fx",
+          "canonical_frames": 10,
+          "canonical_fps": 18.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
+          "is_migration_target": true
+        },
+        {
+          "canonical_identity": "melee_1h/attack/fast_03/w/fx",
+          "canonical_frames": 8,
+          "canonical_fps": 12.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "classification": "NO_CANONICAL_EQUIVALENT",
+          "note": "legacy 10 frames vs canonical 8; pixel sequences differ",
+          "is_migration_target": false
+        }
+      ]
+    }
+  ]
+}
