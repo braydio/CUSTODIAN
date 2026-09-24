@@ -2,9 +2,7 @@
   "schema": "custodian.operator_armed_melee_canonicalization.v1",
   "canonical_database": "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
   "summary": {
-    "SAME_PIXELS_DIFFERENT_TIMING": 10,
-    "PRESERVED_SUBRANGE": 2,
-    "EXACT": 4,
+    "EXACT": 16,
     "NO_CANONICAL_EQUIVALENT": 20
   },
   "entries": [
@@ -34,10 +32,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__e__10f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_01/e/full_body",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_01/e/full_body",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/full_body",
@@ -47,7 +45,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/e/full_body",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -60,8 +58,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -92,10 +90,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__full_body__melee_1h__attack__fast_01__w__10f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_01/w/full_body",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_01/w/full_body",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/full_body",
@@ -105,7 +103,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/w/full_body",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -118,8 +116,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -148,10 +146,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__e__8f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_02/e/full_body",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_02/e/full_body",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/full_body",
@@ -161,7 +159,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/e/full_body",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -172,8 +170,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -202,10 +200,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__w__8f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_02/w/full_body",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_02/w/full_body",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/full_body",
@@ -215,7 +213,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/w/full_body",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -226,8 +224,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -256,16 +254,30 @@
       "legacy_textures": [
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__e__10f__156x96.png"
       ],
-      "migration_target": "melee_1h/attack/fast_03/e/full_body",
-      "classification": "PRESERVED_SUBRANGE",
-      "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
-      "best_available_match": "melee_1h/attack/fast_03/e/full_body",
-      "best_available_classification": "PRESERVED_SUBRANGE",
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body",
-          "classification": "IDENTITY_ABSENT",
-          "note": "not published in the canonical database"
+          "canonical_frames": 9,
+          "canonical_fps": 13.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.5
+          ],
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
+          "is_migration_target": true
         },
         {
           "canonical_identity": "melee_1h/attack/fast_03/e/full_body",
@@ -285,7 +297,7 @@
           ],
           "classification": "PRESERVED_SUBRANGE",
           "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
-          "is_migration_target": true
+          "is_migration_target": false
         }
       ]
     },
@@ -313,16 +325,30 @@
       "legacy_textures": [
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__w__10f__156x96.png"
       ],
-      "migration_target": "melee_1h/attack/fast_03/w/full_body",
-      "classification": "PRESERVED_SUBRANGE",
-      "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
-      "best_available_match": "melee_1h/attack/fast_03/w/full_body",
-      "best_available_classification": "PRESERVED_SUBRANGE",
+      "migration_target": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/full_body",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
+      "best_available_match": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/full_body",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/full_body",
-          "classification": "IDENTITY_ABSENT",
-          "note": "not published in the canonical database"
+          "canonical_frames": 9,
+          "canonical_fps": 13.0,
+          "canonical_durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.5
+          ],
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
+          "is_migration_target": true
         },
         {
           "canonical_identity": "melee_1h/attack/fast_03/w/full_body",
@@ -342,7 +368,7 @@
           ],
           "classification": "PRESERVED_SUBRANGE",
           "note": "legacy plays the first 9 of 10 canonical frames at 13 fps (canonical 12); legacy durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5]",
-          "is_migration_target": true
+          "is_migration_target": false
         }
       ]
     },
@@ -708,10 +734,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__e__10f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_01/e/fx",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_01/e/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/fx",
@@ -721,7 +747,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/e/fx",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -734,8 +760,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -766,10 +792,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__fx__melee_1h__attack__fast_01__w__10f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_01/w/fx",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_01/w/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/fx",
@@ -779,7 +805,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/w/fx",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -792,8 +818,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -822,10 +848,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__e__8f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_02/e/fx",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_02/e/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/fx",
@@ -835,7 +861,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/e/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -846,8 +872,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -876,10 +902,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__fx__melee_1h__attack__fast_02__w__8f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_02/w/fx",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_02/w/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/fx",
@@ -889,7 +915,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/w/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -900,8 +926,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 8 frames; legacy 14 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -930,10 +956,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__fx__melee_1h__attack__fast_03__e__8f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_03/e/fx",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_03/e/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/fx",
@@ -943,7 +969,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_03/e/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 13.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -952,10 +978,10 @@
             1.0,
             1.0,
             1.0,
-            1.0
+            1.5
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -984,10 +1010,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__fx__melee_1h__attack__fast_03__w__8f__156x96.png"
       ],
       "migration_target": "melee_1h/attack/fast_03/w/fx",
-      "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-      "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+      "classification": "EXACT",
+      "note": "identical pixels and timing",
       "best_available_match": "melee_1h/attack/fast_03/w/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/fx",
@@ -997,7 +1023,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_03/w/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 13.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -1006,10 +1032,10 @@
             1.0,
             1.0,
             1.0,
-            1.0
+            1.5
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 8 frames; legacy 13 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": true
         }
       ]
@@ -1043,7 +1069,7 @@
       "classification": "NO_CANONICAL_EQUIVALENT",
       "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
       "best_available_match": "melee_1h/attack/fast_01/e/full_body",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/e/full_body",
@@ -1073,7 +1099,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/e/full_body",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -1086,8 +1112,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": false
         }
       ]
@@ -1121,7 +1147,7 @@
       "classification": "NO_CANONICAL_EQUIVALENT",
       "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
       "best_available_match": "melee_1h/attack/fast_01/w/full_body",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/w/full_body",
@@ -1151,7 +1177,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/w/full_body",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -1164,8 +1190,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": false
         }
       ]
@@ -1229,7 +1255,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/e/full_body",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -1305,7 +1331,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/w/full_body",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -1885,7 +1911,7 @@
       "classification": "NO_CANONICAL_EQUIVALENT",
       "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
       "best_available_match": "melee_1h/attack/fast_01/e/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/e/fx",
@@ -1915,7 +1941,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/e/fx",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -1928,8 +1954,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": false
         }
       ]
@@ -1963,7 +1989,7 @@
       "classification": "NO_CANONICAL_EQUIVALENT",
       "note": "legacy 10 frames vs canonical 10; pixel sequences differ",
       "best_available_match": "melee_1h/attack/fast_01/w/fx",
-      "best_available_classification": "SAME_PIXELS_DIFFERENT_TIMING",
+      "best_available_classification": "EXACT",
       "candidates": [
         {
           "canonical_identity": "weapon/sword_cleaver/melee_1h_heavy/attack/fast_01/w/fx",
@@ -1993,7 +2019,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_01/w/fx",
           "canonical_frames": 10,
-          "canonical_fps": 12.0,
+          "canonical_fps": 18.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -2006,8 +2032,8 @@
             1.0,
             1.0
           ],
-          "classification": "SAME_PIXELS_DIFFERENT_TIMING",
-          "note": "same 10 frames; legacy 18 fps vs canonical 12 fps; durations [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] vs [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]",
+          "classification": "EXACT",
+          "note": "identical pixels and timing",
           "is_migration_target": false
         }
       ]
@@ -2071,7 +2097,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/e/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -2147,7 +2173,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_02/w/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 14.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -2223,7 +2249,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_03/e/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 13.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -2232,7 +2258,7 @@
             1.0,
             1.0,
             1.0,
-            1.0
+            1.5
           ],
           "classification": "NO_CANONICAL_EQUIVALENT",
           "note": "legacy 10 frames vs canonical 8; pixel sequences differ",
@@ -2299,7 +2325,7 @@
         {
           "canonical_identity": "melee_1h/attack/fast_03/w/fx",
           "canonical_frames": 8,
-          "canonical_fps": 12.0,
+          "canonical_fps": 13.0,
           "canonical_durations": [
             1.0,
             1.0,
@@ -2308,7 +2334,7 @@
             1.0,
             1.0,
             1.0,
-            1.0
+            1.5
           ],
           "classification": "NO_CANONICAL_EQUIVALENT",
           "note": "legacy 10 frames vs canonical 8; pixel sequences differ",

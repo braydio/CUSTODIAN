@@ -1,0 +1,34 @@
+{
+	"durations": [
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.0,
+		1.5
+	],
+	"fps": 13.0,
+	"frame_rgba_sha256": [
+		"c13ac1aa7ab18abf38e347f2c04e5cd3e0f6e04b7f6baeb6a00364409abfdbe4",
+		"892624c63eba801a6be99688b8cf3fcdf07092ed197f3f37cba6f6abc43ab19e",
+		"8ffe5420e2f78e978f0dd00795cbacfb48457324e1aa5eb499dfc70ab36c977e",
+		"db42349e6a29bbd04ca73afdc8ec777a496fad28626fcbeb8315fbada0e7b660",
+		"a33edc8fe309bf84da0407ad74dc754e8a3bc579fab5218ceb2d0094dcff1a90",
+		"b8c9eee987d9b4a8dca800afb96e2efea4d6d36377e1d219866f895f8ada0981",
+		"56e01ad5cd5d68e13947382615ca975ed2b2aaf8d3dc7b8215aec6aebb31548c",
+		"a715d56bbb390b846b4938fade78d6cfc1bf1181b5a7e39d70cfd676b9521cf7",
+		"2eaa53bb3f219b04fb4c98fe2a4c1888f83e240d04266389e4df4bab5fa77a1c"
+	],
+	"frames": 9,
+	"loop": false,
+	"migration_source": {
+		"animation": "vigil_dagger_fast_03_left",
+		"consumer": "res://game/actors/operator/vigil_pattern_dagger_definition.tres",
+		"note": "Frames 0-8 of the generic ten-frame melee_1h fast_03 strip, the exact subrange and cadence the compatibility SpriteFrames played. Copied region-for-region; no resample, no redraw.",
+		"resource": "res://game/actors/operator/vigil_pattern_dagger_body_frames.tres"
+	},
+	"schema": "custodian.operator_animation_timing.v1"
+}

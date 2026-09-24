@@ -244,16 +244,25 @@ def canonical_candidates(weapon_id: str, spec: dict, layer: str, action: str, se
     return identities
 
 
-def migration_target(weapon_id: str, spec: dict, layer: str, action: str, sector: str) -> str:
+def migration_target(
+    weapon_id: str, spec: dict, layer: str, action: str, sector: str,
+    canonical: dict | None = None,
+) -> str:
     """The identity this layer will play after canonicalization.
 
-    The semantic contract, not the best pixel match: the weapon layer is owned by
-    the weapon, body and FX come from the weapon's own `weapon_type` family.
+    The semantic contract, not the best pixel match. The weapon layer is always
+    weapon-owned. Body and FX come from the weapon's own `weapon_type` family
+    *unless* a weapon-owned override is published for that action, which is how a
+    weapon keeps a presentation the shared family cannot express -- the Vigil
+    dagger's nine-frame Fast 03 body being the one live case.
     """
+    owned = "weapon/%s/%s/attack/%s/%s/%s" % (
+        weapon_id, spec["animation_profile"], action, sector, layer
+    )
     if layer == "weapon":
-        return "weapon/%s/%s/attack/%s/%s/%s" % (
-            weapon_id, spec["animation_profile"], action, sector, layer
-        )
+        return owned
+    if canonical is not None and owned in canonical:
+        return owned
     return "%s/attack/%s/%s/%s" % (spec["weapon_type"], action, sector, layer)
 
 
@@ -285,7 +294,7 @@ def main(argv: list[str] | None = None) -> int:
                     if legacy_name not in legacy_anims:
                         continue
                     legacy = legacy_anims[legacy_name]
-                    target = migration_target(weapon_id, spec, layer, action, sector)
+                    target = migration_target(weapon_id, spec, layer, action, sector, canonical)
                     candidates = []
                     for candidate in canonical_candidates(weapon_id, spec, layer, action, sector):
                         if candidate not in canonical:
