@@ -2,13 +2,30 @@ extends Node2D
 
 const VAULTWING_SCENE := preload("res://game/actors/ambient/vaultwing/vaultwing.tscn")
 
+class MomentTarget extends StaticBody2D:
+	var hits := 0
+	func receive_enemy_hit(amount: float, _kind: StringName = &"melee", _team: String = "enemy", _attacker: Node2D = null, _direction: Vector2 = Vector2.ZERO, _guard: float = -1.0, _context: Dictionary = {}) -> Dictionary:
+		hits += 1
+		return {"applied_damage": amount}
+
 var vaultwing: Vaultwing
-var operator: StaticBody2D
+var operator: MomentTarget
 var dive_committed := false
 var operator_moved_after_commit := false
 var air_stagger_seen := false
 var grounded_seen := false
 var climb_out_seen := false
+
+var dive_hit_count: int:
+	get: return vaultwing.behavior.dive_hit_count if is_instance_valid(vaultwing) else 0
+var dive_miss_count: int:
+	get: return vaultwing.behavior.dive_miss_count if is_instance_valid(vaultwing) else 0
+var dive_vector: Vector2:
+	get: return vaultwing.behavior.strike_vector if is_instance_valid(vaultwing) else Vector2.ZERO
+var dive_vector_x: float:
+	get: return dive_vector.x
+var dive_vector_y: float:
+	get: return dive_vector.y
 
 var vaultwing_state: StringName:
 	get: return vaultwing.get_state_name() if is_instance_valid(vaultwing) else &"missing"
@@ -16,7 +33,7 @@ var vaultwing_band: StringName:
 	get: return vaultwing.get_altitude_band_name() if is_instance_valid(vaultwing) else &"missing"
 
 func _ready() -> void:
-	operator = StaticBody2D.new()
+	operator = MomentTarget.new()
 	operator.name = "Operator"
 	operator.position = Vector2(760, 360)
 	operator.add_to_group("player")

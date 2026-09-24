@@ -1597,7 +1597,10 @@ HIGH/ATTACK/GROUND/PERCHED behavior, patrol, interest, committed dive windup and
 strike, climb-out, landing/takeoff, aerial stagger, damage, retreat, and death.
 The actor owns health/combat API, spatial contact gating, and the shared ambient
 semantic presentation controller. Production `World/Ambient` spawning and
-deterministic generated spawn/perch markers are wired. No bonding, companion
+deterministic generated spawn/perch markers are wired. Wild Vaultwings
+participate in the generic `enemy` combat-team contract without counting toward
+enemy wave caps; living-population gauges exclude retained corpses, and
+post-engagement cooldown prevents immediate repeated dives. No bonding, companion
 commands, or mounting are implemented. Vaultwing-specific production SFX remains
 an explicit presentation follow-up.
 

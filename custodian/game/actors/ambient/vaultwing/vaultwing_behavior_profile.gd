@@ -25,4 +25,4 @@ class_name VaultwingBehaviorProfile
 @export var perch_dwell_seconds := 1.2
 @export var perch_alert_seconds := 0.35
 @export var failed_engagement_seconds := 2.8
-@export var perch_min_spacing := 256.0
+@export var post_engagement_cooldown_seconds := 3.0

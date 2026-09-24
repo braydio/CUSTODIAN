@@ -33,6 +33,8 @@ func _run() -> void:
 	root.add_child(actor)
 	await physics_frame
 	if not actor.is_in_group("vaultwing"): _fail("actor missing vaultwing group")
+	if not actor.is_in_group("enemy"): _fail("wild Vaultwing missing generic enemy group")
+	if actor.counts_for_wave_cap(): _fail("wild Vaultwing incorrectly counts for enemy wave cap")
 	if actor.get_altitude_band_name() != &"high": _fail("initial band is not HIGH")
 	for action in [&"glide", &"flap", &"dive_windup", &"dive_strike", &"climb_out", &"land", &"takeoff", &"perch_idle", &"ground_idle", &"ground_walk", &"bite_attack", &"air_stagger", &"hurt", &"death"]:
 		if not actor.has_action(action): _fail("published Vaultwing action was not discovered: %s" % String(action))
@@ -78,6 +80,10 @@ func _check_spawn_authority() -> void:
 	if spawned == null: _fail("focused Vaultwing spawner failed to create actor")
 	if spawner.get_active_count() != 1: _fail("Vaultwing spawner active count is incorrect")
 	if spawned != null and spawned.get_altitude_band_name() != &"high": _fail("spawned Vaultwing did not begin in HIGH")
+	if spawned != null:
+		spawned.die()
+		await process_frame
+		if spawner.get_active_count() != 0: _fail("dead Vaultwing corpse consumed living population count")
 	spawner.despawn_all()
 	spawner.queue_free()
 	await process_frame

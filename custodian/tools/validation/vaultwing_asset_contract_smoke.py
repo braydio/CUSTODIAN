@@ -77,7 +77,7 @@ def main() -> int:
         for direction in sorted(DIRECTIONS):
             if (action, direction) not in by_action_direction:
                 failures.append(f"missing {action}::{direction}")
-    for path in [CUSTODIAN / "game/actors/ambient/vaultwing", CUSTODIAN / "game/systems/spawning/vaultwing_spawner.gd", CUSTODIAN / "game/scenes"]:
+    for path in [CUSTODIAN / "game/actors/ambient/vaultwing", CUSTODIAN / "game/systems/spawning/vaultwing_spawner.gd", CUSTODIAN / "scenes"]:
         for script in ([path] if path.is_file() else list(path.rglob("*.gd"))):
             text = script.read_text(encoding="utf-8")
             if "asset_drop/inbox" in text or "asset_drop/source_work" in text:

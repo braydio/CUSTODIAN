@@ -61,13 +61,13 @@ func spawn_at(spawn_position: Vector2, creature_seed: int = seed_value) -> Vault
 	creature.set_perch_positions(_perch_positions())
 	_spawned.append(creature)
 	_log_event(&"vaultwing_spawned", {"seed": creature_seed, "position": spawn_position})
-	_obs_set_gauge("active_vaultwings", _spawned.size())
+	_obs_set_gauge("active_vaultwings", _active_count())
 	return creature
 
 
 func get_active_count() -> int:
 	_prune_spawned()
-	return _spawned.size()
+	return _living_count()
 
 
 func reset_for_world() -> void:
@@ -88,7 +88,7 @@ func despawn_all(reason: String = "explicit_cleanup") -> void:
 
 func _active_count() -> int:
 	_prune_spawned()
-	return _spawned.size()
+	return _living_count()
 
 
 func _prune_spawned() -> void:
@@ -98,7 +98,17 @@ func _prune_spawned() -> void:
 			return false
 		return true
 	)
-	_obs_set_gauge("active_vaultwings", _spawned.size())
+	_obs_set_gauge("active_vaultwings", _living_count())
+
+func _living_count() -> int:
+	var count := 0
+	for creature in _spawned:
+		if not is_instance_valid(creature) or creature.is_queued_for_deletion():
+			continue
+		if creature.has_method("is_dead") and creature.call("is_dead"):
+			continue
+		count += 1
+	return count
 
 
 func _perch_positions() -> Array[Vector2]:

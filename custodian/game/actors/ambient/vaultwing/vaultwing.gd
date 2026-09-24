@@ -27,6 +27,10 @@ func _ready() -> void:
 	add_to_group("ambient_creature")
 	add_to_group("hostile_fauna")
 	add_to_group("vaultwing")
+	# Wild Vaultwings participate in the existing hostile-team contract so
+	# ordinary player projectiles, threat queries, and combat read models can
+	# discover them without Vaultwing-specific branches.
+	add_to_group("enemy")
 	_original_collision_layer = collision_layer
 	_original_collision_mask = collision_mask
 	if ANIMATION_SET.has_method("rescan_runtime"):
@@ -95,6 +99,12 @@ func take_damage(amount: float, _hit_strength := 0, _reaction_damage := -1.0) ->
 	if behavior != null: behavior.notify_damage(applied)
 	if health <= 0.0: die()
 	return _damage_result(applied, true, before)
+
+func is_dead() -> bool:
+	return _dead
+
+func counts_for_wave_cap() -> bool:
+	return false
 
 func set_band_interaction(next_band: int) -> void:
 	var grounded := next_band == VaultwingBehaviorController.Band.GROUND or next_band == VaultwingBehaviorController.Band.PERCHED

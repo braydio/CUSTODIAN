@@ -33,6 +33,10 @@ var _failed_engagement_elapsed := 0.0
 var _pending_after_takeoff: StringName = &""
 var _perch_approach_active := false
 var _landing_to_perch := false
+var _engagement_cooldown_remaining := 0.0
+var dive_started_count := 0
+var dive_hit_count := 0
+var dive_miss_count := 0
 
 func _ready() -> void:
 	var bus := get_node_or_null("/root/NoiseEventBus")
@@ -117,6 +121,7 @@ func force_state(next_state: State) -> void: _enter(next_state)
 
 func step(delta: float) -> void:
 	if actor == null or state == State.DEAD: return
+	_engagement_cooldown_remaining = maxf(0.0, _engagement_cooldown_remaining - delta)
 	state_elapsed += delta; actor.velocity = Vector2.ZERO; _update_player_interest(delta)
 	match state:
 		State.HIGH_PATROL:
@@ -144,13 +149,15 @@ func step(delta: float) -> void:
 			_set_band(Band.ATTACK); actor.velocity = strike_vector * profile.dive_speed
 			if not strike_hit and state_elapsed >= 0.08 and state_elapsed <= 0.22:
 				if _hit_target_with_shape(profile.dive_damage, &"dash"):
-					strike_hit = true; strike_contact_tested = true; _log_event(&"vaultwing_dive_hit", {"target": target.name if is_instance_valid(target) else ""})
+					strike_hit = true; strike_contact_tested = true; dive_hit_count += 1; _log_event(&"vaultwing_dive_hit", {"target": target.name if is_instance_valid(target) else ""})
 			if state_elapsed >= profile.dive_strike_seconds:
-				if not strike_hit: _log_event(&"vaultwing_dive_missed", {})
+				if not strike_hit: dive_miss_count += 1; _log_event(&"vaultwing_dive_missed", {})
 				_enter(State.CLIMB_OUT)
 		State.CLIMB_OUT:
 			_set_band(Band.ATTACK); actor.velocity = (-strike_vector + Vector2.UP * 0.8).normalized() * profile.climb_speed
-			if state_elapsed >= profile.climb_out_seconds: _enter(State.HIGH_PATROL)
+			if state_elapsed >= profile.climb_out_seconds:
+				_engagement_cooldown_remaining = profile.post_engagement_cooldown_seconds
+				_enter(State.HIGH_PATROL)
 		State.PERCH_IDLE:
 			_set_band(Band.PERCHED)
 			if state_elapsed >= profile.perch_dwell_seconds: _enter(State.TAKEOFF)
@@ -167,7 +174,8 @@ func step(delta: float) -> void:
 			elif state_elapsed >= 1.4: _enter(State.TAKEOFF)
 		State.GROUND_STALK:
 			_set_band(Band.GROUND); _failed_engagement_elapsed += delta
-			if not _has_valid_target() or actor.global_position.distance_to(target.global_position) > profile.engagement_radius: _enter(State.RETREAT)
+			if not _has_valid_target() or actor.global_position.distance_to(target.global_position) > profile.engagement_radius:
+				_pending_after_takeoff = &"RETREAT"; _enter(State.TAKEOFF)
 			elif _failed_engagement_elapsed >= profile.failed_engagement_seconds: _pending_after_takeoff = &"RETREAT"; _enter(State.TAKEOFF)
 			elif _target_in_range(profile.ground_attack_range): _enter(State.GROUND_ATTACK)
 			else: actor.velocity = actor.global_position.direction_to(target.global_position) * profile.ground_speed
@@ -191,7 +199,9 @@ func step(delta: float) -> void:
 			if state_elapsed >= profile.ground_stagger_seconds: _enter(State.GROUND_STALK if _has_valid_target() else State.GROUND_IDLE)
 		State.RETREAT:
 			_set_band(Band.ATTACK if state_elapsed < 0.25 else Band.HIGH); actor.velocity = retreat_vector * profile.climb_speed
-			if state_elapsed >= profile.retreat_seconds: _enter(State.HIGH_PATROL)
+			if state_elapsed >= profile.retreat_seconds:
+				_engagement_cooldown_remaining = profile.post_engagement_cooldown_seconds
+				_enter(State.HIGH_PATROL)
 	_publish_presentation(delta)
 
 func get_state_name() -> StringName: return StringName(State.keys()[state].to_lower())
@@ -216,6 +226,7 @@ func _enter(next_state: State) -> void:
 		strike_vector = actor.global_position.direction_to(target_position) if target_position_valid else patrol_direction
 		if strike_vector.length_squared() < 0.01: strike_vector = Vector2.DOWN
 		committed_attack_vector = strike_vector
+		dive_started_count += 1
 		_log_event(&"vaultwing_dive_started", {})
 	if state == State.LAND: _log_event(&"vaultwing_landed", {})
 	if state == State.TAKEOFF: _log_event(&"vaultwing_takeoff", {})
@@ -257,7 +268,7 @@ func _presentation_action_for_state() -> StringName:
 	return &""
 
 func _update_player_interest(delta: float) -> void:
-	if state != State.HIGH_PATROL: return
+	if state != State.HIGH_PATROL or _engagement_cooldown_remaining > 0.0: return
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	if player == null: return
 	if actor.global_position.distance_to(player.global_position) <= profile.awareness_radius:
