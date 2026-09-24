@@ -28,14 +28,29 @@ assist is a subtle increase in commitment, not a larger hitbox or mid-swing
 tracking. Each link freezes its corrected facing and resolved drive at commit.
 
 All links have distinct semantic animation names and attack profiles. Body,
-dagger, and FX use separate synchronized 156×96 `SpriteFrames` resources.
-Runtime semantics follow the authored numbering: Chain 02 is Fast 02 and the
-nine-frame Chain 03 strip is Fast 03. All play at 18 FPS. Fast 03 owns contacts
-at zero-based runtime frames 4 and 8; its final frame has a `1.5x` duration
-hold before animation completion.
+dagger, and FX are separate synchronized 156×96 layers selected from the one
+generated `operator_runtime_frames.tres`; C2b.1 retired the per-weapon
+`SpriteFrames` resources they used to come from. Runtime semantics follow the
+authored numbering: Chain 02 is Fast 02 and the nine-frame Chain 03 strip is
+Fast 03.
+
+The links do **not** share a rate. The cadence retune slowed Fast 02 and Fast 03
+to widen the chain's commitment windows, and the live profiles and regressions
+have protected those rates since:
+
+| Link | Body | Dagger | FX | Rate |
+|------|------|--------|----|------|
+| Fast 01 | 10f | 10f | 10f | 18 FPS |
+| Fast 02 | 8f | 8f | 8f | 14 FPS |
+| Fast 03 | 9f | 9f | 8f | 13 FPS |
+
+Fast 03 owns contacts at zero-based runtime frames 4 and 8; its final body and
+dagger frame has a `1.5x` duration hold before animation completion. The
+prose that used to stand here said all three links play at 18 FPS, which
+described the pre-retune state.
 
 Gameplay timing follows that contact grammar: `0.278 s` startup, `0.056 s`
-active contact, and link-specific recovery (`0.222/0.111/0.420 s`). Movement,
+active contact, and link-specific recovery (`0.222/0.143/0.269 s`). Movement,
 turn lock, drive, cancellation, damage, and presentation therefore agree on
 the same beat. Swing audio begins at visible acceleration rather than frame
 zero, and hit-stop escalates across the three links.
@@ -72,20 +87,34 @@ weapon art is not a valid substitute.
 ```text
 custodian/game/actors/operator/
 ├── vigil_pattern_dagger_definition.tres
-├── vigil_pattern_dagger_frames.tres
-├── vigil_pattern_dagger_body_frames.tres
-├── vigil_pattern_dagger_melee_overlay_frames.tres
-├── vigil_pattern_dagger_fx_frames.tres
+├── vigil_pattern_dagger_frames.tres          # held weapon only
 └── attacks/vigil_pattern_dagger_fast_{01,02,03}.tres
 ```
 
-Pipeline outputs are under:
+C2b.1 deleted `vigil_pattern_dagger_{body,melee_overlay,fx}_frames.tres`. They
+were installed into the shared canonical `SpriteFrames` at equip time, which
+made the runtime animation database mutable. Presentation now selects canonical
+identities from the one generated database instead:
 
 ```text
-content/sprites/operator/runtime/body/melee_1h/shared/
-content/sprites/operator/runtime/fx/melee_1h/shared/
-content/sprites/operator/runtime/weapon/melee_1h/vigil_pattern_dagger/
+Fast 01/02 body   melee_1h/attack/fast_0N/{e,w}/full_body
+Fast 03 body      weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/{e,w}/full_body
+dagger            weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_0N/{e,w}/weapon
+FX                melee_1h/attack/fast_0N/{e,w}/fx
 ```
+
+Fast 03's body is weapon-owned because the dagger plays the first nine frames of
+the shared ten-frame strip -- a distinct presentation, not a retime of it.
+
+Pipeline sources are under:
+
+```text
+content/sprites/operator/source/animations/melee_1h/attack/fast_{01,02,03}/
+content/sprites/weapons/vigil_pattern_dagger/source/operator/melee_1h_dagger/overrides/attack/
+```
+
+Authored rate, loop and per-frame durations travel with the art in
+`*.animation.json` timing sidecars; nothing in the actor retimes a clip.
 
 ## Acceptance
 

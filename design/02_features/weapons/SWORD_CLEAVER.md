@@ -31,21 +31,39 @@ zero-based frame 5 and commit is frame 6.
 ```text
 custodian/game/actors/operator/
 ├── sword_cleaver_definition.tres
-├── sword_cleaver_held_frames.tres
-├── sword_cleaver_body_frames.tres
-├── sword_cleaver_weapon_overlay_frames.tres
-├── sword_cleaver_fx_frames.tres
+├── sword_cleaver_held_frames.tres          # held weapon only
 └── attacks/sword_cleaver_fast_{01,02,03}.tres
 ```
 
-`OperatorWeaponDefinition` owns body, weapon, FX, profiles, hit windows,
-commits, and stamina. No cleaver-specific playback exists in `operator.gd`.
+C2b.1 deleted `sword_cleaver_{body,weapon_overlay,fx}_frames.tres`. They were
+installed into the shared canonical `SpriteFrames` at equip time, which made the
+runtime animation database mutable. Presentation now selects canonical
+identities from the one generated database:
+
+```text
+body      melee_1h_heavy/attack/fast_0N/{e,w}/full_body
+weapon    weapon/sword_cleaver/melee_1h_heavy/attack/fast_0N/{e,w}/weapon
+FX        melee_1h_heavy/attack/fast_0N/{e,w}/fx
+```
+
+That changed what the chain draws, and it is worth stating plainly. The deleted
+body and FX resources pointed at the generic `melee_1h` **fast_01** strip -- all
+three links at the same one -- so the chain played a single borrowed swing three
+times. The canonical `melee_1h_heavy` art is distinct per link, at the same ten
+frames and 18 FPS, so hit windows, commits and contacts are unchanged.
+
+`OperatorWeaponDefinition` owns profiles, hit windows, commits and stamina. It no
+longer owns animation databases. No cleaver-specific playback exists in
+`operator.gd`.
 
 ## Deferred
 
 - Production held/locomotion art. The current held stance is intentionally
   transparent so the runtime never displays the wrong weapon.
-- Dedicated Fast 02 and Fast 03 sheets.
+- Dedicated Fast 02 and Fast 03 *source* sheets. The canonical
+  `melee_1h_heavy/attack/fast_02..03` identities the runtime now selects are
+  published and distinct, but the cleaver's own authored art for those links is
+  still outstanding.
 - Heavy profile/runtime enablement and its complete body/weapon/FX set.
 - Inventory acquisition/reward registration.
 - North/south presentation.

@@ -1,10 +1,21 @@
 # Task Packet — Operator Runtime Decomposition
 
 **Status:** Slices A, B, B-final, C1, **D** (through D.3) and **C2b in part**
-complete (2026-09-24). C2a/R4 landed some time ago -- `animated_sprite` is
-canonical and the modular body is canonical -- so the older "C2a blocked / R4
-next" prose below is history, not present reality. Architecture debt is **98**,
-down from **347** at the start of the migration. The figure previously given
+(through **C2b.1**) complete (2026-09-24). C2a/R4 landed some time ago --
+`animated_sprite` is canonical and the modular body is canonical -- so the older
+"C2a blocked / R4 next" prose below is history, not present reality.
+Architecture debt is **97**, down from **347** at the start of the migration.
+
+**C2b.1 (blocker removal).** C2b discovered that equipping a melee weapon copied
+that weapon's `body_frames_resource` into the shared canonical `SpriteFrames`,
+making the runtime animation database mutable and keeping legacy clip names
+genuinely reachable. That mutation is gone: the canonical database is immutable
+across equip/unequip/cycling, armed melee selects canonical semantic identities
+derived from weapon data, the per-weapon `SpriteFrames` fields and their six
+resources are deleted, and `actor_local_spriteframes` reached 0.
+`operator_runtime_spine_immutable` is the executable form of that invariant.
+`animation_resolver` (18) and `directional_animation_fallback` (4) remain for
+non-armed callers and retire in the C2b demolition pass. The figure previously given
 here as the migration's starting point, 201, was an intermediate state, not the
 opening balance.
 

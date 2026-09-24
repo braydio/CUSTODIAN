@@ -2,9 +2,6 @@
   "absolute_scene_lookups": {
     "operator.gd": 38
   },
-  "actor_local_spriteframes": {
-    "operator.gd": 1
-  },
   "animation_resolver": {
     "animations/animation_resolver.gd": 1,
     "operator.gd": 17
