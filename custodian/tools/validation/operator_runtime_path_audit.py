@@ -41,19 +41,11 @@ KNOWN_LEGACY_RAW_OPERATOR_PATHS = frozenset({
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
-        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01_legacy_7f7c22c3/operator__fx__melee_1h__attack__fast_01_legacy_7f7c22c3__e__10f__96.png",
-        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01_legacy_3865ae8b/operator__fx__melee_1h__attack__fast_01_legacy_3865ae8b__w__10f__96.png",
-        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02_legacy_c1da49f3/operator__fx__melee_1h__attack__fast_02_legacy_c1da49f3__e__8f__96.png",
-        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02_legacy_04ab0f51/operator__fx__melee_1h__attack__fast_02_legacy_04ab0f51__w__8f__96.png",
-        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_7010c688/operator__fx__melee_1h__attack__fast_03_legacy_7010c688__e__8f__96.png",
-        "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03_legacy_99791341/operator__fx__melee_1h__attack__fast_03_legacy_99791341__w__8f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_aim_raise/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_aim_raise__omni__1f__288x96.png",
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png",
-        "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__n__9f__96.png",
-        "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__s__9f__96.png",
     )
 })
 

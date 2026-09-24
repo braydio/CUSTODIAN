@@ -1,11 +1,12 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slices A, B, B-final, C1 and **D** complete (2026-09-23). C2a/R4
-landed some time ago -- `animated_sprite` is canonical and the modular body is
-canonical -- so the older "C2a blocked / R4 next" prose below is history, not
-present reality. Architecture debt is **119**, down from 201 at the start of the
-migration; the stale 201 figure has been corrected here and in the architecture
-contract.
+**Status:** Slices A, B, B-final, C1, **D** (through D.3) and **C2b in part**
+complete (2026-09-24). C2a/R4 landed some time ago -- `animated_sprite` is
+canonical and the modular body is canonical -- so the older "C2a blocked / R4
+next" prose below is history, not present reality. Architecture debt is **98**,
+down from **347** at the start of the migration. The figure previously given
+here as the migration's starting point, 201, was an intermediate state, not the
+opening balance.
 
 **Slice D (done, after the D.1 and D.2 seal corrections).** `operator/input/` is the sole owner of raw Operator input
 sampling: `OperatorInputFrame` (one immutable tick of intent),
@@ -57,9 +58,13 @@ The C2a renderer cutover record, kept for its evidence (2026-09-15):
 | C2a-R3 art | synchronized 4-frame `block_enter_01` body pair | published |
 | C2a-T1.1 | frozen authored-timing oracle | done |
 | C2a-R3 | `modular_lower_body_sprite` + `modular_upper_body_sprite` | canonical |
+| C2a-R4 | `animated_sprite` | canonical |
+| C2a-R4.1 | `animated_sprite` seal correction | done |
 
-`animated_sprite` and the melee/weapon overlays are still compatibility
-renderers, and the compatibility SpriteFrames stay on disk until C2b.
+`animated_sprite` is canonical as of R4/R4.1; the sentence that used to stand
+here calling it a compatibility renderer predated that and was wrong when read.
+The melee weapon/FX overlays are still compatibility renderers, and the
+compatibility SpriteFrames stay on disk until C2b completes.
 **Contract:** `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`
 **Gate:** `custodian/tools/validation/operator_architecture_debt_audit.py`
 

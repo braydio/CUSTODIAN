@@ -259,10 +259,62 @@ architecture debt audit       119    baseline held
 changed set                   40/40
 ```
 
+## D.3 — restore ordinary KBM mouse ownership (2026-09-24, `f428d96bd`)
+
+D.2 was accepted, and it changed one historical behaviour nobody asked it to.
+
+Making pointer movement event-derived was correct: a parked cursor must not take
+aim back from an active gamepad just because `InputPromptService` flips the
+device family on any keyboard press. But it was implemented as a latch that
+started **cleared** — `_mouse_is_live = false` at construction — so the rule read
+"the mouse is dead until proven alive" rather than "the mouse must move to
+reclaim aim". A fresh keyboard/mouse session with arrow aim off therefore had no
+cursor aim at all until the player jiggled the mouse. Before Slice D that case
+resolved aim from the cursor on the very first tick.
+
+The fix is a state inversion, not a new mechanism. The latch is now
+`_mouse_blocked_until_motion`, normally clear. Only `GAMEPAD` and `EXTERNAL`
+ownership set it; a real qualifying `InputEventMouseMotion` clears it, and it
+stays clear. `reset()` returns to the ordinary available state, because a reset
+is a return to no owner and the mouse is the ordinary owner of a local session —
+leaving it set there would have recreated the jiggle requirement one possession
+later. `mouse_motion_generation` and the event-derived `mouse_moved` plumbing are
+untouched; nothing infers physical movement from world-space coordinates.
+
+Keyboard arrow aim deliberately does **not** set the latch. Turning arrow aim off
+hands aim straight back to the cursor with no physical event in between, which is
+the second required case.
+
+### Negative controls
+
+The new cases run against `OperatorAimController` directly rather than the live
+actor, because the distinguishing fact is the controller's *initial* state and an
+actor that has already ticked has moved past it. The D.2 camera case still runs
+against the real actor with a live `Camera2D`.
+
+Both directions were mutation-checked, because a test that cannot fail proves
+nothing:
+
+```
+start the latch set (the D.2 behaviour)  -> fresh-KBM case FAILS as intended
+never set the latch                      -> both stale-mouse cases FAIL as intended
+```
+
+The second mutation also failed the pre-existing D.2 camera control, which is the
+right coupling: loosening the birth rule must not loosen the reclaim rule.
+
+### Result
+
+```
+operator_input_aim_source     PASS
+operator_input_frame          PASS
+```
+
 ## Deferred deliberately
 
-C2b animation compatibility demolition, Slice E (`OperatorActionController`),
-Slice F (melee/dodge/ranged/loadout/interaction/recovery extraction). No combat,
-input or timing values were retuned, and no assets were touched.
+Slice E (`OperatorActionController`), Slice F (melee/dodge/ranged/loadout/
+interaction/recovery extraction). No combat, input or timing values were retuned,
+and no assets were touched. C2b is under way separately and is tracked in
+`OPERATOR_C2B_CLAUDE_SUMMARY.md`.
 
-Slice D is sealed.
+Slice D is sealed through D.3.

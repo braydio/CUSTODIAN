@@ -1067,7 +1067,6 @@ Last updated: 2026-09-23
 - `custodian/tools/pipelines/operator_asset_schema.py` — sole V2 filename/semantic identity authority.
 - `custodian/tools/pipelines/sync_operator_runtime_assets.py` — canonical source scanner, dimension/synchronization validator, runtime emitter, and animation-catalog generator.
 - `custodian/tools/pipelines/migrate_operator_assets_v2.py` — dry-run-first hash/reference migration and legacy cleanup tool.
-- `custodian/game/actors/operator/animations/operator_animation_catalog.gd` — Godot semantic catalog reader for body layers and weapon presentation.
 - `custodian/tools/pipelines/build_operator_runtime_frames.gd` — post-import canonical Operator runtime `SpriteFrames` generator; compatibility aliases are refreshed separately while legacy consumers remain.
 - `custodian/content/sprites/operator/README.md` — current Operator authoring and weapon-profile workflow.
 - `custodian/tools/validation/operator_{asset_schema,asset_layout}_smoke.py` and `operator_runtime_path_audit.py` — schema, layout, canvas, synchronization, supersession, and historical-path gates.

@@ -3,7 +3,7 @@
     "operator.gd": 38
   },
   "actor_local_spriteframes": {
-    "operator.gd": 5
+    "operator.gd": 1
   },
   "animation_resolver": {
     "animations/animation_resolver.gd": 1,
@@ -17,15 +17,8 @@
     "animations/states/hit_recoil_state.gd": 12,
     "animations/states/sheathe_weapon_state.gd": 6
   },
-  "attack_fallback_animation": {
-    "operator.gd": 13
-  },
   "directional_animation_fallback": {
     "operator.gd": 4
-  },
-  "operator_animation_catalog": {
-    "animations/operator_animation_catalog.gd": 1,
-    "operator.gd": 3
   },
   "weapon_definition_runtime_state": {
     "operator_weapon_definition.gd": 3

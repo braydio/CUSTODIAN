@@ -54,7 +54,7 @@ The active Godot runtime boots into a generated contract context with full 7-sys
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Mouse aim validation | Pending | Needs explicit validation against procgen camera handoff |
+| Mouse aim validation | Complete | Covered by `operator_input_aim_source`, which drives a real `Camera2D` at the path the Operator reads: camera follow/lookahead/shake must not register as pointer motion (D.2), and a fresh keyboard/mouse session owns cursor aim without a mouse jiggle while a stale cursor stays blocked after gamepad or external ownership (D.3) |
 | Shadow system integration | Pending | Node2D procedural approach, TileMap path aspirational |
 | Weapon data factory expansion | Incomplete | Factory reads 10 of 20+ schema fields |
 | Power system values alignment | Minor drift | Design says 0.75 damaged efficiency, code uses 0.6 |
