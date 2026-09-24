@@ -57,9 +57,6 @@ class_name MeleeAttackProfile
 ## The semantic action this attack presents. The selector owns the concrete
 ## runtime identity: direction, layer and clip name are not authored here.
 @export var presentation_action: StringName = &"fast_01"
-## Migration bridge: the last concrete clip name still read by the actor's
-## pre-selector melee playback. Remove with the operator.gd cutover.
-@export var fallback_animation: StringName = &"melee_2h_fast"
 
 @export_category("Animation")
 @export var hit_window_frames: PackedInt32Array = []

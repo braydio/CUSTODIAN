@@ -35,5 +35,4 @@ target_assist_cone_degrees = 24.0
 target_aim_correction_degrees = 6.0
 target_drive_bonus_max_px = 4.0
 presentation_action = &"fast_01"
-fallback_animation = &"unarmed_attack_fast"
 hit_window_frames = PackedInt32Array(3)

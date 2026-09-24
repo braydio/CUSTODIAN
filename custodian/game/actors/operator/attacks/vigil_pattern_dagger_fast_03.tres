@@ -34,4 +34,3 @@ hit_stop_scale = 0.3
 hit_stop_duration = 0.043
 camera_shake_power = 1.5
 presentation_action = &"fast_03"
-fallback_animation = &"vigil_dagger_fast_03"

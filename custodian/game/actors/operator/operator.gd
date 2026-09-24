@@ -6562,13 +6562,6 @@ func _start_fast_attack() -> void:
 		_melee_attack_key = String(
 			chain_keys[_melee_fast_combo_step]
 		)
-		var fallback_name := StringName(
-			_get_weapon_animation_name(
-				_active_attack_profile,
-				_melee_attack_key,
-				&"melee_2h_fast"
-			)
-		)
 		var stamina_cost := _get_fast_chain_stamina_cost()
 		if stamina_cost > 0.0:
 			_spend_stamina(stamina_cost, &"fast_attack")
@@ -6606,10 +6599,7 @@ func _start_fast_attack() -> void:
 				melee_range,
 				melee_arc_degrees
 			)
-		_play_melee_anim_from_key(
-			_melee_attack_key,
-			fallback_name
-		)
+		_play_melee_anim_from_key(_melee_attack_key)
 		_melee_duration = _resolve_fast_chain_gameplay_duration()
 		_lock_melee_cooldown(_melee_duration + 0.04)
 		match _melee_attack_key:
@@ -6634,7 +6624,6 @@ func _start_fast_attack() -> void:
 		return
 
 	var next_fast_key := "melee_fast_1"
-	var fallback_animation: StringName = &"melee_2h_fast"
 	var next_duration := 0.42
 	# C2a-R4: fast-chain capability is weapon data, not a `has_animation()` probe.
 	# It used to ask whether `melee_2h_fast_2_right` existed -- a legacy clip the
@@ -6644,16 +6633,13 @@ func _start_fast_attack() -> void:
 	# link".
 	if _melee_fast_combo_step >= 1 and _weapon_defines_fast_chain_link("melee_fast_2"):
 		next_fast_key = "melee_fast_2"
-		fallback_animation = &""
 		next_duration = 0.42
 		_melee_fast_combo_step = 2
 	else:
 		_melee_fast_combo_step = 1
-		fallback_animation = &""
 		next_duration = 0.42
 	if is_unarmed_attack:
 		next_fast_key = "unarmed_fast_2" if _melee_fast_combo_step >= 2 else "unarmed_fast_1"
-		fallback_animation = &"unarmed_attack_fast"
 	_melee_attack_key = next_fast_key
 	_melee_elapsed = 0.0
 	var requested_direction := _get_melee_forward_direction()
@@ -6701,7 +6687,7 @@ func _start_fast_attack() -> void:
 	if is_unarmed_attack and uses_dodge_fast_attack_entry:
 		_dodge_fast_attack_presentation_active = _play_dodge_fast_attack_presentation()
 	if not _dodge_fast_attack_presentation_active:
-		_play_melee_anim_from_key(_melee_attack_key, fallback_animation)
+		_play_melee_anim_from_key(_melee_attack_key)
 	_melee_duration = (
 		float(DODGE_FAST_ATTACK_FRAME_COUNT) / DODGE_FAST_ATTACK_FPS
 		if _dodge_fast_attack_presentation_active
@@ -6800,14 +6786,14 @@ func _begin_fast_attack_strike_phase() -> void:
 	var attack_profile: MeleeAttackProfile = _active_melee_attack_profile
 	if attack_profile != null:
 		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
-		_play_melee_anim_from_key(_melee_attack_key, attack_profile.fallback_animation)
+		_play_melee_anim_from_key(_melee_attack_key)
 		var authored_target := _get_fast_chain_presentation_duration(0.42)
 		_melee_duration = _get_current_melee_animation_duration(
 			authored_target, 0.24, authored_target
 		)
 	else:
 		_configure_melee_hitbox(melee_fast_hit_damage, melee_range, melee_arc_degrees)
-		_play_melee_anim_from_key(_melee_attack_key, &"unarmed_attack_fast")
+		_play_melee_anim_from_key(_melee_attack_key)
 		_melee_duration = _get_current_melee_animation_duration(0.42, 0.24, 0.42)
 	if melee_cooldown_remaining <= 0.0:
 		_lock_melee_cooldown(_melee_duration + 0.04)
@@ -6883,7 +6869,7 @@ func _begin_heavy_attack_active_phase() -> void:
 	_melee_duration = attack_profile.recovery_sec if attack_profile != null else 0.70
 	if attack_profile != null:
 		_configure_melee_hitbox(attack_profile.damage, attack_profile.range_px, attack_profile.arc_degrees)
-		_play_melee_anim_from_key(_melee_attack_key, attack_profile.fallback_animation)
+		_play_melee_anim_from_key(_melee_attack_key)
 	else:
 		_configure_melee_hitbox(melee_heavy_hit_damage, melee_heavy_range, melee_heavy_arc_degrees)
 		# No legacy fallback name. `melee_2h_heavy` was a generic identity standing
@@ -8233,7 +8219,7 @@ func _play_critical_attack_animation() -> void:
 		_play_operator_critical_hitspark(_melee_forward)
 		return
 	_warn_missing_animation_once("operator_critical_1h", "unarmed_attack_fast")
-	_play_melee_anim_from_key("unarmed_fast_1", &"unarmed_attack_fast")
+	_play_melee_anim_from_key("unarmed_fast_1")
 
 
 func _ensure_operator_critical_attack_animation(direction: Vector2) -> StringName:
@@ -8502,18 +8488,23 @@ func _play_block_weapon_overlay(animation_name: StringName) -> void:
 	melee_weapon_overlay_sprite.frame = 0
 
 
-func _play_melee_anim_from_key(attack_key: String, fallback_animation: StringName = &"") -> void:
+## Play the full-body clip a weapon's animation map names for this attack key.
+##
+## The second-chance parameter this used to take is gone, along with the
+## `MeleeAttackProfile` field that supplied it. It named another compatibility
+## base to retry when the first produced nothing, which only made sense while the
+## retry could land on a differently-spelled clip. Both spellings now resolve
+## through the same `FULL_BODY_IDENTITIES` table to the same canonical identity,
+## so the retry either repeated the first attempt or asked for an identity the
+## weapon did not claim. Either way it could not add a frame of animation.
+func _play_melee_anim_from_key(attack_key: String) -> void:
 	if not _is_melee_loadout_active():
 		return
 	if animated_sprite == null:
 		return
 	var weapon_definition = _get_equipped_primary_weapon_definition()
-	var base_animation := _get_weapon_animation_name(weapon_definition, attack_key, fallback_animation)
-	if _play_melee_anim_resolved(base_animation, _melee_forward, attack_key):
-		return
-	if not fallback_animation.is_empty() and fallback_animation != base_animation:
-		_warn_missing_animation_once(String(base_animation), String(fallback_animation))
-		_play_melee_anim_resolved(fallback_animation, _melee_forward, attack_key)
+	var base_animation := _get_weapon_animation_name(weapon_definition, attack_key)
+	_play_melee_anim_resolved(base_animation, _melee_forward, attack_key)
 
 
 ## Take the body before starting a full-body melee clip.
@@ -8539,13 +8530,22 @@ func _prepare_armed_melee_full_body() -> void:
 		_hide_modular_locomotion_layers()
 
 
+## Play the full-body clip for a melee attack.
+##
+## C2b tried to delete the compatibility tail below and had to put it back. The
+## premise was that `animated_sprite` binds `operator_runtime_frames.tres`, whose
+## identities are all slash-delimited, so the `<base>_right` and bare-base probes
+## could never hit. That is true of the resource on disk and false at runtime:
+## `_install_weapon_body_frames()` copies a weapon's `body_frames_resource`
+## animations *into* that same SpriteFrames object, so an equipped Vigil dagger
+## adds `vigil_dagger_fast_03_right` to the canonical database in place.
+##
+## So this tail is live for armed melee, not archaeology. Removing it needs the
+## per-weapon body art published as canonical identities first; it is not a
+## call-site cleanup. See OPERATOR_C2B_CLAUDE_SUMMARY.md.
 func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> bool:
 	if animated_sprite == null:
 		return false
-	# Canonical first. A base with a canonical identity resolves through the
-	# selector and is never mirrored; the legacy chain below still serves the
-	# per-weapon bases that arrive from weapon resources, which C2a section 7
-	# migrates in its own slice.
 	var canonical_animation := _resolve_full_body_animation(String(base_animation), direction)
 	if not canonical_animation.is_empty() and animated_sprite.sprite_frames \
 	and _has_playable_sprite_animation(animated_sprite.sprite_frames, canonical_animation):
