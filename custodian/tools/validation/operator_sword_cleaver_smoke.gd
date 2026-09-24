@@ -259,6 +259,15 @@ func _validate_all_chain_links(operator: Node) -> void:
 			"cleaver link %d did not play its canonical FX overlay, got %s"
 			% [link, fx.animation]
 		)
+		# Every canonical identity is slash-delimited; every compatibility clip
+		# name is not. This is the cheap, direct expression of "armed melee no
+		# longer needs legacy animation names".
+		for renderer: Array in [["body", body], ["weapon", weapon], ["fx", fx]]:
+			_assert(
+				String((renderer[1] as AnimatedSprite2D).animation).contains("/"),
+				"cleaver link %d presented a compatibility clip name on the %s layer: %s"
+				% [link, renderer[0], (renderer[1] as AnimatedSprite2D).animation]
+			)
 		_assert(
 			operator.get("_active_melee_attack_profile")
 			== CLEAVER_DEFINITION.fast_chain_attack_profiles[index],

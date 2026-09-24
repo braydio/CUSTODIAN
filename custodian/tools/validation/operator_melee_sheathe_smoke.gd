@@ -1,8 +1,9 @@
 extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
-const VIGIL_FX_FRAMES := preload("res://game/actors/operator/vigil_pattern_dagger_fx_frames.tres")
-const VIGIL_OVERLAY_FRAMES := preload("res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres")
+const RUNTIME_FRAMES := preload(
+	"res://content/sprites/operator/runtime/operator_runtime_frames.tres"
+)
 
 var _failures: Array[String] = []
 
@@ -162,36 +163,44 @@ func _assert_hidden_legacy_body_does_not_hijack(
 	legacy_body.visible = false
 
 
+## C2b.1: the per-weapon compatibility resources these used to inspect are gone.
+##
+## The assertions they carried were really about the canonical art the Vigil
+## chain presents -- Fast 03 FX being the eight-frame melee_1h strip, Fast 02
+## weapon being the eight-frame dagger override -- so they now read the canonical
+## database directly instead of checking that a compatibility resource had been
+## repointed at it.
 func _assert_canonical_vigil_resources() -> void:
-	for animation_name in [&"vigil_dagger_fast_03_fx_left", &"vigil_dagger_fast_03_fx_right"]:
-		_expect(VIGIL_FX_FRAMES.has_animation(animation_name), "missing %s" % animation_name)
-		_expect(VIGIL_FX_FRAMES.get_frame_count(animation_name) == 8, "%s must be 8 frames (canonical fast_03 fx)" % animation_name)
-	for animation_name in [&"vigil_dagger_fast_02_weapon_left", &"vigil_dagger_fast_02_weapon_right"]:
-		_expect(VIGIL_OVERLAY_FRAMES.has_animation(animation_name), "missing %s" % animation_name)
-		_expect(VIGIL_OVERLAY_FRAMES.get_frame_count(animation_name) == 8, "%s must be 8 frames (canonical fast_02 weapon)" % animation_name)
-
-	var fx_source := FileAccess.get_file_as_string(
-		"res://game/actors/operator/vigil_pattern_dagger_fx_frames.tres"
-	)
-	_expect(
-		not fx_source.contains("legacy_operator_modular_fx_melee_1h_chain_03"),
-		"Vigil FX resource must not reference the legacy chain_03 FX source"
-	)
-	var overlay_source := FileAccess.get_file_as_string(
-		"res://game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres"
-	)
-	_expect(
-		not overlay_source.contains("legacy_operator_weapon_vigil_pattern_dagger_chain_02"),
-		"Vigil weapon overlay resource must not reference the legacy chain_02 weapon source"
-	)
-	_expect(
-		fx_source.contains("melee_1h/attack/fast_03/operator__fx__melee_1h__attack__fast_03__"),
-		"Vigil FX resource must reference canonical melee_1h/attack/fast_03 art"
-	)
-	_expect(
-		overlay_source.contains("melee_1h_dagger/attack/fast_02/operator__weapon__melee_1h_dagger__attack__fast_02__"),
-		"Vigil weapon overlay resource must reference canonical melee_1h_dagger/attack/fast_02 art"
-	)
+	for sector in ["e", "w"]:
+		var fx_identity := StringName("melee_1h/attack/fast_03/%s/fx" % sector)
+		_expect(RUNTIME_FRAMES.has_animation(fx_identity), "missing %s" % fx_identity)
+		_expect(
+			RUNTIME_FRAMES.get_frame_count(fx_identity) == 8,
+			"%s must be 8 frames (canonical fast_03 fx)" % fx_identity
+		)
+		var weapon_identity := StringName(
+			"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/%s/weapon" % sector
+		)
+		_expect(RUNTIME_FRAMES.has_animation(weapon_identity), "missing %s" % weapon_identity)
+		_expect(
+			RUNTIME_FRAMES.get_frame_count(weapon_identity) == 8,
+			"%s must be 8 frames (canonical fast_02 weapon)" % weapon_identity
+		)
+	# Fast 03's body is the preserved nine-frame weapon-owned override, with the
+	# authored 1.5x hold on its final frame.
+	for sector in ["e", "w"]:
+		var body_identity := StringName(
+			"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/%s/full_body" % sector
+		)
+		_expect(RUNTIME_FRAMES.has_animation(body_identity), "missing %s" % body_identity)
+		_expect(
+			RUNTIME_FRAMES.get_frame_count(body_identity) == 9,
+			"%s must keep its authored 9 frames" % body_identity
+		)
+		_expect(
+			is_equal_approx(RUNTIME_FRAMES.get_frame_duration(body_identity, 8), 1.5),
+			"%s must keep its authored 1.5x final-frame hold" % body_identity
+		)
 
 
 func _expect(condition: bool, message: String) -> void:

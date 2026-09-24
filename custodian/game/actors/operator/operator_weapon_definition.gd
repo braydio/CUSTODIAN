@@ -17,9 +17,6 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export_enum("socketed_static", "authored_overlay", "hybrid") var weapon_presentation_mode: String = "hybrid"
 
 @export_group("Weapon Animation Resources")
-@export var body_frames_resource: SpriteFrames
-@export var melee_overlay_frames_resource: SpriteFrames
-@export var melee_fx_frames_resource: SpriteFrames
 
 @export var animation_map: Dictionary = {
 	"ranged_stance": "ranged_2h_stance",
