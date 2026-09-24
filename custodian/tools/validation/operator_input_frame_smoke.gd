@@ -26,6 +26,8 @@ func _run() -> void:
 	_check_movement()
 	_check_aim_ownership()
 	_check_external_control()
+	_check_injected_edges()
+	_check_mouse_handoff()
 
 	if _failures.is_empty():
 		print("operator_input_frame_smoke passed")
@@ -191,3 +193,101 @@ func _check_external_control() -> void:
 		OperatorInputFrame.neutral().has_any_activity() == false,
 		"a neutral frame must report no activity"
 	)
+
+
+## Injected control must produce edges, not only held state.
+##
+## `from_control_intent()` can only say what is held -- an external source does
+## not know when it started holding. `adopt()` derives the edges by comparing
+## against the previous tick, exactly as local sampling does. Without that,
+## `pressed` works and `just_pressed` never fires, so held-fire ranged behaves
+## while melee and the sidearm silently ignore injected control: one seam, two
+## behaviours.
+func _check_injected_edges() -> void:
+	var router := OperatorInputRouter.new()
+	var primary: StringName = OperatorInputRouter.PRIMARY_ATTACK[0]
+
+	var idle := router.adopt(OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.RIGHT, false))
+	_check(not idle.pressed(primary), "not firing must not read as pressed")
+	_check(not idle.just_pressed(primary), "not firing must not produce a press edge")
+
+	var began := router.adopt(OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.RIGHT, true))
+	_check(began.pressed(primary), "injected firing must read as pressed")
+	_check(
+		began.just_pressed(primary),
+		"injected firing must produce a press edge, or edge-triggered attacks "
+			+ "(melee, sidearm) cannot be driven by external control at all"
+	)
+	_check(not began.just_released(primary), "starting to fire is not a release")
+
+	var held := router.adopt(OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.RIGHT, true))
+	_check(held.pressed(primary), "continued firing must stay pressed")
+	_check(not held.just_pressed(primary), "continued firing must not re-report a press edge")
+
+	var ended := router.adopt(OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.RIGHT, false))
+	_check(ended.just_released(primary), "ceasing fire must produce a release edge")
+	_check(not ended.pressed(primary), "ceasing fire must not stay pressed")
+
+	var quiet := router.adopt(OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.RIGHT, false))
+	_check(not quiet.just_released(primary), "the release edge must clear on the next tick")
+	_check(not quiet.just_pressed(primary), "an idle injected tick must produce no edge")
+
+
+## A stale mouse position must not acquire aim just because the device family
+## flipped. `InputPromptService` switches to keyboard_mouse on any keyboard press,
+## so a movement key after using a controller would otherwise hand aim to wherever
+## the cursor happened to be sitting.
+func _check_mouse_handoff() -> void:
+	var aim := OperatorAimController.new()
+	var facing := Vector2.DOWN
+	var stale_mouse := Vector2(400.0, 400.0)
+
+	var gamepad := OperatorInputFrame.build(
+		{}, {}, {}, Vector2.ZERO, Vector2.RIGHT, Vector2.ZERO, true, false
+	)
+	var resolved := aim.resolve(gamepad, false, Vector2.ZERO, facing, Vector2.ZERO, stale_mouse)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.RIGHT),
+		"the gamepad should own aim while it is active"
+	)
+
+	# Keyboard press flips the device family. The mouse has not moved.
+	var kbm_no_motion := OperatorInputFrame.build(
+		{}, {}, {}, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, false, false
+	)
+	resolved = aim.resolve(kbm_no_motion, false, Vector2.ZERO, facing, Vector2.RIGHT, stale_mouse)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.RIGHT),
+		"a stale mouse position acquired aim after the device family flipped, "
+			+ "resolved %s -- pointer presence is not pointer movement" % resolved["aim"]
+	)
+
+	# Now the pointer really moves.
+	var kbm_moved := OperatorInputFrame.build(
+		{}, {}, {}, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, false, true
+	)
+	resolved = aim.resolve(kbm_moved, false, Vector2.ZERO, facing, Vector2.RIGHT, Vector2(0.0, -40.0))
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.UP),
+		"real pointer movement must hand aim back to the mouse, resolved %s" % resolved["aim"]
+	)
+
+	# And it keeps it without having to keep moving.
+	resolved = aim.resolve(kbm_no_motion, false, Vector2.ZERO, facing, Vector2.UP, Vector2(0.0, -40.0))
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.UP),
+		"the mouse should keep aim once live, without needing to jiggle"
+	)
+
+	# The gamepad taking over revokes it again.
+	resolved = aim.resolve(gamepad, false, Vector2.ZERO, facing, Vector2.UP, stale_mouse)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.RIGHT),
+		"the gamepad must be able to take aim back"
+	)
+	resolved = aim.resolve(kbm_no_motion, false, Vector2.ZERO, facing, Vector2.RIGHT, stale_mouse)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.RIGHT),
+		"after the gamepad takes over, the mouse must earn aim back by moving again"
+	)
+

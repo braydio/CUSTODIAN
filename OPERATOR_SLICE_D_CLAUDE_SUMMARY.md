@@ -5,13 +5,53 @@ This file is overwritten as the slice advances; it is not a changelog.
 Contract: `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`.
 Tracker: `custodian/docs/ai_context/task_packets/OPERATOR_RUNTIME_DECOMPOSITION.md`.
 
-## Status — **SLICE D COMPLETE**
+## Status — **SLICE D COMPLETE** (after the D.1 seal correction)
 
 ```
 part 1  input frame / router / aim authority        7d047f3cc
 part 2  simulation onto the fixed-tick spine        38675287f
 part 3  architecture + drift documentation          60d38cebb
+D.1     seal correction (see below)                 this pass
 ```
+
+## D.1 — what Slice D got wrong
+
+Review caught three holes. All three were places where the implementation did not
+satisfy its own contract, and one of them I had flagged as a risk and then not
+checked.
+
+**1. The audit exemption was false.** Slice D exempted four `_process` calls from
+the render-tick rule on the strength of their names, and claimed each was
+"verified to read simulation state and write none". Three were not:
+
+| call | what it actually moves | who reads it |
+|---|---|---|
+| `_tick_primary_ranged_action_presentation` | `_primary_ranged_action_timer` / phase | `_is_ranged_aim_ready()` → `can_fire_ranged_now()` and the fire branch of `_handle_attack_input()` |
+| `_update_animation_state_machine` | `AnimationState.elapsed`, transitions | `_is_movement_locked()`, weapon selection, `update_block_state()` |
+| `_update_melee_presentation_posture` | melee draw grace, READY/RELAXED | the Vigil ready-up bridge before attack startup |
+
+So **whether you may fire was advancing on render delta**, and the reported zero
+was not true. All three are on the fixed tick now; only `_update_body_recoil`
+remains exempt, verified against its readers rather than its name.
+
+**2. Injected control had no edges.** `from_control_intent()` states what is
+held; `adopt()` returned it unchanged. `pressed` worked and `just_pressed` never
+fired, so a replay or AI could drive held-fire ranged but **could not start melee
+or the sidearm** — one seam delivering two behaviours, which is precisely what
+the seam exists to prevent. `adopt()` now derives edges against the previous
+tick. The old Slice D test only asserted `pressed_any()`, which is why it passed.
+
+**3. `mouse_moved` was dead data.** The router computed it, the docs promised
+pointer movement owned the handoff, and `OperatorAimController` never read it.
+`InputPromptService` flips to keyboard_mouse on *any* keyboard press, so tapping
+a movement key after using a controller handed aim to wherever the cursor was
+sitting. Now latched on real pointer movement, cleared when the gamepad takes
+aim back.
+
+Controls, all biting: putting the three advancers back fails the spine gate in
+three places naming each reader; reverting `adopt()` fails in four including
+"external control could not start a melee attack"; ignoring `mouse_moved` fails
+with the stale cursor acquiring aim.
 
 ## What moved
 
@@ -49,8 +89,9 @@ movement can be driven alone; it is also the seam the attack-drive tests wanted.
 operator.gd            15212 -> 15201 lines, 716 -> 721 functions
 
 input_calls_outside_input_dir   65 -> 0
-gameplay_mutation_in_process    12 -> 0
-total architecture debt        196 -> 119   (347 at migration start)
+gameplay_mutation_in_process    12 -> 0   (honestly, after D.1; not before)
+total architecture debt        196 -> 119
+migration opened at            347         (201 was a midpoint, not the start)
 ```
 
 ## Edge semantics
@@ -73,13 +114,11 @@ because two places remembering one stick is how they disagree.
 
 ## Three things worth flagging
 
-- **I loosened the audit, narrowly.** Four presentation advancers in `_process`
-  take a delta and match the rule's naming heuristic — recoil easing, the posture
-  clock, the ranged action presentation, the animation state machine. Each was
-  verified to read simulation state and write none, then listed in an
-  `exempt_calls` allowlist beside the existing `exempt_functions` mechanism.
-  Wrapping them in an `_advance_presentation()` would have reached zero without
-  the audit noticing, which would have been gaming the regex.
+- **The audit exemption was the failure, not the risk I thought it was.** I said
+  each of the four was "verified to read simulation state and write none". I had
+  checked one. Three moved state that gates firing, movement locks and the Vigil
+  ready-up route. Corrected in D.1; an exemption is a claim about a function's
+  readers, and has to be checked against them.
 - **A flake I caused, found and fixed.** `operator_unarmed_posture` failed 2-in-5
   after part 2 because the fixture stepped attacks by hand while the actor's own
   ticks still ran — a physics tick landing inside an `await` completed the attack

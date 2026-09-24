@@ -13,9 +13,10 @@ gameplay fact and say exactly one thing owns it — the rule
 `design/04_architecture/INTEGRATION_CONTRACT_GLUE_LAYER.md` already sets for
 the project as a whole.
 
-Measured at the start of this migration (`--emit-baseline`, 2026-09-10). Total
-then **201**; after Slice D, **119**. The Slice D rows are struck through
-because they are now zero:
+Measured at the start of this migration (`--emit-baseline`, 2026-09-10). The
+table's own total is the opening figure: **347**. It stood at 201 partway through,
+and after Slice D and its D.1 correction it is **119**. The Slice D rows are
+struck through because they are now zero:
 
 | Overlapping authority | Violations | Should be owned by |
 |---|---:|---|
@@ -98,11 +99,41 @@ re-checks the same conditions for itself. `_advance_movement` is split out so
 movement can be driven alone, which is the seam the attack-drive tests actually
 wanted.
 
-Four presentation advancers in `_process` legitimately take a delta — a recoil
-offset easing back, a posture clock that owns no gameplay, the ranged action
-presentation, the animation state machine. They are named in the debt audit's
-`exempt_calls` allowlist rather than hidden behind a wrapper or renamed, and each
-is verified to read simulation state and write none.
+Exactly one call in `_process` is exempted from the debt audit's naming rule:
+`_update_body_recoil`, which eases a rendered offset back to zero and is read by
+nothing else.
+
+Slice D originally exempted four, on the strength of their names. Three of them
+turned out to advance state gameplay reads, and D.1 moved them to the fixed tick:
+
+| call | what it actually moves | who reads it |
+|---|---|---|
+| `_tick_primary_ranged_action_presentation` | `_primary_ranged_action_timer` / phase | `_is_ranged_aim_ready()` → `can_fire_ranged_now()` and the fire branch of `_handle_attack_input()` |
+| `_update_animation_state_machine` | `AnimationState.elapsed`, state transitions | `_is_movement_locked()`, weapon-selection gating, `update_block_state()` |
+| `_update_melee_presentation_posture` | melee draw grace, READY/RELAXED | the Vigil ready-up bridge before attack startup |
+
+The lesson is in the rule now: an exemption is a claim about what a function
+writes, and it has to be checked against the readers, not against the name.
+
+### External control carries edges
+
+`from_control_intent()` can only state what is *held*; an external driver does
+not know when it started holding. `adopt()` therefore derives `just_pressed` and
+`just_released` against the previous tick, exactly as local sampling does.
+Without that, `pressed` works and `just_pressed` never fires, so held-fire ranged
+behaves while melee and the sidearm silently ignore injected control — one seam
+delivering two behaviours, which is the thing the seam exists to prevent. D.1
+fixed this; Slice D shipped it broken.
+
+### Mouse handoff
+
+`OperatorAimController` consumes `OperatorInputFrame.mouse_moved`. This matters
+because `InputPromptService` switches the device family to keyboard_mouse on *any*
+keyboard press, so tapping a movement key after using a controller would otherwise
+hand aim to wherever the cursor happened to be sitting. The latch stays set once
+the pointer really moves, so the player does not have to keep jiggling the mouse,
+and the gamepad taking aim back clears it. Slice D sampled `mouse_moved` and never
+read it; D.1 wired it up.
 
 ### Gates
 

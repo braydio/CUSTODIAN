@@ -209,12 +209,12 @@ RULES = [
         "the fixed physics tick",
         files=("_process_body",),
         exempt_calls=(
-            # Presentation advancers. Each eases or sequences something drawn and
-            # writes no gameplay state; verified when Slice D emptied `_process`.
+            # Purely visual: eases a rendered offset back to zero and reads nothing
+            # gameplay reads. Verified by inspection, not by its name -- three
+            # calls were exempted here on the strength of their names in Slice D
+            # and turned out to advance clocks that gate firing, movement locks
+            # and the Vigil ready-up route. They are on the fixed tick now.
             "_update_body_recoil",
-            "_update_melee_presentation_posture",
-            "_tick_primary_ranged_action_presentation",
-            "_update_animation_state_machine",
         ),
     ),
     Rule(

@@ -7,7 +7,7 @@ present reality. Architecture debt is **119**, down from 201 at the start of the
 migration; the stale 201 figure has been corrected here and in the architecture
 contract.
 
-**Slice D (done).** `operator/input/` is the sole owner of raw Operator input
+**Slice D (done, after the D.1 seal correction).** `operator/input/` is the sole owner of raw Operator input
 sampling: `OperatorInputFrame` (one immutable tick of intent),
 `OperatorInputRouter` (the only `Input.*` reader) and `OperatorAimController`
 (aim-source policy and the retained controller direction, moved out of
@@ -15,8 +15,16 @@ sampling: `OperatorInputFrame` (one immutable tick of intent),
 `_sample_input_frame` -> `_advance_simulation` -> `_advance_movement`, and
 `_process` is presentation only. `ControllableActor.process_input()` is real: an
 injected frame is adopted by the next fixed tick, so external control converges
-with local input before any gameplay decision. Counters:
-`input_calls_outside_input_dir` 65 -> 0, `gameplay_mutation_in_process` 12 -> 0.
+with local input before any gameplay decision. Counters: `input_calls_outside_input_dir` 65 -> 0, `gameplay_mutation_in_process` 12 -> 0.
+
+**D.1 corrected three things Slice D got wrong.** It had exempted four calls from the render-tick
+audit on the strength of their names; three of them advance state gameplay reads and are now on the
+fixed tick -- the ranged action timer gates firing through `_is_ranged_aim_ready()`, the animation
+state machine's state gates movement locks and weapon selection, and melee draw grace gates the Vigil
+ready-up bridge. Only `_update_body_recoil` remains exempt. `adopt()` now derives
+`just_pressed`/`just_released` for injected frames, without which external control could drive
+held-fire ranged but not melee or the sidearm. And `OperatorAimController` now actually reads
+`OperatorInputFrame.mouse_moved`, which Slice D sampled and ignored.
 Gates `operator_input_frame` and `operator_fixed_tick_spine` own
 `operator/input/**`. Still open and deliberately untouched: C2b, Slice E
 (`OperatorActionController`) and Slice F (domain extraction).

@@ -95,15 +95,39 @@ func sample(
 
 ## Adopt an externally supplied frame -- replay, AI, possession, a vehicle.
 ##
-## The router still owns edge bookkeeping so that local and injected control leave
-## the same trail, and so handing control back does not manufacture a spurious
-## edge from a stale previous tick.
+## The external source states what is *held*; it does not know when it started
+## holding it. The router derives the edges the same way it does for a keyboard,
+## by comparing against the previously sampled tick, and returns a frame carrying
+## them. Without this an injected frame has `pressed` but never `just_pressed`,
+## and every edge-triggered action -- melee, the sidearm -- silently ignores it
+## while held-fire ranged happens to work. That is two behaviours from one seam,
+## which is the thing this seam exists to prevent.
+##
+## Comparing against the previous tick also means handing control back and forth
+## cannot manufacture a spurious edge from stale state.
 func adopt(frame: OperatorInputFrame) -> OperatorInputFrame:
 	var pressed: Dictionary = {}
+	var just_pressed: Dictionary = {}
+	var just_released: Dictionary = {}
 	for action: StringName in _available:
-		pressed[action] = frame.pressed(action)
-	_previous_pressed = pressed
-	return frame
+		var is_down := frame.pressed(action)
+		var was_down := bool(_previous_pressed.get(action, false))
+		pressed[action] = is_down
+		if is_down and not was_down:
+			just_pressed[action] = true
+		if was_down and not is_down:
+			just_released[action] = true
+	_previous_pressed = pressed.duplicate()
+	return OperatorInputFrame.build(
+		pressed,
+		just_pressed,
+		just_released,
+		frame.move,
+		frame.controller_aim,
+		frame.keyboard_aim,
+		frame.gamepad_active,
+		frame.mouse_moved
+	)
 
 
 ## Build a frame from an external intent triple, as `ControllableActor` supplies.

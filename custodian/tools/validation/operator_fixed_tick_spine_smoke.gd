@@ -54,6 +54,8 @@ func _run() -> void:
 	await _check_render_tick_moves_nothing(operator)
 	await _check_fixed_tick_advances(operator)
 	await _check_reload_is_fixed_tick_owned(operator)
+	await _check_gameplay_bearing_advancers(operator)
+	await _check_injected_control_can_start_an_attack(operator)
 
 	operator.queue_free()
 	root.queue_free()
@@ -135,3 +137,133 @@ func _check_reload_is_fixed_tick_owned(operator: Node) -> void:
 		"reload did not advance on the fixed tick, timer is %.4f" % float(operator.get("_reload_timer"))
 	)
 	operator.set("_reload_active", false)
+
+
+## The three advancers that Slice D wrongly exempted as "presentation".
+##
+## Each was left on the render tick because its name said presentation, and each
+## turned out to move state gameplay reads:
+##
+##   `_primary_ranged_action_timer` -> `_is_ranged_aim_ready()` -> whether you may fire
+##   `AnimationStateMachine` state  -> `_is_movement_locked()`, weapon selection
+##   melee posture draw grace       -> READY, and the Vigil ready-up bridge
+##
+## This is the case that fails if any of them goes back.
+func _check_gameplay_bearing_advancers(operator: Node) -> void:
+	# --- ranged action timer: it decides whether firing is allowed ---
+	# "aiming" is the phase `_is_primary_ranged_aim_presentation_active()` keys on,
+	# and the one `_is_ranged_aim_ready()` gates firing behind.
+	operator.set("_primary_ranged_action_phase", &"aiming")
+	operator.set("_primary_ranged_action_timer", 1.0)
+	operator.set("_primary_ranged_action_total", 1.0)
+	for _i in 10:
+		operator.call("_process", 0.1)
+		await process_frame
+	_check(
+		is_equal_approx(float(operator.get("_primary_ranged_action_timer")), 1.0),
+		"ranged aim readiness advanced from the render tick: timer is %.4f. It "
+			% float(operator.get("_primary_ranged_action_timer"))
+			+ "feeds _is_ranged_aim_ready(), so this is whether you may fire."
+	)
+	operator.call("_advance_simulation", 0.25)
+	await process_frame
+	_check(
+		float(operator.get("_primary_ranged_action_timer")) < 1.0,
+		"ranged aim readiness did not advance on the fixed tick"
+	)
+
+	# --- animation state machine: its state gates movement locks ---
+	var machine = operator.get("_animation_state_machine")
+	_check(machine != null, "the state-machine case needs the live machine")
+	if machine != null:
+		var state_name: String = String(machine.current_state)
+		if machine.states.has(state_name):
+			var state = machine.states[state_name]
+			state.elapsed = 0.0
+			for _i in 10:
+				operator.call("_process", 0.1)
+				await process_frame
+			var after_render: float = float(state.elapsed)
+			_check(
+				is_equal_approx(after_render, 0.0),
+				"the animation state machine advanced from the render tick: "
+					+ "elapsed is %.4f. Its state gates movement locks and weapon "
+						% after_render
+					+ "selection."
+			)
+			operator.call("_advance_simulation", 0.25)
+			await process_frame
+			var active_name: String = String(machine.current_state)
+			var active = machine.states.get(active_name)
+			_check(
+				active != null and float(active.elapsed) > 0.0,
+				"the animation state machine did not advance on the fixed tick"
+			)
+
+	# --- melee posture: draw grace decides the Vigil ready-up route ---
+	var posture = operator.get("_melee_posture_state")
+	_check(posture != null, "the posture case needs the live posture state")
+	if posture != null:
+		posture.draw_grace_remaining = 1.0
+		for _i in 10:
+			operator.call("_process", 0.1)
+			await process_frame
+		_check(
+			is_equal_approx(float(posture.draw_grace_remaining), 1.0),
+			"melee draw grace advanced from the render tick: %.4f. It decides "
+				% float(posture.draw_grace_remaining)
+				+ "whether the Vigil ready-up bridge runs before an attack."
+		)
+		operator.call("_advance_simulation", 0.25)
+		await process_frame
+		_check(
+			float(posture.draw_grace_remaining) < 1.0,
+			"melee draw grace did not advance on the fixed tick"
+		)
+
+
+## External control must be able to start an edge-triggered attack.
+##
+## `from_control_intent()` can only state what is held. If `adopt()` does not
+## derive the edges, `pressed` works and `just_pressed` never fires -- so held
+## ranged fire behaves while melee and the sidearm silently ignore injected
+## control. That is the seam promising one path and delivering two.
+func _check_injected_control_can_start_an_attack(operator: Node) -> void:
+	operator.call("_apply_unarmed_selection")
+	operator.set("stamina", 100.0)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	operator.set("_melee_active", false)
+	operator.set("_melee_fast_windup", false)
+	operator.call("_clear_attack_buffer")
+	await process_frame
+
+	# One quiet injected tick establishes the "not firing" baseline, exactly as a
+	# real driver would before it decides to attack.
+	operator.call("process_input", Vector2.ZERO, Vector2.RIGHT, false)
+	operator.call("_sample_input_frame")
+	_check(
+		not bool(operator.get("_melee_active")),
+		"the injected-control case must start from a non-attacking baseline"
+	)
+
+	operator.call("process_input", Vector2.ZERO, Vector2.RIGHT, true)
+	operator.call("_sample_input_frame")
+	var frame = operator.get("_input_frame")
+	_check(
+		frame != null and bool(frame.just_pressed_any(OperatorInputRouter.PRIMARY_ATTACK)),
+		"an injected firing intent must arrive as a press edge, not only as held"
+	)
+	operator.call("_advance_simulation", 1.0 / 60.0)
+	await process_frame
+	_check(
+		bool(operator.get("_melee_active")) or bool(operator.get("_melee_fast_windup")),
+		"external control could not start a melee attack; the edge-triggered path "
+			+ "is unreachable from process_input()"
+	)
+	operator.set("_melee_active", false)
+	operator.set("_melee_fast_windup", false)
+	operator.call("_clear_attack_buffer")
+	await process_frame
+

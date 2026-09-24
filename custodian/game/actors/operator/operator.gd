@@ -1380,12 +1380,9 @@ func _process(delta):
 	if _paired_execution_active:
 		return
 	_update_body_recoil(delta)
-	_update_melee_presentation_posture(delta)
 	_update_unarmed_presentation_posture()
-	_tick_primary_ranged_action_presentation(delta)
 	_sync_ranged_aim_camera_state()
 	_sync_primary_ranged_weapon_frame_to_upper()
-	_update_animation_state_machine(delta)
 	_update_target_ring()
 	if _is_dead:
 		return
@@ -1427,6 +1424,15 @@ func _advance_simulation(delta: float) -> void:
 	_update_reload(delta)
 	_update_field_patch(delta)
 	_update_field_patch_observability(delta)
+	# These three advance clocks that gameplay reads, whatever their names say.
+	# The ranged action timer feeds `_is_ranged_aim_ready()`, which gates firing;
+	# the animation state machine's state gates movement locks and weapon
+	# selection; melee posture decays the draw grace that decides whether the
+	# Vigil ready-up bridge runs before an attack. They were exempted from the
+	# render-tick audit on the strength of their names, which was wrong.
+	_update_melee_presentation_posture(delta)
+	_tick_primary_ranged_action_presentation(delta)
+	_update_animation_state_machine(delta)
 	_update_combat_target()
 	_update_interaction_target()
 	if _is_dead:

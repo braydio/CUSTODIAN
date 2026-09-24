@@ -24,6 +24,15 @@ enum Source { NONE, GAMEPAD, KEYBOARD, MOUSE }
 
 var last_controller_aim: Vector2 = Vector2.ZERO
 var source: Source = Source.NONE
+## Whether the pointer has moved since the gamepad last held aim.
+##
+## A mouse position exists at all times, and `InputPromptService` switches the
+## device family to keyboard_mouse on *any* keyboard press -- a movement key, not
+## just the mouse. Without this latch, tapping W after using a controller would
+## hand aim to wherever the cursor happened to be sitting. The latch stays set
+## once the pointer really moves, so the player does not have to keep jiggling the
+## mouse to keep aiming with it.
+var _mouse_is_live: bool = false
 
 
 ## Resolve aim for one tick.
@@ -39,8 +48,12 @@ func resolve(
 	current_aim: Vector2,
 	mouse_vector: Vector2
 ) -> Dictionary:
+	if frame.mouse_moved:
+		_mouse_is_live = true
 	if frame.gamepad_active:
 		source = Source.GAMEPAD
+		# The gamepad has aim; the mouse must earn it back by actually moving.
+		_mouse_is_live = false
 		if frame.controller_aim != Vector2.ZERO:
 			last_controller_aim = frame.controller_aim
 		if last_controller_aim == Vector2.ZERO:
@@ -69,7 +82,7 @@ func resolve(
 			}
 		return {"aim": current_aim, "facing": visual_idle_direction, "facing_changed": false}
 
-	if mouse_vector.length_squared() > 0.0001:
+	if _mouse_is_live and mouse_vector.length_squared() > 0.0001:
 		source = Source.MOUSE
 		return {
 			"aim": mouse_vector.normalized(),
@@ -84,3 +97,4 @@ func resolve(
 func reset() -> void:
 	last_controller_aim = Vector2.ZERO
 	source = Source.NONE
+	_mouse_is_live = false
