@@ -1,7 +1,27 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slices A, B, B-final and C1 complete. C2a is cutting renderers over one
-at a time and the modular body is now canonical (2026-09-15):
+**Status:** Slices A, B, B-final, C1 and **D** complete (2026-09-23). C2a/R4
+landed some time ago -- `animated_sprite` is canonical and the modular body is
+canonical -- so the older "C2a blocked / R4 next" prose below is history, not
+present reality. Architecture debt is **119**, down from 201 at the start of the
+migration; the stale 201 figure has been corrected here and in the architecture
+contract.
+
+**Slice D (done).** `operator/input/` is the sole owner of raw Operator input
+sampling: `OperatorInputFrame` (one immutable tick of intent),
+`OperatorInputRouter` (the only `Input.*` reader) and `OperatorAimController`
+(aim-source policy and the retained controller direction, moved out of
+`operator.gd`). One frame is sampled at the top of `_physics_process`; the tick is
+`_sample_input_frame` -> `_advance_simulation` -> `_advance_movement`, and
+`_process` is presentation only. `ControllableActor.process_input()` is real: an
+injected frame is adopted by the next fixed tick, so external control converges
+with local input before any gameplay decision. Counters:
+`input_calls_outside_input_dir` 65 -> 0, `gameplay_mutation_in_process` 12 -> 0.
+Gates `operator_input_frame` and `operator_fixed_tick_spine` own
+`operator/input/**`. Still open and deliberately untouched: C2b, Slice E
+(`OperatorActionController`) and Slice F (domain extraction).
+
+The C2a renderer cutover record, kept for its evidence (2026-09-15):
 
 | step | renderer / scope | state |
 |---|---|---|

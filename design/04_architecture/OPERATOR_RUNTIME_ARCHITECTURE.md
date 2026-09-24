@@ -13,11 +13,13 @@ gameplay fact and say exactly one thing owns it — the rule
 `design/04_architecture/INTEGRATION_CONTRACT_GLUE_LAYER.md` already sets for
 the project as a whole.
 
-Measured at the start of this migration (`--emit-baseline`, 2026-09-10):
+Measured at the start of this migration (`--emit-baseline`, 2026-09-10). Total
+then **201**; after Slice D, **119**. The Slice D rows are struck through
+because they are now zero:
 
 | Overlapping authority | Violations | Should be owned by |
 |---|---:|---|
-| direct `Input.*` sampling | 65 | `OperatorInputRouter` |
+| ~~direct `Input.*` sampling~~ | ~~65~~ → **0** | `OperatorInputRouter` (Slice D) |
 | `AnimatedSprite2D.play()` outside presentation | 94 | `OperatorAnimationPlayer` |
 | retired `AnimationResolver` | 45 | `OperatorAnimationSelector` |
 | absolute `/root/...` scene lookups | 38 | injected dependencies |
@@ -41,6 +43,74 @@ and compatibility layer.
 Line count is not the acceptance test. The acceptance test is that an agent
 fixing melee does not need to understand ranged ammo, building, field patches,
 procgen unstuck recovery and UI focus handling.
+
+## Slice D — the deterministic input and tick spine (done)
+
+`operator/input/` is the sole owner of raw Operator input sampling:
+
+```
+OperatorInputFrame     one fixed tick's intent, immutable
+OperatorInputRouter    the only Input.* reader; edges, axes, device observation
+OperatorAimController  aim-source policy and the retained controller direction
+```
+
+The division is by question, not by convenience. The router answers *what did
+the player do*; the aim controller answers *what direction does that mean*; the
+gameplay authorities keep *is that legal right now*. That is what lets a replay,
+an AI, a possession system or a vehicle supply intent without pretending to be a
+global keyboard.
+
+### One frame per tick
+
+`_sample_input_frame()` runs at the top of `_physics_process` and nothing else
+reads `Input`. Edges combine Godot's physics-relative `just_pressed` /
+`just_released` with a comparison against the previously sampled tick: the engine
+answer alone loses an edge when a tick is skipped, the comparison alone loses a
+press that begins and ends between two ticks, and because both mean "since the
+last physics frame" combining them cannot report one edge twice. There are no
+consumed flags anywhere in gameplay code — a superseded frame is simply replaced.
+
+### Aim ownership
+
+Source priority is gamepad, then keyboard in arrow-aim mode, then mouse. The
+retained controller direction lives in `OperatorAimController`, not in
+`operator.gd`, because two places remembering one stick is how they disagree. A
+stick returning to neutral is the player holding still: it does not zero aim and
+does not hand aim to the mouse. A mouse position exists whether or not anyone is
+touching the mouse, so pointer *movement*, not pointer *presence*, is what hands
+ownership back. `InputPromptService` remains the single device-family authority.
+
+### The tick
+
+```
+_physics_process(delta)
+    _sample_input_frame()        one immutable frame
+    _advance_simulation(delta)   clocks, input handling, state changes
+    _advance_movement(delta)     movement intent, attack drive, move_and_slide()
+
+_process(delta)
+    presentation only
+```
+
+`_advance_simulation` is the old `_process` body moved verbatim in order, early
+returns included: those returns encode real dependencies, and the movement ladder
+re-checks the same conditions for itself. `_advance_movement` is split out so
+movement can be driven alone, which is the seam the attack-drive tests actually
+wanted.
+
+Four presentation advancers in `_process` legitimately take a delta — a recoil
+offset easing back, a posture clock that owns no gameplay, the ranged action
+presentation, the animation state machine. They are named in the debt audit's
+`exempt_calls` allowlist rather than hidden behind a wrapper or renamed, and each
+is verified to read simulation state and write none.
+
+### Gates
+
+`operator_input_frame` covers edge semantics, movement normalisation, the full
+aim-source policy and injected control. `operator_fixed_tick_spine` proves render
+ticks move no clock while fixed ticks advance by exactly their delta, independent
+of step size. Both own `operator/input/**`, so an input edit selects a focused
+gate instead of the whole Operator suite.
 
 ## Core locks
 
@@ -329,7 +399,7 @@ counter is left without a home.
 | B-final | Owner-scoped overlays, transactional `present()`, caller-side lifecycle cancellation, alias-proof audit | `aliased_body_visibility_writes` 17 → 0 | **done** |
 | C1 | Presentation playback funnel; remove hidden legacy-body-as-animation-clock authority | `animated_sprite_play_outside_presentation` 94 → 0 | **done** |
 | C2 | Canonical semantic selection | `animation_resolver` 45, `attack_fallback_animation` 16, `directional_animation_fallback` 6, `actor_local_spriteframes` 5, `operator_animation_catalog` 4 → 0 | pending |
-| D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | pending |
+| D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | **done** |
 | E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | pending |
 | F | Extract melee, dodge, ranged, loadout, interaction, recovery behind injected dependencies; remove the temporary presenter compatibility seams | `absolute_scene_lookups` 38 → 0, `weapon_definition_runtime_state` 3 → 0 | pending |
 | G | Collapse `operator.tscn` and `operator.gd`, delete compatibility infra, final audits | `--final` on every audit | pending |
