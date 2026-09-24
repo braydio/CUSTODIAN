@@ -86,6 +86,13 @@ func _run() -> void:
 		var frames: PackedInt32Array = UNARMED.fast_chain_attack_profiles[index].hit_window_frames
 		_assert_true(frames == PackedInt32Array([EXPECTED_CONTACTS[index]]), "each link must expose one reviewed contact")
 
+	# The clip has to be left alone to play. The actor's own tick re-presents from
+	# live state every frame, and this fixture sets a link key without ever making
+	# the attack active, so anything still running would immediately draw the idle
+	# over it. An AnimatedSprite2D advances on its own once played, which is
+	# exactly the clock under test here.
+	operator.set_process(false)
+	operator.set_physics_process(false)
 	operator.set("_melee_fast_combo_step", 0)
 	operator.set("_melee_attack_key", "unarmed_fast_01")
 	operator.set("_active_melee_attack_profile", UNARMED.fast_chain_attack_profiles[0])
@@ -163,7 +170,7 @@ func _validate_attack_drive(operator: Node, root: Node) -> void:
 			"opposing input reversed the link %d drive" % (index + 1)
 		)
 		for _step in range(40):
-			operator.call("_physics_process", 1.0 / 60.0)
+			operator.call("_advance_movement", 1.0 / 60.0)
 		var travelled: float = operator.global_position.x
 		var declared: float = profile.drive_distance_px
 		_assert_true(
@@ -172,7 +179,7 @@ func _validate_attack_drive(operator: Node, root: Node) -> void:
 		)
 		var settled: Vector2 = operator.global_position
 		for _step in range(8):
-			operator.call("_physics_process", 1.0 / 60.0)
+			operator.call("_advance_movement", 1.0 / 60.0)
 		_assert_true(
 			operator.global_position.distance_to(settled) <= 0.05,
 			"link %d drive snapped back or drifted after completion" % (index + 1)
@@ -547,7 +554,7 @@ func _validate_chain_drive_continuity(operator: Node, root: Node) -> void:
 	)
 	var carried := Vector2.ZERO
 	for _i in 4:
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 		carried += operator.get("_last_attack_drive_velocity") as Vector2
 	_assert_true(
 		carried.dot(Vector2.RIGHT) > 0.0,
@@ -583,7 +590,7 @@ func _drive_through_seam(
 	operator.call("_begin_attack_drive", outgoing, Vector2.RIGHT)
 	var driven := 0.0
 	for _i in int(round(seam_time * 60.0)):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 		driven += (operator.get("_last_attack_drive_velocity") as Vector2).length() / 60.0
 
 	operator.set(
@@ -593,13 +600,13 @@ func _drive_through_seam(
 	operator.call("_begin_attack_drive", incoming, Vector2.RIGHT)
 	var dead_frames := 0
 	for _i in int(ceil(incoming.drive_delay_sec * 60.0)):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 		var speed: float = (operator.get("_last_attack_drive_velocity") as Vector2).length()
 		driven += speed / 60.0
 		if speed <= 0.001:
 			dead_frames += 1
 	for _i in 60:
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 		driven += (operator.get("_last_attack_drive_velocity") as Vector2).length() / 60.0
 	return {"driven": driven, "dead_frames": dead_frames}
 
@@ -709,7 +716,7 @@ func _run_handoff_against_wall(
 	await physics_frame
 	var end_frame := -1
 	for frame in range(30):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 		if end_frame < 0 \
 		and (operator.get("_attack_drive_direction") as Vector2) == Vector2.ZERO:
 			end_frame = frame
@@ -730,7 +737,7 @@ func _install_live_carry(operator: Node) -> void:
 		"_begin_attack_drive", UNARMED.fast_chain_attack_profiles[0], Vector2.RIGHT
 	)
 	for _i in int(round(_chain_seam_time(0) * 60.0)):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 	operator.set("_melee_fast_combo_step", 1)
 	operator.call(
 		"_begin_attack_drive", UNARMED.fast_chain_attack_profiles[1], Vector2.RIGHT

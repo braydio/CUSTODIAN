@@ -41,6 +41,13 @@ func _run() -> void:
 	var operator := OPERATOR_SCENE.instantiate()
 	root.add_child(operator)
 	await process_frame
+	# Every case here drives posture and presentation explicitly through
+	# `_settle()`. Leaving the actor's own ticks running as well means a physics
+	# tick can land inside an `await` and complete an attack the case was in the
+	# middle of stepping by hand, which shows up as an intermittent failure rather
+	# than a wrong answer.
+	operator.set_process(false)
+	operator.set_physics_process(false)
 
 	await _check_quiet_presents_relaxed(operator)
 	await _check_engagement_transitions_to_ready(operator)

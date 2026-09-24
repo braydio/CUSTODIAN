@@ -629,7 +629,7 @@ func _validate_open_space_drive(operator: Node) -> void:
 		0.05
 	)
 	for _step in range(20):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 	var distance: float = operator.global_position.x
 	_assert(
 		distance >= 5.5 and distance <= 8.0,
@@ -637,10 +637,10 @@ func _validate_open_space_drive(operator: Node) -> void:
 		% distance
 	)
 	# Authored 0.167 + 0.167 timing is fractionally over twenty 60 Hz ticks.
-	operator.call("_physics_process", 1.0 / 60.0)
+	operator.call("_advance_movement", 1.0 / 60.0)
 	var settled_position: Vector2 = operator.global_position
 	for _step in range(8):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 	_assert(
 		operator.global_position.distance_to(settled_position) <= 2.0,
 		"dagger drive retained excessive post-completion drift"
@@ -666,7 +666,7 @@ func _validate_wall_truncation(operator: Node) -> void:
 		Vector2.RIGHT
 	)
 	for _step in range(20):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 	var distance: float = operator.global_position.x
 	var status := operator.call(
 		"get_attack_drive_status"

@@ -23,12 +23,6 @@
   "directional_animation_fallback": {
     "operator.gd": 4
   },
-  "gameplay_mutation_in_process": {
-    "operator.gd": 12
-  },
-  "input_calls_outside_input_dir": {
-    "operator.gd": 65
-  },
   "operator_animation_catalog": {
     "animations/operator_animation_catalog.gd": 1,
     "operator.gd": 3

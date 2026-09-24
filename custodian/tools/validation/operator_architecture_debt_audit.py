@@ -63,7 +63,7 @@ class Rule:
     """One ownership rule: a pattern, the dirs allowed to violate it, and why."""
 
     def __init__(self, key, title, pattern, owner, allowed_prefixes=(), files=("*.gd",),
-                 exempt_functions=()):
+                 exempt_functions=(), exempt_calls=()):
         self.key = key
         self.title = title
         self.pattern = re.compile(pattern, re.MULTILINE)
@@ -74,6 +74,14 @@ class Rule:
         # where a single declared funnel is the correct place for a write; it is
         # a narrow, auditable exemption rather than a laxer pattern.
         self.exempt_functions = exempt_functions
+        # Named calls removed before matching. The `_process_body` pattern keys on
+        # a naming convention, and a handful of presentation advancers legitimately
+        # take a delta -- a recoil offset easing back, an animation state machine,
+        # a posture clock that owns no gameplay. Listing them here is narrower and
+        # more honest than loosening the pattern, and far more honest than renaming
+        # the functions so the regex stops seeing them. Each entry must be
+        # presentation: it may read simulation state and must mutate none.
+        self.exempt_calls = exempt_calls
 
     def allows(self, relative: str) -> bool:
         return any(relative.startswith(prefix) for prefix in self.allowed_prefixes)
@@ -81,6 +89,12 @@ class Rule:
     def prepare(self, source: str) -> str:
         for name in self.exempt_functions:
             source = _strip_function(source, name)
+        if self.exempt_calls:
+            kept = [
+                line for line in source.splitlines()
+                if line.strip().split("(")[0] not in self.exempt_calls
+            ]
+            source = "\n".join(kept)
         return source
 
 
@@ -194,6 +208,14 @@ RULES = [
         r"^\t(?:_update_|_tick_|_try_|_sync_)\w+\(delta\)",
         "the fixed physics tick",
         files=("_process_body",),
+        exempt_calls=(
+            # Presentation advancers. Each eases or sequences something drawn and
+            # writes no gameplay state; verified when Slice D emptied `_process`.
+            "_update_body_recoil",
+            "_update_melee_presentation_posture",
+            "_tick_primary_ranged_action_presentation",
+            "_update_animation_state_machine",
+        ),
     ),
     Rule(
         "move_and_slide_authority",

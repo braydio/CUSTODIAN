@@ -451,16 +451,13 @@ var build_target: Node = null  # WallBlueprint we're building
 var movement_direction := Vector2.DOWN  # Direction player is moving (for walk animations)
 var visual_idle_direction := Vector2.DOWN
 var arrow_aim_enabled: bool = false
-## Slice D: raw player input has exactly one owner, and it is not this file.
-## `_input` is the frame sampled at the top of the fixed tick; every gameplay read
-## below goes through it, so a replay, an AI or a vehicle can supply intent
-## without pretending to be a keyboard. See `operator/input/`.
+## Raw player input has one owner, and it is not this file. `_input_frame` is
+## sampled at the top of the fixed tick and every gameplay read goes through it.
+## See `operator/input/` and OPERATOR_RUNTIME_ARCHITECTURE.md.
 var _input_router: OperatorInputRouter = null
 var _aim_controller: OperatorAimController = null
 var _input_frame: OperatorInputFrame = OperatorInputFrame.neutral()
-## Set by `process_input()` when something else is driving this actor. The next
-## fixed tick consumes and clears it, so control reverts the moment the external
-## driver stops supplying frames.
+## Set by `process_input()`; consumed and cleared by the next fixed tick.
 var _external_control_frame: OperatorInputFrame = null
 @export_range(0.0, 1.0, 0.01) var controller_aim_deadzone := 0.25
 var stamina: float = 100.0
@@ -1377,7 +1374,35 @@ func _draw_socket_marker(pos: Vector2, color: Color, label: String) -> void:
 	if font != null:
 		draw_string(font, pos + Vector2(10.0, -8.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 12, color)
 
+## Presentation only: this derives from simulation state and mutates none of it.
+## The guards mirror the simulation's, for the cases with nothing to draw.
 func _process(delta):
+	if _paired_execution_active:
+		return
+	_update_body_recoil(delta)
+	_update_melee_presentation_posture(delta)
+	_update_unarmed_presentation_posture()
+	_tick_primary_ranged_action_presentation(delta)
+	_sync_ranged_aim_camera_state()
+	_sync_primary_ranged_weapon_frame_to_upper()
+	_update_animation_state_machine(delta)
+	_update_target_ring()
+	if _is_dead:
+		return
+	if _is_terminal_open() or _is_non_terminal_ui_open():
+		return
+	_apply_aim_presentation()
+	if _is_primary_ranged_transition_presentation_active():
+		_retarget_primary_ranged_transition(aim_direction)
+	_update_animation()
+	_sync_primary_ranged_weapon_frame_to_upper()
+
+
+## The deterministic half of the tick: clocks, input handling, state changes.
+##
+## Moved verbatim in order from `_process`, early returns included: they encode
+## real dependencies, and the movement ladder re-checks those conditions itself.
+func _advance_simulation(delta: float) -> void:
 	if _paired_execution_active:
 		return
 	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
@@ -1395,7 +1420,6 @@ func _process(delta):
 	_update_weapon_heat(delta)
 	_update_pending_ranged_shot(delta)
 	_try_consume_sidearm_fire_buffer()
-	_update_body_recoil(delta)
 	_update_attack_buffer(delta)
 	_update_melee_attack(delta)
 	_try_start_terminal_fast_restart()
@@ -1403,14 +1427,7 @@ func _process(delta):
 	_update_reload(delta)
 	_update_field_patch(delta)
 	_update_field_patch_observability(delta)
-	_update_melee_presentation_posture(delta)
-	_update_unarmed_presentation_posture()
-	_tick_primary_ranged_action_presentation(delta)
-	_sync_ranged_aim_camera_state()
-	_sync_primary_ranged_weapon_frame_to_upper()
-	_update_animation_state_machine(delta)
 	_update_combat_target()
-	_update_target_ring()
 	_update_interaction_target()
 	if _is_dead:
 		_reset_unstuck_detector()
@@ -1425,8 +1442,7 @@ func _process(delta):
 		cancel_field_patch(&"impact")
 		_cancel_dodge(&"impact")
 		_exit_ranged_ready()
-		_update_aim()
-		_update_animation()
+		_resolve_aim()
 		return
 	_handle_interact_input()
 	if _is_terminal_open() or _is_non_terminal_ui_open():
@@ -1438,28 +1454,22 @@ func _process(delta):
 		cancel_field_patch(&"portal")
 		_cancel_dodge_charge(&"portal")
 		_exit_ranged_ready()
-		_update_aim()
-		_update_animation()
+		_resolve_aim()
 		return
 	_handle_field_patch_input()
 	_handle_field_patch_interrupt_input()
 	if _field_patch_active:
 		_exit_ranged_ready()
-		_update_aim()
-		_update_animation()
+		_resolve_aim()
 		return
 	_handle_loadout_toggle_input()
 	try_apply_pending_weapon_selection()
 	_handle_aim_input_toggle()
 	_handle_reload_input()
-	_update_aim()
-	if _is_primary_ranged_transition_presentation_active():
-		_retarget_primary_ranged_transition(aim_direction)
+	_resolve_aim()
 	_handle_offhand_secondary_input(delta)
 	_update_ranged_ready_state()
 	_handle_dodge_input(delta)
-	_update_animation()
-	_sync_primary_ranged_weapon_frame_to_upper()
 	if _dodge_charge_active:
 		return
 	if _input_frame.just_pressed(&"build"):
@@ -1477,21 +1487,17 @@ func _process(delta):
 		_request_block_state()
 
 
-func _input(event: InputEvent) -> void:
-	if _is_ui_text_input_focused():
-		return
-	if event is InputEventMouseMotion \
-	and not arrow_aim_enabled \
-	and not _is_gamepad_input_active():
-		var mouse_aim_vector := _get_world_mouse_position() - global_position
-		if mouse_aim_vector.length_squared() > 0.0001:
-			visual_idle_direction = mouse_aim_vector.normalized()
-
-
+## The simulation spine: one input frame, then decisions, then movement.
 func _physics_process(delta):
-	# The fixed tick is the simulation spine, and it opens by deciding what the
-	# player asked for. Everything below reads that one frozen frame.
 	_sample_input_frame()
+	_advance_simulation(delta)
+	_advance_movement(delta)
+
+
+## Movement intent, attack drive, `move_and_slide()` and post-collision
+## bookkeeping. Simulation decides what the Operator is doing; this decides where
+## that puts it. `move_and_slide()` stays in this chassis and nowhere else.
+func _advance_movement(delta: float) -> void:
 	apply_debug_resource_overrides()
 	_advance_integrity_reclaim(delta)
 	if _engagement_tracker != null:
@@ -1747,13 +1753,9 @@ func debug_print_stuck_report() -> Dictionary:
 	return provider.call("debug_print_stuck_report", global_position)
 
 
-## Resolve which way the Operator is aiming. Simulation, so it belongs to the
-## fixed tick.
-##
-## The source policy -- retained controller direction, keyboard override, mouse
-## only while the mouse is live -- is `OperatorAimController`. `aim_direction`
-## remains the public resolved result other systems read; it is not a second
-## state machine, because nothing else writes it from input.
+## Simulation: which way the Operator is aiming. The source policy lives in
+## `OperatorAimController`; `aim_direction` is the resolved result others read,
+## not a second state machine, because nothing else writes it from input.
 func _resolve_aim() -> void:
 	if _aim_controller == null:
 		_aim_controller = OperatorAimController.new()
@@ -13981,8 +13983,7 @@ func _update_stealth_noise_snapshot(moving: bool) -> void:
 		stealth_visibility_mult = 0.9
 
 
-## Facade over the frame. The sampling that used to live here is in
-## `OperatorInputRouter`, which normalises and deadzones before anyone sees it.
+## Facade over the frame; `OperatorInputRouter` does the sampling.
 func _get_move_input_vector() -> Vector2:
 	return _input_frame.move
 
@@ -13991,8 +13992,7 @@ func _get_controller_aim_direction() -> Vector2:
 	return _input_frame.controller_aim
 
 
-## `InputPromptService` stays the one device-family authority; this asks it
-## rather than sniffing devices a second time.
+## `InputPromptService` stays the one device-family authority.
 func _is_gamepad_input_active() -> bool:
 	var prompt_service := get_node_or_null("/root/InputPromptService")
 	return prompt_service != null \
@@ -14025,10 +14025,8 @@ func _get_keyboard_aim_direction() -> Vector2:
 	return _input_frame.keyboard_aim
 
 
-## The direction the aim controller is holding for the gamepad, read-only.
-##
-## Exposed rather than mirrored: this file no longer keeps its own copy, because
-## two places remembering the same stick is how they disagree.
+## Read-only view of the aim controller's retained gamepad direction. Not
+## mirrored here: two places remembering one stick is how they disagree.
 func _retained_controller_aim() -> Vector2:
 	return Vector2.ZERO if _aim_controller == null else _aim_controller.last_controller_aim
 
@@ -14987,15 +14985,9 @@ func can_be_controlled() -> bool:
 	return is_alive() and not _is_dead and not _is_terminal_open()
 
 
-## ControllableActor interface implementation.
-##
-## Intent from a replay, an AI, a possession system or a vehicle. It is stored
-## rather than applied: the next fixed tick adopts it as that tick's input frame,
-## so externally supplied control converges with local input *before* any gameplay
-## decision is made. There is deliberately no second path -- an injected frame is
-## read by exactly the same code that reads a keyboard.
-##
-## Supplying no frame on a tick hands control straight back to local input.
+## ControllableActor seam. Stored, not applied: the next fixed tick adopts it as
+## that tick's input frame, so injected control converges with local input before
+## any gameplay decision. Supplying no frame hands control back.
 func process_input(input_vector: Vector2, aim_vector: Vector2, is_firing: bool) -> void:
 	_external_control_frame = OperatorInputRouter.from_control_intent(
 		input_vector,

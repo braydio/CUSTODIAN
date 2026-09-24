@@ -282,7 +282,7 @@ func _validate_finisher_drive(operator: Node) -> void:
 		"opposing input reversed the cleaver finisher drive"
 	)
 	for _step in range(30):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 	var distance: float = operator.global_position.x
 	_assert(
 		distance > 10.0 and distance <= 14.1,
@@ -291,7 +291,7 @@ func _validate_finisher_drive(operator: Node) -> void:
 	)
 	var settled: Vector2 = operator.global_position
 	for _step in range(8):
-		operator.call("_physics_process", 1.0 / 60.0)
+		operator.call("_advance_movement", 1.0 / 60.0)
 	_assert(
 		operator.global_position.distance_to(settled) <= 0.05,
 		"cleaver drive snapped back or drifted after completion"
