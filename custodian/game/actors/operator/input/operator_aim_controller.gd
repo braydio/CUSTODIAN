@@ -10,9 +10,16 @@ extends RefCounted
 ##
 ## Source priority, highest first:
 ##
+##     external control -> the driver's supplied direction
 ##     gamepad active   -> retained controller direction
 ##     arrow aim mode   -> keyboard axes while nonzero
 ##     otherwise        -> mouse, and only while the mouse is a live source
+##
+## External control outranks every local source and is conditional on none of
+## them: a driver that supplies an aim vector gets that aim whatever
+## `arrow_aim_enabled`, the device family, the retained stick or the mouse happen
+## to say. Anything less means the seam accepts a direction and may ignore it,
+## which is worse than not accepting one.
 ##
 ## The mouse cannot steal aim from an active gamepad, because a mouse position
 ## exists whether or not anyone is touching the mouse. Actual pointer movement is
@@ -20,7 +27,7 @@ extends RefCounted
 ##
 ## Authority: design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md
 
-enum Source { NONE, GAMEPAD, KEYBOARD, MOUSE }
+enum Source { NONE, GAMEPAD, KEYBOARD, MOUSE, EXTERNAL }
 
 var last_controller_aim: Vector2 = Vector2.ZERO
 var source: Source = Source.NONE
@@ -50,6 +57,24 @@ func resolve(
 ) -> Dictionary:
 	if frame.mouse_moved:
 		_mouse_is_live = true
+
+	if frame.external_control:
+		if frame.control_aim.length_squared() > 0.0001:
+			source = Source.EXTERNAL
+			# The driver owns aim, so the mouse must earn it back by moving, the
+			# same rule the gamepad gets. Otherwise handing control back would
+			# snap aim to wherever the cursor was parked during the possession.
+			_mouse_is_live = false
+			var control_aim := frame.control_aim.normalized()
+			return {
+				"aim": control_aim,
+				"facing": control_aim,
+				"facing_changed": true,
+			}
+		# A driver with no opinion about aim holds the current direction rather
+		# than falling through to local devices, which are not driving.
+		return {"aim": current_aim, "facing": visual_idle_direction, "facing_changed": false}
+
 	if frame.gamepad_active:
 		source = Source.GAMEPAD
 		# The gamepad has aim; the mouse must earn it back by actually moving.

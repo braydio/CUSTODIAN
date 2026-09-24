@@ -7,15 +7,18 @@ present reality. Architecture debt is **119**, down from 201 at the start of the
 migration; the stale 201 figure has been corrected here and in the architecture
 contract.
 
-**Slice D (done, after the D.1 seal correction).** `operator/input/` is the sole owner of raw Operator input
+**Slice D (done, after the D.1 and D.2 seal corrections).** `operator/input/` is the sole owner of raw Operator input
 sampling: `OperatorInputFrame` (one immutable tick of intent),
 `OperatorInputRouter` (the only `Input.*` reader) and `OperatorAimController`
 (aim-source policy and the retained controller direction, moved out of
 `operator.gd`). One frame is sampled at the top of `_physics_process`; the tick is
 `_sample_input_frame` -> `_advance_simulation` -> `_advance_movement`, and
-`_process` is presentation only. `ControllableActor.process_input()` is real: an
-injected frame is adopted by the next fixed tick, so external control converges
-with local input before any gameplay decision. Counters: `input_calls_outside_input_dir` 65 -> 0, `gameplay_mutation_in_process` 12 -> 0.
+`_process` is presentation only. `ControllableActor.process_input()` stays a no-op
+base interface; the **Operator override** is the implemented adapter, and it is
+real: an injected frame is adopted by the next fixed tick, so external control
+converges with local input before any gameplay decision. Counters:
+`input_calls_outside_input_dir` 65 -> 0, `gameplay_mutation_in_process` 12 -> 0,
+total architecture debt 119.
 
 **D.1 corrected three things Slice D got wrong.** It had exempted four calls from the render-tick
 audit on the strength of their names; three of them advance state gameplay reads and are now on the
@@ -25,8 +28,23 @@ ready-up bridge. Only `_update_body_recoil` remains exempt. `adopt()` now derive
 `just_pressed`/`just_released` for injected frames, without which external control could drive
 held-fire ranged but not melee or the sidearm. And `OperatorAimController` now actually reads
 `OperatorInputFrame.mouse_moved`, which Slice D sampled and ignored.
+
+**D.2 closed the two authority seams D.1 left open.** External aim is now an
+explicit input-frame fact (`external_control` + `control_aim`) that
+`OperatorAimController` ranks above every local source: D.1 filed the supplied
+vector as `keyboard_aim`, which is read only in arrow-aim mode, so
+`process_input()` accepted a world-space aim direction and could silently discard
+it -- external control could press a button but not steer. And `mouse_moved` is now
+event-derived, from `InputPromptService.mouse_motion_generation`, a monotonic count
+advanced only by a qualifying `InputEventMouseMotion`. D.1 derived it from changes
+in `_get_world_mouse_position()`, a camera-relative coordinate that moves under a
+motionless mouse because `CameraController` follows the Operator with smoothing,
+lookahead, ranged lead, threat framing, bob and shake -- so the stale-mouse handoff
+D.1 set out to fix could still reappear. The router no longer sees a mouse position
+at all.
 Gates `operator_input_frame` and `operator_fixed_tick_spine` own
-`operator/input/**`. Still open and deliberately untouched: C2b, Slice E
+`operator/input/**`, and `operator_input_aim_source` carries the D.2 negative
+controls against the real actor. Still open and deliberately untouched: C2b, Slice E
 (`OperatorActionController`) and Slice F (domain extraction).
 
 The C2a renderer cutover record, kept for its evidence (2026-09-15):
@@ -822,9 +840,14 @@ Introduce `OperatorInputFrame`, `OperatorInputRouter` and
 `OperatorAimController`. Move the 12 simulation advances out of `_process()`
 onto the explicitly ordered fixed tick; leave `_process()` presentation-only.
 Make gamepad/mouse ownership deterministic: a neutral stick retains the last
-gamepad aim and only real mouse movement hands the device back. Make
-`ControllableActor.process_input()` a real adapter instead of the current
-no-op `pass`, so replay/AI/vehicle drivers have a seam.
+gamepad aim and only real mouse movement hands the device back -- *real* meaning a
+pointer-motion event, never a change in the world-space mouse coordinate, which
+the camera moves on its own. Give `ControllableActor.process_input()` a real
+adapter in the **Operator override**, so replay/AI/vehicle drivers have a seam;
+the base method stays a no-op `pass`, because it is the interface, not the
+implementation. The adapter is not done when an injected frame arrives: it must
+carry edges *and* aim, on its own explicit facts rather than by impersonating a
+keyboard or a gamepad.
 
 ## Slice E — action arbitration
 

@@ -26,8 +26,10 @@ func _run() -> void:
 	_check_movement()
 	_check_aim_ownership()
 	_check_external_control()
+	_check_external_aim_authority()
 	_check_injected_edges()
 	_check_mouse_handoff()
+	_check_pointer_motion_is_event_derived()
 
 	if _failures.is_empty():
 		print("operator_input_frame_smoke passed")
@@ -39,8 +41,10 @@ func _run() -> void:
 	quit(1)
 
 
-func _sample(router: OperatorInputRouter) -> OperatorInputFrame:
-	return router.sample(false, 0.25, Vector2.ZERO)
+## Sampling takes a pointer-motion generation, not a mouse position. Holding it
+## constant is the truthful way to say "the pointer did not move".
+func _sample(router: OperatorInputRouter, motion_generation: int = 0) -> OperatorInputFrame:
+	return router.sample(false, 0.25, motion_generation)
 
 
 ## Press, hold, release, and the tick after. Each edge belongs to one tick.
@@ -190,6 +194,19 @@ func _check_external_control() -> void:
 		"injected control must not claim to be a gamepad"
 	)
 	_check(
+		frame.external_control,
+		"an injected frame must declare itself external rather than impersonating a device"
+	)
+	_check(
+		frame.control_aim.is_equal_approx(Vector2.UP),
+		"the supplied aim vector must survive as an explicit external fact, got %s" % frame.control_aim
+	)
+	_check(
+		frame.keyboard_aim == Vector2.ZERO,
+		"injected aim must not be filed as keyboard axes: that made it conditional "
+			+ "on arrow_aim_enabled, which defaults to false"
+	)
+	_check(
 		OperatorInputFrame.neutral().has_any_activity() == false,
 		"a neutral frame must report no activity"
 	)
@@ -291,3 +308,145 @@ func _check_mouse_handoff() -> void:
 		"after the gamepad takes over, the mouse must earn aim back by moving again"
 	)
 
+
+## Externally supplied aim must actually own aim.
+##
+## `ControllableActor.process_input()` documents `aim_vector` as a world-space aim
+## direction. Before D.2 the router filed it as `keyboard_aim`, and the aim
+## authority reads `keyboard_aim` only while `arrow_aim_enabled` is true -- which
+## the Operator defaults to false. The seam therefore accepted an aim vector and
+## discarded it: external control could press a button but could not steer.
+##
+## The policy is that an external frame with a nonzero aim wins outright. It must
+## not depend on arrow-aim mode, the device family, a retained stick, or the mouse.
+func _check_external_aim_authority() -> void:
+	var facing := Vector2.DOWN
+	var external_up := OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.UP, false)
+
+	# Arrow-aim off is the Operator's own default, and the case that was broken.
+	var resolved := OperatorAimController.new().resolve(
+		external_up, false, Vector2.ZERO, facing, Vector2.RIGHT, Vector2(500.0, 0.0)
+	)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.UP),
+		"external aim must own aim with arrow_aim_enabled false, resolved %s" % resolved["aim"]
+	)
+	_check(
+		bool(resolved["facing_changed"])
+			and (resolved["facing"] as Vector2).is_equal_approx(Vector2.UP),
+		"external aim must also turn the body, or an injected attack swings the wrong way"
+	)
+
+	# Arrow-aim on must not change the answer either.
+	resolved = OperatorAimController.new().resolve(
+		external_up, true, Vector2.ZERO, facing, Vector2.RIGHT, Vector2(500.0, 0.0)
+	)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.UP),
+		"external aim must not depend on arrow-aim mode, resolved %s" % resolved["aim"]
+	)
+
+	# A live mouse must not outrank the driver.
+	var mouse_live := OperatorAimController.new()
+	mouse_live.resolve(
+		OperatorInputFrame.build({}, {}, {}, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, false, true),
+		false, Vector2.ZERO, facing, Vector2.RIGHT, Vector2(0.0, -40.0)
+	)
+	resolved = mouse_live.resolve(external_up, false, Vector2.ZERO, facing, Vector2.RIGHT, Vector2(500.0, 0.0))
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.UP),
+		"a live mouse must not outrank external control, resolved %s" % resolved["aim"]
+	)
+
+	# Nor must a retained gamepad direction.
+	var gamepad_retained := OperatorAimController.new()
+	gamepad_retained.resolve(
+		OperatorInputFrame.build({}, {}, {}, Vector2.ZERO, Vector2.RIGHT, Vector2.ZERO, true, false),
+		false, Vector2.ZERO, facing, Vector2.ZERO, Vector2.ZERO
+	)
+	resolved = gamepad_retained.resolve(external_up, false, Vector2.ZERO, facing, Vector2.RIGHT, Vector2.ZERO)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.UP),
+		"a retained controller direction must not outrank external control, resolved %s" % resolved["aim"]
+	)
+
+	# A driver with no opinion holds the current aim rather than falling through
+	# to local devices, which are not the ones driving.
+	var silent := OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.ZERO, false)
+	resolved = OperatorAimController.new().resolve(
+		silent, false, Vector2.ZERO, facing, Vector2.RIGHT, Vector2(0.0, -400.0)
+	)
+	_check(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.RIGHT),
+		"an external frame with no aim opinion must hold the current aim, resolved %s" % resolved["aim"]
+	)
+
+	# Edges still come from adopt(); the aim fact must survive that trip.
+	var adopted := OperatorInputRouter.new().adopt(
+		OperatorInputRouter.from_control_intent(Vector2.ZERO, Vector2.UP, true)
+	)
+	_check(
+		adopted.external_control and adopted.control_aim.is_equal_approx(Vector2.UP),
+		"adopt() must carry the external aim fact, not just the button state"
+	)
+
+
+## `mouse_moved` must come from pointer events, never from a world coordinate.
+##
+## The router used to compare `_get_world_mouse_position()` between ticks. The
+## camera follows the Operator and applies smoothing, lookahead, ranged lead,
+## threat framing, bob and shake, so that coordinate moves while the physical
+## mouse sits still -- which let a stale mouse take aim back from a gamepad. The
+## router no longer sees a position at all; it compares `InputPromptService`'s
+## motion generation, which only a real motion event advances.
+func _check_pointer_motion_is_event_derived() -> void:
+	var router := OperatorInputRouter.new()
+	_check(not _sample(router, 7).mouse_moved, "the first sample has nothing to compare against")
+	_check(
+		not _sample(router, 7).mouse_moved,
+		"an unchanged motion generation must report no pointer movement"
+	)
+	_check(_sample(router, 8).mouse_moved, "a new motion event must report pointer movement")
+	_check(
+		not _sample(router, 8).mouse_moved,
+		"the movement report must clear once the generation stops advancing"
+	)
+
+	# The negative control, stated as the bug: no amount of camera or actor motion
+	# can reach this path, because a coordinate is not one of its inputs.
+	var service_source := FileAccess.get_file_as_string(
+		"res://game/systems/input/input_prompt_service.gd"
+	)
+	_check(
+		service_source.contains("mouse_motion_generation += 1")
+			and service_source.contains("InputEventMouseMotion"),
+		"InputPromptService must advance the motion generation from a real mouse-motion event"
+	)
+	var router_source := FileAccess.get_file_as_string(
+		"res://game/actors/operator/input/operator_input_router.gd"
+	)
+	_check(
+		not router_source.contains("_last_mouse_position"),
+		"the router must not retain a mouse position: comparing world coordinates is "
+			+ "camera movement, not pointer movement"
+	)
+
+	# The service itself: a real event counts, a sub-threshold twitch does not.
+	var service_script: GDScript = load("res://game/systems/input/input_prompt_service.gd")
+	var service: Node = service_script.new()
+	var before: int = int(service.call("get_mouse_motion_generation"))
+	var tiny := InputEventMouseMotion.new()
+	tiny.relative = Vector2(0.1, 0.0)
+	service.call("_input", tiny)
+	_check(
+		int(service.call("get_mouse_motion_generation")) == before,
+		"sub-threshold pointer noise must not count as movement"
+	)
+	var real_motion := InputEventMouseMotion.new()
+	real_motion.relative = Vector2(64.0, 0.0)
+	service.call("_input", real_motion)
+	_check(
+		int(service.call("get_mouse_motion_generation")) == before + 1,
+		"a real mouse-motion event must advance the motion generation"
+	)
+	service.free()

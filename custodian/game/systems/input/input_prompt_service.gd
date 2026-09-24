@@ -16,6 +16,16 @@ const XBOX_AXIS_LABELS := {4: "LT", 5: "RT"}
 
 var device_family: StringName = KEYBOARD_MOUSE
 
+## Monotonic count of real pointer-motion events, using the same qualifying
+## threshold as the device-family switch.
+##
+## This service already receives physical `InputEventMouseMotion` and already owns
+## device-family detection, so it is the only thing that needs to. Consumers ask
+## "has this changed since my last sample?" rather than inferring motion from a
+## mouse *position*: the world-space mouse coordinate moves whenever the camera
+## does, which would report a motionless mouse as moving.
+var mouse_motion_generation: int = 0
+
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventJoypadButton and event.pressed:
@@ -27,11 +37,18 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.pressed:
 		_set_device_family(KEYBOARD_MOUSE)
 	elif event is InputEventMouseMotion and event.relative.length() >= MOUSE_MOTION_THRESHOLD:
+		mouse_motion_generation += 1
 		_set_device_family(KEYBOARD_MOUSE)
 
 
 func is_gamepad_active() -> bool:
 	return device_family == GAMEPAD
+
+
+## Read the pointer-motion count. A method rather than a bare property read so
+## callers can `has_method()`-guard it, as the Operator does for every autoload.
+func get_mouse_motion_generation() -> int:
+	return mouse_motion_generation
 
 
 func resolve_action_label(action: StringName, family: StringName = &"") -> String:

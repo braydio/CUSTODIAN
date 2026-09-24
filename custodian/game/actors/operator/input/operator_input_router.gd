@@ -39,8 +39,7 @@ const RELOAD := [&"reload_weapon", &"reload"]
 
 var _available: Array[StringName] = []
 var _previous_pressed: Dictionary = {}
-var _last_mouse_position: Vector2 = Vector2.ZERO
-var _has_mouse_sample: bool = false
+var _last_mouse_motion_generation: int = -1
 
 
 func _init() -> void:
@@ -57,10 +56,18 @@ func _init() -> void:
 ## answer alone loses an edge if a tick is skipped entirely, and the comparison
 ## alone loses a press that begins and ends between two ticks. Both are "since the
 ## last physics frame", so combining them cannot report an edge twice.
+##
+## `mouse_motion_generation` is `InputPromptService`'s monotonic count of real
+## pointer-motion events. The router compares it against its own previous sample
+## and reports the boolean; it does not observe the pointer itself. Deriving this
+## from the world-space mouse position instead -- as this did before D.2 -- reports
+## movement whenever the *camera* moves, which it does constantly: it follows the
+## Operator with smoothing, lookahead, ranged lead, threat framing, bob and shake.
+## A motionless mouse could therefore take aim back from an active gamepad.
 func sample(
 	gamepad_active: bool,
 	controller_deadzone: float,
-	mouse_position: Vector2
+	mouse_motion_generation: int
 ) -> OperatorInputFrame:
 	var pressed: Dictionary = {}
 	var just_pressed: Dictionary = {}
@@ -76,10 +83,9 @@ func sample(
 	_previous_pressed = pressed.duplicate()
 
 	var pointer_moved := false
-	if _has_mouse_sample:
-		pointer_moved = _last_mouse_position.distance_squared_to(mouse_position) > 0.01
-	_last_mouse_position = mouse_position
-	_has_mouse_sample = true
+	if _last_mouse_motion_generation >= 0:
+		pointer_moved = mouse_motion_generation > _last_mouse_motion_generation
+	_last_mouse_motion_generation = mouse_motion_generation
 
 	return OperatorInputFrame.build(
 		pressed,
@@ -126,11 +132,19 @@ func adopt(frame: OperatorInputFrame) -> OperatorInputFrame:
 		frame.controller_aim,
 		frame.keyboard_aim,
 		frame.gamepad_active,
-		frame.mouse_moved
+		frame.mouse_moved,
+		frame.external_control,
+		frame.control_aim
 	)
 
 
 ## Build a frame from an external intent triple, as `ControllableActor` supplies.
+##
+## The aim vector is recorded as `control_aim` behind the `external_control` flag,
+## not as `keyboard_aim`. Storing it as a keyboard fact made it conditional on
+## `arrow_aim_enabled`, which the Operator defaults to false, so a driver could
+## supply an aim direction and be ignored. External control is its own source and
+## says so.
 static func from_control_intent(
 	input_vector: Vector2,
 	aim_vector: Vector2,
@@ -146,9 +160,11 @@ static func from_control_intent(
 		{},
 		input_vector.limit_length(1.0),
 		Vector2.ZERO,
-		aim_vector.normalized() if aim_vector.length_squared() > 0.0001 else Vector2.ZERO,
+		Vector2.ZERO,
 		false,
-		false
+		false,
+		true,
+		aim_vector.normalized() if aim_vector.length_squared() > 0.0001 else Vector2.ZERO
 	)
 
 

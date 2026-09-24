@@ -56,6 +56,7 @@ func _run() -> void:
 	await _check_reload_is_fixed_tick_owned(operator)
 	await _check_gameplay_bearing_advancers(operator)
 	await _check_injected_control_can_start_an_attack(operator)
+	await _check_injected_attack_uses_the_supplied_facing(operator)
 
 	operator.queue_free()
 	root.queue_free()
@@ -267,3 +268,55 @@ func _check_injected_control_can_start_an_attack(operator: Node) -> void:
 	operator.call("_clear_attack_buffer")
 	await process_frame
 
+
+## An injected attack must swing where the driver pointed.
+##
+## Starting the attack is only half the seam. `process_input()` documents
+## `aim_vector` as a world-space aim direction, and before D.2 the router filed it
+## as `keyboard_aim`, which `OperatorAimController` reads only while
+## `arrow_aim_enabled` is true -- false by default on the Operator. So an AI, a
+## vehicle or a replay could fire and would hit whatever direction the Operator
+## already happened to face. The earlier case cannot see this because it injects
+## the same direction the actor is already aiming.
+func _check_injected_attack_uses_the_supplied_facing(operator: Node) -> void:
+	operator.set("arrow_aim_enabled", false)
+	operator.call("_apply_unarmed_selection")
+	operator.set("stamina", 100.0)
+	operator.set("melee_cooldown_remaining", 0.0)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	operator.set("_melee_active", false)
+	operator.set("_melee_fast_windup", false)
+	operator.call("_clear_attack_buffer")
+	await process_frame
+
+	# The driver points the other way from the aim that already exists.
+	operator.call("process_input", Vector2.ZERO, Vector2.UP, false)
+	operator.call("_sample_input_frame")
+	operator.call("_advance_simulation", 1.0 / 60.0)
+	await process_frame
+	var aim: Vector2 = operator.get("aim_direction")
+	_check(
+		aim.is_equal_approx(Vector2.UP),
+		"the supplied aim vector did not reach aim_direction: it is %s, not UP. "
+			% aim
+			+ "external control can press buttons but cannot steer."
+	)
+
+	operator.call("process_input", Vector2.ZERO, Vector2.UP, true)
+	operator.call("_sample_input_frame")
+	var attack_aim: Vector2 = operator.call("_get_attack_aim_direction")
+	_check(
+		attack_aim.is_equal_approx(Vector2.UP),
+		"an injected attack used %s instead of the supplied facing UP" % attack_aim
+	)
+	operator.call("_advance_simulation", 1.0 / 60.0)
+	await process_frame
+	_check(
+		bool(operator.get("_melee_active")) or bool(operator.get("_melee_fast_windup")),
+		"the injected attack must still start, or the facing assertion proves nothing"
+	)
+	operator.set("_melee_active", false)
+	operator.set("_melee_fast_windup", false)
+	operator.call("_clear_attack_buffer")
+	await process_frame

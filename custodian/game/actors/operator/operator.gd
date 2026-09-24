@@ -13998,12 +13998,31 @@ func _get_controller_aim_direction() -> Vector2:
 	return _input_frame.controller_aim
 
 
+## The one place the Operator resolves the input-prompt autoload. Both device
+## facts it reads come from here, so the absolute path is written once.
+func _get_input_prompt_service() -> Node:
+	return get_node_or_null("/root/InputPromptService")
+
+
 ## `InputPromptService` stays the one device-family authority.
 func _is_gamepad_input_active() -> bool:
-	var prompt_service := get_node_or_null("/root/InputPromptService")
+	var prompt_service := _get_input_prompt_service()
 	return prompt_service != null \
 		and prompt_service.has_method("is_gamepad_active") \
 		and bool(prompt_service.call("is_gamepad_active"))
+
+
+## Physical pointer motion, counted by the same service that owns device family.
+##
+## The Operator does not add a second `_input(event)` device detector, and it must
+## not infer motion from the world mouse position: the camera follows the body
+## with smoothing, lookahead, lead, framing, bob and shake, so that coordinate
+## moves under a motionless mouse.
+func _read_mouse_motion_generation() -> int:
+	var prompt_service := _get_input_prompt_service()
+	if prompt_service == null or not prompt_service.has_method("get_mouse_motion_generation"):
+		return 0
+	return int(prompt_service.call("get_mouse_motion_generation"))
 
 
 ## Build this tick's input frame. The one place the Operator acquires intent.
@@ -14017,7 +14036,7 @@ func _sample_input_frame() -> void:
 	_input_frame = _input_router.sample(
 		_is_gamepad_input_active(),
 		controller_aim_deadzone,
-		_get_world_mouse_position()
+		_read_mouse_motion_generation()
 	)
 
 
@@ -14994,6 +15013,11 @@ func can_be_controlled() -> bool:
 ## ControllableActor seam. Stored, not applied: the next fixed tick adopts it as
 ## that tick's input frame, so injected control converges with local input before
 ## any gameplay decision. Supplying no frame hands control back.
+##
+## `aim_vector` is a world-space aim direction and is honoured as one: the frame
+## carries it as an explicit external fact, and `OperatorAimController` ranks that
+## above every local source. It does not depend on `arrow_aim_enabled`, the device
+## family, the retained stick or the mouse.
 func process_input(input_vector: Vector2, aim_vector: Vector2, is_firing: bool) -> void:
 	_external_control_frame = OperatorInputRouter.from_control_intent(
 		input_vector,

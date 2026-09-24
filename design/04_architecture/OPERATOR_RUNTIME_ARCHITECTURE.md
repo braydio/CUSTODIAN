@@ -15,7 +15,7 @@ the project as a whole.
 
 Measured at the start of this migration (`--emit-baseline`, 2026-09-10). The
 table's own total is the opening figure: **347**. It stood at 201 partway through,
-and after Slice D and its D.1 correction it is **119**. The Slice D rows are
+and after Slice D and its D.1/D.2 corrections it is **119**. The Slice D rows are
 struck through because they are now zero:
 
 | Overlapping authority | Violations | Should be owned by |
@@ -32,9 +32,15 @@ struck through because they are now zero:
 | actor-local `SpriteFrames` construction | 5 | one generated `operator_runtime_frames.tres` |
 | retired `OperatorAnimationCatalog` | 4 | `OperatorAnimationSelector` |
 | mutable state in `OperatorWeaponDefinition` | 3 | `OperatorWeaponRuntimeState` |
-| **total** | **347** → **322** | |
+| **total** | **347** → **119** | |
 
-`operator.gd` is 540,567 bytes / 13,745 lines and acts simultaneously as input
+The rows are the measured figures the audit prints today; the total is their sum,
+and the audit's own total is the acceptance test. An earlier revision of this
+table carried a stale `347 → 322` while the prose said 119, which is the kind of
+drift the seal exists to remove.
+
+`operator.gd` is 613,598 bytes / 15,231 lines / 723 functions after D.2, and acts
+simultaneously as input
 handler, locomotion controller, aim resolver, combat coordinator, animation
 selector, renderer, ranged and melee controller, dodge controller,
 reload/ammo/heat controller, interaction system, build/repair interface,
@@ -73,13 +79,14 @@ consumed flags anywhere in gameplay code — a superseded frame is simply replac
 
 ### Aim ownership
 
-Source priority is gamepad, then keyboard in arrow-aim mode, then mouse. The
-retained controller direction lives in `OperatorAimController`, not in
-`operator.gd`, because two places remembering one stick is how they disagree. A
-stick returning to neutral is the player holding still: it does not zero aim and
-does not hand aim to the mouse. A mouse position exists whether or not anyone is
-touching the mouse, so pointer *movement*, not pointer *presence*, is what hands
-ownership back. `InputPromptService` remains the single device-family authority.
+Source priority is external control, then gamepad, then keyboard in arrow-aim
+mode, then mouse. The retained controller direction lives in
+`OperatorAimController`, not in `operator.gd`, because two places remembering one
+stick is how they disagree. A stick returning to neutral is the player holding
+still: it does not zero aim and does not hand aim to the mouse. A mouse position
+exists whether or not anyone is touching the mouse, so pointer *movement*, not
+pointer *presence*, is what hands ownership back. `InputPromptService` remains the
+single device-family authority.
 
 ### The tick
 
@@ -115,6 +122,23 @@ turned out to advance state gameplay reads, and D.1 moved them to the fixed tick
 The lesson is in the rule now: an exemption is a claim about what a function
 writes, and it has to be checked against the readers, not against the name.
 
+### External aim is an input-frame fact
+
+`OperatorInputFrame` carries `external_control` and `control_aim`: an explicit
+statement that a driver supplied this frame, and which direction it asked for.
+External control does not impersonate a device, and `OperatorAimController` ranks
+it above every local source. A supplied aim wins whatever `arrow_aim_enabled`, the
+`InputPromptService` device family, the retained stick or the mouse latch happen
+to say; a driver that supplies no aim holds the current direction rather than
+falling through to local devices, which are not the ones driving.
+
+D.2 fixed this. D.1 and Slice D filed the supplied vector as `keyboard_aim`, and
+the aim authority reads `keyboard_aim` only in arrow-aim mode, which the Operator
+defaults to off — so `ControllableActor.process_input()` documented a world-space
+aim direction, accepted one, and could silently discard it. External control could
+press a button but not steer, which is most of what an AI, a vehicle, a possession
+system or a replay needs the seam for.
+
 ### External control carries edges
 
 `from_control_intent()` can only state what is *held*; an external driver does
@@ -135,13 +159,40 @@ the pointer really moves, so the player does not have to keep jiggling the mouse
 and the gamepad taking aim back clears it. Slice D sampled `mouse_moved` and never
 read it; D.1 wired it up.
 
+`mouse_moved` is **event-derived, never inferred from coordinates**.
+`InputPromptService` already receives physical `InputEventMouseMotion` and already
+owns device-family detection, so it also keeps `mouse_motion_generation`, a
+monotonic count advanced only by the same qualifying motion event. The router
+compares that number against its previous sample and reports the boolean; it never
+sees a mouse position at all, and the Operator adds no second `_input(event)`
+device detector.
+
+D.2 fixed this too. Until then the router compared `_get_world_mouse_position()`
+between ticks — a *camera-relative* coordinate. `CameraController` follows the
+Operator and applies smoothing, lookahead, ranged aim lead, threat framing, bob,
+shake and zoom, so the world coordinate under a physically motionless mouse moves
+constantly. The exact scenario D.1 set out to fix could therefore reappear: the
+gamepad owns aim, the player presses W, the device family flips, the camera moves,
+the world mouse coordinate changes, and a stale mouse takes aim back. Camera
+position, actor position and world mouse coordinates are not evidence of pointer
+movement, and nothing may treat them as such.
+
 ### Gates
 
 `operator_input_frame` covers edge semantics, movement normalisation, the full
-aim-source policy and injected control. `operator_fixed_tick_spine` proves render
-ticks move no clock while fixed ticks advance by exactly their delta, independent
-of step size. Both own `operator/input/**`, so an input edit selects a focused
-gate instead of the whole Operator suite.
+aim-source policy, injected control and the external-aim ranking, and proves
+`mouse_moved` advances only on a qualifying motion event. `operator_fixed_tick_spine`
+proves render ticks move no clock while fixed ticks advance by exactly their delta,
+independent of step size, and that an injected attack swings where the driver
+pointed rather than where the actor already faced. Both own `operator/input/**`, so
+an input edit selects a focused gate instead of the whole Operator suite.
+
+`operator_input_aim_source` carries the two D.2 negative controls against the real
+actor: external aim resolving through `process_input()` with `arrow_aim_enabled`
+false, and a real `Camera2D` moved at the path the Operator reads, proving world
+mouse motion without a pointer event does not revive mouse aim. That case asserts
+the world mouse coordinate really moved before asserting what it must not cause —
+a negative control that cannot reproduce the input proves nothing.
 
 ## Core locks
 

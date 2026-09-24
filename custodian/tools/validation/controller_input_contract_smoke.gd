@@ -50,7 +50,19 @@ func _initialize() -> void:
 	_expect(_has_physical_key(&"toggle_unarmed", KEY_F), "toggle_unarmed lost physical F")
 
 	var operator_source := FileAccess.get_file_as_string("res://game/actors/operator/operator.gd")
-	_expect(operator_source.contains('Input.is_action_pressed("sprint")'), "operator sprint is not action-driven")
+	# Sprint must be a bound action rather than a raw key, which is what the two
+	# assertions below forbid. Slice D moved the read itself off `Input` and onto
+	# the deterministic fixed-tick frame, so the contract now names that owner:
+	# asserting the old raw `Input.is_action_pressed("sprint")` call demanded a
+	# call site Slice D deliberately removed, and this gate has failed since.
+	_expect(
+		operator_source.contains('_input_frame.pressed(&"sprint")'),
+		"operator sprint is not action-driven through the fixed-tick input frame"
+	)
+	_expect(
+		not operator_source.contains('Input.is_action_pressed("sprint")'),
+		"operator sprint went back to sampling Input directly instead of the input frame"
+	)
 	_expect(not operator_source.contains("Input.is_key_pressed(KEY_CTRL)"), "operator retains raw Ctrl gameplay dependency")
 	_expect(not operator_source.contains("Input.is_key_pressed(KEY_SHIFT)"), "operator retains raw Shift gameplay dependency")
 

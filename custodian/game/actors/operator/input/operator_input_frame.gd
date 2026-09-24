@@ -20,7 +20,24 @@ var keyboard_aim: Vector2 = Vector2.ZERO
 var gamepad_active: bool = false
 ## Whether the pointer actually moved since the previous frame. A mouse position
 ## exists at all times; movement is what makes the mouse an *active* aim source.
+##
+## This is an event-derived fact. It is true only when a real pointer-motion
+## event occurred, never because a world-space mouse coordinate changed: the
+## camera follows the Operator and applies smoothing, lookahead, lead, framing,
+## bob and shake, so the world coordinate under a motionless mouse moves
+## constantly.
 var mouse_moved: bool = false
+## True when this frame came from an external driver -- a replay, an AI, a
+## possession system, a vehicle -- rather than from local devices.
+##
+## The flag exists so external control does not have to impersonate a device.
+## Storing an injected direction as `keyboard_aim` made it depend on
+## `arrow_aim_enabled`, which the Operator defaults to false: the seam accepted an
+## aim vector and then silently ignored it.
+var external_control: bool = false
+## The direction an external driver asked for, normalised, or zero for "no
+## opinion". Only meaningful while `external_control` is true.
+var control_aim: Vector2 = Vector2.ZERO
 
 var _pressed: Dictionary = {}
 var _just_pressed: Dictionary = {}
@@ -35,7 +52,9 @@ static func build(
 	controller_aim_vector: Vector2,
 	keyboard_aim_vector: Vector2,
 	is_gamepad_active: bool,
-	pointer_moved: bool
+	pointer_moved: bool,
+	is_external_control: bool = false,
+	control_aim_vector: Vector2 = Vector2.ZERO
 ) -> OperatorInputFrame:
 	var frame := OperatorInputFrame.new()
 	frame._pressed = pressed
@@ -46,6 +65,8 @@ static func build(
 	frame.keyboard_aim = keyboard_aim_vector
 	frame.gamepad_active = is_gamepad_active
 	frame.mouse_moved = pointer_moved
+	frame.external_control = is_external_control
+	frame.control_aim = control_aim_vector
 	return frame
 
 
@@ -97,6 +118,8 @@ func just_released_any(actions: Array) -> bool:
 ## style checks that previously spelled out a long `or` chain of raw reads.
 func has_any_activity() -> bool:
 	if move.length_squared() > 0.0001 or controller_aim.length_squared() > 0.0001:
+		return true
+	if external_control and control_aim.length_squared() > 0.0001:
 		return true
 	for value: Variant in _pressed.values():
 		if bool(value):
