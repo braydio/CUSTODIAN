@@ -58,6 +58,7 @@ func _run() -> void:
 
 	_check_external_aim_through_the_seam(operator, prompt_service)
 	await _check_camera_motion_does_not_revive_the_mouse(operator, prompt_service)
+	_check_fresh_kbm_mouse_ownership()
 
 	operator.queue_free()
 	await process_frame
@@ -212,3 +213,115 @@ func _check_camera_motion_does_not_revive_the_mouse(operator: Node, prompt_servi
 
 	game_root.queue_free()
 	await process_frame
+
+
+## D.3: the reclaim rule must not become a birth rule.
+##
+## D.2 made pointer movement event-derived and stopped a parked cursor from
+## stealing aim back from the gamepad. It did that with a latch that started
+## *cleared*, which also meant a fresh keyboard/mouse session had no mouse aim at
+## all until the player moved the mouse. Nothing in the game had ever asked for
+## that: ordinary KBM play with arrow aim off resolved aim from the cursor on the
+## first tick.
+##
+## These cases run against `OperatorAimController` directly rather than the live
+## actor, because the distinguishing fact is the controller's *initial* state and
+## an actor that has already ticked has moved past it.
+func _check_fresh_kbm_mouse_ownership() -> void:
+	# A fresh local KBM session: arrow aim off, a real mouse vector, and no
+	# pointer-motion event has ever been seen. The mouse owns aim immediately.
+	var controller := OperatorAimController.new()
+	var resolved: Dictionary = controller.resolve(
+		_local_frame(), false, Vector2.ZERO, Vector2.RIGHT, Vector2.RIGHT, Vector2.LEFT * 64.0
+	)
+	assert(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.LEFT),
+		"a fresh KBM session must resolve cursor aim without a mouse jiggle, got %s"
+			% resolved["aim"]
+	)
+	assert(
+		controller.source == OperatorAimController.Source.MOUSE,
+		"the fresh KBM owner must be the mouse, got %d" % controller.source
+	)
+
+	# Keyboard arrow aim is not a protected source. Turning arrow aim off hands
+	# aim straight back to the cursor, with no physical event in between.
+	controller = OperatorAimController.new()
+	resolved = controller.resolve(
+		_local_frame(Vector2.DOWN), true, Vector2.ZERO, Vector2.RIGHT, Vector2.RIGHT, Vector2.LEFT * 64.0
+	)
+	assert(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.DOWN),
+		"arrow aim must own aim while enabled and nonzero, got %s" % resolved["aim"]
+	)
+	resolved = controller.resolve(
+		_local_frame(), false, Vector2.ZERO, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT * 64.0
+	)
+	assert(
+		(resolved["aim"] as Vector2).is_equal_approx(Vector2.LEFT),
+		"leaving arrow aim must resume ordinary mouse aim without a new pointer "
+			+ "event, got %s" % resolved["aim"]
+	)
+
+	_check_protected_source_still_blocks_a_stale_mouse()
+
+
+## The other half of D.3: loosening the birth case must not loosen the reclaim
+## case. A gamepad or an external driver that has committed a direction still
+## blocks a motionless cursor, and only a real event lifts the block.
+func _check_protected_source_still_blocks_a_stale_mouse() -> void:
+	for protected_source: String in ["gamepad", "external"]:
+		var controller := OperatorAimController.new()
+		var opening := (
+			_gamepad_frame(Vector2.RIGHT)
+			if protected_source == "gamepad"
+			else _external_frame(Vector2.RIGHT)
+		)
+		var resolved: Dictionary = controller.resolve(
+			opening, false, Vector2.ZERO, Vector2.RIGHT, Vector2.RIGHT, Vector2.UP * 64.0
+		)
+		assert(
+			(resolved["aim"] as Vector2).is_equal_approx(Vector2.RIGHT),
+			"%s must own aim before the stale-mouse case means anything, got %s"
+				% [protected_source, resolved["aim"]]
+		)
+
+		# Control returns to local KBM. The cursor is parked somewhere that would
+		# resolve to a *different* direction, and no pointer event has occurred.
+		# Without a distinct direction this negative control would be vacuous.
+		resolved = controller.resolve(
+			_local_frame(), false, Vector2.ZERO, Vector2.RIGHT, Vector2.RIGHT, Vector2.UP * 64.0
+		)
+		assert(
+			(resolved["aim"] as Vector2).is_equal_approx(Vector2.RIGHT),
+			"a stale mouse stole aim committed by %s without any pointer motion, got %s"
+				% [protected_source, resolved["aim"]]
+		)
+
+		# A real qualifying motion event lifts the block.
+		resolved = controller.resolve(
+			_local_frame(Vector2.ZERO, true), false, Vector2.ZERO, Vector2.RIGHT, Vector2.RIGHT, Vector2.UP * 64.0
+		)
+		assert(
+			(resolved["aim"] as Vector2).is_equal_approx(Vector2.UP),
+			"real pointer motion must let the mouse reclaim aim from %s, got %s"
+				% [protected_source, resolved["aim"]]
+		)
+
+
+func _local_frame(keyboard_aim: Vector2 = Vector2.ZERO, pointer_moved: bool = false) -> OperatorInputFrame:
+	return OperatorInputFrame.build(
+		{}, {}, {}, Vector2.ZERO, Vector2.ZERO, keyboard_aim, false, pointer_moved
+	)
+
+
+func _gamepad_frame(controller_aim: Vector2) -> OperatorInputFrame:
+	return OperatorInputFrame.build(
+		{}, {}, {}, Vector2.ZERO, controller_aim, Vector2.ZERO, true, false
+	)
+
+
+func _external_frame(control_aim: Vector2) -> OperatorInputFrame:
+	return OperatorInputFrame.build(
+		{}, {}, {}, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, false, false, true, control_aim
+	)

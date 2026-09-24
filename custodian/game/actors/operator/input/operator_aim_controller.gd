@@ -13,7 +13,7 @@ extends RefCounted
 ##     external control -> the driver's supplied direction
 ##     gamepad active   -> retained controller direction
 ##     arrow aim mode   -> keyboard axes while nonzero
-##     otherwise        -> mouse, and only while the mouse is a live source
+##     otherwise        -> mouse, unless it is blocked pending real motion
 ##
 ## External control outranks every local source and is conditional on none of
 ## them: a driver that supplies an aim vector gets that aim whatever
@@ -25,21 +25,32 @@ extends RefCounted
 ## exists whether or not anyone is touching the mouse. Actual pointer movement is
 ## what hands ownership back.
 ##
+## That rule is a *reclaim* rule, not a birth rule. Ordinary keyboard/mouse play
+## with arrow aim off must resolve aim from the cursor on the very first tick,
+## without asking the player to jiggle the mouse to prove it exists. Only a source
+## that outranks the mouse and commits a direction of its own -- the gamepad or an
+## external driver -- blocks the mouse until real motion arrives.
+##
 ## Authority: design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md
 
 enum Source { NONE, GAMEPAD, KEYBOARD, MOUSE, EXTERNAL }
 
 var last_controller_aim: Vector2 = Vector2.ZERO
 var source: Source = Source.NONE
-## Whether the pointer has moved since the gamepad last held aim.
+## Whether a protected source has taken aim and the mouse must move to get it back.
 ##
 ## A mouse position exists at all times, and `InputPromptService` switches the
 ## device family to keyboard_mouse on *any* keyboard press -- a movement key, not
 ## just the mouse. Without this latch, tapping W after using a controller would
-## hand aim to wherever the cursor happened to be sitting. The latch stays set
-## once the pointer really moves, so the player does not have to keep jiggling the
-## mouse to keep aiming with it.
-var _mouse_is_live: bool = false
+## hand aim to wherever the cursor happened to be sitting.
+##
+## The latch is normally *clear*, which is the D.3 correction. Starting it set
+## made a fresh keyboard/mouse session refuse cursor aim until the player moved
+## the mouse, which was never the historical behaviour and is not what the
+## reclaim rule is for. Only GAMEPAD and EXTERNAL ownership set it; real pointer
+## motion clears it, and it stays clear, so the player does not have to keep
+## jiggling the mouse to keep aiming with it.
+var _mouse_blocked_until_motion: bool = false
 
 
 ## Resolve aim for one tick.
@@ -56,7 +67,7 @@ func resolve(
 	mouse_vector: Vector2
 ) -> Dictionary:
 	if frame.mouse_moved:
-		_mouse_is_live = true
+		_mouse_blocked_until_motion = false
 
 	if frame.external_control:
 		if frame.control_aim.length_squared() > 0.0001:
@@ -64,7 +75,7 @@ func resolve(
 			# The driver owns aim, so the mouse must earn it back by moving, the
 			# same rule the gamepad gets. Otherwise handing control back would
 			# snap aim to wherever the cursor was parked during the possession.
-			_mouse_is_live = false
+			_mouse_blocked_until_motion = true
 			var control_aim := frame.control_aim.normalized()
 			return {
 				"aim": control_aim,
@@ -78,7 +89,7 @@ func resolve(
 	if frame.gamepad_active:
 		source = Source.GAMEPAD
 		# The gamepad has aim; the mouse must earn it back by actually moving.
-		_mouse_is_live = false
+		_mouse_blocked_until_motion = true
 		if frame.controller_aim != Vector2.ZERO:
 			last_controller_aim = frame.controller_aim
 		if last_controller_aim == Vector2.ZERO:
@@ -107,7 +118,7 @@ func resolve(
 			}
 		return {"aim": current_aim, "facing": visual_idle_direction, "facing_changed": false}
 
-	if _mouse_is_live and mouse_vector.length_squared() > 0.0001:
+	if not _mouse_blocked_until_motion and mouse_vector.length_squared() > 0.0001:
 		source = Source.MOUSE
 		return {
 			"aim": mouse_vector.normalized(),
@@ -119,7 +130,12 @@ func resolve(
 
 ## Forget the retained controller direction, for a possession or loadout change
 ## that should not inherit the previous controller's stick.
+##
+## This clears the mouse block as well: a reset is a return to no owner, and the
+## mouse is the ordinary owner of a local keyboard/mouse session. Leaving the
+## block set here would recreate the fresh-session jiggle requirement one
+## possession later.
 func reset() -> void:
 	last_controller_aim = Vector2.ZERO
 	source = Source.NONE
-	_mouse_is_live = false
+	_mouse_blocked_until_motion = false
