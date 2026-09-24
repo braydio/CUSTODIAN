@@ -25,7 +25,6 @@ func _run() -> void:
 	operator.set("combat_loadout_mode", &"melee")
 	operator.set("using_unarmed", false)
 	operator.set("primary_weapon_equipped", true)
-	operator.call("_apply_melee_weapon_animation_resources", vigil_definition)
 	var armed_weapons: Array = operator.get("armed_weapons")
 	var vigil_index := armed_weapons.find(vigil_definition)
 	_expect(vigil_index >= 0, "Vigil definition missing from weapon selection")

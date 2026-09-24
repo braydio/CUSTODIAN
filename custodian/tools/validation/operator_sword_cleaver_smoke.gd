@@ -9,6 +9,9 @@ const DAGGER_DEFINITION := preload(
 const CLEAVER_DEFINITION := preload(
 	"res://game/actors/operator/sword_cleaver_definition.tres"
 )
+const RUNTIME_FRAMES := preload(
+	"res://content/sprites/operator/runtime/operator_runtime_frames.tres"
+)
 
 const CHAIN_KEYS := [
 	"sword_cleaver_fast_01",
@@ -132,50 +135,50 @@ func _validate_canonical_default(operator: Node) -> void:
 	)
 
 
+## C2b.1: the cleaver installs nothing on equip.
+##
+## Every renderer binds the one generated runtime database and selects a
+## different canonical identity from it. The compatibility resources this used to
+## assert were installed into the shared database at equip time, which is the
+## mutation this slice removed.
+##
+## This is also where the cleaver's authored art changed. Its compatibility body
+## and FX resources pointed at the generic `melee_1h` fast_01 strip -- and all
+## three links pointed at the SAME one, so the chain played one swing three
+## times. Canonical `melee_1h_heavy/attack/fast_01..03` is distinct per link, at
+## the same 10 frames and 18 fps, so hit windows and contacts are unaffected.
 func _validate_installed_resources(operator: Node) -> void:
-	var body := CLEAVER_DEFINITION.body_frames_resource
-	var weapon := CLEAVER_DEFINITION.melee_overlay_frames_resource
-	var fx := CLEAVER_DEFINITION.melee_fx_frames_resource
-	_assert(body != null, "cleaver body frames are missing")
-	_assert(weapon != null, "cleaver weapon frames are missing")
-	_assert(fx != null, "cleaver FX frames are missing")
 	for link in range(1, 4):
-		for suffix in ["right", "left"]:
+		for sector in ["e", "w"]:
 			_validate_animation(
-				body,
-				StringName("sword_cleaver_fast_%02d_%s" % [link, suffix]),
+				RUNTIME_FRAMES,
+				StringName("melee_1h_heavy/attack/fast_%02d/%s/full_body" % [link, sector]),
 				"body"
 			)
 			_validate_animation(
-				weapon,
+				RUNTIME_FRAMES,
 				StringName(
-					"sword_cleaver_fast_%02d_weapon_%s"
-					% [link, suffix]
+					"weapon/sword_cleaver/melee_1h_heavy/attack/fast_%02d/%s/weapon"
+					% [link, sector]
 				),
 				"weapon"
 			)
 			_validate_animation(
-				fx,
-				StringName(
-					"sword_cleaver_fast_%02d_fx_%s"
-					% [link, suffix]
-				),
+				RUNTIME_FRAMES,
+				StringName("melee_1h_heavy/attack/fast_%02d/%s/fx" % [link, sector]),
 				"FX"
 			)
-	var runtime_weapon := operator.get(
-		"melee_weapon_overlay_sprite"
-	) as AnimatedSprite2D
-	var runtime_fx := operator.get(
-		"melee_fx_overlay_sprite"
-	) as AnimatedSprite2D
-	_assert(
-		runtime_weapon.sprite_frames == weapon,
-		"equipping cleaver did not install its weapon overlay resource"
-	)
-	_assert(
-		runtime_fx.sprite_frames == fx,
-		"equipping cleaver did not install its FX resource"
-	)
+	for property: String in [
+		"animated_sprite", "melee_weapon_overlay_sprite", "melee_fx_overlay_sprite"
+	]:
+		var sprite := operator.get(property) as AnimatedSprite2D
+		_assert(sprite != null, "%s is missing" % property)
+		if sprite == null:
+			continue
+		_assert(
+			sprite.sprite_frames == RUNTIME_FRAMES,
+			"%s must bind the canonical runtime frames, not a per-weapon resource" % property
+		)
 
 
 func _validate_animation(
@@ -232,24 +235,29 @@ func _validate_all_chain_links(operator: Node) -> void:
 		operator.set("_melee_fast_combo_step", index)
 		operator.set("melee_cooldown_remaining", 0.0)
 		operator.call("_start_fast_attack")
-		var base := "sword_cleaver_fast_%02d" % (index + 1)
+		var link := index + 1
 		_assert(
-			body.animation == StringName("%s_right" % base),
-			"cleaver link %d did not play its semantic body animation"
-			% (index + 1)
+			body.animation == StringName(
+				"melee_1h_heavy/attack/fast_%02d/e/full_body" % link
+			),
+			"cleaver link %d did not play its canonical body identity, got %s"
+			% [link, body.animation]
 		)
 		_assert(
 			weapon.visible
-			and weapon.animation
-				== StringName("%s_weapon_right" % base),
-			"cleaver link %d did not play its weapon overlay"
-			% (index + 1)
+			and weapon.animation == StringName(
+				"weapon/sword_cleaver/melee_1h_heavy/attack/fast_%02d/e/weapon" % link
+			),
+			"cleaver link %d did not play its canonical weapon overlay, got %s"
+			% [link, weapon.animation]
 		)
 		_assert(
 			fx.visible
-			and fx.animation == StringName("%s_fx_right" % base),
-			"cleaver link %d did not play its FX overlay"
-			% (index + 1)
+			and fx.animation == StringName(
+				"melee_1h_heavy/attack/fast_%02d/e/fx" % link
+			),
+			"cleaver link %d did not play its canonical FX overlay, got %s"
+			% [link, fx.animation]
 		)
 		_assert(
 			operator.get("_active_melee_attack_profile")

@@ -79,16 +79,23 @@ func _init() -> void:
 				)
 			assert(lower.sprite_frames.has_animation("melee_1h/posture/%s/%s/lower_body" % [action, suffix]), "missing lower %s %s" % [action, suffix])
 			assert(upper.sprite_frames.has_animation("melee_1h/posture/%s/%s/upper_body" % [action, suffix]), "missing upper %s %s" % [action, suffix])
+	# C2b.1: the draw identities are present because every body renderer binds the
+	# canonical database, not because the actor copied them in at equip time.
 	for suffix in ["e", "w"]:
 		for layer in ["lower_body", "upper_body"]:
 			var draw_animation := StringName("melee_1h/posture/draw_01/%s/%s" % [suffix, layer])
 			var target := lower.sprite_frames if layer == "lower_body" else upper.sprite_frames
-			operator.call("_copy_runtime_animation", RUNTIME_FRAMES, target, draw_animation)
-			assert(target.has_animation(draw_animation))
+			assert(target == RUNTIME_FRAMES, "%s must bind the canonical runtime frames" % layer)
+			assert(target.has_animation(draw_animation), "missing canonical draw %s" % draw_animation)
 	var vigil_definition = operator.get("melee_weapon_definition")
 	assert(vigil_definition != null)
 	assert(vigil_definition.get_animation_profile() == &"melee_1h_dagger")
-	operator.call("_apply_melee_weapon_animation_resources", vigil_definition)
+	# No equip-time install: the weapon overlay already carries every Vigil posture
+	# identity because it shares the one generated database.
+	assert(
+		weapon.sprite_frames == RUNTIME_FRAMES,
+		"the melee weapon overlay must bind the canonical runtime frames"
+	)
 	for suffix in ["e", "w"]:
 		for action in ["idle_ready_01", "idle_relaxed_01"]:
 			var weapon_animation := "melee_1h_dagger/posture/%s/%s/weapon" % [action, suffix]
@@ -151,8 +158,22 @@ func _init() -> void:
 	assert(upper.animation == &"melee_1h/locomotion/walk_01/s/upper_body")
 	assert(weapon.animation == &"melee_1h_dagger/locomotion/walk_01/s/weapon")
 	assert(weapon.visible and weapon.is_playing(), "south Vigil walk must use its authored weapon strip")
-	assert(not operator.call("_sync_modular_locomotion_layers", "unarmed_walk", Vector2.RIGHT, Vector2.RIGHT, 1.0), "missing east Vigil walk must retain fallback")
-	assert(not lower.visible and not upper.visible and not weapon.visible, "incomplete directional melee locomotion must hide the modular stack")
+	# C2b.1: east Vigil walk now presents. The authored
+	# melee_1h_dagger/locomotion/walk_01/e/weapon strip was published all along,
+	# but the equip-time copy this slice removed only installed the SOUTH walk
+	# (MELEE_LOCOMOTION_CATALOG_DIRECTIONS listed walk_01 as [s]), so east had
+	# nothing to play and fell back. Binding the canonical database makes every
+	# authored direction reachable.
+	assert(
+		operator.call("_sync_modular_locomotion_layers", "unarmed_walk", Vector2.RIGHT, Vector2.RIGHT, 1.0),
+		"east Vigil walk should present now that the overlay binds the canonical database"
+	)
+	assert(weapon.animation == &"melee_1h_dagger/locomotion/walk_01/e/weapon")
+	assert(weapon.visible, "east Vigil walk must show its authored weapon strip")
+	assert(
+		lower.visible and upper.visible,
+		"a complete directional melee locomotion package must present the modular stack"
+	)
 	operator.set_process(false)
 	operator.set_physics_process(false)
 	operator.set("visual_idle_direction", Vector2.RIGHT)

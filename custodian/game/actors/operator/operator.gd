@@ -765,8 +765,6 @@ var _modular_damage_reaction_animation: StringName = &""
 var _modular_damage_reaction_upper_animation: StringName = &""
 var _modular_damage_reaction_head_animation: StringName = &""
 var _modular_damage_reaction_sector: StringName = &"s"
-var _default_melee_overlay_frames: SpriteFrames = null
-var _default_melee_fx_frames: SpriteFrames = null
 var _modular_lower_action_animation: StringName = &""
 var _modular_upper_action_animation: StringName = &""
 var _modular_upper_fx_action_animation: StringName = &""
@@ -1012,14 +1010,6 @@ func _ready():
 		# never completed without it. The visible clock reports its own finish.
 		modular_lower_body_sprite.animation_finished.connect(
 			_on_operator_animation_finished.bind(modular_lower_body_sprite)
-		)
-	if melee_weapon_overlay_sprite != null:
-		_default_melee_overlay_frames = (
-			melee_weapon_overlay_sprite.sprite_frames
-		)
-	if melee_fx_overlay_sprite != null:
-		_default_melee_fx_frames = (
-			melee_fx_overlay_sprite.sprite_frames
 		)
 	if dodge_fx_back_sprite:
 		dodge_fx_back_sprite.visible = false
@@ -2267,57 +2257,6 @@ func _sync_melee_posture_weapon_overlay(
 			mini(modular_lower_body_sprite.frame, weapon_frame_count - 1),
 			modular_lower_body_sprite.frame_progress
 		)
-
-
-func _install_melee_posture_weapon_frames(
-	weapon_definition: OperatorWeaponDefinition
-) -> void:
-	if melee_weapon_overlay_sprite == null or weapon_definition == null:
-		return
-	var weapon_profile := String(weapon_definition.get_animation_profile())
-	if weapon_profile.is_empty():
-		return
-	var canonical_animations: Array[StringName] = []
-	for action in MELEE_POSTURE_CATALOG_ACTIONS:
-		for suffix in ["e", "w"]:
-			var animation := StringName(
-				"%s/posture/%s/%s/weapon" % [weapon_profile, action, suffix]
-			)
-			if OPERATOR_RUNTIME_FRAMES.has_animation(animation):
-				canonical_animations.append(animation)
-	for action in MELEE_LOCOMOTION_CATALOG_DIRECTIONS:
-		for suffix in MELEE_LOCOMOTION_CATALOG_DIRECTIONS[action]:
-			var animation := StringName(
-				"%s/locomotion/%s/%s/weapon" % [weapon_profile, action, suffix]
-			)
-			if OPERATOR_RUNTIME_FRAMES.has_animation(animation):
-				canonical_animations.append(animation)
-	if canonical_animations.is_empty():
-		return
-	var frames: SpriteFrames = melee_weapon_overlay_sprite.sprite_frames
-	if frames == null:
-		frames = SpriteFrames.new()
-	else:
-		frames = frames.duplicate(true)
-	melee_weapon_overlay_sprite.sprite_frames = frames
-	for animation in canonical_animations:
-		_copy_runtime_animation(OPERATOR_RUNTIME_FRAMES, frames, animation)
-
-
-func _copy_runtime_animation(source: SpriteFrames, target: SpriteFrames, animation: StringName) -> void:
-	if source == null or target == null or not source.has_animation(animation) or target.has_animation(animation):
-		return
-	target.add_animation(animation)
-	target.set_animation_loop(animation, source.get_animation_loop(animation))
-	target.set_animation_speed(animation, source.get_animation_speed(animation))
-	for frame_index in source.get_frame_count(animation):
-		target.add_frame(
-			animation,
-			source.get_frame_texture(animation, frame_index),
-			source.get_frame_duration(animation, frame_index)
-		)
-
-
 func start_equip_weapon_presentation() -> void:
 	_melee_draw_presentation_active = false
 	if not _is_melee_loadout_active() \
@@ -8488,6 +8427,67 @@ func _play_block_weapon_overlay(animation_name: StringName) -> void:
 	melee_weapon_overlay_sprite.frame = 0
 
 
+## The canonical identities an armed melee link presents, or empty.
+##
+## C2b.1's whole point. Armed melee used to reach presentation by installing a
+## weapon's private `SpriteFrames` into the shared canonical database at equip
+## time and then asking for legacy clip names such as `vigil_dagger_fast_03_right`.
+## The identity is now derived from weapon data the definition already carries,
+## and every renderer stays bound to the one generated runtime database.
+##
+##     body/FX family   OperatorWeaponDefinition.weapon_type
+##     weapon profile   OperatorWeaponDefinition.get_animation_profile()
+##     weapon owner     OperatorWeaponDefinition.weapon_id
+##     action           active MeleeAttackProfile.presentation_action
+##     sector           the authored E/W presentation policy below
+##
+## Body and FX come from the weapon's shared family. A weapon-owned body override
+## wins when one is published, which is how a weapon keeps a presentation the
+## shared family cannot express -- the Vigil dagger's nine-frame Fast 03 body is
+## the one live case, because it plays a subrange of the shared ten-frame strip
+## rather than a retime of it.
+##
+## Returns {} when this is not an armed melee link with a semantic action, which
+## the caller treats as "no canonical presentation", never as "try another name".
+func _resolve_armed_melee_identities() -> Dictionary:
+	var weapon_definition := _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
+	if weapon_definition == null or _is_current_profile_unarmed():
+		return {}
+	var profile := _active_melee_attack_profile
+	if profile == null or profile.presentation_action.is_empty():
+		return {}
+	var action: StringName = profile.presentation_action
+	# Armed fast-chain art is authored E/W only; projecting a requested direction
+	# onto an authored facing is presentation policy and belongs here, not in the
+	# selector.
+	var sector: StringName = &"w" if _melee_forward.x < 0.0 else &"e"
+	var family: StringName = weapon_definition.weapon_type
+	var weapon_profile: StringName = weapon_definition.get_animation_profile()
+	var weapon_id: StringName = weapon_definition.weapon_id
+	var selector = _get_operator_animation_selector()
+
+	var identities := {}
+	if selector.has_sector_identity(
+		weapon_profile, &"attack", action, sector, &"full_body", weapon_id
+	):
+		identities["full_body"] = selector.resolve_sector(
+			weapon_profile, &"attack", action, sector, &"full_body", weapon_id
+		)
+	elif selector.has_sector_identity(family, &"attack", action, sector, &"full_body"):
+		identities["full_body"] = selector.resolve_sector(
+			family, &"attack", action, sector, &"full_body"
+		)
+	if selector.has_sector_identity(
+		weapon_profile, &"attack", action, sector, &"weapon", weapon_id
+	):
+		identities["weapon"] = selector.resolve_sector(
+			weapon_profile, &"attack", action, sector, &"weapon", weapon_id
+		)
+	if selector.has_sector_identity(family, &"attack", action, sector, &"fx"):
+		identities["fx"] = selector.resolve_sector(family, &"attack", action, sector, &"fx")
+	return identities
+
+
 ## Play the full-body clip a weapon's animation map names for this attack key.
 ##
 ## The second-chance parameter this used to take is gone, along with the
@@ -8502,9 +8502,61 @@ func _play_melee_anim_from_key(attack_key: String) -> void:
 		return
 	if animated_sprite == null:
 		return
+	if _play_canonical_armed_melee(attack_key):
+		return
 	var weapon_definition = _get_equipped_primary_weapon_definition()
 	var base_animation := _get_weapon_animation_name(weapon_definition, attack_key)
 	_play_melee_anim_resolved(base_animation, _melee_forward, attack_key)
+
+
+## Present one armed melee link entirely from canonical identities.
+##
+## Body, weapon and FX are selected and started together, because the overlays are
+## frame-synchronized to the body clock: a half-canonical composition would sync a
+## canonical body against a compatibility overlay. Either the whole link is
+## canonical or none of it is.
+func _play_canonical_armed_melee(attack_key: String) -> bool:
+	var identities := _resolve_armed_melee_identities()
+	var body_animation: StringName = identities.get("full_body", &"")
+	if body_animation.is_empty() \
+	or not _has_playable_sprite_animation(animated_sprite.sprite_frames, body_animation):
+		return false
+	_prepare_armed_melee_full_body()
+	# Canonical identities are authored per sector and are never mirrored.
+	animated_sprite.flip_h = false
+	animated_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
+	_animation_player.play(animated_sprite, body_animation)
+	_melee_overlay_clock_owner = MeleeOverlayClockOwner.LEGACY_BODY
+	_play_canonical_melee_overlay(
+		melee_weapon_overlay_sprite, identities.get("weapon", &""), attack_key
+	)
+	_play_canonical_melee_overlay(
+		melee_fx_overlay_sprite, identities.get("fx", &""), attack_key
+	)
+	_sync_melee_hitbox_window_from_animation()
+	return true
+
+
+## Start one canonical overlay layer, or retire it when the link does not author
+## that layer. An absent optional layer is hidden, never substituted.
+func _play_canonical_melee_overlay(
+	sprite: AnimatedSprite2D, animation: StringName, attack_key: String
+) -> void:
+	if sprite == null:
+		return
+	if animation.is_empty() \
+	or not _has_playable_sprite_animation(sprite.sprite_frames, animation):
+		# Visibility goes through the declared funnel rather than a direct write,
+		# because `sprite` here is a parameter and an aliased write is invisible
+		# to the body firewall -- the exact hole `aliased_body_visibility_writes`
+		# exists to close.
+		_hide_presentation_layer(sprite)
+		sprite.frame = 0
+		return
+	_show_presentation_layer(sprite)
+	sprite.flip_h = false
+	sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
+	_animation_player.play(sprite, animation)
 
 
 ## Take the body before starting a full-body melee clip.
@@ -8532,17 +8584,12 @@ func _prepare_armed_melee_full_body() -> void:
 
 ## Play the full-body clip for a melee attack.
 ##
-## C2b tried to delete the compatibility tail below and had to put it back. The
-## premise was that `animated_sprite` binds `operator_runtime_frames.tres`, whose
-## identities are all slash-delimited, so the `<base>_right` and bare-base probes
-## could never hit. That is true of the resource on disk and false at runtime:
-## `_install_weapon_body_frames()` copies a weapon's `body_frames_resource`
-## animations *into* that same SpriteFrames object, so an equipped Vigil dagger
-## adds `vigil_dagger_fast_03_right` to the canonical database in place.
-##
-## So this tail is live for armed melee, not archaeology. Removing it needs the
-## per-weapon body art published as canonical identities first; it is not a
-## call-site cleanup. See OPERATOR_C2B_CLAUDE_SUMMARY.md.
+## The compatibility tail below is reached only when a caller has no canonical
+## identity to play. C2b.1 removed the mutation that used to make it live for
+## armed melee: nothing copies a weapon's `body_frames_resource` into the shared
+## canonical database any more, so no legacy clip name is reachable through
+## `animated_sprite`. It is kept for the remaining non-armed callers and retires
+## with them in the C2b demolition pass.
 func _play_melee_anim_resolved(base_animation: StringName, direction: Vector2, attack_key: String) -> bool:
 	if animated_sprite == null:
 		return false
@@ -10938,7 +10985,6 @@ func _apply_unarmed_selection() -> void:
 	combat_loadout_mode = LOADOUT_MELEE
 	_cancel_reload()
 	_reset_melee_overlay_visuals()
-	_apply_melee_weapon_animation_resources(unarmed_definition)
 
 
 func _apply_armed_selection(index: int) -> void:
@@ -10958,7 +11004,6 @@ func _apply_armed_selection(index: int) -> void:
 		_melee_posture_state.begin_draw_grace()
 	_cancel_reload()
 	_reset_melee_overlay_visuals()
-	_apply_melee_weapon_animation_resources(profile)
 
 
 func _rebuild_armed_weapon_list() -> void:
@@ -12750,78 +12795,6 @@ func _apply_active_weapon_frames() -> void:
 		primary_weapon_sprite.sprite_frames = weapon_definition.frames_resource
 	elif primary_weapon_frames_resource:
 		primary_weapon_sprite.sprite_frames = primary_weapon_frames_resource
-
-
-func _install_weapon_body_frames(
-	source_frames: SpriteFrames
-) -> void:
-	if source_frames == null \
-	or animated_sprite == null \
-	or animated_sprite.sprite_frames == null:
-		return
-	var destination: SpriteFrames = animated_sprite.sprite_frames
-	for animation_name in source_frames.get_animation_names():
-		if destination.has_animation(animation_name):
-			destination.remove_animation(animation_name)
-		destination.add_animation(animation_name)
-		destination.set_animation_loop(
-			animation_name,
-			source_frames.get_animation_loop(animation_name)
-		)
-		destination.set_animation_speed(
-			animation_name,
-			source_frames.get_animation_speed(animation_name)
-		)
-		var frame_count := source_frames.get_frame_count(
-			animation_name
-		)
-		for frame_index in range(frame_count):
-			destination.add_frame(
-				animation_name,
-				source_frames.get_frame_texture(
-					animation_name,
-					frame_index
-				),
-				source_frames.get_frame_duration(
-					animation_name,
-					frame_index
-				)
-			)
-
-
-func _apply_melee_weapon_animation_resources(
-	weapon_definition: OperatorWeaponDefinition
-) -> void:
-	if weapon_definition != null \
-	and weapon_definition.body_frames_resource != null:
-		_install_weapon_body_frames(
-			weapon_definition.body_frames_resource
-		)
-	if melee_weapon_overlay_sprite == null:
-		return
-	if weapon_definition != null \
-	and weapon_definition.melee_overlay_frames_resource != null:
-		melee_weapon_overlay_sprite.sprite_frames = (
-			weapon_definition.melee_overlay_frames_resource
-		)
-	elif _default_melee_overlay_frames != null:
-		melee_weapon_overlay_sprite.sprite_frames = (
-			_default_melee_overlay_frames
-		)
-	_install_melee_posture_weapon_frames(weapon_definition)
-	if melee_fx_overlay_sprite == null:
-		return
-	if weapon_definition != null \
-	and weapon_definition.melee_fx_frames_resource != null:
-		melee_fx_overlay_sprite.sprite_frames = (
-			weapon_definition.melee_fx_frames_resource
-		)
-	elif _default_melee_fx_frames != null:
-		melee_fx_overlay_sprite.sprite_frames = (
-			_default_melee_fx_frames
-		)
-
-
 func _refresh_primary_weapon_state() -> void:
 	_apply_active_weapon_frames()
 	if use_tiny_rpg_placeholder_soldier:

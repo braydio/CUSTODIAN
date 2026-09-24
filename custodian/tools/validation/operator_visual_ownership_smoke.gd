@@ -128,7 +128,6 @@ func _install_vigil_posture_art() -> void:
 	if vigil_definition == null:
 		_fail("Vigil dagger definition is unavailable")
 		return
-	_operator.call("_apply_melee_weapon_animation_resources", vigil_definition)
 	var armed_weapons: Array = _operator.get("armed_weapons")
 	var vigil_index := armed_weapons.find(vigil_definition)
 	if vigil_index < 0:

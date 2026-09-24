@@ -139,15 +139,13 @@ sprite_frames = ExtResource("39_canonical_runtime_frames")
 [node name="MeleeWeaponOverlaySprite" type="AnimatedSprite2D" parent="." unique_id=1317416613]
 visible = false
 position = Vector2(0, -18)
-sprite_frames = ExtResource("27_melee_overlay_frames")
-animation = &"melee_2h_fast_weapon"
+sprite_frames = ExtResource("39_canonical_runtime_frames")
 offset = Vector2(0, 0)
 
 [node name="MeleeFxOverlaySprite" type="AnimatedSprite2D" parent="." unique_id=1317416614]
 visible = false
 position = Vector2(0, -18)
-sprite_frames = ExtResource("27_melee_overlay_frames")
-animation = &"melee_2h_fast_fx"
+sprite_frames = ExtResource("39_canonical_runtime_frames")
 offset = Vector2(0, 0)
 
 [node name="RightHandSocket" type="Node2D" parent="." unique_id=931819468]

@@ -11,29 +11,37 @@ const DAGGER_PROFILE := preload(
 	+ "vigil_pattern_dagger_fast_01.tres"
 )
 
+const RUNTIME_FRAMES := preload(
+	"res://content/sprites/operator/runtime/operator_runtime_frames.tres"
+)
+
+# C2b.1: the dagger presents canonical semantic identities. Body and FX come from
+# the shared `melee_1h` family; the weapon layer is weapon-owned; Fast 03's body
+# is a weapon-owned nine-frame override, because the dagger plays a subrange of
+# the shared ten-frame strip rather than a retime of it.
 const BODY_ANIMATIONS := [
-	&"vigil_dagger_fast_01_right",
-	&"vigil_dagger_fast_01_left",
-	&"vigil_dagger_fast_02_right",
-	&"vigil_dagger_fast_02_left",
-	&"vigil_dagger_fast_03_right",
-	&"vigil_dagger_fast_03_left",
+	&"melee_1h/attack/fast_01/e/full_body",
+	&"melee_1h/attack/fast_01/w/full_body",
+	&"melee_1h/attack/fast_02/e/full_body",
+	&"melee_1h/attack/fast_02/w/full_body",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/full_body",
 ]
 const OVERLAY_ANIMATIONS := [
-	&"vigil_dagger_fast_01_weapon_right",
-	&"vigil_dagger_fast_01_weapon_left",
-	&"vigil_dagger_fast_02_weapon_right",
-	&"vigil_dagger_fast_02_weapon_left",
-	&"vigil_dagger_fast_03_weapon_right",
-	&"vigil_dagger_fast_03_weapon_left",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/weapon",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/w/weapon",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/weapon",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/w/weapon",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/weapon",
+	&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/w/weapon",
 ]
 const FX_ANIMATIONS := [
-	&"vigil_dagger_fast_01_fx_right",
-	&"vigil_dagger_fast_01_fx_left",
-	&"vigil_dagger_fast_02_fx_right",
-	&"vigil_dagger_fast_02_fx_left",
-	&"vigil_dagger_fast_03_fx_right",
-	&"vigil_dagger_fast_03_fx_left",
+	&"melee_1h/attack/fast_01/e/fx",
+	&"melee_1h/attack/fast_01/w/fx",
+	&"melee_1h/attack/fast_02/e/fx",
+	&"melee_1h/attack/fast_02/w/fx",
+	&"melee_1h/attack/fast_03/e/fx",
+	&"melee_1h/attack/fast_03/w/fx",
 ]
 
 var _errors: Array[String] = []
@@ -269,14 +277,15 @@ func _validate_semantic_guard_playback(operator: Node) -> void:
 ## reached) -- this is the deterministic wall-clock time of a maximally
 ## forgiving (always-buffered) chain.
 func _validate_chain_sequence_timing(operator: Node) -> void:
-	var body := DAGGER_DEFINITION.body_frames_resource
-	if body == null:
-		_assert(false, "dagger body frames missing; cannot validate chain sequence timing")
-		return
+	# C2b.1: cadence is read from the canonical database, which is now where the
+	# authored 18/14/13 rates live.
+	var body := RUNTIME_FRAMES
 	var commit_frames := DAGGER_DEFINITION.fast_chain_commit_frames
-	var fps_01 := body.get_animation_speed(&"vigil_dagger_fast_01_right")
-	var fps_02 := body.get_animation_speed(&"vigil_dagger_fast_02_right")
-	var fps_03 := body.get_animation_speed(&"vigil_dagger_fast_03_right")
+	var fps_01 := body.get_animation_speed(&"melee_1h/attack/fast_01/e/full_body")
+	var fps_02 := body.get_animation_speed(&"melee_1h/attack/fast_02/e/full_body")
+	var fps_03 := body.get_animation_speed(
+		&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body"
+	)
 	var segment_1 := float(commit_frames[0]) / fps_01
 	var segment_2 := float(commit_frames[1]) / fps_02
 
@@ -289,10 +298,14 @@ func _validate_chain_sequence_timing(operator: Node) -> void:
 	var final_contact_frame_index := final_contact_authored_frame - 1
 	var segment_3 := float(final_contact_frame_index) / fps_03
 
-	var fast_03_frame_count := body.get_frame_count(&"vigil_dagger_fast_03_right")
+	var fast_03_frame_count := body.get_frame_count(
+		&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body"
+	)
 	var fast_03_authored_units := 0.0
 	for frame_index in range(fast_03_frame_count):
-		fast_03_authored_units += body.get_frame_duration(&"vigil_dagger_fast_03_right", frame_index)
+		fast_03_authored_units += body.get_frame_duration(
+			&"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body", frame_index
+		)
 	var fast_03_full_duration := fast_03_authored_units / fps_03
 	var terminal_grace := float(operator.get("fast_chain_terminal_restart_grace_sec"))
 
@@ -325,9 +338,6 @@ func _validate_default_scene(operator: Node) -> void:
 
 func _validate_frame_resources(operator: Node) -> void:
 	var held := DAGGER_DEFINITION.frames_resource
-	var body := DAGGER_DEFINITION.body_frames_resource
-	var overlay := DAGGER_DEFINITION.melee_overlay_frames_resource
-	var fx := DAGGER_DEFINITION.melee_fx_frames_resource
 	_assert(
 		held != null and held.has_animation(&"vigil_dagger_stance"),
 		"held dagger stance is missing"
@@ -342,41 +352,32 @@ func _validate_frame_resources(operator: Node) -> void:
 			Vector2(24, 24),
 			"held dagger stance"
 		)
-	_validate_animation_set(body, BODY_ANIMATIONS, "body")
-	_validate_animation_set(
-		overlay,
-		OVERLAY_ANIMATIONS,
-		"weapon overlay"
-	)
-	_validate_animation_set(fx, FX_ANIMATIONS, "FX overlay")
 
-	var runtime_body := operator.get("animated_sprite") as AnimatedSprite2D
-	var runtime_overlay := operator.get(
-		"melee_weapon_overlay_sprite"
-	) as AnimatedSprite2D
-	var runtime_fx := operator.get(
-		"melee_fx_overlay_sprite"
-	) as AnimatedSprite2D
-	for animation: StringName in BODY_ANIMATIONS:
+	# The canonical database carries every identity the dagger presents, with the
+	# authored cadence, before any weapon is equipped.
+	_validate_animation_set(RUNTIME_FRAMES, BODY_ANIMATIONS, "body")
+	_validate_animation_set(RUNTIME_FRAMES, OVERLAY_ANIMATIONS, "weapon overlay")
+	_validate_animation_set(RUNTIME_FRAMES, FX_ANIMATIONS, "FX overlay")
+
+	# C2b.1: equipping installs nothing. Each renderer binds the one generated
+	# database and simply selects a different identity from it.
+	for property: String in [
+		"animated_sprite", "melee_weapon_overlay_sprite", "melee_fx_overlay_sprite"
+	]:
+		var sprite := operator.get(property) as AnimatedSprite2D
+		_assert(sprite != null, "%s is missing" % property)
+		if sprite == null:
+			continue
 		_assert(
-			runtime_body.sprite_frames.has_animation(animation),
-			"equipped dagger did not install body animation %s"
-			% animation
+			sprite.sprite_frames == RUNTIME_FRAMES,
+			"%s must bind the canonical runtime frames, not a per-weapon resource" % property
 		)
-	_validate_animation_set(
-		runtime_overlay.sprite_frames,
-		OVERLAY_ANIMATIONS,
-		"runtime weapon overlay"
-	)
+	var runtime_overlay := operator.get("melee_weapon_overlay_sprite") as AnimatedSprite2D
 	_assert(
-		runtime_overlay.sprite_frames.has_animation(
+		runtime_overlay != null and runtime_overlay.sprite_frames.has_animation(
 			&"melee_1h_dagger/posture/idle_relaxed_01/e/weapon"
 		),
-		"equipped dagger did not compose its posture weapon animation"
-	)
-	_assert(
-		runtime_fx.sprite_frames == fx,
-		"equipped dagger did not install its FX resource"
+		"the canonical database must carry the Vigil posture weapon animation"
 	)
 
 
@@ -389,12 +390,13 @@ func _validate_animation_set(
 	if frames == null:
 		return
 	for animation: StringName in animations:
-		var expected_frames := 9 if "fast_03" in String(animation) else (8 if "fast_02" in String(animation) else 10)
-		if label == "FX overlay" and "fast_03" in String(animation):
-			# Fast 03 FX was canonicalized onto the 8-frame melee_1h/attack/fast_03
-			# source; only the body/weapon Fast 03 clips still hold their prior
-			# 9-frame legacy layout.
+		var expected_frames := 10
+		if "fast_02" in String(animation):
 			expected_frames = 8
+		elif "fast_03" in String(animation):
+			# Fast 03 body and weapon are the authored nine-frame presentation;
+			# its FX is the eight-frame melee_1h strip.
+			expected_frames = 8 if label == "FX overlay" else 9
 		# Combat tempo pass: Fast 02/03 were deliberately slowed (18fps ->
 		# 14fps / 13fps) to widen the chain's runtime commitment windows;
 		# Fast 01 is unchanged.
@@ -461,18 +463,18 @@ func _validate_attack_playback(operator: Node) -> void:
 		"melee_fx_overlay_sprite"
 	) as AnimatedSprite2D
 	_assert(
-		body.animation == &"vigil_dagger_fast_01_right",
+		body.animation == &"melee_1h/attack/fast_01/e/full_body",
 		"dagger attack did not play its semantic right body action"
 	)
 	_assert(
 		overlay.visible
 		and overlay.animation
-			== &"vigil_dagger_fast_01_weapon_right",
+			== &"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_01/e/weapon",
 		"dagger attack did not play its synchronized weapon overlay"
 	)
 	_assert(
 		fx.visible
-		and fx.animation == &"vigil_dagger_fast_01_fx_right",
+		and fx.animation == &"melee_1h/attack/fast_01/e/fx",
 		"dagger attack did not play its synchronized FX overlay"
 	)
 	var drive_status := operator.call(
@@ -520,15 +522,15 @@ func _validate_attack_playback(operator: Node) -> void:
 	operator.set("stamina", 100.0)
 	operator.call("_start_fast_attack")
 	_assert(
-		body.animation == &"vigil_dagger_fast_02_right",
+		body.animation == &"melee_1h/attack/fast_02/e/full_body",
 		"dagger chain step 2 did not play authored Chain 02 body"
 	)
 	_assert(
-		overlay.animation == &"vigil_dagger_fast_02_weapon_right",
+		overlay.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_02/e/weapon",
 		"dagger chain step 2 did not play authored Chain 02 dagger"
 	)
 	_assert(
-		fx.animation == &"vigil_dagger_fast_02_fx_right",
+		fx.animation == &"melee_1h/attack/fast_02/e/fx",
 		"dagger chain step 2 did not play authored Chain 02 FX"
 	)
 	operator.call("_interrupt_active_combat_for_damage_reaction")
@@ -536,7 +538,7 @@ func _validate_attack_playback(operator: Node) -> void:
 	operator.set("melee_cooldown_remaining", 0.0)
 	operator.set("stamina", 100.0)
 	operator.call("_start_fast_attack")
-	_assert(body.animation == &"vigil_dagger_fast_03_right", "dagger finisher did not play authored Chain 03 body")
+	_assert(body.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/e/full_body", "dagger finisher did not play authored Chain 03 body")
 	var finisher_window := DAGGER_DEFINITION.hit_windows.get("vigil_dagger_fast_03", {}) as Dictionary
 	_assert(bool(operator.call("_is_melee_hit_frame_active", 4, finisher_window)), "finisher cut 01 is not active on runtime frame 4")
 	_assert(bool(operator.call("_is_melee_hit_frame_active", 8, finisher_window)), "finisher cut 02 is not active on runtime frame 8")
