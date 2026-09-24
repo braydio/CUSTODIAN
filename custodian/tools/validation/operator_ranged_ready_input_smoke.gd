@@ -506,7 +506,11 @@ func _validate_dodge_fx_overlay(operator: Node) -> void:
 	if body_sprite == null or dodge_fx == null:
 		return
 	_assert_true(dodge_fx.z_index < body_sprite.z_index, "dodge FX should render behind/under the Custodian body")
-	_assert_true(dodge_fx.sprite_frames != null and dodge_fx.sprite_frames.has_animation(&"operator_dodge_full_fx_south"), "dodge FX sprite should own the authored 9-frame south dodge FX animation")
+	# C2b: the dodge FX renderer binds the canonical runtime frames and plays a
+	# canonical identity. It used to build `operator_dodge_full_fx_south` from a
+	# PNG at `_ready` into a private SpriteFrames, from the same art.
+	_assert_true(dodge_fx.sprite_frames != null and dodge_fx.sprite_frames.has_animation(&"shared/transition/dodge_01/s/fx"), "dodge FX sprite should own the authored 9-frame south dodge FX animation")
+	_assert_true(dodge_fx.sprite_frames != null and dodge_fx.sprite_frames.get_frame_count(&"shared/transition/dodge_01/s/fx") == 9, "south dodge FX should keep all 9 authored frames")
 	_assert_true(body_sprite.sprite_frames.has_animation(&"shared/transition/dodge_01/n/full_body"), "body should own the authored 9-frame north dodge animation")
 	_assert_true(body_sprite.sprite_frames.has_animation(&"shared/transition/dodge_01/s/full_body"), "body should own the authored 9-frame south dodge animation")
 	_assert_true(body_sprite.sprite_frames.get_frame_count(&"shared/transition/dodge_01/n/full_body") == 9, "north dodge should use all 9 authored frames")
@@ -517,7 +521,7 @@ func _validate_dodge_fx_overlay(operator: Node) -> void:
 	_add_placeholder_animation(body_sprite.sprite_frames, &"operator_dodge_recovery")
 	_assert_true(bool(operator.call("_try_start_dodge")), "operator should start a deterministic dodge")
 	_assert_true(String(body_sprite.animation) == "shared/transition/dodge_01/s/full_body", "east/horizontal dodge should start the authored south body track")
-	_assert_true(String(dodge_fx.animation) == "operator_dodge_full_fx_south", "east/horizontal dodge should start the synchronized authored south FX track")
+	_assert_true(String(dodge_fx.animation) == "shared/transition/dodge_01/s/fx", "east/horizontal dodge should start the synchronized authored south FX track")
 	_assert_true(body_sprite.frame == 0, "body dodge should restart on frame 0")
 	_assert_true(dodge_fx.frame == 0, "dodge FX should restart on frame 0")
 	_assert_true(dodge_fx.visible, "dodge FX should be visible during dodge")

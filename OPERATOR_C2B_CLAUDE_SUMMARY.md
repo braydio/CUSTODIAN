@@ -205,7 +205,27 @@ operator_body_pair_canonical       PASS
 operator_visual_ownership          PASS
 operator_architecture_debt         PASS   98, baseline refreshed
 operator_runtime_path_audit        PASS   ledger shrunk by the 8 removed PNG paths
+operator_ranged_ready_input        PASS   (after repointing its dodge-FX assertions)
+operator_dodge_fx_canonical        PASS   (new)
+actor tier                         56/56
+changed set                        4/4
 ```
+
+Actor tier: **56 selected, 56 passed** after one fix. The first run was 55/56 --
+`operator_ranged_ready_input` failed on two dodge-FX assertions still written
+against the retired compatibility name `operator_dodge_full_fx_south`. That was a
+real regression from this slice, not a stale test: the assertions were correct
+about the behaviour and wrong about the identity. Repointed at
+`shared/transition/dodge_01/s/fx` and given a frame-count check.
+
+Worth naming: `operator_dodge_flow` passed throughout and proved nothing about
+this, because `_play_dodge_fx()` fails soft -- a missing animation returns
+silently, so the FX can stop rendering without any test noticing. The coverage
+that existed was in the *ranged ready input* smoke. I added
+`operator_dodge_fx_canonical` for this directly: it asserts the renderer binds
+the canonical resource object (not a duplicate), that both authored facings keep
+9 frames / 25 fps / no-loop, and that a live north and south dodge each present
+the matching identity visibly.
 
 New C2b **hard invariants** (not migration gates) in
 `operator_runtime_animation_authority_smoke.py`: the catalog script must not
