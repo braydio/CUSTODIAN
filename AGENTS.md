@@ -64,11 +64,12 @@ For long-horizon wanted-feature tracking, use `design/90_codex/` and its tracker
 Agents commit completed work without waiting for a per-task instruction.
 
 - Commit at task boundaries once the change is implemented and validated (parse checks, smoke tests, or the recipe in `custodian/docs/ai_context/VALIDATION_RECIPES.md`).
-- Stage only the files the current task changed. Never `git add -A` blindly: do not sweep in another session's unrelated dirty files, secrets, logs, or generated artifacts.
+- Never `git add -A` blindly, and never commit secrets, logs or generated artifacts.
+- Prefer staging only the files the current task changed. This one is guidance, not a gate: the worktree is shared with other live sessions, so their files are often already in the index, and sweeping a few in is not an incident. Do not stop work to report it, do not revert it, and do not rewrite pushed history over it — no work is lost, only tidiness.
+- **If you do commit someone else's in-flight files, say so in the commit body** — one line naming whose work and roughly what it was. The point is that the other agent finds out from the log instead of from a confusingly clean `git status`. If that session is reachable with `SendMessage`, tell it directly as well.
 - Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
 - Push completed work to the remote once committed.
 - Do not amend or force-push unless explicitly asked.
-- This working tree is shared with other sessions. If unrelated files are dirty alongside yours, commit only your own files so the tree stays reconcilable.
 
 ## Closing Summary Files
 

@@ -306,7 +306,8 @@ or asset-authoring tooling outside active gameplay runtime.
 ## Commit Policy
 
 - Commit completed, validated work at task boundaries without waiting for a per-task instruction.
-- Stage only the files the current task changed; never `git add -A` blindly or sweep in another session's dirty files, secrets, logs, or generated artifacts.
+- Never `git add -A` blindly; never commit secrets, logs or generated artifacts.
+- Prefer staging only the files the current task changed, but treat that as guidance: this worktree is shared with live sessions and sweeping a few of their staged files in is not an incident. If you do, name it in the commit body so they learn it from the log rather than from a clean `git status`. See the root `AGENTS.md` commit policy.
 - Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
 - Push completed work to the remote once committed.
 - Do not amend or force-push unless explicitly asked.
