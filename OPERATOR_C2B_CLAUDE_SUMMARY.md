@@ -1,33 +1,33 @@
 # Operator C2b — canonical animation authority
 
-**Status: partially complete. C2b is not closed.** Three of the five target debt
-categories reached zero. Two did not, for one shared reason that is written out
-below rather than deferred to "future work", because the reason is the useful
-part of this summary.
+Two slices, recorded in order. **C2b** (first pass) and **C2b.1** (blocker
+removal). C2b is still not closed; what remains is smaller and better understood
+than when it started.
 
-Read `OPERATOR_SLICE_D_CLAUDE_SUMMARY.md` for D.3, which opened this task as its
-regression gate and did pass.
+Read `OPERATOR_SLICE_D_CLAUDE_SUMMARY.md` for D.3, which opened this work as its
+regression gate and passed.
 
-## Measured result
+## Measured result, both slices
 
 ```
-architecture debt      119 -> 98        (target was ~75)
-operator.gd         15,231 -> 14,841 lines
-operator.gd            723 -> 709 functions
+architecture debt      119 -> 98 -> 97
+operator.gd         15,231 -> 14,841 -> 14,814 lines
+operator.gd            723 ->    709 ->     708 functions
 ```
 
 Per category:
 
 ```
-                                 before   after   target
-operator_animation_catalog            4       0        0   done
-attack_fallback_animation            13       0        0   done
-actor_local_spriteframes              5       1        0   1 remains
-animation_resolver                   18      18        0   BLOCKED
-directional_animation_fallback        4       4        0   BLOCKED
+                                 start   C2b   C2b.1   target
+operator_animation_catalog           4     0       0        0   done
+attack_fallback_animation           13     0       0        0   done
+actor_local_spriteframes             5     1       0        0   done
+animation_resolver                  18    18      18        0   deferred
+directional_animation_fallback       4     4       4        0   deferred (out of scope)
 ```
 
-The baseline was refreshed to the measured 98 through the approved `/tmp` flow.
+The baseline was refreshed to measured truth after each slice, through the
+approved `/tmp` flow.
 No regex was weakened, no exemption was added, no symbol was renamed to escape
 detection, and no audit coverage was removed.
 
@@ -140,13 +140,20 @@ restored the tail with that reasoning written directly above it, because the nex
 person to read that function will reach for the same argument I did.
 
 This is also the reason `animation_resolver` and
-`directional_animation_fallback` did not move. They are not call-site debt. They
-are held up by a runtime mutation of the shared canonical resource, and removing
-them requires per-weapon body art published as canonical identities first.
+`directional_animation_fallback` did not move in C2b. They are not call-site
+debt. They are held up by a runtime mutation of the shared canonical resource,
+and removing them requires per-weapon body art published as canonical identities
+first.
 
 **Worth flagging on its own:** `_install_weapon_body_frames()` mutating the shared
 canonical `SpriteFrames` at runtime is arguably a worse violation than the ones
 this audit tracks, and no current rule catches it. It deserves its own rule.
+
+> **C2b.1 resolved this.** The mutation is gone and the invariant is now
+> executable rather than a note in a summary — see below. One correction to the
+> paragraph above, from measurement rather than argument: "per-weapon body art
+> published as canonical identities" was too broad. Almost all of it already
+> existed.
 
 ## Missing canonical identities (reported, not invented)
 
@@ -198,6 +205,178 @@ direction selection, and I had just been burned by one equivalence that held on
 disk and failed at runtime. Left alone deliberately; whoever finishes this should
 pick the intended boundary behaviour on purpose rather than inherit whichever
 function survived.
+
+# C2b.1 — armed melee canonicalization and the immutable spine
+
+The blocker C2b found, removed. Equipping a weapon no longer edits the animation
+database; it changes which identity a renderer selects.
+
+## What measurement corrected
+
+C2b ended saying per-weapon body and FX art was broadly missing. That was an
+argument, not a measurement, and it was wrong in both directions. C2b.1 started
+by characterizing every live Vigil/Cleaver fast-chain animation against its
+candidate canonical identities using decoded pixels, frame count, FPS, loop and
+per-frame durations
+(`reports/operator/operator_armed_melee_canonicalization.json`).
+
+Two measurement traps had to be cleared first, and each would have produced a
+confident wrong answer:
+
+- Comparing `(texture, region)` pairs calls the source and published strips
+  different art. The compatibility resources cite
+  `weapons/<id>/source/.../legacy_*`; the canonical database cites
+  `weapons/<id>/runtime/.../attack/<action>`. Same pixels, different files.
+- Hashing raw RGBA then calls them different anyway. Vigil fast_01 differs in the
+  RGB channels of **450 fully transparent pixels** and in **zero** visible ones —
+  PNG encoder choice, not art. The hash now zeroes RGB under alpha 0.
+  (`ImageChops.difference().getbbox()` happens to agree, because `getbbox()`
+  keys on alpha for RGBA. Right answer, wrong reason, so the tool is explicit.)
+
+What that showed:
+
+```
+Vigil weapon layer      already canonical, all three links, nothing to do
+Vigil fast_01/02 body   already canonical pixels, wrong published rate
+Vigil all three FX      already canonical pixels, wrong published rate
+Vigil fast_03 body      the ONLY genuine gap
+Sword Cleaver           not rendering melee_1h_heavy art at all
+```
+
+The Vigil weapon layer was already published at 9 frames / 13 fps with the 1.5x
+final hold for Fast 03. Three of its nine frames differ from the legacy source by
+2, 2 and 5 pixels out of 14,976 — a re-encode artifact.
+
+## Timing, fixed in the pipeline rather than the actor
+
+The shared `melee_1h/attack/fast_0N` body and FX layers carried **no timing
+sidecar**, so they published at the 12 fps default while the dagger played them
+at 18/14/13. Canonicalizing without closing that gap would have retuned the
+dagger by accident.
+
+The evidence that 18/14/13 is the *semantic* timing of those identities, not a
+dagger-local preference, is that the database already said so: the weapon layer
+of the same actions carried exactly those rates. Only body and FX were missing
+sidecars. Checked for a competing clock before retiming shared art — no runtime
+consumer selects `melee_1h/attack/*` semantically at all; the only `melee_1h`
+identities the actor asks for are `transition` and `defense`.
+
+18 sidecars authored in `source/`, republished with
+`sync_operator_runtime_assets.py`, rebuilt with
+`build_operator_runtime_frames.gd`. No generated file was hand-edited. Diffed
+against HEAD: **582 animations before and after, none added, none removed, and
+exactly the 18 intended changes.**
+
+## The one preservation asset
+
+Vigil Fast 03's body plays the **first nine** atlas regions of the generic
+ten-frame strip at 13 fps with a 1.5x hold. A subrange, not a retime, so it
+became weapon-owned art rather than something imposed on `melee_1h`.
+
+Those exact nine frames were copied region-for-region — no resample, no redraw,
+no new art — into an Operator V2 source master under the weapon's override tree
+and published through `OperatorAssetKey`, which produced the canonical path and
+filename itself. The new PNG needed a Godot import pass before the frames build
+could load it.
+
+```
+source master vs compatibility resource : 9/9 frames pixel-identical, both sectors
+published identity vs compatibility     : EXACT (identical pixels AND timing)
+
+weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/{e,w}/full_body
+9 frames @ 13 fps, loop false, durations [1 x8, 1.5]
+```
+
+Database 582 -> 584 animations; only these two added.
+
+## Final semantic mapping
+
+```
+Vigil
+  fast_01/02 body   melee_1h/attack/fast_0N/{e,w}/full_body
+  fast_03 body      weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_03/{e,w}/full_body
+  weapon            weapon/vigil_pattern_dagger/melee_1h_dagger/attack/fast_0N/{e,w}/weapon
+  fx                melee_1h/attack/fast_0N/{e,w}/fx
+
+Sword Cleaver
+  body              melee_1h_heavy/attack/fast_0N/{e,w}/full_body
+  weapon            weapon/sword_cleaver/melee_1h_heavy/attack/fast_0N/{e,w}/weapon
+  fx                melee_1h_heavy/attack/fast_0N/{e,w}/fx
+```
+
+Identity is derived from data the weapon definition already carries —
+`weapon_type` for the shared body/FX family, `get_animation_profile()` plus
+`weapon_id` for the weapon layer, and the active
+`MeleeAttackProfile.presentation_action` for the action. A weapon-owned body
+override wins when published. Body, weapon and FX are selected and started
+together, because the overlays are frame-synchronized to the body clock and a
+half-canonical composition would sync a canonical body against a compatibility
+overlay.
+
+## The immutable spine
+
+Deleted: `_install_weapon_body_frames()`,
+`_install_melee_posture_weapon_frames()`, `_copy_runtime_animation()`,
+`_apply_melee_weapon_animation_resources()` and the `_default_melee_*_frames`
+caches that existed only to restore a swapped resource. `AnimatedSprite2D`,
+`MeleeWeaponOverlaySprite` and `MeleeFxOverlaySprite` bind the canonical database
+in the scene.
+
+`operator_runtime_spine_immutable` snapshots the whole database — name set, frame
+counts, fps, loop, every frame duration, and each frame's atlas source and region
+— cycles Vigil / unarmed / Cleaver / Vigil, and asserts it is unchanged. It
+carries its own negative control, because a fingerprint that cannot see a
+mutation proves nothing by staying quiet.
+
+**Verified by reintroducing the mutation:** 584 -> 591 -> 597 animations, caught
+on every step.
+
+## Behaviour that changed, and why
+
+Both are restrictions removed, not features added. Frame counts and rates are
+unchanged in both, so hit windows, commits and contacts are untouched.
+
+1. **East Vigil walk now presents its weapon strip.** The authored
+   `melee_1h_dagger/locomotion/walk_01/e/weapon` art was published all along, but
+   the equip-time copy list named `walk_01` as `[s]` only, so east had nothing to
+   play and fell back. The test that asserted that gap now asserts the art.
+2. **The Sword Cleaver gets its own art.** Its body and FX resources pointed at
+   the generic `melee_1h` fast_01 strip — all three links at the *same* one — so
+   the chain played one borrowed swing three times. Canonical
+   `melee_1h_heavy/attack/fast_01..03` is distinct per link at the same 10 frames
+   and 18 fps.
+
+## Retired
+
+Zero consumers proven first, then deleted: the three `SpriteFrames` fields on
+`OperatorWeaponDefinition`, their assignments and orphaned `ext_resource`
+headers, and
+
+```
+vigil_pattern_dagger_{body,melee_overlay,fx}_frames.tres
+sword_cleaver_{body,weapon_overlay,fx}_frames.tres
+```
+
+`frames_resource` stays — the held-weapon sprite is not part of the animation
+spine. `fx_map` is gone from both armed definitions, verified by removing it and
+re-running both weapon smokes rather than by reading the call graph.
+
+`operator_melee_sheathe_smoke` inspected those deleted resources; its assertions
+were really about the art the chain presents, so they read the canonical database
+directly now. No test requires resurrecting a dead resource.
+
+Two pre-existing `FAIL` lines in the authority smoke — "gameplay reads weapon
+source art" for the dagger and cleaver overlay resources — are gone as a side
+effect, since the resources that read source art no longer exist.
+
+## Deferred to the C2b demolition pass
+
+`animation_resolver` (18) and `directional_animation_fallback` (4). Armed melee
+is no longer among the resolver's consumers, which was this packet's requirement;
+the remainder is non-armed call-site debt and is now ordinary cleanup rather than
+a live runtime dependency. `directional_animation_fallback` was explicitly out of
+scope here, and the boundary-behaviour difference C2b measured between its
+quantizer and the selector's still needs a deliberate decision.
 
 ## Phases not started
 
