@@ -86,7 +86,11 @@ As procgen and campaign content deepen, `world_profile` / `level_data` should re
 - `original_function`
 - `collapse_mode`
 - `post_collapse_reuse`
-- `present_ideology`
+- `resident_polity`
+- `secondary_polity`
+- `local_traditions`
+- `hazard_layers`
+- `occupancy_posture`
 - `world_legibility_class`
 
 These fields are not required to be fully implemented yet, but planet-contract generation should stay extensible enough to carry them.

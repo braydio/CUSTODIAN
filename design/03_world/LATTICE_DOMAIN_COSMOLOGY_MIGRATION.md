@@ -2,7 +2,7 @@
 
 **Status:** canonical and active  
 **Authority:** doctrine / lore / architecture documentation  
-**Scope:** documentation migration only; runtime, faction redesign, and visual implementation remain deferred.
+**Scope:** persistent-Domain documentation migration complete; seven-polity canon resolved; runtime faction cutover and visual implementation remain separately tracked.
 
 This document supersedes conflicting isolated/disposable Campaign World language
 throughout the repository. The authority order is:
@@ -83,12 +83,20 @@ continuity-port and Archive infrastructure. Its imported architecture and
 continuity anomalies remain exceptional consequences of damaged transit
 infrastructure.
 
-## Faction migration hold
+## Faction migration resolution
 
-The current faction roster is not redesigned by this migration. Existing
-profiles remain historical design reference until a replacement faction
-architecture is locked. New documents must not introduce dependencies on the
-superseded roster as if it were newly finalized canon.
+The replacement faction architecture is now locked as seven active polity
+families: Fieldworks Compact, Drawdown Councils, Cordon Service, Charter
+Authorities, Orraic Orders, Recovery Companies, and Witness Assemblies.
+
+The Legacy Interdiction Mesh is a separately typed HAZARD_LAYER, not an eighth
+polity. Pale Bell, Indexer, Leaseholder, Choir, Buried-Kin, and Feral Defense
+labels remain only where explicitly mapped as historical or local traditions,
+tendencies, societies, or automated-hazard source material.
+
+Canonical profiles live in design/03_world/factions/. Runtime migration remains
+tracked separately in design/02_features/factions/FACTION_IMPLEMENTATION_TRACKER.md
+and must not be inferred complete from this documentation migration.
 
 ## Documentation rule
 

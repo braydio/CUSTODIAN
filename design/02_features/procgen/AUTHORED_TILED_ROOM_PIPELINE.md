@@ -82,7 +82,11 @@ Supported map properties:
 | `original_function` | string | pre-collapse function of the room/site |
 | `collapse_mode` | string | how the room/site failed or was severed |
 | `post_collapse_reuse` | string | how later occupants repurposed it |
-| `present_ideology` | string | current occupant worldview/faction logic |
+| `resident_polity` | string | canonical primary polity ID, if any |
+| `secondary_polity` | string | optional secondary polity ID |
+| `local_traditions` | string/array | mapped local traditions or inherited labels |
+| `hazard_layers` | string/array | composable non-polity hazard IDs |
+| `occupancy_posture` | string | current working/guarded/quarantined/evacuating/etc. posture |
 
 Door properties should use JSON arrays:
 
