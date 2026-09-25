@@ -243,7 +243,11 @@ For first-pass implementation, the generator should at minimum support tags or d
 - `original_function`
 - `collapse_mode`
 - `post_collapse_reuse`
-- `present_ideology`
+- `resident_polity`
+- `secondary_polity`
+- `local_traditions`
+- `hazard_layers`
+- `occupancy_posture`
 - `surviving_truth`
 - `false_local_interpretation`
 
@@ -651,7 +655,7 @@ From scenario:
 * purposeful occupation zones
 * trap or doctrine-shaped spaces
 
-#### Feral Defense Systems
+#### Legacy Interdiction Mesh
 
 * broken but active machinery clusters
 * misaligned security corridors

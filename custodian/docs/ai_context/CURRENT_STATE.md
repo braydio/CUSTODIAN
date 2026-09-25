@@ -1,8 +1,8 @@
 # CURRENT STATE — CUSTODIAN
 
-## Seven-Polity Canon + Persistent-Domain Narrative Migration (2026-09-23)
+## Seven-Polity Canon + Persistent-Domain Narrative Migration (sealed 2026-09-24)
 
-Faction canon migration is complete at the design-document level. The seven
+Faction canon migration is complete at the canonical design-document level. The seven
 major post-Severing polity families are the **Fieldworks Compact**, **Drawdown
 Councils**, **Cordon Service**, **Charter Authorities**, **Orraic Orders**,
 **Recovery Companies**, and **Witness Assemblies**. The **Legacy Interdiction
@@ -27,6 +27,14 @@ an audit and typed canonical definition/registry slice. The broader playable
 idea bank lives in
 `design/03_world/factions/FACTION_GAMEPLAY_OPPORTUNITIES.md` and does not imply
 implementation.
+
+The documentation seal also reconciles the active faction-expression target,
+persistent-Domain migration note, region/room/planet lore metadata targets, and
+historical old-roster references. The live procgen field dominant_faction and
+its prototype values remain implementation compatibility state until FI-001 and
+FI-002 replace them; documentation must not mistake those runtime placeholders
+for current setting canon. The focused faction_canon_docs validation is the
+tripwire for future split-brain drift.
 
 ## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 

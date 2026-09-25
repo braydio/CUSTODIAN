@@ -1031,8 +1031,9 @@ Last updated: 2026-09-23
 - `design/03_world/factions/_FACTION_OVERVIEW.md` — canonical cross-faction authority, comparison, political tensions, Custodian relationships, and old-roster migration map
 - `design/03_world/factions/{FIELDWORKS_COMPACT,DRAWDOWN_COUNCILS,CORDON_SERVICE,CHARTER_AUTHORITIES,ORRAIC_ORDERS,RECOVERY_COMPANIES,WITNESS_ASSEMBLIES,LEGACY_INTERDICTION_MESH}.md` — seven full polity profiles plus the separately typed non-polity hazard-layer profile
 - `design/03_world/factions/FACTION_GAMEPLAY_OPPORTUNITIES.md` — generous faction gameplay idea bank; not implementation truth
-- `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — runtime-facing seven-polity expression architecture; migration pending
+- `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — canonical seven-polity runtime target and legacy-implication mapping; runtime cutover remains pending FI-001/FI-002
 - `design/02_features/factions/FACTION_IMPLEMENTATION_TRACKER.md` — strict implementation-shaped faction slice queue and validation targets
+- `custodian/tools/validation/faction_canon_docs_smoke.py` — documentation-consistency tripwire for completion/hold conflicts, indexed canonical paths, stale narrative headings, and the resolved faction migration note
 - `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md` — downstream canonical lore and game-protocol authority
 - `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md` — active lore for Custodian crèches and designation-keyed crèche lockers (P-9 sidearm assignment, continuity of assignment vs. personhood); SECTION 2 refinement takes precedence over SECTION 1 draft
 - `design/03_world/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target

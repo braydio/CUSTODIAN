@@ -86,12 +86,20 @@ The prior six-roster files remain retained as historical/tradition references.
 
 ---
 
-## Visual Design Templates
+## Historical Visual-Design References
 
-Artist-facing visual design briefs are preserved in the pre-design directory for reference:
-- `pre-design/FACTION_PROFILE_THE_PENITENTS_OF_STATIC.md` — Superseded naming; use "Pale Bell Penitents" for design briefs
-- `pre-design/FACTION_PROFILE_THE_INDEXERS.md` — Current and correct
-- `pre-design/FACTION_PROFILE_THE_LEASEHOLDERS.md` — Current and correct
-- `pre-design/FACTION_PROFILE_THE_CHOIR_OF_PROVENANCE.md` — Current and correct
-- `pre-design/THE_BURIED_KINS_FACTION_PROFILE.md` — Current and correct
-- `pre-design/FACTION_PROFILE_FERAL_DEFENSE_REMNANTS.md` — Current and correct
+The pre-design faction briefs remain useful visual archaeology for mapped local
+traditions and tendencies. They are not current polity identities, canonical
+unit rosters, or permission to create runtime dependencies on the old six-roster
+model.
+
+- pre-design/FACTION_PROFILE_THE_PENITENTS_OF_STATIC.md - Pale Bell / Ash-Bell visual reference only
+- pre-design/FACTION_PROFILE_THE_INDEXERS.md - Indexer tradition visual reference only
+- pre-design/FACTION_PROFILE_THE_LEASEHOLDERS.md - Leaseholder tendency visual reference only
+- pre-design/FACTION_PROFILE_THE_CHOIR_OF_PROVENANCE.md - provenance-focused Cordon lineage reference only
+- pre-design/THE_BURIED_KINS_FACTION_PROFILE.md - Buried-Kin local-society reference only
+- pre-design/FACTION_PROFILE_FERAL_DEFENSE_REMNANTS.md - Legacy Interdiction Mesh source reference only
+
+Any future production art should be commissioned from the active polity or
+hazard profile that actually owns the gameplay need, not by reviving the retired
+six-roster structure.

@@ -1,4 +1,12 @@
-# Each of these should also be saved alongside the faction roster in custodian/content/enemies
+# Legacy Faction Profile Archive
+
+> **Status:** historical pre-migration reference only
+> **Superseded by:** design/03_world/factions/_FACTION_OVERVIEW.md and the seven active polity profiles
+>
+> Do not use the faction identities, eight-unit roster assumptions, or runtime
+> placement instructions below as current canon. Preserve this material only as
+> design archaeology and as source material for explicitly mapped local
+> traditions, tendencies, societies, or Legacy Interdiction Mesh behaviors.
 
 # The Choir of Provenance
 
