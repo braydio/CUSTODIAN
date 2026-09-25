@@ -54,20 +54,24 @@ func _run() -> void:
 	operator.set("_active_attack_profile", UNARMED)
 	operator.set("_melee_active", true)
 	operator.set("_melee_attack_kind", "fast")
-	for direction in [Vector2.RIGHT, Vector2.LEFT]:
+	for direction in [Vector2.RIGHT, Vector2.LEFT, Vector2.DOWN]:
 		operator.set("_melee_forward", direction)
-		var sector := "e" if direction.x > 0.0 else "w"
+		var sector := "s" if direction == Vector2.DOWN else ("e" if direction.x > 0.0 else "w")
 		for index in range(4):
 			var key: String = UNARMED.fast_chain_keys[index]
 			var profile = UNARMED.fast_chain_attack_profiles[index]
+			var expected_sector := sector
+			if direction == Vector2.DOWN and index > 0:
+				# Fast 02-04 do not yet author South modular pairs.
+				expected_sector = "e"
 			operator.set("_melee_fast_combo_step", index)
 			operator.set("_melee_attack_key", key)
 			operator.set("_active_melee_attack_profile", profile)
-			_assert_true(bool(operator.call("_sync_modular_action_domains")), "%s %s must resolve" % [key, sector])
+			_assert_true(bool(operator.call("_sync_modular_action_domains")), "%s %s must resolve" % [key, expected_sector])
 			var lower := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
 			var upper := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
-			var expected_lower := StringName("unarmed/attack/fast_%02d/%s/lower_body" % [index + 1, sector])
-			var expected_upper := StringName("unarmed/attack/fast_%02d/%s/upper_body" % [index + 1, sector])
+			var expected_lower := StringName("unarmed/attack/fast_%02d/%s/lower_body" % [index + 1, expected_sector])
+			var expected_upper := StringName("unarmed/attack/fast_%02d/%s/upper_body" % [index + 1, expected_sector])
 			_assert_true(lower.animation == expected_lower, "%s lower identity mismatch" % key)
 			_assert_true(upper.animation == expected_upper, "%s upper identity mismatch" % key)
 			_assert_true(not lower.flip_h and not upper.flip_h, "%s must not runtime-mirror" % key)
@@ -96,11 +100,17 @@ func _run() -> void:
 	operator.set("_melee_fast_combo_step", 0)
 	operator.set("_melee_attack_key", "unarmed_fast_01")
 	operator.set("_active_melee_attack_profile", UNARMED.fast_chain_attack_profiles[0])
-	operator.set("_melee_forward", Vector2.RIGHT)
+	operator.set("_melee_forward", Vector2.DOWN)
 	operator.call("_sync_modular_action_domains")
 	await create_timer(0.18).timeout
-	var playback_clock := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
-	_assert_true(playback_clock.frame > 0, "visible modular presentation clock must advance")
+	var playback_lower := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
+	var playback_upper := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
+	_assert_true(playback_lower.animation == &"unarmed/attack/fast_01/s/lower_body", "South Fast 01 must resolve its exact lower identity")
+	_assert_true(playback_upper.animation == &"unarmed/attack/fast_01/s/upper_body", "South Fast 01 must resolve its exact upper identity")
+	_assert_true(playback_lower.frame > 0, "visible modular presentation clock must advance")
+	_assert_true(playback_lower.frame == playback_upper.frame, "South Fast 01 body layers must remain frame-synchronized")
+	_assert_true(is_equal_approx(playback_lower.frame_progress, playback_upper.frame_progress), "South Fast 01 body layer frame clocks must remain synchronized")
+	_assert_true(not playback_lower.flip_h and not playback_upper.flip_h, "South Fast 01 must not runtime-mirror")
 
 	await _validate_attack_drive(operator, root)
 	await _validate_early_input_forgiveness(operator)
@@ -866,4 +876,3 @@ func _visible_duration(sprite: AnimatedSprite2D) -> float:
 	for frame in range(sprite.sprite_frames.get_frame_count(sprite.animation)):
 		units += sprite.sprite_frames.get_frame_duration(sprite.animation, frame)
 	return units / maxf(fps * maxf(sprite.speed_scale, 0.0001), 0.0001)
-

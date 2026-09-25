@@ -2457,7 +2457,8 @@ func _sync_modular_action_domains() -> bool:
 
 
 ## Presents the authored unarmed combo link as one synchronized modular clock.
-## The caller owns directional projection: this family is authored E/W only.
+## An exact sector is used only when both body layers are available together;
+## otherwise the legacy E/W projection remains the complete-pair fallback.
 func _sync_unarmed_fast_chain_action() -> bool:
 	var profile := _active_melee_attack_profile
 	if profile == null or profile.presentation_action.is_empty():
@@ -2465,8 +2466,8 @@ func _sync_unarmed_fast_chain_action() -> bool:
 	var action := profile.presentation_action
 	if not String(action).begins_with("fast_0"):
 		return false
-	var sector: StringName = &"w" if _melee_forward.x < 0.0 else &"e"
 	var selector = _get_operator_animation_selector()
+	var sector := _resolve_unarmed_fast_chain_sector(action, selector)
 	for layer: StringName in [&"lower_body", &"upper_body"]:
 		if not selector.has_sector_identity(&"unarmed", &"attack", action, sector, layer):
 			return false
@@ -8427,6 +8428,17 @@ func _play_block_weapon_overlay(animation_name: StringName) -> void:
 	melee_weapon_overlay_sprite.frame = 0
 
 
+func _resolve_unarmed_fast_chain_sector(action: StringName, selector) -> StringName:
+	var requested_sector := OperatorAnimationSelector.vector_to_sector(_melee_forward)
+	if selector.has_sector_identity(
+		&"unarmed", &"attack", action, requested_sector, &"lower_body"
+	) and selector.has_sector_identity(
+		&"unarmed", &"attack", action, requested_sector, &"upper_body"
+	):
+		return requested_sector
+	return &"w" if _melee_forward.x < 0.0 else &"e"
+
+
 ## The canonical identities an armed melee link presents, or empty.
 ##
 ## C2b.1's whole point. Armed melee used to reach presentation by installing a
@@ -8656,8 +8668,9 @@ func _get_melee_animation_speed_scale(attack_key: String) -> float:
 			var target := float(weapon.fast_chain_presentation_durations[step])
 			var profile := _active_melee_attack_profile
 			if target > 0.0 and profile != null:
-				var sector: StringName = &"w" if _melee_forward.x < 0.0 else &"e"
-				var animation: StringName = _get_operator_animation_selector().resolve_sector(
+				var selector = _get_operator_animation_selector()
+				var sector := _resolve_unarmed_fast_chain_sector(profile.presentation_action, selector)
+				var animation: StringName = selector.resolve_sector(
 					&"unarmed", &"attack", profile.presentation_action, sector, &"lower_body"
 				)
 				if _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, animation):
