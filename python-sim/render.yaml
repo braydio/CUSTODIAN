@@ -3,6 +3,7 @@ services:
     name: custodian-terminal
     runtime: python
     plan: free
+    rootDir: python-sim
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120 --chdir custodian-terminal server:app
     envVars:
