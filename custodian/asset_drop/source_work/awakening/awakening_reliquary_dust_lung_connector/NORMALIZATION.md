@@ -12,3 +12,13 @@ The normalized outputs are in the matching Asset V2 inbox. The B source aspect
 ratio differs from its locked placement rectangle, so the centered crop retains
 the passage proportions while removing excess vertical canvas. All three
 placements continue to use the unchanged Layout rectangles.
+
+## Connector A replacement — 2026-09-25
+
+The approved replacement source is preserved as
+`connector_a_source_v2_20260925.png`; the original `connector_a_source.png`
+remains unchanged. The source is 1254×1254 RGBA with transparency. It was
+resized uniformly with Lanczos to 128×128, then centered vertically on a
+transparent 128×160 RGBA canvas (16px transparent top and bottom). No crop,
+stretch, or alpha flattening was applied. The final inbox image remains the
+family's `connector_a` state and canonical runtime path.
