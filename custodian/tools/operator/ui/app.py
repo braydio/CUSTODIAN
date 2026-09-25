@@ -11,7 +11,7 @@ from pathlib import Path
 from textual.app import App
 from textual.binding import Binding
 from textual.widget import Widget
-from textual.widgets import DataTable, Input, Static
+from textual.widgets import DataTable, Input, Static, TextArea
 
 from .dialogs import (
     CanvasMigrationDialog, CanvasResizeDialog, ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog,
@@ -105,7 +105,7 @@ class OperatorWorkbenchApp(App):
         Binding("right", "preview_next", "Next frame", show=False), Binding("home", "preview_first", "First frame", show=False),
         Binding("end", "preview_last", "Last frame", show=False), Binding("left_square_bracket", "preview_slower", "Slower review", show=False),
         Binding("right_square_bracket", "preview_faster", "Faster review", show=False), Binding("l", "preview_loop", "Loop", show=False),
-        Binding("s", "preview_source", "Source", show=False), Binding("ctrl+a", "timeline_add", "Add clip", show=False),
+        Binding("s", "preview_source", "Source", show=False), Binding("ctrl+a", "timeline_add", "Add clip", priority=True, show=False),
         Binding("shift+d", "preview_examiner_mode", "Preview examiner", show=False),
         Binding("shift+s", "preview_compare_source", "Compare source", show=False),
         Binding("t", "transition_target", "Transition target", show=False),
@@ -114,9 +114,9 @@ class OperatorWorkbenchApp(App):
         Binding("i", "timeline_trim_in_forward", "Trim in +", show=False), Binding("shift+i", "timeline_trim_in_backward", "Trim in -", show=False),
         Binding("o", "timeline_trim_out_backward", "Trim out -", show=False), Binding("shift+o", "timeline_trim_out_forward", "Trim out +", show=False),
         Binding("shift+l", "timeline_clip_loops", "Clip loops", show=False),
-        Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", show=False),
-        Binding("ctrl+down", "timeline_down", "Move clip right", show=False), Binding("ctrl+s", "timeline_save", "Save sequence", show=False),
-        Binding("ctrl+o", "timeline_load", "Load sequence", show=False),
+        Binding("delete", "timeline_remove", "Remove clip", show=False), Binding("ctrl+up", "timeline_up", "Move clip left", priority=True, show=False),
+        Binding("ctrl+down", "timeline_down", "Move clip right", priority=True, show=False), Binding("ctrl+s", "timeline_save", "Save sequence", priority=True, show=False),
+        Binding("ctrl+o", "timeline_load", "Load sequence", priority=True, show=False),
         Binding("y", "copy_spritesheet", "Copy spritesheet", show=False),
         Binding("shift+y", "cycle_copy_mode", "Copy mode", show=False),
         Binding("shift+u", "toggle_superseded", "Superseded", show=False),
@@ -124,8 +124,8 @@ class OperatorWorkbenchApp(App):
         Binding("g", "motion_ground", "Motion ground", show=False), Binding("c", "motion_curve", "Motion curve", show=False),
         Binding("d", "motion_distance", "Motion distance", show=False), Binding("shift+l", "motion_loop_cycles", "Motion loop span", show=False),
         Binding("shift+left", "motion_travel_less", "Travel -16", show=False), Binding("shift+right", "motion_travel_more", "Travel +16", show=False),
-        Binding("ctrl+left", "motion_travel_less_large", "Travel -32", show=False), Binding("ctrl+right", "motion_travel_more_large", "Travel +32", show=False),
-        Binding("ctrl+r", "motion_reset", "Reset motion", show=False), Binding("enter", "motion_runtime", "Runtime check", show=False),
+        Binding("ctrl+left", "motion_travel_less_large", "Travel -32", priority=True, show=False), Binding("ctrl+right", "motion_travel_more_large", "Travel +32", priority=True, show=False),
+        Binding("ctrl+r", "motion_reset", "Reset motion", priority=True, show=False), Binding("enter", "motion_runtime", "Runtime check", show=False),
     ]
 
     def __init__(
@@ -1054,11 +1054,20 @@ class OperatorWorkbenchApp(App):
     def _adjust_motion_travel(self, delta: float):
         if self.state.mode != "motion": return
         self.state.motion.travel_px = min(512.0, max(0.0, self.state.motion.travel_px + delta)); self._render_motion()
-    def action_motion_travel_less(self): self._adjust_motion_travel(-16.0)
-    def action_motion_travel_more(self): self._adjust_motion_travel(16.0)
-    def action_motion_travel_less_large(self): self._adjust_motion_travel(-32.0)
-    def action_motion_travel_more_large(self): self._adjust_motion_travel(32.0)
+    def action_motion_travel_less(self):
+        if self.state.mode != "motion": return
+        self._adjust_motion_travel(-16.0)
+    def action_motion_travel_more(self):
+        if self.state.mode != "motion": return
+        self._adjust_motion_travel(16.0)
+    def action_motion_travel_less_large(self):
+        if self._route_text_entry_shortcut("ctrl+left") or self.state.mode != "motion": return
+        self._adjust_motion_travel(-32.0)
+    def action_motion_travel_more_large(self):
+        if self._route_text_entry_shortcut("ctrl+right") or self.state.mode != "motion": return
+        self._adjust_motion_travel(32.0)
     def action_motion_reset(self):
+        if self._route_text_entry_shortcut("ctrl+r"): return
         if self.state.mode != "motion": return
         from .state import MotionLabState
         self.state.motion = MotionLabState(); self._motion_last_tick = time.monotonic()
@@ -1079,7 +1088,34 @@ class OperatorWorkbenchApp(App):
             self._activity(f"{selection.identity} · {motion.travel_px:.0f}px/cycle · {motion.loop_cycles} cycles · {self.state.review_fps:g}fps · {motion.curve.upper()}")
         except Exception as error: self._error(error)
 
+    def _route_text_entry_shortcut(self, key: str) -> bool:
+        """Keep native text-editing behavior when an app shortcut has priority."""
+        focused = self.focused
+        if isinstance(focused, Input):
+            action = {
+                "ctrl+a": "home",
+                "ctrl+left": "cursor_left_word",
+                "ctrl+right": "cursor_right_word",
+            }.get(key)
+        elif isinstance(focused, TextArea):
+            action = {
+                "ctrl+a": "cursor_line_start",
+                "ctrl+left": "cursor_word_left",
+                "ctrl+right": "cursor_word_right",
+            }.get(key)
+        else:
+            return False
+        if action:
+            # These native Textual edit actions are synchronous widget methods.
+            # Invoke them directly so the priority app binding doesn't swallow
+            # normal text navigation while avoiding a second key dispatch.
+            getattr(focused, f"action_{action}")()
+        # These mode shortcuts have no native text-entry mapping. Consume them
+        # while editing instead of allowing the app-level action to run.
+        return True
+
     def action_timeline_add(self):
+        if self._route_text_entry_shortcut("ctrl+a") or self.state.mode != "timeline": return
         selection = self._require_selection()
         if not selection: return
         self.sequence.clips.append(animation_preview.TimelineClip(selection.profile, selection.group, selection.action, selection.direction, self.state.review_fps))
@@ -1105,6 +1141,7 @@ class OperatorWorkbenchApp(App):
             self.state.preview_playing = False; self.state.preview_frame = matches[0]; self._reset_preview_clock(); self._render_preview()
 
     def action_timeline_remove(self):
+        if self.state.mode != "timeline": return
         index = self._timeline_index()
         if 0 <= index < len(self.sequence.clips):
             self.sequence.clips.pop(index)
@@ -1117,6 +1154,7 @@ class OperatorWorkbenchApp(App):
             self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
 
     def _move_clip(self, delta: int):
+        if self.state.mode != "timeline": return
         index = self._timeline_index(); target = index + delta
         if 0 <= index < len(self.sequence.clips) and 0 <= target < len(self.sequence.clips):
             source_frame = self._timeline_current_source_frame(index)
@@ -1125,13 +1163,19 @@ class OperatorWorkbenchApp(App):
             table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.select_clip(target)
             self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
 
-    def action_timeline_up(self): self._move_clip(-1)
-    def action_timeline_down(self): self._move_clip(1)
+    def action_timeline_up(self):
+        if self._route_text_entry_shortcut("ctrl+up") or self.state.mode != "timeline": return
+        self._move_clip(-1)
+    def action_timeline_down(self):
+        if self._route_text_entry_shortcut("ctrl+down") or self.state.mode != "timeline": return
+        self._move_clip(1)
     def action_timeline_save(self):
+        if self._route_text_entry_shortcut("ctrl+s") or self.state.mode != "timeline": return
         try: self._activity(f"sequence saved: {self.service.save_sequence(self.sequence)}", "OK")
         except Exception as error: self._error(error)
 
     def action_timeline_load(self):
+        if self._route_text_entry_shortcut("ctrl+o") or self.state.mode != "timeline": return
         try:
             self.sequence = self.service.load_sequence(self.state.sequence_name)
             self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)

@@ -332,7 +332,7 @@ async def textual_smoke() -> None:
     from ui.live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
     from ui.widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar,
                             LayerTable, MotionCanvas, MotionControls, PreviewCanvas, TimelineTable, WorkbenchStatusBar)
-    from textual.widgets import DataTable, Footer, Static
+    from textual.widgets import Button, DataTable, Footer, Input, Static, TextArea
     from textual_image.widget import AutoImage
     from websockets.asyncio.client import connect
     from live_bridge.server import LiveBridgeServer
@@ -1013,6 +1013,75 @@ async def textual_smoke() -> None:
         warnings = [event for event in unavailable_app.state.activity if event.message.startswith("Live Bridge unavailable:")]
         assert len(warnings) == 1
         assert unavailable_app.main_screen.query_one("#animation-tree", AnimationTree).root.children
+
+    # Isolated real-keypress regression: keep extra focus/time activity out of
+    # the long playback pilot above, whose assertions depend on authored ticks.
+    shortcut_service = PilotService()
+    shortcut_app = OperatorWorkbenchApp(
+        service=shortcut_service, startup=shortcut_service.selection,
+        live_bridge=LiveBridgeController(shortcut_service.repo_root, port=0),
+    )
+    async with shortcut_app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.2)
+        shortcut_app.action_mode_timeline(); await pilot.pause(0.2)
+        timeline_table = shortcut_app.main_screen.query_one("#timeline-table", TimelineTable)
+        timeline_table.focus()
+        await pilot.press("ctrl+a"); await pilot.pause(0.1)
+        assert len(shortcut_app.sequence.clips) == 1
+        shortcut_app.state.selection = AnimationSelection("unarmed", "locomotion", "walk_01", "e")
+        await pilot.press("ctrl+a"); await pilot.pause(0.1)
+        assert len(shortcut_app.sequence.clips) == 2
+        await pilot.press("ctrl+up"); await pilot.pause(0.1)
+        assert shortcut_app.sequence.clips[0].action == "walk_01"
+        await pilot.press("ctrl+down"); await pilot.pause(0.1)
+        assert shortcut_app.sequence.clips[1].action == "walk_01"
+
+        saved_names = []
+        loaded_names = []
+        shortcut_service.save_sequence = lambda sequence: (saved_names.append(sequence.name) or Path("fixture-sequence.json"))
+        shortcut_service.load_sequence = lambda name: (loaded_names.append(name) or animation_preview.ReviewSequence("loaded-sequence"))
+        await pilot.press("ctrl+s"); await pilot.pause(0.1)
+        await pilot.press("ctrl+o"); await pilot.pause(0.1)
+        assert saved_names == ["review"] and loaded_names == [shortcut_app.state.sequence_name]
+
+        text_input = Input(value="search words", id="shortcut-text-input")
+        await shortcut_app.main_screen.mount(text_input); await pilot.pause()
+        text_input.cursor_position = len(text_input.value)
+        text_input.focus()
+        clip_count = len(shortcut_app.sequence.clips)
+        await pilot.press("ctrl+a"); await pilot.pause(0.1)
+        assert text_input.value == "search words" and text_input.cursor_position == 0
+        assert len(shortcut_app.sequence.clips) == clip_count
+        await pilot.press("ctrl+s", "ctrl+o")
+        assert saved_names == ["review"] and loaded_names == [shortcut_app.state.sequence_name]
+        text_input.cursor_position = len(text_input.value)
+        await pilot.press("ctrl+left")
+        assert text_input.cursor_position < len(text_input.value)
+        await text_input.remove(); await pilot.pause()
+
+        text_area = TextArea("first line\nsecond words", id="shortcut-text-area")
+        await shortcut_app.main_screen.mount(text_area); await pilot.pause()
+        text_area.focus()
+        text_area.move_cursor((1, len("second words")))
+        await pilot.press("ctrl+a"); await pilot.pause(0.1)
+        assert text_area.cursor_location == (1, 0)
+        assert len(shortcut_app.sequence.clips) == clip_count
+        text_area.move_cursor((1, len("second words")))
+        await pilot.press("ctrl+left")
+        assert text_area.cursor_location[1] < len("second words")
+        await text_area.remove(); await pilot.pause()
+
+        shortcut_app.action_mode_motion(); await pilot.pause(0.2)
+        shortcut_button = Button("Keyboard focus target", id="shortcut-focus-target")
+        await shortcut_app.main_screen.mount(shortcut_button); await pilot.pause()
+        shortcut_button.focus()
+        travel = shortcut_app.state.motion.travel_px
+        await pilot.press("ctrl+right"); assert shortcut_app.state.motion.travel_px == travel + 32
+        await pilot.press("ctrl+left"); assert shortcut_app.state.motion.travel_px == travel
+        shortcut_app.state.motion.travel_px = 240.0
+        await pilot.press("ctrl+r"); assert shortcut_app.state.motion.travel_px == 128.0
+        await pilot.press("ctrl+a")
+        assert len(shortcut_app.sequence.clips) == clip_count
 
 
 def real_repo_read_only() -> None:
