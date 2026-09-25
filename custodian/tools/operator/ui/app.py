@@ -94,7 +94,6 @@ class OperatorWorkbenchApp(App):
         Binding("question_mark", "help", "Help", show=False), Binding("e", "edit", "Edit", show=False),
         Binding("a", "add_frame", "Add Frame", show=False),
         Binding("x", "remove_frame", "Remove Frame", show=False), Binding("p", "publish", "Publish", show=False),
-        Binding("shift+r", "resize_canvas", "Resize Canvas", show=False),
         Binding("r", "refresh_workbench", "Refresh", show=False), Binding("w", "weapon_context", "Weapon", show=False),
         Binding("v", "validate", "Validate", show=False), Binding("j", "cursor_down", "Down", show=False),
         Binding("k", "cursor_up", "Up", show=False),
@@ -125,7 +124,7 @@ class OperatorWorkbenchApp(App):
         Binding("d", "motion_distance", "Motion distance", show=False), Binding("shift+l", "motion_loop_cycles", "Motion loop span", show=False),
         Binding("shift+left", "motion_travel_less", "Travel -16", show=False), Binding("shift+right", "motion_travel_more", "Travel +16", show=False),
         Binding("ctrl+left", "motion_travel_less_large", "Travel -32", priority=True, show=False), Binding("ctrl+right", "motion_travel_more_large", "Travel +32", priority=True, show=False),
-        Binding("ctrl+r", "motion_reset", "Reset motion", priority=True, show=False), Binding("enter", "motion_runtime", "Runtime check", show=False),
+        Binding("ctrl+r", "context_ctrl_r", "Context action", priority=True, show=False), Binding("enter", "motion_runtime", "Runtime check", show=False),
     ]
 
     def __init__(
@@ -1067,11 +1066,19 @@ class OperatorWorkbenchApp(App):
         if self._route_text_entry_shortcut("ctrl+right") or self.state.mode != "motion": return
         self._adjust_motion_travel(32.0)
     def action_motion_reset(self):
-        if self._route_text_entry_shortcut("ctrl+r"): return
         if self.state.mode != "motion": return
         from .state import MotionLabState
         self.state.motion = MotionLabState(); self._motion_last_tick = time.monotonic()
         self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
+
+    def action_context_ctrl_r(self) -> None:
+        if self._route_text_entry_shortcut("ctrl+r"):
+            return
+        if self.state.mode == "workbench":
+            self.action_resize_canvas()
+            return
+        if self.state.mode == "motion":
+            self.action_motion_reset()
     def action_motion_runtime(self):
         if self.state.mode != "motion": return
         selection = self._motion_selection()
@@ -1092,12 +1099,16 @@ class OperatorWorkbenchApp(App):
         """Keep native text-editing behavior when an app shortcut has priority."""
         focused = self.focused
         if isinstance(focused, Input):
+            if key == "ctrl+r":
+                return True
             action = {
                 "ctrl+a": "home",
                 "ctrl+left": "cursor_left_word",
                 "ctrl+right": "cursor_right_word",
             }.get(key)
         elif isinstance(focused, TextArea):
+            if key == "ctrl+r":
+                return True
             action = {
                 "ctrl+a": "cursor_line_start",
                 "ctrl+left": "cursor_word_left",

@@ -3,13 +3,13 @@ from textual.widgets import Static
 
 HINTS = {
     "plan": "ENTER Open   / Search   1-5 Modes   ? Help",
-    "workbench": "ENTER Layer   SPACE Show/Hide   E Edit   A/X Frame   ⇧R Resize Canvas   P Publish   V Validate   W Weapon   ? Help",
+    "workbench": "ENTER Layer   SPACE Show/Hide   E Edit   A/X Frame   Ctrl+R Resize Canvas   P Publish   V Validate   W Weapon   ? Help",
     "preview": "SPACE Play   ←/→ Frame   S Source   ⇧D Examiner   T Target   ⇧T Seam View   Z Zoom   ? Help",
     "timeline": "SPACE Play   ENTER Clip   I/⇧I In   O/⇧O Out   [/] FPS   ⇧L Loops   Ctrl+A Add   Del Remove   ? Help",
     "motion": (
         "SPACE Play   H Heading   M Tread/World   "
         "G Ground   D Distance   L Loop   ⇧L Span   "
-        "ENTER Runtime   ? Help"
+        "Ctrl+R Reset   ENTER Runtime   ? Help"
     ),
 }
 

@@ -101,7 +101,7 @@ recomputed document canvas. Pixel-coordinate socket dependencies are YELLOW and
 block staging until separately migrated; animation clocks, frame count, timing,
 and gameplay hit windows do not change.
 
-Use `Shift+R` in WORKBENCH mode or `operator anim canvas resize ... --width W
+Use `Ctrl+R` in WORKBENCH mode or `operator anim canvas resize ... --width W
 --height H --scope animation|body|all`. Review is explicit; staging rebuilds
 the physical Aseprite document from saved pixels. A matching dirty live Aseprite
 document is refused until saved. Publish constructs the new canonical size-token

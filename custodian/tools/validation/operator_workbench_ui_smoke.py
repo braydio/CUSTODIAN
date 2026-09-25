@@ -876,7 +876,11 @@ async def textual_smoke() -> None:
         assert isinstance(app.screen, FrameAddDialog) and "6" in str(app.screen.query_one("#frame-add-preview").render())
         await pilot.click("#cancel"); await pilot.pause()
         app.action_mode_workbench(); await pilot.pause()
-        await pilot.press("shift+r"); await pilot.pause(0.2)
+        key_bar = app.main_screen.query_one("#context-key-bar", ContextKeyBar)
+        assert "Ctrl+R Resize Canvas" in str(key_bar.render())
+        assert "⇧R Resize Canvas" not in str(key_bar.render())
+        app.screen.query_one("#animation-tree").focus()
+        await pilot.press("ctrl+r"); await pilot.pause(0.2)
         from ui.dialogs import CanvasResizeDialog, CanvasMigrationDialog
         assert isinstance(app.screen, CanvasResizeDialog)
         await pilot.click("#confirm"); await pilot.pause(0.3)
@@ -1072,16 +1076,39 @@ async def textual_smoke() -> None:
         await text_area.remove(); await pilot.pause()
 
         shortcut_app.action_mode_motion(); await pilot.pause(0.2)
+        assert "Ctrl+R Reset" in str(shortcut_app.main_screen.query_one("#context-key-bar", ContextKeyBar).render())
         shortcut_button = Button("Keyboard focus target", id="shortcut-focus-target")
         await shortcut_app.main_screen.mount(shortcut_button); await pilot.pause()
         shortcut_button.focus()
         travel = shortcut_app.state.motion.travel_px
         await pilot.press("ctrl+right"); assert shortcut_app.state.motion.travel_px == travel + 32
         await pilot.press("ctrl+left"); assert shortcut_app.state.motion.travel_px == travel
+        from ui.state import MotionLabState
         shortcut_app.state.motion.travel_px = 240.0
-        await pilot.press("ctrl+r"); assert shortcut_app.state.motion.travel_px == 128.0
+        shortcut_app.state.motion.curve = "ease_in"
+        await pilot.press("ctrl+r"); await pilot.pause(0.2)
+        assert shortcut_app.state.motion == MotionLabState()
         await pilot.press("ctrl+a")
         assert len(shortcut_app.sequence.clips) == clip_count
+
+        shortcut_app.action_mode_timeline(); await pilot.pause(0.2)
+        timeline_table.focus()
+        motion_before = shortcut_app.state.motion
+        await pilot.press("ctrl+r"); await pilot.pause(0.1)
+        assert shortcut_app.screen is shortcut_app.main_screen
+        assert shortcut_app.state.motion == motion_before
+
+        shortcut_app.action_mode_workbench(); await pilot.pause(0.2)
+        search = shortcut_app.main_screen.query_one("#search", Input)
+        search.value = "run_01"
+        search.focus()
+        motion_before = shortcut_app.state.motion
+        await pilot.press("ctrl+r"); await pilot.pause(0.1)
+        from ui.dialogs import CanvasResizeDialog
+        assert shortcut_app.screen is shortcut_app.main_screen
+        assert shortcut_app.state.motion == motion_before
+        assert "Ctrl+R Resize Canvas" in str(shortcut_app.main_screen.query_one("#context-key-bar", ContextKeyBar).render())
+        assert "⇧R Resize Canvas" not in str(shortcut_app.main_screen.query_one("#context-key-bar", ContextKeyBar).render())
 
 
 def real_repo_read_only() -> None:

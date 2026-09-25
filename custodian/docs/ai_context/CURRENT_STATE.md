@@ -582,7 +582,7 @@ aliases, journals resource hashes, restores them during rollback, and reports
 retired runtime PNG paths before actor smokes.
 
 The Workbench also stages explicit frame-canvas contract migrations through
-`operator anim canvas resize` or WORKBENCH `Shift+R`. This is centered canvas
+`operator anim canvas resize` or WORKBENCH `Ctrl+R`. This is centered canvas
 placement only: it preserves RGBA pixels without scaling, adds transparent
 padding, and refuses any contraction that would crop visible pixels. Animation,
 body-only, and all-editable scopes are distinct; source contracts stay old while
