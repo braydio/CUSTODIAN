@@ -143,3 +143,6 @@ history.jsonl
 olddauth.json
 log/
 shell_snapshots/
+
+# Local-only shell helpers; never shared repository authority.
+tools/temporary_aliases.sh

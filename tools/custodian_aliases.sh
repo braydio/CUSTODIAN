@@ -247,3 +247,10 @@ alias_usage() {
 
 echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opui, opui-install, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
 echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."
+
+# Optional ignored local commands; keep personal helpers out of shared authority.
+_custodian_temp_aliases="${CUSTODIAN_REPO}/tools/temporary_aliases.sh"
+if [[ -f "${_custodian_temp_aliases}" ]]; then
+  source "${_custodian_temp_aliases}"
+fi
+unset _custodian_temp_aliases
