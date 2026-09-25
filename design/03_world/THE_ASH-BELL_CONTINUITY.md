@@ -72,6 +72,13 @@ The defining image is a crowd moving toward West Gate while, above them on an
 inaccessible part of the Lower Quarter, one still figure watches. Most never see
 it. A Null Warrant officer does, radios the sighting, and the machinery starts.
 
+**Visual reference — West Gate closure mural**
+
+![Null Warrant West Gate closure mural depicting the crowd beneath the closing gate](../../custodian/asset_drop/source_work/meridian_civic_ruins_props/NULL_WARRANT_WEST_GATE_MURAL.png)
+
+*Reference art for the West Gate closure: the Lower Quarter crowd, containment
+machinery, and the civic memory of the moment the gate was ordered shut.*
+
 The civilians understand: *They are locking us in with it.*
 
 Null Warrant may understand: *We cannot let it out with them.*
