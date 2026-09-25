@@ -113,6 +113,45 @@ pgrep -af godot || echo "clear"
 - Prefer `--json` for machine-readable results instead of re-running a suite to
   read its output again.
 
+### Iteration Economy
+
+Use this sequence for ordinary implementation loops:
+
+```bash
+# 1. Check for an existing validation/capture process before starting another.
+pgrep -af 'godot|run_validation|run_moment' || true
+
+# 2. Run only the focused owner while debugging.
+python3 custodian/tools/validation/run_validation.py --test <id> --json
+
+# 3. For Moment Forge logic iteration, avoid rendering.
+python3 custodian/tools/iteration/run_moment.py <scenario-id> --capture-mode none
+
+# 4. Once green, capture sparse review evidence.
+python3 custodian/tools/iteration/run_moment.py <scenario-id> --capture-mode evidence
+
+# 5. At task closeout, run changed-file validation once.
+python3 custodian/tools/validation/run_validation.py --changed --json
+```
+
+Use `--capture-mode full` only when final acceptance genuinely depends on full
+audiovisual timing, continuous motion, or baseline comparison. A full capture is
+a review artifact, not the default debugging loop. If a full capture is needed,
+prefer one final run after deterministic assertions and evidence capture are
+already green.
+
+Do not run the focused test and `--changed` concurrently against the same
+project. If another agent/session already owns a broad sweep, wait for it or use
+its result rather than launching a competing sweep.
+
+Avoid tight `ps`/`pgrep` polling while a healthy long-running command is
+progressing. Poll only when its expected completion window has passed or when
+you need to diagnose a stall.
+
+If implementation is interrupted by another substantial task, checkpoint the
+current task before switching: record the current status, stop or finish its
+validation process, and keep the two tasks' validation loops separate.
+
 ## Route Traversal V1
 
 From `custodian/`, run the complete directed-route suite:

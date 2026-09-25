@@ -122,6 +122,35 @@ readability, camera composition, or game feel.
    task completion or handoff. Reports belong under `reports/moment_forge/`,
    never runtime content.
 
+## Validation Iteration Economy
+
+During implementation, optimize for the narrowest proof loop that can falsify
+the change quickly. Validation should broaden at task closeout, not become the
+ordinary edit/test loop.
+
+- Before starting validation, check for existing `godot`, `run_validation.py`,
+  or `run_moment.py` processes. Do not start a second broad sweep while one is
+  active.
+- Run focused tests first. Run `run_validation.py --changed --json` once at the
+  closeout boundary unless a materially different changed set genuinely requires
+  another sweep.
+- For Moment Forge, use `--capture-mode none` while debugging deterministic
+  logic, then `--capture-mode evidence` for the first reviewable green run.
+  Use `--capture-mode full` only for final audiovisual review when full capture
+  is actually required; do not use full capture as the ordinary iteration loop.
+- Do not run a focused validation concurrently with a broad sweep against the
+  same Godot project. Stop, wait for, or reuse the in-flight result instead.
+- Avoid tight process polling. If a healthy validation or capture is making
+  progress, wait a reasonable interval before checking it again.
+- If code-review-graph is unavailable, fall back to targeted symbol/file reads.
+  Do not compensate by dumping entire large files or broad repository searches.
+- If the user switches to another substantial task mid-implementation, checkpoint
+  the current task cleanly before switching. Do not interleave two substantial
+  implementation/validation loops in the same worktree unless explicitly required.
+
+See `docs/ai_context/VALIDATION_RECIPES.md` for concrete command sequencing and
+resource checks.
+
 ## Reusable Context Fetch Pipeline
 
 Before editing, run this retrieval pipeline:
