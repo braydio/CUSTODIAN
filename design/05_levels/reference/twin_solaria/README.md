@@ -7,6 +7,9 @@
 
 ## Canonical reference
 
+![Twin Solaria Crown Route Court reference](twin_solaria_crown_route_court_reference.png)
+
+
 - Persistent documentation copy:
   `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png`
 - Dimensions: **3500 x 3000**
