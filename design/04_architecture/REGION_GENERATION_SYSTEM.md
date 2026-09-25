@@ -655,7 +655,7 @@ From scenario:
 * purposeful occupation zones
 * trap or doctrine-shaped spaces
 
-#### Feral Defense Systems
+#### Legacy Interdiction Mesh
 
 * broken but active machinery clusters
 * misaligned security corridors
