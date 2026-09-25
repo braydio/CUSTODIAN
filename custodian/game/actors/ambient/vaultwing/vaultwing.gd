@@ -102,6 +102,12 @@ func get_behavior_trace_state() -> Dictionary:
 func play_action(action: StringName, restart := false) -> bool:
 	return presentation.play_action(action, facing_direction, restart)
 
+func request_interaction_presentation(action: StringName, duration := -1.0) -> void:
+	if behavior != null: behavior.request_interaction_presentation(action, duration)
+
+func clear_interaction_presentation(action: StringName = &"") -> void:
+	if behavior != null: behavior.clear_interaction_presentation(action)
+
 func has_action(action: StringName) -> bool:
 	return presentation.has_action(action, facing_direction)
 

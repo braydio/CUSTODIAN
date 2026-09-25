@@ -141,7 +141,7 @@ func offer_bait(bait_id: StringName, feeder: Node2D = null) -> bool:
 	_attempt_bait = bait_id
 	_attempt_elapsed = 0.0
 	feed_attempt_active = true
-	if actor.has_method("play_action"): actor.call("play_action", &"notice_bait")
+	if actor.has_method("request_interaction_presentation"): actor.call("request_interaction_presentation", &"notice_bait", 0.5)
 	if actor.has_method("request_bait_observation"): actor.call("request_bait_observation", feeder)
 	return true
 
@@ -185,12 +185,13 @@ func complete_bond_trial(final_bait_id: StringName = &"vaultwing_bait", feeder: 
 	_set_stage(BONDED)
 	if actor.has_method("set_allegiance"): actor.call("set_allegiance", ActorAllegianceComponent.OPERATOR_ALLIED)
 	if actor.has_method("on_bond_completed"): actor.call("on_bond_completed", feeder)
-	if actor.has_method("play_action"): actor.call("play_action", &"bond_greet")
+	if actor.has_method("request_interaction_presentation"): actor.call("request_interaction_presentation", &"bond_greet", 0.8)
 	_log(&"vaultwing_feed_accepted", _event_payload({"bait_id":String(final_bait_id),"feed_count":peaceful_feed_count,"trial":true}))
 	_log(&"vaultwing_bond_completed", _event_payload({"species":SPECIES_ID}))
 	bond_completed.emit()
 	trial_phase = &""
 	_feeder = null
+	if actor.has_method("clear_interaction_presentation"): actor.call("clear_interaction_presentation", &"watch_player")
 	_set_bonded_gauge()
 	return true
 
@@ -198,6 +199,8 @@ func notify_actor_landed() -> void:
 	if bond_trial_active and trial_phase == &"voluntary_approach":
 		trial_phase = &"guarded_observation"
 		_trial_elapsed = 0.0
+		if actor.has_method("request_interaction_presentation"):
+			actor.call("request_interaction_presentation", &"watch_player")
 
 func interrupt_bond_trial(reason: StringName = &"interrupted") -> void:
 	if not bond_trial_active: return
@@ -206,6 +209,7 @@ func interrupt_bond_trial(reason: StringName = &"interrupted") -> void:
 	_log(&"vaultwing_bond_trial_interrupted", payload)
 	trial_phase = &""
 	_feeder = null
+	if actor.has_method("clear_interaction_presentation"): actor.call("clear_interaction_presentation", &"watch_player")
 	if actor.has_method("cancel_voluntary_bond_approach"): actor.call("cancel_voluntary_bond_approach")
 
 func interrupt_interaction(reason: StringName = &"interrupted") -> void:
@@ -260,6 +264,7 @@ func from_save_dict(data: Dictionary) -> bool:
 	_must_separate = false
 	_last_encounter_feeder = null
 	if actor != null:
+		if actor.has_method("clear_interaction_presentation"): actor.call("clear_interaction_presentation")
 		actor.set("max_health", loaded_max_health)
 		actor.set("health", loaded_health)
 		if actor.has_method("set_allegiance"):
@@ -288,7 +293,6 @@ func _update_trial(delta: float) -> void:
 		_trial_elapsed += delta
 		if _trial_elapsed >= trial_guarded_seconds:
 			trial_phase = &"final_feed_ready"
-			if actor.has_method("play_action"): actor.call("play_action", &"watch_player")
 
 func _rejection_reason(bait_id: StringName, feeder: Node2D) -> StringName:
 	if actor == null or not is_instance_valid(actor): return &"actor_invalid"
@@ -337,7 +341,7 @@ func _complete_feed_attempt() -> void:
 	elif stage == OBSERVING and peaceful_feed_count >= feeds_to_tolerant: next = TOLERANT
 	elif stage == TOLERANT and peaceful_feed_count >= feeds_to_accepting: next = ACCEPTING
 	if next != stage: _set_stage(next)
-	if actor.has_method("play_action"): actor.call("play_action", &"feed_accept")
+	if actor.has_method("request_interaction_presentation"): actor.call("request_interaction_presentation", &"feed_accept", 0.75)
 	_encounter_cooldown = encounter_cooldown_seconds
 	_must_separate = true
 	_last_encounter_feeder = _feeder

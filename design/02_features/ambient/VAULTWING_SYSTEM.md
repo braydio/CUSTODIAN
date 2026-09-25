@@ -1,6 +1,6 @@
 # CUSTODIAN — VAULTWING CREATURE, PREDATION, AND BOND SYSTEM
 
-**Status:** design locked / wild Slice A gameplay-runtime closeout implemented; EAST/WEST/SOUTH/NORTH art baseline published; production Vaultwing SFX pending
+**Status:** design locked / wild Slice A and B.1 behavioral bond implemented / B.2 bonding presentation contract implemented; bonding art and production Vaultwing SFX pending
 **Feature family:** ambient ecology / hostile fauna / companion progression  
 **Initial creature:** Common Vaultwing  
 **Runtime identity:** `vaultwing_common`  
@@ -425,6 +425,16 @@ Bonding clips:
 | `bond_greet` | 8 | 10 | no |
 | `command_ack` | 4 | 8 | no |
 
+The six Slice-B actions above are requested through a behavior-owned presentation
+override, so state playback cannot replace a cue on the next frame. Timed
+recognition/feed/greeting cues use presentation-only durations; grounded bait
+approach and inspection follow their behavior phases; `watch_player` persists
+through trial readiness and clears on completion/interruption. None of these
+animation durations gates feed, trial, or bond progression. Until dedicated art
+is published, `VaultwingAnimationSet` recognizes the actions and semantic
+fallbacks resolve them to existing wild clips. `command_ack` remains deferred
+until Slice C.
+
 Later candidates include `ground_shove`, `preen`, `sleep/perch_rest`,
 `feed_idle`, `roost_warning`, `carry_small_prey`, `landing_heavy`, and
 `companion_excited`.
@@ -552,12 +562,13 @@ compatibility indexes. Slice B.1 now supplies the same-instance behavioral bond
 loop: safe interruptible feed attempts, encounter separation, stage-specific
 approach/escalation policy, voluntary landing and guarded trial, bonded
 allegiance, provenance-derived stable identity, and a versioned bond/health save
-record. The local record contract is not global save orchestration. Production
-bait pickups/inventory, dedicated bonding animation assets, and companion
-commands remain separate work. After the B.1 runtime and Moment gates are green,
-the next work is a focused bonding presentation/art pass; companion behavior
-remains Slice C. Inspect
-the live dependency graph before choosing exact file ownership. Preserve
+record. The local record contract is not global save orchestration. B.2 now
+owns the six Slice-B semantic animation cues and protects them from ordinary
+state playback; the Asset V2 family and canonical missing-assets tracker list
+the six art families plus feed and recognition SFX. Next, generate and ingest
+the six bonding families, then review `combat/vaultwing_first_bond`; production
+SFX and bait/global-save integration follow, and companion behavior remains
+Slice C. Preserve
 unrelated working-tree changes; keep simulation deterministic; do not expand
 `AmbientCritterManager`; reuse semantic ambient presentation; keep flight as
 discrete bands; put tunable timing/range/damage in appropriate data/config; do

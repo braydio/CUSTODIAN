@@ -1147,9 +1147,10 @@ Last updated: 2026-09-24
 - `design/02_features/ambient/VAULTWING_SLICE_B_BONDING.md`,
   `custodian/tools/validation/vaultwing_bond_smoke.gd`, and
   `custodian/tools/iteration/scenarios/combat/vaultwing_first_bond.json` — Slice
-  B.1 behavioral feed/trial loop, same-instance bonded allegiance, stable spawn
-  identity, versioned save/restore and lifecycle/target-release regressions; the
-  first-bond Moment uses temporary existing-art fallbacks.
+  B.1 behavioral feed/trial loop plus B.2 interaction-presentation ownership,
+  same-instance bonded allegiance, stable spawn identity, versioned save/restore
+  and lifecycle/target-release regressions; the first-bond Moment uses temporary
+  existing-art fallbacks until the six bonding families are ingested.
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.

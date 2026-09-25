@@ -29,6 +29,23 @@ func _run() -> void:
 	vaultwing.global_position = Vector2.ZERO
 	player.global_position = Vector2(120.0, 0.0)
 	vaultwing.behavior.force_state(VaultwingBehaviorController.State.GROUND_IDLE)
+	vaultwing.request_interaction_presentation(&"bond_greet", 0.8)
+	vaultwing.behavior.step(0.01)
+	if vaultwing.behavior._presentation_action_for_state() != &"bond_greet":
+		_fail("interaction presentation was replaced by ordinary state playback")
+	vaultwing.behavior.force_state(VaultwingBehaviorController.State.GROUND_STAGGER)
+	if vaultwing.behavior._presentation_action_for_state() != &"hurt":
+		_fail("bond cue masked a higher-priority damage reaction")
+	vaultwing.behavior.force_state(VaultwingBehaviorController.State.GROUND_IDLE)
+	vaultwing.clear_interaction_presentation(&"bond_greet")
+	vaultwing.behavior.request_bait_observation(player)
+	if vaultwing.behavior._presentation_action_for_state() != &"guarded_approach":
+		_fail("grounded bait approach did not request guarded_approach")
+	vaultwing.behavior._bait_approach_active = false
+	vaultwing.behavior._bait_inspection_active = true
+	if vaultwing.behavior._presentation_action_for_state() != &"inspect_bait":
+		_fail("bait observation dwell did not request inspect_bait")
+	vaultwing.behavior.finish_bait_observation()
 	var actor_id: int = vaultwing.get_instance_id()
 	var behavior_id: int = vaultwing.behavior.get_instance_id()
 	var presentation_id: int = vaultwing.presentation.get_instance_id()
@@ -100,9 +117,11 @@ func _run() -> void:
 		trial_trace.append("%s/%s@%s d=%.1f target=%s pending=%s" % [vaultwing.get_state_name(), vaultwing.get_altitude_band_name(), vaultwing.global_position, vaultwing.global_position.distance_to(player.global_position), str(vaultwing.behavior.target), vaultwing.behavior._pending_after_takeoff])
 	if not bond_state.is_bond_trial_active(): _fail("trial cancelled before voluntary landing/observation (trace=%s)" % [trial_trace])
 	if bond_state.trial_phase != &"guarded_observation": _fail("voluntary approach did not transition to guarded observation (phase=%s state=%s band=%s distance=%.1f trace=%s)" % [bond_state.trial_phase, vaultwing.get_state_name(), vaultwing.get_altitude_band_name(), vaultwing.global_position.distance_to(player.global_position), trial_trace])
+	if vaultwing.behavior._interaction_action != &"watch_player": _fail("watch_player did not cover guarded observation")
 	player.global_position = vaultwing.global_position + Vector2(45.0, 0.0)
 	await create_timer(0.1).timeout
 	if bond_state.is_bond_trial_active(): _fail("rushed approach did not interrupt trial")
+	if vaultwing.behavior._interaction_action == &"watch_player": _fail("interrupted trial left watch_player active")
 	if vaultwing.get_bond_stage() != BondState.ACCEPTING: _fail("interrupted trial erased ACCEPTING stage")
 
 	# Operator violence also cancels a live trial without erasing earned progress.
@@ -126,6 +145,7 @@ func _run() -> void:
 	var before_bond_health: float = vaultwing.health
 	var seed_state_before_bond: int = vaultwing.behavior._rng.state
 	if not vaultwing.complete_bond_trial(&"vaultwing_bait", player): _fail("valid final direct feed did not complete trial")
+	if vaultwing.behavior._interaction_action != &"bond_greet": _fail("bond completion did not request bond_greet")
 	if vaultwing.get_bond_stage() != BondState.BONDED: _fail("valid trial did not reach BONDED")
 	if vaultwing.get_allegiance() != ActorAllegianceComponent.OPERATOR_ALLIED: _fail("bonded Vaultwing did not become Operator-allied")
 	if vaultwing.get_instance_id() != actor_id or vaultwing.behavior.get_instance_id() != behavior_id: _fail("bonding replaced the actor or behavior controller")

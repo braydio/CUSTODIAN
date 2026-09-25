@@ -20,7 +20,13 @@
     "bite_attack":{"required":true,"layer":"body","action_group":"attack","variant":"bite_attack","animation":true,"fps":12,"frames":6},
     "air_stagger":{"required":true,"layer":"body","action_group":"reaction","variant":"air_stagger","animation":true,"fps":12,"frames":5},
     "hurt":{"required":true,"layer":"body","action_group":"reaction","variant":"hurt","animation":true,"fps":12,"frames":4},
-    "death":{"required":true,"layer":"body","action_group":"reaction","variant":"death","animation":true,"fps":10,"frames":8}
+    "death":{"required":true,"layer":"body","action_group":"reaction","variant":"death","animation":true,"fps":10,"frames":8},
+    "notice_bait":{"recommended":true,"layer":"body","action_group":"bonding","variant":"notice_bait","animation":true,"fps":8,"frames":4,"required_directions":["n","s","e"]},
+    "guarded_approach":{"recommended":true,"layer":"body","action_group":"bonding","variant":"guarded_approach","animation":true,"fps":8,"frames":6,"loop":true,"required_directions":["n","s","e"]},
+    "inspect_bait":{"recommended":true,"layer":"body","action_group":"bonding","variant":"inspect_bait","animation":true,"fps":8,"frames":5,"required_directions":["n","s","e"]},
+    "feed_accept":{"recommended":true,"layer":"body","action_group":"bonding","variant":"feed_accept","animation":true,"fps":8,"frames":6,"required_directions":["n","s","e"]},
+    "watch_player":{"recommended":true,"layer":"body","action_group":"bonding","variant":"watch_player","animation":true,"fps":6,"frames":6,"loop":true,"required_directions":["n","s","e"]},
+    "bond_greet":{"recommended":true,"layer":"body","action_group":"bonding","variant":"bond_greet","animation":true,"fps":10,"frames":8,"required_directions":["n","s","e"]}
   },
   "consumers":[{"type":"script","path":"res://game/actors/ambient/vaultwing/vaultwing_animation_set.gd"}]
 }

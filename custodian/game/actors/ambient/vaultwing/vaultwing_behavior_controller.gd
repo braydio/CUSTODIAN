@@ -39,6 +39,10 @@ var _bond_feeder: Node2D
 var _bait_approach_active := false
 var _bait_feeder: Node2D
 var _bait_standoff := 96.0
+var _bait_inspection_active := false
+var _interaction_action: StringName = &""
+var _interaction_remaining := 0.0
+var _published_action: StringName = &""
 var dive_started_count := 0
 var dive_hit_count := 0
 var dive_miss_count := 0
@@ -114,14 +118,30 @@ func request_bait_observation(feeder: Node2D) -> void:
 	if bond_state != null and bond_state.has_method("get_min_safe_approach_distance"):
 		_bait_standoff = float(bond_state.call("get_min_safe_approach_distance")) + 14.0
 	_bait_approach_active = band == Band.GROUND and state == State.GROUND_IDLE
-	if actor.has_method("play_action"): actor.call("play_action", &"notice_bait")
+	_bait_inspection_active = not _bait_approach_active
 
 func is_bait_approach_complete() -> bool:
 	return not _bait_approach_active
 
 func finish_bait_observation() -> void:
 	_bait_approach_active = false
+	_bait_inspection_active = false
 	_bait_feeder = null
+
+## Presentation cues are owned here so the per-frame state publisher cannot
+## replace them with locomotion. Duration is cosmetic and never gates behavior.
+func request_interaction_presentation(action: StringName, duration: float = -1.0) -> void:
+	_interaction_action = action
+	_interaction_remaining = duration
+	_published_action = action
+	if actor != null and actor.has_method("play_action"):
+		actor.call("play_action", action, true)
+
+func clear_interaction_presentation(action: StringName = &"") -> void:
+	if action == &"" or _interaction_action == action:
+		_interaction_action = &""
+		_interaction_remaining = 0.0
+		_published_action = &""
 
 func begin_voluntary_bond_approach(feeder: Node2D) -> void:
 	if feeder == null or not is_instance_valid(feeder): return
@@ -197,6 +217,11 @@ func force_state(next_state: State) -> void: _enter(next_state)
 
 func step(delta: float) -> void:
 	if actor == null or state == State.DEAD: return
+	if _interaction_remaining > 0.0:
+		_interaction_remaining = maxf(0.0, _interaction_remaining - delta)
+		if is_zero_approx(_interaction_remaining):
+			_interaction_action = &""
+			_published_action = &""
 	_engagement_cooldown_remaining = maxf(0.0, _engagement_cooldown_remaining - delta)
 	state_elapsed += delta; actor.velocity = Vector2.ZERO; _update_player_interest(delta)
 	match state:
@@ -256,6 +281,7 @@ func step(delta: float) -> void:
 					actor.velocity = to_feeder.normalized() * profile.ground_speed
 				else:
 					_bait_approach_active = false
+					_bait_inspection_active = true
 			elif _bond_interaction_active(): pass
 			elif _target_in_range(profile.ground_attack_range): _enter(State.GROUND_ATTACK)
 			elif _has_valid_target() and actor.global_position.distance_to(target.global_position) <= profile.engagement_radius: _enter(State.GROUND_STALK)
@@ -308,6 +334,10 @@ func get_band_name() -> StringName: return StringName(Band.keys()[band].to_lower
 
 func _enter(next_state: State) -> void:
 	state = next_state; state_elapsed = 0.0; strike_hit = false; strike_contact_tested = false
+	_published_action = &""
+	if next_state not in [State.GROUND_IDLE, State.PERCH_IDLE]:
+		_interaction_action = &""
+		_interaction_remaining = 0.0
 	match state:
 		State.HIGH_PATROL, State.CIRCLE_INTEREST, State.BOND_APPROACH: _set_band(Band.HIGH)
 		State.DIVE_WINDUP, State.DIVE_STRIKE, State.CLIMB_OUT, State.AIR_STAGGER: _set_band(Band.ATTACK)
@@ -342,7 +372,9 @@ func _set_band(next_band: Band) -> void:
 func _publish_presentation(delta: float) -> void:
 	if actor.has_method("play_action"):
 		var action := _presentation_action_for_state()
-		if action != &"": actor.call("play_action", action)
+		if action != &"" and action != _published_action:
+			actor.call("play_action", action)
+			_published_action = action
 	if actor.has_method("apply_visual_altitude"):
 		var target_altitude := 0.75 if band == Band.HIGH else (0.52 if band == Band.ATTACK else 0.0)
 		if state == State.DIVE_STRIKE: target_altitude = 0.10
@@ -350,6 +382,9 @@ func _publish_presentation(delta: float) -> void:
 		visual_altitude = move_toward(visual_altitude, target_altitude, 2.4 * delta); actor.call("apply_visual_altitude", visual_altitude)
 
 func _presentation_action_for_state() -> StringName:
+	if _interaction_action != &"": return _interaction_action
+	if _bait_approach_active: return &"guarded_approach"
+	if _bait_inspection_active: return &"inspect_bait"
 	match state:
 		State.HIGH_PATROL, State.CIRCLE_INTEREST: return &"glide"
 		State.DIVE_WINDUP: return &"dive_windup"

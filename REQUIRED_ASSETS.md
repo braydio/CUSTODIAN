@@ -127,6 +127,18 @@ denotes the state names listed in the Notes column.
 | needed | P1 `awakening_ruin_decal` | `custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_*_64.png` | Ruin damage and rubble decal set. | Required: `floor_crack_a`, `floor_crack_b`, `floor_crack_c`, `rubble_small`, `rubble_medium`. |
 | needed | P1 ambient Awakening FX families | `custodian/content/sprites/effects/awakening/runtime/<family>/<family>__fx__effect__*__omni__8f__<size>.png` | Required environmental motion layers. | `awakening_dust_motes/loop` 64px at 6 FPS; `awakening_falling_ash/loop` 64px at 6 FPS; `awakening_gate_wind_dust/loop` 128px at 8 FPS. |
 
+## Common Vaultwing Bonding Presentation
+
+Family contract: `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`.
+Author source masters under `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`;
+Asset V2 publishes to `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/`.
+
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | Vaultwing bonding animation suite | `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/vaultwing_common__body__bonding__<action>__{n,s,e,w}__<frames>f__256.png` | Give bait recognition, cautious approach, inspection, feeding, trial observation, and earned bond recognition distinct authored motion. | `notice_bait` 4f/8 FPS; `guarded_approach` 6f/8 FPS; `inspect_bait` 5f/8 FPS; `feed_accept` 6f/8 FPS; `watch_player` 6f/6 FPS; `bond_greet` 8f/10 FPS. Author E/S/N at 256×256 RGBA; W is Asset V2 mirrored from E when symmetric. This yields 18 source masters and 24 runtime directional strips. Existing wild clips are temporary semantic fallbacks. `command_ack` is deferred to Slice C. |
+| needed | Vaultwing feed vocalization | `custodian/content/audio/sfx/fauna/vaultwing/vaultwing_feed_accept_01.wav` | Give accepted feeding a creature-specific vocal response. | Production SFX follows animation ingest and first-bond visual review. |
+| needed | Vaultwing bond-recognition call | `custodian/content/audio/sfx/fauna/vaultwing/vaultwing_bond_recognition_01.wav` | Mark the first earned recognition beat when the creature becomes bonded. | Keep distinct from hostile territorial and dive calls; production SFX follows animation ingest and first-bond visual review. |
+
 ## Baby Opossum Ambient Creature
 
 Runtime body strips are published; the entries below are approved source renders whose poses sit on a non-uniform

@@ -15,7 +15,8 @@ const FALLBACKS := {
 	"alert":["startle","look","idle"],"startle":["alert","idle"],"freeze":["idle"],"hiss":["alert","startle","idle"],"panic":["startle","scurry","waddle","idle"],"flee_start":["startle","scurry","waddle","idle"],
 	"play_dead_enter":["freeze","idle"],"play_dead_hold":["freeze","idle"],"play_dead_peek":["look","idle"],"play_dead_exit":["idle"],"hide_enter":["scurry","idle"],"hide_hold":["idle"],"hide_peek":["look","idle"],"hide_exit":["idle"],
 	"reject_hit":["startle","idle"],"disapprove":["look","idle"],"disapprove_hold":["disapprove","look","idle"],"notice_treat":["alert","look","idle"],"approach_wary":["waddle","idle"],"sniff_treat":["sniff","look","idle"],"take_treat":["eat","idle"],"eat":["idle"],"friend_happy":["greet","look","idle"],"greet":["friend_happy","look","idle"],"approach_player":["waddle","idle"],"follow":["waddle","idle"],"wait":["idle"],
-	"search":["sniff","look","idle"],"dig":["search","sniff","idle"],"find_target":["alert","look","idle"],"look_back":["look","idle"],"excited_idle":["friend_happy","idle"],"danger_sense":["alert","freeze","idle"],"retrieve":["waddle","idle"],"gift_drop":["idle"]
+	"search":["sniff","look","idle"],"dig":["search","sniff","idle"],"find_target":["alert","look","idle"],"look_back":["look","idle"],"excited_idle":["friend_happy","idle"],"danger_sense":["alert","freeze","idle"],"retrieve":["waddle","idle"],"gift_drop":["idle"],
+	"notice_bait":["look","ground_idle"],"guarded_approach":["ground_walk","ground_idle"],"inspect_bait":["ground_idle","look"],"feed_accept":["ground_idle","look"],"watch_player":["perch_idle","ground_idle"],"bond_greet":["look","ground_idle"]
 }
 
 var animation_set: AmbientCreatureAnimationSet

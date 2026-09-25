@@ -74,7 +74,15 @@ def main() -> int:
     if len(strips) != 56:
         failures.append(f"expected 56 canonical strips, found {len(strips)}")
     for action in sorted(expected_actions):
-        for direction in sorted(DIRECTIONS):
+        state = states[action]
+        present_directions = {direction for candidate, direction in by_action_direction if candidate == action}
+        # Recommended states may be registered before production art exists.
+        # Once any strips are published, validate their declared coverage;
+        # required states must always have full or explicitly declared coverage.
+        if not state.get("required", False) and not present_directions:
+            continue
+        required_directions = set(state.get("required_directions", DIRECTIONS))
+        for direction in sorted(required_directions):
             if (action, direction) not in by_action_direction:
                 failures.append(f"missing {action}::{direction}")
     for path in [CUSTODIAN / "game/actors/ambient/vaultwing", CUSTODIAN / "game/systems/spawning/vaultwing_spawner.gd", CUSTODIAN / "scenes"]:

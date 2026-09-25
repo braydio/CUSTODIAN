@@ -1737,15 +1737,19 @@ progress, identity, and health while discarding transient interaction state.
 Bonded actors survive wild-world population reset and do not consume wild
 population cap. Damage attribution, observability, retained turret/drone target
 release, `vaultwing_bond`, and the reviewed `combat/vaultwing_first_bond` Moment
-are covered. Production bait pickups/inventory, global save orchestration,
-bonding art/SFX, and companion commands/behavior remain deferred. Bait
-acquisition and global save ownership need later integration; bonding art/SFX
-are presentation follow-up; companion commands/behavior remain Slice C.
-The focused bond/runtime/world-spawn/relationship checks and first-bond Moment
-pass. The changed sweep ran 63 checks with 63 passing and no test failures;
-coverage remains incomplete only for 25 unrelated shared-worktree Operator
-art/runtime and audio/review artifacts. Historical archive-boundary validation
-passes.
+are covered. B.2 adds a behavior-owned presentation override for bait
+recognition, guarded approach, inspection, accepted feed, trial observation /
+readiness, and bond recognition; ordinary state playback cannot replace these
+cues each frame. Cue durations do not gate gameplay. The V2 family registers
+the six designed actions with existing wild-clip fallbacks until art arrives,
+and root `REQUIRED_ASSETS.md` tracks the 18 E/S/N source masters, 24 runtime
+directional strips, feed vocalization, and bond-recognition call. Next: generate
+and ingest the art, review `combat/vaultwing_first_bond`, add production SFX,
+then integrate bait inventory and global save ownership. Companion
+commands/behavior remain Slice C. The B.2 `combat/vaultwing_first_bond`
+Moment evidence capture passes at
+`reports/moment_forge/combat/vaultwing_first_bond/20260925T124724-0400`;
+defer full audiovisual judgment until authored bonding art is ingested.
 
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored

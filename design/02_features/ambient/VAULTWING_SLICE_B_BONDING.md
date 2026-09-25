@@ -1,6 +1,6 @@
 # Vaultwing Slice B — Bonding Vertical Slice
 
-**Status:** Slice B.1 behavioral loop implemented; Slice B remains active
+**Status:** Slice B.1 behavioral loop and B.2 presentation contract implemented; Slice B remains active
 **Authority:** `design/02_features/ambient/VAULTWING_SYSTEM.md`
 
 This slice establishes the first same-instance bonding lifecycle without adding
@@ -37,13 +37,43 @@ companion commands or a new generic creature framework.
 - Bond feed, rejection, stage, trial, completion, and population observability
   include stable identity where applicable.
 
+## B.2 presentation contract
+
+`VaultwingBehaviorController` owns a presentation-only interaction override so
+its per-frame behavior animation publication cannot immediately stomp bond
+cues. Slice-B semantics map to `notice_bait` (bait recognition),
+`guarded_approach` (cautious grounded bait approach), `inspect_bait` (bait
+observation dwell), `feed_accept` (completed feed), `watch_player` (guarded
+trial observation through final-feed readiness), and `bond_greet` (recognition
+after completion). Timed one-shots use visual durations only; approach, feed,
+trial, and bond timing remain behavior/bond-state owned. The Asset V2 family
+registers all six at their designed frame/FPS contracts, with current wild
+clips as semantic fallbacks until art is ingested. `command_ack` is not part of
+this pass.
+
 ## Deliberate follow-up
 
 This slice does not add production bait pickups/inventory consumption, global
-save orchestration, companion commands, follow/orbit/assist behavior, or new
-bonding animation assets. The bond API and versioned local save record are live;
-item acquisition, global persistence ownership, presentation art, and Slice C
-commands remain later integration work.
+save orchestration, companion commands, follow/orbit/assist behavior, authored
+bonding animation assets, or bonding SFX. The bond API, versioned local save
+record, and semantic presentation contract are live; art ingest and Moment
+review precede production SFX, item acquisition, global persistence ownership,
+and Slice C commands.
+
+## Next Agent Slice — Bonding Art Ingest and First-Bond Review
+
+- **Goal:** Author and ingest the six B.2 bonding actions, then review the
+  existing `combat/vaultwing_first_bond` Moment.
+- **Files:** Vaultwing art source under
+  `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`, family
+  inbox/runtime outputs, and validation/Moment reports.
+- **Constraints:** 256×256 RGBA cells; E/S/N source masters; W mirrored by Asset
+  V2 when valid; 18 source masters and 24 runtime strips. Do not generate
+  `command_ack`. Keep gameplay timing independent of animation completion.
+- **Acceptance:** All six action contracts ingest with expected counts and
+  directional coverage; focused Vaultwing asset/bond checks pass;
+  `combat/vaultwing_first_bond` passes with `--capture-mode evidence`; use one
+  `full` capture for final visual judgment.
 
 ## Validation
 

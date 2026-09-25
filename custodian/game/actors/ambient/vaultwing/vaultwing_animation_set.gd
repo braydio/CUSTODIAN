@@ -5,12 +5,14 @@ extends AmbientCreatureAnimationSet
 const ROOT := "res://content/sprites/ambient_creatures/vaultwing_common/runtime"
 const OWNER := "vaultwing_common"
 const VALID_DIRECTIONS := {"n":true, "s":true, "e":true, "w":true, "omni":true}
-const LOOP_ACTIONS := {"glide":true, "flap":true, "perch_idle":true, "ground_idle":true, "ground_walk":true}
+const LOOP_ACTIONS := {"glide":true, "flap":true, "perch_idle":true, "ground_idle":true, "ground_walk":true, "guarded_approach":true, "watch_player":true}
 const ACTION_FPS := {
 	"glide":8.0, "flap":10.0, "dive_windup":10.0, "dive_strike":14.0,
 	"climb_out":12.0, "land":10.0, "takeoff":12.0, "perch_idle":6.0,
 	"ground_idle":6.0, "ground_walk":8.0, "bite_attack":12.0,
-	"air_stagger":12.0, "hurt":12.0, "death":10.0
+	"air_stagger":12.0, "hurt":12.0, "death":10.0,
+	"notice_bait":8.0, "guarded_approach":8.0, "inspect_bait":8.0,
+	"feed_accept":8.0, "watch_player":6.0, "bond_greet":10.0
 }
 
 func _init() -> void:
