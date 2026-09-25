@@ -1,0 +1,61 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_reliquary_dust_lung_connector",
+  "kind": "backdrop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "levels/awakening/04_05_connector",
+    "owner": "awakening_reliquary_dust_lung_connector",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 704,
+    "height": 160
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "connector_a": {
+      "required": true,
+      "layer": "background",
+      "action_group": "connector",
+      "variant": "connector_a",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 160,
+      "frames": 1,
+      "fps": 0
+    },
+    "connector_b": {
+      "required": true,
+      "layer": "background",
+      "action_group": "connector",
+      "variant": "connector_b",
+      "layout": "copy",
+      "frame_width": 704,
+      "frame_height": 128,
+      "frames": 1,
+      "fps": 0
+    },
+    "connector_c": {
+      "required": true,
+      "layer": "background",
+      "action_group": "connector",
+      "variant": "connector_c",
+      "layout": "copy",
+      "frame_width": 128,
+      "frame_height": 96,
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/awakening_first_return.tscn"
+    }
+  ]
+}

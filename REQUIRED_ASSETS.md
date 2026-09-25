@@ -108,6 +108,10 @@ Canonical tracker for production art, audio, animation, and content assets that 
 
 ## Awakening / The First Return (sections 01-10)
 
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| bound | Reliquary → Dust Lung connector plates | `custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_{a_128x160,b_704x128,c_128x96}.png` | Present the locked three-part 04→05 dogleg without changing its geometry. | Asset V2 family `awakening_reliquary_dust_lung_connector`; presentation-only; traversal/collision remain Layout-owned. |
+
 The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is
 registered by the Asset V2 families below; drop human-named state files into
 `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in

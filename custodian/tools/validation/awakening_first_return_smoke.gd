@@ -218,6 +218,7 @@ func _check_scene_skeleton(instance: Node) -> void:
 		_fail("Layout traversal authority is missing")
 	elif traversal != null and traversal.get_child_count() != Layout.traversal_rects().size() * 2:
 		_fail("traversal debug presentation no longer follows Layout traversal authority")
+	_check_connector_art(instance)
 	var backdrop := instance.get_node_or_null("World/AwakeningVoidBackdrop") as Polygon2D
 	if backdrop == null or backdrop.polygon.size() != 4:
 		_fail("Awakening presentation void backdrop is missing")
@@ -268,6 +269,46 @@ func _check_zone_art_fade(instance: Node) -> void:
 	instance.call("_update_zone_art_visibility")
 	if creche.modulate.a != 1.0 or reliquary.modulate.a != 0.0:
 		_fail("backtracking must restore Crèche art and hide the Reliquary")
+	var connector_a := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_A") as CanvasItem
+	var connector_b := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_B") as CanvasItem
+	var connector_c := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_C") as CanvasItem
+	if connector_a == null or connector_b == null or connector_c == null:
+		_fail("04→05 production connector art is missing from the scene")
+		return
+	var connector_sprites := {"04_05_A": connector_a, "04_05_B": connector_b, "04_05_C": connector_c}
+	for connector_id in connector_sprites:
+		operator.global_position = Layout.CONNECTORS[connector_id].get_center()
+		instance.call("_update_zone_art_visibility")
+		if connector_sprites[connector_id].modulate.a != 1.0:
+			_fail("%s connector art must be fully revealed inside its authored rectangle" % connector_id)
+	operator.global_position = Layout.OPERATOR_WAKE_POSITION
+	instance.call("_update_zone_art_visibility")
+	if connector_a.modulate.a != 0.0 or connector_b.modulate.a != 0.0 or connector_c.modulate.a != 0.0:
+		_fail("04→05 connector art must fade out away from the dogleg")
+
+
+func _check_connector_art(instance: Node) -> void:
+	var expected := {
+		"04_05_A": Vector2i(128, 160),
+		"04_05_B": Vector2i(704, 128),
+		"04_05_C": Vector2i(128, 96),
+	}
+	for connector_id in expected:
+		var rect: Rect2 = Layout.CONNECTORS[connector_id]
+		var sprite := instance.get_node_or_null(
+			"World/AwakeningZones/Traversal/ProductionArt/Connector" + String(connector_id)
+		) as Sprite2D
+		if sprite == null:
+			_fail("production connector sprite missing: %s" % connector_id)
+			continue
+		if sprite.position != rect.get_center():
+			_fail("%s sprite center no longer matches locked connector rect" % connector_id)
+		if sprite.texture == null or sprite.texture.get_size() != Vector2(expected[connector_id]):
+			_fail("%s texture missing or not normalized to %s" % [connector_id, str(expected[connector_id])])
+		if not sprite.centered:
+			_fail("%s connector sprite must remain centered on its locked rectangle" % connector_id)
+		if sprite.get_child_count() > 0:
+			_fail("%s connector sprite unexpectedly owns child gameplay nodes" % connector_id)
 
 
 func _check_marker_placements(instance: Node) -> void:

@@ -28,6 +28,9 @@
 [ext_resource type="Texture2D" path="res://content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_foreground_1536x768.png" id="28_gate_plaza_foreground"]
 [ext_resource type="Texture2D" path="res://content/levels/awakening/08_approach/awakening_custodian_approach_underlay_1024x864.png" id="29_approach_underlay"]
 [ext_resource type="Texture2D" path="res://content/levels/awakening/08_approach/awakening_custodian_approach_foreground_1024x864.png" id="30_approach_foreground"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_a_128x160.png" id="31_connector_a"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_b_704x128.png" id="32_connector_b"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_c_128x96.png" id="33_connector_c"]
 
 [node name="GameRoot" type="Node2D"]
 script = ExtResource("1_awakening")
@@ -209,6 +212,26 @@ centered = true
 z_index = 10
 
 [node name="Zone10_RoadSouthReach" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="Traversal" type="Node2D" parent="World/AwakeningZones"]
+
+[node name="ProductionArt" type="Node2D" parent="World/AwakeningZones/Traversal"]
+z_index = 1
+
+[node name="Connector04_05_A" type="Sprite2D" parent="World/AwakeningZones/Traversal/ProductionArt"]
+position = Vector2(704, -2352)
+texture = ExtResource("31_connector_a")
+centered = true
+
+[node name="Connector04_05_B" type="Sprite2D" parent="World/AwakeningZones/Traversal/ProductionArt"]
+position = Vector2(352, -2496)
+texture = ExtResource("32_connector_b")
+centered = true
+
+[node name="Connector04_05_C" type="Sprite2D" parent="World/AwakeningZones/Traversal/ProductionArt"]
+position = Vector2(0, -2608)
+texture = ExtResource("33_connector_c")
+centered = true
 
 [node name="RoadOfWitnessesPrototype" type="Node2D" parent="World/AwakeningZones/Zone10_RoadSouthReach"]
 position = Vector2(6, -6626)

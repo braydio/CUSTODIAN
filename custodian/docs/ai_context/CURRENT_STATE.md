@@ -1543,8 +1543,10 @@ Plate binding is distinct from finished visual QA. The live Awakening now hides
 production traversal blockout visuals, uses a dark void plane and local camera
 framing, fades neighboring room canvases at transitions, seats the P-9 locker
 into its east wall, and raises only the Undergate's existing ambient profiles.
-The 04→05 dogleg still lacks authored connector art; the first five Road modular
-presentation families require new native-size art. The sealed central Gate
+The 04→05 dogleg now has three normalized, V2-ingested connector plates bound
+to its unchanged `04_05_A/B/C` rectangles; they are presentation-only and fade
+with distance. The first five Road modular presentation families require new
+native-size art. The sealed central Gate
 body's passage composition remains an authored-state decision.
 
 The traversal connector/inlay blockout layer now yields to the production

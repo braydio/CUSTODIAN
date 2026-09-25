@@ -10345,6 +10345,74 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_reliquary_dust_lung_connector": {
+      "kind": "backdrop",
+      "assets": {
+        "connector_a::omni": {
+          "state_id": "connector_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_reliquary_dust_lung_connector",
+            "backdrop",
+            "background",
+            "connector",
+            "connector_a",
+            "omni"
+          ],
+          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_a_128x160.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "607024c6b619efb7e590a3c94ba763ab00b1fa86c9f4a8c0214795571357cd39",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "connector_b::omni": {
+          "state_id": "connector_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_reliquary_dust_lung_connector",
+            "backdrop",
+            "background",
+            "connector",
+            "connector_b",
+            "omni"
+          ],
+          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_b_704x128.png",
+          "frames": 1,
+          "frame_size": [
+            704,
+            128
+          ],
+          "sha256": "ca43246ce8e5b82e5cd8e800a241dd29a3576a611df1bf150c0f99cbf7c52cde",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "connector_c::omni": {
+          "state_id": "connector_c",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_reliquary_dust_lung_connector",
+            "backdrop",
+            "background",
+            "connector",
+            "connector_c",
+            "omni"
+          ],
+          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_c_128x96.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            96
+          ],
+          "sha256": "47365e2edc92eeb4558be4cf0e552febdb37f2c1fe55fea540c2c294ee281215",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }
