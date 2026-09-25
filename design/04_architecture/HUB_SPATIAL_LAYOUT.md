@@ -2,7 +2,7 @@
 
 **Status:** draft
 **Parent:** HUB_DOCTRINE.md
-**Last Updated:** 2026-04-22
+**Last Updated:** 2026-09-25
 
 ---
 
@@ -28,11 +28,11 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 ```text
                                      NORTH
 
-                         ┌─────────────────────────────┐
-                         │      THE TWIN SOLARIA       │
-                         │  sunset terraces / sky law  │
-                         └─────────────┬───────────────┘
-                                       │
+                         ╔─────────────────────────────╗
+                         ║      THE TWIN SOLARIA       ║
+                         ║  detached Crown Route Court ║
+                         ╚─────────────▲───────────────╝
+                                       │ CROWN TRANSFER
                       ┌────────────────┴────────────────┐
                       │        ARCHIVE HEIGHTS          │
                       │  sealed libraries / index halls │
@@ -239,15 +239,40 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 
 ### 1.10 Twin Solaria
 
-**Purpose:** Double-sunset cosmology, terminal sky measurement
+**Canonical authority:** `design/05_levels/TWIN_SOLARIA.md`
+
+**Purpose:** Crown-class continuity route reconstruction, reciprocity review, and
+Custodian route adjudication.
+
+**Location:** A detached Crown Annex associated with Archive Heights and reached by
+the **Crown Transfer**. It is part of the Hub Domain but no longer sits on an
+ordinary continuous street approach.
 
 **Geometry:**
-- Long terraces, solar courts
-- Horizon galleries
-- Sky instruments aligned to impossible celestial behavior
-- NOT "sun worship" — civilizational measurement attempt
+- narrow Crown Causeway arrival;
+- lower Home Index and paired Witness Rings;
+- opposed Echo Drums;
+- central Reciprocity Dial and Authority Threshold;
+- paired Outbound and Reciprocal Solaria;
+- tall Meridian Needle;
+- enormous offset Crown Aperture court;
+- exposed Crown Verge around surviving structure.
 
-**Function:** Where the city measures the terminal sky. Cosmology becomes architectural.
+**Function:** Twin Solaria reconstructs damaged or incomplete route solutions when an
+ordinary Continuity Port no longer has enough route information to operate safely.
+The facility establishes the Hub's own continuity reference, compares historical and
+live evidence, interrogates a candidate route, models the reciprocal return path, and
+presents the resulting finding for Custodian Hold, Abort, or Restoration
+Authorization.
+
+**Naming:** "Twin Solaria" refers to the paired continuity-reference towers, not two
+literal suns.
+
+**Exterior:** The Crown Verge is deliberately unresolved. It may look like outer
+space, but active canon does not classify it as ordinary vacuum or normal astronomy.
+
+**Constraint:** The facility does not create Domains, invent destinations, defeat
+reciprocity, or function as casual fast travel.
 
 ---
 
@@ -285,14 +310,14 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 | 6 | Tower of Catalogues | Archive Heights | Skyline anchor |
 | 7 | The Drowned Courts | Sunken Civic | Quarter anchor |
 | 8 | Reliquary of Names | Reliquary Ward | Memory node |
-| 9 | Twin Solaria | Twin Solaria | Sunset terraces |
+| 9 | Crown Aperture / Twin Solaria | Twin Solaria | Lost-route reconstruction and reciprocity adjudication |
 | 10 | Prism Margin | Prism Margin | End-of-world overlook |
 
 ---
 
 ## 3. Traversal Loop
 
-```
+```text
 [GATE OF DUST]
         |
         v
@@ -300,18 +325,20 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
         |
         v
 [ROAD OF WITNESSES] <-- main axis
-    /   |   \
-   /    |    \
-  v     v     v
-[SEPULCHER] [ASHEN] [MEMORY]
-  GARDENS  FORUM BASTIONS
-   |       |       \
-   v       v        v
-[SUNKEN] [ARCHIVE] [TWIN SOLARIA]
-  CIVIC  HEIGHTS
-   \      |      /
-    \     |     /
-     v    v    v
+    /       |        \
+   v        v         v
+[SEPULCHER] [ASHEN] [MEMORY BASTIONS]
+  GARDENS    FORUM
+   |          |
+   v          v
+[SUNKEN] [ARCHIVE HEIGHTS]
+  CIVIC       |  \
+   |           |   \ Crown Transfer
+   |           |    v
+   |           | [TWIN SOLARIA]
+   |           |  [DETACHED ANNEX]
+   |           |
+   v           v
   [RELIQUARY WARD]
          |
          v
@@ -320,6 +347,10 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
          v
 [THE LONG EDGE OF THE WORLD]
 ```
+
+Twin Solaria is connected **institutionally and by transfer**, not by a surviving
+ordinary street. Its detached geometry must not be drawn as a walkable northern
+terrace extension.
 
 ---
 
@@ -349,7 +380,7 @@ Without overbuilding the entire city initially.
 | **2: Archive Colors** | Archive Heights | Violets, cobalt, glass green, lamp-amber |
 | **3: Living Pressure** | Sepulcher Gardens, Sunken Civic | Moss-green, wet stone umber, pale flowers, varied wildlife |
 | **4: Civic Revelation** | Ashen Forum, Reliquary Ward | Golds, whites, mural pigments, enamel, stained stone, ceremonial surfacing |
-| **5: Prism Excess** | Twin Solaria, Prism Margin | Almost too vivid, spectral bands, double sunsets, more revealed not safer |
+| **5: Prism Excess** | Twin Solaria, Prism Margin | Almost too vivid, route-light spill, Crown Verge spectral banding, more revealed not safer |
 
 ---
 
@@ -362,21 +393,24 @@ Without overbuilding the entire city initially.
 
 ---
 
-## 7. Sky / Celestial Framing
+## 7. Sky / Exterior Framing
 
-| Location | Sky Exposure | Celestial Moment |
+| Location | Exterior Exposure | Canonical visual event |
 |----------|-----------|--------------|
-| Road of Witnesses | Partial (colonnade frames) | Sunrise / first sun |
-| Ashen Forum | Partial | Star-map floor visible |
-| Archive Heights - Observatory | Full 360 | Star patterns, double sunset |
-| Prism Margin | Full 180+ | Both suns, prismatic effects |
-| Twin Solaria | Full | Solar alignment events |
-| Sunken Civic (flooded) | Reflected | Inverted sky views |
+| Road of Witnesses | Partial, colonnade-framed | Low-angle daylight and distant sky |
+| Ashen Forum | Partial | Star-map floor and civic light relationships |
+| Archive Heights - Observatory | Full 360 | Star patterns, relay lights, route-reference optics |
+| Prism Margin | Full 180+ | Prismatic exterior effects and unstable horizon phenomena |
+| Twin Solaria | Crown Verge | Route acquisition, Solaria activation, Resolved Route Vistas |
+| Sunken Civic (flooded) | Reflected | Inverted sky and city reflections |
+
+Twin Solaria's exterior presentation may resemble outer space, but the Crown Verge is
+not canonically reduced to normal astronomy.
 
 ---
 
 ## 8. Related
 
 - Parent: `HUB_DOCTRINE.md`
-- Related: `HUB_CHROMA_PROGRESSION.md`, `HUB_RETURN_GRAMMAR.md`
+- Related: `HUB_CHROMA_PROGRESSION.md`, `HUB_RETURN_GRAMMAR.md`, `../05_levels/TWIN_SOLARIA.md`
 - Integrates: City map with chroma progression, landmarks
