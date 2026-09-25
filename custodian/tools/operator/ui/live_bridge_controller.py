@@ -184,6 +184,33 @@ class LiveBridgeController:
             payload["composition"] = composition
         return await self.server.send_command(MessageType.EXPORT_PREVIEW, payload)
 
+    async def request_preview_export(self, workbench_path: Path, revision: int, composition: str = "body_fx") -> dict[str, object]:
+        """Synchronously export a live composition and return its detached contract."""
+        if revision < 0:
+            raise ValueError("revision must be non-negative")
+        if composition not in ("body", "fx", "body_fx"):
+            raise ValueError("composition must be body, fx, or body_fx")
+        document = self.server.paths.validate_workbench(workbench_path)
+        output = self._live_preview_path(document, composition)
+        payload: dict[str, object] = {
+            "document_path": str(document), "output_path": str(output), "revision": revision,
+            "composition": composition,
+        }
+        result = await self.server.request_command(MessageType.EXPORT_PREVIEW, payload)
+        data = result.payload
+        if data.get("operation") != "export_preview":
+            raise RuntimeError("live preview returned an unexpected operation")
+        if data.get("ok") is not True:
+            raise RuntimeError(str(data.get("error") or "live preview export failed"))
+        required = ("output_path", "frames", "frame_width", "frame_height", "revision")
+        if any(key not in data for key in required):
+            raise RuntimeError("live preview result omitted its detached frame contract")
+        if int(data["revision"]) != revision:
+            raise RuntimeError("live preview result revision is stale")
+        if Path(str(data["output_path"])).resolve() != output.resolve():
+            raise RuntimeError("live preview result path is outside the requested cache")
+        return {key: data[key] for key in required}
+
     async def start(self) -> None:
         if self._status not in (LiveBridgeUIStatus.STOPPED, LiveBridgeUIStatus.UNAVAILABLE):
             return

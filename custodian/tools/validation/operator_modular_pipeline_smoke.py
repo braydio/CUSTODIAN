@@ -14,10 +14,12 @@ from PIL import Image
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PIPELINES = PROJECT_ROOT / "tools" / "pipelines"
 sys.path.insert(0, str(PIPELINES))
+sys.path.insert(0, str(PROJECT_ROOT / "tools/operator"))
 
 import sync_operator_runtime_assets as builder  # noqa: E402
 import generate_inbox_manifests as manifests  # noqa: E402
 from operator_asset_schema import parse_filename  # noqa: E402
+import animation_frame_contract as frame_contract  # noqa: E402
 
 
 def _write_strip(path: Path, frames: int, width: int, height: int) -> None:
@@ -162,6 +164,37 @@ def main() -> int:
         else:
             raise AssertionError("mismatched synchronized timing must fail strict validation")
         builder.timing_sidecar_path(upper).unlink()
+
+        # End-to-end canvas contract: canonical 96px strips are center-padded
+        # into staged 128px strips, then the real runtime sync writes matching
+        # frame_size metadata to both the runtime manifest and presentation catalog.
+        canvas_source_root = root / "canvas-canonical"
+        canvas_stage_root = root / "canvas-staged"
+        canvas_project = root / "canvas-project"
+        old_identity = ("unarmed", "attack", "fast_02", "e")
+        for layer in ("lower_body", "upper_body", "fx"):
+            old_name = f"operator__{layer}__unarmed__attack__fast_02__e__6f__96.png"
+            staged_name = old_name.replace("__6f__96.png", "__6f__128.png")
+            old_strip = canvas_source_root / "animations/unarmed/attack/fast_02" / old_name
+            _write_strip(old_strip, 6, 96, 96)
+            staged_strip = canvas_stage_root / "unarmed/attack/fast_02" / staged_name
+            frame_contract.transform_canvas_strip(old_strip, staged_strip, 6, [96, 96], [128, 128], layer)
+        canvas_manifest_path = canvas_project / "content/sprites/operator/runtime/operator_runtime_manifest.generated.json"
+        canvas_catalog_path = canvas_project / "content/data/operator/generated/operator_animation_catalog.generated.json"
+        builder.sync(source_root=canvas_stage_root, project_root=canvas_project,
+                     manifest_path=canvas_manifest_path, catalog_path=canvas_catalog_path,
+                     weapons_root=canvas_project / "content/sprites/weapons", strict=True)
+        canvas_runtime = json.loads(canvas_manifest_path.read_text())
+        canvas_catalog = json.loads(canvas_catalog_path.read_text())
+        runtime_entry = canvas_runtime["animations"]["unarmed/attack/fast_02/e"]
+        catalog_entry = canvas_catalog["animations"]["unarmed/attack/fast_02/e"]
+        for layer in ("lower_body", "upper_body", "fx"):
+            assert runtime_entry["layers"][layer]["frame_size"] == [128, 128]
+            assert catalog_entry["layers"][layer]["frame_size"] == runtime_entry["layers"][layer]["frame_size"], \
+                f"runtime/catalog canvas contract diverged for {old_identity}/{layer}"
+            runtime_path = canvas_project / runtime_entry["layers"][layer]["path"].removeprefix("res://")
+            with Image.open(runtime_path) as runtime_sheet:
+                assert runtime_sheet.size == (768, 128)
 
         stale = runtime / "melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__e__3f__128x96.png"
         _write_strip(stale, 3, 128, 96)

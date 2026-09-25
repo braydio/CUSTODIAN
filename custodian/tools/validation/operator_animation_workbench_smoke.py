@@ -85,6 +85,7 @@ def main():
   linked_binding=json.loads(json.dumps(canvas_manifest["layers"][0]));linked_binding.update({"binding_id":"weapon__vigil","layer":"weapon","owner":"weapon_vigil","profile":"melee_1h"});canvas_manifest["layers"].append(linked_binding)
   canvas_report=fc.canvas_migration_report(canvas_manifest,128,128,"animation",root)
   assert set(canvas_report["affected_bindings"])=={"lower_body","upper_body","fx"}
+  assert canvas_report["crop_audit"]["status"]=="impossible"
   assert canvas_report["new_document_size"]==[128,128] and canvas_report["placements"]["lower_body"]==[0,0]
   assert "weapon__vigil" in {x["binding_id"] for x in canvas_report["excluded_bindings"]}
   assert set(fc.canvas_affected_set(canvas_manifest,"body")[0][i]["layer"] for i in range(2))=={"lower_body","upper_body"}
@@ -92,6 +93,8 @@ def main():
   mismatch=json.loads(json.dumps(canvas_manifest));mismatch["layers"][0]["frame_size"]=[100,96];mismatch["layers"][0]["workspace_contract"]["frame_size"]=[100,96]
   try:fc.canvas_migration_report(mismatch,129,128,"animation",root);raise AssertionError("half-pixel centering accepted")
   except ValueError:pass
+  shrink_report=fc.canvas_migration_report(canvas_manifest,64,64,"animation",root)
+  assert shrink_report["crop_audit"]["status"]=="requires_staging_validation"
   try:fc.migration_report(mixed,"add",2,"duplicate-prev","upper_body",m.REPO_ROOT);raise AssertionError("clock-owner exclusion accepted")
   except ValueError as error:assert "clock owner" in str(error)
   empty=json.loads(json.dumps(mixed));empty["layers"]=[fx]

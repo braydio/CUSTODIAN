@@ -202,6 +202,7 @@ class PilotService:
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
         self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0; self.publish_calls = []
         self.runtime_selection = None
+        self.copy_calls = []
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
     def browser_records(self):
         return [
@@ -289,6 +290,10 @@ class PilotService:
         return animation_preview.Preview(
             identity, "live", images, frame_size, "live-fixture", (str(strip_path),),
         )
+    def copy_spritesheet(self, selection, **kwargs):
+        self.copy_calls.append((selection, kwargs))
+        return {"mode": kwargs["mode"], "source": "live", "identity": selection.identity,
+                "frames": kwargs["live_frames"], "size": (kwargs["live_frame_size"][0] * kwargs["live_frames"], kwargs["live_frame_size"][1])}
     def motion_event_markers(self, _selection): return ()
     def launch_motion_runtime(self, selection, **_kwargs):
         self.runtime_calls += 1; self.runtime_selection = selection; return SimpleNamespace()
@@ -366,6 +371,7 @@ async def textual_smoke() -> None:
         live_bridge=LiveBridgeController(service.repo_root, port=0),
     )
     async with app.run_test(size=(80, 35)) as pilot:
+        assert await app._thread(lambda value, *, suffix: (value, suffix), 7, suffix="kw") == (7, "kw")
         await pilot.pause(0.5)
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
         status_bar = app.main_screen.query_one("#workbench-status", WorkbenchStatusBar)
@@ -733,6 +739,44 @@ async def textual_smoke() -> None:
             next_sequence += 1
             await pilot.pause(0.05)
             assert layer_table._live_marker("lower_body") == "○"
+
+            # Exercise the actual Y action and prove it waits for the exact
+            # command.result instead of consuming a pre-existing mode cache.
+            app.state.mode = "workbench"
+            original_caches = {}
+            for mode_index, mode in enumerate(("body", "fx", "body_fx")):
+                app.state.copy_mode = mode
+                expected_cache = app.live_bridge._live_preview_path(Path(workbench_path), mode)
+                original_caches[expected_cache] = expected_cache.read_bytes() if expected_cache.exists() else None
+                expected_cache.parent.mkdir(parents=True, exist_ok=True)
+                Image.new("RGBA", (6 * 96, 96), (99, 88, 77, 255)).save(expected_cache)
+                prior_calls = len(service.copy_calls)
+                app.action_copy_spritesheet()
+                copy_command = json.loads(await asyncio.wait_for(live_client.recv(), timeout=0.5))
+                assert copy_command["type"] == "command.export_preview"
+                assert copy_command["payload"]["composition"] == mode
+                assert copy_command["payload"]["output_path"] == str(expected_cache)
+                await pilot.pause(0.05)
+                assert len(service.copy_calls) == prior_calls, "clipboard consumed stale cache before command.result"
+                Image.new("RGBA", (3 * 20, 16), (mode_index + 1, 2, 3, 255)).save(expected_cache)
+                await live_client.send(json.dumps({
+                    "schema": "custodian.operator_live_bridge.message.v1",
+                    "session_id": client_session, "sequence": next_sequence,
+                    "type": "command.result", "cause": copy_command["sequence"],
+                    "payload": {"ok": True, "operation": "export_preview",
+                                "document_path": workbench_path, "output_path": str(expected_cache),
+                                "revision": copy_command["payload"]["revision"], "frames": 3,
+                                "frame_width": 20, "frame_height": 16, "modified": True},
+                }))
+                next_sequence += 1
+                await pilot.pause(0.2)
+                assert len(service.copy_calls) == prior_calls + 1
+                used_selection, used = service.copy_calls[-1]
+                assert used_selection == app.state.selection
+                assert used == {"mode": mode, "live_path": expected_cache, "live_frames": 3, "live_frame_size": (20, 16)}
+            for cache_path, old_bytes in original_caches.items():
+                if old_bytes is None: cache_path.unlink(missing_ok=True)
+                else: cache_path.write_bytes(old_bytes)
         await pilot.pause(0.6)
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
         assert "LIVE ○ WAITING" in str(status_bar.render())
@@ -830,12 +874,13 @@ async def textual_smoke() -> None:
         app.state.adopt_context("", "")
         await pilot.press("a"); await pilot.pause(0.3)
         assert isinstance(app.screen, FrameAddDialog) and "6" in str(app.screen.query_one("#frame-add-preview").render())
-        await pilot.press("escape"); await pilot.pause()
+        await pilot.click("#cancel"); await pilot.pause()
+        app.action_mode_workbench(); await pilot.pause()
         await pilot.press("shift+r"); await pilot.pause(0.2)
         from ui.dialogs import CanvasResizeDialog, CanvasMigrationDialog
         assert isinstance(app.screen, CanvasResizeDialog)
         await pilot.click("#confirm"); await pilot.pause(0.3)
-        assert isinstance(app.screen, CanvasMigrationDialog) and "96×96 → 128×128" in str(app.screen.render())
+        assert isinstance(app.screen, CanvasMigrationDialog) and "96×96 → 128×128" in str(app.screen.query_one(".dialog-body", Static).render()), type(app.screen)
         await pilot.press("escape"); await pilot.pause()
         await pilot.click("#cancel"); await pilot.pause(); assert service.mutations == 0
         await pilot.press("p"); await pilot.pause(0.3)

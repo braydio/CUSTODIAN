@@ -109,7 +109,9 @@ def canvas_migration_report(manifest:dict,width:int,height:int,scope:str,repo:Pa
     for reference,size in zip(manifest.get("references",[]),sizes[len(manifest.get("layers",[])):]):
         if (doc_w-size[0])%2 or (doc_h-size[1])%2: raise ValueError(f"document cannot center {reference['binding_id']} on integer pixels")
         placements[reference["binding_id"]]=[(doc_w-size[0])//2,(doc_h-size[1])//2]
-    return {"kind":"frame_canvas","operation":"resize_canvas","old_document_size":[manifest["canvas"]["width"],manifest["canvas"]["height"]],"new_document_size":[doc_w,doc_h],"target_size":[width,height],"scope":scope,"affected_bindings":[b["binding_id"] for b in affected],"excluded_bindings":excluded,"layer_changes":changes,"placements":placements,"dependency_audit":audit_canvas_dependencies(repo,manifest,affected),"crop_audit":{"status":"checked_during_staging"},"status":"pending"}
+    shrinks=any(width<change["old_size"][0] or height<change["old_size"][1] for change in changes)
+    crop_status="requires_staging_validation" if shrinks else "impossible"
+    return {"kind":"frame_canvas","operation":"resize_canvas","old_document_size":[manifest["canvas"]["width"],manifest["canvas"]["height"]],"new_document_size":[doc_w,doc_h],"target_size":[width,height],"scope":scope,"affected_bindings":[b["binding_id"] for b in affected],"excluded_bindings":excluded,"layer_changes":changes,"placements":placements,"dependency_audit":audit_canvas_dependencies(repo,manifest,affected),"crop_audit":{"status":crop_status},"status":"pending"}
 
 def automatic_set(manifest:dict,layers:str="auto"):
     editable=[b for b in manifest["layers"] if b.get("editable",True) and b.get("role")!="reference"]

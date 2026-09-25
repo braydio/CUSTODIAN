@@ -348,7 +348,7 @@ def build_animation_catalog(manifest: dict, catalog_path: Path) -> dict:
             # reads the catalog, so the compatibility resources kept an
             # ext_resource reference to a file the sync had just deleted and failed
             # to load entirely.
-            for field in ("path", "frames", "size", "fps", "loop", "durations"):
+            for field in ("path", "frames", "frame_size", "fps", "loop", "durations"):
                 if field in runtime_layer:
                     catalog_layer[field] = runtime_layer[field]
             for field in ("fps", "loop", "durations"):

@@ -566,7 +566,12 @@ workspace/publish contracts stage the new dimensions, and explicit publish
 rebuilds canonical size-token filenames plus runtime/catalog/resources. Pixel-
 coordinate socket tracks block until separately migrated. Fast 02 E `6f
 96×96 → 128×128` passes disposable Aseprite assembly and pixel-equivalence
-coverage; no canonical art was changed by that acceptance fixture.
+coverage; no canonical art was changed by that acceptance fixture. The
+runtime-builder regression carries the staged 128×128 contract into both the
+runtime manifest and generated animation catalog. Canvas review distinguishes
+expansion (clipping impossible) from shrink (visible-pixel clipping validated
+at staging). Live clipboard export waits for the matching bridge result and
+consumes its returned path and frame/canvas metadata.
 
 `Operator Art Agent V2` is live above Workbench V2. `operator art` starts a
 semantic `.ai` session, inspects editable bindings, renders the actual Aseprite

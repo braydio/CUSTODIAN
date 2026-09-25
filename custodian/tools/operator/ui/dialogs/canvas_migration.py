@@ -17,9 +17,15 @@ class CanvasMigrationDialog(ModalScreen[bool | None]):
         affected = "\n".join(f"✓ {name}   {changes[name]['old_size'][0]}×{changes[name]['old_size'][1]} → {changes[name]['new_size'][0]}×{changes[name]['new_size'][1]}" for name in p.affected)
         excluded = "\n".join(f"- {name}: {reason}" for name, reason in p.excluded) or "- none"
         audit = "GREEN" if p.audit == "GREEN" else f"{p.audit} · coordinate migration required"
+        crop_status = report.get("crop_audit", {}).get("status")
+        clipping = (
+            "NONE — expansion cannot discard pixels"
+            if crop_status == "impossible"
+            else "validated when staging; fails closed if visible pixels would be removed"
+        )
         with Vertical(classes="dialog"):
             yield Label("CANVAS MIGRATION REVIEW", classes="dialog-title")
-            yield Static(f"Document              {p.old_document_size[0]}×{p.old_document_size[1]} → {p.new_document_size[0]}×{p.new_document_size[1]}\nScope                 {p.scope}\nFrames                unchanged\nPixel scaling         none\nClipping              checked before staging\n\nAFFECTED\n{affected}\n\nEXCLUDED\n{excluded}\n\nCoordinate dependencies  {audit}", classes="dialog-body")
+            yield Static(f"Document              {p.old_document_size[0]}×{p.old_document_size[1]} → {p.new_document_size[0]}×{p.new_document_size[1]}\nScope                 {p.scope}\nFrames                unchanged\nPixel scaling         none\nClipping              {clipping}\n\nAFFECTED\n{affected}\n\nEXCLUDED\n{excluded}\n\nCoordinate dependencies  {audit}", classes="dialog-body")
             with Horizontal(classes="dialog-buttons"):
                 yield Button("CANCEL", id="cancel")
                 yield Button("STAGE CANVAS MIGRATION", id="confirm", variant="success", disabled=p.audit != "GREEN")

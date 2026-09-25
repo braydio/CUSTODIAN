@@ -197,6 +197,11 @@ reachability-classified `SUPERSEDED` browser rows; preserved source art is not
 deleted. Aseprite failures retain their useful script error in the Workbench
 error dialog.
 
+For live clipboard export, OPUI waits for the matching Live Bridge
+`command.result` before reading the detached render. It uses the returned
+output path and exact frame/canvas metadata, so an older cache image cannot be
+mistaken for the requested render.
+
 The persistent Aseprite channel is independently specified in
 `OPERATOR_ASEPRITE_LIVE_BRIDGE.md`. The UI owns its stable loopback server
 lifecycle and truthfully reports waiting/connected/unavailable state. Manual

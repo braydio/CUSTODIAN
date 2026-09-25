@@ -268,7 +268,9 @@ cycles `BODY`, `FX ONLY`, and `BODY + FX`. The exact RGBA strip is placed on
 the local image clipboard (`wl-copy` on Wayland or `xclip` on X11) and retained
 under the ignored `.ai/operator_animation_workbench/clipboard/` cache. `Shift+U`
 toggles preserved `SUPERSEDED` browser rows. Aseprite script failures surface
-their underlying message in OPUI.
+their underlying message in OPUI. For a connected unsaved Workbench, OPUI waits
+for that export's matching `command.result` and uses its detached output path
+and frame/canvas metadata rather than trusting a stale cache file.
 
 After modular asset routing or runtime playback changes, use the focused Godot smoke when the change reaches live Operator presentation:
 

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 from functools import partial
 import shutil
 import subprocess
@@ -351,7 +350,7 @@ class OperatorWorkbenchApp(App):
         event = self.state.add_activity(message, severity)
         self._main_widget("#activity-log", ActivityLog).add_event(event)
 
-    async def _thread(self, function, *args): return await asyncio.to_thread(function, *args)
+    async def _thread(self, function, *args, **kwargs): return await asyncio.to_thread(function, *args, **kwargs)
 
     def _error(self, error: Exception) -> None:
         projected = self.service.project_error(error); self._activity(projected.message.splitlines()[0], "ERROR")
@@ -526,7 +525,9 @@ class OperatorWorkbenchApp(App):
         modes = ("body", "fx", "body_fx")
         self.state.copy_mode = modes[(modes.index(self.state.copy_mode) + 1) % len(modes)]
         self._main_widget("#context-key-bar", ContextKeyBar).set_mode(self.state.mode, self.state.copy_mode, self.state.show_superseded)
-        self._activity(f"Copy mode: {self.state.copy_mode.upper().replace('_', ' + ')}")
+        label = self.state.copy_mode.upper().replace("_", " + ")
+        self._activity(f"Copy mode: {label}")
+        self.notify(f"Copy mode: {label}", severity="information", timeout=2.5)
 
     def action_toggle_superseded(self) -> None:
         self.state.show_superseded = self.service.toggle_superseded()
@@ -542,15 +543,19 @@ class OperatorWorkbenchApp(App):
             live_path = live_frames = live_size = None
             workbench = self._selected_live_workbench_path()
             if workbench is not None and self._live_document_matches_selection() and self.live_bridge.snapshot().status is LiveBridgeUIStatus.CONNECTED:
-                await self.live_bridge.export_preview(workbench, self.live_bridge.server.state.document_revision, self.state.copy_mode)
-                live_path = self.live_bridge._live_preview_path(workbench, self.state.copy_mode)
-                manifest = json.loads((workbench.parent / "workbench.json").read_text())
-                live_frames = int(manifest["timeline"]["document_frames"])
-                live_size = (int(manifest["canvas"]["width"]), int(manifest["canvas"]["height"]))
+                export = await self.live_bridge.request_preview_export(
+                    workbench, self.live_bridge.server.state.document_revision, self.state.copy_mode,
+                )
+                live_path = Path(export["output_path"])
+                live_frames = int(export["frames"])
+                live_size = (int(export["frame_width"]), int(export["frame_height"]))
             result = await self._thread(self.service.copy_spritesheet, self.state.selection, mode=self.state.copy_mode, live_path=live_path, live_frames=live_frames, live_frame_size=live_size)
             width, height = result["size"]
-            self._activity(f"Copied {result['mode'].upper().replace('_', '+')} · {result['source'].upper()} · {result['identity']} · {result['frames']}f · {width}×{height}", "OK")
+            message = f"Copied {result['mode'].upper().replace('_', '+')} · {result['source'].upper()} · {result['identity']} · {result['frames']}f · {width}×{height}"
+            self._activity(message, "OK")
+            self.notify(message, severity="information", timeout=4.0)
         except Exception as error:
+            self.notify(f"Copy failed: {error}", severity="error", timeout=5.0)
             self._error(error)
     def action_full_refresh(self) -> None: self.run_worker(self._reload_browser(), group="browser", exclusive=True)
 
