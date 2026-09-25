@@ -36,6 +36,22 @@ FI-002 replace them; documentation must not mistake those runtime placeholders
 for current setting canon. The focused faction_canon_docs validation is the
 tripwire for future split-brain drift.
 
+## Custodian Mandate + Hub Institutional Canon (2026-09-24)
+
+Custodian institutional authority is now locked in
+`design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`. Custodian jurisdiction is
+system-bound rather than territorially sovereign; the five mandate powers are
+Inspection, Attestation, Intervention, Hold, and Adjudication. Designations are
+persistent institutional identities attached to Posts without proving personal
+continuity. The Hub is evidence/adjudication infrastructure rather than a
+superior intelligence, and Contracts both authorize and constrain extraordinary
+intervention. Meridian remains a separate regional civil continuity operator.
+Null Warrant remains a separate containment authority with an asymmetric
+double-veto: either office can block restoration within its jurisdiction, and
+neither can casually compel the other to open a constrained route. The player's
+prior identity, crèche personhood mechanism, Null Warrant's ultimate target, and
+the Custodian role in the Severing remain unresolved.
+
 ## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 
 The optional, loopback-only Python WebSocket server now defaults to stable

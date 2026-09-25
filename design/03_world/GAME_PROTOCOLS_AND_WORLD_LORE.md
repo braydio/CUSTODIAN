@@ -3,10 +3,10 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-04-08  
 **Status:** active — content-facing protocol authority  
-**Last Updated:** 2026-07-29  
+**Last Updated:** 2026-09-24  
 **Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md` — this file is primary for all lore, terminology, and faction definitions. `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` is the highest authority for cosmology and continuity physics. This doc is a content-facing downstream that references those authorities.  
 **Supersedes:** `design/GAME_NOTES.md`, `design/GAME_NOTES_DRAFT.md` as canonical authority  
-**Related Docs:** `design/03_world/lore/CORE_LORE.md`, `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`, `design/03_world/factions/`, `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
+**Related Docs:** `design/03_world/lore/CORE_LORE.md`, `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`, `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`, `design/03_world/factions/`, `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 > **CANONICAL MIGRATION OVERRIDE:** Contracts access persistent Lattice Domains.
 > CampaignRegion runtime instances are transient representations only. Mission
@@ -72,6 +72,7 @@ These are canonically true, but their full detail can be expanded later without 
 - Pre-collapse society depended on a continuity-verification and interpretation lattice referred to here as the **Civic Mesh**.
 - Custodians were continuity authorities: archivists, adjudicators, field operators, forensic restorers, and doctrinal auditors. Above all, they were built to operate, inspect, restore, isolate, and adjudicate Lattice infrastructure.
 - Custodians are continuity authority because they operate, inspect, restore, isolate and adjudicate Lattice infrastructure. A Custodian might examine provenance because "Did this reactor come from our continuity?" is an extremely important engineering question — not because correct paperwork makes the reactor real.
+- Custodian authority is **system-bound, not territorially sovereign**. Its full jurisdiction, five mandate powers, designation/Post semantics, Hub/Contract model, Meridian overlap, and Null Warrant double-veto are locked in `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`.
 - The Hub is the surviving adjudication layer of the Custodian order.
 - Many surviving cultures are coherent but wrong; they are built on stable misinterpretations of intact machinery and partial records.
 - Active polity families are the Fieldworks Compact, Drawdown Councils, Cordon
@@ -192,6 +193,8 @@ Do not write the world as random rubble. Write it as layered, functioning misint
 
 ## Custodian, Hub, Contract, Campaign
 
+> **Institutional authority:** This section is a content-facing summary. `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md` is the specialized authority for Custodian jurisdiction, designation, Posts, Hub, Contracts, Meridian overlap, and Null Warrant institutional constraints.
+
 ### What Custodians Were
 
 Custodians were the continuity arm of civilization.
@@ -222,7 +225,7 @@ That is why:
 - stabilization fields respond to the player’s authority
 - factions may hate or fear the player on political grounds, not only combat grounds
 - the player’s presence destabilizes local claims about reality
-- every campaign the player undertakes extends—and ultimately accelerates—the Lattice’s collapse
+- every intervention can alter a Domain's field burden, route exposure, infrastructure state, and future viability
 - terminals and field nodes may recognize the player by authority lineage before any physical contact — the recognition precedes the meeting
 
 ### What the Hub Is

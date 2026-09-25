@@ -3,7 +3,7 @@
 > **Status:** Canonical design reference — single source of truth for all lore
 > **Supersedes:** All pre-design lore documents.
 > **Doctrine authority:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` is the highest authority for cosmology and continuity physics. Where this document conflicts with the Reciprocal Continuity Doctrine, the Doctrine wins.
-> **Related:** `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+> **Related:** `design/03_world/LATTICE_DOCTRINE.md`, `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`
 
 ---
 
@@ -232,3 +232,4 @@ Provenance is never presented as supernatural. It is always forensic: where did 
 - Faction Overview: `design/03_world/factions/_FACTION_OVERVIEW.md`
 - Procedural Lore: `design/03_world/PROCEDURAL_LORE_GENERATION.md`
 - Game Protocols: `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+- Custodian Mandate & Hub: `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md` — specialized authority for system-bound Custodian jurisdiction, designation, Posts, Hub, Contracts, Meridian overlap, and Null Warrant institutional deadlock

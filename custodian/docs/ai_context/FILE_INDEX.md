@@ -21,7 +21,7 @@
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
 reciprocity, and runtime-vs-fiction lifecycle terminology.
 
-Last updated: 2026-09-23
+Last updated: 2026-09-24
 
 ## Map + AI Coherence
 
@@ -1028,6 +1028,7 @@ Last updated: 2026-09-23
 - `design/02_features/combat_feel/OPERATOR_INTEGRITY_RECLAIM.md` — completed V1 authority for temporary recoverable integrity, confirmed hostile-damage recovery, packet timing/eligibility, health-bar presentation, observability, and tuning
 - `custodian/docs/ai_context/task_packets/archived/COMBAT_RESOURCE_READABILITY_SPEC_NORMALIZATION.md` — completed migration record for retiring the root draft, routing completed V1 slices to permanent feature authorities, and establishing the current in-progress umbrella
 - `design/03_world/lore/CORE_LORE.md` — canonical lore authority and terse seven-polity / Legacy Interdiction Mesh lock
+- `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md` — canonical institutional authority for system-bound Custodian jurisdiction, the five mandate powers, designation/Post continuity, Hub/Contract semantics, Meridian overlap, and Null Warrant double-veto
 - `design/03_world/factions/_FACTION_OVERVIEW.md` — canonical cross-faction authority, comparison, political tensions, Custodian relationships, and old-roster migration map
 - `design/03_world/factions/{FIELDWORKS_COMPACT,DRAWDOWN_COUNCILS,CORDON_SERVICE,CHARTER_AUTHORITIES,ORRAIC_ORDERS,RECOVERY_COMPANIES,WITNESS_ASSEMBLIES,LEGACY_INTERDICTION_MESH}.md` — seven full polity profiles plus the separately typed non-polity hazard-layer profile
 - `design/03_world/factions/FACTION_GAMEPLAY_OPPORTUNITIES.md` — generous faction gameplay idea bank; not implementation truth
