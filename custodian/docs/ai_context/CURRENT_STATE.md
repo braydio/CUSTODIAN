@@ -1710,13 +1710,26 @@ Vaultwing hostile intent without coupling EngagementTracker to controller
 internals. The next implementation slice is Vaultwing bonding/companion
 progression; production Vaultwing SFX remains a separate presentation follow-up.
 
-Vaultwing Slice B has begun with a same-instance `VaultwingBondState` vertical
-slice. `WILD → OBSERVING → TOLERANT → ACCEPTING → BONDED` progression, semantic
-bait acceptance/rejection, voluntary bond-trial completion, stable creature
-identity, and save/restore dictionaries are live and covered by
-`vaultwing_bond`. Production bait pickups, inventory consumption, commands,
-companion behavior, global save orchestration, and bonding art remain deferred
-until the interaction sequence is validated.
+Vaultwing Slice B.1 now implements the same-instance behavioral bonding loop:
+safe interruptible bait approach/observation, encounter-separated peaceful-feed
+progression through `WILD → OBSERVING → TOLERANT → ACCEPTING`, a voluntary
+landing/guarded-observation/final-feed trial, and `BONDED` allegiance without
+replacing actor, health, behavior, seed, or presentation. Stable creature IDs
+derive from species plus world/contract and semantic spawn-marker provenance;
+versioned `custodian.vaultwing_bond.v1` records validate and restore stage,
+progress, identity, and health while discarding transient interaction state.
+Bonded actors survive wild-world population reset and do not consume wild
+population cap. Damage attribution, observability, retained turret/drone target
+release, `vaultwing_bond`, and the reviewed `combat/vaultwing_first_bond` Moment
+are covered. Production bait pickups/inventory, global save orchestration,
+bonding art/SFX, and companion commands/behavior remain deferred. Bait
+acquisition and global save ownership need later integration; bonding art/SFX
+are presentation follow-up; companion commands/behavior remain Slice C.
+The focused bond/runtime/world-spawn/relationship checks and first-bond Moment
+pass. The changed sweep ran 63 checks with 63 passing and no test failures;
+coverage remains incomplete only for 25 unrelated shared-worktree Operator
+art/runtime and audio/review artifacts. Historical archive-boundary validation
+passes.
 
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored

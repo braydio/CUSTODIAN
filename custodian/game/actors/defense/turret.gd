@@ -114,7 +114,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_set_power_visual(true)
 
-	_prune_enemies_in_range()
+	reconcile_relationship_targets()
 	if target == null or not is_instance_valid(target):
 		target = acquire_target()
 	elif not _is_target_valid(target) \
@@ -171,6 +171,29 @@ func _prune_enemies_in_range() -> void:
 			return false
 		return true
 	)
+
+
+func _reconcile_overlapping_targets() -> void:
+	# Relationship changes do not generate new physics body_entered signals.
+	# Re-scan the current overlap set so a still-present body can become eligible
+	# after changing allegiance back to HOSTILE.
+	if range_area == null:
+		return
+	for body_variant in range_area.get_overlapping_bodies():
+		var body := body_variant as Node2D
+		if body == null or not _is_target_valid(body):
+			continue
+		if body.has_method("is_passive_enemy") and bool(body.call("is_passive_enemy")):
+			continue
+		if not enemies_in_range.has(body):
+			enemies_in_range.append(body)
+
+
+func reconcile_relationship_targets() -> void:
+	_reconcile_overlapping_targets()
+	_prune_enemies_in_range()
+	if target != null and not _is_target_valid(target):
+		target = null
 
 
 func acquire_target() -> Node2D:

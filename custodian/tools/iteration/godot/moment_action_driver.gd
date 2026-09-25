@@ -233,6 +233,7 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 		],
 		"vaultwing_dive_readability": ["start_dive", "sidestep_operator"],
 		"vaultwing_forced_landing": ["start_dive", "interrupt_dive"],
+		"vaultwing_first_bond": ["begin_trial", "controlled_approach", "final_feed", "finish"],
 	}
 	if command not in allowed.get(fixture_id, []):
 		result.ok = false

@@ -2,7 +2,7 @@ extends Node
 class_name VaultwingBehaviorController
 
 enum Band { HIGH, ATTACK, GROUND, PERCHED }
-enum State { HIGH_PATROL, CIRCLE_INTEREST, DIVE_WINDUP, DIVE_STRIKE, CLIMB_OUT, PERCH_IDLE, PERCH_ALERT, LAND, GROUND_IDLE, GROUND_STALK, GROUND_ATTACK, TAKEOFF, AIR_STAGGER, GROUND_STAGGER, RETREAT, DEAD }
+enum State { HIGH_PATROL, CIRCLE_INTEREST, DIVE_WINDUP, DIVE_STRIKE, CLIMB_OUT, PERCH_IDLE, PERCH_ALERT, LAND, GROUND_IDLE, GROUND_STALK, GROUND_ATTACK, TAKEOFF, AIR_STAGGER, GROUND_STAGGER, RETREAT, BOND_APPROACH, DEAD }
 
 const PROFILE := preload("res://game/actors/ambient/vaultwing/vaultwing_behavior_profile.tres")
 
@@ -34,6 +34,11 @@ var _pending_after_takeoff: StringName = &""
 var _perch_approach_active := false
 var _landing_to_perch := false
 var _engagement_cooldown_remaining := 0.0
+var _bond_trial_active := false
+var _bond_feeder: Node2D
+var _bait_approach_active := false
+var _bait_feeder: Node2D
+var _bait_standoff := 96.0
 var dive_started_count := 0
 var dive_hit_count := 0
 var dive_miss_count := 0
@@ -101,10 +106,80 @@ func request_land() -> void:
 func request_takeoff() -> void:
 	if band == Band.GROUND or band == Band.PERCHED: _enter(State.TAKEOFF)
 
-func notify_damage(amount: float) -> void:
+func request_bait_observation(feeder: Node2D) -> void:
+	if feeder == null or not is_instance_valid(feeder): return
+	_bait_feeder = feeder
+	_bait_standoff = 96.0
+	var bond_state := _bond_state()
+	if bond_state != null and bond_state.has_method("get_min_safe_approach_distance"):
+		_bait_standoff = float(bond_state.call("get_min_safe_approach_distance")) + 14.0
+	_bait_approach_active = band == Band.GROUND and state == State.GROUND_IDLE
+	if actor.has_method("play_action"): actor.call("play_action", &"notice_bait")
+
+func is_bait_approach_complete() -> bool:
+	return not _bait_approach_active
+
+func finish_bait_observation() -> void:
+	_bait_approach_active = false
+	_bait_feeder = null
+
+func begin_voluntary_bond_approach(feeder: Node2D) -> void:
+	if feeder == null or not is_instance_valid(feeder): return
+	_bond_trial_active = true
+	_bond_feeder = feeder
+	_pending_after_takeoff = &""
+	_perch_approach_active = false
+	_landing_to_perch = false
+	_remember_target(feeder.global_position, feeder)
+	if band == Band.GROUND or band == Band.PERCHED:
+		_pending_after_takeoff = &"BOND_TRIAL"
+		_enter(State.TAKEOFF)
+	else:
+		_enter(State.BOND_APPROACH)
+
+func cancel_voluntary_bond_approach() -> void:
+	_bond_trial_active = false
+	if target == _bond_feeder: _clear_target()
+	_bond_feeder = null
+	finish_bait_observation()
+	var was_trial_state := state == State.BOND_APPROACH or (
+		state == State.TAKEOFF and _pending_after_takeoff == &"BOND_TRIAL"
+	) or state == State.LAND
+	if was_trial_state:
+		_pending_after_takeoff = &""
+		_enter(State.HIGH_PATROL if band in [Band.HIGH, Band.ATTACK] else State.GROUND_IDLE)
+
+func clear_operator_hostility(operator: Node) -> void:
+	if operator == null:
+		operator = get_tree().get_first_node_in_group("player")
+	if target == operator: _clear_target()
+	_pending_after_takeoff = &""
+	_perch_approach_active = false
+	_landing_to_perch = false
+	_bond_trial_active = false
+	_bond_feeder = null
+	finish_bait_observation()
+	if state in [State.CIRCLE_INTEREST, State.DIVE_WINDUP, State.DIVE_STRIKE, State.CLIMB_OUT, State.RETREAT, State.PERCH_ALERT, State.GROUND_STALK, State.GROUND_ATTACK, State.BOND_APPROACH]:
+		_enter(State.GROUND_IDLE if band == Band.GROUND else State.PERCH_IDLE if band == Band.PERCHED else State.HIGH_PATROL)
+
+func reset_bond_transient_state() -> void:
+	cancel_voluntary_bond_approach()
+	finish_bait_observation()
+
+func _clear_target() -> void:
+	target = null
+	target_position = Vector2.ZERO
+	target_position_valid = false
+
+func notify_damage(amount: float, attacker: Node2D = null) -> void:
 	if state == State.DEAD: return
-	var player := get_tree().get_first_node_in_group("player") as Node2D
-	if player != null: _remember_target(player.global_position, player)
+	if actor != null and actor.has_method("get_bond_state"):
+		var bond_state: Node = actor.call("get_bond_state") as Node
+		if bond_state != null and bond_state.has_method("interrupt_interaction"):
+			bond_state.call("interrupt_interaction", &"attacked")
+	_bond_trial_active = false
+	if attacker != null and is_instance_valid(attacker) and actor != null and actor.has_method("is_hostile_to") and bool(actor.call("is_hostile_to", attacker)):
+		_remember_target(attacker.global_position, attacker)
 	if actor != null and actor.health / maxf(actor.max_health, 1.0) <= profile.low_health_ratio:
 		retreat_vector = _compute_retreat_vector()
 		if band == Band.GROUND or band == Band.PERCHED:
@@ -161,18 +236,30 @@ func step(delta: float) -> void:
 				_enter(State.HIGH_PATROL)
 		State.PERCH_IDLE:
 			_set_band(Band.PERCHED)
-			if state_elapsed >= profile.perch_dwell_seconds: _enter(State.TAKEOFF)
+			if _bond_trial_active or _bond_interaction_active(): pass
+			elif state_elapsed >= profile.perch_dwell_seconds and not _holding_near_tolerated_operator(): _enter(State.TAKEOFF)
 		State.PERCH_ALERT:
 			_set_band(Band.PERCHED)
 			if state_elapsed >= profile.perch_alert_seconds: _pending_after_takeoff = &"INTEREST"; _enter(State.TAKEOFF)
 		State.LAND:
 			_set_band(Band.GROUND)
-			if state_elapsed >= profile.land_seconds: _enter(State.PERCH_IDLE if _landing_to_perch else State.GROUND_IDLE); _landing_to_perch = false
+			if state_elapsed >= profile.land_seconds:
+				_enter(State.PERCH_IDLE if _landing_to_perch else State.GROUND_IDLE)
+				_landing_to_perch = false
+				if actor.has_method("get_bond_state"): actor.call("get_bond_state").call("notify_actor_landed")
 		State.GROUND_IDLE:
 			_set_band(Band.GROUND)
-			if _target_in_range(profile.ground_attack_range): _enter(State.GROUND_ATTACK)
+			if _bond_trial_active: pass
+			elif _bait_approach_active and is_instance_valid(_bait_feeder):
+				var to_feeder := _bait_feeder.global_position - actor.global_position
+				if to_feeder.length() > _bait_standoff:
+					actor.velocity = to_feeder.normalized() * profile.ground_speed
+				else:
+					_bait_approach_active = false
+			elif _bond_interaction_active(): pass
+			elif _target_in_range(profile.ground_attack_range): _enter(State.GROUND_ATTACK)
 			elif _has_valid_target() and actor.global_position.distance_to(target.global_position) <= profile.engagement_radius: _enter(State.GROUND_STALK)
-			elif state_elapsed >= 1.4: _enter(State.TAKEOFF)
+			elif state_elapsed >= 1.4 and not _holding_near_tolerated_operator(): _enter(State.TAKEOFF)
 		State.GROUND_STALK:
 			_set_band(Band.GROUND); _failed_engagement_elapsed += delta
 			if not _has_valid_target() or actor.global_position.distance_to(target.global_position) > profile.engagement_radius:
@@ -191,6 +278,7 @@ func step(delta: float) -> void:
 				var pending := _pending_after_takeoff; _pending_after_takeoff = &""
 				if pending == &"INTEREST": _enter(State.CIRCLE_INTEREST)
 				elif pending == &"RETREAT": _enter(State.RETREAT)
+				elif pending == &"BOND_TRIAL": _enter(State.BOND_APPROACH)
 				else: _enter(State.HIGH_PATROL)
 		State.AIR_STAGGER:
 			_set_band(Band.ATTACK)
@@ -203,6 +291,16 @@ func step(delta: float) -> void:
 			if state_elapsed >= profile.retreat_seconds:
 				_engagement_cooldown_remaining = profile.post_engagement_cooldown_seconds
 				_enter(State.HIGH_PATROL)
+		State.BOND_APPROACH:
+			_set_band(Band.HIGH)
+			if not _has_valid_target():
+				if actor.has_method("get_bond_state"): actor.call("get_bond_state").call("interrupt_bond_trial", &"feeder_invalid")
+				_enter(State.HIGH_PATROL)
+			else:
+				actor.velocity = actor.global_position.direction_to(target.global_position) * profile.patrol_speed
+				if actor.global_position.distance_to(target.global_position) <= 150.0:
+					actor.velocity = Vector2.ZERO
+					_enter(State.LAND)
 	_publish_presentation(delta)
 
 func get_state_name() -> StringName: return StringName(State.keys()[state].to_lower())
@@ -211,7 +309,7 @@ func get_band_name() -> StringName: return StringName(Band.keys()[band].to_lower
 func _enter(next_state: State) -> void:
 	state = next_state; state_elapsed = 0.0; strike_hit = false; strike_contact_tested = false
 	match state:
-		State.HIGH_PATROL, State.CIRCLE_INTEREST: _set_band(Band.HIGH)
+		State.HIGH_PATROL, State.CIRCLE_INTEREST, State.BOND_APPROACH: _set_band(Band.HIGH)
 		State.DIVE_WINDUP, State.DIVE_STRIKE, State.CLIMB_OUT, State.AIR_STAGGER: _set_band(Band.ATTACK)
 		State.PERCH_IDLE, State.PERCH_ALERT: _set_band(Band.PERCHED)
 		State.LAND, State.GROUND_IDLE, State.GROUND_STALK, State.GROUND_ATTACK, State.GROUND_STAGGER: _set_band(Band.GROUND)
@@ -262,6 +360,7 @@ func _presentation_action_for_state() -> StringName:
 		State.GROUND_IDLE: return &"ground_idle"
 		State.GROUND_STALK: return &"ground_walk"
 		State.GROUND_ATTACK: return &"bite_attack"
+		State.BOND_APPROACH: return &"glide"
 		State.TAKEOFF: return &"takeoff"
 		State.AIR_STAGGER: return &"air_stagger"
 		State.GROUND_STAGGER: return &"hurt"
@@ -271,11 +370,16 @@ func _presentation_action_for_state() -> StringName:
 func _update_player_interest(delta: float) -> void:
 	if state != State.HIGH_PATROL or _engagement_cooldown_remaining > 0.0: return
 	if actor.has_method("is_bonded") and bool(actor.call("is_bonded")): return
+	if _bond_interaction_active(): return
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	if player == null: return
-	if actor.global_position.distance_to(player.global_position) <= profile.awareness_radius:
+	var bond_state := _bond_state()
+	var awareness: float = profile.awareness_radius
+	if bond_state != null: awareness = maxf(awareness, float(bond_state.call("get_operator_tolerance_radius")) * 2.4)
+	if actor.global_position.distance_to(player.global_position) <= awareness:
 		_interest_elapsed += delta
-		if _interest_elapsed >= 0.75: request_interest(player.global_position, player)
+		var stage_delay := 0.0 if bond_state == null else float(bond_state.call("get_escalation_delay"))
+		if _interest_elapsed >= 0.75 + stage_delay: request_interest(player.global_position, player)
 	else: _interest_elapsed = 0.0
 
 func _on_noise_emitted(event: Variant) -> void:
@@ -338,6 +442,18 @@ func _compute_retreat_vector() -> Vector2:
 	return safe.normalized() if safe.length_squared() > 0.01 else patrol_direction
 
 func _direction_from_rng() -> Vector2: return Vector2.RIGHT.rotated(_rng.randf_range(-PI, PI)).normalized()
+
+func _bond_state() -> Node:
+	return actor.call("get_bond_state") as Node if actor != null and actor.has_method("get_bond_state") else null
+
+func _bond_interaction_active() -> bool:
+	var bond_state := _bond_state()
+	return bond_state != null and ((bond_state.has_method("is_feed_attempt_active") and bool(bond_state.call("is_feed_attempt_active"))) or (bond_state.has_method("is_bond_trial_active") and bool(bond_state.call("is_bond_trial_active"))))
+
+func _holding_near_tolerated_operator() -> bool:
+	var bond_state := _bond_state()
+	var operator := get_tree().get_first_node_in_group("player") as Node2D
+	return bond_state != null and bond_state.has_method("should_hold_safe_near_operator") and bool(bond_state.call("should_hold_safe_near_operator", operator))
 
 func _log_event(event_name: StringName, payload: Dictionary) -> void:
 	var observatory := actor.get_node_or_null("/root/DevObservatory")

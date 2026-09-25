@@ -83,7 +83,7 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 		return false
 
 	if body.has_method("take_damage"):
-		body.take_damage(damage, CombatConstants.HitStrength.LIGHT)
+		_call_take_damage(body, damage, CombatConstants.HitStrength.LIGHT)
 		_apply_game_feel(body, 40.0)
 		_spawn_impact_at(impact_position)
 		queue_free()
@@ -95,6 +95,17 @@ func _handle_body_hit(body: Node, impact_position: Vector2) -> bool:
 		return true
 	return false
 
+
+func _call_take_damage(body: Node, amount: float, hit_strength: int) -> Variant:
+	if body.has_method("take_damage_from"):
+		return body.call("take_damage_from", amount, hit_strength, -1.0, shooter as Node2D)
+	var argument_count := 0
+	for method_variant in body.get_method_list():
+		var method := method_variant as Dictionary
+		if StringName(str(method.get("name", ""))) == &"take_damage":
+			argument_count = (method.get("args", []) as Array).size()
+			break
+	return body.call("take_damage", amount, hit_strength)
 
 func _sweep_projectile(from: Vector2, to: Vector2) -> Dictionary:
 	if from.distance_squared_to(to) <= 0.01:

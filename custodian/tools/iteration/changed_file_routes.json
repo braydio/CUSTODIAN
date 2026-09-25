@@ -2,6 +2,25 @@
   "schema_version": 1,
   "rules": [
     {
+      "id": "vaultwing_behavior_and_bonding",
+      "include": [
+        "custodian/game/actors/ambient/vaultwing/**",
+        "custodian/game/systems/spawning/vaultwing_spawner.gd",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/actors/defense/turret.gd"
+      ],
+      "exclude": [
+        "**/*.import"
+      ],
+      "scenario_ids": [
+        "combat/vaultwing_dive_readability",
+        "combat/vaultwing_forced_landing",
+        "combat/vaultwing_first_bond"
+      ],
+      "priority": 88,
+      "reason": "Vaultwing behavior, population, relationship, or bond interaction changed."
+    },
+    {
       "id": "combat_audio",
       "include": [
         "custodian/content/audio/sfx/combat/**/*.wav",

@@ -282,7 +282,8 @@ func _place_vaultwing_markers(level_data: Dictionary, map_instance: Node) -> voi
 	for existing in get_tree().get_nodes_in_group("generated_vaultwing_marker"):
 		if existing is Node and is_instance_valid(existing): (existing as Node).queue_free()
 	var candidates := _build_ambient_enemy_candidate_tiles(level_data, map_instance)
-	_place_vaultwing_markers_from_candidates(candidates, map_instance, spawner)
+	var world_identity := str(level_data.get("generation_id", level_data.get("seed", "unknown_contract")))
+	_place_vaultwing_markers_from_candidates(candidates, map_instance, spawner, world_identity)
 
 ## Validation seam for the production marker algorithm. Candidate selection is
 ## still owned by the loader; this only lets a bounded fixture supply a
@@ -293,14 +294,21 @@ func place_vaultwing_markers_for_candidates(candidate_tiles: Array[Vector2i], ma
 		spawner.call("reset_for_world")
 	for existing in get_tree().get_nodes_in_group("generated_vaultwing_marker"):
 		if existing is Node and is_instance_valid(existing): (existing as Node).queue_free()
-	_place_vaultwing_markers_from_candidates(candidate_tiles, map_instance, spawner)
+	_place_vaultwing_markers_from_candidates(candidate_tiles, map_instance, spawner, "fixture_world")
 
-func _place_vaultwing_markers_from_candidates(candidates: Array[Vector2i], map_instance: Node, spawner: Node) -> void:
+func _place_vaultwing_markers_from_candidates(
+	candidates: Array[Vector2i],
+	map_instance: Node,
+	spawner: Node,
+	world_identity := "unknown_contract"
+) -> void:
 	if candidates.is_empty(): return
 	var spawn_marker := Marker2D.new()
 	spawn_marker.name = "VaultwingSpawnMarker"
 	spawn_marker.add_to_group("vaultwing_spawn_marker")
 	spawn_marker.add_to_group("generated_vaultwing_marker")
+	spawn_marker.set_meta("vaultwing_world_identity", world_identity)
+	spawn_marker.set_meta("vaultwing_marker_identity", "vaultwing_common_spawn_00")
 	map_instance.add_child(spawn_marker)
 	spawn_marker.global_position = _tile_to_world(map_instance, candidates[0])
 	var perch_candidates: Array = []

@@ -283,6 +283,8 @@ func _call_take_damage(
 	hit_strength: int,
 	reaction_damage: float
 ) -> Variant:
+	if target.has_method("take_damage_from"):
+		return target.call("take_damage_from", direct_damage, hit_strength, reaction_damage, shooter as Node2D)
 	var argument_count := 0
 	for method_variant in target.get_method_list():
 		var method := method_variant as Dictionary

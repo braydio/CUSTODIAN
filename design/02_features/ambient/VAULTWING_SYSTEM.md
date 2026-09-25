@@ -548,8 +548,15 @@ pipeline commands.
 
 The Actor Relationship Foundation V1/V1.1 seam is complete: shared allegiance
 and targetability semantics now precede bonding, while legacy groups remain
-compatibility indexes. The next implementation slice is **bonding and companion
-progression**, then companion behavior. Inspect
+compatibility indexes. Slice B.1 now supplies the same-instance behavioral bond
+loop: safe interruptible feed attempts, encounter separation, stage-specific
+approach/escalation policy, voluntary landing and guarded trial, bonded
+allegiance, provenance-derived stable identity, and a versioned bond/health save
+record. The local record contract is not global save orchestration. Production
+bait pickups/inventory, dedicated bonding animation assets, and companion
+commands remain separate work. After the B.1 runtime and Moment gates are green,
+the next work is a focused bonding presentation/art pass; companion behavior
+remains Slice C. Inspect
 the live dependency graph before choosing exact file ownership. Preserve
 unrelated working-tree changes; keep simulation deterministic; do not expand
 `AmbientCritterManager`; reuse semantic ambient presentation; keep flight as

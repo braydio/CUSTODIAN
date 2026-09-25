@@ -93,7 +93,7 @@ func _on_body_entered(body: Node):
 
 	if body.has_method("take_damage"):
 		var impact_position := _resolve_impact_position(body)
-		body.take_damage(damage, CombatConstants.HitStrength.LIGHT)
+		_call_take_damage(body, damage, CombatConstants.HitStrength.LIGHT)
 		_apply_game_feel(body, 50.0)
 		_spawn_impact_at(impact_position)
 		queue_free()
@@ -103,6 +103,17 @@ func _on_body_entered(body: Node):
 		_spawn_impact_at(_resolve_impact_position(body))
 		queue_free()
 
+
+func _call_take_damage(body: Node, amount: float, hit_strength: int) -> Variant:
+	if body.has_method("take_damage_from"):
+		return body.call("take_damage_from", amount, hit_strength, -1.0, shooter as Node2D)
+	var argument_count := 0
+	for method_variant in body.get_method_list():
+		var method := method_variant as Dictionary
+		if StringName(str(method.get("name", ""))) == &"take_damage":
+			argument_count = (method.get("args", []) as Array).size()
+			break
+	return body.call("take_damage", amount, hit_strength)
 
 func _can_hit(body: Node) -> bool:
 	if body == null:

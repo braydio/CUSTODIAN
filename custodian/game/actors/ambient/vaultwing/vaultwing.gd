@@ -59,8 +59,12 @@ func _physics_process(delta: float) -> void:
 
 func set_ambient_seed(seed_value: int) -> void:
 	if behavior != null: behavior.set_seed(seed_value)
-	if bond_state != null and bond_state.get_stable_creature_id() == &"vaultwing_unassigned":
-		bond_state.configure(self, StringName("vaultwing_%08x" % absi(seed_value)))
+
+func set_spawn_provenance(world_identity: String, marker_identity: String) -> void:
+	if bond_state == null: return
+	var provenance := "%s|%s|%s" % ["vaultwing_common", world_identity.strip_edges(), marker_identity.strip_edges()]
+	var digest := provenance.sha256_text().substr(0, 20)
+	bond_state.configure(self, StringName("vaultwing_common_%s" % digest))
 
 func set_home_position(position: Vector2) -> void:
 	if behavior != null: behavior.set_home_position(position)
@@ -101,7 +105,10 @@ func play_action(action: StringName, restart := false) -> bool:
 func has_action(action: StringName) -> bool:
 	return presentation.has_action(action, facing_direction)
 
-func take_damage(amount: float, _hit_strength := 0, _reaction_damage := -1.0) -> Dictionary:
+func take_damage(amount: float, hit_strength := 0, reaction_damage := -1.0) -> Dictionary:
+	return take_damage_from(amount, hit_strength, reaction_damage, null)
+
+func take_damage_from(amount: float, _hit_strength := 0, _reaction_damage := -1.0, attacker: Node2D = null) -> Dictionary:
 	var before := health
 	if _dead or health <= 0.0:
 		return _damage_result(0.0, false, before, false)
@@ -109,7 +116,7 @@ func take_damage(amount: float, _hit_strength := 0, _reaction_damage := -1.0) ->
 		return _damage_result(0.0, true, before, true)
 	var applied := minf(maxf(0.0, amount), health)
 	health = maxf(0.0, health - applied)
-	if behavior != null: behavior.notify_damage(applied)
+	if behavior != null: behavior.notify_damage(applied, attacker)
 	if health <= 0.0: die()
 	return _damage_result(applied, true, before)
 
@@ -134,8 +141,29 @@ func get_stable_creature_id() -> StringName:
 func offer_bait(bait_id: StringName, feeder: Node2D = null) -> bool:
 	return bond_state != null and bond_state.offer_bait(bait_id, feeder)
 
+func request_bait_observation(feeder: Node2D) -> void:
+	if behavior != null: behavior.request_bait_observation(feeder)
+
+func is_bait_approach_complete() -> bool:
+	return behavior == null or behavior.is_bait_approach_complete()
+
+func finish_bait_observation() -> void:
+	if behavior != null: behavior.finish_bait_observation()
+
+func begin_voluntary_bond_approach(feeder: Node2D) -> void:
+	if behavior != null: behavior.begin_voluntary_bond_approach(feeder)
+
+func cancel_voluntary_bond_approach() -> void:
+	if behavior != null: behavior.cancel_voluntary_bond_approach()
+
+func reset_bond_transient_state() -> void:
+	if behavior != null: behavior.reset_bond_transient_state()
+
 func begin_bond_trial() -> bool:
-	return bond_state != null and bond_state.begin_bond_trial()
+	return bond_state != null and bond_state.begin_bond_trial(get_tree().get_first_node_in_group("player") as Node2D)
+
+func begin_bond_trial_with(feeder: Node2D) -> bool:
+	return bond_state != null and bond_state.begin_bond_trial(feeder)
 
 func complete_bond_trial(bait_id: StringName = &"vaultwing_bait", feeder: Node2D = null) -> bool:
 	return bond_state != null and bond_state.complete_bond_trial(bait_id, feeder)
@@ -145,6 +173,15 @@ func to_save_dict() -> Dictionary:
 
 func from_save_dict(data: Dictionary) -> bool:
 	return bond_state != null and bond_state.from_save_dict(data)
+
+func get_bond_state() -> Node:
+	return bond_state
+
+func is_wild_population() -> bool:
+	return not is_bonded()
+
+func on_bond_completed(feeder: Node2D) -> void:
+	if behavior != null: behavior.clear_operator_hostility(feeder)
 
 func is_hostile_to(other: Node) -> bool:
 	return allegiance_component != null and allegiance_component.is_hostile_to(other)
@@ -172,10 +209,10 @@ func set_band_interaction(next_band: int) -> void:
 		collision_layer = 0
 		collision_mask = 0
 
-func receive_enemy_hit(amount: float, _hit_kind: StringName = &"melee", _attacker_team: String = "enemy", _attacker: Node2D = null, _hit_direction: Vector2 = Vector2.ZERO, _guard_stamina_cost_override: float = -1.0, _attack_context: Dictionary = {}) -> Dictionary:
+func receive_enemy_hit(amount: float, _hit_kind: StringName = &"melee", _attacker_team: String = "enemy", attacker: Node2D = null, _hit_direction: Vector2 = Vector2.ZERO, _guard_stamina_cost_override: float = -1.0, _attack_context: Dictionary = {}) -> Dictionary:
 	if _dead or (behavior != null and behavior.band == VaultwingBehaviorController.Band.HIGH):
 		return _damage_result(0.0, not _dead, health, true)
-	return take_damage(amount)
+	return take_damage_from(amount, 0, -1.0, attacker)
 
 func die() -> void:
 	if _dead: return

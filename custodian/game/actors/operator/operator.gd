@@ -9659,6 +9659,14 @@ func _call_hostile_take_damage(
 	hit_strength: int,
 	stagger_damage: float
 ) -> Variant:
+	if target.has_method("take_damage_from"):
+		return target.call(
+			"take_damage_from",
+			direct_damage,
+			hit_strength,
+			stagger_damage,
+			self
+		)
 	var argument_count := 0
 	for method_variant in target.get_method_list():
 		var method := method_variant as Dictionary

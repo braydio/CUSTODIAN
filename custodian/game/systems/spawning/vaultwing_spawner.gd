@@ -38,14 +38,21 @@ func spawn_from_markers() -> int:
 			continue
 		if player != null and marker.global_position.distance_to(player.global_position) < min_distance_from_player_start_px:
 			continue
-		if spawn_at(marker.global_position, seed_value + created):
+		var world_identity := str(marker.get_meta("vaultwing_world_identity", "legacy_world"))
+		var marker_identity := str(marker.get_meta("vaultwing_marker_identity", marker.name))
+		if spawn_at(marker.global_position, seed_value + created, world_identity, marker_identity):
 			marker.set_meta("vaultwing_spawned", true)
 			created += 1
 	_obs_set_gauge("active_vaultwings", _active_count())
 	return created
 
 
-func spawn_at(spawn_position: Vector2, creature_seed: int = seed_value) -> Vaultwing:
+func spawn_at(
+	spawn_position: Vector2,
+	creature_seed: int = seed_value,
+	world_identity: String = "debug_world",
+	marker_identity: String = ""
+) -> Vaultwing:
 	if vaultwing_scene == null or _active_count() >= max_active_vaultwings:
 		return null
 	var parent := get_node_or_null(vaultwing_container_path)
@@ -57,10 +64,17 @@ func spawn_at(spawn_position: Vector2, creature_seed: int = seed_value) -> Vault
 	parent.add_child(creature)
 	creature.global_position = spawn_position
 	creature.set_ambient_seed(creature_seed)
+	if marker_identity.is_empty():
+		marker_identity = "debug_spawn_%.0f_%.0f" % [spawn_position.x, spawn_position.y]
+	creature.set_spawn_provenance(world_identity, marker_identity)
 	creature.set_home_position(spawn_position)
 	creature.set_perch_positions(_perch_positions())
 	_spawned.append(creature)
-	_log_event(&"vaultwing_spawned", {"seed": creature_seed, "position": spawn_position})
+	_log_event(&"vaultwing_spawned", {
+		"seed": creature_seed, "position": spawn_position,
+		"stable_creature_id": String(creature.get_stable_creature_id()),
+		"world_identity": world_identity, "spawn_marker_identity": marker_identity,
+	})
 	_obs_set_gauge("active_vaultwings", _active_count())
 	return creature
 
@@ -71,7 +85,17 @@ func get_active_count() -> int:
 
 
 func reset_for_world() -> void:
-	despawn_all("world_reset")
+	var persistent: Array[Node] = []
+	for creature in _spawned:
+		if not is_instance_valid(creature):
+			continue
+		if creature.has_method("is_bonded") and bool(creature.call("is_bonded")):
+			persistent.append(creature)
+			continue
+		_log_despawn(creature, "world_reset")
+		creature.queue_free()
+	_spawned = persistent
+	_obs_set_gauge("active_vaultwings", _living_count())
 	for marker_variant in get_tree().get_nodes_in_group("vaultwing_spawn_marker"):
 		var marker := marker_variant as Node
 		if marker != null and marker.has_meta("vaultwing_spawned"):
@@ -80,7 +104,7 @@ func reset_for_world() -> void:
 func despawn_all(reason: String = "explicit_cleanup") -> void:
 	for creature in _spawned:
 		if is_instance_valid(creature):
-			_log_event(&"vaultwing_despawned", {"reason": reason, "position": creature.global_position})
+			_log_despawn(creature, reason)
 			creature.queue_free()
 	_spawned.clear()
 	_obs_set_gauge("active_vaultwings", 0)
@@ -94,7 +118,7 @@ func _active_count() -> int:
 func _prune_spawned() -> void:
 	_spawned = _spawned.filter(func(creature: Node) -> bool:
 		if not is_instance_valid(creature) or creature.is_queued_for_deletion():
-			_log_event(&"vaultwing_despawned", {"reason": "runtime_removal"})
+			if is_instance_valid(creature): _log_despawn(creature, "runtime_removal")
 			return false
 		return true
 	)
@@ -104,6 +128,8 @@ func _living_count() -> int:
 	var count := 0
 	for creature in _spawned:
 		if not is_instance_valid(creature) or creature.is_queued_for_deletion():
+			continue
+		if creature.has_method("is_wild_population") and not creature.call("is_wild_population"):
 			continue
 		if creature.has_method("is_dead") and creature.call("is_dead"):
 			continue
@@ -136,6 +162,14 @@ func _log_event(event_name: StringName, payload: Dictionary) -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null and observatory.has_method("log_event"):
 		observatory.call("log_event", event_name, payload)
+
+func _log_despawn(creature: Node, reason: String) -> void:
+	var payload := {"reason": reason}
+	if creature is Node2D:
+		payload["position"] = (creature as Node2D).global_position
+	if creature.has_method("get_stable_creature_id"):
+		payload["stable_creature_id"] = String(creature.call("get_stable_creature_id"))
+	_log_event(&"vaultwing_despawned", payload)
 
 func _obs_set_gauge(gauge_name: String, value: Variant) -> void:
 	var observatory := get_node_or_null("/root/DevObservatory")
