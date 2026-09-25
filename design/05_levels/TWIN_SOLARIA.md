@@ -9,6 +9,14 @@
 > **Persistent visual reference:** `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png`  
 > **Current runtime status:** development fidelity preview only; internal collision and route gameplay are not authored
 
+## Canonical visual reference
+
+![Twin Solaria Crown Route Court canonical visual reference](reference/twin_solaria/twin_solaria_crown_route_court_reference.png)
+
+*The preserved 3500 x 3000 composite is canonical for visual identity and landmark
+relationships. It is not yet canonical collision, navigation, or runtime asset
+decomposition.*
+
 ---
 
 ## 0. Canon lock
