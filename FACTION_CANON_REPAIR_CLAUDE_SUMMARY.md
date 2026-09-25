@@ -6,4 +6,5 @@
 - Marked the root FACTION_PROFILES.md compilation and old visual briefs as historical source material rather than current polity authority.
 - Updated region-generation, authored-room, and PixelPlanet lore metadata targets from present_ideology to resident_polity / secondary_polity / local_traditions / hazard_layers / occupancy_posture.
 - Strengthened faction_canon_docs_smoke.py to catch AI-context-complete vs migration-hold disagreement, missing faction paths indexed by FILE_INDEX, retired narrative headings, stale Domain migration hold, and loss of the Mesh HAZARD_LAYER lock.
+- Closing validation exposed and corrected one validator defect: FILE_INDEX uses brace-compressed faction paths, so the required-index check now compares against the same expanded path set used by the missing-path check.
 - Live runtime compatibility is intentionally unchanged: dominant_faction and prototype values remain until FI-001/FI-002 perform the focused runtime migration.

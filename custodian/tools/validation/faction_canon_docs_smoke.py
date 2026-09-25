@@ -55,6 +55,7 @@ def main() -> int:
     lattice_migration = (ROOT / "design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md").read_text(encoding="utf-8")
     index = (ROOT / "custodian/docs/ai_context/FILE_INDEX.md").read_text(encoding="utf-8")
     current = (ROOT / "custodian/docs/ai_context/CURRENT_STATE.md").read_text(encoding="utf-8")
+    indexed_paths = _indexed_faction_paths(index)
 
     ai_claims_complete = any(marker in current for marker in COMPLETE_MARKERS)
     hold_present = (
@@ -71,10 +72,10 @@ def main() -> int:
     for relative in REQUIRED_CANON:
         if not (ROOT / relative).is_file():
             errors.append(f"missing required canonical faction document: {relative}")
-        if relative not in index and Path(relative).name not in index:
+        if relative not in indexed_paths:
             errors.append(f"required canonical faction document is not indexed: {relative}")
 
-    for relative in sorted(_indexed_faction_paths(index)):
+    for relative in sorted(indexed_paths):
         if not (ROOT / relative).is_file():
             errors.append(f"FILE_INDEX lists missing canonical faction path: {relative}")
 
@@ -100,7 +101,7 @@ def main() -> int:
 
     print(
         "faction_canon_docs_smoke: PASS "
-        f"required={len(REQUIRED_CANON)} indexed={len(_indexed_faction_paths(index))}"
+        f"required={len(REQUIRED_CANON)} indexed={len(indexed_paths)}"
     )
     return 0
 
