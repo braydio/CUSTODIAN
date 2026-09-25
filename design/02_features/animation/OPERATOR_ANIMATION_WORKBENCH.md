@@ -13,7 +13,7 @@ separate Operator Art Agent V1 above this backend. It may mutate only the
 disposable workbench and does not change Workbench publication authority. See
 `OPERATOR_ART_AGENT_SYSTEM.md`.
 
-V2 edits pixels, stages explicit frame-count contract migrations, and exposes authored animation-clock timing. Canonical adjacent `.animation.json` sidecars own FPS, loop, and per-frame duration multipliers; publish updates that source sidecar transactionally and generated runtime resources remain projections. It cannot change semantic identity, source-frame canvas, transitions, direction ownership, hit windows, weapon presentation ownership, or combat simulation. Frame commands mutate only the ignored workspace; publish alone replaces canonical frame-count filenames and timing sidecars transactionally. Ambiguous semantic source identity is a hard error. Resolution uses Operator V2 grammar and exact identity; modification time, directory order, filename recency, arbitrary glob selection, and archives never choose authority.
+V2 edits pixels, stages explicit frame-count and frame-canvas contract migrations, and exposes authored animation-clock timing. Canonical adjacent `.animation.json` sidecars own FPS, loop, and per-frame duration multipliers; publish updates that source sidecar transactionally and generated runtime resources remain projections. It cannot change semantic identity, transitions, direction ownership, hit windows, weapon presentation ownership, or combat simulation. Contract commands mutate only the ignored workspace; publish alone replaces canonical contract filenames and timing sidecars transactionally. Ambiguous semantic source identity is a hard error. Resolution uses Operator V2 grammar and exact identity; modification time, directory order, filename recency, arbitrary glob selection, and archives never choose authority.
 
 ## Workflow
 
@@ -66,13 +66,14 @@ operator anim refresh melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
 operator anim publish melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger
 operator anim frame add melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger --after 2
 operator anim frame remove melee_1h idle_relaxed_01 e --weapon vigil_pattern_dagger --frame 3
+operator anim canvas resize unarmed fast_02 e --group attack --width 128 --height 128 --scope animation --dry-run
 ```
 
 The manifest records exact repo-relative source/runtime provenance, file and pixel hashes, original frame contracts, centered integer placement, presentation-clock mapping, and the ordered editable-layer whitelist. Lua only assembles and exports workspace data. Python rejects unexpected pixels outside a binding rectangle, validates every candidate before replacement, backs up sources, performs atomic replacement, and invokes production rebuilding.
 
 Publishing edits the requested authored direction and, only when explicitly enabled in the publish review, may promote it to its horizontal counterpart (`e↔w`, `ne↔nw`, `se↔sw`). The option defaults OFF and is unavailable for `n`, `s`, and `omni`. Preview lists direct and mirror targets with CREATE/REPLACE status; replacing authored counterpart art is permitted only by this explicit promotion. Every publishing layer participates while reference/nonpublishing layers remain excluded. Mirroring flips each frame cell independently and reassembles the cells in their original temporal order, never flips the whole strip. Counterpart PNGs and timing sidecars share the direct publish transaction, journal, downstream build, validation, and rollback. The backend constructs counterpart paths through `operator_asset_schema.py`; this flow never uses `asset_drop/inbox`. CLI automation uses `--mirror-counterpart`. A source changed after assembly makes the session stale; publishing refuses unless the explicit `--force-stale-source` escape hatch is supplied.
 
-## Frame-contract migration
+## Contract migration: frame count and canvas
 
 The V2 manifest separately records canonical `source_contract`, current
 `workspace_contract`, proposed `publish_contract`, explicit timeline slots,
@@ -81,13 +82,31 @@ migration includes synchronized lower+upper (or full body), matching-clock
 head/cape, and the exact requested matching-clock authored weapon. FX and a
 concurrent full-body reference remain unchanged unless explicitly selected.
 
-Before staging and again before publish, dependency auditing checks weapon
-gameplay frame fields, melee hit-window profiles, and per-frame socket tracks.
-GREEN migrations proceed; YELLOW presentation dependencies and RED gameplay
-dependencies fail closed. Frame commands export current saved workspace pixels,
-stage exact strip transforms, reassemble Aseprite, and record a pending
-migration. Publish journals the source swap and rolls source/runtime/import/
-resource state back if any mandatory downstream stage fails.
+Before staging and again before publish, frame-count dependency auditing checks
+weapon gameplay frame fields, melee hit-window profiles, and per-frame socket
+tracks. GREEN migrations proceed; YELLOW presentation dependencies and RED
+gameplay dependencies fail closed. Frame-count commands export current saved
+workspace pixels, stage exact strip transforms, reassemble Aseprite, and record
+a pending migration.
+
+Canvas migration is a separate `kind: frame_canvas` contract operation. It
+changes each selected layer's frame canvas without resizing/resampling pixels;
+the V1 placement anchor is centered and requires integer offsets. Expansion
+adds transparent padding. Contraction is allowed only when no visible pixel
+would be cropped. The default `animation` scope migrates editable Operator-owned
+presentation layers for the selected semantic animation; `body` selects the
+synchronized lower/upper pair or full body; `all` also includes linked editable
+publishing layers. References are never resized and are only re-centered in the
+recomputed document canvas. Pixel-coordinate socket dependencies are YELLOW and
+block staging until separately migrated; animation clocks, frame count, timing,
+and gameplay hit windows do not change.
+
+Use `Shift+R` in WORKBENCH mode or `operator anim canvas resize ... --width W
+--height H --scope animation|body|all`. Review is explicit; staging rebuilds
+the physical Aseprite document from saved pixels. A matching dirty live Aseprite
+document is refused until saved. Publish constructs the new canonical size-token
+paths through `operator_asset_schema.py`, then uses the existing transactional
+runtime, compatibility, resource, import, validation, and rollback pipeline.
 
 ## Compatibility SpriteFrames boundary
 
@@ -115,7 +134,7 @@ the modular-layer smoke. Failure of that recovery becomes `RECOVERY_REQUIRED`.
 
 ## Acceptance
 
-The smoke covers exact extraction after rectangular-canvas placement, illegal outside-rectangle pixels, and current lower/upper/Vigil semantic resolution. Aseprite headless assembly is exercised by the non-destructive edit demo when the executable is available.
+The smoke covers exact extraction after rectangular-canvas placement, illegal outside-rectangle pixels, no-scale canvas expansion, visible-crop rejection, scope/dependency selection, and current lower/upper/Vigil semantic resolution. When Aseprite is available it stages Fast 02 E in a temporary workspace, proves centered RGBA identity, and exports the physical six-frame 128×128 Aseprite document. The UI smoke covers canvas-migration projections and the dirty-live-document guard; its Textual pilot remains optional.
 
 `operator_workbench_ui_smoke.py` exercises browser/session/context/error
 projections without a terminal, then uses Textual's headless pilot when the

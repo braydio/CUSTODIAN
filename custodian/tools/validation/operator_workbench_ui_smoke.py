@@ -13,7 +13,7 @@ OPERATOR_ROOT = Path(__file__).resolve().parents[1] / "operator"
 sys.path.insert(0, str(OPERATOR_ROOT))
 
 from ui.service import WorkbenchService
-from ui.state import AnimationRecord, AnimationSelection, ExistingContextView, LayerView, MigrationView, PublishRow, PublishView, SessionView
+from ui.state import AnimationRecord, AnimationSelection, CanvasMigrationView, ExistingContextView, LayerView, MigrationView, PublishRow, PublishView, SessionView
 import animation_motion_preview
 import animation_preview
 
@@ -76,6 +76,8 @@ class FakeWorkbench:
                 "affected_bindings": ["lower_body", "upper_body"],
                 "excluded_bindings": [{"binding_id": "fx", "reason": "independent clock"}],
                 "dependency_audit": {"level": "GREEN"}}
+    def canvas_migrate(self, _profile, _action, _direction, width, height, scope, *_args):
+        return {"kind":"frame_canvas","operation":"resize_canvas","old_document_size":[96,96],"new_document_size":[width,height],"target_size":[width,height],"scope":scope,"affected_bindings":["lower_body","upper_body"],"excluded_bindings":[],"layer_changes":[{"binding_id":"lower_body","old_size":[96,96],"new_size":[width,height]},{"binding_id":"upper_body","old_size":[96,96],"new_size":[width,height]}],"dependency_audit":{"level":"GREEN"},"status":"pending"}
     @staticmethod
     def horizontal_counterpart(direction): return {"e": "w", "w": "e", "ne": "nw", "nw": "ne", "se": "sw", "sw": "se"}.get(direction)
     def publish(self, manifest, _aseprite, _force, dry_run, _full, requested, mirror_counterpart=False):
@@ -173,6 +175,13 @@ def pure_service_smoke() -> None:
         remove = service.frame_preview(run.selection, "remove", 6)
         assert (add.old_frames, add.new_frames, add.affected) == (6, 7, ("lower_body", "upper_body"))
         assert remove.new_frames == 5 and backend.applied == 0
+        canvas = service.canvas_preview(run.selection, 128, 128)
+        assert isinstance(canvas, CanvasMigrationView) and canvas.target_size == (128, 128) and canvas.scope == "animation"
+        assert canvas.affected == ("lower_body", "upper_body") and backend.applied == 0
+        service.require_saved_live_document_for_migration(str(root / "other.aseprite"), root / "workbench.aseprite", True)
+        try: service.require_saved_live_document_for_migration(str(root / "workbench.aseprite"), root / "workbench.aseprite", True)
+        except RuntimeError as error: assert "SAVE WORKBENCH BEFORE CONTRACT MIGRATION" in str(error)
+        else: raise AssertionError("dirty live canvas migration was not refused")
         error = service.project_error(FakeModel.WorkbenchError("WORKBENCH STALE\nsource changed"))
         assert error.title == "WORKBENCH STALE" and "source changed" in error.message
 
@@ -211,6 +220,9 @@ class PilotService:
     def frame_preview(self, _selection, operation, position, fill):
         if operation == "remove": return MigrationView("remove", position, fill, 6, 5, ("lower_body",), (), "GREEN")
         return self.migration
+    def canvas_preview(self, _selection, width, height, scope):
+        return CanvasMigrationView((96,96),(width,height),(width,height),scope,("lower_body","upper_body"),(),"GREEN",{"layer_changes":[{"binding_id":"lower_body","old_size":[96,96],"new_size":[width,height]},{"binding_id":"upper_body","old_size":[96,96],"new_size":[width,height]}]})
+    def canvas_apply(self, *_args): self.mutations += 1
     def publish_preview(self, selection, _full):
         old = "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png"
         upper = old.replace("lower_body", "upper_body")
@@ -818,6 +830,13 @@ async def textual_smoke() -> None:
         app.state.adopt_context("", "")
         await pilot.press("a"); await pilot.pause(0.3)
         assert isinstance(app.screen, FrameAddDialog) and "6" in str(app.screen.query_one("#frame-add-preview").render())
+        await pilot.press("escape"); await pilot.pause()
+        await pilot.press("shift+r"); await pilot.pause(0.2)
+        from ui.dialogs import CanvasResizeDialog, CanvasMigrationDialog
+        assert isinstance(app.screen, CanvasResizeDialog)
+        await pilot.click("#confirm"); await pilot.pause(0.3)
+        assert isinstance(app.screen, CanvasMigrationDialog) and "96×96 → 128×128" in str(app.screen.render())
+        await pilot.press("escape"); await pilot.pause()
         await pilot.click("#cancel"); await pilot.pause(); assert service.mutations == 0
         await pilot.press("p"); await pilot.pause(0.3)
         assert isinstance(app.screen, PublishDialog)

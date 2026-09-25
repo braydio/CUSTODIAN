@@ -557,6 +557,17 @@ import. The catalog-driven path phase resizes only full sequential strip
 aliases, journals resource hashes, restores them during rollback, and reports
 retired runtime PNG paths before actor smokes.
 
+The Workbench also stages explicit frame-canvas contract migrations through
+`operator anim canvas resize` or WORKBENCH `Shift+R`. This is centered canvas
+placement only: it preserves RGBA pixels without scaling, adds transparent
+padding, and refuses any contraction that would crop visible pixels. Animation,
+body-only, and all-editable scopes are distinct; source contracts stay old while
+workspace/publish contracts stage the new dimensions, and explicit publish
+rebuilds canonical size-token filenames plus runtime/catalog/resources. Pixel-
+coordinate socket tracks block until separately migrated. Fast 02 E `6f
+96×96 → 128×128` passes disposable Aseprite assembly and pixel-equivalence
+coverage; no canonical art was changed by that acceptance fixture.
+
 `Operator Art Agent V2` is live above Workbench V2. `operator art` starts a
 semantic `.ai` session, inspects editable bindings, renders the actual Aseprite
 composite, and performs deterministic paint, erase, integer stroke, same-layer

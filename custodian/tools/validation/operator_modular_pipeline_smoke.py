@@ -134,6 +134,15 @@ def main() -> int:
         assert catalog["animations"]["melee_1h/posture/draw_01/e"]["timing"]["durations"] == durations
         assert "timing" not in payload["animations"]["melee_1h/attack/fast_01/e"], "missing sidecar must preserve legacy timing"
 
+        # Canvas-contract migrations must replace stale generated catalog sizes.
+        catalog["animations"]["melee_1h/posture/draw_01/e"]["layers"]["lower_body"]["frame_size"] = [96, 96]
+        catalog_path.write_text(json.dumps(catalog))
+        runtime_size = json.loads(json.dumps(payload))
+        runtime_size["animations"]["melee_1h/posture/draw_01/e"]["layers"]["lower_body"]["frame_size"] = [128, 96]
+        merged = builder.build_animation_catalog(runtime_size, catalog_path)
+        assert merged["animations"]["melee_1h/posture/draw_01/e"]["layers"]["lower_body"]["frame_size"] == [128, 96]
+        catalog_path.write_text(json.dumps(merged))
+
         catalog["animations"]["melee_1h/posture/draw_01/e"]["layers"]["fx"] = {
             "path": "res://deleted_fx.png", "frames": 4, "frame_size": [128, 96]
         }

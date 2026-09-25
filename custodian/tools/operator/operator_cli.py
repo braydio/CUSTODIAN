@@ -21,6 +21,8 @@ def main():
     frame=anim.add_parser("frame").add_subparsers(dest="frame_cmd",required=True)
     add=frame.add_parser("add"); common(add,dry_run=True); add.add_argument("--after",type=int,required=True); add.add_argument("--fill",choices=("duplicate-prev","duplicate-next","blank"),default="duplicate-prev"); add.add_argument("--layers",default="auto")
     remove=frame.add_parser("remove"); common(remove,dry_run=True); remove.add_argument("--frame",type=int,required=True); remove.add_argument("--layers",default="auto")
+    canvas=anim.add_parser("canvas").add_subparsers(dest="canvas_cmd",required=True)
+    resize=canvas.add_parser("resize"); common(resize,dry_run=True); resize.add_argument("--width",type=int,required=True); resize.add_argument("--height",type=int,required=True); resize.add_argument("--scope",choices=("animation","body","all"),default="animation")
     anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true"); anim.choices["publish"].add_argument("--mirror-counterpart",action="store_true",default=True,help="publish the horizontal counterpart as a mirror of this direction (default)"); anim.choices["publish"].add_argument("--no-mirror-counterpart",dest="mirror_counterpart",action="store_false",help="author the counterpart separately instead of mirroring")
     x=ap.parse_args()
     if x.area=="art": return dispatch_art_command(x)
@@ -42,6 +44,8 @@ def main():
         elif x.cmd=="frame":
             operation=x.frame_cmd; position=x.after if operation=="add" else x.frame
             out=w.frame_migrate(x.profile,x.action,x.direction,operation,position,getattr(x,"fill","duplicate-prev"),x.layers,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.dry_run)
+        elif x.cmd=="canvas":
+            out=w.canvas_migrate(x.profile,x.action,x.direction,x.width,x.height,x.scope,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.dry_run)
         else:
             plan=m.build_plan(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile); ws=w.workspace(x.workspace_root,plan["identity"]); mf=ws/"workbench.json"; wb=ws/"workbench.aseprite"
             if x.cmd=="status":

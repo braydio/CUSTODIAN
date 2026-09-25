@@ -50,6 +50,12 @@ FPS. Review sequences are disposable `.ai` JSON and allow duplicates and trims.
 Use `operator anim frame add ... --after N --dry-run` or `frame remove ...
 --frame N --dry-run` to inspect an explicit frame-contract migration. Run
 without `--dry-run` to stage it, edit the new timeline, then publish.
+Use `operator anim canvas resize unarmed fast_02 e --group attack --width 128
+--height 128 --scope animation --dry-run` to inspect a no-scale centered canvas
+migration. In WORKBENCH mode, `Shift+R` opens the same review flow. The migration
+adds transparent padding (or rejects a crop that would discard visible pixels),
+then explicit `operator anim publish` updates canonical size-token filenames and
+the generated runtime/catalog contract.
 
 For guarded agent-driven edits to an existing Workbench, use `operator art
 start|inspect|render|paint|erase|stroke|copy|move|undo`. These commands operate

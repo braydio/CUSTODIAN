@@ -7,11 +7,14 @@ class AnimationDetail(Static):
         migration = ""
         if session.migration:
             item = session.migration
-            migration = (
-                f"\n\nPENDING {item.operation.upper()} @ {item.position}\n"
-                f"{item.old_frames}f → {item.new_frames}f\n"
-                f"Affected: {', '.join(item.affected)}\nAudit: {item.audit}"
-            )
+            if hasattr(item, "old_document_size"):
+                migration = (f"\n\nCANVAS MIGRATION PENDING\n"
+                             f"{item.old_document_size[0]}×{item.old_document_size[1]} → {item.new_document_size[0]}×{item.new_document_size[1]}\n"
+                             f"Affected: {', '.join(item.affected)}\nAudit: {item.audit}")
+            else:
+                migration = (f"\n\nPENDING {item.operation.upper()} @ {item.position}\n"
+                             f"{item.old_frames}f → {item.new_frames}f\n"
+                             f"Affected: {', '.join(item.affected)}\nAudit: {item.audit}")
         weapon = session.context.get("weapon_id") or "none"
         completeness = session.completeness
         if session.completeness_detail:

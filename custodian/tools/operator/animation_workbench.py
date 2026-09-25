@@ -156,6 +156,51 @@ def frame_migrate(profile,action,direction,operation,position,fill="duplicate-pr
         shutil.copy2(backup/"workbench.aseprite",wb); shutil.copy2(backup/"workbench.json",mf); raise
     return report
 
+def canvas_migrate(profile,action,direction,width,height,scope="animation",group="",weapon="",linked_profile="",root=DEFAULT_ROOT,aseprite=None,dry_run=False):
+    requested=m.build_plan(profile,action,direction,group,weapon,linked_profile); ws=workspace(root,requested["identity"]); mf=ws/"workbench.json"; wb=ws/"workbench.aseprite"
+    if not mf.exists() or not wb.exists(): raise m.WorkbenchError("workbench absent; run operator anim edit first")
+    data=load(mf); m.assert_context(data,requested)
+    if "STALE" in state(data,wb): raise m.WorkbenchError("WORKBENCH STALE")
+    if data.get("pending_migration"): raise m.WorkbenchError("WORKBENCH HAS PENDING CONTRACT MIGRATION")
+    try: report=fc.canvas_migration_report(data,int(width),int(height),scope,m.REPO_ROOT)
+    except ValueError as error: raise m.WorkbenchError(str(error)) from error
+    if dry_run: return report
+    if report["dependency_audit"]["level"]!="GREEN": raise m.WorkbenchError("CANVAS MIGRATION BLOCKED BY PIXEL-COORDINATE AUTHORITY\n"+json.dumps(report["dependency_audit"],indent=2))
+    stamp=datetime.now().strftime("%Y%m%dT%H%M%S"); backup=ws/"backups"/f"canvas_{stamp}"; backup.mkdir(parents=True,exist_ok=True); shutil.copy2(wb,backup/"workbench.aseprite"); shutil.copy2(mf,backup/"workbench.json")
+    data["export_stamp"]=f"canvas_migration_{stamp}"; save(mf,data); aseprite_run(resolve_aseprite(aseprite,True),mf,"export")
+    raw=ws/"exports"/data["export_stamp"] / "raw"; staging=ws/"migrations"/stamp; affected=set(report["affected_bindings"])
+    try:
+        for binding in data["layers"]:
+            current=staging/"current"/f"{binding['binding_id']}.png"; m.extract_binding(raw/f"{binding['binding_id']}.png",binding,data["canvas"],current)
+            target=staging/"target"/f"{binding['binding_id']}.png"
+            if binding["binding_id"] in affected:
+                old=list(binding["workspace_contract"]["frame_size"]); new=[int(width),int(height)]
+                fc.transform_canvas_strip(current,target,binding["workspace_contract"]["frames"],old,new,binding["binding_id"])
+                binding["frame_size"]=new; binding["workspace_contract"]["frame_size"]=new
+                binding["publish_contract"]["frame_size"]=new
+                key=m.SCHEMA.OperatorAssetKey(binding["owner"],binding["layer"],binding["profile"],binding["group"],binding["action"],binding["direction"],binding["workspace_contract"]["frames"],*new)
+                binding["publish_contract"]["path"]=m.rel(m.CUSTODIAN_ROOT/m.SCHEMA.canonical_source_path(key))
+            else: shutil.copy2(current,target)
+            binding["input_path"]=str(target.resolve())
+        for binding in data.get("layers",[]):
+            binding["workspace_contract"]["placement"]=report["placements"][binding["binding_id"]]; binding["placement"]=report["placements"][binding["binding_id"]]
+        for reference in data.get("references",[]): reference["placement"]=report["placements"][reference["binding_id"]]
+        data["canvas"]={"width":report["new_document_size"][0],"height":report["new_document_size"][1]}
+        # Keep a clean reference composite in the new document geometry.
+        frames=int(data["timeline"]["document_frames"]); cw,ch=data["canvas"]["width"],data["canvas"]["height"]
+        composite=Image.new("RGBA",(cw*frames,ch))
+        for binding in data["layers"]:
+            with Image.open(binding["input_path"]) as opened:
+                strip=opened.convert("RGBA"); fw,fh=binding["frame_size"]; x,y=binding["placement"]
+                for index in range(min(frames,binding["workspace_contract"]["frames"])):
+                    composite.alpha_composite(strip.crop((index*fw,0,(index+1)*fw,fh)),(index*cw+x,y))
+        baseline=ws/"baseline"; baseline.mkdir(parents=True,exist_ok=True); composite.save(baseline/"reference_composite.png")
+        report["layer_changes"]=[{**change,"new_placement":report["placements"][change["binding_id"]]} for change in report["layer_changes"]]
+        data["pending_migration"]=report; save(mf,data); aseprite_run(resolve_aseprite(aseprite,True),mf,"assemble"); data["aseprite"]["last_synced_sha256"]=m.file_sha256(wb); save(mf,data)
+    except Exception:
+        shutil.copy2(backup/"workbench.aseprite",wb); shutil.copy2(backup/"workbench.json",mf); raise
+    return report
+
 def _validation_commands(data,full_validate=False):
     cmds=[["python3",str(COMPATIBILITY_SCRIPT),"--check"],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_contract_report.py")],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_workbench_smoke.py")],["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"]]
     if data["identity"]["profile"]=="melee_1h" and data["identity"]["group"]=="posture": cmds.append(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_melee_posture_smoke.gd"])
@@ -215,11 +260,13 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             candidates.append({"binding":b,"candidate":mirrored,"target":target,"old":old,"mirror":True,"existed":existing is not None})
     if dry_run: return [str(x["target"]) for x in candidates]
     if migration:
-        affected=[b for b in data["layers"] if b["binding_id"] in migration["affected_bindings"]]; current_audit=fc.audit_dependencies(m.REPO_ROOT,data,affected)
-        if current_audit["level"]!="GREEN": raise m.WorkbenchError("FRAME MIGRATION BLOCKED BY GAMEPLAY FRAME AUTHORITY\n"+json.dumps(current_audit,indent=2))
+        affected=[b for b in data["layers"] if b["binding_id"] in migration["affected_bindings"]]
+        current_audit=(fc.audit_canvas_dependencies(m.REPO_ROOT,data,affected) if migration.get("kind")=="frame_canvas" else fc.audit_dependencies(m.REPO_ROOT,data,affected))
+        if current_audit["level"]!="GREEN":
+            authority="PIXEL-COORDINATE" if migration.get("kind")=="frame_canvas" else "GAMEPLAY FRAME"
+            raise m.WorkbenchError(f"{migration.get('kind','frame_count').upper()} MIGRATION BLOCKED BY {authority} AUTHORITY\n"+json.dumps(current_audit,indent=2))
     for item in candidates:
         b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
-        if item["mirror"]: continue
         if dst!=old and dst.exists(): raise m.WorkbenchError(f"target frame contract already exists: {dst}")
     tx=ws/"transactions"/stamp; backup=tx/"backups"; source_backup=backup/"sources"; resource_backup=backup/"resources"; source_backup.mkdir(parents=True,exist_ok=True); resource_backup.mkdir(parents=True,exist_ok=True)
     journal_path=tx/"transaction.json"

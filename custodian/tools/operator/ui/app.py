@@ -15,7 +15,7 @@ from textual.widget import Widget
 from textual.widgets import DataTable, Input, Static
 
 from .dialogs import (
-    ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog,
+    CanvasMigrationDialog, CanvasResizeDialog, ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog,
     PublishDialog, RefreshDialog, ValidationDialog, WeaponContextDialog,
 )
 from .features import AnimationFeature
@@ -95,6 +95,7 @@ class OperatorWorkbenchApp(App):
         Binding("question_mark", "help", "Help", show=False), Binding("e", "edit", "Edit", show=False),
         Binding("a", "add_frame", "Add Frame", show=False),
         Binding("x", "remove_frame", "Remove Frame", show=False), Binding("p", "publish", "Publish", show=False),
+        Binding("shift+r", "resize_canvas", "Resize Canvas", show=False),
         Binding("r", "refresh_workbench", "Refresh", show=False), Binding("w", "weapon_context", "Weapon", show=False),
         Binding("v", "validate", "Validate", show=False), Binding("j", "cursor_down", "Down", show=False),
         Binding("k", "cursor_up", "Up", show=False),
@@ -1307,6 +1308,35 @@ class OperatorWorkbenchApp(App):
         except Exception as error:self._error(error)
     def action_remove_frame(self)->None:
         if self._guard_preview(): self.run_worker(self._prepare_remove(),group="preview",exclusive=True)
+
+    def action_resize_canvas(self) -> None:
+        if self.state.mode != "workbench" or not self._guard_preview(): return
+        selection=self._require_selection()
+        if selection and self.session_view:
+            self.push_screen(CanvasResizeDialog(self.session_view.document_canvas), self._accept_canvas_options)
+
+    def _accept_canvas_options(self, options: dict | None) -> None:
+        if options and self.state.selection:
+            self.run_worker(self._review_canvas_migration(self.state.selection, options), group="preview", exclusive=True)
+
+    async def _review_canvas_migration(self, selection: AnimationSelection, options: dict) -> None:
+        try:
+            preview=await self._thread(self.service.canvas_preview, selection, options["width"], options["height"], options["scope"])
+            self.push_screen(CanvasMigrationDialog(preview), lambda accepted: self._accept_canvas_migration(accepted, options))
+        except Exception as error: self._error(error)
+
+    def _accept_canvas_migration(self, accepted: bool | None, options: dict) -> None:
+        if not accepted or not self.state.selection: return
+        active=self.live_bridge.server.state.active_document_path
+        try:
+            expected=self._selected_live_workbench_path()
+            if (expected is not None
+                    and self.live_bridge.snapshot().status is LiveBridgeUIStatus.CONNECTED):
+                self.service.require_saved_live_document_for_migration(active, expected, self.live_bridge.server.state.document_modified)
+        except Exception as error:
+            self._error(error)
+            return
+        self.run_worker(self._mutate("CANVAS MIGRATION", self.service.canvas_apply, self.state.selection, options["width"], options["height"], options["scope"]), group="mutation")
 
     def _accept_frame(self,result:dict|None)->None:
         selection=self.state.selection

@@ -17,7 +17,7 @@ import animation_preview
 import animation_motion_preview
 
 from .state import (
-    AnimationRecord, AnimationSelection, ErrorView, ExistingContextView,
+    AnimationRecord, AnimationSelection, CanvasMigrationView, ErrorView, ExistingContextView,
     LayerView, MigrationView, PublishRow, PublishView, SessionView,
 )
 
@@ -64,6 +64,14 @@ class WorkbenchService:
 
     def _index(self):
         return self.model.source_index(self.source_root, self.weapon_root)
+
+    def require_saved_live_document_for_migration(self, active_path: str | None, expected_path: Path, modified: bool | None) -> None:
+        if not active_path or modified is not True:
+            return
+        try: matches = Path(active_path).resolve() == Path(expected_path).resolve()
+        except OSError: matches = False
+        if matches:
+            raise self.model.WorkbenchError("SAVE WORKBENCH BEFORE CONTRACT MIGRATION\n\nCanvas migration rebuilds the Aseprite document from saved pixels. Save the current document, then retry.")
 
     def browser_records(self) -> list[AnimationRecord]:
         grouped: dict[tuple[str, str, str, str], list[Any]] = {}
@@ -367,12 +375,14 @@ class WorkbenchService:
         return self._context_view(self._plan(selection).get("context", {}))
 
     @staticmethod
-    def migration_view(report: dict[str, Any] | None) -> MigrationView | None:
+    def migration_view(report: dict[str, Any] | None) -> MigrationView | CanvasMigrationView | None:
         if not report:
             return None
         position = report.get("position", {})
         value = position.get("after", position.get("frame", 0)) if isinstance(position, dict) else position
         audit = report.get("dependency_audit", {})
+        if report.get("kind") == "frame_canvas":
+            return CanvasMigrationView(tuple(report.get("old_document_size", (0, 0))), tuple(report.get("new_document_size", (0, 0))), tuple(report.get("target_size", (0, 0))), str(report.get("scope", "animation")), tuple(report.get("affected_bindings", ())), tuple((item.get("binding_id", ""), item.get("reason", "")) for item in report.get("excluded_bindings", ())), str(audit.get("level", "GREEN")), report)
         return MigrationView(
             str(report.get("operation", "")), int(value), str(report.get("fill", "")),
             int(report.get("old_clock_frames", 0)), int(report.get("new_clock_frames", 0)),
@@ -417,7 +427,7 @@ class WorkbenchService:
             state, "MIGRATION_PENDING" if migration else "NONE", dependency, ws,
             str(self.workbench.resolve_aseprite(self.aseprite) or "unavailable"), tuple(layers),
             migration, data.get("context", {}), completeness, completeness_detail,
-            workspace_display,
+            workspace_display, (int(data.get("canvas", {}).get("width", 96)), int(data.get("canvas", {}).get("height", 96))),
         )
 
     def watch_signature(self, selection: AnimationSelection) -> tuple[int | None, int | None]:
@@ -449,6 +459,14 @@ class WorkbenchService:
             fill, "auto", selection.group, selection.weapon_id, selection.linked_profile,
             self.workspace_root, self.aseprite, False,
         )
+        return self.migration_view(report)  # type: ignore[return-value]
+
+    def canvas_preview(self, selection: AnimationSelection, width: int, height: int, scope: str = "animation") -> CanvasMigrationView:
+        report = self.workbench.canvas_migrate(selection.profile, selection.action, selection.direction, width, height, scope, selection.group, selection.weapon_id, selection.linked_profile, self.workspace_root, self.aseprite, True)
+        return self.migration_view(report)  # type: ignore[return-value]
+
+    def canvas_apply(self, selection: AnimationSelection, width: int, height: int, scope: str = "animation") -> CanvasMigrationView:
+        report = self.workbench.canvas_migrate(selection.profile, selection.action, selection.direction, width, height, scope, selection.group, selection.weapon_id, selection.linked_profile, self.workspace_root, self.aseprite, False)
         return self.migration_view(report)  # type: ignore[return-value]
 
     def publish_preview(self, selection: AnimationSelection, full_validate: bool = False) -> PublishView:

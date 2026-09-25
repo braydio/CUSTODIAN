@@ -76,7 +76,11 @@ class PublishDialog(ModalScreen[tuple[bool, bool] | None]):
         if p.variable_durations:
             timing += "    VARIABLE DURATIONS"
         layers = " + ".join(p.publishing_layers) or "no publishing layers"
-        contract = f"Frames    {p.old_frames} -> {p.new_frames}" if p.contract_changed else "Frame contract unchanged"
+        if p.migration and hasattr(p.migration, "old_document_size"):
+            old, new = p.migration.old_document_size, p.migration.new_document_size
+            contract = f"Canvas    {old[0]}×{old[1]} -> {new[0]}×{new[1]}"
+        else:
+            contract = f"Frames    {p.old_frames} -> {p.new_frames}" if p.contract_changed else "Frame contract unchanged"
         direction = DIRECTION_NAMES.get(selection.direction, selection.direction.upper())
         dependency = "[green]✓ Dependency audit[/green]" if p.audit == "GREEN" else "[red]✗ Dependency audit[/red]"
         compatibility = "[green]✓ Compatibility preflight[/green]" if p.compatibility_preflight else "[red]✗ Compatibility preflight[/red]"

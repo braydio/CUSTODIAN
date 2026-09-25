@@ -89,8 +89,13 @@ bridge failure. Render output includes transparent frames, a strip, a contact
 sheet, baseline diff, and before/after sheet.
 
 Neither V1 nor V2 has canonical publish, runtime rebuild, frame/timing
-mutation, resize, rotation, socket mutation, embedded image-model, or automatic
+mutation, canvas-contract migration, rotation, socket mutation, embedded image-model, or automatic
 commit capability.
+
+Canvas resizing is deliberately outside Art Agent mutation authority. The
+separate Operator Workbench publication authority supports explicit centered,
+no-resampling frame-canvas contract migration with crop and coordinate-dependency
+gates; see `OPERATOR_ANIMATION_WORKBENCH.md`.
 
 ## Source Session subsystem
 

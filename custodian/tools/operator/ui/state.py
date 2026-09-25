@@ -64,6 +64,18 @@ class MigrationView:
 
 
 @dataclass(frozen=True)
+class CanvasMigrationView:
+    old_document_size: tuple[int, int]
+    new_document_size: tuple[int, int]
+    target_size: tuple[int, int]
+    scope: str
+    affected: tuple[str, ...]
+    excluded: tuple[tuple[str, str], ...]
+    audit: str
+    raw: dict[str, Any] = field(compare=False, repr=False, default_factory=dict)
+
+
+@dataclass(frozen=True)
 class PublishRow:
     layer: str
     direction: str
@@ -79,7 +91,7 @@ class PublishView:
     new_frames: int
     retired_paths: tuple[str, ...]
     new_paths: tuple[str, ...]
-    migration: MigrationView | None
+    migration: MigrationView | CanvasMigrationView | None
     audit: str
     counterpart_direction: str | None = None
     mirror_paths: tuple[str, ...] = ()
@@ -108,11 +120,12 @@ class SessionView:
     workspace_path: Path
     aseprite_path: str
     layers: tuple[LayerView, ...]
-    migration: MigrationView | None = None
+    migration: MigrationView | CanvasMigrationView | None = None
     context: dict[str, Any] = field(default_factory=dict, compare=False)
     completeness: str = "COMPLETE"
     completeness_detail: str = ""
     workspace_display: str = ""
+    document_canvas: tuple[int, int] = (96, 96)
 
 
 @dataclass(frozen=True)

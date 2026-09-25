@@ -45,6 +45,8 @@ Completed packets are moved to `archived/`. They are preserved for historical re
 
 ### Recently Complete (awaiting archive)
 
+- `OPERATOR_WORKBENCH_CANVAS_MIGRATION.md` — Added centered, no-resampling frame-canvas contract migration to Workbench V2 with animation/body/all scopes, crop and socket-coordinate guards, Shift+R/CLI parity, and Fast 02 E disposable Aseprite proof.
+
 - `PROCGEN_STUCK_POCKET_AUTHORITY.md` — Added collision-owner runtime blocker authority, protected route/structure clearances, two-exit pocket remediation, navigation consumption, loud stuck diagnostics, debug-only Operator rescue, Observatory telemetry, and focused smoke coverage.
 - `COMBAT_RESOURCE_FEEDBACK.md` — Added authoritative reload/heat/overheat progress snapshots, debounced feedback events, compact pressure HUD, weapon-local audio/procedural vent presentation, schema wiring, and focused smoke coverage.
 - `ASH_BELL_FORLORN_RITUALANT.md` — Added the centralized authored-scene procgen authority reservation API and wired Ash-Bell dev placement to claim its canonical room footprint before instantiation.
