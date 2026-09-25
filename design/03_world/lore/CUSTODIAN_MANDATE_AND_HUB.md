@@ -3,7 +3,7 @@
 > **Status:** canonical institutional lore authority  
 > **Locked:** 2026-09-24  
 > **Scope:** Custodian office, jurisdiction, designation, Posts, Hub, Contracts, Civic Mesh, Meridian Office, and Null Warrant institutional relationships.  
-> **Canon authority:** \`design/03_world/lore/CORE_LORE.md\` remains the setting canon authority; this document is the specialized authority for Custodian institutional semantics.  
+> **Canon authority:** `design/03_world/lore/CORE_LORE.md` remains the setting canon authority; this document is the specialized authority for Custodian institutional semantics.  
 > **Reserved boundary:** This document does not establish who the awakened player was, whether they previously carried the designation, how crèches relate to biological personhood, what Null Warrant ultimately contained, or the ultimate cause of the Severing.
 
 ---
@@ -696,13 +696,13 @@ It does not explain the person who woke inside it.
 
 ## Canonical cross-links
 
-- Core Lore: \`design/03_world/lore/CORE_LORE.md\`
-- Reciprocal Continuity Doctrine: \`design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md\`
-- Game Protocols & World Lore: \`design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md\`
-- Crèche and Locker Lore: \`design/03_world/lore/CRECHE_AND_LOCKER_LORE.md\`
-- Hub Meta Progression: \`design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md\`
-- Campaign Flow: \`design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md\`
-- Faction Overview: \`design/03_world/factions/_FACTION_OVERVIEW.md\`
+- Core Lore: `design/03_world/lore/CORE_LORE.md`
+- Reciprocal Continuity Doctrine: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
+- Game Protocols & World Lore: `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+- Crèche and Locker Lore: `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`
+- Hub Meta Progression: `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`
+- Campaign Flow: `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`
+- Faction Overview: `design/03_world/factions/_FACTION_OVERVIEW.md`
 
 ## Next Agent Slice
 

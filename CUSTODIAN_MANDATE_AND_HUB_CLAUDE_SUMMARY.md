@@ -8,14 +8,14 @@ Lock the approved Custodian institutional mandate into active design authority w
 
 Created:
 
-- \`design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md\`
+- `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`
 
 Routed from:
 
-- \`design/03_world/lore/CORE_LORE.md\`
-- \`design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md\`
-- \`custodian/docs/ai_context/CURRENT_STATE.md\`
-- \`custodian/docs/ai_context/FILE_INDEX.md\`
+- `design/03_world/lore/CORE_LORE.md`
+- `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
+- `custodian/docs/ai_context/CURRENT_STATE.md`
+- `custodian/docs/ai_context/FILE_INDEX.md`
 
 ## Canon locked
 
