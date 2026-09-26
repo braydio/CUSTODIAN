@@ -2,7 +2,7 @@
 
 **Status:** draft
 **Parent:** HUB_DOCTRINE.md
-**Last Updated:** 2026-04-22
+**Last Updated:** 2026-09-25
 
 ---
 
@@ -78,6 +78,7 @@ Every return raises one or more of:
 | The Sunken Civic Quarter | Persistence (green) | - |
 | The Prism Margin | Synthesis (white) | All domains interact |
 | The Custodian's Approach | All domains | Ambient |
+| Twin Solaria | Cognition (blue/violet) + Authority (gold/amber) | Synthesis / destination-derived route light |
 
 ---
 
@@ -96,7 +97,7 @@ Every return raises one or more of:
 ### Phase 2: Recovery
 - Colors return in domains
 - Memory overlays begin
-- New routes/sky start responding
+- New routes, field optics, and exterior relationships start responding
 
 ### Phase 3: Saturation
 - City becomes magnificent
@@ -141,14 +142,18 @@ At certain fidelity thresholds, brief overlays of the city's former state appear
 
 ---
 
-## 9. Prismatic Routing
+## 9. Prismatic and Continuity Optics
 
-Once enough color exists, the sky participates:
+Once enough color exists, weak visual relationships become legible:
 
-- Certain routes only appear under specific sky angles
-- Double-sunset alignment temporarily opens parts of the city
-- Prism flares reveal hidden inscriptions or route markers
-- Late game: sky becomes a dynamic timing system for hub interactions
+- prism flares reveal hidden inscriptions or route markers;
+- field geometry can make damaged local mechanisms understandable;
+- exterior light can expose relationships between surviving structures;
+- chromatic pressure can destabilize previously trustworthy visual evidence.
+
+Twin Solaria is a special case. Its route acquisition is not a sky-timing mechanic.
+It follows Home Index state, evidence correlation, reciprocity review, and Custodian
+authorization as defined in `design/05_levels/TWIN_SOLARIA.md`.
 
 ---
 
@@ -179,7 +184,7 @@ Once enough color exists, the sky participates:
 
 - Distant horizon tears
 - Stars misalign
-- Light blooms too long after sunset
+- Light blooms persist after their apparent source has changed
 - Whole towers silhouette against cosmic rupture flashes
 
 ### 10.3 Overexposure Mechanics
@@ -223,7 +228,7 @@ Once enough color exists, the sky participates:
 - Per-district + per-prop-type state tracking
 - `chromatic_pressure` meter with decay rate
 - Particle systems for prism effects (triggered by domain restoration)
-- Skybox shader parameters linked to domain state
+- Exterior/sky presentation and route-optics shader parameters linked to domain state
 
 ---
 
@@ -241,4 +246,4 @@ Once enough color exists, the sky participates:
 ## 14. Related
 
 - Parent: `HUB_DOCTRINE.md`
-- Related: `HUB_SPATIAL_LAYOUT.md`, `HUB_RETURN_GRAMMAR.md`
+- Related: `HUB_SPATIAL_LAYOUT.md`, `HUB_RETURN_GRAMMAR.md`, `../05_levels/TWIN_SOLARIA.md`

@@ -182,7 +182,11 @@ Last updated: 2026-09-26
 - `custodian/tools/iteration/scenarios/traversal/awakening_underlays_zones_01_05.json` and `custodian/tools/validation/fixtures/awakening_underlays_moment.*` — deterministic Moment Forge registration review for the first five production environment underlays and the art/blockout handoff.
 - `custodian/scenes/debug/awakening_first_return_mapper.tscn` — Awakening collision/POI mapper framed on the whole dungeon spine, with section envelopes, critical path, optional branch, camera reveals, encounter slots, interaction markers, and future-art anchors overlaid from `awakening_layout.gd`.
 - `custodian/scenes/debug/awakening_first_return_debug.tscn` — dev-only tour: zone selector, teleport to entry, collision/zone/landmark overlays, reset progression. Adds no global hotkeys.
-- `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene.
+- `design/05_levels/TWIN_SOLARIA.md` — canonical Twin Solaria location/level authority: detached Crown Route Court, surviving Solarium I Acquisition Aperture, destroyed Solarium II Passage Aperture / Amputation, Crown Verge, route-acquisition grammar, gameplay progression, and future implementation slices.
+- `design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md` — specialized historical authority for the Crown Reciprocal Incident, deliberate Second Crown amputation, pre-cut anomalous evidence, Null Warrant safety-chain presence, network-scale Severing relationship, and explicit reserved mysteries.
+- `custodian/tools/validation/twin_solaria_canon_docs_smoke.py` — focused canon-drift tripwire for the two-aperture Twin Solaria lock, Second Crown narrative slice, Ground Zero uncertainty, and truthful development-only runtime status.
+- `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png` and adjacent `README.md` — persistent 3500x3000 documentation copy of the current master composite plus LFS/provenance/preservation contract; never a runtime target.
+- `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene or implement the Crown Route Court contract.
 
 ## Active Runtime Systems
 
@@ -802,7 +806,7 @@ Last updated: 2026-09-26
 - `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
 - `custodian/content/README.md` — stable content-root domain map and duplicate policy for runtime/source/legacy/quarantine asset placement
 - `custodian/content/levels/hub/Road_of_Witnesses_Tilemap.png` — retained legacy/source map image; active Road presentation uses modular plates under `custodian/content/levels/hub/road_of_witnesses/`
-- `custodian/content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png` — project-local development copy of the largest current Twin Solaria composite used by the dedicated backdrop test scene
+- `custodian/content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png` — development/runtime-preview copy of the current Twin Solaria composite; the persistent documentation source reference is `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png`
 - `custodian/content/props/gothic/vault_dressing/source/unregistered/` — vault-owned source quarantine for unregistered vault prop art pending manifest/runtime promotion
 - `custodian/content/tiles/source/ashen_forum/`, `custodian/content/tiles/source/compound_ashen/`, `custodian/content/tiles/source/gothic_compound/`, and `custodian/content/tiles/source/roads_paths/` — source/master tile-sheet homes for previously loose top-level tile art
 - `custodian/content/reference/active_art_samplesheet.png` — generated design-reference sheet containing deterministic samples from active art directories; regenerate with `python3 custodian/tools/art/build_reference_samplesheet.py`
