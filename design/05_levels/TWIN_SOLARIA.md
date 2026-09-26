@@ -5,6 +5,7 @@
 > **Location:** detached Crown Annex of the Hub Domain  
 > **Primary doctrine:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`  
 > **Institutional doctrine:** `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`  
+> **Historical incident authority:** `design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`  
 > **Hub architecture:** `design/04_architecture/HUB_DOCTRINE.md`, `design/04_architecture/HUB_SPATIAL_LAYOUT.md`  
 > **Persistent visual reference:** `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png`  
 > **Current runtime status:** development fidelity preview only; internal collision and route gameplay are not authored
@@ -24,17 +25,28 @@ decomposition.*
 Twin Solaria is no longer a double-sunset observatory, solar court, sun shrine,
 or literal astronomical installation.
 
-The name **Twin Solaria** refers to two paired continuity-reference towers:
-the **Outbound Solaria** and the **Reciprocal Solaria**.
+The name **Twin Solaria** refers to the facility's two enormous Crown-class aperture
+courts:
+
+- **Solarium I — Acquisition Aperture**, the surviving upper-left circle;
+- **Solarium II — Passage Aperture**, the destroyed upper-right Second Crown.
 
 The facility is the Hub's surviving **Crown Route Court**, an old-world
-continuity-adjudication complex built to reconstruct, verify, judge, and, when
-authorized, stabilize damaged or incomplete Lattice routes.
+continuity-adjudication complex built to reconstruct, verify, judge, observe, and,
+when authorized, commit damaged or incomplete Lattice routes.
 
 The decisive distinction is:
 
 > **An ordinary Continuity Port executes a route whose address is sufficiently known.  
-> Twin Solaria reconstructs whether a lost address is still a defensible route.**
+> Twin Solaria reconstructs whether a lost address is still a defensible route.  
+> Solarium I can acquire and inspect that route. Solarium II once committed it to passage.**
+
+Solarium II is not merely dormant. It was deliberately **amputated** during the
+Crown Reciprocal Incident after the Passage Aperture was already exhibiting
+unacceptable reciprocal behavior.
+
+The Amputation is part of the Severing-era forensic record, but Twin Solaria is not
+canonically established as Ground Zero or the ultimate cause of the Severing.
 
 The facility does not create destinations, create Domains, manufacture alternate
 worlds, negate the Pale, or defeat the Reciprocal Continuity Law.
@@ -45,8 +57,8 @@ then presents a Custodian with the evidence and consequences of reopening them.
 The location is physically real infrastructure. It is not a simulation, dream,
 Archive reconstruction, or metaphysical mind-space.
 
----
-
+Historical incident detail and mystery boundaries are locked in
+`design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
 ## 1. Why the facility exists
 
 Old continuity infrastructure normally expected a usable route package:
@@ -234,54 +246,70 @@ the exact metaphysics of the Verge unresolved.
 
 ## 4. Why it is called Twin Solaria
 
-The facility's two namesake towers are the **Outbound Solaria** and
-**Reciprocal Solaria**.
+The **Twin Solaria are the two giant aperture courts**.
 
-They are enormous continuity-reference anchors.
+The namesake is architectural and functional.
 
-At high output, each produces a hard blue-white field glow bright enough to flood the
-court with artificial daylight.
+It does not refer to two literal suns and does not refer to the two blue anchor
+towers.
 
-The historical nickname "Solaria" came from that operating appearance.
+### 4.1 Solarium I — Acquisition Aperture
 
-It is not evidence of sun worship or of two literal suns.
+Solarium I survives in the upper-left circular court.
 
-### 4.1 Outbound Solaria
+Its job is to find, correlate, interrogate, and observe a candidate route before
+full passage is allowed.
 
-The Outbound Solaria holds the candidate destination solution.
+It can:
 
-It answers:
+- hold a destination solution;
+- expose a Resolved Route Vista;
+- compare current destination behavior to Archive evidence;
+- support Echo Drum interrogation;
+- feed reciprocity review;
+- keep a route observable while passage authority remains withheld.
 
-- where the route is trying to go;
-- whether the destination signature remains coherent;
-- whether historical route records converge;
-- whether the outbound aperture remains locked to the same destination during activation.
+A stable image in Solarium I is **not** permission to cross.
 
-### 4.2 Reciprocal Solaria
+The old system intentionally separated "we can see it" from "we can enter it."
 
-The Reciprocal Solaria searches for the path the same connection creates back toward
-the Hub.
+### 4.2 Solarium II — Passage Aperture
 
-It answers:
+Solarium II formerly occupied the missing upper-right circular court.
 
-- what can address the Hub from the far side;
-- whether the return path converges on the expected origin;
-- whether unexpected reciprocal addresses appear;
-- whether route activation increases return-path ambiguity;
-- whether a candidate should enter Hold automatically.
+It accepted a route solution only after acquisition and review, then created the
+controlled passage state used for people, equipment, and material.
 
-### 4.3 Institutional maxim
+Solarium II was destroyed by a deliberate Crown Amputation during the wider
+Severing crisis.
+
+The surviving structure preserves evidence that the aperture was already behaving
+abnormally before the cut.
+
+The missing northeast mass is therefore a canonical historical wound, not an
+unfinished part of the art.
+
+### 4.3 Outbound and Reciprocal Anchors
+
+The two large blue crystal towers flanking the upper court are:
+
+- **Outbound Anchor**
+- **Reciprocal Anchor**
+
+They are continuity-field anchors supporting route acquisition and return-path
+analysis.
+
+They are not the Solaria.
+
+### 4.4 Institutional maxim
 
 A surviving operational maxim is:
 
-> **A route is not acquired when the first Solaria finds the destination.  
-> A route is acquired when the second finds what can come back.**
+> **A route is not acquired when the destination appears.  
+> A route is acquired when the court knows what can come back.**
 
 This should appear at least once in environmental text or Archive material, but not
 as an omnipresent slogan.
-
----
-
 ## 5. Portal and route hierarchy
 
 Twin Solaria must remain distinct from existing and planned traversal systems.
@@ -351,25 +379,24 @@ Top of the raster is treated as north for documentation.
 
 | Visual region | Canonical landmark | Canonical function |
 |---|---|---|
-| Huge upper-left circular court and opening | **Crown Aperture** | Crown-class continuity aperture and route manifestation court |
-| Bright landscape visible inside the opening | **Resolved Route Vista** | Remote destination sample, not local sky |
-| Tall blue crystal left of the upper central axis | **Outbound Solaria** | Holds and verifies destination solution |
-| Tall blue crystal right of the upper central axis | **Reciprocal Solaria** | Models and verifies return-path exposure |
+| Huge upper-left circular court and opening | **Solarium I / Acquisition Aperture** | Crown-class route acquisition, interrogation, and remote observational resolve |
+| Bright landscape visible inside it | **Resolved Route Vista** | Remote destination sample, not local sky and not automatically traversable |
+| Missing upper-right circular mass implied by surviving arc | **Solarium II / Passage Aperture** | Former full-transfer aperture; destroyed during the Crown Reciprocal Incident |
+| Surviving upper-right root/arc | **The Amputation / Second Crown Root** | Designed separation interface plus pre-amputation anomalous damage |
+| Tall blue crystal left of the upper central axis | **Outbound Anchor** | Holds and verifies destination-side route solution |
+| Tall blue crystal right of the upper central axis | **Reciprocal Anchor** | Measures and stabilizes return-path solution |
 | Tall central blue crystal tower | **Meridian Needle** | Long-baseline route correlation and candidate reconstruction |
 | Large circular instrument below the Meridian Needle | **Reciprocity Dial** | Primary route-risk and adjudication instrument |
-| Monumental stair/threshold below the upper court | **Authority Threshold** | Physical and procedural separation before crown activation |
+| Monumental stair/threshold below the upper court | **Authority Threshold** | Physical and procedural separation before Crown-class route commitment |
 | Large bronze circular mechanism mid-left | **West Echo Drum** | Emits calibrated route interrogation pulses |
 | Large bronze circular mechanism mid-right | **East Echo Drum** | Reads delayed, reflected, and returning route response |
 | Large circular court in lower center | **Home Index** | Establishes the Hub's own current continuity reference |
 | Lower-left circular instrument court | **Archive Witness Ring** | Loads historical route evidence, Holds, findings, and provenance |
 | Lower-right circular instrument court | **Live Witness Ring** | Compares historical evidence against current field behavior |
-| Distributed small blue crystals | **Coherence Witnesses** | Local field strain and fail-closed instrumentation |
+| Distributed small blue crystals | **Coherence Witnesses** | Local field strain and fail-closed consensus instrumentation |
 | Small detached left-side platform/tower | **Blind Witness** | Severed auxiliary observation relay and optional restoration node |
 | Narrow bottom entrance/bridge | **Crown Causeway** | Arrival from the Crown Transfer |
 | Black/cosmic exterior around structure | **Crown Verge** | Unresolved exterior beyond the annex's maintained coherent structure |
-
----
-
 ## 7. Landmark detail
 
 ### 7.1 Crown Causeway
@@ -557,29 +584,27 @@ RECIPROCAL EXPOSURE: UNRESOLVED
 RESTORATION AUTHORITY: WITHHELD
 ```
 
-### 7.10 Outbound Solaria
+### 7.10 Outbound Anchor
 
-**Role:** destination lock.
+**Role:** destination-side route stabilization.
 
-Once authorized for acquisition, the Outbound Solaria holds the destination solution
-stable while the Crown Aperture begins resolving.
+Once a route candidate exists, the Outbound Anchor holds the destination solution
+stable while Solarium I begins observational resolve.
 
 Its visual response should be clean and narrow.
 
-A stable Outbound Solaria is not proof that the route is safe.
+A stable Outbound Anchor is not proof that the route is safe.
+### 7.11 Reciprocal Anchor
 
-### 7.11 Reciprocal Solaria
+**Role:** return-path stabilization and measurement.
 
-**Role:** return-path lock.
-
-The Reciprocal Solaria is deliberately allowed to become visually more alarming than
-the Outbound Solaria.
+The Reciprocal Anchor is deliberately allowed to become visually more alarming than
+the Outbound Anchor.
 
 A route that looks perfect outbound can still produce unstable or multiple return
 solutions.
 
-If the Reciprocal Solaria fails to converge, the default state is Hold or shutdown.
-
+If the Reciprocal Anchor fails to converge, the default state is Hold or shutdown.
 ### 7.12 Coherence Witnesses
 
 **Role:** distributed fail-closed instrumentation.
@@ -625,40 +650,44 @@ Possible later discoveries can establish whether it was:
 
 Do not resolve this in the baseline location spec.
 
-### 7.14 Crown Aperture
+### 7.14 Solarium I — Acquisition Aperture
 
-**Role:** high-order route manifestation.
+**Role:** high-order route acquisition and observation.
 
-The aperture occupies the enormous upper-left circular court.
+The surviving aperture occupies the enormous upper-left circular court.
 
 The whole circular structure is part of the machine.
 
 The visible opening is only the most obvious component.
 
-The asymmetrical placement is intentional safety architecture.
-
-If something returns through the Crown Aperture, it does not emerge on a direct line
-toward:
-
-- the Home Index;
-- the primary controls;
-- the Crown Causeway;
-- Archive Heights;
-- the main Hub.
-
-The court provides lateral distance, containment geometry, and time to react.
-
-The aperture can show a destination before full traversal is authorized.
+Solarium I can show a destination before full traversal is authorized.
 
 That image is a **Resolved Route Vista**.
 
-It is not a literal window in the ordinary optical sense.
+It is not a literal optical window in the ordinary sense.
 
----
+The acquisition court is intentionally offset from the main Hub approach so that
+route work is not aligned directly with the city.
 
+### 7.15 Solarium II — Passage Aperture / The Amputation
+
+**Role before destruction:** controlled Crown-class passage.
+
+Solarium II occupied the now-missing upper-right circular court.
+
+Its surviving root contains both:
+
+- deliberate emergency-separation geometry;
+- damage or field evidence that predates the final cut.
+
+The site is therefore read as a failed Passage Aperture that was subsequently
+amputated, not as a complete aperture destroyed by a single external blast.
+
+The absent Second Crown should remain visually absent until and unless a later
+campaign explicitly authorizes reconstruction.
 ## 8. Interpreting the current golden vista
 
-The golden landscape currently visible through the Crown Aperture is canonical as a
+The golden landscape currently visible through Solarium I is canonical as a
 **Resolved Route Vista**.
 
 It is not the Crown Annex's sunrise.
@@ -667,28 +696,30 @@ It is not one of two local suns.
 
 It is not evidence that Twin Solaria is built on a planet with strange astronomy.
 
-The current composite therefore depicts the facility in one of two acceptable states:
+The current composite depicts the surviving Acquisition Aperture in
+**ROUTE CANDIDATE / observational resolve**.
 
-1. **ROUTE CANDIDATE / observational resolve**, where the destination is visually
-   correlated but traversal is not yet authorized; or
-2. **STABLE**, where a route has been fully authorized and held.
+The destination has been correlated strongly enough to present.
 
-For baseline documentation, prefer interpretation **1**.
+Passage remains withheld because the Passage Aperture, Solarium II, no longer
+exists.
 
-That preserves dramatic uncertainty in the reference image.
-
----
-
+This is now the preferred and canonical interpretation of the reference image.
 ## 9. Operational sequence
 
 Twin Solaria uses a fail-closed progression.
+
+The current surviving Crown Court can complete acquisition and adjudication.
+It cannot perform Crown-class passage until a future story/runtime slice restores a
+valid Passage Aperture.
 
 ### 9.1 DORMANT
 
 Conditions:
 
-- Crown Aperture closed;
-- Solaria dim;
+- Solarium I closed;
+- Solarium II absent;
+- anchors dim;
 - Echo Drums inert;
 - Witness Rings readable only as dead machinery;
 - Coherence Witnesses mostly dark.
@@ -755,11 +786,11 @@ Important:
 
 **candidate does not mean safe.**
 
-The Crown Aperture may begin a faint observational resolve.
+Solarium I may begin a faint observational resolve.
 
 ### 9.7 RECIPROCITY REVIEW
 
-The Reciprocal Solaria and East Echo Drum determine what return path the candidate
+The Reciprocal Anchor and East Echo Drum determine what return path the candidate
 creates.
 
 Possible machine outcomes include:
@@ -786,36 +817,50 @@ Available high-level findings:
 
 - **HOLD**
 - **ABORT**
-- **AUTHORIZE RESTORATION**
+- **AUTHORIZE ACQUISITION**
 
-A Hold preserves the evidence and prevents activation while uncertainty remains.
+A Hold preserves the evidence and prevents stronger resolve while uncertainty remains.
 
 Abort rejects the current attempt without claiming the route can never be revisited.
 
-Authorize Restoration permits the system to proceed to aperture resolve.
+Authorize Acquisition permits Solarium I to enter full observational resolve.
 
-### 9.9 APERTURE RESOLVE
+### 9.9 ACQUISITION RESOLVE
 
-The Crown Aperture transitions from route sample to traversable continuity interface.
+Solarium I transitions from weak candidate signal to a stable Resolved Route Vista.
 
 This should be slow enough to read as industrial work, not a spell.
 
-### 9.10 STABLE
+The destination may now be inspected and used as evidence.
 
-The route is open under monitored conditions.
+No traversal occurs.
 
-All major instruments remain active.
+### 9.10 ACQUISITION STABLE
 
-The facility continuously rechecks:
+The route is held under monitored observational conditions.
+
+All major instruments continuously recheck:
 
 - destination lock;
 - return path;
 - field strain;
 - witness agreement.
 
-### 9.11 SHUTDOWN
+The current facility stops here.
 
-Normal closure collapses the aperture under control.
+### 9.11 PASSAGE HANDOFF — HISTORICAL / FUTURE
+
+Historically, a route that survived acquisition and reciprocity review could be handed
+to Solarium II.
+
+That state is unavailable in the surviving court.
+
+Future reconstruction must treat Passage as a separate authorization and system, not
+as an upgrade that silently turns Solarium I into a walk-through portal.
+
+### 9.12 SHUTDOWN
+
+Normal closure collapses Solarium I under control.
 
 The route record remains.
 
@@ -827,9 +872,9 @@ The facility records:
 - final reciprocal state;
 - reason for closure.
 
-### 9.12 RECIPROCAL WARNING
+### 9.13 RECIPROCAL WARNING
 
-A route can degrade after opening.
+A candidate can degrade while held.
 
 Warning conditions may include:
 
@@ -842,17 +887,14 @@ Warning conditions may include:
 
 The default response is throttle and Hold.
 
-### 9.13 EMERGENCY CLOSURE
+### 9.14 EMERGENCY CLOSURE
 
-If the route crosses a safety threshold, Twin Solaria closes it without waiting for
-a new discretionary command.
+If the route crosses a safety threshold, Twin Solaria collapses Solarium I without
+waiting for a new discretionary command.
 
-A Custodian may own the decision to open.
+A Custodian may own the decision to acquire.
 
 The machine is allowed to fail closed.
-
----
-
 ## 10. Custodian authority
 
 Twin Solaria exists to make Custodian authority mechanically and narratively specific.
@@ -893,8 +935,6 @@ ordinary Continuity Port.
 
 Twin Solaria is a later escalation.
 
-This protects pacing.
-
 The player should understand ordinary route infrastructure before being introduced to
 the machine used when ordinary route infrastructure is no longer enough.
 
@@ -905,27 +945,60 @@ Recommended state:
 - Crown Annex reachable;
 - Home Index partly active;
 - most Witnesses dormant;
-- one Solaria capable of limited response;
-- Crown Aperture inert;
+- Solarium I inert or capable only of weak response;
+- Solarium II visibly absent;
+- Second Crown Root inaccessible or unreadable;
 - Blind Witness isolated;
-- no strategic route restoration yet.
+- no strategic passage available.
 
-The visit establishes scale, authority recognition, and danger.
+The visit establishes scale, authority recognition, and the unexplained asymmetry.
 
-### 11.3 First restoration arc
+Do not immediately tell the player what the word "Twin" means.
 
-The player recovers enough evidence to reconstruct one lost route.
+### 11.3 Second Crown revelation
+
+A later evidence pass establishes that the missing northeast mass was
+**Solarium II / Passage Aperture**.
+
+This should recontextualize the whole composition.
+
+The player learns that:
+
+- Solarium I was for acquisition;
+- Solarium II was for passage;
+- the surviving facility is not merely damaged;
+- one of its two namesake machines is gone.
+
+### 11.4 Crown Incident forensic arc
+
+Progressive investigation establishes:
+
+1. Solarium II was operating during the wider crisis;
+2. reciprocal behavior exceeded normal containment;
+3. some anomalous damage predates the final cut;
+4. a deliberate Crown Amputation followed;
+5. Null Warrant authority was already part of the safety chain;
+6. wider network crisis activity persisted after the local aperture was severed.
+
+This is the point where the Severing becomes visibly civilization-scale.
+
+### 11.5 Acquisition gameplay
+
+The player recovers enough evidence to reconstruct one lost route through Solarium I.
 
 This teaches:
 
 - route evidence can be incomplete;
+- visible is not traversable;
 - "reachable" is not the same as "authorized";
 - reciprocity can introduce new risk;
 - a Hold is an active decision, not failure.
 
-### 11.4 Mature strategic use
+Solarium I can now foreshadow Domains the player cannot yet enter through the Crown.
 
-Twin Solaria becomes the location for exceptional routes such as:
+### 11.6 Mature strategic use
+
+Twin Solaria becomes the location for exceptional route findings such as:
 
 - a Domain whose original Continuity Port is dead;
 - an old Custodian Post reachable only through partial records;
@@ -935,9 +1008,19 @@ Twin Solaria becomes the location for exceptional routes such as:
 - a route that exposes a surviving population to outside access;
 - a route connected to continuity-displaced or adjacent phenomena.
 
-### 11.5 Late-game use
+The result may be a Contract, a Hold, a warning, an ordinary-port destination unlock,
+or a future Passage candidate.
 
-Late-game Twin Solaria decisions should force the player to weigh:
+### 11.7 Late-game restoration dilemma
+
+The late-game question is whether the player should restore **Passage capability**.
+
+That must not be framed as ordinary fast-travel repair.
+
+The player is contemplating replacement of the exact class of machine that the old
+civilization intentionally tore out during a reciprocal crisis.
+
+Any reconstruction arc should force the player to weigh:
 
 - evidence quality;
 - reciprocal exposure;
@@ -945,12 +1028,10 @@ Late-game Twin Solaria decisions should force the player to weigh:
 - strategic value;
 - political consequences;
 - historical obligation;
-- the cost of leaving a route closed.
+- the unknown reason the original safety chain reached amputation;
+- the cost of leaving reachable people unreachable.
 
 The system should never collapse into "green route good, red route bad."
-
----
-
 ## 12. Decision grammar
 
 A Twin Solaria decision should provide enough evidence to support judgment without
@@ -1040,7 +1121,7 @@ Do not automatically explain why.
 
 ## 14. Environmental storytelling
 
-### 14.1 The Home Index was protected more carefully than the gate
+### 14.1 The Home Index was protected more carefully than the apertures
 
 The facility should visibly communicate that the builders feared origin confusion more
 than spectacle.
@@ -1055,37 +1136,68 @@ Historical Holds should survive as material traces:
 - physically interrupted command paths;
 - Archive entries attached to specific route records.
 
-### 14.3 The facility was used during emergencies
+### 14.3 Solarium II was built to be amputated
 
-Signs should include:
+The Second Crown Root must contain unmistakable designed separation features:
 
-- hurried manual bypasses;
-- temporary cable runs;
-- patched witness housings;
-- one or two emergency inscriptions;
-- locked-down side mechanisms;
-- maintenance performed unevenly.
+- sacrificial bolts;
+- cut continuity buses;
+- isolation shutters;
+- controlled breakpoints;
+- emergency interlocks.
 
-### 14.4 The Blind Witness was deliberately isolated
+The player should eventually understand that the facility was engineered to destroy
+one of its own apertures.
+
+### 14.4 The Amputation does not explain all the damage
+
+Near the designed breakpoints, place a second forensic language that does not align
+cleanly with the scuttle geometry.
+
+Examples:
+
+- deformation in the wrong load direction;
+- fused glass on the protected side;
+- dead Witness housings with contradictory state marks;
+- field scoring outside the designed separation plane.
+
+Do not turn this into monster claw marks or a conventional blast crater.
+
+### 14.5 Null Warrant was already in the safety chain
+
+Null Warrant evidence should look integrated, not improvised after the fact.
+
+Appropriate traces:
+
+- pre-existing interdict hardware;
+- sealed authority channels;
+- black-office labels under later civic covers;
+- route-state fields normal operators could read but not clear.
+
+This establishes prior institutional fear without revealing the ultimate target.
+
+### 14.6 The Blind Witness was deliberately isolated
 
 The player should be able to distinguish "broken by age" from "cut on purpose."
 
-### 14.5 The aperture court is defensively offset
+Its relationship to the Crown Incident remains open unless later evidence locks it.
+
+### 14.7 The surviving Acquisition Aperture is defensively offset
 
 Architecture itself teaches reciprocal risk.
 
-The gate is not aligned directly with the city.
+Solarium I is not aligned directly with the city.
 
-### 14.6 No habitation
+The missing Solarium II should make that safety architecture feel even more
+deliberate.
+
+### 14.8 No habitation
 
 Twin Solaria is not a palace.
 
 It may have service recesses and old operator stations, but no cozy living district.
 
 The level should feel like a cathedral built for a dangerous civil machine.
-
----
-
 ## 15. Visual language
 
 ### 15.1 Materials
@@ -1100,7 +1212,7 @@ Preserve the existing reference language:
 - selective enamel;
 - very limited warm light.
 
-### 15.2 The crystals
+### 15.2 The anchors and crystals
 
 The crystalline structures are technical continuity-field components.
 
@@ -1121,9 +1233,9 @@ Avoid:
 - fantasy rune spam;
 - constant idle fireworks.
 
-### 15.3 Crown Aperture
+### 15.3 Solarium I / Acquisition Aperture
 
-The aperture should look like a destination being **resolved**, not a flat television.
+Solarium I should look like a destination being **resolved**, not a flat television.
 
 Useful layers:
 
@@ -1138,7 +1250,22 @@ The remote vista should remain readable.
 
 Do not bury it under VFX.
 
-### 15.4 Crown Verge
+### 15.4 The Amputation
+
+The missing Second Crown is a primary landmark.
+
+Future art should emphasize:
+
+- clean structural cut points among chaotic damage;
+- exposed continuity conductors;
+- dead anchor sockets;
+- blackened busbars;
+- a small amount of suspended or disappearing debris;
+- no readable conventional impact source.
+
+The visual thesis is **industrial emergency surgery performed on architecture**.
+
+### 15.5 Crown Verge
 
 The Verge should remain quiet enough that the court reads clearly.
 
@@ -1148,7 +1275,7 @@ The space-like appearance is desirable.
 
 Literal astronomical explanation is not.
 
-### 15.5 Color hierarchy
+### 15.6 Color hierarchy
 
 Baseline:
 
@@ -1156,19 +1283,18 @@ Baseline:
 - brass: restrained warm authority color;
 - continuity instruments: blue/cyan;
 - active destination resolve: destination-derived color;
+- Amputation scar: dead metal, limited cold residue, no permanent alarm-red bath;
 - warnings: use existing Black Reliquary / institutional warning language rather than
   turning the whole scene red.
-
----
-
 ## 16. Lighting
 
 ### Dormant
 
 - low environmental light;
 - weak witness points;
-- no active aperture light;
-- court reads primarily by silhouette and surviving local fixtures.
+- no active acquisition light;
+- the Amputation reads primarily by silhouette and dead structural edge;
+- court reads primarily by surviving local fixtures.
 
 ### Correlating
 
@@ -1179,25 +1305,24 @@ Baseline:
 
 ### Reciprocity Review
 
-- both Solaria active;
+- Outbound and Reciprocal Anchors are both active;
 - their relationship should be visually legible;
 - subtle disagreement in pulse timing communicates uncertainty before UI text does.
 
-### Stable aperture
+### Acquisition stable
 
-- remote destination light enters the court;
+- remote destination light enters through Solarium I;
 - local materials catch that destination's hue;
-- this is the main way the current golden vista can flood the left court.
+- this is the main way the current golden vista can flood the left court;
+- Solarium II remains dark absence, creating a visual asymmetry between knowledge and
+  passage.
 
 ### Warning
 
 - do not globally strobe the map;
-- local witness disagreement and Reciprocal Solaria instability should carry the first
+- local witness disagreement and Reciprocal Anchor instability should carry the first
   warning;
-- aperture distortion escalates only after sustained risk.
-
----
-
+- Solarium I distortion escalates only after sustained risk.
 ## 17. Audio
 
 Twin Solaria needs a machine identity distinct from ordinary portals.
@@ -1207,7 +1332,8 @@ Twin Solaria needs a machine identity distinct from ordinary portals.
 - very low infrastructure resonance;
 - sparse metal cooling;
 - occasional far relay tick;
-- Verge nearly silent.
+- Verge nearly silent;
+- occasional dead-metal response from the Second Crown Root.
 
 ### Home Index
 
@@ -1222,28 +1348,32 @@ Twin Solaria needs a machine identity distinct from ordinary portals.
 
 The player should learn to hear when the East return is wrong.
 
-### Solaria
+### Outbound and Reciprocal Anchors
 
-Outbound and Reciprocal should occupy related but distinct tonal bands.
+The anchors should occupy related but distinct tonal bands.
 
 Stable operation produces consonance.
 
 Risk produces beat-frequency disagreement, not generic alarm sirens.
 
-### Crown Aperture
+### Solarium I
 
 The sound should feel like environmental pressure resolving into geometry.
 
 Avoid "whoosh portal" as the main identity.
+
+### The Amputation
+
+The destroyed Second Crown should have almost no active sound.
+
+When forensic systems wake, let dead conductors answer with sparse, localized
+resonance rather than turning the scar into a haunted soundscape.
 
 ### Emergency closure
 
 Closure should be fast, physical, and final.
 
 A short silence immediately afterward is valuable.
-
----
-
 ## 18. Camera and reveal grammar
 
 ### Reveal A: Crown Causeway
@@ -1265,26 +1395,35 @@ Camera should briefly show that multiple lines and mechanisms converge inward.
 
 ### Reveal C: Reciprocity Court
 
-Purpose: show Echo Drums, Dial, and paired Solaria as one system.
+Purpose: show Echo Drums, Dial, and paired Anchors as one system.
 
 This is the "understand the machine" vista.
 
-### Reveal D: Crown Aperture
+### Reveal D: Solarium I
 
 Purpose: destination spectacle.
 
-Do not reveal the full aperture immediately on first arrival if avoidable.
+Do not reveal the full Acquisition Aperture immediately on first arrival if avoidable.
 
 The upper-left placement supports a delayed lateral reveal.
 
-### Reveal E: Active route
+### Reveal E: Resolved Route Vista
 
 When a remote vista resolves, camera framing should keep enough local architecture in
 view that the player understands they are standing at an aperture, not viewing a
 cutscene background.
 
----
+### Reveal F: The Second Crown
 
+Purpose: delayed architectural realization.
+
+The player should not receive a centered establishing shot that instantly explains the
+missing northeast region.
+
+A later camera position, recovered plan overlay, or forensic framing should let the
+surviving right-hand arc suddenly read as the root of a second giant circle.
+
+That is the moment the name **Twin Solaria** becomes literal.
 ## 19. Traversal and collision intent
 
 The current backdrop preview has perimeter collision only.
@@ -1297,7 +1436,8 @@ Future authored collision should follow these principles:
 - both Witness Rings are optional side courts;
 - Echo Drums create lateral exploration but do not choke the main route;
 - Authority Threshold is a clear progression gate;
-- Aperture court has a generous containment buffer;
+- Solarium I has a generous containment buffer;
+- the Second Crown Root is explorable only where surviving structure supports it;
 - exposed Verge edges receive obvious physical boundaries where surviving rails exist;
 - broken edges without rails remain dangerous;
 - decorative machinery does not create invisible blockers;
@@ -1323,15 +1463,15 @@ RECIPROCITY DIAL
       |
       v
 AUTHORITY THRESHOLD
-      |
-      +-----> SOLARIA SERVICE SIDES
-      |
-      v
-CROWN APERTURE COURT
+   /            \
+  v              v
+SOLARIUM I    SECOND CROWN ROOT
+ACQUISITION    / AMPUTATION
+APERTURE
 ```
 
----
-
+The Second Crown branch is primarily forensic/lore traversal until a later explicit
+reconstruction arc exists.
 ## 20. Interaction plan
 
 Baseline interactables should be sparse.
@@ -1355,14 +1495,19 @@ Recommended:
    - optional repair / lore investigation.
 
 6. **Authority Threshold**
-   - route activation checkpoint.
+   - acquisition authorization checkpoint.
 
-The Crown Aperture itself should not present a giant "PRESS E TO PORTAL" prompt.
+7. **Second Crown forensic nodes**
+   - unlock progressively;
+   - distinguish designed Amputation evidence from pre-cut anomaly evidence;
+   - never dump the entire Crown Incident in one terminal.
 
-Traversal should be allowed only once route state and authority already permit it.
+Solarium I itself should not present a giant "PRESS E TO PORTAL" prompt.
 
----
+It is an acquisition instrument, not the surviving walk-through gate.
 
+Full traversal remains unavailable until a future Passage implementation explicitly
+restores that capability.
 ## 21. Faction and political consequences
 
 Twin Solaria is strategically terrifying because it can restore access that modern
@@ -1395,14 +1540,19 @@ locks them:
 - whether the Crown Verge is normal outer space;
 - why the Blind Witness was cut;
 - whether every light in the Verge is astronomical;
-- how many crown-scale route courts once existed;
-- whether Twin Solaria was operating during the exact initiating moment of the Severing;
+- how many Crown Route Courts once existed;
+- whether Twin Solaria was an origin point, early victim, amplifier, or diagnostic
+  witness of the propagation crisis;
+- who issued the decisive Crown Amputation authorization;
+- whether anything physically intelligent traversed Solarium II;
 - whether any current route record corresponds to the original propagation hazard;
+- whether the Crown Reciprocal Incident, Ash-Bell figures, and `NON-RECIPIENT` are
+  related;
 - whether a perfectly converged reciprocal address is necessarily safer than an
   unresolved one.
 
----
-
+For the complete incident lock, see
+`design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
 ## 23. Naming lock
 
 Use these names consistently:
@@ -1414,7 +1564,15 @@ Crown Annex
 Crown Transfer
 Crown Causeway
 Crown Verge
-Crown Aperture
+Solarium I
+Acquisition Aperture
+Solarium II
+Passage Aperture
+the Second Crown
+the Amputation
+Second Crown Root
+Crown Reciprocal Incident
+Crown Amputation
 Resolved Route Vista
 Home Index
 Archive Witness Ring
@@ -1424,15 +1582,19 @@ East Echo Drum
 Meridian Needle
 Reciprocity Dial
 Authority Threshold
-Outbound Solaria
-Reciprocal Solaria
+Outbound Anchor
+Reciprocal Anchor
 Coherence Witnesses
 Blind Witness
 ```
 
+**Crown Breach** may be used as later colloquial/faction shorthand.
+
 Avoid as current canon:
 
 ```text
+Outbound Solaria
+Reciprocal Solaria
 sunset terraces
 sky law
 double-sunset observatory
@@ -1442,9 +1604,6 @@ terminal-sky measurement station
 ```
 
 Historical filenames containing `twin_solaria` remain valid and do not need renaming.
-
----
-
 ## 24. Machine-language style
 
 Twin Solaria should use restrained institutional language.
@@ -1567,33 +1726,74 @@ Do not point runtime code at the design copy.
 Do not create these families until implementation begins and the live Asset Pipeline
 V2 schema is rechecked.
 
-### 29.1 Crown aperture FX
+### 29.1 Solarium I acquisition FX
 
 Proposed family:
 
-`twin_solaria_crown_aperture_fx`
+`twin_solaria_acquisition_aperture_fx`
 
 Proposed source-work home:
 
-`custodian/asset_drop/source_work/hub/twin_solaria_crown_aperture_fx/`
+`custodian/asset_drop/source_work/hub/twin_solaria_acquisition_aperture_fx/`
 
 Proposed normalized inbox:
 
-`custodian/asset_drop/inbox/twin_solaria_crown_aperture_fx/`
+`custodian/asset_drop/inbox/twin_solaria_acquisition_aperture_fx/`
 
 Recommended states:
 
 | State | Canvas | Frames | FPS | Loop | Purpose |
 |---|---:|---:|---:|---|---|
 | `route_candidate` | 1024x1024 | 1 | - | false | faint resolved destination sample |
-| `aperture_resolve` | 1024x1024 | 12 | 8 | false | controlled transition into open route |
-| `aperture_stable` | 1024x1024 | 8 | 8 | true | restrained field-edge motion |
+| `acquisition_resolve` | 1024x1024 | 12 | 8 | false | controlled observational resolve |
+| `acquisition_stable` | 1024x1024 | 8 | 8 | true | restrained field-edge motion |
 | `reciprocity_warning` | 1024x1024 | 8 | 8 | true | unstable return-path presentation |
 | `shutdown` | 1024x1024 | 8 | 10 | false | controlled collapse |
 
 All require true alpha and stable registration.
 
-### 29.2 Solaria anchor FX
+### 29.2 Crown Amputation scar
+
+Proposed family:
+
+`twin_solaria_amputation_scar`
+
+Kind:
+
+`world_prop`
+
+Source-work:
+
+`custodian/asset_drop/source_work/hub/twin_solaria_amputation_scar/`
+
+Normalized inbox:
+
+`custodian/asset_drop/inbox/twin_solaria_amputation_scar/`
+
+Recommended baseline state:
+
+| State | Canvas | Frames | FPS | Loop | Purpose |
+|---|---:|---:|---:|---|---|
+| `second_crown_root` | 768x1024 | 1 | - | false | persistent structural scar / designed separation geometry |
+
+Requirements:
+
+- RGBA true alpha;
+- no painted background;
+- no baked Crown Verge;
+- clearly readable sacrificial cuts and dead continuation buses;
+- include limited anomalous deformation that cannot be mistaken for a monster impact;
+- static architecture only.
+
+Suggested source filename:
+
+`custodian/asset_drop/source_work/hub/twin_solaria_amputation_scar/second_crown_root_source.png`
+
+Suggested normalized intake:
+
+`custodian/asset_drop/inbox/twin_solaria_amputation_scar/second_crown_root.png`
+
+### 29.3 Anchor FX
 
 Proposed family:
 
@@ -1617,7 +1817,7 @@ Recommended states:
 | `reciprocal_lock` | 256x512 | 8 | 8 | true |
 | `reciprocal_warning` | 256x512 | 8 | 10 | true |
 
-### 29.3 Coherence Witness FX
+### 29.4 Coherence Witness FX
 
 Proposed family:
 
@@ -1640,9 +1840,6 @@ Recommended states:
 | `dropout` | 64x96 | 6 | 10 | false |
 
 These are recommendations, not registered families in this documentation patch.
-
----
-
 ## 30. Future runtime ownership
 
 When implemented, prefer existing authored-level and route authorities.
@@ -1672,7 +1869,7 @@ Future implementation should be split.
 - decompose the backdrop into usable authored presentation;
 - author internal collision;
 - add camera zones;
-- preserve landmark positions;
+- preserve Solarium I and Second Crown Root landmark positions;
 - no strategic route gameplay.
 
 ### Slice B: dormant machine interactions
@@ -1680,54 +1877,62 @@ Future implementation should be split.
 - Home Index;
 - Witness Rings;
 - Blind Witness;
+- first Second Crown forensic nodes;
 - machine readouts;
 - no route activation.
 
-### Slice C: route-review authority
+### Slice C: Crown Incident forensic progression
+
+- architectural overlay proving there were two Solaria;
+- designed-Amputation evidence;
+- pre-Amputation anomaly evidence;
+- Null Warrant safety-chain evidence;
+- final network-scale post-cut log;
+- no answer to Ground Zero / NON-RECIPIENT / Ash-Bell identity questions.
+
+### Slice D: route-review authority
 
 - route candidate model;
 - evidence classifications;
-- Hold / Abort / Authorize finding;
-- no cross-map traversal yet.
+- Hold / Abort / Authorize Acquisition finding;
+- no cross-map Crown traversal.
 
-### Slice D: aperture presentation
+### Slice E: Solarium I acquisition presentation
 
-- Solaria;
+- Outbound/Reciprocal Anchors;
 - Coherence Witnesses;
 - Echo Drums;
-- aperture state presentation.
+- acquisition-aperture state presentation.
 
-### Slice E: strategic route handoff
+### Slice F: future Passage restoration
 
-- integrate with authored route system;
-- controlled destination travel;
-- return-path state;
-- persistence.
+- separate story decision;
+- separate implementation packet;
+- integrate with authored route system only after the narrative authorization exists;
+- never silently convert Solarium I into the Passage Aperture.
 
 This order keeps the level reviewable and prevents a single giant feature patch.
-
----
-
 ## 32. Validation targets for future implementation
 
 Minimum focused validation should eventually prove:
 
 - reference landmarks are preserved;
+- the missing upper-right Second Crown remains absent by default;
 - internal collision is authored and main route is traversable;
 - Crown Verge cannot be walked across;
 - Home Index must converge before route work;
 - candidate state cannot skip reciprocity review;
-- Hold prevents aperture resolve;
+- Hold prevents acquisition resolve;
 - Abort returns to a safe local state;
-- Authorize is the only discretionary path into aperture resolve;
+- Authorize Acquisition is the only discretionary path into full Solarium I resolve;
+- Solarium I never grants full player passage in the baseline implementation;
 - reciprocal warning can force a fail-closed state;
 - route presentation cannot mutate route truth;
-- route handoff uses existing authored route ownership;
+- Crown Incident evidence progression never asserts Twin Solaria was Ground Zero;
+- Crown Incident evidence never identifies `NON-RECIPIENT` or the Ash-Bell figures;
+- any future Passage handoff uses existing authored route ownership;
 - current tactical procgen portal behavior remains unchanged;
 - Gate of Dust behavior remains unchanged.
-
----
-
 ## 33. Documentation supersession
 
 This document supersedes active Twin Solaria claims that describe it as:
@@ -1747,11 +1952,16 @@ Those phenomena are no longer the canonical purpose or naming basis of Twin Sola
 
 ## 34. Design thesis
 
-Twin Solaria should make one idea physical:
+Twin Solaria should make two ideas physical:
 
 > **Opening a road is not the same thing as proving a road should be open.**
 
-The player walks through the logic of that decision.
+and:
+
+> **The last civilization once proved that distinction by tearing its own passage
+> aperture out of the city.**
+
+The player walks through the logic of route judgment.
 
 They enter by establishing home.
 
@@ -1761,6 +1971,10 @@ They interrogate the candidate.
 
 They see the return path.
 
-Only then do they stand before the aperture.
+They can make the destination visible in Solarium I.
 
-That is the Crown Route Court.
+Then they look east and see where Solarium II used to be.
+
+The Crown Route Court can still teach the player how to find lost roads.
+
+The Amputation teaches them why the old world became afraid to use them.
