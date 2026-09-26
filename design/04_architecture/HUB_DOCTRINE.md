@@ -146,12 +146,15 @@ A detached continuity-adjudication complex reached from Archive Heights through 
 Crown Transfer.
 
 Twin Solaria reconstructs damaged or incomplete Lattice routes, tests reciprocal
-exposure, and presents route findings for Custodian Hold, Abort, or Restoration
-Authorization. Its two namesake Solaria are continuity-reference towers, not literal
-suns.
+exposure, and presents route findings for Custodian judgment. Its two namesake
+Solaria are the giant Crown-class aperture courts, not literal suns. Solarium I, the
+Acquisition Aperture, survives; Solarium II, the Passage Aperture, was deliberately
+amputated during a Severing-era Crown Reciprocal Incident after abnormal reciprocal
+behavior was already underway.
 
 The exposed Crown Verge may resemble outer space, but its physical classification is
-intentionally unresolved. See `design/05_levels/TWIN_SOLARIA.md`.
+intentionally unresolved. See `design/05_levels/TWIN_SOLARIA.md` and
+`design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
 
 ---
 
