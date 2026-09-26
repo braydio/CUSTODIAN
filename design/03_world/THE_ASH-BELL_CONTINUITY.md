@@ -198,6 +198,13 @@ This evidence explains Null Warrant's fear; it does not prove that the Ash-Bell
 figures were identical to those in the fragments. It does not prove that either
 phenomenon caused the Severing.
 
+Twin Solaria later preserves a separate Crown-class reciprocal disaster in which
+Solarium II was deliberately amputated after unacceptable reciprocal behavior was
+already underway. That incident strengthens the evidence that Null Warrant feared a
+broader class of return-path failures. It does **not** identify the Ash-Bell figures
+with the Crown Reciprocal Incident, `NON-RECIPIENT`, or the ultimate Severing
+hazard. See `lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
+
 ### 7. The name withheld
 
 Ash-Bell records may classify the immediate contact without naming it:
