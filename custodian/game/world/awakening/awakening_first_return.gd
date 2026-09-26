@@ -143,21 +143,20 @@ func _update_zone_art_visibility() -> void:
 	var connector_root := zones_root.get_node_or_null("Traversal/ProductionArt")
 	if connector_root == null:
 		return
-	for connector_id in Layout.CONNECTORS:
-		if not String(connector_id).begins_with("04_05_"):
-			continue
-		var visual := connector_root.get_node_or_null("Connector" + String(connector_id)) as CanvasItem
-		if visual == null:
-			continue
-		var rect: Rect2 = Layout.CONNECTORS[connector_id]
-		var nearest := Vector2(
-			clampf(point.x, rect.position.x, rect.end.x),
-			clampf(point.y, rect.position.y, rect.end.y)
-		)
-		var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
-		var tint := visual.modulate
-		tint.a = alpha
-		visual.modulate = tint
+	var visual := connector_root.get_node_or_null("Connector04_05_FullPlate") as CanvasItem
+	if visual == null:
+		return
+	var connector_envelope: Rect2 = Layout.CONNECTORS["04_05_A"].merge(
+		Layout.CONNECTORS["04_05_B"]
+	).merge(Layout.CONNECTORS["04_05_C"])
+	var nearest := Vector2(
+		clampf(point.x, connector_envelope.position.x, connector_envelope.end.x),
+		clampf(point.y, connector_envelope.position.y, connector_envelope.end.y)
+	)
+	var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
+	var tint := visual.modulate
+	tint.a = alpha
+	visual.modulate = tint
 
 
 # --- Geometry construction ---------------------------------------------------

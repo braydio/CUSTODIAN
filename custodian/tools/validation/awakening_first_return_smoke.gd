@@ -62,6 +62,7 @@ const LOCKED_CONNECTORS := {
 	"05_06": Rect2(-64, -3776, 128, 32),
 	"09_BRANCH": Rect2(-448, -5824, 288, 128),
 }
+const LOCKED_CONNECTOR_ENVELOPE := Rect2(-64, -2656, 832, 384)
 
 var _failures: Array[String] = []
 
@@ -269,46 +270,44 @@ func _check_zone_art_fade(instance: Node) -> void:
 	instance.call("_update_zone_art_visibility")
 	if creche.modulate.a != 1.0 or reliquary.modulate.a != 0.0:
 		_fail("backtracking must restore Crèche art and hide the Reliquary")
-	var connector_a := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_A") as CanvasItem
-	var connector_b := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_B") as CanvasItem
-	var connector_c := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_C") as CanvasItem
-	if connector_a == null or connector_b == null or connector_c == null:
-		_fail("04→05 production connector art is missing from the scene")
+	var connector := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_FullPlate") as CanvasItem
+	if connector == null:
+		_fail("04→05 full plate is missing from the scene")
 		return
-	var connector_sprites := {"04_05_A": connector_a, "04_05_B": connector_b, "04_05_C": connector_c}
-	for connector_id in connector_sprites:
+	for connector_id in ["04_05_A", "04_05_B", "04_05_C"]:
 		operator.global_position = Layout.CONNECTORS[connector_id].get_center()
 		instance.call("_update_zone_art_visibility")
-		if connector_sprites[connector_id].modulate.a != 1.0:
-			_fail("%s connector art must be fully revealed inside its authored rectangle" % connector_id)
+		if connector.modulate.a != 1.0:
+			_fail("full plate must be fully revealed inside %s" % connector_id)
 	operator.global_position = Layout.OPERATOR_WAKE_POSITION
 	instance.call("_update_zone_art_visibility")
-	if connector_a.modulate.a != 0.0 or connector_b.modulate.a != 0.0 or connector_c.modulate.a != 0.0:
+	if connector.modulate.a != 0.0:
 		_fail("04→05 connector art must fade out away from the dogleg")
 
 
 func _check_connector_art(instance: Node) -> void:
-	var expected := {
-		"04_05_A": Vector2i(128, 160),
-		"04_05_B": Vector2i(704, 128),
-		"04_05_C": Vector2i(128, 96),
-	}
-	for connector_id in expected:
-		var rect: Rect2 = Layout.CONNECTORS[connector_id]
-		var sprite := instance.get_node_or_null(
-			"World/AwakeningZones/Traversal/ProductionArt/Connector" + String(connector_id)
-		) as Sprite2D
-		if sprite == null:
-			_fail("production connector sprite missing: %s" % connector_id)
-			continue
-		if sprite.position != rect.get_center():
-			_fail("%s sprite center no longer matches locked connector rect" % connector_id)
-		if sprite.texture == null or sprite.texture.get_size() != Vector2(expected[connector_id]):
-			_fail("%s texture missing or not normalized to %s" % [connector_id, str(expected[connector_id])])
-		if not sprite.centered:
-			_fail("%s connector sprite must remain centered on its locked rectangle" % connector_id)
-		if sprite.get_child_count() > 0:
-			_fail("%s connector sprite unexpectedly owns child gameplay nodes" % connector_id)
+	var sprite := instance.get_node_or_null(
+		"World/AwakeningZones/Traversal/ProductionArt/Connector04_05_FullPlate"
+	) as Sprite2D
+	if sprite == null:
+		_fail("production full plate sprite missing")
+		return
+	if sprite.position != Vector2(352, -2464):
+		_fail("full plate position drifted: %s" % str(sprite.position))
+	if sprite.texture == null or sprite.texture.get_size() != Vector2(832, 384):
+		_fail("full plate texture missing or not normalized to 832x384")
+	if not sprite.centered:
+		_fail("full plate sprite must be centered")
+	if sprite.get_child_count() > 0:
+		_fail("full plate unexpectedly owns child gameplay nodes")
+	for retired in ["Connector04_05_A", "Connector04_05_B", "Connector04_05_C"]:
+		if instance.get_node_or_null(NodePath("World/AwakeningZones/Traversal/ProductionArt/" + retired)) != null:
+			_fail("retired connector sprite remains live: %s" % retired)
+	var merged: Rect2 = Layout.CONNECTORS["04_05_A"].merge(
+		Layout.CONNECTORS["04_05_B"]
+	).merge(Layout.CONNECTORS["04_05_C"])
+	if merged != LOCKED_CONNECTOR_ENVELOPE:
+		_fail("derived 04→05 presentation envelope drifted: %s" % str(merged))
 
 
 func _check_marker_placements(instance: Node) -> void:

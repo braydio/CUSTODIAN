@@ -21,7 +21,7 @@
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
 reciprocity, and runtime-vs-fiction lifecycle terminology.
 
-Last updated: 2026-09-24
+Last updated: 2026-09-26
 
 ## Map + AI Coherence
 
@@ -428,7 +428,7 @@ Last updated: 2026-09-24
 - `custodian/game/world/sundered_keep/sundered_keep_tilemap_loader.gd` — small JSON loader for `custodian.sundered_keep.level_tilemap.v1` level data used by the Sundered Keep Sprite2D tilemap build path
 - `custodian/game/world/sundered_keep/sundered_keep_interactable.gd` — small InputMap-aware interactable bridge used by the Sundered Keep Return Mooring, gate key pickup, Main Gate, and Great Hall door interaction nodes
 - `custodian/game/world/awakening/awakening_layout.gd` — single spatial authority for the opening dungeon: world bounds, section envelopes, floors, voids, connectors, thresholds, set pieces, markers, camera reveals, and the Road offset.
-- `custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json` — V2 contract for the three 04→05 Reliquary/Dust Lung connector plates, consumed by `awakening_first_return.tscn`.
+- `custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json` — V2 contract for the single 832×384 04→05 Reliquary/Dust Lung full plate, consumed by `awakening_first_return.tscn`; Layout A/B/C still owns geometry.
 - `custodian/game/world/awakening/awakening_first_return.gd` — Awakening orchestration: zone/HUD progression, Layout-bound interactables, production-aware traversal blockout, generation-safe reveals, controller-scoped debug reset, and first-pass completion.
 - `custodian/game/world/awakening/awakening_transit_lift.gd` — Dust Lung bidirectional service lift.
 - `custodian/game/world/awakening/awakening_plaque_interactable.gd` — read-only Crèche console and Undergate port readout.

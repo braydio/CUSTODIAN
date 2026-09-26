@@ -110,7 +110,7 @@ Canonical tracker for production art, audio, animation, and content assets that 
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
-| bound | Reliquary → Dust Lung connector plates | `custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_{a_128x160,b_704x128,c_128x96}.png` | Present the locked three-part 04→05 dogleg without changing its geometry. | Asset V2 family `awakening_reliquary_dust_lung_connector`; presentation-only; traversal/collision remain Layout-owned. |
+| bound | Reliquary → Dust Lung full connector plate | `custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_832x384.png` | Present the locked 04→05 dogleg as one coherent plate. | Asset V2 family `awakening_reliquary_dust_lung_connector`; presentation-only; Layout A/B/C rectangles still own traversal/collision. |
 
 The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is
 registered by the Asset V2 families below; drop human-named state files into

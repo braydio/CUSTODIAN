@@ -10538,66 +10538,24 @@
     "awakening_reliquary_dust_lung_connector": {
       "kind": "backdrop",
       "assets": {
-        "connector_a::omni": {
-          "state_id": "connector_a",
+        "full_plate::omni": {
+          "state_id": "full_plate",
           "direction": "omni",
           "semantic_identity": [
             "awakening_reliquary_dust_lung_connector",
             "backdrop",
             "background",
             "connector",
-            "connector_a",
+            "full_plate",
             "omni"
           ],
-          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_a_128x160.png",
+          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_832x384.png",
           "frames": 1,
           "frame_size": [
-            128,
-            160
+            832,
+            384
           ],
-          "sha256": "3892276c290aa2f03a6cd840310b1fade0302f2e7575345cb61135df134adb06",
-          "provenance": "authored",
-          "source_asset": null
-        },
-        "connector_b::omni": {
-          "state_id": "connector_b",
-          "direction": "omni",
-          "semantic_identity": [
-            "awakening_reliquary_dust_lung_connector",
-            "backdrop",
-            "background",
-            "connector",
-            "connector_b",
-            "omni"
-          ],
-          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_b_704x128.png",
-          "frames": 1,
-          "frame_size": [
-            704,
-            128
-          ],
-          "sha256": "ca43246ce8e5b82e5cd8e800a241dd29a3576a611df1bf150c0f99cbf7c52cde",
-          "provenance": "authored",
-          "source_asset": null
-        },
-        "connector_c::omni": {
-          "state_id": "connector_c",
-          "direction": "omni",
-          "semantic_identity": [
-            "awakening_reliquary_dust_lung_connector",
-            "backdrop",
-            "background",
-            "connector",
-            "connector_c",
-            "omni"
-          ],
-          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_c_128x96.png",
-          "frames": 1,
-          "frame_size": [
-            128,
-            96
-          ],
-          "sha256": "47365e2edc92eeb4558be4cf0e552febdb37f2c1fe55fea540c2c294ee281215",
+          "sha256": "a40ccb5b9d42b6a4cde7f2f69def16dd92a215b58f1f77a5ffe2d228b9d90016",
           "provenance": "authored",
           "source_asset": null
         }

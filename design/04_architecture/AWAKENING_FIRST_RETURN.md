@@ -1,7 +1,7 @@
 # Awakening: The First Return
 
 **Status:** active opening, production plates in sections 01-09 and authored Road in section 10
-**Last Updated:** 2026-09-20
+**Last Updated:** 2026-09-26
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Runtime Slice:** `res://scenes/awakening_first_return.tscn` (project `main_scene`)
 **Spatial authority:** `res://game/world/awakening/awakening_layout.gd`
@@ -125,9 +125,10 @@ The live scene places a dark, collision-free void plane beneath the plates and
 uses an Awakening-local camera scale. Zone art fades by distance to the
 Operator's current Layout envelope so neighboring complete canvases do not
 intrude at room edges; the 128px blend supports crossing and backtracking.
-Production art remains at native scale and registration. The 04→05 dogleg now
-uses three Asset V2 connector plates bound to the locked `04_05_A/B/C` layout
-rectangles; their presentation fades with distance and does not own traversal or
+Production art remains at native scale and registration. The 04→05 dogleg uses
+one Asset V2 `full_plate` presentation sprite (832×384), centered on the exact
+union of the locked `04_05_A/B/C` Layout rectangles. Its fade envelope is
+derived by merging those rectangles; the plate does not own traversal or
 collision. The first five Road modular plate pairs remain pending native-size
 replacement.
 

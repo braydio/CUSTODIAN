@@ -22,3 +22,17 @@ resized uniformly with Lanczos to 128×128, then centered vertically on a
 transparent 128×160 RGBA canvas (16px transparent top and bottom). No crop,
 stretch, or alpha flattening was applied. The final inbox image remains the
 family's `connector_a` state and canonical runtime path.
+
+## Full composition source — 2026-09-26
+
+The newly approved root master `connector_a.png` (1374×1145 RGB) is preserved
+separately as `full_plate_source.png`; it is not treated as the old A state.
+Its Dust Lung threshold, eastward hall, and Reliquary landing/run are cropped
+and registered as one 832×384 plate by
+`custodian/tools/assets/compose_awakening_connector_full_plate.py`. See
+`README.md` for the exact source pixel-edge crop boxes and target rectangles.
+Lanczos resizing uses one uniform scale per crop. The source has an opaque dark
+field, so the normalizer retains dark architectural pixels inside each crop and
+sets only canvas beyond the three locked plate regions to true alpha. Asset V2
+publishes the `full_plate` state; historical A/B/C source and runtime files are
+kept as provenance but are no longer scene presentation.
