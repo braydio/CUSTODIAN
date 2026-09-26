@@ -41,12 +41,15 @@ Provenance is forensic evidence lineage and continuity-origin verification, not 
 
 Unarrival is an Ash-Bell term originating in the Station IX failure during the Ash-Bell Unarrival and later generalized by religious traditions.
 
-Twin Solaria is now canonically the Hub's detached **Crown Route Court**: a
-Crown-class Continuity Adjudication Array that reconstructs damaged or incomplete
-routes, tests reciprocal exposure, and requires Custodian judgment before
-restoration. Its paired Solaria are continuity-reference towers, not literal suns,
-and the surrounding Crown Verge remains intentionally unresolved rather than being
-defined as ordinary outer space. See `design/05_levels/TWIN_SOLARIA.md`.
+Twin Solaria is canonically the Hub's detached **Crown Route Court**. Its
+namesake twins are two giant Crown-class aperture courts: surviving **Solarium I /
+Acquisition Aperture** and the destroyed **Solarium II / Passage Aperture**. Solarium
+II was deliberately amputated during the Severing-era Crown Reciprocal Incident after
+unacceptable reciprocal behavior was already underway; the wider network crisis
+continued beyond the local cut, but Twin Solaria is not established as Ground Zero.
+The surrounding Crown Verge remains intentionally unresolved rather than being
+defined as ordinary outer space. See `design/05_levels/TWIN_SOLARIA.md` and
+`design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
 
 See: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`.
 
