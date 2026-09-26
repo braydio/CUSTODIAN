@@ -239,7 +239,8 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 
 ### 1.10 Twin Solaria
 
-**Canonical authority:** `design/05_levels/TWIN_SOLARIA.md`
+**Canonical level authority:** `design/05_levels/TWIN_SOLARIA.md`  
+**Historical incident authority:** `design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`
 
 **Purpose:** Crown-class continuity route reconstruction, reciprocity review, and
 Custodian route adjudication.
@@ -253,29 +254,32 @@ ordinary continuous street approach.
 - lower Home Index and paired Witness Rings;
 - opposed Echo Drums;
 - central Reciprocity Dial and Authority Threshold;
-- paired Outbound and Reciprocal Solaria;
+- **Solarium I / Acquisition Aperture** surviving in the enormous upper-left circle;
+- **Solarium II / Passage Aperture** absent from the upper-right, leaving the
+  **Second Crown Root / Amputation**;
+- Outbound and Reciprocal Anchors flanking the upper machinery;
 - tall Meridian Needle;
-- enormous offset Crown Aperture court;
 - exposed Crown Verge around surviving structure.
 
 **Function:** Twin Solaria reconstructs damaged or incomplete route solutions when an
 ordinary Continuity Port no longer has enough route information to operate safely.
 The facility establishes the Hub's own continuity reference, compares historical and
 live evidence, interrogates a candidate route, models the reciprocal return path, and
-presents the resulting finding for Custodian Hold, Abort, or Restoration
-Authorization.
+presents the resulting finding for Custodian judgment.
 
-**Naming:** "Twin Solaria" refers to the paired continuity-reference towers, not two
-literal suns.
+**Naming:** "Twin Solaria" refers to the two giant aperture courts, not literal suns
+and not the anchor towers.
+
+**Current limitation:** Solarium I can acquire and inspect a route. Solarium II, the
+former Passage Aperture, was deliberately amputated during the Crown Reciprocal
+Incident. Crown-class passage is therefore unavailable in the baseline surviving
+facility.
 
 **Exterior:** The Crown Verge is deliberately unresolved. It may look like outer
 space, but active canon does not classify it as ordinary vacuum or normal astronomy.
 
 **Constraint:** The facility does not create Domains, invent destinations, defeat
 reciprocity, or function as casual fast travel.
-
----
-
 ### 1.11 Prism Margin
 
 **Purpose:** Climactic view, end-game spectacle, city-edge
@@ -310,7 +314,7 @@ reciprocity, or function as casual fast travel.
 | 6 | Tower of Catalogues | Archive Heights | Skyline anchor |
 | 7 | The Drowned Courts | Sunken Civic | Quarter anchor |
 | 8 | Reliquary of Names | Reliquary Ward | Memory node |
-| 9 | Crown Aperture / Twin Solaria | Twin Solaria | Lost-route reconstruction and reciprocity adjudication |
+| 9 | Solarium I + the Amputation | Twin Solaria | Lost-route acquisition, reciprocity adjudication, and the destroyed Second Crown |
 | 10 | Prism Margin | Prism Margin | End-of-world overlook |
 
 ---
@@ -401,7 +405,7 @@ Without overbuilding the entire city initially.
 | Ashen Forum | Partial | Star-map floor and civic light relationships |
 | Archive Heights - Observatory | Full 360 | Star patterns, relay lights, route-reference optics |
 | Prism Margin | Full 180+ | Prismatic exterior effects and unstable horizon phenomena |
-| Twin Solaria | Crown Verge | Route acquisition, Solaria activation, Resolved Route Vistas |
+| Twin Solaria | Crown Verge | Route acquisition, Resolved Route Vistas, and the dark Second Crown Amputation |
 | Sunken Civic (flooded) | Reflected | Inverted sky and city reflections |
 
 Twin Solaria's exterior presentation may resemble outer space, but the Crown Verge is
