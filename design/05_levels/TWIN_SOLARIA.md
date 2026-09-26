@@ -131,7 +131,7 @@ Twin Solaria can model, constrain, observe, throttle, and reject reciprocal expo
 
 It cannot abolish reciprocity.
 
-That is why the **Reciprocal Solaria** is as important as the Outbound Solaria.
+That is why the **Reciprocal Anchor** is as important as the Outbound Anchor.
 
 ### 2.4 Provenance is evidence
 
@@ -179,8 +179,9 @@ CROWN TRANSFER
     v
 TWIN SOLARIA
     |
-    v
-CROWN APERTURE
+    +--> SOLARIUM I / ACQUISITION
+    |
+    `--> SOLARIUM II / PASSAGE [HISTORICAL]
 ```
 
 ### 3.2 Post-Severing position
