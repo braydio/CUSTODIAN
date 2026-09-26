@@ -10,9 +10,15 @@ and biome authority, before visual floor clustering.
 ## Precedence
 
 Highest precedence wins: authored landmark/reserved surface, bridge, explicit
-industrial/service hardstand, civic hardstand/parking/plaza, ruined road or
-constructed path, wet ground, Rocky Upland natural rock, then natural soft.
+industrial/service hardstand, civic hardstand/parking/plaza, explicit ruined
+road or connector, wet ground, Rocky Upland natural rock, then natural soft.
 Only existing floor cells receive a material; walls and chasm remain untyped.
+
+Road Semantics V2 derives intermittent ruined-road fragments from existing
+route/playability cells and at most one site-adjacent service apron. Generic
+`soft_path` and path-centerline metadata are not constructed-road authority;
+they fall through to the biome's natural material unless a cell is explicitly
+classified by the road resolver.
 
 The first presentation seam is `NavigationRegion2D/SurfaceMaterialOverlay`, a
 collision-free and navigation-free `TileMapLayer`. Meridian hardened-floor
