@@ -243,6 +243,7 @@ Provenance is never presented as supernatural. It is always forensic: where did 
 - Lattice Doctrine: `design/03_world/LATTICE_DOCTRINE.md`
 - Lattice / Archive Engine / Memory Glass: `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`
 - Ash-Bell Continuity: `design/03_world/THE_ASH-BELL_CONTINUITY.md`
+- Twin Solaria Crown Incident: `design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`
 - Faction Overview: `design/03_world/factions/_FACTION_OVERVIEW.md`
 - Procedural Lore: `design/03_world/PROCEDURAL_LORE_GENERATION.md`
 - Game Protocols: `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
