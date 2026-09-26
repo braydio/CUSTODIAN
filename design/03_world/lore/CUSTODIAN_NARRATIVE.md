@@ -17,11 +17,12 @@
 8. [The Gate of Dust](#the-gate-of-dust)
 9. [The Seven Polity Families](#the-seven-polity-families)
 10. [The Hub and the Work](#the-hub-and-the-work)
-11. [Persistent Domains](#persistent-domains)
-12. [Why Do Anything](#why-do-anything)
-13. [Reserved Mysteries](#reserved-mysteries)
-14. [Designation](#designation)
-15. [Return to Post](#return-to-post)
+11. [The Second Crown](#the-second-crown)
+12. [Persistent Domains](#persistent-domains)
+13. [Why Do Anything](#why-do-anything)
+14. [Reserved Mysteries](#reserved-mysteries)
+15. [Designation](#designation)
+16. [Return to Post](#return-to-post)
 
 ## Technicians and the Lattice
 
@@ -930,6 +931,471 @@ Decide whether a connection deserves restoration.
 Then leave.
 
 Because the worlds you enter are already dying.
+
+## The Second Crown
+
+Much later, after the Hub has taught you how to read a route without trusting it, you
+are permitted into Twin Solaria.
+
+The transfer from Archive Heights is short.
+
+That is the first strange thing about it.
+
+You enter a lift, or something that still behaves enough like a lift for the old word
+to remain useful.
+
+The doors close on stone.
+
+The doors open on stars.
+
+At least, they look like stars.
+
+The floor continues beneath your boots.
+
+Stone.
+
+Brass.
+
+Black iron.
+
+Blue continuity glass burning inside housings older than every government that still
+claims the city.
+
+Beyond the rails there is no district.
+
+No neighboring roof.
+
+No lower street.
+
+No wall.
+
+Only black distance and points of light.
+
+The surviving instruments call it the **Crown Verge**.
+
+They do not call it space.
+
+That is the second strange thing.
+
+The causeway leads north into a machine built on the scale of civic architecture.
+
+Circular courts.
+
+Radial tracks.
+
+Great bronze drums.
+
+Conduits wide enough to crawl through.
+
+A central needle of blue glass rising from machinery that appears to have been built
+around it rather than beneath it.
+
+And to the northwest, an aperture so large that the first time it wakes you mistake
+what appears inside it for sunrise.
+
+Gold light spills over the stone.
+
+Water.
+
+Cloud.
+
+A horizon.
+
+Structures too distant to identify.
+
+For several seconds the ruined court is illuminated by weather happening somewhere
+else.
+
+The machine labels it:
+
+```text
+SOLARIUM I
+ACQUISITION APERTURE
+
+ROUTE CANDIDATE: CORRELATED
+PASSAGE AUTHORITY: WITHHELD
+```
+
+You cannot step through.
+
+That is what Solarium I was for.
+
+Not travel.
+
+Knowing.
+
+The old world had learned to separate those things.
+
+A route could be found here.
+
+Observed here.
+
+Interrogated here.
+
+Held here.
+
+It could be beautiful.
+
+It could be stable.
+
+It could answer every question the engineers knew how to ask.
+
+And none of that meant anyone was allowed to cross.
+
+That required the other Solarium.
+
+There is no other Solarium.
+
+At first the name seems ceremonial.
+
+Twin Solaria.
+
+Two anchors perhaps.
+
+Two towers.
+
+Some old naming convention whose meaning died with its operators.
+
+Then the Archive restores an architectural layer over the court.
+
+The overlay extends east.
+
+Far beyond the surviving stone.
+
+A second circle resolves in pale linework over the Crown Verge.
+
+The same scale as the first.
+
+Not quite the same machinery.
+
+A passage court.
+
+A receiving apron.
+
+Heavy transfer rails.
+
+Isolation structures.
+
+A complete second crown attached to the surviving complex where now there is only
+blackness.
+
+The current map is not asymmetrical.
+
+It is missing something.
+
+The surviving plan identifies it:
+
+```text
+SOLARIUM II
+PASSAGE APERTURE
+```
+
+The twins were apertures.
+
+One found the road.
+
+The other committed civilization to it.
+
+Walk far enough toward the eastern root and the damage stops looking like age.
+
+There are bolts designed to break.
+
+Busbars cut along straight sacrificial lines.
+
+Isolation shutters buried inside the walls.
+
+Continuity trunks ended with the brutal neatness of machinery doing exactly what it
+was built to do.
+
+This structure was designed to lose half of itself.
+
+That fact is more frightening than the ruin.
+
+The old builders expected a day when preserving the Crown Court might require tearing
+one of its own apertures away.
+
+The procedure had a name.
+
+**Crown Amputation.**
+
+You find the word before you find the reason.
+
+At first the evidence is almost reassuring.
+
+An emergency happened.
+
+The safety system worked.
+
+Someone ordered the passage aperture severed.
+
+The Second Crown was sacrificed.
+
+The surviving Hub endured.
+
+Then you begin reading the damage that happened before the cut.
+
+A Witness housing is fused on the interior face of its protective glass.
+
+That is the wrong side.
+
+A structural member carries loading in a direction the release charges cannot have
+produced.
+
+Two Coherence Witnesses recorded the same event at mutually impossible times.
+
+The West Echo Drum reports an interrogation pulse.
+
+The East Echo Drum reports the return.
+
+The return is timestamped first.
+
+A damaged route record survives in three fragments.
+
+The first says:
+
+```text
+RECIPROCAL ADDRESS: MULTIPLE
+```
+
+The second says:
+
+```text
+RETURN-PATH CONTACT: UNRESOLVED
+```
+
+The third is older than the final alarm and already carries a Null Warrant interdict.
+
+They were here before the disaster.
+
+Not physically, necessarily.
+
+Institutionally.
+
+Their authority was already built into the machine.
+
+Someone had decided, before the Severing, that a Crown-class passage aperture might
+one day need to be denied even when every ordinary system said the route worked.
+
+The sealed record continues:
+
+```text
+CROWN RECIPROCAL INCIDENT
+SOLARIUM II
+
+PASSAGE AUTHORITY: REVOKED
+RECIPROCAL CONVERGENCE: FAILED
+NULL WARRANT INTERDICT: ACCEPTED
+
+CROWN AMPUTATION:
+AUTHORIZED
+```
+
+Authorized by whom is missing.
+
+Or sealed.
+
+Or contradictory.
+
+One record attaches a Custodian authority chain.
+
+Another gives Null Warrant precedence.
+
+A third treats the amputation as automatic once three Witness classes ceased to
+agree.
+
+The Hub will not choose between them for you.
+
+Contradiction is evidence.
+
+So you keep looking.
+
+At the physical root of Solarium II the sequence becomes clearer.
+
+Something was wrong with the passage aperture.
+
+Then the cut happened.
+
+Not the other way around.
+
+The Amputation did not create all of the damage you are standing in.
+
+It was a response to damage, behavior, or contact the surviving machinery could no
+longer classify.
+
+That should be the revelation.
+
+Instead there is another one.
+
+The final local log is not a description of Solarium II.
+
+It is a list of other places.
+
+Stations.
+
+Ports.
+
+Relay trunks.
+
+Custodian Posts.
+
+Meridian regions.
+
+Some names survive.
+
+Some are only numbers.
+
+Some are corrupted beyond recovery.
+
+Their timestamps continue after Solarium II is gone.
+
+Twin Solaria reports its own Passage Aperture physically isolated.
+
+Then another route enters emergency closure.
+
+Then another.
+
+Then six.
+
+Then the record stops displaying individual sites and changes category.
+
+```text
+LOCAL PASSAGE APERTURE:
+DISCONNECTED
+
+LOCAL RECIPROCAL PATH:
+COLLAPSING
+
+UNREGISTERED ROUTE ACTIVITY:
+DETECTED
+
+REMOTE AMPUTATION TRAFFIC:
+RISING
+
+NETWORK CONTAINMENT:
+IN PROGRESS
+```
+
+That is when the scale changes.
+
+Until this moment, the Severing can still be imagined as an explosion.
+
+A place.
+
+A day.
+
+A machine that failed catastrophically enough to ruin everything around it.
+
+Twin Solaria teaches you otherwise.
+
+The Second Crown was enormous.
+
+They cut it off.
+
+And the crisis continued.
+
+Whatever the Severing was, it was larger than this room.
+
+Larger than this facility.
+
+Larger than the Hub.
+
+The old civilization did not destroy one dangerous gate.
+
+It began destroying roads.
+
+Everywhere.
+
+Some were cut deliberately.
+
+Some failed before anyone reached them.
+
+Some were isolated because nobody could prove they were safe.
+
+Some remained open long enough for history on either side to stop agreeing about what
+had crossed.
+
+Some records call what followed coordinated containment.
+
+Others call it panic.
+
+Others call it attack.
+
+Others insist the network itself had become the threat.
+
+Twin Solaria cannot tell you which one is true.
+
+It can tell you that destroying Solarium II was not enough.
+
+That distinction matters.
+
+Because the surviving Solarium still works.
+
+Not fully.
+
+But enough.
+
+Solarium I can find things.
+
+Lost Domains.
+
+Dead route addresses.
+
+Places whose ports no longer answer.
+
+Places everyone assumed were gone because no road to them remained.
+
+The machine can show them to you.
+
+A city under green rain.
+
+A dry industrial basin where lights still switch on at dusk.
+
+An Archive field surrounded by Pale.
+
+A settlement whose people have spent generations believing no other human place
+survived.
+
+You can stand in the dead half of the Crown Court and watch another world breathe.
+
+You simply cannot go there through the Crown.
+
+The machine that once carried people is missing.
+
+For much of the game, that is a limitation.
+
+Eventually it becomes a decision.
+
+Enough records survive to reconstruct Passage architecture.
+
+Enough route science returns to imagine replacing the Second Crown.
+
+Enough authority recognizes you to permit the question.
+
+And suddenly the ruin at the northeast edge of Twin Solaria stops being a scar.
+
+It becomes an empty socket.
+
+The last civilization faced a reciprocal crisis here and chose to tear that socket
+out of its own capital.
+
+Centuries later, you may become the person capable of putting it back.
+
+Before you do, there is one question the surviving court cannot answer for you.
+
+Was Solarium II where the catastrophe began?
+
+Or was it only the first place with instruments powerful enough to understand that
+the catastrophe had already begun somewhere else?
+
+The records do not say.
+
+Null Warrant does not say.
+
+The Crown Verge does not say.
+
+The Acquisition Aperture continues showing you roads.
+
+And waits.
 
 ## Persistent Domains
 
