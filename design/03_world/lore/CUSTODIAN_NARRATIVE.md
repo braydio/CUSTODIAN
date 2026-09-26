@@ -1743,6 +1743,7 @@ Because it is still here.
 - [Archive Engine / Memory Glass](../LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md)
 - [Ash-Bell Continuity](../THE_ASH-BELL_CONTINUITY.md)
 - [Core Lore](CORE_LORE.md)
+- [Twin Solaria Crown Incident](TWIN_SOLARIA_CROWN_INCIDENT.md)
 - [Crèche and Locker Lore](CRECHE_AND_LOCKER_LORE.md)
 - [Faction Profiles](../FACTION_PROFILES.md)
 - [Awakening First Return](../../04_architecture/AWAKENING_FIRST_RETURN.md)
