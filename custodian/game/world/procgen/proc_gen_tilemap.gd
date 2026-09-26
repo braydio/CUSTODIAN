@@ -20,7 +20,6 @@ const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrai
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
 const SURFACE_MATERIAL_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/surface_material_resolver.gd")
 const SURFACE_MATERIAL_IDS := preload("res://game/world/procgen/surfaces/surface_material_ids.gd")
-const ROAD_SEMANTICS_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/road_semantics_resolver.gd")
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
 )
@@ -475,9 +474,6 @@ var _path_visual_tiles: Dictionary = {}
 var _compound_connector_centerline_tiles: Array[Vector2i] = []
 var _compound_connector_visual_candidates: Dictionary = {}
 var _parking_zone_tiles: Dictionary = {}
-var _ruined_road_cells: Dictionary = {}
-var _service_hardstand_cells: Dictionary = {}
-var _road_semantics_summary: Dictionary = {}
 var _parking_zone_center: Vector2i = Vector2i.ZERO
 var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
@@ -1323,9 +1319,6 @@ func _fill_tilemaps() -> void:
 		_capture_generated_tile_state(map_size)
 		_marks["roads2_state_capture"] = Time.get_ticks_msec() - roads2_phase_started
 	_marks["roads_pass2"] = Time.get_ticks_msec() - _last
-	_last = Time.get_ticks_msec()
-	_resolve_road_semantics(map_size)
-	_marks["road_semantics"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
 	# Chasm semantics must exist before biome-aware macro presentation planning.
 	# This classifier is read-only with respect to floor/wall gameplay authority.
@@ -5500,9 +5493,6 @@ func _clear_world_progression_runtime() -> void:
 	_surface_kind_by_cell.clear()
 	_surface_material_by_cell.clear()
 	_surface_material_summary.clear()
-	_ruined_road_cells.clear()
-	_service_hardstand_cells.clear()
-	_road_semantics_summary.clear()
 	if surface_material_overlay != null:
 		surface_material_overlay.clear()
 	_chasm_cells.clear()
@@ -5605,7 +5595,7 @@ func get_special_room_sites() -> Array[Dictionary]:
 
 
 func is_road_surface_tile(tile: Vector2i) -> bool:
-	return _main_road_tiles.has(tile) or _ruined_road_cells.has(tile) or get_region_type_at_tile(tile) == "soft_path"
+	return _main_road_tiles.has(tile) or get_region_type_at_tile(tile) == "soft_path"
 
 
 func is_parking_zone_tile(tile: Vector2i) -> bool:
@@ -5618,26 +5608,6 @@ func get_main_road_tiles() -> Array[Vector2i]:
 
 func get_parking_zone_tiles() -> Array[Vector2i]:
 	return _dict_keys_as_vector2i_array(_parking_zone_tiles)
-
-
-func get_ruined_road_tiles() -> Array[Vector2i]:
-	return _sorted_tile_keys(_ruined_road_cells)
-
-
-func get_service_hardstand_tiles() -> Array[Vector2i]:
-	return _sorted_tile_keys(_service_hardstand_cells)
-
-
-func _sorted_tile_keys(source: Dictionary) -> Array[Vector2i]:
-	var result := _dict_keys_as_vector2i_array(source)
-	result.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
-		return a.y < b.y or (a.y == b.y and a.x < b.x)
-	)
-	return result
-
-
-func debug_get_road_semantics_summary() -> Dictionary:
-	return _road_semantics_summary.duplicate(true)
 
 
 func debug_get_generated_floor_cells() -> Dictionary:
@@ -5655,8 +5625,6 @@ func debug_get_runtime_authoring_fingerprint() -> Dictionary:
 		"regions": _region_tiles.duplicate(true),
 		"roads": _main_road_tiles.duplicate(true),
 		"road_centerline": _road_centerline_tiles.duplicate(true),
-		"ruined_road": _ruined_road_cells.duplicate(true),
-		"service_hardstand": _service_hardstand_cells.duplicate(true),
 		"foliage": _foliage_nodes.duplicate(true),
 		"surface": _surface_kind_by_cell.duplicate(true),
 		"surface_material": _surface_material_by_cell.duplicate(true),
@@ -6412,14 +6380,7 @@ func debug_has_road_surface_decal_at(tile: Vector2i) -> bool:
 
 
 func get_movement_surface_multiplier_at_tile(tile: Vector2i, actor_kind: String = "operator") -> float:
-	var material := get_surface_material_at_tile(tile)
-	var constructed := material in [
-		SURFACE_MATERIAL_IDS.RUINED_ROAD,
-		SURFACE_MATERIAL_IDS.HARDENED_CIVIC,
-		SURFACE_MATERIAL_IDS.HARDENED_INDUSTRIAL,
-	]
-	var legacy_soft_path := get_region_type_at_tile(tile) == "soft_path"
-	if not constructed and not legacy_soft_path and not _main_road_tiles.has(tile):
+	if not is_road_surface_tile(tile):
 		return 1.0
 	if actor_kind == "vehicle":
 		return maxf(1.0, road_vehicle_speed_multiplier)
@@ -7433,38 +7394,6 @@ func _build_biome_field() -> void:
 			observatory.call("set_gauge", "procgen_biome_%s_cells" % biome_id, int(counts.get(StringName(biome_id), 0)))
 
 
-func _resolve_road_semantics(_map_size: Vector2i) -> void:
-	var region_kinds: Dictionary = {}
-	for value: Variant in _generated_floor_cells.keys():
-		if value is Vector2i:
-			region_kinds[value] = get_region_type_at_tile(value)
-	var resolver := ROAD_SEMANTICS_RESOLVER_SCRIPT.new()
-	var result: Dictionary = resolver.resolve({
-		"seed": _get_generation_seed(),
-		"floor_cells": _generated_floor_cells,
-		"wall_cells": _generated_wall_cells,
-		"chasm_cells": _chasm_cells,
-		"ocean_cells": _ocean_cells,
-		"route_cells": _route_playability_result.get("route_cells", {}) as Dictionary,
-		"route_centerline_cells": _ascent_field_main_route_centerline_cells,
-		"centerline_distance": _route_playability_result.get("centerline_distance", {}) as Dictionary,
-		"spawn_cell": get_player_spawn(),
-		"compound_rect": _last_compound_rect,
-		"compound_ingress_cells": _last_compound_ingress,
-		"region_kind_by_cell": region_kinds,
-		"reserved_cells": _macro_reserved_cells(),
-	})
-	_ruined_road_cells = (result.get("ruined_road_cells", {}) as Dictionary).duplicate(true)
-	_service_hardstand_cells = (result.get("service_hardstand_cells", {}) as Dictionary).duplicate(true)
-	if not intent_main_roads_enabled:
-		_parking_zone_tiles = (result.get("parking_cells", {}) as Dictionary).duplicate(true)
-	_road_semantics_summary = (result.get("summary", {}) as Dictionary).duplicate(true)
-	_road_semantics_summary["parking_cell_count"] = _parking_zone_tiles.size()
-	_obs_gauge(&"procgen_ruined_road_cells", int(_road_semantics_summary.get("ruined_road_cell_count", 0)))
-	_obs_gauge(&"procgen_service_hardstand_cells", int(_road_semantics_summary.get("service_hardstand_cell_count", 0)))
-	_obs_gauge(&"procgen_parking_staging_cells", int(_road_semantics_summary.get("parking_cell_count", 0)))
-
-
 func _resolve_surface_materials() -> void:
 	var region_kinds: Dictionary = {}
 	var region_data: Dictionary = {}
@@ -7481,9 +7410,6 @@ func _resolve_surface_materials() -> void:
 		if lowered.contains("authored") or lowered.contains("story_room") or lowered.begins_with("faction_"):
 			authored_cells[cell] = true
 	var resolver := SURFACE_MATERIAL_RESOLVER_SCRIPT.new()
-	var road_cells := _ruined_road_cells.duplicate(true)
-	if intent_main_roads_enabled:
-		road_cells.merge(_main_road_tiles, true)
 	var result: Dictionary = resolver.resolve({
 		"floor_cells": _generated_floor_cells,
 		"wall_cells": _generated_wall_cells,
@@ -7492,8 +7418,7 @@ func _resolve_surface_materials() -> void:
 		"region_kind_by_cell": region_kinds,
 		"region_data_by_cell": region_data,
 		"parking_cells": _parking_zone_tiles,
-		"industrial_hardstand_cells": _service_hardstand_cells,
-		"road_cells": road_cells,
+		"road_cells": _main_road_tiles,
 		"path_cells": _path_centerline_tiles,
 		"bridge_cells": _last_terrain_result.get("bridge_cells", {}) as Dictionary,
 		"reserved_cells": _macro_reserved_cells(),
@@ -7587,7 +7512,11 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 		return
 	_ensure_macro_presentation_composer()
 	var protected_cells := _macro_presentation_protected_cells()
-	var surface_claim_cells := _macro_presentation_surface_claims()
+	var surface_claim_cells: Dictionary = {}
+	for source: Dictionary in [_main_road_tiles, _parking_zone_tiles]:
+		for cell: Variant in source.keys():
+			if cell is Vector2i:
+				surface_claim_cells[cell] = true
 	var ingress_cells: Dictionary = {}
 	for rect: Rect2i in _world_ingress_dressing_clearance_rects:
 		for x in range(rect.position.x, rect.end.x):
@@ -7681,15 +7610,6 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 				"count": int(_macro_presentation_plan["rejection_counts"][reason]),
 			})
 	_publish_macro_presentation_gauges()
-
-
-func _macro_presentation_surface_claims() -> Dictionary:
-	var result: Dictionary = {}
-	for source: Dictionary in [_main_road_tiles, _parking_zone_tiles, _ruined_road_cells, _service_hardstand_cells]:
-		for cell: Variant in source.keys():
-			if cell is Vector2i:
-				result[cell] = true
-	return result
 
 
 func _rebuild_macro_presentation(map_size: Vector2i) -> void:
@@ -10924,10 +10844,7 @@ func get_level_data() -> Dictionary:
 		"compound_construction_zone_anchor": _last_compound_construction_zone_anchor,
 		"compound_diagnostics": _last_compound_diagnostics.duplicate(true),
 		"main_road_tiles": get_main_road_tiles(),
-		"ruined_road_tiles": get_ruined_road_tiles(),
-		"service_hardstand_tiles": get_service_hardstand_tiles(),
 		"parking_zone_tiles": get_parking_zone_tiles(),
-		"road_semantics": debug_get_road_semantics_summary(),
 		"road_walk_speed_multiplier": road_walk_speed_multiplier,
 		"road_vehicle_speed_multiplier": road_vehicle_speed_multiplier,
 		"interior_region_rect": _last_interior_region_rect,

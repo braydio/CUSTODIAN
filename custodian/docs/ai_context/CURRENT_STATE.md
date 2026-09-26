@@ -1389,11 +1389,25 @@ coarse. Measured against the database, most of it was already canonical:
   the same 10 frames and 18 fps, so hit windows and contacts are unaffected.
 
 Armed melee no longer uses any legacy animation name, and `fx_map` is removed
-from both armed definitions. `actor_local_spriteframes` reached **0** and the
-ledger stands at **97**. `operator.gd` measures 14,811 lines / 708 functions,
-down from 15,231 / 723 at the start of Slice D.
+from both armed definitions. `actor_local_spriteframes` reached **0**.
 
-**C2b is still not closed.** `animation_resolver` (18) and
+Binding the weapon/FX overlays to the canonical database took three non-armed
+paths with it, each reaching for a clip name that only ever lived in the
+retired compatibility resource: unarmed heavy attack FX (out of `fx_map`),
+unarmed dodge-fast-attack FX, and unarmed fast-attack recovery FX. A new
+`_resolve_melee_fx_identity()` resolves the shared FX layer canonically for
+both loadouts, used at all three sites plus the general `fx_map` overlay path;
+the two dead weapon-overlay calls this exposed (heavy windup anticipation,
+block-phase `<phase>_weapon`) are removed rather than left as permanent misses.
+`operator_modular_defense_ranged` caught the heavy-attack FX regression.
+
+The ledger stands at **95** -- `animation_resolver` fell further, 18 -> 16, as
+a side effect of consolidating FX resolution behind one helper.
+`operator.gd` measures 14,849 lines / 709 functions, against 14,841 / 709 at
+the start of this blocker-removal slice and 15,231 / 723 at the start of
+Slice D; the small net increase is the new shared FX-resolution helper.
+
+**C2b is still not closed.** `animation_resolver` (16) and
 `directional_animation_fallback` (4) remain, now genuinely as call-site debt on
 non-armed paths rather than as a live runtime dependency; they retire in the C2b
 demolition pass. Slice E (`OperatorActionController`) and Slice F (domain

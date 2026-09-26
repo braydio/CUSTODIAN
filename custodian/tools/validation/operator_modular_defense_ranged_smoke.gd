@@ -122,14 +122,16 @@ func _validate_unarmed_heavy_fx_survives_visual_update(operator: Node) -> void:
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.set("visual_idle_direction", Vector2.RIGHT)
 
-	_assert_animation_exists(operator, "melee_fx_overlay_sprite", &"unarmed_attack_heavy_fx_right")
+	# C2b.1: the FX renderer binds the canonical database, so the unarmed heavy
+	# clip is its semantic identity rather than the `fx_map` spelling.
+	_assert_animation_exists(operator, "melee_fx_overlay_sprite", &"unarmed/attack/heavy_01/e/fx")
 	operator.call("start_attack", "unarmed_heavy")
 	var fx_sprite := operator.get("melee_fx_overlay_sprite") as AnimatedSprite2D
 	_assert_true(fx_sprite != null and fx_sprite.visible, "unarmed heavy should show its melee FX overlay when the attack starts")
-	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed_attack_heavy_fx_right", "unarmed heavy should play right heavy FX")
+	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed/attack/heavy_01/e/fx", "unarmed heavy should play right heavy FX")
 	operator.call("_update_primary_weapon_visual", false)
 	_assert_true(fx_sprite != null and fx_sprite.visible, "unarmed heavy FX should survive the normal weapon visual update")
-	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed_attack_heavy_fx_right", "weapon visual update should not replace unarmed heavy FX")
+	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed/attack/heavy_01/e/fx", "weapon visual update should not replace unarmed heavy FX")
 	operator.call("_reset_melee_overlay_visuals")
 	operator.set("_melee_active", false)
 	operator.set("_melee_attack_kind", "")

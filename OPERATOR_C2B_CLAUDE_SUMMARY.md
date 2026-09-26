@@ -10,9 +10,9 @@ regression gate and passed.
 ## Measured result, both slices
 
 ```
-architecture debt      119 -> 98 -> 97
-operator.gd         15,231 -> 14,841 -> 14,814 lines
-operator.gd            723 ->    709 ->     708 functions
+architecture debt      119 -> 98 -> 95
+operator.gd         15,231 -> 14,841 -> 14,849 lines
+operator.gd            723 ->    709 ->     709 functions
 ```
 
 Per category:
@@ -22,7 +22,7 @@ Per category:
 operator_animation_catalog           4     0       0        0   done
 attack_fallback_animation           13     0       0        0   done
 actor_local_spriteframes             5     1       0        0   done
-animation_resolver                  18    18      18        0   deferred
+animation_resolver                  18    18      16        0   deferred
 directional_animation_fallback       4     4       4        0   deferred (out of scope)
 ```
 
@@ -390,6 +390,51 @@ but six validation and tooling scripts still read it.
 
 `operator_timing_preservation` is therefore **not** retired and still passes.
 
+## C2b.1 follow-up: the overlay-binding regression
+
+Binding `MeleeWeaponOverlaySprite` and `MeleeFxOverlaySprite` to the canonical
+database (above) took three non-armed presentation paths with it, each reaching
+for a clip name that only ever lived in the deleted compatibility resource, so
+the lookup became a permanent, silent miss:
+
+```
+unarmed heavy attack FX            fx_map "unarmed_attack_heavy_fx_right"
+unarmed dodge-fast-attack FX        "unarmed_dodge_fast_attack_fx_<suffix>"
+unarmed fast-attack recovery FX     AnimationResolver("unarmed_attack_fast_recovery_fx")
+```
+
+`operator_modular_defense_ranged` caught the first as a real regression, not a
+stale assertion -- it asserted the FX overlay stays visible across a weapon
+visual update, and the clip it named could never be found again.
+
+Added `_resolve_melee_fx_identity()`: one canonical FX lookup (weapon type,
+active `presentation_action`, sector) usable by both loadouts. Used at all
+three regressed sites plus the general armed/unarmed `fx_map` overlay path
+(`_play_melee_overlay_from_key`), which now tries the canonical identity before
+falling back to `AnimationResolver` for any `fx_map` entry this slice did not
+touch. Repointed the ranged smoke's two assertions at the canonical identity
+(`unarmed/attack/heavy_01/e/fx`) rather than the retired clip name.
+
+Two calls exposed as permanent no-ops by the same binding change are removed
+rather than left dead: the heavy-attack windup's
+`_play_named_melee_weapon_overlay(&"melee_2h_heavy_anticipation_weapon")`, and
+`_play_block_weapon_overlay()`'s `<phase>_weapon` probe (Vigil's block weapon
+art presents separately, through `_try_play_vigil_semantic_block()`, and hides
+this overlay itself). `_play_named_melee_weapon_overlay()` itself is now
+unused and deleted.
+
+No dedicated smoke covers block-phase or heavy-attack-windup weapon-overlay
+presentation; both removed calls were confirmed dead (the names they probed are
+absent from the canonical database) rather than verified against a passing
+test. Flagging this as a coverage gap rather than closing it silently.
+
+`animation_resolver` fell 18 -> 16 (`operator.gd` 17 -> 15, per the audit's own
+delta) as a side effect of consolidating FX resolution behind one helper, not
+as a goal of this pass. Architecture debt baseline refreshed 98 -> 95.
+`operator.gd` is 14,849 lines / 709 functions, against 14,841 / 709 at the
+start of this blocker-removal slice -- a net +8 lines, entirely the new shared
+helper, against a net -6 for the binding change alone.
+
 ## Validation
 
 ```
@@ -405,7 +450,7 @@ operator_dodge_flow                PASS
 operator_animated_sprite_canonical PASS
 operator_body_pair_canonical       PASS
 operator_visual_ownership          PASS
-operator_architecture_debt         PASS   98, baseline refreshed
+operator_architecture_debt         PASS   95, baseline refreshed (98 after C2b.1's binding change, 95 after the overlay-regression follow-up)
 operator_runtime_path_audit        PASS   ledger shrunk by the 8 removed PNG paths
 operator_ranged_ready_input        PASS   (after repointing its dodge-FX assertions)
 operator_dodge_fx_canonical        PASS   (new)
@@ -455,6 +500,20 @@ confirmed by running it against a clean `HEAD` before any C2b commit.
 Moment Forge was not run. No authored timing, cadence, window or economy value
 changed; the only art-path change (dodge FX) was proven frame-, loop- and
 FPS-identical beforehand.
+
+**Overlay-regression follow-up, re-run focused:** `operator_vigil_dagger`,
+`operator_sword_cleaver`, `operator_melee_posture`, `operator_attack_phase_cadence`,
+`operator_body_pair_canonical`, `operator_animated_sprite_canonical`,
+`operator_timing_preservation`, `operator_runtime_spine_immutable`,
+`operator_dodge_flow`, `operator_dodge_fx_canonical`, `operator_unarmed_fast_chain`,
+`operator_melee_sheathe` and `operator_modular_defense_ranged` (the one this
+follow-up's diff touches directly) all **PASS**. `--changed` was attempted but
+this worktree is shared with other concurrent sessions and carries unrelated
+dirty state (procgen, vaultwing, road-semantics work); the unscoped sweep it
+triggered was killed after 300s rather than left to churn through unrelated
+tests, per the instruction not to run a giant sweep for an animation-file
+touch. The full actor tier was not re-run for this follow-up specifically —
+only the tests above, chosen to cover every path the diff changes.
 
 ## Non-goals respected
 

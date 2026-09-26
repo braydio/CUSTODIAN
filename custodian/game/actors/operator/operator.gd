@@ -6656,8 +6656,12 @@ func _play_dodge_fast_attack_presentation() -> bool:
 	animated_sprite.flip_h = false
 	animated_sprite.speed_scale = 1.0
 	_animation_player.play(animated_sprite, body_animation)
-	var fx_animation := StringName("unarmed_dodge_fast_attack_fx_%s" % suffix)
-	if not _play_named_melee_fx_overlay(fx_animation) and melee_fx_overlay_sprite != null:
+	# Canonical: the FX overlay no longer binds the compatibility resource.
+	var fx_animation := _resolve_melee_fx_identity(
+		&"dodge_fast_attack_01", &"w" if suffix == "left" else &"e", &"unarmed"
+	)
+	if (fx_animation.is_empty() or not _play_named_melee_fx_overlay(fx_animation)) \
+	and melee_fx_overlay_sprite != null:
 		melee_fx_overlay_sprite.visible = false
 	var cape_animation := StringName("unarmed_dodge_fast_attack_cape_%s" % suffix)
 	if ACTIVE_MODULAR_CAPE \
@@ -6785,7 +6789,6 @@ func _start_heavy_attack() -> void:
 		_prepare_armed_melee_full_body()
 		animated_sprite.flip_h = false
 		_animation_player.play(animated_sprite, heavy_windup_animation)
-		_play_named_melee_weapon_overlay(&"melee_2h_heavy_anticipation_weapon")
 		_lock_melee_cooldown(1.10)
 		return
 	_begin_heavy_attack_active_phase()
@@ -8417,11 +8420,11 @@ func _is_block_animation_finished() -> bool:
 	return animated_sprite != null and not animated_sprite.is_playing()
 
 
-func _play_block_weapon_overlay(animation_name: StringName) -> void:
+## `<phase>_weapon` clips only ever lived in the retired compatibility
+## resource, so this now just retires the layer. Vigil's block weapon art
+## presents separately, through `_try_play_vigil_semantic_block()`.
+func _play_block_weapon_overlay(_animation_name: StringName) -> void:
 	if melee_weapon_overlay_sprite == null:
-		return
-	var weapon_animation := StringName("%s_weapon" % String(animation_name))
-	if _play_named_melee_weapon_overlay(weapon_animation):
 		return
 	melee_weapon_overlay_sprite.visible = false
 	melee_weapon_overlay_sprite.stop()
@@ -8498,6 +8501,32 @@ func _resolve_armed_melee_identities() -> Dictionary:
 	if selector.has_sector_identity(family, &"attack", action, sector, &"fx"):
 		identities["fx"] = selector.resolve_sector(family, &"attack", action, sector, &"fx")
 	return identities
+
+
+## Canonical FX identity for the melee action in flight, armed or unarmed --
+## the FX overlay is shared by both loadouts and only binds canonical frames
+## now, so a `fx_map` clip name (e.g. unarmed heavy's) can no longer resolve.
+func _resolve_melee_fx_identity(
+	action: StringName = &"", sector: StringName = &"", family: StringName = &""
+) -> StringName:
+	if action.is_empty():
+		var profile := _active_melee_attack_profile
+		if profile == null:
+			return &""
+		action = profile.presentation_action
+	if family.is_empty():
+		var definition := get_current_combat_profile()
+		if definition == null:
+			return &""
+		family = definition.weapon_type
+	if sector.is_empty():
+		sector = OperatorAnimationSelectorScript.vector_to_sector(_melee_forward)
+	if action.is_empty() or family.is_empty():
+		return &""
+	var selector = _get_operator_animation_selector()
+	if not selector.has_sector_identity(family, &"attack", action, sector, &"fx"):
+		return &""
+	return selector.resolve_sector(family, &"attack", action, sector, &"fx")
 
 
 ## Play the full-body clip a weapon's animation map names for this attack key.
@@ -8991,9 +9020,10 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 	if overlay_data.is_empty():
 		_reset_melee_overlay_visuals()
 		return
-	var weapon_anim := StringName(str(overlay_data.get("weapon_anim", "")))
+	# Armed melee never reaches here; the only remaining `fx_map` (unarmed)
+	# carries no weapon animation, so the weapon overlay is simply retired.
 	var fx_anim := StringName(str(overlay_data.get("fx_anim", "")))
-	if weapon_anim.is_empty() and melee_weapon_overlay_sprite:
+	if melee_weapon_overlay_sprite:
 		melee_weapon_overlay_sprite.visible = false
 		melee_weapon_overlay_sprite.stop()
 		melee_weapon_overlay_sprite.frame = 0
@@ -9002,19 +9032,14 @@ func _play_melee_overlay_from_key(attack_key: String) -> void:
 		melee_fx_overlay_sprite.stop()
 		melee_fx_overlay_sprite.frame = 0
 	_melee_overlay_clock_owner = MeleeOverlayClockOwner.LEGACY_BODY
-	if not weapon_anim.is_empty() and melee_weapon_overlay_sprite:
-		weapon_anim = AnimationResolver.resolve(String(weapon_anim), _melee_forward, melee_weapon_overlay_sprite)
 	if not fx_anim.is_empty() and melee_fx_overlay_sprite:
-		fx_anim = AnimationResolver.resolve(String(fx_anim), _melee_forward, melee_fx_overlay_sprite)
-	if melee_weapon_overlay_sprite and melee_weapon_overlay_sprite.sprite_frames and melee_weapon_overlay_sprite.sprite_frames.has_animation(weapon_anim):
-		melee_weapon_overlay_sprite.visible = true
-		melee_weapon_overlay_sprite.flip_h = (
-			animated_sprite != null
-			and animated_sprite.flip_h
-			and not String(weapon_anim).ends_with("_left")
-		)
-		melee_weapon_overlay_sprite.speed_scale = _get_melee_animation_speed_scale(attack_key)
-		_animation_player.play(melee_weapon_overlay_sprite, weapon_anim)
+		# Canonical first; the `fx_map` spelling only resolves against the
+		# retired compatibility resource.
+		var canonical_fx := _resolve_melee_fx_identity()
+		if not canonical_fx.is_empty():
+			fx_anim = canonical_fx
+		else:
+			fx_anim = AnimationResolver.resolve(String(fx_anim), _melee_forward, melee_fx_overlay_sprite)
 	if melee_fx_overlay_sprite and melee_fx_overlay_sprite.sprite_frames and melee_fx_overlay_sprite.sprite_frames.has_animation(fx_anim):
 		melee_fx_overlay_sprite.visible = true
 		melee_fx_overlay_sprite.flip_h = (
@@ -9095,17 +9120,6 @@ func _reset_melee_overlay_visuals() -> void:
 		_melee_overlay_clock_owner = MeleeOverlayClockOwner.NONE
 
 
-func _play_named_melee_weapon_overlay(animation_name: StringName) -> bool:
-	if melee_weapon_overlay_sprite == null:
-		return false
-	if melee_weapon_overlay_sprite.sprite_frames and melee_weapon_overlay_sprite.sprite_frames.has_animation(animation_name):
-		melee_weapon_overlay_sprite.visible = true
-		melee_weapon_overlay_sprite.flip_h = animated_sprite.flip_h if animated_sprite else false
-		_animation_player.play(melee_weapon_overlay_sprite, animation_name)
-		return true
-	return false
-
-
 func _play_named_melee_fx_overlay(animation_name: StringName) -> bool:
 	if melee_fx_overlay_sprite == null:
 		return false
@@ -9139,8 +9153,10 @@ func _play_fast_attack_recovery() -> void:
 			_clear_modular_fast_attack_layers()
 		if melee_weapon_overlay_sprite:
 			melee_weapon_overlay_sprite.visible = false
-		var recovery_fx := AnimationResolver.resolve("unarmed_attack_fast_recovery_fx", _melee_forward, melee_fx_overlay_sprite)
-		if not _play_named_melee_fx_overlay(recovery_fx):
+		# `fast_recovery_01` FX is authored north-only, same as the compatibility
+		# clip it replaces, so a non-north recovery still retires the layer.
+		var recovery_fx := _resolve_melee_fx_identity(&"fast_recovery_01", &"", &"unarmed")
+		if recovery_fx.is_empty() or not _play_named_melee_fx_overlay(recovery_fx):
 			_reset_melee_overlay_visuals()
 		return
 	var armed_recovery := _resolve_full_body_animation("melee_2h_fast_recovery", _melee_forward)
@@ -9149,8 +9165,6 @@ func _play_fast_attack_recovery() -> void:
 		_prepare_armed_melee_full_body()
 		animated_sprite.flip_h = false
 		_animation_player.play(animated_sprite, armed_recovery)
-		_play_named_melee_weapon_overlay(&"melee_2h_fast_recovery_weapon")
-		_play_named_melee_fx_overlay(&"melee_2h_fast_recovery_fx")
 
 
 func _start_fast_attack_recovery() -> void:
