@@ -24,6 +24,12 @@ The development copy remains in place because the existing fidelity-preview scen
 references it. This documentation copy is the persistent visual record used by
 `design/05_levels/TWIN_SOLARIA.md`.
 
+Canonical interpretation now locks the large upper-left circle as **Solarium I /
+Acquisition Aperture** and the missing upper-right mass as the destroyed
+**Solarium II / Passage Aperture**. The surviving right-hand root/arc is part of
+**the Amputation**. Do not "complete" the image into symmetry in documentation art
+unless a future story state explicitly reconstructs the Second Crown.
+
 ## Preservation rule
 
 This file is a canonical **visual reference**, not a production runtime texture contract.
