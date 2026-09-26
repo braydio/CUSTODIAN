@@ -1149,15 +1149,17 @@ Last updated: 2026-09-24
   `custodian/tools/iteration/scenarios/combat/vaultwing_first_bond.json` — Slice
   B.1 behavioral feed/trial loop plus B.2 interaction-presentation ownership,
   same-instance bonded allegiance, stable spawn identity, versioned save/restore
-  and lifecycle/target-release regressions; the first-bond Moment uses temporary
-  existing-art fallbacks until the six bonding families are ingested.
+  and lifecycle/target-release regressions; bonding art pass 1 has nine runtime
+  strips and the first-bond evidence capture passes, with final visual judgment
+  deferred until the six bonding families are complete.
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.
 - `custodian/game/actors/ambient/vaultwing/vaultwing_behavior_profile.tres` —
   Slice A tuning authority for patrol, attacks, perching, retreat, and perception.
-- `custodian/tools/validation/vaultwing_asset_contract_smoke.py` — 56-strip
-  published Asset V2 geometry, alpha, naming, and semantic coverage contract.
+- `custodian/tools/validation/vaultwing_asset_contract_smoke.py` — manifest-driven
+  published Asset V2 geometry, alpha, naming, required-direction, and staged
+  recommended-coverage contract.
 - `custodian/tools/validation/vaultwing_world_spawn_smoke.gd` — production
   container, marker, population-cap, and duplicate-marker spawn seam smoke.
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`

@@ -1741,15 +1741,19 @@ are covered. B.2 adds a behavior-owned presentation override for bait
 recognition, guarded approach, inspection, accepted feed, trial observation /
 readiness, and bond recognition; ordinary state playback cannot replace these
 cues each frame. Cue durations do not gate gameplay. The V2 family registers
-the six designed actions with existing wild-clip fallbacks until art arrives,
-and root `REQUIRED_ASSETS.md` tracks the 18 E/S/N source masters, 24 runtime
-directional strips, feed vocalization, and bond-recognition call. Next: generate
-and ingest the art, review `combat/vaultwing_first_bond`, add production SFX,
-then integrate bait inventory and global save ownership. Companion
-commands/behavior remain Slice C. The B.2 `combat/vaultwing_first_bond`
-Moment evidence capture passes at
-`reports/moment_forge/combat/vaultwing_first_bond/20260925T124724-0400`;
-defer full audiovisual judgment until authored bonding art is ingested.
+the six designed actions with existing wild-clip fallbacks until their art
+arrives, and root `REQUIRED_ASSETS.md` tracks the 18 E/S/N source masters, 24
+runtime directional strips, feed vocalization, and bond-recognition call.
+Bonding art pass 1 ingested seven clean strips into nine runtime directions:
+`guarded_approach` is READY N/E/S/W; `notice_bait` is partial N/S;
+`inspect_bait` is partial N/E/W; `feed_accept`, `watch_player`, and `bond_greet`
+remain missing. Inputs 1 and 10 were absent; input 8 was quarantined for
+generated matte. The `combat/vaultwing_first_bond` evidence capture passes at
+`reports/moment_forge/combat/vaultwing_first_bond/20260926T020356-0400`; it has
+no baseline capture, so defer final visual judgment until the remaining art is
+complete. Recover inputs 1, 8, and 10, then author ordinals 11–18. Production
+SFX and bait/global save ownership follow; companion commands/behavior remain
+Slice C.
 
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored

@@ -1,6 +1,6 @@
 # CUSTODIAN — VAULTWING CREATURE, PREDATION, AND BOND SYSTEM
 
-**Status:** design locked / wild Slice A and B.1 behavioral bond implemented / B.2 bonding presentation contract implemented; bonding art and production Vaultwing SFX pending
+**Status:** design locked / wild Slice A, B.1 behavioral bond, and B.2 presentation contract implemented / bonding art partially ingested in pass 1; production Vaultwing SFX pending
 **Feature family:** ambient ecology / hostile fauna / companion progression  
 **Initial creature:** Common Vaultwing  
 **Runtime identity:** `vaultwing_common`  
@@ -565,10 +565,15 @@ allegiance, provenance-derived stable identity, and a versioned bond/health save
 record. The local record contract is not global save orchestration. B.2 now
 owns the six Slice-B semantic animation cues and protects them from ordinary
 state playback; the Asset V2 family and canonical missing-assets tracker list
-the six art families plus feed and recognition SFX. Next, generate and ingest
-the six bonding families, then review `combat/vaultwing_first_bond`; production
-SFX and bait/global-save integration follow, and companion behavior remains
-Slice C. Preserve
+the six art families plus feed and recognition SFX. Bonding art pass 1 has
+ingested seven clean strips into nine runtime directions: `guarded_approach`
+is complete; `notice_bait` and `inspect_bait` are partial; `feed_accept`,
+`watch_player`, and `bond_greet` remain missing. Inputs 1 and 10 were absent,
+and input 8 was quarantined for matte. The evidence-mode
+`combat/vaultwing_first_bond` run passes, with final visual judgment deferred
+until the art is complete. Recover those inputs and author ordinals 11–18,
+then finish art review; production SFX and bait/global-save integration
+follow, and companion behavior remains Slice C. Preserve
 unrelated working-tree changes; keep simulation deterministic; do not expand
 `AmbientCritterManager`; reuse semantic ambient presentation; keep flight as
 discrete bands; put tunable timing/range/damage in appropriate data/config; do

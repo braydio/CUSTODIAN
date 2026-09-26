@@ -60,20 +60,36 @@ record, and semantic presentation contract are live; art ingest and Moment
 review precede production SFX, item acquisition, global persistence ownership,
 and Slice C commands.
 
-## Next Agent Slice — Bonding Art Ingest and First-Bond Review
+## Bonding Art Pass 1 — Partial Production Ingest (2026-09-26)
 
-- **Goal:** Author and ingest the six B.2 bonding actions, then review the
+Pass 1 ingested seven clean normalized inbox strips into nine canonical runtime
+strips. `guarded_approach` is READY N/E/S/W; `notice_bait` has authored N/S;
+`inspect_bait` has authored N/E plus mirrored W. The fixed inputs `vw1` and
+`vw10` were absent. `vw8` was retained in source_work and quarantined because
+its generated matte covered the sheet. No gameplay timing or mechanics changed.
+The manifest-driven asset validator now accepts partial recommended states
+while continuing to enforce every present strip and all required directions.
+
+The evidence-mode `combat/vaultwing_first_bond` run passes its behavioral
+assertions. Its report has no baseline capture and is not a final art judgment;
+use a full visual capture only after the remaining art is ingested.
+
+## Next Agent Slice — Bonding Art Pass 2 and First-Bond Review
+
+- **Goal:** Resolve missing/rejected ordinals 1, 8, and 10; author the next
+  numbered batch 11–18; then complete the six B.2 actions and review the
   existing `combat/vaultwing_first_bond` Moment.
 - **Files:** Vaultwing art source under
   `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`, family
   inbox/runtime outputs, and validation/Moment reports.
-- **Constraints:** 256×256 RGBA cells; E/S/N source masters; W mirrored by Asset
-  V2 when valid; 18 source masters and 24 runtime strips. Do not generate
-  `command_ack`. Keep gameplay timing independent of animation completion.
+- **Constraints:** Preserve ordinal mapping and source masters; 256×256 RGBA
+  cells; E/S/N source masters; W mirrored by Asset V2 when valid. Do not change
+  frame/FPS contracts or generate `command_ack`. Keep gameplay timing
+  independent of animation completion.
 - **Acceptance:** All six action contracts ingest with expected counts and
   directional coverage; focused Vaultwing asset/bond checks pass;
   `combat/vaultwing_first_bond` passes with `--capture-mode evidence`; use one
-  `full` capture for final visual judgment.
+  `full` capture for final visual judgment after art completion.
 
 ## Validation
 
