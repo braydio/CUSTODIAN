@@ -90,6 +90,17 @@ eventually seal West Gate when it could no longer verify the continuity origin
 of the evacuation flow. The sightings are historical canon; their identity,
 intent, and relationship to `NON-RECIPIENT` or the Severing are not.
 
+Twin Solaria provides a second kind of evidence. Its lost **Solarium II / Passage
+Aperture** suffered a Crown-class reciprocal failure during the wider Severing crisis,
+and the surviving court proves that deliberate emergency amputation followed
+unacceptable reciprocal behavior already underway at the aperture. Null Warrant
+containment authority was integrated into that safety chain before the final cut.
+The local amputation did not terminate the wider network crisis. These facts show
+scale and prior institutional knowledge; they do **not** establish Twin Solaria as
+Ground Zero, identify the propagation hazard, or prove the Crown incident and
+Ash-Bell were the same phenomenon. See
+`design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
+
 ---
 
 ## Layer 5 — Reserved Cosmic Mystery
@@ -98,6 +109,9 @@ Do not answer.
 
 - What first demonstrated reciprocal traversal?
 - What was Null Warrant containing?
+- Was the Crown Reciprocal Incident an origin point, an early victim, an amplifier,
+  or merely one of the first well-instrumented failures?
+- Who issued the decisive Crown Amputation authorization at Solarium II?
 - Was the Severing deliberate?
 - How many continuity routes survived?
 - Are active Lattice restorations recreating dangerous paths?
