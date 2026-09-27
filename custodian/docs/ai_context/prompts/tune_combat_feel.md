@@ -1,50 +1,25 @@
 # Tune Combat Feel
 
-Read `custodian/AGENTS.md` first.
-Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, and the linked design doc.
+Repository workflow and runtime ownership defaults are inherited from
+`custodian/AGENTS.md`.
 
-## Task: {{weapon_or_enemy_type}}
+## Task
+
 Tune combat feel for: {{weapon_or_enemy_type}}
 
-## Rules
-- Preserve deterministic fixed-step simulation.
-- Keep rendering/UI separate from simulation authority.
-- Create or update a compact task packet when durable scope, acceptance, or handoff context adds value; expand it only for high-risk or multi-session work.
-- Update `CURRENT_STATE.md` if behavior changes.
-- Update `FILE_INDEX.md` if ownership or entrypoints change.
-- Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
-- Run `python3 custodian/tools/iteration/run_moment.py --changed`, select the
-  smallest relevant combat scenario, and use `--capture-mode full` when judging
-  weight, contact timing, animation/FX/SFX synchronization, hitstop, recoil, or
-  displacement. Keep focused combat smokes for stable logic and never accept a
-  baseline automatically.
+**Combat authority:** {{combat_design_or_profile}}
 
-## Context Files
-- `custodian/AGENTS.md` — Local routing and working rules
-- `custodian/docs/ai_context/CURRENT_STATE.md` — Live runtime state
-- `custodian/docs/ai_context/FILE_INDEX.md` — File ownership map
-- `custodian/docs/ai_context/CONTEXT.md` — Full context overview
-- `custodian/docs/ai_context/VALIDATION_RECIPES.md` — Validation command guide
-- Combat design: `design/[combat_design].md` — Combat specifications
+**Work surface:** {{actors_systems_and_profiles}}
 
-## Combat Systems to Reference
-- **Player controller**: `custodian/game/systems/core/player_controller.gd`
-- **Operator actor**: `custodian/game/actors/operator/operator.gd`
-- **Enemy base**: `custodian/game/actors/enemies/enemy.gd`
-- **Weapon definitions**: `custodian/game/actors/operator/operator_weapon_definition.gd`
-- **Animation state machine**: `custodian/game/actors/operator/animations/`
+**Preserve:** {{task_specific_behavior_and_timing}}
 
-## Cognitive State Modifiers (Phase B Integration)
-Check `custodian/game/systems/cognitive/cognitive_state_system.gd` for:
-- `get_move_speed_multiplier()` — Player movement speed
-- `get_attack_recovery_multiplier()` — Attack recovery time
-- `get_player_accuracy_bonus()` — Player attack accuracy
-- `get_enemy_accuracy_bonus()` — Enemy tracking/accuracy
-- `get_input_delay_variance()` — Input delay for discrete actions
+**Change:** {{target_feel_change}}
 
-## Tuning Notes
-- Use `custodian/game/actors/operator/operator_weapon_definition.gd` for the weapon profile schema and concrete `*.tres` profile resources such as `custodian/game/actors/operator/unarmed_definition.tres`
-- Test in `custodian/scenes/game.tscn`
-- Consider cognitive state effects from Forest Shrumb items
-- Check `custodian/game/actors/effects/` for hit/spark effects
-- Validate with different cognitive states (DRIFT, FLOW, ALIGNMENT, MIXED)
+Select the smallest combat Moment Forge scenario that exposes the changed feel.
+Use evidence or full capture according to whether timing/readability needs
+visual judgment; retain focused smokes for stable logic assertions. Never
+replace a baseline automatically.
+
+## Acceptance
+
+{{task_specific_acceptance}}

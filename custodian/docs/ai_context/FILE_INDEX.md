@@ -96,6 +96,7 @@ Last updated: 2026-09-26
 - `custodian/docs/ai_context/ARCHITECTURE_OWNERSHIP_MAP.md` — compact agent-facing ownership map answering who owns persistent state, campaign state, world lifecycle, procgen, authored maps, combat, actors, UI, and debug; lists overburdened coordinator files and extraction targets
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — canonical validation command selection guide for docs, Godot, asset pipeline, tile pipeline, architecture organization, and review work
 - `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
+- `custodian/tools/agent/validate_prompt_contract.py` — reports repository-default boilerplate repeated in prompts and active task packets; supports `TASK OVERRIDE:` and strict template-only checks
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
 - `REQUIRED_ASSETS.md` — project-level tracker for missing or partial production art, audio, animation, and content assets that implementation work depends on
 - `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available

@@ -205,6 +205,46 @@ Task packet workflow:
 
 Task packets do not replace design docs. Use `../design/` as implementation authority, and use task packets to make the current agent slice explicit.
 
+## Instruction Inheritance And Prompt Compression
+
+Repository defaults live in this file and the active authority chain. Prompt
+templates, task packets, and handoffs describe the current task's delta; they
+should not repeat repository defaults for reassurance.
+
+Unless a task explicitly overrides them, agents inherit authority/read order,
+archive boundaries, deterministic fixed-step and simulation/presentation
+ownership, graph/tool routing, task-packet selection, consequence-driven docs
+drift, validation economy, Moment Forge selection, asset and Operator animation
+authority, commit/push policy, and closing-summary requirements from this
+primer and the root `AGENTS.md`.
+
+Task prompts should normally specify only the goal, narrower task authority or
+work surface, task-specific changes and invariants, non-goals, acceptance,
+necessary task-specific validation, and any actual blockers or deferred work.
+Repeating an inherited rule does not make it stricter. Do not add extra work,
+validation, documentation edits, checkpoints, or confirmation gates just
+because a generated prompt repeats a repository default.
+
+Do not omit explicit user-requested behavior, acceptance criteria, non-goals,
+preservation requirements, named regressions, asset/data compatibility, or
+architecture ownership changes. A deliberate task-level exception must be
+marked `TASK OVERRIDE:` with its reason. It applies only within that task and
+cannot override higher repository or design authority.
+
+Use the narrowest test that can falsify a change during implementation, then
+broaden once at closeout according to Validation Iteration Economy. Multiple
+commands are separate acceptance gates only when the task explains why each
+proves a distinct property. Update documents when their owned truth changes;
+do not edit an otherwise-correct document only because a prompt listed it.
+
+### Parallel Worktrees
+
+Use an isolated git worktree by default for substantial parallel
+implementation. Shared-worktree tolerance is for incidental overlap and legacy
+sessions, not the preferred way to run simultaneous substantial tasks. When a
+shared worktree is unavoidable, preserve other sessions' staged and unstaged
+changes and stage only paths or hunks owned by the current task.
+
 ## Prompt Templates And Validation
 
 Reusable prompts live in `docs/ai_context/prompts/`.
@@ -224,6 +264,11 @@ Use these prompts to standardize recurring agent work:
 - procgen handoff inspection
 - combat feel tuning
 - git state and commit preparation
+
+After changing reusable prompt templates, run
+`python3 tools/agent/validate_prompt_contract.py --templates-only --strict`.
+The linter can also report repeated repository-default boilerplate in active
+task packets during packet maintenance.
 
 Validation recipes live in `docs/ai_context/VALIDATION_RECIPES.md`.
 
@@ -334,13 +379,11 @@ or asset-authoring tooling outside active gameplay runtime.
 
 ## Commit Policy
 
-- Commit completed, validated work at task boundaries without waiting for a per-task instruction.
-- Never `git add -A` blindly; never commit secrets, logs or generated artifacts.
-- Prefer staging only the files the current task changed, but treat that as guidance: this worktree is shared with live sessions and sweeping a few of their staged files in is not an incident. If you do, name it in the commit body so they learn it from the log rather than from a clean `git status`. See the root `AGENTS.md` commit policy.
-- Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
-- Push completed work to the remote once committed.
-- Do not amend or force-push unless explicitly asked.
-- Write the closing summary to `<TASK_NAME>_CLAUDE_SUMMARY.md` at the **repository root** and push it with the work. Full rule, including why updating `CURRENT_STATE.md` or a task packet does not discharge it, is in the root `AGENTS.md` under "Closing Summary Files".
+The root `AGENTS.md` owns commit and closing-summary policy. Follow it: commit
+completed, validated work at task boundaries, stage only current-task files,
+preserve other sessions' work, push completed commits, and never amend or
+force-push unless explicitly asked. Use the repository's short lowercase,
+comma-joined commit style.
 
 ## Design Codex Governance
 

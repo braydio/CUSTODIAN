@@ -1,23 +1,27 @@
 # Agent Prompt Templates
 
-Reusable prompts for common CUSTODIAN agent tasks.
-
-Use these prompts after reading `custodian/AGENTS.md`, the active AI context pack, and any existing task packet for the work. Create a compact task packet only when durable scope, acceptance, or handoff context adds value; expand it only for high-risk or multi-session work.
+These templates inherit repository workflow, authority, validation,
+documentation, and Git defaults from `custodian/AGENTS.md` and the root
+`AGENTS.md`. Fill the task-specific fields and keep the prompt focused on the
+delta. Mark deliberate task-level exceptions `TASK OVERRIDE:` with a reason.
 
 ## Templates
 
-- `implement_runtime_feature.md` - scoped Godot runtime implementation.
-- `review_docs_drift.md` - documentation drift review against live runtime files.
-- `update_sprite_pipeline.md` - sprite intake and runtime animation pipeline work.
-- `inspect_procgen_handoff.md` - procgen handoff and integration inspection.
-- `flip_spritesheet_frames.md` - mirror a spritesheet horizontally/vertically using `custodian/tools/art/png_flip_frames.py`.
-- `tune_combat_feel.md` - combat timing/feel tuning review or implementation.
-- `scan_git_commit.md` - git state grouping and commit preparation; requires explicit user approval before staging or committing.
+- `implement_runtime_feature.md` — delta-only runtime implementation.
+- `review_docs_drift.md` — documentation drift review.
+- `update_sprite_pipeline.md` — sprite intake and pipeline work.
+- `inspect_procgen_handoff.md` — procgen-to-consumer handoff inspection.
+- `flip_spritesheet_frames.md` — mirror a spritesheet by frame grid.
+- `tune_combat_feel.md` — combat feel tuning.
+- `review_runtime_change.md` — runtime diff review.
+- `scan_git_commit.md` — Git audit/planning; explicitly overrides automatic
+  commit behavior until the user approves exact actions.
 
-## Required Use
+Run this after editing reusable templates:
 
-1. Replace bracketed placeholders before acting.
-2. Confirm referenced paths exist.
-3. Attach or update a task packet only when the packet-selection rules in `custodian/AGENTS.md` call for one.
-4. Follow `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
-5. Update `CURRENT_STATE.md`, `CONTEXT.md`, and `FILE_INDEX.md` when workflow, ownership, or runtime state changes.
+```bash
+python3 custodian/tools/agent/validate_prompt_contract.py --templates-only --strict
+```
+
+The default full scan also reports repeated boilerplate in active task packets;
+use `--strict` for an explicit audit gate while migrating an existing packet.

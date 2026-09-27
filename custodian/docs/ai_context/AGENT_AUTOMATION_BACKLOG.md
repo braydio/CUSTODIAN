@@ -1,15 +1,16 @@
 # AGENT AUTOMATION BACKLOG
 
-Last updated: 2026-07-28
+Last updated: 2026-09-27
 
 Prioritized automation candidates for CUSTODIAN agent workflow. These are intentionally lightweight checks first; avoid adding a large framework until the simple checks prove insufficient.
 
 ## Current Implementation Audit
 
-The five scripts proposed below remain pending. A repository audit on
-2026-07-28 found no implementations at their suggested paths. Existing
-`custodian/tools/agent/change_control_bundle.py` is useful related tooling, but
-it is not an equivalent implementation of these validators.
+The prompt-template contract linter is now implemented at
+`custodian/tools/agent/validate_prompt_contract.py`. It flags repeated
+repository-default boilerplate in reusable prompts and active task packets,
+supports explicit `TASK OVERRIDE:` lines, and offers a strict template-only
+gate. The broader AI-context and task-packet validators below remain pending.
 
 Moment Forge is now implemented separately under
 `custodian/tools/iteration/`. It was prioritized first because deterministic
@@ -67,7 +68,7 @@ Why second:
 - useful once multiple agents are active
 - protects against ambiguous handoffs
 
-## Priority 3 — Prompt Template Validator
+## Priority 3 — Prompt Template Path Validator
 
 Suggested path: `custodian/tools/agent/check_prompts.py`
 

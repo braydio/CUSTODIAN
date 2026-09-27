@@ -1,37 +1,20 @@
 # Review Runtime Change
 
-Read `custodian/AGENTS.md` first.
-Then read `CURRENT_STATE.md`, `FILE_INDEX.md`, any relevant existing task packet, and the linked design doc.
+Repository workflow and review defaults are inherited from
+`custodian/AGENTS.md`.
 
-## Task: {{change_or_diff_scope}}
+## Task
 
 Review this runtime change: {{change_or_diff_scope}}
 
-## Review Priority
+**Active design authority:** {{design_doc}}
 
-Findings first. Prioritize:
-
-- behavior regressions
-- determinism risks
-- simulation/UI authority leaks
-- stale docs or paths
-- missing validation
-- missing Moment Forge evidence when the change affects a repeatable
-  audiovisual or game-feel moment
-- unsafe asset or git workflow side effects
-
-## Context Files
-
-- `custodian/AGENTS.md` - local routing and working rules
-- `custodian/docs/ai_context/CURRENT_STATE.md` - live runtime state
-- `custodian/docs/ai_context/FILE_INDEX.md` - file ownership map
-- `custodian/docs/ai_context/VALIDATION_RECIPES.md` - validation command guide
-- Task packet, when one exists: `custodian/docs/ai_context/task_packets/[TASK_PACKET].md`
-- Design doc: `design/[feature_path].md`
+**Relevant task acceptance:** {{acceptance_or_none}}
 
 ## Output
 
-- Findings with file and line references
-- Open questions or assumptions
-- Validation performed or still needed
-- Brief change summary only after findings
+Report findings first, with file and line references. Prioritize behavior or
+determinism regressions, ownership leaks, stale documentation, missing proof
+for the changed behavior, and unsafe side effects. Distinguish confirmed
+failures from questions or assumptions. Summarize the change only after
+findings.

@@ -1,33 +1,35 @@
 # AGENT TASK PACKET TEMPLATE
 
-Template last updated: 2026-06-12
+Repository defaults are inherited from `custodian/AGENTS.md` and the root
+`AGENTS.md`; do not duplicate them here. Packets capture task-specific scope and
+acceptance only.
 
-Task packets are optional risk-control and handoff records. Use the lightest level that preserves useful context:
+Use the lightest useful form. Skip a packet for narrow, low-risk work. Use this
+compact form when scope or acceptance needs a durable handoff. Add full-packet
+sections only when they preserve information needed for high-risk or
+multi-session work.
 
-- Skip: narrow, low-risk, single-session work with obvious acceptance and no meaningful handoff risk.
-- Compact: ordinary non-trivial work where scope, constraints, acceptance, or deferred work should survive the current session.
-- Full: multi-session work; architecture or ownership changes; migrations; high-risk runtime or asset-pipeline work; substantial handoffs.
-
-Do not create or expand a packet merely because several files change.
-
-Copy this file into `custodian/docs/ai_context/task_packets/` only when a packet adds value. Delete unused optional sections from the copy.
+Copy this file into `custodian/docs/ai_context/task_packets/` only when a packet
+adds value. Delete unused optional sections from the copy.
 
 # [TASK NAME]
 
 - Status: `draft`
-- Authority:
 - Goal:
-- Files:
-- Constraints:
+- Current measured state:
+- Task-specific authority:
+- Change:
+- Preserve:
+- Non-goals:
 - Acceptance:
-- Completed:
+- Task overrides: `none` or list each as `TASK OVERRIDE: ...`
 - Deferred:
 
 Status values: `draft`, `ready`, `in_progress`, `blocked`, `complete`.
 
 ## Full Packet Expansion
 
-Add only the sections needed for higher-risk or multi-session work.
+Add only sections that preserve useful task-specific information.
 
 ### Ownership And Timing
 
@@ -38,9 +40,8 @@ Add only the sections needed for higher-risk or multi-session work.
 
 ### Work Surface
 
-- Read:
-- Change:
-- Out of scope:
+- Files/systems to change:
+- Related consumers or tests:
 
 ### Plan
 
@@ -48,17 +49,8 @@ Add only the sections needed for higher-risk or multi-session work.
 2.
 3.
 
-### Drift Review
-
-- Primary authority:
-- `CURRENT_STATE.md`:
-- `CONTEXT.md`:
-- `FILE_INDEX.md`:
-- Local routing/readmes:
-
 ### Handoff
 
 - Next action:
 - Best starting files:
-- Validation to run:
 - Blockers or open questions:
