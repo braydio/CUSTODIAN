@@ -4,7 +4,7 @@ To procgen levels like that image, do **not** try to generate the whole illustra
 
 Your repo guidance says active runtime is `custodian/`, Godot-native specs belong in `design/`, and runtime/architecture changes should update `custodian/docs/ai_context/` too.  The uploaded tree map confirms the repo has `custodian/`, content folders, dev tile material like `custodian/content/dev/in_progress/new_wall_tiles.png`, and tile/tooling material under `custodian/assets/tiles/`. 
 
-## Main Map Road Surface Slice
+## Main Map Road Semantics V2
 
 Production wide-road carving remains disabled by `intent_main_roads_enabled =
 false`; route/playability remains the connectivity authority. Road Semantics V2

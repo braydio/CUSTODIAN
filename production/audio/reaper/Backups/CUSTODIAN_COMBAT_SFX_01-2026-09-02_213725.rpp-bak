@@ -1,0 +1,2269 @@
+<REAPER_PROJECT 0.1 "7.79/linux-x86_64" 1788399445 0
+  <NOTES 0 2
+  >
+  RIPPLE 0 0
+  GROUPOVERRIDE 0 0 0 0
+  AUTOXFADE 129
+  ENVATTACH 3
+  POOLEDENVATTACH 0
+  TCPUIFLAGS 0
+  MIXERUIFLAGS 11 48 0
+  ENVFADESZ10 40
+  PEAKGAIN 1
+  FEEDBACK 0
+  PANLAW 1
+  PROJOFFS 0 0 0
+  MAXPROJLEN 0 0
+  GRID 3455 8 1 8 1 0 0 0
+  TIMEMODE 0 5 -1 30 0 0 -1 0
+  VIDEO_CONFIG 0 0 65792
+  PANMODE 3
+  PANLAWFLAGS 3
+  CURSOR 6.39645914042269
+  ZOOM 564.37474558173199 3319 0
+  VZOOMEX 29.90408897 0
+  USE_REC_CFG 0
+  RECMODE 1
+  SMPTESYNC 0 30 100 40 1000 300 0 0 1 0 0
+  LOOP 0
+  LOOPGRAN 0 4
+  RECORD_PATH "Media" ""
+  <RECORD_CFG
+    ZXZhdxgAAQ==
+  >
+  <APPLYFX_CFG
+  >
+  RENDER_FILE /home/braydenchaffee/Projects/CUSTODIAN/custodian/content/audio/sfx/combat/
+  RENDER_PATTERN $region
+  RENDER_FMT 0 1 0
+  RENDER_1X 0
+  RENDER_RANGE 3 0 0 0 1000
+  RENDER_RESAMPLE 3 0 1
+  RENDER_ADDTOPROJ 0
+  RENDER_STEMS 8
+  RENDER_DITHER 0
+  RENDER_TRIM 0.000001 0.000001 0 0
+  TIMELOCKMODE 0
+  TEMPOENVLOCKMODE 0
+  ITEMMIX 1
+  DEFPITCHMODE 720896 0
+  TAKELANE 1
+  SAMPLERATE 48000 1 0
+  <RENDER_CFG
+    ZXZhdxAAAQ==
+  >
+  LOCK 1
+  <METRONOME 6 2
+    VOL 0.25 0.125
+    BEATLEN 4
+    FREQ 1760 880 1
+    SAMPLES "" "" "" ""
+    SPLIGNORE 0 0
+    SPLDEF 2 660 "" 0 ""
+    SPLDEF 3 440 "" 0 ""
+    PATTERN 0 169
+    PATTERNSTR ABBB
+    MULT 1
+  >
+  GLOBAL_AUTO -1
+  TEMPO 120 4 4 0
+  PLAYRATE 1 0 0.25 4
+  SELECTION 0 0
+  SELECTION2 0 0
+  MASTERAUTOMODE 0
+  MASTERTRACKHEIGHT 0 0
+  MASTERPEAKCOL 16576
+  MASTERMUTESOLO 0
+  MASTERTRACKVIEW 0 0.6667 0.5 0.5 0 0 0 0 0 0 0 0 0 0 1
+  MASTERHWOUT 0 0 1 0 0 0 0 -1
+  MASTER_NCH 2 2
+  MASTER_VOLUME 1 0 -1 -1 1
+  MASTER_PANMODE 3
+  MASTER_PANLAWFLAGS 3
+  MASTER_FX 1
+  MASTER_TRACKID {B4C77563-DA08-455B-9BD3-F0EB60308289}
+  MASTER_SEL 0
+  <MASTERPLAYSPEEDENV
+    EGUID {166B3023-3C91-EB76-CA14-66F0E0D0728B}
+    ACT 0 -1
+    VIS 0 1 1
+    LANEHEIGHT 0 0
+    ARM 0
+    DEFSHAPE 0 -1 -1
+  >
+  <TEMPOENVEX
+    EGUID {22F777A8-3E47-9C86-D75E-42D9793FA200}
+    ACT 0 -1
+    VIS 1 0 1
+    LANEHEIGHT 0 0
+    ARM 0
+    DEFSHAPE 1 -1 -1
+  >
+  RULERHEIGHT 86 86
+  RULERLANE 1 4 "" 0 -1 0
+  RULERLANE 2 8 "" 0 -1 0
+  MARKER 1 29.9556379304292 melee_swing_light_01 1 0 1 B {84B45D2A-3C88-7D33-85ED-E4A0FBDFD320} 0 1
+  MARKER 1 30.34589483869922 "" 1
+  MARKER 1 29.9556379304292 "" 0 0 1 B {07E476BF-BA36-E1DF-CCBC-3793F67B3F89} 0 2
+  MARKER 2 30.39413501198565 melee_swing_light_02 1 0 1 B {72B2D2D8-1F67-E265-C256-73DDB1464926} 0 1
+  MARKER 2 30.78897798991272 "" 1
+  MARKER 3 30.81441790090634 melee_swing_light_03 1 0 1 B {57B06AB7-8DE4-1CA3-3D5D-EFA47248B829} 0 1
+  MARKER 3 31.21260057868211 "" 1
+  MARKER 4 31.21591802007442 melee_swing_light_04 1 0 1 B {1F4C9A41-0DAA-7D58-E1DF-38001E094AAE} 0 1
+  MARKER 4 31.5978544102106 "" 1
+  MARKER 5 31.63469117890737 melee_swing_light_05 1 0 1 B {D0492813-6CA6-D308-1C6C-E8BB9D0AD971} 0 1
+  MARKER 5 32.028274974803 "" 1
+  MARKER 6 33.1498377252508 melee_swing_heavy_01 1 0 1 B {68FF029F-0671-A3DD-79DD-D073A3235CD0} 0 1
+  MARKER 6 33.60087141166118 "" 1
+  MARKER 7 34.60087141166118 melee_swing_heavy_02 1 0 1 B {8497C471-2B76-8147-0582-73A04AFE5AA8} 0 1
+  MARKER 7 35.05190509807156 "" 1
+  MARKER 8 36.05190509807156 melee_swing_heavy_03 1 0 1 B {FCAF149F-35BA-143D-80BE-90CFF3A36E77} 0 1
+  MARKER 8 36.50293878448195 "" 1
+  MARKER 9 38.9477300974386 melee_swing_heavy_05 5 0 1 B {395DE4C5-DB9C-8460-7797-9AA2BC80F97F} 0 1
+  MARKER 9 39.39876378384898 "" 5
+  MARKER 10 45.97270287063471 melee_hit_flesh_01 1 0 1 B {B8422ED2-9725-DB02-509A-2681E26A55E1} 0 1
+  MARKER 10 46.28516022111042 "" 1
+  MARKER 11 47.03516022111042 melee_hit_flesh_02 1 0 1 B {11D32E7F-55F9-74DB-0A32-F2522144C813} 0 1
+  MARKER 11 47.34761757158614 "" 1
+  MARKER 12 48.09761757158614 melee_hit_flesh_03 1 0 1 B {AAB99457-A4EE-4BED-2921-4840F1D45D6B} 0 1
+  MARKER 12 48.41007492206186 "" 1
+  MARKER 13 49.16007492206186 melee_hit_flesh_04 1 0 1 B {964BA87E-A717-8000-F41D-5AEB2B89CB9E} 0 1
+  MARKER 13 49.47253227253758 "" 1
+  MARKER 14 50.22253227253758 melee_hit_flesh_05 1 0 1 B {A2A4EE2B-040E-7954-7F2A-7CB2B0F891C1} 0 1
+  MARKER 14 50.5349896230133 "" 1
+  <PROJBAY
+  >
+  <TRACK {DBCFD518-77C9-B6BF-F211-AE870FA6C0EB}
+    NAME WHOOSH
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 0.36739544054905 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 0 0
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    LANEREC -1 -1 -1 0
+    SEL 0
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 45 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {DBCFD518-77C9-B6BF-F211-AE870FA6C0EB}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+    <FXCHAIN
+      WNDRECT 195 119 912 483
+      SHOW 0
+      LASTSEL 0
+      DOCKED 0
+      BYPASS 0 0 0
+      <VST "VST: ReaEQ (Cockos)" reaeq.vst.so 0 "" 1919247729<56535472656571726561657100000000> ""
+        cWVlcu5e7f4CAAAAAQAAAAAAAAACAAAAAAAAAAIAAAABAAAAAAAAAAIAAAAAAAAAzQAAAAEAAAAAABAA
+        IQAAAAUAAAAEAAAAAQAAAAAAAAAAgFZAAAAAAAAA8D+amZmZmZnpPwEIAAAAAQAAAAAAAAAAwHJANMTNCyNr6T8zMzMzMzPzPwEIAAAAAQAAAAAAAAAAwKJANsRrn8nz
+        8T8AAAAAAADwPwEIAAAAAAAAAAAAAAAAcKdANsRrn8nz8T+amZmZmZnpPwEEAAAAAAAAAAAAAAAAAFlAAAAAAAAA8D8AAAAAAAAAQAEBAAAAAQAAAAAAAAAAAPA/AAAA
+        AIQCAACWAQAAAgABAA==
+        AAAQAAAA
+      >
+      FLOATPOS 0 0 0 0
+      FXID {BA38DBC3-4961-A66B-3B1D-59D5998C55A5}
+      WAK 0 0
+    >
+    <ITEM
+      POSITION 3.5
+      SNAPOFFS 0
+      LENGTH 1.6043047278749
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {4372B34C-62EA-B100-E652-28D4049EE71C}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {8FADE13B-49F1-D5C1-78B0-E6A549DA2319}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 5.49979565110008
+      SNAPOFFS 0
+      LENGTH 2.00020434889992
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {7E3E1047-D1D3-13B7-A09C-A66E0091A9EB}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 1.99979565110008
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {4E711A8B-7042-575C-3B29-DB23C84EE1D4}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 7.5
+      SNAPOFFS 0
+      LENGTH 7.705748922746
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {116CC0E6-F54C-F1FB-E716-07E7DA4283B1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.5
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {FFAF50B4-2A96-9785-C67E-A4AC20FF23FC}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 15.89135434921441
+      SNAPOFFS 0
+      LENGTH 4.75131231745226
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {486DC339-228A-B47F-2475-395D10CE9E5B}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 12.89135434921441
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {EA0A4639-E57A-1C86-31EE-397F5BFD7B21}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 29.99574327823142
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {F9B39209-BF94-387C-AD53-9C7C07874731}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 0.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {D22BCCDB-A1C3-D217-71FB-F6612CC3B5DF}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 30.42518314847376
+      SNAPOFFS 0
+      LENGTH 0.17224756285806
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {4D8D451B-AE78-67E8-4794-60C4402B0E97}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 0.794328 -1
+      SOFFS 1.68705248435886
+      PLAYRATE 1 1 0.8 -1 0 0.0025
+      CHANMODE 0
+      GUID {B694B70D-1188-3D76-8585-099118F494E1}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 30.85485168104579
+      SNAPOFFS 0
+      LENGTH 0.22829429246078
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {3E7EDC25-4203-F03D-81E1-83A1237BD90F}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 12.54713573764702
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {7FF7FDB7-2EA6-5025-6856-8C0E6E27037A}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 30.85614063045691
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {1587EE9D-0B8C-8C65-3BC5-F44A3B15B44B}
+      IID 18
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 -0.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {F17001F2-B0AE-656E-7BCA-E2ADF22F00B7}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 31.24600536103027
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {2F2CD818-F096-6228-E442-91246B56C9C7}
+      IID 20
+      NAME Belt.wav
+      VOLPAN 1 0 0.636541 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 1.7 -1 0 0.0025
+      CHANMODE 0
+      GUID {352D8F09-C5F9-9BEA-224C-984E6399DA71}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 31.6711471940074
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {6194CE82-11BD-0EBB-A262-19D3A230A4BD}
+      IID 23
+      NAME Belt.wav
+      VOLPAN 1 0 0.761727 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 -1.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {CD5AA9AA-6456-7D85-E292-BD5886443109}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 33.15807641081754
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 0.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 34.60911009722793
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 0.05 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 36.06014378363831
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 0.85 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 38.51117747004869
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 0.05 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 38.95596878300535
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 -0.3 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 40.41324484286946
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 -0.4 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 41.86427852927984
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 0.4 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+    <ITEM
+      POSITION 43.31531221569023
+      SNAPOFFS 0
+      LENGTH 0.22295434243589
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {5F34F8D1-C021-E423-4550-70D587401AA1}
+      IID 2
+      NAME Belt.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 4.27704565756411
+      PLAYRATE 1 1 -0.75 -1 0 0.0025
+      CHANMODE 0
+      GUID {6F45E095-F34B-F6F3-0C1B-0CCE542AC788}
+      <SOURCE WAVE
+        FILE "Media/Belt.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Belt.wav
+      >
+    >
+  >
+  <TRACK {8263A267-2765-3EC6-F22E-6D463AA58111}
+    NAME CLOTH
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 0.82268743809333 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 0 0
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    LANEREC -1 -1 -1 0
+    SEL 0
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 25 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {8263A267-2765-3EC6-F22E-6D463AA58111}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+    <FXCHAIN
+      WNDRECT 859 273 912 483
+      SHOW 0
+      LASTSEL 0
+      DOCKED 0
+      BYPASS 0 0 0
+      <VST "VST: ReaEQ (Cockos)" reaeq.vst.so 0 "" 1919247729<56535472656571726561657100000000> ""
+        cWVlcu5e7f4CAAAAAQAAAAAAAAACAAAAAAAAAAIAAAABAAAAAAAAAAIAAAAAAAAAzQAAAAEAAAAAABAA
+        IQAAAAUAAAAEAAAAAQAAAAAAAAAAQGBAAAAAAAAA8D+amZmZmZnpPwEDAAAAAQAAAAAAAAAAfMVAAAAAAAAA8D8AAAAAAAAAQAEIAAAAAQAAAAAAAAAAQI9AAAAAAAAA
+        8D8AAAAAAAAAQAEBAAAAAAAAAAAAAAAAiLNAAAAAAAAA8D+amZmZmZnpPwEEAAAAAAAAAAAAAAAAAFlAAAAAAAAA8D8AAAAAAAAAQAEBAAAAAQAAAAAAAAAAAPA/AAAA
+        AIQCAACWAQAAAgABAA==
+        AAAQAAAA
+      >
+      FLOATPOS 0 0 0 0
+      FXID {65192D4B-4862-35D0-796F-7D4A8F31F71B}
+      WAK 0 0
+    >
+    <ITEM
+      POSITION 6.00698533164256
+      SNAPOFFS 0
+      LENGTH 2.56395715374987
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {009417A1-F673-4720-DBD3-B96A1878FBBD}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {3ECAE10C-F336-EC0D-4737-01E2C4708D44}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 8.57094248539243
+      SNAPOFFS 0.04883727911905
+      LENGTH 0.87907102414281
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {6E6BFF55-9E37-A2DB-C60D-788B977E6CFA}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 2.56395715374987
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {831FFDDD-40C5-6A26-AF3C-9C07F68D1E83}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 9.45001350953524
+      SNAPOFFS 0
+      LENGTH 6.62753877232538
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {6AB142A2-7F36-66A0-6EBF-7488A255F2B4}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 3.44302817789268
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {CA6E4C39-BD87-FFDF-370C-FA84AC2258AD}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 10.72237447142588
+      SNAPOFFS 0
+      LENGTH 2.49604702464919
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {818CBFEF-4415-44F1-9BB0-545BE214E421}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {756D9EEB-3D67-0631-8409-13A8007FF07F}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 13.75794890407814
+      SNAPOFFS 0
+      LENGTH 2.24707439519064
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {ECDD11AD-E87F-6E70-016D-EDBFE6C5DB96}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 3.03557443265226
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {BA884FBD-8F68-69EE-918A-070205FDC01B}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 16.29163390581352
+      SNAPOFFS 0
+      LENGTH 0.06787150117142
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {3C0F9E3A-0AAC-C9C1-5B86-CD7717DFC21A}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.07056695021806
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {651C3416-479B-A16C-BC5A-C6C2DD171CC2}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 16.83050844173499
+      SNAPOFFS 0
+      LENGTH 3.88804858680729
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.00516064823286 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {A86254C1-947D-4D91-DA44-C960E606540D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.60944148613953
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {4F086B36-2F98-9E31-8B16-E33546F73BBD}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 16.84050844173499
+      SNAPOFFS 0
+      LENGTH 0.00001
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1.1 0.00001 4.39370797504976 1 1 0 0
+      FADEOUT 1 0.00001 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {4DA2B9C9-CC80-5289-F88E-32CA61E06142}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 5.70792399339084
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {A7421096-BA01-D052-5C9B-F484666162AE}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 20.78018271869262
+      SNAPOFFS 0
+      LENGTH 0.77648369589421
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {3FDB6765-E711-6D04-DF6B-60A8C4D24969}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 5.33244888524703
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {20C00804-DA7F-96EA-D4C5-9F50DE87B67C}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 21.55666641458683
+      SNAPOFFS 0
+      LENGTH 4.57325136709064
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {26A3CFCF-28DB-2BBD-0555-70579E561B94}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.42408196624269
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2774E05-81C8-B839-5355-B5DDC78CF4A4}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 29.95613859276422
+      SNAPOFFS 0
+      LENGTH 0.38986473057336
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {5877E710-8CD6-3655-A8A5-A56A1BDFFBF1}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 7.76953090917215
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {828D3055-CD4F-E8EC-3FB3-18700FEC82C5}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 30.39632858408525
+      SNAPOFFS 0
+      LENGTH 0.38986473057336
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {EE8F322C-9059-D58F-EB44-4E0B8483DC8C}
+      IID 16
+      NAME Roll.wav
+      VOLPAN 1 0 0.794328 -1
+      SOFFS 7.76953090917215
+      PLAYRATE 1 1 -0.8 -1 0 0.0025
+      CHANMODE 0
+      GUID {A7301BEC-553A-ADA9-DAF8-D1DF62AE7546}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 30.80639824401576
+      SNAPOFFS 0
+      LENGTH 0.22090844799413
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {5D661594-D9BC-6A62-7E86-4F42EEB08CF9}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 5.38245947057971
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {F2BBB7E5-88F8-D4F7-B35D-E6E068BBB065}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 31.03730669200989
+      SNAPOFFS 0
+      LENGTH 0.12656728924817
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {A10B1036-05F7-F12E-22B6-06B6CB8B0DF3}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 5.61336791857384
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {AAD05827-4D1F-122C-48D2-1B2B63D2A3C1}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 31.20640067556308
+      SNAPOFFS 0
+      LENGTH 0.38986473057336
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {B269CAF8-A59C-139E-75E2-A54473F77CAA}
+      IID 21
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 7.76953090917215
+      PLAYRATE 1.2 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {CCDB0C0F-F93F-4244-BEFC-D0942E64E312}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 31.64014570833363
+      SNAPOFFS 0
+      LENGTH 0.3545985657442
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {983320C1-2628-A2B9-2EEA-91370568CB46}
+      IID 7
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.22361046288614
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {556A0FD2-09B8-790F-18A2-AAE95D21AD2E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 33.1498377252508
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 34.60087141166118
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 -0.15 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 36.05190509807156
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 0.2 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 38.50293878448195
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 -0.15 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 38.9477300974386
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 -0.3 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 40.40500615730272
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 -0.3 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 41.8560398437131
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 0.05 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 43.30707353012348
+      SNAPOFFS 0
+      LENGTH 0.36358481655106
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {01C19132-74F8-6CCE-7E4D-5225E311DD9D}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 10.24585666958847
+      PLAYRATE 1 1 -0.45 -1 0 0.0025
+      CHANMODE 0
+      GUID {D2E740AB-F6C9-771D-6448-9C88E7A7EC3E}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 45.97270287063471
+      SNAPOFFS 0
+      LENGTH 0.31245735047572
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {727691F1-D5EF-4BAC-E83D-942FD7F2EFC7}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 0.867961 -1
+      SOFFS 2.64168323846978
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {51D433E9-1464-E50A-C112-6B50BDE58131}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 47.03516022111042
+      SNAPOFFS 0
+      LENGTH 0.31245735047572
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {727691F1-D5EF-4BAC-E83D-942FD7F2EFC7}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 0.867961 -1
+      SOFFS 2.64168323846978
+      PLAYRATE 1 1 -0.1 -1 0 0.0025
+      CHANMODE 0
+      GUID {51D433E9-1464-E50A-C112-6B50BDE58131}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 48.09761757158614
+      SNAPOFFS 0
+      LENGTH 0.31245735047572
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {727691F1-D5EF-4BAC-E83D-942FD7F2EFC7}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 0.867961 -1
+      SOFFS 2.64168323846978
+      PLAYRATE 1 1 0.15 -1 0 0.0025
+      CHANMODE 0
+      GUID {51D433E9-1464-E50A-C112-6B50BDE58131}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 49.16007492206186
+      SNAPOFFS 0
+      LENGTH 0.31245735047572
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {727691F1-D5EF-4BAC-E83D-942FD7F2EFC7}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 0.867961 -1
+      SOFFS 2.64168323846978
+      PLAYRATE 1 1 -0.2 -1 0 0.0025
+      CHANMODE 0
+      GUID {51D433E9-1464-E50A-C112-6B50BDE58131}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+    <ITEM
+      POSITION 50.22253227253758
+      SNAPOFFS 0
+      LENGTH 0.31245735047572
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {727691F1-D5EF-4BAC-E83D-942FD7F2EFC7}
+      IID 43
+      NAME Roll.wav
+      VOLPAN 1 0 0.867961 -1
+      SOFFS 2.64168323846978
+      PLAYRATE 1 1 0.2 -1 0 0.0025
+      CHANMODE 0
+      GUID {51D433E9-1464-E50A-C112-6B50BDE58131}
+      <SOURCE WAVE
+        FILE "Media/Roll.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Roll.wav
+      >
+    >
+  >
+  <TRACK {14D6107B-3DAB-9CB1-034B-649FDFBE3508}
+    NAME BODY
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 1 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 0 0
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    LANEREC -1 -1 -1 0
+    SEL 0
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 33 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {14D6107B-3DAB-9CB1-034B-649FDFBE3508}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+    <FXCHAIN
+      WNDRECT 166 171 912 483
+      SHOW 0
+      LASTSEL 0
+      DOCKED 0
+      BYPASS 0 0 0
+      <VST "VST: ReaEQ (Cockos)" reaeq.vst.so 0 "" 1919247729<56535472656571726561657100000000> ""
+        cWVlcu5e7f4CAAAAAQAAAAAAAAACAAAAAAAAAAIAAAABAAAAAAAAAAIAAAAAAAAAzQAAAAEAAAAAABAA
+        IQAAAAUAAAAEAAAAAQAAAAAAAAAAgEtAmOAlxEJI8D+amZmZmZnpPwEIAAAAAQAAAAAAAAAAgGZABCb8+I4k9D+amZmZmZnxPwEDAAAAAQAAAAAAAAAAfLVAAAAAAAAA
+        8D8AAAAAAAAAQAEBAAAAAAAAAAAAAAAAiLNAAAAAAAAA8D+amZmZmZnpPwEEAAAAAAAAAAAAAAAAAFlAAAAAAAAA8D8AAAAAAAAAQAEBAAAAAQAAAAAAAAAAAPA/AAAA
+        AIQCAACWAQAAAgABAA==
+        AAAQAAAA
+      >
+      FLOATPOS 0 0 0 0
+      FXID {BCE1BDDC-C327-1771-43CD-A004B6EFEA74}
+      WAK 0 0
+    >
+    <ITEM
+      POSITION 33.27737798326296
+      SNAPOFFS 0
+      LENGTH 0.32349342839822
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -1.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 34.72841166967334
+      SNAPOFFS 0
+      LENGTH 0.32349342839822
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -1.8 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 36.17944535608373
+      SNAPOFFS 0
+      LENGTH 0.32349342839822
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -1.65 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 38.63047904249411
+      SNAPOFFS 0
+      LENGTH 0.31725105494449
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -1.8 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 39.07527035545076
+      SNAPOFFS 0
+      LENGTH 0.32349342839822
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -2.05 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 39.39876378384898
+      SNAPOFFS 0
+      LENGTH 0.00624237345373
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.00624237345373 0 1 0 0 0
+      FADEOUT 2 0 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {EE1336F6-4861-438F-752E-4224DAA8A850}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.45563797225343
+      PLAYRATE 0.94 0 -1.8 -1 0 0.0025
+      CHANMODE 0
+      GUID {36B26FBA-0687-8634-E490-9EF662E9919E}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 40.53254641531488
+      SNAPOFFS 0
+      LENGTH 0.32349342839822
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -2.1 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 41.98358010172526
+      SNAPOFFS 0
+      LENGTH 0.32349342839822
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -1.95 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 43.43461378813564
+      SNAPOFFS 0
+      LENGTH 0.21435650550973
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -2.35 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 46.03670037080849
+      SNAPOFFS 0
+      LENGTH 0.22943364554908
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {6EDE31D9-1557-41C4-F3F2-D26F0E5104D1}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 1 0 -1 -1 0 0.0025
+      CHANMODE 0
+      GUID {50587D4D-0FC1-3E8B-BF64-08EDDDA7D0F4}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 47.09915772128421
+      SNAPOFFS 0
+      LENGTH 0.22943364554908
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {6EDE31D9-1557-41C4-F3F2-D26F0E5104D1}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 1 0 -1.35 -1 0 0.0025
+      CHANMODE 0
+      GUID {50587D4D-0FC1-3E8B-BF64-08EDDDA7D0F4}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 48.16161507175993
+      SNAPOFFS 0
+      LENGTH 0.22943364554908
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {6EDE31D9-1557-41C4-F3F2-D26F0E5104D1}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 1 0 -0.7 -1 0 0.0025
+      CHANMODE 0
+      GUID {50587D4D-0FC1-3E8B-BF64-08EDDDA7D0F4}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 49.22407242223564
+      SNAPOFFS 0
+      LENGTH 0.22943364554908
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {6EDE31D9-1557-41C4-F3F2-D26F0E5104D1}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 1 0 -1.65 -1 0 0.0025
+      CHANMODE 0
+      GUID {50587D4D-0FC1-3E8B-BF64-08EDDDA7D0F4}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 50.28652977271136
+      SNAPOFFS 0
+      LENGTH 0.22943364554908
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {6EDE31D9-1557-41C4-F3F2-D26F0E5104D1}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 1 0 -0.45 -1 0 0.0025
+      CHANMODE 0
+      GUID {50587D4D-0FC1-3E8B-BF64-08EDDDA7D0F4}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 55.41578917940662
+      SNAPOFFS 0
+      LENGTH 0.32349342839822
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 2 0.01 0 2 0 -1 -1
+      MUTE 0 0
+      SEL 0
+      IGUID {AFCFDDB2-EEA7-9589-63E2-02D792E31889}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.15742198060561
+      PLAYRATE 0.94 0 -2.6 -1 0 0.0025
+      CHANMODE 0
+      GUID {A44689BA-35D1-F38B-7791-E00C32E0F605}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 55.69601473096074
+      SNAPOFFS 0
+      LENGTH 0.0432678768441
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1.1 0 0.0432678768441 1 1 0 0
+      FADEOUT 1.1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {AF784C54-8591-400D-AC0D-5857CC7E8838}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1.1 0 0.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {CE9E8431-4B36-BEC2-8D66-0C2BA2438D2B}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 56.07051860710556
+      SNAPOFFS 0
+      LENGTH 5.64903499610855
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {2D2CE2A3-CF09-3A25-307E-17EA4C911D80}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0.4577911545152
+      PLAYRATE 1.1 0 0.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {3EA3E7DA-D275-0939-502F-1773B1AE4533}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 62.26294861720867
+      SNAPOFFS 0
+      LENGTH 1.30621570525613
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {E98E290F-60E0-BCDD-2395-7B5E5BD0D8AD}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 6.99557263560915
+      PLAYRATE 0.94 0 -1.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {89C2755A-261A-9D3D-2AD8-72AE75DCAF4B}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 63.56916432245634
+      SNAPOFFS 0
+      LENGTH 0.87081047017075
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {F9692845-A723-B72B-4207-D95799D69AB8}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 8.22341539854991
+      PLAYRATE 0.94 0 -1.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {B1CE1FDB-1EDA-AC90-2120-34362BBE2157}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+    <ITEM
+      POSITION 64.43997479263555
+      SNAPOFFS 0
+      LENGTH 3.35154194271941
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0.01 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {1A5F7F8F-B93C-A1A0-1875-A5541ED8D97A}
+      IID 6
+      NAME Pillow.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 9.04197724051042
+      PLAYRATE 0.94 0 -1.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {F58CBAE8-AABB-FDEC-4EC6-CB729D41ED1C}
+      <SOURCE WAVE
+        FILE "Media/Pillow.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Pillow.wav
+      >
+    >
+  >
+  <TRACK {D0D8CEE8-76FD-6CCB-A004-4B0C16A10D36}
+    NAME DETAIL
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 1 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 1 1
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    LANEREC -1 -1 -1 0
+    SEL 1
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 25 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {D0D8CEE8-76FD-6CCB-A004-4B0C16A10D36}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+    <FXCHAIN
+      WNDRECT 24 260 912 483
+      SHOW 0
+      LASTSEL 0
+      DOCKED 0
+      BYPASS 0 0 0
+      <VST "VST: ReaEQ (Cockos)" reaeq.vst.so 0 "" 1919247729<56535472656571726561657100000000> ""
+        cWVlcu5e7f4CAAAAAQAAAAAAAAACAAAAAAAAAAIAAAABAAAAAAAAAAIAAAAAAAAAzQAAAAEAAAAAABAA
+        IQAAAAUAAAAEAAAAAQAAAAAAAAAAAF5AAAAAAAAA8D+amZmZmZnpPwEIAAAAAQAAAAAAAAAAMKFABCb8+I4k9D8AAAAAAADwPwEDAAAAAQAAAAAAAAAAQL9AAAAAAAAA
+        8D8AAAAAAAAAQAEBAAAAAAAAAAAAAAAAiLNAAAAAAAAA8D+amZmZmZnpPwEEAAAAAAAAAAAAAAAAAFlAAAAAAAAA8D8AAAAAAAAAQAEBAAAAAQAAAAAAAAAAAPA/AAAA
+        AIQCAACWAQAAAgABAA==
+        AAAQAAAA
+      >
+      FLOATPOS 0 0 0 0
+      FXID {478351FC-957C-D385-A654-9CADF09AE39A}
+      WAK 0 0
+    >
+    <ITEM
+      POSITION 6.38047221453392
+      SNAPOFFS 0
+      LENGTH 6.37238927504984
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 2 0 0 2 0 1 1
+      FADEOUT 1 0.01 0 1 0 0 0
+      MUTE 0 0
+      SEL 1
+      IGUID {1BE71CF5-132C-6C65-4975-2C630B97161D}
+      IID 105
+      NAME Palm.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {9B41EF5C-597F-CB2E-5771-916CE2BAF751}
+      <SOURCE WAVE
+        FILE "Media/Palm.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Palm.wav
+      >
+    >
+    <ITEM
+      POSITION 13.70619313406275
+      SNAPOFFS 0
+      LENGTH 9.69827908047117
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 2 0.01 0 2 0 1 1
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {43AA9048-0097-F109-C3D4-2CE25EA8F59C}
+      IID 105
+      NAME Palm.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 7.32572091952883
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {7E46EDB8-D881-D83B-94AA-C21DF1F93B98}
+      <SOURCE WAVE
+        FILE "Media/Palm.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Palm.wav
+      >
+    >
+    <ITEM
+      POSITION 46.0236799169306
+      SNAPOFFS 0
+      LENGTH 0.13172581463001
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {51367395-6C67-E7A4-C81A-357F10E5E3F6}
+      IID 105
+      NAME Palm.wav
+      VOLPAN 1 0 0.492776 -1
+      SOFFS 6.99752739217884
+      PLAYRATE 1 1 -0.3 -1 0 0.0025
+      CHANMODE 0
+      GUID {42D01B04-1EA4-BC4F-8690-66540D4A4855}
+      <SOURCE WAVE
+        FILE "Media/Palm.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Palm.wav
+      >
+    >
+    <ITEM
+      POSITION 47.07956617949218
+      SNAPOFFS 0
+      LENGTH 0.13172581463001
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {51367395-6C67-E7A4-C81A-357F10E5E3F6}
+      IID 105
+      NAME Palm.wav
+      VOLPAN 1 0 0.492776 -1
+      SOFFS 6.99752739217884
+      PLAYRATE 1 1 -0.1 -1 0 0.0025
+      CHANMODE 0
+      GUID {42D01B04-1EA4-BC4F-8690-66540D4A4855}
+      <SOURCE WAVE
+        FILE "Media/Palm.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Palm.wav
+      >
+    >
+    <ITEM
+      POSITION 48.17590778130097
+      SNAPOFFS 0
+      LENGTH 0.13172581463001
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {51367395-6C67-E7A4-C81A-357F10E5E3F6}
+      IID 105
+      NAME Palm.wav
+      VOLPAN 1 0 0.492776 -1
+      SOFFS 6.99752739217884
+      PLAYRATE 1 1 -0.5 -1 0 0.0025
+      CHANMODE 0
+      GUID {42D01B04-1EA4-BC4F-8690-66540D4A4855}
+      <SOURCE WAVE
+        FILE "Media/Palm.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Palm.wav
+      >
+    >
+    <ITEM
+      POSITION 49.2556381467187
+      SNAPOFFS 0
+      LENGTH 0.13172581463001
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {51367395-6C67-E7A4-C81A-357F10E5E3F6}
+      IID 105
+      NAME Palm.wav
+      VOLPAN 1 0 0.492776 -1
+      SOFFS 6.99752739217884
+      PLAYRATE 1 1 -0.65 -1 0 0.0025
+      CHANMODE 0
+      GUID {42D01B04-1EA4-BC4F-8690-66540D4A4855}
+      <SOURCE WAVE
+        FILE "Media/Palm.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Palm.wav
+      >
+    >
+    <ITEM
+      POSITION 50.26560131929408
+      SNAPOFFS 0
+      LENGTH 0.13172581463001
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {51367395-6C67-E7A4-C81A-357F10E5E3F6}
+      IID 105
+      NAME Palm.wav
+      VOLPAN 1 0 0.492776 -1
+      SOFFS 6.99752739217884
+      PLAYRATE 1 1 0.05 -1 0 0.0025
+      CHANMODE 0
+      GUID {42D01B04-1EA4-BC4F-8690-66540D4A4855}
+      <SOURCE WAVE
+        FILE "Media/Palm.wav"
+      >
+      <EXT
+        ORIGINAL_FILENAME /home/braydenchaffee/Projects/CUSTODIAN/production/audio/source/Palm.wav
+      >
+    >
+  >
+  <TRACK {D3040E8B-D391-B83F-5A5A-290D999DF936}
+    NAME TAIL
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 1 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 2 -1
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    LANEREC -1 -1 -1 0
+    SEL 0
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 25 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {D3040E8B-D391-B83F-5A5A-290D999DF936}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+  >
+  <TRACK {DD302DD2-13A7-514E-49E6-24499E79DA81}
+    NAME SYNTH
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 1 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 0 0
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    LANEREC -1 -1 -1 0
+    SEL 0
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 28 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {DD302DD2-13A7-514E-49E6-24499E79DA81}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+  >
+  <TRACK {97B6D0CA-B980-897B-B545-A301E57C3E8E}
+    NAME PRINT
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 1 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 0 0
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    LANEREC -1 -1 -1 0
+    SEL 0
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 25 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {97B6D0CA-B980-897B-B545-A301E57C3E8E}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+  >
+  <TRACK {BC214EE5-37A9-48CE-852A-DFA0419B9EB6}
+    NAME ""
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    PANLAWFLAGS 3
+    VOLPAN 1 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 0 0
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 0 0 0 0
+    FIXEDLANES 9 0 0 0 0
+    SEL 0
+    REC 0 0 1 0 0 0 0 0
+    VU 64
+    TRACKHEIGHT 25 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {BC214EE5-37A9-48CE-852A-DFA0419B9EB6}
+    PERF 0
+    MIDIOUT -1 -1
+    MAINSEND 1 0
+  >
+>

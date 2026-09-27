@@ -10538,24 +10538,24 @@
     "awakening_reliquary_dust_lung_connector": {
       "kind": "backdrop",
       "assets": {
-        "full_plate::omni": {
-          "state_id": "full_plate",
+        "full_plate_underlay::omni": {
+          "state_id": "full_plate_underlay",
           "direction": "omni",
           "semantic_identity": [
             "awakening_reliquary_dust_lung_connector",
             "backdrop",
             "background",
             "connector",
-            "full_plate",
+            "full_plate_underlay",
             "omni"
           ],
-          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_832x384.png",
+          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png",
           "frames": 1,
           "frame_size": [
-            832,
-            384
+            1024,
+            576
           ],
-          "sha256": "a40ccb5b9d42b6a4cde7f2f69def16dd92a215b58f1f77a5ffe2d228b9d90016",
+          "sha256": "b183bf6038b85709e5673bce5a760ac20d6c7a36b9cefe3d32029f19cc3d748b",
           "provenance": "authored",
           "source_asset": null
         }
@@ -10729,6 +10729,32 @@
             340
           ],
           "sha256": "048814628996096c3b5228011f9f63496b8dbc92de8ad9c1690ef4ee0bb99367",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "twin_solaria_v1_fidelity_underlay": {
+      "kind": "backdrop",
+      "assets": {
+        "fidelity_underlay::omni": {
+          "state_id": "fidelity_underlay",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1_fidelity",
+            "backdrop",
+            "background",
+            "display",
+            "fidelity_underlay",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_fidelity/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png",
+          "frames": 1,
+          "frame_size": [
+            2048,
+            1536
+          ],
+          "sha256": "a2ffef3f51e690ff6f65e0933843b8efb1b3bfcf1aea7290352b646fcb7bb6ec",
           "provenance": "authored",
           "source_asset": null
         }

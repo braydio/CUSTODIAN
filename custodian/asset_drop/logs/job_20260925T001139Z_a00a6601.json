@@ -1,0 +1,90 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260925T001139Z_a00a6601",
+  "timestamp": "2026-09-25T00:11:39.369022+00:00",
+  "family": "awakening_reliquary_dust_lung_connector",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_reliquary_dust_lung_connector/connector_a.png",
+      "sha256": "607024c6b619efb7e590a3c94ba763ab00b1fa86c9f4a8c0214795571357cd39"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_reliquary_dust_lung_connector/connector_b.png",
+      "sha256": "ca43246ce8e5b82e5cd8e800a241dd29a3576a611df1bf150c0f99cbf7c52cde"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_reliquary_dust_lung_connector/connector_c.png",
+      "sha256": "47365e2edc92eeb4558be4cf0e552febdb37f2c1fe55fea540c2c294ee281215"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "connector_a",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_reliquary_dust_lung_connector",
+        "backdrop",
+        "background",
+        "connector",
+        "connector_a",
+        "omni"
+      ],
+      "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_a_128x160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "607024c6b619efb7e590a3c94ba763ab00b1fa86c9f4a8c0214795571357cd39",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "connector_b",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_reliquary_dust_lung_connector",
+        "backdrop",
+        "background",
+        "connector",
+        "connector_b",
+        "omni"
+      ],
+      "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_b_704x128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ca43246ce8e5b82e5cd8e800a241dd29a3576a611df1bf150c0f99cbf7c52cde",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "connector_c",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_reliquary_dust_lung_connector",
+        "backdrop",
+        "background",
+        "connector",
+        "connector_c",
+        "omni"
+      ],
+      "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_connector_c_128x96.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "47365e2edc92eeb4558be4cf0e552febdb37f2c1fe55fea540c2c294ee281215",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

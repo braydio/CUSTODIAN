@@ -1,0 +1,251 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260924T201133Z_5cb09a14",
+  "timestamp": "2026-09-24T20:11:33.122399+00:00",
+  "family": "procgen_surface_meridian_hardstand",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_corner_01.png",
+      "sha256": "ab14d4d03af4dd46b2942d613f4c823f934cded1d3b12556c7d4a648f6f51285"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_grate_service_01.png",
+      "sha256": "b05f4c60b54264505c743453499f2d5c5b9a1dd95370ac1a89f95864e3d03387"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_landing_pad_octagonal_01.png",
+      "sha256": "0fb4b1fa2da57064905cf096eda4afccf10e9d68228f40e1cd9b57c2167d6af7"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_landing_pad_square_01.png",
+      "sha256": "04d7639a4c2dbf83e59379af71e146f5e93c9f636fe721dbc255c748f73cc2dd"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_maintenance_hatch_01.png",
+      "sha256": "303ff0e1b0b73f390f3d10fd5d4a520ac57999cb8478a372277bdfe91e6d2bbb"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_plaza_irregular_01.png",
+      "sha256": "b6760e1d28932c2d5ea2b654f3b139ce43a5fb803a35836b6e1f52ffa26b1d5b"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_ruined_transition_01.png",
+      "sha256": "4881d47b8bad2acfac488688f2fdca0adc3f1b676988b8cfedbc67f3750dd3f5"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_service_plaza_01.png",
+      "sha256": "19d88e00ef29b16b87256ee430a2acb63f2f33800c8e11303671f3fb05384164"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_hardstand_service_strip_01.png",
+      "sha256": "8ea28f9bf54c0f8e86279f292343df4f51619f14059b9d47c804aa461b8800ab"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_surface_meridian_hardstand/meridian_ruined_roadway_01.png",
+      "sha256": "50e712f9a5fc01cd9c64b151f45858dc36af1083c5eeb2ac652def93a1fbd91c"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "meridian_hardstand_corner_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_corner_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_corner_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ab14d4d03af4dd46b2942d613f4c823f934cded1d3b12556c7d4a648f6f51285",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_grate_service_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_grate_service_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_grate_service_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b05f4c60b54264505c743453499f2d5c5b9a1dd95370ac1a89f95864e3d03387",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_landing_pad_octagonal_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_landing_pad_octagonal_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_landing_pad_octagonal_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0fb4b1fa2da57064905cf096eda4afccf10e9d68228f40e1cd9b57c2167d6af7",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_landing_pad_square_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_landing_pad_square_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_landing_pad_square_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "04d7639a4c2dbf83e59379af71e146f5e93c9f636fe721dbc255c748f73cc2dd",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_maintenance_hatch_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_maintenance_hatch_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_maintenance_hatch_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "303ff0e1b0b73f390f3d10fd5d4a520ac57999cb8478a372277bdfe91e6d2bbb",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_plaza_irregular_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_plaza_irregular_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_plaza_irregular_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b6760e1d28932c2d5ea2b654f3b139ce43a5fb803a35836b6e1f52ffa26b1d5b",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_ruined_transition_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_ruined_transition_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_ruined_transition_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4881d47b8bad2acfac488688f2fdca0adc3f1b676988b8cfedbc67f3750dd3f5",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_service_plaza_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_service_plaza_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_service_plaza_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "19d88e00ef29b16b87256ee430a2acb63f2f33800c8e11303671f3fb05384164",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_hardstand_service_strip_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_hardstand_service_strip_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_hardstand_service_strip_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8ea28f9bf54c0f8e86279f292343df4f51619f14059b9d47c804aa461b8800ab",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "meridian_ruined_roadway_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_surface_meridian_hardstand",
+        "backdrop",
+        "body",
+        "meridian_hardstand",
+        "meridian_ruined_roadway_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/meridian_hardstand/meridian_ruined_roadway_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "50e712f9a5fc01cd9c64b151f45858dc36af1083c5eeb2ac652def93a1fbd91c",
+      "operation": "duplicate",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

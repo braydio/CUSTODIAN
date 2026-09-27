@@ -1,0 +1,322 @@
+{
+  "cell_size_px": 32,
+  "failures": [],
+  "family_id": "procgen_surface_meridian_hardstand",
+  "operator_reference_px": [
+    32,
+    64
+  ],
+  "profiles": [
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_plaza_irregular_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_plaza_irregular_01",
+      "walkable_overlay_cells": 982
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_service_plaza_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_service_plaza_01",
+      "walkable_overlay_cells": 954
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_corner_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_corner_01",
+      "walkable_overlay_cells": 1003
+    },
+    {
+      "canvas_px": [
+        1024,
+        448
+      ],
+      "footprint_cells": [
+        32,
+        14
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        0,
+        32,
+        14
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_service_strip_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        14
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_service_strip_01",
+      "walkable_overlay_cells": 448
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        2,
+        32,
+        30
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_maintenance_hatch_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_maintenance_hatch_01",
+      "walkable_overlay_cells": 954
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_landing_pad_square_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_landing_pad_square_01",
+      "walkable_overlay_cells": 985
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        1,
+        32,
+        31
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_landing_pad_octagonal_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_landing_pad_octagonal_01",
+      "walkable_overlay_cells": 888
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_grate_service_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_grate_service_01",
+      "walkable_overlay_cells": 976
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        1,
+        32,
+        31
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_hardstand_ruined_transition_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_hardstand_ruined_transition_01",
+      "walkable_overlay_cells": 880
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        0,
+        0,
+        30,
+        32
+      ],
+      "reveal_probe_cells": 8,
+      "review": "meridian_ruined_roadway_01_review.png",
+      "semantic_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "meridian_ruined_roadway_01",
+      "walkable_overlay_cells": 926
+    }
+  ],
+  "schema": "custodian.procgen_surface_macro_review.v1"
+}

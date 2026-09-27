@@ -205,11 +205,16 @@ func _check_scene_skeleton(instance: Node) -> void:
 			_fail("%s foreground texture did not load" % zone_name)
 		elif foreground.texture.get_size() != spec["size"]:
 			_fail("%s foreground texture size drifted: %s" % [zone_name, str(foreground.texture.get_size())])
-	var script_source := FileAccess.get_file_as_string(SCRIPT)
-	if not script_source.contains('presentation.visible = build_blockout_presentation and art_underlay.get_node_or_null("Underlay") == null'):
-		_fail("blockout presentation does not yield to an authored production underlay")
-	if not script_source.contains("presentation.add_child(visual)"):
-		_fail("grey placeholder set-piece visuals are not owned by BlockoutPresentation")
+	for zone in Layout.ZONES:
+		if StringName(zone["id"]) == &"zone10_road_south_reach":
+			continue
+		var zone_node := instance.get_node_or_null(
+			"World/AwakeningZones/%s" % String(zone["node"])
+		)
+		var art_underlay := zone_node.get_node_or_null("ArtUnderlay/Underlay") if zone_node != null else null
+		var zone_blockout := zone_node.get_node_or_null("BlockoutPresentation") as CanvasItem if zone_node != null else null
+		if art_underlay != null and (zone_blockout == null or zone_blockout.visible):
+			_fail("authored underlay did not suppress blockout in %s" % String(zone["id"]))
 	var traversal := instance.get_node_or_null("World/AwakeningZones/Traversal/BlockoutPresentation") as CanvasItem
 	if traversal == null:
 		_fail("traversal blockout presentation is missing")
@@ -266,40 +271,63 @@ func _check_zone_art_fade(instance: Node) -> void:
 	instance.call("_update_zone_art_visibility")
 	if reliquary.modulate.a != 1.0 or attestation.modulate.a != 0.0:
 		_fail("neighboring room art must yield inside the Reliquary")
+	if not reliquary.visible or attestation.visible:
+		_fail("near-zone art visibility does not match its fade alpha")
 	operator.global_position = Layout.OPERATOR_WAKE_POSITION
 	instance.call("_update_zone_art_visibility")
 	if creche.modulate.a != 1.0 or reliquary.modulate.a != 0.0:
 		_fail("backtracking must restore Crèche art and hide the Reliquary")
-	var connector := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_FullPlate") as CanvasItem
+	if not creche.visible or reliquary.visible:
+		_fail("fully faded distant room art was not hidden or backtracked art was not restored")
+	var connector := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_Underlay") as CanvasItem
 	if connector == null:
-		_fail("04→05 full plate is missing from the scene")
+		_fail("04→05 underlay is missing from the scene")
 		return
+	var foreground := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionOcclusion/Connector04_05_Foreground") as CanvasItem
 	for connector_id in ["04_05_A", "04_05_B", "04_05_C"]:
 		operator.global_position = Layout.CONNECTORS[connector_id].get_center()
 		instance.call("_update_zone_art_visibility")
 		if connector.modulate.a != 1.0:
-			_fail("full plate must be fully revealed inside %s" % connector_id)
+			_fail("connector underlay must be fully revealed inside %s" % connector_id)
+		if foreground != null and foreground.modulate.a != 1.0:
+			_fail("connector foreground must fade with the underlay inside %s" % connector_id)
 	operator.global_position = Layout.OPERATOR_WAKE_POSITION
 	instance.call("_update_zone_art_visibility")
 	if connector.modulate.a != 0.0:
 		_fail("04→05 connector art must fade out away from the dogleg")
+	if foreground != null and foreground.modulate.a != 0.0:
+		_fail("04→05 foreground must fade out with the underlay away from the dogleg")
 
 
 func _check_connector_art(instance: Node) -> void:
 	var sprite := instance.get_node_or_null(
-		"World/AwakeningZones/Traversal/ProductionArt/Connector04_05_FullPlate"
+		"World/AwakeningZones/Traversal/ProductionArt/Connector04_05_Underlay"
 	) as Sprite2D
 	if sprite == null:
-		_fail("production full plate sprite missing")
+		_fail("production underlay sprite missing")
 		return
 	if sprite.position != Vector2(352, -2464):
-		_fail("full plate position drifted: %s" % str(sprite.position))
-	if sprite.texture == null or sprite.texture.get_size() != Vector2(832, 384):
-		_fail("full plate texture missing or not normalized to 832x384")
+		_fail("underlay position drifted: %s" % str(sprite.position))
+	if sprite.texture == null or sprite.texture.get_size() != Vector2(1024, 576):
+		_fail("underlay texture missing or not normalized to 1024x576")
 	if not sprite.centered:
-		_fail("full plate sprite must be centered")
+		_fail("underlay sprite must be centered")
+	var production_art := sprite.get_parent() as CanvasItem
+	var effective_z := sprite.z_index + (production_art.z_index if production_art != null else 0)
+	if effective_z >= 0:
+		_fail("connector underlay must remain behind the Operator and room plates")
 	if sprite.get_child_count() > 0:
-		_fail("full plate unexpectedly owns child gameplay nodes")
+		_fail("underlay unexpectedly owns child gameplay nodes")
+	var foreground := instance.get_node_or_null(
+		"World/AwakeningZones/Traversal/ProductionOcclusion/Connector04_05_Foreground"
+	) as Sprite2D
+	if foreground != null:
+		if foreground.position != Vector2(352, -2464) or not foreground.centered:
+			_fail("foreground registration differs from underlay")
+		if foreground.texture == null or foreground.texture.get_size() != Vector2(1024, 576):
+			_fail("foreground must be 1024x576")
+		if foreground.get_child_count() > 0:
+			_fail("foreground unexpectedly owns child gameplay nodes")
 	for retired in ["Connector04_05_A", "Connector04_05_B", "Connector04_05_C"]:
 		if instance.get_node_or_null(NodePath("World/AwakeningZones/Traversal/ProductionArt/" + retired)) != null:
 			_fail("retired connector sprite remains live: %s" % retired)
@@ -307,7 +335,17 @@ func _check_connector_art(instance: Node) -> void:
 		Layout.CONNECTORS["04_05_B"]
 	).merge(Layout.CONNECTORS["04_05_C"])
 	if merged != LOCKED_CONNECTOR_ENVELOPE:
-		_fail("derived 04→05 presentation envelope drifted: %s" % str(merged))
+		_fail("derived 04→05 traversal envelope drifted: %s" % str(merged))
+	if sprite.texture != null:
+		var image := sprite.texture.get_image()
+		for region in [Rect2i(96, 96, 128, 96), Rect2i(160, 192, 704, 128), Rect2i(800, 320, 128, 160)]:
+			var visible_pixels := 0
+			for y in range(region.position.y, region.end.y, 8):
+				for x in range(region.position.x, region.end.x, 8):
+					if image.get_pixel(x, y).a > 0.1:
+						visible_pixels += 1
+			if visible_pixels == 0:
+				_fail("underlay is transparent throughout locked traversal region %s" % str(region))
 
 
 func _check_marker_placements(instance: Node) -> void:

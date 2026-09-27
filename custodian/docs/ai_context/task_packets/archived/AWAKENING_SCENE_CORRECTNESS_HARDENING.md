@@ -1,5 +1,11 @@
 # AWAKENING SCENE CORRECTNESS HARDENING
 
+## Packet Status
+
+- Status: complete; archived as historical implementation record
+- Last updated: 2026-09-27
+- Follow-up progression, camera ownership, and art-fade hardening is tracked in the Twin Solaria Runtime V1 + Awakening Hardening task packet.
+
 Audit/fix the live Awakening scene in ONE pass where practical.
 
 Primary:

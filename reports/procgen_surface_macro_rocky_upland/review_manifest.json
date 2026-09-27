@@ -1,0 +1,322 @@
+{
+  "cell_size_px": 32,
+  "failures": [],
+  "family_id": "procgen_surface_rocky_upland",
+  "operator_reference_px": [
+    32,
+    64
+  ],
+  "profiles": [
+    {
+      "canvas_px": [
+        1024,
+        768
+      ],
+      "footprint_cells": [
+        32,
+        24
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        11,
+        10,
+        10,
+        2
+      ],
+      "reveal_probe_cells": 8,
+      "review": "granite_cliff_mass_south_01_review.png",
+      "semantic_bounds": [
+        11,
+        10,
+        10,
+        1
+      ],
+      "solid_mask_cells": 10,
+      "stamp_id": "granite_cliff_mass_south_01",
+      "walkable_overlay_cells": 0
+    },
+    {
+      "canvas_px": [
+        1024,
+        768
+      ],
+      "footprint_cells": [
+        32,
+        24
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        11,
+        10,
+        10,
+        2
+      ],
+      "reveal_probe_cells": 8,
+      "review": "granite_cliff_mass_south_02_review.png",
+      "semantic_bounds": [
+        11,
+        10,
+        10,
+        1
+      ],
+      "solid_mask_cells": 10,
+      "stamp_id": "granite_cliff_mass_south_02",
+      "walkable_overlay_cells": 0
+    },
+    {
+      "canvas_px": [
+        768,
+        1024
+      ],
+      "footprint_cells": [
+        24,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        10,
+        11,
+        2,
+        10
+      ],
+      "reveal_probe_cells": 8,
+      "review": "granite_cliff_mass_east_01_review.png",
+      "semantic_bounds": [
+        10,
+        11,
+        1,
+        10
+      ],
+      "solid_mask_cells": 10,
+      "stamp_id": "granite_cliff_mass_east_01",
+      "walkable_overlay_cells": 0
+    },
+    {
+      "canvas_px": [
+        768,
+        1024
+      ],
+      "footprint_cells": [
+        24,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        12,
+        11,
+        2,
+        10
+      ],
+      "reveal_probe_cells": 8,
+      "review": "granite_cliff_mass_west_01_review.png",
+      "semantic_bounds": [
+        12,
+        11,
+        1,
+        10
+      ],
+      "solid_mask_cells": 10,
+      "stamp_id": "granite_cliff_mass_west_01",
+      "walkable_overlay_cells": 0
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        10,
+        12,
+        10,
+        10
+      ],
+      "reveal_probe_cells": 7,
+      "review": "granite_cliff_corner_se_01_review.png",
+      "semantic_bounds": [
+        10,
+        12,
+        10,
+        10
+      ],
+      "solid_mask_cells": 19,
+      "stamp_id": "granite_cliff_corner_se_01",
+      "walkable_overlay_cells": 0
+    },
+    {
+      "canvas_px": [
+        1024,
+        1024
+      ],
+      "footprint_cells": [
+        32,
+        32
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        10,
+        12,
+        10,
+        10
+      ],
+      "reveal_probe_cells": 7,
+      "review": "granite_cliff_corner_sw_01_review.png",
+      "semantic_bounds": [
+        10,
+        12,
+        10,
+        10
+      ],
+      "solid_mask_cells": 19,
+      "stamp_id": "granite_cliff_corner_sw_01",
+      "walkable_overlay_cells": 0
+    },
+    {
+      "canvas_px": [
+        1024,
+        768
+      ],
+      "footprint_cells": [
+        32,
+        24
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        12,
+        8,
+        6,
+        4
+      ],
+      "reveal_probe_cells": 8,
+      "review": "granite_shelf_large_01_review.png",
+      "semantic_bounds": [
+        12,
+        8,
+        6,
+        4
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "granite_shelf_large_01",
+      "walkable_overlay_cells": 24
+    },
+    {
+      "canvas_px": [
+        1024,
+        768
+      ],
+      "footprint_cells": [
+        32,
+        24
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        12,
+        8,
+        6,
+        4
+      ],
+      "reveal_probe_cells": 8,
+      "review": "granite_shelf_large_02_review.png",
+      "semantic_bounds": [
+        12,
+        8,
+        6,
+        4
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "granite_shelf_large_02",
+      "walkable_overlay_cells": 24
+    },
+    {
+      "canvas_px": [
+        512,
+        384
+      ],
+      "footprint_cells": [
+        16,
+        12
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        6,
+        4,
+        4,
+        3
+      ],
+      "reveal_probe_cells": 6,
+      "review": "granite_shelf_small_01_review.png",
+      "semantic_bounds": [
+        6,
+        4,
+        4,
+        3
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "granite_shelf_small_01",
+      "walkable_overlay_cells": 12
+    },
+    {
+      "canvas_px": [
+        512,
+        256
+      ],
+      "footprint_cells": [
+        16,
+        8
+      ],
+      "pivot_px": [
+        0.0,
+        0.0
+      ],
+      "probe_bounds": [
+        3,
+        3,
+        10,
+        2
+      ],
+      "reveal_probe_cells": 8,
+      "review": "scree_overlay_01_review.png",
+      "semantic_bounds": [
+        3,
+        3,
+        10,
+        2
+      ],
+      "solid_mask_cells": 0,
+      "stamp_id": "scree_overlay_01",
+      "walkable_overlay_cells": 20
+    }
+  ],
+  "schema": "custodian.procgen_surface_macro_review.v1"
+}

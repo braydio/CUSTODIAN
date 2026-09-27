@@ -68,8 +68,8 @@
       "frame_height": 385
     },
     "west_service_terrace": {
-      "required": false,
-      "recommended": true,
+      "required": true,
+      "recommended": false,
       "layer": "background",
       "action_group": "display",
       "variant": "west_service_terrace",
@@ -78,8 +78,8 @@
       "frame_height": 340
     },
     "east_service_terrace": {
-      "required": false,
-      "recommended": true,
+      "required": true,
+      "recommended": false,
       "layer": "background",
       "action_group": "display",
       "variant": "east_service_terrace",
@@ -102,7 +102,7 @@
   "consumers": [
     {
       "type": "scene",
-      "path": "res://scenes/twin_solaria_v1.tscn"
+      "path": "res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn"
     }
   ]
 }

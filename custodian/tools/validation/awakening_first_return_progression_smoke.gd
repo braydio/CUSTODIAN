@@ -260,10 +260,23 @@ func _check_reveal_lifecycle_and_reset(awakening: Node) -> void:
 func _check_south_reach(awakening: Node) -> void:
 	var operator := awakening.get_node("World/Operator") as Node2D
 	operator.global_position = Layout.SOUTH_REACH_COMPLETION_CENTER
-	await physics_frame
-	await physics_frame
+	var prerequisites := [
+		{"console": false, "p9": false, "expected": false, "objective": "Wake and read the crèche console"},
+		{"console": true, "p9": false, "expected": false, "objective": "Recover the assigned P-9"},
+		{"console": false, "p9": true, "expected": false, "objective": "Wake and read the crèche console"},
+		{"console": true, "p9": true, "expected": true, "objective": "RETURN TO POST"},
+	]
+	for entry in prerequisites:
+		awakening.set("completed", false)
+		awakening.set("opening_console_acknowledged", entry["console"])
+		awakening.set("p9_recovered", entry["p9"])
+		awakening.call("_on_south_reach_reached", operator)
+		if bool(awakening.get("completed")) != bool(entry["expected"]):
+			_fail("South Reach completion gate mismatch for console=%s P-9=%s" % [entry["console"], entry["p9"]])
+		if not bool(entry["expected"]) and str(awakening.get("current_objective_text")) != str(entry["objective"]):
+			_fail("missing prerequisite feedback is not useful: %s" % str(awakening.get("current_objective_text")))
 	if not bool(awakening.get("completed")):
-		_fail("reaching %s did not complete the first pass" % str(Layout.SOUTH_REACH_COMPLETION_CENTER))
+		_fail("both authored prerequisites did not permit South Reach completion")
 	var barrier := awakening.get_node_or_null(
 		"World/AwakeningZones/Zone10_RoadSouthReach/SetPieces/SouthReachCollapse"
 	)

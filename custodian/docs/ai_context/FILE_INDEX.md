@@ -188,6 +188,9 @@ Last updated: 2026-09-27
 - `custodian/tools/validation/twin_solaria_canon_docs_smoke.py` — focused canon-drift tripwire for the two-aperture Twin Solaria lock, Second Crown narrative slice, Ground Zero uncertainty, and truthful development-only runtime status.
 - `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png` and adjacent `README.md` — persistent 3500x3000 documentation copy of the current master composite plus LFS/provenance/preservation contract; never a runtime target.
 - `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene or implement the Crown Route Court contract.
+- `custodian/game/world/levels/authored/hub/twin_solaria/` — registered production Twin Solaria AuthoredLevel scene, single coordinate layout authority, presentation, and standalone playtest wrapper.
+- `custodian/content/levels/hub/twin_solaria.json` and `custodian/content/levels/levels.json` — production level definition and registry identity.
+- `custodian/content/metadata/assets/families/twin_solaria_v1_environment.asset.json` and `twin_solaria_v1_fidelity_underlay.asset.json` — V2 plate and temporary exact-underlay family contracts.
 
 ## Active Runtime Systems
 
@@ -435,8 +438,10 @@ Last updated: 2026-09-27
 - `custodian/game/world/sundered_keep/sundered_keep_tilemap_loader.gd` — small JSON loader for `custodian.sundered_keep.level_tilemap.v1` level data used by the Sundered Keep Sprite2D tilemap build path
 - `custodian/game/world/sundered_keep/sundered_keep_interactable.gd` — small InputMap-aware interactable bridge used by the Sundered Keep Return Mooring, gate key pickup, Main Gate, and Great Hall door interaction nodes
 - `custodian/game/world/awakening/awakening_layout.gd` — single spatial authority for the opening dungeon: world bounds, section envelopes, floors, voids, connectors, thresholds, set pieces, markers, camera reveals, and the Road offset.
-- `custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json` — V2 contract for the single 832×384 04→05 Reliquary/Dust Lung full plate, consumed by `awakening_first_return.tscn`; Layout A/B/C still owns geometry.
-- `custodian/game/world/awakening/awakening_first_return.gd` — Awakening orchestration: zone/HUD progression, Layout-bound interactables, production-aware traversal blockout, generation-safe reveals, controller-scoped debug reset, and first-pass completion.
+- `custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json` — V2 contract for the 1024×576 04→05 Reliquary/Dust Lung underlay and optional unbound foreground state, consumed by `awakening_first_return.tscn`; Layout A/B/C still owns geometry.
+- `custodian/game/world/awakening/awakening_first_return.gd` — Awakening progression and Layout-driven scene assembly, including the console/P-9 completion gate, generation-safe reveals, controller-scoped debug reset, and cached zone-art fade targets.
+- `custodian/game/world/interactions/world_readout_interactable.gd` — shared read-only HUD interaction contract used by Awakening plaques and Twin Solaria dormant POIs.
+- `custodian/tools/validation/twin_solaria_v1_smoke.gd` and `custodian/tools/validation/camera_authored_scene_zoom_smoke.gd` — registered AuthoredLevel/asset/collision ownership checks and idempotent authored-scene camera zoom regression.
 - `custodian/game/world/awakening/awakening_transit_lift.gd` — Dust Lung bidirectional service lift.
 - `custodian/game/world/awakening/awakening_plaque_interactable.gd` — read-only Crèche console and Undergate port readout.
 - `custodian/game/world/awakening/awakening_undergate_lighting.tscn` — authored Dust Lung-to-Undergate lighting zones, sparse local light pools, and major machinery occluders.
@@ -881,8 +886,11 @@ Last updated: 2026-09-27
 - `custodian/tools/validation/operator_authored_melee_fx_smoke.gd` — validates
   authored Operator melee FX suppress the legacy procedural gold swing while
   attacks without authored FX retain it as a fallback.
-- `custodian/tools/validation/procgen_road_surface_roles_smoke.gd` — validates connected procgen road/parking generation, exact filled-surface role classification, one 32×32 base decal per road tile, manifest coverage, separate path rendering, streaming reconstruction, and no wall/impassable authority on roads; `procgen_placeholder_roads_smoke.gd` remains a compatibility entrypoint.
-- `custodian/content/tiles/roads_paths/runtime/roads/surface/road_surface_piece_manifest.game32.json` — active 15-piece road base-decal contract for center, cardinal edge, outer-corner, and inner-corner surface roles.
+- `custodian/tools/validation/procgen_road_surface_roles_smoke.gd` — validates the archived opt-in connected wide-road/parking generator, filled-surface role classification, decal manifest coverage, separate path rendering, streaming reconstruction, and no wall/impassable authority on roads; `procgen_placeholder_roads_smoke.gd` remains a compatibility entrypoint.
+- `custodian/content/tiles/roads_paths/runtime/roads/surface/road_surface_piece_manifest.game32.json` — archived wide-road debug renderer's 15-piece base-decal contract for center, cardinal edge, outer-corner, and inner-corner surface roles.
+- `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd` — pure deterministic Road Semantics V2 authority deriving intermittent ruined-road fragments and an optional site-adjacent service apron from existing route/floor cells, without changing gameplay geometry.
+- `custodian/tools/validation/procgen_road_semantics_v2_smoke.gd` — fixed-fixture and production-seed validation for intermittent road classification, service apron, soft-path material fallback, semantic immutability, and production-disabled wide roads.
+- `custodian/tools/validation/procgen_road_semantics_v2_review.gd` — fixed-seed normal-production procgen overview capture and road/apron/parking summary under `reports/procgen_road_semantics_v2/` (requires a rendering backend; no dedicated Moment Forge road scenario exists).
 - `custodian/tools/validation/procgen_playability_smoke.gd` — focused unit smoke for route distance bands, pocket clearance, and blocker-aware audit failure/success
 - `custodian/content/tiles/interiors/runtime/` — runtime-ready `32x32` constructed-interior floor and military wall tiles registered into procgen source lists by naming convention
 - `custodian/content/tiles/interiors/source/` — oversized/reference interior tile source art preserved for slicing or replacement

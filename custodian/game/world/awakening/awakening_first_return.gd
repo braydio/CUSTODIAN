@@ -3,9 +3,8 @@ class_name AwakeningFirstReturn
 
 ## CUSTODIAN Awakening / The First Return — orchestration for sections 01-10.
 ##
-## This controller owns progression, HUD state, and one-shot presentation beats.
-## It owns no geometry: every coordinate comes from AwakeningLayout, and the
-## blockout bodies are built from that same authority at _ready.
+## This controller owns progression and HUD state, then assembles geometry and
+## presentation from AwakeningLayout. Hero-art assembly is a deferred extraction.
 ##
 ## The Field Terminal, Ashen Forum, Continuity Port, first Contract, and the
 ## campaign handoff belong to later sections and are deliberately absent here.
@@ -24,6 +23,7 @@ const GATE_SEALED_APERTURE := preload("res://content/sprites/environment/props/a
 const GATE_REST_THRESHOLD := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png")
 
 const OBJECTIVE_RECOVERY := "Wake and read the crèche console"
+const OBJECTIVE_P9_RECOVERY := "Recover the assigned P-9"
 const OBJECTIVE_RETURN_TO_POST := "RETURN TO POST"
 
 const CRECHE_READOUT := "FIELD RECALL DETECTED\nCUSTODIAN AUTHORITY: VALID\nPERSONAL CONTINUITY: UNRESOLVED\n\nRETURN TO SERVICE"
@@ -59,11 +59,17 @@ var _transit_lift: Node = null
 var _recovery_alcove: AnimatedSprite2D = null
 var _reveal_release_pending := false
 var _reveal_generation := 0
+var current_objective_text := ""
+var _zone_fade_entries: Array[Dictionary] = []
+var _connector_fade_entries: Array[CanvasItem] = []
+var _connector_envelope := Rect2()
+var _last_art_visibility_position := Vector2.INF
 
 
 func _ready() -> void:
 	_build_void_backdrop()
 	_build_world_geometry()
+	_cache_zone_art_visibility_targets()
 	_build_hero_presentation()
 	_build_interactables()
 	_build_triggers()
@@ -108,55 +114,85 @@ func _build_void_backdrop() -> void:
 func _apply_camera_policy() -> void:
 	if camera_ref == null:
 		return
-	camera_ref.max_zoom = Vector2(2.5, 2.5)
-	for property_name in [
-		"base_zoom", "move_zoom", "interaction_zoom", "melee_zoom",
-		"melee_move_zoom", "ranged_zoom", "ranged_move_zoom",
-		"hitstun_zoom", "sector_entry_zoom", "heavy_zoom",
+	if camera_ref.has_method("apply_authored_scene_zoom_scale"):
+		camera_ref.call("apply_authored_scene_zoom_scale", CAMERA_ZOOM_SCALE, Vector2(2.5, 2.5))
+
+
+func _cache_zone_art_visibility_targets() -> void:
+	_zone_fade_entries.clear()
+	_connector_fade_entries.clear()
+	if zones_root == null:
+		return
+	for zone in Layout.ZONES:
+		var zone_node := zones_root.get_node_or_null(NodePath(String(zone["node"])))
+		if zone_node == null:
+			continue
+		var targets: Array[CanvasItem] = []
+		for child_name in ["ArtUnderlay", "Occlusion", "SetPieces", "RoadOfWitnessesPrototype", "SidearmLocker"]:
+			var item := zone_node.get_node_or_null(child_name) as CanvasItem
+			if item != null:
+				targets.append(item)
+		_zone_fade_entries.append({
+			"rect": zone["envelope"],
+			"targets": targets,
+			"keep_opaque_in_connector": String(zone["node"]) in ["Zone04_LockerReliquary", "Zone05_DustLung"],
+		})
+	_connector_envelope = Layout.CONNECTORS["04_05_A"].merge(
+		Layout.CONNECTORS["04_05_B"]
+	).merge(Layout.CONNECTORS["04_05_C"])
+	for visual_path in [
+		"Traversal/ProductionArt/Connector04_05_Underlay",
+		"Traversal/ProductionOcclusion/Connector04_05_Foreground",
 	]:
-		camera_ref.set(property_name, camera_ref.get(property_name) * CAMERA_ZOOM_SCALE)
-	camera_ref.zoom = camera_ref.base_zoom
-	camera_ref.target_zoom = camera_ref.base_zoom
-	camera_ref.set("_locked_zoom", camera_ref.base_zoom)
+		var visual := zones_root.get_node_or_null(visual_path) as CanvasItem
+		if visual != null:
+			_connector_fade_entries.append(visual)
 
 
 func _update_zone_art_visibility() -> void:
 	if operator_ref == null or zones_root == null:
 		return
 	var point := operator_ref.global_position
-	for zone in Layout.ZONES:
-		var zone_node := zones_root.get_node_or_null(NodePath(String(zone["node"])))
-		if zone_node == null:
-			continue
-		var rect: Rect2 = zone["envelope"]
+	if point.distance_squared_to(_last_art_visibility_position) < 1.0:
+		return
+	_last_art_visibility_position = point
+	var inside_connector := _connector_envelope.has_point(point)
+	for entry in _zone_fade_entries:
+		var rect: Rect2 = entry["rect"]
 		var nearest := Vector2(
 			clampf(point.x, rect.position.x, rect.end.x),
 			clampf(point.y, rect.position.y, rect.end.y)
 		)
 		var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
-		for child_name in ["ArtUnderlay", "Occlusion", "SetPieces", "RoadOfWitnessesPrototype", "SidearmLocker"]:
-			var visual := zone_node.get_node_or_null(child_name) as CanvasItem
-			if visual != null:
-				var tint := visual.modulate
-				tint.a = alpha
-				visual.modulate = tint
-	var connector_root := zones_root.get_node_or_null("Traversal/ProductionArt")
-	if connector_root == null:
-		return
-	var visual := connector_root.get_node_or_null("Connector04_05_FullPlate") as CanvasItem
-	if visual == null:
-		return
-	var connector_envelope: Rect2 = Layout.CONNECTORS["04_05_A"].merge(
-		Layout.CONNECTORS["04_05_B"]
-	).merge(Layout.CONNECTORS["04_05_C"])
+		if inside_connector and bool(entry["keep_opaque_in_connector"]):
+			alpha = 1.0
+		_apply_art_alpha(entry["targets"], alpha)
 	var nearest := Vector2(
-		clampf(point.x, connector_envelope.position.x, connector_envelope.end.x),
-		clampf(point.y, connector_envelope.position.y, connector_envelope.end.y)
+		clampf(point.x, _connector_envelope.position.x, _connector_envelope.end.x),
+		clampf(point.y, _connector_envelope.position.y, _connector_envelope.end.y)
 	)
 	var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
-	var tint := visual.modulate
-	tint.a = alpha
-	visual.modulate = tint
+	_apply_art_alpha(_connector_fade_entries, alpha)
+
+
+func _apply_art_alpha(targets: Array, alpha: float) -> void:
+	for target in targets:
+		var visual := target as CanvasItem
+		if visual == null or not is_instance_valid(visual):
+			continue
+		if alpha <= 0.001:
+			var hidden_tint := visual.modulate
+			if absf(hidden_tint.a) > 0.005:
+				hidden_tint.a = 0.0
+				visual.modulate = hidden_tint
+			visual.visible = false
+			continue
+		if not visual.visible:
+			visual.visible = true
+		var tint := visual.modulate
+		if absf(tint.a - alpha) > 0.005:
+			tint.a = alpha
+			visual.modulate = tint
 
 
 # --- Geometry construction ---------------------------------------------------
@@ -686,6 +722,12 @@ func _release_reveal_after(seconds: float) -> void:
 
 func _on_south_reach_reached(body: Node) -> void:
 	if completed or not _is_operator(body): return
+	if not opening_console_acknowledged:
+		_set_objective(OBJECTIVE_RECOVERY)
+		return
+	if not p9_recovered:
+		_set_objective(OBJECTIVE_P9_RECOVERY)
+		return
 	completed = true
 	if hud != null and OS.is_debug_build():
 		hud.call("show_interaction", "AWAKENING BLOCKOUT COMPLETE",
@@ -722,6 +764,7 @@ func _configure_hud() -> void:
 
 
 func _set_objective(text: String) -> void:
+	current_objective_text = text
 	if hud != null: hud.set_objective(text)
 
 

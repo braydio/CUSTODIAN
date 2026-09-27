@@ -161,6 +161,7 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 - It uses the authored map image as a background layer with hand-placed collision blockers and a small set of foreground occlusion masks.
 - It is a traversal/readability prototype, not yet a canonical reusable TileMap conversion.
 - `res://scenes/twin_solaria_backdrop_test.tscn` is a separate development-only fidelity preview using the largest current Twin Solaria composite as a gameplay backdrop. It intentionally provides perimeter collision only; internal traversal and collision are not authored.
+- Production Twin Solaria V1 is the registered `hub_twin_solaria` AuthoredLevel at `res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn`; its 2048×1536 coordinate authority, modular Asset V2 plates, authored boundary collision, and dormant readouts are specified in `design/05_levels/TWIN_SOLARIA.md`. The older backdrop and V1-A assembly scenes remain development review surfaces only.
 
 ---
 

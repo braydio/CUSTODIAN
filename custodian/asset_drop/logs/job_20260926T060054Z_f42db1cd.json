@@ -1,0 +1,220 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260926T060054Z_f42db1cd",
+  "timestamp": "2026-09-26T06:00:54.275094+00:00",
+  "family": "ambient_vaultwing_common",
+  "kind": "ambient_creature",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/guarded_approach__e.png",
+      "sha256": "79e41fbfa50e40efbdfda1b90cbc40fb2ac86951ed3c4f54af62ee4434b8d4e0"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/guarded_approach__n.png",
+      "sha256": "e53f90f39e5def2c2c702540ae339c080b4a2d56d47b56f9ddc997ab6ae676e5"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/guarded_approach__s.png",
+      "sha256": "5efc0418d3efa066164dd98dbddc1b1640067cb7f6fd160f11a7b936c6a05c2e"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/inspect_bait__e.png",
+      "sha256": "084a96848dc91eb8b98b06d30eaea464da6ac59a227331da1182be2d7f70e52d"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/inspect_bait__n.png",
+      "sha256": "f71fa8703fece6c91c697c92ee7aff65cf7b04d3ed0548559adf8591ed292e99"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/notice_bait__n.png",
+      "sha256": "6ecce0cb29957c5ee16d2ec68fa32d84e99aaa5b9e2d77277b64921d96a1d58a"
+    },
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/notice_bait__s.png",
+      "sha256": "dc4316460135abe656899ee827e315ec3033b09fa7e1e9ac1144461fa454ece4"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "guarded_approach",
+      "direction": "e",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "guarded_approach",
+        "e"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__guarded_approach__e__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a0d03d1b75975f2ec11a8d1937232da16584bda0c3b622396e5f4dd91d9a2750",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "guarded_approach",
+      "direction": "w",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "guarded_approach",
+        "w"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__guarded_approach__w__6f__256.png",
+      "provenance": "mirrored",
+      "source_asset": "guarded_approach::e",
+      "sha256": "62c366cba47cf07c90ed6c8272287bcd22225c69d3b61953492866c5f128fc6e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "guarded_approach",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "guarded_approach",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__guarded_approach__n__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d177cd5f5b774826b9a184ee4916f3112fff414e231e050ac920d29a0dc741c5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "guarded_approach",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "guarded_approach",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__guarded_approach__s__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "543d1d57bcc5892945908751ee778818a3d375ad50f81eed89eb83a11094bdb0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "inspect_bait",
+      "direction": "e",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "inspect_bait",
+        "e"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__inspect_bait__e__5f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "12a48ca4a78798ce7ba3d4c63cb04f5116d619f370f304551cd7cafc9253ac6e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "inspect_bait",
+      "direction": "w",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "inspect_bait",
+        "w"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__inspect_bait__w__5f__256.png",
+      "provenance": "mirrored",
+      "source_asset": "inspect_bait::e",
+      "sha256": "1fdf098c442b3222a7d757da79b203ad202136e63c1dc6f0cf3a95428aa5663d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "inspect_bait",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "inspect_bait",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__inspect_bait__n__5f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "87f068d64b5f883d17f1a8494c3d154913a26acb672cac41ce5580e6fba15eef",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "notice_bait",
+      "direction": "n",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "notice_bait",
+        "n"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__notice_bait__n__4f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a736786c0eeff977289c6f1333ba25bc9f5f8fb602ef0c2613547496b5e02f81",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "notice_bait",
+      "direction": "s",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "notice_bait",
+        "s"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__notice_bait__s__4f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b9e4b41b5f3543ec319da6164fd0e39669dc3cde9bac96a4548e53ec27a0e0c9",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

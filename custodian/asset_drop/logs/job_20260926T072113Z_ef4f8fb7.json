@@ -1,0 +1,44 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260926T072113Z_ef4f8fb7",
+  "timestamp": "2026-09-26T07:21:13.751848+00:00",
+  "family": "awakening_reliquary_dust_lung_connector",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_reliquary_dust_lung_connector/full_plate.png",
+      "sha256": "a40ccb5b9d42b6a4cde7f2f69def16dd92a215b58f1f77a5ffe2d228b9d90016"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "full_plate",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_reliquary_dust_lung_connector",
+        "backdrop",
+        "background",
+        "connector",
+        "full_plate",
+        "omni"
+      ],
+      "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_832x384.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a40ccb5b9d42b6a4cde7f2f69def16dd92a215b58f1f77a5ffe2d228b9d90016",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

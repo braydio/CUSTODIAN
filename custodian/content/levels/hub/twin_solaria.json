@@ -1,0 +1,17 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "hub_twin_solaria",
+  "display_name": "Twin Solaria — Crown Route Court",
+  "route_scene_path": "res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn",
+  "target_scene_path": "res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn",
+  "playtest_scene_path": "res://game/world/levels/authored/hub/twin_solaria/twin_solaria_playtest.tscn",
+  "design_doc_path": "../design/05_levels/TWIN_SOLARIA.md",
+  "world_context": "hub",
+  "presentation_profile": "gameplay",
+  "spawns": ["Spawn_CrownCauseway"],
+  "lifecycle": {
+    "cache_policy": "keep_during_route",
+    "state_policy": "session"
+  },
+  "tags": ["authored", "hub", "route_node", "twin_solaria", "crown_route_court"]
+}

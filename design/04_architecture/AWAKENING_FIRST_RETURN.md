@@ -125,16 +125,31 @@ The live scene places a dark, collision-free void plane beneath the plates and
 uses an Awakening-local camera scale. Zone art fades by distance to the
 Operator's current Layout envelope so neighboring complete canvases do not
 intrude at room edges; the 128px blend supports crossing and backtracking.
-Production art remains at native scale and registration. The 04→05 dogleg uses
-one Asset V2 `full_plate` presentation sprite (832×384), centered on the exact
-union of the locked `04_05_A/B/C` Layout rectangles. Its fade envelope is
-derived by merging those rectangles; the plate does not own traversal or
-collision. The first five Road modular plate pairs remain pending native-size
-replacement.
+Zone fade targets are cached after scene assembly, stationary frames perform no
+fade work, and art at zero alpha is hidden while preserving the existing blend
+distance/curve. Production art remains at native scale and registration. The
+04→05 dogleg uses
+an Asset V2 `full_plate_underlay` presentation sprite (1024×576), centered at
+`(352,-2464)`. Its 96px architectural bleed surrounds the exact union of the
+locked `04_05_A/B/C` Layout rectangles; the fade envelope is still derived by
+merging those rectangles, and the plate does not own traversal or collision.
+The neighboring Reliquary and Dust Lung underlay pixels are registered into
+the connector's room-end bleed, and those room plates remain opaque over the
+shared canvas while the Operator is inside the connector union.
+The source master is a flattened RGB image, so a separate foreground occlusion
+state is intentionally unbound rather than cut from baked lighting/shadows. The
+first five Road modular plate pairs remain pending native-size replacement.
 
-`AwakeningFirstReturn` is orchestration only: current zone, visited zones, console
-acknowledgement, P-9 recovery, one-shot camera reveals, HUD location/phase/
-objective, and first-pass completion. It owns no geometry.
+`AwakeningFirstReturn` owns progression and HUD state, and assembles geometry and
+presentation from `AwakeningLayout`. It caches its zone-art fade targets and does
+not resolve their scene paths while the Operator is stationary. Recovery Alcove
+and Gate of Dust sprite assembly remain controller-owned pending a narrow
+presentation extraction.
+
+South Reach completion is gated by both the Crèche console acknowledgement and
+P-9 recovery. Arriving before either beat leaves the route physically open and
+sets the objective to the missing prerequisite; only after both beats does the
+completion signal fire. The existing RETURN TO POST objective remains in place.
 
 ### Reused runtime, not rebuilt
 
@@ -158,6 +173,10 @@ objective, and first-pass completion. It owns no geometry.
 - The camera gained one seam, `set_authored_map_bounds`, because its deferred
   procgen/connected-map rebuild would otherwise clear an authored level's clamp
   half a second after the level set it.
+- `apply_authored_scene_zoom_scale` lets authored scenes scale all standard
+  camera profiles through camera-owned state. Repeated calls rebase to the
+  original profiles, so Awakening cannot multiply the local scale twice or
+  write the private locked-zoom field.
 
 ### Interactions implemented
 

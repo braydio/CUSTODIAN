@@ -1,0 +1,91 @@
+{
+  "accepted": true,
+  "capture": "res://../reports/procgen_surface_macro_rocky_upland/gameplay/seed_824790_overview.png",
+  "chasm_count": 2,
+  "fingerprint": "ceb854312a3a55bf375eb6febf11606c6ea5b3877ec21d42491528112d6754e3",
+  "rejection_counts": {
+    "chasm_outside_map": 30,
+    "overlay_semantic_mismatch": 152,
+    "protected_chasm": 186,
+    "protected_presentation_footprint": 28,
+    "region_too_small": 192,
+    "solid_semantic_mismatch": 114
+  },
+  "route_audit": {
+    "minimum_route_width": 17,
+    "ok": true,
+    "reachable_required_count": 9,
+    "required_cell_count": 9,
+    "schema": "custodian.procgen_playability.audit.v1",
+    "violations": []
+  },
+  "seed": 824790,
+  "surface_count": 3,
+  "surface_placements": [
+    {
+      "anchor_cell": [
+        34,
+        92
+      ],
+      "origin_cell": [
+        23,
+        82
+      ],
+      "overlay_cell_count": 0,
+      "reveal_probe_count": 8,
+      "solid_cell_count": 10,
+      "stamp_id": "granite_cliff_mass_south_02",
+      "visual_footprint": [
+        23,
+        82,
+        32,
+        24
+      ]
+    },
+    {
+      "anchor_cell": [
+        42,
+        73
+      ],
+      "origin_cell": [
+        36,
+        69
+      ],
+      "overlay_cell_count": 12,
+      "reveal_probe_count": 6,
+      "solid_cell_count": 0,
+      "stamp_id": "granite_shelf_small_01",
+      "visual_footprint": [
+        36,
+        69,
+        16,
+        12
+      ]
+    },
+    {
+      "anchor_cell": [
+        58,
+        90
+      ],
+      "origin_cell": [
+        52,
+        86
+      ],
+      "overlay_cell_count": 12,
+      "reveal_probe_count": 6,
+      "solid_cell_count": 0,
+      "stamp_id": "granite_shelf_small_01",
+      "visual_footprint": [
+        52,
+        86,
+        16,
+        12
+      ]
+    }
+  ],
+  "surface_stamp_ids": [
+    "granite_cliff_mass_south_02",
+    "granite_shelf_small_01",
+    "granite_shelf_small_01"
+  ]
+}
