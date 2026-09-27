@@ -189,6 +189,9 @@ Last updated: 2026-09-27
 - `custodian/tools/validation/twin_solaria_canon_docs_smoke.py` — focused canon-drift tripwire for the two-aperture Twin Solaria lock, Second Crown narrative slice, Ground Zero uncertainty, and truthful development-only runtime status.
 - `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png` and adjacent `README.md` — persistent 3500x3000 documentation copy of the current master composite plus LFS/provenance/preservation contract; never a runtime target.
 - `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene or implement the Crown Route Court contract.
+- `custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/`, `custodian/asset_drop/source_work/hub/twin_solaria_v1_fidelity_underlay/`, `custodian/asset_drop/source_work/hub/twin_solaria_v1_reference/`, and `custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/` — preserved source crops, exact fidelity master, reference-only crops, ZIP tracker/manifests, and flattened landmark reference crops.
+- `custodian/content/metadata/assets/families/twin_solaria_v1_environment.asset.json` and `twin_solaria_v1_fidelity_underlay.asset.json` — current Asset V2 contracts for the eight required gameplay plates and temporary fidelity underlay; consumers intentionally remain unbound until the production runtime packet.
+- `custodian/content/levels/hub/twin_solaria/v1/` — current-pipeline runtime copies of the eight exact 2048×1536-source gameplay plates and exact fidelity underlay; no standalone V1-A Node2D runtime is published.
 
 ## Active Runtime Systems
 

@@ -1,0 +1,426 @@
+{
+  "coordinate_system": {
+    "master_size": [
+      2048,
+      1536
+    ],
+    "master_origin": "top-left",
+    "godot_origin_master_px": [
+      1024,
+      768
+    ],
+    "sprite_centered": true,
+    "scale": [
+      1.0,
+      1.0
+    ]
+  },
+  "formula": "Sprite2D.position = (crop_x + width/2 - 1024, crop_y + height/2 - 768)",
+  "placements": [
+    {
+      "asset_id": "solarium_i_acquisition_court",
+      "state": "solarium_i_acquisition_court",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/solarium_i_acquisition_court_source.png",
+      "crop_xywh": [
+        28,
+        85,
+        617,
+        695
+      ],
+      "godot_center_xy": [
+        -687.5,
+        -335.5
+      ]
+    },
+    {
+      "asset_id": "upper_crown_court",
+      "state": "upper_crown_court",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/upper_crown_court_source.png",
+      "crop_xywh": [
+        585,
+        180,
+        697,
+        520
+      ],
+      "godot_center_xy": [
+        -90.5,
+        -328.0
+      ]
+    },
+    {
+      "asset_id": "authority_threshold_plate",
+      "state": "authority_threshold_plate",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/authority_threshold_plate_source.png",
+      "crop_xywh": [
+        735,
+        555,
+        375,
+        355
+      ],
+      "godot_center_xy": [
+        -101.5,
+        -35.5
+      ]
+    },
+    {
+      "asset_id": "reciprocity_midcourt",
+      "state": "reciprocity_midcourt",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/reciprocity_midcourt_source.png",
+      "crop_xywh": [
+        410,
+        650,
+        1190,
+        525
+      ],
+      "godot_center_xy": [
+        -19.0,
+        144.5
+      ]
+    },
+    {
+      "asset_id": "home_index_lowercourt",
+      "state": "home_index_lowercourt",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/home_index_lowercourt_source.png",
+      "crop_xywh": [
+        540,
+        1065,
+        825,
+        385
+      ],
+      "godot_center_xy": [
+        -71.5,
+        489.5
+      ]
+    },
+    {
+      "asset_id": "west_service_terrace",
+      "state": "west_service_terrace",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/west_service_terrace_source.png",
+      "crop_xywh": [
+        350,
+        1010,
+        275,
+        340
+      ],
+      "godot_center_xy": [
+        -536.5,
+        412.0
+      ]
+    },
+    {
+      "asset_id": "east_service_terrace",
+      "state": "east_service_terrace",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/east_service_terrace_source.png",
+      "crop_xywh": [
+        1360,
+        1010,
+        275,
+        340
+      ],
+      "godot_center_xy": [
+        473.5,
+        412.0
+      ]
+    },
+    {
+      "asset_id": "crown_causeway",
+      "state": "crown_causeway",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_environment/crown_causeway_source.png",
+      "crop_xywh": [
+        810,
+        1320,
+        245,
+        216
+      ],
+      "godot_center_xy": [
+        -91.5,
+        660.0
+      ]
+    },
+    {
+      "asset_id": "outbound_anchor",
+      "state": "outbound_anchor",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/outbound_anchor_source.png",
+      "crop_xywh": [
+        626,
+        205,
+        152,
+        290
+      ],
+      "godot_center_xy": [
+        -322.0,
+        -418.0
+      ]
+    },
+    {
+      "asset_id": "reciprocal_anchor",
+      "state": "reciprocal_anchor",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/reciprocal_anchor_source.png",
+      "crop_xywh": [
+        1080,
+        205,
+        145,
+        290
+      ],
+      "godot_center_xy": [
+        128.5,
+        -418.0
+      ]
+    },
+    {
+      "asset_id": "meridian_needle",
+      "state": "meridian_needle",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/meridian_needle_source.png",
+      "crop_xywh": [
+        830,
+        15,
+        188,
+        385
+      ],
+      "godot_center_xy": [
+        -100.0,
+        -560.5
+      ]
+    },
+    {
+      "asset_id": "reciprocity_dial",
+      "state": "reciprocity_dial",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/reciprocity_dial_source.png",
+      "crop_xywh": [
+        820,
+        345,
+        225,
+        260
+      ],
+      "godot_center_xy": [
+        -91.5,
+        -293.0
+      ]
+    },
+    {
+      "asset_id": "authority_gate",
+      "state": "authority_gate",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/authority_gate_source.png",
+      "crop_xywh": [
+        760,
+        580,
+        345,
+        350
+      ],
+      "godot_center_xy": [
+        -91.5,
+        -13.0
+      ]
+    },
+    {
+      "asset_id": "west_echo_drum",
+      "state": "west_echo_drum",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/west_echo_drum_source.png",
+      "crop_xywh": [
+        510,
+        840,
+        245,
+        285
+      ],
+      "godot_center_xy": [
+        -391.5,
+        214.5
+      ]
+    },
+    {
+      "asset_id": "east_echo_drum",
+      "state": "east_echo_drum",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/east_echo_drum_source.png",
+      "crop_xywh": [
+        1125,
+        835,
+        295,
+        295
+      ],
+      "godot_center_xy": [
+        248.5,
+        214.5
+      ]
+    },
+    {
+      "asset_id": "home_index",
+      "state": "home_index",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/home_index_source.png",
+      "crop_xywh": [
+        805,
+        1080,
+        240,
+        260
+      ],
+      "godot_center_xy": [
+        -99.0,
+        442.0
+      ]
+    },
+    {
+      "asset_id": "archive_witness_ring",
+      "state": "archive_witness_ring",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/archive_witness_ring_source.png",
+      "crop_xywh": [
+        560,
+        1200,
+        260,
+        260
+      ],
+      "godot_center_xy": [
+        -334.0,
+        562.0
+      ]
+    },
+    {
+      "asset_id": "live_witness_ring",
+      "state": "live_witness_ring",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/live_witness_ring_source.png",
+      "crop_xywh": [
+        1080,
+        1200,
+        260,
+        260
+      ],
+      "godot_center_xy": [
+        186.0,
+        562.0
+      ]
+    },
+    {
+      "asset_id": "blind_witness",
+      "state": "blind_witness",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/blind_witness_source.png",
+      "crop_xywh": [
+        270,
+        870,
+        125,
+        210
+      ],
+      "godot_center_xy": [
+        -691.5,
+        207.0
+      ]
+    },
+    {
+      "asset_id": "second_crown_root",
+      "state": "second_crown_root",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/second_crown_root_source.png",
+      "crop_xywh": [
+        1200,
+        205,
+        115,
+        510
+      ],
+      "godot_center_xy": [
+        233.5,
+        -308.0
+      ]
+    },
+    {
+      "asset_id": "west_aux_witness",
+      "state": "west_aux_witness",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/west_aux_witness_source.png",
+      "crop_xywh": [
+        410,
+        1060,
+        130,
+        170
+      ],
+      "godot_center_xy": [
+        -549.0,
+        377.0
+      ]
+    },
+    {
+      "asset_id": "east_aux_witness",
+      "state": "east_aux_witness",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/east_aux_witness_source.png",
+      "crop_xywh": [
+        1400,
+        1070,
+        150,
+        180
+      ],
+      "godot_center_xy": [
+        451.0,
+        392.0
+      ]
+    },
+    {
+      "asset_id": "coherence_witness_exemplar",
+      "state": "coherence_witness_exemplar",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_landmarks/coherence_witness_exemplar_source.png",
+      "crop_xywh": [
+        775,
+        700,
+        70,
+        125
+      ],
+      "godot_center_xy": [
+        -214.0,
+        -5.5
+      ]
+    },
+    {
+      "asset_id": "resolved_route_vista",
+      "state": "resolved_route_vista",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_reference/resolved_route_vista_source.png",
+      "crop_xywh": [
+        105,
+        175,
+        465,
+        280
+      ],
+      "godot_center_xy": [
+        -686.5,
+        -453.0
+      ]
+    },
+    {
+      "asset_id": "second_crown_absence",
+      "state": "second_crown_absence",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_reference/second_crown_absence_source.png",
+      "crop_xywh": [
+        1190,
+        170,
+        535,
+        680
+      ],
+      "godot_center_xy": [
+        433.5,
+        -258.0
+      ]
+    },
+    {
+      "asset_id": "crown_verge_west",
+      "state": "crown_verge_west",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_reference/crown_verge_west_source.png",
+      "crop_xywh": [
+        250,
+        690,
+        200,
+        765
+      ],
+      "godot_center_xy": [
+        -674.0,
+        304.5
+      ]
+    },
+    {
+      "asset_id": "crown_verge_east",
+      "state": "crown_verge_east",
+      "source_work_path": "custodian/asset_drop/source_work/hub/twin_solaria_v1_reference/crown_verge_east_source.png",
+      "crop_xywh": [
+        1450,
+        835,
+        280,
+        620
+      ],
+      "godot_center_xy": [
+        566.0,
+        377.0
+      ]
+    }
+  ]
+}

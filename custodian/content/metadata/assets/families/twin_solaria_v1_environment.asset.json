@@ -1,0 +1,103 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "twin_solaria_v1_environment",
+  "kind": "backdrop",
+  "priority": "P0",
+  "runtime": {
+    "domain": "levels/hub/twin_solaria/v1",
+    "owner": "twin_solaria_v1",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 2048,
+    "height": 1536
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "solarium_i_acquisition_court": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "solarium_i_acquisition_court",
+      "layout": "copy",
+      "frame_width": 617,
+      "frame_height": 695
+    },
+    "upper_crown_court": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "upper_crown_court",
+      "layout": "copy",
+      "frame_width": 697,
+      "frame_height": 520
+    },
+    "authority_threshold_plate": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "authority_threshold_plate",
+      "layout": "copy",
+      "frame_width": 375,
+      "frame_height": 355
+    },
+    "reciprocity_midcourt": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "reciprocity_midcourt",
+      "layout": "copy",
+      "frame_width": 1190,
+      "frame_height": 525
+    },
+    "home_index_lowercourt": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "home_index_lowercourt",
+      "layout": "copy",
+      "frame_width": 825,
+      "frame_height": 385
+    },
+    "west_service_terrace": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "west_service_terrace",
+      "layout": "copy",
+      "frame_width": 275,
+      "frame_height": 340
+    },
+    "east_service_terrace": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "east_service_terrace",
+      "layout": "copy",
+      "frame_width": 275,
+      "frame_height": 340
+    },
+    "crown_causeway": {
+      "required": true,
+      "recommended": false,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "crown_causeway",
+      "layout": "copy",
+      "frame_width": 245,
+      "frame_height": 216
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}
