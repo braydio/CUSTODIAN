@@ -6,6 +6,8 @@ extends SceneTree
 
 const SCENE := preload("res://game/actors/ambient/vaultwing/vaultwing.tscn")
 const SPAWNER_SCRIPT := preload("res://game/systems/spawning/vaultwing_spawner.gd")
+const VAULTWING_ANIMATION_SET := preload("res://game/actors/ambient/vaultwing/vaultwing_animation_set.gd")
+const PRESENTATION_CONTROLLER := preload("res://game/actors/ambient/ambient_creature_presentation_controller.gd")
 const STEP := 1.0 / 60.0
 
 class DummyTarget extends StaticBody2D:
@@ -40,6 +42,7 @@ func _run() -> void:
 	for action in [&"glide", &"flap", &"dive_windup", &"dive_strike", &"climb_out", &"land", &"takeoff", &"perch_idle", &"ground_idle", &"ground_walk", &"bite_attack", &"air_stagger", &"hurt", &"death"]:
 		if not actor.has_action(action): _fail("published Vaultwing action was not discovered: %s" % String(action))
 	_check_api(actor)
+	_check_direction_strict_bonding()
 	await _check_determinism()
 	await _check_spawn_authority()
 	await _check_dive(actor)
@@ -61,6 +64,47 @@ func _run() -> void:
 func _check_api(actor: Node) -> void:
 	for method in ["set_ambient_seed", "request_interest", "request_dive", "request_land", "request_takeoff", "take_damage", "get_state_name", "get_altitude_band_name", "apply_visual_altitude"]:
 		if not actor.has_method(method): _fail("missing actor API: %s" % method)
+
+func _check_direction_strict_bonding() -> void:
+	var animation_set := VAULTWING_ANIMATION_SET.new() as AmbientCreatureAnimationSet
+	animation_set.clips = [_synthetic_clip(&"notice_bait", &"s")]
+	animation_set.refresh()
+	if not animation_set.resolve_clip(&"notice_bait", &"e").is_empty():
+		_fail("partial notice_bait crossed S→E instead of yielding to semantic fallback")
+	animation_set.clips = [_synthetic_clip(&"inspect_bait", &"n")]
+	animation_set.refresh()
+	if not animation_set.resolve_clip(&"inspect_bait", &"s").is_empty():
+		_fail("partial inspect_bait crossed N→S instead of yielding to semantic fallback")
+	animation_set.clips = [_synthetic_clip(&"notice_bait", &"e")]
+	animation_set.refresh()
+	var west_mirror := animation_set.resolve_clip(&"notice_bait", &"w")
+	if west_mirror.get("direction", &"") != &"e" or not bool(west_mirror.get("mirrored", false)):
+		_fail("notice_bait W did not intentionally mirror the E strip")
+	animation_set.clips = [_synthetic_clip(&"notice_bait", &"e"), _synthetic_clip(&"notice_bait", &"s")]
+	animation_set.refresh()
+	if animation_set.resolve_clip(&"notice_bait", &"s").get("direction", &"") != &"s":
+		_fail("exact bonding direction did not win")
+	animation_set.clips = [_synthetic_clip(&"ground_walk", &"s")]
+	animation_set.refresh()
+	if animation_set.resolve_clip(&"ground_walk", &"e").get("direction", &"") != &"s":
+		_fail("non-bonding action lost generic directional fallback")
+	animation_set.clips = [
+		_synthetic_clip(&"notice_bait", &"s"),
+		_synthetic_clip(&"ground_idle", &"e")
+	]
+	animation_set.refresh()
+	var controller := PRESENTATION_CONTROLLER.new()
+	controller.animation_set = animation_set
+	var semantic_fallback: Dictionary = controller._resolve(&"notice_bait", &"e")
+	if semantic_fallback.get("resolved_action", &"") != &"ground_idle" or semantic_fallback.get("direction", &"") != &"e":
+		_fail("strict bonding miss did not preserve correct-facing semantic fallback")
+
+func _synthetic_clip(action: StringName, direction: StringName) -> Dictionary:
+	return {
+		"action": action, "direction": direction, "layer": &"body",
+		"animation_name": StringName("%s__%s" % [String(action), String(direction)]),
+		"frame_count": 1, "fps": 8.0, "frame_size": Vector2i(256, 256), "path": "synthetic"
+	}
 
 func _check_determinism() -> void:
 	var traces: Array = []

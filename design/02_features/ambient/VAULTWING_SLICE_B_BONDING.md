@@ -74,6 +74,27 @@ The evidence-mode `combat/vaultwing_first_bond` run passes its behavioral
 assertions. Its report has no baseline capture and is not a final art judgment;
 use a full visual capture only after the remaining art is ingested.
 
+## Bonding Art Pass 2 — Source and Direction Fallback Corrections (2026-09-26)
+
+Pass 2 corrected the Pass-1 rejected-source lifecycle: the `vw8` matte-bearing
+candidate was byte-compared against its canonical copy, removed from
+`source_work`, and retained as hash-named evidence under
+`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/`. The staging
+helper validates backgrounds before assigning canonical source names, so a
+clean replacement can occupy the previously rejected semantic slot without
+overwriting a different accepted master. The Vaultwing animation set now keeps
+all six Slice-B actions direction-strict: exact directions resolve, W may use a
+mirrored E strip, and other missing directions return empty so the existing
+semantic fallback chain can use correctly-facing wild art. Generic ambient
+direction fallback and bonding gameplay timing are unchanged.
+
+No Pass-2 numbered source images were present. Art remains partial at nine
+bonding runtime strips: `guarded_approach` is N/E/S/W; `notice_bait` is N/S;
+`inspect_bait` is N/E/W. `feed_accept`, `watch_player`, and `bond_greet` remain
+missing. First-bond evidence/full visual review is deferred until all six art
+families are complete; production SFX is still the next presentation task after
+art closure.
+
 ## Next Agent Slice — Bonding Art Pass 2 and First-Bond Review
 
 - **Goal:** Resolve missing/rejected ordinals 1, 8, and 10; author the next

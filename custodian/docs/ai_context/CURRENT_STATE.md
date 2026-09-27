@@ -1729,17 +1729,19 @@ semantic presentation controller. Production `World/Ambient` spawning and
 deterministic generated spawn/perch markers are wired. Wild Vaultwings
 participate in the generic `enemy` combat-team contract without counting toward
 enemy wave caps; living-population gauges exclude retained corpses, and
-post-engagement cooldown prevents immediate repeated dives. No bonding, companion
-commands, or mounting are implemented. Vaultwing-specific production SFX remains
-an explicit presentation follow-up.
+post-engagement cooldown prevents immediate repeated dives. Wild Slice A itself
+did not include bonding; B.1 behavioral bonding and B.2 presentation ownership
+are now live. Companion commands and mounting remain deferred. Vaultwing
+production bonding SFX remains an explicit presentation follow-up.
 
 Actor Relationship Foundation V1 and its V1.1 seal are complete. The shared
 relationship resolver separates discovery/indexing, allegiance, and dynamic
 targetability; it preserves legacy Enemy/team behavior, invalidates retained
 turret and drone targets when allegiance or targetability changes, and exposes
 Vaultwing hostile intent without coupling EngagementTracker to controller
-internals. The next implementation slice is Vaultwing bonding/companion
-progression; production Vaultwing SFX remains a separate presentation follow-up.
+internals. The relationship foundation is complete; current Vaultwing work is
+bonding presentation art recovery, then production SFX and bait/global-save
+integration. Slice C companion progression remains later work.
 
 Vaultwing Slice B.1 now implements the same-instance behavioral bonding loop:
 safe interruptible bait approach/observation, encounter-separated peaceful-feed
@@ -1763,7 +1765,12 @@ Bonding art pass 1 ingested seven clean strips into nine runtime directions:
 `guarded_approach` is READY N/E/S/W; `notice_bait` is partial N/S;
 `inspect_bait` is partial N/E/W; `feed_accept`, `watch_player`, and `bond_greet`
 remain missing. Inputs 1 and 10 were absent; input 8 was quarantined for
-generated matte. The `combat/vaultwing_first_bond` evidence capture passes at
+generated matte. Pass 2 removes the rejected input from canonical source_work,
+preserves it under hash-named `unresolved/vaultwing_bonding_rejected/`, and
+makes the six bonding actions direction-strict so missing art reaches the
+correct-facing semantic fallback. No Pass-2 `vw1`, `vw8`, or `vw10`–`vw18`
+root sources are present; coverage remains partial. The
+`combat/vaultwing_first_bond` evidence capture passes at
 `reports/moment_forge/combat/vaultwing_first_bond/20260926T020356-0400`; it has
 no baseline capture, so defer final visual judgment until the remaining art is
 complete. Recover inputs 1, 8, and 10, then author ordinals 11–18. Production

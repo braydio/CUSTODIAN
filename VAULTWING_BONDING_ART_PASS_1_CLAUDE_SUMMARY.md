@@ -26,7 +26,7 @@ image contents.
 Accepted and rejected source masters are under
 `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`. Ordinal 8
 is also copied to
-`custodian/asset_drop/unresolved/vaultwing_bonding_pass_1_matte/inspect_bait_s_vw8.png`.
+`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/inspect_bait_s_vw8__2e75b561e102.png`.
 Its generated gray/pink matte occupies about 49% of the low-alpha sheet area;
 it was not safe to separate. The eight found root inputs were copied and
 hash-verified before only those matching files were removed. Ordinals 1 and 10

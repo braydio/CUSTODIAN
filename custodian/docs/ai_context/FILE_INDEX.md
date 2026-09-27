@@ -1163,11 +1163,12 @@ Last updated: 2026-09-26
 - `custodian/tools/validation/vaultwing_world_spawn_smoke.gd` — production
   container, marker, population-cap, and duplicate-marker spawn seam smoke.
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
-  — Asset V2 family contract for the 256px Common Vaultwing states; EAST/WEST,
-  SOUTH, and NORTH are complete at 14/14, with historical matte-bearing inputs
-  preserved in quarantine.
-  Replacements preserve semantic filenames/frame contracts and flow through
-  targeted family ingest; prior matte-bearing inputs remain quarantined.
+  — Asset V2 family contract for the 256px Common Vaultwing states; the WILD
+  EAST/WEST, SOUTH, and NORTH baseline is complete at 14/14 states per facing.
+  Slice-B bonding art is separate and remains partial (nine runtime strips);
+  rejected bonding candidates are preserved in hash-named quarantine, not
+  source_work. Replacements preserve semantic filenames/frame contracts and
+  flow through targeted family ingest.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
   runtime smoke covering flight bands, attack-window contact, dive commitment,
   live-player stagger persistence, retreat, death, presentation fallback, and

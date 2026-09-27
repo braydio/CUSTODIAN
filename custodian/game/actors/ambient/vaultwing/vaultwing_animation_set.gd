@@ -5,6 +5,10 @@ extends AmbientCreatureAnimationSet
 const ROOT := "res://content/sprites/ambient_creatures/vaultwing_common/runtime"
 const OWNER := "vaultwing_common"
 const VALID_DIRECTIONS := {"n":true, "s":true, "e":true, "w":true, "omni":true}
+const STRICT_BONDING_ACTIONS := {
+	"notice_bait":true, "guarded_approach":true, "inspect_bait":true,
+	"feed_accept":true, "watch_player":true, "bond_greet":true
+}
 const LOOP_ACTIONS := {"glide":true, "flap":true, "perch_idle":true, "ground_idle":true, "ground_walk":true, "guarded_approach":true, "watch_player":true}
 const ACTION_FPS := {
 	"glide":8.0, "flap":10.0, "dive_windup":10.0, "dive_strike":14.0,
@@ -28,6 +32,21 @@ func rescan_runtime() -> void:
 	clips.clear()
 	_scan_directory(ROOT)
 	refresh()
+
+## Bonding semantics must fall through to correctly-facing wild art when the
+## requested authored direction is absent. Generic ambient actions retain the
+## base class's cross-direction fallback behavior.
+func resolve_clip(action: StringName, direction: StringName, variation_ordinal := 0, layer: StringName = DEFAULT_LAYER) -> Dictionary:
+	var resolved := super.resolve_clip(action, direction, variation_ordinal, layer)
+	if resolved.is_empty() or not STRICT_BONDING_ACTIONS.has(String(action)):
+		return resolved
+	var actual_direction := StringName(resolved.get("direction", &""))
+	if actual_direction == direction:
+		return resolved
+	if direction == &"w" and actual_direction == &"e":
+		resolved["mirrored"] = true
+		return resolved
+	return {}
 
 func _scan_directory(path: String) -> void:
 	var directory := DirAccess.open(path)

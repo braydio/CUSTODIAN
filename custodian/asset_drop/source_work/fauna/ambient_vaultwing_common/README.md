@@ -1,6 +1,7 @@
 # Common Vaultwing source art
 
-The regenerated South and North replacements are complete at 14/14. The wild
+The regenerated wild South and North replacements are complete at 14/14
+states per facing; this count describes the Slice-A wild baseline only. The wild
 Slice A runtime closeout is implemented with production marker/spawner wiring,
 spatial attacks, perching, retreat, and focused validation. All source
 files retain their semantic names and 256px contracts.
@@ -22,8 +23,16 @@ these temporary strips. The rejected `vw_3`/`vw_7` masters are preserved under
 
 ## Bonding art pass 1 (2026-09-26)
 
-Ordinal mapping is fixed by the pass contract. The matching root inputs were
-copied byte-for-byte here and removed from the root only after hash checks:
+Lifecycle: accepted source masters belong in this directory. Rejected generated
+candidates belong under
+`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/` and must never
+occupy a canonical source-master filename. The rejected Pass-1 `vw8` source was
+removed from source_work after byte comparison and retained as
+`inspect_bait_s_vw8__2e75b561e102.png` in durable quarantine.
+
+Ordinal mapping is fixed by the pass contract. Accepted root inputs were copied
+byte-for-byte here and removed from the root only after hash checks; the
+rejected vw8 input was quarantined instead:
 
 | Ordinal | Input | Semantic source master | Raw size | Result |
 |---:|---|---|---:|---|
@@ -34,7 +43,7 @@ copied byte-for-byte here and removed from the root only after hash checks:
 | 5 | `vw5.png` | `guarded_approach_s_source.png` | 2172×724 | accepted |
 | 6 | `vw6.png` | `guarded_approach_n_source.png` | 2172×724 | accepted |
 | 7 | `vw7.png` | `inspect_bait_e_source.png` | 1983×793 | accepted |
-| 8 | `vw8.png` | `inspect_bait_s_source.png` | 1983×793 | rejected: generated matte; quarantined at `custodian/asset_drop/unresolved/vaultwing_bonding_pass_1_matte/inspect_bait_s_vw8.png` |
+| 8 | `vw8.png` | — | 1983×793 | rejected: generated matte; preserved at `custodian/asset_drop/unresolved/vaultwing_bonding_rejected/inspect_bait_s_vw8__2e75b561e102.png` |
 | 9 | `vw9.png` | `inspect_bait_n_source.png` | 1983×793 | accepted |
 | 10 | missing | `feed_accept_e_source.png` | — | not staged |
 
@@ -47,3 +56,14 @@ downsampling and registers each frame to the ground-support anchor in the
 are 1024×256 (notice, 4f), 1536×256 (approach, 6f), and 1280×256 (inspect,
 5f). `feed_accept` has no input in this batch. Ordinals 1, 8, and 10 remain
 unresolved for recovery. The next authored batch is ordinals 11–18.
+
+## Bonding art pass 2 source recovery
+
+Pass 2 corrected the staging order so background validation precedes canonical
+source_work assignment. Rejected art is hash-named in the durable quarantine;
+it creates no canonical master or inbox strip. Distinct accepted source masters
+remain immutable, while an accepted replacement can populate a slot that has
+only rejected history. The first-batch ordinal map remains fixed: 1
+`notice_bait_e`, 8 `inspect_bait_s`, 10–12 `feed_accept_e/s/n`, 13–15
+`watch_player_e/s/n`, and 16–18 `bond_greet_e/s/n`. No Pass-2 root masters were
+present during this run; all eleven remain missing.

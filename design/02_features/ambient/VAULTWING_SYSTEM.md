@@ -1,6 +1,6 @@
 # CUSTODIAN — VAULTWING CREATURE, PREDATION, AND BOND SYSTEM
 
-**Status:** design locked / wild Slice A, B.1 behavioral bond, and B.2 presentation contract implemented / bonding art partially ingested in pass 1; production Vaultwing SFX pending
+**Status:** design locked / wild Slice A, B.1 behavioral bond, and B.2 presentation contract implemented / bonding art remains partial after Pass 2 source recovery; production Vaultwing SFX pending
 **Feature family:** ambient ecology / hostile fauna / companion progression  
 **Initial creature:** Common Vaultwing  
 **Runtime identity:** `vaultwing_common`  
