@@ -80,6 +80,13 @@ commit, or push.`
 - For substantial parallel work, use an isolated worktree and task branch.
   Land completed commits with `custodian/tools/agent/land_main.py`, which
   serializes local landing attempts and safely retries remote `main` races.
+- After landing a scoped task branch on `origin/main`, synchronize the user's
+  project-root checkout by running `git -C <project-root> pull --ff-only origin main`.
+  This is a required post-push step; updating only the scoped worktree is not
+  sufficient. Check the project-root worktree first. If unrelated dirty or
+  divergent work prevents the fast-forward, preserve it, do not reset or stash
+  it automatically, and report that synchronization is pending until the root
+  checkout can safely pull the latest `main`.
   Rebase conflicts and failed required validation are blockers; never force-push.
 - Do not amend or force-push unless explicitly asked.
 
