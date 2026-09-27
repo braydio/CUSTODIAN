@@ -285,6 +285,27 @@ Check:
 - `FILE_INDEX.md` indexes new docs, prompts, task packets, and ownership changes
 - task packet status and completion notes match the actual work state when a packet exists
 
+### Twin Solaria canon lock
+
+For changes touching Twin Solaria, the Crown Incident, Hub spatial doctrine, or
+related AI context:
+
+```bash
+python3 custodian/tools/validation/twin_solaria_canon_docs_smoke.py
+python3 custodian/tools/validation/run_validation.py --changed --json
+```
+
+The focused smoke protects:
+
+- Solarium I as the surviving Acquisition Aperture;
+- Solarium II as the destroyed Passage Aperture / Second Crown;
+- deliberate Amputation following pre-cut reciprocal anomaly evidence;
+- Twin Solaria not being asserted as Ground Zero;
+- the Second Crown narrative exposition slice;
+- the development backdrop remaining development-only rather than silently promoted
+  to runtime authority.
+
+
 ## Godot Runtime Validation
 
 Use for runtime GDScript, scene wiring, autoload, input, or gameplay behavior changes.
