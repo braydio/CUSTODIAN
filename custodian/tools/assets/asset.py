@@ -433,6 +433,20 @@ def cmd_doctor(args, families):
     return 2 if any(issue.severity == "error" for issue in issues) else 0
 
 
+def cmd_ui(args, families):
+    if args.family and args.family not in families:
+        return _unknown_family(args.family)
+    try:
+        from ui.app import run_asset_workbench
+    except ModuleNotFoundError as error:
+        if error.name and error.name.split(".")[0] == "textual":
+            from ui import OPTIONAL_DEPENDENCY_MESSAGE
+            print(f"asset: {OPTIONAL_DEPENDENCY_MESSAGE}", file=sys.stderr)
+            return 2
+        raise
+    return run_asset_workbench(family_id=args.family or "")
+
+
 def _unknown_family(name: str) -> int:
     print(f"{MARK['error']} Unknown asset family: {name}\n\nRun:\n  asset families")
     return 2
@@ -492,6 +506,8 @@ def build_parser() -> argparse.ArgumentParser:
     _output_flags(command)
     command = subs.add_parser("doctor")
     _output_flags(command)
+    command = subs.add_parser("ui")
+    command.add_argument("family", nargs="?")
     return parser
 
 

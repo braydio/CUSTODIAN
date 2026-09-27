@@ -1740,6 +1740,14 @@ baseline clip by clip instead of accepting any single PNG, and both
 validation manifest. `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md` is the
 implementation authority.
 
+`python3 custodian/tools/assets/asset.py ui ambient_baby_opossum` opens the new
+optional Asset Workbench (Textual; Slice 1: FAMILY/REVIEW/PIPELINE), a
+non-Operator sibling of the Operator Workbench for browsing any Asset V2
+family's state/direction coverage and reviewing published runtime strips
+frame-by-frame. It is read-only in this slice and requires
+`custodian/tools/assets/ui/requirements.txt`; `asset_workbench_ui_smoke` is
+registered in the validation manifest. Baby Opossum is its acceptance fixture.
+
 # Vaultwing Wild Predator Slice A Closeout (2026-09-23)
 
 The Common Vaultwing Slice A runtime is closed out under
