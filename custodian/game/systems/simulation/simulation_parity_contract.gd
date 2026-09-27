@@ -1,6 +1,6 @@
 class_name SimulationParityContract
 extends RefCounted
-const FIXTURE_SCHEMA := "custodian.python_sim.godot_port_parity.v2"
+const FIXTURE_SCHEMA := "custodian.python_sim.godot_port_parity.v3"
 const COMMANDS_SCHEMA := "custodian.simulation_commands.v2"
 static func validate_fixture(data: Dictionary) -> bool: return data.get("fixture_schema") == FIXTURE_SCHEMA and data.get("commands_schema") == COMMANDS_SCHEMA and data.has("projection") and data.has("projection_sha256")
 static func projection(state: WorldSimulationState) -> Dictionary: return SimulationCanonicalJson.normalize(state.parity_projection())

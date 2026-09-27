@@ -4,6 +4,7 @@ signal campaign_started(session: CampaignSession)
 signal snapshot_updated(snapshot: SimulationSnapshot)
 signal simulation_event(event: SimulationEvent)
 signal campaign_resolved(outcome: CampaignOutcome)
+signal physical_assault_plan_ready(plan: AssaultSpawnPlan)
 var clock: SimulationClock = SimulationClock.new()
 var kernel: SimulationKernel
 var session: CampaignSession
@@ -15,10 +16,15 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if kernel != null: clock.advance(delta, _authoritative_step)
 func start_campaign(scenario: CampaignScenario) -> void:
-	var world := DefaultCampaignScenarioFactory.create_world(scenario); session = CampaignSession.new(scenario, world); session.start(); kernel = SimulationKernel.new(world); kernel.event_emitted.connect(_on_event); latest_snapshot = SimulationSnapshot.capture(world); campaign_started.emit(session); snapshot_updated.emit(latest_snapshot)
+	var world := DefaultCampaignScenarioFactory.create_world(scenario); session = CampaignSession.new(scenario, world); session.start(); kernel = SimulationKernel.new(world); kernel.event_emitted.connect(_on_event); kernel.assault_handoff_ready.connect(_on_assault_handoff_ready); latest_snapshot = SimulationSnapshot.capture(world); campaign_started.emit(session); snapshot_updated.emit(latest_snapshot)
 func queue_command(kind: StringName, payload: Dictionary = {}, at_world_tick: int = -1) -> int: return -1 if kernel == null else kernel.queue(kind, payload, at_world_tick)
 func set_simulation_paused(value: bool) -> void: clock.paused = value
 func current_snapshot() -> SimulationSnapshot: return latest_snapshot
+func current_assault_plan() -> AssaultSpawnPlan:
+	return kernel.state.assault.to_spawn_plan() if kernel != null and kernel.state.assault.phase == "HANDOFF_READY" else null
+func acknowledge_assault_handoff(plan_id: String) -> bool:
+	if kernel == null or kernel.state.assault.phase != "HANDOFF_READY" or kernel.state.assault.assault_id != plan_id: return false
+	kernel.state.assault.handoff_consumed = true; kernel.state.assault.phase = "HANDED_OFF"; latest_snapshot = SimulationSnapshot.capture(kernel.state); snapshot_updated.emit(latest_snapshot); return true
 func resolve_campaign(result: StringName, reason: String = "") -> CampaignOutcome:
 	if session == null: return null
 	var outcome := session.resolve_once(result, reason)
@@ -29,7 +35,8 @@ func restore_snapshot(data: Dictionary) -> void:
 	var restored := SimulationSnapshot.restore(data); if restored == null: return
 	if session == null: var scenario := DefaultCampaignScenarioFactory.create_scenario(restored.seed); session = CampaignSession.new(scenario, restored); session.start()
 	else: session.world = restored
-	kernel = SimulationKernel.new(restored); kernel.event_emitted.connect(_on_event); latest_snapshot = SimulationSnapshot.capture(restored); clock.fixed_tick = restored.fixed_tick; snapshot_updated.emit(latest_snapshot)
+	kernel = SimulationKernel.new(restored); kernel.event_emitted.connect(_on_event); kernel.assault_handoff_ready.connect(_on_assault_handoff_ready); latest_snapshot = SimulationSnapshot.capture(restored); clock.fixed_tick = restored.fixed_tick; snapshot_updated.emit(latest_snapshot)
 func _authoritative_step() -> void:
 	latest_snapshot = kernel.step_once(); var game_state := get_node_or_null("/root/GameState"); if game_state != null and game_state.has_method("advance"): game_state.advance(); snapshot_updated.emit(latest_snapshot)
 func _on_event(event: SimulationEvent) -> void: simulation_event.emit(event)
+func _on_assault_handoff_ready(plan: AssaultSpawnPlan) -> void: physical_assault_plan_ready.emit(plan)

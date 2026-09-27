@@ -71,6 +71,7 @@
 [ext_resource type="Script" path="res://game/tutorial/command_terminal_tutorial.gd" id="221_command_tutorial"]
 [ext_resource type="PackedScene" path="res://game/ui/cognitive/cognitive_feedback_overlay.tscn" id="222_cognitive_overlay"]
 [ext_resource type="Script" path="res://game/scenarios/command_pressure_v1/command_pressure_scenario_bootstrap.gd" id="223_command_pressure_bootstrap"]
+[ext_resource type="Script" path="res://game/world/bindings/wave_manager_simulation_binding.gd" id="225_wave_simulation_binding"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
@@ -364,6 +365,11 @@ pursuit_frame_scene = ExtResource("18_pursuit_frame_enemy")
 marine_scene = ExtResource("18_marine_enemy")
 savage_scene = ExtResource("18_savage_enemy")
 debug_spawn_grunt_on_start = false
+
+[node name="WaveManagerSimulationBinding" type="Node" parent="."]
+script = ExtResource("225_wave_simulation_binding")
+wave_manager_path = NodePath("../WaveManager")
+simulation_runtime_path = NodePath("../Simulation")
 
 [node name="EnemyDirector" type="Node" parent="." unique_id=987111453]
 script = ExtResource("15_enemy_director")

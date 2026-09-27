@@ -1,13 +1,13 @@
 # Python Simulation Macro World-State Completion
 
-- Status: `ready`
+- Status: `complete`
 - Goal: Complete the next coherent Python→Godot simulation remap boundary by adding authoritative relay state, deterministic systemic-event state/selection, and strategic assault state to `WorldSimulationRuntime`.
 
 - Current measured state:
-  - `SimulationKernel` currently resolves macro systems in this order:
-    `power → logistics → repairs → fabrication → world_tick/invariants/failure`.
-  - Python parity v2 currently covers policies, resources, limited-bootstrap inventory/stocks, strategic power load, and logistics.
-  - Relay state, systemic random events, and strategic assault state remain explicitly unported.
+  - `SimulationKernel` resolves macro systems in this order:
+    `power → logistics → repairs → fabrication → relay → systemic events → strategic assault → world_tick/invariants/failure`.
+  - Python parity v3 covers policies, resources, limited-bootstrap inventory/stocks, strategic power load/logistics, representative relay state, systemic-event context, and inactive strategic-assault state.
+  - Relay state, deterministic systemic events, and strategic assault approach/handoff are implemented.
   - Snapshot/restore and exactly-once campaign outcome foundations already exist.
   - Loaded assaults are already physical Godot gameplay and must remain so.
 
@@ -129,6 +129,11 @@ Inspect the graph before deciding exact new filenames or adapter boundaries.
   - `custodian/game/state/world/world_simulation_state.gd`
   - `design/02_features/assault/ASSAULT_DESIGN_GODOT.md`
 - Blockers or open questions:
-  - None currently. If historical assault semantics conflict with the active
-    physical-assault authority, active Godot design wins and the difference
-    must be classified/documented rather than recreated.
+  - None.
+
+## Completion notes
+
+- Implemented: three Godot macro systems, one serialized deterministic RNG stream, relay progression commands, schema-v3 snapshot migration from v2, macro invariants, parity-v3 projection/fixtures, and typed WaveManager handoff plus physical completion observation.
+- Historical classification: PORT relay progression/event context and selection/strategic approaches; SUPERSEDED Python parallel-sector damage/power consequences and target/intercept details; RETIRED prose, detection presentation, tactical autopilot and abstract combat/economy outcomes; no unresolved design decisions.
+- Validation: `world_simulation_kernel_smoke.gd`, `world_simulation_macro_state_smoke.gd`, `world_simulation_python_parity_smoke.gd`, `world_simulation_snapshot_roundtrip_smoke.gd`, fixture validator, and the one-shot migration suite passed. Loaded combat remains WaveManager/actor-owned; the negative control rejects physical-result fields in macro assault state/plans.
+- Deferred: REMAP-2 wear/fidelity/full repairs/ambient fabrication; REMAP-3 disk persistence; REMAP-4 final migration closeout.

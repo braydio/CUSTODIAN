@@ -5,7 +5,7 @@ import json
 from typing import Any
 from game.simulations.world_state.core.policies import clamp_policy_level, FAB_CATEGORIES
 
-FIXTURE_SCHEMA = "custodian.python_sim.godot_port_parity.v2"
+FIXTURE_SCHEMA = "custodian.python_sim.godot_port_parity.v3"
 COMMANDS_SCHEMA = "custodian.simulation_commands.v2"
 
 def normalize(value: Any) -> Any:
@@ -23,13 +23,18 @@ def sha256(value: Any) -> str:
     return hashlib.sha256(encode(value).encode("utf-8")).hexdigest()
 
 def projection(state) -> dict[str, Any]:
+    relays = {
+        relay_id: {"sector_id": relay.get("sector", ""), "status": relay.get("status", "UNKNOWN"), "stability": relay.get("stability", 0.0), "packets_pending": 0}
+        for relay_id, relay in sorted(state.relay_nodes.items())
+    }
     return normalize({
-        "schema_version": 2, "seed": state.seed, "world_tick": state.time,
+        "schema_version": 3, "seed": state.seed, "world_tick": state.time,
         "resources": {"materials": state.materials}, "inventory": dict(state.inventory),
         "stocks": {"repair_drones": state.repair_drone_stock, "turret_ammo": state.turret_ammo_stock},
         "policies": {"repair_intensity": state.policies.repair_intensity, "defense_readiness": state.policies.defense_readiness, "surveillance_coverage": state.policies.surveillance_coverage, "fabrication_allocation": dict(state.fab_allocation), "sector_fortification": {k.replace("DEFENSE GRID", "DEFENSE_GRID"): v for k, v in state.sector_fort_levels.items()}, "transit_fortification": dict(state.transit_fort_levels)},
         "power_load": state.power_load,
         "logistics": {"throughput": state.logistics_throughput, "load": state.logistics_load, "pressure": state.logistics_pressure, "multiplier": state.logistics_multiplier},
+        "macro_state": {"relays": relays, "relay_knowledge": int(state.knowledge_index.get("RELAY_RECOVERY", 0)), "relay_dormancy_pressure": int(state.dormancy_pressure), "ticks_since_assault": int(state.ticks_since_assault), "ticks_since_hostile": int(state.ticks_since_hostile), "assault": {"phase": "NONE", "ingress": "", "target": "", "eta_ticks": 0}},
     })
 
 def apply_command(state, command: dict[str, Any]) -> None:

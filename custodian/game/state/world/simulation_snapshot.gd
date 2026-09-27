@@ -1,7 +1,7 @@
 class_name SimulationSnapshot
 extends RefCounted
 const SCHEMA := "custodian.world_simulation_snapshot"
-const VERSION := 2
+const VERSION := 3
 var fixed_tick: int = 0
 var world_tick: int = 0
 var fingerprint: String = ""

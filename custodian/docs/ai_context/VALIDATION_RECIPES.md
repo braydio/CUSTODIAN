@@ -230,16 +230,17 @@ This validates:
 - no stale `design/03_architecture` references remain inside `design/04_architecture/`
 - reports line counts for overburdened coordinator files (warning only)
 
-For the Python-to-Godot simulation extraction scaffold:
+For the Python-to-Godot simulation migration (including REMAP-1 macro state):
 
 ```bash
 cd custodian
 godot --headless --path . --script res://tools/validation/world_simulation_kernel_smoke.gd
+godot --headless --path . --script res://tools/validation/world_simulation_macro_state_smoke.gd
 cd ..
 bash custodian/tools/validation/run_world_simulation_migration_suite.sh
 ```
 
-The kernel smoke proves same-seed command determinism, fixed-step pause/resume, typed structure damage, logistics/power execution, snapshots, and fingerprints. The migration suite validates checked-in fixtures and Godot contract smokes without invoking a retired runtime.
+The kernel smoke proves same-seed command determinism, fixed-step pause/resume, typed structure damage, logistics/power execution, snapshots, and fingerprints. The macro-state smoke proves exact macro ordering, relay/event/assault determinism, schema-v2 migration, snapshot continuation, data-only handoff, and physical completion feedback. The migration suite validates checked-in parity-v3 fixtures and Godot contract smokes without launching the historical Python runtime.
 
 ## Historical Archive Boundary Validation
 

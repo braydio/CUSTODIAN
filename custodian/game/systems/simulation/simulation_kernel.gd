@@ -3,6 +3,8 @@ extends RefCounted
 const MACRO_TICK_INTERVAL := 60
 signal snapshot_emitted(snapshot: SimulationSnapshot)
 signal event_emitted(event: SimulationEvent)
+signal macro_stage_completed(stage: StringName)
+signal assault_handoff_ready(plan: AssaultSpawnPlan)
 var state: WorldSimulationState
 var command_queue: Array[SimulationCommand] = []
 var strict_invariants := false
@@ -11,6 +13,9 @@ var _power := PowerSimulationSystem.new()
 var _logistics := LogisticsSimulationSystem.new()
 var _repairs := RepairSimulationSystem.new()
 var _fabrication := FabricationSimulationSystem.new()
+var _relay := RelaySimulationSystem.new()
+var _systemic_events := SystemicEventSimulationSystem.new()
+var _strategic_assault := StrategicAssaultSimulationSystem.new()
 var _invariants := SimulationInvariants.new()
 
 func _init(initial_state: WorldSimulationState = null) -> void: state = initial_state if initial_state != null else WorldSimulationState.new()
@@ -21,7 +26,16 @@ func apply_commands_at_current_boundary() -> void: _drain_commands()
 func step_once() -> SimulationSnapshot:
 	_drain_commands(); state.fixed_tick += 1
 	if state.fixed_tick % MACRO_TICK_INTERVAL == 0:
-		_power.step_macro(state); _logistics.step_macro(state); _repairs.step_macro(state); _fabrication.step_macro(state); state.world_tick += 1; _validate(); _evaluate_failure()
+		_power.step_macro(state); macro_stage_completed.emit(&"power")
+		_logistics.step_macro(state); macro_stage_completed.emit(&"logistics")
+		_repairs.step_macro(state); macro_stage_completed.emit(&"repairs")
+		_fabrication.step_macro(state); macro_stage_completed.emit(&"fabrication")
+		_relay.step_macro(state); macro_stage_completed.emit(&"relay")
+		_systemic_events.step_macro(state); macro_stage_completed.emit(&"systemic_events")
+		var previous_assault_phase := state.assault.phase
+		_strategic_assault.step_macro(state); macro_stage_completed.emit(&"strategic_assault")
+		if previous_assault_phase != "HANDOFF_READY" and state.assault.phase == "HANDOFF_READY": assault_handoff_ready.emit(state.assault.to_spawn_plan())
+		state.world_tick += 1; _validate(); _evaluate_failure()
 	var snapshot := SimulationSnapshot.capture(state); snapshot_emitted.emit(snapshot); return snapshot
 func _drain_commands() -> void:
 	command_queue.sort_custom(func(a: SimulationCommand, b: SimulationCommand) -> bool: return a.sequence < b.sequence)
@@ -51,6 +65,16 @@ func _apply_command(command: SimulationCommand) -> void:
 		SimulationCommand.QUEUE_FABRICATION:
 			var category:=String(command.payload.get("category","")); ok=category in PolicySimulationState.FABRICATION_CATEGORIES
 			if ok: state.fabrication_queue.append({"job_id":"fab_%d"%command.sequence,"recipe_id":String(command.payload.get("recipe_id","CUSTOM")),"category":category,"remaining":float(command.payload.get("ticks",3.0)),"total":float(command.payload.get("ticks",3.0)),"outputs":(command.payload.get("outputs",{}) as Dictionary).duplicate(true)})
+		SimulationCommand.STABILIZE_RELAY: ok = _relay.stabilize(state, String(command.payload.get("relay_id", "")))
+		SimulationCommand.SYNC_RELAYS: ok = _relay.sync_packets(state) >= 0
+		SimulationCommand.PHYSICAL_ASSAULT_COMPLETED:
+			var assault_id := String(command.payload.get("assault_id", "")); ok = state.assault.phase == "HANDED_OFF" and assault_id == state.assault.assault_id
+			if ok:
+				state.assault.history.append({"assault_id": assault_id, "approach_tick": state.assault.approach_tick, "handoff_tick": state.world_tick, "physical_completion_tick": state.world_tick})
+				while state.assault.history.size() > 32: state.assault.history.pop_front()
+				state.assault.phase = "NONE"; state.assault.assault_id = ""; state.assault.objective = ""; state.assault.spawn_plan.clear(); state.assault.route.clear(); state.assault.eta_ticks = 0; state.assault.handoff_consumed = false
+		SimulationCommand.STABILIZE_RELAY: ok = _relay.stabilize(state, String(command.payload.get("relay_id", "")))
+		SimulationCommand.SYNC_RELAYS: ok = _relay.sync_packets(state) >= 0
 	if ok: _emit_event(&"command_applied", {"sequence": command.sequence, "kind": String(command.kind)})
 	else: _emit_event(SimulationEvent.COMMAND_REJECTED, {"sequence": command.sequence, "kind": String(command.kind)})
 func _validate() -> void:

@@ -31,6 +31,12 @@ authored composition / point-budget cadence
 
 - `WaveManager` owns queueing, cadence, scene instantiation, lane selection,
   objective assignment, and observable wave status.
+- `WorldSimulationRuntime` may issue a deterministic `AssaultSpawnPlan` when
+  its strategic approach reaches handoff readiness. The
+  `WaveManagerSimulationBinding` submits that plan through
+  `WaveManager.apply_external_wave_plan()` and the existing
+  `start_external_wave()` physical path. Wave completion is returned as a
+  typed observation for strategic bookkeeping.
 - `SpawnNode` is an authored physical lane marker with lane, weight, and active
   state.
 - Enemy owns movement, targeting, attacks, damage reactions, death, and corpse
@@ -83,8 +89,10 @@ systems.
 Do not use an abstract interception score, threat-point damage, simulated kill
 count, simulated turret ammunition, mirrored infrastructure HP, or a
 WorldSimulationRuntime outcome to decide a loaded assault. Strategic adapters
-may observe a completed physical outcome for persistence; they do not choose
-that outcome.
+may observe physical completion for persistence; they do not choose that
+outcome. The strategic plan carries composition, lane, objective, and
+behavior-profile instructions only; it carries no enemy health, damage, kill,
+ammunition, or salvage result.
 
 ## Current proving scenario
 

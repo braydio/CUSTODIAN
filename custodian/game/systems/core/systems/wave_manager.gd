@@ -49,6 +49,7 @@ var _composition_index: int = 0
 var _wave_in_progress: bool = false
 var _pending_spawns: Array[String] = []
 var _external_wave_queue: Array[String] = []
+var _last_external_plan_id := ""
 var _forced_lane: String = ""
 var _forced_objective: String = ""
 var _forced_behavior_profile: StringName = &""
@@ -384,6 +385,18 @@ func start_external_wave(
 		_complete_wave()
 	else:
 		_schedule_next_spawn()
+	return true
+
+func apply_external_wave_plan(plan: Dictionary) -> bool:
+	var plan_id := String(plan.get("plan_id", ""))
+	if plan_id.is_empty() or plan_id == _last_external_plan_id: return false
+	var waves: Array = plan.get("waves", [])
+	if waves.is_empty() or not waves[0] is Dictionary: return false
+	var wave: Dictionary = waves[0]
+	var composition: Array[String] = []
+	for enemy_type in wave.get("composition", []): composition.append(String(enemy_type))
+	if not start_external_wave(composition, String(wave.get("lane", "")), String(wave.get("objective", "")), StringName(wave.get("behavior_profile", ""))): return false
+	_last_external_plan_id = plan_id
 	return true
 
 func get_wave_status() -> Dictionary:

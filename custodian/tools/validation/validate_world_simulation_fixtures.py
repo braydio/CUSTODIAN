@@ -28,7 +28,7 @@ def main() -> int:
             continue
         seed, tick = int(match.group(1)), int(match.group(2))
         found.add((seed, tick))
-        if payload.get("fixture_schema") != "custodian.python_sim.godot_port_parity.v2":
+        if payload.get("fixture_schema") != "custodian.python_sim.godot_port_parity.v3":
             failures.append(f"unexpected schema: {path.name}")
         if payload.get("checkpoint_world_tick") != tick:
             failures.append(f"checkpoint mismatch: {path.name}")

@@ -18,6 +18,22 @@ func validate(state: WorldSimulationState, queued_commands: Array = []) -> Array
 	_check(errors, state.logistics_throughput >= 0.0, "LOGISTICS_THROUGHPUT_NEGATIVE", "logistics_throughput", state.logistics_throughput); _check(errors, state.logistics_pressure >= 0.0, "LOGISTICS_PRESSURE_NEGATIVE", "logistics_pressure", state.logistics_pressure); _check(errors, state.logistics_multiplier >= 0.45 and state.logistics_multiplier <= 1.0, "LOGISTICS_MULTIPLIER_INVALID", "logistics_multiplier", state.logistics_multiplier)
 	for key in state.structures:
 		var s: StructureSimulationState = state.structures[key]; _check(errors, s.hp >= 0 and s.hp <= s.max_hp, "STRUCTURE_HP_OUT_OF_RANGE", "structures.%s.hp" % key, s.hp); _check(errors, WorldIdentityContract.is_macro_sector(s.sector_id), "UNKNOWN_SECTOR", "structures.%s.sector" % key, s.sector_id)
+	_check(errors, state.rng_state > 0 and state.rng_state <= 0x7fffffff, "RNG_STATE_INVALID", "rng_state", state.rng_state)
+	for relay_id in state.relays:
+		var relay: Dictionary = state.relays[relay_id]
+		_check(errors, String(relay.get("id", "")) == String(relay_id), "RELAY_ID_MISMATCH", "relays.%s.id" % relay_id, relay.get("id"))
+		_check(errors, String(relay.get("status", "")) in ["UNKNOWN", "LOCATED", "UNSTABLE", "STABLE", "WEAK", "DORMANT"], "RELAY_STATUS_INVALID", "relays.%s.status" % relay_id, relay.get("status"))
+		_check(errors, is_finite(float(relay.get("stability", -1.0))) and float(relay.get("stability", -1.0)) >= 0.0 and float(relay.get("stability", 101.0)) <= 100.0, "RELAY_STABILITY_INVALID", "relays.%s.stability" % relay_id, relay.get("stability"))
+		_check(errors, WorldIdentityContract.is_macro_sector(String(relay.get("sector_id", ""))) or WorldIdentityContract.is_transit(String(relay.get("sector_id", ""))), "RELAY_SECTOR_INVALID", "relays.%s.sector_id" % relay_id, relay.get("sector_id"))
+		_check(errors, int(relay.get("packets_pending", -1)) >= 0, "RELAY_PROGRESSION_INVALID", "relays.%s.packets_pending" % relay_id, relay.get("packets_pending"))
+	var event_state: Dictionary = state.systemic_event_state
+	for field in ["ticks_since_assault", "ticks_since_hostile"]:
+		if event_state.has(field): _check(errors, int(event_state[field]) >= 0, "SYSTEMIC_EVENT_COUNTER_INVALID", "systemic_event_state.%s" % field, event_state[field])
+	_check(errors, state.relay_knowledge_level >= 0 and state.relay_knowledge_level <= 7 and state.relay_dormancy_pressure >= 0, "RELAY_NETWORK_PROGRESSION_INVALID", "relay_network", {"knowledge_level": state.relay_knowledge_level, "dormancy_pressure": state.relay_dormancy_pressure})
+	_check(errors, String(event_state.get("last_category", "")) in ["", "QUIET", "ENVIRONMENTAL", "INFRASTRUCTURE", "RECON", "HOSTILE"], "SYSTEMIC_EVENT_CATEGORY_INVALID", "systemic_event_state.last_category", event_state.get("last_category"))
+	_check(errors, (event_state.get("recent_keys", []) as Array).size() <= 8 and (event_state.get("history", []) as Array).size() <= 16, "SYSTEMIC_EVENT_HISTORY_OVERFLOW", "systemic_event_state.history", event_state.get("history"))
+	_check(errors, String(state.assault.phase) in ["NONE", "APPROACHING", "HANDOFF_READY", "HANDED_OFF"], "ASSAULT_PHASE_INVALID", "assault.phase", state.assault.phase)
+	_check(errors, state.assault.eta_ticks >= 0 and state.assault.route_index >= 0 and is_finite(state.assault.pressure) and state.assault.pressure >= 0.0, "ASSAULT_APPROACH_INVALID", "assault", state.assault.to_dict())
 	var sequences := {}; for command in queued_commands: _check(errors, not sequences.has(command.sequence), "DUPLICATE_COMMAND_SEQUENCE", "command_queue.sequence", command.sequence); sequences[command.sequence] = true
 	_check(errors, not state.failed or not state.failure_reason.is_empty(), "FAILURE_REASON_EMPTY", "failure_reason", state.failure_reason)
 	return errors

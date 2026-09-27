@@ -76,11 +76,12 @@ Last updated: 2026-09-27
 
 - `game/systems/simulation/world_simulation_runtime.gd` — sole live runtime owner.
 - `game/systems/simulation/simulation_{clock,kernel,command,event,invariants,canonical_json,parity_contract,policy_tables}.gd` — deterministic core.
-- `game/systems/simulation/{power,logistics,repair,fabrication}_simulation_system.gd` — implemented macro systems.
-- `game/state/world/` simulation state, identity, snapshot/migration, policies, sectors, structures, jobs, and assault plan — pure state.
+- `game/systems/simulation/{power,logistics,repair,fabrication,relay,systemic_event,strategic_assault}_simulation_system.gd` — ordered deterministic macro systems; the last three own retained REMAP-1 state progression.
+- `game/state/world/` simulation state, identity, snapshot/migration, policies, sectors, structures, jobs, macro relay/event/assault state, and typed assault spawn plan — serialization-safe pure state.
 - `game/state/run/default_campaign_scenario_factory.gd` and campaign session/outcome plus persistent Hub/history — bootstrap and exactly-once lifecycle.
 - `game/world/bindings/` simulation binding files — non-authoritative adapters.
-- `tools/validation/run_world_simulation_migration_suite.sh` and `*simulation*smoke.gd`/`campaign_outcome_exactly_once_smoke.gd` — validation.
+- `game/world/bindings/wave_manager_simulation_binding.gd` — sends data-only strategic assault plans through WaveManager's physical spawn API and reports physical completion back as a typed observation.
+- `tools/validation/run_world_simulation_migration_suite.sh`, `world_simulation_macro_state_smoke.gd`, and `*simulation*smoke.gd`/`campaign_outcome_exactly_once_smoke.gd` — simulation order, determinism, snapshot, parity, and physical-handoff validation.
 - `docs/ai_context/task_packets/PYTHON_SIM_GODOT_RUNTIME_INTEGRATION.md` — task packet.
 - `tools/validation/fixtures/world_simulation/` — checked-in parity fixtures retained as Godot migration evidence; the active suite validates the Godot contract without invoking a retired runtime.
 

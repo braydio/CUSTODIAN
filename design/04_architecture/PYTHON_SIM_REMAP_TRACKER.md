@@ -24,7 +24,7 @@ The remap is complete when:
 | ID | Slice | Scope | Status | Completion evidence |
 |---|---|---|---|---|
 | REMAP-0 | Runtime foundation | Clock/kernel, commands, snapshots, policies, resources, strategic power, logistics, repair/fabrication foundations, invariants, campaign outcome | COMPLETE | Existing migration suite and parity v2 |
-| REMAP-1 | Macro world-state completion | Relay state, deterministic systemic-event weighting/state, strategic assault state/handoff | READY | Task packet `PYTHON_SIM_MACRO_WORLD_STATE_COMPLETION.md` |
+| REMAP-1 | Macro world-state completion | Relay state, deterministic systemic-event weighting/state, strategic assault state/handoff | COMPLETE | Macro-order/determinism/snapshot continuation smoke; parity v3 fixtures; physical WaveManager handoff and completion-observation boundary; migration suite |
 | REMAP-2 | Infrastructure degradation completion | Wear, fidelity, full repair semantics, ambient fabrication semantics | QUEUED | Focused parity + snapshot/restore + macro-order validation |
 | REMAP-3 | Campaign persistence | Disk save/load for authoritative campaign/world state and durable route/domain state where applicable | QUEUED | Save → process restart → restore → deterministic continuation |
 | REMAP-4 | Migration closeout | Expand final parity surface, reconcile docs, classify intentionally retired Python systems, mark migration complete | BLOCKED_BY_1_2_3 | Final migration suite green; no unresolved active Python dependency |
@@ -152,10 +152,17 @@ final parity + migration closeout
 ## Progress
 
 - Runtime foundation: 100%
-- Macro world-state completion: 0%
+- Macro world-state completion: 100%
 - Infrastructure degradation completion: 0%
 - Campaign persistence: 0%
 - Migration closeout: 0%
 
-Overall remaining-remap program: **~20% complete by slice count**
-(the foundation slice is already complete).
+Overall remaining-remap program: **~40% complete by slice count**
+(runtime foundation and macro world-state completion are done; persistence and closeout remain).
+
+### REMAP-1 classifications
+
+- **PORT:** stable relay identities/sectors/status/stability decay, packet and knowledge progression, dormancy pressure; event context counters, category thresholds/base weights/context multipliers, recent-key suppression and deterministic seeded selection; strategic approach/target/ETA/warning/handoff/history; seeded deterministic continuation.
+- **SUPERSEDED:** Python event key catalog/cooldowns and exact selection sequence (the Godot catalog is intentionally compact and consumes the serialized Godot RNG); Python event consequences that mutate its parallel sector damage/power/effect model; Python assault target weights, route graph, intercept-ammo simulation, and tactical bridge results. Godot macro events only change current `SectorSimulationState` alertness/occupancy and ambient threat. Assault completion is recorded only after a physical WaveManager completion observation.
+- **RETIRED:** terminal event prose/name generation, detection/prose randomness, Python tactical autopilot, simulated kills/HP/ammunition/salvage, and Python assault outcome resolution.
+- **DESIGN_DECISION_REQUIRED:** none for the retained REMAP-1 surface. Macro relay data remains campaign snapshot state; the existing ARRN autoload continues to own player-facing relay interaction.

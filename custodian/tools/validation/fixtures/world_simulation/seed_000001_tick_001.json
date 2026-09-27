@@ -49,7 +49,7 @@
     }
   ],
   "commands_schema": "custodian.simulation_commands.v2",
-  "fixture_schema": "custodian.python_sim.godot_port_parity.v2",
+  "fixture_schema": "custodian.python_sim.godot_port_parity.v3",
   "projection": {
     "inventory": {
       "ASSEMBLIES": 0,
@@ -62,6 +62,44 @@
       "multiplier": 1,
       "pressure": 0,
       "throughput": 3
+    },
+    "macro_state": {
+      "assault": {
+        "eta_ticks": 0,
+        "ingress": "",
+        "phase": "NONE",
+        "target": ""
+      },
+      "relay_dormancy_pressure": 0,
+      "relay_knowledge": 0,
+      "relays": {
+        "R_ARCHIVE": {
+          "packets_pending": 0,
+          "sector_id": "ARCHIVE",
+          "stability": 40,
+          "status": "UNKNOWN"
+        },
+        "R_GATEWAY": {
+          "packets_pending": 0,
+          "sector_id": "GATEWAY",
+          "stability": 40,
+          "status": "UNKNOWN"
+        },
+        "R_NORTH": {
+          "packets_pending": 0,
+          "sector_id": "T_NORTH",
+          "stability": 79.5,
+          "status": "LOCATED"
+        },
+        "R_SOUTH": {
+          "packets_pending": 0,
+          "sector_id": "T_SOUTH",
+          "stability": 79.5,
+          "status": "LOCATED"
+        }
+      },
+      "ticks_since_assault": 1,
+      "ticks_since_hostile": 1
     },
     "policies": {
       "defense_readiness": 2,
@@ -93,7 +131,7 @@
     "resources": {
       "materials": 3
     },
-    "schema_version": 2,
+    "schema_version": 3,
     "seed": 1,
     "stocks": {
       "repair_drones": 0,
@@ -101,6 +139,6 @@
     },
     "world_tick": 1
   },
-  "projection_sha256": "b033919137cfe7cfd2cd98963ef609e35eae89016f1a593005c725de882cd269",
+  "projection_sha256": "91057edc483acb4d35529e48dbb70d1e591a29e175651228d8ca60583e6d8523",
   "seed": 1
 }

@@ -10,7 +10,7 @@ Godot is the sole live runtime authority. Python is an offline executable specif
 
 `fixed_tick` advances once per authoritative 1/60-second step. After each group of 60 fixed steps, macro systems resolve the outgoing interval, then `world_tick` increments, invariants and critical failure are evaluated, and an immutable snapshot is emitted. World tick 100 therefore corresponds to fixed tick 6000. Presentation catch-up is bounded to eight steps; excess presentation time is discarded and counted only in clock diagnostics. Headless determinism drives `SimulationKernel` directly.
 
-Implemented macro order is strategic policy power, Python-compatible logistics, repairs, and fabrication. Relay, systemic-event, and strategic-assault slots remain deferred.
+Implemented macro order is strategic policy power, Python-compatible logistics, repairs, fabrication, relay progression, systemic events, strategic assault, world-tick increment, invariants, and critical-failure evaluation. The seven system slots are asserted by `world_simulation_macro_state_smoke.gd`.
 
 ## Identity and adapter boundaries
 
@@ -18,20 +18,21 @@ Implemented macro order is strategic policy power, Python-compatible logistics, 
 
 Strategic power load lives in `PowerSimulationSystem`. Existing scene power remains local physical delivery. `WaveManager` remains physical spawn execution behind a typed plan bridge. `FabPipeline` remains a delivery/presentation adapter and does not advance simulation jobs.
 
-## Python parity v2
+## Python parity v3
 
-Fixtures for seeds 1/2 and world ticks 0/1/10/100 include the scheduled command stream, normalized projection, and shared SHA-256. Covered fields: seed, world tick, materials, inventory/stocks under a limited bootstrap, policy levels and dictionaries, strategic power load, and logistics. The fixture bootstrap disables ambient fabrication because that Python algorithm is not ported.
+Fixtures for seeds 1/2 and world ticks 0/1/10/100 include the scheduled command stream, normalized projection, and shared SHA-256 (parity schema v3). Covered fields include the prior resource/policy/power/logistics surface plus relay IDs, sectors, statuses, stability and packet counts; relay knowledge; event assault/hostile context counters; and inactive strategic assault state. The fixture bootstrap disables ambient fabrication because that Python algorithm is not ported. Event-key/category selection and active strategic approaches intentionally use the Godot serialized RNG and are validated by Godot same-seed trace/restore tests rather than treated as Python authorities.
 
-Not parity-covered: ambient threat, RNG events, prose, topology, relays, assaults, wear, fidelity, repair/fabrication progression, and failure. Pure Godot tests cover commands, pause retention, catch-up, snapshots/restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes.
+Not parity-covered: ambient threat, selected event key/category sequence, active strategic approaches, prose, topology, wear, fidelity, repair/fabrication progression, and failure. Pure Godot tests cover commands, pause retention, catch-up, snapshots/restore, Command Post failure, repair/fabrication foundations, and exactly-once outcomes.
 
 ## Current status
 
 - Live runtime authority: yes.
-- Python parity coverage: policies, resources, limited-bootstrap inventory/stocks, power load, logistics.
-- Pure Godot deterministic coverage: snapshots, commands, campaign lifecycle, critical failure, repair/fabrication foundations.
+- Python parity coverage: policies, resources, limited-bootstrap inventory/stocks, power load, logistics, retained relay/event context, and inactive strategic assault state.
+- Pure Godot deterministic coverage: snapshots, commands, campaign lifecycle, critical failure, repair/fabrication foundations, relay/event/assault evolution and restore.
 - Adapter-only: local power delivery, physical WaveManager spawning, FabPipeline delivery.
-- Not yet ported: relays, systemic random events, full assaults, wear, fidelity, ambient fabrication, full Python repairs.
+- Implemented in REMAP-1: macro relay state/progression, deterministic systemic-event context/selection, and strategic assault approach/handoff. Loaded combat remains physical through WaveManager.
+- Not yet ported: wear, fidelity, ambient fabrication, full Python repairs, and campaign disk persistence.
 
 ## Next Agent Slice
 
-Port relay state first in macro order, then deterministic event weighting and strategic assault state before expanding parity. Keep one runtime owner, never launch Python from Godot, and add fields to parity only after exact algorithm matches. Acceptance requires repeated command-trace determinism, exact restore, focused cross-runtime comparison, and asserted macro order.
+REMAP-1 is complete. Continue with REMAP-2 under the tracker; keep one runtime owner and never launch Python from Godot. Extend parity only for retained semantics that match exactly.
