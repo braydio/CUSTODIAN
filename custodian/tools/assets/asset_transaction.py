@@ -59,6 +59,28 @@ def _journal_sidecar(
         record.created_targets.append(sidecar)
 
 
+def journal_retired_target(
+    record: TransactionRecord,
+    staging_dir: Path,
+    project_dir: Path,
+    relative: Path,
+) -> Path:
+    """Back up an explicitly retired runtime asset and its Godot sidecar."""
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ValueError(f"unsafe retired runtime path: {relative}")
+    target = (project_dir / relative).resolve()
+    if not target.is_relative_to(project_dir.resolve()):
+        raise ValueError(f"retired runtime path escapes project: {relative}")
+    if target.is_file() and target not in record.backups:
+        backup = staging_dir / "backups" / relative
+        backup.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(target, backup)
+        record.backups[target] = backup
+        record.replaced_targets.append(target)
+    _journal_sidecar(record, staging_dir, target, relative)
+    return target
+
+
 def new_job_id() -> str:
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     short = uuid.uuid4().hex[:8]

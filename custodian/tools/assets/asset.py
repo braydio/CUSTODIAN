@@ -19,7 +19,7 @@ if str(ASSETS_DIR) not in sys.path:
     sys.path.insert(0, str(ASSETS_DIR))
 
 from adapters.godot_import import DEFAULT_GODOT_IMPORT_TIMEOUT_SEC
-from asset_catalog import CatalogEntry, file_hash, load_catalog, save_catalog, update_catalog_entry
+from asset_catalog import CatalogEntry, asset_catalog_key, file_hash, load_catalog, save_catalog, update_catalog_entry
 from asset_contract import SCHEMA_VERSION, load_all_families, parse_family
 from asset_doctor import run_doctor
 from asset_plan import AssetOperation, generate_plan
@@ -173,6 +173,15 @@ def cmd_ingest(args, families):
     if not plan.can_apply:
         print(f"\nFix the blocking issues, then run:\n  asset plan {family.id}")
         return 2
+    retire_states = list(dict.fromkeys(getattr(args, "retire_state", []) or []))
+    retirement_entries, retirement_error = _validate_state_retirement(
+        family, plan, PROJECT_DIR, retire_states
+    )
+    if retirement_error:
+        print(f"\n{MARK['error']} State retirement refused\n\n{retirement_error}")
+        return 2
+    if retire_states:
+        print("\nStates retired after successful ingest: " + ", ".join(retire_states))
     if args.dry_run:
         print(f"\n{MARK['success']} Dry run complete · no files changed")
         return 0
@@ -188,7 +197,7 @@ def cmd_ingest(args, families):
             print("  Godot cache changes are not transactional: " + ", ".join(plan.post_process))
     if not args.yes and input("\nApply this plan? [y/N] ").strip().lower() not in {"y", "yes"}:
         return 1
-    from asset_transaction import begin_transaction, commit_transaction, new_job_id, rollback_transaction
+    from asset_transaction import begin_transaction, commit_transaction, journal_retired_target, new_job_id, rollback_transaction
     job_id = new_job_id()
     record, staging = begin_transaction(job_id, PROJECT_DIR, list(plan.assets))
     try:
@@ -197,12 +206,31 @@ def cmd_ingest(args, families):
             result = module.stage_asset(asset, PROJECT_DIR, replace=args.replace, work_dir=staging)
             if not result.ok:
                 raise RuntimeError("; ".join(result.errors))
+        retired_runtime_targets = []
+        for entry in retirement_entries:
+            relative = Path(str(entry.get("path", "")))
+            retired_runtime_targets.append(
+                journal_retired_target(record, staging, PROJECT_DIR, relative)
+            )
         for output in plan.outputs:
             for superseded in output.superseded_targets:
                 old_target = PROJECT_DIR / superseded
                 if old_target.is_file():
                     old_target.unlink()
+        for old_target in retired_runtime_targets:
+            if old_target.is_file():
+                old_target.unlink()
+            old_sidecar = Path(str(old_target) + ".import")
+            if old_sidecar.is_file():
+                old_sidecar.unlink()
         catalog = load_catalog()
+        family_catalog = catalog.get("families", {}).get(family.id, {}).get("assets", {})
+        retired_keys = [
+            asset_catalog_key(str(entry.get("state_id", "")), str(entry.get("direction", "omni")))
+            for entry in retirement_entries
+        ]
+        for catalog_key in retired_keys:
+            family_catalog.pop(catalog_key, None)
         receipt_assets = []
         for asset in plan.assets:
             for output in asset.outputs:
@@ -220,6 +248,21 @@ def cmd_ingest(args, families):
                 raise RuntimeError(import_result.detail)
         save_catalog(catalog)
         archive_root = PROJECT_DIR / "asset_drop/archive" / job_id / family.id
+        retired_receipts = []
+        for old_target in retired_runtime_targets:
+            for target in (old_target, Path(str(old_target) + ".import")):
+                backup = record.backups.get(target)
+                if backup is None or not backup.is_file():
+                    continue
+                relative = target.relative_to(PROJECT_DIR)
+                archived = archive_root / "retired" / relative
+                archived.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(backup, archived)
+                retired_receipts.append({
+                    "path": relative.as_posix(),
+                    "archive_path": archived.relative_to(PROJECT_DIR).as_posix(),
+                    "sha256": hashlib.sha256(backup.read_bytes()).hexdigest(),
+                })
         input_receipts = []
         for asset in plan.assets:
             archive = archive_root / asset.source_path.name
@@ -228,7 +271,7 @@ def cmd_ingest(args, families):
             shutil.move(str(asset.source_path), str(archive))
             record.archived_inputs[asset.source_path] = archive
             input_receipts.append({"path": asset.source_path.relative_to(PROJECT_DIR).as_posix(), "sha256": digest})
-        receipt = {"schema": "custodian.asset_ingest_job.v2", "job_id": job_id, "timestamp": record.timestamp, "family": family.id, "kind": family.kind, "inputs": input_receipts, "outputs": receipt_assets, "backends": sorted({asset.backend for asset in plan.assets}), "post_process_hooks": list(plan.post_process), "godot_import": {"attempted": args.godot_import, "ok": import_result.ok if import_result else None}, "validation_evidence": [], "result": "success"}
+        receipt = {"schema": "custodian.asset_ingest_job.v2", "job_id": job_id, "timestamp": record.timestamp, "family": family.id, "kind": family.kind, "inputs": input_receipts, "outputs": receipt_assets, "retired_states": [{"state_id": state_id, "paths": sorted({str(entry.get("path", "")) for entry in retirement_entries if entry.get("state_id") == state_id})} for state_id in retire_states], "retired_files": retired_receipts, "backends": sorted({asset.backend for asset in plan.assets}), "post_process_hooks": list(plan.post_process), "godot_import": {"attempted": args.godot_import, "ok": import_result.ok if import_result else None}, "validation_evidence": [], "result": "success"}
         commit_transaction(record, PROJECT_DIR, receipt)
         mirrored = sum(output.provenance == "mirrored" for output in plan.outputs)
         replaced = sum(output.operation == AssetOperation.REPLACE for output in plan.outputs)
@@ -240,6 +283,43 @@ def cmd_ingest(args, families):
         rollback_transaction(record, PROJECT_DIR)
         print(f"\n{MARK['error']} Ingest failed; all managed changes were rolled back\n\n{exc}\n\nRun:\n  asset plan {family.id} --verbose")
         return 2
+
+
+def _validate_state_retirement(family, plan, project_dir: Path, state_ids: list[str]):
+    """Permit explicit retirement only for optional states superseded by this ingest."""
+    if not state_ids:
+        return [], ""
+    catalog = load_catalog(project_dir / "content/metadata/assets/generated/asset_catalog.generated.json")
+    assets = catalog.get("families", {}).get(family.id, {}).get("assets", {})
+    replacement_roles = {
+        tuple(output.key.semantic_identity[:4]) + (output.key.direction,)
+        for output in plan.outputs
+    }
+    retired_entries = []
+    for state_id in state_ids:
+        state = family.states.get(state_id)
+        if state is None:
+            return [], f"{state_id}: retirement must first be declared as an optional family state"
+        if state.required or state.recommended:
+            return [], f"{state_id}: only optional states can be retired"
+        entries = [entry for entry in assets.values() if str(entry.get("state_id", "")) == state_id]
+        if not entries:
+            return [], f"{state_id}: no registered catalog outputs to retire"
+        for entry in entries:
+            relative = str(entry.get("path", ""))
+            identity = tuple(entry.get("semantic_identity", ()))
+            if len(identity) < 6 or identity[:4] + (identity[5],) not in replacement_roles:
+                return [], f"{state_id}: replacement ingest has no output for the same semantic role as {relative}"
+            expected = "res://" + relative
+            for consumer in family.consumers:
+                consumer_path = str(consumer.get("path", ""))
+                if not consumer_path.startswith("res://"):
+                    continue
+                source = project_dir / consumer_path.removeprefix("res://")
+                if source.is_file() and expected in source.read_text(encoding="utf-8"):
+                    return [], f"{state_id}: consumer still references retiring output {relative}: {consumer_path}"
+        retired_entries.extend(entries)
+    return retired_entries, ""
 
 
 def _status_payload(family, status) -> dict:
@@ -463,6 +543,12 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--yes", action="store_true")
     command.add_argument("--dry-run", action="store_true")
     command.add_argument("--replace", action="store_true")
+    command.add_argument(
+        "--retire-state",
+        action="append",
+        default=[],
+        help="Retire an optional state only when this ingest supersedes its outputs and no consumer references them.",
+    )
     command.add_argument("--godot-import", action="store_true")
     command.add_argument("--godot-import-timeout", type=float, default=DEFAULT_GODOT_IMPORT_TIMEOUT_SEC,
                          help="seconds to allow the Godot import when --godot-import is set "

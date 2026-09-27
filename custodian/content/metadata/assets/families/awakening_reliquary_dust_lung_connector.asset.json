@@ -11,20 +11,31 @@
     "filename_template": "{owner}_{variant}_{frame_size}.png"
   },
   "canvas": {
-    "width": 832,
-    "height": 384
+    "width": 1024,
+    "height": 576
   },
   "direction_policy": "omni",
   "auto_mirror": false,
   "states": {
-    "full_plate": {
+    "full_plate_underlay": {
       "required": true,
       "layer": "background",
       "action_group": "connector",
-      "variant": "full_plate",
+      "variant": "full_plate_underlay",
       "layout": "copy",
-      "frame_width": 832,
-      "frame_height": 384,
+      "frame_width": 1024,
+      "frame_height": 576,
+      "frames": 1,
+      "fps": 0
+    },
+    "full_plate_foreground": {
+      "required": false,
+      "layer": "foreground",
+      "action_group": "connector",
+      "variant": "full_plate_foreground",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 576,
       "frames": 1,
       "fps": 0
     }

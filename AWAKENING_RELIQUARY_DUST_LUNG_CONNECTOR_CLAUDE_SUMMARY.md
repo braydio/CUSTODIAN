@@ -1,85 +1,28 @@
-# Awakening Reliquary–Dust Lung connector full-plate pass
+# Awakening 04→05 connector visual-envelope repair
 
-## Source and normalization
+## Current implementation status — landed with visual QA follow-up
 
-- Approved master: root `connector_a.png`, **1374×1145 RGB**, SHA-256
-  `8ff4fc38682bad5d27ef81293833e5a7629a08c030f39532ad08df9f5d6e1264`.
-- Byte-identical source master:
-  `custodian/asset_drop/source_work/awakening/awakening_reliquary_dust_lung_connector/full_plate_source.png`.
-- No source was rejected or quarantined. Existing A/B/C source masters were left intact.
-- Deterministic normalizer:
-  `custodian/tools/assets/compose_awakening_connector_full_plate.py`.
-  It performs uniform-scale Lanczos reductions, keeps the generated stone/shadow
-  pixels, and clears alpha only outside the three target route regions.
+- Immutable approved source master: `custodian/asset_drop/source_work/awakening/awakening_reliquary_dust_lung_connector/full_plate_source.png` (1374×1145 RGB). The source was not edited.
+- The earlier 832×384 full plate is **rejected**: it cleared architecture outside the three traversal rectangles and produced floating floor strips. Its V2 state/runtime catalog entry was retired transactionally; prior ingest provenance remains archived.
+- The compositor now uses expanded source extractions registered to the locked route anchors, a uniform Lanczos scale per extraction, and authored geometric silhouette masks. It does not color-key dark pixels. It also copies existing 04/05 room underlay pixels into the 96px shared canvases at exact world registration to prevent doubled threshold/stair art. Result: 1024×576 RGBA underlay, centered at `(352,-2464)`, with the unchanged traversal regions at local `(96,96,128,96)`, `(160,192,704,128)`, `(800,320,128,160)`.
+- Source extraction anchors/crops: hall `(250,530)`, crop `(140,400,1374,850)`, scale `0.79368658`; Dust Lung `(143,370)`, crop `(0,204,520,650)`, scale `0.59813084`; Reliquary `(1030,691)`, crop `(860,600,1374,1145)`, scale `0.59813084`. The crops overlap; ordered composition retains both architectural elbows and landing surrounds.
+- Runtime: `custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png`, bound as the required Asset V2 `full_plate_underlay` state. Old A/B/C provenance remains; those sprites are not scene-wired.
+- Foreground extraction was attempted conceptually but is unsafe from this flattened RGB master: tall architecture, floor shadows, and illumination are inseparable. No fabricated foreground state or node is published. The optional V2 `full_plate_foreground` state remains unbound; occlusion layering is a known limitation.
+- Scene node: `World/AwakeningZones/Traversal/ProductionArt/Connector04_05_Underlay`, centered at `(352,-2464)`. It has no gameplay children. The existing fade is derived from merged Layout A/B/C rectangles and remains 128px; it also supports the optional foreground node if one is later authored.
+- `awakening_layout.gd` was not changed. A/B/C and their union remain exact; traversal, collision, progression, triggers, P-9, room positions, and lighting geometry are unchanged.
 
-| Segment | Source crop `(left, top, right, bottom)` | Source pixels | Target plate rect | Scale |
-|---|---|---:|---|---:|
-| Dust Lung threshold/run | `(143, 370, 357, 530)` | 214×160 | `(0, 0, 128, 96)` | 0.5981 |
-| Eastward middle hall | `(250, 530, 1137, 691)` | 887×161 | `(64, 96, 768, 224)` | 0.7937 |
-| Reliquary landing/south run | `(1030, 691, 1244, 958)` | 214×267 | `(704, 224, 832, 384)` | 0.5981 |
+## Validation and direct visual review
 
-- Normalized intake: `custodian/asset_drop/inbox/awakening_reliquary_dust_lung_connector/full_plate.png`;
-  Asset V2 archived the ingested inbox derivative after publication.
-- Final plate: **832×384 RGBA**, one frame. All pixels outside the union of the
-  three registered corridor regions are alpha 0; pixels within the authored
-  regions are opaque, including intentional near-black stone/shadow.
+- Asset V2 plan: exactly one 1024×576 underlay output. Ingest/import succeeded; status reports the required underlay bound and no stale `full_plate` catalog record. Doctor's only warning is the unrelated unregistered Operator inbox.
+- Focused: `awakening_first_return_smoke.gd` PASS; `awakening_first_return_geometry_smoke.gd` PASS; `awakening_first_return_progression_smoke.gd` PASS; `asset_pipeline_ingest_smoke.py` PASS (including transactional optional-state retirement).
+- Focused validation on the fresh-main integration worktree: Asset V2 ingest smoke PASS; Awakening geometry smoke PASS; Awakening scene and progression smoke assertions PASS. Godot logs an unrelated invalid WAV import and existing camera conversion errors during scene/progression runs. Asset doctor reports no connector error; its only warning is the unrelated unregistered Operator inbox. A full changed-file sweep was not rerun in this isolated integration worktree.
+- Windowed Vulkan captures were generated and inspected directly:
+  - `reports/awakening_connector_04_05/connector_C.png`
+  - `reports/awakening_connector_04_05/connector_B.png`
+  - `reports/awakening_connector_04_05/connector_A.png`
+  - `reports/awakening_connector_04_05/connector_overview.png`
+- Review confirms the expanded plate restores walls/parapets, lamps, route lines, both turns, and a transparent exterior silhouette. Exact registered room pixels and z-order remove doubled threshold/stair details, but the latest C/A captures still show a noticeable straight join at the room-canvas edge; visual acceptance remains unresolved against the no-hard-seam criterion. The flattened layer also cannot independently render tall structures over the Operator. The capture paths are evidence for the current state, not final acceptance. The user authorized landing this connector slice with that visual follow-up explicitly recorded.
 
-## Runtime and layout
+## Rejected-version history
 
-- Asset V2 family `awakening_reliquary_dust_lung_connector` now contains one
-  required `full_plate` backdrop state, `background` / `connector`, `copy`,
-  832×384, one frame, 0 FPS.
-- Runtime output:
-  `custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_832x384.png`.
-- Scene presentation is one centered `Connector04_05_FullPlate` at
-  `Vector2(352, -2464)` under
-  `World/AwakeningZones/Traversal/ProductionArt`.
-- The old A/B/C runtime files remain as historical assets but are no longer live
-  scene sprites. Their stale generated catalog records were removed; no source
-  provenance was deleted.
-- `Layout.CONNECTORS` was not edited. Smoke assertions still lock the A/B/C
-  rectangles and assert that their merged envelope is `Rect2(-64, -2656, 832,
-  384)`. Collision, traversal, room envelopes, P-9, progression, triggers,
-  camera reveals, and lighting geometry were not changed.
-- Fade distance remains `ZONE_ART_FADE_DISTANCE`; runtime derives the nearest
-  point from the merged Layout A/B/C envelope.
-
-## Validation and visual QA
-
-- Focused scripts: `awakening_first_return_smoke.gd` **PASS**;
-  `awakening_first_return_geometry_smoke.gd` **PASS** (16,801 safe cells; 555
-  route cells); `awakening_first_return_progression_smoke.gd` **PASS**.
-- Asset V2 status: `full_plate` **READY / OMNI**. Asset doctor reports no
-  errors; its one warning is an unrelated unregistered Operator inbox with 12
-  PNGs.
-- `python3 custodian/tools/validation/run_validation.py --changed --json`:
-  **66 selected, 66 passed, 0 failed, 0 timed out**. The overall JSON `passed`
-  field is false only because changed-file coverage is incomplete for 25 files:
-  the raw root connector inputs (`connector_a/b/c.png`), concurrent Operator
-  runtime/source outputs and inputs, and unrelated Reaper audio assets. No
-  selected validation failed. Awakening smoke, geometry, and progression all
-  passed in this sweep.
-- Runtime evidence (windowed Vulkan render; the headless dummy renderer cannot
-  capture SubViewport images) is saved under
-  `reports/awakening_visual_walkthrough/connector_full_plate_pass_20260926/`:
-  `center_C.png`, `center_B.png`, `center_A.png`, and `whole_transition.png`.
-  Review found the route connected through both turns, the south threshold
-  meets the Reliquary plate, operator scale is believable, and no hard crop seam,
-  wall duplication, or stretched anatomy is visible. The transparent exterior
-  reveals the existing dark world void as intended.
-
-## Awkward failures and negative controls
-
-- The first capture command used `--headless`, which selects Godot's dummy
-  renderer and returned a null SubViewport texture. The capture was rerun using
-  the windowed Vulkan renderer and produced all four reviewed images.
-- Asset doctor initially found three stale A/B/C records in the generated
-  catalog after the family migration. Those orphan catalog records were removed;
-  the old runtime/source files remain preserved.
-- An initial runner invocation used an incorrect test ID and returned a
-  configuration error; the exact smoke scripts were then run directly and
-  passed.
-- Focused scene/progression scripts print the project's known exit-time
-  ObjectDB/resource leak warnings while returning PASS.
-- The locked Layout rectangles remain unchanged; the existing traversal and
-  collision regression passed. No nearby room or gameplay geometry was moved.
+The previous 832×384 screenshots under `reports/awakening_visual_walkthrough/connector_full_plate_pass_20260926/` document the rejected composition only. Their earlier “no hard crop seam / visually acceptable” verdict is superseded by the user's review and must not be used as acceptance evidence. The present implementation remains uncommitted pending a clean, directly reviewed room join.

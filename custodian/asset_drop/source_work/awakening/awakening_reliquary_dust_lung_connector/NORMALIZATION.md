@@ -23,16 +23,27 @@ transparent 128×160 RGBA canvas (16px transparent top and bottom). No crop,
 stretch, or alpha flattening was applied. The final inbox image remains the
 family's `connector_a` state and canonical runtime path.
 
-## Full composition source — 2026-09-26
+## Rejected first full-plate composition — 2026-09-26
 
 The newly approved root master `connector_a.png` (1374×1145 RGB) is preserved
 separately as `full_plate_source.png`; it is not treated as the old A state.
-Its Dust Lung threshold, eastward hall, and Reliquary landing/run are cropped
-and registered as one 832×384 plate by
-`custodian/tools/assets/compose_awakening_connector_full_plate.py`. See
-`README.md` for the exact source pixel-edge crop boxes and target rectangles.
-Lanczos resizing uses one uniform scale per crop. The source has an opaque dark
-field, so the normalizer retains dark architectural pixels inside each crop and
-sets only canvas beyond the three locked plate regions to true alpha. Asset V2
-publishes the `full_plate` state; historical A/B/C source and runtime files are
-kept as provenance but are no longer scene presentation.
+Its earlier 832×384 composition was rejected during visual review because it
+cleared architecture outside three traversal rectangles, leaving floating floor
+strips. That version is retired from the runtime catalog and retained only in
+its ingest archive.
+
+## Corrected architectural underlay — 2026-09-26
+
+The approved flattened RGB source master remains unchanged. The compositor now
+uses the original floor crops only as registration anchors and extracts expanded
+architectural surroundings with authored silhouette masks, uniform Lanczos
+scales, and no luminance key. The output is a 1024×576 transparent RGBA
+`full_plate_underlay`, centered at world `(352, -2464)`; locked traversal lands
+at local `(96,96)`, `(160,192)`, and `(800,320)` without changing Layout.
+
+The source has no alpha channel or independently authored layers: corridor
+lighting, floor shadows, wall bases, and tall structures are flattened together.
+Separating only true foreground occluders would require arbitrary pixel cuts and
+would split baked shadows/lighting, so a foreground state is intentionally
+unbound rather than fabricated. Direct runtime captures, not this note, govern
+visual acceptance.

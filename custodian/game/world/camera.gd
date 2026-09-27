@@ -1,6 +1,12 @@
 extends Camera2D
 class_name CameraController
 
+const AUTHORED_SCENE_ZOOM_PROFILES: Array[StringName] = [
+	&"base_zoom", &"move_zoom", &"interaction_zoom", &"melee_zoom",
+	&"melee_move_zoom", &"ranged_zoom", &"ranged_move_zoom",
+	&"hitstun_zoom", &"sector_entry_zoom", &"heavy_zoom",
+]
+
 ## CUSTODIAN Camera System
 ## Readability → Weight → Immersion
 ##
@@ -176,6 +182,8 @@ var _presentation_subject: Node2D = null
 var _presentation_subject_inset := Vector4(0.04, 0.06, 0.04, 0.08)
 var _debug_free_camera_active := false
 var _debug_saved_state: Dictionary = {}
+var _authored_scene_zoom_baselines: Dictionary = {}
+var _authored_scene_zoom_scale := 1.0
 
 # Input
 var dragging := false
@@ -1009,6 +1017,27 @@ func get_ranged_aim_camera_snapshot() -> Dictionary:
 
 ## An authored world envelope wins over the procgen/connected-map rebuild, which
 ## would otherwise clear the clamp half a second after the level set it.
+func apply_authored_scene_zoom_scale(scale: float, max_zoom_override := Vector2.ZERO) -> void:
+	if scale <= 0.0 or is_nan(scale) or is_inf(scale):
+		push_warning("CameraController: authored scene zoom scale must be finite and positive")
+		return
+	for profile_name in AUTHORED_SCENE_ZOOM_PROFILES:
+		var key := String(profile_name)
+		if not _authored_scene_zoom_baselines.has(key):
+			_authored_scene_zoom_baselines[key] = get(key) as Vector2
+		set(key, (_authored_scene_zoom_baselines[key] as Vector2) * scale)
+	_authored_scene_zoom_scale = scale
+	if max_zoom_override != Vector2.ZERO:
+		max_zoom = max_zoom_override
+	zoom = base_zoom
+	target_zoom = base_zoom
+	_locked_zoom = base_zoom
+
+
+func get_authored_scene_zoom_scale() -> float:
+	return _authored_scene_zoom_scale
+
+
 func set_authored_map_bounds(bounds: Rect2) -> void:
 	authored_map_bounds = bounds
 	if bounds.size.x > 0.0 and bounds.size.y > 0.0:

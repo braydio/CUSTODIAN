@@ -21,6 +21,7 @@ from adapters import godot_import as godot_import_adapter
 from adapters.runtime_ready import stage_asset as runtime_stage
 from adapters.sprite_ingest import build_manifest, stage_asset as sprite_stage
 import asset as asset_cli
+import asset_catalog
 
 
 def fixture(root: Path):
@@ -85,6 +86,61 @@ def test_replacement_and_backend():
         png(inbox/"idle.png", color=(99,1,1,255)); replacement=generate_plan(family,inbox,root).assets[0]
         assert replacement.operation == AssetOperation.REPLACE and not runtime_stage(replacement,root).ok
         assert runtime_stage(replacement,root,replace=True).ok
+
+
+def test_optional_state_retirement_during_replacement():
+    """A superseded optional state is removed from the V2 catalog transactionally."""
+    with tempfile.TemporaryDirectory() as raw:
+        root = Path(raw)
+        family_path = root / "family.asset.json"
+        family_path.write_text(json.dumps({
+            "schema": "custodian.asset_family.v2", "id": "fixture", "kind": "backdrop",
+            "runtime": {"domain": "levels/test", "owner": "fixture", "template": "{domain}/{filename}", "filename_policy": "template", "filename_template": "{owner}_{variant}_{frame_size}.png"},
+            "canvas": {"width": 32, "height": 16}, "direction_policy": "omni",
+            "states": {
+                "legacy": {"required": False, "layer": "background", "action_group": "connector", "variant": "full_plate", "layout": "copy", "frame_width": 32, "frame_height": 16, "frames": 1, "fps": 0},
+                "underlay": {"required": True, "layer": "background", "action_group": "connector", "variant": "full_plate", "layout": "copy", "frame_width": 64, "frame_height": 32, "frames": 1, "fps": 0},
+            }, "aliases": {}, "consumers": []
+        }), encoding="utf-8")
+        family = load_family(family_path)
+        legacy_path = root / "content/levels/test/fixture_full_plate_32x16.png"
+        png(legacy_path, (32, 16))
+        godot_sidecar(legacy_path).write_text("old import", encoding="utf-8")
+        catalog_path = root / "content/metadata/assets/generated/asset_catalog.generated.json"
+        catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        catalog_path.write_text(json.dumps({"schema": "custodian.asset_catalog.v2", "families": {
+            "fixture": {"kind": "backdrop", "assets": {"legacy::omni": {
+                "state_id": "legacy", "direction": "omni",
+                "semantic_identity": ["fixture", "backdrop", "background", "connector", "full_plate", "omni"],
+                "path": "content/levels/test/fixture_full_plate_32x16.png", "frames": 1,
+                "frame_size": [32, 16], "sha256": hashlib.sha256(legacy_path.read_bytes()).hexdigest(),
+                "provenance": "authored", "source_asset": None
+            }}}
+        }}), encoding="utf-8")
+        inbox = root / "asset_drop/inbox/fixture"
+        png(inbox / "underlay.png", (64, 32))
+
+        old_project, old_inbox, old_catalog = asset_cli.PROJECT_DIR, asset_cli.INBOX_ROOT, asset_catalog.CATALOG_PATH
+        try:
+            asset_cli.PROJECT_DIR, asset_cli.INBOX_ROOT = root, root / "asset_drop/inbox"
+            asset_catalog.CATALOG_PATH = catalog_path
+            args = SimpleNamespace(family="fixture", dry_run=False, replace=True, yes=True,
+                                   godot_import=False, no_mirror=False, verbose=False,
+                                   retire_state=["legacy"])
+            assert asset_cli.cmd_ingest(args, {"fixture": family}) == 0
+            updated = json.loads(catalog_path.read_text(encoding="utf-8"))
+            assets = updated["families"]["fixture"]["assets"]
+            assert "legacy::omni" not in assets
+            assert assets["underlay::omni"]["path"].endswith("fixture_full_plate_64x32.png")
+            assert not legacy_path.exists()
+            assert not godot_sidecar(legacy_path).exists()
+            assert (root / assets["underlay::omni"]["path"]).is_file()
+            receipts = list((root / "asset_drop/logs").glob("*.json"))
+            assert len(receipts) == 1
+            receipt = json.loads(receipts[0].read_text(encoding="utf-8"))
+            assert receipt["retired_states"] == [{"state_id": "legacy", "paths": ["content/levels/test/fixture_full_plate_32x16.png"]}]
+        finally:
+            asset_cli.PROJECT_DIR, asset_cli.INBOX_ROOT, asset_catalog.CATALOG_PATH = old_project, old_inbox, old_catalog
 
 
 def test_duplicate_rollback_survives():
@@ -255,6 +311,7 @@ def snapshot(root: Path):
 
 
 CASES={"contract":test_contract_and_plan,"plan":test_contract_and_plan,"ingest":test_replacement_and_backend,
+       "retire_state":test_optional_state_retirement_during_replacement,
        "replacement":test_replacement_and_backend,"transaction":test_duplicate_rollback_survives,
        "status":test_status_runtime_not_inbox,"backend":test_sprite_delegation_and_dry_run,
        "animation":test_animation_contract,"godot_import_timeout":test_godot_import_timeout_contract,
