@@ -146,3 +146,19 @@ shell_snapshots/
 
 # Local-only shell helpers; never shared repository authority.
 tools/temporary_aliases.sh
+
+# =======================
+# RETIRED ROOT-LEVEL INGEST / REVIEW SCRATCH
+# =======================
+# Canonical source art belongs under custodian/asset_drop/source_work/ and
+# temporary review outputs belong outside the repository root.
+/review_ranged/
+/fast 1 vfx.png
+/fast_2_vfx.png
+/fast_3_vfx.png
+/fast_4_vfx.png
+/CRECHE_NEW_OVERLAY.png
+/CRECHE_NEW_UNDERLSAY.png
+/CUSTODIAN_Awakening_Next10_Runtime_Assets_*.zip
+/CUSTODIAN_Visual_Identity_Art_Correction_Batch*.zip
+/VALIDATION.json

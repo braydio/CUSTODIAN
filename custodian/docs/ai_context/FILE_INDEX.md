@@ -21,7 +21,7 @@
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
 reciprocity, and runtime-vs-fiction lifecycle terminology.
 
-Last updated: 2026-09-26
+Last updated: 2026-09-27
 
 ## Map + AI Coherence
 
@@ -183,14 +183,18 @@ Last updated: 2026-09-26
 - `custodian/tools/iteration/scenarios/traversal/awakening_underlays_zones_01_05.json` and `custodian/tools/validation/fixtures/awakening_underlays_moment.*` — deterministic Moment Forge registration review for the first five production environment underlays and the art/blockout handoff.
 - `custodian/scenes/debug/awakening_first_return_mapper.tscn` — Awakening collision/POI mapper framed on the whole dungeon spine, with section envelopes, critical path, optional branch, camera reveals, encounter slots, interaction markers, and future-art anchors overlaid from `awakening_layout.gd`.
 - `custodian/scenes/debug/awakening_first_return_debug.tscn` — dev-only tour: zone selector, teleport to entry, collision/zone/landmark overlays, reset progression. Adds no global hotkeys.
-- `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene.
-- `custodian/scenes/twin_solaria_v1.tscn` and `custodian/game/world/hub/twin_solaria_v1.gd` — separate native 2048×1536 Twin Solaria V1-A visual assembly; V2 environment plates sit at manifest coordinates over a fidelity underlay. Collision, operator/camera integration, and interaction remain V1-B/C work.
-- `custodian/content/metadata/assets/families/twin_solaria_v1_environment.asset.json` — Asset V2 contract for the eight native-size Twin Solaria environment plates.
+- `design/05_levels/TWIN_SOLARIA.md` — canonical Twin Solaria location/level authority: detached Crown Route Court, surviving Solarium I Acquisition Aperture, destroyed Solarium II Passage Aperture / Amputation, Crown Verge, route-acquisition grammar, gameplay progression, and future implementation slices.
+- `design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md` — specialized historical authority for the Crown Reciprocal Incident, deliberate Second Crown amputation, pre-cut anomalous evidence, Null Warrant safety-chain presence, network-scale Severing relationship, and explicit reserved mysteries.
+- `custodian/tools/validation/twin_solaria_canon_docs_smoke.py` — focused canon-drift tripwire for the two-aperture Twin Solaria lock, Second Crown narrative slice, Ground Zero uncertainty, and truthful development-only runtime status.
+- `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png` and adjacent `README.md` — persistent 3500x3000 documentation copy of the current master composite plus LFS/provenance/preservation contract; never a runtime target.
+- `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene or implement the Crown Route Court contract.
 
 ## Active Runtime Systems
 
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands, ambient Shrumb trait profile fields, contract-owned candidate generation, layout plus terrain fallback/connectivity acceptance logging, terrain-fallback candidate rejection/preference rules, and in-place promotion of the accepted structural candidate
-- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen façade and state host. Production disables the archived wide-road/parking generator through `intent_main_roads_enabled = false`, skipping its second repair/refresh/capture pass while retaining narrow interest paths and route authority. The opt-in road implementation remains available for debug comparison. The façade also owns world generation coordination, terrain/result export, collision/runtime blockers, accepted-candidate promotion, foliage/prop orchestration, presentation gauges, streaming, portals, authored-scene floor claims, and the cached five-branch procgen render-isolation surface used by the F2 attribution test.
+- `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen façade and state host. Production keeps archived wide-road carving disabled (`intent_main_roads_enabled = false`) while Road Semantics V2 derives intermittent route-backed ruined-road fragments and a bounded service apron. Ruined fragments use the shared filled-surface role grammar as `ruined_road` decals; the opt-in archived renderer remains separately keyed as `road`. Soft paths remain natural-material route presentation. The façade also owns world generation coordination, terrain/result export, collision/runtime blockers, accepted-candidate promotion, foliage/prop orchestration, presentation gauges, streaming, portals, authored-scene floor claims, and the cached five-branch procgen render-isolation surface used by the F2 attribution test.
+- `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd` and `surface_material_resolver.gd` — deterministic road-fragment/service-apron semantics and final natural/constructed floor-material classification; route/playability remains connectivity authority.
+- `custodian/tools/validation/procgen_road_semantics_v2_smoke.gd` and `procgen_road_semantics_v2_review.gd` — semantic, presentation, streaming, bounded service-apron, and fixed-seed visual review coverage.
 - `custodian/game/world/procgen/proc_gen_map.tscn` — active procgen map scene; currently keeps source-10 floor authority while disabling source-9/full-grid alternate floor patchwork for first-pass combat readability. Root `scale == Vector2.ONE`; native 32px TileSet grid, no root-scale compensation.
 - `custodian/game/world/procgen/procgen_spatial_contract.gd` — `ProcgenSpatialContract`: the single canonical 32px cell-size fallback (`CELL_SIZE_PX`, `CELL_SIZE`, `CELL_SIZE_I`, `HALF_CELL`) for defensive `tile_set == null` branches; not a coordinate service, does not replace `TileMap.map_to_local()`/`local_to_map()`.
 - `custodian/tools/validation/procgen_spatial_normalization_smoke.gd` — permanent smoke asserting the native-32px procgen spatial contract (root scale, TileSet tile_size, runtime tile size, cell-center steps/round-trips, map extents, spawn/wall/nav/shadow/Threadway/ContractWorldLoader/streaming alignment, and absence of compensatory 2x scale on structural nodes).
@@ -805,7 +809,7 @@ Last updated: 2026-09-26
 - `custodian/tools/art/build_reference_samplesheet.py` — Pillow-based utility that samples active runtime-facing tiles, walls, floors, ruin props, and environment prop sheets into a labeled design-reference PNG
 - `custodian/content/README.md` — stable content-root domain map and duplicate policy for runtime/source/legacy/quarantine asset placement
 - `custodian/content/levels/hub/Road_of_Witnesses_Tilemap.png` — retained legacy/source map image; active Road presentation uses modular plates under `custodian/content/levels/hub/road_of_witnesses/`
-- `custodian/content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png` — project-local development copy of the largest current Twin Solaria composite used by the dedicated backdrop test scene
+- `custodian/content/levels/hub/twin_solaria/development/twin_solaria_rebuilt_upscaled.png` — development/runtime-preview copy of the current Twin Solaria composite; the persistent documentation source reference is `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png`
 - `custodian/content/props/gothic/vault_dressing/source/unregistered/` — vault-owned source quarantine for unregistered vault prop art pending manifest/runtime promotion
 - `custodian/content/tiles/source/ashen_forum/`, `custodian/content/tiles/source/compound_ashen/`, `custodian/content/tiles/source/gothic_compound/`, and `custodian/content/tiles/source/roads_paths/` — source/master tile-sheet homes for previously loose top-level tile art
 - `custodian/content/reference/active_art_samplesheet.png` — generated design-reference sheet containing deterministic samples from active art directories; regenerate with `python3 custodian/tools/art/build_reference_samplesheet.py`
@@ -821,9 +825,10 @@ Last updated: 2026-09-26
 - `custodian/content/tiles/roads_paths/README.md` — local road/path asset layout, regeneration commands, and runtime/source split
 - `custodian/content/tiles/roads_paths/source/Pathways.json` — road/path role metadata used by the game32 normalizer and procgen surface mapping
 - `custodian/content/tiles/roads_paths/source/road_piece_exports/road_piece_manifest.json` — raw procgen road-piece metadata; maps variable-size stamp PNGs by connection bitmask before game-grid normalization
-- `custodian/content/tiles/roads_paths/runtime/placeholders/roads/PLACEHOLDER_road_piece_manifest.game32.json` — active temporary road stamp manifest used for main-map road and parking-zone overlays while production road art is reviewed; includes the 32x32 lane-role contract `center`, `left_1`, `left_2`, `right_1`, and `right_2`
+- `custodian/content/tiles/roads_paths/runtime/roads/surface/road_surface_piece_manifest.game32.json` — active 15-piece filled-surface role manifest shared by Road Semantics V2 ruined-road decals and the opt-in archived wide-road renderer; V2 and archived decals use distinct surface keys
+- `custodian/content/tiles/roads_paths/runtime/placeholders/roads/PLACEHOLDER_road_piece_manifest.game32.json` — archived connection-mask road stamp fallback retained for debug compatibility, not production wide-road generation
 - `custodian/content/tiles/roads_paths/runtime/placeholders/paths/PLACEHOLDER_path_piece_manifest.game32.json` — active temporary footpath/degraded-transition stamp manifest used for `soft_path` overlays while production path art is reviewed
-- `custodian/content/tiles/roads_paths/runtime/placeholders/` — current active road/path placeholder decal pack; all runtime images are intentionally named `PLACEHOLDER_*`
+- `custodian/content/tiles/roads_paths/runtime/placeholders/` — active soft-path placeholder decals plus archived road debug fallback; all runtime images are intentionally named `PLACEHOLDER_*`
 - `custodian/content/tiles/roads_paths/runtime/roads/standard/manifest.json`, `custodian/content/tiles/roads_paths/runtime/roads/gothic/manifest.json`, and `custodian/content/tiles/roads_paths/runtime/paths/path_piece_manifest.game32.json` — generated/candidate production road and path packs retained for replacement review, not active procgen defaults
 - `custodian/content/tiles/roads_paths/tools/normalize_road_pieces_game32.py` — pads raw road/path stamps to 32px game-grid canvases and emits separate road/path runtime manifests
 - `custodian/content/tiles/roads_paths/source/ancient_ruined_roads_and_paths.png` — source road/path sheet preserved as the visual source/reference for the runtime exports
@@ -980,6 +985,9 @@ Last updated: 2026-09-26
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — validation command recipes and selection rules
 - `custodian/docs/ai_context/prompts/` — reusable prompt templates for common agent tasks
 - `custodian/docs/ai_context/task_packets/` — active and completed task-scoped agent packets
+- `custodian/tools/agent/land_main.py` — lock-serialized, conflict-safe automatic landing of clean task branches on `origin/main`; never force-pushes
+- `custodian/tools/agent/validate_prompt_contract.py` — prompt/task-packet default-duplication linter with `TASK OVERRIDE:` handling
+- `custodian/tools/agent/test_land_main.py` and `custodian/tools/validation/agent_workflow_smoke.py` — temporary-repository landing tests and focused prompt-contract workflow validation
 - `design/90_codex/` — non-authoritative idea inventory and graduation audit trail; `tools/validate_design_codex.py` validates index coverage, metadata, graduation/runtime links, and packaging residue
 - `custodian/tools/validation/contract_resource_node_smoke.gd` — headless smoke test that loads `game.tscn`, verifies scarce generated tutorial resource nodes include blackwood/alloy/wreckage, verifies the far-field expedition patch covers every compatible resource-node kind, and checks generated/default node sprites build frames
 - `custodian/tools/validation/sundered_keep_asset_smoke.gd` — headless smoke test that instantiates the Sundered Keep connected map and fails if any slice `Sprite2D` has a missing texture or if the authored level-shape underlay is missing

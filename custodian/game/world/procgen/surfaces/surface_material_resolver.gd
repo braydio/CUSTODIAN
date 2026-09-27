@@ -13,6 +13,7 @@ func resolve(context: Dictionary) -> Dictionary:
 	var parking_cells: Dictionary = context.get("parking_cells", {})
 	var road_cells: Dictionary = context.get("road_cells", {})
 	var path_cells: Dictionary = context.get("path_cells", {})
+	var industrial_hardstand_cells: Dictionary = context.get("industrial_hardstand_cells", {})
 	var bridge_cells: Dictionary = context.get("bridge_cells", {})
 	var reserved_cells: Dictionary = context.get("reserved_cells", {})
 	var authored_cells: Dictionary = context.get("authored_cells", {})
@@ -30,6 +31,7 @@ func resolve(context: Dictionary) -> Dictionary:
 			continue
 		var material := _resolve_cell(cell, biome_by_cell, region_kind_by_cell,
 			region_data_by_cell, parking_cells, road_cells, path_cells,
+			industrial_hardstand_cells,
 			bridge_cells, reserved_cells, authored_cells)
 		material_by_cell[cell] = material
 		counts[material] = int(counts.get(material, 0)) + 1
@@ -45,20 +47,23 @@ func resolve(context: Dictionary) -> Dictionary:
 
 
 func _resolve_cell(cell: Vector2i, biome_by_cell: Dictionary, region_kind_by_cell: Dictionary,
-	region_data_by_cell: Dictionary, parking_cells: Dictionary, road_cells: Dictionary,
-	path_cells: Dictionary, bridge_cells: Dictionary, reserved_cells: Dictionary,
-	authored_cells: Dictionary) -> StringName:
+		region_data_by_cell: Dictionary, parking_cells: Dictionary, road_cells: Dictionary,
+		path_cells: Dictionary, industrial_hardstand_cells: Dictionary,
+		bridge_cells: Dictionary, reserved_cells: Dictionary,
+		authored_cells: Dictionary) -> StringName:
 	var region := String(region_kind_by_cell.get(cell, "")).to_lower()
 	var region_data: Dictionary = region_data_by_cell.get(cell, {}) as Dictionary
 	if authored_cells.has(cell) or reserved_cells.has(cell) or _contains_any(region, ["authored", "landmark", "story_room", "faction_"]):
 		return IDS.AUTHORED_LANDMARK
 	if bridge_cells.has(cell) or _contains_any(region, ["bridge", "ramp_bridge"]):
 		return IDS.BRIDGE
-	if _contains_any(region, ["industrial", "service_hardstand", "hardstand", "platform", "apron"]):
+	if industrial_hardstand_cells.has(cell) or _contains_any(region, ["industrial", "service", "hardstand", "platform", "apron"]):
 		return IDS.HARDENED_INDUSTRIAL
 	if parking_cells.has(cell) or _contains_any(region, ["parking", "plaza", "civic"]):
 		return IDS.HARDENED_CIVIC
-	if road_cells.has(cell) or path_cells.has(cell) or _contains_any(region, ["road", "path", "connector"]):
+	# path_cells remains accepted during migration for source compatibility, but
+	# generic soft paths are natural route presentation, not constructed roads.
+	if road_cells.has(cell) or _contains_any(region, ["road", "connector"]):
 		return IDS.RUINED_ROAD
 	if _contains_any(String(region_data.get("surface_role", "")).to_lower(), ["bridge"]):
 		return IDS.BRIDGE

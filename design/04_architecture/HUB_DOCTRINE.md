@@ -1,7 +1,7 @@
 # HUB WORLD DOCTRINE
 
 **Status:** draft
-**Last Updated:** 2026-04-22
+**Last Updated:** 2026-09-25
 
 ---
 
@@ -110,7 +110,7 @@ Campaign outcomes add to specific domains:
 
 ## 5. Spatial Layout
 
-Five mythic zones:
+Six mythic zones:
 
 ### The Road of Witnesses
 
@@ -140,20 +140,48 @@ Skybox and end-of-all-things feeling hits hardest here.
 A modest but severe route the player traverses repeatedly.
 Should become emotionally familiar so changes in hue and atmosphere land hard.
 
+### Twin Solaria / Crown Annex
+
+A detached continuity-adjudication complex reached from Archive Heights through the
+Crown Transfer.
+
+Twin Solaria reconstructs damaged or incomplete Lattice routes, tests reciprocal
+exposure, and presents route findings for Custodian judgment. Its two namesake
+Solaria are the giant Crown-class aperture courts, not literal suns. Solarium I, the
+Acquisition Aperture, survives; Solarium II, the Passage Aperture, was deliberately
+amputated during a Severing-era Crown Reciprocal Incident after abnormal reciprocal
+behavior was already underway.
+
+The exposed Crown Verge may resemble outer space, but its physical classification is
+intentionally unresolved. See `design/05_levels/TWIN_SOLARIA.md` and
+`design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
+
 ---
 
-## 6. Celestial Logic
+## 6. Exterior and Continuity Optics
 
-- The hub exists under an **abnormal terminal sky**
-- Two solar descents that do not behave like normal astronomy
-- Sometimes they overlap
-- Sometimes one is delayed, producing a doubled dusk
-- Atmospheric particulates cause the sky to prism and "firework" **only when enough chromatic information exists to refract**
+The Hub can still present abnormal sky, horizon, prism, star, and continuity
+phenomena, but these are no longer governed by a literal two-sun cosmology.
 
-Early game: effects mostly invisible or muted
-Later: recovered chroma gives the atmosphere something to work with
+Core rules:
 
-The city does not merely gain color. It gains a **relationship to light**.
+- strange exterior light may be astronomical, atmospheric, Lattice-derived, or unresolved;
+- recovered chroma can make weak optical relationships visible;
+- prismatic effects may reveal route markers, inscriptions, and damaged field geometry;
+- Archive Heights can observe route-reference and sky phenomena without claiming that
+  astronomy is the mechanism behind every anomaly;
+- Twin Solaria's Crown Verge is deliberately unresolved and must not be described as
+  ordinary outer space by default;
+- Twin Solaria route access is driven by route evidence and continuity state, not by
+  waiting for a solar alignment.
+
+Early game: optical relationships are muted or unreadable.
+
+Later: recovered chroma gives the city enough distinction for weak field, material,
+and exterior relationships to become legible.
+
+The city does not merely gain color. It gains a **relationship to light and
+continuity evidence**.
 
 ---
 
@@ -173,7 +201,7 @@ Instead:
 - What color family returned
 - What statue can now be identified
 - What mural now resolves into meaning
-- What celestial event is now visible
+- What field, optical, or exterior event is now visible
 - What part of the city now admits a new interpretation
 
 ---
@@ -309,14 +337,21 @@ Wildlife is not just ambience — it is diegetic telemetry:
 
 ---
 
-### 11.6 Prismatic Routing
+### 11.6 Prismatic and Continuity Optics
 
-Once enough color exists, the sky participates:
+Once enough color exists, weak relationships become legible:
 
-- Certain routes only appear under specific sky angles
-- Double-sunset alignment temporarily opens parts of the city
-- Prism flares reveal hidden inscriptions or route markers
-- Late game: sky becomes a dynamic timing system for hub interactions
+- prism flares can reveal hidden inscriptions or route markers;
+- some damaged local mechanisms become readable only when their field geometry is
+  visible;
+- exterior light can expose alignments between surviving structures;
+- late-game pressure can distort those relationships and make previously reliable
+  visual evidence ambiguous.
+
+Local Hub access should not depend on a double-sunset timer.
+
+Twin Solaria route work follows route evidence, Home Index state, reciprocal review,
+and Custodian authorization as defined in `design/05_levels/TWIN_SOLARIA.md`.
 
 ---
 
@@ -345,7 +380,7 @@ Localized bursts where environment violently reasserts lost form:
 The universe looks tired, old, overextended:
 - Distant horizon tears
 - Stars misalign
-- Light blooms too long after sunset
+- Light blooms persist after their apparent source has changed
 - Whole towers silhouette against cosmic rupture flashes
 - Debris lifts/trembles during pressure spikes
 
@@ -390,6 +425,7 @@ Too much fidelity causes certain truths to become painful or unstable:
 | `HUB_CHROMA_PROGRESSION.md` | Color domains, restoration logic, district mapping, pressure system |
 | `HUB_SPATIAL_LAYOUT.md` | District geometry, traversal, reveal sequencing |
 | `HUB_RETURN_GRAMMAR.md` | Campaign outcome mutation rules, scenario intelligence |
+| `../05_levels/TWIN_SOLARIA.md` | Crown Route Court canon, landmarks, route-adjudication grammar, and Crown Verge lock |
 
 ---
 

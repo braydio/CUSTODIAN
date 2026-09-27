@@ -17,6 +17,7 @@ func _run() -> void:
 	_test_pure_resolver()
 	_test_material_authority()
 	_test_macro_claims()
+	_test_filled_surface_roles()
 	await _test_production_integration()
 	if _failed:
 		quit(1)
@@ -170,6 +171,21 @@ func _test_macro_claims() -> void:
 	host.free()
 
 
+func _test_filled_surface_roles() -> void:
+	var host := MAP_SCRIPT.new() as ProcGenTilemap
+	var cells: Dictionary = {}
+	for y in range(3):
+		for x in range(3):
+			if x == 0 and y == 0:
+				continue
+			cells[Vector2i(x, y)] = true
+	_require(host.call("_classify_filled_surface_role", Vector2i(1, 1), cells) == "inner_corner_nw", "filled-surface roles did not use the supplied cell dictionary")
+	_require(host.call("_classify_filled_surface_role", Vector2i(8, 8), cells) == "", "filled-surface role classified a tile outside its supplied mask")
+	host._main_road_tiles = cells.duplicate(true)
+	_require(host.call("_classify_road_surface_role", Vector2i(1, 1)) == host.call("_classify_filled_surface_role", Vector2i(1, 1), cells), "archived road role wrapper changed its classification")
+	host.free()
+
+
 func _test_production_integration() -> void:
 	var map := MAP_SCENE.instantiate()
 	root.add_child(map)
@@ -178,7 +194,12 @@ func _test_production_integration() -> void:
 	if tilemap == null:
 		quit(1)
 		return
+	var duplicate_procgen := map.get_node_or_null("ProcGen")
+	if duplicate_procgen != null:
+		duplicate_procgen.queue_free()
+		await process_frame
 	var procgen := map.get_node("ProcGen2") as ProcGen
+	tilemap.procgen_node = procgen
 	procgen.generate_seed = false
 	procgen.seed = 824790
 	procgen.map_size = Vector2i(128, 104)
@@ -194,6 +215,10 @@ func _test_production_integration() -> void:
 	var walls_before := tilemap.debug_get_generated_wall_cells()
 	var route_before := tilemap.debug_get_route_playability()
 	var elevation_before: Variant = tilemap.get_elevation_map().get_serialized_cells()
+	var generated_summary := tilemap.debug_get_road_semantics_summary()
+	_require(generated_summary.has("fingerprint"), "production generation did not run the Road Semantics resolver")
+	_require(int(generated_summary.get("ruined_road_cell_count", 0)) > 0, "production generation did not publish ruined-road semantics")
+	var route_snapshot := tilemap.debug_get_route_playability()
 	tilemap.call("_resolve_road_semantics", procgen.map_size)
 	_require(tilemap.debug_get_generated_floor_cells() == floor_before, "integration changed floor authority")
 	_require(tilemap.debug_get_generated_wall_cells() == walls_before, "integration changed wall authority")
@@ -207,6 +232,62 @@ func _test_production_integration() -> void:
 	_require(tilemap.get_level_data().has("ruined_road_tiles"), "level data omitted ruined road export")
 	_require(tilemap.get_level_data().has("service_hardstand_tiles"), "level data omitted service apron export")
 	_require(tilemap.get_level_data().has("parking_zone_tiles"), "level data omitted parking export")
+	_require(tilemap.get_level_data().has("road_semantics"), "level data omitted Road Semantics observability")
+	_require(tilemap.debug_get_route_playability() == route_snapshot, "road semantics changed route/playability data")
+	var ruined_tiles := tilemap.get_ruined_road_tiles()
+	_require(not ruined_tiles.is_empty(), "production integration produced no ruined-road cells")
+	var ruined_roles: Dictionary = {}
+	for cell: Vector2i in ruined_tiles:
+		_require(tilemap.get_surface_material_at_tile(cell) == IDS.RUINED_ROAD, "ruined-road semantic cell did not resolve to ruined_road material")
+		_require(tilemap.debug_has_ruined_road_surface_decal_at(cell), "visible ruined-road cell lacks its production road-piece decal: %s" % str(cell))
+		var role := tilemap.debug_get_ruined_road_surface_role_at(cell)
+		_require(not role.is_empty(), "ruined-road decal omitted surface_role metadata: %s" % str(cell))
+		_require(role == tilemap.call("_classify_filled_surface_role", cell, tilemap._ruined_road_cells), "ruined-road decal role differs from semantic mask")
+		ruined_roles[role] = int(ruined_roles.get(role, 0)) + 1
+	_require(tilemap.debug_get_surface_piece_decal_count("ruined_road") == ruined_tiles.size(), "ruined-road cells did not receive exactly one distinct-key decal")
+	var apron_set: Dictionary = {}
+	for cell: Vector2i in tilemap.get_service_hardstand_tiles():
+		apron_set[cell] = true
+		_require(tilemap.get_surface_material_at_tile(cell) == IDS.HARDENED_INDUSTRIAL, "service apron cell did not resolve hardened_industrial")
+		if tilemap.surface_material_overlay != null:
+			_require(tilemap.surface_material_overlay.get_cell_source_id(cell) >= 0, "service apron omitted Meridian hardstand base presentation")
+	var parking_set: Dictionary = {}
+	for cell: Vector2i in tilemap.get_parking_zone_tiles():
+		parking_set[cell] = true
+	_require(apron_set == parking_set, "production parking export differs from service apron cells")
+	var absent_road_cell := Vector2i(-20, -20)
+	tilemap.call("_reveal_ruined_road_surface_piece_decal", absent_road_cell)
+	_require(not tilemap.debug_has_ruined_road_surface_decal_at(absent_road_cell), "non-road cell received a ruined-road decal")
+	if not ruined_tiles.is_empty():
+		var overlap := ruined_tiles[0]
+		tilemap._main_road_tiles[overlap] = true
+		tilemap.call("_reveal_road_surface_piece_decal", overlap)
+		_require(tilemap.debug_has_road_surface_decal_at(overlap) and tilemap.debug_has_ruined_road_surface_decal_at(overlap), "archived road and V2 ruined-road decal keys collided")
+		tilemap._main_road_tiles.erase(overlap)
+		tilemap.call("_remove_road_piece_decal", overlap)
+		tilemap.call("_reveal_ruined_road_surface_piece_decal", overlap)
+	var path_tile := _first_soft_path_visual_tile(tilemap)
+	_require(path_tile != Vector2i(-1, -1), "production map lacks a soft-path presentation sample")
+	if path_tile != Vector2i(-1, -1):
+		tilemap.call("_reveal_road_piece_decal", path_tile)
+		_require(tilemap.debug_has_surface_piece_decal_at(path_tile, "path"), "soft-path lost its separate path presentation at %s (path_decals=%d mask_defs=%d visual=%s)" % [str(path_tile), tilemap.debug_get_surface_piece_decal_count("path"), tilemap._path_piece_defs_by_mask.size(), str(tilemap._path_visual_tiles.has(path_tile))])
+		_require(not tilemap.debug_has_ruined_road_surface_decal_at(path_tile), "soft-path received a ruined-road presentation key")
+	var sample := ruined_tiles[0] if not ruined_tiles.is_empty() else Vector2i(-1, -1)
+	if sample != Vector2i(-1, -1):
+		var expected_role := tilemap.debug_get_ruined_road_surface_role_at(sample)
+		var chunk_size := tilemap.streaming_chunk_size_tiles
+		var chunk := Vector2i(sample.x / chunk_size, sample.y / chunk_size)
+		tilemap._revealed_chunks[chunk] = true
+		tilemap.call("_unload_chunk", chunk)
+		await process_frame
+		_require(not tilemap.debug_has_ruined_road_surface_decal_at(sample), "unloaded chunk retained a ruined-road decal")
+		tilemap.call("_reveal_chunk_immediately", chunk)
+		await process_frame
+		_require(tilemap.debug_has_ruined_road_surface_decal_at(sample), "revealed chunk did not recreate its ruined-road decal")
+		_require(tilemap.debug_get_ruined_road_surface_role_at(sample) == expected_role, "streaming reveal changed the deterministic ruined-road piece role: expected=%s actual=%s" % [expected_role, tilemap.debug_get_ruined_road_surface_role_at(sample)])
+	if not ruined_tiles.is_empty() and tilemap.surface_material_overlay != null:
+		_require(tilemap.surface_material_overlay.get_cell_source_id(ruined_tiles[0]) == -1, "ruined road incorrectly entered hardened SurfaceMaterialOverlay")
+	_require(not FileAccess.get_file_as_string("res://game/world/procgen/surfaces/surface_material_overlay.gd").contains("RUINED_ROAD"), "ruined road entered SurfaceMaterialOverlay hardened materials")
 	_require(is_equal_approx(tilemap.get_movement_surface_multiplier_at_tile(Vector2i(-1, -1)), 1.0), "natural non-path movement changed")
 	var civic_probe := Vector2i(-10, -10)
 	var industrial_probe := Vector2i(-11, -10)
@@ -223,7 +304,7 @@ func _test_production_integration() -> void:
 	_require(is_equal_approx(tilemap.get_movement_surface_multiplier_at_tile(industrial_probe, "vehicle"), 1.35), "industrial hardstand lost vehicle multiplier")
 	_require(is_equal_approx(tilemap.get_movement_surface_multiplier_at_tile(road_probe), 1.12), "ruined road lost operator multiplier")
 	_require(is_equal_approx(tilemap.get_movement_surface_multiplier_at_tile(road_probe, "vehicle"), 1.35), "ruined road lost vehicle multiplier")
-	_require(is_equal_approx(tilemap.get_movement_surface_multiplier_at_tile(soft_path_probe), 1.12), "soft_path compatibility multiplier changed")
+	_require(is_equal_approx(tilemap.get_movement_surface_multiplier_at_tile(soft_path_probe), 1.12), "soft_path movement compatibility changed")
 	tilemap._surface_material_by_cell.erase(civic_probe)
 	tilemap._surface_material_by_cell.erase(industrial_probe)
 	tilemap._surface_material_by_cell.erase(road_probe)
@@ -234,7 +315,7 @@ func _test_production_integration() -> void:
 	for cell: Vector2i in materials:
 		_require(floor_before.has(cell), "surface material exists without floor authority")
 		_require(not walls_before.has(cell) and not tilemap.is_chasm_tile(cell) and not ocean.has(cell), "wall/chasm/ocean received floor material")
-	print("road_semantics_fixed_seed: fragments=%d road_cells=%d service_apron=%d parking=%d fingerprint=%s" % [int(summary.get("ruined_road_fragment_count", 0)), int(summary.get("ruined_road_cell_count", 0)), int(summary.get("service_hardstand_cell_count", 0)), int(summary.get("parking_cell_count", 0)), String(summary.get("fingerprint", ""))])
+	print("road_semantics_fixed_seed: fragments=%d road_cells=%d decals=%d roles=%s service_apron=%d parking=%d fingerprint=%s" % [int(summary.get("ruined_road_fragment_count", 0)), int(summary.get("ruined_road_cell_count", 0)), tilemap.debug_get_surface_piece_decal_count("ruined_road"), str(ruined_roles), int(summary.get("service_hardstand_cell_count", 0)), int(summary.get("parking_cell_count", 0)), String(summary.get("fingerprint", ""))])
 	map.queue_free()
 	await process_frame
 
@@ -255,3 +336,14 @@ func _sorted_cells(values: Array) -> Array[Vector2i]:
 		return a.y < b.y or (a.y == b.y and a.x < b.x)
 	)
 	return result
+
+
+func _first_soft_path_visual_tile(tilemap: ProcGenTilemap) -> Vector2i:
+	for value: Variant in tilemap._path_visual_tiles.keys():
+		if value is Vector2i:
+			var tile := value as Vector2i
+			if tilemap.get_region_type_at_tile(tile) == "soft_path" \
+					and tilemap._path_centerline_tiles.has(tile) \
+					and int(tilemap.call("_get_road_piece_mask", tile, tilemap._path_centerline_tiles)) > 0:
+				return tile
+	return Vector2i(-1, -1)

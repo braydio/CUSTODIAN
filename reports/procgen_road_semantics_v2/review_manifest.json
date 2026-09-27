@@ -1,0 +1,54 @@
+{
+  "bounded_service_apron_check": {
+    "checked_seeds": [
+      824790,
+      824791,
+      824792,
+      824793,
+      824794,
+      824795,
+      824796,
+      824797
+    ],
+    "status": "NO_ELIGIBLE_APRON_IN_BOUNDED_SAMPLE"
+  },
+  "capture": "res://../reports/procgen_road_semantics_v2/seed_824790_overview.png",
+  "parking_cell_count": 0,
+  "production_wide_roads_enabled": false,
+  "road_fragment_detail_capture": "res://../reports/procgen_road_semantics_v2/seed_824790_road_fragment_detail.png",
+  "road_semantics": {
+    "fingerprint": "c29c6e034199105ad3b1c6d3c54e319c5e2fd943ad1fdb8c2eb9e853b4de5026",
+    "parking_cell_count": 0,
+    "ruined_road_cell_count": 115,
+    "ruined_road_fragment_count": 4,
+    "service_hardstand_cell_count": 0
+  },
+  "route_audit": {
+    "minimum_route_width": 17,
+    "ok": true,
+    "reachable_required_count": 9,
+    "required_cell_count": 9,
+    "schema": "custodian.procgen_playability.audit.v1",
+    "violations": []
+  },
+  "ruined_road_cell_count": 115,
+  "ruined_road_decal_count": 115,
+  "ruined_road_fragment_count": 4,
+  "ruined_road_surface_role_counts": {
+    "center": 31,
+    "edge_e": 5,
+    "edge_n": 2,
+    "edge_s": 4,
+    "edge_w": 6,
+    "inner_corner_ne": 4,
+    "inner_corner_nw": 12,
+    "inner_corner_se": 6,
+    "inner_corner_sw": 4,
+    "outer_corner_ne": 8,
+    "outer_corner_nw": 16,
+    "outer_corner_se": 9,
+    "outer_corner_sw": 8
+  },
+  "seed": 824790,
+  "service_hardstand_cell_count": 0
+}

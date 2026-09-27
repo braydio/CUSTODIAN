@@ -1,5 +1,15 @@
 # PROJECT CONTEXT PRIMER — CUSTODIAN
 
+## Agent Execution Workflow (2026-09-27)
+
+Repository defaults are inherited from root and `custodian/AGENTS.md`; prompts
+and packets describe task-specific deltas only. Use isolated worktrees for
+substantial parallel tasks. Validated implementation work commits and lands
+automatically on `origin/main` through `custodian/tools/agent/land_main.py`;
+review is by exception. The helper serializes local landings, rebases onto the
+latest main, retries bounded remote races, and aborts on conflicts without
+force-pushing. Review-only work must carry an explicit `TASK OVERRIDE:`.
+
 ## Canon Migration (2026-09-03)
 
 CampaignRegion is a transient runtime representation of a persistent Lattice
@@ -7,7 +17,7 @@ Domain. Archive Engines stabilize damaged reality; they do not create worlds.
 The Pale is an unstable continuity condition, provenance is forensic, and route
 restoration remains reciprocal and dangerous.
 
-Last updated: 2026-08-20
+Last updated: 2026-09-27
 
 Simulation boundary update (2026-08-08): use `WorldSimulationRuntime` and typed command ingress for live campaign-world access. Never launch Python from Godot. `GameState`, local power, `WaveManager`, and `FabPipeline` are compatibility/adapters. Validate with `run_world_simulation_migration_suite.sh`.
 
@@ -40,6 +50,16 @@ The Pale and cross-continuity bleed are real cosmological phenomena.
 Provenance is forensic evidence lineage and continuity-origin verification, not a metaphysical substrate.
 
 Unarrival is an Ash-Bell term originating in the Station IX failure during the Ash-Bell Unarrival and later generalized by religious traditions.
+
+Twin Solaria is canonically the Hub's detached **Crown Route Court**. Its
+namesake twins are two giant Crown-class aperture courts: surviving **Solarium I /
+Acquisition Aperture** and the destroyed **Solarium II / Passage Aperture**. Solarium
+II was deliberately amputated during the Severing-era Crown Reciprocal Incident after
+unacceptable reciprocal behavior was already underway; the wider network crisis
+continued beyond the local cut, but Twin Solaria is not established as Ground Zero.
+The surrounding Crown Verge remains intentionally unresolved rather than being
+defined as ordinary outer space. See `design/05_levels/TWIN_SOLARIA.md` and
+`design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`.
 
 See: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`.
 

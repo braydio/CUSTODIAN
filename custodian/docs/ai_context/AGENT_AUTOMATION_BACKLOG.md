@@ -6,18 +6,21 @@ Prioritized automation candidates for CUSTODIAN agent workflow. These are intent
 
 ## Current Implementation Audit
 
-The prompt-template contract linter is now implemented at
+The prompt-template contract linter is implemented at
 `custodian/tools/agent/validate_prompt_contract.py`. It flags repeated
 repository-default boilerplate in reusable prompts and active task packets,
-supports explicit `TASK OVERRIDE:` lines, and offers a strict template-only
-gate. The broader AI-context and task-packet validators below remain pending.
+supports explicit `TASK OVERRIDE:` lines, and has a focused validation-manifest
+entry. Automatic main landing is implemented at
+`custodian/tools/agent/land_main.py`; it serializes local landing attempts,
+rebases clean task branches on current `origin/main`, retries bounded races,
+and aborts conflicts without force-pushing. Substantial parallel tasks use
+isolated worktrees; review is by exception. Broader AI-context, task-packet,
+and Git-safety validators below remain follow-up proposals.
 
 Moment Forge is now implemented separately under
 `custodian/tools/iteration/`. It was prioritized first because deterministic
 visual/audio/game-feel comparison provides direct production leverage across
-combat, animation, VFX, healing, and vista work. The lightweight documentation
-and Git-safety proposals below remain worthwhile follow-up work rather than
-being implicitly treated as shipped.
+combat, animation, VFX, healing, and vista work.
 
 ## Priority 1 — AI Context Validator
 

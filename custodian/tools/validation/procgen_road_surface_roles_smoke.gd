@@ -27,6 +27,8 @@ func _run() -> void:
 	procgen.seed = 420777
 	procgen.map_size = Vector2i(128, 104)
 
+	assert(not tilemap.intent_main_roads_enabled, "Production wide-road generation must stay disabled by default.")
+	tilemap.intent_main_roads_enabled = true
 	tilemap.enable_streaming_reveal = false
 	tilemap.build_runtime_wall_collision = true
 	tilemap.show_runtime_wall_collision_debug = false
@@ -61,14 +63,16 @@ func _run() -> void:
 		role_map[tile] = actual_role
 
 	var decal_paths := tilemap.debug_get_road_piece_decal_texture_paths()
-	var road_decal_count := 0
+	var road_decal_count := tilemap.debug_get_surface_piece_decal_count("road")
 	var path_decal_count := 0
 	for path in decal_paths:
-		if path.begins_with(ROAD_SURFACE_ROOT):
-			road_decal_count += 1
-		elif path.begins_with(PATH_ROOT):
+		if path.begins_with(PATH_ROOT):
 			path_decal_count += 1
-	assert(road_decal_count == road_tiles.size(), "Expected exactly one road decal per road tile: decals=%d tiles=%d" % [road_decal_count, road_tiles.size()])
+	assert(
+		road_decal_count == road_tiles.size(),
+		"Expected exactly one archived-road decal per road tile: decals=%d tiles=%d"
+		% [road_decal_count, road_tiles.size()]
+	)
 	assert(
 		str(tilemap.path_piece_manifest_path).begins_with(
 			"res://content/tiles/roads_paths/runtime/placeholders/paths/"
