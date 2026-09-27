@@ -184,6 +184,8 @@ Last updated: 2026-09-26
 - `custodian/scenes/debug/awakening_first_return_mapper.tscn` — Awakening collision/POI mapper framed on the whole dungeon spine, with section envelopes, critical path, optional branch, camera reveals, encounter slots, interaction markers, and future-art anchors overlaid from `awakening_layout.gd`.
 - `custodian/scenes/debug/awakening_first_return_debug.tscn` — dev-only tour: zone selector, teleport to entry, collision/zone/landmark overlays, reset progression. Adds no global hotkeys.
 - `custodian/scenes/twin_solaria_backdrop_test.tscn` — development-only playable preview of the largest current Twin Solaria composite as a gameplay backdrop; uses perimeter collision only and does not replace the main scene.
+- `custodian/scenes/twin_solaria_v1.tscn` and `custodian/game/world/hub/twin_solaria_v1.gd` — separate native 2048×1536 Twin Solaria V1-A visual assembly; V2 environment plates sit at manifest coordinates over a fidelity underlay. Collision, operator/camera integration, and interaction remain V1-B/C work.
+- `custodian/content/metadata/assets/families/twin_solaria_v1_environment.asset.json` — Asset V2 contract for the eight native-size Twin Solaria environment plates.
 
 ## Active Runtime Systems
 

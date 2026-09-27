@@ -1,0 +1,53 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://game/world/hub/twin_solaria_v1.gd" id="1_controller"]
+[ext_resource type="Texture2D" path="res://content/backgrounds/hub/twin_solaria/v1/twin_solaria_fidelity_underlay_2048x1536.png" id="2_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_solarium_i_acquisition_court_617x695.png" id="3_solarium"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_upper_crown_court_697x520.png" id="4_upper"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_authority_threshold_plate_375x355.png" id="5_threshold"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_reciprocity_midcourt_1190x525.png" id="6_midcourt"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_home_index_lowercourt_825x385.png" id="7_home"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_west_service_terrace_275x340.png" id="8_west"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_east_service_terrace_275x340.png" id="9_east"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_crown_causeway_245x216.png" id="10_causeway"]
+
+[node name="TwinSolariaV1" type="Node2D"]
+script = ExtResource("1_controller")
+
+[node name="FidelityUnderlay" type="Sprite2D" parent="."]
+texture = ExtResource("2_underlay")
+z_index = -1
+
+[node name="EnvironmentPlates" type="Node2D" parent="."]
+
+[node name="SolariumIAcquisitionCourt" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(-687.5, -335.5)
+texture = ExtResource("3_solarium")
+
+[node name="UpperCrownCourt" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(-90.5, -328)
+texture = ExtResource("4_upper")
+
+[node name="AuthorityThresholdPlate" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(-101.5, -35.5)
+texture = ExtResource("5_threshold")
+
+[node name="ReciprocityMidcourt" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(-19, 144.5)
+texture = ExtResource("6_midcourt")
+
+[node name="HomeIndexLowercourt" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(-71.5, 489.5)
+texture = ExtResource("7_home")
+
+[node name="WestServiceTerrace" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(-536.5, 412)
+texture = ExtResource("8_west")
+
+[node name="EastServiceTerrace" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(473.5, 412)
+texture = ExtResource("9_east")
+
+[node name="CrownCauseway" type="Sprite2D" parent="EnvironmentPlates"]
+position = Vector2(-91.5, 660)
+texture = ExtResource("10_causeway")

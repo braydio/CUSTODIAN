@@ -10560,6 +10560,179 @@
           "source_asset": null
         }
       }
+    },
+    "twin_solaria_v1_environment": {
+      "kind": "backdrop",
+      "assets": {
+        "authority_threshold_plate::omni": {
+          "state_id": "authority_threshold_plate",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "authority_threshold_plate",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_authority_threshold_plate_375x355.png",
+          "frames": 1,
+          "frame_size": [
+            375,
+            355
+          ],
+          "sha256": "fd541aade79fdbfa9b69c0449636e81502ff4d62af6177d2aa2243ad5e707772",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "crown_causeway::omni": {
+          "state_id": "crown_causeway",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "crown_causeway",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_crown_causeway_245x216.png",
+          "frames": 1,
+          "frame_size": [
+            245,
+            216
+          ],
+          "sha256": "aa835f9300155aa7e7b3009b7c27836b05cdeac320c353da685c94525ae62b4e",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "east_service_terrace::omni": {
+          "state_id": "east_service_terrace",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "east_service_terrace",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_east_service_terrace_275x340.png",
+          "frames": 1,
+          "frame_size": [
+            275,
+            340
+          ],
+          "sha256": "a93f07e8e074627e2002d478b405ff4849cb9506a466445d7db0632dad4bad11",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "home_index_lowercourt::omni": {
+          "state_id": "home_index_lowercourt",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "home_index_lowercourt",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_home_index_lowercourt_825x385.png",
+          "frames": 1,
+          "frame_size": [
+            825,
+            385
+          ],
+          "sha256": "7be18a8df0c3a557235bb6a83b03f7c8b970ade15847b93dd15b6a58a323d982",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "reciprocity_midcourt::omni": {
+          "state_id": "reciprocity_midcourt",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "reciprocity_midcourt",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_reciprocity_midcourt_1190x525.png",
+          "frames": 1,
+          "frame_size": [
+            1190,
+            525
+          ],
+          "sha256": "354e693db7e4fa24148adec4264206ff8c5ba389c3331f143a143599e94395dc",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "solarium_i_acquisition_court::omni": {
+          "state_id": "solarium_i_acquisition_court",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "solarium_i_acquisition_court",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_solarium_i_acquisition_court_617x695.png",
+          "frames": 1,
+          "frame_size": [
+            617,
+            695
+          ],
+          "sha256": "075461164e9b632f887e102f9e7d4fb46dd3616db01227b1b9b35b04423a483d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "upper_crown_court::omni": {
+          "state_id": "upper_crown_court",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "upper_crown_court",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_upper_crown_court_697x520.png",
+          "frames": 1,
+          "frame_size": [
+            697,
+            520
+          ],
+          "sha256": "bd152c5673696f27e8939409fe60f06c16028da73ae1b40cccfb868f7f29039e",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "west_service_terrace::omni": {
+          "state_id": "west_service_terrace",
+          "direction": "omni",
+          "semantic_identity": [
+            "twin_solaria_v1",
+            "backdrop",
+            "background",
+            "display",
+            "west_service_terrace",
+            "omni"
+          ],
+          "path": "content/levels/hub/twin_solaria/v1/twin_solaria_v1_west_service_terrace_275x340.png",
+          "frames": 1,
+          "frame_size": [
+            275,
+            340
+          ],
+          "sha256": "048814628996096c3b5228011f9f63496b8dbc92de8ad9c1690ef4ee0bb99367",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }
