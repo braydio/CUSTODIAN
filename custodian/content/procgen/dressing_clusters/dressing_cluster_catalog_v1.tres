@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DressingClusterCatalog" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/world/procgen/dressing/dressing_cluster_catalog.gd" id="1"]
+[ext_resource type="Resource" path="res://content/procgen/dressing_clusters/rocky_upland/rocky_tree_scrub_small_01.tres" id="2"]
+[ext_resource type="Resource" path="res://content/procgen/dressing_clusters/rocky_upland/rocky_tree_scrub_large_01.tres" id="3"]
+[ext_resource type="Resource" path="res://content/procgen/dressing_clusters/rocky_upland/rocky_scrub_pocket_01.tres" id="4"]
+
+[resource]
+script = ExtResource("1")
+profiles = Array[DressingClusterProfile]([ExtResource("2"), ExtResource("3"), ExtResource("4")])

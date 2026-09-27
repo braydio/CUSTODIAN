@@ -50,6 +50,8 @@ var _machine_house_root: Node2D = null
 var _machine_house_exterior_return_position := Vector2.ZERO
 var _operator_inside_machine_house := false
 var _structure_sites: Dictionary = {}
+var _travel_route_active := false
+var _travel_gates: Array[WeakRef] = []
 
 
 func _ready() -> void:
@@ -67,6 +69,36 @@ func _process(_delta: float) -> void:
 func configure_connection(p_main_map: Node, p_main_return_position: Vector2) -> void:
 	main_map = p_main_map
 	main_return_position = p_main_return_position
+
+
+func is_travel_route_active() -> bool:
+	return _travel_route_active
+
+
+func register_travel_gate(gate: Node) -> void:
+	if gate == null or not is_instance_valid(gate):
+		return
+	for reference in _travel_gates:
+		if reference.get_ref() == gate:
+			if _travel_route_active and gate.has_method("set_presentation_state"):
+				gate.call("set_presentation_state", 3)
+			return
+	_travel_gates.append(weakref(gate))
+	if _travel_route_active and gate.has_method("set_presentation_state"):
+		gate.call("set_presentation_state", 3)
+
+
+func activate_travel_route() -> void:
+	_travel_route_active = true
+	var alive: Array[WeakRef] = []
+	for reference in _travel_gates:
+		var gate := reference.get_ref() as Node
+		if not is_instance_valid(gate):
+			continue
+		alive.append(reference)
+		if gate.has_method("set_presentation_state"):
+			gate.call("set_presentation_state", 3)
+	_travel_gates = alive
 
 
 func get_entry_position() -> Vector2:

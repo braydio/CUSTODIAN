@@ -31,18 +31,27 @@ const TEXTURES := {
 @export var prompt_text: String = "ENTER CARROW YARD"
 @export_range(32.0, 192.0, 1.0) var interaction_distance: float = 92.0
 @export var connected_map_path: NodePath
+@export var auto_trigger_offset := Vector2(0, -48)
+@export var auto_trigger_size := Vector2(96, 64)
+@export_range(1, 120, 1) var teleport_cooldown_frames := 24
 
 var connected_map: Node = null
 var presentation_state := PresentationState.INACTIVE
 var _layers: Dictionary = {}
 var _animation_elapsed := 0.0
+var _travel_busy := false
+var _auto_area: Area2D
+var _last_travel_state := PresentationState.INACTIVE
+var _travel_call_count := 0
 
 
 func _ready() -> void:
-	add_to_group("interactable")
 	_resolve_connected_map()
 	_build_presentation()
-	set_presentation_state(PresentationState.ROUTE_AVAILABLE if connected_map != null else PresentationState.INACTIVE)
+	_build_auto_travel_area()
+	_register_with_map()
+	var route_active := connected_map != null and connected_map.has_method("is_travel_route_active") and bool(connected_map.call("is_travel_route_active"))
+	set_presentation_state(PresentationState.ACTIVE if route_active else (PresentationState.ROUTE_AVAILABLE if connected_map != null else PresentationState.INACTIVE))
 
 
 func _process(delta: float) -> void:
@@ -55,7 +64,10 @@ func _process(delta: float) -> void:
 		fps = 9.0
 	elif presentation_state == PresentationState.FAILURE:
 		fps = 8.0
-	animation.frame = int(_animation_elapsed * fps) % animation.hframes
+	if presentation_state == PresentationState.ACTIVATING:
+		animation.frame = mini(animation.hframes - 1, int(_animation_elapsed * fps))
+	else:
+		animation.frame = int(_animation_elapsed * fps) % animation.hframes
 
 
 func configure(map: Node, mode: int, prompt: String) -> void:
@@ -63,7 +75,9 @@ func configure(map: Node, mode: int, prompt: String) -> void:
 	travel_mode = mode
 	prompt_text = prompt
 	if is_inside_tree():
-		set_presentation_state(PresentationState.ROUTE_AVAILABLE)
+		_register_with_map()
+		var route_active := connected_map != null and connected_map.has_method("is_travel_route_active") and bool(connected_map.call("is_travel_route_active"))
+		set_presentation_state(PresentationState.ACTIVE if route_active else PresentationState.ROUTE_AVAILABLE)
 
 
 func get_interaction_prompt() -> String:
@@ -79,23 +93,82 @@ func get_interaction_distance() -> float:
 
 
 func interact(actor: Node) -> void:
+	if _travel_busy or presentation_state == PresentationState.ACTIVATING or presentation_state == PresentationState.INACTIVE:
+		return
 	_resolve_connected_map()
-	if connected_map == null:
+	if connected_map == null or not _map_can_travel():
 		set_presentation_state(PresentationState.FAILURE)
 		return
+	if connected_map.has_method("is_travel_route_active") and bool(connected_map.call("is_travel_route_active")):
+		return
+	_travel_busy = true
 	set_presentation_state(PresentationState.ACTIVATING)
+	_complete_first_activation(actor)
+
+
+func _complete_first_activation(actor: Node) -> void:
+	await get_tree().create_timer(6.0 / 9.0).timeout
+	if not is_instance_valid(connected_map) or not _map_can_travel():
+		_travel_busy = false
+		set_presentation_state(PresentationState.FAILURE)
+		return
+	if connected_map.has_method("activate_travel_route"):
+		connected_map.call("activate_travel_route")
+	else:
+		set_presentation_state(PresentationState.ACTIVE)
+	set_presentation_state(PresentationState.ACTIVE)
+	await get_tree().process_frame
+	_travel_actor(actor)
+	_travel_busy = false
+
+
+func _travel_actor(actor: Node) -> void:
+	if not is_instance_valid(actor) or not _map_can_travel():
+		return
+	if _is_actor_locked(actor):
+		return
+	actor.set_meta("portal_teleport_lock_until_frame", Engine.get_physics_frames() + teleport_cooldown_frames)
+	_last_travel_state = presentation_state
+	_travel_call_count += 1
 	match travel_mode:
 		TravelMode.ENTER_COMPOUND:
-			if connected_map.has_method("enter_from_main"):
-				connected_map.call("enter_from_main", actor)
+			connected_map.call("enter_from_main", actor)
 		TravelMode.RETURN_TO_MAIN:
-			if connected_map.has_method("return_to_main"):
-				connected_map.call("return_to_main", actor)
-	set_presentation_state(PresentationState.ACTIVE)
+			connected_map.call("return_to_main", actor)
+
+
+func _on_auto_travel_body_entered(body: Node2D) -> void:
+	if _travel_busy or presentation_state != PresentationState.ACTIVE or connected_map == null:
+		return
+	if not connected_map.has_method("is_travel_route_active") or not bool(connected_map.call("is_travel_route_active")):
+		return
+	if not body.is_in_group("player"):
+		return
+	if _is_actor_locked(body):
+		return
+	_travel_busy = true
+	_travel_actor(body)
+	_travel_busy = false
+
+
+func _is_actor_locked(actor: Node) -> bool:
+	return actor.has_meta("portal_teleport_lock_until_frame") and Engine.get_physics_frames() < int(actor.get_meta("portal_teleport_lock_until_frame"))
+
+
+func _map_can_travel() -> bool:
+	if connected_map == null:
+		return false
+	return connected_map.has_method("enter_from_main") if travel_mode == TravelMode.ENTER_COMPOUND else connected_map.has_method("return_to_main")
 
 
 func set_presentation_state(next_state: PresentationState) -> void:
 	presentation_state = next_state
+	if next_state == PresentationState.ACTIVE:
+		remove_from_group("interactable")
+	elif next_state in [PresentationState.ROUTE_AVAILABLE, PresentationState.FAILURE]:
+		add_to_group("interactable")
+	else:
+		remove_from_group("interactable")
 	_animation_elapsed = 0.0
 	if _layers.is_empty():
 		return
@@ -120,6 +193,11 @@ func get_presentation_debug_state() -> Dictionary:
 		"production_layers": _layers.keys(),
 		"interaction_frames": (_layers.get("interaction") as Sprite2D).hframes,
 		"scale": scale,
+		"travel_call_count": _travel_call_count,
+		"last_travel_state": _last_travel_state,
+		"has_interaction_prompt": is_in_group("interactable"),
+		"auto_trigger_offset": auto_trigger_offset,
+		"auto_trigger_size": auto_trigger_size,
 	}
 
 
@@ -134,6 +212,27 @@ func _resolve_connected_map() -> void:
 	var node := get_node_or_null(connected_map_path)
 	if node != null and (node.has_method("enter_from_main") or node.has_method("return_to_main")):
 		connected_map = node
+
+
+func _register_with_map() -> void:
+	if connected_map != null and connected_map.has_method("register_travel_gate"):
+		connected_map.call("register_travel_gate", self)
+
+
+func _build_auto_travel_area() -> void:
+	_auto_area = Area2D.new()
+	_auto_area.name = "AutoTravelArea"
+	_auto_area.position = auto_trigger_offset
+	_auto_area.collision_layer = 0
+	_auto_area.collision_mask = 1
+	var collision := CollisionShape2D.new()
+	collision.name = "CollisionShape2D"
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = auto_trigger_size
+	collision.shape = rectangle
+	_auto_area.add_child(collision)
+	add_child(_auto_area)
+	_auto_area.body_entered.connect(_on_auto_travel_body_entered)
 
 
 func _build_presentation() -> void:

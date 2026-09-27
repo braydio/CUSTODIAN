@@ -7,14 +7,15 @@ const FOLIAGE_OCCLUSION_MAX_SHADER_BUBBLES := 8
 var _shared_materials: Dictionary = {}
 
 
-func generate(context: Dictionary) -> Dictionary:
+func generate(context: Dictionary, clear_existing := true) -> Dictionary:
 	var started := Time.get_ticks_msec()
 	var foliage_parent := context.get("foliage_parent", null) as Node2D
 	if foliage_parent == null:
 		push_warning("[Foliage] Missing FoliageLayer, skipping foliage spawn")
 		return _result(0, true, "missing_parent", started)
 
-	clear(context)
+	if clear_existing:
+		clear(context)
 
 	var foliage_textures: Array = context.get("foliage_textures", [])
 	if foliage_textures.is_empty():
@@ -117,6 +118,24 @@ func can_place_at(context: Dictionary, pos: Vector2i) -> bool:
 	return _should_place_foliage(context, pos)
 
 
+func can_place_authored_at(context: Dictionary, pos: Vector2i) -> bool:
+	return _passes_foliage_clearance(context, pos, false)
+
+
+func place_at_kind(context: Dictionary, pos: Vector2i, kind: StringName, cluster_id: StringName = &"") -> bool:
+	if kind != &"tree" and kind != &"shrub":
+		return false
+	if not can_place_authored_at(context, pos):
+		return false
+	var choices: Array = context.get("foliage_tree_textures" if kind == &"tree" else "foliage_shrub_textures", [])
+	if choices.is_empty():
+		return false
+	var texture := choices[_tile_noise_hash(context, pos + Vector2i(19, 73)) % choices.size()] as Texture2D
+	if texture == null or _classify_foliage(texture.get_size()) != String(kind):
+		return false
+	return _place_foliage_with_texture(context, pos, texture, cluster_id)
+
+
 func place_at(context: Dictionary, pos: Vector2i) -> bool:
 	return _place_foliage(context, pos)
 
@@ -124,9 +143,21 @@ func place_at(context: Dictionary, pos: Vector2i) -> bool:
 func _should_place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	if float(context.get("foliage_density", 0.0)) <= 0.0:
 		return false
+	return _passes_foliage_clearance(context, pos, true) and _would_place_foliage_at(context, pos)
+
+
+func _passes_foliage_clearance(context: Dictionary, pos: Vector2i, check_cluster_suppression: bool) -> bool:
+	var floors: Dictionary = context.get("generated_floor_cells", {})
+	if not floors.is_empty() and not floors.has(pos):
+		return false
+	var foliage_nodes: Dictionary = context.get("foliage_nodes", {})
+	if foliage_nodes.has(pos):
+		return false
 	if _call_bool(context, "is_inside_world_ingress_dressing_clearance", pos):
 		return false
 	if _call_bool(context, "is_inside_macro_presentation_dressing_clearance", pos):
+		return false
+	if check_cluster_suppression and _call_bool(context, "is_inside_dressing_cluster_suppression", pos):
 		return false
 	if _is_route_hard_clearance(context, pos):
 		return false
@@ -146,7 +177,7 @@ func _should_place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 		return false
 	if _call_bool(context, "is_inside_combat_readability_clearance", pos):
 		return false
-	return _would_place_foliage_at(context, pos)
+	return true
 
 
 func _collect_candidate_tiles(context: Dictionary, generated_floor_cells: Dictionary) -> Array[Vector2i]:
@@ -223,10 +254,18 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 	var texture := _pick_foliage_texture(context, pos)
 	if texture == null:
 		return false
+	return _place_foliage_with_texture(context, pos, texture)
+
+
+func _place_foliage_with_texture(context: Dictionary, pos: Vector2i, texture: Texture2D, cluster_id: StringName = &"") -> bool:
+	var foliage_parent := context.get("foliage_parent", null) as Node2D
+	var foliage_nodes: Dictionary = context.get("foliage_nodes", {})
+	if foliage_parent == null or foliage_nodes.has(pos) or texture == null:
+		return false
 
 	var texture_size := texture.get_size()
 	var foliage_kind := _classify_foliage(texture_size)
-	if foliage_kind == "tree" and not _is_tree_allowed(context, pos):
+	if foliage_kind == "tree" and not _is_tree_allowed(context, pos, cluster_id):
 		return false
 	var sprite := Sprite2D.new()
 	sprite.texture = texture
@@ -252,6 +291,7 @@ func _place_foliage(context: Dictionary, pos: Vector2i) -> bool:
 		"base_y": world_pos.y + texture_size.y * 0.5,
 		"size": texture_size,
 		"kind": foliage_kind,
+		"cluster_id": cluster_id,
 		"has_collision": has_trunk_collision,
 	}
 
@@ -371,6 +411,7 @@ func _would_place_foliage_at(context: Dictionary, pos: Vector2i) -> bool:
 	var density := float(context.get("foliage_density", 0.0))
 	density = minf(density, _call_float(context, "get_biome_foliage_density", pos, density))
 	density = minf(density, _route_foliage_density(context, pos))
+	density *= _call_float(context, "get_foliage_presentation_density_multiplier", pos, 1.0)
 	if _is_inside_compound_zone(context, pos):
 		density *= float(context.get("foliage_compound_density_multiplier", 0.28))
 	if density <= 0.0:
@@ -415,7 +456,8 @@ func _route_foliage_density(
 
 func _is_tree_allowed(
 	context: Dictionary,
-	pos: Vector2i
+	pos: Vector2i,
+	cluster_id: StringName = &""
 ) -> bool:
 	var centerline_distance: Dictionary = context.get(
 		"route_centerline_distance",
@@ -434,6 +476,8 @@ func _is_tree_allowed(
 			)
 			if entry is Dictionary \
 					and String((entry as Dictionary).get("kind", "")) == "tree":
+				if cluster_id != &"" and StringName((entry as Dictionary).get("cluster_id", &"")) == cluster_id:
+					continue
 				return false
 	return true
 

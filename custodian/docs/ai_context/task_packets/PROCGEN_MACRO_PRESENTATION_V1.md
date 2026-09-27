@@ -48,13 +48,15 @@
 | --- | --- | --- | --- |
 | 0 | Hardened contract reconciliation and live API audit | Paths, schemas, ownership, deterministic rules, and validation commands locked | validated |
 | 1 | Rocky-upland region extraction and macro stamp foundation | Determinism, containment, no semantic mutation, fallback smoke | validated |
-| 2 | Cluster and hardstand composition | Clearance/readability rules preserved; quiet-ground ratios reviewable | pending |
-| 3 | Minor/major/hero landmark placement | Deterministic cadence and authored-claim compatibility proven | pending |
-| 4 | Woodland, wetland, and scrubland vocabularies | Per-biome fallback and regression coverage proven | pending |
-| 5 | Lighting/weather/surface-overlay finish | Existing environment authorities retained; visual review approved | pending |
+| 2a | Semantic surface materials | Existing floor authority and resolver tests preserved | validated |
+| 2b | Meridian hardstand + Road Semantics V2 | Material/road semantics and local presentation validated | validated |
+| 2c | Rocky Upland dressing cluster proof compositions | Three deterministic foliage compositions, route-safe realization, and fixed-seed review | validated |
+| 3 | Minor/major/hero landmark placement | Deterministic cadence and authored-claim compatibility proven | next |
+| 4 | Woodland, Wetland, and Scrubland vocabularies | Per-biome fallback and regression coverage proven | deferred |
+| 5 | Lighting/weather/surface-overlay finish | Existing environment authorities retained; visual review approved | deferred |
 
 Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
-`validated`, and `deferred`.
+`validated`, `next`, and `deferred`.
 
 ## Dependency And Risk Register
 
@@ -72,6 +74,10 @@ Allowed ledger states are `waiting_spec`, `pending`, `in_progress`, `blocked`,
 | Scope | Biome/profile work expands into classification rewrite | Add presentation fields only; retain classifier ownership |
 
 ## Planned Implementation Sequence
+
+The next milestone is Landmark Vocabulary V1. The current cluster pass supplies
+three Rocky Upland proof compositions only; the full six-piece vocabulary and
+natural-rock prop clusters remain deferred until reusable approved assets exist.
 
 1. Reconcile the hardened spec and resolve every open decision in the active
    design document.

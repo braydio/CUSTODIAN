@@ -549,13 +549,16 @@ func _validate_pipeline_order() -> void:
 	var final_capture := body.rfind("_capture_generated_tile_state(map_size)")
 	var biome := body.find("_build_biome_field()")
 	var macro := body.find("_build_macro_presentation_plan(map_size)")
+	var clusters := body.find("_build_dressing_cluster_plan(map_size)")
 	var streaming := body.find("_prepare_streaming_reveal()")
 	_require(final_capture >= 0 and final_capture < biome, "biome field precedes final structural capture")
-	_require(biome < macro and macro < streaming, "macro plan is not between final biome and streaming setup")
+	_require(biome < macro and macro < clusters and clusters < streaming, "dressing clusters are not planned after macros and before streaming setup")
+	_require(body.find("if enable_streaming_reveal and not generation_evaluation_mode") < streaming, "candidate evaluation entered streaming realization before promotion")
 	var promotion_start := source.find("func promote_evaluated_candidate_to_final()")
 	var promotion_end := source.find("func _fill_tilemaps()", promotion_start)
 	var promotion := source.substr(promotion_start, promotion_end - promotion_start)
-	_require(promotion.find("_rebuild_macro_presentation(map_size)") < promotion.find("_generate_foliage(map_size)"), "promotion builds foliage before macro presentation")
+	_require(promotion.find("_rebuild_macro_presentation(map_size)") < promotion.find("_build_dressing_cluster_plan(map_size)"), "promotion builds clusters before macro presentation")
+	_require(promotion.find("_build_dressing_cluster_plan(map_size)") < promotion.find("_generate_foliage(map_size)"), "promotion builds foliage before clusters")
 
 
 func _require(condition: bool, message: String) -> void:

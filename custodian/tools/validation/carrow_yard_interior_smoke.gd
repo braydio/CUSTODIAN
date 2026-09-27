@@ -104,6 +104,51 @@ func _run() -> void:
 		gate.set_presentation_state(GothicCompoundTravelGate.PresentationState.ACTIVATING)
 		gate_state = gate.get_presentation_debug_state()
 		_require(int(gate_state.interaction_frames) == 6, "boot strip is not six frames")
+		var trigger := gate.get_node_or_null("AutoTravelArea") as Area2D
+		var trigger_shape := trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D if trigger != null else null
+		_require(trigger != null and trigger.position == Vector2(0, -48), "auto-travel trigger offset changed")
+		_require(trigger_shape != null and (trigger_shape.shape as RectangleShape2D).size == Vector2(96, 64), "auto-travel trigger footprint changed")
+		_require(gate.position == map._tile_to_local(map.return_gate_tile), "return Transfer Frame position changed")
+
+	var entry_gate := GothicCompoundTravelGate.new()
+	entry_gate.name = "TestMainEntryGate"
+	entry_gate.configure(map, GothicCompoundTravelGate.TravelMode.ENTER_COMPOUND, "ENTER CARROW YARD")
+	root.add_child(entry_gate)
+	actor.add_to_group("player")
+	gate.set_presentation_state(GothicCompoundTravelGate.PresentationState.ROUTE_AVAILABLE)
+	_require(not map.is_travel_route_active(), "fresh route unexpectedly starts active")
+	_require(entry_gate.is_in_group("interactable"), "fresh frame is not interactable")
+	gate.call("_on_auto_travel_body_entered", actor)
+	_require(int(gate.get_presentation_debug_state().travel_call_count) == 0, "inactive body entry triggered travel")
+	entry_gate.interact(actor)
+	_require(entry_gate.presentation_state == GothicCompoundTravelGate.PresentationState.ACTIVATING, "first interaction skipped boot activation")
+	await create_timer(0.2).timeout
+	_require(int(entry_gate.get_presentation_debug_state().travel_call_count) == 0, "travel began before boot completed")
+	await create_timer(0.55).timeout
+	_require(map.is_travel_route_active(), "successful boot did not activate shared route")
+	_require(entry_gate.presentation_state == GothicCompoundTravelGate.PresentationState.ACTIVE, "entry frame did not reach ACTIVE before travel")
+	_require(int(entry_gate.get_presentation_debug_state().last_travel_state) == GothicCompoundTravelGate.PresentationState.ACTIVE, "travel was called before ACTIVE presentation")
+	_require(entry_gate.get_presentation_debug_state().travel_call_count == 1, "first activation did not travel once")
+	_require(gate.presentation_state == GothicCompoundTravelGate.PresentationState.ACTIVE, "registered return endpoint did not activate")
+	_require(gate.get_presentation_debug_state().production_layers.size() == 17, "route activation changed Transfer Frame art layers")
+	_require(not entry_gate.is_in_group("interactable") and not gate.is_in_group("interactable"), "active route still exposes manual prompt")
+	gate.call("_on_auto_travel_body_entered", actor)
+	_require(int(gate.get_presentation_debug_state().travel_call_count) == 0, "arrival cooldown failed to stop immediate bounce")
+	actor.global_position = map.to_global(Vector2(9999, 9999))
+	await physics_frame
+	for frame_index in range(26): await physics_frame
+	actor.global_position = gate.global_position
+	gate.call("_on_auto_travel_body_entered", actor)
+	_require(int(gate.get_presentation_debug_state().travel_call_count) == 1, "active endpoint did not auto-travel after cooldown")
+	_require(int(gate.get_presentation_debug_state().last_travel_state) == GothicCompoundTravelGate.PresentationState.ACTIVE, "automatic travel did not use active presentation")
+	var broken_route := Node.new()
+	root.add_child(broken_route)
+	var failed_gate := GothicCompoundTravelGate.new()
+	failed_gate.configure(broken_route, GothicCompoundTravelGate.TravelMode.ENTER_COMPOUND, "ENTER")
+	root.add_child(failed_gate)
+	failed_gate.interact(actor)
+	_require(failed_gate.presentation_state == GothicCompoundTravelGate.PresentationState.FAILURE, "unavailable destination did not enter FAILURE")
+	_require(not broken_route.has_method("is_travel_route_active"), "failed route was spuriously activated")
 
 	if _failed:
 		quit(1)

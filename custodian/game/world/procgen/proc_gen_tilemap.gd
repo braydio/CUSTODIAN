@@ -24,6 +24,9 @@ const ROAD_SEMANTICS_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfac
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
 )
+const DRESSING_CLUSTER_PLANNER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_planner.gd")
+const DRESSING_CLUSTER_REALIZER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_realizer.gd")
+const DRESSING_CLUSTER_CATALOG := preload("res://content/procgen/dressing_clusters/dressing_cluster_catalog_v1.tres")
 const BIOME_PROFILES := {
 	"scrubland": preload("res://content/procgen/biomes/scrubland.tres"),
 	"woodland": preload("res://content/procgen/biomes/woodland.tres"),
@@ -241,6 +244,10 @@ enum WorldShapeMode {
 @export_range(0, 64, 1) var macro_presentation_max_chasm_stamps := 8
 @export_range(0, 64, 1) var macro_presentation_max_surface_stamps := 6
 @export var macro_presentation_debug_logging := false
+@export_group("", "")
+@export_group("Dressing Clusters")
+@export var dressing_clusters_enabled := true
+@export var dressing_cluster_catalog: Resource = DRESSING_CLUSTER_CATALOG
 @export_group("", "")
 
 ## TileSet source IDs (from your TileSet)
@@ -723,6 +730,13 @@ var _macro_presentation_composer: RefCounted = null
 var _macro_presentation_plan: Dictionary = {}
 var _macro_presentation_summary: Dictionary = {}
 var _macro_presentation_dressing_clearance_cells: Dictionary = {}
+var _dressing_cluster_planner: RefCounted = null
+var _dressing_cluster_realizer: RefCounted = null
+var _dressing_cluster_plan: Dictionary = {}
+var _dressing_cluster_child_by_cell: Dictionary = {}
+var _dressing_cluster_occupied_cells: Dictionary = {}
+var _dressing_cluster_suppression_cells: Dictionary = {}
+var _dressing_cluster_summary: Dictionary = {}
 var _environment_wind_speed_multiplier: float = 1.0
 var _environment_wind_gust_multiplier: float = 1.0
 var _planet_world_profile: Dictionary = {}
@@ -1125,6 +1139,12 @@ func promote_evaluated_candidate_to_final() -> Dictionary:
 	marks["macro_presentation"] = Time.get_ticks_msec() - phase_started
 
 	phase_started = Time.get_ticks_msec()
+	_build_dressing_cluster_plan(map_size)
+	marks["dressing_cluster_plan"] = Time.get_ticks_msec() - phase_started
+	if enable_streaming_reveal and not generation_evaluation_mode:
+		_prepare_streaming_reveal()
+
+	phase_started = Time.get_ticks_msec()
 	if not enable_streaming_reveal and enable_final_foliage:
 		_generate_foliage(map_size)
 	marks["foliage_finalize"] = Time.get_ticks_msec() - phase_started
@@ -1361,8 +1381,11 @@ func _fill_tilemaps() -> void:
 		_rebuild_macro_presentation(map_size)
 	_marks["macro_presentation"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
+	_build_dressing_cluster_plan(map_size)
+	_marks["dressing_cluster_plan"] = Time.get_ticks_msec() - _last
+	_last = Time.get_ticks_msec()
 
-	if enable_streaming_reveal:
+	if enable_streaming_reveal and not generation_evaluation_mode:
 		_prepare_streaming_reveal()
 	elif build_runtime_wall_collision:
 		_rebuild_runtime_wall_collision(map_size)
@@ -5523,6 +5546,11 @@ func _find_or_create_world_progress_marker_parent() -> Node2D:
 
 
 func _clear_world_progression_runtime() -> void:
+	_dressing_cluster_plan.clear()
+	_dressing_cluster_child_by_cell.clear()
+	_dressing_cluster_occupied_cells.clear()
+	_dressing_cluster_suppression_cells.clear()
+	_dressing_cluster_summary.clear()
 	_surface_kind_by_cell.clear()
 	_surface_material_by_cell.clear()
 	_surface_material_summary.clear()
@@ -7843,6 +7871,94 @@ func _publish_macro_presentation_gauges() -> void:
 	_obs_gauge(&"procgen_surface_rocky_upland_count", int(family_counts.get("procgen_surface_rocky_upland", 0)))
 
 
+func _build_dressing_cluster_plan(map_size: Vector2i) -> void:
+	if _dressing_cluster_planner == null: _dressing_cluster_planner = DRESSING_CLUSTER_PLANNER_SCRIPT.new()
+	if _dressing_cluster_realizer == null: _dressing_cluster_realizer = DRESSING_CLUSTER_REALIZER_SCRIPT.new()
+	_dressing_cluster_plan.clear()
+	_dressing_cluster_child_by_cell.clear()
+	_dressing_cluster_occupied_cells.clear()
+	_dressing_cluster_suppression_cells.clear()
+	if not dressing_clusters_enabled or dressing_cluster_catalog == null:
+		_dressing_cluster_summary = {"fingerprint": "", "target_count": 0, "placed_count": 0, "child_count": 0, "suppression_cell_count": 0, "counts_by_profile": {}}
+		_publish_dressing_cluster_gauges()
+		return
+	var ingress: Dictionary = {}
+	for rect: Rect2i in _world_ingress_dressing_clearance_rects:
+		for y in range(rect.position.y, rect.end.y):
+			for x in range(rect.position.x, rect.end.x): ingress[Vector2i(x, y)] = true
+	var indoor: Dictionary = {}
+	for tile_variant in _generated_floor_cells:
+		var tile := tile_variant as Vector2i
+		if is_indoor_tile(tile): indoor[tile] = true
+	var context := {
+		"seed": _get_generation_seed(), "map_area": map_size.x * map_size.y,
+		"floor_cells": _generated_floor_cells, "wall_cells": _generated_wall_cells,
+		"chasm_cells": _chasm_cells, "ocean_cells": _ocean_cells,
+		"biome_by_cell": _biome_id_by_cell, "surface_material_by_cell": _surface_material_by_cell,
+		"route_distance": _route_playability_result.get("route_distance", {}),
+		"route_hard_clearance_cells": _route_playability_result.get("hard_clearance_cells", {}),
+		"route_shoulder_cells": _route_playability_result.get("shoulder_cells", {}),
+		"sparse_dressing_cells": _route_playability_result.get("sparse_dressing_cells", {}),
+		"deep_dressing_cells": _route_playability_result.get("deep_dressing_cells", {}),
+		"macro_dressing_clearance_cells": _macro_presentation_dressing_clearance_cells,
+		"ingress_dressing_clearance_cells": ingress,
+		"is_encounter_reserved_cell": Callable(self, "is_encounter_reserved_cell"),
+		"authored_cells": _macro_presentation_protected_cells(), "reserved_cells": _surface_claim_cells,
+		"road_cells": _main_road_tiles.merged(_ruined_road_cells, true),
+		"parking_cells": _parking_zone_tiles, "service_hardstand_cells": _service_hardstand_cells,
+		"indoor_cells": indoor,
+	}
+	_ensure_foliage_spawner()
+	var foliage_context := _build_foliage_spawner_context(map_size)
+	foliage_context["foliage_nodes"] = {}
+	var foliage_safe: Dictionary = {}
+	for cell_variant in _generated_floor_cells:
+		var cell := cell_variant as Vector2i
+		if _foliage_spawner.can_place_authored_at(foliage_context, cell):
+			foliage_safe[cell] = true
+	context["foliage_authored_safe_cells"] = foliage_safe
+	_dressing_cluster_plan = _dressing_cluster_planner.build_plan(context, dressing_cluster_catalog as DressingClusterCatalog)
+	_dressing_cluster_child_by_cell = _dressing_cluster_plan.get("child_by_cell", {})
+	_dressing_cluster_occupied_cells = _dressing_cluster_plan.get("occupied_cells", {})
+	_dressing_cluster_suppression_cells = _dressing_cluster_plan.get("suppression_cells", {})
+	_dressing_cluster_summary = {
+		"fingerprint": String(_dressing_cluster_plan.get("fingerprint", "")),
+		"target_count": int(_dressing_cluster_plan.get("target_cluster_count", 0)),
+		"placed_count": int(_dressing_cluster_plan.get("placed_cluster_count", 0)),
+		"child_count": _dressing_cluster_child_by_cell.size(),
+		"suppression_cell_count": _dressing_cluster_suppression_cells.size(),
+		"counts_by_profile": (_dressing_cluster_plan.get("counts_by_profile", {}) as Dictionary).duplicate(true),
+	}
+	_publish_dressing_cluster_gauges()
+
+
+func is_inside_dressing_cluster_suppression(tile: Vector2i) -> bool:
+	return _dressing_cluster_suppression_cells.has(tile)
+
+
+func get_foliage_presentation_density_multiplier(tile: Vector2i) -> float:
+	if dressing_clusters_enabled and StringName(_biome_id_by_cell.get(tile, &"")) == &"rocky_upland" and StringName(_surface_material_by_cell.get(tile, &"")) == &"natural_rock": return 0.62
+	return 1.0
+
+
+func debug_get_dressing_cluster_plan() -> Dictionary:
+	return _dressing_cluster_plan.duplicate(true)
+
+
+func debug_get_dressing_cluster_summary() -> Dictionary:
+	return _dressing_cluster_summary.duplicate(true)
+
+
+func _publish_dressing_cluster_gauges() -> void:
+	var counts: Dictionary = _dressing_cluster_summary.get("counts_by_profile", {})
+	var total := 0
+	for amount in counts.values(): total += int(amount)
+	_obs_gauge(&"procgen_dressing_cluster_count", int(_dressing_cluster_summary.get("placed_count", 0)))
+	_obs_gauge(&"procgen_dressing_cluster_child_count", int(_dressing_cluster_summary.get("child_count", 0)))
+	_obs_gauge(&"procgen_dressing_cluster_suppression_cell_count", int(_dressing_cluster_summary.get("suppression_cell_count", 0)))
+	_obs_gauge(&"procgen_dressing_cluster_rocky_upland_count", total)
+
+
 func set_environment_wind_multipliers(speed_multiplier: float, gust_multiplier: float) -> void:
 	_environment_wind_speed_multiplier = clampf(speed_multiplier, 0.0, 3.0)
 	_environment_wind_gust_multiplier = clampf(gust_multiplier, 0.0, 3.0)
@@ -7961,6 +8077,8 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 			self,
 			"is_inside_macro_presentation_dressing_clearance"
 		),
+		"is_inside_dressing_cluster_suppression": Callable(self, "is_inside_dressing_cluster_suppression"),
+		"get_foliage_presentation_density_multiplier": Callable(self, "get_foliage_presentation_density_multiplier"),
 		"get_region_type_at_tile": Callable(self, "get_region_type_at_tile"),
 		"get_region_data_at_tile": Callable(self, "get_region_data_at_tile"),
 		"set_region_tile": Callable(self, "_set_region_tile"),
@@ -7972,11 +8090,17 @@ func _build_foliage_spawner_context(map_size: Vector2i = Vector2i.ZERO) -> Dicti
 
 func _generate_foliage(map_size: Vector2i) -> void:
 	_ensure_foliage_spawner()
-	var result: Dictionary = _foliage_spawner.generate(_build_foliage_spawner_context(map_size))
+	var context := _build_foliage_spawner_context(map_size)
+	_foliage_spawner.clear(context)
+	if _dressing_cluster_realizer != null and not _dressing_cluster_plan.is_empty():
+		var realization: Dictionary = _dressing_cluster_realizer.realize(_dressing_cluster_plan, context, _foliage_spawner)
+		_dressing_cluster_summary["realized_child_count"] = int(realization.get("placed_child_count", 0))
+	var result: Dictionary = _foliage_spawner.generate(context, false)
 	if bool(result.get("deferred", false)) and not _pending_foliage_tiles.is_empty():
 		_foliage_deferred_start_msec = Time.get_ticks_msec()
 	else:
 		_foliage_deferred_start_msec = 0
+	_publish_dressing_cluster_gauges()
 
 
 func _clear_foliage() -> void:
@@ -9994,7 +10118,11 @@ func _reveal_tile(tile: Vector2i) -> void:
 		var floor_data: Dictionary = _generated_floor_cells[tile]
 		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord), int(floor_data.get("alternative", 0)))
 		_reveal_road_piece_decal(tile)
-		if _should_place_foliage(tile):
+		if _dressing_cluster_child_by_cell.has(tile):
+			var child: Dictionary = _dressing_cluster_child_by_cell[tile]
+			_ensure_foliage_spawner()
+			_foliage_spawner.place_at_kind(_build_foliage_spawner_context(), tile, StringName(child.kind))
+		elif _should_place_foliage(tile):
 			_place_foliage(tile)
 	if _generated_wall_cells.has(tile):
 		var wall_data: Dictionary = _generated_wall_cells[tile]
@@ -11008,6 +11136,7 @@ func get_level_data() -> Dictionary:
 		"surface_material_by_cell": _surface_material_by_cell.duplicate(true),
 		"surface_materials": _surface_material_summary.duplicate(true),
 		"macro_presentation": _macro_presentation_summary.duplicate(true),
+		"dressing_clusters": _dressing_cluster_summary.duplicate(true),
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"ocean_cells": _dict_keys_as_vector2i_array(_ocean_cells),

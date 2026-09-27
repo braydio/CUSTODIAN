@@ -1845,3 +1845,29 @@ excluded from generic floor-value clusters. The empty
 `procgen_surface_meridian_hardstand` macro family is registered and bound to
 material-backed presentation regions. Transition/detail atlas rendering is
 not claimed beyond the live floor presentation support.
+
+Procgen dressing cluster composition is now validated for the Rocky Upland
+vertical slice. Three data-only profiles group existing trees and shrubs after
+macro planning; the foliage spawner retains texture selection, tint, wind,
+occlusion, collision, and node ownership. Planned clusters respect route,
+macro, ingress, encounter, authored, hardstand, and indoor clearances, and
+streaming reveals the same deterministic child at the same tile. Rocky
+Upland `natural_rock` residual foliage uses multiplier 0.62. The fixed-seed
+review at `reports/procgen_dressing_clusters/seed_824790_clusters_{off,on}.png`
+placed two clusters and nine children, with total foliage equal to the
+clusters-off baseline and route audit passing. This is not the complete six
+cluster vocabulary; approved natural-rock prop art is still needed for boulder
+compositions. Landmark Vocabulary V1 is the next procgen presentation phase.
+
+Known procgen road visual debt from the 2026-09-27 gameplay screenshot: two
+dark ruined-road regions read as isolated rounded/blotchy patches at gameplay
+zoom. This does not invalidate Road Semantics V2 and was not changed during
+cluster composition; later visual review should isolate texture/role art,
+fragment geometry, and camera scale.
+
+Carrow District Transfer Frame routes now require one explicit first
+activation. The six-frame, 9 fps boot reaches ACTIVE for a rendered frame
+before first travel, then both registered endpoints share active state and use
+body-entry automatic travel. The 24-physics-frame
+`portal_teleport_lock_until_frame` contract prevents immediate return bounce;
+ACTIVE endpoints suppress the manual interaction prompt.

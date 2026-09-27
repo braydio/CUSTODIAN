@@ -181,6 +181,17 @@ resolve to the union of both masks.
 
 ## Migration Phases
 
+| Phase | Deliverable | Status |
+| --- | --- | --- |
+| 0 | Contract hardening | VALIDATED |
+| 1 | Rocky Upland macro composition | VALIDATED |
+| 2a | Semantic surface materials | VALIDATED |
+| 2b | Meridian hardstand and Road Semantics V2 | VALIDATED |
+| 2c | Rocky Upland dressing cluster composition | VALIDATED (three proof profiles) |
+| 3 | Landmark vocabulary | NEXT |
+| 4 | Woodland, Wetland, and Scrubland surface expansion | DEFERRED |
+| 5 | Environment and weather finish | DEFERRED |
+
 ### Phase 0 — Contract hardening (complete)
 
 - Reconcile the forthcoming hardened implementation spec.
@@ -196,24 +207,32 @@ resolve to the union of both masks.
 - Preserve existing TileMap fallback.
 - Expose debug selection and rejection evidence.
 
-### Phase 2 — Cluster and hardstand composition
+### Phase 2c — Dressing cluster composition (validated)
 
-- Replace visual confetti with clearance-aware cluster scenes.
-- Generate meaningful road, apron, foundation, and service-lane shapes.
-- Keep material tiles visually subordinate to macro composition.
+Rocky Upland now has three deterministic data-only proof compositions, placed
+after macro planning and before residual foliage. Cluster children reuse the
+existing foliage renderer, material, collision, and bookkeeping paths. A
+0.62 residual foliage multiplier applies only to Rocky Upland `natural_rock`;
+the accepted-candidate promotion and streaming reveal paths use the same plan.
+These are proof compositions rather than the final six-piece vocabulary.
+Reusable natural-rock prop art is not approved, so true boulder clusters remain
+deferred; no placeholder boulders are used.
 
-### Phase 3 — Landmark vocabulary
+Meridian hardstand and Road Semantics V2 are validated in Phase 2b. The existing
+15-piece filled-surface road grammar is reused for local road presentation.
+
+### Phase 3 — Landmark vocabulary (next)
 
 - Add minor, major, and rare hero landmark placement contracts.
 - Establish a target cadence of roughly one memorable feature per one to two
   screen widths without sacrificing combat readability.
 
-### Phase 4 — Biome expansion
+### Phase 4 — Biome expansion (deferred)
 
 - Extend archetype and asset families to woodland, wetland, and scrubland.
 - Retain deterministic fallback when a biome lacks production art.
 
-### Phase 5 — Environmental finish
+### Phase 5 — Environmental finish (deferred)
 
 - Integrate day/night, weather, wet/snow/ash overlays, and landmark light
   anchors through existing environment authorities.
@@ -244,21 +263,17 @@ composition target. Baselines may not be approved automatically.
 
 ## Next Agent Slice
 
-Goal: finish validation of the hardened runtime foundation, then populate the
-empty-safe catalog only when approved rocky-upland production art exists.
+Landmark Vocabulary V1. The three Rocky Upland dressing profiles are only
+proof compositions; do not describe them as the complete six-piece cluster
+vocabulary. The immediate next milestone is deterministic minor/major/hero
+landmark placement without changing terrain authority or combat readability.
 
-Read first:
+## Known visual debt
 
-- this document;
-- `custodian/docs/ai_context/task_packets/PROCGEN_MACRO_PRESENTATION_V1.md`;
-- `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md`;
-- `design/02_features/procgen/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md`;
-- `design/02_features/environment/WORLD_ENVIRONMENT_BIOME_DAYNIGHT_WEATHER.md`;
-- current procgen, biome, foliage-clearance, authored-claim, and streaming APIs.
-
-Acceptance for that slice:
-
-- focused and existing procgen validation remains green;
-- candidate promotion and direct final generation agree on plan fingerprint;
-- the first approved asset profiles have explicit semantic masks and pivots;
-- a fixed-seed visual capture is reviewed without automatic baseline approval.
+Gameplay screenshot dated 2026-09-27: two dark ruined-road areas in open
+procgen ground read at current gameplay zoom as isolated rounded/blotchy patches
+rather than remnants of a linear roadway. This is a presentation observation;
+Road Semantics V2 remains valid and this cluster slice does not change road
+generation or the 15-piece role grammar. Later review should distinguish road
+texture/role art, short fragment geometry, and camera scale before proposing a
+fix.
