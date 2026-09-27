@@ -37,11 +37,12 @@ func _run() -> void:
 	map.generation_output_enabled = true
 	map.enable_streaming_reveal = false
 	map.build_runtime_wall_collision = false
+	var expected_generation := map._debug_generation_id + 1
 	map.generate()
-	for _frame in range(480):
-		if not map.debug_get_generated_floor_cells().is_empty():
-			break
-		await process_frame
+	if not await _wait_for_generation(map, expected_generation):
+		push_error("Road semantics review seed did not finish generation")
+		quit(1)
+		return
 	for _frame in range(4):
 		await process_frame
 	var camera := Camera2D.new()
@@ -64,6 +65,13 @@ func _run() -> void:
 	var capture_path := OUTPUT_DIR.path_join("seed_%d_overview.png" % REVIEW_SEED)
 	var save_error := image.save_png(ProjectSettings.globalize_path(capture_path))
 	var summary := map.debug_get_road_semantics_summary()
+	var review_route_audit := map.debug_run_route_playability_audit()
+	var ruined_road_cell_count := map.get_ruined_road_tiles().size()
+	var ruined_road_fragment_count := int(summary.get("ruined_road_fragment_count", 0))
+	var service_hardstand_cell_count := map.get_service_hardstand_tiles().size()
+	var parking_cell_count := map.get_parking_zone_tiles().size()
+	var ruined_road_decal_count := map.debug_get_surface_piece_decal_count("ruined_road")
+	var ruined_road_surface_role_counts := map.debug_get_surface_piece_role_counts("ruined_road")
 	var road_closeup_path := ""
 	var largest_fragment := _largest_road_fragment(map.get_ruined_road_tiles())
 	if not largest_fragment.is_empty():
@@ -78,14 +86,19 @@ func _run() -> void:
 		if closeup_texture != null:
 			road_closeup_path = OUTPUT_DIR.path_join("seed_%d_road_fragment_detail.png" % REVIEW_SEED)
 			save_error = closeup_texture.get_image().save_png(ProjectSettings.globalize_path(road_closeup_path))
+	var bounded_apron_check := await _check_service_apron_sample(map, procgen)
 	var report := {
 		"seed": REVIEW_SEED,
 		"production_wide_roads_enabled": map.intent_main_roads_enabled,
 		"road_semantics": summary,
-		"ruined_road_cells": map.get_ruined_road_tiles().size(),
-		"service_hardstand_cells": map.get_service_hardstand_tiles().size(),
-		"parking_staging_cells": map.get_parking_zone_tiles().size(),
-		"route_audit": map.debug_run_route_playability_audit(),
+		"ruined_road_cell_count": ruined_road_cell_count,
+		"ruined_road_fragment_count": ruined_road_fragment_count,
+		"ruined_road_decal_count": ruined_road_decal_count,
+		"ruined_road_surface_role_counts": ruined_road_surface_role_counts,
+		"service_hardstand_cell_count": service_hardstand_cell_count,
+		"parking_cell_count": parking_cell_count,
+		"bounded_service_apron_check": bounded_apron_check,
+		"route_audit": review_route_audit,
 		"capture": capture_path,
 		"road_fragment_detail_capture": road_closeup_path,
 	}
@@ -98,8 +111,62 @@ func _run() -> void:
 		push_error("Road semantics visual capture failed: " + error_string(save_error))
 		quit(1)
 		return
-	print("procgen_road_semantics_v2_review: capture=%s road_detail=%s fragments=%d roads=%d apron=%d parking=%d" % [capture_path, road_closeup_path, int(summary.get("ruined_road_fragment_count", 0)), int(summary.get("ruined_road_cell_count", 0)), int(summary.get("service_hardstand_cell_count", 0)), int(summary.get("parking_cell_count", 0))])
+	print("procgen_road_semantics_v2_review: capture=%s road_detail=%s fragments=%d roads=%d decals=%d roles=%s apron=%d parking=%d apron_sample=%s" % [capture_path, road_closeup_path, ruined_road_fragment_count, ruined_road_cell_count, ruined_road_decal_count, str(ruined_road_surface_role_counts), service_hardstand_cell_count, parking_cell_count, str(bounded_apron_check)])
 	quit(0)
+
+
+func _wait_for_generation(map: ProcGenTilemap, generation_id: int) -> bool:
+	for _frame in range(900):
+		var summary := map.debug_get_road_semantics_summary()
+		if map._debug_generation_id >= generation_id \
+				and not map.debug_get_generated_floor_cells().is_empty() \
+				and summary.has("fingerprint") \
+				and map.debug_get_surface_material_summary().has("fingerprint") \
+				and map.debug_get_surface_piece_decal_count("ruined_road") == map.get_ruined_road_tiles().size():
+			return true
+		await process_frame
+	return false
+
+
+func _check_service_apron_sample(map: ProcGenTilemap, procgen: ProcGen) -> Dictionary:
+	var checked_seeds: Array[int] = []
+	for offset in range(8):
+		var seed := REVIEW_SEED + offset
+		if offset > 0:
+			procgen.seed = seed
+			var expected_generation := map._debug_generation_id + 1
+			map.generate()
+			if not await _wait_for_generation(map, expected_generation):
+				return {"status": "GENERATION_FAILED", "seed": seed, "checked_seeds": checked_seeds}
+		checked_seeds.append(seed)
+		var apron := map.get_service_hardstand_tiles()
+		if apron.is_empty():
+			continue
+		var parking: Dictionary = {}
+		for cell: Vector2i in map.get_parking_zone_tiles():
+			parking[cell] = true
+		var apron_cells: Dictionary = {}
+		for cell: Vector2i in apron:
+			apron_cells[cell] = true
+			if map.get_surface_material_at_tile(cell) != &"hardened_industrial":
+				return {"status": "INVALID_MATERIAL", "seed": seed, "checked_seeds": checked_seeds}
+			if map.surface_material_overlay == null or map.surface_material_overlay.get_cell_source_id(cell) < 0:
+				return {"status": "MISSING_HARDSTAND_PRESENTATION", "seed": seed, "checked_seeds": checked_seeds}
+		if apron_cells != parking:
+			return {"status": "PARKING_MISMATCH", "seed": seed, "checked_seeds": checked_seeds}
+		if not bool(map.debug_run_route_playability_audit().get("ok", false)):
+			return {"status": "ROUTE_AUDIT_FAILED", "seed": seed, "checked_seeds": checked_seeds}
+		return {
+			"status": "FOUND",
+			"seed": seed,
+			"service_hardstand_cell_count": apron.size(),
+			"parking_cell_count": parking.size(),
+			"hardened_industrial_material": true,
+			"meridian_hardstand_presentation": true,
+			"route_audit_ok": true,
+			"checked_seeds": checked_seeds,
+		}
+	return {"status": "NO_ELIGIBLE_APRON_IN_BOUNDED_SAMPLE", "checked_seeds": checked_seeds}
 
 
 func _largest_road_fragment(cells: Array[Vector2i]) -> Array[Vector2i]:

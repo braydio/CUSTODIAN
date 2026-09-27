@@ -11,8 +11,29 @@ and biome authority, before visual floor clustering.
 
 Highest precedence wins: authored landmark/reserved surface, bridge, explicit
 industrial/service hardstand, civic hardstand/parking/plaza, ruined road or
-constructed path, wet ground, Rocky Upland natural rock, then natural soft.
+explicit constructed-road classification, wet ground, Rocky Upland natural
+rock, then natural soft. Generic `soft_path` and path-centerline metadata alone
+do not classify a constructed road.
 Only existing floor cells receive a material; walls and chasm remain untyped.
+
+## Road Semantics V2
+
+`ProcGenTilemap` runs the pure Road Semantics resolver after route/playability
+and the existing archived-road refresh. It derives intermittent
+`ruined_road` cells from already eligible route floor and a bounded
+site-adjacent service apron. Connectivity remains route/playability-owned; the
+resolver does not change floor/wall membership, route topology, elevation,
+collision, or navigation. Generic `soft_path` retains the biome's natural
+material unless independently marked as a road. Service-apron cells resolve to
+`hardened_industrial`, and its parking export matches the apron.
+
+Ruined fragments use the existing 15-piece 32px filled-surface road grammar as
+presentation-only decals with a distinct `ruined_road` identity. The archived
+wide-road generator remains opt-in through `intent_main_roads_enabled` and
+production keeps it disabled. Soft paths keep their independent
+connection-bitmask renderer. `SurfaceMaterialOverlay` continues to draw only
+hardened civic/industrial base treatment; it does not render ruined-road art.
+No new production road art is approved in this slice.
 
 The first presentation seam is `NavigationRegion2D/SurfaceMaterialOverlay`, a
 collision-free and navigation-free `TileMapLayer`. Meridian hardened-floor

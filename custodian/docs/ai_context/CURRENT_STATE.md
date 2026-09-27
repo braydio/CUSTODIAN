@@ -10,6 +10,18 @@ gate. Review is by exception. The focused `agent_workflow_contract` validator
 covers prompt compression and safe landing behavior. Review-only tasks require
 an explicit `TASK OVERRIDE:`.
 
+## Road Semantics V2 (2026-09-27)
+
+Road Semantics V2 is integrated into production procgen after route/playability
+and archived-road refresh. It adds deterministic intermittent `ruined_road`
+cells and a bounded service apron without changing connectivity, floor/wall,
+elevation, collision, or navigation authority. Generic `soft_path` remains
+biome-natural; service apron resolves `hardened_industrial`. Visible ruined
+fragments reuse the existing 15-piece 32px filled-surface road grammar with
+distinct `ruined_road` decal keys; archived wide-road carving remains disabled
+in production. The service apron continues through the existing Meridian
+hardstand presentation. No new production road art was approved in this slice.
+
 ## Seven-Polity Canon + Persistent-Domain Narrative Migration (sealed 2026-09-24)
 
 Faction canon migration is complete at the canonical design-document level. The seven

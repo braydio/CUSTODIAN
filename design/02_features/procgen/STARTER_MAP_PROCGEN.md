@@ -6,37 +6,26 @@ Your repo guidance says active runtime is `custodian/`, Godot-native specs belon
 
 ## Main Map Road Surface Slice
 
-The live contract map also generates a modest functional road/path network
-outside the gothic compound. Wide generated roads are currently disabled in
-production because their repair, parking, refresh, and capture passes impose
-disproportionate startup cost and the visual result is not approved. The code
-remains available behind `intent_main_roads_enabled` for explicit debug
-comparison. Narrow interest footpaths and required route/playability authority
-remain active. When enabled for debug, wide roads render through the fixed 32×32
-filled-surface role pack at
-`custodian/content/tiles/roads_paths/runtime/roads/surface/`; narrow footpaths
-remain on their connection-bitmask manifest. The road centerline owns
-generation and connectivity, while the complete `_main_road_tiles` mask owns
-visual roles: center, edge, outer corner, and inner corner. Lane-offset roles
-are retired as base-road presentation authority. Raw sheets, raw slices, and
-`Pathways.json` stay under `custodian/content/tiles/roads_paths/source/`. This
-is not the ornate connected-map gothic compound road grammar; it is a
-low-decoration tactical route pass that:
+Production wide-road carving remains disabled by `intent_main_roads_enabled =
+false`; route/playability remains the connectivity authority. Road Semantics V2
+derives intermittent `ruined_road` fragments from existing eligible route
+cells, plus a bounded site-adjacent service apron. These semantic overlays do
+not change floor, wall, route, elevation, collision, or navigation authority.
+Generic `soft_path` cells remain biome-natural (`natural_soft`, `natural_rock`,
+or `wet_ground`) unless explicitly classified as a road.
 
-- carves a readable road from the player-side spawn area toward compound ingress and constructed-interior thresholds
-- repairs the road graph after carving so spawn, edge access, compound ingress, connector end, and constructed-base thresholds stay in one connected road component
-- keeps this road generation in the main contract map; the authored gothic compound submap keeps its own road grammar
-- adds a long compound-connector road segment on the main map, running outward from the chosen compound ingress toward the generated map
-- contains that connector with procgen wall rails so it reads as a walled approach instead of an open scatter path
-- applies a deterministic elevation/ramp section to the connector after TerrainBuilder runs, using existing industrial elevation metadata and visuals
-- widens a small parking-like apron beside the primary road
-- marks road and parking cells as semantic movement surfaces
-- leaves procedural floor cells on the default floor sources and overlays road art as manifest-selected `Sprite2D` stamps
-- clears wall tiles, generated wall metadata, and runtime wall collision from road/parking cells after wall visuals and terrain builder have run
-- keeps foliage/tree placement off road and parking cells, with only nearby natural scatter allowed
-- gives the operator a small walking speed boost on road/path surfaces
-- gives occupied vehicles a larger driving speed boost on road/path surfaces
-- exposes parking cells in level data so `ContractWorldLoader` can place vehicles there before falling back to old compound placement
+Ruined-road fragments use the existing 15-piece 32×32 filled-surface grammar at
+`custodian/content/tiles/roads_paths/runtime/roads/surface/`, with one decal per
+visible ruined-road cell. The same role classifier accepts the archived
+`_main_road_tiles` mask when the old generator is explicitly enabled for debug.
+Those archived decals use the separate `road` key; Road Semantics V2 uses
+`ruined_road`. Narrow soft paths retain their connection-bitmask manifest and
+separate `path` presentation. The service apron resolves to
+`hardened_industrial` and uses the existing Meridian hardstand base overlay.
+Large Meridian macros remain reserved for regions that meet their area
+threshold; they are not the ordinary fragment renderer. No new production road
+art has been approved in this slice. The authored gothic compound keeps its
+own road grammar.
 
 ## Exact code files I would add
 
