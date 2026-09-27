@@ -4,10 +4,12 @@ Repository defaults are inherited from `custodian/AGENTS.md` and the root
 `AGENTS.md`; do not duplicate them here. Packets capture task-specific scope and
 acceptance only.
 
-Use the lightest useful form. Skip a packet for narrow, low-risk work. Use this
-compact form when scope or acceptance needs a durable handoff. Add full-packet
-sections only when they preserve information needed for high-risk or
-multi-session work.
+Use the smallest coherent completion boundary. Skip a packet for narrow,
+low-risk work. Sequential migration steps may share one packet and acceptance
+gate; independent commits within that boundary are fine. Do not split work into
+review-dependent micro-packets when it shares an architectural acceptance gate.
+Add sections only when they preserve task-specific information needed for
+high-risk or multi-session work.
 
 Copy this file into `custodian/docs/ai_context/task_packets/` only when a packet
 adds value. Delete unused optional sections from the copy.

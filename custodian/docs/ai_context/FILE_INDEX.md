@@ -21,7 +21,7 @@
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
 reciprocity, and runtime-vs-fiction lifecycle terminology.
 
-Last updated: 2026-09-26
+Last updated: 2026-09-27
 
 ## Map + AI Coherence
 
@@ -978,6 +978,9 @@ Last updated: 2026-09-26
 - `custodian/docs/ai_context/VALIDATION_RECIPES.md` — validation command recipes and selection rules
 - `custodian/docs/ai_context/prompts/` — reusable prompt templates for common agent tasks
 - `custodian/docs/ai_context/task_packets/` — active and completed task-scoped agent packets
+- `custodian/tools/agent/land_main.py` — lock-serialized, conflict-safe automatic landing of clean task branches on `origin/main`; never force-pushes
+- `custodian/tools/agent/validate_prompt_contract.py` — prompt/task-packet default-duplication linter with `TASK OVERRIDE:` handling
+- `custodian/tools/agent/test_land_main.py` and `custodian/tools/validation/agent_workflow_smoke.py` — temporary-repository landing tests and focused prompt-contract workflow validation
 - `design/90_codex/` — non-authoritative idea inventory and graduation audit trail; `tools/validate_design_codex.py` validates index coverage, metadata, graduation/runtime links, and packaging residue
 - `custodian/tools/validation/contract_resource_node_smoke.gd` — headless smoke test that loads `game.tscn`, verifies scarce generated tutorial resource nodes include blackwood/alloy/wreckage, verifies the far-field expedition patch covers every compatible resource-node kind, and checks generated/default node sprites build frames
 - `custodian/tools/validation/sundered_keep_asset_smoke.gd` — headless smoke test that instantiates the Sundered Keep connected map and fails if any slice `Sprite2D` has a missing texture or if the authored level-shape underlay is missing

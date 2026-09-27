@@ -231,6 +231,13 @@ architecture ownership changes. A deliberate task-level exception must be
 marked `TASK OVERRIDE:` with its reason. It applies only within that task and
 cannot override higher repository or design authority.
 
+Normal implementation work is autonomous through `implement → validate →
+commit → land on origin/main`. No PR or routine human approval is required.
+Use `custodian/tools/agent/land_main.py` from an isolated task worktree to
+serialize local landings, rebase onto current `origin/main`, and push safely.
+Review-only work must explicitly say `TASK OVERRIDE: review only; do not stage,
+commit, or push.`
+
 Use the narrowest test that can falsify a change during implementation, then
 broaden once at closeout according to Validation Iteration Economy. Multiple
 commands are separate acceptance gates only when the task explains why each
@@ -244,6 +251,10 @@ implementation. Shared-worktree tolerance is for incidental overlap and legacy
 sessions, not the preferred way to run simultaneous substantial tasks. When a
 shared worktree is unavoidable, preserve other sessions' staged and unstaged
 changes and stage only paths or hunks owned by the current task.
+
+Keep work together through the smallest coherent completion boundary. Separate
+commits inside that boundary are fine; do not create review-dependent micro-
+packets when sequential migration steps share one architectural acceptance gate.
 
 ## Prompt Templates And Validation
 
@@ -380,10 +391,10 @@ or asset-authoring tooling outside active gameplay runtime.
 ## Commit Policy
 
 The root `AGENTS.md` owns commit and closing-summary policy. Follow it: commit
-completed, validated work at task boundaries, stage only current-task files,
-preserve other sessions' work, push completed commits, and never amend or
-force-push unless explicitly asked. Use the repository's short lowercase,
-comma-joined commit style.
+completed, validated work at task boundaries and land it with
+`custodian/tools/agent/land_main.py`. Stage only current-task files, preserve
+other sessions' work, and never amend or force-push unless explicitly asked.
+Use the repository's short lowercase, comma-joined commit style.
 
 ## Design Codex Governance
 

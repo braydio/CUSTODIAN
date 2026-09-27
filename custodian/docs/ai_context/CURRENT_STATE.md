@@ -1,5 +1,15 @@
 # CURRENT STATE — CUSTODIAN
 
+## Agent Workflow (2026-09-27)
+
+Prompts and task packets inherit repository defaults and carry only task deltas.
+Substantial parallel work uses isolated worktrees. Validated implementation
+work lands automatically on `origin/main` through
+`custodian/tools/agent/land_main.py`; routine PR or human approval is not a
+gate. Review is by exception. The focused `agent_workflow_contract` validator
+covers prompt compression and safe landing behavior. Review-only tasks require
+an explicit `TASK OVERRIDE:`.
+
 ## Seven-Polity Canon + Persistent-Domain Narrative Migration (sealed 2026-09-24)
 
 Faction canon migration is complete at the canonical design-document level. The seven

@@ -4,6 +4,9 @@ These templates inherit repository workflow, authority, validation,
 documentation, and Git defaults from `custodian/AGENTS.md` and the root
 `AGENTS.md`. Fill the task-specific fields and keep the prompt focused on the
 delta. Mark deliberate task-level exceptions `TASK OVERRIDE:` with a reason.
+Substantial parallel work uses isolated worktrees. Validated implementation
+work lands automatically on `origin/main`; review is by exception. Review-only
+templates must explicitly override that default.
 
 ## Templates
 
@@ -14,8 +17,8 @@ delta. Mark deliberate task-level exceptions `TASK OVERRIDE:` with a reason.
 - `flip_spritesheet_frames.md` — mirror a spritesheet by frame grid.
 - `tune_combat_feel.md` — combat feel tuning.
 - `review_runtime_change.md` — runtime diff review.
-- `scan_git_commit.md` — Git audit/planning; explicitly overrides automatic
-  commit behavior until the user approves exact actions.
+- `scan_git_commit.md` — review-only Git audit/planning; explicitly overrides
+  automatic landing and does not mutate repository state.
 
 Run this after editing reusable templates:
 
