@@ -2,13 +2,9 @@
   "schema": "custodian.asset_family.v2",
   "id": "twin_solaria_v1_fidelity_underlay",
   "kind": "backdrop",
-  "priority": "P0",
   "runtime": {
     "domain": "levels/hub/twin_solaria/v1",
-    "owner": "twin_solaria_v1_fidelity",
-    "template": "{domain}/{filename}",
-    "filename_policy": "template",
-    "filename_template": "{owner}_{variant}_{frame_size}.png"
+    "owner": "twin_solaria_v1_fidelity"
   },
   "canvas": {
     "width": 2048,
@@ -22,13 +18,18 @@
       "layer": "background",
       "action_group": "display",
       "variant": "fidelity_underlay",
+      "animation": false,
+      "frames": 1,
       "layout": "copy",
       "frame_width": 2048,
-      "frame_height": 1536,
-      "frames": 1,
-      "fps": 0
+      "frame_height": 1536
     }
   },
   "aliases": {},
-  "consumers": []
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn"
+    }
+  ]
 }

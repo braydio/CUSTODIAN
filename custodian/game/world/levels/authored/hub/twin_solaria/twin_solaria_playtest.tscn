@@ -1,0 +1,21 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/world/levels/authored/hub/twin_solaria/twin_solaria_playtest.gd" id="1_wrapper"]
+[ext_resource type="PackedScene" path="res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn" id="2_level"]
+[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="3_operator"]
+[ext_resource type="Script" path="res://game/systems/core/player_controller.gd" id="4_controller"]
+[ext_resource type="Script" path="res://game/world/camera.gd" id="5_camera"]
+
+[node name="TwinSolariaPlaytest" type="Node2D"]
+script = ExtResource("1_wrapper")
+
+[node name="Level" parent="." instance=ExtResource("2_level")]
+
+[node name="Operator" parent="." instance=ExtResource("3_operator")]
+
+[node name="PlayerController" type="Node" parent="."]
+script = ExtResource("4_controller")
+operator_path = NodePath("../Operator")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("5_camera")

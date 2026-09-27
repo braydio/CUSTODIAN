@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c26eurckxns7s"
-path="res://.godot/imported/twin_solaria_v1_solarium_i_acquisition_court_617x695.png-843334f4c87820284a5b51fd24eb62c3.ctex"
+uid="uid://da4vfeibnip7c"
+path="res://.godot/imported/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png-ba8fe79ae3fe75cbeb952ccaf0aa8ba1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_solarium_i_acquisition_court_617x695.png"
-dest_files=["res://.godot/imported/twin_solaria_v1_solarium_i_acquisition_court_617x695.png-843334f4c87820284a5b51fd24eb62c3.ctex"]
+source_file="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_fidelity/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png"
+dest_files=["res://.godot/imported/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png-ba8fe79ae3fe75cbeb952ccaf0aa8ba1.ctex"]
 
 [params]
 
