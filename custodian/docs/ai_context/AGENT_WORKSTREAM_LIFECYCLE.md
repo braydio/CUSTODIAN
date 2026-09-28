@@ -25,6 +25,25 @@ documentation edits, and the required `<TASK>_CLAUDE_SUMMARY.md` inside that
 worktree. Commit only scoped task files. The task branch is pushed before
 landing, providing a remote recovery ref.
 
+### Run-artifact contract
+
+A worktree is disposable; its unresolved artifacts are not. If a task packet is
+used, give it the stable `Workstream` ID. Before finish, the associated packet
+must be `complete`, moved to `task_packets/archived/`, and absent from the
+packet README's active/recently-complete sections. The root closing summary is
+durable and committed. Validation JSON is normally an ephemeral input to finish
+unless the task specifically needs it retained. Temporary logs/caches/previews
+may be deleted deliberately, while review evidence is retained only when it has
+future review value. Asset Pipeline V2 `source_work/` and `inbox/` material is
+never disposable merely because it was created during a run.
+
+`workstream.py finish` runs an artifact preflight before synchronization and
+again after synchronizing latest main. Any untracked file blocks teardown and is
+classified as task-packet, closing-summary, Asset V2 source, review evidence,
+disposable candidate, or unclassified. The agent must explicitly commit durable
+material or remove disposable material; ambiguous files are never silently
+removed.
+
 ## Exit paths
 
 For blocked, paused, or review-pending work, make intentional commits, ensure
