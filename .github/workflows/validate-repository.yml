@@ -4,11 +4,17 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]
+    branches:
+      - main
+      - "agent/**"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: validate-repository-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   cross-platform-filenames:
@@ -27,3 +33,110 @@ jobs:
 
       - name: Validate repository paths
         run: python tools/validate_filenames.py --all
+
+  changed-unit:
+    name: Fast changed validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      base-sha: ${{ steps.base.outputs.sha }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install Godot 4.7
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+
+      - name: Install validation dependencies
+        run: python -m pip install -r requirements.txt pillow numpy requests textual
+
+      - name: Resolve changed-file base
+        id: base
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            base="$PR_BASE_SHA"
+          elif [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF" == "refs/heads/main" ]]; then
+            base="$PUSH_BEFORE_SHA"
+          elif [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            base="$(git rev-parse HEAD^)"
+          else
+            git fetch --no-tags origin main
+            base="$(git merge-base HEAD origin/main)"
+          fi
+
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            git fetch --no-tags origin main
+            base="$(git merge-base HEAD origin/main)"
+            if [[ "$base" == "$(git rev-parse HEAD)" ]]; then
+              base="$(git rev-parse HEAD^)"
+            fi
+          fi
+
+          echo "sha=$base" >> "$GITHUB_OUTPUT"
+          echo "Validation base: $base"
+
+      - name: Run fast changed validation
+        run: >-
+          python3 custodian/tools/validation/run_validation.py
+          --changed
+          --base "${{ steps.base.outputs.sha }}"
+          --max-tier unit
+          --json
+
+  changed-downstream:
+    name: Downstream changed validation
+    if: >-
+      github.event_name == 'pull_request' ||
+      github.ref == 'refs/heads/main' ||
+      github.event_name == 'workflow_dispatch'
+    needs: changed-unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install Godot 4.7
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+
+      - name: Install validation dependencies
+        run: python -m pip install -r requirements.txt pillow numpy requests textual
+
+      - name: Run downstream changed validation
+        run: >-
+          python3 custodian/tools/validation/run_validation.py
+          --changed
+          --base "${{ needs.changed-unit.outputs.base-sha }}"
+          --json
