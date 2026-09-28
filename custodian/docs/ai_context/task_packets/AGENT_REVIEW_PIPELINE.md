@@ -4,7 +4,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `agent-task-dispatch`
+- Depends on: `agent-task-dispatch, agent-task-dispatch-review-corrections`
 - Locks: `agent-workflow`
 - Kind: `implementation`
 - Review: `auto`
