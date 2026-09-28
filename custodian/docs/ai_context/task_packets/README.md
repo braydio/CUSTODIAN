@@ -78,6 +78,10 @@ cannot be lost when the ephemeral worktree is removed.
 
 - `OPERATOR_AUTHORING_SURFACE_HARDENING.md` — P1 manual packet to reconcile active Operator authoring docs with Workbench V5 / Operator V2, expose targeted/strict focused ingest controls, and add regression coverage for tooling-doc drift.
 
+### Ready / Manual Dispatch
+
+- `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` — P1 closeout for the landed 04→05 architectural connector: remove the remaining room-canvas seams, preserve locked geometry/source art, refresh direct visual evidence, and correct stale connector docs.
+
 ### In Progress
 
 - `PROCGEN_MACRO_PRESENTATION_V1.md` — Validated migration ledger for the live region-first Rocky Upland macro presentation layer; ten SURFACE states are bound and hardened.
