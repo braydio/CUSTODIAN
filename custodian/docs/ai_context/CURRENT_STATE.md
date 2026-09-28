@@ -5,7 +5,10 @@
 Prompts and task packets inherit repository defaults and carry only task deltas.
 Every normal implementation run uses the ephemeral workstream lifecycle in
 `AGENT_WORKSTREAM_LIFECYCLE.md`; the project-root checkout is for coordination
-and safe post-landing sync. `workstream.py` pushes recovery work before landing,
+and safe post-landing sync. `workstream.py` now runs a pre-teardown artifact gate:
+associated packets must be complete and archived, stale active packet-index
+entries block finish, and any untracked run artifact must be explicitly resolved
+before the disposable worktree can be removed. `workstream.py` pushes recovery work before landing,
 and `land_main.py` accepts the branch's own upstream while still rejecting
 publication on unrelated remote refs. Successful finish verifies ancestry from
 `origin/main` before removing completed branch/worktree state. Branch archive
