@@ -16,6 +16,7 @@ adds value. Delete unused optional sections from the copy.
 
 # [TASK NAME]
 
+- Workstream: `<lowercase-kebab-id>`
 - Status: `draft`
 - Goal:
 - Current measured state:
