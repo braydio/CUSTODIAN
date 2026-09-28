@@ -1,7 +1,12 @@
 # Agent Workstream Lifecycle
 
-Normal implementation runs use an isolated ephemeral worktree. Read-only and
-review-only work may stay in the coordination checkout. If a worktree cannot be
+Normal implementation runs use an isolated ephemeral worktree. For queued
+packet work, prefer `dispatch.py claim-next --agent codex`, or use
+`dispatch.py claim <id> --agent codex` for explicit selection. The dispatcher
+reads fetched `origin/main`, checks packet dependencies and locks, then
+delegates branch/worktree creation or resume to `workstream.py`. Direct
+`workstream.py start <id>` remains valid. Read-only and review-only work may
+stay in the coordination checkout. If a worktree cannot be
 used, document the reason in the task record. The project-root checkout is not
 the default implementation surface.
 
@@ -12,6 +17,14 @@ repository coordination checkout:
 
 ```bash
 python3 custodian/tools/agent/workstream.py start <workstream-id>
+```
+
+Queued packet front door:
+
+```bash
+python3 custodian/tools/agent/dispatch.py status
+python3 custodian/tools/agent/dispatch.py claim-next --agent codex
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --agent codex
 ```
 
 The tool fetches and prunes `origin`, then creates or resumes

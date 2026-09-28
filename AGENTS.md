@@ -92,6 +92,16 @@ commit, or push.`
   Rebase conflicts and failed required validation are blockers; never force-push.
 - Do not amend or force-push unless explicitly asked.
 
+## CUSTODIAN Task Dispatch
+
+For “Take the next CUSTODIAN task,” run
+`python3 custodian/tools/agent/dispatch.py claim-next --agent codex`.
+For “Take CUSTODIAN workstream `<id>`,” run
+`python3 custodian/tools/agent/dispatch.py claim <id> --agent codex`.
+Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
+returned packet, then execute only that workstream through the lifecycle in
+`custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
 ## Closing Summary Files
 
 Every agent writes the summary that normally closes a message to

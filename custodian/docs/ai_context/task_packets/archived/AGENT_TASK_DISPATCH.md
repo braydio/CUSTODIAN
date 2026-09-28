@@ -1,7 +1,7 @@
 # AGENT TASK DISPATCH
 
 - Workstream: `agent-task-dispatch`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `manual`
 - Priority: `P0`
 - Depends on: `none`
@@ -352,6 +352,13 @@ Completion report should state only:
 
 ## Handoff
 
-- Next action: Codex should manually start `agent-task-dispatch` once, implement this packet, validate, and land it. After that, future queued implementation packets should be written to `main` with `Dispatch: auto` when safe.
+- Next action: Mark future ready packets `Dispatch: auto` only when safe for unattended claiming; use `dispatch.py status` to inspect the queue.
 - Best starting files: `custodian/tools/agent/workstream.py`, `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`, `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`, `custodian/docs/ai_context/task_packets/README.md`.
 - Blockers or open questions: None. Keep V1 local-machine safe and repository-native; distributed leasing and continuous workers are explicitly deferred.
+
+## Completion
+
+- Implemented `status`, `claim-next`, and explicit `claim` commands using packet metadata on fetched `origin/main` and the existing workstream lifecycle.
+- Added manual-by-default dispatch metadata, deterministic priority/path order, completed-archive dependencies, narrow lock checks, and a local `flock` mutex spanning selection through worktree publication.
+- Focused temporary-repository suite: 23 tests passed, including auto/manual, dependency, lock, stale-main, duplicate identity, real two-claim, and concurrent terminal cases.
+- Continuous worker mode, generated README inventory, and cross-machine leasing remain deferred.

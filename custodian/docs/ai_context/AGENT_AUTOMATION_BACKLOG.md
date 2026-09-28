@@ -27,7 +27,7 @@ visual/audio/game-feel comparison provides direct production leverage across
 combat, animation, VFX, healing, and vista work.
 
 
-## Immediate Bootstrap — Repository Task Dispatcher
+## Implemented — Repository Task Dispatcher
 
 A ready implementation packet now exists at
 `custodian/docs/ai_context/task_packets/AGENT_TASK_DISPATCH.md`.
@@ -41,8 +41,12 @@ Goal:
 - use dependencies and narrow locks to prevent invalid concurrent work;
 - eliminate packet copy/paste and terminal-to-task bookkeeping by the user.
 
-V1 explicitly stops after one claim. Continuous workers and distributed leasing
-remain deferred until the one-job flow proves reliable.
+`custodian/tools/agent/dispatch.py` reads packet truth from fetched
+`origin/main`, safely defaults missing dispatch metadata to manual, sorts
+eligible tasks by priority and packet path, enforces completed dependencies and
+narrow locks, serializes local claims, and delegates worktree lifecycle to
+`workstream.py`. V1 stops after one claim. Continuous workers, distributed
+leasing, and a generated packet README remain deferred.
 
 
 ### Next bootstrap stage — independent review

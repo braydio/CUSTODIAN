@@ -20,6 +20,20 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 5. Keep it current when scope, blockers, acceptance, or deferred work materially changes.
 6. Mark it `complete` only after implementation, required docs updates, feasible validation, and completion notes are done.
 
+## Dispatch
+
+Packets are manual by default. Add `Dispatch: auto` only when the ready packet
+is safe for a Codex terminal to claim without additional human selection.
+`dispatch.py status` reads packet truth from fetched `origin/main`; use
+`dispatch.py claim-next --agent codex` to claim the highest-priority eligible
+auto packet, or `dispatch.py claim <workstream-id> --agent codex` for explicit
+selection (including manual packets). `Priority` is `P0`–`P3` (default `P2`),
+`Depends on` lists workstream IDs that must be complete and archived on main,
+and `Locks` lists narrow contention IDs. A missing `Dispatch` remains manual.
+Claims create/resume exactly one existing `agent/<id>` workstream and do not
+edit packet state on main; normal lifecycle progression and archival happen
+on the task branch. Continuous workers and cross-machine leases are deferred.
+
 ## Ownership
 
 - Reuse a packet only when it is scoped to the current task.
@@ -41,15 +55,10 @@ cannot be lost when the ephemeral worktree is removed.
 
 ## Active Packets
 
-### Ready For Manual Bootstrap
-
-- `AGENT_TASK_DISPATCH.md` — Bootstrap the repository-native packet dispatcher. This is the final manually directed packet: after it lands, safe `Dispatch: auto` packets can be claimed by Codex through `dispatch.py claim-next` without packet copy/paste.
-
 ### Queued After Dispatcher Bootstrap
 
 - `AGENT_REVIEW_PIPELINE.md` — P0 auto-dispatch task, blocked on `agent-task-dispatch`; adds independent post-land review, durable review receipts, bounded correction packets, and human decision escalation.
 - `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
-
 ### In Progress
 
 - `PROCGEN_MACRO_PRESENTATION_V1.md` — Validated migration ledger for the live region-first Rocky Upland macro presentation layer; ten SURFACE states are bound and hardened.

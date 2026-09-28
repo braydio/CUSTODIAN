@@ -18,6 +18,10 @@ adds value. Delete unused optional sections from the copy.
 
 - Workstream: `<lowercase-kebab-id>`
 - Status: `draft`
+- Dispatch: `manual`
+- Priority: `P2`
+- Depends on: `none`
+- Locks: `none`
 - Goal:
 - Current measured state:
 - Task-specific authority:
@@ -29,6 +33,12 @@ adds value. Delete unused optional sections from the copy.
 - Deferred:
 
 Status values: `draft`, `ready`, `in_progress`, `blocked`, `complete`.
+
+Dispatch defaults safely to `manual`; only explicitly marked `auto` packets
+can be selected by `dispatch.py claim-next`. Priority is `P0` (highest) through
+`P3` (lowest). Dependencies name workstream IDs that must have complete
+archived packets on `origin/main`. Locks are comma-separated narrow ownership
+IDs held for the duration of a published claim, or `none`.
 
 ## Full Packet Expansion
 

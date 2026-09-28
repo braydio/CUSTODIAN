@@ -18,6 +18,14 @@ Run focused lifecycle tests after changes to agent Git tooling:
 python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.test_workstream custodian.tools.agent.test_workstream_artifacts custodian.tools.agent.test_branch_hygiene
 ```
 
+Task dispatch uses temporary bare remotes and worktrees to verify metadata,
+queue ordering, dependency and lock blocking, stale-main discovery, branch
+claims, and same-machine concurrent selection:
+
+```bash
+python3 custodian/tools/agent/test_dispatch.py
+```
+
 These temporary-repository tests do not launch Godot. Run the changed-file
 validation recipe below after implementation changes as resource budget permits.
 
