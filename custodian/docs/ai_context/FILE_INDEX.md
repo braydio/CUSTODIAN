@@ -1214,6 +1214,8 @@ Last updated: 2026-09-27
 
 ## Twin Solaria Runtime V1
 
+- `docs/ai_context/task_packets/TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — queued Slice C implementation for staged Crown Incident evidence, recovered Second Crown plan overlay, local forensic route-state persistence, and canon guards.
+- `docs/ai_context/task_packets/REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired post-land review for forensic ordering, architecture/state ownership, canon boundaries, and visual overlay registration.
 - `game/world/levels/authored/hub/twin_solaria/twin_solaria_layout.gd` and `.tscn` — registered AuthoredLevel production shell with exact 2048×1536 crop placement, named Crown Causeway spawn, authored boundary segments, and dormant machine readouts.
 - `content/levels/hub/twin_solaria_v1.json` and `content/levels/levels.json` — `hub_twin_solaria` registry definition and named spawn contract.
 - `scenes/twin_solaria_playtest.tscn` and `tools/validation/twin_solaria_runtime_smoke.gd` — standalone movement wrapper and production registration/native-size/collision/POI smoke.
