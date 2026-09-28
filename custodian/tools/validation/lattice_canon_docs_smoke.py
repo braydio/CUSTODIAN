@@ -24,7 +24,7 @@ CHECKS = {
 
 REQUIRED = {
     "design/03_world/LATTICE_DOCTRINE.md": [
-        "Lattice Domains are",
+        "A **Lattice Domain** is",
         "CampaignRegion",
         "It does not fictionally destroy the place.",
         "Failure should be consequential precisely because it is **not automatic**.",
