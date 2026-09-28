@@ -26,6 +26,24 @@ Moment Forge is now implemented separately under
 visual/audio/game-feel comparison provides direct production leverage across
 combat, animation, VFX, healing, and vista work.
 
+
+## Immediate Bootstrap — Repository Task Dispatcher
+
+A ready implementation packet now exists at
+`custodian/docs/ai_context/task_packets/AGENT_TASK_DISPATCH.md`.
+
+Goal:
+
+- treat fetched `origin/main` task packets as the durable job board;
+- add explicit safe auto-dispatch metadata with manual-by-default behavior;
+- let any local Codex terminal claim exactly one eligible workstream;
+- delegate branch/worktree creation to existing `workstream.py`;
+- use dependencies and narrow locks to prevent invalid concurrent work;
+- eliminate packet copy/paste and terminal-to-task bookkeeping by the user.
+
+V1 explicitly stops after one claim. Continuous workers and distributed leasing
+remain deferred until the one-job flow proves reliable.
+
 ## Priority 1 — AI Context Validator
 
 Suggested path: `custodian/tools/agent/check_ai_context.py`
