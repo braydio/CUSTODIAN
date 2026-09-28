@@ -25,7 +25,7 @@ The remap is complete when:
 |---|---|---|---|---|
 | REMAP-0 | Runtime foundation | Clock/kernel, commands, snapshots, policies, resources, strategic power, logistics, repair/fabrication foundations, invariants, campaign outcome | COMPLETE | Existing migration suite and parity v2 |
 | REMAP-1 | Macro world-state completion | Relay state, deterministic systemic-event weighting/state, strategic assault state/handoff | COMPLETE | Macro-order/determinism/snapshot continuation smoke; parity v3 fixtures; physical WaveManager handoff and completion-observation boundary; migration suite |
-| REMAP-2 | Infrastructure degradation completion | Wear, fidelity, full repair semantics, ambient fabrication semantics | QUEUED | Focused parity + snapshot/restore + macro-order validation |
+| REMAP-2 | Infrastructure degradation completion | REMAP-1 review corrections + wear, fidelity, full repair semantics, ambient fabrication semantics | READY | Task packet `PYTHON_SIM_INFRASTRUCTURE_DEGRADATION_COMPLETION.md`; focused parity + snapshot/restore + macro-order validation |
 | REMAP-3 | Campaign persistence | Disk save/load for authoritative campaign/world state and durable route/domain state where applicable | QUEUED | Save → process restart → restore → deterministic continuation |
 | REMAP-4 | Migration closeout | Expand final parity surface, reconcile docs, classify intentionally retired Python systems, mark migration complete | BLOCKED_BY_1_2_3 | Final migration suite green; no unresolved active Python dependency |
 
@@ -158,7 +158,7 @@ final parity + migration closeout
 - Migration closeout: 0%
 
 Overall remaining-remap program: **~40% complete by slice count**
-(runtime foundation and macro world-state completion are done; persistence and closeout remain).
+(runtime foundation and macro world-state completion are done; REMAP-2 infrastructure degradation, REMAP-3 persistence, and REMAP-4 closeout remain).
 
 ### REMAP-1 classifications
 
