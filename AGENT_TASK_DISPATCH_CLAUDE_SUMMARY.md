@@ -2,6 +2,7 @@
 
 ## Delivered
 
+- Implementation landing SHA: `582c1efc989415701c99905bf0f2c5e66101dd14`.
 - Added `dispatch.py status`, `claim-next`, and explicit `claim`; packet truth is read from fetched `origin/main` without requiring a pull.
 - Added safe task packet metadata defaults, deterministic priority/path ordering, archived-complete dependency checks, claimed-workstream and narrow-lock checks, and a `.git`-local `flock` mutex held through `workstream.py start` and branch publication.
 - Added 23 temporary-repository tests, including real sequential claims, same-machine concurrent attempts, manual packet safety, malformed/duplicate metadata, locks, dependencies, and stale local `main`.
