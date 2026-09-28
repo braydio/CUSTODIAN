@@ -44,6 +44,21 @@ Goal:
 V1 explicitly stops after one claim. Continuous workers and distributed leasing
 remain deferred until the one-job flow proves reliable.
 
+
+### Next bootstrap stage — independent review
+
+Queued behind the dispatcher:
+
+- `task_packets/AGENT_REVIEW_PIPELINE.md` — adds packet-level review contracts,
+  independent post-land reviewer workstreams, durable review receipts, bounded
+  correction/re-review generation, and human escalation for unresolved judgment.
+- `task_packets/REVIEW_AGENT_REVIEW_PIPELINE.md` — uses the new machinery to
+  independently review the review pipeline itself.
+
+The review stage reuses dispatcher/workstream primitives rather than adding a
+second queue. Pre-land review, continuous workers, distributed leasing, and
+automatic subjective baseline acceptance remain deferred.
+
 ## Priority 1 — AI Context Validator
 
 Suggested path: `custodian/tools/agent/check_ai_context.py`
