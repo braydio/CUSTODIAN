@@ -296,9 +296,9 @@ Add to the existing BREACH/countdown paragraph:
 
 > Optional posture-break flash spawns at the enemy breach-marker offset when critical-open begins. Optional critical-window expiry spawns at the countdown-ring offset when the opportunity expires unconsumed. Both are one-shot `queue_free`-on-finish scenes gated by `grunt_optional_critical_vfx_enabled`.
 
-### `REQUIRED_ASSETS.md`
+### Production asset requirements
 
-The runtime PNGs are supplied and therefore are not listed as outstanding work in the canonical tracker. Their two missing editable `.aseprite` source files remain tracked as `needed`:
+The runtime PNGs are supplied and therefore are not listed as outstanding work. Their two missing editable `.aseprite` source files remain tracked as `needed` in `custodian/content/metadata/assets/required_assets.registry.json`; the root `REQUIRED_ASSETS.md` is a generated human view:
 
 ```text
 custodian/content/sprites/effects/combat/critical/source/posture_break_flash_01.aseprite

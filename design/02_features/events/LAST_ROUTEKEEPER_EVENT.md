@@ -28,7 +28,7 @@ This fits CUSTODIAN's core fantasy: the player wins by preserving and reconstruc
 3. Reward the player with **map/traversal clarity**, not stats.
 4. Reuse existing Sundered Keep interaction/HUD/minimap patterns.
 5. Track the event as one-time per run/save.
-6. Register missing production assets in `REQUIRED_ASSETS.md`.
+6. Register missing production assets in `custodian/content/metadata/assets/required_assets.registry.json` and regenerate the root `REQUIRED_ASSETS.md` view.
 
 ### Non-Goals
 
@@ -60,7 +60,7 @@ The event attaches to the existing Sundered Keep runtime.
 | `game/world/events/last_routekeeper/last_routekeeper_event_state.gd` | Event state resource (notes, lines, status) |
 | `game/systems/core/state/world_event_memory.gd` | Autoload for one-time event tracking |
 | `content/levels/sundered_keep/sundered_keep_front_gate_large.json` | Optional level-data-driven tile markers |
-| `REQUIRED_ASSETS.md` | Missing production art registry |
+| `custodian/content/metadata/assets/required_assets.registry.json` | Editable missing production art registry; root `REQUIRED_ASSETS.md` is its generated view |
 
 ### Precedent
 
@@ -280,7 +280,7 @@ After implementing, update:
 
 - `custodian/docs/ai_context/CURRENT_STATE.md`
 - `custodian/docs/ai_context/FILE_INDEX.md`
-- `REQUIRED_ASSETS.md`
+- `custodian/content/metadata/assets/required_assets.registry.json` and its generated root `REQUIRED_ASSETS.md` view
 - `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md`
 
 Check whether Drive/project-context copies of `AGENTS.md` need refreshing if they are supposed to mirror the repo root.
@@ -303,7 +303,7 @@ Check whether Drive/project-context copies of `AGENTS.md` need refreshing if the
 **Docs to create/update:**
 - `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md`
 - `custodian/docs/ai_context/task_packets/LAST_ROUTEKEEPER_EVENT.md`
-- `REQUIRED_ASSETS.md`
+- `custodian/content/metadata/assets/required_assets.registry.json` and its generated root `REQUIRED_ASSETS.md` view
 - `custodian/docs/ai_context/CURRENT_STATE.md`
 - `custodian/docs/ai_context/FILE_INDEX.md`
 

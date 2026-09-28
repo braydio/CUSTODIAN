@@ -1,13 +1,13 @@
 # ASSET REQUIREMENTS PIPELINE
 
 - Workstream: `asset-requirements-pipeline`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `asset-requirements`
 - Goal: Harden the landed production-requirements control plane and convert the obvious already-registered Asset V2 requirements from manual status to live family/catalog-derived status.
-- Current measured state: On reviewed `main@616caae`, the registry has 115 durable requirements but only 3 use V2-derived fulfillment. Non-V2 routes cannot reach `fulfilled`; five useful section notes were lost during migration; validation/next-action guidance have correctness gaps; one-time reverse Markdown migration code remains live; and ten requirements can be safely mapped to existing V2 contracts.
+- Current measured state: The registry has 115 durable requirements; 13 now use V2-derived fulfillment. At closeout, 113 are active and 2 are fulfilled. Ten additional requirements derive status from existing V2 family contracts/catalog evidence.
 - Task-specific authority: `design/04_architecture/ASSET_PIPELINE_V2.md`, `custodian/content/metadata/assets/required_assets.registry.json`, `custodian/tools/assets/{asset_requirements.py,asset_status.py,asset.py}`, and referenced live family contracts.
 - Change: Fix lifecycle/validation; add `required_states` family-scope targets, request-local status caching, source-pending-aware next actions, section-note projection, and compact agent guidance; remove reverse migration code; correct three misrouted effect rows; map ten existing requirements to complete live V2 closure conditions.
 - Preserve: Family contracts remain technical art authority; catalog/runtime evidence remains production-state authority; V2 completion stays derived-only; ingest/naming/transaction behavior stays unchanged; mixed requirements stay manual when a family contract does not fully express closure.
@@ -222,6 +222,17 @@ Completion report: files changed; registry/active/fulfilled counts; mappings add
 
 ## Handof
 
-- Next action: `python3 custodian/tools/agent/dispatch.py claim asset-requirements-pipeline --agent codex`, or let `claim-next` select it by priority.
+- Next action: Continue with the next eligible packet through `dispatch.py` after this packet lands.
 - Best starting files: `asset_requirements.py`, `required_assets.registry.json`, `asset_status.py`, `asset_requirements_smoke.py`.
-- Blockers or open questions: None. Reviewed live contracts support the explicit mappings without new art or family design.
+- Blockers or open questions: None for this workstream. Audio, Tiled, Operator, and review adapters remain deliberately non-derived unless their existing workflows update declared registry status; no new art or family design was added.
+
+## Completion Notes
+
+- Registry: 115 total requirements; 113 active and 2 fulfilled. Fulfillment routes: 13 Asset V2, 56 manual, 17 Operator, 18 Tiled, 8 audio, and 3 review.
+- Added ten family-scope/state-target mappings. Live derived status: zone plates `fulfilled`; late-service relay lamp `needed`; zone fixtures `partial`; authority inlay `needed`; ruin decal `needed`; ambient Awakening FX `needed`; Opossum threat re-export `needed`; Opossum reaction/friendship re-export `needed`; hide-exit body/barrel re-export `needed`; barrel hide-layer framing `needed`.
+- Non-V2 `fulfilled` is now valid and retained but filtered from generated Markdown. Asset V2 status supports `required_states`, evaluates each family once per registry evaluation, and exposes satisfied/missing/source-pending evidence.
+- CLI next actions use staged family source evidence, fulfilled inspection reports no production action, invalid mode combinations fail, and doctor stops requirement projection after structural validation errors.
+- Restored the five migrated section notes, corrected the three combat-effect fulfillment routes, removed one-time Markdown migration code and its permanent test, updated active asset-authority docs, and regenerated root `REQUIRED_ASSETS.md`.
+- Validation: requirement smoke, Asset Pipeline CLI UX/V2/V2.1, plan/status/ingest/replacement/transaction/backend, Vaultwing and Opossum contract smokes, `asset needs --check`, `asset doctor`, Python compile, and changed-unit validation all passed. Doctor reports one existing warning: unregistered `operator` inbox with 12 PNGs; there are no requirement errors.
+- The first requirements-smoke iteration exposed a temporary fixture omission (the written registry lacked the completed and source-action rows); the fixture was corrected. An extra attempted path `asset_pipeline_hardening_smoke.py` does not exist; the packet's named focused tests and actual asset pipeline smokes were run instead.
+- Moment Forge: not run — production-demand tooling and documentation only; no runtime or presentation behavior changed.

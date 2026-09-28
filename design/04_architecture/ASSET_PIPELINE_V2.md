@@ -138,10 +138,19 @@ Required completeness is based on catalog-backed runtime art, not inbox presence
 The ordered `required_assets.registry.json` is the sole editable demand queue. It
 records each need's purpose and routes Asset V2, Operator, audio, Tiled, review,
 or manual work to its existing authority. Asset V2 targets reference family and
-state IDs only; technical details remain in family contracts. Their requirement
-status derives from catalog-backed runtime art and requested directions, without
-using binding or runtime verification as a closure gate. Other routes retain
-their declared status until their existing workflow updates the registry.
+state IDs only; a `required_states` family scope expands dynamically from states
+whose family contract declares `required: true`. Technical details remain in
+family contracts. Asset V2 requirement status derives from catalog-backed
+runtime art and requested directions, without using binding or runtime
+verification as a closure gate. Other routes retain their declared status
+until their existing workflow updates the registry; `fulfilled` may be declared
+after real non-V2 fulfillment and remains recorded as history.
+
+Optional registry `section_notes` preserve human guidance above each generated
+section table. Direct inspection of a fulfilled requirement reports completion
+and no production action. For incomplete V2 targets, `asset needs <id>` uses
+matching staged inbox source to recommend `asset plan`; missing unstaged source
+recommends `asset request`, and mixed evidence can recommend both.
 
 Root `REQUIRED_ASSETS.md` is generated from the registry and omits fulfilled
 Asset V2 requirements while retaining those records in the registry. Run
@@ -540,6 +549,7 @@ Consumer gameplay binding remains explicit. Godot's `.godot/` import cache is no
 | `custodian/tools/assets/asset_router.py` | Schema-driven routing |
 | `custodian/tools/assets/asset_plan.py` | Plan generation and mutation boundary |
 | `custodian/tools/assets/asset_status.py` | Layered status reporting |
+| `custodian/tools/assets/asset_requirements.py` and `custodian/content/metadata/assets/required_assets.registry.json` | Requirement validation, catalog-derived status, and generated demand projection |
 | `custodian/tools/assets/asset_doctor.py` | Health checks |
 | `custodian/tools/assets/asset_catalog.py` | V2 generated catalog |
 | `custodian/tools/assets/asset_transaction.py` | Transaction journal + rollback |
@@ -558,6 +568,8 @@ Use focused current validation first:
 ```bash
 python3 custodian/tools/validation/asset_pipeline_v21_production_smoke.py
 python3 custodian/tools/validation/asset_pipeline_cli_ux_smoke.py
+python3 custodian/tools/validation/asset_requirements_smoke.py
+python3 custodian/tools/assets/asset.py needs --check
 ```
 
 Then exercise the CLI as appropriate:

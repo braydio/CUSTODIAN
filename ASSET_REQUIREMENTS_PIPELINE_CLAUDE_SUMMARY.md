@@ -1,26 +1,29 @@
-# Asset Requirements Pipeline — Implementation Summary
+# Asset Requirements Pipeline Summary
 
-## Delivered
+## Changes
 
-- Migrated the live Markdown tracker into `custodian/content/metadata/assets/required_assets.registry.json`. The parser read `origin/main`'s 115 rows, generated unique semantic IDs, and preserved section, title, target, purpose, and notes for every row. It handled both five-column asset rows, three-column Tiled rows, and the literal pipe in a code-formatted note.
-- Added `asset needs`, ID detail, JSON, deterministic `--write`, and read-only `--check`; Asset V2 status derives from `get_family_status()` and requested authored/mirrored directions. The root Markdown is now generated and excludes fulfilled Asset V2 rows without deleting their registry entries.
-- Added registry/link/projection validation to `asset doctor` and a focused temporary-fixture smoke registered in the validation manifest.
-- Linked the three specified live families/states. Current statuses: Reliquary connector **fulfilled**; Opossum south `waddle` + `scurry` **needed**; Vaultwing bonding suite **partial**.
-- Updated active pipeline/manifest/current-state/index/validation docs to identify the registry as the requirement authority and family contracts as technical authority.
+- Hardened registry validation for required fields, kebab-case IDs, declared lifecycle states, normalized duplicate targets, exact `state`/`scope` selection, `required_states` family scope, and section notes. Structural errors stop doctor before generated-view projection.
+- Added live family-scope expansion and per-evaluation family-status caching. State and scope evidence now expose missing/satisfied states and staged-source status. `asset needs <id>` recommends `request` for missing unstaged source, `plan` for staged source, both when evidence is mixed, and no action for fulfilled requirements.
+- Enabled declared `fulfilled` for non-V2 routes while retaining records and omitting them from the active generated view. Rejected ambiguous CLI mode combinations.
+- Restored five lost section notes, corrected three generic combat effects from Operator to manual fulfillment, removed one-time Markdown migration code/test, corrected three active design references, and added production-requirements guidance to `custodian/AGENTS.md`.
+- Added exactly the ten packet-authorized Asset V2 mappings. Root `REQUIRED_ASSETS.md` was regenerated from the registry.
 
-## Measurements and evidence
+## Measured state
 
-- Source rows: **115**. Registry rows after migration: **115**. Generated active Markdown rows: **114** (one derived fulfilled row filtered).
-- All 115 migrated title/target/purpose/notes/section values compared equal against `git show origin/main:REQUIRED_ASSETS.md`.
-- Passed: `asset_requirements_smoke.py`, `asset_pipeline_cli_ux_smoke.py`, `asset_pipeline_v21_production_smoke.py`, `asset_pipeline_v2_smoke.py`, `asset needs --check`, and `git diff --check`.
-- `asset doctor` exits successfully with no errors. It retains one pre-existing warning for 12 PNGs in the unregistered Operator inbox.
-- The requested `run_validation.py --changed --max-tier unit --json` selected 7 unit checks: 6 passed; `lattice_canon_docs` failed because untouched `design/03_world/LATTICE_DOCTRINE.md:312` contains the retired phrase “temporary continuity pockets.” The same phrase exists at that line in `origin/main`, so this is baseline drift unrelated to the asset change. No broad actor/integration sweep was run.
+- 115 requirements total: 113 active, 2 fulfilled.
+- Routes: 13 Asset V2, 56 manual, 17 Operator, 18 Tiled, 8 audio, 3 review.
+- Added mapping statuses: zone plates `fulfilled`; relay lamp `needed`; zone fixtures `partial`; authority inlay `needed`; ruin decal `needed`; Awakening FX `needed`; Opossum threat `needed`; Opossum reaction/friendship `needed`; hide-exit body/barrel `needed`; barrel hide-layer framing `needed`.
 
-## Negative controls and rough edges
+## Validation
 
-- A north-authored Opossum strip did not satisfy the south-only target; it remained `needed` until south art appeared.
-- Unknown schema, duplicate ID, unknown route, missing family/state, out-of-policy direction, and empty target-list fixtures fail validation. Missing production art itself does not fail requirement doctor checks.
-- The first generated projection check caught a stale source-authority header during implementation; regeneration corrected it and the subsequent check passed.
-- Non-V2 requirements remain declared-status records; no audio/Tiled/Operator ingestion adapters, automatic `asset next`, or additional family guesses were added.
+- Requirement smoke, Asset CLI UX, Asset Pipeline V2 and V2.1, plan/status/ingest/replacement/transaction/backend smokes, Vaultwing contract (65 strips), and Baby Opossum contract (22 strips) passed.
+- `asset needs --check` passed. `asset doctor` returned no errors and one existing warning: unregistered `operator` inbox containing 12 PNGs.
+- Python compile checks and `git diff --check` passed.
+- Closeout `run_validation.py --changed --max-tier unit --json`: passed 3/3 selected unit checks (`agent_workflow_contract`, `asset_pipeline_v2`, `asset_requirements`), zero failures, timeouts, or infrastructure errors. Green report: `/tmp/asset-requirements-pipeline-validation.json`.
+- Moment Forge: not run — tooling, registry, and documentation changes only; no runtime or presentation behavior changed.
 
-Moment Forge: not run — tooling, data, and documentation only.
+## Awkward bits and deferred work
+
+- The first temporary smoke iteration had not written its completed/source-action fixtures into the temporary registry; the assertions exposed this and the fixture setup was corrected.
+- An extra attempted validation path, `asset_pipeline_hardening_smoke.py`, does not exist. The actual shared test library ran through `asset_pipeline_v2_smoke.py`, and the packet's required focused smokes passed.
+- Audio, Tiled, Operator, and review status remain declared and workflow-updated. No new art, families, adapters, or priority features were added.

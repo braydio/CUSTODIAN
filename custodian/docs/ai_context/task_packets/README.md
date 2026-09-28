@@ -59,7 +59,6 @@ cannot be lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `ASSET_REQUIREMENTS_PIPELINE.md` — P1 auto-dispatch continuation of the production-requirements control plane: lifecycle hardening, V2 family-scope derivation, source-aware next actions, and ten safe live V2 mappings.
 - `AGENT_REVIEW_PIPELINE.md` — P0 auto-dispatch task, blocked on `agent-task-dispatch`; adds independent post-land review, durable review receipts, bounded correction packets, and human decision escalation.
 - `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
 ### In Progress

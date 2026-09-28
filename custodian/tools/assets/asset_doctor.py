@@ -62,8 +62,11 @@ def _check_requirements(project_dir: Path, families: dict[str, AssetFamilyContra
     except (OSError, ValueError) as exc:
         issues.append(DoctorIssue("error", f"required-assets registry cannot be read: {exc}"))
         return
-    for error in validate_registry(registry, families):
+    errors = validate_registry(registry, families)
+    for error in errors:
         issues.append(DoctorIssue("error", f"required-assets: {error}"))
+    if errors:
+        return
     try:
         if not check_markdown(registry, families, project_dir):
             issues.append(DoctorIssue("error", "generated REQUIRED_ASSETS.md is stale; run asset needs --write"))

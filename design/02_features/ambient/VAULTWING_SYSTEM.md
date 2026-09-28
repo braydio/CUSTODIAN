@@ -549,7 +549,8 @@ When implementation changes runtime truth, update this authority plus:
 ```text
 custodian/docs/ai_context/CURRENT_STATE.md
 custodian/docs/ai_context/FILE_INDEX.md
-REQUIRED_ASSETS.md   # only if it remains the live missing-asset tracker
+custodian/content/metadata/assets/required_assets.registry.json
+REQUIRED_ASSETS.md   # generated human view; regenerate from the registry
 ```
 
 Do not create a second missing-asset tracker. Register the Asset V2 family and
@@ -564,7 +565,7 @@ approach/escalation policy, voluntary landing and guarded trial, bonded
 allegiance, provenance-derived stable identity, and a versioned bond/health save
 record. The local record contract is not global save orchestration. B.2 now
 owns the six Slice-B semantic animation cues and protects them from ordinary
-state playback; the Asset V2 family and canonical missing-assets tracker list
+state playback; the Asset V2 family and production-requirements registry list
 the six art families plus feed and recognition SFX. Bonding art pass 1 has
 ingested seven clean strips into nine runtime directions: `guarded_approach`
 is complete; `notice_bait` and `inspect_bait` are partial; `feed_accept`,

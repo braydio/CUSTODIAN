@@ -91,16 +91,19 @@ Generated production demand queue. Edit the registry and regenerate this file; d
 
 ## Awakening / The First Return (sections 01-10)
 
+The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is registered by the Asset V2 families below; drop human-named state files into `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in `custodian/game/world/awakening/awakening_layout.gd`. Targets below are the V2-resolved runtime identities; `*` denotes state names listed in each family contract.
+
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
-| partial | P0/P1 zone plates — nine `awakening_*_environment` families | `custodian/content/levels/awakening/<zone>/<owner>_{underlay,foreground}_<WxH>.png` | Replace each section's blockout presentation without changing spatial authority. | Zones 01–09 now have underlay + foreground ingested and bound in `awakening_first_return.tscn`; production art preserves the locked spatial authority. |
 | needed | P1 `awakening_late_service_relay_lamp` | `custodian/content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png` | Relay-lamp altar hero prop. | Required state: `idle`. |
-| needed | P1 zone fixture families | `custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png` | Room-specific required set pieces and recommended dressing. | `awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts. |
+| partial | P1 zone fixture families | `custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png` | Room-specific required set pieces and recommended dressing. | `awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts. |
 | needed | P1 `awakening_authority_inlay` | `custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_*_32.png` | Authority-route equal-cell floor inlays. | Required: `straight`, `corner`, `t_junction`, `cross`, `ring_node`, `threshold`. |
 | needed | P1 `awakening_ruin_decal` | `custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_*_64.png` | Ruin damage and rubble decal set. | Required: `floor_crack_a`, `floor_crack_b`, `floor_crack_c`, `rubble_small`, `rubble_medium`. |
 | needed | P1 ambient Awakening FX families | `custodian/content/sprites/effects/awakening/runtime/<family>/<family>__fx__effect__*__omni__8f__<size>.png` | Required environmental motion layers. | `awakening_dust_motes/loop` 64px at 6 FPS; `awakening_falling_ash/loop` 64px at 6 FPS; `awakening_gate_wind_dust/loop` 128px at 8 FPS. |
 
 ## Common Vaultwing Bonding Presentation
+
+Family contract: `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`. Author source masters under `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`; Asset V2 publishes to `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/`.
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
@@ -109,6 +112,8 @@ Generated production demand queue. Edit the registry and regenerate this file; d
 | needed | Vaultwing bond-recognition call | `custodian/content/audio/sfx/fauna/vaultwing/vaultwing_bond_recognition_01.wav` | Mark the first earned recognition beat when the creature becomes bonded. | Keep distinct from hostile territorial and dive calls; production SFX follows animation ingest and first-bond visual review. |
 
 ## Baby Opossum Ambient Creature
+
+Runtime body strips are published; the entries below are approved source renders whose poses sit on a non-uniform grid (or, for the barrel, disagree on canvas framing between hide states), so they cannot be sliced onto 96x96 cells without cutting poses in half. The failed staging is preserved in `custodian/asset_drop/unresolved/ambient_baby_opossum/` and raw renders in `custodian/asset_drop/source_work/baby_opossum/`. Each needs an artist re-export onto a uniform pose grid, not a pipeline change. Family contract: `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`. Publish with `python tools/assets/asset.py ingest ambient_baby_opossum`; verify with `python tools/validation/baby_opossum_asset_contract_smoke.py`.
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
@@ -170,6 +175,8 @@ Generated production demand queue. Edit the registry and regenerate this file; d
 
 ## Combat Resource Feedback (Milestone A)
 
+The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-verified, and wired. The P-9 reuses those cues until bespoke replacements arrive.
+
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
 | needed | Overheat vent FX strip | `custodian/content/sprites/effects/runtime/weapon_pressure/weapon_pressure__fx__ranged__overheat_vent_01__omni__6f__32.png` | Compact white-grey pressure discharge with faint amber first frame, spawned at weapon barrel during overheat. | 32×32 per frame, 6 frames, 12 fps, non-looping. Optional for V1 — a procedural particle scene (`weapon_overheat_vent_vfx.tscn`) can stand in. |
@@ -196,6 +203,8 @@ Generated production demand queue. Edit the registry and regenerate this file; d
 | needed | Terminal UI frames, overlays, icons, pips, button skins | See `custodian/content/ui/terminal/README.md` | Replace placeholder/lightly-derived terminal styling. | Keep UI asset asks synchronized with that README. |
 
 ## Persistent Compound Authored Rooms
+
+Persistent Compound V1 is live with procedural semantic shells; these 32×32px Tiled `.tmj` maps are the deferred curated-interior layer, not a runtime blocker. Frame count is not applicable.
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|

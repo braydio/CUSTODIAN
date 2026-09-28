@@ -523,6 +523,12 @@ def cmd_doctor(args, families):
 
 
 def cmd_needs(args, families):
+    if args.requirement_id and (args.write or args.check):
+        print(f"{MARK['error']} Choose a requirement ID or --write/--check, not both.")
+        return 2
+    if (args.write or args.check) and args.json:
+        print(f"{MARK['error']} Choose --write/--check or --json, not both.")
+        return 2
     try:
         registry = load_registry(PROJECT_DIR)
         errors = validate_registry(registry, families)
@@ -530,7 +536,7 @@ def cmd_needs(args, families):
             print("\n".join(f"{MARK['error']} {error}" for error in errors))
             return 2
         items = evaluate_registry(registry, families, PROJECT_DIR)
-    except (OSError, ValueError, KeyError, TypeError) as exc:
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         print(f"{MARK['error']} Cannot load requirements: {exc}")
         return 2
     if args.write:
@@ -555,21 +561,52 @@ def cmd_needs(args, families):
         print(f"{item['status'].upper()} · {item['title']}\n\nSection: {item['section']}\nRoute: {fulfillment['type']}")
         if fulfillment["type"] == "asset_v2":
             for target in item["targets_status"]:
-                directions = f" ({', '.join(target['directions'])})" if "directions" in target else ""
-                state = "satisfied" if target["satisfied"] else "missing"
-                print(f"  {state}: {target['family']} / {target['state']}{directions}")
-                if target["missing_directions"]:
-                    print(f"    Missing directions: {', '.join(target['missing_directions'])}")
-            family_ids = list(dict.fromkeys(target["family"] for target in item["targets_status"]))
-            print("\nNext:")
-            for family_id in family_ids:
-                if item["status"] == "needed":
-                    print(f"  asset request {family_id}")
+                if target.get("scope") == "required_states":
+                    state = "satisfied" if target["satisfied"] else "partial" if target["satisfied_states"] else "missing"
+                    print(f"  {state}: {target['family']} / required states")
+                    if target["satisfied_states"]:
+                        print(f"    Satisfied states: {', '.join(target['satisfied_states'])}")
+                    if target["missing_states"]:
+                        print(f"    Missing states: {', '.join(target['missing_states'])}")
+                    if target["source_pending_states"]:
+                        print(f"    Source staged for: {', '.join(target['source_pending_states'])}")
                 else:
-                    print(f"  asset plan {family_id}")
-                print(f"  asset status {family_id}")
+                    directions = f" ({', '.join(target['directions'])})" if "directions" in target else ""
+                    state = "satisfied" if target["satisfied"] else "missing"
+                    print(f"  {state}: {target['family']} / {target['state']}{directions}")
+                    if target["missing_directions"]:
+                        print(f"    Missing directions: {', '.join(target['missing_directions'])}")
+                    if target["source_pending"] and not target["satisfied"]:
+                        print("    Source staged: yes")
+            actions: dict[str, set[str]] = {}
+            for target in item["targets_status"]:
+                family_id = target["family"]
+                if target["satisfied"]:
+                    continue
+                family_actions = actions.setdefault(family_id, set())
+                if target.get("scope") == "required_states":
+                    missing = set(target["missing_states"])
+                    pending = set(target["source_pending_states"])
+                    if missing - pending:
+                        family_actions.add("request")
+                    if pending:
+                        family_actions.add("plan")
+                else:
+                    family_actions.add("plan" if target.get("source_pending") else "request")
+            if not actions:
+                print("\nNo production action required; this requirement is complete.")
+            else:
+                print("\nNext:")
+                for family_id, family_actions in actions.items():
+                    for action in ("request", "plan"):
+                        if action in family_actions:
+                            print(f"  asset {action} {family_id}")
+                    print(f"  asset status {family_id}")
         else:
-            print(f"Declared status: {fulfillment['status']}\nNext: fulfill through the {fulfillment['type']} workflow, then update the registry status.")
+            if fulfillment["status"] == "fulfilled":
+                print("Declared status: fulfilled\nNo production action required; this requirement is complete.")
+            else:
+                print(f"Declared status: {fulfillment['status']}\nNext: fulfill through the {fulfillment['type']} workflow, then update the registry status.")
         return 0
     active = [item for item in items if item["status"] != "fulfilled"]
     current_section = None

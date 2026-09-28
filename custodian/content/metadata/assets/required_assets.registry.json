@@ -554,8 +554,45 @@
       "purpose": "Replace each section's blockout presentation without changing spatial authority.",
       "notes": "Zones 01–09 now have underlay + foreground ingested and bound in `awakening_first_return.tscn`; production art preserves the locked spatial authority.",
       "fulfillment": {
-        "type": "manual",
-        "status": "partial"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_creche_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_ambulatory_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_attestation_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_locker_reliquary_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_dust_lung_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_undergate_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_gate_plaza_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_custodian_approach_environment",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_late_service_environment",
+            "scope": "required_states"
+          }
+        ]
       }
     },
     {
@@ -566,8 +603,13 @@
       "purpose": "Relay-lamp altar hero prop.",
       "notes": "Required state: `idle`.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_late_service_relay_lamp",
+            "scope": "required_states"
+          }
+        ]
       }
     },
     {
@@ -578,8 +620,41 @@
       "purpose": "Room-specific required set pieces and recommended dressing.",
       "notes": "`awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_creche_fixtures",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_ambulatory_fixtures",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_attestation_fixtures",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_reliquary_fixtures",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_dust_lung_structures",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_undergate_machinery",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_approach_fixtures",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_late_service_fixtures",
+            "scope": "required_states"
+          }
+        ]
       }
     },
     {
@@ -590,8 +665,13 @@
       "purpose": "Authority-route equal-cell floor inlays.",
       "notes": "Required: `straight`, `corner`, `t_junction`, `cross`, `ring_node`, `threshold`.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_authority_inlay",
+            "scope": "required_states"
+          }
+        ]
       }
     },
     {
@@ -602,8 +682,13 @@
       "purpose": "Ruin damage and rubble decal set.",
       "notes": "Required: `floor_crack_a`, `floor_crack_b`, `floor_crack_c`, `rubble_small`, `rubble_medium`.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_ruin_decal",
+            "scope": "required_states"
+          }
+        ]
       }
     },
     {
@@ -614,8 +699,21 @@
       "purpose": "Required environmental motion layers.",
       "notes": "`awakening_dust_motes/loop` 64px at 6 FPS; `awakening_falling_ash/loop` 64px at 6 FPS; `awakening_gate_wind_dust/loop` 128px at 8 FPS.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_dust_motes",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_falling_ash",
+            "scope": "required_states"
+          },
+          {
+            "family": "awakening_gate_wind_dust",
+            "scope": "required_states"
+          }
+        ]
       }
     },
     {
@@ -714,8 +812,30 @@
       "purpose": "`look` idle beat; `hiss` and `startle` threat preamble. States are wired and currently fall back to `alert`/`idle`.",
       "notes": "Sources are 768px (look, startle) and 2172px (hiss) with non-uniform pose spacing. `look` is 4 poses, `startle` 4, `hiss` 4.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "ambient_baby_opossum",
+            "state": "look",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "hiss",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "startle",
+            "directions": [
+              "s"
+            ]
+          }
+        ]
       }
     },
     {
@@ -726,8 +846,30 @@
       "purpose": "Rejection disapproval beat and the treat payoff. States are wired and fall back to `look`/`idle`.",
       "notes": "Sources are 768px wide, 6 poses each, irregularly spaced with tails crossing pose boundaries.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "ambient_baby_opossum",
+            "state": "disapprove",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "eat",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "friend_happy",
+            "directions": [
+              "s"
+            ]
+          }
+        ]
       }
     },
     {
@@ -738,8 +880,23 @@
       "purpose": "Climbing back out of the barrel.",
       "notes": "Source is 2172x724 with 5 poses at a non-integer 434.4px pitch; the previously staged 4-frame strip cut a pose in half.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "ambient_baby_opossum",
+            "state": "hide_exit",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "hide_exit__barrel_prop",
+            "directions": [
+              "s"
+            ]
+          }
+        ]
       }
     },
     {
@@ -750,8 +907,37 @@
       "purpose": "The barrel the opossum hides in. The `HideProp` layer exists and stays hidden without it, so hide states currently show no barrel.",
       "notes": "The four source canvases are 880x136, 768x162, and 2172x724, which renders the barrel at 74x61, 90x34, and 88x66 — it would visibly resize between hide states. Re-export all four hide actions from one camera/canvas, body and barrel registered to each other.",
       "fulfillment": {
-        "type": "manual",
-        "status": "needed"
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "ambient_baby_opossum",
+            "state": "hide_enter__barrel_prop",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "hide_hold__barrel_prop",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "hide_peek__barrel_prop",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "hide_exit__barrel_prop",
+            "directions": [
+              "s"
+            ]
+          }
+        ]
       }
     },
     {
@@ -882,7 +1068,7 @@
       "purpose": "Preserve the editable source for the live seven-frame critical-open posture-break strip.",
       "notes": "Runtime PNG, SpriteFrames, scene, and playback are implemented; only the source file named by the design contract is absent.",
       "fulfillment": {
-        "type": "operator",
+        "type": "manual",
         "status": "needed"
       }
     },
@@ -894,7 +1080,7 @@
       "purpose": "Preserve the editable source for the live eight-frame unconsumed-opportunity closure strip.",
       "notes": "Runtime PNG, SpriteFrames, scene, and playback are implemented; only the source file named by the design contract is absent.",
       "fulfillment": {
-        "type": "operator",
+        "type": "manual",
         "status": "needed"
       }
     },
@@ -966,7 +1152,7 @@
       "purpose": "Show a missed active parry as a dry empty-air whiff when no hit is caught.",
       "notes": "Runtime spawns `res://game/vfx/combat/parry_miss_vfx.tscn` only when the active parry window expires into recovery without a successful parry. The scene disables itself with a warning until this 6-frame 128px horizontal strip exists.",
       "fulfillment": {
-        "type": "operator",
+        "type": "manual",
         "status": "needed"
       }
     },
@@ -1426,5 +1612,12 @@
         "status": "needed"
       }
     }
-  ]
+  ],
+  "section_notes": {
+    "Awakening / The First Return (sections 01-10)": "The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is registered by the Asset V2 families below; drop human-named state files into `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in `custodian/game/world/awakening/awakening_layout.gd`. Targets below are the V2-resolved runtime identities; `*` denotes state names listed in each family contract.",
+    "Common Vaultwing Bonding Presentation": "Family contract: `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`. Author source masters under `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`; Asset V2 publishes to `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/`.",
+    "Baby Opossum Ambient Creature": "Runtime body strips are published; the entries below are approved source renders whose poses sit on a non-uniform grid (or, for the barrel, disagree on canvas framing between hide states), so they cannot be sliced onto 96x96 cells without cutting poses in half. The failed staging is preserved in `custodian/asset_drop/unresolved/ambient_baby_opossum/` and raw renders in `custodian/asset_drop/source_work/baby_opossum/`. Each needs an artist re-export onto a uniform pose grid, not a pipeline change. Family contract: `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`. Publish with `python tools/assets/asset.py ingest ambient_baby_opossum`; verify with `python tools/validation/baby_opossum_asset_contract_smoke.py`.",
+    "Combat Resource Feedback (Milestone A)": "The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-verified, and wired. The P-9 reuses those cues until bespoke replacements arrive.",
+    "Persistent Compound Authored Rooms": "Persistent Compound V1 is live with procedural semantic shells; these 32×32px Tiled `.tmj` maps are the deferred curated-interior layer, not a runtime blocker. Frame count is not applicable."
+  }
 }

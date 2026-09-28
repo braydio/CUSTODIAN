@@ -69,6 +69,12 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
 - Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
 
+## Production Asset Requirements
+
+- Discovery: update `content/metadata/assets/required_assets.registry.json`, choose the real fulfillment route, regenerate/check the generated view, and report the added need.
+- Fulfillment: Asset V2 completion is derived from live family/catalog evidence; non-V2 requirements may become `fulfilled` only after real fulfillment. Retain fulfilled records and regenerate/check the view.
+- Never hand-edit generated root `REQUIRED_ASSETS.md`.
+
 ## Moment Forge Selection
 
 Use Moment Forge for repeatable 2–8 second gameplay moments whose acceptance
