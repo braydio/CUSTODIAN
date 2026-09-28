@@ -93,6 +93,7 @@ Last updated: 2026-09-27
 - `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` — prioritized automation/script backlog for agent workflow validation and safety checks
 - `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` — mandatory ephemeral-worktree start, checkpoint, finish, recovery, and branch-retirement workflow
 - `custodian/docs/ai_context/task_packets/AGENT_TASK_DISPATCH.md` — ready bootstrap packet for repository-native task discovery/claiming, packet dependencies/locks, and the one-command Codex dispatch front door
+- `custodian/docs/ai_context/task_packets/AGENT_TASK_DISPATCH_REVIEW_CORRECTIONS.md` — queued P0 dispatcher hardening from independent second-pass review: remote claim exclusivity, coordination-worktree proof, and closeout drift cleanup
 - `custodian/docs/ai_context/task_packets/AGENT_REVIEW_PIPELINE.md` — queued P0 review-orchestration implementation: paired post-land independent review, durable receipts, correction packets, finite review cycles, and human decision escalation
 - `custodian/docs/ai_context/task_packets/REVIEW_AGENT_REVIEW_PIPELINE.md` — paired self-review task that becomes eligible after the review pipeline lands
 - `custodian/docs/ai_context/BRANCH_ARCHIVE.md` — compact ledger of retired unique remote branch heads and archive tags
