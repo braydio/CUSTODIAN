@@ -61,10 +61,18 @@ cannot be lost when the ephemeral worktree is removed.
 
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
 - `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening, blocked on `workstream-finish-landed-closeout-hardening`.
-- `AGENT_REVIEW_PIPELINE.md` — P0 auto-dispatch bootstrap for independent post-land review, durable review receipts, bounded correction packets, and human decision escalation; blocked on `agent-task-dispatch`.
+- `AGENT_REVIEW_PIPELINE.md` — P0 independent-review bootstrap; currently claimed on `agent/agent-review-pipeline`, with dispatcher prerequisites complete.
 - `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
 - `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; waits on `agent-review-pipeline`.
 - `REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired independent review of the forensic slice, blocked on `twin-solaria-crown-incident-forensics`.
+- `TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — P1 Slice D: fail-closed route candidate/evidence/reciprocity authority and HOLD / ABORT / AUTHORIZE ACQUISITION decisions; blocked on reviewed Slice C.
+- `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — paired independent review of Slice D, blocked on `twin-solaria-route-review-authority`.
+- `TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — P1 Slice E: Asset V2 aperture/anchor/witness FX and state-driven Solarium I observational acquisition; blocked on reviewed Slice D.
+- `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — paired independent review of Slice E; no automatic Passage slice follows.
+- `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
+- `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
+- `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
+- `AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — P2 one-time conservative cleanup of pre-hardened stale `agent/*` branches and `Recently Complete` packet residue after finish hardening lands.
 ### Ready / Manual
 
 - `OPERATOR_AUTHORING_SURFACE_HARDENING.md` — P1 manual packet to reconcile active Operator authoring docs with Workbench V5 / Operator V2, expose targeted/strict focused ingest controls, and add regression coverage for tooling-doc drift.
