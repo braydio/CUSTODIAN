@@ -17,6 +17,9 @@ class WorkstreamError(RuntimeError):
 
 
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+TASK_PACKET_ROOT = Path("custodian/docs/ai_context/task_packets")
+TASK_PACKET_ARCHIVE = TASK_PACKET_ROOT / "archived"
+
 
 
 def git(*args: str, cwd: Path | None = None, check: bool = True) -> str:
@@ -57,6 +60,153 @@ def worktree_records(repo: Path) -> list[dict[str, str]]:
 
 def status_clean(path: Path) -> bool:
     return not git("status", "--porcelain", "--untracked-files=all", cwd=path)
+
+
+def _packet_status(text: str) -> str | None:
+    for line in text.splitlines():
+        match = re.match(r"^\\s*-\\s*Status:\\s*`?([^\`]*)`?\\s*$", line, re.IGNORECASE)
+        if match:
+            return match.group(1).strip().lower()
+    return None
+
+
+def _packet_declares_workstream(text: str, workstream_id: str) -> bool:
+    pattern = rf"^\\s*-\\s*Workstream:\\s*`?{re.escape(workstream_id)}`?\\s*$"
+    return re.search(pattern, text, re.IGNORECASE | re.MULTILINE) is not None
+
+
+def _packet_filename_key(packet: Path) -> str:
+    return packet.stem.lower().replace("_", "-")
+
+
+def _active_packet_index_mentions(repo: Path, packet_name: str) -> bool:
+    index = repo / TASK_PACKET_ROOT / "README.md"
+    if not index.exists():
+        return False
+    active = False
+    for line in index.read_text().splitlines():
+        if line.startswith("## "):
+            active = False
+        if line.startswith("### "):
+            heading = line[4:].strip().lower()
+            active = heading in {"in progress", "recently complete (awaiting archive)"}
+            continue
+        if active and packet_name in line:
+            return True
+    return False
+
+
+def _associated_task_packets(repo: Path, workstream_id: str) -> list[Path]:
+    packets: list[Path] = []
+    seen: set[Path] = set()
+    expected_name = workstream_id.upper().replace("-", "_") + ".md"
+    roots = (repo / TASK_PACKET_ROOT, repo / TASK_PACKET_ARCHIVE)
+    for root in roots:
+        if not root.exists():
+            continue
+        for packet in root.glob("*.md"):
+            if packet.name == "README.md":
+                continue
+            try:
+                text = packet.read_text()
+            except OSError as exc:
+                raise WorkstreamError(f"cannot inspect task packet {packet}: {exc}") from exc
+            associated = (
+                packet.name == expected_name
+                or _packet_filename_key(packet) == workstream_id
+                or _packet_declares_workstream(text, workstream_id)
+            )
+            if associated and packet not in seen:
+                packets.append(packet)
+                seen.add(packet)
+    return packets
+
+
+def _untracked_run_artifacts(path: Path) -> list[str]:
+    raw = git("status", "--porcelain=v1", "-z", "--untracked-files=all", cwd=path)
+    return [entry[3:] for entry in raw.split("\\0") if entry.startswith("?? ")]
+
+
+def _artifact_class(path: str) -> str:
+    normalized = path.replace("\\\\", "/")
+    name = Path(normalized).name
+    if normalized.startswith("custodian/docs/ai_context/task_packets/"):
+        return "task-packet"
+    if name.endswith("_CLAUDE_SUMMARY.md"):
+        return "closing-summary"
+    if normalized.startswith("custodian/asset_drop/source_work/") or normalized.startswith("custodian/asset_drop/inbox/"):
+        return "asset-v2-source"
+    if normalized.startswith("reports/") or normalized.startswith("custodian/reports/"):
+        return "review-evidence"
+    if (
+        "__pycache__/" in normalized
+        or ".pytest_cache/" in normalized
+        or name == ".DS_Store"
+        or name.endswith((".pyc", ".tmp", ".log", ".cache"))
+    ):
+        return "disposable-candidate"
+    return "unclassified"
+
+
+def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
+    """Fail closed before teardown when run artifacts are not durably resolved."""
+    repo = root_repo(path)
+    untracked = _untracked_run_artifacts(path)
+    if untracked:
+        details = ", ".join(f"{_artifact_class(item)}:{item}" for item in untracked[:12])
+        if len(untracked) > 12:
+            details += f", +{len(untracked) - 12} more"
+        raise WorkstreamError(
+            "finish artifact gate found untracked run artifacts; commit durable artifacts "
+            f"or explicitly remove disposable ones before teardown: {details}"
+        )
+
+    packets = _associated_task_packets(repo, workstream_id)
+    active_root = (repo / TASK_PACKET_ROOT).resolve()
+    archive_root = (repo / TASK_PACKET_ARCHIVE).resolve()
+    active_packets: list[tuple[Path, str | None]] = []
+    archived_packets: list[tuple[Path, str | None]] = []
+    for packet in packets:
+        status = _packet_status(packet.read_text())
+        parent = packet.parent.resolve()
+        if parent == active_root:
+            active_packets.append((packet, status))
+        elif parent == archive_root:
+            archived_packets.append((packet, status))
+
+    if active_packets:
+        rendered = ", ".join(
+            f"{packet.relative_to(repo)} (status={status or 'missing'})"
+            for packet, status in active_packets
+        )
+        raise WorkstreamError(
+            "finish artifact gate requires associated task packets to be complete and moved "
+            f"to task_packets/archived before teardown: {rendered}"
+        )
+
+    incomplete = [
+        (packet, status)
+        for packet, status in archived_packets
+        if status is None or not status.startswith("complete")
+    ]
+    if incomplete:
+        rendered = ", ".join(
+            f"{packet.relative_to(repo)} (status={status or 'missing'})"
+            for packet, status in incomplete
+        )
+        raise WorkstreamError(f"archived task packet is not complete: {rendered}")
+
+    stale_index = [
+        packet for packet, _ in archived_packets
+        if _active_packet_index_mentions(repo, packet.name)
+    ]
+    if stale_index:
+        rendered = ", ".join(str(packet.relative_to(repo)) for packet in stale_index)
+        raise WorkstreamError(
+            "archived task packet is still listed as active/recently-complete in "
+            f"task_packets/README.md: {rendered}"
+        )
+    return packets
 
 
 def fetch(repo: Path) -> None:
@@ -204,6 +354,7 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
     path = find_worktree(repo, branch)
     if git("branch", "--show-current", cwd=path) != branch:
         raise WorkstreamError("finish must run for its matching agent/<workstream-id> branch")
+    artifact_preflight(workstream_id, path)
     if not status_clean(path):
         raise WorkstreamError("finish requires a clean worktree and committed task files")
     committed_files = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
@@ -219,6 +370,9 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
     if changed:
         if validation_report_after_sync is None or not validation_green(validation_report_after_sync):
             raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
+    artifact_preflight(workstream_id, path)
+    if not status_clean(path):
+        raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
     git("push", "origin", branch, cwd=path)
     landed = subprocess.run([sys.executable, str(Path(__file__).with_name("land_main.py"))], cwd=path, text=True, capture_output=True)
     if landed.returncode:
