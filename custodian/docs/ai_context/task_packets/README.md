@@ -41,6 +41,10 @@ cannot be lost when the ephemeral worktree is removed.
 
 ## Active Packets
 
+### Ready For Manual Bootstrap
+
+- `AGENT_TASK_DISPATCH.md` — Bootstrap the repository-native packet dispatcher. This is the final manually directed packet: after it lands, safe `Dispatch: auto` packets can be claimed by Codex through `dispatch.py claim-next` without packet copy/paste.
+
 ### In Progress
 
 - `PROCGEN_MACRO_PRESENTATION_V1.md` — Validated migration ledger for the live region-first Rocky Upland macro presentation layer; ten SURFACE states are bound and hardened.
