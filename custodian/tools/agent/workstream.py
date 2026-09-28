@@ -64,14 +64,14 @@ def status_clean(path: Path) -> bool:
 
 def _packet_status(text: str) -> str | None:
     for line in text.splitlines():
-        match = re.match(r"^\\s*-\\s*Status:\\s*`?([^\`]*)`?\\s*$", line, re.IGNORECASE)
+        match = re.match(r"^\s*-\s*Status:\s*`?([^`]*)`?\s*$", line, re.IGNORECASE)
         if match:
             return match.group(1).strip().lower()
     return None
 
 
 def _packet_declares_workstream(text: str, workstream_id: str) -> bool:
-    pattern = rf"^\\s*-\\s*Workstream:\\s*`?{re.escape(workstream_id)}`?\\s*$"
+    pattern = rf"^\s*-\s*Workstream:\s*`?{re.escape(workstream_id)}`?\s*$"
     return re.search(pattern, text, re.IGNORECASE | re.MULTILINE) is not None
 
 
@@ -124,11 +124,11 @@ def _associated_task_packets(repo: Path, workstream_id: str) -> list[Path]:
 
 def _untracked_run_artifacts(path: Path) -> list[str]:
     raw = git("status", "--porcelain=v1", "-z", "--untracked-files=all", cwd=path)
-    return [entry[3:] for entry in raw.split("\\0") if entry.startswith("?? ")]
+    return [entry[3:] for entry in raw.split("\0") if entry.startswith("?? ")]
 
 
 def _artifact_class(path: str) -> str:
-    normalized = path.replace("\\\\", "/")
+    normalized = path.replace("\\", "/")
     name = Path(normalized).name
     if normalized.startswith("custodian/docs/ai_context/task_packets/"):
         return "task-packet"
