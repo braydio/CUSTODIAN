@@ -57,7 +57,13 @@ def already_published_elsewhere(root: Path, commits: list[str], target_ref: str)
     # landing. Ignore only that branch's configured upstream; other remote refs
     # remain a blocker because landing rebases the local copy.
     upstream = git("rev-parse", "--symbolic-full-name", "@{upstream}", check=False, cwd=root)
-    own_upstream = upstream.stdout.strip() if upstream.returncode == 0 else ""
+    branch = branch_name(root)
+    expected_own_upstream = target_ref.rsplit("/", 1)[0] + f"/{branch}"
+    own_upstream = (
+        expected_own_upstream
+        if upstream.returncode == 0 and upstream.stdout.strip() == expected_own_upstream
+        else ""
+    )
     for commit in commits:
         for ref in remote_refs:
             if ref in {target_ref, own_upstream}:

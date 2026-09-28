@@ -114,6 +114,7 @@ class LandMainTests(unittest.TestCase):
     def test_commit_published_on_unrelated_remote_branch_is_blocked(self) -> None:
         self._task_commit("task.txt", "task\n")
         run_git(self.task, "push", "origin", "HEAD:refs/heads/unrelated")
+        run_git(self.task, "branch", "--set-upstream-to", "origin/unrelated")
         result = self._land()
         self.assertEqual(result.returncode, 2)
         self.assertIn("already published", result.stderr)

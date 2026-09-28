@@ -5,7 +5,7 @@
 - Workstream: `agent-workstream-lifecycle`
 - Branch: `agent/agent-workstream-lifecycle`
 - Base at start: `origin/main@576934b47de37a8c755955cff86540fbbc8b18f0`
-- Status: implementation in progress
+- Status: complete on merge to current main
 
 ## Goal
 
@@ -46,6 +46,8 @@ record retirements in `BRANCH_ARCHIVE.md`.
 - Workflow docs and AI context match the tool behavior.
 - Remote branches in the task's live census are reconciled; unique historical
   heads are tagged and ledgered before deletion.
+- Initial remote census: 19 refs. Expected normal post-finish state: main plus
+  the three active agent workstreams.
 - Root worktree changes remain untouched; current root has five generated,
   untracked import sidecars that must be preserved.
 

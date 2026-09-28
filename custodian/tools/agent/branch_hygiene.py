@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 
@@ -32,6 +32,8 @@ def classify(repo: Path, branch: str, protected: set[str]) -> tuple[str, str, in
         if behind == 0:
             return "IDENTICAL_SAFE_DELETE", head, behind, ahead
         return "LANDED_SAFE_DELETE", head, behind, ahead
+    if branch.startswith("agent/"):
+        return "ACTIVE", head, behind, ahead
     exact = subprocess.run(["git", "merge-base", "--is-ancestor", ref, "origin/main"], cwd=repo).returncode == 0
     if exact:
         return "IDENTICAL_SAFE_DELETE", head, behind, ahead
@@ -58,7 +60,7 @@ def record(ledger: Path, branch: str, head: str, disposition: str, tag: str, not
     ledger.parent.mkdir(parents=True, exist_ok=True)
     if not ledger.exists():
         ledger.write_text("# Branch Archive\n\n| Retired branch | Head SHA | Retirement date | Disposition | Archive tag | Notes / successor workstream |\n|---|---|---|---|---|---|\n")
-    row = f"| `{branch}` | `{head}` | {datetime.now(timezone.utc).strftime('%Y-%m-%d')} | {disposition} | {f'`{tag}`' if tag else '—'} | {note or '—'} |\n"
+    row = f"| `{branch}` | `{head}` | {datetime.now().astimezone().strftime('%Y-%m-%d')} | {disposition} | {f'`{tag}`' if tag else '—'} | {note or '—'} |\n"
     with ledger.open("a") as stream:
         stream.write(row)
 
@@ -69,9 +71,27 @@ def retire(repo: Path, branch: str, ledger: Path, note: str = "") -> None:
     state, head, _, ahead = classify(repo, branch, {"main"})
     if state == "PROTECTED":
         raise HygieneError(f"refusing to retire protected branch {branch}")
+    raw_worktrees = git("worktree", "list", "--porcelain", cwd=repo)
+    attached: list[Path] = []
+    current: dict[str, str] = {}
+    for line in raw_worktrees.splitlines() + [""]:
+        if not line:
+            if current.get("branch") == f"refs/heads/{branch}":
+                attached.append(Path(current["worktree"]).resolve())
+            current = {}
+        else:
+            key, _, value = line.partition(" ")
+            current[key] = value
+    for path in attached:
+        dirty = git("status", "--porcelain", "--untracked-files=all", cwd=path)
+        local_head = git("rev-parse", "HEAD", cwd=path)
+        if dirty:
+            raise HygieneError(f"{branch} is attached to a dirty worktree; preserved at {path}")
+        if local_head != head:
+            raise HygieneError(f"{branch} has attached local commits/state beyond its remote head; preserved at {path}")
     tag = ""
     if ahead:
-        tag = archive_tag(repo, branch, head, datetime.now(timezone.utc).strftime("%Y%m%d"))
+        tag = archive_tag(repo, branch, head, datetime.now().astimezone().strftime("%Y%m%d"))
         record(ledger, branch, head, "archived unique history", tag, note)
     else:
         record(ledger, branch, head, "fully contained by main", "", note)
