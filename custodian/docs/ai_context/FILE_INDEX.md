@@ -91,6 +91,11 @@ Last updated: 2026-09-27
 - `custodian/docs/AGENT_MIGRATION_PLAYBOOK.md` — detailed migration and drift-remediation workflow
 - `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` — compact-by-default optional task packet template with full-packet expansion guidance for high-risk or multi-session work
 - `custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` — prioritized automation/script backlog for agent workflow validation and safety checks
+- `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` — mandatory ephemeral-worktree start, checkpoint, finish, recovery, and branch-retirement workflow
+- `custodian/docs/ai_context/BRANCH_ARCHIVE.md` — compact ledger of retired unique remote branch heads and archive tags
+- `custodian/tools/agent/workstream.py` — stable-ID `agent/<id>` worktree start/status/checkpoint/finish/gc lifecycle entrypoint
+- `custodian/tools/agent/branch_hygiene.py` — report-only ancestry-based remote branch classification and verified archive-before-delete operation
+- `custodian/tools/agent/test_workstream.py`, `test_branch_hygiene.py`, and `test_land_main.py` — temporary-repository lifecycle, hygiene, and landing tests
 - `custodian/docs/ai_context/task_packets/AUTHORED_LEVEL_AUTHORING_PIPELINE.md` — implementation record for the shared production/playtest/authoring scaffold, named-spawn loader boundary, generic mapper, and registry-driven ingress placement
 - `custodian/docs/ai_context/task_packets/ROUTE_TRAVERSAL_V1.md` — implementation/validation record for directed intra-campaign traversal and the Sundered Keep migration
 - `custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md` — ask-specific tooling router for agent work, currently covering modular Operator asset audit/review scripts and their caveats

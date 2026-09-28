@@ -3,11 +3,13 @@
 ## Agent Workflow (2026-09-27)
 
 Prompts and task packets inherit repository defaults and carry only task deltas.
-Substantial parallel work uses isolated worktrees. Validated implementation
-work lands automatically on `origin/main` through
-`custodian/tools/agent/land_main.py`; routine PR or human approval is not a
-gate. Review is by exception. The focused `agent_workflow_contract` validator
-covers prompt compression and safe landing behavior. Review-only tasks require
+Every normal implementation run uses the ephemeral workstream lifecycle in
+`AGENT_WORKSTREAM_LIFECYCLE.md`; the project-root checkout is for coordination
+and safe post-landing sync. `workstream.py` pushes recovery work before landing,
+and `land_main.py` accepts the branch's own upstream while still rejecting
+publication on unrelated remote refs. Successful finish verifies ancestry from
+`origin/main` before removing completed branch/worktree state. Branch archive
+hygiene is ancestry-based and report-only by default. Review-only tasks require
 an explicit `TASK OVERRIDE:`.
 
 ## Road Semantics V2 (2026-09-27)

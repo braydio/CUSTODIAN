@@ -2,6 +2,25 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Agent Workstream Lifecycle
+
+Every normal implementation run starts/resumes through
+`python3 custodian/tools/agent/workstream.py start <stable-kebab-id>` from the
+coordination checkout. Implement and validate in the returned sibling
+`.custodian-worktrees/` checkout. Use `checkpoint` for intentionally incomplete
+work and `finish --validation-report <json>` for validated completed work. See
+`AGENT_WORKSTREAM_LIFECYCLE.md` for recovery, synchronization, cleanup, and
+branch archive rules.
+
+Run focused lifecycle tests after changes to agent Git tooling:
+
+```bash
+python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.test_workstream custodian.tools.agent.test_branch_hygiene
+```
+
+These temporary-repository tests do not launch Godot. Run the changed-file
+validation recipe below after implementation changes as resource budget permits.
+
 ## Persistent Compound Layout
 
 ```bash

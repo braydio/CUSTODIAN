@@ -67,9 +67,10 @@ approval and without a PR or routine human-review gate. Review-only work must
 carry the explicit task override `TASK OVERRIDE: review only; do not stage,
 commit, or push.`
 
-- For substantial parallel implementation tasks, use isolated git worktrees by
-  default. Shared-worktree tolerance covers incidental overlap and legacy
-  sessions; it is not the preferred setup for simultaneous substantial work.
+- Every normal implementation run uses `python3 custodian/tools/agent/workstream.py`
+  in an isolated ephemeral worktree. Exceptions are explicitly read-only/review-only
+  tasks or a documented reason an ephemeral worktree cannot be used. The persistent
+  project-root checkout is for coordination and safe post-landing main sync.
 - Commit at task boundaries once the change is implemented and validated (parse checks, smoke tests, or the recipe in `custodian/docs/ai_context/VALIDATION_RECIPES.md`).
 - Never `git add -A` blindly, and never commit secrets, logs or generated artifacts.
 - Stage only files belonging to the current task. Preserve staged and unstaged
@@ -77,9 +78,10 @@ commit, or push.`
   before including another session's work.
 - Use short, lowercase, comma-joined summaries in the repo's existing style (for example `combat feel authoring, FPS chasing`).
 - Push completed work to the remote once committed.
-- For substantial parallel work, use an isolated worktree and task branch.
-  Land completed commits with `custodian/tools/agent/land_main.py`, which
-  serializes local landing attempts and safely retries remote `main` races.
+- Use stable `agent/<workstream-id>` branches and the `workstream.py` lifecycle;
+  push recovery work before landing and delete completed task branches only after
+  verifying reachability from `origin/main`. See
+  `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
 - After landing a scoped task branch on `origin/main`, synchronize the user's
   project-root checkout by running `git -C <project-root> pull --ff-only origin main`.
   This is a required post-push step; updating only the scoped worktree is not

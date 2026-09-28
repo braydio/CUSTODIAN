@@ -231,10 +231,12 @@ architecture ownership changes. A deliberate task-level exception must be
 marked `TASK OVERRIDE:` with its reason. It applies only within that task and
 cannot override higher repository or design authority.
 
-Normal implementation work is autonomous through `implement → validate →
-commit → land on origin/main`. No PR or routine human approval is required.
-Use `custodian/tools/agent/land_main.py` from an isolated task worktree to
-serialize local landings, rebase onto current `origin/main`, and push safely.
+Normal implementation work is autonomous through the lifecycle documented in
+`docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`: start/resume a stable
+`agent/<workstream-id>` branch in an ephemeral worktree, implement and validate
+there, push a recovery branch, and land through `custodian/tools/agent/land_main.py`.
+Completed remote task branches are deleted only after reachability from
+`origin/main` is verified. No PR or routine human approval is required.
 Review-only work must explicitly say `TASK OVERRIDE: review only; do not stage,
 commit, or push.`
 
@@ -244,13 +246,15 @@ commands are separate acceptance gates only when the task explains why each
 proves a distinct property. Update documents when their owned truth changes;
 do not edit an otherwise-correct document only because a prompt listed it.
 
-### Parallel Worktrees
+### Ephemeral Worktrees
 
-Use an isolated git worktree by default for substantial parallel
-implementation. Shared-worktree tolerance is for incidental overlap and legacy
-sessions, not the preferred way to run simultaneous substantial tasks. When a
-shared worktree is unavoidable, preserve other sessions' staged and unstaged
-changes and stage only paths or hunks owned by the current task.
+Every normal implementation run uses an isolated ephemeral worktree, including
+single-agent work. Exceptions are explicitly read-only/review-only tasks or a
+documented reason ephemeral worktrees cannot be used. The persistent root
+checkout is a coordination checkout, not the implementation surface. Use
+`python3 custodian/tools/agent/workstream.py start <stable-kebab-id>` to resume
+or create the canonical `agent/<id>` branch. Never reset/stash a dirty attached
+worktree; preserve it and report the blocker.
 
 Keep work together through the smallest coherent completion boundary. Separate
 commits inside that boundary are fine; do not create review-dependent micro-

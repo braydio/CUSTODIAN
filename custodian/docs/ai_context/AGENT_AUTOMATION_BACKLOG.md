@@ -12,10 +12,14 @@ repository-default boilerplate in reusable prompts and active task packets,
 supports explicit `TASK OVERRIDE:` lines, and has a focused validation-manifest
 entry. Automatic main landing is implemented at
 `custodian/tools/agent/land_main.py`; it serializes local landing attempts,
-rebases clean task branches on current `origin/main`, retries bounded races,
-and aborts conflicts without force-pushing. Substantial parallel tasks use
-isolated worktrees; review is by exception. Broader AI-context, task-packet,
-and Git-safety validators below remain follow-up proposals.
+rebases clean landing copies on current `origin/main`, retries bounded races,
+and aborts conflicts without force-pushing. `workstream.py` now owns normal
+implementation runs in isolated ephemeral worktrees, with push-first checkpoint
+and finish paths. Its published-history guard allows only the current branch's
+own upstream. `branch_hygiene.py` reports ancestry-based dispositions by default
+and archive-tags unique history before optional retirement. Review-only work is
+the explicit exception. Broader AI-context and task-packet validators below
+remain follow-up proposals.
 
 Moment Forge is now implemented separately under
 `custodian/tools/iteration/`. It was prioritized first because deterministic

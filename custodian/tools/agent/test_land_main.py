@@ -105,14 +105,19 @@ class LandMainTests(unittest.TestCase):
         self.assertEqual(run_git(self.seed, "rev-parse", "origin/main"), run_git(self.task, "rev-parse", "HEAD"))
         self.assertTrue((self.seed / "task.txt").exists() is False)
 
-    def test_already_pushed_task_history_is_not_rewritten(self) -> None:
+    def test_own_pushed_workstream_is_allowed_to_land(self) -> None:
         self._task_commit("task.txt", "task\n")
-        original_head = run_git(self.task, "rev-parse", "HEAD")
-        run_git(self.task, "push", "origin", "HEAD:refs/heads/task/work")
+        run_git(self.task, "push", "-u", "origin", "HEAD:refs/heads/task/work")
+        result = self._land()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_commit_published_on_unrelated_remote_branch_is_blocked(self) -> None:
+        self._task_commit("task.txt", "task\n")
+        run_git(self.task, "push", "origin", "HEAD:refs/heads/unrelated")
         result = self._land()
         self.assertEqual(result.returncode, 2)
         self.assertIn("already published", result.stderr)
-        self.assertEqual(run_git(self.task, "rev-parse", "HEAD"), original_head)
+        self.assertIn("refs/remotes/origin/unrelated", result.stderr)
 
     def test_rebase_conflict_aborts_and_reports_blocker(self) -> None:
         self._task_commit("shared.txt", "task side\n")

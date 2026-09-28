@@ -53,9 +53,14 @@ def commits_to_replay(root: Path, base: str) -> list[str]:
 
 def already_published_elsewhere(root: Path, commits: list[str], target_ref: str) -> str | None:
     remote_refs = git("for-each-ref", "--format=%(refname)", "refs/remotes", cwd=root).stdout.splitlines()
+    # A push-first workstream intentionally publishes its own commits before
+    # landing. Ignore only that branch's configured upstream; other remote refs
+    # remain a blocker because landing rebases the local copy.
+    upstream = git("rev-parse", "--symbolic-full-name", "@{upstream}", check=False, cwd=root)
+    own_upstream = upstream.stdout.strip() if upstream.returncode == 0 else ""
     for commit in commits:
         for ref in remote_refs:
-            if ref == target_ref:
+            if ref in {target_ref, own_upstream}:
                 continue
             contained = git("merge-base", "--is-ancestor", commit, ref, check=False, cwd=root)
             if contained.returncode == 0:
