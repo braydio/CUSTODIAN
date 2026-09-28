@@ -94,6 +94,8 @@ Last updated: 2026-09-27
 - `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` — mandatory ephemeral-worktree start, checkpoint, finish, recovery, and branch-retirement workflow
 - `custodian/docs/ai_context/task_packets/archived/AGENT_TASK_DISPATCH.md` — archived implementation/acceptance record for repository-native task dispatch; live authority is `custodian/tools/agent/dispatch.py`
 - `custodian/docs/ai_context/task_packets/AGENT_REVIEW_PIPELINE.md` — queued P0 review-orchestration implementation: paired post-land independent review, durable receipts, correction packets, finite review cycles, and human decision escalation
+- `custodian/docs/ai_context/task_packets/WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — queued P0 correction for already-landed finish handling, durable closing-summary proof, and idempotent safe teardown.
+- `custodian/docs/ai_context/task_packets/REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired review for the corrected finish/landing lifecycle.
 - `custodian/docs/ai_context/task_packets/REVIEW_AGENT_REVIEW_PIPELINE.md` — paired self-review task that becomes eligible after the review pipeline lands
 - `custodian/docs/ai_context/BRANCH_ARCHIVE.md` — compact ledger of retired unique remote branch heads and archive tags
 - `custodian/tools/agent/workstream.py` — stable-ID `agent/<id>` worktree start/status/checkpoint/finish/gc lifecycle entrypoint with pre-teardown task-packet and untracked-run-artifact finalization gates
