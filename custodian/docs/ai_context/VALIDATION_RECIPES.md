@@ -15,7 +15,7 @@ branch archive rules.
 Run focused lifecycle tests after changes to agent Git tooling:
 
 ```bash
-python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.test_workstream custodian.tools.agent.test_branch_hygiene
+python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.test_workstream custodian.tools.agent.test_workstream_artifacts custodian.tools.agent.test_branch_hygiene
 ```
 
 These temporary-repository tests do not launch Godot. Run the changed-file
