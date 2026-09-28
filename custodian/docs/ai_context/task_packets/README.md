@@ -57,6 +57,7 @@ cannot be lost when the ephemeral worktree is removed.
 
 ### Queued After Dispatcher Bootstrap
 
+- `AGENT_TASK_DISPATCH_REVIEW_CORRECTIONS.md` — P0 auto-dispatch hardening pass from second review: exclusive remote claim acquisition across independent clones, non-main coordination-path proof, and dispatcher closeout drift cleanup.
 - `AGENT_REVIEW_PIPELINE.md` — P0 auto-dispatch task, blocked on `agent-task-dispatch`; adds independent post-land review, durable review receipts, bounded correction packets, and human decision escalation.
 - `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
 ### In Progress
