@@ -120,6 +120,19 @@ diff.
 Say the awkward parts in it. A summary that only records what worked is not worth
 reading next to the diff, which already shows that.
 
+## Run Artifact Finalization
+
+Before `workstream.py finish` may tear down an implementation worktree, run
+artifacts must be resolved explicitly. Associated task packets must be marked
+complete, moved to `custodian/docs/ai_context/task_packets/archived/`, and
+removed from active/recently-complete packet-index sections. Untracked files are
+classified and block finish until the agent deliberately commits durable
+artifacts or removes disposable scratch output. Asset V2 source/inbox material
+is never treated as disposable run debris. Validation JSON may remain ephemeral
+unless the task requires durable evidence; the required `<TASK>_CLAUDE_SUMMARY.md`
+remains committed at repository root. The finish path never silently deletes an
+ambiguous artifact.
+
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 
