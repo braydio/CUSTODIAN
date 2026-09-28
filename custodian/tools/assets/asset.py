@@ -25,6 +25,15 @@ from asset_doctor import run_doctor
 from asset_plan import AssetOperation, generate_plan
 from asset_router import load_kind_schemas
 from asset_status import get_family_status
+from asset_requirements import (
+    check_markdown,
+    evaluate_registry,
+    load_registry,
+    markdown_path,
+    render_markdown,
+    validate_registry,
+    write_markdown,
+)
 
 MARK = {"success": "✓", "pending": "→", "empty": "·", "warning": "⚠", "error": "✗", "partial": "◐"}
 RITUALANT_SPRITEFRAMES_HOOK = "forlorn_ritualant_spriteframes"
@@ -513,6 +522,66 @@ def cmd_doctor(args, families):
     return 2 if any(issue.severity == "error" for issue in issues) else 0
 
 
+def cmd_needs(args, families):
+    try:
+        registry = load_registry(PROJECT_DIR)
+        errors = validate_registry(registry, families)
+        if errors:
+            print("\n".join(f"{MARK['error']} {error}" for error in errors))
+            return 2
+        items = evaluate_registry(registry, families, PROJECT_DIR)
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"{MARK['error']} Cannot load requirements: {exc}")
+        return 2
+    if args.write:
+        path = write_markdown(registry, families, PROJECT_DIR)
+        print(f"{MARK['success']} Wrote {_display_path(path)}")
+        return 0
+    if args.check:
+        if check_markdown(registry, families, PROJECT_DIR):
+            print(f"{MARK['success']} REQUIRED_ASSETS.md is current")
+            return 0
+        print(f"{MARK['error']} REQUIRED_ASSETS.md is stale; run asset needs --write")
+        return 1
+    if args.json:
+        _print_json({"schema": "custodian.asset_requirements_cli.v1", "requirements": items})
+        return 0
+    if args.requirement_id:
+        item = next((entry for entry in items if entry["id"] == args.requirement_id), None)
+        if item is None:
+            print(f"{MARK['error']} Unknown requirement: {args.requirement_id}\n\nRun:\n  asset needs")
+            return 2
+        fulfillment = item["fulfillment"]
+        print(f"{item['status'].upper()} · {item['title']}\n\nSection: {item['section']}\nRoute: {fulfillment['type']}")
+        if fulfillment["type"] == "asset_v2":
+            for target in item["targets_status"]:
+                directions = f" ({', '.join(target['directions'])})" if "directions" in target else ""
+                state = "satisfied" if target["satisfied"] else "missing"
+                print(f"  {state}: {target['family']} / {target['state']}{directions}")
+                if target["missing_directions"]:
+                    print(f"    Missing directions: {', '.join(target['missing_directions'])}")
+            family_ids = list(dict.fromkeys(target["family"] for target in item["targets_status"]))
+            print("\nNext:")
+            for family_id in family_ids:
+                if item["status"] == "needed":
+                    print(f"  asset request {family_id}")
+                else:
+                    print(f"  asset plan {family_id}")
+                print(f"  asset status {family_id}")
+        else:
+            print(f"Declared status: {fulfillment['status']}\nNext: fulfill through the {fulfillment['type']} workflow, then update the registry status.")
+        return 0
+    active = [item for item in items if item["status"] != "fulfilled"]
+    current_section = None
+    for item in active:
+        if item["section"] != current_section:
+            current_section = item["section"]
+            print(f"\n{current_section}")
+        print(f"  {item['status']:8} {item['title']} [{item['fulfillment']['type']}]")
+    print(f"\n{len(active)} active requirement{'s' if len(active) != 1 else ''}; {len(items) - len(active)} fulfilled.")
+    return 0
+
+
 def _unknown_family(name: str) -> int:
     print(f"{MARK['error']} Unknown asset family: {name}\n\nRun:\n  asset families")
     return 2
@@ -578,6 +647,12 @@ def build_parser() -> argparse.ArgumentParser:
     _output_flags(command)
     command = subs.add_parser("doctor")
     _output_flags(command)
+    command = subs.add_parser("needs")
+    command.add_argument("requirement_id", nargs="?")
+    mode = command.add_mutually_exclusive_group()
+    mode.add_argument("--write", action="store_true", help="Regenerate the root REQUIRED_ASSETS.md projection.")
+    mode.add_argument("--check", action="store_true", help="Fail when the generated Markdown is stale.")
+    command.add_argument("--json", action="store_true", help="Print stable machine-readable requirement data.")
     return parser
 
 

@@ -2,7 +2,8 @@
 
 **Status:** Active production implementation, V2.1 unified non-Operator intake
 **Scope:** Orchestration layer above existing backends
-**Authority:** This document + `custodian/tools/assets/`
+**Technical contract authority:** This document, `custodian/tools/assets/`, and registered Asset V2 family contracts
+**Requirement authority:** `custodian/content/metadata/assets/required_assets.registry.json`
 
 ---
 
@@ -127,7 +128,27 @@ Required completeness is based on catalog-backed runtime art, not inbox presence
 | `asset families` | List registered families |
 | `asset new <family> --kind <kind> [--size WxH] [--direction omni]` | Create family contract + inbox |
 | `asset request <family> [--write]` | Print art request checklist |
+| `asset needs [<requirement-id>]` | Track active production requirements and fulfillment routes |
+| `asset needs --json` | Emit stable requirement and derived-status data |
+| `asset needs --write` / `--check` | Regenerate or verify root `REQUIRED_ASSETS.md` |
 | `asset doctor` | Health checks for contracts, inboxes, catalog, and consumers |
+
+### Production requirements
+
+The ordered `required_assets.registry.json` is the sole editable demand queue. It
+records each need's purpose and routes Asset V2, Operator, audio, Tiled, review,
+or manual work to its existing authority. Asset V2 targets reference family and
+state IDs only; technical details remain in family contracts. Their requirement
+status derives from catalog-backed runtime art and requested directions, without
+using binding or runtime verification as a closure gate. Other routes retain
+their declared status until their existing workflow updates the registry.
+
+Root `REQUIRED_ASSETS.md` is generated from the registry and omits fulfilled
+Asset V2 requirements while retaining those records in the registry. Run
+`python3 custodian/tools/assets/asset.py needs --write` to regenerate it, or
+`asset needs --check` to detect drift. `asset doctor` validates the registry,
+family/state/direction links, and generated projection; missing production art
+is an active requirement rather than a doctor error.
 
 ### Terminal information architecture
 

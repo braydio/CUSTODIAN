@@ -17,6 +17,7 @@ from asset_catalog import file_hash, load_catalog
 from asset_plan import generate_plan
 from asset_naming import parse_canonical_filename
 from asset_router import load_kind_schemas
+from asset_requirements import check_markdown, load_registry, validate_registry
 
 
 @dataclass
@@ -47,8 +48,27 @@ def run_doctor(project_dir: Path) -> list[DoctorIssue]:
 
     _check_unprocessed_inbox(project_dir, families, issues)
     _check_catalog(project_dir, families, issues)
+    _check_requirements(project_dir, families, issues)
 
     return issues
+
+
+def _check_requirements(project_dir: Path, families: dict[str, AssetFamilyContract], issues: list[DoctorIssue]) -> None:
+    try:
+        registry = load_registry(project_dir)
+    except FileNotFoundError:
+        issues.append(DoctorIssue("error", "required-assets registry is missing"))
+        return
+    except (OSError, ValueError) as exc:
+        issues.append(DoctorIssue("error", f"required-assets registry cannot be read: {exc}"))
+        return
+    for error in validate_registry(registry, families):
+        issues.append(DoctorIssue("error", f"required-assets: {error}"))
+    try:
+        if not check_markdown(registry, families, project_dir):
+            issues.append(DoctorIssue("error", "generated REQUIRED_ASSETS.md is stale; run asset needs --write"))
+    except (KeyError, TypeError, ValueError) as exc:
+        issues.append(DoctorIssue("error", f"required-assets projection failed: {exc}"))
 
 
 def _check_catalog(project_dir: Path, families: dict[str, AssetFamilyContract], issues: list[DoctorIssue]) -> None:

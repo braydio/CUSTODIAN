@@ -1,9 +1,7 @@
-# Required Assets Tracker (Deprecated Route)
+# Required Assets View
 
-Status: deprecated forwarding notice
-Last updated: 2026-07-13
+This path is retained for older design links. The editable requirement authority is
+[`../../custodian/content/metadata/assets/required_assets.registry.json`](../../custodian/content/metadata/assets/required_assets.registry.json).
 
-The sole canonical tracker is [`../../REQUIRED_ASSETS.md`](../../REQUIRED_ASSETS.md).
-
-Do not add or mirror entries here. This forwarding file remains only so older design links lead agents to the root
-tracker instead of creating a second source of truth.
+Root [`../../REQUIRED_ASSETS.md`](../../REQUIRED_ASSETS.md) is generated from that
+registry. Do not add or mirror requirement rows here.

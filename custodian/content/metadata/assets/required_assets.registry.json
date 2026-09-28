@@ -1,0 +1,1430 @@
+{
+  "schema": "custodian.asset_requirements.v1",
+  "requirements": [
+    {
+      "id": "sundered-keep-reveal-fog-veil-sheet",
+      "section": "Sundered Keep",
+      "title": "Sundered Keep reveal fog veil sheet",
+      "target": "`custodian/content/sprites/vista/sundered_keep/reveal/sundered_keep_reveal_fog_veil_01.png` and `custodian/content/sprites/vista/sundered_keep/source/sundered_keep_reveal_fog_veil_01.aseprite`",
+      "purpose": "Replace the runtime near-fog peel scaffold with a center-opening authored veil.",
+      "notes": "512×256 frames, 8 frames, 4096×256 transparent sheet.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "sundered-keep-reveal-fog-ribbons-sheet",
+      "section": "Sundered Keep",
+      "title": "Sundered Keep reveal fog ribbons sheet",
+      "target": "`custodian/content/sprites/vista/sundered_keep/reveal/sundered_keep_reveal_fog_ribbons_01.png` and `custodian/content/sprites/vista/sundered_keep/source/sundered_keep_reveal_fog_ribbons_01.aseprite`",
+      "purpose": "Add soft trailing breakup behind the fast near-fog peel.",
+      "notes": "384×192 frames, 6 frames, 2304×192 transparent sheet.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "sundered-keep-far-silhouette-plate",
+      "section": "Sundered Keep",
+      "title": "Sundered Keep far silhouette plate",
+      "target": "`custodian/content/sprites/vista/sundered_keep/background/sundered_keep_far_silhouette_01.png` and `custodian/content/sprites/vista/sundered_keep/source/sundered_keep_far_silhouette_01.aseprite`",
+      "purpose": "Replace reused horizon-matte distance scaffolds with a dedicated large keep mass.",
+      "notes": "Single 2048×1024 transparent/background plate.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "sundered-keep-labyrinth-wall-kit",
+      "section": "Sundered Keep",
+      "title": "Sundered Keep labyrinth wall kit",
+      "target": "`custodian/content/tiles/sundered_keep/walls/labyrinth_keep/{wall_straight_s_01,wall_pier_01,wall_corner_01,wall_broken_end_01}.png` plus `.game32.json` sidecars",
+      "purpose": "Replace `PLACEHOLDER_sundered_keep_labyrinth_wall_*` sprites with production walls that make courtyard partitions, gatehouse side blockers, west service-yard boundaries, and keep maze turns read as actual architecture.",
+      "notes": "The registered cheat-sheet relayout placeholders are `PLACEHOLDER_sundered_keep_labyrinth_wall_straight_s`, `_wall_pier`, and `_wall_corner`; all remain production-art TODOs.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "sundered-keep-void-cliff-boundary-kit",
+      "section": "Sundered Keep",
+      "title": "Sundered Keep void/cliff boundary kit",
+      "target": "`custodian/content/tiles/sundered_keep/walls/labyrinth_keep/{void_edge_w_01,void_edge_e_01,collapsed_sea_cut_01,cliff_guard_rail_01}.png` plus `.game32.json` sidecars",
+      "purpose": "Replace `PLACEHOLDER_sundered_keep_labyrinth_void_edge.png` where ocean/void collision boundaries need to read as cliffs, broken masonry, or collapsed keep edges instead of invisible walls.",
+      "notes": "The registered `_void_edge` placeholder remains in the cheat-sheet relayout around lower-route boundaries and the Great Hall collapsed sea cut.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "sundered-keep-wall-dressing-overlays",
+      "section": "Sundered Keep",
+      "title": "Sundered Keep wall dressing overlays",
+      "target": "`custodian/content/tiles/sundered_keep/walls/labyrinth_keep/overlays/{moss_drip_*.png,crack_*.png,iron_sconce_*.png,white_thread_marker_*.png}`",
+      "purpose": "Add variation and landmarks to the labyrinth walls so the keep is readable as a designed place instead of repeated wall tiles.",
+      "notes": "Recommended before replacing the placeholder walls broadly; not required for collision semantics.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "sundered-keep-custodian-sidearm-field-retention-locker",
+      "section": "Sundered Keep",
+      "title": "Sundered Keep Custodian sidearm field-retention locker",
+      "target": "`custodian/content/runtime/sundered_keep/props/prop_storage/prop_custodian_sidearm_locker_01.png` plus `.game32.json` sidecar",
+      "purpose": "Replace the temporary wet-crate stand-in for the P-9 Field Sidearm unlock with a sealed Custodian service-imprint locker/chest.",
+      "notes": "Runtime uses `prop_crate_stack_wet_01` as a temporary visual at `SidearmLockerInteraction`.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-inventory-frame-and-panel-kit",
+      "section": "Inventory UI",
+      "title": "CUSTODIAN inventory frame and panel kit",
+      "target": "`custodian/content/ui/inventory/runtime/panels/{inventory_frame_9slice,inventory_panel_deep_9slice}.png` plus `.game32.json` sidecars",
+      "purpose": "Replace Black Reliquary fallback panels with bespoke professional inventory frame art.",
+      "notes": "Runtime resolves these paths automatically through `inventory_ui_asset_manifest.json`.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-inventory-slot-kit",
+      "section": "Inventory UI",
+      "title": "CUSTODIAN inventory slot kit",
+      "target": "`custodian/content/ui/inventory/runtime/slots/{inventory_slot_empty,inventory_slot_hover,inventory_slot_selected}.png` plus `.game32.json` sidecars",
+      "purpose": "Provide production empty/hover/selected carried-object slot visuals.",
+      "notes": "Current UI falls back to legacy inventory slot PNGs.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-inventory-ornaments",
+      "section": "Inventory UI",
+      "title": "CUSTODIAN inventory ornaments",
+      "target": "`custodian/content/ui/inventory/runtime/ornaments/inventory_ornament_{nw,ne,sw,se}.png`",
+      "purpose": "Replace fallback Black Reliquary corner ornaments with inventory-specific framing accents.",
+      "notes": "Text remains live in Godot labels.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-item-icon-suite",
+      "section": "Inventory UI",
+      "title": "CUSTODIAN item icon suite",
+      "target": "`custodian/content/ui/inventory/runtime/icons/icon_{item_id}.png` and `icon_unknown.png`",
+      "purpose": "Provide production icons for carried items such as Shrumb drops, Sundered Gate Key, Ash-Bell relics, and future ledger objects.",
+      "notes": "Any matching `icon_{item_id}.png` is picked up automatically by the runtime catalog.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-field-terminal-production-prop-suite",
+      "section": "Home Beginning / Custodian Field Terminal",
+      "title": "Custodian Field Terminal production prop suite",
+      "target": "`custodian/content/sprites/environment/props/field_terminal/runtime/body/field_terminal__body__interaction__{idle,activate,damaged_active}__omni__?f__96.png`",
+      "purpose": "Replace the placeholder command-terminal compatibility art with the half-buried armored Field Terminal / Archive Anchor described by the first objective.",
+      "notes": "Deferred: the Field Terminal is no longer part of the implemented opening. `FieldTerminalInteractable` is retained for the later Forum section and is not instanced in `awakening_first_return.tscn`.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-band-signal-visual-fx",
+      "section": "Home Beginning / Custodian Field Terminal",
+      "title": "Custodian-band signal visual FX",
+      "target": "`custodian/content/sprites/effects/runtime/custodian_frequency/custodian_band_pulse_01__omni__?f__?.png`, `custodian/content/sprites/effects/runtime/custodian_frequency/provenance_static_01__omni__?f__?.png`",
+      "purpose": "Make the opening signal gradient, pulse, and provenance distortion readable without relying only on HUD text.",
+      "notes": "V1 uses a small procedural `Line2D` signal needle and HUD status fragments.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-band-signal-audio-cues",
+      "section": "Home Beginning / Custodian Field Terminal",
+      "title": "Custodian-band signal audio cues",
+      "target": "`custodian/content/audio/sfx/custodian_frequency/signal_pulse_*.wav`, `custodian/content/audio/sfx/custodian_frequency/provenance_static_*.wav`, `custodian/content/audio/ambience/home_beginning_signal_bed_*.wav`",
+      "purpose": "Provide directional/static/near-terminal audio feedback for tracing the degraded provenance carrier.",
+      "notes": "No audio hooks are wired yet; assets are needed before the signal-tracking pass can be made diegetic.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "field-terminal-chamber-dressing-props",
+      "section": "Home Beginning / Custodian Field Terminal",
+      "title": "Field Terminal chamber dressing props",
+      "target": "`custodian/content/props/home/field_terminal/{burned_generator_*.png,dead_maintenance_drone_*.png,field_tag_offerings_*.png,white_thread_tie_*.png,floor_map_mismatch_*.png}`",
+      "purpose": "Communicate that the terminal was found before, misunderstood, and treated as an Oath Box / Iron Witness.",
+      "notes": "V1 uses the Road of Witnesses map without bespoke terminal-chamber environmental storytelling props.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "forlorn-ritualant-npc-runtime-sprites",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Forlorn-Ritualant NPC runtime sprites",
+      "target": "`custodian/content/sprites/enemies/forlorn_ritualant/runtime/body/`",
+      "purpose": "Complete readable locomotion and reaction animation on the live 128×128 contract.",
+      "notes": "Idle, hostile-idle, four-frame rise, Pin Strike, Thread Pull, eight-frame Ninth Answer, and eight-frame Orra Comes Late are live. Still needed: directional walk/drag, turning, reactions, and the eight-frame rise.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "unarrived-saint-apparition-sprite",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Unarrived Saint apparition sprite",
+      "target": "`custodian/content/tiles/encounters/ritualant_set/unnarrived_apparration_01.png`",
+      "purpose": "Show the delayed behind-player apparition when thread snaps, Orra Comes Late resolves, or the site is defiled.",
+      "notes": "A real Sprite2D-backed apparition is live; final production polish/directional apparition variants remain open.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "unarrived-procession-silhouettes",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Unarrived procession silhouettes",
+      "target": "`custodian/content/sprites/npcs/ash_bell/unarrived_procession_ghosts_32x48.png`",
+      "purpose": "Replace the placeholder procession band with subtle civic silhouettes.",
+      "notes": "Needed before Ninth Answer/procession lane reads correctly.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "ash-bell-ritual-prop-sprites",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Ash-Bell ritual prop sprites",
+      "target": "`custodian/content/props/ash_bell/empty_bell_frame_96x96.png`, `custodian/content/props/ash_bell/stilling_pin_32x32.png`, `custodian/content/props/ash_bell/white_thread_floor_a_32.png`, `custodian/content/props/ash_bell/white_thread_floor_b_32.png`, `custodian/content/props/ash_bell/white_thread_hanging_32x64.png`, `custodian/content/props/ash_bell/white_thread_knot_16x16.png`",
+      "purpose": "Replace placeholder bell frame, stilling pin, and white-thread zones in the authored encounter.",
+      "notes": "The runtime module is wired but intentionally not pretending production art exists.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "ash-bell-chamber-dressing-props-decals",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Ash-Bell chamber dressing props/decals",
+      "target": "`custodian/content/props/ash_bell/black_banner_hanging_32x64.png`, `custodian/content/props/ash_bell/black_banner_torn_32x48.png`, `custodian/content/props/ash_bell/black_banner_floor_32x32.png`, `custodian/content/decals/ash_bell/ash_child_handprints_32.png`, `custodian/content/props/ash_bell/west_gate_seal_marker_32x64.png`, `custodian/content/decals/ash_bell/sealed_gate_scratches_32.png`",
+      "purpose": "Make the room communicate black banners, sealed west gate, child handprints, and Ash-Bell ritual context.",
+      "notes": "Placeholder banners exist; decals/seal markers are not yet represented.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "dry-fountain-apparition-states",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Dry Fountain apparition states",
+      "target": "`custodian/content/tiles/encounters/ritualant_set/runtime/{dry_fountain_ghost_frames,black_water_fountain_frames}.tres` plus `fountain_cracked_anchored_ring_01.png`",
+      "purpose": "Support ABSENT/GHOST/BLACK_WATER/CRACKED_ANCHORED fountain states.",
+      "notes": "Ghost and black-water states are AnimatedSprite2D-backed and the anchored ring is textured; final state-transition polish remains open.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "ash-bell-audio-cues",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Ash-Bell audio cues",
+      "target": "`custodian/content/audio/sfx/ash_bell/thread_strain_*.wav`, `custodian/content/audio/sfx/ash_bell/reverse_chime_*.wav`, `custodian/content/audio/ambience/ash_bell/ash_bell_room_bed_*.ogg`, `custodian/content/audio/sfx/ash_bell/silence_pulse_*.wav`, `custodian/content/audio/sfx/ash_bell/stilling_pin_drag_*.wav`",
+      "purpose": "Provide thread strain, reversed chime, room bed, silence-pulse, and pin-drag feedback for the encounter mechanics.",
+      "notes": "Runtime has state hooks but no authored audio node hierarchy, review-ready assets, or mixer mute implementation yet.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "last-routekeeper-residual-projection-animations",
+      "section": "Last Routekeeper Event",
+      "title": "Last Routekeeper residual projection animations",
+      "target": "`custodian/content/sprites/events/last_routekeeper/{last_routekeeper_residual_idle_south_96x96_6f,last_routekeeper_residual_mark_south_96x96_6f,last_routekeeper_residual_fade_south_96x96_8f}.png`",
+      "purpose": "Replace placeholder Polygon2D residual figure used by `LastRoutekeeperEvent`.",
+      "notes": "One-time Sundered Keep random event: route authority trace of B. Chaffee.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "last-routekeeper-route-beacon-and-route-mark-props",
+      "section": "Last Routekeeper Event",
+      "title": "Last Routekeeper route beacon and route-mark props",
+      "target": "`custodian/content/tiles/sundered_keep/events/last_routekeeper/{routekeeper_survey_beacon_01,routekeeper_chalk_marks_01,routekeeper_route_hint_marker_01,routekeeper_hologram_pulse_01}.png` plus `.game32.json` sidecars",
+      "purpose": "Replace placeholder beacon/marker visuals used by `LastRoutekeeperEvent` and Sundered Keep hint reveal.",
+      "notes": "Lower causeway / underpass traversal readability reward.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "production-procgen-road-path-art-review-and-replacements",
+      "section": "Procgen Gameplay Feel",
+      "title": "Production procgen road/path art review and replacements",
+      "target": "`custodian/content/tiles/roads_paths/runtime/roads/surface/road_surface_piece_manifest.game32.json` and `custodian/content/tiles/roads_paths/runtime/paths/`",
+      "purpose": "Judge the existing 15-piece filled-surface road grammar on Road Semantics V2 fragments; author replacements only if the current runtime art fails that review.",
+      "notes": "Road fragments now use one 32x32 role decal per visible `ruined_road` cell; archived wide roads remain disabled in production. Soft paths keep their separate connection-bitmask presentation. No new production road art is approved in the current slice.",
+      "fulfillment": {
+        "type": "review",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "terrain-gameplay-pack-direction-corner-semantic-review",
+      "section": "Procgen Gameplay Feel",
+      "title": "Terrain gameplay pack direction/corner semantic review",
+      "target": "`reports/terrain_pack_ingest/terrain_direction_review.md` plus runtime art under `custodian/content/tiles/terrain/runtime/{connector,ascent,chasm_bridge}/`",
+      "purpose": "Confirm connector inner/outer corners, ascent ramp/stair directions, chasm edge/corner directions, and bridge start directions before gameplay placement.",
+      "notes": "Connector, Ascent, and Chasm+Bridge packs are ingested and registered as TileSet atlas sources, but runtime placement and actual TileSet terrain/autotile terrain sets are deferred.",
+      "fulfillment": {
+        "type": "review",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "power-components-harvesting-node-strips",
+      "section": "Procgen Gameplay Feel",
+      "title": "Power Components harvesting node strips",
+      "target": "`custodian/content/sprites/props/harvesting_nodes/power_node/power_node__node__idle__5f__96.png`, `custodian/content/sprites/props/harvesting_nodes/power_node/power_node__node__depleted__1f__96.png`",
+      "purpose": "Complete local `power_components` source-node implementation with the same 96px idle/depleted strip contract used by other `ResourceNode` presets.",
+      "notes": "Existing flat `power_components_*` PNGs are concept/source material, not compatible harvest-state node strips.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "fiber-moss-harvesting-node-strips",
+      "section": "Procgen Gameplay Feel",
+      "title": "Fiber Moss harvesting node strips",
+      "target": "`custodian/content/sprites/props/harvesting_nodes/moss_patch/moss_patch__node__idle__5f__96.png`, `custodian/content/sprites/props/harvesting_nodes/moss_patch/moss_patch__node__depleted__1f__96.png`",
+      "purpose": "Complete local `fiber_moss` source-node implementation for gatherable moss patches.",
+      "notes": "Existing design references `moss_patch`; runtime currently gets `fiber_moss` only as a secondary yield from fungal resin pods.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "destroyed-wall-debris-floor-variants",
+      "section": "Procgen Gameplay Feel",
+      "title": "Destroyed wall debris floor variants",
+      "target": "`custodian/content/tiles/walls/runtime/destroyed_wall_floor_*.png` or registered TileSet source",
+      "purpose": "Make destroyed walls read as debris terrain instead of generic floor.",
+      "notes": "Runtime now tags `destroyed_wall_floor / debris`; visual art is still generic floor until supplied and wired.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "wall-destruction-dust-puff-fx",
+      "section": "Procgen Gameplay Feel",
+      "title": "Wall destruction dust puff FX",
+      "target": "`custodian/content/sprites/effects/runtime/wall_destruction/wall_dust_puff_01__omni__?f__?.png`",
+      "purpose": "Reinforce destructible wall impact and traversal affordance.",
+      "notes": "No runtime FX hook yet; asset needed before wiring.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "wall-destruction-audio-cues",
+      "section": "Procgen Gameplay Feel",
+      "title": "Wall destruction audio cues",
+      "target": "`custodian/content/audio/sfx/world/wall_destroy_*.wav`",
+      "purpose": "Feedback for wall break events.",
+      "notes": "Pair with future dust FX hook.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "portal-plaza-dressing-props",
+      "section": "Procgen Gameplay Feel",
+      "title": "Portal plaza dressing props",
+      "target": "`custodian/content/props/ruins/data/prop_definitions/portal_plaza_*.tres` plus sprites under `custodian/content/props/ruins/`",
+      "purpose": "Make portal endpoints feel authored and landmark-like.",
+      "notes": "Runtime now stamps `portal_plaza`; decorative ring clutter is not yet authored.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "compound-ingress-cover-props",
+      "section": "Procgen Gameplay Feel",
+      "title": "Compound ingress cover props",
+      "target": "`custodian/content/props/ruins/data/prop_definitions/compound_cover_*.tres`",
+      "purpose": "Fill `cover_anchor / compound_ingress` points with barricades, crates, lamps, or ruin cover.",
+      "notes": "Runtime tags anchors only; no prop consumer yet.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "compound-ingress-hazard-light-markers",
+      "section": "Procgen Gameplay Feel",
+      "title": "Compound ingress hazard/light markers",
+      "target": "`custodian/content/sprites/environment/props/compound/ingress_marker_*.png`",
+      "purpose": "Make compound thresholds read as defended encounter spaces.",
+      "notes": "Optional but recommended by procgen feel notes.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "room-identity-interior-prop-sets",
+      "section": "Procgen Gameplay Feel",
+      "title": "Room-identity interior prop sets",
+      "target": "`custodian/content/tiles/interiors/runtime/props_storage_*.png`, `props_security_*.png`, `props_maintenance_*.png`, `props_archive_*.png`, `props_generator_*.png`, `props_barracks_*.png`, `props_lab_*.png`",
+      "purpose": "Let room zones influence interior dressing.",
+      "notes": "Runtime now tags prop `region_zone`; current prop pool is generic.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "foliage-tactical-cover-variants",
+      "section": "Procgen Gameplay Feel",
+      "title": "Foliage tactical cover variants",
+      "target": "`custodian/content/sprites/environment/foliage/cover_shrub_*.png`, `tree_los_blocker_*.png`",
+      "purpose": "Make `foliage_cover` terrain visually distinguish concealment/blocker roles.",
+      "notes": "Runtime now tags foliage as `foliage_cover / tree|shrub`.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hangar-room-templates",
+      "section": "Compound Room Templates",
+      "title": "Hangar room templates",
+      "target": "`custodian/game/world/compound/rooms/templates/hangar_large.tmj`, `custodian/game/world/compound/rooms/templates/hangar_small.tmj`",
+      "purpose": "Supply combat/vehicle-scale room candidates referenced by `default_compound.json`.",
+      "notes": "Only `command_post.tmj` exists today; layout generation skips missing templates.",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "corridor-room-templates",
+      "section": "Compound Room Templates",
+      "title": "Corridor room templates",
+      "target": "`custodian/game/world/compound/rooms/templates/corridor_h.tmj`, `custodian/game/world/compound/rooms/templates/corridor_v.tmj`",
+      "purpose": "Supply graph connectivity rooms with authored north/south/east/west door metadata.",
+      "notes": "Required before deterministic graph-walk assembly can be meaningfully smoke-tested.",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "storage-room-template",
+      "section": "Compound Room Templates",
+      "title": "Storage room template",
+      "target": "`custodian/game/world/compound/rooms/templates/storage.tmj`",
+      "purpose": "Supply loot/storage candidate referenced by `default_compound.json`.",
+      "notes": "Should include door properties and optional loot/prop markers per room template README.",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "landing-pad-room-template",
+      "section": "Compound Room Templates",
+      "title": "Landing pad room template",
+      "target": "`custodian/game/world/compound/rooms/templates/landing_pad.tmj`",
+      "purpose": "Supply extract/arrival room candidate referenced by `default_compound.json`.",
+      "notes": "Should include door properties plus extract/arrival markers when that runtime consumer exists.",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "per-resource-vault-storage-state-sprites",
+      "section": "Vault Storage / Enemy Raiding",
+      "title": "Per-resource vault storage state sprites",
+      "target": "`custodian/content/sprites/environment/props/vault_storage/runtime/{ruin_scrap,structural_alloy,power_components,resin_clot,capacitor_dust,signal_filament,memory_glass_fragment}__storage__{empty,stored,damaged}__1f__160x128.png`",
+      "purpose": "Make stored resources visibly occupy the vault instead of using one generic chest for every resource.",
+      "notes": "Runtime now has a permanent vault-storage sprite home and uses the generic chest states there until resource-specific props exist.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "enemy-grunt-sabotage-animation-suite",
+      "section": "Vault Storage / Enemy Raiding",
+      "title": "Enemy grunt sabotage animation suite",
+      "target": "`custodian/content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__objective__sabotage_01__{n,ne,e,se,s,sw,w,nw}__6f__96.png`",
+      "purpose": "Make storage vandalism/opening readable during the timed sabotage action.",
+      "notes": "Runtime sabotage behavior is implemented but currently reuses existing stop/idle presentation.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "enemy-grunt-loot-carry-escape-animation-suite",
+      "section": "Vault Storage / Enemy Raiding",
+      "title": "Enemy grunt loot/carry/escape animation suite",
+      "target": "`custodian/content/sprites/enemies/enemy_grunt/runtime/body/enemy_grunt__body__objective__{loot_start_01,carry_run_01,escape_01}__{n,ne,e,se,s,sw,w,nw}__?f__96.png`",
+      "purpose": "Show thieves taking a bundle and fleeing with weight/urgency.",
+      "notes": "Current loot carrier state is functional and minimap-visible but not visually distinct on the enemy body.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "vault-raid-audio-cues",
+      "section": "Vault Storage / Enemy Raiding",
+      "title": "Vault raid audio cues",
+      "target": "`custodian/content/audio/sfx/vault/{storage_open_*.wav,storage_sabotage_*.wav,storage_destroyed_*.wav,loot_stolen_*.wav}`",
+      "purpose": "Feedback for enemy storage opening, sabotage damage, destruction, and successful theft.",
+      "notes": "Runtime emits manager signals that can drive these cues once supplied.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "reliquary-dust-lung-architectural-connector-underlay",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Reliquary → Dust Lung architectural connector underlay",
+      "target": "`custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png`",
+      "purpose": "Present the locked 04→05 dogleg with surrounding corridor architecture.",
+      "notes": "Asset V2 family `awakening_reliquary_dust_lung_connector`; centered at `(352,-2464)`; 96px visual bleed beyond the unchanged Layout A/B/C traversal union. Flattened source cannot be safely separated into a foreground occlusion layer; that optional state remains unbound.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_reliquary_dust_lung_connector",
+            "state": "full_plate_underlay"
+          }
+        ]
+      }
+    },
+    {
+      "id": "p0-p1-zone-plates-nine-awakening-environment-families",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "P0/P1 zone plates — nine `awakening_*_environment` families",
+      "target": "`custodian/content/levels/awakening/<zone>/<owner>_{underlay,foreground}_<WxH>.png`",
+      "purpose": "Replace each section's blockout presentation without changing spatial authority.",
+      "notes": "Zones 01–09 now have underlay + foreground ingested and bound in `awakening_first_return.tscn`; production art preserves the locked spatial authority.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "p1-awakening-late-service-relay-lamp",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "P1 `awakening_late_service_relay_lamp`",
+      "target": "`custodian/content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png`",
+      "purpose": "Relay-lamp altar hero prop.",
+      "notes": "Required state: `idle`.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "p1-zone-fixture-families",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "P1 zone fixture families",
+      "target": "`custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png`",
+      "purpose": "Room-specific required set pieces and recommended dressing.",
+      "notes": "`awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "p1-awakening-authority-inlay",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "P1 `awakening_authority_inlay`",
+      "target": "`custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_*_32.png`",
+      "purpose": "Authority-route equal-cell floor inlays.",
+      "notes": "Required: `straight`, `corner`, `t_junction`, `cross`, `ring_node`, `threshold`.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "p1-awakening-ruin-decal",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "P1 `awakening_ruin_decal`",
+      "target": "`custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_*_64.png`",
+      "purpose": "Ruin damage and rubble decal set.",
+      "notes": "Required: `floor_crack_a`, `floor_crack_b`, `floor_crack_c`, `rubble_small`, `rubble_medium`.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "p1-ambient-awakening-fx-families",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "P1 ambient Awakening FX families",
+      "target": "`custodian/content/sprites/effects/awakening/runtime/<family>/<family>__fx__effect__*__omni__8f__<size>.png`",
+      "purpose": "Required environmental motion layers.",
+      "notes": "`awakening_dust_motes/loop` 64px at 6 FPS; `awakening_falling_ash/loop` 64px at 6 FPS; `awakening_gate_wind_dust/loop` 128px at 8 FPS.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "vaultwing-bonding-animation-suite",
+      "section": "Common Vaultwing Bonding Presentation",
+      "title": "Vaultwing bonding animation suite",
+      "target": "`custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__<action>__{n,s,e,w}__<frames>f__256.png`",
+      "purpose": "Give bait recognition, cautious approach, inspection, feeding, trial observation, and earned bond recognition distinct authored motion.",
+      "notes": "READY: `guarded_approach` N/S/E/W. PARTIAL: `notice_bait` N/S (E/W still needed); `inspect_bait` N/E/W (S still needed). MISSING: `feed_accept` N/S/E; `watch_player` N/S/E; `bond_greet` N/S/E. Source ordinals 1 and 10 were absent; ordinal 8 was rejected for generated matte and is retained only at `custodian/asset_drop/unresolved/vaultwing_bonding_rejected/inspect_bait_s_vw8__2e75b561e102.png`. Pass 2 source discovery found no ordinals 1, 8, or 10–18. Contracts remain `notice_bait` 4f/8 FPS; `guarded_approach` 6f/8 FPS; `inspect_bait` 5f/8 FPS; `feed_accept` 6f/8 FPS; `watch_player` 6f/6 FPS; `bond_greet` 8f/10 FPS. Author E/S/N at 256×256 RGBA; W is Asset V2 mirrored from E when symmetric. Full suite is 18 source masters and 24 runtime directional strips. Existing wild clips remain temporary semantic fallbacks, with direction-strict fallback for the six bonding actions. `command_ack` is deferred to Slice C.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "ambient_vaultwing_common",
+            "state": "notice_bait"
+          },
+          {
+            "family": "ambient_vaultwing_common",
+            "state": "guarded_approach"
+          },
+          {
+            "family": "ambient_vaultwing_common",
+            "state": "inspect_bait"
+          },
+          {
+            "family": "ambient_vaultwing_common",
+            "state": "feed_accept"
+          },
+          {
+            "family": "ambient_vaultwing_common",
+            "state": "watch_player"
+          },
+          {
+            "family": "ambient_vaultwing_common",
+            "state": "bond_greet"
+          }
+        ]
+      }
+    },
+    {
+      "id": "vaultwing-feed-vocalization",
+      "section": "Common Vaultwing Bonding Presentation",
+      "title": "Vaultwing feed vocalization",
+      "target": "`custodian/content/audio/sfx/fauna/vaultwing/vaultwing_feed_accept_01.wav`",
+      "purpose": "Give accepted feeding a creature-specific vocal response.",
+      "notes": "Production SFX follows animation ingest and first-bond visual review.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "vaultwing-bond-recognition-call",
+      "section": "Common Vaultwing Bonding Presentation",
+      "title": "Vaultwing bond-recognition call",
+      "target": "`custodian/content/audio/sfx/fauna/vaultwing/vaultwing_bond_recognition_01.wav`",
+      "purpose": "Mark the first earned recognition beat when the creature becomes bonded.",
+      "notes": "Keep distinct from hostile territorial and dive calls; production SFX follows animation ingest and first-bond visual review.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "baby-opossum-south-locomotion-re-export",
+      "section": "Baby Opossum Ambient Creature",
+      "title": "Baby Opossum south locomotion re-export",
+      "target": "staged as `custodian/asset_drop/inbox/ambient_baby_opossum/{waddle,scurry}__s.png`",
+      "purpose": "South-facing walk and run. Currently the most visible gap: moving toward the camera falls back to the north (rear-view) strip.",
+      "notes": "Source `opossum_{waddle,scurry}_s_v1.png` is 768px wide with 6 irregularly spaced poses. Re-export as a uniform 6-cell strip.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "ambient_baby_opossum",
+            "state": "waddle",
+            "directions": [
+              "s"
+            ]
+          },
+          {
+            "family": "ambient_baby_opossum",
+            "state": "scurry",
+            "directions": [
+              "s"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "baby-opossum-ambient-threat-re-export",
+      "section": "Baby Opossum Ambient Creature",
+      "title": "Baby Opossum ambient/threat re-export",
+      "target": "staged as `custodian/asset_drop/inbox/ambient_baby_opossum/{look,hiss,startle}__s.png`",
+      "purpose": "`look` idle beat; `hiss` and `startle` threat preamble. States are wired and currently fall back to `alert`/`idle`.",
+      "notes": "Sources are 768px (look, startle) and 2172px (hiss) with non-uniform pose spacing. `look` is 4 poses, `startle` 4, `hiss` 4.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "baby-opossum-reaction-friendship-re-export",
+      "section": "Baby Opossum Ambient Creature",
+      "title": "Baby Opossum reaction/friendship re-export",
+      "target": "staged as `custodian/asset_drop/inbox/ambient_baby_opossum/{disapprove,eat,friend_happy}__s.png`",
+      "purpose": "Rejection disapproval beat and the treat payoff. States are wired and fall back to `look`/`idle`.",
+      "notes": "Sources are 768px wide, 6 poses each, irregularly spaced with tails crossing pose boundaries.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "baby-opossum-hide-exit-re-export-body-barrel",
+      "section": "Baby Opossum Ambient Creature",
+      "title": "Baby Opossum `hide_exit` re-export (body + barrel)",
+      "target": "staged as `custodian/asset_drop/inbox/ambient_baby_opossum/hide_exit__{s,barrel_prop__s}.png`",
+      "purpose": "Climbing back out of the barrel.",
+      "notes": "Source is 2172x724 with 5 poses at a non-integer 434.4px pitch; the previously staged 4-frame strip cut a pose in half.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "baby-opossum-barrel-prop-hide-layer-consistent-framing",
+      "section": "Baby Opossum Ambient Creature",
+      "title": "Baby Opossum `barrel_prop` hide layer, consistent framing",
+      "target": "staged as `custodian/asset_drop/inbox/ambient_baby_opossum/hide_{enter,hold,peek,exit}__barrel_prop__s.png`",
+      "purpose": "The barrel the opossum hides in. The `HideProp` layer exists and stays hidden without it, so hide states currently show no barrel.",
+      "notes": "The four source canvases are 880x136, 768x162, and 2172x724, which renders the barrel at 74x61, 90x34, and 88x66 — it would visibly resize between hide states. Re-export all four hide actions from one camera/canvas, body and barrel registered to each other.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "enemy-marine-movement-and-combat-runtime-suite",
+      "section": "Enemy Marine",
+      "title": "Enemy marine movement and combat runtime suite",
+      "target": "`custodian/content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__{run_01,melee_01,stagger_01,death_01}__{n,ne,e,se,s,sw,w,nw}__?f__96.png`, optional FX under `custodian/content/sprites/enemies/enemy_marine/runtime/fx/`",
+      "purpose": "Promote `enemy_marine` beyond idle fallback into a readable active wave enemy.",
+      "notes": "The full 8-direction idle suite is wired, and an east dash attack body/FX strip is wired for the Sundered Keep Great Hall ambush. Full directional run, regular melee, stagger, death, and non-east dash coverage are still needed.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "enemy-marine-heavy-dash-directional-body-suite",
+      "section": "Enemy Marine",
+      "title": "Enemy marine heavy dash directional body suite",
+      "target": "`custodian/content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_01__{n,ne,e,se,s,sw,w,nw}__8f__156.png`",
+      "purpose": "Replace the current east-only dash fallback with readable directional heavy-charge body animation.",
+      "notes": "Design target is slow compressed windup, violent launch smear, impact frame, and skid/recovery. Minimum useful coverage is E/W/NE/NW/SE/SW; E exists and W may flip temporarily.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "enemy-marine-heavy-dash-fx-overlay-suite",
+      "section": "Enemy Marine",
+      "title": "Enemy marine heavy dash FX overlay suite",
+      "target": "`custodian/content/sprites/enemies/enemy_marine/runtime/fx/enemy_marine__fx__unarmed__dash_attack_01__{n,ne,e,se,s,sw,w,nw}__8f__156.png`",
+      "purpose": "Add separate telegraph, launch, travel, impact, skid, and settling dust/spark overlays for the heavy dash.",
+      "notes": "Keep FX dirty/metallic: shoulder glow, boot scrape, floor chips, orange sparks, short shock crescent, skid dust. E exists but should be revised to the hardened design if needed.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "enemy-marine-heavy-dash-audio-stack",
+      "section": "Enemy Marine",
+      "title": "Enemy marine heavy dash audio stack",
+      "target": "`custodian/content/audio/sfx/enemies/enemy_marine/dash_{windup,launch,travel,impact,recover}_*.wav`",
+      "purpose": "Sell mass and impact with servo whine, armor creak, boot slam, dirty whoosh, metal body hit, bass thud, stone scrape, and recovery grind.",
+      "notes": "Do not use sword-swish audio; this should sound like armored mass crossing space violently.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "enemy-savage-rushdown-animation-suite",
+      "section": "Enemy Savage",
+      "title": "Enemy Savage rushdown animation suite",
+      "target": "`custodian/content/sprites/enemies/enemy_savage/runtime/body/{locomotion,melee}/enemy_savage__body__*__{n,ne,e,se,s,sw,w,nw}__?f__96.png`, optional FX under `runtime/fx/`",
+      "purpose": "Complete readable movement, two-hit pressure, pounce commitment, reactions, and death.",
+      "notes": "E/W eight-frame run strips are wired; missing directions use nearest-sector presentation fallback. E/W pounce body/FX strips exist but remain unwired. Still needed: N/S/diagonal movement coverage plus chain, reaction, and death art/playback.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "portal-ring-fx-strips",
+      "section": "Portal / Ruin Props",
+      "title": "Portal-ring FX strips",
+      "target": "`custodian/content/sprites/environment/props/portal_ring/runtime/fx/`",
+      "purpose": "Idle, activation, and arrival portal playback.",
+      "notes": "Runtime strips exist; in-editor timing polish may still need revised frames.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "portal-ring-collision-occlusion-reference",
+      "section": "Portal / Ruin Props",
+      "title": "Portal-ring collision/occlusion reference",
+      "target": "`custodian/content/props/ruins/scenes/portal_ring_collision.tscn`",
+      "purpose": "Precise side blockers and platform occlusion.",
+      "notes": "Authored scene exists; keep tracker open until final visual QA locks it.",
+      "fulfillment": {
+        "type": "review",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "additional-ruin-prop-overlays",
+      "section": "Portal / Ruin Props",
+      "title": "Additional ruin prop overlays",
+      "target": "`custodian/content/props/ruins/overlays/`",
+      "purpose": "Dirt, chips, vines, highlights, moss/crack variety for procedural prop variants.",
+      "notes": "Current starter definitions use limited moss/crack overlays.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "additional-ruin-prop-definitions",
+      "section": "Portal / Ruin Props",
+      "title": "Additional ruin prop definitions",
+      "target": "`custodian/content/props/ruins/data/prop_definitions/*.tres`",
+      "purpose": "Expand procgen ruin landmark and clutter variety.",
+      "notes": "Starter obelisk, portal, rotunda, slab exist.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "light-body-authored-impact-variants-02-and-03",
+      "section": "Operator / Combat",
+      "title": "Light-body authored impact variants 02 and 03",
+      "target": "`custodian/content/audio/sfx/combat/hit_light_body_{02,03}.wav`",
+      "purpose": "Complete the requested balanced/sharp/dull three-take light-hit family before enabling bounded runtime pitch variation.",
+      "notes": "`hit_light_body_01.wav` is supplied and live. Export 02/03 as 48 kHz, 24-bit, mono PCM WAV with normalize/dither/reverb off; keep perceived loudness within ±1 dB. Runtime pitch randomization remains disabled until both land.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "posture-break-flash-editable-source",
+      "section": "Operator / Combat",
+      "title": "Posture-break flash editable source",
+      "target": "`custodian/content/sprites/effects/combat/critical/source/posture_break_flash_01.aseprite`",
+      "purpose": "Preserve the editable source for the live seven-frame critical-open posture-break strip.",
+      "notes": "Runtime PNG, SpriteFrames, scene, and playback are implemented; only the source file named by the design contract is absent.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "critical-window-expiry-editable-source",
+      "section": "Operator / Combat",
+      "title": "Critical-window expiry editable source",
+      "target": "`custodian/content/sprites/effects/combat/critical/source/critical_window_expire_01.aseprite`",
+      "purpose": "Preserve the editable source for the live eight-frame unconsumed-opportunity closure strip.",
+      "notes": "Runtime PNG, SpriteFrames, scene, and playback are implemented; only the source file named by the design contract is absent.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-unarmed-arrival",
+      "section": "Operator / Combat",
+      "title": "Operator unarmed arrival",
+      "target": "`custodian/content/sprites/operator/runtime/body/unarmed/operator__body__unarmed__arrival_01__s__9f__96.png`",
+      "purpose": "Portal arrival body animation.",
+      "notes": "Ingested and wired for south/down only. Directional variants not supplied.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "operator-modular-fast-windup-fx-south-sheet",
+      "section": "Operator / Combat",
+      "title": "Operator modular fast windup FX south sheet",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/fast_attack/operator__modular_upper_fx__unarmed__fast_windup_01__s__3f__96.png`",
+      "purpose": "Complete optional fast windup FX coverage if windup FX is promoted into runtime playback later.",
+      "notes": "Fast windup lower/upper body sheets are live for all 8 directions. Existing non-south windup FX source sheets remain unwired because fast windup FX is not part of the current runtime phase contract.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-ranged-ready-fire-suite",
+      "section": "Operator / Combat",
+      "title": "Operator modular ranged-ready/fire suite",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/ranged/` plus runtime copies under `custodian/content/sprites/operator/runtime/modules/new_operator/`",
+      "purpose": "Complete the true layered two-handed ranged rig where body, weapon, muzzle flash, and smoke act independently.",
+      "notes": "E/N/W lower-body, upper-body, and weapon stance layers are live for idle carbine-ready. Still needed: south/diagonals plus modular movement, fire, recover, reload, muzzle flash, and smoke.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "complete-operator-modular-sidearm-recovery-reload-cardinal-suite",
+      "section": "Operator / Combat",
+      "title": "Complete Operator modular sidearm recovery/reload/cardinal suite",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/sidearm/` with matching upper/lower/sidearm/FX layers for `{n,e,s,w}` draw/fire plus diagonal/cardinal recover/reload",
+      "purpose": "Complete the modular pistol set so cardinal aim, recovery, and reload do not require nearest-diagonal or legacy placeholder fallbacks.",
+      "notes": "Draw/fire lower, upper, pistol, and FX layers are live for NE/NW/SE/SW. Draw's final frame is the held ready pose.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-unarmed-parry-body-and-fx-suite",
+      "section": "Operator / Combat",
+      "title": "Operator unarmed parry body and FX suite",
+      "target": "Authored through **Asset Pipeline V2**; canonical source `custodian/content/sprites/operator/source/animations/unarmed/defense/parry_01/` and `.../parry_success_01/`, generated runtime `custodian/content/sprites/operator/runtime/animations/unarmed/defense/...`. The old `new_operator/modular/parry/...` authoring tree this row used to name no longer exists.",
+      "purpose": "Complete authored primary-from-guard parry, perfect-parry success, parry recovery, and impact FX coverage.",
+      "notes": "Baseline `parry_01` is live for guard-triggered parry/success at 12 FPS with **east, north and west** coverage across all three layers: lower body, upper body and FX (`unarmed/defense/parry_01/{e,n,w}/{lower_body,upper_body,fx}`). East and north are 5 frames; west is 6, the extra frame being a presentation settle that does not alter gameplay timing. Parry success presentation is **live, not placeholder**: a dedicated world-space burst (`game/vfx/combat/parry_success_burst_vfx.tscn`), a contact spark, and positional success SFX, plus a dedicated 5-frame `parry_success_01` FX strip in east and west. What is still missing is separate modular **body-layer** success and recovery art -- `parry_success_01` publishes FX only, so the success pose reuses the `parry_01` body strip. Still needed: modular body-layer success and recovery art, stronger impact variants, and **south and diagonal** body/FX coverage. Audio is not a gap here -- the positional parry-success sound is live; the only missing beat is a dedicated *miss* cue, tracked in its own row below. South and the diagonals are genuinely absent -- the runtime projects those requests onto the authored e/n/w sectors rather than faking art.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "operator-parry-miss-world-vfx",
+      "section": "Operator / Combat",
+      "title": "Operator parry miss world VFX",
+      "target": "`custodian/content/sprites/effects/combat/parry/combat_fx__parry_miss_01__6f__128.png`",
+      "purpose": "Show a missed active parry as a dry empty-air whiff when no hit is caught.",
+      "notes": "Runtime spawns `res://game/vfx/combat/parry_miss_vfx.tscn` only when the active parry window expires into recovery without a successful parry. The scene disables itself with a warning until this 6-frame 128px horizontal strip exists.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-lower-body-fallback-action",
+      "section": "Operator / Combat",
+      "title": "Operator modular lower-body fallback action",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/lower/operator__modular_lower_body__action_01__{n,ne,e,se,s,sw,w,nw}__5f__96.png`",
+      "purpose": "Shared lower-body fallback for modular movement/action defaults.",
+      "notes": "Runtime builder supports `action_01` as a fallback, but no source sheets exist yet; current generated idle/walk fall back to available authored sheets or `run_01`.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-lower-body-directional-idle-gaps",
+      "section": "Operator / Combat",
+      "title": "Operator modular lower-body directional idle gaps",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/idle/operator__modular_lower_body__idle__{ne,nw}__5f__96.png`",
+      "purpose": "Complete true modular lower-body idle defaults for all directions.",
+      "notes": "Runtime builder now uses authored lower idle for N/E/SE/S/SW/W; NE/NW still fall back through `action_01` then `run_01`.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-lower-body-directional-walk",
+      "section": "Operator / Combat",
+      "title": "Operator modular lower-body directional walk",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/walk/operator__modular_lower_body__walk_01__{n,ne,s,se,sw,nw}__5f__96.png`",
+      "purpose": "True modular lower-body walk defaults beyond east/west.",
+      "notes": "East/west walk sources exist; other directions fall back through `action_01` then `run_01`.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-upper-body-fallback-action",
+      "section": "Operator / Combat",
+      "title": "Operator modular upper-body fallback action",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/upper/operator__modular_upper_body__unarmed__action_01__{n,ne,e,se,s,sw,w,nw}__5f__96.png`",
+      "purpose": "Shared upper-body fallback for modular movement/action defaults.",
+      "notes": "Runtime builder supports upper `action_01`, but no source sheets exist yet; idle/walk currently fall back to available upper `run_01`.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-upper-body-directional-idle",
+      "section": "Operator / Combat",
+      "title": "Operator modular upper-body directional idle",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/idle/operator__modular_upper_body__unarmed__idle_01__{n,ne,e,se,s,sw,w,nw}__5f__96.png`",
+      "purpose": "True upper-body idle layer for the modular operator rig.",
+      "notes": "Current upper idle runtime sheets are generated fallbacks from upper `run_01`/nearest-direction sources.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-upper-body-directional-walk",
+      "section": "Operator / Combat",
+      "title": "Operator modular upper-body directional walk",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/walk/operator__modular_upper_body__unarmed__walk_01__{n,ne,e,se,s,sw,w,nw}__5f__96.png`",
+      "purpose": "True upper-body walk layer for the modular operator rig.",
+      "notes": "Current upper walk runtime sheets are generated fallbacks from upper `run_01`/nearest-direction sources.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-modular-upper-body-run-diagonal-gaps",
+      "section": "Operator / Combat",
+      "title": "Operator modular upper-body run diagonal gaps",
+      "target": "`custodian/content/sprites/operator/new_operator/modular/run/operator__modular_upper_body__unarmed__run_01__{ne,nw}__5f__96.png`",
+      "purpose": "Complete authored upper-body run coverage for all 8 directions.",
+      "notes": "Upper run has N/E/SE/S/SW/W; NE/NW currently use nearest-direction fallbacks.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "operator-full-directional-dodge-body-fx-suite",
+      "section": "Operator / Combat",
+      "title": "Operator full directional dodge body/FX suite",
+      "target": "Current full strips: `custodian/content/sprites/operator/new_operator/modular/dodge/operator__{body,fx}__full__dodge_01__{n,s}__9f__96.png`; remaining directions under the same folder. Optional split/backstep tracks remain supported under `custodian/content/sprites/operator/runtime/body/locomotion/`.",
+      "purpose": "Complete authored dodge direction coverage while preserving deterministic impulse/recovery timing.",
+      "notes": "N/S 9-frame full body and FX strips are live; upward uses N and horizontal/downward uses S with horizontal mirroring. Still needed: dedicated E/W/diagonals and optional authored aim-backstep variants.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "operator-charge-windup-and-clean-link-directional-coverage",
+      "section": "Operator / Combat",
+      "title": "Operator charge-windup and clean-link directional coverage",
+      "target": "`custodian/content/sprites/operator/runtime/actions/{dodge_charge,dodge_chain}/body/`",
+      "purpose": "Complete the dedicated ratio-held charge and repeatable clean-link presentation families.",
+      "notes": "E/S/W five-frame charge and four-frame link strips are live. Missing N/diagonal coverage uses deterministic nearest-sector fallback; hard pivots retain the full-dodge atlas.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "operator-modular-idle-hit-reaction-coverage",
+      "section": "Operator / Combat",
+      "title": "Operator modular idle-hit reaction coverage",
+      "target": "`custodian/content/sprites/operator/runtime/modules/new_operator/{lower_body,upper_body,head}/actions/{unarmed,hooded}/idle_hitreact_01/`",
+      "purpose": "Complete synchronized modular light-recoil direction coverage.",
+      "notes": "N/S lower/upper and optional hooded-head layers are live. Diagonals resolve to N/S and E/W ties remain stable; dedicated E/W/diagonal art is still absent.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "partial"
+      }
+    },
+    {
+      "id": "operator-non-unarmed-hit-reactions",
+      "section": "Operator / Combat",
+      "title": "Operator non-unarmed hit reactions",
+      "target": "`custodian/content/sprites/operator/runtime/body/{melee_2h,ranged_2h}/operator__body__*__light_hitreact_01__*__?f__96.png`",
+      "purpose": "Avoid using unarmed hitreact fallback for armed profiles.",
+      "notes": "Runtime currently falls back to unarmed hitreact.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "remaining-directional-ranged-run-sheets",
+      "section": "Operator / Combat",
+      "title": "Remaining directional ranged run sheets",
+      "target": "`custodian/content/sprites/operator/runtime/body/ranged_2h/operator__body__ranged_2h__run_01__{n,s,w}__?f__96.png` and matching weapon overlays",
+      "purpose": "Dedicated ranged sprint/run in all directions.",
+      "notes": "East is wired and mirrored for horizontal left.",
+      "fulfillment": {
+        "type": "operator",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "overheat-vent-fx-strip",
+      "section": "Combat Resource Feedback (Milestone A)",
+      "title": "Overheat vent FX strip",
+      "target": "`custodian/content/sprites/effects/runtime/weapon_pressure/weapon_pressure__fx__ranged__overheat_vent_01__omni__6f__32.png`",
+      "purpose": "Compact white-grey pressure discharge with faint amber first frame, spawned at weapon barrel during overheat.",
+      "notes": "32×32 per frame, 6 frames, 12 fps, non-looping. Optional for V1 — a procedural particle scene (`weapon_overheat_vent_vfx.tscn`) can stand in.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "source-aseprite-for-vent-fx",
+      "section": "Combat Resource Feedback (Milestone A)",
+      "title": "Source Aseprite for vent FX",
+      "target": "`custodian/content/_aseprite/sprites/effects/source/weapon_pressure/weapon_pressure__fx__ranged__overheat_vent_01__omni__6f__32.aseprite`",
+      "purpose": "Editable source for the overheat vent strip.",
+      "notes": "Required by the Aseprite source file convention.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hud-icon-heat-hot",
+      "section": "Combat Resource Feedback (Milestone A)",
+      "title": "HUD icon: heat hot",
+      "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/heat_hot.png`",
+      "purpose": "Optional state icon for the pressure row when heat is above warning threshold.",
+      "notes": "16×16, transparent background. Optional — initial implementation uses the text label and Black Reliquary palette.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hud-icon-heat-critical",
+      "section": "Combat Resource Feedback (Milestone A)",
+      "title": "HUD icon: heat critical",
+      "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/heat_critical.png`",
+      "purpose": "Optional state icon for the pressure row when 1–2 shots remain before overheat.",
+      "notes": "16×16, transparent background. Optional.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hud-icon-overheated",
+      "section": "Combat Resource Feedback (Milestone A)",
+      "title": "HUD icon: overheated",
+      "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/overheated.png`",
+      "purpose": "Optional state icon for the pressure row during overheat lockout.",
+      "notes": "16×16, transparent background. Optional.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hud-icon-reloading",
+      "section": "Combat Resource Feedback (Milestone A)",
+      "title": "HUD icon: reloading",
+      "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/reloading.png`",
+      "purpose": "Optional state icon for the pressure row during magazine reload.",
+      "notes": "16×16, transparent background. Optional.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hud-icon-dry",
+      "section": "Combat Resource Feedback (Milestone A)",
+      "title": "HUD icon: dry",
+      "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/dry.png`",
+      "purpose": "Optional state icon for the pressure row when magazine and reserve are empty.",
+      "notes": "16×16, transparent background. Optional.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hover-buggy-firing-animation",
+      "section": "Vehicles",
+      "title": "Hover buggy firing animation",
+      "target": "`custodian/content/sprites/vehicles/light_buggy/runtime/`",
+      "purpose": "Vehicle combat feedback.",
+      "notes": "Idle and horizontal movement are runtime-ready.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hover-buggy-damage-animation",
+      "section": "Vehicles",
+      "title": "Hover buggy damage animation",
+      "target": "`custodian/content/sprites/vehicles/light_buggy/runtime/`",
+      "purpose": "Vehicle damage readability.",
+      "notes": "Needed before broader vehicle combat polish.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "hover-buggy-destruction-animation",
+      "section": "Vehicles",
+      "title": "Hover buggy destruction animation",
+      "target": "`custodian/content/sprites/vehicles/light_buggy/runtime/`",
+      "purpose": "Vehicle failure/death readability.",
+      "notes": "Needed before vehicle durability feels complete.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "command-terminal-renamed-production-sheets",
+      "section": "UI / Terminal",
+      "title": "Command terminal renamed production sheets",
+      "target": "`custodian/content/sprites/environment/props/terminal/runtime/body/command_terminal__*.png`",
+      "purpose": "Replace compatibility fallback to older terminal naming.",
+      "notes": "Some compatibility copies exist; final canonical art pass remains open.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "terminal-ui-frames-overlays-icons-pips-button-skins",
+      "section": "UI / Terminal",
+      "title": "Terminal UI frames, overlays, icons, pips, button skins",
+      "target": "See `custodian/content/ui/terminal/README.md`",
+      "purpose": "Replace placeholder/lightly-derived terminal styling.",
+      "notes": "Keep UI asset asks synchronized with that README.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-command-post-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/command_post.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/command_post.tmj`",
+      "purpose": "",
+      "notes": "16×12 tiles / 512×384px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-power-core-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/power_core_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/power_core_a.tmj`",
+      "purpose": "",
+      "notes": "14×10 / 448×320px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-archive-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/archive_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/archive_a.tmj`",
+      "purpose": "",
+      "notes": "13×10 / 416×320px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-defense-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/defense_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/defense_a.tmj`",
+      "purpose": "",
+      "notes": "16×11 / 512×352px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-storage-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/storage_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/storage_a.tmj`",
+      "purpose": "",
+      "notes": "12×9 / 384×288px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-north-transit-a-south-transit-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj`",
+      "purpose": "",
+      "notes": "12×8 / 384×256px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-maintenance-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/maintenance_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/maintenance_a.tmj`",
+      "purpose": "",
+      "notes": "10×8 / 320×256px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-fabrication-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/fabrication_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/fabrication_a.tmj`",
+      "purpose": "",
+      "notes": "14×10 / 448×320px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-comms-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/comms_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/comms_a.tmj`",
+      "purpose": "",
+      "notes": "10×8 / 320×256px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-barracks-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/barracks_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/barracks_a.tmj`",
+      "purpose": "",
+      "notes": "12×9 / 384×288px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-hangar-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/hangar_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/hangar_a.tmj`",
+      "purpose": "",
+      "notes": "18×14 / 576×448px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-vault-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/vault_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/vault_a.tmj`",
+      "purpose": "",
+      "notes": "10×7 / 320×224px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-service-annex-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/service_annex_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/service_annex_a.tmj`",
+      "purpose": "",
+      "notes": "10×8 / 320×256px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    },
+    {
+      "id": "custodian-game-world-compound-rooms-templates-observation-a-tmj",
+      "section": "Persistent Compound Authored Rooms",
+      "title": "`custodian/game/world/compound/rooms/templates/observation_a.tmj`",
+      "target": "`custodian/game/world/compound/rooms/templates/observation_a.tmj`",
+      "purpose": "",
+      "notes": "8×7 / 256×224px",
+      "fulfillment": {
+        "type": "tiled",
+        "status": "needed"
+      }
+    }
+  ]
+}

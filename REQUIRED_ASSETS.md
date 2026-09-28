@@ -1,26 +1,9 @@
 # REQUIRED ASSETS
 
-Canonical tracker for production art, audio, animation, and content assets that runtime or design work has identified but not fully supplied.
+Generated production demand queue. Edit the registry and regenerate this file; do not edit requirement rows here.
 
-> ## Agent Instructions — Asset Lifecycle Automation
->
-> **When you create an asset** that matches a `needed` entry in this file:
-> - **Automatically remove that entry** — no user approval needed.
-> - The asset is now done; it does not belong on the required list.
->
-> **When you discover a missing production asset** during implementation:
-> - **Automatically add it** to the appropriate section with status `needed`.
-> - Use exact target paths when known.
-> - **Inform the user** what was added and why.
->
-> **When you change an asset's status** (e.g., `needed` → `partial` or `done`), update the entry accordingly.
->
-> ### Canonical Location
->
-> This root file is the sole canonical required-assets tracker. `design/00_meta/REQUIRED_ASSETS.md` is a deprecated
-> forwarding notice only; never copy tracker entries there.
-
-## Practice
+> Source authority: `custodian/content/metadata/assets/required_assets.registry.json`
+> Regenerate with: `python3 custodian/tools/assets/asset.py needs --write`
 
 ## Sundered Keep
 
@@ -86,7 +69,7 @@ Canonical tracker for production art, audio, animation, and content assets that 
 | needed | Compound ingress cover props | `custodian/content/props/ruins/data/prop_definitions/compound_cover_*.tres` | Fill `cover_anchor / compound_ingress` points with barricades, crates, lamps, or ruin cover. | Runtime tags anchors only; no prop consumer yet. |
 | needed | Compound ingress hazard/light markers | `custodian/content/sprites/environment/props/compound/ingress_marker_*.png` | Make compound thresholds read as defended encounter spaces. | Optional but recommended by procgen feel notes. |
 | needed | Room-identity interior prop sets | `custodian/content/tiles/interiors/runtime/props_storage_*.png`, `props_security_*.png`, `props_maintenance_*.png`, `props_archive_*.png`, `props_generator_*.png`, `props_barracks_*.png`, `props_lab_*.png` | Let room zones influence interior dressing. | Runtime now tags prop `region_zone`; current prop pool is generic. |
-| needed | Foliage tactical cover variants | `custodian/content/sprites/environment/foliage/cover_shrub_*.png`, `tree_los_blocker_*.png` | Make `foliage_cover` terrain visually distinguish concealment/blocker roles. | Runtime now tags foliage as `foliage_cover / tree|shrub`. |
+| needed | Foliage tactical cover variants | `custodian/content/sprites/environment/foliage/cover_shrub_*.png`, `tree_los_blocker_*.png` | Make `foliage_cover` terrain visually distinguish concealment/blocker roles. | Runtime now tags foliage as `foliage_cover / tree&#124;shrub`. |
 
 ## Compound Room Templates
 
@@ -110,16 +93,6 @@ Canonical tracker for production art, audio, animation, and content assets that 
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
-| bound | Reliquary → Dust Lung architectural connector underlay | `custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png` | Present the locked 04→05 dogleg with surrounding corridor architecture. | Asset V2 family `awakening_reliquary_dust_lung_connector`; centered at `(352,-2464)`; 96px visual bleed beyond the unchanged Layout A/B/C traversal union. Flattened source cannot be safely separated into a foreground occlusion layer; that optional state remains unbound. |
-
-The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is
-registered by the Asset V2 families below; drop human-named state files into
-`custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in
-`custodian/game/world/awakening/awakening_layout.gd`. Targets below are the V2-resolved runtime identities; `*`
-denotes the state names listed in the Notes column.
-
-| Status | Asset | Target Path | Purpose | Notes |
-|---|---|---|---|---|
 | partial | P0/P1 zone plates — nine `awakening_*_environment` families | `custodian/content/levels/awakening/<zone>/<owner>_{underlay,foreground}_<WxH>.png` | Replace each section's blockout presentation without changing spatial authority. | Zones 01–09 now have underlay + foreground ingested and bound in `awakening_first_return.tscn`; production art preserves the locked spatial authority. |
 | needed | P1 `awakening_late_service_relay_lamp` | `custodian/content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png` | Relay-lamp altar hero prop. | Required state: `idle`. |
 | needed | P1 zone fixture families | `custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png` | Room-specific required set pieces and recommended dressing. | `awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts. |
@@ -129,10 +102,6 @@ denotes the state names listed in the Notes column.
 
 ## Common Vaultwing Bonding Presentation
 
-Family contract: `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`.
-Author source masters under `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`;
-Asset V2 publishes to `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/`.
-
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
 | partial | Vaultwing bonding animation suite | `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__<action>__{n,s,e,w}__<frames>f__256.png` | Give bait recognition, cautious approach, inspection, feeding, trial observation, and earned bond recognition distinct authored motion. | READY: `guarded_approach` N/S/E/W. PARTIAL: `notice_bait` N/S (E/W still needed); `inspect_bait` N/E/W (S still needed). MISSING: `feed_accept` N/S/E; `watch_player` N/S/E; `bond_greet` N/S/E. Source ordinals 1 and 10 were absent; ordinal 8 was rejected for generated matte and is retained only at `custodian/asset_drop/unresolved/vaultwing_bonding_rejected/inspect_bait_s_vw8__2e75b561e102.png`. Pass 2 source discovery found no ordinals 1, 8, or 10–18. Contracts remain `notice_bait` 4f/8 FPS; `guarded_approach` 6f/8 FPS; `inspect_bait` 5f/8 FPS; `feed_accept` 6f/8 FPS; `watch_player` 6f/6 FPS; `bond_greet` 8f/10 FPS. Author E/S/N at 256×256 RGBA; W is Asset V2 mirrored from E when symmetric. Full suite is 18 source masters and 24 runtime directional strips. Existing wild clips remain temporary semantic fallbacks, with direction-strict fallback for the six bonding actions. `command_ack` is deferred to Slice C. |
@@ -140,14 +109,6 @@ Asset V2 publishes to `custodian/content/sprites/ambient_creatures/vaultwing_com
 | needed | Vaultwing bond-recognition call | `custodian/content/audio/sfx/fauna/vaultwing/vaultwing_bond_recognition_01.wav` | Mark the first earned recognition beat when the creature becomes bonded. | Keep distinct from hostile territorial and dive calls; production SFX follows animation ingest and first-bond visual review. |
 
 ## Baby Opossum Ambient Creature
-
-Runtime body strips are published; the entries below are approved source renders whose poses sit on a non-uniform
-grid (or, for the barrel, disagree on canvas framing between hide states), so they cannot be sliced onto 96x96 cells
-without cutting poses in half. The failed staging is preserved in `custodian/asset_drop/unresolved/ambient_baby_opossum/`
-and the raw renders in `custodian/asset_drop/source_work/baby_opossum/`. Each needs an artist re-export onto a uniform
-pose grid, not a pipeline change. Family contract: `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`.
-Publish with `python tools/assets/asset.py ingest ambient_baby_opossum`; verify with
-`python tools/validation/baby_opossum_asset_contract_smoke.py`.
 
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
@@ -209,8 +170,6 @@ Publish with `python tools/assets/asset.py ingest ambient_baby_opossum`; verify 
 
 ## Combat Resource Feedback (Milestone A)
 
-The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-verified, and wired. The P-9 reuses those cues until bespoke replacements arrive.
-
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
 | needed | Overheat vent FX strip | `custodian/content/sprites/effects/runtime/weapon_pressure/weapon_pressure__fx__ranged__overheat_vent_01__omni__6f__32.png` | Compact white-grey pressure discharge with faint amber first frame, spawned at weapon barrel during overheat. | 32×32 per frame, 6 frames, 12 fps, non-looping. Optional for V1 — a procedural particle scene (`weapon_overheat_vent_vfx.tscn`) can stand in. |
@@ -238,21 +197,19 @@ The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-ve
 
 ## Persistent Compound Authored Rooms
 
-Persistent Compound V1 is live with procedural semantic shells; these 32×32px Tiled `.tmj` maps are the deferred curated-interior layer, not a runtime blocker. Frame count is not applicable.
-
-| Status | Template | Target canvas |
-|---|---|---|
-| needed | `custodian/game/world/compound/rooms/templates/command_post.tmj` | 16×12 tiles / 512×384px |
-| needed | `custodian/game/world/compound/rooms/templates/power_core_a.tmj` | 14×10 / 448×320px |
-| needed | `custodian/game/world/compound/rooms/templates/archive_a.tmj` | 13×10 / 416×320px |
-| needed | `custodian/game/world/compound/rooms/templates/defense_a.tmj` | 16×11 / 512×352px |
-| needed | `custodian/game/world/compound/rooms/templates/storage_a.tmj` | 12×9 / 384×288px |
-| needed | `custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj` | 12×8 / 384×256px |
-| needed | `custodian/game/world/compound/rooms/templates/maintenance_a.tmj` | 10×8 / 320×256px |
-| needed | `custodian/game/world/compound/rooms/templates/fabrication_a.tmj` | 14×10 / 448×320px |
-| needed | `custodian/game/world/compound/rooms/templates/comms_a.tmj` | 10×8 / 320×256px |
-| needed | `custodian/game/world/compound/rooms/templates/barracks_a.tmj` | 12×9 / 384×288px |
-| needed | `custodian/game/world/compound/rooms/templates/hangar_a.tmj` | 18×14 / 576×448px |
-| needed | `custodian/game/world/compound/rooms/templates/vault_a.tmj` | 10×7 / 320×224px |
-| needed | `custodian/game/world/compound/rooms/templates/service_annex_a.tmj` | 10×8 / 320×256px |
-| needed | `custodian/game/world/compound/rooms/templates/observation_a.tmj` | 8×7 / 256×224px |
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | `custodian/game/world/compound/rooms/templates/command_post.tmj` | `custodian/game/world/compound/rooms/templates/command_post.tmj` |  | 16×12 tiles / 512×384px |
+| needed | `custodian/game/world/compound/rooms/templates/power_core_a.tmj` | `custodian/game/world/compound/rooms/templates/power_core_a.tmj` |  | 14×10 / 448×320px |
+| needed | `custodian/game/world/compound/rooms/templates/archive_a.tmj` | `custodian/game/world/compound/rooms/templates/archive_a.tmj` |  | 13×10 / 416×320px |
+| needed | `custodian/game/world/compound/rooms/templates/defense_a.tmj` | `custodian/game/world/compound/rooms/templates/defense_a.tmj` |  | 16×11 / 512×352px |
+| needed | `custodian/game/world/compound/rooms/templates/storage_a.tmj` | `custodian/game/world/compound/rooms/templates/storage_a.tmj` |  | 12×9 / 384×288px |
+| needed | `custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj` | `custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj` |  | 12×8 / 384×256px |
+| needed | `custodian/game/world/compound/rooms/templates/maintenance_a.tmj` | `custodian/game/world/compound/rooms/templates/maintenance_a.tmj` |  | 10×8 / 320×256px |
+| needed | `custodian/game/world/compound/rooms/templates/fabrication_a.tmj` | `custodian/game/world/compound/rooms/templates/fabrication_a.tmj` |  | 14×10 / 448×320px |
+| needed | `custodian/game/world/compound/rooms/templates/comms_a.tmj` | `custodian/game/world/compound/rooms/templates/comms_a.tmj` |  | 10×8 / 320×256px |
+| needed | `custodian/game/world/compound/rooms/templates/barracks_a.tmj` | `custodian/game/world/compound/rooms/templates/barracks_a.tmj` |  | 12×9 / 384×288px |
+| needed | `custodian/game/world/compound/rooms/templates/hangar_a.tmj` | `custodian/game/world/compound/rooms/templates/hangar_a.tmj` |  | 18×14 / 576×448px |
+| needed | `custodian/game/world/compound/rooms/templates/vault_a.tmj` | `custodian/game/world/compound/rooms/templates/vault_a.tmj` |  | 10×7 / 320×224px |
+| needed | `custodian/game/world/compound/rooms/templates/service_annex_a.tmj` | `custodian/game/world/compound/rooms/templates/service_annex_a.tmj` |  | 10×8 / 320×256px |
+| needed | `custodian/game/world/compound/rooms/templates/observation_a.tmj` | `custodian/game/world/compound/rooms/templates/observation_a.tmj` |  | 8×7 / 256×224px |

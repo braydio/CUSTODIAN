@@ -104,11 +104,12 @@ Last updated: 2026-09-27
 - `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
 - `custodian/tools/agent/validate_prompt_contract.py` — reports repository-default boilerplate repeated in prompts and active task packets; supports `TASK OVERRIDE:` and strict template-only checks
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
-- `REQUIRED_ASSETS.md` — project-level tracker for missing or partial production art, audio, animation, and content assets that implementation work depends on
+- `REQUIRED_ASSETS.md` — generated human view of open production requirements; regenerate with `python3 custodian/tools/assets/asset.py needs --write`
 - `custodian/tools/agent/change_control_bundle.py` — utility that bundles current git-changed files into `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the markdown bundle to the clipboard when a clipboard command is available
 - `custodian/asset_drop/runtime_ready/README.md` — persistent intake contract for already-runtime-ready assets before they become Godot content authority
 - `custodian/tools/pipelines/runtime_ready_assets.py` — conflict-safe router from the persistent runtime-ready inbox into organized `res://content/` targets, with archives and receipts
 - `custodian/tools/assets/asset.py` — preferred Asset Pipeline V2.1 CLI; schema-driven non-Operator family planning delegates static and animated execution to mature backends
+- `custodian/content/metadata/assets/required_assets.registry.json` and `custodian/tools/assets/asset_requirements.py` — sole editable production-demand registry and its route validation, Asset V2-derived status, and Markdown projection
 - `custodian/content/metadata/assets/schemas/*.json` — V2 kind registry for world props, enemies, tiles, effects, vehicles, weapons, UI, and backdrops
 - `../design/04_architecture/AWAKENING_ASSET_MANIFEST.md` and `custodian/content/metadata/assets/families/awakening_*.asset.json` plus `gate_of_dust.asset.json` — semantic state, canvas, priority, and routing authority plus the 32 registered Asset V2 family contracts for Awakening sections 01–10, including `awakening_designation_locker`, the P-9 release fixture that replaced the field-retention locker
 - `custodian/game/world/home/sidearm_locker_interactable.gd` — Custodian Designation Locker: draws `closed`, the eight-frame `authorize_open` strip at 10 FPS, `open_loaded`, and `empty` from the `awakening_designation_locker` V2 family, granting the P-9 exactly once. Covered by `custodian/tools/validation/awakening_designation_locker_presentation_smoke.gd`.

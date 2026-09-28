@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Asset Requirements Pipeline (2026-09-28)
+
+`custodian/content/metadata/assets/required_assets.registry.json` is the sole
+editable production-demand registry. `asset needs` lists and inspects
+requirements, derives Asset V2 status from catalog-backed runtime art and
+requested directions, and supports stable JSON plus generated Markdown
+`--write`/`--check` modes. Root `REQUIRED_ASSETS.md` is a generated view that
+omits fulfilled Asset V2 entries; fulfilled records remain in the registry.
+`asset doctor` validates route and family/state/direction references plus
+projection drift. Asset family contracts remain the technical production
+authority; audio, Tiled, Operator, review, and manual rows retain declared
+statuses until their existing workflows update the registry.
+
 ## Agent Workflow (2026-09-27)
 
 Prompts and task packets inherit repository defaults and carry only task deltas.
@@ -1459,7 +1472,7 @@ extraction) remain after that.
 ## Active Agent Workflow
 
 - Agent task packets are now risk-based, optional planning/handoff artifacts: skip narrow low-risk work, use the compact default when durable context helps, and expand it for high-risk or multi-session work.
-- Required production asset requests are tracked only in root `REQUIRED_ASSETS.md`; `design/00_meta/REQUIRED_ASSETS.md` is a deprecated forwarding notice and must not contain mirrored entries.
+- Required production needs are tracked in `custodian/content/metadata/assets/required_assets.registry.json`; root `REQUIRED_ASSETS.md` is its generated view, and `design/00_meta/REQUIRED_ASSETS.md` is a forwarding notice.
 - The command terminal now has a licensed two-font runtime hierarchy under `res://content/ui/fonts/`: IBM Plex Sans Condensed drives the 22px title plus 11/12px section/navigation/action labels, while IBM Plex Mono Regular/Bold drives 10-13px status, body, log, Fabrication, and 16px command-input text. `ui.gd` loads all three defensively, applies semantic label/button/rich-text helpers in both terminal theme passes, ellipsizes bounded buttons/labels, and keeps Fabrication horizontal scrolling disabled. Opening the terminal forces a visible mouse pointer, restores the prior mode on close, and orders the modal scrim before the panel for reliable button/link hit testing while still blocking gameplay input. Missing font assets use the default Godot font and emit a `DevObservatory.mark_warning` entry with the missing paths so the issue appears in the game-time log/session export. `terminal_typography_smoke.gd` verifies imported font ownership, hierarchy sizes, Fabrication row/detail/filter density, flat-row labels, ellipsis, and scroll policy.
 - The Ash-Bell / Forlorn-Ritualant packet is `custodian/docs/ai_context/task_packets/ASH_BELL_FORLORN_RITUALANT.md`; its historical procgen-footprint lane is superseded by `design/05_levels/FORLORN_RITUALANT_UNDERGROUND_MIGRATION.md`. The live chapel uses ambient captions, two-beat manual opening, optional topic menus, neutral site z inheritance, and a visible lower-lift ascent before blackout. Follow-up work must preserve authored-route ownership and must not restore generic special-room insertion.
 - Autonomous combat drone runtime authority lives in `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` and implementation notes live in `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES_CODE.md`; the older task packet is archived under `custodian/docs/ai_context/task_packets/archived/`. Runtime V3 is implemented with animated allied droids, Operator/order-point anchors, and deferred production acknowledgement audio/art expansion, repair/redeploy, and terminal command UI.
@@ -1575,7 +1588,7 @@ extraction) remain after that.
 - Active runtime docs: `custodian/docs/*`.
 - Godot implementation specs: `design/`.
 - Sundered Keep production authority is split by role: procgen owns the playable generated frontage, floor/collision/navigation, distant reveal, actors/dressing, and terminal ingress; `design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md` owns Shore Parish through the outer-wall east traverse and Front Gate handoff. Standard short fades connect them. The playable-blackout bridge and full-screen occluded handoff are not production route authority.
-- Required asset tracker: `REQUIRED_ASSETS.md`.
+- Required asset registry: `custodian/content/metadata/assets/required_assets.registry.json`; generated view: `REQUIRED_ASSETS.md`.
 - Event design docs: `design/02_features/events/LAST_ROUTEKEEPER_EVENT.md` (spec) and `design/02_features/events/LAST_ROUTEKEEPER_EVENT_CODE.md` (drop-in code) for The Last Routekeeper — a rare, one-time residual-system event inside Sundered Keep where the player recovers B. Chaffee's field-survey trace.
 - Project doctrine: `design/00_meta/MASTER_DESIGN_DOCTRINE.md`.
 - Resolve design conflicts through the active authority chain in `custodian/AGENTS.md`.

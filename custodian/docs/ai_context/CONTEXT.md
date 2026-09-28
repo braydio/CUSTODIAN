@@ -126,7 +126,7 @@ An explicit architecture organization pass is now documented and tracked.
 
 - Treat `custodian/` and `design/` as the active implementation surface.
 - Put active feature specs under `design/02_features/`; `design/20_features/` is retired and must not receive new work.
-- Treat root `REQUIRED_ASSETS.md` as the sole asset-tracker authority; the design-tree file is a deprecated pointer, not a synchronized copy.
+- Treat `custodian/content/metadata/assets/required_assets.registry.json` as the editable production-requirements authority. Root `REQUIRED_ASSETS.md` is generated with `python3 custodian/tools/assets/asset.py needs --write`; `design/00_meta/REQUIRED_ASSETS.md` is a forwarding pointer.
 - Start all local work by reading `custodian/AGENTS.md`, then this context pack.
 - Use task packets as optional risk-control and handoff records: skip narrow low-risk work, use the compact template when durable scope or acceptance helps, and expand it only for high-risk or multi-session work.
 - When a task packet exists, keep it current as scope, blockers, acceptance, or deferred work materially changes.

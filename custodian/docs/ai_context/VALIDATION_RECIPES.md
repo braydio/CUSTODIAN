@@ -71,6 +71,11 @@ Run `bash custodian/tools/validation/run_world_simulation_migration_suite.sh` fr
 
 Use the narrowest recipe that proves the change, then broaden only when the change affects shared runtime behavior, scenes, imports, or workflow routing.
 
+For production requirement registry, CLI, or generated-view changes, run
+`python3 custodian/tools/validation/asset_requirements_smoke.py`,
+`python3 custodian/tools/assets/asset.py needs --check`, and
+`python3 custodian/tools/assets/asset.py doctor`.
+
 ## Preferred Agent Entry Point
 
 From repository root, select changed-file-owned tests and receive one bounded,

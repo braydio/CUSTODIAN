@@ -8,7 +8,7 @@
 
 **Intake authority:** `design/04_architecture/ASSET_PIPELINE_V2.md` and `custodian/tools/assets/`
 
-**Global missing-asset tracker:** root `REQUIRED_ASSETS.md` remains canonical for whether an asset is still needed. This document defines the semantic Asset V2 families, states, canvases, priorities, and intended consumers for Awakening.
+**Global production-demand authority:** `custodian/content/metadata/assets/required_assets.registry.json` records whether needs remain open and routes them to existing fulfillment authorities. Root `REQUIRED_ASSETS.md` is its generated human view. This document and the Asset V2 family contracts define Awakening technical families, states, canvases, priorities, and intended consumers.
 
 ## Production rules
 
@@ -21,7 +21,7 @@
 - Equal-cell floor/decal systems use `tile` families.
 - Authored animated visual effects use `effect` families.
 - Multi-animation source masters may exist under source-work/Aseprite locations, but runtime gets only the concrete V2 state outputs actually used.
-- Audio is not an Asset V2 family in the current pipeline. Keep Awakening audio requirements in `REQUIRED_ASSETS.md` until an audio intake kind exists.
+- Audio is not an Asset V2 family in the current pipeline. Keep Awakening audio requirements in the required-assets registry on its audio route until an audio intake kind exists.
 - The existing Road of Witnesses image remains live and is not migrated in this family-registration pass.
 - The First Return now uses `awakening_designation_locker`; the old field-retention locker remains available only for generic storage if still referenced.
   It is not canonical Crèche weapon-issuance art.
@@ -432,7 +432,7 @@ This pass is complete when:
 3. `python3 custodian/tools/assets/asset.py request <family>` produces a usable request for each P0/P1 family.
 4. `python3 custodian/tools/assets/asset.py status <family>` reports missing source/runtime art cleanly rather than schema or routing errors.
 5. No production PNGs are created, copied, or bound in this registration pass.
-6. Root `REQUIRED_ASSETS.md` uses the V2-resolved target naming/routing for Awakening entries rather than hand-maintained pre-V2 filenames where they conflict.
+6. The required-assets registry routes mapped Awakening needs to V2 family/state IDs; root `REQUIRED_ASSETS.md` remains a generated view and does not own technical naming/routing.
 7. Asset Pipeline V2 focused validation passes.
 
 ## Art generation order
