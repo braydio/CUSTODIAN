@@ -164,6 +164,21 @@ def find_worktree(repo: Path, branch: str) -> Path:
     raise WorkstreamError(f"no attached worktree found for {branch}")
 
 
+def administrative_worktree(repo: Path, excluded: Path) -> Path:
+    candidates = [
+        (Path(item["worktree"]).resolve(), item.get("branch", ""))
+        for item in worktree_records(repo)
+        if Path(item["worktree"]).resolve() != excluded
+        and Path(item["worktree"]).resolve().is_dir()
+    ]
+    main = next((path for path, branch in candidates if branch == "refs/heads/main"), None)
+    if main is not None:
+        return main
+    if candidates:
+        return candidates[0][0]
+    raise WorkstreamError("cannot find a surviving worktree for safe task teardown")
+
+
 def checkpoint(workstream_id: str, remove_worktree: bool = False, repo: Path | None = None) -> None:
     repo = (repo or root_repo()).resolve()
     branch = branch_for(workstream_id)
@@ -213,16 +228,17 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
     reachable = subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"], cwd=path).returncode == 0
     if not reachable:
         raise WorkstreamError("landing did not verify as reachable from origin/main; recovery branch retained")
+    admin_repo = administrative_worktree(repo, path)
     git("push", "origin", "--delete", branch, cwd=path)
-    git("worktree", "remove", str(path), cwd=repo)
+    git("worktree", "remove", str(path), cwd=admin_repo)
     # The local main branch may intentionally lag origin/main in the coordination
     # checkout. Reachability was proven above against freshly fetched origin/main.
-    git("branch", "-D", branch, cwd=repo)
-    git("worktree", "prune", cwd=repo)
-    git("fetch", "--prune", "origin", cwd=repo)
+    git("branch", "-D", branch, cwd=admin_repo)
+    git("worktree", "prune", cwd=admin_repo)
+    git("fetch", "--prune", "origin", cwd=admin_repo)
 
     # Root checkout sync is subordinate and never alters user state.
-    for item in worktree_records(repo):
+    for item in worktree_records(admin_repo):
         root_path = Path(item["worktree"]).resolve()
         if root_path == path:
             continue

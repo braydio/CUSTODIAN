@@ -110,7 +110,9 @@ class WorkstreamTests(unittest.TestCase):
         landed_head = git(path, "rev-parse", "HEAD")
         report = self.base / "validation.json"
         report.write_text('{"schema":"custodian.validation.result.v1","passed":true,"tests":[{"status":"passed"}]}')
-        workstream.finish("finish-me", report, repo=self.repo)
+        # Invoke from the task worktree itself, as the normal CLI does. Teardown
+        # must continue through a surviving coordination worktree.
+        workstream.finish("finish-me", report, repo=path)
         self.assertFalse(path.exists())
         self.assertNotIn("agent/finish-me", git(self.repo, "branch", "--list"))
         self.assertEqual(git(self.repo, "ls-remote", "--heads", "origin", "agent/finish-me"), "")
