@@ -212,7 +212,7 @@ And the old world learned to hold it back.
 
 Temporarily.
 
-That civilization built an empire of temporary miracles and became accustomed to living inside them.
+That civilization built an empire of maintained continuity infrastructure and became accustomed to depending on it.
 
 Then came the **Severing**.
 
@@ -1512,13 +1512,13 @@ Then the Severing demonstrated that continuity itself could fail.
 
 Now the Custodian lives in the aftermath of that revelation.
 
-You recover a record knowing the Archive holding it will eventually collapse.
+You recover a record knowing the Archive holding it may not outlast the people depending on it.
 
-You restore a settlement knowing the Lattice cannot hold forever.
+You restore a settlement knowing its future is contingent, not guaranteed.
 
 You learn the true name of something after everyone who cared about that name is dead.
 
-You carry knowledge back to the Hub from worlds that no longer exist.
+You carry knowledge back to the Hub from Domains that may later change beyond recognition or be lost entirely.
 
 This is why knowledge matters more than mere power.
 
@@ -1530,13 +1530,13 @@ A wall survives until the Pale reaches the coordinates where the concept of that
 
 But recovered knowledge can change the next intervention.
 
-A dead world's calibration can save another Domain six months.
+A failed Domain's calibration can save another Domain six months.
 
 A route signature recovered from one collapse can prevent another Archive from opening a dangerous return path.
 
 A witness statement can reveal that two supposedly unrelated disasters were manifestations of the same continuity.
 
-One lost world teaches you how to keep another alive a little longer.
+One failed or abandoned Domain teaches you how to keep another alive a little longer.
 
 The dead become instruction.
 

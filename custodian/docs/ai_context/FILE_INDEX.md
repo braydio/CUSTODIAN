@@ -1057,6 +1057,7 @@ Last updated: 2026-09-27
 - `design/02_features/factions/FACTION_EXPRESSION_SYSTEM.md` — canonical seven-polity runtime target and legacy-implication mapping; runtime cutover remains pending FI-001/FI-002
 - `design/02_features/factions/FACTION_IMPLEMENTATION_TRACKER.md` — strict implementation-shaped faction slice queue and validation targets
 - `custodian/tools/validation/faction_canon_docs_smoke.py` — documentation-consistency tripwire for completion/hold conflicts, indexed canonical paths, stale narrative headings, and the resolved faction migration note
+- `custodian/tools/validation/lattice_canon_docs_smoke.py` — canon tripwire preventing reintroduction of disposable Campaign Worlds, guaranteed collapse, Archive-created reality, and fatalistic narrative phrasing
 - `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md` — downstream canonical lore and game-protocol authority
 - `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md` — active lore for Custodian crèches and designation-keyed crèche lockers (P-9 sidearm assignment, continuity of assignment vs. personhood); SECTION 2 refinement takes precedence over SECTION 1 draft
 - `design/03_world/PROCEDURAL_LORE_GENERATION.md` — procedural lore payload, inspect, machine-language, and faction mapping target

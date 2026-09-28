@@ -1,313 +1,334 @@
-# Lattice Doctrine — Protected Reality Canon
+# Lattice Doctrine — Persistent Domain Canon
 
 **Project:** CUSTODIAN  
 **Created:** 2026-05-21  
+**Rewritten:** 2026-09-28  
 **Status:** active  
-**Last Updated:** 2026-05-21  
-**Authority:** Supersedes previous Custodian-purpose framing in `GAME_PROTOCOLS_AND_WORLD_LORE.md` (see § Conflicts & Supersessions). Subordinate to `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` for cosmology and continuity physics.  
-**Related Docs:** `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`, `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/03_world/PROCEDURAL_LORE_GENERATION.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`  
-**Source:** `design/LORE_GAMEPLAY_DUMP.md` (archived after migration)
-
-> **CANONICAL MIGRATION OVERRIDE:** This document is governed by
-> `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md`. Any older wording
-> below that describes Campaign Worlds as ontologically temporary, Archive-created,
-> inherently non-revisitable, or destroyed on mission resolution is historical
-> framing and is superseded by the Lattice Domain model.
+**Authority:** Subordinate only to `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md` for cosmology and continuity physics. This document is the active doctrine authority for Lattice Domains, Archive-field behavior, and the fiction/mechanics boundary between Domains and transient CampaignRegion runtime instances.  
+**Related Docs:** `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md`, `design/03_world/lore/CORE_LORE.md`, `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`, `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/03_world/LATTICE_ARCHIVE_ENGINE_MEMORY_GLASS.md`
 
 ---
 
 ## Purpose
 
-Lock the **Lattice doctrine** as the new canonical framing for CUSTODIAN's core premise. This document defines:
+Lock the current Lattice model without preserving the superseded disposable-world framing.
 
-- what the Lattice actually does (it cannot protect any reality permanently)
-- what Lattice Domains are (persistent damaged regions, not generated bubbles)
-- what the Custodian is actually trying to accomplish
-- why campaigns inevitably end
-- how this reframes meta-progression, the world boundary, and replayability
+This document defines:
 
-This is a **doctrinal reframe**, not a lore footnote. It changes the emotional axis of the entire game.
+- what a Lattice Domain is;
+- what Archive Engines and Archive fields do;
+- how Domains expand, contract, persist, fail, and become reachable;
+- why CampaignRegion runtime lifetime is not world lifetime;
+- how the Custodian changes Domain futures without creating or automatically destroying them;
+- how finite coherence pressure supports stakes without predetermining every Domain's collapse.
 
----
-
-## Scope
-
-### In Scope
-- The Lattice mechanism and its implications
-- Reframed Custodian purpose and player motivation
-- Campaign lifecycle as Lattice establishment-to-collapse
-- World boundary design implications
-- Meta-progression seeding via past-Lattice recovery
-- Resolved contradictions with prior docs
-
-### Out of Scope
-- Exact GDScript implementation
-- Balance values or tuning
-- Full faction-by-faction lore updates (those flow downstream from this doctrine)
-- Visual asset specifications beyond high-level direction
+The migration record in `LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md` explains how the project arrived here. This document is the ongoing doctrine.
 
 ---
 
-## Core Doctrine: The Lattice
+## Canonical model
 
-### The Archives Do Not Save Worlds
+Before the Severing, planets, settlements, ecosystems, machinery, and ordinary physical processes existed independently of Archive Engines. The Lattice was infrastructure imposed on stable reality. It did not create reality.
 
-The foundational shift:
+The Severing damaged continuity relationships badly enough that, in the regions relevant to CUSTODIAN, stable complex reality often depends on surviving Lattice and Archive infrastructure.
 
-> **The Archives are not saving the world permanently.**
->
-> They are reinforcing Lattice reality pockets for a limited duration.
+A **Lattice Domain** is an existing contiguous region of damaged post-Severing reality maintained at usable physical coherence by one or more Archive Engines and associated infrastructure.
 
-This is the core truth. Everything below flows from it.
+A Domain is therefore:
 
-### What Campaign Worlds Actually Are
+- a place, not a generated scenario;
+- persistent beyond the lifetime of a runtime scene;
+- capable of containing settlements, governments, ecosystems, industry, roads, ruins, and ordinary civic life;
+- capable of gaining or losing coherent territory;
+- capable of surviving for years or generations;
+- capable of being abandoned, cut off, partially consumed by the Pale, or catastrophically lost;
+- potentially revisitable when route, field, Hub, and political conditions permit.
 
-Each campaign is:
-
-- a **temporary continuity pocket**
-- **reinforced by an Archive engine**
-- **barely insulated from total erasure**
-
-The Archive can only:
-
-- hold so much territory
-- sustain coherence temporarily
-- resist collapse for a finite duration
-
-Eventually:
-
-> **the Pale wins.**
-
-The Lattice collapses. The world collapses.
-
-### Scale: Planets + Time + Universe
-
-A Lattice Domain is an existing damaged region of post-Severing reality held at usable coherence by Archive/Lattice infrastructure. It may be geographically large; a route may reach an adjacent continuity or historical state, but continuity displacement is a consequential anomaly rather than the default identity of every Domain.
-
-Campaigns from different cycles may be on different planets, in different eras, or in universes that don't share the same timeline. Most may not exist at the same time as each other.
-
-Campaign worlds feel like:
-
-- isolated surviving pockets on a planetary surface
-- continuity pockets in space-time
-- fractured territorial remnants across time and space
-- temporary stitched-together reality zones
-
-The scale is intimate and fragile — not galactic. Even though they span planets and times, each campaign is a **bounded pocket**, not an empire.
+No doctrine should imply that entering, leaving, winning, losing, or unloading a CampaignRegion automatically creates or destroys the represented Domain.
 
 ---
 
-## The Custodian's Reframed Purpose
+## Archive Engines and fields
 
-This is the critical emotional shift and **the primary canon change this document enacts:**
+Archive Engines do not make worlds.
 
-| Before | After |
-|--------|-------|
-| Custodian preserves provenance and recovers knowledge | Custodian keeps a survivable pocket alive long enough for meaning to exist inside it |
-| Knowledge recovery is the goal | Knowledge recovery is a *means* — it reinforces the Lattice |
-| Campaign failure = archive loss | Campaign end = inevitable Lattice collapse |
-| The player is an authorized interpreter | The player is a Lattice operator |
+They stabilize damaged reality by maintaining an Archive field and associated Lattice relationships. Their functions may include:
 
-> **The Custodian is not trying to save the world.**
->
-> Nobody believes that is possible anymore.
->
-> They are trying to keep a pocket alive long enough for meaning to exist inside it.
+- coherence stabilization;
+- anchor maintenance;
+- continuity-signature comparison;
+- route arbitration;
+- telemetry and calibration;
+- historical and provenance comparison as diagnostic reference;
+- controlled expansion or contraction of coherent access.
 
-This is **emotionally stronger** than the previous framing. It makes victories more meaningful because every restored district, every recovered relationship, every rebuilt infrastructure is **buying weeks, months, years** — not eternity.
+Records assist operation. They do not metaphysically determine reality.
 
----
+Provenance remains forensic: evidence lineage, origin, custody, route history, and continuity-origin verification.
 
-## Campaign Lifecycle as Lattice Dynamics
+Archive-field capacity is finite in practice. That does **not** mean every Domain has a scripted expiration date.
 
-### Establishment: Archive Reinforcement
-
-A campaign begins when an Archive engine reinforces a Lattice around a reality pocket. The field expands, sectors cohere, geography becomes survivable.
-
-### Maintenance: Lattice Integrity
-
-The player extends the Lattice's lifespan through:
-
-- restoring Archive Lattice anchor integrity
-- stabilizing sectors
-- recovering infrastructure
-- pushing back Pale intrusion
-
-Archive completion does not "win" the world. It:
-
-- expands Lattice radius
-- stabilizes more sectors
-- restores deeper routes
-- increases Lattice durability
-
-But every success also increases:
-
-- strain on the Lattice
-- Pale pressure from beyond the boundary
-- instability pressure
-
-Every success accelerates the eventual catastrophe.
-
-### The First Archive Completion
-
-The first Archive completion should be framed as:
-
-> **Lattice Reinforcement Event 01**
-
-The player restores enough infrastructure and Lattice anchor integrity to:
-
-- widen the Lattice radius
-- reconnect nearby sectors
-- push back local Pale intrusion
-
-This unlocks new biomes, deeper expeditions, larger compounds, more survivors, stronger enemies, more dangerous anomalies.
-
-### End: Lattice Collapse
-
-Eventually the campaign ends — not because "you lost," but because no Lattice lasts forever.
-
-Late-campaign symptoms:
-
-- settlements disappear
-- maps become corrupted
-- NPCs vanish
-- routes destabilize
-- weather becomes impossible
-- extraction windows shorten
-
-Finally the Lattice collapse. Campaign over.
-
-### What the Player Sees After Expansion
-
-After the first Lattice expansion, the horizon should reveal:
-
-- countless collapsed Lattice fields
-- Pale-overrun zones
-- broken Archive pylons
-- extinct continuity pockets
-- (maybe) faint distant fields still flickering
-
-Meaning: humanity has been doing this for a very long time. And losing.
+A Domain can be stable, strained, expanding, contracting, partially abandoned, or failing. Its future depends on infrastructure, field load, route exposure, damage, politics, resource allocation, disaster, and intervention.
 
 ---
 
-## The World Boundary
+## Domain geography
 
-**Aspirational design target — not yet locked for implementation.**
+A Domain should be understood as a gradient:
 
-Never use invisible walls, map borders, or radiation zones. At the outer edge of the campaign world:
+1. **Domain Core** — high-confidence coherent territory with durable support.
+2. **Stable Field** — ordinary usable territory supported by active infrastructure.
+3. **Field Fringe** — coherent but increasingly expensive, unreliable, or exposed territory.
+4. **Unstable Coherence** — places where routes, geometry, matter, or records begin to diverge dangerously.
+5. **Deep Pale** — conditions insufficiently coherent for ordinary habitation or operation.
 
-- geometry truncates
-- lighting collapses
-- sound dampens
-- stars disappear
-- terrain phases into impossible static absence
-- distant structures are half-erased
+These states may move.
 
-Objects near the edge:
+Repair can expand coherent access.
 
-- lose textures
-- lose names
-- lose collision
-- partially disappear frame-to-frame
+Damage, deliberate Drawdown, overload, route failure, or Pale pressure can contract it.
 
-The edge of the world should feel *wrong*.
+Territory that leaves the stable field is not necessarily annihilated instantly. It may become inaccessible, unstable, partially coherent, or eventually lost.
 
 ---
 
-## Meta-Progression Through Past Campaigns
+## Routes and reciprocity
 
-**Aspirational design target — not yet locked for implementation.**
+Domains may be connected by surviving apertures, gateways, Continuity Ports, relays, and route systems.
 
-Because each campaign is a failed preservation attempt, future campaigns can:
+Operational distance is often route distance rather than simple physical distance.
 
-- rediscover prior Lattice fields
-- recover relics from old runs
-- encounter remnants of previous Custodians
-- find collapsed player-built compounds
+Restoring a route is never merely transportation repair because the Reciprocal Continuity Law remains absolute:
 
-This gives incredible replayability and narrative depth without authored scripting.
+> Any reachable continuity may potentially establish a return path.
 
----
+A route restoration can therefore provide enormous civic value while increasing exposure.
 
-## Lore-Native Procedural Generation
-
-The Lattice doctrine makes procedural generation **canon** rather than abstraction:
-
-Because the world is:
-
-- unstable
-- stitched together
-- under pressure
-- partially collapsing
-- continuously reconstructed by the Archive field
-
-...inconsistent geography becomes **canon**, not an engine limitation.
+This is one of the central decisions of CUSTODIAN.
 
 ---
 
-## The Tone Shift
+## The Custodian's purpose
 
-This doctrine reframes the game's identity:
+The Custodian does not create worlds and does not merely prolong a pre-scripted death animation.
 
-| Was | Now |
-|-----|-----|
-| Post-apocalyptic survival | Existence-support maintenance at the edge of oblivion |
-| Knowledge recovery | Field extension with inevitable collapse |
-| Industrial ruin with institutional residue | Same, but now you know *why* the institutions failed |
-| Campaigns are missions | Campaigns are failing Lattice pockets you chose to love anyway |
+The Custodian operates inside **contested futures**.
 
----
+A successful intervention may:
 
-## Conflicts & Supersessions
+- keep existing territory viable;
+- restore lost service;
+- expand coherent access;
+- reduce field load;
+- retire infrastructure cleanly;
+- recover knowledge needed elsewhere;
+- identify a dangerous route before it is reopened;
+- stabilize a settlement;
+- enable evacuation;
+- preserve a Domain that would otherwise fail;
+- create new risk through restoration or expansion.
 
-### Custodian Purpose — OVERWRITTEN
+The emotional thesis remains impermanence without fatalism:
 
-This doctrine **replaces** the previous framing of the Custodian's purpose in `GAME_PROTOCOLS_AND_WORLD_LORE.md` (Tier 1, items 1 & 4, and the "What Custodians Were" / "What the Player Is" sections).
+> Preservation need not be permanent to matter.
 
-The old framing — Custodians as "provenance-preservation systems" and "authorized interpreters" — is **not invalidated** as a functional description. Custodians still do those things. But the **why** has changed: they do them to extend the Lattice, not to restore eternal truth.
+But the player must be allowed to produce materially different futures.
 
-**Action required:** `GAME_PROTOCOLS_AND_WORLD_LORE.md` should be updated to reflect this reframed purpose in its Tier 1 locked canon.
+A settlement that survives another generation is not equivalent to one that collapses tomorrow.
 
-### Campaign World Transience — Clarified
+A district deliberately retired is not equivalent to one erased by catastrophe.
 
-Earlier campaign-world transience language is superseded. CampaignRegion runtime instances are transient representations of persistent Domains. Domains may contain ordinary planetary territory and may be revisited when routes and field state permit; continuity-displaced destinations remain exceptional. This remains compatible with PixelPlanets runtime generation.
-
-### Hub System Progression — Compatible
-
-The existing Hub meta-progression system (knowledge nodes, archive states, capability flags) remains mechanically valid. The Lattice doctrine adds a narrative layer: knowledge recovery = Lattice reinforcement. Archive loss = Lattice destabilization.
-
-### First Archive Completion — Reframed
-
-Previously framed as "unlocking new content." Now framed as **Lattice Reinforcement Event 01** — expanding the Lattice, pushing back Pale intrusion, with a bittersweet reveal of all the collapsed Lattice fields on the horizon.
+A repaired Domain is not secretly doomed because a mission ended.
 
 ---
 
-## Resolved Contradictions
+## Contracts and CampaignRegion lifecycle
 
-| Earlier Tension | Resolution |
-|---|---|
-| `LORE_GAMEPLAY_DUMP.md` was a raw transcript, not a design doc | This doc formalizes it into canon |
-| The dump introduced a mechanism (bubbles) not present in existing canon | Core concept locked. GAME_PROTOCOLS doc needs updating |
-| Player motivation was ambiguous (save the world? recover knowledge?) | Now locked: extend the Lattice, knowing it will fail |
-| World boundary was undefined | Aspirational design direction recorded above |
+A **Contract** is a bounded intervention into a known, newly reachable, partially characterized, or strategically relevant Domain.
+
+A **CampaignRegion** is the transient runtime representation of the portion of that Domain currently under active play.
+
+The runtime lifecycle is:
+
+```text
+HUB
+  -> select / authorize Contract
+  -> instantiate CampaignRegion representation
+
+CAMPAIGN
+  -> intervene
+  -> produce outcome
+
+HUB
+  -> record outcome
+  -> mutate persistent knowledge / Domain state
+  -> unload CampaignRegion runtime instance
+```
+
+The last step unloads software state.
+
+It does not fictionally destroy the place.
+
+Domains persist unless an in-world state change says otherwise.
 
 ---
 
-## Documentation Rule Going Forward
+## Expansion and contraction
 
-When future docs touch the core premise, Custodian purpose, or campaign lifecycle:
+Archive-field expansion makes existing but unstable or inaccessible territory coherently usable.
 
-1. Start here.
-2. Treat the Lattice doctrine as the authoritative emotional and narrative frame.
-3. Treat `GAME_PROTOCOLS_AND_WORLD_LORE.md` as the functional/mechanical canon (pending its updates to reflect this doctrine).
-4. Treat implementation-phase docs as downstream realizations, not places to redefine canon.
+It does not generate terrain ex nihilo.
+
+Expansion can provide:
+
+- housing;
+- farmland;
+- industry;
+- roads;
+- defensive depth;
+- access to infrastructure;
+- access to old routes or archives.
+
+Expansion can also impose:
+
+- additional field load;
+- maintenance burden;
+- exposure to unstable boundaries;
+- new reciprocal-route questions;
+- political commitments that become difficult to withdraw.
+
+Contraction may be equally rational.
+
+A Domain may intentionally retire territory to:
+
+- protect a stronger core;
+- reduce field load;
+- shorten defensive lines;
+- move population away from unstable regions;
+- isolate hazards;
+- preserve infrastructure elsewhere.
+
+This is why Fieldworks and Drawdown can disagree without either faction being irrational.
 
 ---
 
-## Open Questions (Reserved for Later Refinement)
+## Failure
 
-- At what point does the player learn the truth about the Lattice?
-- Does the first Archive completion reveal the collapsed Lattice fields, or only later ones?
-- Should the Lattice's inevitable collapse be visible from day one (health bar of reality) or discovered gradually?
-- What is the Pale exactly? Reserved mystery — keep ambiguous.
+Domain failure is real.
+
+Possible causes include:
+
+- Archive-field collapse;
+- catastrophic infrastructure loss;
+- Pale consumption;
+- unresolved continuity propagation;
+- unsustainable field load;
+- loss of critical anchors;
+- route catastrophe;
+- explicit story or simulation outcomes.
+
+Failure should be consequential precisely because it is **not automatic**.
+
+If every Domain inevitably collapses on schedule, maintenance and political choice become theater.
+
+The setting instead treats survival as contingent, expensive, and meaningful.
+
+---
+
+## World boundaries
+
+The outer edge of a playable stable field may visibly communicate increasing instability through lighting, geometry, sound, route behavior, or other presentation.
+
+This is an aesthetic and gameplay surface, not proof that the entire Domain ends at the current map boundary.
+
+A CampaignRegion can expose only part of a much larger Domain.
+
+Avoid using current runtime map size as a cosmological claim.
+
+---
+
+## Procedural generation
+
+Procedural generation is an implementation method for representing places inside the setting.
+
+It is not canonically explained by Archive Engines continuously reconstructing arbitrary geography.
+
+Generated layouts may represent:
+
+- newly accessed territory;
+- imperfectly surveyed territory;
+- a region not previously visited by the player;
+- unstable areas whose exact traversable state has changed;
+- ordinary variation across persistent places.
+
+Do not turn generator variability into a claim that locations are recreated from nothing on every visit.
+
+---
+
+## Meta-progression and revisitation
+
+Persistent Hub knowledge can improve later intervention quality without requiring stat inflation.
+
+Future Contracts may revisit prior Domains when fiction and implementation support it.
+
+On revisitation, meaningful continuity may include:
+
+- repaired or lost infrastructure;
+- changed jurisdiction;
+- evacuated or resettled districts;
+- surviving political consequences;
+- altered route availability;
+- recovered or missing records;
+- field expansion or contraction;
+- evidence of prior Custodian decisions.
+
+A Domain that genuinely fails may later survive only as records, debris, inaccessible coordinates, imported matter, or testimony.
+
+That outcome is powerful because it happened, not because every campaign was always destined to end that way.
+
+---
+
+## Tone lock
+
+The intended tone is:
+
+- finite capacity without automatic futility;
+- maintained civilization rather than temporary simulation bubbles;
+- real places with political futures;
+- infrastructure whose operation changes lives;
+- preservation whose value is measured in lived time, not eternity;
+- danger created by both neglect and restoration.
+
+The Custodian works because the future is uncertain.
+
+If every outcome were already collapse, adjudication would be ceremonial.
+
+---
+
+## Superseded framing
+
+The following claims are retired and must not appear as current canon:
+
+- Campaign Worlds are temporary continuity pockets created by Archive Engines.
+- A mission ending causes the represented world to collapse.
+- Every successful expansion necessarily accelerates catastrophe.
+- Every Campaign is a failed preservation attempt.
+- The Pale inevitably wins every Domain on a fixed narrative schedule.
+- Procedural generation means the Archive continuously reconstructs reality.
+- Knowledge or provenance metaphysically determines what is real.
+
+Historical documents may retain these claims only when clearly marked as superseded history.
+
+---
+
+## Documentation rule
+
+When future documents discuss Lattice cosmology:
+
+1. Use **Lattice Domain** for the persistent in-world place.
+2. Use **CampaignRegion** for its transient runtime representation.
+3. Treat Archive Engines as coherence infrastructure, never world generators.
+4. Treat provenance as forensic evidence, never metaphysical substrate.
+5. Allow expansion, contraction, persistence, abandonment, revisitation, and genuine failure.
+6. Never infer fictional destruction from runtime unload.
+7. Preserve the Reciprocal Continuity Law and the danger of restored routes.

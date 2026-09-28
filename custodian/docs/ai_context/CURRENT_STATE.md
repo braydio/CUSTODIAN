@@ -63,6 +63,18 @@ FI-002 replace them; documentation must not mistake those runtime placeholders
 for current setting canon. The focused faction_canon_docs validation is the
 tripwire for future split-brain drift.
 
+## Lattice Doctrine Drift Cleanup (2026-09-28)
+
+The active `design/03_world/LATTICE_DOCTRINE.md` has been rewritten to remove
+superseded disposable-world and inevitable-collapse claims rather than leaving
+them beneath a migration disclaimer. Canon now states directly that Lattice
+Domains are persistent places; Archive Engines stabilize rather than create
+reality; CampaignRegion lifetime is runtime-only; field expansion and
+contraction alter access to existing territory; and Domain failure is possible,
+consequential, and non-automatic. The corresponding fatalistic lines in
+`design/03_world/lore/CUSTODIAN_NARRATIVE.md` were tightened without removing
+the setting's impermanence theme.
+
 ## Custodian Mandate + Hub Institutional Canon (2026-09-24)
 
 Custodian institutional authority is now locked in
