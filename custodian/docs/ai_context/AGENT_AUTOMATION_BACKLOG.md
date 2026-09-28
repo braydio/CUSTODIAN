@@ -55,8 +55,8 @@ lease expiry, and a generated packet README remain deferred.
 ### Next bootstrap stage — independent review
 
 The dispatcher is implemented, including its second-pass remote-claim and
-coordination-path corrections. The review pipeline is the next queued bootstrap
-stage.
+coordination-path corrections. The review pipeline is now claimed/in progress on
+`agent/agent-review-pipeline`; its paired self-review remains the next QC gate.
 
 Queued behind the dispatcher:
 
@@ -71,6 +71,8 @@ second queue. Pre-land review, continuous workers, distributed leasing, and
 automatic subjective baseline acceptance remain deferred.
 
 ## Priority 1 — AI Context Validator
+
+Queued implementation packet: `custodian/docs/ai_context/task_packets/AI_CONTEXT_TASK_PACKET_VALIDATOR.md`.
 
 Suggested path: `custodian/tools/agent/check_ai_context.py`
 
