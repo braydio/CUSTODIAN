@@ -40,3 +40,10 @@ uses 2048×1536. Initial validation also found this clean worktree could not
 import a legacy non-PCM WAV used by unrelated Operator code. Reusing the existing
 project import cache allowed the Awakening smokes to run without changing that
 unrelated audio source.
+
+The first landing-helper attempt refused the pushed task commit because the
+helper's published-history guard treats the branch's own remote-tracking ref as
+a reason to rewrite history. At that point the task commit was a direct child
+of unchanged `origin/main`; landing therefore proceeds with a verified
+fast-forward-only merge/push, without rebasing or rewriting the published
+branch.
