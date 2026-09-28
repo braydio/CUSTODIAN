@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-06-12
+Last updated: 2026-09-28
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -31,6 +31,13 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 ## Archive
 
 Completed packets are moved to `archived/`. They are preserved for historical reference but are no longer active task surfaces.
+
+For implementation workstreams, set the packet's `Workstream` field to the
+stable kebab-case ID used by `agent/<workstream-id>`. Before
+`workstream.py finish`, an associated packet must be marked `complete`, moved
+under `archived/`, and removed from the `In Progress` or `Recently Complete
+(awaiting archive)` index sections. Finish now enforces this so packet cleanup
+cannot be lost when the ephemeral worktree is removed.
 
 ## Active Packets
 
