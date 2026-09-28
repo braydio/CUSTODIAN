@@ -56,9 +56,10 @@ pending without reset, stash, or branch switching.
 
 `workstream.py gc` runs fetch/prune and emits the branch hygiene report.
 `branch_hygiene.py` is report-only by default. Its classifications are based on
-ancestry and commit counts; it never age-deletes. `--apply` deletes branches
-fully contained by main and archive-tags unique history before deleting the
-branch. Protected refs cannot be deleted. Archive tags use
+ancestry and commit counts; unique `agent/*` refs classify as `ACTIVE`, and the
+tool never age-deletes. `--apply` deletes branches fully contained by main and
+archive-tags unique history before deleting the branch. Protected refs cannot
+be deleted. Archive tags use
 `archive/<sanitized-branch>-<YYYYMMDD>` and are recorded in
 `BRANCH_ARCHIVE.md`.
 
