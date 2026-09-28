@@ -65,6 +65,10 @@ cannot be lost when the ephemeral worktree is removed.
 - `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
 - `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; waits on `agent-review-pipeline`.
 - `REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired independent review of the forensic slice, blocked on `twin-solaria-crown-incident-forensics`.
+### Ready / Manual
+
+- `OPERATOR_AUTHORING_SURFACE_HARDENING.md` — P1 manual packet to reconcile active Operator authoring docs with Workbench V5 / Operator V2, expose targeted/strict focused ingest controls, and add regression coverage for tooling-doc drift.
+
 ### In Progress
 
 - `PROCGEN_MACRO_PRESENTATION_V1.md` — Validated migration ledger for the live region-first Rocky Upland macro presentation layer; ten SURFACE states are bound and hardened.
