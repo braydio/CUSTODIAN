@@ -186,6 +186,12 @@ Minimum adjacency check:
 ## Agent Task Packets
 
 Task packets are optional risk-control and handoff records, not mandatory ceremony.
+When a packet is used, give it the stable workstream ID. Before a completed
+implementation workstream is torn down, mark its packet complete, move it to
+`docs/ai_context/task_packets/archived/`, and remove stale active-index entries.
+`workstream.py finish` enforces this association and fails closed on unresolved
+untracked run artifacts; it does not silently delete scratch, evidence, or Asset
+V2 source material.
 
 Choose the lightest useful level:
 
