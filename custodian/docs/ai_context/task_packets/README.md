@@ -45,6 +45,11 @@ cannot be lost when the ephemeral worktree is removed.
 
 - `AGENT_TASK_DISPATCH.md` — Bootstrap the repository-native packet dispatcher. This is the final manually directed packet: after it lands, safe `Dispatch: auto` packets can be claimed by Codex through `dispatch.py claim-next` without packet copy/paste.
 
+### Queued After Dispatcher Bootstrap
+
+- `AGENT_REVIEW_PIPELINE.md` — P0 auto-dispatch task, blocked on `agent-task-dispatch`; adds independent post-land review, durable review receipts, bounded correction packets, and human decision escalation.
+- `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
+
 ### In Progress
 
 - `PROCGEN_MACRO_PRESENTATION_V1.md` — Validated migration ledger for the live region-first Rocky Upland macro presentation layer; ten SURFACE states are bound and hardened.
