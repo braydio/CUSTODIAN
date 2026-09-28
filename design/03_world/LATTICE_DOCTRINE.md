@@ -309,7 +309,7 @@ If every outcome were already collapse, adjudication would be ceremonial.
 
 The following claims are retired and must not appear as current canon:
 
-- Campaign Worlds are temporary continuity pockets created by Archive Engines.
+- Archive Engines generate disposable local Campaign Worlds.
 - A mission ending causes the represented world to collapse.
 - Every successful expansion necessarily accelerates catastrophe.
 - Every Campaign is a failed preservation attempt.

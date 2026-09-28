@@ -751,3 +751,8 @@ This document supersedes both `design/RESOURCE_FABRICATION_PIPELINE.md` and `des
 | v1.0 Power & Logistics | Fabrication system | **design** (rolled into this doc) |
 
 The Stage 1 implementation (compound test nodes) feeds into v0.5.0. The full fabrication pipeline connects to v1.0. See `design/00_meta/MASTER_ROADMAP.md` for milestone context.
+
+
+## Campaign Macro Fabrication Boundary
+
+`FabricationRecipeContract` separately owns deterministic campaign/snapshot recipes used by the strategic simulation. Explicit queue requests identify a recipe only; callers cannot select costs, duration, category, or output. Ambient category progress uses the same contract's input-consumption and output-application helpers and the existing macro stock/inventory owners. This bounded campaign model does not replace `FabPipeline`, powered machine work orders, or physical construction delivery.

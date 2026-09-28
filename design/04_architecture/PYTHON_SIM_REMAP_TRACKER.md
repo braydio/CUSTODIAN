@@ -25,7 +25,7 @@ The remap is complete when:
 |---|---|---|---|---|
 | REMAP-0 | Runtime foundation | Clock/kernel, commands, snapshots, policies, resources, strategic power, logistics, repair/fabrication foundations, invariants, campaign outcome | COMPLETE | Existing migration suite and parity v2 |
 | REMAP-1 | Macro world-state completion | Relay state, deterministic systemic-event weighting/state, strategic assault state/handoff | COMPLETE | Macro-order/determinism/snapshot continuation smoke; parity v3 fixtures; physical WaveManager handoff and completion-observation boundary; migration suite |
-| REMAP-2 | Infrastructure degradation completion | REMAP-1 review corrections + wear, fidelity, full repair semantics, ambient fabrication semantics | READY | Task packet `PYTHON_SIM_INFRASTRUCTURE_DEGRADATION_COMPLETION.md`; focused parity + snapshot/restore + macro-order validation |
+| REMAP-2 | Infrastructure degradation completion | REMAP-1 review corrections + wear, fidelity, full repair semantics, ambient fabrication semantics | COMPLETE | `python_sim_remap2_smoke.gd`, updated macro/repair smokes, v3→v4 snapshot migration, and world-simulation migration suite |
 | REMAP-3 | Campaign persistence | Disk save/load for authoritative campaign/world state and durable route/domain state where applicable | QUEUED | Save → process restart → restore → deterministic continuation |
 | REMAP-4 | Migration closeout | Expand final parity surface, reconcile docs, classify intentionally retired Python systems, mark migration complete | BLOCKED_BY_1_2_3 | Final migration suite green; no unresolved active Python dependency |
 
@@ -153,12 +153,12 @@ final parity + migration closeout
 
 - Runtime foundation: 100%
 - Macro world-state completion: 100%
-- Infrastructure degradation completion: 0%
+- Infrastructure degradation completion: 100%
 - Campaign persistence: 0%
 - Migration closeout: 0%
 
 Overall remaining-remap program: **~40% complete by slice count**
-(runtime foundation and macro world-state completion are done; REMAP-2 infrastructure degradation, REMAP-3 persistence, and REMAP-4 closeout remain).
+(runtime foundation plus REMAP-1/2 are complete; REMAP-3 persistence and REMAP-4 closeout remain).
 
 ### REMAP-1 classifications
 
@@ -166,3 +166,11 @@ Overall remaining-remap program: **~40% complete by slice count**
 - **SUPERSEDED:** Python event key catalog/cooldowns and exact selection sequence (the Godot catalog is intentionally compact and consumes the serialized Godot RNG); Python event consequences that mutate its parallel sector damage/power/effect model; Python assault target weights, route graph, intercept-ammo simulation, and tactical bridge results. Godot macro events only change current `SectorSimulationState` alertness/occupancy and ambient threat. Assault completion is recorded only after a physical WaveManager completion observation.
 - **RETIRED:** terminal event prose/name generation, detection/prose randomness, Python tactical autopilot, simulated kills/HP/ammunition/salvage, and Python assault outcome resolution.
 - **DESIGN_DECISION_REQUIRED:** none for the retained REMAP-1 surface. Macro relay data remains campaign snapshot state; the existing ARRN autoload continues to own player-facing relay interaction.
+
+
+### REMAP-2 classifications
+
+- **PORT:** deterministic sector wear using current defense-readiness and sector-fortification policy tables; surveillance buffering and signal-interference fidelity transitions; repair policy speed/material multipliers and relay repair discount for macro HP repair jobs; relay knowledge fabrication unlock/progression and logistics optimization; ambient category allocation, bounded progress, supply/power pressure, deterministic crafting order, input consumption, and output application through the shared recipe/output contract.
+- **SUPERSEDED:** Python health-state ladder and local/remote repair enum behavior (Godot macro jobs use current structure HP/status; loaded hold-repair remains physical); Python structure IDs/effective local power (macro fidelity uses current COMMS sector integrity and strategic power load); Python repair-drone/turret-ammo/archive inventories and recipe catalog (outputs map to current stocks/inventory/sector owners); historical per-structure ambient fabrication throughput (the Godot macro model has no authoritative macro Fab Core/Tools identity); old Python event-selection power projection (infrastructure weighting reads `PowerSimulationSystem.power_load`).
+- **RETIRED:** remote repair as a separate physical interaction, reconstruction of destroyed structures through macro jobs, sector recovery windows, repair cancellation/refund, assault regression of local repair, perimeter-drone grid rebuilding, and parallel legacy resource stores. Current physical repair/build/defense authorities remain authoritative for loaded scenes.
+- **Relay knowledge:** remote repair discount ports at tier 2; threat forecast ports as a deterministic extra strategic warning tick at tier 3; archive fabrication blueprint unlock ports at tier 4; logistics optimization ports at tier 5; signal reconstruction floors port at tiers 1 and 6; tier-7 dormancy pressure uses `ceil(dormant_count / 2)`. Benefits derive directly from `relay_knowledge_level`; no duplicate persisted benefit map is introduced.

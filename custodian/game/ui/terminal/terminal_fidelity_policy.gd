@@ -17,7 +17,8 @@ const _ORDER := {
 func resolve(
 	terminal_mode: StringName,
 	sectors: Array,
-	arrn_snapshot: Dictionary = {}
+	arrn_snapshot: Dictionary = {},
+	macro_fidelity: StringName = &""
 ) -> StringName:
 	var fidelity := FULL if terminal_mode == &"command" else DEGRADED
 	var communications_state := _communications_state(sectors)
@@ -36,6 +37,8 @@ func resolve(
 	# even when ARRN reconstruction improves a damaged communications return.
 	if terminal_mode != &"command":
 		fidelity = _worse_of(fidelity, DEGRADED)
+	var authoritative := normalize(macro_fidelity)
+	if not authoritative.is_empty(): fidelity = _worse_of(fidelity, authoritative)
 	return fidelity
 
 

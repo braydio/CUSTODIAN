@@ -152,3 +152,8 @@ The canonical Python implementation adds:
 - WAIT feedback for repair completion
 
 For Godot: Translate `step_world` ticks to `_process(delta)` time.
+
+
+## Campaign Macro Repair Boundary
+
+The authoritative campaign simulation has a separate typed repair-job command for snapshot-backed structure HP state. Callers submit the target structure only; the macro owner derives eligibility, material cost, duration, logistics/policy progression, and completion. This job does not implement the loaded Operator hold-repair interaction, does not mutate scene nodes, and does not reconstruct structures at zero HP. Macro repair is single-job and costs materials up front.

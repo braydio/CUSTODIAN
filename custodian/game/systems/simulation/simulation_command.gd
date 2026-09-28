@@ -12,6 +12,7 @@ const QUEUE_FABRICATION := &"queue_fabrication"
 const STABILIZE_RELAY := &"stabilize_relay"
 const SYNC_RELAYS := &"sync_relays"
 const PHYSICAL_ASSAULT_COMPLETED := &"physical_assault_completed"
+const ASSAULT_HANDOFF_ACCEPTED := &"assault_handoff_accepted"
 const FAIL_CAMPAIGN := &"fail_campaign"
 var sequence: int = 0
 var issued_fixed_tick: int = 0

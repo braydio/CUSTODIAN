@@ -8,6 +8,7 @@ signal wave_started(wave_number: int)
 signal wave_completed(wave_number: int)
 signal all_waves_completed()
 signal authored_enemy_spawned(enemy: Node, enemy_type: String)
+signal external_plan_physically_completed(plan_id: String)
 
 @export var wave_interval: float = 45.0
 @export var intra_wave_spawn_interval: float = 0.5
@@ -56,6 +57,8 @@ var _forced_behavior_profile: StringName = &""
 var _game_state: Node = null
 var _burst_spawns_remaining: int = 0
 var _waiting_for_recovery_clearance: bool = false
+var _active_external_plan_id := ""
+var _external_plan_actors: Dictionary = {}
 
 const ENEMY_COST := {
 	"drone": 1,
@@ -73,6 +76,9 @@ func _ready():
 	_bind_game_state()
 	_maybe_debug_spawn_grunt_on_start.call_deferred()
 	print("[WaveManager] Initialized with %d spawn nodes" % _spawn_nodes.size())
+
+func _process(_delta: float) -> void:
+	_check_external_plan_completion()
 
 func _bind_game_state() -> void:
 	_game_state = get_node_or_null(game_state_path)
@@ -289,6 +295,10 @@ func _spawn_enemy(enemy_type: String, difficulty: float) -> bool:
 		_configure_enemy_variant(enemy, enemy_type)
 	if not _forced_objective.is_empty() and "attack_objective" in enemy:
 		enemy.set("attack_objective", _forced_objective)
+	if not _active_external_plan_id.is_empty():
+		enemy.set_meta("strategic_plan_id", _active_external_plan_id)
+		if not _external_plan_actors.has(_active_external_plan_id): _external_plan_actors[_active_external_plan_id] = []
+		(_external_plan_actors[_active_external_plan_id] as Array).append(enemy.get_instance_id())
 	_apply_behavior_profile(enemy, enemy_type, _forced_behavior_profile)
 	parent.add_child(enemy)
 	if not _forced_objective.is_empty():
@@ -390,13 +400,39 @@ func start_external_wave(
 func apply_external_wave_plan(plan: Dictionary) -> bool:
 	var plan_id := String(plan.get("plan_id", ""))
 	if plan_id.is_empty() or plan_id == _last_external_plan_id: return false
+	if _wave_in_progress or (not _active_external_plan_id.is_empty() and _active_external_plan_id != plan_id): return false
 	var waves: Array = plan.get("waves", [])
 	if waves.is_empty() or not waves[0] is Dictionary: return false
 	var wave: Dictionary = waves[0]
 	var composition: Array[String] = []
-	for enemy_type in wave.get("composition", []): composition.append(String(enemy_type))
-	if not start_external_wave(composition, String(wave.get("lane", "")), String(wave.get("objective", "")), StringName(wave.get("behavior_profile", ""))): return false
+	for enemy_type in wave.get("composition", []):
+		var normalized_enemy := String(enemy_type).strip_edges().to_lower()
+		if _scene_for_enemy_type(normalized_enemy) == null: return false
+		composition.append(normalized_enemy)
+	_active_external_plan_id = plan_id
+	var started := start_external_wave(composition, String(wave.get("lane", "")), String(wave.get("objective", "")), StringName(wave.get("behavior_profile", "")))
+	if not started: _active_external_plan_id = ""; _external_plan_actors.erase(plan_id); return false
 	_last_external_plan_id = plan_id
+	return true
+
+func _check_external_plan_completion() -> void:
+	if _active_external_plan_id.is_empty() or _wave_in_progress or not _pending_spawns.is_empty(): return
+	var actors: Array = _external_plan_actors.get(_active_external_plan_id, [])
+	var live: Array[int] = []
+	for instance_id in actors:
+		var actor = instance_from_id(int(instance_id))
+		if _is_live_plan_actor(actor): live.append(int(instance_id))
+	_external_plan_actors[_active_external_plan_id] = live
+	if not live.is_empty(): return
+	var completed_id := _active_external_plan_id
+	_active_external_plan_id = ""
+	_external_plan_actors.erase(completed_id)
+	external_plan_physically_completed.emit(completed_id)
+
+func _is_live_plan_actor(actor: Variant) -> bool:
+	if not is_instance_valid(actor): return false
+	if actor.has_method("is_dead") and bool(actor.call("is_dead")): return false
+	if "dead" in actor and bool(actor.get("dead")): return false
 	return true
 
 func get_wave_status() -> Dictionary:

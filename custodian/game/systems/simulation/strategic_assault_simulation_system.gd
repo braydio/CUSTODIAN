@@ -13,7 +13,7 @@ func step_macro(state: WorldSimulationState) -> void:
 		if assault.eta_ticks <= 1: assault.warning_issued = true
 		if assault.eta_ticks == 0:
 			assault.phase = "HANDOFF_READY"
-			assault.spawn_plan = [{"composition": _composition(assault.threat_budget), "lane": "north" if assault.ingress_id == "T_NORTH" else "south", "objective": "breach_command", "behavior_profile": ""}]
+			assault.spawn_plan = [{"composition": _composition(assault.threat_budget), "lane": "north" if assault.ingress_id == "T_NORTH" else "south", "objective": _physical_objective(assault.objective), "behavior_profile": ""}]
 			state.record_event(&"strategic_assault_handoff_ready", {"assault_id": assault.assault_id, "objective": assault.objective})
 		return
 	assault.pressure = float(assault.pressure) + 0.15 + state.ambient_threat * 0.02
@@ -25,10 +25,17 @@ func step_macro(state: WorldSimulationState) -> void:
 		var wb := (2.0 if b == "COMMAND" else 1.0) + sb.damage * 1.2 + sb.alertness * 0.6
 		return wa > wb if not is_equal_approx(wa, wb) else a < b)
 	var ingress := "T_NORTH" if state.next_random_index(2) == 0 else "T_SOUTH"
-	assault.phase = "APPROACHING"; assault.assault_id = "assault_%d_%d" % [state.seed, state.world_tick]; assault.ingress_id = ingress; assault.objective = targets[0]; assault.route = [ingress, assault.objective]; assault.route_index = 0; assault.eta_ticks = 2; assault.approach_tick = state.world_tick; assault.started_tick = -1; assault.threat_budget = maxf(10.0, roundf(10.0 + state.ambient_threat * 3.0)); assault.pressure = assault.threat_budget; assault.warning_issued = false; assault.handoff_consumed = false
+	assault.phase = "APPROACHING"; assault.assault_id = "assault_%d_%d" % [state.seed, state.world_tick]; assault.ingress_id = ingress; assault.objective = targets[0]; assault.route = [ingress, assault.objective]; assault.route_index = 0; assault.eta_ticks = 2 + (1 if state.relay_knowledge_level >= 3 else 0); assault.approach_tick = state.world_tick; assault.started_tick = -1; assault.threat_budget = maxf(10.0, roundf(10.0 + state.ambient_threat * 3.0)); assault.pressure = assault.threat_budget; assault.warning_issued = false; assault.handoff_consumed = false
 	state.record_event(&"strategic_assault_approaching", {"assault_id": assault.assault_id, "ingress": ingress, "objective": assault.objective, "eta_ticks": assault.eta_ticks})
 
 func _composition(budget: float) -> Array[String]:
 	var count := clampi(roundi(budget / 10.0), 1, 12); var result: Array[String] = []
 	for index in count: result.append("grunt")
 	return result
+
+static func _physical_objective(macro_target: String) -> String:
+	match macro_target:
+		"POWER": return "destroy_power"
+		"DEFENSE_GRID": return "destroy_turrets"
+		"COMMAND": return "breach_command"
+		_: return "breach_command"

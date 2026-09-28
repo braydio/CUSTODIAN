@@ -76,7 +76,7 @@ Last updated: 2026-09-27
 
 - `game/systems/simulation/world_simulation_runtime.gd` — sole live runtime owner.
 - `game/systems/simulation/simulation_{clock,kernel,command,event,invariants,canonical_json,parity_contract,policy_tables}.gd` — deterministic core.
-- `game/systems/simulation/{power,logistics,repair,fabrication,relay,systemic_event,strategic_assault}_simulation_system.gd` — ordered deterministic macro systems; the last three own retained REMAP-1 state progression.
+- `game/systems/simulation/{power,logistics,repair,fabrication,relay,systemic_event,strategic_assault,wear,fidelity}_simulation_system.gd` — ordered deterministic macro systems; relay/events/assault cover REMAP-1 and wear/fidelity/repair/fabrication cover REMAP-2.
 - `game/state/world/` simulation state, identity, snapshot/migration, policies, sectors, structures, jobs, macro relay/event/assault state, and typed assault spawn plan — serialization-safe pure state.
 - `game/state/run/default_campaign_scenario_factory.gd` and campaign session/outcome plus persistent Hub/history — bootstrap and exactly-once lifecycle.
 - `game/world/bindings/` simulation binding files — non-authoritative adapters.
@@ -638,7 +638,7 @@ Last updated: 2026-09-27
 - `custodian/docs/ai_context/task_packets/FAB_TERMINAL_READABILITY_PASS.md` — completed packet for the FABRICATION work-order readability pass, including the terminal translation layer and build-placement alias
 - `custodian/game/ui/terminal/terminal_command_router.gd` — command parsing, validation, refresh policy, and dispatch boundary for the HUD terminal
 - `custodian/game/ui/terminal/terminal_snapshot.gd` — read-only terminal snapshot aggregation from runtime groups/autoloads/systems, including deterministic physics-frame time, physical-terminal command authority, sector-only Operator location and system counts, vault totals, and enemy diagnostic signals; broad `structure` membership is never used as sector authority
-- `custodian/game/ui/terminal/terminal_fidelity_policy.gd` — pure command/field plus communications-state policy for FULL, DEGRADED, FRAGMENTED, and LOST information quality
+- `custodian/game/ui/terminal/terminal_fidelity_policy.gd` — presentation policy combining command/field and communications context with read-only authoritative macro fidelity for FULL, DEGRADED, FRAGMENTED, and LOST information quality
 - `custodian/game/ui/terminal/terminal_status_formatter.gd` — sole deterministic canonical STATUS formatter shared by page rendering and typed STATUS commands
 - `custodian/game/ui/terminal/terminal_overview_view_model.gd` — pure weighted sector diagnosis, stable incident/recommendation IDs, and offline/cold-start summary model
 - `custodian/tools/validation/terminal_status_fidelity_smoke.gd` and `terminal_overview_semantics_smoke.gd` — focused semantic validation for fidelity omissions, simulation-clock/header ownership, and ranked Overview diagnosis
@@ -1218,3 +1218,5 @@ Last updated: 2026-09-27
 - `game/world/levels/authored/hub/twin_solaria/twin_solaria_layout.gd` and `.tscn` — registered AuthoredLevel production shell with exact 2048×1536 crop placement, named Crown Causeway spawn, authored boundary segments, and dormant machine readouts.
 - `content/levels/hub/twin_solaria_v1.json` and `content/levels/levels.json` — `hub_twin_solaria` registry definition and named spawn contract.
 - `scenes/twin_solaria_playtest.tscn` and `tools/validation/twin_solaria_runtime_smoke.gd` — standalone movement wrapper and production registration/native-size/collision/POI smoke.
+
+- `custodian/tools/validation/python_sim_remap2_smoke.gd` — deterministic REMAP-2 regression coverage for macro wear/fidelity, repair/fabrication contracts, relay/assault corrections, and snapshot continuation.

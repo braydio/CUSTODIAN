@@ -11,18 +11,12 @@ const EVENT_KEYS := {"QUIET": ["quiet_signal"], "ENVIRONMENTAL": ["microfracture
 
 func step_macro(state: WorldSimulationState) -> void:
 	var context: Dictionary = state.systemic_event_state
-	context.ticks_since_assault = int(context.get("ticks_since_assault", 0)) + 1
+	var assault_active := state.assault.phase != "NONE"
+	context.ticks_since_assault = 0 if assault_active else int(context.get("ticks_since_assault", 0)) + 1
 	context.ticks_since_hostile = int(context.get("ticks_since_hostile", 0)) + 1
-	var weights: Dictionary = {}
+	var weights := compute_category_weights(state)
 	var total := 0.0
-	for category in CATEGORIES:
-		if state.ambient_threat < float(MIN_THREAT[category]): continue
-		var weight := float(BASE_WEIGHTS[category])
-		if int(context.ticks_since_assault) < 5 and category in ["ENVIRONMENTAL", "QUIET"]: weight *= 1.4
-		if _aggregate_power(state) < 0.4 and category == "INFRASTRUCTURE": weight *= 1.5
-		if int(context.ticks_since_hostile) > 25 and category == "RECON": weight *= 1.5
-		if String(context.get("last_category", "")) == category: weight *= 0.25
-		weights[category] = weight; total += weight
+	for category in weights: total += float(weights[category])
 	var chance := minf(EVENT_CHANCE_MAX, EVENT_CHANCE_BASE + state.ambient_threat * EVENT_CHANCE_PER_THREAT)
 	if total <= 0.0 or state.next_random_unit() >= chance: return
 	var roll := state.next_random_unit() * total
@@ -46,17 +40,25 @@ func step_macro(state: WorldSimulationState) -> void:
 	_apply_consequence(state, selected, key)
 	state.record_event(&"systemic_event", record)
 
+func compute_category_weights(state: WorldSimulationState) -> Dictionary:
+	var context: Dictionary = state.systemic_event_state
+	var weights := {}
+	for category in CATEGORIES:
+		if state.ambient_threat < float(MIN_THREAT[category]): continue
+		var weight := float(BASE_WEIGHTS[category])
+		if int(context.get("ticks_since_assault", 0)) < 5 and category in ["ENVIRONMENTAL", "QUIET"]: weight *= 1.4
+		if category == "INFRASTRUCTURE": weight *= PowerSimulationSystem.blackout_event_weight_multiplier(state)
+		if int(context.get("ticks_since_hostile", 0)) > 25 and category == "RECON": weight *= 1.5
+		if String(context.get("last_category", "")) == category: weight *= 0.25
+		weights[category] = weight
+	return weights
+
 func _apply_consequence(state: WorldSimulationState, category: String, key: String) -> void:
 	if category == "QUIET": return
+	if key == "signal_interference": state.signal_interference_ticks = 3
 	state.ambient_threat = minf(10.0, state.ambient_threat + (0.25 if category == "HOSTILE" else 0.05))
 	var target_id := "COMMAND" if category == "HOSTILE" else "COMMS" if category == "RECON" else "POWER" if category == "INFRASTRUCTURE" else "HANGAR"
 	var sector: SectorSimulationState = state.sectors.get(target_id)
 	if sector == null: return
 	sector.alertness = minf(10.0, sector.alertness + (0.5 if category == "HOSTILE" else 0.2))
 	if key == "perimeter_probe" or key == "infiltration": sector.occupied = true
-
-func _aggregate_power(state: WorldSimulationState) -> float:
-	if state.sectors.is_empty(): return 0.0
-	var total := 0.0
-	for sector: SectorSimulationState in state.sectors.values(): total += sector.power
-	return total / float(state.sectors.size())

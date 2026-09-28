@@ -23,10 +23,11 @@ func step_macro(state: WorldSimulationState) -> void:
 			else: relay.status = "DORMANT"
 		if relay.status == "DORMANT": dormant += 1
 	var level := state.relay_knowledge_level
-	var pressure := maxi(0, dormant - (1 if level >= KNOWLEDGE_MAX else 0))
+	var pressure := maxi(0, ceili(float(dormant) / 2.0)) if level >= KNOWLEDGE_MAX else dormant
 	state.relay_dormancy_pressure = pressure
 	if pressure >= 3 and state.world_tick > 0 and state.world_tick % KNOWLEDGE_DRIFT_PERIOD == 0:
 		state.relay_knowledge_level = maxi(0, level - 1)
+		_recompute_pressure(state)
 		state.record_event(&"relay_knowledge_drift", {"knowledge_level": state.relay_knowledge_level})
 
 func stabilize(state: WorldSimulationState, relay_id: String) -> bool:
@@ -41,7 +42,7 @@ func sync_packets(state: WorldSimulationState) -> int:
 	var ids: Array = state.relays.keys(); ids.sort()
 	for id in ids:
 		var relay: Dictionary = state.relays[id]; pending += int(relay.get("packets_pending", 0)); relay.packets_pending = 0
-	if pending <= 0: return 0
+	if pending <= 0: _recompute_pressure(state); return 0
 	var weak := 0; var active := 0
 	for relay: Dictionary in state.relays.values():
 		if relay.status in ["STABLE", "WEAK"]: active += 1
@@ -52,4 +53,11 @@ func sync_packets(state: WorldSimulationState) -> int:
 	var successful := maxi(0, pending - failed)
 	var gain := roundi(successful * (1.0 - (0.5 * (float(weak) / maxf(1.0, float(active))))))
 	state.relay_knowledge_level = mini(KNOWLEDGE_MAX, state.relay_knowledge_level + gain)
+	_recompute_pressure(state)
 	return successful
+
+func _recompute_pressure(state: WorldSimulationState) -> void:
+	var dormant := 0
+	for relay: Dictionary in state.relays.values():
+		if String(relay.get("status", "")) == "DORMANT": dormant += 1
+	state.relay_dormancy_pressure = maxi(0, ceili(float(dormant) / 2.0)) if state.relay_knowledge_level >= KNOWLEDGE_MAX else dormant

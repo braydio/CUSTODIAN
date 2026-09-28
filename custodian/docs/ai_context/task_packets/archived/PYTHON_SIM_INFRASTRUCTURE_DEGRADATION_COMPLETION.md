@@ -1,16 +1,19 @@
 # Python Simulation Infrastructure Degradation Completion
 
-- Status: `ready`
+- Status: `complete`
+- Workstream: `python-sim-infrastructure-degradation`
 - Goal: Close the REMAP-1 integration defects found in post-landing review, then complete REMAP-2 by making wear, macro fidelity, repair progression, and ambient fabrication authoritative Godot simulation behavior without reintroducing Python-era parallel runtime authority.
 
+- Last updated: 2026-09-28
+
 - Current measured state:
-  - REMAP-1 is on `main` and the macro order is currently:
-    `power → logistics → repairs → fabrication → relay → systemic events → strategic assault → world_tick/invariants/failure`.
-  - Snapshot schema/parity are v3.
-  - Relay/event/strategic-assault state is serialized and deterministic under the existing macro smoke.
-  - Repair and fabrication have Godot foundations, but command ingress still accepts caller-supplied repair cost/duration and fabrication outputs/duration instead of deriving those contracts from authoritative simulation data.
-  - Wear, macro fidelity, ambient fabrication, and the retained full repair semantics remain unported.
-  - Post-landing review found several REMAP-1 integration defects that must be corrected in this slice before REMAP-2 is marked complete.
+  - REMAP-2 is complete; macro order now includes wear and fidelity before world tick/invariants/failure.
+  - Snapshot schema is v4 with explicit v3 migration and deterministic continuation coverage.
+  - Repair/fabrication economics are simulation-owned; ambient fabrication shares recipe/output authority with explicit queues.
+  - REMAP-1 assault handoff, objective mapping, event recency/power weighting, relay pressure, and knowledge benefits are reconciled and smoke-covered.
+  - The focused REMAP-2 smoke, existing focused simulation smokes, migration suite, and changed-unit gate pass.
+  - The migration suite reported existing procgen stuck-pocket diagnostics and live-scene ObjectDB/resource shutdown warnings while still passing.
+  - The first changed-unit report exposed stale wording in the active Lattice canon doc; wording was corrected and the canon smoke passes. Final changed-unit coverage is complete (6/6).
 
 - Task-specific authority:
   - `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md`
@@ -322,7 +325,7 @@ Likely active files, subject to live graph/source inspection:
 
 ## Handoff
 
-- Next action: inspect the live ownership graph around WaveManager external plans, simulation command ingress, repair/fabrication command callers, current COMMS/power state, and current recipe/resource authorities. Fix the REMAP-1 handoff lifecycle first.
+- Next action: REMAP-2 implementation and validation are complete; continue with REMAP-3 campaign/save-file persistence.
 - Best starting files:
   - `custodian/game/world/bindings/wave_manager_simulation_binding.gd`
   - `custodian/game/systems/core/systems/wave_manager.gd`
@@ -334,3 +337,11 @@ Likely active files, subject to live graph/source inspection:
   - `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md`
 - Blockers or open questions:
   - No blocker known. If current active design does not define a macro power-availability signal suitable for fidelity/event weighting, make that ownership decision explicit in the implementation and document it rather than reusing inert legacy fields.
+
+
+## Completion Record
+
+- Validation: `python_sim_remap2_smoke.gd`, `world_simulation_macro_state_smoke.gd`, `repair_fabrication_simulation_smoke.gd`, `world_simulation_python_parity_smoke.gd`, `lattice_canon_docs_smoke.py`, and `bash custodian/tools/validation/run_world_simulation_migration_suite.sh` passed. The migration suite was run once at closeout.
+- Changed-unit gate: `python3 custodian/tools/validation/run_validation.py --changed --max-tier unit --json` passed, 6/6 selected, coverage complete. `git diff --check` passed.
+- Exact historical wear parity was checked against 25 readiness/fortification combinations. Other fidelity/resource/economics behavior follows current Godot authority and is documented as a deliberate replacement.
+- No requirement in the packet was dropped as unmigratable. Existing shutdown diagnostics noted above did not fail validation.

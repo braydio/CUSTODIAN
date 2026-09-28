@@ -18,6 +18,20 @@ func validate(state: WorldSimulationState, queued_commands: Array = []) -> Array
 	_check(errors, state.logistics_throughput >= 0.0, "LOGISTICS_THROUGHPUT_NEGATIVE", "logistics_throughput", state.logistics_throughput); _check(errors, state.logistics_pressure >= 0.0, "LOGISTICS_PRESSURE_NEGATIVE", "logistics_pressure", state.logistics_pressure); _check(errors, state.logistics_multiplier >= 0.45 and state.logistics_multiplier <= 1.0, "LOGISTICS_MULTIPLIER_INVALID", "logistics_multiplier", state.logistics_multiplier)
 	for key in state.structures:
 		var s: StructureSimulationState = state.structures[key]; _check(errors, s.hp >= 0 and s.hp <= s.max_hp, "STRUCTURE_HP_OUT_OF_RANGE", "structures.%s.hp" % key, s.hp); _check(errors, WorldIdentityContract.is_macro_sector(s.sector_id), "UNKNOWN_SECTOR", "structures.%s.sector" % key, s.sector_id)
+	for sector_id in state.sectors:
+		var sector: SectorSimulationState = state.sectors[sector_id]; _check(errors, is_finite(sector.damage) and sector.damage >= 0.0 and sector.damage <= 10.0, "SECTOR_WEAR_INVALID", "sectors.%s.damage" % sector_id, sector.damage)
+	_check(errors, state.macro_fidelity in ["FULL", "DEGRADED", "FRAGMENTED", "LOST"], "MACRO_FIDELITY_INVALID", "macro_fidelity", state.macro_fidelity)
+	for category in PolicySimulationState.FABRICATION_CATEGORIES:
+		var cycle := float(FabricationSimulationSystem.AMBIENT_RULES[category].cycle)
+		var progress := float(state.ambient_fab_progress.get(category, -1.0))
+		_check(errors, is_finite(progress) and progress >= 0.0 and progress <= cycle * 1.5, "AMBIENT_FAB_PROGRESS_INVALID", "ambient_fab_progress.%s" % category, progress)
+	for raw_job in state.repairs:
+		var repair_job := RepairJobState.from_dict(raw_job) if raw_job is Dictionary else raw_job as RepairJobState
+		_check(errors, state.structures.has(repair_job.structure_id) and repair_job.material_cost >= 0 and repair_job.repair_amount >= 0 and repair_job.remaining >= 0.0 and repair_job.progress >= 0.0, "REPAIR_JOB_INVALID", "repairs.%s" % repair_job.job_id, repair_job.to_dict())
+	for raw_job in state.fabrication_queue:
+		var fabrication_job := FabricationJobState.from_dict(raw_job) if raw_job is Dictionary else raw_job as FabricationJobState
+		var recipe := FabricationRecipeContract.get_recipe(fabrication_job.recipe_id, maxi(state.relay_knowledge_level, 4))
+		_check(errors, not recipe.is_empty() and fabrication_job.remaining >= 0.0 and fabrication_job.total > 0.0 and fabrication_job.outputs == recipe.get("outputs", {}), "FABRICATION_JOB_INVALID", "fabrication_queue.%s" % fabrication_job.job_id, fabrication_job.to_dict())
 	_check(errors, state.rng_state > 0 and state.rng_state <= 0x7fffffff, "RNG_STATE_INVALID", "rng_state", state.rng_state)
 	for relay_id in state.relays:
 		var relay: Dictionary = state.relays[relay_id]

@@ -19,9 +19,11 @@ func build(ui: Node) -> Dictionary:
 	var power_pct := get_power_utilization_pct(ui)
 	var power_status := get_power_status(ui)
 	var terminal_mode: StringName = &"command" if bool(operator_context.get("command_center_occupied", false)) else &"field"
-	var base_fidelity := _fidelity_policy.resolve(terminal_mode, sectors)
+	var runtime := ui.get_node_or_null("/root/GameRoot/WorldSimulationRuntime")
+	var macro_fidelity := StringName(String(runtime.kernel.state.macro_fidelity)) if runtime != null and runtime.kernel != null else &""
+	var base_fidelity := _fidelity_policy.resolve(terminal_mode, sectors, {}, macro_fidelity)
 	var arrn := collect_arrn(ui, String(base_fidelity).to_upper())
-	var fidelity := _fidelity_policy.resolve(terminal_mode, sectors, arrn)
+	var fidelity := _fidelity_policy.resolve(terminal_mode, sectors, arrn, macro_fidelity)
 	var simulation_tick := _resolve_simulation_tick(ui, game_state)
 	var simulation_ticks_per_second := 60
 	var system_counts := _collect_system_counts(sectors)

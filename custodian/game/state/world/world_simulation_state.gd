@@ -2,7 +2,7 @@ class_name WorldSimulationState
 extends RefCounted
 
 const SNAPSHOT_SCHEMA := "custodian.world_simulation_state"
-const SNAPSHOT_VERSION := 3
+const SNAPSHOT_VERSION := 4
 const MAX_EVENTS := 32
 
 var seed: int = 0
@@ -29,6 +29,9 @@ var structures: Dictionary = {}
 var relays: Dictionary = {}
 var relay_knowledge_level := 0
 var relay_dormancy_pressure := 0
+var macro_fidelity := "FULL"
+var signal_interference_ticks := 0
+var ambient_fab_progress: Dictionary = {"DEFENSE": 0.0, "DRONES": 0.0, "REPAIRS": 0.0, "ARCHIVE": 0.0}
 var repairs: Array = []
 var fabrication_queue: Array = []
 var events: Array = []
@@ -74,11 +77,11 @@ func record_event(kind: StringName, data: Dictionary = {}) -> void:
 	while events.size() > MAX_EVENTS: events.pop_front()
 
 func to_dict() -> Dictionary:
-	return {"schema": SNAPSHOT_SCHEMA, "schema_version": SNAPSHOT_VERSION, "seed": seed, "text_seed": text_seed, "rng_state": rng_state, "fixed_tick": fixed_tick, "world_tick": world_tick, "ambient_threat": ambient_threat, "assaults_enabled": assaults_enabled, "failed": failed, "failure_reason": failure_reason, "resources": {"materials": materials}, "inventory": inventory.duplicate(true), "stocks": stocks.duplicate(true), "power_load": power_load, "logistics": {"throughput": logistics_throughput, "load": logistics_load, "pressure": logistics_pressure, "multiplier": logistics_multiplier}, "policies": policies.to_dict(), "assault": assault.to_dict(), "relay_knowledge_level": relay_knowledge_level, "relay_dormancy_pressure": relay_dormancy_pressure, "systemic_event_state": systemic_event_state.duplicate(true), "sectors": _objects_to_dict(sectors), "transit_states": _deep_dict(transit_states), "structures": _objects_to_dict(structures), "relays": _objects_to_dict(relays), "repairs": _object_array(repairs), "fabrication_queue": _object_array(fabrication_queue), "events": events.duplicate(true)}
+	return {"schema": SNAPSHOT_SCHEMA, "schema_version": SNAPSHOT_VERSION, "seed": seed, "text_seed": text_seed, "rng_state": rng_state, "fixed_tick": fixed_tick, "world_tick": world_tick, "ambient_threat": ambient_threat, "assaults_enabled": assaults_enabled, "failed": failed, "failure_reason": failure_reason, "resources": {"materials": materials}, "inventory": inventory.duplicate(true), "stocks": stocks.duplicate(true), "power_load": power_load, "logistics": {"throughput": logistics_throughput, "load": logistics_load, "pressure": logistics_pressure, "multiplier": logistics_multiplier}, "policies": policies.to_dict(), "assault": assault.to_dict(), "relay_knowledge_level": relay_knowledge_level, "relay_dormancy_pressure": relay_dormancy_pressure, "macro_fidelity": macro_fidelity, "ambient_fab_progress": ambient_fab_progress.duplicate(true), "signal_interference_ticks": signal_interference_ticks, "systemic_event_state": systemic_event_state.duplicate(true), "sectors": _objects_to_dict(sectors), "transit_states": _deep_dict(transit_states), "structures": _objects_to_dict(structures), "relays": _objects_to_dict(relays), "repairs": _object_array(repairs), "fabrication_queue": _object_array(fabrication_queue), "events": events.duplicate(true)}
 
 static func from_dict(data: Dictionary) -> WorldSimulationState:
 	var value := WorldSimulationState.new(int(data.get("seed", 0)), int(data.get("text_seed", data.get("seed", 0))))
-	value.fixed_tick = int(data.get("fixed_tick", data.get("tick", 0))); value.world_tick = int(data.get("world_tick", value.fixed_tick / 60)); value.ambient_threat = float(data.get("ambient_threat", 0.0)); value.assaults_enabled = bool(data.get("assaults_enabled", true)); value.failed = bool(data.get("failed", false)); value.failure_reason = String(data.get("failure_reason", "")); value.rng_state = int(data.get("rng_state", value.rng_state)); value.relay_knowledge_level = int(data.get("relay_knowledge_level", 0)); value.relay_dormancy_pressure = int(data.get("relay_dormancy_pressure", 0)); value.systemic_event_state = _normalize_integer_values((data.get("systemic_event_state", value.systemic_event_state) as Dictionary).duplicate(true))
+	value.fixed_tick = int(data.get("fixed_tick", data.get("tick", 0))); value.world_tick = int(data.get("world_tick", value.fixed_tick / 60)); value.ambient_threat = float(data.get("ambient_threat", 0.0)); value.assaults_enabled = bool(data.get("assaults_enabled", true)); value.failed = bool(data.get("failed", false)); value.failure_reason = String(data.get("failure_reason", "")); value.rng_state = int(data.get("rng_state", value.rng_state)); value.relay_knowledge_level = int(data.get("relay_knowledge_level", 0)); value.relay_dormancy_pressure = int(data.get("relay_dormancy_pressure", 0)); value.macro_fidelity = String(data.get("macro_fidelity", "FULL")); value.ambient_fab_progress = (data.get("ambient_fab_progress", value.ambient_fab_progress) as Dictionary).duplicate(true); value.signal_interference_ticks = maxi(0, int(data.get("signal_interference_ticks", 0))); value.systemic_event_state = _normalize_integer_values((data.get("systemic_event_state", value.systemic_event_state) as Dictionary).duplicate(true))
 	var resources: Dictionary = data.get("resources", {}); value.materials = int(resources.get("materials", data.get("materials", 3))); value.inventory = _integer_dict(data.get("inventory", value.inventory)); value.stocks = _integer_dict(data.get("stocks", value.stocks)); value.power_load = float(data.get("power_load", 1.0))
 	var logistics: Dictionary = data.get("logistics", {}); value.logistics_throughput = float(logistics.get("throughput", 3.0)); value.logistics_load = float(logistics.get("load", 0.0)); value.logistics_pressure = float(logistics.get("pressure", 0.0)); value.logistics_multiplier = float(logistics.get("multiplier", 1.0)); value.policies = PolicySimulationState.from_dict(data.get("policies", {})); value.assault = AssaultSimulationState.from_dict(data.get("assault", {}))
 	for key in (data.get("sectors", {}) as Dictionary): value.sectors[String(key)] = SectorSimulationState.from_dict(data["sectors"][key])

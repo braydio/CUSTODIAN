@@ -22,9 +22,6 @@ func set_simulation_paused(value: bool) -> void: clock.paused = value
 func current_snapshot() -> SimulationSnapshot: return latest_snapshot
 func current_assault_plan() -> AssaultSpawnPlan:
 	return kernel.state.assault.to_spawn_plan() if kernel != null and kernel.state.assault.phase == "HANDOFF_READY" else null
-func acknowledge_assault_handoff(plan_id: String) -> bool:
-	if kernel == null or kernel.state.assault.phase != "HANDOFF_READY" or kernel.state.assault.assault_id != plan_id: return false
-	kernel.state.assault.handoff_consumed = true; kernel.state.assault.phase = "HANDED_OFF"; latest_snapshot = SimulationSnapshot.capture(kernel.state); snapshot_updated.emit(latest_snapshot); return true
 func resolve_campaign(result: StringName, reason: String = "") -> CampaignOutcome:
 	if session == null: return null
 	var outcome := session.resolve_once(result, reason)
