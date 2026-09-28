@@ -59,6 +59,7 @@ cannot be lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
 - `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening, blocked on `workstream-finish-landed-closeout-hardening`.
 - `AGENT_REVIEW_PIPELINE.md` — P0 independent-review bootstrap; currently claimed on `agent/agent-review-pipeline`, with dispatcher prerequisites complete.
