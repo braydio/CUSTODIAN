@@ -1679,28 +1679,21 @@ route-reconstruction court is categorically different from a normal port.
 
 ## 27. Current runtime status
 
-The repository currently provides:
+The registered production destination is `hub_twin_solaria`, implemented as an
+`AuthoredLevel2D` with a 2048×1536 coordinate authority, exact Asset V2 fidelity
+underlay and eight native-size gameplay plate states, a named Crown Causeway
+spawn, authored boundary rails, and sparse dormant read-only machine readouts.
+Its standalone movement wrapper and production smoke are separate from the old
+`custodian/scenes/twin_solaria_backdrop_test.tscn`, which remains a development
+fidelity preview using the 4000×3000 development texture despite its legacy
+3500×3000 expectation. That development-preview mismatch remains an explicit
+audit follow-up and has no production-coordinate authority.
 
-- `custodian/scenes/twin_solaria_backdrop_test.tscn`;
-- the live Operator;
-- shared camera;
-- the 3500 x 3000 development composite;
-- image-matched camera bounds;
-- perimeter collision;
-- an explicit development notice that internal collision is not authored.
-
-This scene is a fidelity preview.
-
-It does not establish:
-
-- canonical internal collision;
-- interactable placement;
-- route-state gameplay;
-- cross-map travel;
-- strategic route ownership;
-- final camera zones;
-- final lighting;
-- Asset V2 runtime decomposition.
+This runtime slice does not establish route-state gameplay, cross-map travel,
+strategic route ownership, final camera zones, final lighting, Solarium I
+acquisition, or Crown-class passage. The eight plate crops restore the preserved
+composite's exact registration; they are not independent props and no landmark
+reference crop is rendered at runtime.
 
 ---
 

@@ -1199,3 +1199,10 @@ Last updated: 2026-09-27
 - `game/world/procgen/biomes/` and `content/procgen/biomes/` — deterministic field logic and local foliage profiles.
 - `game/world/environment/world_environment_director.gd` — fixed-physics clock, seeded weather, indoor exposure, and presentation publication.
 - `tools/validation/{biome_field,world_environment}_smoke.gd` — focused deterministic contracts.
+
+
+## Twin Solaria Runtime V1
+
+- `game/world/levels/authored/hub/twin_solaria/twin_solaria_layout.gd` and `.tscn` — registered AuthoredLevel production shell with exact 2048×1536 crop placement, named Crown Causeway spawn, authored boundary segments, and dormant machine readouts.
+- `content/levels/hub/twin_solaria_v1.json` and `content/levels/levels.json` — `hub_twin_solaria` registry definition and named spawn contract.
+- `scenes/twin_solaria_playtest.tscn` and `tools/validation/twin_solaria_runtime_smoke.gd` — standalone movement wrapper and production registration/native-size/collision/POI smoke.

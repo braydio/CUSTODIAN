@@ -1,0 +1,40 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/world/levels/authored/hub/twin_solaria/twin_solaria_layout.gd" id="1_layout"]
+[ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png" id="2_underlay"]
+
+[node name="TwinSolaria" type="Node2D"]
+script = ExtResource("1_layout")
+camera_bounds = Rect2(-1024, -768, 2048, 1536)
+draw_placeholder_grid = false
+
+[node name="UnderlayRoot" type="Node2D" parent="."]
+[node name="FidelityUnderlay" type="Sprite2D" parent="UnderlayRoot"]
+texture = ExtResource("2_underlay")
+
+[node name="BackgroundRoot" type="Node2D" parent="."]
+[node name="PlayableRoot" type="Node2D" parent="."]
+[node name="PropsRoot" type="Node2D" parent="."]
+[node name="OcclusionRoot" type="Node2D" parent="."]
+[node name="Collision" type="Node2D" parent="."]
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
+collision_layer = 1
+collision_mask = 0
+[node name="Markers" type="Node2D" parent="."]
+[node name="Spawn_CrownCauseway" type="Marker2D" parent="Markers"]
+[node name="HomeIndex" type="Marker2D" parent="Markers"]
+[node name="ArchiveWitnessRing" type="Marker2D" parent="Markers"]
+[node name="LiveWitnessRing" type="Marker2D" parent="Markers"]
+[node name="ReciprocityDial" type="Marker2D" parent="Markers"]
+[node name="BlindWitness" type="Marker2D" parent="Markers"]
+[node name="AuthorityThreshold" type="Marker2D" parent="Markers"]
+[node name="OutboundAnchor" type="Marker2D" parent="Markers"]
+[node name="ReciprocalAnchor" type="Marker2D" parent="Markers"]
+[node name="MeridianNeedle" type="Marker2D" parent="Markers"]
+[node name="WestEchoDrum" type="Marker2D" parent="Markers"]
+[node name="EastEchoDrum" type="Marker2D" parent="Markers"]
+[node name="SecondCrownRoot" type="Marker2D" parent="Markers"]
+[node name="POIRoot" type="Node2D" parent="."]
+[node name="EventMarkers" type="Node2D" parent="."]
+[node name="EventRuntime" type="Node2D" parent="."]
+[node name="NavigationRoot" type="Node2D" parent="."]

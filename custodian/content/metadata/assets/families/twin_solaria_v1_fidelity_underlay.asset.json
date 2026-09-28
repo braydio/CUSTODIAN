@@ -30,5 +30,10 @@
     }
   },
   "aliases": {},
-  "consumers": []
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://game/world/levels/authored/hub/twin_solaria/twin_solaria.tscn"
+    }
+  ]
 }
