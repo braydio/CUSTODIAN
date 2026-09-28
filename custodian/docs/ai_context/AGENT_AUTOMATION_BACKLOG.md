@@ -1,6 +1,6 @@
 # AGENT AUTOMATION BACKLOG
 
-Last updated: 2026-09-27
+Last updated: 2026-09-28
 
 Prioritized automation candidates for CUSTODIAN agent workflow. These are intentionally lightweight checks first; avoid adding a large framework until the simple checks prove insufficient.
 
