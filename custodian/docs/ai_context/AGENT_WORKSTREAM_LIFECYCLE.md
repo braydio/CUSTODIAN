@@ -33,6 +33,16 @@ existing remote branch is canonical. It is synchronized with `origin/main` by
 fast-forward or a normal merge; published workstream history is never rebased.
 If the branch is attached to a dirty worktree, stop and preserve it.
 
+Before creating a workstream, `dispatch.py` atomically acquires the remote
+`refs/heads/dispatch-claims/<workstream-id>` ref using a unique claimant commit
+and a normal create-only push. Once `agent/<workstream-id>` is confirmed
+published, it explicitly deletes the temporary claim. A temporary claim without
+the agent branch means acquisition was interrupted: status marks it blocked and
+prints the ref to inspect and a normal explicit-delete recovery command. Verify
+there is no live claimant before deleting; V1 never expires claims by age. If
+both refs exist, the workstream branch is canonical and the temporary claim is
+cleanup residue.
+
 Run implementation, validation, asset ingest, generated-file review, packet and
 documentation edits, and the required `<TASK>_CLAUDE_SUMMARY.md` inside that
 worktree. Commit only scoped task files. The task branch is pushed before

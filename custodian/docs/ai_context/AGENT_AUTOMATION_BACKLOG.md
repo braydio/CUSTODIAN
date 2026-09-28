@@ -29,8 +29,10 @@ combat, animation, VFX, healing, and vista work.
 
 ## Implemented — Repository Task Dispatcher
 
-A ready implementation packet now exists at
-`custodian/docs/ai_context/task_packets/AGENT_TASK_DISPATCH.md`.
+The dispatcher implementation and acceptance record are in
+`custodian/tools/agent/dispatch.py` and the archived packet at
+`custodian/docs/ai_context/task_packets/archived/AGENT_TASK_DISPATCH.md`.
+The archived packet is historical; the live tool is the current authority.
 
 Goal:
 
@@ -45,11 +47,16 @@ Goal:
 `origin/main`, safely defaults missing dispatch metadata to manual, sorts
 eligible tasks by priority and packet path, enforces completed dependencies and
 narrow locks, serializes local claims, and delegates worktree lifecycle to
-`workstream.py`. V1 stops after one claim. Continuous workers, distributed
-leasing, and a generated packet README remain deferred.
+`workstream.py`. V1 stops after one claim and uses a temporary create-only
+remote Git ref to serialize initial claims across clones. Continuous workers,
+lease expiry, and a generated packet README remain deferred.
 
 
 ### Next bootstrap stage — independent review
+
+The dispatcher is implemented, including its second-pass remote-claim and
+coordination-path corrections. The review pipeline is the next queued bootstrap
+stage.
 
 Queued behind the dispatcher:
 

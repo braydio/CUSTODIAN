@@ -27,7 +27,9 @@ is safe for a Codex terminal to claim without additional human selection.
 `dispatch.py status` reads packet truth from fetched `origin/main`; use
 `dispatch.py claim-next --agent codex` to claim the highest-priority eligible
 auto packet, or `dispatch.py claim <workstream-id> --agent codex` for explicit
-selection (including manual packets). `Priority` is `P0`–`P3` (default `P2`),
+selection (including manual packets). Initial claims use unique remote Git
+claim refs so separate clones cannot both acquire the same task; interrupted
+claims require explicit operator recovery. `Priority` is `P0`–`P3` (default `P2`),
 `Depends on` lists workstream IDs that must be complete and archived on main,
 and `Locks` lists narrow contention IDs. A missing `Dispatch` remains manual.
 Claims create/resume exactly one existing `agent/<id>` workstream and do not
@@ -58,7 +60,6 @@ cannot be lost when the ephemeral worktree is removed.
 ### Ready / Auto Dispatch
 
 - `ASSET_REQUIREMENTS_PIPELINE.md` — P1 auto-dispatch continuation of the production-requirements control plane: lifecycle hardening, V2 family-scope derivation, source-aware next actions, and ten safe live V2 mappings.
-- `AGENT_TASK_DISPATCH_REVIEW_CORRECTIONS.md` — P0 auto-dispatch hardening pass from second review: exclusive remote claim acquisition across independent clones, non-main coordination-path proof, and dispatcher closeout drift cleanup.
 - `AGENT_REVIEW_PIPELINE.md` — P0 auto-dispatch task, blocked on `agent-task-dispatch`; adds independent post-land review, durable review receipts, bounded correction packets, and human decision escalation.
 - `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
 ### In Progress

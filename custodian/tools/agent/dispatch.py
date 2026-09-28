@@ -8,6 +8,7 @@ import contextlib
 import fcntl
 import importlib.util
 import io
+import os
 import re
 import subprocess
 import sys
@@ -138,7 +139,17 @@ def _claimed(repo: Path) -> set[str]:
         branch = next((line.removeprefix("branch refs/heads/agent/") for line in record.splitlines() if line.startswith("branch refs/heads/agent/")), None)
         if branch:
             claimed.add(branch)
+    claims, branches = _remote_claim_state(repo)
+    claimed.update(claims & branches)
     return claimed
+
+
+def _remote_claim_state(repo: Path) -> tuple[set[str], set[str]]:
+    refs = git(repo, "for-each-ref", "--format=%(refname)", "refs/remotes/origin/dispatch-claims").splitlines()
+    claims = {ref.removeprefix("refs/remotes/origin/dispatch-claims/") for ref in refs}
+    refs = git(repo, "for-each-ref", "--format=%(refname)", "refs/remotes/origin/agent").splitlines()
+    branches = {ref.removeprefix("refs/remotes/origin/agent/") for ref in refs}
+    return claims, branches
 
 
 def _decision(packet: Packet, packets: list[Packet], archived: list[Packet], claimed: set[str], *, auto_only: bool) -> tuple[bool, str | None]:
@@ -205,10 +216,20 @@ def _coordination_repo(repo: Path) -> Path:
 
 def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], claimed: set[str]) -> str:
     groups: dict[str, list[str]] = {key: [] for key in ("READY", "CLAIMED", "BLOCKED", "MANUAL")}
+    claims, branches = _remote_claim_state(repo)
+    for work_id in sorted(claims - branches):
+        groups["BLOCKED"].append(
+            f"{work_id} — remote dispatch claim interrupted; recovery required. "
+            f"Inspect refs/heads/dispatch-claims/{work_id}; after verifying no live claimant, "
+            f"an operator may explicitly delete it with git push origin :refs/heads/dispatch-claims/{work_id}."
+        )
     for packet in sorted(packets, key=lambda item: (PRIORITY.get(item.priority, 9), item.path)):
         name = packet.workstream or packet.path
+        if packet.workstream in claims - branches:
+            continue
         if packet.workstream in claimed:
-            groups["CLAIMED"].append(f"{name} [{packet.path}]")
+            cleanup_note = " (remote claim cleanup pending)" if packet.workstream in claims else ""
+            groups["CLAIMED"].append(f"{name}{cleanup_note} [{packet.path}]")
         elif not packet.dispatch_declared:
             groups["MANUAL"].append(f"{name} [{packet.path}]")
         elif packet.error:
@@ -250,6 +271,7 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         packets = _packets(repo)
         archived = _archived_packets(repo)
         claimed = _claimed(repo)
+        remote_claims, remote_branches = _remote_claim_state(repo)
         ordered = sorted(packets, key=lambda p: (PRIORITY.get(p.priority, 9), p.path))
         if workstream_id:
             candidates = [p for p in ordered if p.workstream == workstream_id]
@@ -277,6 +299,29 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
                 print(f"- ... {len(reasons) - 20} more")
             return 0
 
+        claim_ref = f"refs/heads/dispatch-claims/{selected.workstream}"
+        if selected.workstream in remote_claims and selected.workstream not in remote_branches:
+            raise DispatchError(
+                f"remote dispatch claim for {selected.workstream} exists without its agent branch; "
+                f"recovery required. Inspect origin/{claim_ref} and only after verifying no live "
+                f"claimant explicitly remove it with git push origin :{claim_ref}"
+            )
+
+        # A unique claimant-specific commit makes remote creation a compare-and-set:
+        # unlike pushing the common main OID, a concurrent loser proposes a different OID.
+        claimant = f"{agent}:{os.getpid()}:{os.urandom(16).hex()}"
+        tree = git(repo, "rev-parse", "origin/main^{tree}")
+        parent = git(repo, "rev-parse", "origin/main")
+        claim_oid = git(repo, "-c", f"user.name={agent}", "-c", f"user.email={agent}@dispatch.invalid",
+                        "commit-tree", tree, "-p", parent, "-m", f"dispatch claim {selected.workstream} {claimant}")
+        local_claim_ref = f"refs/dispatch-claims/{selected.workstream}"
+        git(repo, "update-ref", local_claim_ref, claim_oid)
+        result = subprocess.run(["git", "push", "origin", f"{claim_oid}:{claim_ref}"], cwd=repo, text=True, capture_output=True)
+        if result.returncode:
+            git(repo, "update-ref", "-d", local_claim_ref, check=False)
+            _fetch(repo)
+            raise DispatchError(f"remote claim acquisition lost or failed for {selected.workstream}: {(result.stderr or result.stdout).strip()}")
+
         module = _load_workstream(repo)
         # Suppress the legacy start banner so this command emits one stable result.
         try:
@@ -284,6 +329,14 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
                 worktree = module.start(selected.workstream, repo)
         except module.WorkstreamError as error:
             raise DispatchError(f"workstream start blocked: {error}") from error
+        _fetch(repo)
+        published = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/agent/{selected.workstream}"], cwd=repo).returncode == 0
+        if not published:
+            raise DispatchError(f"workstream branch was not confirmed published; recovery claim retained at origin/{claim_ref}")
+        # The canonical workstream branch is now durable; deleting the temporary
+        # claim is safe. If cleanup fails, both refs remain and status explains it.
+        subprocess.run(["git", "push", "origin", f":{claim_ref}"], cwd=repo, text=True, capture_output=True)
+        git(repo, "update-ref", "-d", local_claim_ref, check=False)
         print("CLAIMED")
         print(f"workstream: {selected.workstream}")
         print(f"branch: agent/{selected.workstream}")

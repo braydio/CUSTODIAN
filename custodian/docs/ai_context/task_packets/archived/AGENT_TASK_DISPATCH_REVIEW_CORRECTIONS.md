@@ -1,7 +1,7 @@
 # AGENT TASK DISPATCH REVIEW CORRECTIONS
 
 - Workstream: `agent-task-dispatch-review-corrections`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-task-dispatch`
@@ -9,7 +9,7 @@
 - Kind: `correction`
 - Review: `none`
 - Goal: Harden the live repository task dispatcher where second-pass review found one real concurrency hole, one coordination-path proof gap, and closeout documentation drift before the independent-review pipeline builds on top of it.
-- Current measured state: `dispatch.py` is live on main with 23 focused temporary-repository tests and correct same-common-dir serialization, dependency handling, manual-safe defaults, and workstream delegation. The live implementation uses a local `flock` plus existence of `origin/agent/<id>` as the durable claim signal.
+- Current measured state: `dispatch.py` now has 28 temporary-repository tests covering independent-clone remote claim races, interrupted-claim recovery, cleanup failure, and attached coordination-worktree dispatch, in addition to prior selection and locking contracts.
 - Task-specific authority: archived `custodian/docs/ai_context/task_packets/archived/AGENT_TASK_DISPATCH.md`, `custodian/tools/agent/dispatch.py`, `custodian/tools/agent/workstream.py`, `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`, and root/local AGENTS workflow rules.
 - Change: Add a repository-native exclusive remote claim primitive that prevents two separate clones/Git common directories from both successfully claiming the same workstream; add missing coordination-checkout coverage; repair dispatcher closeout docs drift. Preserve the existing CLI and one-task-per-claim workflow.
 - Preserve: Same-machine local mutex, fetched-`origin/main` packet truth, manual-by-default dispatch, priority/path ordering, archived-complete dependency semantics, narrow lock semantics, `workstream.py` branch/worktree authority, no force-push/reset/stash behavior, and safe retention of uncertain recovery state.
@@ -235,3 +235,12 @@ stage.
   `AGENT_TASK_DISPATCH.md`.
 - Blockers or open questions: None. Keep the correction repository-native and small;
   do not expand it into distributed leasing.
+
+## Completion Notes
+
+- Added a unique claimant commit pushed to `refs/heads/dispatch-claims/<id>` with normal create-only Git semantics. A race loser cannot also create the same absent ref.
+- Confirmed the canonical `agent/<id>` remote branch before explicitly deleting the temporary claim. Interrupted claims are shown as blocked with non-destructive inspection and recovery guidance; cleanup failure retains the marker while the published workstream remains claimed.
+- Added separate-clone contention and non-main attached-worktree coordination tests. The full focused dispatcher suite passes 28 tests.
+- Corrected dispatcher index/backlog/lifecycle wording and archived this completed packet.
+- Moment Forge: not run — tooling and documentation only; no runtime or presentation behavior changed.
+- Lattice canon validation was not part of this workstream and was not run independently.

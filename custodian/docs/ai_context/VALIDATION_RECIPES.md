@@ -20,7 +20,8 @@ python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.t
 
 Task dispatch uses temporary bare remotes and worktrees to verify metadata,
 queue ordering, dependency and lock blocking, stale-main discovery, branch
-claims, and same-machine concurrent selection:
+claims, same-machine selection, independent-clone remote-claim races, interrupted
+claim recovery, and attached-worktree coordination:
 
 ```bash
 python3 custodian/tools/agent/test_dispatch.py
