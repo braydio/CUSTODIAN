@@ -95,6 +95,8 @@ Last updated: 2026-09-27
 - `custodian/docs/ai_context/task_packets/archived/AGENT_TASK_DISPATCH.md` — archived implementation/acceptance record for repository-native task dispatch; live authority is `custodian/tools/agent/dispatch.py`
 - `custodian/docs/ai_context/task_packets/AGENT_REVIEW_PIPELINE.md` — queued P0 review-orchestration implementation: paired post-land independent review, durable receipts, correction packets, finite review cycles, and human decision escalation
 - `custodian/docs/ai_context/task_packets/WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — queued P0 correction for already-landed finish handling, durable closing-summary proof, and idempotent safe teardown.
+- `custodian/docs/ai_context/task_packets/AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — queued read-only AI-context/task-packet consistency validator from the automation backlog.
+- `custodian/docs/ai_context/task_packets/AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — queued conservative cleanup of stale workstream branches and completed-but-unarchived packet residue.
 - `custodian/docs/ai_context/task_packets/REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired review for the corrected finish/landing lifecycle.
 - `custodian/docs/ai_context/task_packets/REVIEW_AGENT_REVIEW_PIPELINE.md` — paired self-review task that becomes eligible after the review pipeline lands
 - `custodian/docs/ai_context/BRANCH_ARCHIVE.md` — compact ledger of retired unique remote branch heads and archive tags
@@ -656,6 +658,7 @@ Last updated: 2026-09-27
 - `custodian/game/actors/operator/combat/operator_guard_controller.gd` — authoritative Operator guard/parry phase, recoil, posture cost, guard-break recovery, re-raise lockout, and counter-window owner
 - `custodian/game/actors/operator/combat/operator_guard_config.gd` / `configs/operator_guard_default.tres` — typed guard/parry timing, mitigation, posture, recovery, and counter tuning
 - `custodian/tools/validation/operator_guard_flow_smoke.gd` — focused guard stance, strength-scaled posture, Falcon block/break, break vulnerability/lockout, parry success/miss, and release regression
+- `custodian/docs/ai_context/task_packets/OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — queued reconciliation of the 12 Fast 01–04 Operator inbox strips against already-processed canonical source/runtime provenance.
 - `custodian/game/actors/operator/combat/operator_integrity_reclaim.gd` — Operator-owned deterministic RefCounted for independently expiring recoverable-damage packets, second-hit forfeiture, health ceilings, source efficiencies, healing clamp, and read-only event/status output
 - `custodian/tools/validation/operator_integrity_reclaim_smoke.gd` — focused reclaim smoke covering exact conversion/recovery values, independent light/heavy packet windows, decay, re-hit forfeiture, passive/allied/structure/DoT rejection, overkill clamp, fatal clearing, Field Patch-compatible clamp, HUD layering, and repeated fixed-step determinism
 - `custodian/game/actors/operator/operator.tscn` — Operator scene with body/weapon layers, exact weapon sockets, collision/hitbox roots, health bar, and presentation-only weapon/dodge-charge feedback children
@@ -1216,6 +1219,9 @@ Last updated: 2026-09-27
 
 ## Twin Solaria Runtime V1
 
+- `docs/ai_context/task_packets/TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` / `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — queued Slice D route-review state/evidence/reciprocity authority plus independent review.
+- `docs/ai_context/task_packets/TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` / `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — queued Slice E Asset V2 acquisition presentation plus independent review; Passage remains unqueued.
+- `docs/ai_context/task_packets/TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — queued dev-only 3500×3000-vs-4000×3000 provenance/expectation repair.
 - `docs/ai_context/task_packets/TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — queued Slice C implementation for staged Crown Incident evidence, recovered Second Crown plan overlay, local forensic route-state persistence, and canon guards.
 - `docs/ai_context/task_packets/REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired post-land review for forensic ordering, architecture/state ownership, canon boundaries, and visual overlay registration.
 - `game/world/levels/authored/hub/twin_solaria/twin_solaria_layout.gd` and `.tscn` — registered AuthoredLevel production shell with exact 2048×1536 crop placement, named Crown Causeway spawn, authored boundary segments, and dormant machine readouts.
