@@ -152,6 +152,28 @@ asset() {
   python3 "${CUSTODIAN_GODOT}/tools/assets/asset.py" "$@"
 }
 
+# -- Install/update the optional Textual Asset Workbench environment
+assetui-install() {
+  _update_usage "assetui-install"
+  local ui_venv="${CUSTODIAN_REPO}/.ai/asset-ui-venv"
+  if [[ ! -x "${ui_venv}/bin/python" ]]; then
+    python3 -m venv --system-site-packages "${ui_venv}" || return
+  fi
+  "${ui_venv}/bin/python" -m pip install \
+    -r "${CUSTODIAN_GODOT}/tools/assets/ui/requirements.txt"
+}
+
+# -- Open the optional Textual Asset Workbench (any Asset Pipeline V2 family)
+assetui() {
+  _update_usage "assetui"
+  local ui_python="${CUSTODIAN_REPO}/.ai/asset-ui-venv/bin/python"
+  if [[ ! -x "${ui_python}" ]]; then
+    echo "Asset Workbench UI environment missing. Run 'assetui-install' first." >&2
+    return 2
+  fi
+  "${ui_python}" "${CUSTODIAN_GODOT}/tools/assets/asset.py" ui "$@"
+}
+
 # -- Generate prioritized next-actions report (fit + contract joined)
 opnext() {
   _update_usage "opnext"
@@ -205,6 +227,9 @@ clisting() {
   echo "    matchpal       match sprite palette to a reference (CIE LAB)"
   echo "    batchstrike    batch-match fast_strike palettes to fast_windup"
   echo "    listbox        list current assets in pipeline inbox"
+  echo "    asset          Asset Pipeline V2.1 CLI (non-Operator family intake)"
+  echo "    assetui        open the Textual Asset Workbench (any Asset V2 family)"
+  echo "    assetui-install install/update its isolated Textual environment"
   echo ""
   echo "  Operator Animation"
   echo "    opui           open the Textual Operator Workbench"
@@ -236,7 +261,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite operator opui opui-install opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
+  for cmd in dryjson runjson runsprite operator opui opui-install opingest obsreport listbox asset assetui assetui-install pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -245,7 +270,7 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opui, opui-install, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opui, opui-install, opingest, obsreport, listbox, asset, assetui, assetui-install, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
 echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."
 
 # Optional ignored local commands; keep personal helpers out of shared authority.
