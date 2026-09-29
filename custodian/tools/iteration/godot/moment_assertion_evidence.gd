@@ -50,6 +50,15 @@ static func evaluate(definitions: Array, context: Dictionary) -> Array[Dictionar
 			"probe_compare":
 				actual = _probe_value(context.probes, definition)
 				passed = _compare(actual, definition)
+			"probe_field_equal":
+				actual = _probe_field_pair(context.probes, definition)
+				passed = bool((actual as Dictionary).get("equal", false))
+			"probe_field_delta":
+				actual = _probe_field_delta(context.probes, definition)
+				passed = _compare(actual, definition)
+			"probe_sequence_equal":
+				actual = _probe_sequence(context.probes, definition)
+				passed = bool((actual as Dictionary).get("equal", false))
 			"metric_compare":
 				actual = VALUE_READER.dotted(context.metrics, str(definition.get("metric", "")))
 				passed = _compare(actual, definition)
@@ -173,3 +182,71 @@ static func _probe_value(probes: Array, definition: Dictionary) -> Variant:
 		if str(record.get("id", "")) == wanted_id and int(record.get("tick", -2)) == wanted_tick:
 			return (record.get("values", {}) as Dictionary).get(field)
 	return null
+
+
+static func _probe_ref_value(probes: Array, wanted_id: String, wanted_tick: int, field: String) -> Variant:
+	for record: Dictionary in probes:
+		if str(record.get("id", "")) == wanted_id and int(record.get("tick", -2)) == wanted_tick:
+			return (record.get("values", {}) as Dictionary).get(field)
+	return null
+
+
+static func _values_equal(a: Variant, b: Variant, tolerance: float) -> bool:
+	if a == null or b == null:
+		return false
+	if (a is float or a is int) and (b is float or b is int):
+		return absf(float(a) - float(b)) <= tolerance
+	if a is Array and b is Array:
+		if (a as Array).size() != (b as Array).size():
+			return false
+		for index in (a as Array).size():
+			if not _values_equal((a as Array)[index], (b as Array)[index], tolerance):
+				return false
+		return true
+	return a == b
+
+
+static func _probe_field_pair(probes: Array, definition: Dictionary) -> Dictionary:
+	var field := str(definition.get("field", ""))
+	var value_a: Variant = _probe_ref_value(
+		probes, str(definition.get("probe_a", "")), int(definition.get("tick_a", -1)), field
+	)
+	var value_b: Variant = _probe_ref_value(
+		probes, str(definition.get("probe_b", "")), int(definition.get("tick_b", -1)), field
+	)
+	var tolerance := float(definition.get("tolerance", 0.0))
+	return {"equal": _values_equal(value_a, value_b, tolerance), "value_a": value_a, "value_b": value_b}
+
+
+static func _probe_field_delta(probes: Array, definition: Dictionary) -> Variant:
+	var field := str(definition.get("field", ""))
+	var value_a: Variant = _probe_ref_value(
+		probes, str(definition.get("probe_a", "")), int(definition.get("tick_a", -1)), field
+	)
+	var value_b: Variant = _probe_ref_value(
+		probes, str(definition.get("probe_b", "")), int(definition.get("tick_b", -1)), field
+	)
+	if value_a == null or value_b == null or not (value_a is float or value_a is int) or not (value_b is float or value_b is int):
+		return null
+	return float(value_b) - float(value_a)
+
+
+static func _probe_sequence(probes: Array, definition: Dictionary) -> Dictionary:
+	var field := str(definition.get("field", ""))
+	var tolerance := float(definition.get("tolerance", 0.0))
+	var values: Array = []
+	for point: Variant in definition.get("points", []):
+		var point_dictionary: Dictionary = point
+		values.append(
+			_probe_ref_value(
+				probes,
+				str(point_dictionary.get("probe", "")),
+				int(point_dictionary.get("tick", -1)),
+				str(point_dictionary.get("field", field)),
+			)
+		)
+	var baseline: Variant = values[0] if not values.is_empty() else null
+	var equal := not values.is_empty() and baseline != null
+	for value: Variant in values:
+		equal = equal and _values_equal(value, baseline, tolerance)
+	return {"equal": equal, "values": values}

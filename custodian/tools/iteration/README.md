@@ -31,3 +31,24 @@ Requirements:
 - FFmpeg is optional; without it the report still contains frames/contact sheets
 
 See `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md` for the full contract.
+
+## Visual Validation Economy
+
+Prefer structural probes/assertions over screenshot review. `moment_probe_collector.gd`
+exposes generic presentation fields (`effective_alpha`, `global_bounds`,
+`collision_shape_count`, etc.) on any `Sprite2D`/`AnimatedSprite2D` role, and
+`moment_assertion_evidence.gd` adds cross-record assertions (`probe_field_equal`,
+`probe_field_delta`, `probe_sequence_equal`) to compare them across
+probes/ticks without rendering. When pixels themselves must be checked, use:
+
+```bash
+python3 custodian/tools/iteration/presentation_image_metrics.py <spec.json>
+```
+
+for deterministic alpha/matte/seam/diff/crop metrics from PNGs, and
+`build_roi_contact_sheet()` (in `build_moment_report.py`) to compose several
+small crops into one compact sheet instead of N full-resolution frames. See
+`traversal/awakening_late_seams_v1.json` and
+`custodian/tools/validation/awakening_late_seams_evidence.py` for a worked
+example, and the "Visual Evidence Economy" section of
+`custodian/docs/ai_context/VALIDATION_RECIPES.md` for the full doctrine.

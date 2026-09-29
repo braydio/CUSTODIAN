@@ -112,6 +112,53 @@ def build_contact_sheet(
     return output
 
 
+def build_roi_contact_sheet(
+    cells: list[dict[str, Any]],
+    output: Path,
+    columns: int | None = None,
+) -> Path:
+    """Compose several small named crops into one compact contact sheet.
+
+    Each cell is `{"label": str, "image": Path, "rect": [x, y, w, h] | None}`.
+    Far cheaper to review than N full-resolution frames; use this instead of
+    routine full-frame contact sheets whenever only a few small regions carry
+    the objective evidence (see Visual Validation Economy in `AGENTS.md`).
+    """
+    if not cells:
+        raise ValueError("build_roi_contact_sheet requires at least one cell")
+    crops: list[tuple[str, Image.Image]] = []
+    for cell in cells:
+        with Image.open(cell["image"]) as source:
+            frame = source.convert("RGBA")
+            rect = cell.get("rect")
+            if rect is not None:
+                x, y, w, h = rect
+                frame = frame.crop((x, y, x + w, y + h))
+            crops.append((str(cell["label"]), frame.copy()))
+    columns = columns or min(3, len(crops))
+    rows = math.ceil(len(crops) / columns)
+    cell_width = max(frame.width for _, frame in crops)
+    cell_height = max(frame.height for _, frame in crops)
+    label_height = 22
+    sheet = Image.new(
+        "RGBA",
+        (cell_width * columns, (cell_height + label_height) * rows),
+        (8, 12, 18, 255),
+    )
+    draw = ImageDraw.Draw(sheet, "RGBA")
+    for index, (label, frame) in enumerate(crops):
+        column = index % columns
+        row = index // columns
+        x = column * cell_width
+        y = row * (cell_height + label_height)
+        draw.rectangle((x, y, x + cell_width, y + label_height), fill=(5, 9, 15, 208))
+        draw.text((x + 6, y + 4), label, fill=(224, 238, 248, 255))
+        sheet.paste(frame, (x, y + label_height))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(output)
+    return output
+
+
 def _visual_metrics(current: Image.Image, baseline: Image.Image) -> dict[str, Any]:
     difference = ImageChops.difference(current.convert("RGBA"), baseline.convert("RGBA"))
     bbox = difference.getbbox()
