@@ -2,7 +2,7 @@
 
 - Workstream: `review-workstream-finish-landed-closeout-hardening`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `workstream-finish-landed-closeout-hardening`
@@ -17,6 +17,7 @@
 - Review focus: already-landed short-circuit; durable closing-summary proof; no unnecessary history rewrite; correct published-ref guard; idempotent teardown; preservation of unlanded commits; dirty-root non-mutation; regression safety for ordinary landing and dispatch.
 - Acceptance: Findings-first review either records a clean pass or queues a bounded correction through the live review pipeline. Reviewer must not patch the reviewed workflow code directly.
 - Non-goals: Do not redesign dispatch, continuous workers, or branch hygiene generally.
+- Task overrides: `TASK OVERRIDE: Stage, commit, and push only this review's receipt, summary, and packet/index closeout documents as explicitly authorized by the user; do not modify the reviewed workflow implementation code.`
 
 ## Required Checks
 
@@ -31,5 +32,7 @@
 
 ## Handoff
 
-- Next action: Auto-dispatch after the hardening implementation lands.
+- Completion: Review passed on live main at `745a9ea56` with 0 blocking and 1 non-blocking test-coverage finding. The stale smoke-test path in the archived implementation packet was corrected in-scope.
+- Validation: Workstream and landing suites (29 tests), artifact and branch-hygiene suites (12 tests), dispatcher suite (56 tests), `agent_workflow_smoke.py`, py_compile, and `git diff --check` passed. Temporary-repository probes verified already-landed closeout and exact dirty-root preservation.
+- Next action: none.
 - Blockers or open questions: Blocked only by `workstream-finish-landed-closeout-hardening`.

@@ -22,7 +22,7 @@
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
 reciprocity, and runtime-vs-fiction lifecycle terminology.
 
-Last updated: 2026-09-27
+Last updated: 2026-09-29
 
 ## Map + AI Coherence
 
@@ -99,7 +99,7 @@ Last updated: 2026-09-27
 - `custodian/docs/ai_context/task_packets/WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — queued P0 correction for already-landed finish handling, durable closing-summary proof, and idempotent safe teardown.
 - `custodian/docs/ai_context/task_packets/AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — queued read-only AI-context/task-packet consistency validator from the automation backlog.
 - `custodian/docs/ai_context/task_packets/AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — queued conservative cleanup of stale workstream branches and completed-but-unarchived packet residue.
-- `custodian/docs/ai_context/task_packets/REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired review for the corrected finish/landing lifecycle.
+- `custodian/docs/ai_context/task_packets/archived/REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — completed independent review of the corrected finish/landing lifecycle.
 - `custodian/docs/ai_context/task_packets/REVIEW_AGENT_REVIEW_PIPELINE.md` — paired self-review task that becomes eligible after the review pipeline lands
 - `custodian/docs/ai_context/BRANCH_ARCHIVE.md` — compact ledger of retired unique remote branch heads and archive tags
 - `custodian/tools/agent/workstream.py` — stable-ID `agent/<id>` worktree start/status/checkpoint/finish/gc lifecycle entrypoint with pre-teardown task-packet and untracked-run-artifact finalization gates; `finish` proves its closing summary durably at `HEAD` (`closing_summary_committed_for_workstream`, independent of any moving `origin/main` diff), short-circuits sync/`land_main.py` once `task_head_reachable_from_main`, tears down idempotently (tolerates an already-deleted remote branch), and reports a clean already-finished result rather than an error when nothing is attached but the summary already landed
