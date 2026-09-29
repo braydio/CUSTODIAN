@@ -67,3 +67,23 @@ only rejected history. The first-batch ordinal map remains fixed: 1
 `notice_bait_e`, 8 `inspect_bait_s`, 10–12 `feed_accept_e/s/n`, 13–15
 `watch_player_e/s/n`, and 16–18 `bond_greet_e/s/n`. No Pass-2 root masters were
 present during this run; all eleven remain missing.
+
+## Bonding art pass 3 (2026-09-28)
+
+The task-local inputs `vw1.png`–`vw12.png` were mapped by semantic name and
+verified by SHA-256; the project-root originals remain with the user. Eight
+approved inputs are retained byte-for-byte here and produced eleven runtime
+strips through the existing Asset V2 family. Seven sheets passed the shared
+family-aware normalizer before balanced pixel-art conversion. `vw6` was
+processed as a fixed-cell six-frame sheet because adjacent source poses join at
+their alpha edges; its 256px output was visually checked and stays inside each
+cell's eight-pixel edge guard.
+
+The three eight-frame greeting sheets `vw9.png`, `vw10.png`, and `vw12.png`
+produce visibly clipped wings when divided into uniform cells. They are not
+accepted source masters and remain hash-verified in
+`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/`. The superseded
+wrong-facing `vw2.png` is quarantined there as well. These inputs need corrected
+sheets or a reviewed segmentation before they can be ingested. Current totals
+are 15/18 authored bonding masters, 20/24 bonding runtime strips, and 76/80
+Vaultwing runtime strips overall.

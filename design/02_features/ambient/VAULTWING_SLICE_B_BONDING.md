@@ -95,11 +95,37 @@ missing. First-bond evidence/full visual review is deferred until all six art
 families are complete; production SFX is still the next presentation task after
 art closure.
 
-## Next Agent Slice — Bonding Art Pass 2 and First-Bond Review
+## Bonding Art Pass 3 — Partial Local-Sheet Ingest (2026-09-28)
 
-- **Goal:** Resolve missing/rejected ordinals 1, 8, and 10; author the next
-  numbered batch 11–18; then complete the six B.2 actions and review the
-  existing `combat/vaultwing_first_bond` Moment.
+The twelve task-local inputs were mapped by the packet's semantic map and
+hash-checked; none were downloaded from `main`. Seven clean sheets passed the
+family-aware stager, were resized with the repository pixel-art converter's
+balanced preset, and ingested through Asset V2. `vw6` (`watch_player_e`) was
+also converted as a fixed-cell six-frame sheet, visually checked for complete
+silhouettes and cell bounds, and ingested with its raw source preserved. The
+eight accepted masters produced eleven runtime strips, including mirrored W
+outputs for E.
+
+Three greeting sheets (`vw9`, `vw10`, and `vw12`) did not survive fixed-cell
+conversion: the resulting frames visibly cut substantial wing sections. They
+remain byte-verified under
+`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/` and were not
+ingested. `vw2`, the superseded wrong-facing inspect attempt, is retained there
+as rejected evidence. Do not treat these four quarantined files as production
+inputs without corrected sheets or a reviewed source segmentation.
+
+Current coverage is 15/18 authored bonding masters and 20/24 bonding runtime
+strips; total Vaultwing runtime coverage is 76/80 strips. `feed_accept` has
+authored E/S/N plus mirrored W, `watch_player` has authored E/S/N plus mirrored
+W, `notice_bait` has authored E plus mirrored W, and `inspect_bait` has
+authored S. The three `bond_greet` directions remain missing. First-bond visual
+review is deferred until those sheets can be separated without clipping.
+
+## Remaining Bonding Art Closure
+
+- **Goal:** Supply or safely segment the three quarantined `bond_greet` E/S/N
+  sheets, then complete all six B.2 actions and review the existing
+  `combat/vaultwing_first_bond` Moment.
 - **Files:** Vaultwing art source under
   `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`, family
   inbox/runtime outputs, and validation/Moment reports.

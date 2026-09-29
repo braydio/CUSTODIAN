@@ -13,6 +13,18 @@ projection drift. Asset family contracts remain the technical production
 authority; audio, Tiled, Operator, review, and manual rows retain declared
 statuses until their existing workflows update the registry.
 
+## Vaultwing Bonding Art (2026-09-28)
+
+Pass 3 used the twelve local task inputs without downloading them from `main`.
+Eight accepted source masters produced eleven Asset V2 runtime strips, bringing
+bonding coverage to 20/24 strips (15/18 authored masters) and total Vaultwing
+runtime coverage to 76/80 strips. Three greeting sheets visibly clip wing art
+under fixed-cell splitting and remain quarantined with the superseded wrong-
+facing `vw2` sheet; final first-bond visual review waits for corrected greeting
+inputs. The focused behavior smoke assertions pass, but the local validation
+wrapper reports unrelated missing-LFS-resource and invalid LimboAI-library
+errors because this worktree uses pointer-only checkout.
+
 ## Agent Workflow (2026-09-27)
 
 Prompts and task packets inherit repository defaults and carry only task deltas.

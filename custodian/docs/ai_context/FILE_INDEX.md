@@ -1182,9 +1182,10 @@ Last updated: 2026-09-27
   `custodian/tools/iteration/scenarios/combat/vaultwing_first_bond.json` — Slice
   B.1 behavioral feed/trial loop plus B.2 interaction-presentation ownership,
   same-instance bonded allegiance, stable spawn identity, versioned save/restore
-  and lifecycle/target-release regressions; bonding art pass 1 has nine runtime
-  strips and the first-bond evidence capture passes, with final visual judgment
-  deferred until the six bonding families are complete.
+  and lifecycle/target-release regressions; Pass 3 brings partial production
+  bonding coverage to 20/24 strips (15/18 authored masters), with three clipped
+  greeting inputs quarantined and final first-bond visual judgment deferred
+  until corrected greeting art is ingested.
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.
@@ -1198,10 +1199,10 @@ Last updated: 2026-09-27
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
   — Asset V2 family contract for the 256px Common Vaultwing states; the WILD
   EAST/WEST, SOUTH, and NORTH baseline is complete at 14/14 states per facing.
-  Slice-B bonding art is separate and remains partial (nine runtime strips);
-  rejected bonding candidates are preserved in hash-named quarantine, not
-  source_work. Replacements preserve semantic filenames/frame contracts and
-  flow through targeted family ingest.
+  Slice-B bonding art is separate and remains partial (20/24 runtime strips,
+  15/18 authored masters after Pass 3); rejected bonding candidates are
+  preserved in hash-named quarantine, not source_work. Replacements preserve
+  semantic filenames/frame contracts and flow through targeted family ingest.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
   runtime smoke covering flight bands, attack-window contact, dive commitment,
   live-player stagger persistence, retreat, death, presentation fallback, and

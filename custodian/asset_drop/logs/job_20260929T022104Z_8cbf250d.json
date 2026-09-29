@@ -1,0 +1,65 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20260929T022104Z_8cbf250d",
+  "timestamp": "2026-09-29T02:21:04.474501+00:00",
+  "family": "ambient_vaultwing_common",
+  "kind": "ambient_creature",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/ambient_vaultwing_common/watch_player__e.png",
+      "sha256": "c1b9f4829eaa858debc2ec6a79cf9da5e668cba3da426d90e9e5ca4be759c033"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "watch_player",
+      "direction": "e",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "watch_player",
+        "e"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__e__6f__256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7c673189a251d23b6e7f4fb8d5f60f05dfc368c722d9ecb0cffaf8fb406bca3e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    },
+    {
+      "state_id": "watch_player",
+      "direction": "w",
+      "semantic_identity": [
+        "vaultwing_common",
+        "ambient_creature",
+        "body",
+        "bonding",
+        "watch_player",
+        "w"
+      ],
+      "path": "content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__watch_player__w__6f__256.png",
+      "provenance": "mirrored",
+      "source_asset": "watch_player::e",
+      "sha256": "bc0b5f7c850a119041e29fab93b518c560d15898aab01c3f9702f1fa09da5776",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "sprite_ingest"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "sprite_ingest"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
