@@ -566,15 +566,18 @@ allegiance, provenance-derived stable identity, and a versioned bond/health save
 record. The local record contract is not global save orchestration. B.2 now
 owns the six Slice-B semantic animation cues and protects them from ordinary
 state playback; the Asset V2 family and production-requirements registry list
-the six art families plus feed and recognition SFX. Bonding art pass 1 has
-ingested seven clean strips into nine runtime directions: `guarded_approach`
-is complete; `notice_bait` and `inspect_bait` are partial; `feed_accept`,
-`watch_player`, and `bond_greet` remain missing. Inputs 1 and 10 were absent,
-and input 8 was quarantined for matte. The evidence-mode
-`combat/vaultwing_first_bond` run passes, with final visual judgment deferred
-until the art is complete. Recover those inputs and author ordinals 11–18,
-then finish art review; production SFX and bait/global-save integration
-follow, and companion behavior remains Slice C. Preserve
+the six art families plus feed and recognition SFX. Bonding art Pass 3 has
+reached 15/18 authored E/S/N masters, 20/24 bonding runtime strips, and 76/80
+total Vaultwing runtime strips. `feed_accept` and `watch_player` are complete
+across E/S/N plus mirrored W; the only missing bonding action coverage is
+`bond_greet` E/S/N plus mirrored W. The prior greeting inputs clipped wing art
+under fixed-cell conversion and the superseded wrong-facing inspect input is
+also rejected. Rejected Vaultwing bonding images are deletion-only after
+hash/rejection verification; do not preserve them under `asset_drop/unresolved/`.
+The evidence-mode `combat/vaultwing_first_bond` behavioral run passes, with
+final visual judgment deferred until corrected greeting art closes 24/24.
+After art closure, production SFX and bait/global-save integration follow, and
+companion behavior remains Slice C. Preserve
 unrelated working-tree changes; keep simulation deterministic; do not expand
 `AmbientCritterManager`; reuse semantic ambient presentation; keep flight as
 discrete bands; put tunable timing/range/damage in appropriate data/config; do
