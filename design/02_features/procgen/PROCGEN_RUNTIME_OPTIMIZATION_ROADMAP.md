@@ -166,7 +166,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | Code | Workstream | Status | Depends on |
 | --- | --- | --- | --- |
 | S1 | `procgen-performance-baseline-v1` | **complete** | none |
-| G1 | `procgen-candidate-evaluator-extraction` | queued | S1 |
+| G1 | `procgen-candidate-evaluator-extraction` | **complete** | S1 |
 | G2 | `procgen-candidate-semantic-model` | queued | G1 |
 | G3 | `procgen-semantic-candidate-generation` | queued | G2 |
 | G4 | `procgen-accepted-candidate-materializer` | queued | G3 |
@@ -216,10 +216,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** G1 `procgen-candidate-evaluator-extraction` (next in serial order)
-**State:** S1 landed; G1, M1, and P1 are now dependency-eligible.
-**Next gate:** extract candidate metrics/acceptance/scoring/terrain-fallback policy out of `CustodianContractMap` into a focused generation authority (G1), matching S1's fixed-seed baseline unchanged.
-**After S1:** G1, M1, and P1 became eligible. The serial full-auto traversal takes G1 first; parallel agents may claim independent eligible siblings subject to locks.
+**Current packet:** G2 `procgen-candidate-semantic-model` (next in serial order after G1 lands)
+**State:** S1 and G1 landed; G2, M1, and P1 are dependency-eligible.
+**Next gate:** introduce the data-only candidate semantic model (G2) while preserving G1's fixed-seed selection contract.
+**After G1:** G2 is now eligible. M1 and P1 remain independent siblings of the generation lane.
 
 ---
 
@@ -271,6 +271,15 @@ Move candidate metrics, acceptance policy, scoring, terrain-failure classificati
 ### Exit
 
 Fixed-seed candidate selection is identical to S1, candidate acceptance/rejection reasons are unchanged, and selection code no longer requires construction internals inside the contract coordinator.
+
+### Completion Evidence
+
+- **Landed main SHA:** `41fde2780` (`procgen candidate evaluator, G1 extraction`).
+- **Closing summary:** `PROCGEN_CANDIDATE_EVALUATOR_EXTRACTION_CLAUDE_SUMMARY.md`.
+- `CandidateEvaluator` now owns candidate measurement, acceptance/rejection, score, ingress validation, terrain-failure classification, fallback eligibility/ranking, connectivity helpers, and layout debug formatting. `CustodianContractMap` retains deterministic attempt orchestration and winner lifecycle; the metric dictionary schema and reason keys are preserved.
+- **Validation:** focused evaluator smoke PASS; rescue diagnostic PASS across 36 candidates and forced-failure abort; terrain-required-cells smoke PASS; S1 quick benchmark PASS; changed-file closeout PASS (7/7 selected tests); `git diff --check` clean.
+- **Known independent failure:** candidate-promotion smoke still stops at its previously documented streamed-floor-cell equality assertion (`Promotion exposed additional streamed floor cells`), unchanged in the S1 closeout evidence and outside G1's scope.
+- **Next:** G2 `procgen-candidate-semantic-model` is eligible.
 
 ---
 

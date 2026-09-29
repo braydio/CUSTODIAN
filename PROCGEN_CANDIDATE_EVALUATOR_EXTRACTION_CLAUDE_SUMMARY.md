@@ -9,6 +9,7 @@ and acceptance; existing metric keys and rejection reasons remain intact.
 
 ## Evidence
 
+- Implementation commit: `41fde2780` (`procgen candidate evaluator, G1 extraction`); included in the workstream landing on `origin/main`.
 - `procgen_candidate_evaluator` focused smoke: PASS. Covers acceptance,
   score/rejection thresholds, terrain-failure classification, degraded fallback
   eligibility, fallback tie ordering, missing-map rejection, and data-only

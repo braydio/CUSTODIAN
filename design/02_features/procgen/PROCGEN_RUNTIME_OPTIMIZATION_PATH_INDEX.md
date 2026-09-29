@@ -25,7 +25,7 @@ This index is a navigation aid, not a substitute for the current task packet's s
 ## S2 / G1 — Candidate Evaluator Extraction
 
 **Workstream:** `procgen-candidate-evaluator-extraction`  
-**Task packet:** `custodian/docs/ai_context/task_packets/PROCGEN_CANDIDATE_EVALUATOR_EXTRACTION.md`
+**Task packet:** `custodian/docs/ai_context/task_packets/archived/PROCGEN_CANDIDATE_EVALUATOR_EXTRACTION.md` (complete)
 
 ### Primary implementation paths
 

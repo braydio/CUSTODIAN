@@ -271,7 +271,7 @@ state.
 | Slice | Status | Priority |
 |---------|--------|----------|
 | S1 Performance baseline + benchmark contract | complete | P0 |
-| S2 Candidate evaluator extraction | planned | P1 |
+| S2 Candidate evaluator extraction | complete | P1 |
 | S3 Semantics-only candidate generation | planned | P0 |
 | S4 Accepted-candidate materializer | planned | P1 |
 | S5 Runtime mutation scheduler | planned | P0 |

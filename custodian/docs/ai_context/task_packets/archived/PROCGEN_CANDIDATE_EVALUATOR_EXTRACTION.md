@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-candidate-evaluator-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-performance-baseline-v1`
@@ -55,6 +55,18 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 ## Handoff
 
-- Next action: Land the evaluator extraction; procgen-candidate-semantic-model then becomes eligible.
+- Next action: Continue with G2 `procgen-candidate-semantic-model`, which becomes eligible after this workstream lands.
 - Best starting files: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_PATH_INDEX.md` first; then the exact S2/G1 paths it lists, beginning with `custodian/game/world/procgen/custodian_contract_map.gd`, `custodian/game/world/procgen/generation/README.md`, `custodian/tools/validation/procgen_contract_rescue_diagnostic_smoke.gd`, and landed S1 benchmark evidence.
 - Blockers or open questions: None known at authoring time.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: LFS skip-smudge initially blocked Godot validation; the first evaluator smoke revision had a floating-point equality assertion and an invalid `RefCounted.free()` call.
+- Root cause / contributing factors: workstream checkouts honor the temporary LFS degraded mode; Godot needed cached binaries materialized and a fresh editor scan before its class cache and imports were usable.
+- Prevention / pipeline improvement: check local LFS object availability and materialize cached objects before Godot import; the repository primer documents this sequence.
+- Tooling / docs drift discovered: none; the candidate-promotion assertion is an already documented independent follow-up.
+- Follow-up: manual-follow-up
+- What worked: one cached LFS checkout and fresh import restored validation; fixed-seed diagnostics retained the previous selection metrics and reasons.
