@@ -100,6 +100,49 @@ guards after expiry.
 - Fulfillment: Asset V2 completion is derived from live family/catalog evidence; non-V2 requirements may become `fulfilled` only after real fulfillment. Retain fulfilled records and regenerate/check the view.
 - Never hand-edit generated root `REQUIRED_ASSETS.md`.
 
+## Visual Validation Economy
+
+For runtime/presentation work, treat visual inspection as the last layer of proof.
+The ordinary edit/test loop should be code- and telemetry-first.
+
+Prefer these alternatives before rendered-image review:
+
+- **Asset contract checks:** canvas/frame dimensions, alpha bounds, silhouette/edge
+  margins, matte detection, registration anchors, frame-count/FPS/layout, source →
+  runtime identity, Asset V2 plan/status/doctor, and exact file hashes.
+- **Scene/presentation probes:** node/resource identity, global position/rect,
+  texture size, visibility, modulate/self_modulate alpha, effective z-order,
+  canvas/camera transform, ownership of collision/navigation, and whether an
+  Operator/path sample is covered by an opaque presentation layer.
+- **Transition/state checks:** deterministic state-machine snapshots, current
+  animation/frame/progress, one-shot generation/token state, forward/reverse
+  traversal equivalence, restore/idempotence, and presentation-state hashes.
+- **Pixel checks without model vision:** alpha/opaque coverage in a named region,
+  edge/seam discontinuity metrics, expected-overlap comparison, border-connected
+  matte/void detection, image diff/fingerprint, and cropped-region statistics.
+- **Targeted renderer evidence:** only after the above cannot prove acceptance.
+  Capture the smallest ROI and fewest authored ticks needed. Prefer one contact
+  sheet of tight crops to several full-screen images.
+
+Moment Forge iteration defaults to `--capture-mode none`. Use `evidence` only
+for a closeout proof that really depends on renderer output. Use `full` only when
+global composition, movement, audiovisual synchronization, or game feel itself is
+the acceptance criterion and no structured alternative can settle it.
+
+Do not repeatedly inspect equivalent full-resolution screenshots with Codex.
+When the implementation already produced durable evidence, a paired review should
+consume the report/telemetry/crops instead of recapturing the same views unless the
+evidence is stale, missing, or the reviewer has a concrete reason to distrust it.
+
+Objective presentation defects may be validated automatically. Subjective visual
+baselines, art direction, aesthetic cohesion, composition preference, and game-feel
+judgment remain human-owned.
+
+For task authoring, any request for more than two full-frame stills, repeated
+full-frame capture after each edit, or full-motion capture must explain why the
+non-visual alternatives above cannot falsify the defect. Otherwise rewrite the
+acceptance around structured assertions and targeted ROIs.
+
 ## Moment Forge Selection
 
 Use Moment Forge for repeatable 2–8 second gameplay moments whose acceptance
