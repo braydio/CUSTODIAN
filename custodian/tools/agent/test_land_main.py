@@ -189,6 +189,12 @@ class LandMainTests(unittest.TestCase):
         self.assertEqual(run_git(self.task, "rev-parse", "HEAD"), original_head)
 
     def test_task_already_on_main_is_a_successful_noop(self) -> None:
+        # Re-root explicitly on origin/main rather than relying on setUp's
+        # implicit clone checkout: the direct fast-forward push below requires
+        # genuine ancestry, unlike land()'s own rebase path, which tolerates
+        # an unrelated history by construction.
+        run_git(self.task, "fetch", "origin", "main")
+        run_git(self.task, "checkout", "-B", "task/work", "origin/main")
         self._task_commit("task.txt", "task\n")
         task_head = run_git(self.task, "rev-parse", "HEAD")
         # Simulate a prior finish that pushed HEAD onto main directly (or by
