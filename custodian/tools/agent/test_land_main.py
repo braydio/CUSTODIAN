@@ -188,6 +188,19 @@ class LandMainTests(unittest.TestCase):
         self.assertEqual(run_git(self.task, "status", "--porcelain"), "")
         self.assertEqual(run_git(self.task, "rev-parse", "HEAD"), original_head)
 
+    def test_task_already_on_main_is_a_successful_noop(self) -> None:
+        self._task_commit("task.txt", "task\n")
+        task_head = run_git(self.task, "rev-parse", "HEAD")
+        # Simulate a prior finish that pushed HEAD onto main directly (or by
+        # fast-forward) but never got to report success back to this run.
+        run_git(self.task, "push", "origin", f"{task_head}:refs/heads/main")
+        result = self._land()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("already up to date", result.stdout)
+        run_git(self.seed, "fetch", "origin", "main")
+        self.assertEqual(run_git(self.seed, "rev-parse", "origin/main"), task_head)
+        self.assertEqual(run_git(self.task, "rev-parse", "HEAD"), task_head)
+
     def test_dirty_worktree_is_refused(self) -> None:
         (self.task / "uncommitted.txt").write_text("dirty\n")
         result = self._land("--dry-run")

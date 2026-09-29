@@ -137,6 +137,26 @@ the recovery branch and worktree. Root checkout synchronization is attempted
 only from a clean `main` checkout using fast-forward-only; otherwise it remains
 pending without reset, stash, or branch switching.
 
+### Already-landed closeout
+
+The closing-summary and reachability checks are independent of any diff
+against `origin/main`. Once a task's exact HEAD is already an ancestor of
+`origin/main` — a prior `finish` landed it but was interrupted before
+teardown, or `land_main.py` reported "already up to date" after a lost push
+response — `finish` proves the artifact gate, the summary (via `git cat-file
+-e HEAD:<summary>`, not a moving diff), and green validation exactly as
+normal, then skips `sync_main`/`land_main.py` entirely and goes straight to
+verified teardown. It never rewrites or remerges already-landed history. A
+task branch with additional commits beyond an already-landed point is not
+mistaken for finished; the normal synchronize → land path still applies to
+the remainder.
+
+Re-running `finish` after teardown already completed (no attached worktree,
+no remote branch) reports a clear already-finished result rather than an
+error, provided the closing summary is durably present on `origin/main`;
+otherwise it fails closed rather than guessing. It never encourages
+recreating a worktree just to clean up.
+
 `workstream.py gc` runs fetch/prune and emits the branch hygiene report.
 `branch_hygiene.py` is report-only by default. Its classifications are based on
 ancestry and commit counts; unique `agent/*` refs classify as `ACTIVE`, and the
