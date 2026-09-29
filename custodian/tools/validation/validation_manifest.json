@@ -1082,6 +1082,20 @@
       "needs_import": false
     },
     {
+      "id": "operator_runtime_spriteframes_imports",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "assets", "import_compatibility"],
+      "owners": [
+        "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
+        "custodian/content/sprites/operator/runtime/animations/**/*.png.import",
+        "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py"
+      ],
+      "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
       "id": "operator_animation_timing",
       "type": "python",
       "script": "custodian/tools/validation/operator_animation_timing_smoke.py",
