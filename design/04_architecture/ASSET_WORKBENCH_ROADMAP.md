@@ -1,6 +1,6 @@
 # Asset Workbench Roadmap
 
-**Status:** planned / implementation roadmap  
+**Status:** active implementation roadmap  
 **Baseline reviewed main:** `a9be70ded8c7d0f63cfc471d684086ef1c5ed287`  
 **Owner:** tooling / Asset Pipeline V2  
 **Runtime target:** CUSTODIAN non-Operator asset authoring and review  
@@ -110,7 +110,7 @@ As of the baseline above:
 
 | Slice | Workstream | Status | Completion focus | Evidence |
 |---|---|---|---|---|
-| **1. Family Navigator Foundation** | `asset-workbench-family-foundation` | planned | Read-only Asset V2 family/state cockpit and stable UI/read-model boundary | pending |
+| **1. Family Navigator Foundation** | `asset-workbench-family-foundation` | ready | Read-only Asset V2 family/state cockpit and stable UI/read-model boundary | `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` queued on main |
 | **2. Review Studio** | `asset-workbench-review-studio` | planned | Raster preview, playback, filmstrip, source/runtime comparison and diagnostics | pending |
 | **3. Safe Pipeline Actions** | `asset-workbench-pipeline-actions` | planned | Plan/ingest UI, isolated mutation checkout, validation, commit/land, refresh | pending |
 | **4. Actor Lens + Sequence Review** | `asset-workbench-actor-sequences` | planned | NPC/enemy/fauna ergonomics and disposable behavioral review sequences | pending |
@@ -118,7 +118,7 @@ As of the baseline above:
 | **6. Creation + Source Intake** | `asset-workbench-creation-source-intake` | planned | New family/state creation, source staging, crisp conversion and authoring handoff | pending |
 | **7. Platform Hardening + Domain Expansion** | `asset-workbench-platform-hardening` | planned | Proven shared UI extraction, large-family performance, broader domains, docs/QA | pending |
 
-**Last reconciled main:** `a9be70d`
+**Last reconciled main:** `972ea75`
 
 ---
 
@@ -393,3 +393,4 @@ Across every slice:
 | Date | Main | Change |
 |---|---|---|
 | 2026-09-29 | `a9be70d` | Initial roadmap created from current Asset V2 and Operator Workbench architecture; V1 defined as Slices 1–3. |
+| 2026-09-29 | `972ea75` | Slice 1 promoted to ready; V2 task packet indexed for auto-dispatch with roadmap maintenance required during implementation. |
