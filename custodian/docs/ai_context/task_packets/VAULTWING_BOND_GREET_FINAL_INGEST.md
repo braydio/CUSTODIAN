@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vaultwing-bond-greet-final-ingest`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -147,6 +147,18 @@ manual final-ingest packet. After validated convergence:
 
 ## Handoff
 
-- Next action: Claim this packet, preflight `~/Downloads/vw1.png` through `vw4.png`, then inspect the old checkpoint diff before making writes.
+- Next action: After the user places the four intended source sheets at `~/Downloads/vw1.png` through `vw4.png`, resume this workstream and preflight them before inspecting/reconciling the old checkpoint.
 - Best starting files: `ambient_vaultwing_common.asset.json`, `stage_vaultwing_bonding_source_work.py`, its focused tests, and `origin/agent/vaultwing-bonding-art-final-ingest`.
-- Blockers or open questions: None if all four Downloads inputs are present and valid. Missing/invalid local inputs are a fail-closed task blocker, not permission to regenerate.
+- Blockers or open questions: Blocked because all four required local inputs were absent/unreadable at `/home/braydenchaffee/Downloads/vw1.png` through `vw4.png`. No art was synthesized or substituted, and no source_work/inbox/runtime files were written. Resume only after the intended inputs are present and valid.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: blocked
+- Friction severity: low
+- What went wrong: The packet's four required same-host Downloads inputs were all absent or unreadable.
+- Root cause / contributing factors: The task depends on user-provided local art that is not part of the repository or remote checkpoint.
+- Prevention / pipeline improvement: Keep the packet fail-closed and resume after the four inputs are saved at the documented paths; do not regenerate or infer replacements.
+- Tooling / docs drift discovered: none
+- Follow-up: resume `vaultwing-bond-greet-final-ingest` after inputs arrive
+- What worked: The preflight found the missing inputs before any task-owned writes.
