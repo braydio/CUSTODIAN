@@ -63,7 +63,7 @@
   - Focused Operator melee/ranged/sidearm/dodge/field-patch/critical presentation smokes remain green.
 - Validation: First run the reachability audit/report and runtime-animation-authority smoke, then focused smokes for any migrated consumer (dodge charge, modular layers, sidearm, primary ranged, melee posture/chain, field patch, critical execution). Run compatibility-resource/update-tool tests after each deletion cluster. Finish with one `run_validation.py --changed --json` closeout sweep. Use Moment Forge only for a final dodge/ranged visual regression if an existing scenario directly exercises a migrated presentation path.
 - Task overrides: `none`
-- Deferred: After C2b.3, execute Slice E as `operator-action-arbitration`, followed by six one-domain Slice F packets (melee, dodge, ranged, loadout/runtime-state, interactions/build/repair, recovery), then Slice G shell collapse/final zero-debt audit.
+- Deferred: Slice E is now queued as `operator-action-arbitration` in `OPERATOR_ACTION_ARBITRATION.md`, followed by six one-domain Slice F packets (melee, dodge, ranged, loadout/runtime-state, interactions/build/repair, recovery), then Slice G shell collapse/final zero-debt audit.
 
 ## Handoff
 
