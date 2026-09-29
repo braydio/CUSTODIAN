@@ -178,6 +178,8 @@ lost when the ephemeral worktree is removed.
 - `TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — P1 Slice E: Asset V2 aperture/anchor/witness FX and state-driven Solarium I observational acquisition; blocked on reviewed Slice D.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — paired independent review of Slice E; no automatic Passage slice follows.
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
+- `PROCGEN_PERFORMANCE_BASELINE_V1.md` — P1 Slice S1 of the tracked procgen optimization roadmap: structured fixed-seed generation/streaming baseline, quick + opt-in full benchmark profiles, no optimization or world-output changes.
+- `REVIEW_PROCGEN_PERFORMANCE_BASELINE_V1.md` — paired independent review of S1 benchmark reproducibility, determinism preservation, schema completeness, and bounded validation cost.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
 - `OPERATOR_RUNTIME_DECOMPLEXIFICATION.md` — P1 C2b.2 resume of the paused Operator god-file migration: repair canonical damage reactions, remove the final Operator legacy selector/fallback debt, and shrink the architecture ledger from 95 to 75.
 - `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md` — P1 C2b.3 cleanup queued behind C2b.2: reconcile stale animation reachability, migrate direct Operator-PNG VFX consumers, disposition orphan/superseded canonical output, and retire compatibility SpriteFrames/resources only after zero-consumer proof.
