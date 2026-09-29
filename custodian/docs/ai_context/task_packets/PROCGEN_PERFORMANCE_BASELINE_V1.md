@@ -63,7 +63,22 @@ become eligible according to dispatcher priority/locks. Subsequent packets unloc
 
 Do not absorb later slices into this workstream and do not rewrite their contracts merely because implementation details differ locally. If S1 proves a downstream packet impossible or materially unsafe, mark that contradiction in the roadmap/summary and leave the affected dependent blocked for the final chain review rather than silently changing the program architecture.
 
-The repository packet chain provides unattended eligibility, not a new continuous-worker implementation. Existing agent automation may repeatedly call `dispatch.py claim-next`; this task must not add a worker daemon.
+The repository packet chain provides unattended eligibility, not a new continuous-worker implementation. This task must not add a worker daemon.
+
+When this packet is being executed inside a user-authorized full-series agent session, successful `workstream.py finish` is also the handoff into the roadmap's **Single-Agent Serial Auto-Run Order**. Return to the coordination checkout and explicitly claim the next unmet workstream in that order with the same agent identity. Continue packet-by-packet without returning for packet authoring. If that workstream is already complete because another agent landed it, advance to the next unmet item. Stop only for failed required validation, a semantically invalid downstream contract, unsafe Git/worktree state, a `human_required` decision, or completion of the final V2-series-authoring handoff.
+
+The serial order is:
+
+```text
+S1
+G1 -> G2 -> G3 -> G4 -> G5
+M1 -> M2 -> M3 -> M4 -> M5 -> M6
+P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> P7
+D1 -> D2 -> D3 -> D4
+V1 -> V2 -> F1 -> Q1 -> A1
+```
+
+The exact code-to-workstream mapping is canonical in `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`.
 
 ## Handoff
 
