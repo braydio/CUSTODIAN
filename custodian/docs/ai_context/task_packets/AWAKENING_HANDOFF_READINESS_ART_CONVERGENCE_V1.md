@@ -163,6 +163,7 @@ At minimum:
 2. Remove/update any statement that the five Road modular presentation families still require native-size art. All five environment families are registered, ingested, and used by `RoadOfWitnessesPrototype`; the north processional continuation remains deferred.
 3. Reconcile old “blockout complete” language with the production completion seam without implying the Hub transition exists.
 4. Treat `custodian/docs/ai_context/task_packets/AWAKENING_SCENE_CORRECTNESS_HARDENING.md` as stale historical planning if it still asks for already-live A1–A5 work. Do not rerun completed hardening. Update/index/supersede it only according to current packet-lifecycle rules; do not silently leave two active authorities for the same work.
+5. `custodian/asset_drop/inbox/awakening_ingest_manifest.json` currently records `awakening_undergate_environment` as 896×1216 even though the live V2 family contract and production scene use 1536×1216. Determine whether this manifest is an active/generated intake index or preserved historical batch record. If active/generated, regenerate it from current catalog/family truth; if historical, relabel/archive it so it cannot masquerade as current authority. Do not change the live 1536×1216 family/scene to match the stale manifest.
 
 ## Visual Evidence
 
