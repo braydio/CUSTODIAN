@@ -133,6 +133,7 @@ class LandMainTests(unittest.TestCase):
         )
         wrapper.chmod(0o755)
         env = os.environ.copy()
+        env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
         env["PATH"] = f"{bin_dir}:{env['PATH']}"
         env["LAND_RACE_MARKER"] = str(marker)
         env["LAND_RACE_REPO"] = str(racer)
