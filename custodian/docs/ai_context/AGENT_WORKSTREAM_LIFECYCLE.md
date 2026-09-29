@@ -4,8 +4,11 @@ Normal implementation runs use an isolated ephemeral worktree. For queued
 packet work, prefer `dispatch.py claim-next --agent codex`, or use
 `dispatch.py claim <id> --agent codex` for explicit selection. The dispatcher
 reads fetched `origin/main`, checks packet dependencies and locks, then
-delegates branch/worktree creation or resume to `workstream.py`. Direct
-`workstream.py start <id>` remains valid. Truly read-only reviews may stay in
+delegates branch/worktree creation to `workstream.py` under the same local
+mutex and remote unique-claim protocol. Direct `workstream.py start <id>` uses
+that exclusive protocol for manual/unpacketed starts and fails closed if the
+branch, claim, or checkout already exists. It never silently adopts existing
+state. Truly read-only reviews may stay in
 the coordination checkout; paired post-land reviews that commit durable
 artifacts use their own workstream worktree. If a worktree cannot be
 used, document the reason in the task record. The project-root checkout is not
@@ -19,6 +22,23 @@ repository coordination checkout:
 ```bash
 python3 custodian/tools/agent/workstream.py start <workstream-id>
 ```
+
+Existing task state requires the explicit recovery command after inspection:
+
+```bash
+python3 custodian/tools/agent/workstream.py resume <workstream-id>
+```
+
+`resume` preserves dirty checkouts and only proceeds with a clean attached
+checkout or an explicitly selected published `origin/agent/<id>` branch. A
+remote claim without that branch is interrupted recovery state; ordinary
+start will not clear it. After verifying no live claimant, an operator may
+explicitly remove the `dispatch-claims/<id>` ref. Every start/claim/finish
+records a local trace under the Git common directory and best-effort publishes
+diagnostics under `agent-diagnostics/<id>/<run-id>`. Inspect with
+`python3 custodian/tools/agent/run_trace.py list` or
+`python3 custodian/tools/agent/run_trace.py export <run-id> --json`.
+Diagnostics contain lifecycle metadata only and cannot be landed as task code.
 
 Queued packet front door:
 

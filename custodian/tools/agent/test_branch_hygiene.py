@@ -53,6 +53,14 @@ class BranchHygieneTests(unittest.TestCase):
         self.assertEqual(hygiene.classify(self.repo, "divergent", {"main"})[0], "ARCHIVE_CANDIDATE")
         self.assertEqual(hygiene.classify(self.repo, "agent/active", {"main"})[0], "ACTIVE")
 
+    def test_diagnostic_refs_are_preserved_and_never_retired(self):
+        git(self.repo, "push", "origin", "HEAD:refs/heads/agent-diagnostics/sample/run-1")
+        git(self.repo, "fetch", "origin")
+        self.assertEqual(hygiene.classify(self.repo, "agent-diagnostics/sample/run-1", {"main"})[0], "DIAGNOSTIC_PRESERVE")
+        with self.assertRaisesRegex(hygiene.HygieneError, "diagnostic ref"):
+            hygiene.retire(self.repo, "agent-diagnostics/sample/run-1", self.base / "archive.md")
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent-diagnostics/sample/run-1"))
+
     def test_report_only_does_not_write_refs(self):
         before = git(self.repo, "for-each-ref", "--format=%(refname) %(objectname)", "refs/remotes", "refs/tags")
         result = subprocess.run(["python3", str(SCRIPT), "divergent"], cwd=self.repo, text=True, capture_output=True)

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-workflow-claim-atomicity-forensics`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -56,6 +56,14 @@
 - Validation: Add focused `test_workstream.py` coverage for same-common-dir and separate-clone direct-start races plus interrupted-create recovery. Reuse/extend `test_dispatch.py` for shared-claim and receipt regression. Add focused trace tests for non-main publication, redaction, event ordering, failure persistence and ref isolation. Run existing agent workflow tests (`test_dispatch`, `test_workstream`, `test_workstream_artifacts`, `test_land_main`, `test_branch_hygiene`, review-pairing/agent workflow smoke) before one changed-file closeout. Use temporary bare remotes/worktrees only; tests must not create diagnostic refs in the developer's live repository.
 - Task overrides: `none`
 - Deferred: Cross-host liveness/heartbeat, TTL leases, automatic stale-claim recovery, centralized telemetry service, automatic diagnostics retention policy, and capture outside repository control-plane tools.
+
+## Execution Feedback
+
+- Outcome: Implemented shared remote claim CAS and common-dir locks; direct starts fail closed on existing state, while explicit `resume` handles inspected clean state. Added local JSONL and diagnostics-ref traces, run inspection CLI, and diagnostic-ref protection in landing and branch hygiene.
+- Friction: The initial lifecycle suite encoded implicit resume through `start`; those expectations had to move to the explicit recovery command. Failed creation intentionally leaves its remote claim visible and blocks ordinary retries until an operator resolves recovery.
+- Prevention: Same-common-dir and independent-clone tests now exercise direct-start contention; trace tests verify sensitive values are redacted and only diagnostics are published.
+- Validation: 113 agent workflow tests passed; `custodian/tools/validation/agent_workflow_smoke.py` passed its prompt and workflow contract checks.
+- Deferred: No heartbeat/TTL or automatic stale-claim recovery; trace ref retention remains explicit operator cleanup.
 
 ## Incident Model
 
