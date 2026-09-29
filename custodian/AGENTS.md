@@ -432,8 +432,9 @@ or asset-authoring tooling outside active gameplay runtime.
 ## Commit Policy
 
 The root `AGENTS.md` owns commit and closing-summary policy. Follow it: commit
-completed, validated work at task boundaries and land it with
-`custodian/tools/agent/land_main.py`. Stage only current-task files, preserve
+completed, validated work at task boundaries and finish it with
+`python3 custodian/tools/agent/workstream.py finish ...`. `land_main.py` is
+an internal helper and must not be used as a substitute for finish. Stage only current-task files, preserve
 other sessions' work, and never amend or force-push unless explicitly asked.
 Use the repository's short lowercase, comma-joined commit style.
 

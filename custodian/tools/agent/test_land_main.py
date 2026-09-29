@@ -44,9 +44,18 @@ class LandMainTests(unittest.TestCase):
         run_git(repo, "config", "user.name", "Test Agent")
         run_git(repo, "config", "user.email", "agent@example.test")
 
-    def _land(self, *args: str) -> subprocess.CompletedProcess[str]:
+    def _land(self, *args: str, authorized: bool = True) -> subprocess.CompletedProcess[str]:
+        env = os.environ.copy()
+        if authorized:
+            env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
+        else:
+            env.pop("CUSTODIAN_WORKSTREAM_FINISH", None)
         return subprocess.run(
-            ["python3", str(SCRIPT), *args], cwd=self.task, text=True, capture_output=True
+            ["python3", str(SCRIPT), *args],
+            cwd=self.task,
+            env=env,
+            text=True,
+            capture_output=True,
         )
 
     def _task_commit(self, filename: str, content: str) -> None:
@@ -57,9 +66,18 @@ class LandMainTests(unittest.TestCase):
     def test_dry_run_inspects_without_landing(self) -> None:
         self._task_commit("task.txt", "task\n")
         before = run_git(self.seed, "rev-parse", "refs/heads/main")
-        result = self._land("--dry-run")
+        result = self._land("--dry-run", authorized=False)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("would fetch origin/main", result.stdout)
+        self.assertEqual(before, run_git(self.seed, "rev-parse", "refs/heads/main"))
+
+    def test_direct_destructive_invocation_is_blocked(self) -> None:
+        self._task_commit("task.txt", "task\n")
+        before = run_git(self.seed, "rev-parse", "refs/heads/main")
+        result = self._land(authorized=False)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("direct landing is disabled", result.stderr)
+        self.assertIn("workstream.py finish", result.stderr)
         self.assertEqual(before, run_git(self.seed, "rev-parse", "refs/heads/main"))
 
     def test_clean_task_branch_lands_on_main(self) -> None:
@@ -115,6 +133,7 @@ class LandMainTests(unittest.TestCase):
         )
         wrapper.chmod(0o755)
         env = os.environ.copy()
+        env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
         env["PATH"] = f"{bin_dir}:{env['PATH']}"
         env["LAND_RACE_MARKER"] = str(marker)
         env["LAND_RACE_REPO"] = str(racer)
