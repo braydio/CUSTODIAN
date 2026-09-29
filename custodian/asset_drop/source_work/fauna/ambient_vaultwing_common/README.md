@@ -23,16 +23,15 @@ these temporary strips. The rejected `vw_3`/`vw_7` masters are preserved under
 
 ## Bonding art pass 1 (2026-09-26)
 
-Lifecycle: accepted source masters belong in this directory. Rejected generated
-candidates belong under
-`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/` and must never
-occupy a canonical source-master filename. The rejected Pass-1 `vw8` source was
-removed from source_work after byte comparison and retained as
-`inspect_bait_s_vw8__2e75b561e102.png` in durable quarantine.
+Historical Pass-1 behavior used a rejected-art quarantine, but that retention
+policy has been superseded. Accepted source masters belong in this directory;
+rejected generated candidates must never occupy a canonical source-master
+filename and are now deletion-only after rejection/hash verification. The old
+Pass-1 `vw8` matte reject and its later quarantine copy have been deleted.
 
 Ordinal mapping is fixed by the pass contract. Accepted root inputs were copied
 byte-for-byte here and removed from the root only after hash checks; the
-rejected vw8 input was quarantined instead:
+rejected `vw8` row below records the historical result, not a retention rule:
 
 | Ordinal | Input | Semantic source master | Raw size | Result |
 |---:|---|---|---:|---|
@@ -43,7 +42,7 @@ rejected vw8 input was quarantined instead:
 | 5 | `vw5.png` | `guarded_approach_s_source.png` | 2172×724 | accepted |
 | 6 | `vw6.png` | `guarded_approach_n_source.png` | 2172×724 | accepted |
 | 7 | `vw7.png` | `inspect_bait_e_source.png` | 1983×793 | accepted |
-| 8 | `vw8.png` | — | 1983×793 | rejected: generated matte; preserved at `custodian/asset_drop/unresolved/vaultwing_bonding_rejected/inspect_bait_s_vw8__2e75b561e102.png` |
+| 8 | `vw8.png` | — | 1983×793 | rejected: generated matte; obsolete rejected copy deleted |
 | 9 | `vw9.png` | `inspect_bait_n_source.png` | 1983×793 | accepted |
 | 10 | missing | `feed_accept_e_source.png` | — | not staged |
 
