@@ -49,3 +49,21 @@
 - Validation: `test_dispatch.py` (56 tests), `validate_review_pairing.py` (6 live auto-review pairs), `agent_workflow_smoke.py`, `review_pairing_contract`, changed-file validation, Python compilation, and `git diff --check` passed.
 - Next action: paired independent review on main.
 - Blockers or open questions: none.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-agent-review-pipeline-review-corrections-1`
+- Reviewed on main: `04aa9ee06`
+- Review modes: `code, architecture, workflow`
+- Blocking findings: `0`
+- Non-blocking findings: `1`
+- Detailed review summary: `REVIEW_AGENT_REVIEW_PIPELINE_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Review Notes
+
+- Both original blocking findings are fixed. The shared pairing guard rejects non-ready or manual paired reviewers and requires the exact canonical archived target-packet path. Status and claim use this guard, and the standalone validator calls the same function.
+- Temporary-repository tests cover malformed status/dispatch and traversal target behavior through status eligibility. A separate temporary-repository probe confirmed that an absent target path is rejected by both status and explicit claim.
+- Non-blocking test coverage note: `test_paired_review_missing_target_packet_fails_closed` asserts the validator error but does not assert dispatcher status/claim rejection. The implementation is verified by the shared guard and the probe above; consider adding the assertion when the test suite is next edited.
+- Historical packets that default to `Review: none` remain valid. Dispatcher tests, workflow smoke, and standalone pairing validation pass.

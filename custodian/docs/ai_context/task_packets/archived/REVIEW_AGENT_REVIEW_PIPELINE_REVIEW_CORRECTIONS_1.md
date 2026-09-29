@@ -2,7 +2,7 @@
 
 - Workstream: `review-agent-review-pipeline-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-review-pipeline-review-corrections-1`
@@ -29,5 +29,7 @@
 
 ## Handoff
 
-- Next action: claim after `agent-review-pipeline-review-corrections-1` lands and archives.
+- Completion: Independent review passed on live main at `04aa9ee06`; receipt is recorded in archived `AGENT_REVIEW_PIPELINE_REVIEW_CORRECTIONS_1.md`.
+- Validation: `test_dispatch.py` (56 tests), `validate_review_pairing.py` (5 active auto-review pairs), and `agent_workflow_smoke.py` passed. A temporary-repository probe confirmed an absent target packet blocks both status and explicit claim.
+- Next action: none.
 - Blockers or open questions: none.
