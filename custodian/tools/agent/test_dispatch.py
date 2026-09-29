@@ -60,6 +60,10 @@ def packet(
     return "# Packet\n\n" + "\n".join(rows) + "\n"
 
 
+def archived_target(workstream):
+    return f"{dispatch.PACKET_ROOT}/archived/{workstream.upper().replace('-', '_')}.md"
+
+
 def publish_workstream(work_id, repo):
     # A real worktree, not just a branch: dispatch.py's post-start identity
     # verification checks that the returned path actually exists and is checked
@@ -618,11 +622,50 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("must depend on 'impl-c'", message)
         self.assertIn("Review target workstream must be 'impl-c'", message)
 
+    def test_paired_review_must_be_ready_and_auto_dispatchable(self):
+        self.add_packet("impl-ready", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-ready")
+        self.add_packet(
+            "review-impl-ready", status="draft", dispatch_value="manual", kind="review", review="none",
+            depends="impl-ready", review_target_workstream="impl-ready",
+            review_target_packet=archived_target("impl-ready"),
+        )
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        message = errors.get("impl-ready", "")
+        self.assertIn("must declare Status: ready", message)
+        self.assertIn("must declare Dispatch: auto", message)
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("invalid review pairing", rendered)
+        self.assertNotIn("impl-ready", rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0])
+
+    def test_paired_review_target_packet_must_be_exact_canonical_archive_path(self):
+        self.add_packet("impl-target", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-target")
+        self.add_packet(
+            "review-impl-target", dispatch_value="auto", kind="review", review="none",
+            depends="impl-target", review_target_workstream="impl-target",
+            review_target_packet=f"{dispatch.PACKET_ROOT}/archived/../IMPL_TARGET.md",
+        )
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        self.assertIn(
+            f"Review target packet must be '{archived_target('impl-target')}'",
+            errors.get("impl-target", ""),
+        )
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("invalid review pairing", rendered)
+
+    def test_paired_review_missing_target_packet_fails_closed(self):
+        self.add_packet("impl-no-target", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-no-target")
+        self.add_packet(
+            "review-impl-no-target", dispatch_value="auto", kind="review", review="none",
+            depends="impl-no-target", review_target_workstream="impl-no-target",
+        )
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        self.assertIn("Review target packet must be", errors.get("impl-no-target", ""))
+
     def test_review_blocked_until_implementation_dependency_complete(self):
         self.add_packet("impl-d", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-d")
         self.add_packet(
             "review-impl-d", dispatch_value="auto", kind="review", review="none",
-            depends="impl-d", review_target_workstream="impl-d",
+            depends="impl-d", review_target_workstream="impl-d", review_target_packet=archived_target("impl-d"),
         )
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("review-impl-d (review of impl-d) — dependency: impl-d", rendered)
@@ -632,7 +675,7 @@ class DispatchTests(unittest.TestCase):
         # remains an active packet, exactly like a real post-land review.
         self.add_packet(
             "review-impl-e", dispatch_value="auto", kind="review", review="none",
-            depends="impl-e", review_target_workstream="impl-e",
+            depends="impl-e", review_target_workstream="impl-e", review_target_packet=archived_target("impl-e"),
         )
         self.add_packet("impl-e", status="complete", archived=True)
         rendered = dispatch.status(self.repo, output=False)
@@ -642,7 +685,7 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("impl-f", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-f")
         self.add_packet(
             "review-impl-f", dispatch_value="auto", kind="review", review="none",
-            depends="impl-f", review_target_workstream="impl-f",
+            depends="impl-f", review_target_workstream="impl-f", review_target_packet=archived_target("impl-f"),
         )
         self.assertEqual(dispatch.validate_review_pairing(dispatch._packets(self.repo)), {})
 
@@ -658,6 +701,7 @@ class DispatchTests(unittest.TestCase):
         self.add_packet(
             "review-impl-g-review-corrections-1", dispatch_value="auto", kind="review", review="none",
             depends="impl-g-review-corrections-1", review_target_workstream="impl-g-review-corrections-1",
+            review_target_packet=archived_target("impl-g-review-corrections-1"),
             review_cycle=1,
         )
         self.add_packet("review-impl-g", status="complete", archived=True)
@@ -717,6 +761,7 @@ class DispatchTests(unittest.TestCase):
         self.add_packet(
             "review-impl-guarded", dispatch_value="auto", kind="review", review="none",
             depends="impl-guarded", review_target_workstream="impl-guarded",
+            review_target_packet=archived_target("impl-guarded"),
         )
         fake = mock.Mock(); fake.start.side_effect = publish_workstream
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):

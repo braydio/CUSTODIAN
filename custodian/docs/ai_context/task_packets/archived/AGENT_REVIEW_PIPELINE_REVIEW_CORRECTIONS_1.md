@@ -1,7 +1,7 @@
 # AGENT REVIEW PIPELINE REVIEW CORRECTIONS 1
 
 - Workstream: `agent-review-pipeline-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-review-pipeline`
@@ -36,7 +36,7 @@
 - Owner: agent workflow / review orchestration
 - Agent/session: Codex 2026-09-28
 - Created: 2026-09-28
-- Last updated: 2026-09-28
+- Last updated: 2026-09-29
 
 ## Work Surface
 
@@ -45,5 +45,7 @@
 
 ## Handoff
 
-- Next action: implement the focused guard and regression cases, then land for its paired independent review.
+- Completion: The shared pairing guard now requires a ready, auto-dispatchable reviewer and the exact canonical archived target-packet path. Added dispatcher and validator regression coverage; docs updated.
+- Validation: `test_dispatch.py` (56 tests), `validate_review_pairing.py` (6 live auto-review pairs), `agent_workflow_smoke.py`, `review_pairing_contract`, changed-file validation, Python compilation, and `git diff --check` passed.
+- Next action: paired independent review on main.
 - Blockers or open questions: none.

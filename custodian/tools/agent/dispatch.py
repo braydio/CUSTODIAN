@@ -231,9 +231,10 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
 
     Every active `Review: auto` packet must have a matching active review
     packet: same declared `Paired review workstream` id, `Kind: review`,
-    `Review: none`, a dependency back on the implementation workstream, and a
-    matching `Review target workstream`. Historical packets that omit review
-    metadata (`Review: none`, the default) are never required to pair.
+    `Review: none`, `Status: ready`, `Dispatch: auto`, a dependency back on the
+    implementation workstream, and matching target workstream and canonical
+    archived target-packet path. Historical packets that omit review metadata
+    (`Review: none`, the default) are never required to pair.
     Reusable by both dispatcher eligibility and standalone tooling/tests, per
     the single reusable validation authority this contract requires.
     """
@@ -256,10 +257,20 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
             add(p.workstream, f"paired review '{paired_id}' must declare Kind: review")
         if paired.review != "none":
             add(p.workstream, f"paired review '{paired_id}' must declare Review: none")
+        if paired.status != "ready":
+            add(p.workstream, f"paired review '{paired_id}' must declare Status: ready")
+        if paired.dispatch != "auto":
+            add(p.workstream, f"paired review '{paired_id}' must declare Dispatch: auto")
         if p.workstream not in paired.dependencies:
             add(p.workstream, f"paired review '{paired_id}' must depend on '{p.workstream}'")
         if paired.review_target_workstream != p.workstream:
             add(p.workstream, f"paired review '{paired_id}' Review target workstream must be '{p.workstream}'")
+        expected_target = f"{PACKET_ROOT}/archived/{Path(p.path).name}"
+        if paired.review_target_packet != expected_target:
+            add(
+                p.workstream,
+                f"paired review '{paired_id}' Review target packet must be '{expected_target}'",
+            )
 
     return {workstream: "; ".join(messages) for workstream, messages in errors.items()}
 

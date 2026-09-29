@@ -95,13 +95,18 @@ a `workstream.py finish` blocker.
   review packet from `AGENT_REVIEW_PACKET_TEMPLATE.md` on `main` in the same
   change. The review packet declares `Kind: review`, `Review: none`,
   `Depends on: <implementation-id>`, and `Review target workstream:
-  <implementation-id>`.
+  <implementation-id>`, `Review target packet:
+  custodian/docs/ai_context/task_packets/archived/<implementation-packet-filename>`,
+  `Status: ready`, and `Dispatch: auto`.
 - `dispatch.py`'s review-pairing consistency guard
   (`custodian/tools/agent/validate_review_pairing.py`) fails closed for any
   active `Review: auto` packet whose pair is missing, wrong `Kind`, wrong
-  `Review`, or whose dependency/target identity does not match. Historical
-  packets that omit review metadata (`Review: none`, the default) are never
-  required to pair.
+  `Review`, not ready or auto-dispatchable, or whose dependency/target
+  workstream/canonical archived target-packet path does not match. The packet
+  path must identify the exact implementation packet filename under the
+  canonical `archived/` directory; missing and traversal paths are rejected.
+  Historical packets that omit review metadata (`Review: none`, the default)
+  are never required to pair.
 - The review becomes dispatcher-eligible once its implementation dependency
   is `complete` and archived, exactly like any other dependency — no new
   eligibility mechanism.
@@ -164,7 +169,6 @@ lost when the ephemeral worktree is removed.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
 - `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening, blocked on `workstream-finish-landed-closeout-hardening`.
-- `AGENT_REVIEW_PIPELINE_REVIEW_CORRECTIONS_1.md` — P0 correction for paired-review validation gaps: require canonical archived target-packet binding and an auto-dispatchable, ready review pair; follow-up review waits on this review workstream.
 - `REVIEW_AGENT_REVIEW_PIPELINE_REVIEW_CORRECTIONS_1.md` — paired P0 independent review of the consistency-guard correction; blocked on `agent-review-pipeline-review-corrections-1`.
 - `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; its `agent-review-pipeline` dependency is now archived complete, so it is eligible subject to the shared `agent-workflow` lock.
 - `REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired independent review of the forensic slice, blocked on `twin-solaria-crown-incident-forensics`.
