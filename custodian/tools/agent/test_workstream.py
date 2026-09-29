@@ -113,8 +113,8 @@ class WorkstreamTests(unittest.TestCase):
     def test_finish_lands_verifies_and_tears_down(self):
         path = workstream.start("finish-me", self.repo)
         (path / "feature").write_text("done\n")
-        (path / "SAMPLE_CLAUDE_SUMMARY.md").write_text("completed\n")
-        git(path, "add", "feature", "SAMPLE_CLAUDE_SUMMARY.md")
+        (path / "FINISH_ME_CLAUDE_SUMMARY.md").write_text("completed\n")
+        git(path, "add", "feature", "FINISH_ME_CLAUDE_SUMMARY.md")
         git(path, "commit", "-m", "finish sample")
         landed_head = git(path, "rev-parse", "HEAD")
         report = self.base / "validation.json"
@@ -127,6 +127,140 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(git(self.repo, "ls-remote", "--heads", "origin", "agent/finish-me"), "")
         check = subprocess.run(["git", "merge-base", "--is-ancestor", landed_head, "origin/main"], cwd=self.repo)
         self.assertEqual(check.returncode, 0)
+        # The clean persistent coordination checkout fast-forwards after teardown.
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+
+    # --- Already-landed closeout hardening ---
+
+    def _green_report(self, name: str = "validation.json") -> Path:
+        report = self.base / name
+        report.write_text('{"schema":"custodian.validation.result.v1","passed":true,"tests":[{"status":"passed"}]}')
+        return report
+
+    def _red_report(self, name: str = "red.json") -> Path:
+        report = self.base / name
+        report.write_text('{"schema":"custodian.validation.result.v1","passed":false,"tests":[]}')
+        return report
+
+    def _commit_task_work(self, path: Path, workstream_id: str, message: str = "work") -> None:
+        (path / "feature").write_text("done\n")
+        summary = workstream._expected_summary_filename(workstream_id)
+        (path / summary).write_text("completed\n")
+        git(path, "add", "feature", summary)
+        git(path, "commit", "-m", message)
+
+    def _simulate_already_landed(self, path: Path) -> str:
+        """Push the task's current HEAD directly onto main.
+
+        Reproduces a prior finish attempt that pushed onto origin/main (or
+        otherwise landed by fast-forward) but crashed or lost its response
+        before completing teardown — the real-world asset-requirements-pipeline
+        edge this task packet cites.
+        """
+        head = git(path, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", f"{head}:refs/heads/main")
+        return head
+
+    def test_finish_short_circuits_when_task_head_already_landed(self):
+        path = workstream.start("already-landed", self.repo)
+        self._commit_task_work(path, "already-landed")
+        head = self._simulate_already_landed(path)
+        # This is exactly the condition that broke the old diff-based summary
+        # check: once HEAD is an ancestor of origin/main, their merge-base is
+        # HEAD itself, so origin/main...HEAD is empty even though the summary
+        # really is committed.
+        self.assertEqual(git(path, "diff", "--name-only", "origin/main...HEAD"), "")
+        workstream.finish("already-landed", self._green_report(), repo=path)
+        self.assertFalse(path.exists())
+        self.assertEqual(git(self.repo, "ls-remote", "--heads", "origin", "agent/already-landed"), "")
+        check = subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"], cwd=self.repo)
+        self.assertEqual(check.returncode, 0)
+
+    def test_finish_still_requires_complete_archived_packet_on_already_landed_path(self):
+        path = workstream.start("packet-required", self.repo)
+        packets_dir = path / "custodian/docs/ai_context/task_packets"
+        packets_dir.mkdir(parents=True, exist_ok=True)
+        (packets_dir / "PACKET_REQUIRED.md").write_text(
+            "# Packet\n\n- Workstream: `packet-required`\n- Status: `ready`\n"
+        )
+        (path / "feature").write_text("done\n")
+        (path / "PACKET_REQUIRED_CLAUDE_SUMMARY.md").write_text("completed\n")
+        git(path, "add", "-A")
+        git(path, "commit", "-m", "active, not archived, packet")
+        self._simulate_already_landed(path)
+        with self.assertRaisesRegex(workstream.WorkstreamError, "complete and moved.*task_packets/archived"):
+            workstream.finish("packet-required", self._green_report(), repo=path)
+        self.assertTrue(path.exists())
+
+    def test_finish_still_requires_green_validation_on_already_landed_path(self):
+        path = workstream.start("needs-green", self.repo)
+        self._commit_task_work(path, "needs-green")
+        self._simulate_already_landed(path)
+        with self.assertRaisesRegex(workstream.WorkstreamError, "not green"):
+            workstream.finish("needs-green", self._red_report(), repo=path)
+        self.assertTrue(path.exists())
+
+    def test_finish_with_extra_unlanded_commit_uses_normal_landing_path(self):
+        path = workstream.start("extra-commit", self.repo)
+        self._commit_task_work(path, "extra-commit", "landed part")
+        landed_head = self._simulate_already_landed(path)
+        (path / "extra").write_text("more\n")
+        git(path, "add", "extra")
+        git(path, "commit", "-m", "extra unlanded work")
+        self.assertFalse(workstream.task_head_reachable_from_main(path))
+        workstream.finish("extra-commit", self._green_report(), repo=path)
+        self.assertFalse(path.exists())
+        git(self.repo, "fetch", "origin", "main")
+        final_head = git(self.repo, "rev-parse", "origin/main")
+        self.assertNotEqual(final_head, landed_head)
+        check = subprocess.run(["git", "cat-file", "-e", f"{final_head}:extra"], cwd=self.repo)
+        self.assertEqual(check.returncode, 0)
+
+    def test_main_advancement_during_finish_requires_and_uses_after_sync_validation(self):
+        path = workstream.start("needs-sync", self.repo)
+        self._commit_task_work(path, "needs-sync")
+        (self.repo / "main-advance").write_text("advance\n")
+        git(self.repo, "add", "main-advance")
+        git(self.repo, "commit", "-m", "main advances")
+        git(self.repo, "push", "origin", "main")
+        with self.assertRaisesRegex(workstream.WorkstreamError, "after-sync"):
+            workstream.finish("needs-sync", self._green_report(), repo=path)
+        self.assertTrue(path.exists())
+        workstream.finish(
+            "needs-sync", self._green_report("validation-2.json"),
+            validation_report_after_sync=self._green_report("after-sync.json"), repo=path,
+        )
+        self.assertFalse(path.exists())
+
+    def test_teardown_tolerates_already_deleted_remote_branch(self):
+        path = workstream.start("manual-teardown", self.repo)
+        head = git(path, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", "--delete", "agent/manual-teardown")
+        workstream._teardown_workstream("manual-teardown", "agent/manual-teardown", self.repo, path, head)
+        self.assertFalse(path.exists())
+
+    def test_finish_reports_already_finished_when_nothing_is_attached(self):
+        path = workstream.start("fully-done", self.repo)
+        self._commit_task_work(path, "fully-done")
+        self._simulate_already_landed(path)
+        git(self.repo, "push", "origin", "--delete", "agent/fully-done")
+        git(self.repo, "worktree", "remove", "--force", str(path))
+        git(self.repo, "branch", "-D", "agent/fully-done")
+        # No worktree, no remote branch, no validation report needed: the
+        # already-finished short-circuit runs before validation is touched.
+        workstream.finish("fully-done", self.base / "does-not-exist.json", repo=self.repo)
+
+    def test_finish_without_worktree_fails_closed_when_unverifiable(self):
+        with self.assertRaisesRegex(workstream.WorkstreamError, "no attached worktree"):
+            workstream.finish("never-existed", self.base / "x.json", repo=self.repo)
+
+    def test_finish_leaves_dirty_persistent_root_untouched(self):
+        path = workstream.start("dirty-root-finish", self.repo)
+        self._commit_task_work(path, "dirty-root-finish")
+        (self.repo / "uncommitted-root-file").write_text("dirty\n")
+        workstream.finish("dirty-root-finish", self._green_report(), repo=path)
+        self.assertTrue((self.repo / "uncommitted-root-file").exists())
+        self.assertNotEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
 
 
 if __name__ == "__main__":

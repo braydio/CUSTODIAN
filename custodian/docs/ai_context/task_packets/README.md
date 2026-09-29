@@ -164,12 +164,13 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, visually verify/correct late seams without moving gameplay authority, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
+- `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — paired independent code/runtime/visual/asset review of the Awakening convergence and handoff-readiness slice.
 - `SECOND_PASS_REVIEW_CONTRACT_V2.md` — P1 V2 second-pass review hardening: stable finding IDs, correction thresholds, delta correction packets, and pipeline-feedback separation.
 - `REVIEW_SECOND_PASS_REVIEW_CONTRACT_V2.md` — paired independent review of the V2 second-pass review/correction contract; blocked on `second-pass-review-contract-v2`.
 - `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — paired independent review of startup routing, bootstrap reuse, and story-default preservation.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
-- `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
-- `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening, blocked on `workstream-finish-landed-closeout-hardening`.
+- `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening; its `workstream-finish-landed-closeout-hardening` dependency is now archived complete, so it is eligible subject to the shared `agent-workflow` lock.
 - `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; its `agent-review-pipeline` dependency is now archived complete, so it is eligible subject to the shared `agent-workflow` lock.
 - `REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired independent review of the forensic slice, blocked on `twin-solaria-crown-incident-forensics`.
 - `TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — P1 Slice D: fail-closed route candidate/evidence/reciprocity authority and HOLD / ABORT / AUTHORIZE ACQUISITION decisions; blocked on reviewed Slice C.
@@ -178,6 +179,7 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — paired independent review of Slice E; no automatic Passage slice follows.
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
+- `OPERATOR_RUNTIME_DECOMPLEXIFICATION.md` — P1 C2b.2 resume of the paused Operator god-file migration: repair canonical damage reactions, remove the final Operator legacy selector/fallback debt, and shrink the architecture ledger from 95 to 75.
 - `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
 - `TASK_PACKET_INDEX_AUTOMODE_HARDENING.md` — P2 bounded auto-index hardening queued after the AI-context validator: deterministically check/write only the Ready / Auto Dispatch block from packet metadata while preserving manual, in-progress, and historical sections.
 - `AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — P2 one-time conservative cleanup of pre-hardened stale `agent/*` branches and `Recently Complete` packet residue after finish hardening lands.

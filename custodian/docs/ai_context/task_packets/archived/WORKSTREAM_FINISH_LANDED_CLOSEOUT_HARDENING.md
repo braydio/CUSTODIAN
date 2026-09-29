@@ -2,7 +2,7 @@
 
 - Workstream: `workstream-finish-landed-closeout-hardening`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-review-pipeline`
@@ -267,6 +267,47 @@ Before normal finish:
 - land through the corrected normal lifecycle itself if safe.
 
 If using this very packet to prove the corrected already-landed behavior would require circular manual intervention, land normally and let the paired review reproduce the fast path in a temporary fixture. Do not create artificial remote state in the production repo.
+
+## Completion Notes
+
+- F1/F2 fixed together: `closing_summary_committed_for_workstream` proves the
+  summary via `git cat-file -e HEAD:<name>` (never a diff against a moving
+  `origin/main`), and `task_head_reachable_from_main` short-circuits straight
+  to teardown before `sync_main`/`land_main.py` are ever called. Verified the
+  bug condition directly in a test: once HEAD is landed,
+  `git diff origin/main...HEAD` really is empty (merge-base becomes HEAD
+  itself), yet `finish` still succeeds.
+- F3: `finish` now reads as PREPARED → (ALREADY_LANDED | SYNC_REQUIRED →
+  READY_TO_LAND) → teardown, as plain conditional branching (no enum/database),
+  with `land_main.py` remaining the sole landing authority — it is only ever
+  skipped when already-landed is independently proven, never reimplemented.
+- F4: `land_main.py`'s existing unrelated-vs-own-upstream guard needed no
+  behavior change; added the one genuinely missing regression
+  (`test_task_already_on_main_is_a_successful_noop`) to the four scenarios
+  already covered.
+- F5: root-sync stayed exactly as-is; added explicit dirty-untouched and
+  clean-fast-forwards assertions so a future change can't turn it into an
+  implicit stash/reset.
+- Idempotence: teardown tolerates an already-deleted remote branch
+  (`"remote ref does not exist"` only); a `finish` re-run with nothing
+  attached reports a clear already-finished result when the summary is
+  durably on `origin/main`, or fails closed with "investigate before
+  recreating anything" otherwise — it never guesses.
+- Checked the "declared/derived closing-summary filename convention" caution
+  against every real archived packet before implementing: zero mismatches
+  between `<workstream-id-upper>_CLAUDE_SUMMARY.md` and the actual committed
+  filename, so the strict transform is safe as the primary check; an
+  explicitly-documented-alternate fallback (regex over the packet body) covers
+  the one case the packet warned about, without weakening the default.
+- Focused tests: `test_workstream.py` 18/18 (9 pre-existing + 9 new, covering
+  packet items 1–3, 4–7, 10–13 directly); `test_land_main.py` 11/11 (10
+  pre-existing + 1 new, item 8/9/4); `test_dispatch.py` 56/56 unaffected
+  (items 14–15); `agent_workflow_smoke.py` green; `git diff --check` clean.
+- One existing test fixture (`test_finish_lands_verifies_and_tears_down`) used
+  a placeholder summary name (`SAMPLE_CLAUDE_SUMMARY.md`) unrelated to its
+  workstream ID; renamed to `FINISH_ME_CLAUDE_SUMMARY.md` to match real
+  convention now that the check is exact-name based, and used it to add the
+  missing clean-root-fast-forward assertion (item 13).
 
 ## Handoff
 

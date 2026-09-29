@@ -375,53 +375,58 @@ def checkpoint(workstream_id: str, remove_worktree: bool = False, repo: Path | N
     print(f"checkpoint retained: origin/{branch} at {remote}; workstream remains active")
 
 
-def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None) -> None:
-    repo = (repo or root_repo()).resolve()
-    branch = branch_for(workstream_id)
-    path = find_worktree(repo, branch)
-    if git("branch", "--show-current", cwd=path) != branch:
-        raise WorkstreamError("finish must run for its matching agent/<workstream-id> branch")
-    artifact_preflight(workstream_id, path)
-    if not status_clean(path):
-        raise WorkstreamError("finish requires a clean worktree and committed task files")
-    committed_files = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
-    if not any(Path(name).name.endswith("_CLAUDE_SUMMARY.md") for name in committed_files):
-        raise WorkstreamError("required task closing summary is not committed")
-    if not validation_green(validation_report):
-        raise WorkstreamError("focused validation report is not green")
+def _expected_summary_filename(workstream_id: str) -> str:
+    return f"{workstream_id.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
 
-    git("push", "-u", "origin", branch, cwd=path)
-    fetch(path)
-    before = git("rev-parse", "HEAD", cwd=path)
-    changed = sync_main(path)
-    if changed:
-        if validation_report_after_sync is None or not validation_green(validation_report_after_sync):
-            raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
-    artifact_preflight(workstream_id, path)
-    if not status_clean(path):
-        raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
-    git("push", "origin", branch, cwd=path)
-    landing_env = os.environ.copy()
-    landing_env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
-    landed = subprocess.run(
-        [sys.executable, str(Path(__file__).with_name("land_main.py"))],
-        cwd=path,
-        env=landing_env,
-        text=True,
-        capture_output=True,
+
+def _alternate_summary_filenames(repo: Path, workstream_id: str) -> list[str]:
+    """Explicitly documented alternate summary names from the associated packet body.
+
+    Covers a legitimate summary name that does not exactly match the workstream-ID
+    transform, without weakening the default: the packet itself must spell it out.
+    """
+    names: list[str] = []
+    for packet in _associated_task_packets(repo, workstream_id):
+        for match in re.finditer(r"\b([A-Z0-9]+(?:_[A-Z0-9]+)*_CLAUDE_SUMMARY\.md)\b", packet.read_text()):
+            if match.group(1) not in names:
+                names.append(match.group(1))
+    return names
+
+
+def closing_summary_committed_for_workstream(workstream_id: str, path: Path) -> str:
+    """Prove a closing summary is durably committed at HEAD.
+
+    Independent of any diff against ``origin/main``: that diff goes empty once
+    HEAD is already an ancestor of ``origin/main`` (the merge-base becomes HEAD
+    itself), which previously made an already-landed task's real, committed
+    summary look missing. Returns the proven filename, or raises.
+    """
+    repo = root_repo(path)
+    candidates = [_expected_summary_filename(workstream_id)]
+    candidates += [name for name in _alternate_summary_filenames(repo, workstream_id) if name not in candidates]
+    for name in candidates:
+        if subprocess.run(["git", "cat-file", "-e", f"HEAD:{name}"], cwd=path).returncode == 0:
+            return name
+    raise WorkstreamError(
+        "required task closing summary is not committed at HEAD; expected one of: "
+        + ", ".join(candidates)
     )
-    if landed.returncode:
-        raise WorkstreamError(f"land_main blocked; workstream preserved: {(landed.stderr or landed.stdout).strip()}")
-    fetch(path)
-    head = git("rev-parse", "HEAD", cwd=path)
-    reachable = subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"], cwd=path).returncode == 0
-    if not reachable:
-        raise WorkstreamError("landing did not verify as reachable from origin/main; recovery branch retained")
+
+
+def task_head_reachable_from_main(path: Path, remote_ref: str = "origin/main") -> bool:
+    return subprocess.run(["git", "merge-base", "--is-ancestor", "HEAD", remote_ref], cwd=path).returncode == 0
+
+
+def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path, head: str) -> None:
     admin_repo = administrative_worktree(repo, path)
-    git("push", "origin", "--delete", branch, cwd=path)
+    # Tolerate a remote branch already deleted by an earlier, interrupted finish
+    # attempt; any other push failure is a real blocker, not idempotence.
+    delete = subprocess.run(["git", "push", "origin", "--delete", branch], cwd=path, text=True, capture_output=True)
+    if delete.returncode and "remote ref does not exist" not in (delete.stderr or ""):
+        raise WorkstreamError(f"failed to delete remote branch {branch}: {(delete.stderr or delete.stdout).strip()}")
     git("worktree", "remove", str(path), cwd=admin_repo)
     # The local main branch may intentionally lag origin/main in the coordination
-    # checkout. Reachability was proven above against freshly fetched origin/main.
+    # checkout. Reachability was proven by the caller against freshly fetched origin/main.
     git("branch", "-D", branch, cwd=admin_repo)
     git("worktree", "prune", cwd=admin_repo)
     git("fetch", "--prune", "origin", cwd=admin_repo)
@@ -440,6 +445,107 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
             print(f"persistent root synchronization pending (dirty): {root_path}")
         break
     print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
+
+
+def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Path) -> None:
+    """No attached worktree for this workstream: either genuinely already
+    finished (report success, do not encourage recreating anything) or an
+    unverifiable/bogus state (fail closed for investigation)."""
+    remote_exists = subprocess.run(
+        ["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo
+    ).returncode == 0
+    if remote_exists:
+        raise WorkstreamError(
+            f"no attached worktree found for {branch}, but its remote branch still exists; "
+            "recovery required rather than recreating the worktree"
+        )
+    summary_names = [_expected_summary_filename(workstream_id)] + _alternate_summary_filenames(repo, workstream_id)
+    summary_landed = any(
+        subprocess.run(["git", "cat-file", "-e", f"origin/main:{name}"], cwd=repo).returncode == 0
+        for name in summary_names
+    )
+    if summary_landed:
+        print(
+            f"already finished: no attached worktree or remote branch for {branch}; "
+            "its closing summary is present on origin/main"
+        )
+        return
+    raise WorkstreamError(
+        f"no attached worktree or remote branch found for {branch}, and no closing summary is "
+        "present on origin/main to confirm it already finished; investigate before recreating anything"
+    )
+
+
+def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None) -> None:
+    repo = (repo or root_repo()).resolve()
+    branch = branch_for(workstream_id)
+    fetch(repo)
+    try:
+        path = find_worktree(repo, branch)
+    except WorkstreamError:
+        _finish_without_attached_worktree(workstream_id, branch, repo)
+        return
+    if git("branch", "--show-current", cwd=path) != branch:
+        raise WorkstreamError("finish must run for its matching agent/<workstream-id> branch")
+
+    # PREPARED: artifacts, cleanliness, a durably committed summary, and green
+    # validation are required regardless of whether this task already landed.
+    artifact_preflight(workstream_id, path)
+    if not status_clean(path):
+        raise WorkstreamError("finish requires a clean worktree and committed task files")
+    closing_summary_committed_for_workstream(workstream_id, path)
+    if not validation_green(validation_report):
+        raise WorkstreamError("focused validation report is not green")
+
+    git("push", "-u", "origin", branch, cwd=path)
+    fetch(path)
+
+    if task_head_reachable_from_main(path):
+        # ALREADY_LANDED: this exact task history is already on origin/main (a
+        # prior finish attempt landed it but did not finish teardown, or it
+        # merged in some other way). Skip sync/land entirely and go straight
+        # to verified teardown; do not rewrite or remerge task history.
+        head = git("rev-parse", "HEAD", cwd=path)
+        _teardown_workstream(workstream_id, branch, repo, path, head)
+        return
+
+    # SYNC_REQUIRED -> READY_TO_LAND
+    changed = sync_main(path)
+    if changed:
+        if validation_report_after_sync is None or not validation_green(validation_report_after_sync):
+            raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
+    artifact_preflight(workstream_id, path)
+    if not status_clean(path):
+        raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
+    git("push", "origin", branch, cwd=path)
+
+    if task_head_reachable_from_main(path):
+        # Synchronization itself (a fast-forward merge, or a concurrent landing
+        # of this exact history) already made HEAD reachable from main.
+        head = git("rev-parse", "HEAD", cwd=path)
+        _teardown_workstream(workstream_id, branch, repo, path, head)
+        return
+
+    # LANDED: hand off to the sole active landing authority. Never duplicate
+    # its serialized rebase/push logic here.
+    landing_env = os.environ.copy()
+    landing_env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
+    landed = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("land_main.py"))],
+        cwd=path,
+        env=landing_env,
+        text=True,
+        capture_output=True,
+    )
+    if landed.returncode:
+        raise WorkstreamError(f"land_main blocked; workstream preserved: {(landed.stderr or landed.stdout).strip()}")
+    fetch(path)
+    head = git("rev-parse", "HEAD", cwd=path)
+    if not task_head_reachable_from_main(path):
+        raise WorkstreamError("landing did not verify as reachable from origin/main; recovery branch retained")
+
+    # READY_TO_TEARDOWN -> FINISHED
+    _teardown_workstream(workstream_id, branch, repo, path, head)
 
 
 def status(workstream_id: str | None = None, repo: Path | None = None) -> None:
