@@ -297,6 +297,57 @@ func _check_zone_art_fade(instance: Node) -> void:
 		_fail("04→05 connector art must fade out away from the dogleg")
 	if foreground != null and foreground.modulate.a != 0.0:
 		_fail("04→05 foreground must fade out with the underlay away from the dogleg")
+	var dust_lung := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay") as CanvasItem
+	if dust_lung == null:
+		_fail("Dust Lung room art is missing from the connector crossfade")
+		return
+	var transition_points := [
+		{"name": "Reliquary end", "position": Layout.CONNECTORS["04_05_A"].get_center(), "reliquary_alpha": 0.0, "dust_alpha": 0.0},
+		{"name": "dogleg", "position": Layout.CONNECTORS["04_05_B"].get_center(), "reliquary_alpha": 0.0, "dust_alpha": 0.0},
+		{"name": "Dust Lung end", "position": Layout.CONNECTORS["04_05_C"].get_center(), "reliquary_alpha": 0.0, "dust_alpha": 0.0},
+	]
+	for transition in transition_points:
+		operator.global_position = transition["position"]
+		instance.call("_update_zone_art_visibility")
+		if not is_equal_approx(reliquary.modulate.a, float(transition["reliquary_alpha"])):
+			_fail("%s Reliquary art should use the distance fade inside the connector (expected %s, got %s)" % [transition["name"], transition["reliquary_alpha"], reliquary.modulate.a])
+		if not is_equal_approx(dust_lung.modulate.a, float(transition["dust_alpha"])):
+			_fail("%s Dust Lung art should use the distance fade inside the connector (expected %s, got %s)" % [transition["name"], transition["dust_alpha"], dust_lung.modulate.a])
+		if not is_equal_approx(connector.modulate.a, 1.0):
+			_fail("connector art must remain visible underneath the %s room fade" % transition["name"])
+	var edge_samples := [
+		{"name": "Reliquary interior", "position": Vector2(704, -2144), "room": reliquary, "alpha": 1.0},
+		{"name": "Reliquary blend midpoint", "position": Vector2(704, -2208), "room": reliquary, "alpha": 0.5},
+		{"name": "Reliquary threshold", "position": Vector2(704, -2272), "room": reliquary, "alpha": 0.0},
+		{"name": "Reliquary connector", "position": Vector2(704, -2336), "room": reliquary, "alpha": 0.0},
+		{"name": "Dust Lung interior", "position": Vector2(0, -2784), "room": dust_lung, "alpha": 1.0},
+		{"name": "Dust Lung blend midpoint", "position": Vector2(0, -2720), "room": dust_lung, "alpha": 0.5},
+		{"name": "Dust Lung threshold", "position": Vector2(0, -2656), "room": dust_lung, "alpha": 0.0},
+		{"name": "Dust Lung connector", "position": Vector2(0, -2592), "room": dust_lung, "alpha": 0.0},
+	]
+	for sample in edge_samples:
+		operator.global_position = sample["position"]
+		instance.call("_update_zone_art_visibility")
+		var room := sample["room"] as CanvasItem
+		if not is_equal_approx(room.modulate.a, float(sample["alpha"])):
+			_fail("%s opacity should be %s at the 128px connector crossfade sample, got %s" % [sample["name"], sample["alpha"], room.modulate.a])
+	# Traverse back through the same checkpoints to assert a reversible fade and
+	# room restoration, with no connector-local opacity override on either end.
+	var backtracking_points := transition_points.duplicate()
+	backtracking_points.reverse()
+	for transition in backtracking_points:
+		operator.global_position = transition["position"]
+		instance.call("_update_zone_art_visibility")
+		if not is_equal_approx(reliquary.modulate.a, float(transition["reliquary_alpha"])) or not is_equal_approx(dust_lung.modulate.a, float(transition["dust_alpha"])):
+			_fail("backtracking must restore the expected %s room crossfade" % transition["name"])
+	operator.global_position = Layout.ZONES[4]["envelope"].get_center()
+	instance.call("_update_zone_art_visibility")
+	if not is_equal_approx(dust_lung.modulate.a, 1.0):
+		_fail("Dust Lung room art must restore fully after connector backtracking")
+	operator.global_position = Layout.ZONES[3]["envelope"].get_center()
+	instance.call("_update_zone_art_visibility")
+	if not is_equal_approx(reliquary.modulate.a, 1.0):
+		_fail("Reliquary room art must restore fully after connector backtracking")
 
 
 func _check_connector_art(instance: Node) -> void:

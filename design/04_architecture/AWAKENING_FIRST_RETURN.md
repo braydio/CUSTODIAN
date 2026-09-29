@@ -134,8 +134,10 @@ an Asset V2 `full_plate_underlay` presentation sprite (1024×576), centered at
 locked `04_05_A/B/C` Layout rectangles; the fade envelope is still derived by
 merging those rectangles, and the plate does not own traversal or collision.
 The neighboring Reliquary and Dust Lung underlay pixels are registered into
-the connector's room-end bleed, and those room plates remain opaque over the
-shared canvas while the Operator is inside the connector union.
+the connector's room-end bleed. At their 04→05 facing edges, the room plates
+fade down across the existing 128px band inside their Layout envelopes while
+the connector plate fades up across the matching connector envelope. The shared
+registered pixels keep the crossfade reversible without a straight canvas join.
 The source master is a flattened RGB image, so a separate foreground occlusion
 state is intentionally unbound rather than cut from baked lighting/shadows. The
 first five Road modular plate pairs remain pending native-size replacement.

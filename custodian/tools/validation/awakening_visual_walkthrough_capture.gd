@@ -5,6 +5,7 @@ extends SceneTree
 const Layout := preload("res://game/world/awakening/awakening_layout.gd")
 const SCENE := preload("res://scenes/awakening_first_return.tscn")
 const OUTPUT := "res://../reports/awakening_visual_walkthrough"
+const CONNECTOR_OUTPUT := "res://../reports/awakening_connector_04_05"
 
 
 func _init() -> void:
@@ -22,12 +23,15 @@ func _run() -> void:
 	var camera := scene.get_node("World/Camera2D") as Camera2D
 	camera.operator_ref = operator
 	camera.follow_target = operator
-	var output := ProjectSettings.globalize_path(OUTPUT)
-	DirAccess.make_dir_recursive_absolute(output)
 	var only := ""
+	var output_path := OUTPUT
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--only="):
 			only = argument.trim_prefix("--only=")
+		elif argument == "--connector-review":
+			output_path = CONNECTOR_OUTPUT
+	var output := ProjectSettings.globalize_path(output_path)
+	DirAccess.make_dir_recursive_absolute(output)
 	for checkpoint in _checkpoints():
 		if not only.is_empty() and not String(checkpoint["name"]).begins_with(only):
 			continue
@@ -42,7 +46,8 @@ func _run() -> void:
 		for frame in 3:
 			RenderingServer.force_draw(false)
 			await process_frame
-		var path := output.path_join(String(checkpoint["name"]) + ".png")
+		var filename := String(checkpoint.get("filename", checkpoint["name"]))
+		var path := output.path_join(filename + ".png")
 		if viewport.get_texture().get_image().save_png(path) != OK:
 			push_error("Awakening walkthrough capture failed: " + path)
 			quit(1)
@@ -71,6 +76,10 @@ func _checkpoints() -> Array[Dictionary]:
 		{"name": "connector_04_05_A", "position": (Layout.CONNECTORS["04_05_A"] as Rect2).get_center()},
 		{"name": "connector_04_05_B", "position": (Layout.CONNECTORS["04_05_B"] as Rect2).get_center()},
 		{"name": "connector_04_05_C", "position": (Layout.CONNECTORS["04_05_C"] as Rect2).get_center()},
+		{"name": "connector_review_A", "filename": "connector_A", "position": (Layout.CONNECTORS["04_05_A"] as Rect2).get_center()},
+		{"name": "connector_review_B", "filename": "connector_B", "position": (Layout.CONNECTORS["04_05_B"] as Rect2).get_center()},
+		{"name": "connector_review_C", "filename": "connector_C", "position": (Layout.CONNECTORS["04_05_C"] as Rect2).get_center()},
+		{"name": "connector_review_overview", "filename": "connector_overview", "position": _connector_envelope().get_center()},
 		{"name": "dust_lung_center", "position": (dust["envelope"] as Rect2).get_center() + Vector2(256, 0)},
 		{"name": "dust_lung_lift", "position": _marker(&"zone05_dust_lung", "lift_lower")},
 		{"name": "undergate_center", "position": (undergate["envelope"] as Rect2).get_center()},
@@ -85,3 +94,9 @@ func _marker(zone_id: StringName, marker_id: String) -> Vector2:
 		if String(marker.get("id", "")) == marker_id:
 			return marker["position"]
 	return Vector2.ZERO
+
+
+func _connector_envelope() -> Rect2:
+	return (Layout.CONNECTORS["04_05_A"] as Rect2).merge(
+		Layout.CONNECTORS["04_05_B"]
+	).merge(Layout.CONNECTORS["04_05_C"])

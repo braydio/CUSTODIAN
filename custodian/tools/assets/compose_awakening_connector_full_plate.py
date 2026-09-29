@@ -93,6 +93,7 @@ ROOM_OVERLAPS = [
         "destination": (512, 416),
     },
 ]
+ROOM_OVERLAP_FEATHER_PX = 32
 
 
 def _piece_image(source: Image.Image, spec: dict[str, object]) -> tuple[Image.Image, tuple[int, int]]:
@@ -123,6 +124,25 @@ def _piece_image(source: Image.Image, spec: dict[str, object]) -> tuple[Image.Im
     return rgb, origin
 
 
+def _feather_overlap_edges(region: Image.Image, feather_px: int) -> Image.Image:
+    """Blend rectangular room crops into the connector without a canvas edge."""
+    if feather_px <= 1:
+        return region
+    alpha = region.getchannel("A")
+    feather = Image.new("L", region.size, 0)
+    source_pixels = alpha.load()
+    feather_pixels = feather.load()
+    width, height = region.size
+    denominator = feather_px - 1
+    for y in range(height):
+        for x in range(width):
+            edge_distance = min(x, y, width - 1 - x, height - 1 - y)
+            edge_weight = min(255, round(edge_distance * 255 / denominator))
+            feather_pixels[x, y] = source_pixels[x, y] * edge_weight // 255
+    region.putalpha(feather)
+    return region
+
+
 def main() -> None:
     source = Image.open(SOURCE)
     if source.size != (1374, 1145) or source.mode != "RGB":
@@ -149,11 +169,12 @@ def main() -> None:
         region = room.crop((left, top, right, bottom))
         if region.size != (right - left, bottom - top):
             raise SystemExit(f"invalid room overlap crop for {overlap['name']}: {region.size}")
-        occupied = region.getchannel("A").point(lambda alpha: 255 if alpha else 0)
-        plate.paste(region, overlap["destination"], occupied)
+        _feather_overlap_edges(region, ROOM_OVERLAP_FEATHER_PX)
+        plate.alpha_composite(region, dest=overlap["destination"])
         print(
             f"{overlap['name']}: source={room_path.relative_to(ROOT)}"
             f" crop={overlap['source_box']} destination={overlap['destination']}"
+            f" edge_feather={ROOM_OVERLAP_FEATHER_PX}px"
         )
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

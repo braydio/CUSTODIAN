@@ -132,11 +132,18 @@ func _cache_zone_art_visibility_targets() -> void:
 			var item := zone_node.get_node_or_null(child_name) as CanvasItem
 			if item != null:
 				targets.append(item)
-		_zone_fade_entries.append({
+		var entry := {
 			"rect": zone["envelope"],
 			"targets": targets,
-			"keep_opaque_in_connector": String(zone["node"]) in ["Zone04_LockerReliquary", "Zone05_DustLung"],
-		})
+		}
+		match String(zone["node"]):
+			"Zone04_LockerReliquary":
+				entry["connector_edge"] = Layout.CONNECTORS["04_05_A"]
+				entry["connector_edge_side"] = "north"
+			"Zone05_DustLung":
+				entry["connector_edge"] = Layout.CONNECTORS["04_05_C"]
+				entry["connector_edge_side"] = "south"
+		_zone_fade_entries.append(entry)
 	_connector_envelope = Layout.CONNECTORS["04_05_A"].merge(
 		Layout.CONNECTORS["04_05_B"]
 	).merge(Layout.CONNECTORS["04_05_C"])
@@ -156,7 +163,6 @@ func _update_zone_art_visibility() -> void:
 	if point.distance_squared_to(_last_art_visibility_position) < 1.0:
 		return
 	_last_art_visibility_position = point
-	var inside_connector := _connector_envelope.has_point(point)
 	for entry in _zone_fade_entries:
 		var rect: Rect2 = entry["rect"]
 		var nearest := Vector2(
@@ -164,8 +170,17 @@ func _update_zone_art_visibility() -> void:
 			clampf(point.y, rect.position.y, rect.end.y)
 		)
 		var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
-		if inside_connector and bool(entry["keep_opaque_in_connector"]):
-			alpha = 1.0
+		if entry.has("connector_edge"):
+			var edge: Rect2 = entry["connector_edge"]
+			var horizontal_range := Rect2(
+				edge.position.x - ZONE_ART_FADE_DISTANCE,
+				edge.position.y,
+				edge.size.x + 2.0 * ZONE_ART_FADE_DISTANCE,
+				edge.size.y
+			)
+			if horizontal_range.position.x <= point.x and point.x <= horizontal_range.end.x:
+				var signed_distance := point.y - edge.position.y if entry["connector_edge_side"] == "south" else edge.end.y - point.y
+				alpha = clampf(-signed_distance / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
 		_apply_art_alpha(entry["targets"], alpha)
 	var nearest := Vector2(
 		clampf(point.x, _connector_envelope.position.x, _connector_envelope.end.x),

@@ -1,13 +1,13 @@
 # AWAKENING 04→05 CONNECTOR VISUAL CLOSEOUT
 
 - Workstream: `awakening-reliquary-dust-lung-connector`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `awakening-04-05-connector-presentation`
 - Goal: Remove the remaining visible straight room-canvas joins at the Dust Lung and Locker Reliquary ends of the 04→05 connector without changing traversal geometry, room placement, or the approved source art.
-- Current measured state: `main@c53160b` replaced the rejected 832×384 route-only plate with a 1024×576 `full_plate_underlay` centered at `(352,-2464)`, with 96px architectural bleed and exact registered room-underlay pixels at both ends. Focused Awakening and Asset V2 validation passed. Direct runtime review still shows a straight room-canvas edge at the C/A joins. The runtime currently forces Zone04/Zone05 art to alpha 1.0 whenever the Operator is inside the merged connector envelope via `keep_opaque_in_connector`, even though the connector already contains exact registered room pixels for crossfade overlap. The optional foreground state remains intentionally unbound because the approved master is flattened RGB.
+- Current measured state: `main@791eb9a62` contained the 1024×576 `full_plate_underlay` centered at `(352,-2464)`, 96px architectural bleed, and registered room pixels at both ends. Direct captures reproduced straight paste boundaries. This slice removed the connector opacity override, fades Zone04/Zone05 art down across a 128px connector-facing band, and feathers the two compositor room-overlap masks by 32px. The optional foreground state remains intentionally unbound because the approved master is flattened RGB.
 - Task-specific authority: `design/04_architecture/AWAKENING_FIRST_RETURN.md`; `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/tools/assets/compose_awakening_connector_full_plate.py`; `custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json`.
 - Change:
   1. Remove the binary Zone04/Zone05 “keep opaque while inside connector” presentation behavior and let those room plates transition through the existing distance-based zone fade while the connector underlay remains driven by the merged A/B/C envelope. Preserve `ZONE_ART_FADE_DISTANCE`.
@@ -24,9 +24,18 @@
   - Focused smoke asserts the corrected alpha lifecycle at representative C/A transition positions and passes with geometry/progression regressions.
   - If compositor pixels change, Asset V2 ingest/status/doctor and the asset pipeline ingest smoke pass for the family with no stale runtime state.
   - New C/B/A/overview evidence is committed under the existing `reports/awakening_connector_04_05/` convention and the closing summary records whether visual acceptance is actually green.
-  - `FILE_INDEX.md` and the connector closing summary no longer state superseded runtime truth.
-- Task overrides: `none`
+- `FILE_INDEX.md` and the connector closing summary no longer state superseded runtime truth.
+
+### Completion
+
+- `awakening_first_return_smoke.gd` asserts the 128px room-to-connector crossfade at Reliquary and Dust Lung midpoints/thresholds, connector visibility at C/B/A, reverse traversal, and full room-art restoration.
+- The compositor feathers only its registered room-overlap crop edges by 32px; canvas size/center, approved source, route registration, and Layout A/B/C are unchanged.
+- The user-authorized WAV compatibility repair converted `hit_medium_body_01.wav` from PCM signed 24-bit to PCM signed 16-bit; mono, 48 kHz, and 0.683542-second duration are preserved. Its existing `.import` descriptor imported successfully, and validation ownership now routes this runtime dependency through the Awakening integration test.
+- New renderer-backed 1920×1080 captures at C, B, A, and overview are saved in `reports/awakening_connector_04_05/`. Direct review confirms the previous rectangular room-paste joins are no longer visible; exterior transparency remains intentional. Visual acceptance is green.
+- Targeted Asset V2 replace ingest completed with Godot import. The source-work master was not changed. The optional foreground remains deferred.
+- Task overrides: user-authorized WAV import compatibility conversion, preserving mono, 48 kHz, and duration.
 - Deferred: Authored foreground occlusion remains deferred until a layered/alpha-separated source can support it without arbitrary cuts through baked lighting and shadows.
+- Scope extension authorized by user: Convert the unrelated-but-blocking `custodian/content/audio/sfx/combat/hit_medium_body_01.wav` from PCM 24-bit to Godot-importable PCM 16-bit while preserving mono, 48 kHz, and duration. The `.import` descriptor already exists; this is source-format repair, not descriptor regeneration.
 
 ### Work Surface
 
@@ -42,6 +51,5 @@
 
 ### Handoff
 
-- Next action: Claim `awakening-reliquary-dust-lung-connector`, start from the live C/A seam captures, and test the room-opacity override before editing asset composition.
-- Best starting files: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/tools/validation/awakening_first_return_smoke.gd`; `reports/awakening_connector_04_05/`.
-- Blockers or open questions: None. Foreground occlusion is explicitly deferred and is not required for this closeout slice.
+- Closed: connector crossfade and crop feathering are implemented, direct evidence reviewed, task files documented, and changed-file validation passed. The user-authorized WAV import compatibility repair is included in this task branch.
+- Deferred: foreground occlusion remains pending a layered or alpha-separated source. No blocking questions remain.

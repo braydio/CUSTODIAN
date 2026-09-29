@@ -25,4 +25,4 @@
 
 ## Rejected-version history
 
-The previous 832×384 screenshots under `reports/awakening_visual_walkthrough/connector_full_plate_pass_20260926/` document the rejected composition only. Their earlier “no hard crop seam / visually acceptable” verdict is superseded by the user's review and must not be used as acceptance evidence. The present implementation remains uncommitted pending a clean, directly reviewed room join.
+The previous 832×384 screenshots under `reports/awakening_visual_walkthrough/connector_full_plate_pass_20260926/` document the rejected composition only. Their earlier “no hard crop seam / visually acceptable” verdict is superseded by the user's review and must not be used as acceptance evidence. The 1024×576 connector slice landed before this visual-closeout packet was dispatched; this packet owns that follow-up and its current evidence.
