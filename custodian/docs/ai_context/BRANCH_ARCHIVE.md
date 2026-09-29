@@ -19,3 +19,4 @@ branches need no tag because main retains their history.
 | `codex/twin-solaria-runtime-v1` | `576934b47de37a8c755955cff86540fbbc8b18f0` | 2026-09-27 | fully contained by main | — | Fully contained by current main at retirement; no unique history. |
 | `feature/fast-attack-three-phase-windup` | `c46d046354c35f3326ebe3574d123f6f5fbd6032` | 2026-09-27 | fully contained by main | — | Fully contained by current main at retirement; no unique history. |
 | `sundered-keep-cheatsheet-layout` | `7dea7c461e8caf631d077759f9cf1a326bcc58ca` | 2026-09-27 | fully contained by main | — | Fully contained by current main at retirement; no unique history. |
+| `agent/agent-review-pipeline` | `64f43894f96478ae20d8313f7287fc19d519091e` | 2026-09-29 | fully contained by main | — | Released stale dispatcher claim; branch had no unique commits and blocked the review-pipeline queue. |
