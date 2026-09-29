@@ -167,6 +167,7 @@ At minimum fixtures should prove:
 - Added dispatcher rejection for missing/malformed auto-review overrides and stale validation script references; diagnostics include a nearest live path when available.
 - Added structural finding/correction fixture checks and a temporary-worktree regression proving allowed review artifacts commit while reviewed implementation and unrelated dirty root state remain unchanged.
 - Validation passed: 61 dispatcher tests, 5 review-contract fixture tests, 8 workstream artifact tests, 11 landing tests, prompt-template contract checks, Python compilation, manifest JSON parsing, and `git diff --check`.
+- `run_validation.py --changed --base origin/main --json` passed all 6 selected tests with complete ownership coverage.
 
 ## Execution Feedback
 

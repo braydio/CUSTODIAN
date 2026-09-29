@@ -17,7 +17,7 @@
 - Standalone `validate_review_pairing.py`: passed for 6 live paired auto-review packets and candidate-tree validation paths.
 - Prompt-template contract: passed with zero repeated defaults.
 - Python compilation, validation-manifest JSON parse, and `git diff --check`: passed.
-- Changed-file validation remains the final closeout check.
+- `run_validation.py --changed --base origin/main --json`: all 6 selected tests passed with complete ownership coverage.
 
 ## Awkward Finding
 
