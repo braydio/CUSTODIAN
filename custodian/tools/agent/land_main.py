@@ -115,6 +115,37 @@ def land(remote: str = "origin", target: str = "main", attempts: int = 3, dry_ru
         if not original_commits:
             print(f"already up to date with {remote}/{target}; nothing to land")
             return 0
+
+        published = already_published_elsewhere(root, original_commits, target_ref)
+        if published:
+            raise LandingError(published)
+
+        head = git("rev-parse", "HEAD", cwd=root).stdout.strip()
+        if git("merge-base", "--is-ancestor", target_ref, head, check=False, cwd=root).returncode == 0:
+            # A synchronized workstream may already contain main as a merge
+            # parent. Preserve that history and fast-forward main directly;
+            # rebasing such a branch can replay stale packet-index edits and
+            # conflict even though the complete tree is already resolved.
+            for attempt in range(1, attempts + 1):
+                push = git("push", remote, f"HEAD:refs/heads/{target}", check=False, cwd=root)
+                if push.returncode == 0:
+                    print(f"landed {branch} on {remote}/{target}: {head}")
+                    return 0
+
+                try:
+                    target_ref = fetch_main(root, remote, target)
+                except LandingError:
+                    raise LandingError(f"push failed and refresh failed: {(push.stderr or push.stdout).strip()}")
+                if git("merge-base", "--is-ancestor", head, target_ref, check=False, cwd=root).returncode == 0:
+                    print(f"already landed on {remote}/{target} after concurrent push")
+                    return 0
+                if git("merge-base", "--is-ancestor", target_ref, head, check=False, cwd=root).returncode != 0:
+                    print(f"{remote}/{target} advanced beyond the synchronized head; retrying with a rebase")
+                    break
+                if attempt == attempts:
+                    raise LandingError(f"remote main kept advancing after {attempts} fast-forward attempts")
+                print(f"{remote}/{target} advanced during push; retrying ({attempt + 1}/{attempts})")
+        original_commits = commits_to_replay(root, target_ref)
         published = already_published_elsewhere(root, original_commits, target_ref)
         if published:
             raise LandingError(published)

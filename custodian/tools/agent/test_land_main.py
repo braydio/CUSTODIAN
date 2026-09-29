@@ -72,6 +72,29 @@ class LandMainTests(unittest.TestCase):
         self.assertEqual(remote_head, task_head)
         self.assertEqual((self.seed / "task.txt").exists(), False)
 
+    def test_synchronized_merge_branch_fast_forwards_main_without_rebase(self) -> None:
+        run_git(self.task, "fetch", "origin", "main")
+        run_git(self.task, "checkout", "-B", "task/work", "origin/main")
+        self._task_commit("task.txt", "task\n")
+        (self.seed / "main.txt").write_text("main\n")
+        run_git(self.seed, "add", "main.txt")
+        run_git(self.seed, "commit", "-m", "concurrent main change")
+        run_git(self.seed, "push", "origin", "main")
+        run_git(self.task, "fetch", "origin", "main")
+        run_git(self.task, "merge", "--no-ff", "origin/main", "-m", "synchronize main")
+        synchronized_head = run_git(self.task, "rev-parse", "HEAD")
+        self.assertEqual(
+            run_git(self.task, "rev-parse", "HEAD^2"),
+            run_git(self.task, "rev-parse", "origin/main"),
+        )
+
+        result = self._land()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        run_git(self.seed, "fetch", "origin", "main")
+        self.assertEqual(run_git(self.seed, "rev-parse", "origin/main"), synchronized_head)
+        self.assertTrue((self.seed / "task.txt").exists() is False)
+
     def test_remote_main_race_retries_after_rebase(self) -> None:
         self._task_commit("task.txt", "task\n")
         racer = self.base / "racer"

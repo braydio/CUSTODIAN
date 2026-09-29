@@ -33,7 +33,7 @@
 - The user-authorized WAV compatibility repair converted `hit_medium_body_01.wav` from PCM signed 24-bit to PCM signed 16-bit; mono, 48 kHz, and 0.683542-second duration are preserved. Its existing `.import` descriptor imported successfully, and validation ownership now routes this runtime dependency through the Awakening integration test.
 - New renderer-backed 1920×1080 captures at C, B, A, and overview are saved in `reports/awakening_connector_04_05/`. Direct review confirms the previous rectangular room-paste joins are no longer visible; exterior transparency remains intentional. Visual acceptance is green.
 - Targeted Asset V2 replace ingest completed with Godot import. The source-work master was not changed. The optional foreground remains deferred.
-- Task overrides: user-authorized WAV import compatibility conversion, preserving mono, 48 kHz, and duration.
+- Task overrides: user-authorized WAV import compatibility conversion, preserving mono, 48 kHz, and duration; scoped `land_main.py` fast-forward path for a workstream already synchronized with main.
 - Deferred: Authored foreground occlusion remains deferred until a layered/alpha-separated source can support it without arbitrary cuts through baked lighting and shadows.
 - Scope extension authorized by user: Convert the unrelated-but-blocking `custodian/content/audio/sfx/combat/hit_medium_body_01.wav` from PCM 24-bit to Godot-importable PCM 16-bit while preserving mono, 48 kHz, and duration. The `.import` descriptor already exists; this is source-format repair, not descriptor regeneration.
 
@@ -52,4 +52,5 @@
 ### Handoff
 
 - Closed: connector crossfade and crop feathering are implemented, direct evidence reviewed, task files documented, and changed-file validation passed. The user-authorized WAV import compatibility repair is included in this task branch.
+- Landing note: the first finish attempt found the task packet README changed on newer main; after merging and resolving its stale manual entries, the normal landing rebase attempted to replay a merge-synchronized branch and conflicted on that same index. `land_main.py` now pushes a fast-forward when `origin/main` is already an ancestor of the synchronized workstream head, preserving history and handling concurrent main advances without force-pushing.
 - Deferred: foreground occlusion remains pending a layered or alpha-separated source. No blocking questions remain.
