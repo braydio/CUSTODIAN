@@ -1,4 +1,10 @@
 # FILE INDEX — CUSTODIAN
+
+## Asset Workbench
+
+- `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` — living slice roadmap for the general non-Operator Asset Workbench; V1 is FAMILY navigator, REVIEW studio, then safe PIPELINE actions, with later actor/sequence, design, creation/source-intake, and hardening slices.
+- `design/04_architecture/ASSET_PIPELINE_V2.md` and `custodian/tools/assets/` — technical authority consumed by Asset Workbench; the UI must project these contracts rather than create parallel asset truth.
+
 - `custodian/docs/ai_context/task_packets/archived/STARTUP_WORLD_ENTRY_SPINE_V1.md` / `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — completed App/Boot startup-mode spine and active independent review; keeps Awakening default while exposing Twin Solaria and seeded Contract sandbox direct-start paths.
 
 ## Operator Runtime Authority Migration (in progress)
@@ -213,6 +219,8 @@ Last updated: 2026-09-29
 
 ## Active Runtime Systems
 
+- `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md` — canonical tracked 11-slice procgen generation/streaming optimization program, including dependencies, invariants, per-slice status/evidence, and mandatory roadmap reconciliation at slice closeout.
+- `custodian/docs/ai_context/task_packets/PROCGEN_PERFORMANCE_BASELINE_V1.md` / `REVIEW_PROCGEN_PERFORMANCE_BASELINE_V1.md` — queued S1 fixed-seed structured generation/runtime benchmark and paired independent review; S1 changes observability/benchmarking only, not procgen behavior.
 - `custodian/game/world/procgen/custodian_contract_map.gd` — contract generation and planet-linked world profile creation, including deterministic map size/room bands, ambient Shrumb trait profile fields, contract-owned candidate generation, layout plus terrain fallback/connectivity acceptance logging, terrain-fallback candidate rejection/preference rules, and in-place promotion of the accepted structural candidate
 - `custodian/game/world/procgen/proc_gen_tilemap.gd` — runtime procgen façade and state host. Production keeps archived wide-road carving disabled (`intent_main_roads_enabled = false`) while Road Semantics V2 derives intermittent route-backed ruined-road fragments and a bounded service apron. Ruined fragments use the shared filled-surface role grammar as `ruined_road` decals; the opt-in archived renderer remains separately keyed as `road`. Soft paths remain natural-material route presentation. The façade also owns world generation coordination, terrain/result export, collision/runtime blockers, accepted-candidate promotion, macro-then-dressing-cluster planning, foliage/prop orchestration, presentation gauges, streaming, portals, authored-scene floor claims, and the cached five-branch procgen render-isolation surface used by the F2 attribution test.
 - `custodian/game/world/procgen/dressing/` and `custodian/content/procgen/dressing_clusters/` — data-only deterministic cluster planning, foliage child realization, catalog, and three Rocky Upland proof compositions; no texture paths or terrain/gameplay authority live in cluster profiles.

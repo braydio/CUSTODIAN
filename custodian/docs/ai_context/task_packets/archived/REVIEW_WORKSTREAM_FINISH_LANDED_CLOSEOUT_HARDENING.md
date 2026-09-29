@@ -17,7 +17,7 @@
 - Review focus: already-landed short-circuit; durable closing-summary proof; no unnecessary history rewrite; correct published-ref guard; idempotent teardown; preservation of unlanded commits; dirty-root non-mutation; regression safety for ordinary landing and dispatch.
 - Acceptance: Findings-first review either records a clean pass or queues a bounded correction through the live review pipeline. Reviewer must not patch the reviewed workflow code directly.
 - Non-goals: Do not redesign dispatch, continuous workers, or branch hygiene generally.
-- Task overrides: `TASK OVERRIDE: Stage, commit, and push only this review's receipt, summary, and packet/index closeout documents as explicitly authorized by the user; do not modify the reviewed workflow implementation code.`
+- Task overrides: `TASK OVERRIDE: Review only with respect to the reviewed implementation; repository/document mutations required for the durable review receipt, required review closing summary, review-packet lifecycle/archive metadata, and bounded follow-up packets are allowed. The user explicitly authorized finishing this packet; stage, commit, and push only those review closeout documents, and do not modify reviewed workflow implementation code.`
 
 ## Required Checks
 
@@ -35,4 +35,4 @@
 - Completion: Review passed on live main at `745a9ea56` with 0 blocking and 1 non-blocking test-coverage finding. The stale smoke-test path in the archived implementation packet was corrected in-scope.
 - Validation: Workstream and landing suites (29 tests), artifact and branch-hygiene suites (12 tests), dispatcher suite (56 tests), `agent_workflow_smoke.py`, py_compile, and `git diff --check` passed. Temporary-repository probes verified already-landed closeout and exact dirty-root preservation.
 - Next action: none.
-- Blockers or open questions: Blocked only by `workstream-finish-landed-closeout-hardening`.
+- Blockers or open questions: None. The implementation dependency is archived complete, and this review is complete.

@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dk0yvvdid2a8c"
-path="res://.godot/imported/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png-5031652ac680d0f1d6f5d9cacb87443c.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png"
-dest_files=["res://.godot/imported/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png-5031652ac680d0f1d6f5d9cacb87443c.ctex"]
 
 [params]
 

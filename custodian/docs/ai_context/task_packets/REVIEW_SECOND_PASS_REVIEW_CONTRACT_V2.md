@@ -4,12 +4,12 @@
 - Workstream: `review-second-pass-review-contract-v2`
 - Status: `ready`
 - Dispatch: `auto`
-- Priority: `P1`
+- Priority: `P0`
 - Depends on: `second-pass-review-contract-v2`
 - Locks: `agent-workflow`
 - Kind: `review`
 - Review: `none`
-- Reviewed main: `e426995d8`
+- Reviewed main: `b32a10d`
 - Review target workstream: `second-pass-review-contract-v2`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/SECOND_PASS_REVIEW_CONTRACT_V2.md`
 - Review modes: `code, architecture, workflow`
