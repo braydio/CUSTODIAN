@@ -101,6 +101,7 @@ Last updated: 2026-09-29
 - `custodian/docs/ai_context/task_packets/archived/VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — completed P0 Moment Forge/validation tooling upgrade: generic presentation probes/cross-record assertions, deterministic `presentation_image_metrics.py`, compact `build_roi_contact_sheet`, and the live `traversal/awakening_late_seams_v1` adopter; `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` (still active) is its paired independent review.
 - `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md` — mandatory ephemeral-worktree start, checkpoint, finish, recovery, and branch-retirement workflow
 - `custodian/docs/ai_context/task_packets/archived/AGENT_TASK_DISPATCH.md` — archived implementation/acceptance record for repository-native task dispatch; live authority is `custodian/tools/agent/dispatch.py`
+- `custodian/docs/ai_context/task_packets/archived/AGENT_WORKFLOW_CLAIM_ATOMICITY_AND_FORENSICS.md` — completed P0 correction for exclusive direct workstream starts, explicit resume, and non-main lifecycle diagnostics
 - `custodian/docs/ai_context/task_packets/archived/AGENT_REVIEW_PIPELINE.md` — archived implementation/acceptance record for paired post-land independent review, durable receipts, correction packets, finite review cycles, and human decision escalation; live authority is `custodian/tools/agent/dispatch.py`'s review-pairing contract and `task_packets/README.md`
 - `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` — paired post-land review packet template; copy alongside any implementation packet declaring `Review: auto`
 - `custodian/docs/ai_context/AGENT_CORRECTION_PACKET_TEMPLATE.md` — V2 delta-only correction packet template; requires parent implementation/review and exact stable finding IDs
@@ -110,7 +111,8 @@ Last updated: 2026-09-29
 - `custodian/docs/ai_context/task_packets/archived/REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — completed independent review of the corrected finish/landing lifecycle.
 - `custodian/docs/ai_context/task_packets/REVIEW_AGENT_REVIEW_PIPELINE.md` — paired self-review task that becomes eligible after the review pipeline lands
 - `custodian/docs/ai_context/BRANCH_ARCHIVE.md` — compact ledger of retired unique remote branch heads and archive tags
-- `custodian/tools/agent/workstream.py` — stable-ID `agent/<id>` worktree start/status/checkpoint/finish/gc lifecycle entrypoint with pre-teardown task-packet and untracked-run-artifact finalization gates; `finish` proves its closing summary durably at `HEAD` (`closing_summary_committed_for_workstream`, independent of any moving `origin/main` diff), short-circuits sync/`land_main.py` once `task_head_reachable_from_main`, tears down idempotently (tolerates an already-deleted remote branch), and reports a clean already-finished result rather than an error when nothing is attached but the summary already landed
+- `custodian/tools/agent/workflow_control.py`, `run_trace.py` — shared local/remote workstream claims, common-dir mutexes, and append-only local plus diagnostics-ref lifecycle traces with operator list/export commands
+- `custodian/tools/agent/workstream.py` — stable-ID `agent/<id>` lifecycle with exclusive claim-on-start, explicit resume, status/checkpoint/finish/gc, and pre-teardown task-packet and untracked-run-artifact finalization gates; finish proves its closing summary durably, avoids re-landing already-landed history, tears down idempotently, and reports already-finished state cleanly
 - `custodian/tools/agent/dispatch.py` — fetched-`origin/main` task queue, dependency/lock checks, local serialized claims plus create-only remote claim refs, and delegation to `workstream.py`; a successful claim emits a structured `CUSTODIAN_DISPATCH_RESULT_JSON` receipt (also persisted under the Git common dir), verifies post-start checkout identity before printing `CLAIMED`, and validates bounded review-artifact overrides plus ready-packet validation script paths before claim
 - `custodian/tools/agent/validate_review_pairing.py` — standalone paired-review and validation-reference guard over checked-out `HEAD`; dispatch runs the same structural checks over fetched `origin/main` before eligibility
 - `custodian/tools/agent/branch_hygiene.py` — report-only ancestry-based remote branch classification and verified archive-before-delete operation
@@ -1205,9 +1207,8 @@ Last updated: 2026-09-29
   `custodian/tools/iteration/scenarios/combat/vaultwing_first_bond.json` — Slice
   B.1 behavioral feed/trial loop plus B.2 interaction-presentation ownership,
   same-instance bonded allegiance, stable spawn identity, versioned save/restore
-  and lifecycle/target-release regressions; bonding art pass 1 has nine runtime
-  strips and the first-bond evidence capture passes, with final visual judgment
-  deferred until the six bonding families are complete.
+  and lifecycle/target-release regressions; all six bonding art states publish
+  24/24 runtime directions and the full family has 80/80 runtime strips.
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.
@@ -1221,10 +1222,10 @@ Last updated: 2026-09-29
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
   — Asset V2 family contract for the 256px Common Vaultwing states; the WILD
   EAST/WEST, SOUTH, and NORTH baseline is complete at 14/14 states per facing.
-  Slice-B bonding art is separate and remains partial (nine runtime strips);
-  rejected bonding candidates are preserved in hash-named quarantine, not
-  source_work. Replacements preserve semantic filenames/frame contracts and
-  flow through targeted family ingest.
+  Slice-B bonding art publishes all 24 directions across six states, including
+  authored E/N/S/W `bond_greet`; Asset V2 owns mirrored W output for the other
+  states. Named Downloads imports use the bounded Vaultwing batch stager, and
+  replacements flow through targeted family ingest.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
   runtime smoke covering flight bands, attack-window contact, dive commitment,
   live-player stagger persistence, retreat, death, presentation fallback, and

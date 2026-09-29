@@ -101,13 +101,34 @@ func _validate_guard_hold_walk_uses_modular_lower(operator: Node) -> void:
 
 	var lower_sprite := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
 	var upper_sprite := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
+	var fx_sprite := operator.get("modular_upper_fx_sprite") as AnimatedSprite2D
 	var legacy_sprite := operator.get("animated_sprite") as AnimatedSprite2D
 	_assert_true(lower_sprite != null and lower_sprite.visible, "moving guard hold should show modular lower body")
 	_assert_true(upper_sprite != null and upper_sprite.visible, "moving guard hold should show modular upper body")
 	_assert_true(lower_sprite != null and lower_sprite.animation == &"unarmed/locomotion/walk_01/e/lower_body", "moving guard hold should use lower-body walk")
 	_assert_true(lower_sprite != null and is_equal_approx(lower_sprite.speed_scale, float(operator.get("block_move_multiplier"))), "moving guard lower walk should use block movement speed scale")
 	_assert_true(upper_sprite != null and upper_sprite.animation == &"unarmed/defense/block_hold_01/e/upper_body", "moving guard hold should keep upper-body block hold")
+	_assert_true(fx_sprite != null and fx_sprite.visible, "moving guard hold should show its optional block-hold FX")
+	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed/defense/block_hold_01/e/fx", "east moving guard hold should play east block-hold FX")
+	_assert_true(fx_sprite != null and fx_sprite.sprite_frames.get_frame_count(fx_sprite.animation) == 5, "block-hold FX should retain all five authored frames")
 	_assert_true(legacy_sprite == null or not legacy_sprite.visible, "moving guard hold should hide legacy full body")
+
+	# The held FX must keep advancing during repeated movement synchronization.
+	if fx_sprite != null:
+		fx_sprite.frame = 2
+	operator.call("_sync_modular_block_hold_movement_presentation")
+	_assert_true(fx_sprite != null and fx_sprite.frame == 2, "repeated guard sync should not restart the block-hold FX")
+
+	operator.set("aim_direction", Vector2.LEFT)
+	operator.call("_sync_modular_block_hold_movement_presentation")
+	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed/defense/block_hold_01/w/fx", "west moving guard hold should select mirrored west FX")
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.set("velocity", Vector2.ZERO)
+	operator.call("_play_modular_unarmed_block", "unarmed_block_hold")
+	_assert_true(fx_sprite != null and fx_sprite.visible, "stationary guard hold should show its block-hold FX")
+	_assert_true(fx_sprite != null and fx_sprite.animation == &"unarmed/defense/block_hold_01/e/fx", "stationary guard hold should select east FX")
+	operator.call("_play_modular_unarmed_block", "unarmed_block_enter")
+	_assert_true(fx_sprite == null or not fx_sprite.visible, "leaving block hold should hide block-hold FX")
 
 	operator.set("velocity", Vector2.ZERO)
 	operator.set("_block_phase", &"")

@@ -1,0 +1,222 @@
+{
+  "assertions": [
+    {
+      "role": "vaultwing",
+      "severity": "error",
+      "type": "role_exists"
+    },
+    {
+      "field": "bond_trial_started",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 20,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "guarded_observation_seen",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 180,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "controlled_approach_seen",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 205,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "bond_completed",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 225,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "bond_completion_count",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 225,
+      "type": "probe_compare",
+      "value": 1
+    },
+    {
+      "field": "vaultwing_stage",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 225,
+      "type": "probe_compare",
+      "value": "bonded"
+    },
+    {
+      "field": "vaultwing_allegiance",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 225,
+      "type": "probe_compare",
+      "value": "operator_allied"
+    },
+    {
+      "field": "bond_same_actor",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 225,
+      "type": "probe_compare",
+      "value": true
+    },
+    {
+      "field": "hostile_attack_during_trial",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 225,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "field": "operator_targetable_after_bond",
+      "op": "eq",
+      "probe": "bond",
+      "severity": "error",
+      "tick": 225,
+      "type": "probe_compare",
+      "value": false
+    },
+    {
+      "severity": "error",
+      "type": "no_unreleased_inputs"
+    }
+  ],
+  "capture": {
+    "audio": false,
+    "background": "opaque",
+    "contact_sheet_ticks": [
+      0,
+      40,
+      90,
+      145,
+      200,
+      235
+    ],
+    "end_tick": 249,
+    "fps": 60,
+    "height": 720,
+    "required_keyframes": true,
+    "start_tick": 0,
+    "width": 1280
+  },
+  "description": "An ACCEPTING wild Vaultwing voluntarily lands, observes, accepts a controlled approach and completes a final feed without replacing the actor.",
+  "duration_ticks": 250,
+  "id": "combat/vaultwing_first_bond",
+  "probes": [
+    {
+      "fields": [
+        "vaultwing_state",
+        "vaultwing_band",
+        "vaultwing_stage",
+        "vaultwing_allegiance",
+        "trial_phase",
+        "bond_trial_started",
+        "guarded_observation_seen",
+        "controlled_approach_seen",
+        "bond_completed",
+        "bond_completion_count",
+        "bond_same_actor",
+        "hostile_attack_during_trial",
+        "operator_targetable_after_bond"
+      ],
+      "id": "bond",
+      "required": true,
+      "role": "fixture",
+      "ticks": [
+        20,
+        80,
+        130,
+        180,
+        205,
+        225,
+        240
+      ]
+    }
+  ],
+  "scene": "res://tools/validation/fixtures/vaultwing_wild_moment.tscn",
+  "schema_version": 1,
+  "seed": 4410,
+  "setup": {
+    "fixture": {
+      "config": {},
+      "id": "vaultwing_first_bond"
+    },
+    "processing": [],
+    "properties": [],
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      },
+      "operator": {
+        "node_path": "Operator"
+      },
+      "vaultwing": {
+        "node_path": "Vaultwing"
+      }
+    },
+    "spawns": []
+  },
+  "simulation": {
+    "max_wall_seconds": 30,
+    "pause_during_setup": true,
+    "physics_hz": 60,
+    "warmup_ticks": 4
+  },
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "bond"
+    ]
+  },
+  "tags": [
+    "combat",
+    "vaultwing",
+    "bonding",
+    "first_bond"
+  ],
+  "timeline": [
+    {
+      "action": "fixture_command",
+      "name": "begin_trial",
+      "tick": 10
+    },
+    {
+      "action": "fixture_command",
+      "name": "controlled_approach",
+      "tick": 200
+    },
+    {
+      "action": "fixture_command",
+      "name": "final_feed",
+      "tick": 220
+    },
+    {
+      "action": "fixture_command",
+      "name": "finish",
+      "tick": 245
+    }
+  ]
+}

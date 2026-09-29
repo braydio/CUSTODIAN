@@ -4,9 +4,11 @@ Canonical validation guide for CUSTODIAN agent work.
 
 ## Agent Workstream Lifecycle
 
-Every normal implementation run starts/resumes through
-`python3 custodian/tools/agent/workstream.py start <stable-kebab-id>` from the
-coordination checkout. Implement and validate in the returned sibling
+Every packeted implementation run claims through `dispatch.py claim-next` or
+`dispatch.py claim <id>`. Direct `workstream.py start <stable-kebab-id>` uses
+the same exclusivity protocol for manual work and will not adopt existing
+state; use explicit `workstream.py resume <id>` after inspecting recovery
+state. Implement and validate in the returned sibling
 `.custodian-worktrees/` checkout. Use `checkpoint` for intentionally incomplete
 work and `finish --validation-report <json>` for validated completed work. See
 `AGENT_WORKSTREAM_LIFECYCLE.md` for recovery, synchronization, cleanup, and
@@ -16,6 +18,7 @@ Run focused lifecycle tests after changes to agent Git tooling:
 
 ```bash
 python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.test_workstream custodian.tools.agent.test_workstream_artifacts custodian.tools.agent.test_branch_hygiene
+python3 -m unittest custodian.tools.agent.test_workflow_control
 ```
 
 Task dispatch uses temporary bare remotes and worktrees to verify metadata,

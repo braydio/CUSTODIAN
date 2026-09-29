@@ -70,8 +70,9 @@ is safe for a Codex terminal to claim without additional human selection.
 `dispatch.py status` reads packet truth from fetched `origin/main`; use
 `dispatch.py claim-next --agent codex` to claim the highest-priority eligible
 auto packet, or `dispatch.py claim <workstream-id> --agent codex` for explicit
-selection (including manual packets). Initial claims use unique remote Git
-claim refs so separate clones cannot both acquire the same task; interrupted
+selection (including manual packets). Initial claims and direct starts share
+unique remote Git claims and per-workstream local mutexes so separate clones
+cannot acquire the same task; interrupted
 claims require explicit operator recovery. `Priority` is `P0`–`P3` (default `P2`),
 `Depends on` lists workstream IDs that must be complete and archived on main,
 and `Locks` lists narrow contention IDs. A missing `Dispatch` remains manual.
@@ -215,6 +216,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md` — P1 persistent Operator art-worktree hardening: per-worktree sparse checkout + safe idle FF sync so unrelated repo files stop surfacing as Workbench version/sync noise while scoped publish/validation remains intact.
+- `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md` — paired P1 code/architecture/workflow review of sparse checkout isolation, ignored-state preservation, and unchanged scoped publish safety.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
@@ -247,14 +250,11 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
-- `AGENT_WORKFLOW_CLAIM_ATOMICITY_AND_FORENSICS.md` — P0 control-plane correction: make direct workstream starts use the same exclusive claim semantics as dispatch, prevent partial-worktree double starts, and emit operator-only non-main lifecycle trace exports.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — paired P0 code/architecture/workflow review of the visual-validation economy tooling; no subjective art review.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` — P2 Slice 1 of the living Asset Workbench roadmap: read-only Asset V2 FAMILY navigator, truthful family/state lifecycle projection, pure search, transactional refresh, and Baby Opossum acceptance coverage.
-- `VAULTWING_BOND_GREET_FINAL_INGEST.md` — P0 auto-claimable convergence of the prior Vaultwing bonding-art checkpoint plus the four same-host `~/Downloads/vw1.png`–`vw4.png` `bond_greet` E/N/S/W strips through source_work → inbox → Asset V2, including bounded staging hardening and final 24/24 visual closure.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, prove late joins code-first with seam metrics/targeted ROIs, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
 - `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — paired independent code/runtime/visual/asset review of the Awakening convergence and handoff-readiness slice.
-- `REVIEW_SECOND_PASS_REVIEW_CONTRACT_V2.md` — paired independent review of the V2 second-pass review/correction contract; eligible after its implementation lands.
 - `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — paired independent review of startup routing, bootstrap reuse, and story-default preservation.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 Twin Solaria forensic progression with code-first overlay/state evidence; now also waits on `visual-validation-economy-tooling-v1` so baseline/Stage-B/Stage-F proof uses structured probes and one compact ROI sheet instead of repeated full-frame inspection.

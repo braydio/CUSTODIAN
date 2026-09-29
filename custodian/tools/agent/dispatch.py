@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import contextlib
 import difflib
-import fcntl
 import importlib.util
 import inspect
 import io
@@ -15,8 +14,15 @@ import os
 import re
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from workflow_control import (
+    RunTrace, WorkflowControlError, acquire_remote_claim, common_mutex,
+    release_remote_claim, workstream_mutex,
+)
 
 PACKET_ROOT = "custodian/docs/ai_context/task_packets"
 FIELDS = (
@@ -430,11 +436,7 @@ def _git_common_dir(repo: Path) -> Path:
 
 
 def _mutex(repo: Path):
-    common = _git_common_dir(repo)
-    common.mkdir(parents=True, exist_ok=True)
-    handle = (common / "custodian-dispatch.lock").open("a")
-    fcntl.flock(handle, fcntl.LOCK_EX)
-    return handle
+    return common_mutex(repo)
 
 
 def _last_claim_path(repo: Path) -> Path:
@@ -458,7 +460,7 @@ def _attached_local_worktree(repo: Path, branch: str) -> str | None:
     return None
 
 
-def _start_workstream(module, workstream_id: str, repo: Path) -> tuple[Path, str | None]:
+def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=None) -> tuple[Path, str | None]:
     """Call workstream.start(), passing a disposition side-channel only if supported.
 
     Test doubles that mock module.start with a plain (work_id, repo) callable must
@@ -466,11 +468,18 @@ def _start_workstream(module, workstream_id: str, repo: Path) -> tuple[Path, str
     """
     report: dict[str, str] = {}
     try:
-        accepts_report = "report" in inspect.signature(module.start).parameters
+        parameters = inspect.signature(module.start).parameters
+        accepts_report = "report" in parameters
     except (TypeError, ValueError):
         accepts_report = False
+    kwargs = {}
     if accepts_report:
-        worktree = module.start(workstream_id, repo, report=report)
+        kwargs["report"] = report
+    parameters = inspect.signature(module.start).parameters if accepts_report else {}
+    if "_claim" in parameters:
+        kwargs.update(_claim=claim, _trace=trace, _lock_held=True)
+    if kwargs:
+        worktree = module.start(workstream_id, repo, **kwargs)
     else:
         worktree = module.start(workstream_id, repo)
     return Path(worktree), report.get("checkout")
@@ -616,28 +625,26 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
                 f"claimant explicitly remove it with git push origin :{claim_ref}"
             )
 
-        # A unique claimant-specific commit makes remote creation a compare-and-set:
-        # unlike pushing the common main OID, a concurrent loser proposes a different OID.
-        claimant = f"{agent}:{os.getpid()}:{os.urandom(16).hex()}"
-        tree = git(repo, "rev-parse", "origin/main^{tree}")
-        parent = git(repo, "rev-parse", "origin/main")
-        claim_oid = git(repo, "-c", f"user.name={agent}", "-c", f"user.email={agent}@dispatch.invalid",
-                        "commit-tree", tree, "-p", parent, "-m", f"dispatch claim {selected.workstream} {claimant}")
-        local_claim_ref = f"refs/dispatch-claims/{selected.workstream}"
-        git(repo, "update-ref", local_claim_ref, claim_oid)
-        result = subprocess.run(["git", "push", "origin", f"{claim_oid}:{claim_ref}"], cwd=repo, text=True, capture_output=True)
-        if result.returncode:
-            git(repo, "update-ref", "-d", local_claim_ref, check=False)
-            _fetch(repo)
-            raise DispatchError(f"remote claim acquisition lost or failed for {selected.workstream}: {(result.stderr or result.stdout).strip()}")
-
-        module = _load_workstream(repo)
-        # Suppress the legacy start banner so this command emits one stable result.
+        packet = next((p for p in packets if p.workstream == selected.workstream), None)
+        trace = None
         try:
-            with contextlib.redirect_stdout(io.StringIO()):
-                worktree, checkout = _start_workstream(module, selected.workstream, repo)
-        except module.WorkstreamError as error:
-            raise DispatchError(f"workstream start blocked: {error}") from error
+            lock_started = time.monotonic()
+            with workstream_mutex(repo, selected.workstream):
+                trace = RunTrace.start(repo, selected.workstream, packet=selected.path, agent=agent)
+                trace.record("mutex_acquired", scope="workstream", wait_ms=round((time.monotonic() - lock_started) * 1000))
+                _fetch(repo)
+                remote_claim = acquire_remote_claim(repo, selected.workstream, agent, trace.run_id, trace=trace)
+                module = _load_workstream(repo)
+                try:
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        worktree, checkout = _start_workstream(module, selected.workstream, repo, remote_claim, trace)
+                except module.WorkstreamError as error:
+                    raise DispatchError(f"workstream start blocked: {error}") from error
+        except (DispatchError, WorkflowControlError) as error:
+            if trace is None:
+                trace = RunTrace.start(repo, selected.workstream, packet=selected.path, agent=agent)
+            trace.finish_blocked(str(error))
+            raise
 
         # Post-start identity verification: the receipt is the assignment authority,
         # so nothing is printed/persisted as CLAIMED unless the checkout returned by
@@ -645,31 +652,35 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         # happens to exist. Any failure here leaves the recovery claim ref intact.
         expected_branch = f"agent/{selected.workstream}"
         if not worktree.is_dir():
+            trace.finish_blocked("post-start verification failed: worktree path does not exist")
             raise DispatchError(
                 f"post-start verification failed: worktree does not exist at {worktree}; "
-                f"recovery claim retained at origin/{claim_ref}"
+                f"recovery claim retained at origin/{claim_ref} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]"
             )
         actual_branch = git(worktree, "branch", "--show-current", check=False)
         if actual_branch != expected_branch:
+            trace.finish_blocked(f"post-start verification failed: actual branch {actual_branch!r} did not match")
             raise DispatchError(
                 f"post-start verification failed: worktree {worktree} is on branch "
                 f"{actual_branch!r}, expected {expected_branch!r}; "
-                f"recovery claim retained at origin/{claim_ref}"
+                f"recovery claim retained at origin/{claim_ref} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]"
             )
         _fetch(repo)
         published = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{expected_branch}"], cwd=repo).returncode == 0
         if not published:
-            raise DispatchError(f"workstream branch was not confirmed published; recovery claim retained at origin/{claim_ref}")
+            trace.finish_blocked("workstream branch was not confirmed published")
+            raise DispatchError(f"workstream branch was not confirmed published; recovery claim retained at origin/{claim_ref} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]")
         claimed_after = _claimed(repo)
         if selected.workstream not in claimed_after:
+            trace.finish_blocked("dispatcher claimed-state logic did not recognize the workstream")
             raise DispatchError(
                 f"post-start verification failed: dispatcher claimed-state logic does not yet "
-                f"recognize {selected.workstream} as claimed; recovery claim retained at origin/{claim_ref}"
+                f"recognize {selected.workstream} as claimed; recovery claim retained at origin/{claim_ref} "
+                f"[run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]"
             )
         # The canonical workstream branch is now durable; deleting the temporary
         # claim is safe. If cleanup fails, both refs remain and status explains it.
-        subprocess.run(["git", "push", "origin", f":{claim_ref}"], cwd=repo, text=True, capture_output=True)
-        git(repo, "update-ref", "-d", local_claim_ref, check=False)
+        release_remote_claim(repo, remote_claim, trace=trace)
 
         receipt = {
             "schema": "custodian.dispatch.claim.v1",
@@ -682,8 +693,12 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
             "checkout": checkout,
             "verified": True,
             "agent": agent,
+            "run_id": trace.run_id,
+            "trace_ref": trace.diagnostic_ref,
         }
         _write_last_claim_receipt(repo, receipt)
+        trace.record("dispatch_receipt_written", packet=selected.path, branch=expected_branch, worktree=str(worktree))
+        trace.complete("claimed")
 
         print("CLAIMED")
         print(f"workstream: {selected.workstream}")
@@ -774,7 +789,7 @@ def main(argv: list[str] | None = None) -> int:
             status(repo)
             return 0
         return claim(repo, getattr(args, "workstream_id", None), args.agent, args.command == "claim-next")
-    except DispatchError as error:
+    except (DispatchError, WorkflowControlError) as error:
         print(f"dispatch: BLOCKED: {error}", file=sys.stderr)
         return 2
 
