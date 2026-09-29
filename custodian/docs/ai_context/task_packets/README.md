@@ -249,7 +249,6 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
-- `VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — P0 code-first presentation-validation tooling: richer Moment probes/assertions, deterministic image metrics, compact ROI evidence, and reusable direct adopters for high-visual-cost queued work; waits on `second-pass-review-contract-v2` so its own paired review can autocomplete safely.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — paired P0 code/architecture/workflow review of the visual-validation economy tooling; no subjective art review.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` — P2 Slice 1 of the living Asset Workbench roadmap: read-only Asset V2 FAMILY navigator, truthful family/state lifecycle projection, pure search, transactional refresh, and Baby Opossum acceptance coverage.
@@ -270,9 +269,11 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 post-Slice-E mobile guard composition: movement-owned lower locomotion through enter/hold/non-break recoil/exit with aim-owned upper defense, continuity guards, and runtime-scale strafe validation.
 - `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
 - `TASK_PACKET_INDEX_AUTOMODE_HARDENING.md` — P2 bounded auto-index hardening queued after the AI-context validator: deterministically check/write only the Ready / Auto Dispatch block from packet metadata while preserving manual, in-progress, and historical sections.
-- `AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — P2 one-time conservative cleanup of pre-hardened stale `agent/*` branches and `Recently Complete` packet residue after finish hardening lands.
 
 ### In Progress
+
+- `ASH_BELL_FORLORN_RITUALANT.md` — INCOMPLETE_CLOSEOUT: route migration is complete and the encounter V2 is implemented; visual polish remains open.
+- `BLACK_RELIQUARY_LIVE_MINIMAP.md` — INCOMPLETE_CLOSEOUT: no complete status is recorded; the packet still calls for a visual playtest.
 
 - `PROCGEN_MACRO_PRESENTATION_V1.md` — Validated migration ledger for the live region-first Rocky Upland macro presentation layer; ten SURFACE states are bound and hardened.
 - `GAME_OVER_FLOW.md` — Implement the game-over UX slice from `design/02_features/game_over/GAME_OVER_FLOW.md`: fail-state modal, stats snapshot, restart/menu actions, and validation.
@@ -283,35 +284,4 @@ lost when the ephemeral worktree is removed.
 
 ### Recently Complete (awaiting archive)
 
-- `OPERATOR_WORKBENCH_CANVAS_MIGRATION.md` — Added centered, no-resampling frame-canvas contract migration to Workbench V2 with animation/body/all scopes, crop and socket-coordinate guards, Shift+R/CLI parity, and Fast 02 E disposable Aseprite proof.
-
-- `PROCGEN_STUCK_POCKET_AUTHORITY.md` — Added collision-owner runtime blocker authority, protected route/structure clearances, two-exit pocket remediation, navigation consumption, loud stuck diagnostics, debug-only Operator rescue, Observatory telemetry, and focused smoke coverage.
-- `COMBAT_RESOURCE_FEEDBACK.md` — Added authoritative reload/heat/overheat progress snapshots, debounced feedback events, compact pressure HUD, weapon-local audio/procedural vent presentation, schema wiring, and focused smoke coverage.
-- `ASH_BELL_FORLORN_RITUALANT.md` — Added the centralized authored-scene procgen authority reservation API and wired Ash-Bell dev placement to claim its canonical room footprint before instantiation.
-- `PROCGEN_ASCENT_STYLE_FACTION_STORY_V1.md` — Added distance-band world progression, connectivity-safe gradual ascent metadata, deterministic faction activity anchors, environmental story-room candidates, placeholder markers, and enemy ambient routines.
-- `OPERATOR_MODULAR_SIDEARM_PLAYBACK.md` — Corrected facing ownership and wired four-diagonal synchronized sidearm draw/fire lower, upper, pistol, and FX layers with draw-complete gating, held final draw pose, fire-to-held return, and Operator-local alignment.
-- `OPERATOR_MODULAR_SIDEARM_INGEST.md` — Validated the supplied modular sidearm draw filenames, added `modular_sidearm` shared-inbox routing, and built stable lower-body, upper-body, and sidearm weapon-layer runtime modules for `draw_sidearm_01`.
-- `OPERATOR_DODGE_PIPELINE_AND_SIDEARM.md` — Added split dodge/recovery runtime and pipeline support, introduced the default pistol sidearm slot for no-primary ranged-ready fallback, mapped sidearm V1 to current ranged placeholder animations, and tracked missing production dodge/sidearm clips.
-- `OPERATOR_MODULAR_IDLE_AND_INGEST.md` — Fixed Fists idle so the modular lower/upper layer stack renders before legacy authored-body fallback, separated lower movement direction from upper action/aim direction, and routed modular Operator sprite inbox files through the live module rebuild/SpriteFrames refresh path.
-- `ROAD_TILE_LANE_ROLE_PLACEHOLDERS.md` — Updated procgen road overlays to use the 32x32 lane-role contract `center`, `left_1`, `left_2`, `right_1`, and `right_2`, with placeholder manifest aliases and focused smoke validation.
-- `FABRICATION_BALANCE_PIPELINE.md` — Added a deterministic offline fabrication/resource balance pipeline with explicit 30-minute scenario inputs, build/drop-rate simulation, lore-aware drop-table checks, Markdown report output, and JSON-only balance proposals.
-- `OPERATOR_TWIN_STICK_DODGE_INPUT.md` — Added keyboard/mouse plus Xbox twin-stick movement/aim bindings, held ranged-ready aliases, RT/LMB panic ranged shot support, movement-first dodge, idle aiming backstep, focused smoke coverage, and missing directional dodge asset tracking.
-- `ENEMY_MARINE_DASH_ATTACK.md` — Hardened enemy marine dash as a heavy commitment move with locked windup telegraph, dash-only hit window, hitstop/knockback/camera feedback, recovery punish window, Sundered Keep ambush tuning, validation coverage, and required body/FX/audio asset tracking.
-- `TERMINAL_OVERLAY_SUPPRESSION.md` — Hid compact gameplay HUD/debug overlays while the terminal interface is open and added focused smoke coverage for open/close restoration.
-- `BLACK_RELIQUARY_LIVE_MINIMAP.md` — Made the Black Reliquary HUD minimap compact and live by embedding the shared tactical minimap renderer and exporting Sundered Keep authored floor/wall minimap data.
-- `SUNDERED_KEEP_HUD_SCOPE.md` — Restricted Sundered Keep-specific quest/status/prompt/minimap HUD content to the active keep map and preserved that state through terminal overlay suppression.
-- `SIDEARM_UNLOCK.md` — Progression-locked the P-9 sidearm fallback and added the one-time Sundered Keep Great Hall field-retention locker unlock.
-- `OPERATOR_RANGED_READY_INPUT.md` — Changed ranged secondary into held ranged-ready/aim, moved right mouse off block, kept primary as the ranged fire confirm while ready, and added focused smoke validation.
-- `DEBUG_SCREEN_UI.md` — Added the dedicated F12/`debug_hud` tabbed debug screen, moved diagnostics out of scattered normal HUD labels, and added focused smoke validation.
-- `UI_COMPACT_DEBUG_GATING.md` — Reduced normal-play HUD footprint, changed Black Reliquary vitals to a header-style strip, tightened prompt/minimap component minima, and moved unformatted diagnostics behind explicit debug HUD visibility.
-- `SUNDERED_KEEP_GAMEPLAY_ELEVATION_OCCLUSION.md` — Implemented the `design/GAMEPLAY.md` Sundered Keep elevation/underpass/keep-roof cutaway slice with authored region metadata, shadow/support dressing, roof occluders, and smoke coverage.
-- `CUSTODIAN_HOME_BEGINNING.md` — Moved the first-objective design into the Home architecture docs and added the dedicated Home beginning scene with Field Terminal witness-contact interaction, Black Reliquary HUD presentation, validation, and required asset tracking.
-- `AUTHORED_VAULT_GRUNT_LOOT_MARINE_WIRING.md` — Placed the first authored gothic vault room, added the practical salvage grunt loot table, and wired `enemy_marine` as a late-unlock idle-backed wave enemy with missing non-idle assets tracked.
-- `VAULT_STORAGE_RAIDING_REVIEW_RUNTIME.md` — Reviewed vault/resource raiding specs, created the permanent vault storage runtime sprite home, added storage integrity/visual states, and wired enemy storage sabotage alongside theft.
-- `OPERATOR_MODULAR_LAYERED_RUNTIME_RIG.md` — Added the first optional upper/lower modular locomotion layer rig for Fists idle/walk/run, generated upper-body runtime modules with fallbacks, and tracked remaining modular source-art gaps.
-- `OPERATOR_MODULAR_LOWER_BODY_RUNTIME.md` — Added the modular operator runtime module builder/folder, generated lower-body locomotion modules, wired Fists movement defaults to module strips, corrected fast-strike east/west `96px` runtime slicing, and tracked missing modular source sheets.
-- `OPERATOR_MODULAR_FAST_ACTION_RUNTIME.md` — Created the dedicated operator action-runtime folder, generated modular-derived unarmed fast strike body/FX sheets, wired Fists fast attack through existing shared attack states, and tracked missing source art.
-- `CONTENT_DIRECTORY_STABILIZATION.md` — Documented content-root domains, added a duplicate/loose-file audit, moved the Road of Witnesses prototype map out of loose content root, moved remaining loose sprite/tile source files into owner folders, and cleared `content/unregistered/` by moving vault art into vault-owned source quarantine.
-- `SUNDERED_KEEP_PHASE_1.md` — Implemented the first Sundered Keep connected-map slice with generated runtime assets, Main Gate/Courtyard/Great Hall layout, traversal stubs, and contract-world entry gate.
-- `CHANGE_CONTROL_BUNDLE_SCRIPT.md` — Adds a change-control bundler that writes current git-changed files to `custodian/docs/change_control/<TASK_PACKET_NAME>.md` and copies the bundle to the clipboard when available.
-- `GOTHIC_COMPOUND_LAYOUT_GRAMMAR.md` — Hardens gothic compound asset metadata, zoning, decal quotas, anchoring, footprint placement, and perimeter validation.
+_None._

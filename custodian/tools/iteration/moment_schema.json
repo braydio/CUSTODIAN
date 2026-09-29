@@ -164,6 +164,9 @@
               ,"event_same_field"
               ,"event_between_ticks"
               ,"role_distance_compare"
+              ,"probe_field_equal"
+              ,"probe_field_delta"
+              ,"probe_sequence_equal"
             ]
           },
           "severity": {"enum": ["error", "warning", "info"]}

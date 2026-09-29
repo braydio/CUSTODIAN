@@ -246,6 +246,36 @@ full-screen pass after each edit, or any `--capture-mode full` run must have a
 task-specific reason recorded in the packet/summary. Subjective visual baselines
 remain human-owned even when objective technical image checks are automated.
 
+#### Tooling
+
+- Structure/state layer: `moment_probe_collector.gd` fields include
+  `visible`, `effective_visible` (visibility including ancestors), `modulate`,
+  `self_modulate`, `effective_alpha` (self × ancestor modulate), `z_index`,
+  `z_as_relative`, `effective_z_index` (accumulated draw order), `global_bounds`
+  / `screen_bounds` (presentation-rect AABB from `Sprite2D`/`AnimatedSprite2D`
+  texture+offset+centering), `texture_size`, `frame_progress`, and
+  `collision_shape_count` / `navigation_node_count` (proving a presentation node
+  stays non-authoritative). Cross-record assertions `probe_field_equal`,
+  `probe_field_delta`, and `probe_sequence_equal` compare one field across two
+  probes/ticks (exact/tolerance equality, numeric delta, or an N-point
+  forward/reverse steady-state sequence) without reading a screenshot.
+- Code-based pixel metrics: `python3 custodian/tools/iteration/presentation_image_metrics.py <spec.json>`
+  runs `alpha_bounds`, `matte_void`, `roi_diff`, `seam_discontinuity`, and `crop`
+  checks against named ROIs of one or more PNGs and emits deterministic JSON,
+  with each check's own threshold folded into a `passed` bool. See the module
+  docstring for the spec shape; `test_presentation_image_metrics.py` has worked
+  examples including negative controls.
+- Renderer ROI: `build_roi_contact_sheet()` in `build_moment_report.py` composes
+  several small named crops into one compact sheet instead of N full-resolution
+  frames.
+- Worked example covering all four layers at once:
+  `custodian/tools/iteration/scenarios/traversal/awakening_late_seams_v1.json`
+  (registration/alpha/collision-ownership/forward-backward-equivalence probes
+  for the five late Awakening seams, `--capture-mode none`) plus
+  `python3 custodian/tools/validation/awakening_late_seams_evidence.py <evidence-run-dir>`
+  (the one compact ROI sheet + void/matte sanity check for final technical
+  review).
+
 Do not run the focused test and `--changed` concurrently against the same
 project. If another agent/session already owns a broad sweep, wait for it or use
 its result rather than launching a competing sweep.
