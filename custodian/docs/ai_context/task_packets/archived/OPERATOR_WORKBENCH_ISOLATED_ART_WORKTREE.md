@@ -186,7 +186,7 @@ Do not rewrite historical packets.
 
 ## Handoff
 
-- Outcome: normal `opui` routes to a dedicated persistent art worktree; the review dialog performs guarded publish, verified staging, deterministic commit, and safe landing. Failed landing remains resumable without re-export. Fixture coverage proves migration preservation and refuses migration while Aseprite is active. Coordination tracked edits are reported and preserved.
+- Outcome: normal `opui` routes to a dedicated persistent art worktree; the review dialog performs guarded publish, verified staging, deterministic commit, and safe landing. Failed landing remains resumable without re-export. Fixture coverage proves migration preservation and refuses migration while Aseprite is active. Coordination tracked edits are reported and preserved. The existing lander now exposes a separately scoped approved Operator publication entry accepted only from `workbench/operator-art` to `origin/main`, preserving the one-button flow under the finish-only direct-landing policy.
 - Validation: `operator_art_worktree_smoke.py`, `operator_workbench_ui_smoke.py` (including Textual pilot with coordination venv), `operator_animation_workbench_smoke.py`, `operator_workbench_mirror_publish_smoke.py`, and `run_validation.py --changed --json` passed. Changed sweep: 14 selected, 14 passed, no uncovered files. `py_compile` and `git diff --check` passed.
 - Operational note: the host had Aseprite open on the legacy ignored coordination Workbench, so live migration was intentionally refused; migration success and the open-editor refusal were verified in isolated fixtures. Local LFS cache hydration was used for the art checkout; no LFS network fetch was required.
 - Blockers or open questions: none.

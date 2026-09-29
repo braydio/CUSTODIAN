@@ -52,6 +52,9 @@ entries block finish, and any untracked run artifact must be explicitly resolved
 before the disposable worktree can be removed. `workstream.py` pushes recovery work before landing and is the required normal
 completion entrypoint. It invokes `land_main.py` internally; destructive direct
 `land_main.py` invocation is blocked while dry-run inspection remains available.
+The reviewed Operator art publisher has a separate explicit landing argument
+that is accepted only on `workbench/operator-art` targeting `origin/main`; it
+still passes through the same serialized, race-safe `land_main.py` algorithm.
 The lander accepts the branch's own upstream while still rejecting publication
 on unrelated remote refs. Successful finish verifies ancestry from
 `origin/main` before removing completed branch/worktree state. Branch archive

@@ -322,7 +322,10 @@ def _atomic_json(path: Path, payload: dict) -> None:
 def _land_and_verify(root: Path, pending: Path, payload: dict) -> dict:
     script = root / "custodian/tools/agent/land_main.py"
     try:
-        subprocess.run([sys.executable, str(script)], cwd=root, check=True)
+        subprocess.run(
+            [sys.executable, str(script), "--approved-operator-publication"],
+            cwd=root, check=True,
+        )
         _git(root, "fetch", "origin", "main")
         head = _git(root, "rev-parse", "HEAD")
         reachable = subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"], cwd=root, check=False)

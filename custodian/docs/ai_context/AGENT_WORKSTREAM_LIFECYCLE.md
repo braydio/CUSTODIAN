@@ -119,8 +119,10 @@ report with `--validation-report-after-sync`. Finish pushes before landing,
 uses `land_main.py` internally for serialized/race-safe landing, verifies the
 landing by ancestry from freshly fetched `origin/main`, then deletes the remote
 branch and tears down the local worktree/branch. `land_main.py` refuses
-destructive direct invocation outside this finish handoff; `--dry-run` remains
-available for inspection. Before that proof, every failure retains
+destructive direct invocation outside this finish handoff; the reviewed
+Operator art publisher has a separately scoped explicit argument accepted only
+for `workbench/operator-art` to `origin/main`. `--dry-run` remains available
+for inspection. Before that proof, every failure retains
 the recovery branch and worktree. Root checkout synchronization is attempted
 only from a clean `main` checkout using fast-forward-only; otherwise it remains
 pending without reset, stash, or branch switching.

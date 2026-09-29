@@ -80,6 +80,14 @@ class LandMainTests(unittest.TestCase):
         self.assertIn("workstream.py finish", result.stderr)
         self.assertEqual(before, run_git(self.seed, "rev-parse", "refs/heads/main"))
 
+    def test_operator_publication_landing_is_limited_to_persistent_art_branch(self) -> None:
+        self._task_commit("task.txt", "task\n")
+        before = run_git(self.seed, "rev-parse", "refs/heads/main")
+        result = self._land("--approved-operator-publication", authorized=False)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("limited to workbench/operator-art on origin/main", result.stderr)
+        self.assertEqual(before, run_git(self.seed, "rev-parse", "refs/heads/main"))
+
     def test_clean_task_branch_lands_on_main(self) -> None:
         self._task_commit("task.txt", "task\n")
         result = self._land()
