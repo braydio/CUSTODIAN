@@ -39,9 +39,36 @@ def fixture(base: Path) -> tuple[Path, Path, Path]:
     (coordination / ".gitignore").write_text(".ai/\n")
     (coordination / "custodian/tools/agent").mkdir(parents=True)
     shutil.copy2(LAND_MAIN, coordination / "custodian/tools/agent/land_main.py")
+    for relative in (
+        "tools/custodian_aliases.sh",
+        "custodian/tools/operator/operator_cli.py",
+        "custodian/tools/aseprite/bridge.py",
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/assets/asset.py",
+        "custodian/tools/pipelines/operator_runtime_build.py",
+        "custodian/tools/validation/operator_animation_workbench_smoke.py",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/content/data/operator/profile.json",
+        "custodian/content/metadata/assets/families/operator.asset.json",
+        "custodian/content/sprites/operator/runtime/idle.png",
+        "custodian/content/sprites/weapons/sword_cleaver/source/operator/heavy.png",
+        "custodian/content/sprites/weapons/sword_cleaver/runtime/operator/heavy.png",
+        "custodian/content/weapons/p9.json",
+        "design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md",
+        "custodian/content/sprites/enemies/unrelated/large.png",
+        "custodian/content/sprites/effects/runtime/muzzle_flash_yellow.png",
+        "custodian/content/sprites/effects/runtime/unrelated_large_pack.png",
+        "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav",
+        "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/unrelated.wav",
+        "reports/unrelated/report.json",
+        "custodian/asset_drop/unrelated/source.png",
+    ):
+        path = coordination / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"fixture\n")
     source.parent.mkdir(parents=True)
     source.write_bytes(b"original canonical art\n")
-    git(coordination, "add", ".gitignore", SOURCE, "custodian/tools/agent/land_main.py")
+    git(coordination, "add", "-A")
     git(coordination, "commit", "-m", "fixture main")
     git(coordination, "remote", "add", "origin", str(bare))
     git(coordination, "push", "-u", "origin", "main")
@@ -56,6 +83,86 @@ def commit_remote(coordination: Path, relative: str, payload: bytes, message: st
     git(coordination, "add", relative)
     git(coordination, "commit", "-m", message)
     git(coordination, "push", "origin", "main")
+
+
+def sparse_sync_smoke(base: Path) -> None:
+    _bare, coordination, _source = fixture(base)
+    hooks = base / "test-hooks"
+    hooks.mkdir()
+    for name in ("post-checkout", "post-merge"):
+        hook = hooks / name
+        hook.write_text("#!/bin/sh\nmkdir -p .githooks\nprintf mutated > .githooks/post-commit\n")
+        hook.chmod(0o755)
+    git(coordination, "config", "core.hooksPath", str(hooks))
+    art_root = art.ensure_art_worktree(coordination)
+    assert not (art_root / ".githooks/post-commit").exists(), "checkout hooks ran during sparse initialization"
+    ignored = art_root / ".ai/operator_animation_workbench/edited.aseprite"
+    ignored.parent.mkdir(parents=True, exist_ok=True)
+    ignored.write_bytes(b"user workbench bytes\x00")
+    initial = git(art_root, "rev-parse", "HEAD")
+
+    commit_remote(coordination, SOURCE, b"selected source v2\n", "selected source update")
+    commit_remote(
+        coordination,
+        "custodian/content/sprites/enemies/unrelated/large.png",
+        b"unrelated v2\n",
+        "unrelated asset update",
+    )
+    art.ensure_art_worktree(coordination)
+    assert not (art_root / ".githooks/post-commit").exists(), "merge hooks ran during safe synchronization"
+    assert git(art_root, "rev-parse", "HEAD") != initial
+    assert (art_root / SOURCE).read_bytes() == b"selected source v2\n"
+    assert not (art_root / "custodian/content/sprites/enemies/unrelated/large.png").exists()
+    assert ignored.read_bytes() == b"user workbench bytes\x00"
+    assert art._git(art_root, "rev-parse", "HEAD") == art._git(art_root, "rev-parse", "origin/main")
+
+    # Dirty authoring content in the sparse checkout blocks all synchronization.
+    head_before = git(art_root, "rev-parse", "HEAD")
+    (art_root / SOURCE).write_bytes(b"uncommitted authored pixels\n")
+    commit_remote(coordination, SOURCE, b"selected source v3\n", "selected source v3")
+    art.ensure_art_worktree(coordination)
+    assert git(art_root, "rev-parse", "HEAD") == head_before
+    assert (art_root / SOURCE).read_bytes() == b"uncommitted authored pixels\n"
+    assert art.checkout_identity(art_root, coordination).main_relation == "ahead 0 / behind 1"
+    art._git_without_hooks(art_root, "restore", "--", SOURCE)
+    art.ensure_art_worktree(coordination)
+    v3 = (art_root / SOURCE).read_bytes()
+    assert v3 == b"selected source v3\n", f"dirty restore did not resume FF: source={v3!r}, state={art.checkout_identity(art_root, coordination)}, dirty={art._status_paths(art_root)}"
+
+    # An idle branch with a local commit is never rebased or reset.
+    (art_root / SOURCE).write_bytes(b"local commit\n")
+    git(art_root, "add", SOURCE)
+    git(art_root, "commit", "-m", "local authoring checkpoint")
+    local_head = git(art_root, "rev-parse", "HEAD")
+    commit_remote(coordination, "README.md", b"main changed again\n", "main changed again")
+    art.ensure_art_worktree(coordination)
+    assert git(art_root, "rev-parse", "HEAD") == local_head
+    assert art.checkout_identity(art_root, coordination).main_relation == "ahead 1 / behind 1"
+
+    # Pending landing state also blocks synchronization.
+    art._git_without_hooks(art_root, "reset", "--hard", "origin/main")
+    pending = art_root / art.PENDING_RELATIVE
+    pending.parent.mkdir(parents=True, exist_ok=True)
+    pending.write_text('{"status":"land_pending"}\n')
+    pending_head = git(art_root, "rev-parse", "HEAD")
+    commit_remote(coordination, "README.md", b"main changed pending\n", "main changed pending")
+    art.ensure_art_worktree(coordination)
+    assert git(art_root, "rev-parse", "HEAD") == pending_head
+    assert pending.exists() and ignored.read_bytes() == b"user workbench bytes\x00"
+
+    # A dirty full-tree migration fails closed without removing unrelated data.
+    art._git_without_hooks(art_root, "reset", "--hard", "origin/main")
+    pending.unlink()
+    art._git(art_root, "sparse-checkout", "disable")
+    sentinel = art_root / "custodian/content/sprites/enemies/unrelated/large.png"
+    sentinel.write_bytes(b"preserve dirty full-tree file")
+    try:
+        art.ensure_art_worktree(coordination)
+    except art.ArtWorktreeError as error:
+        assert "existing checkout was preserved" in str(error)
+    else:
+        raise AssertionError("dirty full-tree migration did not fail closed")
+    assert sentinel.read_bytes() == b"preserve dirty full-tree file"
 
 
 def launcher_smoke(base: Path) -> None:
@@ -108,6 +215,30 @@ def lfs_scope_smoke(base: Path) -> None:
     assert "custodian/content/sprites/weapons/*/source/operator/**" in art.OPERATOR_LFS_GLOBS
     assert "custodian/content/sprites/weapons/*/runtime/operator/**" in art.OPERATOR_LFS_GLOBS
 
+    hook_root = base / "lfs-hook-preservation"
+    hook = hook_root / ".githooks/post-commit"
+    pointer_path = hook_root / "custodian/content/sprites/operator/source/animations/idle.png"
+    hook.parent.mkdir(parents=True)
+    pointer_path.parent.mkdir(parents=True)
+    hook.write_bytes(b"user post-commit hook bytes\n")
+    pointer_path.write_bytes(pointer)
+    original_run = art.subprocess.run
+
+    def lfs_stub(args, *, cwd=None, **kwargs):
+        if args[:3] == ["git", "lfs", "checkout"]:
+            hook.write_bytes(b"rewritten LFS post-commit hook\n")
+            pointer_path.write_bytes(b"hydrated PNG bytes")
+            return subprocess.CompletedProcess(args, 0, "", "")
+        return original_run(args, cwd=cwd, **kwargs)
+
+    art.subprocess.run = lfs_stub
+    try:
+        art.hydrate_operator_art_from_cache(hook_root)
+    finally:
+        art.subprocess.run = original_run
+    assert hook.read_bytes() == b"user post-commit hook bytes\n"
+    assert pointer_path.read_bytes() == b"hydrated PNG bytes"
+
 
 def smoke() -> None:
     with tempfile.TemporaryDirectory(prefix="operator-art-lfs-scope-") as temporary:
@@ -134,6 +265,24 @@ def smoke() -> None:
         assert main_identity.kind == "COORDINATION MAIN" and not main_identity.publish_allowed
         assert source.read_bytes() == b"uncommitted coordination art\n"
         assert SOURCE in art.coordination_operator_changes(coordination)
+        assert art._sparse_profile_healthy(art_root), "new checkout did not apply the Operator sparse profile"
+        assert not (art_root / "custodian/content/sprites/enemies/unrelated/large.png").exists()
+        assert (art_root / "custodian/content/sprites/effects/runtime/muzzle_flash_yellow.png").exists()
+        assert not (art_root / "custodian/content/sprites/effects/runtime/unrelated_large_pack.png").exists()
+        assert (art_root / "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav").exists()
+        assert not (art_root / "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/unrelated.wav").exists()
+        assert not (art_root / "reports/unrelated/report.json").exists()
+        assert not (art_root / "custodian/asset_drop/unrelated/source.png").exists()
+        assert "sparse " + art.SPARSE_PROFILE in identity.sparse_profile
+
+        # Existing clean full-tree art checkouts migrate in place; ignored authoring bytes survive.
+        art._git(art_root, "sparse-checkout", "disable")
+        ignored.write_bytes(b"modified user workbench bytes\x00")
+        assert art.ensure_art_worktree(coordination) == art_root
+        assert ignored.read_bytes() == b"modified user workbench bytes\x00"
+        assert art._sparse_profile_healthy(art_root)
+        assert not (art_root / "custodian/content/sprites/enemies/unrelated/large.png").exists()
+        assert not art._status_paths(art_root)
 
         commit_remote(coordination, "README.md", b"unrelated upstream change\n", "unrelated upstream")
         paths = {SOURCE}
@@ -263,6 +412,9 @@ def smoke() -> None:
         json_path = json.loads((migrated / "workbench.json").read_text())
         assert json_path["aseprite"]["path"].startswith(str(art_root))
         assert document.exists(), "one-time migration preserves the coordination copy"
+
+    with tempfile.TemporaryDirectory(prefix="operator-art-sparse-sync-") as temporary:
+        sparse_sync_smoke(Path(temporary))
 
     with tempfile.TemporaryDirectory(prefix="operator-art-migration-guard-") as temporary:
         _bare, coordination, _source = fixture(Path(temporary))

@@ -5,6 +5,10 @@
 Normal `opui` launch ensures the persistent sibling `CUSTODIAN-operator-art`
 worktree on local branch `workbench/operator-art`, runs Workbench code from that
 checkout, and reuses the coordination checkout's ignored UI virtual environment.
+The art worktree uses the worktree-local `operator-authoring-v1` sparse profile;
+it contains the tested Operator authoring/Godot dependency closure and omits
+reports, asset-drop inputs, and unrelated large art trees. Ordinary worktrees
+remain full-tree.
 The art checkout owns ignored Aseprite/Workbench state and tracked Operator
 publication. Checkout identity and last-known `origin/main` relation appear in
 the UI status bar; direct OPUI launch from coordination `main` keeps review
@@ -18,6 +22,11 @@ with an ignored `LAND PENDING` receipt; retrying the same animation resumes
 landing without exporting pixels again. A successful land refreshes OPUI and
 best-effort fast-forwards a clean coordination checkout. Coordination edits
 remain preserved and are reported as a pending sync.
+On reuse, OPUI fetches `origin/main` and fast-forwards only a clean idle branch
+with zero local commits ahead and no `LAND PENDING` receipt. Dirty, ahead,
+diverged, or pending state is shown and preserved. Clean legacy full-tree art
+checkouts migrate in place; ignored `.ai/operator_animation_workbench` bytes
+survive migration and synchronization. Dirty legacy checkouts fail closed.
 
 First-run migration copies legacy ignored `.ai/operator_animation_workbench`
 state into an empty art checkout, rewrites absolute checkout paths in JSON, and

@@ -16,6 +16,88 @@ from typing import Iterable
 
 
 ART_BRANCH = "workbench/operator-art"
+SPARSE_PROFILE = "operator-authoring-v1"
+SPARSE_PROFILE_PATHS = (
+    "tools/custodian_aliases.sh",
+    "custodian/project.godot",
+    "custodian/AGENTS.md",
+    "custodian/game",
+    "custodian/autoload",
+    "custodian/debug",
+    "custodian/addons/godot_ai/runtime/game_helper.gd",
+    "custodian/addons/godot_ai/runtime",
+    "custodian/addons/godot_ai/utils",
+    "custodian/addons/debug_console",
+    "custodian/addons/dev-console",
+    "custodian/tools/operator",
+    "custodian/tools/aseprite",
+    "custodian/tools/art",
+    "custodian/tools/assets",
+    "custodian/tools/pipelines",
+    "custodian/tools/agent",
+    "custodian/tools/validation",
+    "custodian/tools/godot_project_lock.py",
+    "custodian/content/data/operator",
+    "custodian/content/resources/resource_defs.json",
+    "custodian/content/fabrication/fab_recipes.json",
+    "custodian/content/metadata/assets",
+    "custodian/content/sprites/operator",
+    "custodian/assets/resources/vfx/weapons/carbine_mk1",
+    "custodian/assets/sprites/world/ingress/ash_bell",
+    "custodian/content/backgrounds/procgen/drowned_basilica",
+    "custodian/content/backgrounds/procgen/endless_forest",
+    "custodian/content/backgrounds/procgen/depth_chunks",
+    "custodian/content/backgrounds/procgen/depth_chunks/scrubland",
+    "custodian/content/backgrounds/procgen/depth_chunks/universal",
+    "custodian/content/backgrounds/procgen/depth_chunks/woodland",
+    "custodian/content/procgen/biomes",
+    "custodian/content/procgen/dressing_clusters",
+    "custodian/content/procgen/presentation",
+    "custodian/content/props/ruins",
+    "custodian/content/runtime/sundered_keep/terrain/ocean",
+    "custodian/content/sprites/effects/combat/critical",
+    "custodian/content/sprites/effects/weapons/carbine_mk1",
+    "custodian/content/sprites/environment/props/portal_ring/runtime/fx",
+    "custodian/scenes/debug/dev_observatory_overlay.tscn",
+    "custodian/scripts/debug/dev_observatory_overlay.gd",
+    "custodian/content/sprites/weapons/melee/1-hand",
+    "custodian/content/sprites/weapons/carbine_mk1/runtime",
+    "custodian/content/sprites/effects/combat/status",
+    "custodian/content/sprites/effects/combat/unarmed",
+    "custodian/content/sprites/effects/runtime/block_spark",
+    "custodian/content/sprites/effects/runtime/hit_spark",
+    "custodian/content/sprites/effects/runtime/motion",
+    "custodian/content/sprites/effects/runtime/muzzle_flash_yellow.png",
+    "custodian/content/sprites/world/lighting",
+    "custodian/content/sprites/world/shadows",
+    "custodian/content/sprites/world/ingress/ash_bell",
+    "custodian/content/sprites/environment/props/vault_storage/runtime",
+    "custodian/content/audio/sfx/ambience",
+    "custodian/content/audio/sfx/combat",
+    "custodian/content/audio/sfx/healing",
+    "custodian/content/audio/sfx/environment",
+    "custodian/content/audio/sfx/structures",
+    "custodian/content/spriteframes/effects/combat",
+    "custodian/content/tiles/encounters/ritualant_set/underground",
+    "custodian/content/tiles/elevation/industrial",
+    "custodian/content/tiles/interiors/runtime",
+    "custodian/content/tiles/interiors/temp",
+    "custodian/content/tiles/mountain_cliffs",
+    "custodian/content/tiles/mountain_cliffs/void_fascia",
+    "custodian/content/tiles/procgen/atlases",
+    "custodian/content/tiles/procgen_macro/runtime/meridian_hardstand",
+    "custodian/content/tiles/procgen_macro/runtime/rocky_upland",
+    "custodian/content/tiles/procgen/surfaces/hardened",
+    "custodian/content/tiles/source/placeholder-tileset/0x72_DungeonTilesetII_v1.7",
+    "custodian/content/tiles/sundered_keep/floors",
+    "custodian/content/tiles/terrain/runtime/ascent",
+    "custodian/content/tiles/terrain/runtime/chasm_bridge",
+    "custodian/content/tiles/terrain/runtime/connector",
+    "custodian/content/tiles/tilesets/procgen_world_tileset.tres",
+    "custodian/content/tiles/walls/generated",
+    "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav",
+    "design/02_features/animation",
+)
 OPERATOR_LFS_GLOBS = (
     "custodian/content/sprites/operator/source/animations/**",
     "custodian/content/sprites/operator/runtime/animations/**",
@@ -44,6 +126,101 @@ def _git(root: Path, *args: str, check: bool = True) -> str:
         detail = (result.stderr or result.stdout).strip()
         raise ArtWorktreeError(f"git {' '.join(args)} failed: {detail}")
     return result.stdout.strip()
+
+
+def _git_without_hooks(root: Path, *args: str) -> str:
+    """Run a checkout-only synchronization command without mutating repository hooks."""
+    return _git(root, "-c", "core.hooksPath=/dev/null", *args)
+
+
+def _sparse_paths(root: Path) -> list[str]:
+    """Return existing profile paths, including only Operator-facing weapon art."""
+    paths = [path for path in SPARSE_PROFILE_PATHS if subprocess.run(
+        ["git", "cat-file", "-e", f"HEAD:{path}"], cwd=root,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
+    ).returncode == 0]
+    weapon_tree = "custodian/content/sprites/weapons"
+    listing = subprocess.run(
+        ["git", "ls-tree", "-d", "--name-only", f"HEAD:{weapon_tree}"],
+        cwd=root, text=True, capture_output=True, check=False,
+    )
+    if listing.returncode == 0:
+        for family in listing.stdout.splitlines():
+            for role in ("source", "runtime"):
+                relative = f"{weapon_tree}/{family}/{role}/operator"
+                if subprocess.run(["git", "cat-file", "-e", f"HEAD:{relative}"], cwd=root,
+                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                  check=False).returncode == 0:
+                    paths.append(relative)
+    patterns = []
+    for path in sorted(set(paths)):
+        # Sparse-checkout's non-cone patterns let the one-file runtime dependencies
+        # stay narrow instead of materializing their unrelated sibling directories.
+        patterns.append(f"/{path}/**" if subprocess.run(
+            ["git", "cat-file", "-e", f"HEAD:{path}/."], cwd=root,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
+        ).returncode == 0 else f"/{path}")
+    return patterns
+
+
+def _sparse_profile_enabled(root: Path) -> bool:
+    return _git(root, "config", "--bool", "core.sparseCheckout", check=False) == "true"
+
+
+def _sparse_profile_healthy(root: Path) -> bool:
+    if not _sparse_profile_enabled(root):
+        return False
+    configured = set(_git(root, "sparse-checkout", "list", check=False).splitlines())
+    return set(_sparse_paths(root)) == configured
+
+
+def _apply_sparse_profile(root: Path) -> None:
+    paths = _sparse_paths(root)
+    if not paths:
+        raise ArtWorktreeError("Operator sparse profile has no paths present in this checkout")
+    _git_without_hooks(root, "sparse-checkout", "init", "--no-cone")
+    _git_without_hooks(root, "sparse-checkout", "set", "--no-cone", *paths)
+
+
+def _main_counts(root: Path) -> tuple[int, int]:
+    counts = _git(root, "rev-list", "--left-right", "--count", f"HEAD...origin/main").split()
+    if len(counts) != 2:
+        raise ArtWorktreeError("cannot determine Operator art checkout relation to origin/main")
+    return int(counts[0]), int(counts[1])
+
+
+def _ensure_sparse_and_current(root: Path) -> str:
+    """Fast-forward only a clean, idle art branch, then enforce its local profile."""
+    if _git(root, "branch", "--show-current") != ART_BRANCH:
+        raise ArtWorktreeError(f"Operator art checkout has unexpected branch: {_git(root, 'branch', '--show-current')}")
+    pending = root / PENDING_RELATIVE
+    dirty = _status_paths(root)
+    ahead, behind = _main_counts(root)
+    relation = "current" if ahead == behind == 0 else f"ahead {ahead} / behind {behind}"
+    safe = not dirty and not pending.exists() and ahead == 0
+    if not safe:
+        if _sparse_profile_healthy(root):
+            return f"preserved · origin/main {relation} · sparse {SPARSE_PROFILE}"
+        details = []
+        if dirty:
+            details.append("local changes:\n" + "\n".join(f"  {path}" for path in sorted(dirty)))
+        if pending.exists():
+            details.append("LAND PENDING")
+        if ahead:
+            details.append(f"{ahead} local commit(s) ahead")
+        raise ArtWorktreeError(
+            "Operator sparse migration paused; existing checkout was preserved:\n"
+            + "\n".join(details or [relation])
+            + f"; current profile health is full-tree, origin/main {relation}"
+        )
+    if behind:
+        _git_without_hooks(root, "merge", "--ff-only", "origin/main")
+        relation = "current"
+    if not _sparse_profile_healthy(root):
+        if _status_paths(root):
+            raise ArtWorktreeError("Operator sparse migration produced local changes; checkout preserved for inspection")
+        _apply_sparse_profile(root)
+    return f"sparse {SPARSE_PROFILE} · origin/main {relation}"
 
 
 def _top(root: Path) -> Path:
@@ -104,7 +281,19 @@ def hydrate_operator_art_from_cache(root: Path) -> None:
     pointers = _operator_art_lfs_pointers(root)
     if not pointers:
         return
+    hook = root / ".githooks/post-commit"
+    had_hook = hook.exists()
+    hook_bytes = hook.read_bytes() if had_hook else b""
+    hook_mode = hook.stat().st_mode & 0o777 if had_hook else 0o755
     result = subprocess.run(["git", "lfs", "checkout", *OPERATOR_LFS_GLOBS], cwd=root, text=True, capture_output=True, check=False)
+    # Some Git LFS installations rewrite core.hooksPath's post-commit hook.
+    # Treat that tracked repository file as user state and retain its exact bytes.
+    if had_hook:
+        if not hook.exists() or hook.read_bytes() != hook_bytes:
+            hook.write_bytes(hook_bytes)
+            hook.chmod(hook_mode)
+    else:
+        hook.unlink(missing_ok=True)
     if result.returncode:
         raise ArtWorktreeError(f"local Git LFS checkout failed: {(result.stderr or result.stdout).strip()}")
     missing = _operator_art_lfs_pointers(root)
@@ -201,6 +390,7 @@ def ensure_art_worktree(coordination_root: Path, *, art_path: Path | None = None
         if by_path is not None:
             if by_path != ART_BRANCH:
                 raise ArtWorktreeError(f"art checkout path is attached to unexpected branch {by_path}: {target}")
+            _ensure_sparse_and_current(target)
             migrate_legacy_workbench(root, target)
             hydrate_operator_art_from_cache(target)
             return target
@@ -213,11 +403,14 @@ def ensure_art_worktree(coordination_root: Path, *, art_path: Path | None = None
         target.parent.mkdir(parents=True, exist_ok=True)
         branch_exists = _git(root, "show-ref", "--verify", f"refs/heads/{ART_BRANCH}", check=False)
         if branch_exists:
-            _git(root, "worktree", "add", str(target), ART_BRANCH)
+            _git(root, "worktree", "add", "--no-checkout", str(target), ART_BRANCH)
         else:
-            _git(root, "worktree", "add", "-b", ART_BRANCH, str(target), "origin/main")
+            _git(root, "worktree", "add", "--no-checkout", "-b", ART_BRANCH, str(target), "origin/main")
         if _top(target) != target or _git(target, "branch", "--show-current") != ART_BRANCH:
             raise ArtWorktreeError(f"created checkout failed identity verification: {target}")
+        _apply_sparse_profile(target)
+        _git_without_hooks(target, "checkout", ART_BRANCH)
+        _ensure_sparse_and_current(target)
         migrate_legacy_workbench(root, target)
         hydrate_operator_art_from_cache(target)
         return target
@@ -229,6 +422,8 @@ class CheckoutIdentity:
     branch: str
     worktree: str
     main_relation: str
+    sparse_profile: str
+    worktree_state: str
     publish_allowed: bool
     coordination_root: str
 
@@ -251,7 +446,14 @@ def checkout_identity(repo_root: Path, coordination_root: Path | None = None) ->
         relation = "current" if ahead == behind == 0 else f"ahead {ahead} / behind {behind}"
     else:
         relation = "unknown"
-    return CheckoutIdentity(kind, branch, str(root), relation, allowed, str(coordination))
+    sparse = f"sparse {SPARSE_PROFILE}" if _sparse_profile_healthy(root) else "full-tree"
+    dirty_count = len(_status_paths(root))
+    pending = (root / PENDING_RELATIVE).exists()
+    state_parts = ["clean" if dirty_count == 0 else f"local changes {dirty_count} paths"]
+    if pending:
+        state_parts.append("LAND PENDING")
+    return CheckoutIdentity(kind, branch, str(root), relation, sparse,
+                            " · ".join(state_parts), allowed, str(coordination))
 
 
 def coordination_operator_changes(coordination_root: Path) -> set[str]:

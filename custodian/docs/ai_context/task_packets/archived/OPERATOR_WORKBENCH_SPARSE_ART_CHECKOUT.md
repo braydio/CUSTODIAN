@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-sparse-art-checkout`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -86,3 +86,23 @@ asset trees should not be restored without a proven dependency.
 - Next action: Auto-claim and reproduce the persistent art checkout from a temporary fixture before touching the developer's real `CUSTODIAN-operator-art` worktree.
 - Best starting files: `operator_art_worktree.py`, `operator_art_worktree_smoke.py`, `animation_workbench.py::_validation_commands()`, `tools/custodian_aliases.sh::opui`, current Workbench design/current-state notes.
 - Blockers or open questions: None. The exact final sparse dependency profile is an implementation measurement task; it must be proven by the existing Workbench publish validation rather than guessed.
+
+## Completion Notes
+
+- Implemented worktree-local `operator-authoring-v1` sparse checkout and safe clean/idle FF synchronization. The measured profile has 85 path patterns and materializes 9,706 files / 334 MB outside Godot's ignored import cache. After import, the temporary proof checkout measured 534 MB / 16,010 files including generated `.godot/` data.
+- Fixture evidence proves unrelated enemy art, reports, and asset-drop content remain absent; exact required single-file dependencies remain present while same-directory siblings are omitted. The profile retains Operator source/runtime, build/validation tools, and Godot dependencies proven by the publish validation path.
+- The developer's existing `CUSTODIAN-operator-art` checkout was not migrated in place: it has a live OPUI process and 7,915 dirty tracked paths. Migration therefore correctly fails closed under this packet. Its 2,216 ignored `.ai/operator_animation_workbench` files (109,261,361 bytes) matched a pre-migration SHA-256 manifest with zero missing or changed entries.
+- No production art or canonical publish allowlist changed. Root `.ai` and the active art checkout were left untouched.
+- On the first Godot import, the fresh sparse checkout emitted transient UID-cache warnings; the subsequent import and modular-layer smoke completed without missing-file or script-parse errors. The smoke printed its success marker; Godot still reports its existing leaked-resource count at shutdown.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: The initial cone profile did not include the full Godot validation dependency closure; exact dependency evidence from sparse import and modular validation required widening the profile. The first import in a fresh cache emitted UID warnings before the next clean import.
+- Root cause / contributing factors: The modular Operator smoke loads the normal Godot project and its autoload/resource graph, which touches resources outside the Operator art folders.
+- Prevention / pipeline improvement: Keep the measured sparse proof in the fixture, including exact-file-versus-sibling cases, and repeat the import after first-run UID cache population.
+- Tooling / docs drift discovered: Git LFS checkout can rewrite the tracked post-commit hook on this host; hook bytes are now preserved around scoped hydration. The existing developer art checkout is dirty and active, so the in-place migration was intentionally deferred by the fail-closed contract.
+- Follow-up: manual-follow-up
+- What worked: The temporary sparse checkout passed all focused Workbench, publish, compatibility, and animation-contract checks without modifying production art.

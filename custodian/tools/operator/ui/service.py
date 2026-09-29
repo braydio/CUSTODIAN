@@ -75,10 +75,12 @@ class WorkbenchService:
     def checkout_status_label(self) -> str:
         identity = self.checkout_identity()
         pending = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
-        suffix = " · LAND PENDING" if pending.exists() else ""
+        suffix = f" · {identity.worktree_state}" if identity.worktree_state != "clean" else ""
+        if pending.exists() and "LAND PENDING" not in suffix:
+            suffix += " · LAND PENDING"
         if identity.kind == "COORDINATION MAIN" and operator_art_worktree.coordination_operator_changes(self.coordination_root):
             suffix += " · coordination Operator edits preserved"
-        return f"{identity.kind} · {identity.branch} · origin/main {identity.main_relation}{suffix}"
+        return f"{identity.kind} · {identity.sparse_profile} · {identity.branch} · origin/main {identity.main_relation}{suffix}"
 
     def require_saved_live_document_for_migration(self, active_path: str | None, expected_path: Path, modified: bool | None) -> None:
         if not active_path or modified is not True:

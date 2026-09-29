@@ -51,6 +51,11 @@ python3 custodian/tools/validation/operator_art_worktree_smoke.py
 This proves the dedicated checkout lifecycle, ignored-workspace migration guard,
 selected-source conflict refusal, exact publication staging, safe landing, and
 retry without Workbench re-export.
+It also tests the `operator-authoring-v1` sparse profile, clean full-tree
+migration, FF-only idle synchronization, unrelated-path omission, selected
+Operator updates, and dirty/ahead/`LAND PENDING` preservation. Use a temporary
+fixture checkout for these Git operations; never test sparse conversion on a
+developer's dirty art worktree.
 
 ## Persistent Compound Layout
 

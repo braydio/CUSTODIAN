@@ -216,7 +216,6 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md` — P1 persistent Operator art-worktree hardening: per-worktree sparse checkout + safe idle FF sync so unrelated repo files stop surfacing as Workbench version/sync noise while scoped publish/validation remains intact.
 - `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md` — paired P1 code/architecture/workflow review of sparse checkout isolation, ignored-state preservation, and unchanged scoped publish safety.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 

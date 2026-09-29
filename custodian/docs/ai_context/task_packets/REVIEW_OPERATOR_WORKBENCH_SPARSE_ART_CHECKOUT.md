@@ -17,7 +17,7 @@
 - Review focus: sparse checkout is per-worktree rather than repository-global; unrelated tracked files stay tracked but unmaterialized; clean idle FF-only sync; no reset/rebase/stash of dirty/ahead/pending state; ignored Workbench bytes survive; mandatory publish/build/import/smokes work from the final sparse profile; publication staging remains exact allowlist-only; no user Git step is introduced.
 - Acceptance: Findings-first review of landed `main`. Prove a fresh and migrated fixture, inspect the final sparse path profile for unnecessary bulk and missing authority, run the focused Operator worktree/UI/publish tests, and verify one real sparse Workbench validation path. Blocking findings create the bounded correction pair. Do not patch the reviewed implementation in this review workstream.
 - Non-goals: Do not change Operator art, broaden sparse checkout to other worktrees, redesign Asset V2, or optimize unrelated Git workflows.
-- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to the reviewed implementation. Repository/document mutations required for the durable review receipt, required review closing summary, review-packet lifecycle/archive metadata, and any bounded follow-up correction/re-review packets are allowed.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Required Checks
 

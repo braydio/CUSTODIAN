@@ -60,6 +60,19 @@ the art checkout; the launcher reports them for explicit recovery. LFS-backed
 Operator source/runtime art is hydrated from the local cache only, without an
 implicit network fetch.
 
+The persistent art worktree uses the worktree-local `operator-authoring-v1`
+sparse profile. It keeps Operator authoring tools, the tested Godot/game and
+validation dependencies, canonical Operator art/data, Operator-owned weapon
+art, and the Workbench plan while leaving reports, asset-drop material, and
+unrelated large art trees out of the checkout. Ordinary coordination worktrees
+remain full-tree. On reuse, OPUI fetches `origin/main`; it fast-forwards only a
+clean art branch with no pending landing and no local commits ahead. Dirty,
+ahead, diverged, and `LAND PENDING` states are preserved and shown in the
+status line. Safe synchronization reapplies the profile and retains ignored
+`.ai/operator_animation_workbench` files byte-for-byte. A dirty full-tree
+checkout fails closed before sparse migration so tracked or untracked work is
+not removed.
+
 The browser has exactly one node per semantic profile/group/action and one leaf
 per direction. Only selected ancestry expands automatically; manual expansion
 survives ordinary refresh. Directional rows project canonical presentation
@@ -165,9 +178,12 @@ logging, and exact Workbench-error survival after failed session loading,
 without canonical source mutation.
 
 `operator_art_worktree_smoke.py` uses temporary local Git remotes to verify
-checkout creation/reuse, coordination-main refusal, ignored Workbench migration
-and live-Aseprite protection, same-source conflict refusal, unrelated-upstream
-landing, scoped staging, and resumable `LAND PENDING` behavior.
+checkout creation/reuse, sparse-profile creation and clean migration,
+FF-only synchronization, unrelated-upstream omission, selected Operator path
+updates, ignored Workbench byte preservation, dirty/ahead/pending refusal,
+coordination-main refusal, ignored Workbench migration and live-Aseprite
+protection, same-source conflict refusal, scoped staging, and resumable
+`LAND PENDING` behavior.
 
 ## V5 production cockpit
 

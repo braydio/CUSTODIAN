@@ -888,10 +888,11 @@
       ],
       "owners": [
         "custodian/tools/operator/operator_art_worktree.py",
+        "custodian/tools/operator/ui/service.py",
         "custodian/tools/validation/operator_art_worktree_smoke.py",
         "tools/custodian_aliases.sh"
       ],
-      "timeout_sec": 45,
+      "timeout_sec": 120,
       "needs_import": false
     },
     {
