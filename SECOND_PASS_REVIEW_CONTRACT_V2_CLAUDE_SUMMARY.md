@@ -14,9 +14,10 @@
 - `test_review_contract.py`: 5 fixture/template tests passed for all finding classes/dispositions, stable IDs, correction IDs, and template consistency.
 - `test_workstream_artifacts.py`: 8 tests passed, including an isolated review worktree commit with authorized receipt/summary/lifecycle/correction artifacts; reviewed code and unrelated dirty root bytes/status stayed unchanged, and an implementation-path change was rejected.
 - `agent_workflow_smoke.py`: passed, including 11 landing tests and dispatcher/review fixtures.
+- Standalone `validate_review_pairing.py`: passed for 6 live paired auto-review packets and candidate-tree validation paths.
 - Prompt-template contract: passed with zero repeated defaults.
 - Python compilation, validation-manifest JSON parse, and `git diff --check`: passed.
-- The changed-file sweep and standalone candidate-tree pairing/path validator remain the closeout checks after this summary and packet archive are committed.
+- Changed-file validation remains the final closeout check.
 
 ## Awkward Finding
 

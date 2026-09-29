@@ -29,7 +29,6 @@ SPEC.loader.exec_module(dispatch)
 
 def main() -> int:
     repo = Path(dispatch.git(Path.cwd(), "rev-parse", "--show-toplevel")).resolve()
-    repo = dispatch._coordination_repo(repo)
     dispatch._fetch(repo)
     # Validate the checked-out candidate tree so the closeout gate tests packet
     # changes on a task branch before those changes land. Dispatch itself still
