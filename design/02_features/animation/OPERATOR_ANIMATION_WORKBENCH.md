@@ -2,11 +2,11 @@
 
 ## Status
 
-Implemented editor tooling. Canonical Operator V2 PNGs are authority; Aseprite workbenches are disposable pixel-editing surfaces.
+Implemented editor tooling. Canonical Operator V2 PNGs are authority; Aseprite workbenches are disposable pixel-editing surfaces. Interactive OPUI authoring runs from a dedicated persistent art worktree, and its reviewed Publish to Main action handles validation, commit, and safe landing.
 
 ## Authority and boundaries
 
-Canonical source PNGs under `custodian/content/sprites/operator/source/animations/` remain source authority. Runtime PNGs and the generated Operator animation catalog remain generated outputs. Workbenches live outside `res://` in `.ai/operator_animation_workbench/` and never become production assets.
+Canonical source PNGs under `custodian/content/sprites/operator/source/animations/` remain source authority. Runtime PNGs and the generated Operator animation catalog remain generated outputs. Normal `opui` launch ensures the persistent `workbench/operator-art` checkout beside the coordination checkout and runs the UI code there while reusing the coordination checkout's ignored UI virtual environment. Workbenches live outside `res://` in that art checkout's `.ai/operator_animation_workbench/` and never become production assets. The coordination `main` checkout is not a tracked-publish authority; direct OPUI launch there leaves editing and preview available but disables tracked publish.
 
 Deterministic agent pixel editing and visual rendering are implemented by the
 separate Operator Art Agent V1 above this backend. It may mutate only the
@@ -38,6 +38,27 @@ exact timing, and audit/preflight detail remain available on demand. Aseprite
 launch is nonblocking and publishing explicitly uses the last saved document.
 Textual is isolated to `tools/operator/ui/requirements.txt`; its absence must
 not affect any command below.
+
+The review modal's `PUBLISH TO MAIN` action performs the Workbench transaction
+once, verifies the resulting Git change set against the selected Operator
+publication paths, stages only those paths, creates one deterministic commit,
+and invokes `custodian/tools/agent/land_main.py`. A same-asset change already
+present on `origin/main` blocks before canonical files are replaced; unrelated
+upstream changes remain eligible for the existing landing authority. A failed
+landing leaves a clean committed art branch and an ignored `LAND PENDING`
+receipt. Reopening Publish for the same semantic animation retries that commit
+without re-exporting pixels. After landing, OPUI refreshes the selected browser
+state and best-effort syncs a clean coordination `main` checkout. Local
+coordination changes are preserved and shown as a pending sync.
+
+On first launch, the art checkout is created automatically. If the older
+coordination checkout has ignored Workbench files and the art checkout has no
+Workbench state, OPUI copies that state once, preserves the original copy, and
+rewrites checkout-root paths in JSON manifests. Migration pauses while an
+Aseprite process is open. Tracked coordination changes are never copied into
+the art checkout; the launcher reports them for explicit recovery. LFS-backed
+Operator source/runtime art is hydrated from the local cache only, without an
+implicit network fetch.
 
 The browser has exactly one node per semantic profile/group/action and one leaf
 per direction. Only selected ancestry expands automatically; manual expansion
@@ -142,6 +163,11 @@ optional dependency is installed. It proves search, six-frame run detail,
 add-frame dry-run review/cancel, publish review/cancel, modal-safe activity
 logging, and exact Workbench-error survival after failed session loading,
 without canonical source mutation.
+
+`operator_art_worktree_smoke.py` uses temporary local Git remotes to verify
+checkout creation/reuse, coordination-main refusal, ignored Workbench migration
+and live-Aseprite protection, same-source conflict refusal, unrelated-upstream
+landing, scoped staging, and resumable `LAND PENDING` behavior.
 
 ## V5 production cockpit
 

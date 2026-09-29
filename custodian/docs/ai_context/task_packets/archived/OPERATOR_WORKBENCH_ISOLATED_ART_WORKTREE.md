@@ -1,7 +1,7 @@
 # OPERATOR WORKBENCH ISOLATED ART WORKTREE
 
 - Workstream: `operator-workbench-isolated-art-worktree`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -186,6 +186,7 @@ Do not rewrite historical packets.
 
 ## Handoff
 
-- Next action: implement from a normal Codex ephemeral worktree and validate entirely with fixture repositories/worktrees before exercising the real launcher.
-- Best starting files: `tools/custodian_aliases.sh`, `custodian/tools/operator/animation_workbench.py`, `custodian/tools/operator/ui/service.py`, `custodian/tools/operator/ui/app.py`, `custodian/tools/agent/land_main.py`.
-- Blockers or open questions: none. Preserve the user's one-button publishing requirement as a hard UX acceptance criterion.
+- Outcome: normal `opui` routes to a dedicated persistent art worktree; the review dialog performs guarded publish, verified staging, deterministic commit, and safe landing. Failed landing remains resumable without re-export. Fixture coverage proves migration preservation and refuses migration while Aseprite is active. Coordination tracked edits are reported and preserved.
+- Validation: `operator_art_worktree_smoke.py`, `operator_workbench_ui_smoke.py` (including Textual pilot with coordination venv), `operator_animation_workbench_smoke.py`, `operator_workbench_mirror_publish_smoke.py`, and `run_validation.py --changed --json` passed. Changed sweep: 14 selected, 14 passed, no uncovered files. `py_compile` and `git diff --check` passed.
+- Operational note: the host had Aseprite open on the legacy ignored coordination Workbench, so live migration was intentionally refused; migration success and the open-editor refusal were verified in isolated fixtures. Local LFS cache hydration was used for the art checkout; no LFS network fetch was required.
+- Blockers or open questions: none.

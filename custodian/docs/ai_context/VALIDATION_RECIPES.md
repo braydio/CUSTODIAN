@@ -30,6 +30,17 @@ python3 custodian/tools/agent/test_dispatch.py
 These temporary-repository tests do not launch Godot. Run the changed-file
 validation recipe below after implementation changes as resource budget permits.
 
+Operator Workbench checkout routing and publish landing use fixture-only local
+Git remotes:
+
+```bash
+python3 custodian/tools/validation/operator_art_worktree_smoke.py
+```
+
+This proves the dedicated checkout lifecycle, ignored-workspace migration guard,
+selected-source conflict refusal, exact publication staging, safe landing, and
+retry without Workbench re-export.
+
 ## Persistent Compound Layout
 
 ```bash

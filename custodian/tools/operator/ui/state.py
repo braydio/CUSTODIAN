@@ -106,6 +106,10 @@ class PublishView:
     mirror_rows: tuple[PublishRow, ...] = ()
     contract_changed: bool = False
     compatibility_preflight: bool = True
+    publish_enabled: bool = True
+    publish_block_reason: str = ""
+    land_pending: bool = False
+    pending_identity: str = ""
 
 
 @dataclass(frozen=True)

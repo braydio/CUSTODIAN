@@ -92,7 +92,11 @@ opui() {
     echo "Operator UI environment missing. Run 'opui-install' first." >&2
     return 2
   fi
-  "${ui_python}" "${CUSTODIAN_GODOT}/tools/operator/operator_cli.py" ui "$@"
+  local art_root
+  art_root=$("${ui_python}" "${CUSTODIAN_GODOT}/tools/operator/operator_art_worktree.py" ensure \
+    --coordination-root "${CUSTODIAN_REPO}") || return
+  CUSTODIAN_COORDINATION_ROOT="${CUSTODIAN_REPO}" \
+    "${ui_python}" "${art_root}/custodian/tools/operator/operator_cli.py" ui "$@"
 }
 
 # -- Analyze the latest or an explicitly provided Developer Observatory session

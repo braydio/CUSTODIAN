@@ -332,7 +332,7 @@ async def textual_smoke() -> None:
     from ui.live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
     from ui.widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar,
                             LayerTable, MotionCanvas, MotionControls, PreviewCanvas, TimelineTable, WorkbenchStatusBar)
-    from textual.widgets import Button, DataTable, Footer, Input, Static, TextArea
+    from textual.widgets import Button, DataTable, Footer, Input, Label, Static, TextArea
     from textual_image.widget import AutoImage
     from websockets.asyncio.client import connect
     from live_bridge.server import LiveBridgeServer
@@ -376,6 +376,8 @@ async def textual_smoke() -> None:
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
         status_bar = app.main_screen.query_one("#workbench-status", WorkbenchStatusBar)
         assert "LIVE ○ WAITING" in str(status_bar.render())
+        status_bar.set_status("workbench/operator-art", False, "/bin/true", checkout="DEDICATED ART · origin/main current")
+        assert "CHECKOUT: DEDICATED ART · origin/main current" in str(status_bar.render())
         for live, label in (
             ("starting", "LIVE … STARTING"), ("stopped", "LIVE ○ STOPPED"),
             ("unavailable", "LIVE × UNAVAILABLE"),
@@ -889,6 +891,7 @@ async def textual_smoke() -> None:
         await pilot.click("#cancel"); await pilot.pause(); assert service.mutations == 0
         await pilot.press("p"); await pilot.pause(0.3)
         assert isinstance(app.screen, PublishDialog)
+        assert str(app.screen.query_one("#confirm", Button).label) == "PUBLISH TO MAIN"
         summary = str(app.screen.query_one("#publish-summary", Static).render())
         assert "unarmed / locomotion / walk_01" in summary and "EAST" in summary
         assert "6 frames" in summary and "8 FPS" in summary and "LOOP" in summary
@@ -923,6 +926,22 @@ async def textual_smoke() -> None:
         assert isinstance(app.screen, PublishDialog) and not app.screen.query_one("#mirror-counterpart").value
         await pilot.click("#confirm"); await pilot.pause(0.3)
         assert service.publish_calls[-1][1:] == (False, False)
+
+        calls_before_pending_retry = len(service.publish_calls)
+        pending_view = PublishView(
+            service.selection, 6, 6, (), (), None, "GREEN", "w",
+            publish_enabled=True, land_pending=True,
+            pending_identity=service.selection.identity,
+        )
+        app.push_screen(PublishDialog(pending_view), app._accept_publish); await pilot.pause()
+        assert app.screen.query_one(".dialog-title", Label).renderable == "LAND PENDING"
+        assert str(app.screen.query_one("#confirm", Button).label) == "RETRY LANDING"
+        assert "without exporting or replacing animation pixels" in str(
+            app.screen.query_one("#land-pending-detail", Static).render()
+        )
+        await pilot.click("#confirm"); await pilot.pause(0.3)
+        assert len(service.publish_calls) == calls_before_pending_retry + 1
+        assert service.publish_calls[-1][1:] == (False, False), service.publish_calls
 
         migration_old = "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/old__5f__96.png"
         migration_new = migration_old.replace("5f", "6f")
@@ -1124,6 +1143,21 @@ def real_repo_read_only() -> None:
         assert any(layer.layer == "weapon__vigil_pattern_dagger" for layer in session.layers)
         contacts = service.motion_event_markers(AnimationSelection("melee_1h", "attack", "fast_01", "e", "vigil_pattern_dagger", "melee_1h_dagger"))
         assert len(contacts) == 1 and contacts[0].kind == "CONTACT" and contacts[0].frame == 5
+        pending_path = service.workspace_root / "publish_land_pending.json"
+        pending_path.parent.mkdir(parents=True, exist_ok=True)
+        pending_path.write_text(json.dumps({
+            "status": "land_pending", "commit": "fixture-commit", "branch": "workbench/operator-art",
+            "identity": {"profile": "unarmed", "group": "locomotion", "action": "run_01", "direction": "e"},
+        }))
+        original_publish = service.workbench.publish
+        service.workbench.publish = lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("pending landing re-exported art"))
+        try:
+            pending_view = service.publish_preview(run.selection)
+        finally:
+            service.workbench.publish = original_publish
+            pending_path.unlink(missing_ok=True)
+        assert pending_view.land_pending and pending_view.pending_identity == "unarmed/locomotion/run_01/e"
+        assert not pending_view.publish_enabled and "workbench/operator-art" in pending_view.publish_block_reason
 
 
 def main() -> None:

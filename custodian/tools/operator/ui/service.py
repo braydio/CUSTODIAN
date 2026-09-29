@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import re
 import io
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -15,6 +16,7 @@ import animation_workbench as workbench
 import animation_workbench_model as model
 import animation_preview
 import animation_motion_preview
+import operator_art_worktree
 
 from .state import (
     AnimationRecord, AnimationSelection, CanvasMigrationView, ErrorView, ExistingContextView,
@@ -33,6 +35,8 @@ class WorkbenchService:
         workbench_api: Any = workbench, popen: Callable[..., Any] = subprocess.Popen,
     ) -> None:
         self.repo_root = Path(repo_root)
+        self.coordination_root_configured = bool(os.environ.get("CUSTODIAN_COORDINATION_ROOT"))
+        self.coordination_root = Path(os.environ.get("CUSTODIAN_COORDINATION_ROOT", self.repo_root)).resolve()
         self.source_root = Path(source_root)
         self.weapon_root = Path(weapon_root)
         self.catalog_path = Path(catalog_path)
@@ -64,6 +68,17 @@ class WorkbenchService:
 
     def _index(self):
         return self.model.source_index(self.source_root, self.weapon_root)
+
+    def checkout_identity(self):
+        return operator_art_worktree.checkout_identity(self.repo_root, self.coordination_root)
+
+    def checkout_status_label(self) -> str:
+        identity = self.checkout_identity()
+        pending = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
+        suffix = " · LAND PENDING" if pending.exists() else ""
+        if identity.kind == "COORDINATION MAIN" and operator_art_worktree.coordination_operator_changes(self.coordination_root):
+            suffix += " · coordination Operator edits preserved"
+        return f"{identity.kind} · {identity.branch} · origin/main {identity.main_relation}{suffix}"
 
     def require_saved_live_document_for_migration(self, active_path: str | None, expected_path: Path, modified: bool | None) -> None:
         if not active_path or modified is not True:
@@ -470,6 +485,34 @@ class WorkbenchService:
         return self.migration_view(report)  # type: ignore[return-value]
 
     def publish_preview(self, selection: AnimationSelection, full_validate: bool = False) -> PublishView:
+        pending_path = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
+        if pending_path.exists() and self.model is model and self.workbench is workbench:
+            try:
+                pending = json.loads(pending_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as error:
+                raise operator_art_worktree.ArtWorktreeError(f"LAND PENDING receipt cannot be read: {error}") from error
+            saved_identity = pending.get("identity", {})
+            matches = all(saved_identity.get(key) == getattr(selection, key) for key in ("profile", "group", "action", "direction"))
+            identity_label = "/".join(str(saved_identity.get(key, "")) for key in ("profile", "group", "action", "direction"))
+            try:
+                checkout = self.checkout_identity()
+                allowed = checkout.publish_allowed
+                checkout_reason = "" if allowed else (
+                    "Launch OPUI with 'opui' to retry from the isolated art checkout."
+                    if checkout.kind == "COORDINATION MAIN"
+                    else f"Retry requires {operator_art_worktree.ART_BRANCH}."
+                )
+            except (operator_art_worktree.ArtWorktreeError, OSError):
+                allowed, checkout_reason = False, "Checkout identity could not be verified."
+            reason = "" if matches and allowed else (
+                f"LAND PENDING for {identity_label}; select that animation to retry landing."
+                if not matches else checkout_reason
+            )
+            return PublishView(
+                selection, 0, 0, (), (), None, "GREEN", compatibility_preflight=True,
+                publish_enabled=matches and allowed, publish_block_reason=reason,
+                land_pending=True, pending_identity=identity_label,
+            )
         plan = self._plan(selection)
         manifest_path = self.workspace(selection) / "workbench.json"
         counterpart = self.workbench.horizontal_counterpart(selection.direction)
@@ -516,6 +559,18 @@ class WorkbenchService:
             mirror_rows.append(PublishRow(str(binding.get("binding_id",binding.get("layer",""))),f"{selection.direction} -> {counterpart}",operation_name,display(str(existing[0])) if existing else "",path))
         timeline=data["timeline"]; durations=tuple(float(value) for value in timeline.get("durations", ()))
         variable_durations=bool(durations) and any(abs(value-durations[0])>1e-9 for value in durations[1:])
+        try:
+            identity = self.checkout_identity()
+            publish_enabled = identity.publish_allowed
+            block_reason = "" if publish_enabled else (
+                "Use the isolated Operator art checkout to publish to main."
+                if identity.kind == "COORDINATION MAIN"
+                else f"Publishing requires {operator_art_worktree.ART_BRANCH}."
+            )
+        except (operator_art_worktree.ArtWorktreeError, OSError):
+            # Injected model/backend pairs are used by fixture-only service smokes.
+            publish_enabled = self.model is not model and self.workbench is not workbench
+            block_reason = "Checkout identity could not be verified."
         return PublishView(
             selection,old_frames,new_frames,tuple(retired),tuple(new),migration,
             migration.audit if migration else "GREEN",counterpart,mirror_paths,
@@ -523,11 +578,67 @@ class WorkbenchService:
             float(timeline.get("fps",timeline.get("preview_fps",12.0))),bool(timeline.get("loop",True)),
             variable_durations,durations,tuple(row.layer for row in direct_rows),direct_rows,
             tuple(mirror_rows),old_frames!=new_frames or bool(retired),True,
+            publish_enabled, block_reason,
         )
 
     def publish(self, selection: AnimationSelection, full_validate: bool = False, mirror_counterpart: bool = False):
+        pending_path = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
+        if pending_path.exists() and self.model is model and self.workbench is workbench:
+            checkout = self.checkout_identity()
+            if not checkout.publish_allowed:
+                raise operator_art_worktree.ArtWorktreeError(
+                    "LAND PENDING retry is available only from the dedicated Operator art checkout."
+                )
+            pending = json.loads(pending_path.read_text(encoding="utf-8"))
+            saved_identity = pending.get("identity", {})
+            if not all(saved_identity.get(key) == getattr(selection, key) for key in ("profile", "group", "action", "direction")):
+                raise operator_art_worktree.ArtWorktreeError("LAND PENDING belongs to another animation; select that animation before retrying.")
+            result = operator_art_worktree.retry_pending_land(self.repo_root, pending_path)
+            if result is None:
+                raise operator_art_worktree.ArtWorktreeError("LAND PENDING receipt disappeared before retry.")
+            result["coordination_sync"] = operator_art_worktree.best_effort_coordination_sync(
+                self.coordination_root if self.coordination_root_configured else None
+            )
+            return result
         plan = self._plan(selection)
-        return self.workbench.publish(self.workspace(selection) / "workbench.json", self.aseprite, False, False, full_validate, plan, mirror_counterpart)
+        manifest = self.workspace(selection) / "workbench.json"
+        if self.model is not model and self.workbench is not workbench:
+            return self.workbench.publish(manifest, self.aseprite, False, False, full_validate, plan, mirror_counterpart)
+        data = self.workbench.load(manifest)
+        canonical_paths: set[str] = set()
+        for binding in data.get("layers", ()):
+            for contract in (binding.get("source_contract", {}), binding.get("publish_contract", {})):
+                path = str(contract.get("path", ""))
+                if path:
+                    canonical_paths.add(path)
+        counterpart = self.workbench.horizontal_counterpart(selection.direction) if mirror_counterpart else None
+        if counterpart:
+            index = self._index()
+            for binding in data.get("layers", ()):
+                target = self.workbench._counterpart_target(binding, counterpart)
+                canonical_paths.add(self.model.rel(target))
+                identity = (binding.get("owner"), binding.get("layer"), binding.get("profile"), binding.get("group"), binding.get("action"), counterpart)
+                existing = index.get(identity)
+                if existing:
+                    canonical_paths.add(self.model.rel(Path(existing[0])))
+        allowlist = operator_art_worktree.publication_allowlist(self.repo_root, canonical_paths)
+        result = operator_art_worktree.publish_to_main(
+            repo_root=self.repo_root, coordination_root=self.coordination_root,
+            workspace_root=self.workspace_root, canonical_paths=canonical_paths,
+            allowlist=allowlist,
+            publish_once=lambda: self.workbench.publish(
+                manifest, self.aseprite, False, False, full_validate, plan, mirror_counterpart,
+            ),
+            identity={
+                "profile": selection.profile, "group": selection.group,
+                "action": selection.action, "direction": selection.direction,
+            }, mirror=mirror_counterpart,
+        )
+        if result.get("status") == "landed":
+            result["coordination_sync"] = operator_art_worktree.best_effort_coordination_sync(
+                self.coordination_root if self.coordination_root_configured else None
+            )
+        return result
 
     def refresh(self, selection: AnimationSelection, discard: bool = False):
         return self.workbench.refresh(

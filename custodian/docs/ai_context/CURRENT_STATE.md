@@ -1,5 +1,33 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Workbench Isolated Art Checkout (2026-09-28)
+
+Normal `opui` launch ensures the persistent sibling `CUSTODIAN-operator-art`
+worktree on local branch `workbench/operator-art`, runs Workbench code from that
+checkout, and reuses the coordination checkout's ignored UI virtual environment.
+The art checkout owns ignored Aseprite/Workbench state and tracked Operator
+publication. Checkout identity and last-known `origin/main` relation appear in
+the UI status bar; direct OPUI launch from coordination `main` keeps review
+available but disables tracked publishing.
+
+The reviewed `PUBLISH TO MAIN` confirmation runs the Workbench transaction,
+blocks when selected canonical source paths changed upstream, verifies the
+resulting Operator allowlist, stages only those outputs, commits once, and lands
+through `land_main.py`. A failed landing retains a clean committed art branch
+with an ignored `LAND PENDING` receipt; retrying the same animation resumes
+landing without exporting pixels again. A successful land refreshes OPUI and
+best-effort fast-forwards a clean coordination checkout. Coordination edits
+remain preserved and are reported as a pending sync.
+
+First-run migration copies legacy ignored `.ai/operator_animation_workbench`
+state into an empty art checkout, rewrites absolute checkout paths in JSON, and
+preserves the coordination copy. It refuses to migrate while Aseprite is
+running. Tracked coordination-side Operator edits are reported, never migrated.
+Operator LFS art is filled from the local cache only; no network download is
+triggered by `opui` setup. See
+`design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md` and
+`custodian/tools/validation/operator_art_worktree_smoke.py`.
+
 ## Asset Requirements Pipeline (2026-09-28)
 
 `custodian/content/metadata/assets/required_assets.registry.json` is the sole

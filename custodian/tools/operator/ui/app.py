@@ -38,7 +38,7 @@ class OperatorWorkbenchApp(App):
     TITLE = "Operator Workbench"
     CSS = """
     Screen { background: #11151c; color: #d8dee9; }
-    #workbench-status { height: 3; padding: 1 2; background: #202734; color: #eceff4; }
+    #workbench-status { height: 5; padding: 1 2; background: #202734; color: #eceff4; }
     #search { height: 3; margin: 0 1; }
     .hidden { display: none; }
     #workspace-row { height: 1fr; }
@@ -138,6 +138,7 @@ class OperatorWorkbenchApp(App):
         self._status_branch = "unknown"
         self._status_dirty = False
         self._status_aseprite = "unavailable"
+        self._status_checkout = "unknown checkout"
         self.features = {"animations": AnimationFeature(self.service)}; self.session_view = None
         self.main_screen: MainScreen | None = None
         self.preview_view = None
@@ -320,7 +321,7 @@ class OperatorWorkbenchApp(App):
     def _update_status_bar(self) -> None:
         self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(
             self._status_branch, self._status_dirty, self._status_aseprite,
-            self.live_bridge.snapshot().status.value,
+            self.live_bridge.snapshot().status.value, checkout=self._status_checkout,
         )
 
     def _refresh_live_bridge_status(self) -> None:
@@ -387,6 +388,10 @@ class OperatorWorkbenchApp(App):
                 tree.select_identity(self.state.selection)
                 await self._load_session(self.state.selection)
             self._status_branch, self._status_dirty = await self._thread(self._repo_status)
+            try:
+                self._status_checkout = await self._thread(self.service.checkout_status_label)
+            except (AttributeError, OSError, RuntimeError):
+                self._status_checkout = "unknown checkout"
             self._status_aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
             self._update_status_bar()
             if hasattr(self.service, "animation_plan"):
@@ -1333,6 +1338,14 @@ class OperatorWorkbenchApp(App):
             result = await self._thread(function, *args)
             if operation == "EDIT": self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
             else: self._activity(f"{operation.lower()} complete", "OK")
+            if operation == "PUBLISH" and isinstance(result, dict):
+                if result.get("status") == "landed":
+                    self._activity(f"published to origin/main: {result.get('commit', '')[:12]}", "OK")
+                    sync = result.get("coordination_sync")
+                    if sync and sync not in ("synced", "not-configured"):
+                        self._activity(f"coordination main sync {sync}", "WARN")
+                elif result.get("status") == "unchanged":
+                    self._activity("canonical Operator art already matches this Workbench", "INFO")
             if operation == "PUBLISH" and selection:
                 transaction = self.service.transaction_state(selection)
                 if transaction:

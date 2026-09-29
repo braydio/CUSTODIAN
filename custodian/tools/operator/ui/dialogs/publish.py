@@ -86,11 +86,20 @@ class PublishDialog(ModalScreen[tuple[bool, bool] | None]):
         compatibility = "[green]✓ Compatibility preflight[/green]" if p.compatibility_preflight else "[red]✗ Compatibility preflight[/red]"
         warning = " [yellow]Aseprite open: using last saved state.[/yellow]" if self.aseprite_open else ""
         with Vertical(classes="dialog publish-dialog"):
-            yield Label("PUBLISH ANIMATION", classes="dialog-title")
+            yield Label("LAND PENDING" if p.land_pending else "PUBLISH ANIMATION", classes="dialog-title")
+            if p.land_pending:
+                pending_label = f"A committed {p.pending_identity} publication is waiting for origin/main."
+                if p.publish_block_reason:
+                    pending_label += f"\n{p.publish_block_reason}"
+                yield Static(pending_label, id="publish-checkout", classes="publish-primary")
             yield Static(f"[b]{selection.profile} / {selection.group} / {selection.action}[/b]\n[b]{direction}[/b]\n{timing}    {layers}\n{contract}", id="publish-summary", classes="publish-primary")
+            if p.publish_block_reason and not p.land_pending:
+                yield Static(f"[yellow]{p.publish_block_reason}[/yellow]", id="publish-checkout", classes="publish-primary")
             yield Static("[b]DIRECT[/b]", classes="publish-section-title publish-primary")
             yield Static(_rows(p.direct_rows), classes="publish-table publish-primary", id="publish-direct")
-            if p.counterpart_direction:
+            if p.land_pending:
+                yield Static("The existing commit will be landed without exporting or replacing animation pixels.", id="land-pending-detail", classes="publish-primary")
+            elif p.counterpart_direction:
                 yield Static("[b]MIRROR PROMOTION[/b]    NOT ENABLED", classes="publish-section-title publish-primary", id="mirror-title")
                 yield Static(_rows(p.mirror_rows), classes="publish-table publish-primary", id="publish-mirror")
                 yield Checkbox(f"Also publish mirrored counterpart ({selection.direction.upper()} -> {p.counterpart_direction.upper()})", id="mirror-counterpart", classes="publish-primary")
@@ -98,13 +107,15 @@ class PublishDialog(ModalScreen[tuple[bool, bool] | None]):
             else:
                 yield Static(f"[dim]Mirror promotion unavailable for {direction}.[/dim]", id="mirror-unavailable", classes="publish-primary")
             yield Static(f"{dependency}    {compatibility}{warning}", id="publish-preflight", classes="publish-primary")
-            yield Checkbox("Full changed-file validation", id="full-validation", classes="publish-primary")
+            if not p.land_pending:
+                yield Checkbox("Full changed-file validation", id="full-validation", classes="publish-primary")
             yield Static(self._details(), id="publish-details", classes="hidden")
             with Horizontal(classes="dialog-buttons publish-buttons"):
                 yield Button("DETAILS", id="details")
                 yield Static("", id="publish-button-spacer")
                 yield Button("CANCEL", id="cancel")
-                yield Button("PUBLISH", id="confirm", variant="success", disabled=p.audit != "GREEN" or not p.compatibility_preflight)
+                label = "RETRY LANDING" if p.land_pending else "PUBLISH TO MAIN"
+                yield Button(label, id="confirm", variant="success", disabled=p.audit != "GREEN" or not p.compatibility_preflight or not p.publish_enabled)
 
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
         if event.checkbox.id == "mirror-counterpart":
@@ -119,6 +130,6 @@ class PublishDialog(ModalScreen[tuple[bool, bool] | None]):
                 widget.toggle_class("hidden")
             event.button.label = "HIDE DETAILS" if not panel.has_class("hidden") else "DETAILS"
             return
-        mirror = self.query_one("#mirror-counterpart", Checkbox).value if self.preview.counterpart_direction else False
-        result = None if event.button.id == "cancel" else (self.query_one("#full-validation", Checkbox).value, mirror)
+        mirror = self.query_one("#mirror-counterpart", Checkbox).value if self.preview.counterpart_direction and not self.preview.land_pending else False
+        result = None if event.button.id == "cancel" else (self.query_one("#full-validation", Checkbox).value if not self.preview.land_pending else False, mirror)
         self.dismiss(result)

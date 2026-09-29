@@ -851,6 +851,26 @@
       "needs_import": false
     },
     {
+      "id": "operator_art_worktree",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_art_worktree_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation",
+        "tooling",
+        "worktree",
+        "git"
+      ],
+      "owners": [
+        "custodian/tools/operator/operator_art_worktree.py",
+        "custodian/tools/validation/operator_art_worktree_smoke.py",
+        "tools/custodian_aliases.sh"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "operator_workbench_ui",
       "type": "python",
       "script": "custodian/tools/validation/operator_workbench_ui_smoke.py",
@@ -862,6 +882,7 @@
         "tooling"
       ],
       "owners": [
+        "custodian/tools/operator/operator_art_worktree.py",
         "custodian/tools/operator/ui/**",
         "custodian/tools/validation/operator_workbench_ui_smoke.py"
       ],
