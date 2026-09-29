@@ -2,46 +2,49 @@
 
 - Workstream: `awakening-reliquary-dust-lung-connector`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `awakening-04-05-connector-presentation`
-- Goal: Remove the remaining visible straight room-canvas joins at the Dust Lung and Locker Reliquary ends of the 04→05 connector without changing traversal geometry, room placement, or the approved source art.
-- Current measured state: `main@c53160b` replaced the rejected 832×384 route-only plate with a 1024×576 `full_plate_underlay` centered at `(352,-2464)`, with 96px architectural bleed and exact registered room-underlay pixels at both ends. Focused Awakening and Asset V2 validation passed. Direct runtime review still shows a straight room-canvas edge at the C/A joins. The runtime currently forces Zone04/Zone05 art to alpha 1.0 whenever the Operator is inside the merged connector envelope via `keep_opaque_in_connector`, even though the connector already contains exact registered room pixels for crossfade overlap. The optional foreground state remains intentionally unbound because the approved master is flattened RGB.
-- Task-specific authority: `design/04_architecture/AWAKENING_FIRST_RETURN.md`; `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/tools/assets/compose_awakening_connector_full_plate.py`; `custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json`.
+- Goal: Remove the remaining visible straight room-canvas joins at the Dust Lung and Locker Reliquary ends of the landed 04→05 connector while preserving the approved connector art, room placement, traversal geometry, and Asset V2 identity.
+- Current measured state: `main@1912a56` contains the landed `c53160b` connector implementation: one 1024×576 `full_plate_underlay` centered at `Vector2(352,-2464)`, 96px architectural bleed, exact registered room-underlay overlap at both ends, unchanged A/B/C traversal geometry, and no fabricated foreground layer from the flattened RGB source. Focused Awakening/Asset V2 validation passed for that implementation, but direct runtime review still shows straight rectangular room-canvas joins at the Dust Lung and Locker Reliquary handoffs. `awakening_first_return.gd` currently forces Zone04/Zone05 art to alpha 1.0 whenever the Operator is inside the merged connector envelope via `keep_opaque_in_connector`, preventing the normal 128px distance fade from owning that handoff.
+- Task-specific authority: `design/04_architecture/AWAKENING_FIRST_RETURN.md`; `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/tools/assets/compose_awakening_connector_full_plate.py`; `custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json`; current `custodian/AGENTS.md`; current validation recipes.
 - Change:
-  1. Remove the binary Zone04/Zone05 “keep opaque while inside connector” presentation behavior and let those room plates transition through the existing distance-based zone fade while the connector underlay remains driven by the merged A/B/C envelope. Preserve `ZONE_ART_FADE_DISTANCE`.
-  2. Verify the existing exact room-pixel overlap produces a seamless crossfade at both ends. If a hard seam remains, adjust only the room-end overlap crop/mask/registration in the existing compositor; preserve the 1024×576 canvas, `Vector2(352,-2464)` center, approved `full_plate_source.png`, and locked route registration.
-  3. Update focused smoke coverage so the Dust Lung and Reliquary room art is not forced opaque solely because the Operator is inside the connector, connector art remains visible through the dogleg, and backtracking restores the expected room presentation without a pop.
-  4. Produce new direct runtime captures at connector C, B, A, and an overview and compare them against the currently committed evidence. Do not call visual acceptance green unless the straight rectangular room-canvas joins are no longer visible in motion or stills.
-  5. Correct directly related documentation drift: `FILE_INDEX.md` still describes the retired 832×384 full plate, and `AWAKENING_RELIQUARY_DUST_LUNG_CONNECTOR_CLAUDE_SUMMARY.md` contains a contradictory trailing statement that the landed repair is “uncommitted.” Keep the design/required-assets wording unchanged unless this slice changes their owned truth.
-- Preserve: `awakening_layout.gd` A/B/C rectangles and merged 832×384 traversal envelope; Zone04/Zone05 positions and room plates; 1024×576 connector visual canvas and Asset V2 family identity; 128px fade distance/curve; traversal, collision, progression, P-9, triggers, camera reveals, lighting geometry, and source provenance.
-- Non-goals: No new generated art; no room movement; no new connector geometry; no HUD/UI work; no P-9/progression redesign; no fabricated foreground extraction from the flattened RGB master; no unrelated Awakening cleanup.
+  1. Remove the binary Zone04/Zone05 `keep_opaque_in_connector` presentation override so those room plates transition through the existing distance-based zone fade while the connector underlay remains driven by the merged A/B/C connector envelope. Preserve `ZONE_ART_FADE_DISTANCE` and its current curve.
+  2. Update focused smoke coverage to prove Zone04/Zone05 are not forced opaque solely because the Operator is inside the connector, the connector remains visible throughout the dogleg, and forward/backtracking transitions do not pop.
+  3. Produce fresh direct runtime captures at representative C, B, A, and overview positions and inspect them before editing the compositor.
+  4. Only if a straight join remains after Step 1, make the smallest bounded correction to the existing registered room-overlap crop/mask/registration in `compose_awakening_connector_full_plate.py`. Preserve the 1024×576 visual canvas, `Vector2(352,-2464)` center, approved `full_plate_source.png`, uniform-scale source transforms, and locked route registration. Reingest through Asset Pipeline V2 only if connector pixels change.
+  5. Correct directly related documentation drift: `FILE_INDEX.md` must describe the live 1024×576 `full_plate_underlay` rather than the retired 832×384 plate, and `AWAKENING_RELIQUARY_DUST_LUNG_CONNECTOR_CLAUDE_SUMMARY.md` must remove the stale trailing claim that the landed implementation is “uncommitted.”
+- Preserve: `awakening_layout.gd` A/B/C rectangles and their merged 832×384 traversal envelope; Zone04/Zone05 positions and room plates; 1024×576 connector registration and Asset V2 family/state identity; source provenance; traversal, collision, progression, P-9, triggers, camera reveals, lighting geometry, and unrelated Awakening presentation.
+- Non-goals: No new generated art; no room movement; no new connector geometry; no HUD/UI work; no P-9/progression redesign; no invented foreground extraction from the flattened RGB master; no global fade retuning; no unrelated Awakening cleanup.
 - Acceptance:
-  - Dust Lung → connector and connector → Locker Reliquary no longer expose a straight rectangular room-canvas boundary in direct runtime captures or while backtracking.
-  - No doubled stair/threshold, brightness pop, missing floor, or floating architectural fragment appears during the crossfade.
-  - `Connector04_05_Underlay` remains centered at `Vector2(352,-2464)`, 1024×576, presentation-only, and the merged A/B/C traversal geometry remains unchanged.
-  - Focused smoke asserts the corrected alpha lifecycle at representative C/A transition positions and passes with geometry/progression regressions.
-  - If compositor pixels change, Asset V2 ingest/status/doctor and the asset pipeline ingest smoke pass for the family with no stale runtime state.
-  - New C/B/A/overview evidence is committed under the existing `reports/awakening_connector_04_05/` convention and the closing summary records whether visual acceptance is actually green.
-  - `FILE_INDEX.md` and the connector closing summary no longer state superseded runtime truth.
+  - Dust Lung → connector and connector → Locker Reliquary no longer expose a conspicuous straight rectangular room-canvas boundary in direct runtime stills or while traversing/backtracking.
+  - No doubled stair/threshold, brightness pop, disappearing floor, floating architectural fragment, or new black-gap defect is introduced.
+  - `Connector04_05_Underlay` remains 1024×576, centered at `Vector2(352,-2464)`, presentation-only, and the Layout A/B/C traversal geometry remains unchanged.
+  - Focused smoke covers the corrected alpha lifecycle at representative C/A transition positions and passes with geometry/progression regression checks.
+  - Run the narrowest relevant Moment Forge presentation scenario selected by `python3 custodian/tools/iteration/run_moment.py --changed`; use evidence/full capture only as required for final visual judgment. If no applicable stable scenario exists, record that and rely on the required direct C/B/A/overview runtime evidence rather than inventing a broad sweep.
+  - If compositor pixels change, Asset V2 plan/ingest/status/doctor plus the relevant ingest smoke pass with no stale connector runtime state.
+  - New C/B/A/overview evidence is committed under `reports/awakening_connector_04_05/`, and the closing summary records whether visual acceptance is actually green.
+  - `FILE_INDEX.md` and the connector closing summary reflect live runtime truth.
+  - Complete/archival/finish follow the current workstream lifecycle on the task branch.
 - Task overrides: `none`
 - Deferred: Authored foreground occlusion remains deferred until a layered/alpha-separated source can support it without arbitrary cuts through baked lighting and shadows.
 
 ### Work Surface
 
-- Files/systems to change: Awakening zone/connector presentation fade; focused smoke coverage; connector compositor only if overlap correction is still required; directly stale connector docs/evidence.
-- Related consumers or tests: `awakening_first_return_smoke.gd`, `awakening_first_return_geometry_smoke.gd`, `awakening_first_return_progression_smoke.gd`; Asset V2 ingest validation only if the runtime texture changes.
+- Files/systems to change: `custodian/game/world/awakening/awakening_first_return.gd`; focused Awakening smoke coverage; `custodian/tools/assets/compose_awakening_connector_full_plate.py` only if fade-first review still shows a seam; directly related connector docs/evidence.
+- Related consumers or tests: `custodian/scenes/awakening_first_return.tscn`; `awakening_first_return_smoke.gd`; `awakening_first_return_geometry_smoke.gd`; `awakening_first_return_progression_smoke.gd`; Asset V2 connector family/status if pixels change; relevant Moment Forge presentation selection.
 
 ### Plan
 
-1. Prove or falsify the `keep_opaque_in_connector` seam hypothesis with the smallest runtime/presentation change and focused smoke assertions.
-2. Capture C/B/A/overview. If the seam is gone, stop; do not touch the compositor.
-3. Only if the seam persists, make a bounded room-overlap/mask correction in the existing compositor, reingest that family state, and recapture.
-4. Correct the two known documentation-drift items and close with focused validation plus one changed-file sweep.
+1. Inspect current live main/AGENTS and sync/reuse the existing workstream through dispatcher/workstream tooling. Do not implement in the coordination checkout.
+2. Remove only the `keep_opaque_in_connector` override and add the focused alpha-lifecycle assertions.
+3. Run focused smoke, then capture C/B/A/overview and inspect the actual images. If the seam is gone, stop the visual implementation here.
+4. Only if the seam persists, make one bounded registered room-overlap/mask correction in the existing compositor, reingest the family, rerun focused validation, and recapture.
+5. Run the narrowest relevant Moment Forge presentation check, correct the two known documentation-drift items, perform the changed-file validation closeout, write/update the closing summary, mark this packet complete and archive it, then finish/land through the standard workstream lifecycle.
 
 ### Handoff
 
-- Next action: Claim `awakening-reliquary-dust-lung-connector`, start from the live C/A seam captures, and test the room-opacity override before editing asset composition.
+- Next action: Auto-claim `awakening-reliquary-dust-lung-connector`; begin with the room-opacity override hypothesis before touching asset composition.
 - Best starting files: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/tools/validation/awakening_first_return_smoke.gd`; `reports/awakening_connector_04_05/`.
-- Blockers or open questions: None. Foreground occlusion is explicitly deferred and is not required for this closeout slice.
+- Blockers or open questions: None. The packet is safe for automatic claim because the implementation order, stop condition, preservation boundary, and visual acceptance evidence are explicit.
