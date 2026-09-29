@@ -206,6 +206,38 @@ a review artifact, not the default debugging loop. If a full capture is needed,
 prefer one final run after deterministic assertions and evidence capture are
 already green.
 
+### Visual Evidence Economy
+
+Before any renderer/model-vision pass, exhaust the cheapest objective proof that
+matches the defect:
+
+1. **Structure/state:** scene/resource identity, dimensions, registration, bounds,
+   alpha/visibility, z-order, collision/navigation ownership, animation/state/
+   progress, deterministic snapshots, and Asset V2 contract/status.
+2. **Code-based pixel metrics:** alpha/silhouette bounds, matte/opaque-void
+   detection, expected overlap coverage, seam/edge discontinuity, image
+   fingerprints/diffs, and targeted region statistics.
+3. **Renderer ROI:** one or a few tight crops at authored positions/ticks when
+   actual rendered pixels remain part of acceptance.
+4. **Full frame / motion:** only when global composition, continuous motion,
+   audiovisual timing, or game feel cannot be proven by the earlier layers.
+
+Do not use a full-resolution screenshot as a substitute for a measurable
+registration, visibility, state, or alpha assertion. During iteration prefer
+`--capture-mode none`; at closeout prefer `evidence` with the fewest keyframes.
+If several ROIs are needed, generate one compact contact sheet plus a structured
+metrics report rather than asking Codex to inspect many full-size frames.
+
+A paired independent review should consume the implementation's durable metrics,
+telemetry, ROI/contact sheet, and existing renderer evidence first. It should not
+recapture an equivalent visual set unless the existing evidence is stale,
+missing, contradictory, or cannot establish the review criterion.
+
+Full-frame evidence budget: more than two full-screen stills, any repeated
+full-screen pass after each edit, or any `--capture-mode full` run must have a
+task-specific reason recorded in the packet/summary. Subjective visual baselines
+remain human-owned even when objective technical image checks are automated.
+
 Do not run the focused test and `--changed` concurrently against the same
 project. If another agent/session already owns a broad sweep, wait for it or use
 its result rather than launching a competing sweep.
