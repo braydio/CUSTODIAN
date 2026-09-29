@@ -1,0 +1,97 @@
+{
+  "schema": "custodian.visual_validation_economy.live_evidence.v1",
+  "scenario": "traversal/awakening_late_seams_v1",
+  "scenario_sha256": "9795f7c0d28d7ee7d9840c9c60c8fac8931419e6aed09a367343d9d2aa989147",
+  "runs": [
+    {
+      "run_id": "vve-review-correction-1-none",
+      "mode": "none",
+      "status": "passed",
+      "stable_assertions_passed": true,
+      "stable_fingerprint": "be8bd7cf283947d0f7b7c4f868c1dcd721551c9004c4e58323fe237efabee3e6",
+      "probe_sample_count": 26,
+      "warning_count": 0,
+      "artifact_path": "reports/moment_forge/traversal/awakening_late_seams_v1/vve-review-correction-1-none (ephemeral worktree run output)"
+    },
+    {
+      "run_id": "vve-review-correction-1-evidence",
+      "mode": "evidence",
+      "status": "passed",
+      "stable_assertions_passed": true,
+      "stable_fingerprint": "be8bd7cf283947d0f7b7c4f868c1dcd721551c9004c4e58323fe237efabee3e6",
+      "probe_sample_count": 26,
+      "warning_count": 0,
+      "artifact_path": "reports/moment_forge/traversal/awakening_late_seams_v1/vve-review-correction-1-evidence (ephemeral worktree run output)"
+    }
+  ],
+  "evidence": {
+    "adapter_exit_code": 0,
+    "checks_total": 5,
+    "checks_passed": 5,
+    "checks": [
+      {
+        "index": 0,
+        "metrics": {
+          "matte_border_ratio": 0.17416666666666666,
+          "matte_color": null,
+          "void_ratio": 0.0
+        },
+        "passed": true,
+        "type": "matte_void"
+      },
+      {
+        "index": 1,
+        "metrics": {
+          "matte_border_ratio": 0.59,
+          "matte_color": null,
+          "void_ratio": 0.0
+        },
+        "passed": true,
+        "type": "matte_void"
+      },
+      {
+        "index": 2,
+        "metrics": {
+          "matte_border_ratio": 0.2658333333333333,
+          "matte_color": null,
+          "void_ratio": 0.0
+        },
+        "passed": true,
+        "type": "matte_void"
+      },
+      {
+        "index": 3,
+        "metrics": {
+          "matte_border_ratio": 0.009166666666666667,
+          "matte_color": null,
+          "void_ratio": 0.0
+        },
+        "passed": true,
+        "type": "matte_void"
+      },
+      {
+        "index": 4,
+        "metrics": {
+          "matte_border_ratio": 0.10666666666666667,
+          "matte_color": null,
+          "void_ratio": 0.0
+        },
+        "passed": true,
+        "type": "matte_void"
+      }
+    ],
+    "contact_sheet": "reports/moment_forge/curated/awakening_late_seams_v1_review_correction_1/awakening_late_seams_roi_sheet.png",
+    "contact_sheet_size_px": [
+      1200,
+      444
+    ],
+    "metrics": "reports/moment_forge/curated/awakening_late_seams_v1_review_correction_1/awakening_late_seams_roi_metrics.json",
+    "full_run_directories_retained": false,
+    "retention_note": "Full-frame keyframes and timestamped run directories are ephemeral worktree evidence; compact ROI sheet, ROI metric JSON, run fingerprints, probe counts, and reproduction commands are retained."
+  },
+  "reproduction_commands": [
+    "python3 custodian/tools/iteration/run_moment.py traversal/awakening_late_seams_v1 --capture-mode none --run-id vve-review-correction-1-none",
+    "python3 custodian/tools/iteration/run_moment.py traversal/awakening_late_seams_v1 --capture-mode evidence --run-id vve-review-correction-1-evidence",
+    "python3 custodian/tools/validation/awakening_late_seams_evidence.py reports/moment_forge/traversal/awakening_late_seams_v1/vve-review-correction-1-evidence"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "custodian.moment_forge_adopter_spec.v1",
+  "id": "operator_mobile_guard",
+  "feature_packet": "OPERATOR_MOBILE_GUARD_COMPOSITION",
+  "sequence": ["moving_enter", "moving_hold", "blocked_hit", "recovered_hold", "moving_exit", "stationary_enter", "stationary_hit", "guard_break"],
+  "roles": {
+    "lower_body": "Bind to the movement-owned lower-body AnimatedSprite2D.",
+    "upper_body": "Bind to the aim-owned upper-body AnimatedSprite2D.",
+    "composition_state": "Bind to the presentation owner exposing get_debug_snapshot()."
+  },
+  "probes": [
+    {"id": "lower_body_facts", "role": "lower_body", "fields": ["animation", "frame", "frame_progress", "effective_visible", "global_bounds"], "required": true, "sample_sequence": true},
+    {"id": "upper_body_facts", "role": "upper_body", "fields": ["animation", "frame", "frame_progress", "effective_visible", "global_bounds"], "required": true, "sample_sequence": true},
+    {"id": "composition_facts", "role": "composition_state", "snapshot": "debug", "fields": ["movement_direction", "aim_direction", "movement_aim_directions_diverge", "guard_break_movement_locked"], "required": true, "sample_sequence": true}
+  ],
+  "assertion_templates": [
+    {"type": "probe_sequence_equal", "probe": "lower_body_facts", "field": "animation", "states": ["moving_enter", "moving_hold", "blocked_hit", "recovered_hold", "moving_exit"], "tolerance": 0.0},
+    {"type": "probe_compare", "probe": "composition_facts", "field": "movement_aim_directions_diverge", "op": "eq", "value": true, "state": "moving_hold"},
+    {"type": "probe_compare", "probe": "composition_facts", "field": "guard_break_movement_locked", "op": "eq", "value": true, "state": "guard_break"},
+    {"type": "probe_compare", "probe": "lower_body_facts", "field": "animation", "op": "eq", "value": "<stationary_guard_lower_animation>", "state": "stationary_enter"},
+    {"type": "probe_compare", "probe": "upper_body_facts", "field": "animation", "op": "eq", "value": "<block_enter_animation>", "state": "moving_enter"}
+  ],
+  "continuity_measurements": [
+    {"field": "frame", "states": ["moving_enter", "moving_hold", "blocked_hit", "recovered_hold", "moving_exit"]},
+    {"field": "frame_progress", "states": ["moving_enter", "moving_hold", "blocked_hit", "recovered_hold", "moving_exit"]}
+  ],
+  "authority_invariants": [
+    "Lower-body locomotion remains movement-owned when upper guard phase changes.",
+    "Movement and aim/guard direction resolve independently; no runtime mirroring is introduced.",
+    "Guard break remains movement-locked and uses complete paired presentation."
+  ],
+  "evidence": {
+    "capture_mode": "evidence",
+    "contact_sheet_builder": "build_roi_contact_sheet",
+    "roi_label": "Operator runtime-scale guard composition",
+    "contact_sheet_states": ["moving_enter", "moving_hold", "moving_exit"],
+    "metrics": ["alpha_bounds", "roi_diff"],
+    "raw_frames_secondary": true
+  }
+}

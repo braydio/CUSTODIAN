@@ -47,7 +47,16 @@ def load_image(path: Path) -> Image.Image:
 
 
 def _crop(image: Image.Image, rect: Rect | None) -> Image.Image:
-    return image.crop(rect) if rect is not None else image
+    if rect is None:
+        return image
+    left, top, right, bottom = rect
+    if left < 0 or top < 0 or right > image.width or bottom > image.height:
+        raise MetricsError(
+            f"ROI {rect!r} lies outside image bounds [0, 0, {image.width}, {image.height}]"
+        )
+    if right <= left or bottom <= top:
+        raise MetricsError(f"ROI must have positive width and height: {rect!r}")
+    return image.crop(rect)
 
 
 def alpha_bounds(image: Image.Image, rect: Rect | None = None, threshold: int = 0) -> dict[str, Any]:
@@ -146,29 +155,49 @@ def seam_discontinuity(
     boundary: int,
     band: int = 2,
 ) -> dict[str, Any]:
-    """Mean absolute pixel delta across a declared horizontal/vertical boundary line."""
+    """Mean strongest adjacent-pixel delta near a declared seam line.
+
+    For each scanline, inspect adjacent pixel pairs within ``band`` pixels of
+    the boundary and retain the strongest edge. This preserves the legacy
+    magnitude for a hard split while detecting a narrow discontinuity that
+    exists only on the boundary pixel.
+    """
     if axis not in {"horizontal", "vertical"}:
         raise MetricsError("axis must be 'horizontal' or 'vertical'")
+    if band < 1:
+        raise MetricsError("band must be a positive integer")
     region = _crop(image, rect)
     width, height = region.size
     pixels = region.load()
     accumulator = 0
     samples = 0
     if axis == "vertical":
-        if not (band <= boundary < width - band):
+        if boundary - band < 0 or boundary + band + 1 >= width:
             raise MetricsError("boundary is too close to the ROI edge for the requested band")
         for y in range(height):
-            near = pixels[boundary - band, y]
-            far = pixels[boundary + band, y]
-            accumulator += sum(abs(component_a - component_b) for component_a, component_b in zip(near, far))
+            strongest = 0
+            for x in range(boundary - band, boundary + band + 1):
+                before = pixels[x, y]
+                after = pixels[x + 1, y]
+                strongest = max(
+                    strongest,
+                    sum(abs(component_a - component_b) for component_a, component_b in zip(before, after)),
+                )
+            accumulator += strongest
             samples += 1
     else:
-        if not (band <= boundary < height - band):
+        if boundary - band < 0 or boundary + band + 1 >= height:
             raise MetricsError("boundary is too close to the ROI edge for the requested band")
         for x in range(width):
-            near = pixels[x, boundary - band]
-            far = pixels[x, boundary + band]
-            accumulator += sum(abs(component_a - component_b) for component_a, component_b in zip(near, far))
+            strongest = 0
+            for y in range(boundary - band, boundary + band + 1):
+                before = pixels[x, y]
+                after = pixels[x, y + 1]
+                strongest = max(
+                    strongest,
+                    sum(abs(component_a - component_b) for component_a, component_b in zip(before, after)),
+                )
+            accumulator += strongest
             samples += 1
     return {"mean_absolute_delta": accumulator / max(1, samples * 4), "samples": samples}
 
@@ -186,10 +215,13 @@ def _resolve_rect(entry: dict[str, Any]) -> Rect | None:
 
 def _apply_threshold(kind: str, metrics: dict[str, Any], check: dict[str, Any]) -> bool | None:
     """Fold a check's own threshold fields into a pass/fail bool, or None if undeclared."""
-    if kind == "alpha_bounds" and "max_coverage_ratio" in check:
-        return metrics["coverage_ratio"] <= float(check["max_coverage_ratio"])
-    if kind == "alpha_bounds" and "min_coverage_ratio" in check:
-        return metrics["coverage_ratio"] >= float(check["min_coverage_ratio"])
+    if kind == "alpha_bounds":
+        thresholds = []
+        if "min_coverage_ratio" in check:
+            thresholds.append(metrics["coverage_ratio"] >= float(check["min_coverage_ratio"]))
+        if "max_coverage_ratio" in check:
+            thresholds.append(metrics["coverage_ratio"] <= float(check["max_coverage_ratio"]))
+        return all(thresholds) if thresholds else None
     if kind == "matte_void" and "max_void_ratio" in check:
         return metrics["void_ratio"] <= float(check["max_void_ratio"])
     if kind == "roi_diff" and "max_changed_pixel_ratio" in check:

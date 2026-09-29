@@ -3969,7 +3969,9 @@
       ],
       "owners": [
         "custodian/tools/iteration/presentation_image_metrics.py",
-        "custodian/tools/iteration/test_presentation_image_metrics.py"
+        "custodian/tools/iteration/test_presentation_image_metrics.py",
+        "custodian/tools/iteration/adopter_specs/*.json",
+        "custodian/tools/iteration/test_visual_validation_adopter_specs.py"
       ],
       "timeout_sec": 15,
       "needs_import": false
@@ -3992,6 +3994,33 @@
       "needs_import": false
     },
     {
+      "id": "visual_validation_adopter_specs",
+      "type": "python",
+      "script": "custodian/tools/iteration/test_visual_validation_adopter_specs.py",
+      "tier": "unit",
+      "tags": ["validation", "moment", "visual_economy"],
+      "owners": [
+        "custodian/tools/iteration/adopter_specs/*.json",
+        "custodian/tools/iteration/adopter_specs/README.md",
+        "custodian/tools/iteration/test_visual_validation_adopter_specs.py"
+      ],
+      "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
+      "id": "awakening_late_seams_evidence_adapter",
+      "type": "python",
+      "script": "custodian/tools/validation/test_awakening_late_seams_evidence.py",
+      "tier": "unit",
+      "tags": ["validation", "moment", "visual_economy", "awakening"],
+      "owners": [
+        "custodian/tools/validation/awakening_late_seams_evidence.py",
+        "custodian/tools/validation/test_awakening_late_seams_evidence.py"
+      ],
+      "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
       "id": "awakening_late_seams_v1",
       "type": "moment",
       "scenario": "traversal/awakening_late_seams_v1",
@@ -4006,6 +4035,7 @@
         "custodian/tools/iteration/scenarios/traversal/awakening_late_seams_v1.json",
         "custodian/tools/validation/fixtures/awakening_late_seams_moment.*",
         "custodian/tools/validation/awakening_late_seams_evidence.py",
+        "custodian/tools/validation/test_awakening_late_seams_evidence.py",
         "custodian/scenes/awakening_first_return.tscn",
         "custodian/game/world/awakening/awakening_first_return.gd",
         "custodian/game/world/hub/road_of_witnesses_prototype.gd"

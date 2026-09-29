@@ -1,0 +1,40 @@
+{
+  "schema": "custodian.moment_forge_adopter_spec.v1",
+  "id": "solarium_i_acquisition",
+  "feature_packet": "TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION",
+  "sequence": ["dormant", "candidate", "resolve_midpoint", "stable", "warning_shutdown"],
+  "roles": {
+    "aperture": "Bind to the Acquisition Aperture presentation node.",
+    "anchors": "Bind to the outbound and reciprocal anchor presentation group.",
+    "witnesses": "Bind to the coherence-witness presentation group.",
+    "route_authority": "Bind to the route-review owner exposing its debug snapshot.",
+    "scenario_fixture": "Bind to the fixture/level owner exposing the test-only presentation snapshot."
+  },
+  "probes": [
+    {"id": "aperture_facts", "role": "aperture", "fields": ["effective_visible", "effective_alpha", "global_bounds", "effective_z_index", "animation", "frame", "frame_progress"], "required": true, "sample_sequence": true},
+    {"id": "anchor_facts", "role": "anchors", "fields": ["effective_visible", "effective_alpha", "global_bounds"], "required": true, "sample_sequence": true},
+    {"id": "witness_facts", "role": "witnesses", "fields": ["effective_visible", "effective_alpha", "global_bounds"], "required": true, "sample_sequence": true},
+    {"id": "route_authority_facts", "role": "route_authority", "snapshot": "debug", "fields": ["route_review_state_hash"], "required": true, "sample_sequence": true},
+    {"id": "fixture_state", "role": "scenario_fixture", "snapshot": "debug", "fields": ["passage_node_count", "stale_resolve_completion_count"], "required": true, "sample_sequence": true}
+  ],
+  "assertion_templates": [
+    {"type": "probe_sequence_equal", "probe": "route_authority_facts", "field": "route_review_state_hash", "states": ["dormant", "candidate", "resolve_midpoint", "stable", "warning_shutdown"], "tolerance": 0.0},
+    {"type": "probe_sequence_equal", "probe": "anchor_facts", "field": "global_bounds", "states": ["dormant", "candidate", "resolve_midpoint", "stable", "warning_shutdown"], "tolerance": 0.01},
+    {"type": "probe_sequence_equal", "probe": "witness_facts", "field": "global_bounds", "states": ["dormant", "candidate", "resolve_midpoint", "stable", "warning_shutdown"], "tolerance": 0.01},
+    {"type": "probe_compare", "probe": "fixture_state", "field": "passage_node_count", "op": "eq", "value": 0, "each_state": true},
+    {"type": "probe_compare", "probe": "fixture_state", "field": "stale_resolve_completion_count", "op": "eq", "value": 0, "state": "warning_shutdown"}
+  ],
+  "authority_invariants": [
+    "The route-review snapshot is identical before and after every presentation state.",
+    "No Passage or level-exit node is created.",
+    "Warning/shutdown and ABORT cancel any stale resolve one-shot."
+  ],
+  "evidence": {
+    "capture_mode": "evidence",
+    "contact_sheet_builder": "build_roi_contact_sheet",
+    "roi_label": "Solarium I aperture and instruments",
+    "contact_sheet_states": ["dormant", "candidate", "resolve_midpoint", "stable", "warning_shutdown"],
+    "metrics": ["alpha_bounds", "roi_diff", "matte_void"],
+    "raw_frames_secondary": true
+  }
+}

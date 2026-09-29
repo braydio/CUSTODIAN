@@ -52,3 +52,11 @@ small crops into one compact sheet instead of N full-resolution frames. See
 `custodian/tools/validation/awakening_late_seams_evidence.py` for a worked
 example, and the "Visual Evidence Economy" section of
 `custodian/docs/ai_context/VALIDATION_RECIPES.md` for the full doctrine.
+
+Four tested adopter templates for Twin Crown forensics, Solarium I acquisition,
+Operator mobile guard, and Vaultwing bonding closure live in `adopter_specs/`.
+They are reusable scenario fragments whose feature owners bind declared states
+and read-only probes to their runtime scenes; they do not replace feature-owned
+scenarios or grant presentation tools gameplay authority. Run
+`python3 -m unittest custodian.tools.iteration.test_visual_validation_adopter_specs`
+to validate their contract against the current scenario DSL.
