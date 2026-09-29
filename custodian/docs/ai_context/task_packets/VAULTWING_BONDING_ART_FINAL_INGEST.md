@@ -48,30 +48,27 @@ The root filenames are batch order, not semantic ordinals. This mapping is autho
 | `vw6.png` | `watch_player_e` | accept candidate |
 | `vw7.png` | `watch_player_s` | accept candidate |
 | `vw8.png` | `watch_player_n` | accept candidate |
-| `vw9.png` | `bond_greet_e` | accept candidate |
-| `vw10.png` | `bond_greet_n` | accept candidate |
+| `vw9.png` | `bond_greet_e` | rejected/clipped; delete after hash verification; only a corrected replacement may reuse the name |
+| `vw10.png` | `bond_greet_n` | rejected/clipped; delete after hash verification; only a corrected replacement may reuse the name |
 | `vw11.png` | corrected `inspect_bait_s` | accept candidate |
-| `vw12.png` | corrected `bond_greet_s` | accept candidate |
+| `vw12.png` | `bond_greet_s` | rejected/clipped; delete after hash verification; only a corrected replacement may reuse the name |
 
 The extra greeting image generated after `vw12.png` is outside this task.
 
-The semantic source-map passed to the stager is therefore:
+The original batch map used for Pass 3 is historical for the eight accepted
+masters. Do **not** feed the rejected `vw9.png`, `vw10.png`, or `vw12.png`
+back through the stager. For the remaining closure, map only corrected greeting
+sheets to the semantic ordinals:
 
 ```text
-1=vw1.png
-8=vw11.png
-10=vw3.png
-11=vw5.png
-12=vw4.png
-13=vw6.png
-14=vw7.png
-15=vw8.png
-16=vw9.png
-17=vw12.png
-18=vw10.png
+16=<corrected bond_greet_e source>
+17=<corrected bond_greet_s source>
+18=<corrected bond_greet_n source>
 ```
 
-Because these inputs are local/untracked and normal implementation uses an isolated worktree, verify the twelve files in the coordination checkout before claiming this packet, then copy them into the claimed worktree without committing the root copies. If they are unavailable, block rather than synthesize substitutes.
+A corrected source may reuse a former filename only when its SHA-256/content is
+different from the recorded rejected image and it passes normal geometry/alpha
+review. Do not synthesize a substitute merely to satisfy the count.
 
 ## Remaining Closure Plan
 
