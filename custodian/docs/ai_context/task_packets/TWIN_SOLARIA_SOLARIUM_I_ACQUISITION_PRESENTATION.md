@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-twin-solaria-route-review-authority`
+- Depends on: `review-twin-solaria-route-review-authority, visual-validation-economy-tooling-v1`
 - Locks: `twin-solaria-runtime, asset-catalog`
 - Review: `auto`
 - Review stage: `post-land`
@@ -220,11 +220,31 @@ Cover:
 10. no level exit/Passage node exists;
 11. V2 family state/dimension/frame/FPS/alpha contracts;
 12. exact marker registration for anchors/witness presentation;
-13. existing Twin runtime/forensic/route-review/canon smokes green.
+13. existing Twin runtime/forensic/route-review/canon smokes green;
+14. reusable presentation probes report aperture/anchor/witness visibility, alpha, bounds/registration, animation/frame/progress, and route-authority snapshot immutability for dormant/candidate/resolve/stable/warning-shutdown;
+15. forward/restore/repeated-snapshot paths produce equivalent steady presentation state without relying on screenshot inspection.
 
-## Visual Evidence
+## Presentation Evidence Economy
 
-Add/update a Moment Forge scenario or equivalent deterministic capture for:
+Use the reusable visual-validation/Moment Forge probes as the primary acceptance
+surface. The five requested presentation states do not require five routine
+full-screen visual inspections.
+
+Run the acquisition scenario first in `capture-mode none` and record:
+
+- route-review authoritative snapshot before and after each presentation state;
+- aperture/anchor/witness node identity, visibility, alpha, world/screen bounds,
+  z-order, current animation/frame/progress, and expected registration;
+- dormant mask present, candidate weak, HOLD non-resolved, AUTHORIZE resolve,
+  stable loop, warning/shutdown, and ABORT cancellation;
+- repeated stable snapshots do not restart one-shots;
+- restore maps directly to the correct steady presentation state;
+- no Passage/level-exit node appears and presentation never mutates route truth;
+- Asset V2 family/state/dimension/frame/FPS/alpha contracts remain exact.
+
+If actual rendered pixels remain necessary after those checks are green, run one
+evidence-mode pass and generate a compact aperture/instrument ROI contact sheet
+for:
 
 - dormant;
 - route candidate;
@@ -232,7 +252,16 @@ Add/update a Moment Forge scenario or equivalent deterministic capture for:
 - stable vista;
 - reciprocal warning/shutdown.
 
-Human baseline approval is not automatic. Objective review checks alignment, clipping, duplicate rendering, readability, and that Solarium II remains absent.
+Use code-based ROI metrics for clipping, registration, duplicate rendering, alpha
+coverage, and unexpected Solarium-II content. Do not ask Codex to inspect five
+full-screen captures as a normal acceptance step. Inspect a tight ROI manually
+only when a metric is ambiguous/failing or when a subjective FX/art-direction
+decision remains.
+
+Human baseline approval is never automatic. Subjective FX intensity, beauty,
+composition, and game-feel preference are human-owned; objective alignment,
+clipping, duplication, state correspondence, alpha, and Second Crown absence
+should be settled from structured evidence first.
 
 ## Documentation
 
