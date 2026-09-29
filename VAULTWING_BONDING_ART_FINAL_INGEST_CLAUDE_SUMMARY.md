@@ -20,23 +20,26 @@ bonding masters, 20/24 bonding strips, and 76/80 Vaultwing runtime strips.
 | Input | Semantic target | Result |
 |---|---|---|
 | `vw1.png` | `notice_bait_e` | accepted, balanced conversion, ingested |
-| `vw2.png` | superseded wrong-facing `inspect_bait_s` | hash-named quarantine only |
+| `vw2.png` | superseded wrong-facing `inspect_bait_s` | rejected; delete after hash verification |
 | `vw3.png` | `feed_accept_e` | accepted, balanced conversion, ingested |
 | `vw4.png` | `feed_accept_n` | accepted, balanced conversion, ingested |
 | `vw5.png` | `feed_accept_s` | accepted, balanced conversion, ingested |
 | `vw6.png` | `watch_player_e` | fixed-cell balanced conversion, ingested |
 | `vw7.png` | `watch_player_s` | accepted, balanced conversion, ingested |
 | `vw8.png` | `watch_player_n` | accepted, balanced conversion, ingested |
-| `vw9.png` | `bond_greet_e` | rejected: four X clusters for eight frames; fixed-cell preview clips wings; quarantined |
-| `vw10.png` | `bond_greet_n` | rejected: six X clusters for eight frames; fixed-cell preview clips wings; quarantined |
+| `vw9.png` | `bond_greet_e` | rejected: four X clusters for eight frames; fixed-cell preview clips wings; delete after hash verification |
+| `vw10.png` | `bond_greet_n` | rejected: six X clusters for eight frames; fixed-cell preview clips wings; delete after hash verification |
 | `vw11.png` | `inspect_bait_s` | accepted, balanced conversion, ingested |
-| `vw12.png` | `bond_greet_s` | rejected: six X clusters for eight frames; fixed-cell preview clips wings; quarantined |
+| `vw12.png` | `bond_greet_s` | rejected: six X clusters for eight frames; fixed-cell preview clips wings; delete after hash verification |
 
-The task-worktree copies of all twelve inputs were removed only after matching
-each accepted source master or quarantine copy by hash. The user's project-root
-copies remain untouched. Three of the eleven packet-approved candidates could
-not be migrated losslessly; the prescribed equal-cell conversion visibly clips
-wing sections, so they were not promoted to production.
+The task-worktree copies of all twelve inputs were removed after either matching
+an accepted source master or verifying the rejected input hash. Rejected bonding
+art is not a durable artifact: repo-side rejected copies are removed. If the
+project-root copies of `vw2.png`, `vw9.png`, `vw10.png`, or `vw12.png`
+still match the recorded rejected hashes, delete them as well; a corrected
+replacement using the same filename must not be deleted. Three of the eleven
+packet-approved candidates could not be migrated losslessly because equal-cell
+conversion visibly clips wing sections.
 
 ## Validation
 
@@ -63,5 +66,7 @@ wing sections, so they were not promoted to production.
 ## Workstream state
 
 The packet remains `blocked` pending corrected `bond_greet_e/s/n` sheets or a
-reviewed segmentation that preserves every frame. Pass 3 measurements and the
-remaining work are recorded in the active packet and Vaultwing authority docs.
+reviewed segmentation that preserves every frame. Rejected/wrong-facing bonding
+images are deletion-only and must not be retained in `unresolved/`. Pass 3
+measurements and the remaining work are recorded in the active packet and
+Vaultwing authority docs.
