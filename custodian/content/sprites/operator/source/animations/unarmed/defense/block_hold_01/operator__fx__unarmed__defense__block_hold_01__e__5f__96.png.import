@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://csui36t60aebn"
-path="res://.godot/imported/operator__fx__unarmed__defense__block_hold_01__e__5f__96.png-1adc03d6713c160250ee70f743bf0fb1.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://content/sprites/operator/source/animations/unarmed/defense/block_hold_01/operator__fx__unarmed__defense__block_hold_01__e__5f__96.png"
-dest_files=["res://.godot/imported/operator__fx__unarmed__defense__block_hold_01__e__5f__96.png-1adc03d6713c160250ee70f743bf0fb1.ctex"]
 
 [params]
 
