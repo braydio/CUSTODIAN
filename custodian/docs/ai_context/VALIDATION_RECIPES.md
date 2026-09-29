@@ -1379,6 +1379,44 @@ The attribution benchmark rebuilds every case, warms for 180 frames, measures
 `enemy_total` and per-tier totals separately from their nested subsystem
 distribution; do not sum them together. It applies no hardware FPS threshold.
 
+## Procgen Performance Baseline (S1)
+
+Use after changing procgen generation phase timing, the candidate-attempt
+loop, accepted-candidate promotion, or streaming reveal/runtime-health
+instrumentation covered by
+`design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`.
+
+```bash
+cd custodian
+
+# Quick: cheap deterministic schema/mechanics proof. Registered in
+# validation_manifest.json; safe for normal changed-file validation.
+godot --headless --path . \
+  --script res://tools/validation/procgen_performance_baseline_bench.gd
+
+# Full: opt-in fixed-size/fixed-seed baseline capture. Slow and
+# resource-heavy (9 direct-generation cases across 160x160/192x192/224x224
+# at seeds 420777/420779/771923, plus 3 full-candidate-loop contract cases).
+# Not registered in validation_manifest.json; run manually for closeout
+# evidence, not inside every edit loop. --sha attaches optional CLI-provided
+# commit metadata since Git SHA is not safely discoverable from headless
+# runtime code.
+godot --headless --path . \
+  --script res://tools/validation/procgen_performance_baseline_bench.gd \
+  -- --full --sha=$(git rev-parse HEAD)
+```
+
+Both profiles write `custodian.procgen_performance_baseline.v1` JSON to
+`user://performance/procgen_performance_baseline_v1.json` and print a compact
+summary. The quick profile generates the same fixed seed/size twice and
+asserts matching same-seed fingerprints (`determinism_ok`); it exits non-zero
+if they diverge. Structured output includes per-case generation phase
+timings, candidate-loop attempt/acceptance/promotion timings, and a scripted
+runtime-streaming case (revealed/queued chunk counts, reveal-queue peak,
+node/draw-call counts, frame-time samples). This baseline is intentionally
+threshold-free: it proves reproducibility and schema stability, not a
+pass/fail millisecond gate. Absolute performance budgets are deferred to S11.
+
 ## Review Validation
 
 ## Enemy Hit Spatial Diagnostics

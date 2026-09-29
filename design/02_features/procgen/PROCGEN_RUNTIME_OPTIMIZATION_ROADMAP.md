@@ -165,7 +165,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 
 | Code | Workstream | Status | Depends on |
 | --- | --- | --- | --- |
-| S1 | `procgen-performance-baseline-v1` | **queued/root** | none |
+| S1 | `procgen-performance-baseline-v1` | **complete** | none |
 | G1 | `procgen-candidate-evaluator-extraction` | queued | S1 |
 | G2 | `procgen-candidate-semantic-model` | queued | G1 |
 | G3 | `procgen-semantic-candidate-generation` | queued | G2 |
@@ -216,10 +216,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** S1 `procgen-performance-baseline-v1`  
-**State:** queued/root of fully pre-authored V1 DAG  
-**Next gate:** land a reproducible structured generation + streaming benchmark with no gameplay/world-output changes.  
-**After S1:** G1, M1, and P1 become eligible. The serial full-auto traversal takes G1 first; parallel agents may claim independent eligible siblings subject to locks.
+**Current packet:** G1 `procgen-candidate-evaluator-extraction` (next in serial order)
+**State:** S1 landed; G1, M1, and P1 are now dependency-eligible.
+**Next gate:** extract candidate metrics/acceptance/scoring/terrain-fallback policy out of `CustodianContractMap` into a focused generation authority (G1), matching S1's fixed-seed baseline unchanged.
+**After S1:** G1, M1, and P1 became eligible. The serial full-auto traversal takes G1 first; parallel agents may claim independent eligible siblings subject to locks.
 
 ---
 
@@ -247,6 +247,14 @@ The baseline is initially threshold-free. Performance is host/build dependent; S
 ### Exit
 
 S1 exits when fixed seeds produce structured JSON, same-seed gameplay fingerprints remain unchanged, quick validation is cheap enough for focused use, a full opt-in benchmark profile is documented, and this roadmap records the first measured baseline.
+
+### Completion Evidence
+
+- **Landed main SHA:** see `PROCGEN_PERFORMANCE_BASELINE_V1_CLAUDE_SUMMARY.md` at repo root for the exact commit; this roadmap update lands in the same commit.
+- **Benchmark:** `custodian/tools/validation/procgen_performance_baseline_bench.gd`, schema `custodian.procgen_performance_baseline.v1`, JSON to `user://performance/procgen_performance_baseline_v1.json`. Reuses timing already owned by `ProcGenTilemap` (`get_last_generation_timing_snapshot`, `get_last_promotion_timing_snapshot`, `get_runtime_health_snapshot`) and `CustodianContractMap` (`get_last_contract_generation_report`, newly accumulated per-attempt candidate-loop timing) via a narrow `custodian/game/world/procgen/diagnostics/procgen_performance_snapshot.gd` normalizer. No generation work is duplicated to measure it.
+- **Quick profile (48x48, seed 420777):** two same-seed runs produced identical fingerprint (`determinism_ok: true`); generation `total_ms` ~2.6s (`fill_tilemaps` ~2.56s dominated by `props_visual` ~1.0s, `compound_interior_spawn` ~0.56s, `terrain_elevation`/`terrain_apply_builder` ~0.4s each); one contract case accepted on attempt 1/12 (`t_generate_ms` 18001, `t_metrics_ms` 6081, `total_candidate_loop_duration_ms` 24086, `final_promotion_duration_ms` 14933); runtime case (64x64) averaged ~6.8 ms/frame over 60 sampled frames after generation, 25 chunks revealed, streaming-reveal queue peak 1466.
+- **Full profile (fixed matrix, opt-in `--full`, Godot 4.7.2-stable arch_linux, debug build, headless):** all 9 direct-generation cases and all 3 contract cases produced valid schema-stable output; `determinism_ok: true`. Generation `total_ms` scaled from ~25-30s (160x160) to ~31-40s (192x192) to ~35-46s (224x224) across seeds, dominated by `fill_tilemaps`. All 3 contract cases accepted on attempt 1/12 with `total_candidate_loop_duration_ms` 12637-32399 and `final_promotion_duration_ms` 8676-18536. Runtime case (192x192, seed 420777) averaged ~7.0 ms/frame over 60 sampled frames, 25 chunks revealed, streaming-reveal queue peak 362. JSON evidence not committed (ephemeral per task-packet convention); these are the first measured numbers on this host/build and are not pass/fail budgets.
+- **Validation:** `procgen_runtime_health_smoke.gd` and `procgen_spatial_normalization_smoke.gd` pass unchanged. `procgen_candidate_promotion_smoke.gd` fails on a pre-existing, unrelated assertion (`Promotion exposed additional streamed floor cells`) reproduced identically with S1's diff fully removed; root cause is `_prepare_streaming_reveal()` clearing and re-priming only the immediate-radius chunk window around spawn during promotion, which the smoke test's `== painted_before` equality assertion does not account for. Zero commits touched `proc_gen_tilemap.gd` between the packet's reviewed SHA (`6a11a14e`) and this landing, so this is not a regression introduced by S1 or by other landed work in this window; it is a latent defect in the smoke test's assertion. Tracked as follow-up, not fixed here (streaming reveal behavior is explicitly out of S1's scope).
 
 ---
 

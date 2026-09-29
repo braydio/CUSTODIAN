@@ -270,7 +270,7 @@ state.
 
 | Slice | Status | Priority |
 |---------|--------|----------|
-| S1 Performance baseline + benchmark contract | planned | P0 |
+| S1 Performance baseline + benchmark contract | complete | P0 |
 | S2 Candidate evaluator extraction | planned | P1 |
 | S3 Semantics-only candidate generation | planned | P0 |
 | S4 Accepted-candidate materializer | planned | P1 |

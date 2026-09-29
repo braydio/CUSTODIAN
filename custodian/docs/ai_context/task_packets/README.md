@@ -220,7 +220,6 @@ lost when the ephemeral worktree is removed.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
-- `PROCGEN_PERFORMANCE_BASELINE_V1.md` — S1 root: structured fixed-seed baseline; no runtime optimization.
 - `PROCGEN_CANDIDATE_EVALUATOR_EXTRACTION.md` — G1 candidate acceptance/scoring authority extraction; depends on S1.
 - `PROCGEN_CANDIDATE_SEMANTIC_MODEL.md` — G2 data-only candidate model; depends on G1.
 - `PROCGEN_SEMANTIC_CANDIDATE_GENERATION.md` — G3 semantics-first rejected-candidate path; depends on G2.

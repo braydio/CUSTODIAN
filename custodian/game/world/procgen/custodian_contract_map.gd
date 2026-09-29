@@ -274,6 +274,11 @@ var _map_level_data_ready: bool = false
 var _map_level_data: Dictionary = {}
 var _latest_contract: Dictionary = {}
 var _latest_generation_failure: Dictionary = {}
+## Structured per-attempt candidate-loop facts for
+## custodian.procgen_performance_baseline.v1, reset and accumulated inside
+## generate_contract(); never a second generation pass.
+var _last_generation_attempts: Array[Dictionary] = []
+var _last_contract_generation_report: Dictionary = {}
 var _special_room_inserter: SpecialRoomRuntimeInserter = null
 
 const SPECIAL_ROOM_INSERTER_SCRIPT := preload("res://game/world/procgen/special_rooms/special_room_runtime_inserter.gd")
@@ -329,6 +334,7 @@ func generate_contract(seed_value: int) -> void:
 	var _attempt_total_start := Time.get_ticks_msec()
 	var attempts_run := 0
 	var accepted_attempt := -1
+	_last_generation_attempts = []
 	for attempt in range(max(1, map_generation_attempts)):
 		var _attempt_start := Time.get_ticks_msec()
 		var attempt_seed: int = map_seed + attempt * 7919
@@ -371,6 +377,18 @@ func generate_contract(seed_value: int) -> void:
 		)
 		var _t_total_attempt := Time.get_ticks_msec() - _attempt_start
 		var candidate_terrain_failed := _is_terrain_failed_candidate(candidate_metrics)
+		_last_generation_attempts.append({
+			"attempt": attempt,
+			"attempt_seed": attempt_seed,
+			"t_instantiate_ms": _t_instantiate,
+			"t_generate_ms": _t_generate,
+			"t_metrics_ms": _t_metrics,
+			"t_total_ms": _t_total_attempt,
+			"accepted": accepted,
+			"score": candidate_score,
+			"terrain_failed": candidate_terrain_failed,
+			"metrics": candidate_metrics.duplicate(true),
+		})
 		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs layout_valid=%s candidate_valid=%s connected=%.2f ingress=%.2f pre_terrain_connected=%.2f pre_terrain_missing=%d baseline_rescue=%d terrain_fallback=%s terrain_connectivity=%s terrain_rescue=%d terrain_rescue_limit=%d terrain_rescue_ok=%s rejection_reasons=%s accepted=%s score=%.2f" % [
 			attempt,
 			_t_instantiate / 1000.0,
@@ -430,12 +448,25 @@ func generate_contract(seed_value: int) -> void:
 			await _dispose_node(candidate_map)
 			if _active_map == candidate_map:
 				_active_map = null
+	var _loop_total_duration_ms := Time.get_ticks_msec() - _attempt_total_start
 	print("[CustodianContractMap] Attempt loop total: %.1fs attempts_run=%d max_attempts=%d accepted_attempt=%d" % [
-		(Time.get_ticks_msec() - _attempt_total_start) / 1000.0,
+		_loop_total_duration_ms / 1000.0,
 		attempts_run,
 		max(1, map_generation_attempts),
 		accepted_attempt,
 	])
+
+	_last_contract_generation_report = {
+		"contract_seed": int(contract_seed),
+		"attempt_limit": max(1, map_generation_attempts),
+		"attempts_run": attempts_run,
+		"accepted_attempt": accepted_attempt,
+		"total_candidate_loop_duration_ms": _loop_total_duration_ms,
+		"using_degraded_fallback": false,
+		"degraded_reason": "",
+		"final_promotion_duration_ms": 0,
+		"attempts": _last_generation_attempts,
+	}
 
 	var using_degraded_fallback := false
 	if not map_generated and allow_degraded_best_candidate_fallback and _can_use_degraded_fallback(best_attempt_metrics):
@@ -443,6 +474,8 @@ func generate_contract(seed_value: int) -> void:
 		level_data = best_level_data
 		map_seed = best_attempt_seed
 		using_degraded_fallback = true
+		_last_contract_generation_report["using_degraded_fallback"] = true
+		_last_contract_generation_report["degraded_reason"] = "terrain_rescue_above_limit"
 		print("[CustodianContractMap] DEGRADED_FALLBACK_ACCEPTED terrain_rescue=%d limit=%d" % [
 			int(best_attempt_metrics.get("terrain_rescue_carved", 0)),
 			terrain_rescue_reject_threshold,
@@ -480,7 +513,11 @@ func generate_contract(seed_value: int) -> void:
 		return
 
 	_active_map = map_instance
+	var _final_promotion_start := Time.get_ticks_msec()
 	level_data = await _generate_final_map_level_data(map_instance)
+	_last_contract_generation_report["final_promotion_duration_ms"] = (
+		Time.get_ticks_msec() - _final_promotion_start
+	)
 	if using_degraded_fallback:
 		level_data["degraded_fallback"] = true
 		level_data["degraded_reason"] = "terrain_rescue_above_limit"
@@ -598,6 +635,13 @@ func get_latest_contract() -> Dictionary:
 
 func get_latest_generation_failure() -> Dictionary:
 	return _latest_generation_failure
+
+
+## Structured candidate-loop timing/acceptance report from the most recent
+## generate_contract() call, for custodian.procgen_performance_baseline.v1.
+## Populated even on generation failure so rejection evidence is retained.
+func get_last_contract_generation_report() -> Dictionary:
+	return _last_contract_generation_report.duplicate(true)
 
 
 func _clear_previous_instances() -> void:

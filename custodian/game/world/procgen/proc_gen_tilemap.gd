@@ -763,6 +763,13 @@ var _encounter_plan: Dictionary = {}
 var _encounter_reserved_cells: Dictionary = {}
 var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
+## Structured facts for custodian.procgen_performance_baseline.v1. Populated
+## by _on_procgen_finished()/_fill_tilemaps() and promote_evaluated_candidate_to_final();
+## never recomputed by reading this back, only reshaped by benchmark/diagnostic callers.
+var _last_generation_timing_snapshot: Dictionary = {}
+var _last_promotion_timing_snapshot: Dictionary = {}
+var _last_fill_tilemaps_marks: Dictionary = {}
+var _last_fill_tilemaps_total_ms: int = 0
 var _runtime_wall_body_peak: int = 0
 var _runtime_wall_shape_count: int = 0
 var _runtime_wall_rebuild_count: int = 0
@@ -1109,6 +1116,18 @@ func _on_procgen_finished() -> void:
 		print("[ProcGen]   nav_bake: %d ms" % _t_nav)
 	print("[ProcGen]   TOTAL: %d ms" % (Time.get_ticks_msec() - _t_start))
 
+	_last_generation_timing_snapshot = {
+		"generation_id": _debug_generation_id,
+		"mode": mode,
+		"seed": seed_text,
+		"map_size": procgen_node.map_size if procgen_node != null else Vector2i.ZERO,
+		"phase_timings_ms": _last_fill_tilemaps_marks,
+		"fill_tilemaps_ms": _t_fill,
+		"refresh_shadows_ms": _t_shadows,
+		"nav_bake_ms": _t_nav,
+		"total_ms": Time.get_ticks_msec() - _t_start,
+	}
+
 
 ## Promotes the accepted evaluation result without clearing or regenerating
 ## its structural TileMaps, semantic dictionaries, terrain, roads, or regions.
@@ -1186,6 +1205,11 @@ func promote_evaluated_candidate_to_final() -> Dictionary:
 		"[ProcGen]   PROMOTION TOTAL: %d ms"
 		% (Time.get_ticks_msec() - started)
 	)
+	_last_promotion_timing_snapshot = {
+		"generation_id": _debug_generation_id,
+		"phase_timings_ms": marks,
+		"total_ms": Time.get_ticks_msec() - started,
+	}
 	return data
 
 
@@ -1439,6 +1463,8 @@ func _fill_tilemaps() -> void:
 	for _k in _marks:
 		print("[ProcGen]   %s: %d ms" % [_k, _marks[_k]])
 	print("[ProcGen]   FILL_TILEMAPS TOTAL: %d ms" % _total)
+	_last_fill_tilemaps_marks = _marks.duplicate()
+	_last_fill_tilemaps_total_ms = _total
 
 
 func set_seed(new_seed: int) -> void:
@@ -10783,6 +10809,20 @@ func get_runtime_tile_size() -> Vector2:
 		var world_scale := floor_tilemap.global_scale
 		return Vector2(base_size.x * absf(world_scale.x), base_size.y * absf(world_scale.y))
 	return Vector2(32, 32)
+
+
+## Structured generation phase-timing/identity facts from the most recent
+## _fill_tilemaps()/_on_procgen_finished() pass. Consumed by
+## custodian.procgen_performance_baseline.v1; never recomputed here.
+func get_last_generation_timing_snapshot() -> Dictionary:
+	return _last_generation_timing_snapshot.duplicate(true)
+
+
+## Structured phase-timing facts from the most recent
+## promote_evaluated_candidate_to_final() call. Empty if the accepted
+## candidate never required promotion (final-visual mode already ready).
+func get_last_promotion_timing_snapshot() -> Dictionary:
+	return _last_promotion_timing_snapshot.duplicate(true)
 
 
 func get_runtime_health_snapshot() -> Dictionary:

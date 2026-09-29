@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-performance-baseline-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -89,10 +89,10 @@ The exact code-to-workstream mapping is canonical in `design/02_features/procgen
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `pending`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
+- Outcome: `partial`
+- Friction severity: `high`
+- What went wrong: the worktree environment was non-functional for any procgen validation before this task began (LFS pointer stubs breaking compilation of `custodian_contract_map.gd`'s dependency chain); a real signal-race bug in the new bench script caused it to hang indefinitely; a pre-existing, unrelated smoke-test assertion (`procgen_candidate_promotion_smoke.gd`) remains red and could not be fixed within S1's scope.
+- Root cause / contributing factors: (1) the repo's active temporary Git-LFS bandwidth-degraded mode left binary assets unmaterialized in this specific worktree though fully cached locally; (2) `Signal.emit()` inside a synchronous GDScript call chain fires before the caller's next line runs, so `await signal` placed after the call that emits it is a classic missed-emission race; GDScript lambda closures also capture by value, not reference, defeating a first attempted fix; (3) `_prepare_streaming_reveal()`'s clear-and-reprime behavior does not preserve `procgen_candidate_promotion_smoke.gd`'s `painted_before == painted_after` invariant, and this predates S1 (verified via `git log` and diff-revert reproduction; see `PROCGEN_PERFORMANCE_BASELINE_V1_CLAUDE_SUMMARY.md` for full detail).
+- Prevention / pipeline improvement: when a headless Godot script needs to know a synchronous call has finished, do not `await` a signal it may have already emitted — either avoid the await entirely once synchronicity is confirmed, or connect a listener *before* calling and check a mutable-by-reference container (Array/Dictionary), never a plain local `var`, since GDScript lambdas snapshot locals by value.
+- Tooling / docs drift discovered: `procgen_candidate_promotion_smoke.gd`'s streamed-floor-cell equality assertion appears to be a latent defect independent of any recent landed work; needs its own investigation/fix packet. Two interior-prop PNGs fail to load despite real materialized content on disk after full LFS checkout and two re-import passes; root cause not identified.
+- Follow-up: manual-follow-up (a fix packet for `procgen_candidate_promotion_smoke.gd`'s streaming-reveal floor-cell assertion; this program's packet-authoring restriction means it is not authored here)
