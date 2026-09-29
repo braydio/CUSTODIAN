@@ -21,6 +21,7 @@
   - no Solarium I activation, Crown travel, or Passage reconstruction;
   - architectural overlay is presentation-only and correctly registered to the missing Second Crown;
   - no duplicate landmark raster or Asset V2 misuse;
+  - structured overlay bounds/alpha/authority metrics are the primary presentation evidence; renderer review is limited to the committed Second-Crown ROI contact sheet when needed;
   - Null Warrant evidence proves preexisting safety-chain participation only;
   - no Ground Zero, Ash-Bell, `NON-RECIPIENT`, or final-authorizer resolution;
   - active Twin Solaria documentation matches the live runtime after implementation.
@@ -37,15 +38,15 @@
 5. Confirm presentation does not own or mutate route safety/travel truth.
 6. Confirm the Stage B overlay cannot collide, navigate, or masquerade as restored architecture.
 7. Confirm player-facing copy preserves every reserved mystery.
-8. Inspect baseline / Stage B / Stage F visual evidence when available.
+8. Reuse the implementation's committed presentation-probe JSON, overlay metrics, and baseline/Stage-B/Stage-F Second-Crown ROI contact sheet. Do not regenerate or separately inspect three full-screen views unless the structured evidence is missing, stale, contradictory, or cannot establish a specific acceptance criterion.
 9. Record findings first with file/line references.
 10. If blocking findings exist, queue the narrow correction + paired review required by the live review pipeline.
 
 ## Human Gate
 
-Aesthetic preference about the exact thin-line schematic treatment is not itself a blocking defect if registration/readability/canon are correct.
+Aesthetic preference about the exact thin-line schematic treatment is not itself a blocking defect if registration, alpha/coverage, non-authority, and canon are correct.
 
-Escalate to `human_required` only if a genuine subjective visual choice remains that design authority does not settle.
+If the structured metrics are green, the ROI contact sheet is a spot-check artifact rather than a second model-vision gate. Escalate to `human_required` only if a genuine subjective visual choice remains that design authority does not settle.
 
 ## Handoff
 
