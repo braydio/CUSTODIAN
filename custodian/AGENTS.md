@@ -69,6 +69,31 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
 - Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
 
+<!-- TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z -->
+## Temporary Git LFS Degraded Mode
+
+Active through **2026-10-01 00:00 America/New_York** while the GitHub LFS
+bandwidth allowance is exhausted.
+
+- Agent worktree/landing tooling automatically sets `GIT_LFS_SKIP_SMUDGE=1`
+  during this window, so branch/worktree synchronization does not try to
+  download missing LFS objects.
+- For manual clone/pull/checkout operations that could materialize LFS content,
+  use `GIT_LFS_SKIP_SMUDGE=1`. Do not run `git lfs pull` or `git lfs fetch`
+  during the window unless the user explicitly chooses paid/additional bandwidth.
+- Existing locally cached LFS objects may be used normally. If a required
+  binary is not cached, defer only the validation/art step that truly needs it
+  and report the missing LFS payload. Do not replace LFS pointers with ordinary
+  Git blobs or move production assets out of LFS as a workaround.
+- Avoid unnecessary new LFS asset churn until the reset. Code, docs, metadata,
+  task packets, and non-LFS work continue normally.
+- GitHub Actions currently use pointer-only checkout (no `lfs: true`), so no
+  CI validation gate is weakened or disabled by this temporary mode.
+
+A scheduled repository cleanup removes this note and the temporary agent-tool
+guards after expiry.
+<!-- TEMP_LFS_DEGRADED_MODE_END -->
+
 ## Production Asset Requirements
 
 - Discovery: update `content/metadata/assets/required_assets.registry.json`, choose the real fulfillment route, regenerate/check the generated view, and report the added need.
