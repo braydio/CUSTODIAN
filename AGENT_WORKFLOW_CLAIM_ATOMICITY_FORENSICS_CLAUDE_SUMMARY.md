@@ -24,10 +24,14 @@
 - A create failure leaves a durable remote claim and any partial checkout for explicit recovery. There is no TTL or automatic stale-claim deletion, by design.
 - Diagnostics are best-effort and remain outside task history. Cross-host liveness, retention policy, and tracing arbitrary shell/model activity remain deferred.
 
-## Execution Feedback
+## Process Feedback
 
-- Outcome: Direct creation now shares dispatch's ownership primitive, local races serialize before checkout mutation, and operators can reconstruct the lifecycle from exported structured traces.
-- Friction: A local-only attached checkout can be recoverable but cannot prove assignment ownership; dispatch therefore leaves it untouched and blocks instead of adopting it.
-- Prevention: Concurrency, interrupted-create, redaction, and ref-isolation checks cover those failure boundaries.
-- Validation: 113 focused agent workflow tests and the agent workflow contract smoke passed.
-- Deferred: Explicit operator resolution remains necessary for stale claims; no lease expiry or automated diagnostics cleanup was added.
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The summary used the packet title's `AND` token rather than the workstream-ID-derived canonical filename; finish reported the expected filename missing before completing.
+- Root cause / contributing factors: The packet title and stable workstream slug differ, and the completion review checked the title-derived name instead of the lifecycle's slug-derived contract.
+- Prevention / pipeline improvement: Derive the summary filename from the stable workstream ID and verify its exact path before invoking finish.
+- Tooling / docs drift discovered: The finish path emitted a fatal-looking missing-file probe while continuing; the final artifact gate did not make this mismatch obvious.
+- Follow-up: fixed-in-scope
+- What worked: Shared remote claim CAS and common-dir locks serialize new starts; diagnostic traces remain outside task/main refs.

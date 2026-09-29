@@ -59,11 +59,15 @@
 
 ## Execution Feedback
 
-- Outcome: Implemented shared remote claim CAS and common-dir locks; direct starts fail closed on existing state, while explicit `resume` handles inspected clean state. Added local JSONL and diagnostics-ref traces, run inspection CLI, and diagnostic-ref protection in landing and branch hygiene.
-- Friction: The initial lifecycle suite encoded implicit resume through `start`; those expectations had to move to the explicit recovery command. Failed creation intentionally leaves its remote claim visible and blocks ordinary retries until an operator resolves recovery.
-- Prevention: Same-common-dir and independent-clone tests now exercise direct-start contention; trace tests verify sensitive values are redacted and only diagnostics are published.
-- Validation: 113 agent workflow tests passed; `custodian/tools/validation/agent_workflow_smoke.py` passed its prompt and workflow contract checks.
-- Deferred: No heartbeat/TTL or automatic stale-claim recovery; trace ref retention remains explicit operator cleanup.
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The summary used the packet title's `AND` token rather than the workstream-ID-derived canonical filename; finish reported the expected filename missing before completing.
+- Root cause / contributing factors: The packet title and stable workstream slug differ, and the completion review checked the title-derived name instead of the lifecycle's slug-derived contract.
+- Prevention / pipeline improvement: Derive the summary filename from the stable workstream ID and verify its exact path before invoking finish.
+- Tooling / docs drift discovered: The finish path emitted a fatal-looking missing-file probe while continuing; the final artifact gate did not make this mismatch obvious.
+- Follow-up: fixed-in-scope
+- What worked: Shared remote claim CAS and common-dir locks serialize new starts; diagnostic traces remain outside task/main refs.
 
 ## Incident Model
 
