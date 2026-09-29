@@ -167,7 +167,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | --- | --- | --- | --- |
 | S1 | `procgen-performance-baseline-v1` | **complete** | none |
 | G1 | `procgen-candidate-evaluator-extraction` | **complete** | S1 |
-| G2 | `procgen-candidate-semantic-model` | queued | G1 |
+| G2 | `procgen-candidate-semantic-model` | **complete** | G1 |
 | G3 | `procgen-semantic-candidate-generation` | queued | G2 |
 | G4 | `procgen-accepted-candidate-materializer` | queued | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | queued | G4 |
@@ -216,10 +216,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** G2 `procgen-candidate-semantic-model` (next in serial order after G1 lands)
-**State:** S1 and G1 landed; G2, M1, and P1 are dependency-eligible.
-**Next gate:** introduce the data-only candidate semantic model (G2) while preserving G1's fixed-seed selection contract.
-**After G1:** G2 is now eligible. M1 and P1 remain independent siblings of the generation lane.
+**Current packet:** G3 `procgen-semantic-candidate-generation` (next in serial order after G2 lands)
+**State:** S1, G1, and G2 landed; G3, M1, and P1 are dependency-eligible.
+**Next gate:** stop building rejected candidates as near-runtime worlds using the G2 semantic model, while accepted seed/world fingerprints stay authoritative.
+**After G2:** G3 is now eligible. M1 and P1 remain independent siblings of the generation lane.
 
 ---
 
@@ -305,6 +305,18 @@ Rejected attempts should die as data without final TileMap painting, runtime nod
 ### Exit
 
 Accepted seed/world fingerprints remain authoritative and deterministic while rejected-candidate wall time and node churn materially drop against S1.
+
+### G2 Completion Evidence
+
+G2 is the data-only candidate model and adapter seam; it does not by itself
+stop constructing near-runtime candidates (that is G3's job, deferred). S3's
+own Exit condition above is not yet met until G3 lands.
+
+- **Landed main SHA:** see `PROCGEN_CANDIDATE_SEMANTIC_MODEL_CLAUDE_SUMMARY.md` at repo root.
+- `custodian/game/world/procgen/generation/candidate_semantic_adapter.gd` builds a `custodian.procgen_candidate_semantic_model.v1` snapshot (walkable-cell topology, elevation-blocked edges, level-data pass-through, pre-computed required-ingress facts, seed identity, stable fingerprint) from an already-generated candidate. `CandidateEvaluator` gained snapshot-mirrored `evaluate_snapshot()`/`measure_snapshot()` functions with identical acceptance/score/terrain-failure policy; the legacy live-Node `evaluate_candidate()`/`measure_candidate()` remain unchanged for comparison. `CustodianContractMap`'s candidate loop now builds the snapshot once per attempt and calls `evaluate_snapshot()`; no evaluator call in that path takes a Node/TileMap reference. Live candidate construction is unchanged (no materializer yet, per non-goals).
+- **Validation:** new `procgen_candidate_semantic_model_smoke.gd` PASS across S1 fixed seeds 420777/420779/771923 — snapshot fingerprints stable across two independent builds of the same candidate, and `evaluate_snapshot()` results (accepted, score, terrain_failed, full metrics dict including rejection reasons and required-ingress facts) match `evaluate_candidate()` exactly for every seed. G1's `procgen_candidate_evaluator_smoke.gd`, `procgen_contract_rescue_diagnostic_smoke.gd` (36/36 seeds), and `procgen_terrain_required_cells_smoke.gd` all PASS unchanged. S1 `procgen_performance_baseline_quick` PASS, `determinism_ok: true`. Changed-file closeout PASS (4/4 selected tests); `git diff --check` clean.
+- **Known independent failure:** `procgen_candidate_promotion_smoke.gd` still fails on the same pre-existing streamed-floor-cell equality assertion documented in S1/G1; unrelated to and unchanged by this diff.
+- **Next:** G3 `procgen-semantic-candidate-generation` is eligible.
 
 ---
 

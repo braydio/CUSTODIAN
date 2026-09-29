@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-candidate-semantic-model`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-candidate-evaluator-extraction`
@@ -50,3 +50,14 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 - Next action: Land the model/parity seam; procgen-semantic-candidate-generation then becomes eligible.
 - Best starting files: generation/; proc_gen_tilemap.gd level-data/debug exports; candidate evaluator; S1 fixed cases.
 - Blockers or open questions: None known at authoring time.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: two static-typing bugs and one real parity bug (missing null-map guard) in the first draft of the new snapshot code; all caught by the required parity smoke on the first real run.
+- Root cause / contributing factors: mirroring an existing function's structure by eye missed one conditional early-return branch; GDScript's strict typed-var inference (warnings as errors) rejected a `Variant`-returning helper assigned via `:=`.
+- Prevention / pipeline improvement: when mirroring a function for a new data source, diff the two implementations structurally (branch-by-branch) rather than re-deriving from the docstring/spec, and run the parity proof before anything else once both paths exist.
+- Tooling / docs drift discovered: none new; `procgen_candidate_promotion_smoke.gd`'s pre-existing streaming-reveal assertion remains open, same as reported in S1 and G1.
+- Follow-up: manual-follow-up (same pre-existing candidate-promotion streaming assertion tracked in S1/G1; still not owned by any packet in this series' scope).

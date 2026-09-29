@@ -9,8 +9,10 @@ signal contract_generated(contract: Dictionary)
 signal contract_generation_failed(result: Dictionary)
 
 const CANDIDATE_EVALUATOR_SCRIPT := preload("res://game/world/procgen/generation/candidate_evaluator.gd")
+const CANDIDATE_SEMANTIC_ADAPTER_SCRIPT := preload("res://game/world/procgen/generation/candidate_semantic_adapter.gd")
 
 var _candidate_evaluator: Variant = CANDIDATE_EVALUATOR_SCRIPT.new()
+var _candidate_semantic_adapter: Variant = CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.new()
 
 @export var auto_generate_on_ready: bool = true
 @export var contract_seed: int = 0
@@ -346,9 +348,13 @@ func generate_contract(seed_value: int) -> void:
 		attempts_run += 1
 		var candidate_level_data := await _generate_map_level_data(candidate_map)
 		var _t_generate := Time.get_ticks_msec() - _attempt_start - _t_instantiate
-		var evaluation: Dictionary = _candidate_evaluator.evaluate_candidate(
+		var candidate_snapshot: Dictionary = _candidate_semantic_adapter.build_snapshot(
 			candidate_map,
 			candidate_level_data,
+			{"contract_seed": int(contract_seed), "attempt": attempt, "attempt_seed": attempt_seed}
+		)
+		var evaluation: Dictionary = _candidate_evaluator.evaluate_snapshot(
+			candidate_snapshot,
 			_get_candidate_evaluation_settings()
 		)
 		var candidate_metrics: Dictionary = evaluation.get("metrics", {})
