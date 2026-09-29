@@ -85,6 +85,20 @@ bandwidth allowance is exhausted.
   binary is not cached, defer only the validation/art step that truly needs it
   and report the missing LFS payload. Do not replace LFS pointers with ordinary
   Git blobs or move production assets out of LFS as a workaround.
+- If a worktree's own procgen/asset validation fails on missing/broken
+  textures despite the files existing on disk, check whether the LFS objects
+  are already locally cached (`git lfs ls-files -l`, then check
+  `$(git rev-parse --git-common-dir)/lfs/objects/<oid[0:2]>/<oid[2:4]>/<oid>`)
+  before assuming a real content gap; a full `git lfs checkout` of already-cached
+  objects is a local disk operation, not a network fetch, and is explicitly
+  permitted by the rule above. Run this **before** any `godot --headless
+  --import` pass in that worktree: importing while assets are still
+  unmaterialized pointer stubs leaves stale `valid=false` `.import` sidecars
+  that later reimport passes do not automatically retry, forcing a bulk
+  `grep -rl '^valid=false' --include=*.import` cleanup and reimport to
+  recover. That cleanup is local cache churn only — never commit it; discard
+  with `git checkout -- '*.import'` once materialization is confirmed, and
+  reimport fresh.
 - Avoid unnecessary new LFS asset churn until the reset. Code, docs, metadata,
   task packets, and non-LFS work continue normally.
 - GitHub Actions currently use pointer-only checkout (no `lfs: true`), so no
