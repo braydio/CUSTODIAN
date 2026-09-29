@@ -216,6 +216,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md` — P1 persistent Operator art-worktree hardening: per-worktree sparse checkout + safe idle FF sync so unrelated repo files stop surfacing as Workbench version/sync noise while scoped publish/validation remains intact.
+- `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md` — paired P1 code/architecture/workflow review of sparse checkout isolation, ignored-state preservation, and unchanged scoped publish safety.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
