@@ -1,4 +1,5 @@
 # FILE INDEX — CUSTODIAN
+- `custodian/docs/ai_context/task_packets/STARTUP_WORLD_ENTRY_SPINE_V1.md` / `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — queued App/Boot startup-mode spine and independent review; keeps Awakening default while exposing Twin Solaria and seeded Contract sandbox direct-start paths.
 
 ## Operator Runtime Authority Migration (in progress)
 
