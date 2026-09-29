@@ -167,7 +167,13 @@ At minimum fixtures should prove:
 - Added dispatcher rejection for missing/malformed auto-review overrides and stale validation script references; diagnostics include a nearest live path when available.
 - Added structural finding/correction fixture checks and a temporary-worktree regression proving allowed review artifacts commit while reviewed implementation and unrelated dirty root state remain unchanged.
 - Validation passed: 61 dispatcher tests, 5 review-contract fixture tests, 8 workstream artifact tests, 11 landing tests, prompt-template contract checks, Python compilation, manifest JSON parsing, and `git diff --check`.
-- `run_validation.py --changed --base origin/main --json` passed all 6 selected tests with complete ownership coverage.
+- `run_validation.py --changed --base origin/main --json` passed all 6 selected tests with complete ownership coverage before and after syncing newer `origin/main`; post-sync report: `/tmp/second_pass_review_contract_post_sync_validation.json`.
+
+## Main Sync Closeout
+
+- The newer `origin/main` merge conflicted in the review template, packet index, and three active review packets. Resolution retained the incoming main changes while preserving this task's completed/archive state and canonical bounded review override. The retired Procgen performance review packet remained deleted.
+- The merge exposed a noncanonical override in the new Procgen optimization series review and duplicate override metadata in the Twin Solaria acquisition review. Both were corrected to the shared contract; `validate_review_pairing.py` passes for the resulting five active auto-review packets.
+- Post-sync checks passed: 61 dispatcher tests, 5 review-contract tests, 8 workstream artifact tests, 11 landing tests, prompt-template checks, Python compilation, and all 6 changed-file validation tests with complete ownership coverage.
 
 ## Execution Feedback
 

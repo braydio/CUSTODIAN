@@ -14,10 +14,16 @@
 - `test_review_contract.py`: 5 fixture/template tests passed for all finding classes/dispositions, stable IDs, correction IDs, and template consistency.
 - `test_workstream_artifacts.py`: 8 tests passed, including an isolated review worktree commit with authorized receipt/summary/lifecycle/correction artifacts; reviewed code and unrelated dirty root bytes/status stayed unchanged, and an implementation-path change was rejected.
 - `agent_workflow_smoke.py`: passed, including 11 landing tests and dispatcher/review fixtures.
-- Standalone `validate_review_pairing.py`: passed for 6 live paired auto-review packets and candidate-tree validation paths.
+- Standalone `validate_review_pairing.py`: passed for 5 live paired auto-review packets and candidate-tree validation paths after syncing newer `origin/main`.
 - Prompt-template contract: passed with zero repeated defaults.
 - Python compilation, validation-manifest JSON parse, and `git diff --check`: passed.
-- `run_validation.py --changed --base origin/main --json`: all 6 selected tests passed with complete ownership coverage.
+- `run_validation.py --changed --base origin/main --json`: all 6 selected tests passed with complete ownership coverage, both before and after syncing newer `origin/main`. The post-sync report is `/tmp/second_pass_review_contract_post_sync_validation.json`.
+
+## Main Sync Closeout
+
+- `workstream.py finish` initially stopped on conflicts after `origin/main` advanced by 65 commits. Resolved the merge while retaining the incoming Procgen and Contract World packets, roadmap/index updates, Awakening metadata, and startup validation changes.
+- The merge surfaced two current packet-contract defects: a new Procgen review packet had a noncanonical override, and the Twin Solaria acquisition review packet had duplicate override metadata. Canonicalized both; `validate_review_pairing.py` now passes.
+- Merge resolution removed the Procgen performance review packet that `origin/main` had retired and preserved its new replacement series review packet.
 
 ## Awkward Finding
 
