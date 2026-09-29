@@ -179,6 +179,7 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — paired independent review of Slice E; no automatic Passage slice follows.
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
+- `OPERATOR_RUNTIME_DECOMPLEXIFICATION.md` — P1 C2b.2 resume of the paused Operator god-file migration: repair canonical damage reactions, remove the final Operator legacy selector/fallback debt, and shrink the architecture ledger from 95 to 75.
 - `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
 - `TASK_PACKET_INDEX_AUTOMODE_HARDENING.md` — P2 bounded auto-index hardening queued after the AI-context validator: deterministically check/write only the Ready / Auto Dispatch block from packet metadata while preserving manual, in-progress, and historical sections.
 - `AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — P2 one-time conservative cleanup of pre-hardened stale `agent/*` branches and `Recently Complete` packet residue after finish hardening lands.
