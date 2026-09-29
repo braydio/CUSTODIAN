@@ -17,6 +17,7 @@
 - Review focus: already-landed short-circuit; durable closing-summary proof; no unnecessary history rewrite; correct published-ref guard; idempotent teardown; preservation of unlanded commits; dirty-root non-mutation; regression safety for ordinary landing and dispatch.
 - Acceptance: Findings-first review either records a clean pass or queues a bounded correction through the live review pipeline. Reviewer must not patch the reviewed workflow code directly.
 - Non-goals: Do not redesign dispatch, continuous workers, or branch hygiene generally.
+- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to the reviewed workflow implementation. Repository/document mutations required for the durable review receipt, required review closing summary, review-packet lifecycle/archive metadata, and any bounded follow-up correction/re-review packets are allowed.`
 
 ## Required Checks
 
@@ -32,4 +33,4 @@
 ## Handoff
 
 - Next action: Auto-dispatch after the hardening implementation lands.
-- Blockers or open questions: Blocked only by `workstream-finish-landed-closeout-hardening`.
+- Blockers or open questions: None. The implementation dependency is archived complete; this review is eligible subject to the shared `agent-workflow` lock.
