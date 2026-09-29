@@ -11,7 +11,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 RESOURCE = REPO_ROOT / "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
 EXT_RESOURCE_RE = re.compile(
-    r'^\[ext_resource type="Texture2D"[^\]]*?path="res://([^\"]+)"',
+    r'^\[ext_resource type="Texture2D"[^\]]*\bpath="res://([^\"]+)"',
     re.MULTILINE,
 )
 
