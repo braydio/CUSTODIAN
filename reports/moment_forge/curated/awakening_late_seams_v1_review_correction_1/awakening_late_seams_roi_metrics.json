@@ -1,0 +1,55 @@
+{
+  "checks": [
+    {
+      "index": 0,
+      "metrics": {
+        "matte_border_ratio": 0.17416666666666666,
+        "matte_color": null,
+        "void_ratio": 0.0
+      },
+      "passed": true,
+      "type": "matte_void"
+    },
+    {
+      "index": 1,
+      "metrics": {
+        "matte_border_ratio": 0.59,
+        "matte_color": null,
+        "void_ratio": 0.0
+      },
+      "passed": true,
+      "type": "matte_void"
+    },
+    {
+      "index": 2,
+      "metrics": {
+        "matte_border_ratio": 0.2658333333333333,
+        "matte_color": null,
+        "void_ratio": 0.0
+      },
+      "passed": true,
+      "type": "matte_void"
+    },
+    {
+      "index": 3,
+      "metrics": {
+        "matte_border_ratio": 0.009166666666666667,
+        "matte_color": null,
+        "void_ratio": 0.0
+      },
+      "passed": true,
+      "type": "matte_void"
+    },
+    {
+      "index": 4,
+      "metrics": {
+        "matte_border_ratio": 0.10666666666666667,
+        "matte_color": null,
+        "void_ratio": 0.0
+      },
+      "passed": true,
+      "type": "matte_void"
+    }
+  ],
+  "schema": "custodian.presentation_image_metrics.v1"
+}

@@ -36,6 +36,33 @@ class AlphaBoundsTests(unittest.TestCase):
         self.assertIsNone(result["bbox"])
         self.assertEqual(result["coverage_ratio"], 0.0)
 
+    def test_both_coverage_bounds_are_enforced(self) -> None:
+        check = {"min_coverage_ratio": 0.25, "max_coverage_ratio": 0.75}
+        opaque = metrics.alpha_bounds(_solid((4, 4), (0, 0, 0, 255)))
+        empty = metrics.alpha_bounds(_solid((4, 4), (0, 0, 0, 0)))
+        half = _solid((4, 4), (0, 0, 0, 0))
+        for y in range(2):
+            for x in range(4):
+                half.putpixel((x, y), (0, 0, 0, 255))
+        middle = metrics.alpha_bounds(half)
+        self.assertFalse(metrics._apply_threshold("alpha_bounds", empty, check))
+        self.assertFalse(metrics._apply_threshold("alpha_bounds", opaque, check))
+        self.assertTrue(metrics._apply_threshold("alpha_bounds", middle, check))
+
+
+class CropBoundsTests(unittest.TestCase):
+    def test_crop_rejects_negative_origin_and_right_or_bottom_overflow(self) -> None:
+        image = _solid((20, 10), (0, 0, 0, 255))
+        for rect in [(-1, 0, 5, 5), (0, -1, 5, 5), (15, 0, 25, 5), (0, 5, 5, 11)]:
+            with self.subTest(rect=rect), self.assertRaises(metrics.MetricsError):
+                metrics.alpha_bounds(image, rect)
+
+    def test_crop_rejects_zero_or_negative_dimensions(self) -> None:
+        image = _solid((20, 10), (0, 0, 0, 255))
+        for rect in [(5, 2, 5, 8), (5, 2, 3, 8)]:
+            with self.subTest(rect=rect), self.assertRaises(metrics.MetricsError):
+                metrics.alpha_bounds(image, rect)
+
 
 class MatteVoidTests(unittest.TestCase):
     def test_fully_transparent_roi_is_pure_void(self) -> None:
@@ -94,6 +121,22 @@ class SeamDiscontinuityTests(unittest.TestCase):
         image = _solid((20, 10), (40, 40, 40, 255))
         result = metrics.seam_discontinuity(image, None, "vertical", boundary=10, band=2)
         self.assertEqual(result["mean_absolute_delta"], 0.0)
+
+    def test_single_pixel_vertical_seam_on_boundary_is_detected(self) -> None:
+        image = _solid((20, 10), (0, 0, 0, 255))
+        for y in range(10):
+            image.putpixel((10, y), (255, 0, 0, 255))
+        result = metrics.seam_discontinuity(image, None, "vertical", boundary=10, band=2)
+        self.assertGreater(result["mean_absolute_delta"], 0.0)
+        self.assertEqual(result["samples"], 10)
+
+    def test_single_pixel_horizontal_seam_on_boundary_is_detected(self) -> None:
+        image = _solid((20, 10), (0, 0, 0, 255))
+        for x in range(20):
+            image.putpixel((x, 5), (255, 0, 0, 255))
+        result = metrics.seam_discontinuity(image, None, "horizontal", boundary=5, band=1)
+        self.assertGreater(result["mean_absolute_delta"], 0.0)
+        self.assertEqual(result["samples"], 20)
 
     def test_boundary_too_close_to_edge_raises(self) -> None:
         image = _solid((20, 10), (0, 0, 0, 255))

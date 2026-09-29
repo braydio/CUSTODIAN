@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `visual-validation-economy-tooling-v1-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-visual-validation-economy-tooling-v1`
@@ -43,11 +43,19 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `<none or concise statement>`
-- Root cause / contributing factors: `<none or concise statement>`
-- Prevention / pipeline improvement: `<none or concise statement>`
-- Tooling / docs drift discovered: `<none or concise statement>`
-- Follow-up: `<none | fixed-in-scope | workstream-id | manual-follow-up>`
-- What worked: `<optional concise note>`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Initial changed-file coverage did not map the new adopter specs and focused adapter/spec tests; an evidence receipt was also briefly placed in the adopter-spec directory, where the spec loader correctly rejected it.
+- Root cause / contributing factors: The validation manifest had no owners for the new tests/spec data, and the reusable spec loader intentionally treats every JSON file in its directory as a scenario template.
+- Prevention / pipeline improvement: Added dedicated validation manifest entries and explicit owners for both focused tests and adopter specs; kept the live-run receipt with curated evidence.
+- Tooling / docs drift discovered: The changed-file router lacked coverage for the new visual-economy test/spec files; repaired in-scope.
+- Follow-up: `fixed-in-scope`
+- What worked: Cached LFS checkout plus a single headless editor import restored the isolated worktree, after which the live runs and changed validation passed.
+
+## Completion Notes
+
+- Implemented all six review corrections with focused negative/positive controls and four reusable downstream adopter specs.
+- Both Awakening live runs passed with stable fingerprint `be8bd7cf283947d0f7b7c4f868c1dcd721551c9004c4e58323fe237efabee3e6`; the evidence adapter passed 5/5 ROI checks and wrote a 1200×444 contact sheet.
+- Durable compact evidence and full structured receipt are in `reports/moment_forge/curated/awakening_late_seams_v1_review_correction_1/`; reproduction commands are recorded in `live_run_receipt.json`.
+- Focused tests (27), Moment Forge schema/report/router smokes, and `run_validation.py --changed --json` passed with complete coverage: 10 selected checks, 0 failures.
+- Full frames and timestamped run directories are ephemeral worktree artifacts; the compact contact sheet, metrics, and receipt are retained for paired review.

@@ -24,6 +24,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 ITERATION_DIR = Path(__file__).resolve().parents[1] / "iteration"
 sys.path.insert(0, str(ITERATION_DIR))
@@ -44,7 +45,7 @@ SEAMS = [
 SEAM_ROI = [440, 260, 400, 200]
 
 
-def build(run_dir: Path, output_dir: Path) -> dict[str, Path]:
+def build(run_dir: Path, output_dir: Path) -> dict[str, Any]:
     keyframes = run_dir / "keyframes"
     cells = []
     images: dict[str, str] = {}
@@ -63,7 +64,16 @@ def build(run_dir: Path, output_dir: Path) -> dict[str, Path]:
     metrics = analyze({"images": images, "rois": rois, "checks": checks}, Path("/"))
     metrics_path = output_dir / "awakening_late_seams_roi_metrics.json"
     metrics_path.write_text(json.dumps(metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return {"sheet": sheet_path, "metrics": metrics_path}
+    failed_check_indices = [
+        check["index"]
+        for check in metrics["checks"]
+        if check.get("passed") is False
+    ]
+    return {
+        "sheet": sheet_path,
+        "metrics": metrics_path,
+        "failed_check_indices": failed_check_indices,
+    }
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -87,6 +97,10 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     print(f"ROI sheet: {result['sheet']}")
     print(f"Metrics:   {result['metrics']}")
+    if result["failed_check_indices"]:
+        failed = ", ".join(str(index) for index in result["failed_check_indices"])
+        print(f"failed check indices: {failed}", file=sys.stderr)
+        return 1
     return 0
 
 

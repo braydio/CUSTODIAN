@@ -752,19 +752,25 @@ Economy pixel layer (see "Visual Evidence Economy" in `VALIDATION_RECIPES.md`).
 Given one or more PNGs plus named ROIs, emits threshold-configurable JSON for:
 
 - `alpha_bounds` — bounding box and coverage ratio of pixels above an alpha
-  threshold;
+  threshold, applying configured minimum and maximum coverage limits together;
 - `matte_void` — fully-transparent void ratio and uniform-color matte border
   detection;
 - `roi_diff` — changed-pixel ratio and mean absolute difference between two
   same-size regions;
-- `seam_discontinuity` — mean absolute pixel delta across a declared
-  horizontal/vertical boundary line;
+- `seam_discontinuity` — strongest adjacent-pixel delta per scanline within a
+  declared horizontal/vertical boundary band, including a seam exactly on the
+  band's edge. ROI geometry must be positive and wholly inside the source image;
+  invalid geometry fails explicitly instead of padding the crop;
 - `crop` — exact ROI extraction to a file.
 
 These are technical pixel measurements, not aesthetic scoring; a check's own
 threshold fields fold into a `passed` bool per entry. It is a standalone
 importable module plus CLI, not a second scenario runner — it consumes
 keyframes/crops that `run_moment.py --capture-mode evidence` already produced.
+The four reusable downstream adopter templates and their current-DSL contract
+test are maintained in `custodian/tools/iteration/adopter_specs/` and
+`test_visual_validation_adopter_specs.py`; feature owners bind them to their
+runtime roles and authored states.
 
 ---
 

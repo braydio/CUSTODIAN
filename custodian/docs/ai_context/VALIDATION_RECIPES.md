@@ -261,10 +261,11 @@ remain human-owned even when objective technical image checks are automated.
   forward/reverse steady-state sequence) without reading a screenshot.
 - Code-based pixel metrics: `python3 custodian/tools/iteration/presentation_image_metrics.py <spec.json>`
   runs `alpha_bounds`, `matte_void`, `roi_diff`, `seam_discontinuity`, and `crop`
-  checks against named ROIs of one or more PNGs and emits deterministic JSON,
-  with each check's own threshold folded into a `passed` bool. See the module
-  docstring for the spec shape; `test_presentation_image_metrics.py` has worked
-  examples including negative controls.
+  checks against named, in-bounds ROIs of one or more PNGs and emits deterministic
+  JSON, with each check's own threshold folded into a `passed` bool. Both alpha
+  bounds apply together; seam deltas include adjacent pixels within the declared
+  band. See the module docstring for the spec shape;
+  `test_presentation_image_metrics.py` has worked examples including negative controls.
 - Renderer ROI: `build_roi_contact_sheet()` in `build_moment_report.py` composes
   several small named crops into one compact sheet instead of N full-resolution
   frames.
@@ -275,6 +276,10 @@ remain human-owned even when objective technical image checks are automated.
   `python3 custodian/tools/validation/awakening_late_seams_evidence.py <evidence-run-dir>`
   (the one compact ROI sheet + void/matte sanity check for final technical
   review).
+- Reusable downstream adopter templates for Twin Crown, Solarium I, Operator
+  mobile guard, and Vaultwing closure are in
+  `custodian/tools/iteration/adopter_specs/`; their contract/DSL smoke is
+  `custodian/tools/iteration/test_visual_validation_adopter_specs.py`.
 
 Do not run the focused test and `--changed` concurrently against the same
 project. If another agent/session already owns a broad sweep, wait for it or use
