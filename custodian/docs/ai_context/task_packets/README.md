@@ -215,25 +215,56 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — P0 code-first presentation-validation tooling: richer Moment probes/assertions, deterministic image metrics, compact ROI evidence, and reusable direct adopters for high-visual-cost queued work.
+#### Procgen Runtime Optimization V1 Full-Auto Series
+
+- Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
+- `PROCGEN_PERFORMANCE_BASELINE_V1.md` — S1 root: structured fixed-seed baseline; no runtime optimization.
+- `PROCGEN_CANDIDATE_EVALUATOR_EXTRACTION.md` — G1 candidate acceptance/scoring authority extraction; depends on S1.
+- `PROCGEN_CANDIDATE_SEMANTIC_MODEL.md` — G2 data-only candidate model; depends on G1.
+- `PROCGEN_SEMANTIC_CANDIDATE_GENERATION.md` — G3 semantics-first rejected-candidate path; depends on G2.
+- `PROCGEN_ACCEPTED_CANDIDATE_MATERIALIZER.md` — G4 accepted semantic candidate runtime materializer; depends on G3.
+- `PROCGEN_CANDIDATE_RUNTIME_PATH_DEMOLITION.md` — G5 retire superseded live rejected-candidate path; depends on G4.
+- `PROCGEN_DERIVED_REBUILD_SCHEDULER_FOUNDATION.md` — M1 dirty-region/rebuild scheduler foundation; depends on S1.
+- `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER.md` — M2 route runtime mutation producers through scheduler; depends on M1.
+- `PROCGEN_PAUSE_AWARE_STREAMING.md` — M3 background prepare vs gameplay commit pause contract; depends on M2.
+- `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — M4 explicit chunk lifecycle authority; depends on M3.
+- `PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 deterministic reusable chunk payload cache; depends on M4.
+- `PROCGEN_DISTANT_CHUNK_UNLOAD.md` — M6 production distant unload/reload after cache proof; depends on M5.
+- `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 shared world-placement context/service seam; depends on S1.
+- `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — P2 resource placement extraction; depends on P1.
+- `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — P3 vehicle placement extraction; depends on P1.
+- `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — P4 ARRN relay placement extraction; depends on P1.
+- `CONTRACT_WORLD_ENCOUNTER_PLACEMENT_EXTRACTION.md` — P5 encounter/ambient marker placement extraction; depends on P1.
+- `CONTRACT_WORLD_INGRESS_PLACEMENT_EXTRACTION.md` — P6 authored ingress placement extraction; depends on P1.
+- `CONTRACT_WORLD_LOADER_CONTRACTION.md` — P7 loader cleanup after all placement siblings complete.
+- `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — D1 road authority extraction; depends on G5 + M6.
+- `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — D2 authored claim registry extraction; depends on G5 + M6.
+- `PROCGEN_GENERATION_STATE_EXTRACTION.md` — D3 generation-state/level-data extraction; depends on G5 + M6.
+- `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` — D4 ProcGenTilemap façade contraction after D1+D2+D3.
+- `PROCGEN_RENDER_ATTRIBUTION_V1.md` — V1 presentation cost attribution after D4 + P7.
+- `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` — V2 evidence-driven presentation node/draw consolidation; depends on V1.
+- `PROCGEN_PERFORMANCE_SOAK_V1.md` — F1 final deterministic V1 soak and regression budgets; depends on V2.
+- `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
+- `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
+
+- `AGENT_WORKFLOW_CLAIM_ATOMICITY_AND_FORENSICS.md` — P0 control-plane correction: make direct workstream starts use the same exclusive claim semantics as dispatch, prevent partial-worktree double starts, and emit operator-only non-main lifecycle trace exports.
+- `VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — P0 code-first presentation-validation tooling: richer Moment probes/assertions, deterministic image metrics, compact ROI evidence, and reusable direct adopters for high-visual-cost queued work; waits on `second-pass-review-contract-v2` so its own paired review can autocomplete safely.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — paired P0 code/architecture/workflow review of the visual-validation economy tooling; no subjective art review.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` — P2 Slice 1 of the living Asset Workbench roadmap: read-only Asset V2 FAMILY navigator, truthful family/state lifecycle projection, pure search, transactional refresh, and Baby Opossum acceptance coverage.
 - `VAULTWING_BOND_GREET_FINAL_INGEST.md` — P0 auto-claimable convergence of the prior Vaultwing bonding-art checkpoint plus the four same-host `~/Downloads/vw1.png`–`vw4.png` `bond_greet` E/N/S/W strips through source_work → inbox → Asset V2, including bounded staging hardening and final 24/24 visual closure.
-- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, visually verify/correct late seams without moving gameplay authority, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
+- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, prove late joins code-first with seam metrics/targeted ROIs, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
 - `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — paired independent code/runtime/visual/asset review of the Awakening convergence and handoff-readiness slice.
 - `REVIEW_SECOND_PASS_REVIEW_CONTRACT_V2.md` — paired independent review of the V2 second-pass review/correction contract; eligible after its implementation lands.
 - `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — paired independent review of startup routing, bootstrap reuse, and story-default preservation.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
-- `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; its `agent-review-pipeline` dependency is now archived complete, so it is eligible subject to the shared `agent-workflow` lock.
+- `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 Twin Solaria forensic progression with code-first overlay/state evidence; now also waits on `visual-validation-economy-tooling-v1` so baseline/Stage-B/Stage-F proof uses structured probes and one compact ROI sheet instead of repeated full-frame inspection.
 - `REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired independent review of the forensic slice, blocked on `twin-solaria-crown-incident-forensics`.
 - `TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — P1 Slice D: fail-closed route candidate/evidence/reciprocity authority and HOLD / ABORT / AUTHORIZE ACQUISITION decisions; blocked on reviewed Slice C.
 - `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — paired independent review of Slice D, blocked on `twin-solaria-route-review-authority`.
-- `TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — P1 Slice E: Asset V2 aperture/anchor/witness FX and state-driven Solarium I observational acquisition; blocked on reviewed Slice D.
+- `TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — P1 Slice E: Asset V2 aperture/anchor/witness FX and state-driven Solarium I observational acquisition; blocked on reviewed Slice D plus `visual-validation-economy-tooling-v1` for structured state/registration/ROI proof.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — paired independent review of Slice E; no automatic Passage slice follows.
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
-- `PROCGEN_PERFORMANCE_BASELINE_V1.md` — P1 Slice S1 of the tracked procgen optimization roadmap: structured fixed-seed generation/streaming baseline, quick + opt-in full benchmark profiles, no optimization or world-output changes.
-- `REVIEW_PROCGEN_PERFORMANCE_BASELINE_V1.md` — paired independent review of S1 benchmark reproducibility, determinism preservation, schema completeness, and bounded validation cost.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
 - `OPERATOR_RUNTIME_DECOMPLEXIFICATION.md` — P1 C2b.2 resume of the paused Operator god-file migration: repair canonical damage reactions, remove the final Operator legacy selector/fallback debt, and shrink the architecture ledger from 95 to 75.
 - `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md` — P1 C2b.3 cleanup queued behind C2b.2: reconcile stale animation reachability, migrate direct Operator-PNG VFX consumers, disposition orphan/superseded canonical output, and retire compatibility SpriteFrames/resources only after zero-consumer proof.

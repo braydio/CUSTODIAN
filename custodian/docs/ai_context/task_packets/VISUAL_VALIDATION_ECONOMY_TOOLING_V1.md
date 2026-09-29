@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `none`
+- Depends on: `second-pass-review-contract-v2`
 - Locks: `moment-forge-tooling`
 - Kind: `implementation`
 - Review: `auto`
@@ -67,4 +67,4 @@ Measured high-visual-cost queued work at authoring time:
 
 - Next action: Auto-claim and implement the generic probe/metric primitives first, then the direct-adopter scenarios in the order above.
 - Best starting files: `moment_probe_collector.gd`, `moment_assertion_evidence.gd`, `moment_schema.json`, `run_moment.py`, report builder, existing Moment Forge schema/runtime/report smokes, and the named packet scenarios/fixtures.
-- Blockers or open questions: None. If a direct adopter is impossible to instantiate because its runtime feature has not landed yet, commit the reusable generic tool plus a schema-valid fixture/scenario template and leave feature-specific wiring to that dependency packet.
+- Blockers or open questions: Dependency only on `second-pass-review-contract-v2`, so paired review artifact completion is hardened before this tooling enters its own review cycle. If a direct adopter is impossible to instantiate because its runtime feature has not landed yet, commit the reusable generic tool plus a schema-valid fixture/scenario template and leave feature-specific wiring to that dependency packet.

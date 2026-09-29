@@ -23,7 +23,7 @@
 
 1. Recompute all nine zone art rectangles from live Layout envelopes and live scene sprites; prove exact `grow(64)` registration and underlay/foreground parity.
 2. Prove the 04→05 runtime state is `full_plate_underlay` at 1024×576 centered at `(352,-2464)`, with no live 832×384 binding.
-3. Reuse the implementation's committed registration report, runtime presentation probes, seam-metrics JSON, and compact late-seam ROI contact sheet. Reject any hard crop discontinuity, doubled threshold, missing walkable floor, or foreground-over-Operator contradiction from that structured evidence. Do not regenerate or separately inspect five equivalent full-screen captures unless the implementation evidence is missing, stale, contradictory, or a specific metric cannot establish the criterion.
+3. Reuse the implementation's committed registration report, runtime presentation probes, seam-metrics JSON, ordered capture manifest, and generated late-seam ROI images. Verify that the implementation recorded completion of the required human kitty/xdg-open review sequence. Do not perform a second subjective model-vision acceptance pass; only inspect/regenerate imagery if evidence is missing, stale, contradictory, or changed after human approval.
 4. Verify the Approach/Road seam uses the existing Road offset, y=-6144 anchor, 192 px south gap, and presentation-only correction if any correction was needed.
 5. Verify Gate west/east pylon blockers remain 240×496 and the central visual-route mismatch was not “fixed” by blocking the route.
 6. Exercise South Reach before console acknowledgment, after console but before P-9, and after both. Only the final case may complete.
@@ -32,9 +32,11 @@
 9. Reconcile the live generated asset catalog with the documented BAKED_ONLY / specialized / partial / unpublished classifications.
 10. Confirm CURRENT_STATE and related docs no longer describe the rejected connector or missing Road art as current truth.
 11. Confirm existing Awakening geometry/progression, Road production, asset-pipeline, and changed-file validation remain green.
-12. If all objective seam metrics are green, treat the renderer ROI sheet as a human spot-check artifact, not a second model-vision acceptance gate. Escalate only genuinely subjective Gate/art-composition questions.
+12. Verify the coding agent, not the user, launched the ordered kitty/xdg-open sequence and blocked final closeout until it completed. If relevant art/registration changed after that gate, require regenerated captures and a new human sequence. Escalate only genuinely subjective Gate/art-composition questions.
 
 ## Human Decision Gate
+
+Closing each review kitty window in the implementation workstream is the user's per-capture approval/advance signal. The paired review agent should validate the durable evidence of that gate, not substitute its own visual judgment.
 
 If the central Gate sealed-body composition still visually hides a legal Operator position and the only credible fix requires a different authored Gate state/composition, record that exact evidence as `human_required`. Do not invent art or move collision.
 

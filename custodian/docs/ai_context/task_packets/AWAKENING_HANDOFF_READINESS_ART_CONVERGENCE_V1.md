@@ -24,7 +24,7 @@
 - Change: Add a machine-checkable art-registration/seam contract for the complete Awakening, code-first seam probes/metrics for the late-level joins, and bounded presentation corrections only when structured evidence proves an objective seam/overlap error. Renderer output is secondary evidence: use targeted seam ROIs only when pixel continuity cannot be established from registration/alpha/coverage metrics, and never require repeated full-screen model inspection. Add one production-named completion signal/API for South Reach that preserves legacy compatibility. Update the asset-consumption ledger to distinguish baked-only fixture states, specialized live props, unpublished registered families, and later-Hub assets. Correct stale docs that still describe the rejected connector dimensions or otherwise contradict live placement.
 - Preserve: `awakening_layout.gd` remains the sole spatial authority; mandatory route/collision coordinates stay fixed unless a focused geometry failure proves the authority itself is wrong; all current zone underlay/foreground source pixels and Asset V2 identities remain authoritative; 04→05 stays 1024×576 at its current center with current 32 px feather and 128 px fade unless direct capture proves a regression; Gate pylon blockers stay 240×496; the central Gate route stays traversable; Road collision remains Road-owned; opening does not prewarm a Contract; no Field Terminal/Forum/Continuity Port is added to Awakening; no direct Awakening→Twin jump.
 - Non-goals: No Hub runtime scene; no world-context transition implementation; no Twin Solaria gameplay changes; no procgen handoff; no Contract prewarm; no new generic fixture art; no speculative rescaling of valid plates; no extraction of a fake 04→05 foreground from flattened RGB; no Gate central-body collision enlargement; no redesign of the ten-section Layout; no procgen performance/pause work.
-- Acceptance: All nine Awakening environment plate pairs prove exact center registration and `envelope.grow(64)` visual bounds; underlay/foreground within each family have identical canvas/registration; 04→05 proves the current 1024×576 exception and no stale 832×384 runtime binding; mandatory joins 01→02, 02→03, 03→04, 04→05, 05→06, 06→07, 07→08, and 08→10 plus optional 08↔09 have machine-checkable structural coverage for bounds/overlap/alpha/draw-order/path coverage and, where actual rendered pixels remain necessary, deterministic seam metrics over targeted ROIs with no straight crop discontinuity, doubled threshold, missing walkable floor, or opaque art unexpectedly hiding the Operator. Routine acceptance does not require five full-screen Codex inspections; one compact late-seam ROI sheet is the maximum normal human/agent review artifact, with full-frame evidence only for an unresolved metric failure. The Road South Reach south boundary gap remains 192 px and aligns to the Approach handoff at world y=-6144; Gate pylon blockers remain aligned while the unresolved central sealed-body composition is recorded as art/design debt rather than “fixed” with collision; South Reach completion fails closed until both console acknowledgement and P-9 recovery, emits one production-named completion event once, and keeps any legacy `blockout_completed` listener working during migration; no Contract generation starts; docs and asset gap status match live runtime.
+- Acceptance: All nine Awakening environment plate pairs prove exact center registration and `envelope.grow(64)` visual bounds; underlay/foreground within each family have identical canvas/registration; 04→05 proves the current 1024×576 exception and no stale 832×384 runtime binding; mandatory joins 01→02, 02→03, 03→04, 04→05, 05→06, 06→07, 07→08, and 08→10 plus optional 08↔09 have machine-checkable structural coverage for bounds/overlap/alpha/draw-order/path coverage and, where actual rendered pixels remain necessary, deterministic seam metrics over targeted ROIs with no straight crop discontinuity, doubled threshold, missing walkable floor, or opaque art unexpectedly hiding the Operator. Routine acceptance does not require five full-screen Codex inspections; one compact late-seam ROI sheet is the maximum normal human/agent review artifact, with full-frame evidence only for an unresolved metric failure. The Road South Reach south boundary gap remains 192 px and aligns to the Approach handoff at world y=-6144; Gate pylon blockers remain aligned while the unresolved central sealed-body composition is recorded as art/design debt rather than “fixed” with collision; South Reach completion fails closed until both console acknowledgement and P-9 recovery, emits one production-named completion event once, and keeps any legacy `blockout_completed` listener working during migration; no Contract generation starts; docs and asset gap status match live runtime; the coding agent generates but does not visually judge the required captures, launches the kitty/xdg-open sequence itself, and the human visual review sequence completes before final closeout.
 - Validation: Add focused registration/seam coverage first, preferably `custodian/tools/validation/awakening_art_registration_smoke.gd`, and register changed-file ownership. It should prove plate centers/canvases, overlap envelopes, underlay/foreground registration, alpha/visibility state, effective presentation order, and route/Operator coverage at representative join samples without renderer inspection. Keep `awakening_first_return_smoke.gd`, `awakening_first_return_geometry_smoke.gd`, `awakening_first_return_progression_smoke.gd`, `road_of_witnesses_production_smoke.gd`, and Asset V2 requirement/status checks green. Use the reusable visual-validation/Moment Forge presentation probes when available to cover 05→06, 06→07, 07→08, 08→10 and optional 08↔09 in `capture-mode none`; only after those checks are green run one sparse evidence pass that computes seam metrics and emits a compact five-ROI contact sheet if rendered-pixel proof is still required. Do not run five independent full-screen visual inspections. Run focused checks before `run_validation.py --changed --json` and `git diff --check`.
 - Task overrides: `none`
 - Deferred: Actual Awakening→Hub transition; Hub runtime host; Ashen Forum/Field Terminal/Continuity Port; Hub→Twin Solaria route; missing registered Awakening P1 art; authored Gate central-passage composition; Twin forensic/route/acquisition slices; procgen pause/optimization.
@@ -165,37 +165,124 @@ At minimum:
 4. Treat `custodian/docs/ai_context/task_packets/AWAKENING_SCENE_CORRECTNESS_HARDENING.md` as stale historical planning if it still asks for already-live A1–A5 work. Do not rerun completed hardening. Update/index/supersede it only according to current packet-lifecycle rules; do not silently leave two active authorities for the same work.
 5. `custodian/asset_drop/inbox/awakening_ingest_manifest.json` currently records `awakening_undergate_environment` as 896×1216 even though the live V2 family contract and production scene use 1536×1216. Determine whether this manifest is an active/generated intake index or preserved historical batch record. If active/generated, regenerate it from current catalog/family truth; if historical, relabel/archive it so it cannot masquerade as current authority. Do not change the live 1536×1216 family/scene to match the stale manifest.
 
-## Visual Evidence Economy
+## Visual Evidence + Human Approval Gate
 
-Renderer evidence is secondary to structured proof.
+Structured proof remains first. The coding agent must generate the renderer evidence but must **not visually adjudicate it**.
 
-For the five late joins:
+For the five late joins, preserve this review order:
 
 ```text
-05→06 Dust Lung / Undergate
-06→07 Undergate / Gate of Dust
-07→08 Gate of Dust / Custodian Approach
-08→10 Custodian Approach / Road South Reach
-08↔09 Approach / Late Service optional branch
+01  05→06 Dust Lung / Undergate
+02  06→07 Undergate / Gate of Dust
+03  07→08 Gate of Dust / Custodian Approach
+04  08→10 Custodian Approach / Road South Reach
+05  08↔09 Approach / Late Service optional branch
 ```
 
 Use this order:
 
 1. Registration smoke proves exact plate/canvas/center and expected overlap geometry.
 2. Runtime/presentation probes prove visibility, alpha, draw order, and that an Operator/path sample is not incorrectly covered.
-3. Reusable seam metrics evaluate the actual rendered join ROI for hard edge discontinuity, transparent walkable holes, doubled threshold/rail/stair regions, and unexpected opaque coverage.
-4. Only if a metric is ambiguous or fails, inspect the corresponding tight seam crop. The normal final renderer artifact is one compact contact sheet containing the five seam ROIs, not five full-screen images.
-5. Full-frame capture is reserved for a defect whose diagnosis genuinely depends on wider scene context; record why the ROI/metrics were insufficient.
+3. Reusable seam metrics evaluate the rendered join ROIs for hard-edge discontinuity, transparent walkable holes, doubled threshold/rail/stair regions, and unexpected opaque coverage.
+4. Generate one deterministic PNG per required seam ROI, plus an optional contact sheet for archival convenience.
+5. **Do not use coding-agent vision/model judgment to accept or reject those PNGs.**
+6. When all required images are ready, print their absolute paths and announce:
+   `AWAKENING VISUAL CAPTURES READY FOR HUMAN REVIEW`.
+7. Create an ephemeral local launcher outside the repository, preferably:
+   `/tmp/custodian_awakening_visual_review.sh`.
+8. The coding agent must then **run that launcher itself** and wait for the human review sequence to finish before continuing final closeout.
 
-Objective pass criteria remain:
+### Required launcher behavior
 
-- no straight rectangular crop discontinuity above the configured seam threshold;
+The launcher must:
+
+- verify `kitty` and `xdg-open` exist;
+- verify every expected capture exists before starting;
+- use absolute, safely shell-quoted image paths;
+- preserve the exact order above;
+- print `[N/TOTAL] <absolute path>` before each image;
+- launch one dedicated kitty process in the foreground per image;
+- inside that kitty, call `xdg-open` on that image and then remain alive;
+- treat closing/terminating that kitty process as **approve this image and advance**;
+- start the next image only after the prior kitty process exits;
+- after the final approved image, print:
+  `HUMAN VISUAL REVIEW SEQUENCE COMPLETE`.
+
+Conceptual implementation:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+images=(
+  "/absolute/path/01_dust_lung_undergate.png"
+  "/absolute/path/02_undergate_gate.png"
+  "/absolute/path/03_gate_approach.png"
+  "/absolute/path/04_approach_road.png"
+  "/absolute/path/05_approach_late_service.png"
+)
+
+command -v kitty >/dev/null
+command -v xdg-open >/dev/null
+
+for i in "${!images[@]}"; do
+  image="${images[$i]}"
+  test -f "$image"
+  n=$((i + 1))
+  printf '[%d/%d] %s\n' "$n" "${#images[@]}" "$image"
+
+  kitty \
+    --title "CUSTODIAN Awakening review $n/${#images[@]} — close = approve/next" \
+    sh -lc '
+      image="$1"
+      xdg-open "$image"
+      printf "\nReviewing:\n%s\n\n" "$image"
+      printf "%s\n" "Close/terminate THIS kitty window when approved."
+      printf "%s\n" "To reject/stop, interrupt the parent review command instead of advancing."
+      while :; do sleep 3600; done
+    ' sh "$image"
+done
+
+printf '%s\n' 'HUMAN VISUAL REVIEW SEQUENCE COMPLETE'
+```
+
+The exact shell may differ if required by the local kitty configuration, but the control contract may not.
+
+### Human approval semantics
+
+For this task:
+
+```text
+close/terminate current review kitty
+    = approve current capture
+    = advance to next capture
+```
+
+If a capture is not approved, the user will interrupt/terminate the **parent review sequence** rather than advance through the remaining images, then provide correction feedback.
+
+After an interrupted/rejected review:
+
+- remain on this workstream;
+- make only the requested correction;
+- regenerate only affected evidence plus any dependent captures;
+- rerun structural/probe/metric checks;
+- relaunch the human sequence from the first affected capture or, if simpler and deterministic, from capture 01.
+
+Do not infer approval from file existence, green metrics, or successful `xdg-open`.
+
+### Objective pass criteria presented to the human
+
+The images should make these visual questions easy to inspect:
+
+- no straight rectangular crop discontinuity;
 - no doubled architectural threshold/stair/rail;
 - no transparent hole exposing void where walkable floor exists;
 - no opaque foreground masking the Operator where the required route says the Operator can stand;
-- no change to locked collision/traversal authority merely to improve presentation.
+- no presentation discontinuity that warrants an art correction.
 
-Paired review reuses the committed registration report, seam-metrics JSON, and ROI contact sheet. It must not regenerate an equivalent five-view evidence set unless those artifacts are missing, stale, contradictory, or tied to a different landed implementation.
+Machine checks still own what can be proven structurally. Human inspection is the final visual acceptance gate, not a substitute for the structural validation.
+
+Paired review must reuse the committed registration report, seam metrics, capture manifest, and the recorded completion of this human gate. It must not perform a second subjective model-vision review.
 
 If objective seam correction is needed, preserve editable/generation source under the existing family source-work path and route normalized replacements through the existing Asset Pipeline V2 family/inbox. Do not hand-edit runtime output.
 
