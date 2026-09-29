@@ -9,6 +9,8 @@
 
 ## Overview
 
+The visual UI roadmap lives in `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md`. That roadmap owns implementation sequencing only; this document and the Asset V2 code/contracts remain technical authority.
+
 Asset Pipeline V2 provides a single human-facing workflow for adding production art to CUSTODIAN. It sits above the existing specialized backends (runtime-ready, sprite ingest, Operator) and handles:
 
 - **Semantic contracts** — family definitions declare artistic intent
