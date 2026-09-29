@@ -39,6 +39,45 @@ Repository-root path equivalents used by the local primer are:
 
 If root guidance conflicts with `custodian/AGENTS.md` for Godot runtime work, follow `custodian/AGENTS.md`.
 
+## Visual Validation Economy
+
+Visual/media inspection is a last-mile proof, not the default validation loop.
+Prefer machine-checkable state, geometry, asset-contract, telemetry, and pixel
+metrics before asking an agent to inspect rendered frames.
+
+Use this order:
+
+1. Prove code/data invariants first: dimensions, registration, bounds, node/resource
+   identity, visibility/modulate alpha, z-order, collision/navigation ownership,
+   animation/state/progress, route authority, Asset V2 status, and deterministic
+   forward/reverse snapshots.
+2. When pixels themselves are part of acceptance, prefer automated image checks
+   such as alpha/silhouette bounds, matte/opaque-void detection, overlap/coverage,
+   edge/seam discontinuity metrics, targeted image diffs, and exact region hashes.
+3. If renderer evidence is still needed, capture the smallest authored region and
+   fewest keyframes that can falsify the defect. Prefer tight crops/contact sheets
+   over repeated full-resolution screenshots.
+4. Use full-frame or full-motion capture only when acceptance genuinely depends on
+   global composition, motion, audiovisual synchronization, or game feel that the
+   structured checks cannot establish.
+
+During iteration, Moment Forge defaults to `--capture-mode none`; escalate to
+`evidence` for the final objective proof and to `full` only with a task-specific
+reason. Do not repeatedly feed equivalent full-resolution captures to Codex.
+Independent reviewers should reuse durable implementation evidence and structured
+metrics unless it is missing, stale, or insufficient for the review contract.
+
+Agents may automatically decide objective technical visual failures such as wrong
+registration, clipping, missing/duplicate presentation, invalid alpha, visibility,
+or layering when those are established by deterministic evidence. Subjective art
+direction, composition preference, aesthetic cohesion, and baseline approval stay
+human-owned.
+
+Task packets that require substantial visual evidence must state why non-visual
+checks are insufficient and minimize the capture budget. More than two full-frame
+stills, any repeated full-frame pass, or full-motion capture needs explicit
+task-specific justification.
+
 ## Operator Main-Character Pixel-Art Resizing
 
 For any pixel-art conversion or resizing of the Operator main character's
