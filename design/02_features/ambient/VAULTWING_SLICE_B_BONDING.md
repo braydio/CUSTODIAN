@@ -76,13 +76,14 @@ use a full visual capture only after the remaining art is ingested.
 
 ## Bonding Art Pass 2 — Source and Direction Fallback Corrections (2026-09-26)
 
-Pass 2 corrected the Pass-1 rejected-source lifecycle: the `vw8` matte-bearing
-candidate was byte-compared against its canonical copy, removed from
-`source_work`, and retained as hash-named evidence under
-`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/`. The staging
-helper validates backgrounds before assigning canonical source names, so a
-clean replacement can occupy the previously rejected semantic slot without
-overwriting a different accepted master. The Vaultwing animation set now keeps
+Pass 2 originally moved the `vw8` matte-bearing candidate out of
+`source_work` into a hash-named rejected-art quarantine after byte comparison.
+That retention policy is now superseded: rejected/wrong-facing Vaultwing bonding
+images are deletion-only after rejection/hash verification and must not remain
+under `asset_drop/unresolved/`. The staging helper still validates backgrounds
+before assigning canonical source names, so a clean replacement can occupy a
+previously rejected semantic slot without overwriting a different accepted
+master. The Vaultwing animation set now keeps
 all six Slice-B actions direction-strict: exact directions resolve, W may use a
 mirrored E strip, and other missing directions return empty so the existing
 semantic fallback chain can use correctly-facing wild art. Generic ambient
@@ -107,12 +108,12 @@ eight accepted masters produced eleven runtime strips, including mirrored W
 outputs for E.
 
 Three greeting sheets (`vw9`, `vw10`, and `vw12`) did not survive fixed-cell
-conversion: the resulting frames visibly cut substantial wing sections. They
-remain byte-verified under
-`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/` and were not
-ingested. `vw2`, the superseded wrong-facing inspect attempt, is retained there
-as rejected evidence. Do not treat these four quarantined files as production
-inputs without corrected sheets or a reviewed source segmentation.
+conversion: the resulting frames visibly cut substantial wing sections and were
+not ingested. `vw2`, the superseded wrong-facing inspect attempt, is also
+rejected. These four bad inputs and the older matte reject are deletion-only:
+do not retain them as production evidence or future source candidates. A
+corrected file reusing one of those filenames is valid only when its hash/content
+differs and it passes normal review.
 
 Current coverage is 15/18 authored bonding masters and 20/24 bonding runtime
 strips; total Vaultwing runtime coverage is 76/80 strips. `feed_accept` has
@@ -123,8 +124,8 @@ review is deferred until those sheets can be separated without clipping.
 
 ## Remaining Bonding Art Closure
 
-- **Goal:** Supply or safely segment the three quarantined `bond_greet` E/S/N
-  sheets, then complete all six B.2 actions and review the existing
+- **Goal:** Supply corrected or losslessly segmented `bond_greet` E/S/N sheets,
+  then complete all six B.2 actions and review the existing
   `combat/vaultwing_first_bond` Moment.
 - **Files:** Vaultwing art source under
   `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`, family
