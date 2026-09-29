@@ -86,7 +86,33 @@ def launcher_smoke(base: Path) -> None:
     assert invocation["coordination"] == str(coordination)
 
 
+def lfs_scope_smoke(base: Path) -> None:
+    pointer = (
+        b"version https://git-lfs.github.com/spec/v1\n"
+        b"oid sha256:" + b"0" * 64 + b"\n"
+        b"size 123\n"
+    )
+    operator_png = base / "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_01/operator.png"
+    weapon_source_png = base / "custodian/content/sprites/weapons/sword_cleaver/source/operator/heavy.png"
+    weapon_runtime_png = base / "custodian/content/sprites/weapons/sword_cleaver/runtime/operator/heavy.png"
+    unrelated_png = base / "custodian/content/sprites/weapons/sword_cleaver/source/icon.png"
+    for path in (operator_png, weapon_source_png, weapon_runtime_png, unrelated_png):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(pointer)
+
+    detected = {path.relative_to(base).as_posix() for path in art._operator_art_lfs_pointers(base)}
+    assert operator_png.relative_to(base).as_posix() in detected
+    assert weapon_source_png.relative_to(base).as_posix() in detected
+    assert weapon_runtime_png.relative_to(base).as_posix() in detected
+    assert unrelated_png.relative_to(base).as_posix() not in detected
+    assert "custodian/content/sprites/weapons/*/source/operator/**" in art.OPERATOR_LFS_GLOBS
+    assert "custodian/content/sprites/weapons/*/runtime/operator/**" in art.OPERATOR_LFS_GLOBS
+
+
 def smoke() -> None:
+    with tempfile.TemporaryDirectory(prefix="operator-art-lfs-scope-") as temporary:
+        lfs_scope_smoke(Path(temporary))
+
     with tempfile.TemporaryDirectory(prefix="operator-art-launcher-") as temporary:
         launcher_smoke(Path(temporary))
 
