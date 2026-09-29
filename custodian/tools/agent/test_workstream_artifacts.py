@@ -119,6 +119,81 @@ class WorkstreamArtifactTests(unittest.TestCase):
         with self.assertRaisesRegex(workstream.WorkstreamError, "asset-v2-source"):
             workstream.artifact_preflight("artifact-gate", self.repo)
 
+    def test_paired_review_commits_only_authorized_artifacts_and_preserves_root_work(self):
+        impl_path = self.repo / "custodian/game/reviewed_impl.py"
+        impl_path.parent.mkdir(parents=True)
+        impl_path.write_text("implementation baseline\n")
+        archived_target = self.archive_root / "IMPLEMENTATION.md"
+        archived_target.write_text(
+            "# Implementation\n\n- Workstream: `implementation`\n- Status: `complete`\n"
+        )
+        review_packet = self.packet_root / "REVIEW_IMPLEMENTATION.md"
+        review_packet.write_text(
+            "# Review\n\n- Workstream: `review-implementation`\n- Kind: `review`\n"
+            "- Dispatch: `auto`\n- Status: `ready`\n"
+            "- Review target workstream: `implementation`\n"
+            "- Review target packet: `custodian/docs/ai_context/task_packets/archived/IMPLEMENTATION.md`\n"
+            "- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`\n"
+        )
+        (self.packet_root / "README.md").write_text(
+            "# Agent Task Packets\n\n## Active Packets\n\n### Ready / Auto Dispatch\n"
+            "- `REVIEW_IMPLEMENTATION.md`\n\n### In Progress\n\n"
+            "### Recently Complete (awaiting archive)\n"
+        )
+        git(self.repo, "add", "custodian")
+        git(self.repo, "commit", "-m", "add implementation and review authority")
+        git(self.repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+
+        branch_path = Path(self.temp.name) / "review-worktree"
+        git(self.repo, "worktree", "add", "-b", "agent/review-implementation", str(branch_path), "HEAD")
+        unrelated = self.repo / "operator_notes.txt"
+        unrelated.write_text("keep this unrelated root work\n")
+        root_status = git(self.repo, "status", "--porcelain=v1", "-z")
+        unrelated_bytes = unrelated.read_bytes()
+
+        target_in_branch = branch_path / "custodian/docs/ai_context/task_packets/archived/IMPLEMENTATION.md"
+        target_in_branch.write_text(target_in_branch.read_text() + "\n## Independent Review\n\n- Status: `passed`\n")
+        old_review = branch_path / "custodian/docs/ai_context/task_packets/REVIEW_IMPLEMENTATION.md"
+        review_archive = branch_path / "custodian/docs/ai_context/task_packets/archived/REVIEW_IMPLEMENTATION.md"
+        review_archive.parent.mkdir(parents=True, exist_ok=True)
+        review_archive.write_text(old_review.read_text().replace("Status: `ready`", "Status: `complete`"))
+        old_review.unlink()
+        index = branch_path / "custodian/docs/ai_context/task_packets/README.md"
+        index.write_text(index.read_text().replace("- `REVIEW_IMPLEMENTATION.md`\n", ""))
+        summary = branch_path / "REVIEW_IMPLEMENTATION_CLAUDE_SUMMARY.md"
+        summary.write_text("Review closed with a passed receipt.\n")
+        correction = branch_path / "custodian/docs/ai_context/task_packets/implementation-review-corrections-1.md"
+        correction.write_text("- Workstream: `implementation-review-corrections-1`\n- Findings addressed: `R0-01`\n")
+        paired_correction_review = branch_path / "custodian/docs/ai_context/task_packets/REVIEW_IMPLEMENTATION_REVIEW_CORRECTIONS_1.md"
+        paired_correction_review.write_text("- Workstream: `review-implementation-review-corrections-1`\n")
+        allowed = [
+            "custodian/docs/ai_context/task_packets/archived/IMPLEMENTATION.md",
+            "custodian/docs/ai_context/task_packets/archived/REVIEW_IMPLEMENTATION.md",
+            "custodian/docs/ai_context/task_packets/README.md",
+            "REVIEW_IMPLEMENTATION_CLAUDE_SUMMARY.md",
+            "custodian/docs/ai_context/task_packets/implementation-review-corrections-1.md",
+            "custodian/docs/ai_context/task_packets/REVIEW_IMPLEMENTATION_REVIEW_CORRECTIONS_1.md",
+        ]
+        git(branch_path, "add", *allowed)
+        git(branch_path, "commit", "-m", "close independent review")
+
+        self.assertEqual(workstream.artifact_preflight("review-implementation", branch_path), [review_archive])
+        self.assertEqual((branch_path / "custodian/game/reviewed_impl.py").read_bytes(), b"implementation baseline\n")
+        self.assertEqual(impl_path.read_bytes(), b"implementation baseline\n")
+        self.assertEqual(unrelated.read_bytes(), unrelated_bytes)
+        self.assertEqual(git(self.repo, "status", "--porcelain=v1", "-z"), root_status)
+        self.assertEqual(
+            workstream.paired_review_artifact_scope_error(
+                "review-implementation", review_archive, review_archive.read_text(),
+                allowed + ["custodian/game/reviewed_impl.py"],
+                artifact_contents={
+                    "custodian/docs/ai_context/task_packets/implementation-review-corrections-1.md": correction.read_text(),
+                    "custodian/docs/ai_context/task_packets/REVIEW_IMPLEMENTATION_REVIEW_CORRECTIONS_1.md": paired_correction_review.read_text(),
+                },
+            ),
+            "paired review artifact gate rejects unauthorized change: custodian/game/reviewed_impl.py",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

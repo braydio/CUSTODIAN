@@ -102,9 +102,13 @@ For long-horizon wanted-feature tracking, use `design/90_codex/` and its tracker
 
 Normal implementation work follows `implement → validate → commit → land on
 origin/main`. Completed validated work lands automatically without per-task
-approval and without a PR or routine human-review gate. Review-only work must
-carry the explicit task override `TASK OVERRIDE: review only; do not stage,
-commit, or push.`
+approval and without a PR or routine human-review gate. Ad hoc review-only work
+must carry the explicit task override `TASK OVERRIDE: review only; do not stage,
+commit, or push.` Paired post-land review packets may authorize commits only for
+their durable review receipt, required closing summary, review-packet lifecycle
+metadata, and bounded correction/re-review packets. They must never edit the
+reviewed implementation or unrelated work; the packet must state this bounded
+override explicitly.
 
 - Every normal implementation run uses `python3 custodian/tools/agent/workstream.py`
   in an isolated ephemeral worktree. Exceptions are explicitly read-only/review-only

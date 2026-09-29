@@ -5,8 +5,9 @@ packet work, prefer `dispatch.py claim-next --agent codex`, or use
 `dispatch.py claim <id> --agent codex` for explicit selection. The dispatcher
 reads fetched `origin/main`, checks packet dependencies and locks, then
 delegates branch/worktree creation or resume to `workstream.py`. Direct
-`workstream.py start <id>` remains valid. Read-only and review-only work may
-stay in the coordination checkout. If a worktree cannot be
+`workstream.py start <id>` remains valid. Truly read-only reviews may stay in
+the coordination checkout; paired post-land reviews that commit durable
+artifacts use their own workstream worktree. If a worktree cannot be
 used, document the reason in the task record. The project-root checkout is not
 the default implementation surface.
 
@@ -109,6 +110,18 @@ python3 custodian/tools/agent/workstream.py checkpoint <workstream-id>
 This pushes and verifies the branch while retaining it as active. Optional
 `--remove-worktree` removes only its clean checkout; the local and remote branch
 remain.
+
+Paired post-land review workstreams are review-only with respect to the target
+implementation, but their packet may authorize a bounded repository-artifact
+commit. When that exact override is present, the reviewer stages only the
+archived target's `Independent Review` receipt, the required review closing
+summary, the review packet's lifecycle/archive metadata, and bounded correction
+plus re-review packets. The reviewer never stages reviewed implementation files
+or unrelated work. A clean or non-blocking-only result completes, pushes, and
+lands these artifacts through the ordinary checkpoint/finish lifecycle without
+a routine user-authorization prompt. Stop for user judgment only when the
+receipt is `human_required`. An ad hoc/read-only review without this paired
+packet override remains uncommitted and must say so explicitly.
 
 For completed validated work, provide a green focused validation JSON report:
 

@@ -8,6 +8,7 @@
 - Depends on: `twin-solaria-solarium-i-acquisition-presentation`
 - Locks: `twin-solaria-runtime, asset-catalog`
 - Review: `none`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Review target workstream: `twin-solaria-solarium-i-acquisition-presentation`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md`
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`

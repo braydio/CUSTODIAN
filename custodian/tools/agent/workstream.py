@@ -168,6 +168,31 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
         )
 
     packets = _associated_task_packets(repo, workstream_id)
+    review_packet = next((packet for packet in packets if _packet_header_value(packet.read_text(), "Kind") == "review"), None)
+    if review_packet and _packet_header_value(review_packet.read_text(), "Dispatch") == "auto":
+        changed_paths = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
+        target_packet_path = _packet_header_value(review_packet.read_text(), "Review target packet")
+        if not target_packet_path or target_packet_path not in changed_paths:
+            raise WorkstreamError("paired review artifact gate requires a committed change to the reviewed packet receipt")
+        target_file = (path / target_packet_path).resolve()
+        if not target_file.is_relative_to(path.resolve()) or not target_file.is_file():
+            raise WorkstreamError("paired review artifact gate cannot resolve its archived review target packet")
+        target_text = target_file.read_text()
+        receipt = re.search(r"(?ms)^## Independent Review\s*\n(.*?)(?=^## |\Z)", target_text)
+        receipt_status = re.search(r"(?m)^\s*-\s*Status:\s*`(passed|findings|human_required)`\s*$", receipt.group(1)) if receipt else None
+        if not receipt_status:
+            raise WorkstreamError("paired review artifact gate requires a completed Independent Review receipt")
+        artifact_contents = {
+            changed: (path / changed).read_text()
+            for changed in changed_paths
+            if changed.startswith("custodian/docs/ai_context/task_packets/") and (path / changed).is_file()
+        }
+        scope_error = paired_review_artifact_scope_error(
+            workstream_id, review_packet, review_packet.read_text(), changed_paths,
+            artifact_contents=artifact_contents,
+        )
+        if scope_error:
+            raise WorkstreamError(scope_error)
     active_root = (repo / TASK_PACKET_ROOT).resolve()
     archive_root = (repo / TASK_PACKET_ARCHIVE).resolve()
     active_packets: list[tuple[Path, str | None]] = []
@@ -213,6 +238,69 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
             f"task_packets/README.md: {rendered}"
         )
     return packets
+
+
+def _packet_header_value(text: str, field: str) -> str | None:
+    for line in text.splitlines():
+        match = re.match(rf"^\s*-\s*{re.escape(field)}:\s*(.*?)\s*$", line)
+        if match:
+            return match.group(1).strip().strip("`").strip()
+        if line.startswith("## "):
+            break
+    return None
+
+
+def paired_review_artifact_scope_error(
+    workstream_id: str, packet: Path, packet_text: str, changed_paths: list[str],
+    artifact_contents: dict[str, str] | None = None,
+) -> str | None:
+    """Enforce the bounded file surface authorized by an auto paired-review packet."""
+    if _packet_header_value(packet_text, "Kind") != "review":
+        return None
+    target_workstream = _packet_header_value(packet_text, "Review target workstream")
+    target_packet = _packet_header_value(packet_text, "Review target packet")
+    if not target_workstream or not target_packet:
+        return f"paired review artifact gate requires Review target workstream/packet for {workstream_id}"
+
+    summary = _expected_summary_filename(workstream_id)
+    allowed = {
+        target_packet,
+        f"custodian/docs/ai_context/task_packets/{packet.name}",
+        f"custodian/docs/ai_context/task_packets/archived/{packet.name}",
+        "custodian/docs/ai_context/task_packets/README.md",
+        summary,
+    }
+    correction_id = re.compile(rf"^{re.escape(target_workstream)}-review-corrections-[1-9][0-9]*$")
+    paired_review_id = re.compile(rf"^review-{re.escape(target_workstream)}-review-corrections-[1-9][0-9]*$")
+    correction_workstreams: set[str] = set()
+    paired_review_workstreams: set[str] = set()
+    artifact_contents = artifact_contents or {}
+    for path in changed_paths:
+        normalized = path.replace("\\", "/")
+        if normalized in allowed:
+            continue
+        if not normalized.startswith("custodian/docs/ai_context/task_packets/"):
+            return f"paired review artifact gate rejects unauthorized change: {normalized}"
+        if Path(normalized).parent.as_posix() != "custodian/docs/ai_context/task_packets":
+            return f"paired review artifact gate rejects unauthorized change: {normalized}"
+        stem = Path(normalized).stem
+        workstream = stem.lower().replace("_", "-")
+        is_correction = correction_id.fullmatch(workstream)
+        is_paired_review = paired_review_id.fullmatch(workstream)
+        if not (is_correction or is_paired_review):
+            return f"paired review artifact gate rejects unauthorized change: {normalized}"
+        if is_correction:
+            correction_workstreams.add(workstream)
+            content = artifact_contents.get(normalized, "")
+            findings = re.search(r"(?m)^\s*-\s*Findings addressed:\s*`?([^`\n]+)", content)
+            ids = [item.strip() for item in findings.group(1).split(",")] if findings else []
+            if not ids or any(not re.fullmatch(r"R(?:0|[1-9][0-9]*)-(?:0[1-9]|[1-9][0-9]*)", item) for item in ids):
+                return f"paired review artifact gate requires stable Findings addressed IDs in {normalized}"
+        else:
+            paired_review_workstreams.add(workstream.removeprefix("review-"))
+    if correction_workstreams != paired_review_workstreams:
+        return "paired review artifact gate requires each correction packet to have its paired re-review packet"
+    return None
 
 
 def fetch(repo: Path) -> None:

@@ -17,7 +17,7 @@
 - Review focus: Fixed-seed reproducibility; structured schema completeness; no gameplay/world-output mutation; no candidate policy/map-size/attempt-cap changes; no permanent per-frame telemetry flood; full profile remains opt-in; quick profile is useful and bounded; roadmap completion evidence matches actual landed measurements.
 - Acceptance: Produce a findings-first independent review of live `main`. Either record a clean `passed` receipt or concrete findings. Blocking findings create `procgen-performance-baseline-v1-review-corrections-<n>` plus its paired review packet. Do not patch the reviewed implementation inside this review workstream.
 - Non-goals: Do not optimize procgen, set universal performance thresholds, redesign benchmark cases, implement later roadmap slices, or fix unrelated runtime performance issues during review.
-- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to it. Repository/document mutations required for the review receipt and any follow-up correction/review packets are allowed.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Required Review Checks
 

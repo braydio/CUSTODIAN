@@ -121,11 +121,54 @@ a `workstream.py finish` blocker.
   - Review workstream: `review-...`
   - Reviewed on main: `<short SHA/current target>`
   - Review modes: `...`
-  - Blocking findings: `N`
-  - Non-blocking findings: `N`
+  - Blocking defects: `N`
+  - Material evidence gaps: `N`
+  - Non-blocking issues: `N`
+  - Optional improvements: `N`
+  - Correction finding IDs: `R0-01, ... | none`
+  - Next-slice finding IDs: `... | none`
+  - Human-decision finding IDs: `... | none`
   - Detailed review summary: `<reviewer closing-summary path>`
   - Follow-up workstream: `none | <correction-id>`
   ```
+
+- Each finding has a stable cycle-scoped ID (`R<cycle>-<NN>`), class
+  (`blocking_defect`, `evidence_gap`, `non_blocking_issue`,
+  `optional_improvement`), domain (`implementation`, `pipeline`), affected
+  acceptance, evidence, disposition (`correction`, `next_slice`, `deferred`,
+  `human_required`, `no_action`), and rationale. Re-review retains an existing
+  ID when reporting `fixed`, `unresolved`, or `regressed`; new findings use the
+  current cycle's next ID.
+- Correction threshold: confirmed acceptance/correctness defects and evidence
+  gaps that prevent confidence in required acceptance become correction work.
+  Other evidence gaps, non-blocking issues, and optional improvements are
+  recorded for next-slice/deferred unless separately justified. Subjective
+  design, canon, art-direction, or game-feel decisions use `human_required`.
+  Do not turn taste, speculative optimization, or cleanup into a correction.
+- Implementation findings stay separate from pipeline/process findings.
+  Record the latter through `custodian.task_feedback.v1`; fix a small safe
+  repeatable workflow problem in-scope or name a follow-up for medium/high
+  severity.
+- Use `AGENT_CORRECTION_PACKET_TEMPLATE.md` for correction work. It records a
+  narrow delta against exact finding IDs and affected acceptance; it does not
+  repeat the original feature design. Its paired review uses the ordinary
+  finite review-cycle mechanism.
+- A paired post-land review packet must include the bounded `TASK OVERRIDE:`
+  that authorizes staging, committing, and pushing only its durable review
+  receipt, required closing summary, review-packet lifecycle/archive metadata,
+  and bounded correction/re-review packets. It must explicitly forbid editing
+  the reviewed implementation and unrelated work. Dispatcher validation
+  rejects a missing or malformed override before claim. A clean or
+  non-blocking-only review autonomously commits, pushes, and finishes these
+  authorized artifacts; it does not stop for routine user landing approval.
+  Only `human_required` pauses for a human decision. Truly ad hoc/read-only
+  reviews outside a paired review workstream retain the ordinary review-only
+  no-stage/no-commit/no-push rule unless their task explicitly says otherwise.
+- Before an auto packet is claimable, every explicit validation script path in
+  its `Validation` field must resolve to a live repository entrypoint. A stale
+  path blocks claim and reports the exact path plus the nearest replacement
+  when one can be identified. This is structural path checking, not command or
+  semantic validation.
 
 - Blocking findings scaffold `<implementation-id>-review-corrections-<n>.md`
   (`Kind: correction`, `Review: auto`) plus its own paired
@@ -139,6 +182,14 @@ a `workstream.py finish` blocker.
 - Subjective calls (visual baselines, art direction, unresolved design
   interpretation) are never auto-approved; the reviewer finishes technical
   review, sets `human_required`, and states the exact decision needed.
+
+Manual conversational second-pass requests use the same finding classes,
+evidence, dispositions, and correction threshold. Outside a paired independent
+review workstream, repository patch-first rules still apply: a small, safe,
+obvious correction may be patched directly. Inside a paired review, preserve
+independence and create the narrow correction workstream instead. Prefer
+rolling non-blocking improvements into the next real feature slice or deferred
+work over extending the correction loop.
 
 ## Ownership
 
@@ -171,8 +222,7 @@ lost when the ephemeral worktree is removed.
 - `VAULTWING_BOND_GREET_FINAL_INGEST.md` — P0 auto-claimable convergence of the prior Vaultwing bonding-art checkpoint plus the four same-host `~/Downloads/vw1.png`–`vw4.png` `bond_greet` E/N/S/W strips through source_work → inbox → Asset V2, including bounded staging hardening and final 24/24 visual closure.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, visually verify/correct late seams without moving gameplay authority, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
 - `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — paired independent code/runtime/visual/asset review of the Awakening convergence and handoff-readiness slice.
-- `SECOND_PASS_REVIEW_CONTRACT_V2.md` — P1 V2 second-pass review hardening: stable finding IDs, correction thresholds, delta correction packets, and pipeline-feedback separation.
-- `REVIEW_SECOND_PASS_REVIEW_CONTRACT_V2.md` — paired independent review of the V2 second-pass review/correction contract; blocked on `second-pass-review-contract-v2`.
+- `REVIEW_SECOND_PASS_REVIEW_CONTRACT_V2.md` — paired independent review of the V2 second-pass review/correction contract; eligible after its implementation lands.
 - `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — paired independent review of startup routing, bootstrap reuse, and story-default preservation.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; its `agent-review-pipeline` dependency is now archived complete, so it is eligible subject to the shared `agent-workflow` lock.

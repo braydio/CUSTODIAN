@@ -317,8 +317,13 @@ Normal implementation work is autonomous through the lifecycle documented in
 there, push a recovery branch, and land through `custodian/tools/agent/land_main.py`.
 Completed remote task branches are deleted only after reachability from
 `origin/main` is verified. No PR or routine human approval is required.
-Review-only work must explicitly say `TASK OVERRIDE: review only; do not stage,
-commit, or push.`
+Ad hoc review-only work must explicitly say
+`TASK OVERRIDE: review only; do not stage, commit, or push.` A paired post-land
+review may commit only its durable review receipt, required closing summary,
+review-packet lifecycle metadata, and bounded correction/re-review packets
+when its packet carries that explicit bounded override. It must not edit the
+reviewed implementation or unrelated work. A truly read-only review needs no
+repository mutation; never infer mutation permission from the word “review.”
 
 Use the narrowest test that can falsify a change during implementation, then
 broaden once at closeout according to Validation Iteration Economy. Multiple

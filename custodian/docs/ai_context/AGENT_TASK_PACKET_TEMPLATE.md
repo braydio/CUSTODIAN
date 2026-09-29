@@ -146,7 +146,10 @@ When `Review: auto` is selected, also create a paired review packet on
 `main` using `AGENT_REVIEW_PACKET_TEMPLATE.md`, and set this packet's
 `Paired review workstream` to its ID. The review-pairing consistency guard
 fails closed if the pair is missing or malformed; see `task_packets/README.md`
-for the full paired review/correction lifecycle.
+for the full paired review/correction lifecycle. Auto review packets must carry
+the exact bounded review-artifact mutation override from that template; the
+dispatcher checks it before claim. Their explicit validation script paths must
+resolve to live scripts before an auto claim is allowed.
 
 ## Execution Feedback
 

@@ -5,11 +5,11 @@ documentation, and Git defaults from `custodian/AGENTS.md` and the root
 `AGENTS.md`. Fill the task-specific fields and keep the prompt focused on the
 delta. Mark deliberate task-level exceptions `TASK OVERRIDE:` with a reason.
 Substantial parallel work uses isolated worktrees. Validated implementation
-work lands automatically on `origin/main`; review is by exception. Review-only
-templates must explicitly override that default. For automated, dispatcher-
-scheduled post-land review of a specific implementation packet (rather than an
-ad hoc requested review), see `task_packets/README.md`'s Paired Review And
-Correction section and `AGENT_REVIEW_PACKET_TEMPLATE.md` instead.
+work lands automatically on `origin/main`; review is by exception. Ad hoc
+read-only review templates must explicitly override that default. For
+automated, dispatcher-scheduled post-land review of a specific implementation
+packet (rather than an ad hoc requested review), see `task_packets/README.md`'s
+Paired Review And Correction section and `AGENT_REVIEW_PACKET_TEMPLATE.md`.
 
 ## Templates
 

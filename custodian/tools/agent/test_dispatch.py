@@ -29,6 +29,7 @@ def packet(
     workstream, *, status="ready", dispatch_value=None, priority=None, depends=None, locks=None,
     kind=None, review=None, review_stage=None, review_modes=None, paired_review_workstream=None,
     review_cycle=None, max_review_cycles=None, review_target_workstream=None, review_target_packet=None,
+    task_overrides=None,
 ):
     rows = [f"- Workstream: `{workstream}`", f"- Status: `{status}`"]
     if dispatch_value is not None:
@@ -57,6 +58,10 @@ def packet(
         rows.append(f"- Review target workstream: `{review_target_workstream}`")
     if review_target_packet is not None:
         rows.append(f"- Review target packet: `{review_target_packet}`")
+    if task_overrides is None and kind == "review" and dispatch_value == "auto":
+        task_overrides = dispatch.BOUNDED_REVIEW_OVERRIDE
+    if task_overrides is not None:
+        rows.append(f"- Task overrides: `{task_overrides}`")
     return "# Packet\n\n" + "\n".join(rows) + "\n"
 
 
@@ -680,6 +685,75 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("impl-e", status="complete", archived=True)
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("review-impl-e", rendered.split("READY (", 1)[1])
+
+    def test_auto_review_missing_bounded_override_is_rejected_before_claim(self):
+        self.add_packet(
+            "review-no-override", dispatch_value="auto", kind="review", review="none",
+            depends="reviewed-impl", review_target_workstream="reviewed-impl",
+            review_target_packet=archived_target("reviewed-impl"), task_overrides="none",
+        )
+        self.add_packet("reviewed-impl", status="complete", archived=True)
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        self.assertIn("bounded TASK OVERRIDE", errors.get("review-no-override", ""))
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("invalid review pairing", rendered)
+        self.assertIn("review-no-override", rendered.split("BLOCKED (", 1)[1])
+        with self.assertRaisesRegex(dispatch.DispatchError, "bounded TASK OVERRIDE"):
+            dispatch.claim(self.repo, "review-no-override", "codex", False)
+
+    def test_auto_review_malformed_override_cannot_edit_reviewed_code(self):
+        self.add_packet(
+            "review-bad-override", dispatch_value="auto", kind="review", review="none",
+            depends="reviewed-impl", review_target_workstream="reviewed-impl",
+            review_target_packet=archived_target("reviewed-impl"),
+            task_overrides="TASK OVERRIDE: review receipt and closing summary only.",
+        )
+        self.add_packet("reviewed-impl", status="complete", archived=True)
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        message = errors.get("review-bad-override", "")
+        self.assertIn("malformed bounded TASK OVERRIDE", message)
+
+    def test_wrapped_canonical_override_is_structurally_accepted(self):
+        first, second = dispatch.BOUNDED_REVIEW_OVERRIDE.split("its required", 1)
+        content = (
+            packet(
+                "review-wrapped-override", dispatch_value="auto", kind="review", review="none",
+                depends="reviewed-impl", review_target_workstream="reviewed-impl",
+                review_target_packet=archived_target("reviewed-impl"), task_overrides="none",
+            ).replace("- Task overrides: `none`\n", "")
+        )
+        content += "- Task overrides: `" + first + "\n  its required" + second + "`\n"
+        parsed = dispatch.parse_packet("wrapped.md", content)
+        self.assertEqual(parsed.task_overrides, dispatch.BOUNDED_REVIEW_OVERRIDE)
+        self.assertIsNone(dispatch._bounded_review_override_error(parsed.task_overrides))
+
+    def test_stale_validation_script_blocks_ready_packet_with_replacement(self):
+        script = self.repo / "custodian/tools/agent/agent_workflow_smoke.py"
+        script.parent.mkdir(parents=True, exist_ok=True)
+        script.write_text("# live script\n")
+        git(self.repo, "add", str(script.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "add live validation script")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        content = packet("stale-validation", dispatch_value="auto") + (
+            "\n## Validation\n\nRun `python3 custodian/tools/agent/agent_workflow_contract_smoke.py`.\n"
+        )
+        self.add_packet("stale-validation", dispatch_value="auto", text=content)
+        errors = dispatch.validate_packet_validation_references(self.repo, dispatch._packets(self.repo))
+        message = errors["stale-validation"]
+        self.assertIn("custodian/tools/agent/agent_workflow_contract_smoke.py", message)
+        self.assertIn("custodian/tools/agent/agent_workflow_smoke.py", message)
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("invalid validation references", rendered)
+        with self.assertRaisesRegex(dispatch.DispatchError, "nearest live path"):
+            dispatch.claim(self.repo, "stale-validation", "codex", True)
+
+    def test_header_validation_field_paths_are_checked(self):
+        content = packet("header-validation", dispatch_value="auto") + (
+            "\n- Validation: Run `python3 custodian/tools/agent/not_here.py`.\n"
+        )
+        parsed = dispatch.parse_packet("packet.md", content)
+        self.assertEqual(parsed.validation_scripts, ("custodian/tools/agent/not_here.py",))
 
     def test_passed_receipt_does_not_require_correction_packet(self):
         self.add_packet("impl-f", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-f")

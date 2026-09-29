@@ -121,8 +121,11 @@
         "custodian/tools/agent/dispatch.py",
         "custodian/tools/agent/validate_review_pairing.py",
         "custodian/docs/ai_context/task_packets/**",
+        "custodian/docs/ai_context/AGENT_CORRECTION_PACKET_TEMPLATE.md",
         "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
-        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md"
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+        "custodian/docs/ai_context/prompts/review_runtime_change.md"
       ],
       "timeout_sec": 20,
       "needs_import": false

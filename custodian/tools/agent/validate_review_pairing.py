@@ -3,7 +3,9 @@
 
 Every active task packet declaring `Review: auto` must have a matching active
 review packet (`Kind: review`, `Review: none`, a dependency back on the
-implementation workstream, and a matching `Review target workstream`).
+implementation workstream, and a matching target). Auto review packets also
+need the exact bounded artifact override; ready packets' explicit validation
+script paths must exist in the checked-out candidate tree.
 Historical packets that omit review metadata are never required to pair; the
 check only fires for packets that actively opt into `Review: auto`.
 
@@ -29,7 +31,10 @@ def main() -> int:
     repo = Path(dispatch.git(Path.cwd(), "rev-parse", "--show-toplevel")).resolve()
     repo = dispatch._coordination_repo(repo)
     dispatch._fetch(repo)
-    packets = dispatch._packets(repo)
+    # Validate the checked-out candidate tree so the closeout gate tests packet
+    # changes on a task branch before those changes land. Dispatch itself still
+    # validates fetched origin/main before any real claim.
+    packets = dispatch._packets(repo, "HEAD")
 
     # Scope is the review-pairing contract only: many active packets predate the
     # `Workstream:`-header dispatcher convention entirely and already carry
@@ -37,6 +42,12 @@ def main() -> int:
     # Those are historical documents, not this guard's concern; flagging them
     # here would make this check fail on unrelated pre-existing drift.
     pairing_errors = dispatch.validate_review_pairing(packets)
+    claimed = dispatch._claimed(repo)
+    validation_errors = dispatch.validate_packet_validation_references(
+        repo, packets, tree="HEAD", exclude_workstreams=claimed,
+    )
+    for workstream, message in validation_errors.items():
+        pairing_errors[workstream] = "; ".join(filter(None, (pairing_errors.get(workstream), message)))
 
     if not pairing_errors:
         reviewed = sum(1 for p in packets if p.review == "auto")

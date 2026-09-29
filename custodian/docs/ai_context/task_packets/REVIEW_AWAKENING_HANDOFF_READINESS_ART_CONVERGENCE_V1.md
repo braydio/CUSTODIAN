@@ -17,7 +17,7 @@
 - Review focus: Exact Layout-to-art registration; no speculative resizing; preservation of the corrected 1024×576 04→05 connector; machine seam metrics and compact ROI evidence for late joins rather than repeated full-frame review; Road/Approach join; Gate pylon alignment and central-body non-collision decision; exactly-once console+P-9 completion; production-named handoff seam without scene transition; no duplicate fixture rendering; no Contract prewarm; documentation truth.
 - Acceptance: Produce a findings-first independent review of live `main`. Either record a clean `passed` receipt or concrete findings. Blocking findings create the bounded correction pair through the normal review lifecycle. Do not patch reviewed implementation/runtime code inside this review workstream.
 - Non-goals: Do not implement the Hub, change Twin Solaria gameplay, create missing P1 art, redesign the Layout, enlarge Gate center collision, or add procgen/startup work during review.
-- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to it. Repository/document mutations required for the review receipt and any follow-up correction/review packets are allowed.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Required Review Evidence
 

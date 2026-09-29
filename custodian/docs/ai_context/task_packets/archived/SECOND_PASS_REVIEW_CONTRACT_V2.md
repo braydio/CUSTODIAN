@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `second-pass-review-contract-v2`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-review-pipeline-review-corrections-1`
@@ -157,6 +157,25 @@ At minimum fixtures should prove:
 
 ## Handoff
 
-- Next action: Claim with `python3 custodian/tools/agent/dispatch.py claim second-pass-review-contract-v2 --agent codex`.
-- Best starting files: `AGENT_REVIEW_PACKET_TEMPLATE.md`, `task_packets/README.md`, `review_runtime_change.md`, current V2 packet validator authority, and archived `AGENT_REVIEW_PIPELINE.md`.
-- Blockers or open questions: None. The prerequisite review-pipeline correction re-review is already complete/passed.
+- Next action: The paired `review-second-pass-review-contract-v2` packet is eligible after this implementation lands and archives.
+- Blockers or open questions: None for this implementation. One already-claimed Awakening packet has a stale validation path; the new pre-claim checker identifies it and its nearest candidate without editing the other workstream's packet.
+
+## Completion
+
+- Added the V2 findings/disposition contract, delta correction template, manual second-pass alignment, and pipeline-feedback separation.
+- Resolved paired-review closeout ambiguity across root/local policy and lifecycle docs. Exact bounded artifact scope is enforced by dispatch before claim and by `workstream.py` before a paired-review task can finish.
+- Added dispatcher rejection for missing/malformed auto-review overrides and stale validation script references; diagnostics include a nearest live path when available.
+- Added structural finding/correction fixture checks and a temporary-worktree regression proving allowed review artifacts commit while reviewed implementation and unrelated dirty root state remain unchanged.
+- Validation passed: 61 dispatcher tests, 5 review-contract fixture tests, 8 workstream artifact tests, 11 landing tests, prompt-template contract checks, Python compilation, manifest JSON parsing, and `git diff --check`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: Paired review artifact commits were ambiguously prohibited by repository defaults, and active packet validation paths could name nonexistent scripts.
+- Root cause / contributing factors: Review packets allowed some document edits without explicitly authorizing the required summary/lifecycle commits; dispatcher eligibility did not validate script paths.
+- Prevention / pipeline improvement: Canonical bounded override is now identical in template and dispatch; paired-review finish checks changed paths; ready packet claims check referenced validation scripts and provide nearest-path diagnostics.
+- Tooling / docs drift discovered: A currently claimed Awakening packet references missing `custodian/tools/validation/awakening_art_registration_smoke.gd`; nearest live candidate is `awakening_first_return_smoke.gd`. It was left to its owning workstream and is skipped as already claimed.
+- Follow-up: fixed-in-scope
+- What worked: Temporary repositories verified both fail-closed dispatch and byte-preserving review closeout behavior.

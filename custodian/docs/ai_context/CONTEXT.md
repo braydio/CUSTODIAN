@@ -8,7 +8,9 @@ substantial parallel tasks. Validated implementation work commits and finishes a
 through `custodian/tools/agent/workstream.py finish`; that lifecycle invokes
 `land_main.py` internally for the race-safe landing step. Review is by exception. The helper serializes local landings, rebases onto the
 latest main, retries bounded remote races, and aborts on conflicts without
-force-pushing. Review-only work must carry an explicit `TASK OVERRIDE:`.
+force-pushing. Ad hoc review-only work needs an explicit no-mutation override;
+paired post-land reviews may commit only the bounded artifacts authorized by
+their validated review-packet override, never the reviewed implementation.
 
 ## Canon Migration (2026-09-03)
 
@@ -17,7 +19,7 @@ Domain. Archive Engines stabilize damaged reality; they do not create worlds.
 The Pale is an unstable continuity condition, provenance is forensic, and route
 restoration remains reciprocal and dangerous.
 
-Last updated: 2026-09-27
+Last updated: 2026-09-29
 
 Simulation boundary update (2026-08-08): use `WorldSimulationRuntime` and typed command ingress for live campaign-world access. Never launch Python from Godot. `GameState`, local power, `WaveManager`, and `FabPipeline` are compatibility/adapters. Validate with `run_world_simulation_migration_suite.sh`.
 
