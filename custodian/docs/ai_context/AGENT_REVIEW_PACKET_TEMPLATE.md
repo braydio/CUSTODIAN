@@ -61,14 +61,24 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
 6. **Do not modify reviewed implementation or runtime code in this
    workstream.** Independent review requires a separate workstream, a fresh
    agent context, and no implementation fixes performed inside it.
-7. Append or refresh the archived implementation packet's `## Independent
+7. For visual review, consume the implementation's structured telemetry,
+   deterministic probes, image metrics, and targeted crops first. Do not
+   regenerate equivalent full-frame evidence merely for reviewer independence.
+   Recapture only when evidence is missing, stale, contradictory, or cannot
+   establish an acceptance criterion.
+8. Keep objective technical visual review separate from subjective art direction.
+   Registration, clipping, alpha, visibility, layering, duplicate/missing
+   presentation, and deterministic state correspondence may be decided from
+   machine evidence. Baseline aesthetics, composition preference, game feel,
+   and art-direction acceptance remain human-owned.
+9. Append or refresh the archived implementation packet's `## Independent
    Review` receipt (see `task_packets/README.md` for the exact shape).
-8. If blocking findings exist, create `<implementation-id>-review-corrections-<n>.md`
+10. If blocking findings exist, create `<implementation-id>-review-corrections-<n>.md`
    and its paired `REVIEW_<...>_REVIEW_CORRECTIONS_<n>.md`, incrementing
    `Review cycle`. At `Max automatic review cycles`, set the receipt status to
    `human_required` instead of scaffolding another automatic correction.
-9. If clean, set the receipt `passed` and create no correction packet.
-10. Complete/archive this review packet through the normal workstream
+11. If clean, set the receipt `passed` and create no correction packet.
+12. Complete/archive this review packet through the normal workstream
     lifecycle. Do not mark the reviewed implementation's own packet complete
     again; implementation completion and independent review are separate
     truths.
