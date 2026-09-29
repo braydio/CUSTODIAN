@@ -121,8 +121,11 @@
         "custodian/tools/agent/dispatch.py",
         "custodian/tools/agent/validate_review_pairing.py",
         "custodian/docs/ai_context/task_packets/**",
+        "custodian/docs/ai_context/AGENT_CORRECTION_PACKET_TEMPLATE.md",
         "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
-        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md"
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+        "custodian/docs/ai_context/prompts/review_runtime_change.md"
       ],
       "timeout_sec": 20,
       "needs_import": false
@@ -1839,6 +1842,27 @@
       "owners": [
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/animations/states/hit_recoil_state.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_knockdown_animation",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_knockdown_animation_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "operator",
+        "hitreact",
+        "knockdown",
+        "canonical"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/animations/states/hit_recoil_state.gd",
+        "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
+        "custodian/tools/validation/operator_knockdown_animation_smoke.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -3894,6 +3918,23 @@
       ],
       "timeout_sec": 60,
       "needs_import": true
+    },
+    {
+      "id": "audio_pcm16_asset_contract",
+      "type": "python",
+      "script": "custodian/tools/validation/audio_pcm16_asset_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "audio",
+        "assets",
+        "import_compatibility"
+      ],
+      "owners": [
+        "custodian/content/audio/sfx/combat/hit_medium_body_01-1.wav",
+        "custodian/tools/validation/audio_pcm16_asset_smoke.py"
+      ],
+      "timeout_sec": 10,
+      "needs_import": false
     }
   ]
 }

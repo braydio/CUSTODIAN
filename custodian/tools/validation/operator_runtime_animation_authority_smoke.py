@@ -53,7 +53,6 @@ COMPATIBILITY_RESOURCES = [
 
 RETIRED_SELECTION_SYMBOLS = (
     "AnimationResolver",
-    "DirectionalAnimationFallback",
     "OperatorAnimationCatalog",
     "fallback_animation",
 )
@@ -140,13 +139,12 @@ def check_c2b_invariants() -> list[str]:
     if re.search(r'\bload\(\s*"[^"]*\.png"', actor) or '.png" % ' in actor:
         failures.append("operator.gd loads PNG art at runtime")
 
-    # Actor-local SpriteFrames. One construction site remains (the per-weapon
-    # melee overlay), and it is recorded in the architecture-debt baseline. More
-    # than one means a new private animation database appeared.
+    # The generated runtime SpriteFrames is the only Operator animation
+    # database. Any actor-local construction creates a second authority.
     constructions = len(re.findall(r"\bSpriteFrames\.new\s*\(", actor))
-    if constructions > 1:
+    if constructions > 0:
         failures.append(
-            f"operator.gd constructs {constructions} actor-local SpriteFrames; C2b left exactly 1"
+            f"operator.gd constructs {constructions} actor-local SpriteFrames; expected 0"
         )
 
     # The dodge FX renderer is canonical and must stay bound in the scene rather
@@ -185,6 +183,8 @@ def check_completion_gates() -> list[str]:
         raw = actor.count("content/sprites/operator/runtime/animations")
         if raw:
             gates.append(f"operator.gd still names {raw} raw runtime PNG paths")
+        if "DirectionalAnimationFallback" in actor:
+            gates.append("operator.gd still depends on DirectionalAnimationFallback")
 
     live_symbols: dict[str, int] = {}
     for path in sorted(GAME_ROOT.rglob("*.gd")):

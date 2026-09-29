@@ -246,7 +246,7 @@ At minimum:
 
 ```bash
 python3 custodian/tools/agent/test_dispatch.py
-python3 custodian/tools/validation/agent_workflow_contract_smoke.py
+python3 custodian/tools/validation/agent_workflow_smoke.py
 python3 -m py_compile   custodian/tools/agent/workstream.py   custodian/tools/agent/land_main.py
 
 git diff --check
@@ -314,3 +314,21 @@ If using this very packet to prove the corrected already-landed behavior would r
 - Next action: After the review-pipeline bootstrap and its self-review complete, auto-dispatch this P0 workflow hardening before ordinary P1 production tasks.
 - Best starting files: `workstream.py`, `land_main.py`, agent workflow focused tests, archived `ASSET_REQUIREMENTS_PIPELINE.md`, and its root summary.
 - Blockers or open questions: None. The dirty root checkout is not a blocker and must remain untouched.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-workstream-finish-landed-closeout-hardening`
+- Reviewed on main: `745a9ea56`
+- Review modes: `code, architecture, workflow`
+- Blocking findings: `0`
+- Non-blocking findings: `1`
+- Detailed review summary: `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Review Notes
+
+- The already-landed path verifies the complete archived packet, committed closing summary, green validation, and exact HEAD ancestry before teardown. It bypasses `sync_main` and `land_main.py`; extra unlanded commits use normal synchronization/landing. Temporary-remote tests pass for these paths, own versus unrelated published refs, root fast-forward, and interrupted teardown.
+- A focused temporary-repository probe verified the dirty-root promise more strongly than the committed test: tracked and untracked bytes and the exact porcelain status were unchanged after finish.
+- Non-blocking test gap: `test_finish_leaves_dirty_persistent_root_untouched` checks that an untracked file still exists and that root HEAD did not fast-forward, but does not compare pre/post file bytes or `git status --porcelain`. A stash-only regression could therefore evade the permanent assertion even though the current implementation is read-only in that branch.
+- Corrected the stale validation command in this archived packet: `agent_workflow_contract_smoke.py` does not exist; `agent_workflow_smoke.py` is the live passing workflow contract smoke.

@@ -14,16 +14,16 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently verify the landed Awakening convergence slice against its registration, seam, progression, asset-consumption, and South Reach handoff-readiness contract.
-- Review focus: Exact Layout-to-art registration; no speculative resizing; preservation of the corrected 1024×576 04→05 connector; late-seam renderer evidence; Road/Approach join; Gate pylon alignment and central-body non-collision decision; exactly-once console+P-9 completion; production-named handoff seam without scene transition; no duplicate fixture rendering; no Contract prewarm; documentation truth.
+- Review focus: Exact Layout-to-art registration; no speculative resizing; preservation of the corrected 1024×576 04→05 connector; machine seam metrics and compact ROI evidence for late joins rather than repeated full-frame review; Road/Approach join; Gate pylon alignment and central-body non-collision decision; exactly-once console+P-9 completion; production-named handoff seam without scene transition; no duplicate fixture rendering; no Contract prewarm; documentation truth.
 - Acceptance: Produce a findings-first independent review of live `main`. Either record a clean `passed` receipt or concrete findings. Blocking findings create the bounded correction pair through the normal review lifecycle. Do not patch reviewed implementation/runtime code inside this review workstream.
 - Non-goals: Do not implement the Hub, change Twin Solaria gameplay, create missing P1 art, redesign the Layout, enlarge Gate center collision, or add procgen/startup work during review.
-- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to it. Repository/document mutations required for the review receipt and any follow-up correction/review packets are allowed.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Required Review Evidence
 
 1. Recompute all nine zone art rectangles from live Layout envelopes and live scene sprites; prove exact `grow(64)` registration and underlay/foreground parity.
 2. Prove the 04→05 runtime state is `full_plate_underlay` at 1024×576 centered at `(352,-2464)`, with no live 832×384 binding.
-3. Inspect focused visual evidence for all mandatory seams and the optional Late Service branch. Reject any hard crop edge, doubled threshold, missing walkable floor, or foreground-over-Operator contradiction.
+3. Reuse the implementation's committed registration report, runtime presentation probes, seam-metrics JSON, ordered capture manifest, and generated late-seam ROI images. Verify that the implementation recorded completion of the required human kitty/xdg-open review sequence. Do not perform a second subjective model-vision acceptance pass; only inspect/regenerate imagery if evidence is missing, stale, contradictory, or changed after human approval.
 4. Verify the Approach/Road seam uses the existing Road offset, y=-6144 anchor, 192 px south gap, and presentation-only correction if any correction was needed.
 5. Verify Gate west/east pylon blockers remain 240×496 and the central visual-route mismatch was not “fixed” by blocking the route.
 6. Exercise South Reach before console acknowledgment, after console but before P-9, and after both. Only the final case may complete.
@@ -32,8 +32,11 @@
 9. Reconcile the live generated asset catalog with the documented BAKED_ONLY / specialized / partial / unpublished classifications.
 10. Confirm CURRENT_STATE and related docs no longer describe the rejected connector or missing Road art as current truth.
 11. Confirm existing Awakening geometry/progression, Road production, asset-pipeline, and changed-file validation remain green.
+12. Verify the coding agent, not the user, launched the ordered kitty/xdg-open sequence and blocked final closeout until it completed. If relevant art/registration changed after that gate, require regenerated captures and a new human sequence. Escalate only genuinely subjective Gate/art-composition questions.
 
 ## Human Decision Gate
+
+Closing each review kitty window in the implementation workstream is the user's per-capture approval/advance signal. The paired review agent should validate the durable evidence of that gate, not substitute its own visual judgment.
 
 If the central Gate sealed-body composition still visually hides a legal Operator position and the only credible fix requires a different authored Gate state/composition, record that exact evidence as `human_required`. Do not invent art or move collision.
 

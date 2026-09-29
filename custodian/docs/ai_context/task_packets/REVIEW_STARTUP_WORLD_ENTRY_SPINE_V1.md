@@ -8,6 +8,7 @@
 - Depends on: `startup-world-entry-spine-v1`
 - Locks: `app-boot, world-lifecycle`
 - Review: `none`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Review target workstream: `startup-world-entry-spine-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/STARTUP_WORLD_ENTRY_SPINE_V1.md`
 - Review modes: `code, architecture, runtime, workflow`

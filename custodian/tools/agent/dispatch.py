@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import difflib
 import fcntl
 import importlib.util
 import inspect
@@ -22,13 +23,19 @@ FIELDS = (
     "Workstream", "Status", "Dispatch", "Priority", "Depends on", "Locks",
     "Kind", "Review", "Review stage", "Review modes", "Paired review workstream",
     "Review cycle", "Max automatic review cycles",
-    "Review target workstream", "Review target packet",
+    "Review target workstream", "Review target packet", "Task overrides",
 )
 ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PRIORITY = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
 KINDS = {"implementation", "review", "correction"}
 REVIEW_INTENTS = {"auto", "manual", "none"}
 REVIEW_MODES = {"code", "architecture", "runtime", "visual", "asset-pipeline", "workflow"}
+BOUNDED_REVIEW_OVERRIDE = (
+    "TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, "
+    "this review packet's lifecycle/archive metadata, its required closing summary, and bounded "
+    "correction/re-review packets; do not edit the reviewed implementation or unrelated work."
+)
+VALIDATION_SCRIPT_RE = re.compile(r"(?<![A-Za-z0-9_])((?:custodian/)?tools/[A-Za-z0-9_./-]+\.(?:py|gd|sh))(?=$|[\s`),.;:])")
 
 
 class DispatchError(RuntimeError):
@@ -62,6 +69,8 @@ class Packet:
     max_review_cycles: int = 2
     review_target_workstream: str | None = None
     review_target_packet: str | None = None
+    task_overrides: str | None = None
+    validation_scripts: tuple[str, ...] = ()
 
 
 def parse_packet(path: str, text: str) -> Packet:
@@ -174,14 +183,61 @@ def parse_packet(path: str, text: str) -> Packet:
         errors.append("invalid Review target workstream metadata")
     review_target_packet = values.get("Review target packet") or None
 
+    task_overrides = _header_field_with_continuations(text, "Task overrides")
+    validation_scripts = _validation_script_references(text)
+
     return Packet(
         path, workstream, status, dispatch, dispatch_declared, priority, dependencies, locks,
         "; ".join(errors) or None,
         kind=kind, review=review, review_stage=review_stage, review_modes=review_modes,
         paired_review_workstream=paired_review_workstream, review_cycle=review_cycle,
         max_review_cycles=max_review_cycles, review_target_workstream=review_target_workstream,
-        review_target_packet=review_target_packet,
+        review_target_packet=review_target_packet, task_overrides=task_overrides,
+        validation_scripts=validation_scripts,
     )
+
+
+def _header_field_with_continuations(text: str, field: str) -> str | None:
+    """Read one top-level header field, folding its indented Markdown wraps."""
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
+        match = re.match(rf"^\s*-\s*{re.escape(field)}:\s*(.*)$", line)
+        if not match:
+            continue
+        parts = [match.group(1).strip()]
+        for continuation in lines[index + 1:]:
+            if re.match(r"^\s*-\s*[A-Z][^:]*:\s*", continuation) or continuation.startswith("## "):
+                break
+            if continuation.startswith((" ", "\t")):
+                parts.append(continuation.strip())
+            elif not continuation.strip():
+                continue
+            else:
+                break
+        folded = re.sub(r"\s+", " ", " ".join(parts)).strip().strip("`").strip()
+        return folded or None
+    return None
+
+
+def _validation_script_references(text: str) -> tuple[str, ...]:
+    """Collect explicit script paths only from the packet's Validation field/section."""
+    blocks: list[str] = []
+    header = text.split("\n## ", 1)[0]
+    lines = header.splitlines()
+    for index, line in enumerate(lines):
+        match = re.match(r"^\s*-\s*Validation:\s*(.*)$", line)
+        if not match:
+            continue
+        parts = [match.group(1)]
+        for continuation in lines[index + 1:]:
+            if re.match(r"^\s*-\s*[A-Z][^:]*:\s*", continuation):
+                break
+            parts.append(continuation)
+        blocks.append("\n".join(parts))
+
+    for section in re.finditer(r"(?ms)^## Validation\s*\n(.*?)(?=^## |\Z)", text):
+        blocks.append(section.group(1))
+    return tuple(sorted({match.group(1).rstrip("/.") for block in blocks for match in VALIDATION_SCRIPT_RE.finditer(block)}))
 
 
 def _tree_paths(repo: Path, tree: str, prefix: str) -> list[str]:
@@ -200,10 +256,10 @@ def _packets(repo: Path, tree: str = "origin/main") -> list[Packet]:
     return [parse_packet(path, git(repo, "show", f"{tree}:{path}")) for path in paths]
 
 
-def _archived_packets(repo: Path) -> list[Packet]:
+def _archived_packets(repo: Path, tree: str = "origin/main") -> list[Packet]:
     prefix = f"{PACKET_ROOT}/archived"
-    paths = [p for p in git(repo, "ls-tree", "-r", "--name-only", "origin/main", "--", prefix).splitlines() if p.endswith(".md")]
-    return [parse_packet(p, git(repo, "show", f"origin/main:{p}")) for p in paths]
+    paths = [p for p in git(repo, "ls-tree", "-r", "--name-only", tree, "--", prefix).splitlines() if p.endswith(".md")]
+    return [parse_packet(p, git(repo, "show", f"{tree}:{p}")) for p in paths]
 
 
 def _claimed(repo: Path) -> set[str]:
@@ -246,6 +302,10 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
             errors.setdefault(workstream, []).append(message)
 
     for p in packets:
+        if p.kind == "review" and p.dispatch == "auto":
+            override_error = _bounded_review_override_error(p.task_overrides)
+            if override_error:
+                add(p.workstream, override_error)
         if p.error or p.review != "auto" or not p.workstream or p.paired_review_workstream is None:
             continue
         paired_id = p.paired_review_workstream
@@ -275,6 +335,41 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
     return {workstream: "; ".join(messages) for workstream, messages in errors.items()}
 
 
+def _bounded_review_override_error(value: str | None) -> str | None:
+    if not value or "TASK OVERRIDE:" not in value:
+        return "auto review packet requires a bounded TASK OVERRIDE for review-artifact commits"
+    normalized = re.sub(r"\s+", " ", value).strip()
+    expected = re.sub(r"\s+", " ", BOUNDED_REVIEW_OVERRIDE).strip()
+    if normalized != expected:
+        return "auto review packet has malformed bounded TASK OVERRIDE; copy the exact authorized scope from AGENT_REVIEW_PACKET_TEMPLATE.md"
+    return None
+
+
+def validate_packet_validation_references(
+    repo: Path, packets: list[Packet], tree: str = "origin/main",
+    exclude_workstreams: set[str] | None = None,
+) -> dict[str, str]:
+    """Reject ready packets whose explicit validation scripts do not exist in the authority tree."""
+    tool_paths = set(git(repo, "ls-tree", "-r", "--name-only", tree, "--", "custodian/tools").splitlines())
+    errors: dict[str, str] = {}
+    for packet in packets:
+        if exclude_workstreams and packet.workstream in exclude_workstreams:
+            continue
+        if packet.status != "ready" or not packet.validation_scripts or not packet.workstream:
+            continue
+        missing = [path for path in packet.validation_scripts if path not in tool_paths]
+        if not missing:
+            continue
+        repo_tools = sorted(path for path in tool_paths if path.endswith((".py", ".gd", ".sh")))
+        details = []
+        for path in missing:
+            nearest = difflib.get_close_matches(path, repo_tools, n=1, cutoff=0.45)
+            suggestion = f"; nearest live path: {nearest[0]}" if nearest else ""
+            details.append(f"missing validation script '{path}'{suggestion}")
+        errors[packet.workstream] = "; ".join(details)
+    return errors
+
+
 def review_cycle_exhausted(packet: Packet) -> bool:
     """True once a review/correction packet has reached its finite-loop cap.
 
@@ -289,11 +384,14 @@ def review_cycle_exhausted(packet: Packet) -> bool:
 def _decision(
     packet: Packet, packets: list[Packet], archived: list[Packet], claimed: set[str],
     *, auto_only: bool, pairing_errors: dict[str, str] | None = None,
+    validation_errors: dict[str, str] | None = None,
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
     if pairing_errors and packet.workstream in pairing_errors:
         return False, f"invalid review pairing: {pairing_errors[packet.workstream]}"
+    if validation_errors and packet.workstream in validation_errors:
+        return False, f"invalid validation references: {validation_errors[packet.workstream]}"
     if packet.status != "ready":
         return False, f"status: {packet.status or 'missing'}"
     if auto_only and packet.dispatch != "auto":
@@ -410,6 +508,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
     groups: dict[str, list[str]] = {key: [] for key in ("READY", "CLAIMED", "BLOCKED", "MANUAL")}
     claims, branches = _remote_claim_state(repo)
     pairing_errors = validate_review_pairing(packets)
+    validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
     for work_id in sorted(claims - branches):
         groups["BLOCKED"].append(
             f"{work_id} — remote dispatch claim interrupted; recovery required. "
@@ -430,7 +529,10 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
         elif packet.dispatch == "manual":
             groups["MANUAL"].append(f"{name} [{packet.path}]")
         else:
-            ok, reason = _decision(packet, packets, archived, claimed, auto_only=True, pairing_errors=pairing_errors)
+            ok, reason = _decision(
+                packet, packets, archived, claimed, auto_only=True,
+                pairing_errors=pairing_errors, validation_errors=validation_errors,
+            )
             if ok:
                 groups["READY"].append(f"{packet.priority} {name} [{packet.path}]")
             else:
@@ -466,6 +568,7 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         claimed = _claimed(repo)
         remote_claims, remote_branches = _remote_claim_state(repo)
         pairing_errors = validate_review_pairing(packets)
+        validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
         ordered = sorted(packets, key=lambda p: (PRIORITY.get(p.priority, 9), p.path))
         if workstream_id:
             candidates = [p for p in ordered if p.workstream == workstream_id]
@@ -474,7 +577,10 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         selected = None
         reasons: list[str] = []
         for packet in candidates:
-            ok, reason = _decision(packet, packets, archived, claimed, auto_only=auto_only, pairing_errors=pairing_errors)
+            ok, reason = _decision(
+                packet, packets, archived, claimed, auto_only=auto_only,
+                pairing_errors=pairing_errors, validation_errors=validation_errors,
+            )
             if ok:
                 selected = packet
                 break

@@ -284,6 +284,8 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
+V1 is fully pre-authored as a dependency-driven auto-dispatch series: 26 implementation packets, one whole-series review, and one next-series-authoring handoff. The detailed roadmap owns packet-level dependencies and the single-agent serial auto-run order; this master table remains the macro feature-status mirror.
+
 ---
 
 ### Cross-cutting Combat Resource and Readability

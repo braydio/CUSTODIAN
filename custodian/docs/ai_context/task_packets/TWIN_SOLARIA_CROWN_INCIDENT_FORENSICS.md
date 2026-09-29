@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `agent-review-pipeline`
+- Depends on: `agent-review-pipeline, visual-validation-economy-tooling-v1`
 - Locks: `twin-solaria-runtime`
 - Review: `auto`
 - Review stage: `post-land`
@@ -411,24 +411,41 @@ It must prove at least:
 
 Register changed-file ownership in `validation_manifest.json`.
 
-Run focused validation first, then the repository's current changed-file closeout recipe.
+Also use the reusable presentation probes to assert overlay bounds/visibility/authority and protected-Amputation coverage before any renderer evidence. Run focused validation first, then the repository's current changed-file closeout recipe.
 
-## Runtime / Visual Evidence
+## Runtime / Presentation Evidence
 
-Use the existing production playtest wrapper to capture a small evidence set if feasible:
+Use the reusable presentation-probe/image-metrics tooling as the primary proof.
+Do not require routine full-frame visual inspection.
 
-- baseline Crown/Second Crown view before Stage B;
-- recovered structural overlay after Stage B;
-- final Stage F state.
+In `capture-mode none`, record at minimum:
 
-The visual review target is objective:
+- baseline overlay hidden state;
+- Stage B overlay visible state;
+- Stage F restored/continued visible state;
+- overlay world registration/bounds against the historical `second_crown_absence` authority;
+- overlay alpha/coverage metrics, including a protected Amputation ROI so the
+  schematic cannot become a filled replacement mass;
+- zero collision/navigation/interactable authority owned by the overlay;
+- no duplicate landmark raster/resource binding;
+- capture/restore equivalence for overlay/readout presentation state.
 
-- overlay aligns with the historical missing Second Crown region;
-- it reads as a recovered schematic, not restored physical architecture;
-- it does not obscure the Amputation;
-- no new duplicate landmark raster appears.
+Objective technical acceptance is primarily the structured report:
 
-Do not auto-approve a new subjective visual baseline. If exact overlay treatment needs aesthetic judgment after technical acceptance, record that as review evidence rather than blocking this implementation unless readability is objectively broken.
+- overlay registration matches the missing Second Crown region;
+- overlay is thin/presentation-only rather than restored physical architecture;
+- protected Amputation coverage remains below the configured technical threshold;
+- no duplicate landmark raster appears.
+
+If renderer pixels are still useful after those checks are green, produce one
+compact Second-Crown ROI contact sheet for baseline / Stage B / Stage F. Do not
+perform three separate full-screen Codex inspections. The contact sheet is a
+human/technical spot-check artifact; exact aesthetic treatment remains
+human-owned and is not automatically baseline-approved.
+
+If the structured metrics are ambiguous or fail, inspect only the affected ROI
+and fix the proven technical defect. Full-frame capture requires a specific
+reason that the Second-Crown ROI cannot establish the issue.
 
 ## Validation Economy
 

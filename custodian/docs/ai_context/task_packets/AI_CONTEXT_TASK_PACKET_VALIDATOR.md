@@ -60,6 +60,12 @@ Check:
 - valid dispatch value;
 - dependency/lock parseability;
 - review pair fields when live review-pipeline contract requires them.
+- bounded review-artifact mutation override for auto-dispatched `Kind: review`
+  packets, including the reviewed-implementation prohibition and the exact
+  authorized artifact classes;
+- referenced validation script paths in ready auto packets resolve to tracked
+  live repository entrypoints, with precise path diagnostics and a nearest
+  replacement when determinable.
 
 ### V2 task-packet contract
 
@@ -103,6 +109,20 @@ For a V2 packet with `Status: complete`, require a structured
 - non-empty `Follow-up`
 
 Literal `none` is valid where nothing occurred. `What worked` is optional.
+
+For V2 `Kind: review` packets, validate the structural review contract without
+trying to score prose: reviewed main/target, original acceptance, review
+evidence, correction threshold, focused validation, stable finding-ID format,
+and the required finding class/domain/disposition fields. For V2
+`Kind: correction`, require parent implementation/review references and at
+least one exact finding ID addressed; do not require or bulk-migrate these
+fields in legacy packets.
+
+The durable `## Independent Review` receipt must support counts and finding-ID
+lists for blocking defects, material evidence gaps, non-blocking issues,
+optional improvements, correction, next-slice, and human-decision dispositions.
+Pipeline/process findings use the `custodian.task_feedback.v1` receipt rather
+than being merged into implementation corrections.
 
 ### Authority-path drift
 
