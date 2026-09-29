@@ -1836,21 +1836,20 @@ cues each frame. Cue durations do not gate gameplay. The V2 family registers
 the six designed actions with existing wild-clip fallbacks until their art
 arrives, and root `REQUIRED_ASSETS.md` tracks the 18 E/S/N source masters, 24
 runtime directional strips, feed vocalization, and bond-recognition call.
-Bonding art pass 1 ingested seven clean strips into nine runtime directions:
-`guarded_approach` is READY N/E/S/W; `notice_bait` is partial N/S;
-`inspect_bait` is partial N/E/W; `feed_accept`, `watch_player`, and `bond_greet`
-remain missing. Inputs 1 and 10 were absent; input 8 was quarantined for
-generated matte. Pass 2 removes the rejected input from canonical source_work,
-preserves it under hash-named `unresolved/vaultwing_bonding_rejected/`, and
-makes the six bonding actions direction-strict so missing art reaches the
-correct-facing semantic fallback. No Pass-2 `vw1`, `vw8`, or `vw10`–`vw18`
-root sources are present; coverage remains partial. The
-`combat/vaultwing_first_bond` evidence capture passes at
-`reports/moment_forge/combat/vaultwing_first_bond/20260926T020356-0400`; it has
-no baseline capture, so defer final visual judgment until the remaining art is
-complete. Recover inputs 1, 8, and 10, then author ordinals 11–18. Production
-SFX and bait/global save ownership follow; companion commands/behavior remain
-Slice C.
+Bonding art Pass 3 has advanced production coverage to 15/18 authored
+E/S/N masters, 20/24 bonding runtime strips, and 76/80 total Vaultwing runtime
+strips. `guarded_approach`, `notice_bait`, `inspect_bait`, `feed_accept`,
+and `watch_player` now have complete runtime directional coverage through
+authored E/S/N plus valid W mirroring where applicable. Only `bond_greet`
+E/S/N plus mirrored W remains missing. The prior greeting candidates clip wing
+art under fixed-cell conversion and the superseded wrong-facing inspect input is
+also rejected. Rejected Vaultwing bonding images are deletion-only after
+hash/rejection verification; no rejected bonding art should remain in
+`source_work`, inbox, runtime, or `asset_drop/unresolved/`. The
+`combat/vaultwing_first_bond` evidence capture remains behaviorally green, but
+final visual judgment waits for corrected greeting art and one full capture.
+Production SFX and bait/global save ownership follow; companion commands/behavior
+remain Slice C.
 
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored
