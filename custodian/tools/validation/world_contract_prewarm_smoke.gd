@@ -129,8 +129,12 @@ func _validate_freed_cached_map_guard() -> void:
 func _validate_static_wiring() -> void:
 	assert(
 		ProjectSettings.get_setting("application/run/main_scene")
-		== "res://scenes/awakening_first_return.tscn"
+		== "res://game/app/boot/runtime_entrypoint.tscn"
 	)
+	var startup_modes := load("res://game/app/boot/startup_mode.gd")
+	var default_boot := startup_modes.parse_args(PackedStringArray()) as Dictionary
+	assert(default_boot.get("mode") == "awakening")
+	assert(default_boot.get("seed") == null)
 	var game_scene_source := FileAccess.get_file_as_string("res://scenes/game.tscn")
 	assert(game_scene_source.contains("world_contract_proxy.gd"))
 	assert(not game_scene_source.contains("custodian_contract_map.tscn"))

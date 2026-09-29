@@ -3292,6 +3292,35 @@
       "needs_import": true
     },
     {
+      "id": "startup_world_entry",
+      "type": "godot_script",
+      "script": "res://tools/validation/startup_world_entry_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "app_boot",
+        "awakening",
+        "twin_solaria",
+        "contract"
+      ],
+      "owners": [
+        "custodian/project.godot",
+        "custodian/game/app/boot/**",
+        "custodian/game/app/README.md",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/scenes/twin_solaria_playtest.tscn",
+        "custodian/scenes/game.tscn",
+        "custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png.import",
+        "custodian/game/world/procgen/world_contract_bootstrap.gd",
+        "custodian/game/world/procgen/world_contract_proxy.gd",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/content/levels/hub/twin_solaria_v1.json",
+        "custodian/tools/validation/startup_world_entry_smoke.gd",
+        "custodian/tools/validation/fixtures/pending_world_contract_map.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
       "id": "world_contract_prewarm",
       "type": "godot_script",
       "script": "res://tools/validation/world_contract_prewarm_smoke.gd",

@@ -2,7 +2,7 @@
 
 - Workstream: `startup-world-entry-spine-v1`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-review-pipeline`
@@ -173,3 +173,29 @@ Archive this packet complete, leave the paired review active, write
 - Next action: production Hub continuation/world-transition slice, not more logic in the boot router.
 - Best starting files: `project.godot`, `game/app/README.md`, `WorldContractBootstrap`, `world_contract_proxy.gd`, `twin_solaria_playtest.tscn`, and the boot/flow docs.
 - Blockers or open questions: none. Hub/Forum content remains intentionally deferred.
+
+## Completion
+
+- Production `project.godot` entry is now `game/app/boot/runtime_entrypoint.tscn`; no user arguments route to Awakening and leave Contract generation at zero.
+- Developer commands:
+  - `godot --path custodian -- --custodian-start=awakening`
+  - `godot --path custodian -- --custodian-start=twin-solaria`
+  - `godot --path custodian -- --custodian-start=contract-sandbox`
+  - `godot --path custodian -- --custodian-start=contract-sandbox --contract-seed=123456`
+- Seed values must be nonzero integers; malformed, duplicate, unknown, or inapplicable mode/seed arguments warn and fall back to Awakening.
+- Focused validation passed: `startup_world_entry`, `world_contract_prewarm`, `awakening_first_return`, and `twin_solaria_runtime`. Closeout `run_validation.py --changed --json` passed all 13 selected tests with complete ownership coverage. `startup_world_entry` exercises each real scene route and observes the seeded generation remain in flight after `game.tscn` loads; `world_contract_prewarm` proves the existing proxy and loader consume a ready bootstrap map without duplicate generation.
+- The changed-file sweep selected two Moment-tier checks because the connector import metadata is an owner; both passed. Their generated timestamped reports were removed as disposable after classification. No separate Moment Forge evidence/full capture was needed.
+- The Awakening connector plate's checked-in `.import` record was regenerated from its locally cached source because it had `valid=false` and prevented the production default scene from loading in the isolated worktree. No LFS fetch was performed.
+- Summary: `STARTUP_WORLD_ENTRY_SPINE_V1_CLAUDE_SUMMARY.md`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: the first smoke draft accidentally completed a real procgen generation and hit an incomplete test-world ingress; an earlier run also timed out while that generation ran.
+- Root cause / contributing factors: a completed fake contract drives the production loader's full population and ingress validation; the isolated worktree also needed local LFS materialization and a refreshed invalid connector import record before scene validation.
+- Prevention / pipeline improvement: the focused startup smoke now uses a pending fake generator to observe the scene boundary; ready-contract reuse remains covered by the dedicated `world_contract_prewarm` smoke.
+- Tooling / docs drift discovered: the connector plate `.import` metadata had `valid=false` despite the available source image; regenerated and validated the import record in-scope for the production Awakening boot target.
+- Follow-up: none
+- What worked: the focused manifest tests and serial runtime smokes isolated boot routing from expensive procgen while retaining separate proxy/loader evidence.

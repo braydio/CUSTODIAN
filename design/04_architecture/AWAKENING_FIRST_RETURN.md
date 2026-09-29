@@ -3,7 +3,7 @@
 **Status:** active opening, production plates in sections 01-09 and authored Road in section 10
 **Last Updated:** 2026-09-26
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Runtime Slice:** `res://scenes/awakening_first_return.tscn` (project `main_scene`)
+**Runtime Slice:** `res://scenes/awakening_first_return.tscn` (production default selected by App/Boot)
 **Spatial authority:** `res://game/world/awakening/awakening_layout.gd`
 **Validation:** `awakening_first_return_smoke.gd`, `awakening_first_return_geometry_smoke.gd`, `awakening_first_return_progression_smoke.gd`
 
@@ -104,7 +104,8 @@ black.
 ### Runtime slice
 
 ```text
-custodian/scenes/awakening_first_return.tscn        project main scene
+custodian/game/app/boot/runtime_entrypoint.tscn     project main scene
+custodian/scenes/awakening_first_return.tscn        production default scene
 custodian/game/world/awakening/awakening_layout.gd  spatial authority
 custodian/game/world/awakening/awakening_first_return.gd   orchestration only
 custodian/game/world/awakening/awakening_transit_lift.gd   Dust Lung service lift

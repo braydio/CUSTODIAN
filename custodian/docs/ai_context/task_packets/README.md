@@ -166,7 +166,6 @@ lost when the ephemeral worktree is removed.
 
 - `SECOND_PASS_REVIEW_CONTRACT_V2.md` — P1 V2 second-pass review hardening: stable finding IDs, correction thresholds, delta correction packets, and pipeline-feedback separation.
 - `REVIEW_SECOND_PASS_REVIEW_CONTRACT_V2.md` — paired independent review of the V2 second-pass review/correction contract; blocked on `second-pass-review-contract-v2`.
-- `STARTUP_WORLD_ENTRY_SPINE_V1.md` — P1 App/Boot slice: preserve Awakening default while adding deterministic Twin Solaria and Contract-sandbox startup modes plus single-bootstrap handoff validation.
 - `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — paired independent review of startup routing, bootstrap reuse, and story-default preservation.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.

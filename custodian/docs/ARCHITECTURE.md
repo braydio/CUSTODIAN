@@ -24,21 +24,22 @@ The architecture is organized into nine layers. Each layer has a defined purpose
 
 ### 1. App / Boot Layer
 
-**Purpose:** Chooses the startup mode — Home beginning, Contract Sandbox, Debug Preview, etc.
+**Purpose:** Chooses the startup mode — Awakening by default, with explicit development entry to Twin Solaria or the Contract sandbox.
 
 **Current files:**
-- `custodian/scenes/game.tscn` — active main scene
-- `custodian/scenes/awakening_first_return.tscn` — Awakening / The First Return, sections 01-10; the application main scene
+- `custodian/game/app/boot/` — startup argument parser and runtime entrypoint
+- `custodian/scenes/awakening_first_return.tscn` — Awakening / The First Return, sections 01-10; production default target
+- `custodian/scenes/twin_solaria_playtest.tscn` — development wrapper for the registered Twin Solaria Hub level
+- `custodian/scenes/game.tscn` — procgen Contract runtime shell
 - `custodian/project.godot` — Godot project config, input mappings, autoloads
 
 **Target owner files:**
-- `game/app/boot/` — startup mode selection and routing
-- `game/app/startup_mode.gd` — manages which mode the runtime boots into
-- `game/app/runtime_entrypoint.gd` — shared initialization before mode selection
+- `game/app/boot/startup_mode.gd` — validates the explicit startup argument contract
+- `game/app/boot/runtime_entrypoint.gd` — selects one fixed scene and starts the persistent Contract bootstrap only for sandbox mode
 
 **Allowed dependencies:** Persistent layer, project.godot autoloads
 **Forbidden dependencies:** World layer, Actor layer, Presentation layer at boot time
-**Migration notes:** Boot layer is currently implicit in `game.tscn`. Extract startup-mode selection before wiring the Home scene as default entry.
+**Runtime contract:** No arguments route to Awakening without Contract prewarm. `--custodian-start=twin-solaria` routes to the existing Twin playtest wrapper; `--custodian-start=contract-sandbox` starts `WorldContractBootstrap` and loads `game.tscn`. An optional nonzero `--contract-seed=<integer>` is accepted only for Contract sandbox. Invalid modes or seed arguments warn and fall back to Awakening. The router accepts no arbitrary scene paths.
 
 ---
 
@@ -252,7 +253,7 @@ The architecture is organized into nine layers. Each layer has a defined purpose
 
 | Layer | Current Primary Files | Target | Status |
 |-------|----------------------|--------|--------|
-| App / Boot | implicit in `game.tscn` | `game/app/` | Not started |
+| App / Boot | `game/app/boot/runtime_entrypoint.gd` | `game/app/boot/` | V1 startup modes live |
 | Persistent Meta | `game_state.gd`, `game_stats.gd` | `game/state/persistent/` | Façade exists |
 | Run / Campaign | implicit in contract gen | `game/state/run/` | Not started |
 | World Lifecycle | `contract_world_loader.gd` | `game/world/lifecycle/` | Deferred (Phase 4) |
@@ -286,12 +287,11 @@ The following files own too many concerns and are the first extraction targets:
 
 ## Current Boot Flow
 
-1. `res://scenes/game.tscn` loads with autoloads and scene tree.
-2. `CustodianContractMap` generates contract payload (planet + world profile).
-3. `ContractWorldLoader` reparents `ProcGenMap` into active world.
-4. Operator and spawn nodes repositioned from procgen `level_data`.
-5. Connected maps (gothic compound, Sundered Keep) are placed as `WorldIngressSite` triggers.
-6. Debug/observatory autoloads initialize: DevObservatory, WorldStateGraph, etc.
+1. `project.godot` loads `game/app/boot/runtime_entrypoint.tscn` after autoload initialization.
+2. No arguments select `awakening` and load `res://scenes/awakening_first_return.tscn`; this path does not start Contract generation.
+3. Explicit `twin-solaria` loads the existing playtest wrapper for the registered `hub_twin_solaria` level at `Spawn_CrownCauseway`; it does not create a Contract or register a procgen ingress.
+4. Explicit `contract-sandbox` calls `/root/WorldContractBootstrap.ensure_started(optional_seed)` once, then loads `res://scenes/game.tscn` without waiting for generation.
+5. `WorldContractProxy` and `ContractWorldLoader` consume that same bootstrap generation. Direct `game.tscn` launches remain compatible through the proxy's existing deferred start behavior.
 
 ## Target Boot Flow (Phase 4+)
 

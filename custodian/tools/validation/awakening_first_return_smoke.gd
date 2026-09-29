@@ -91,11 +91,11 @@ func _check_resources() -> void:
 
 
 func _check_main_scene() -> void:
-	if ProjectSettings.get_setting("application/run/main_scene", "") != SCENE:
-		_fail("project main scene must be the Awakening first return")
-	# The historical Home scene remains available for its own mapper/debug
-	# tooling, but it is no longer the project boot path. The active-scene
-	# assertion above is the relevant Awakening retirement contract.
+	if ProjectSettings.get_setting("application/run/main_scene", "") != "res://game/app/boot/runtime_entrypoint.tscn":
+		_fail("project main scene must be the App/Boot runtime entrypoint")
+	var startup_source := FileAccess.get_file_as_string("res://game/app/boot/startup_mode.gd")
+	if not startup_source.contains('const AWAKENING := "awakening"'):
+		_fail("App/Boot startup mode must preserve Awakening as the production default")
 
 
 ## The design is locked; these assertions are the one place coordinates are

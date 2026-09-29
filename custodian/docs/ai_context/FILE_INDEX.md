@@ -1,5 +1,5 @@
 # FILE INDEX — CUSTODIAN
-- `custodian/docs/ai_context/task_packets/STARTUP_WORLD_ENTRY_SPINE_V1.md` / `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — queued App/Boot startup-mode spine and independent review; keeps Awakening default while exposing Twin Solaria and seeded Contract sandbox direct-start paths.
+- `custodian/docs/ai_context/task_packets/archived/STARTUP_WORLD_ENTRY_SPINE_V1.md` / `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — completed App/Boot startup-mode spine and active independent review; keeps Awakening default while exposing Twin Solaria and seeded Contract sandbox direct-start paths.
 
 ## Operator Runtime Authority Migration (in progress)
 
@@ -192,12 +192,13 @@ Last updated: 2026-09-27
 ## Active Runtime Entry
 
 - `custodian/project.godot` — Godot project config and input map
+- `custodian/game/app/boot/startup_mode.gd`, `runtime_entrypoint.gd`, and `runtime_entrypoint.tscn` — explicit Awakening-default App/Boot routing; development-only Twin Solaria and seeded Contract sandbox modes.
 - `design/02_features/input/CONTROLLER_INPUT_SYSTEM.md` — active production keyboard/mouse and Xbox-layout action, analog, UI, prompt, and deferred-command authority.
 - `custodian/game/systems/input/input_prompt_service.gd` — presentation-only last-meaningful-device tracker and InputMap-to-keyboard/Xbox label resolver.
 - `custodian/tools/validation/controller_input_contract_smoke.gd` — focused production action/binding/deadzone/collision/raw-key/prompt/UI contract smoke.
 - `custodian/docs/ai_context/task_packets/CONTROLLER_INPUT_HARDENING.md` — implementation record for the post-twin-stick controller parity migration.
 - `custodian/scenes/game.tscn` — active game scene and terminal layout, including the authored `PageButtonsScroll` with pinned `MoreButton`/terminal actions; no longer auto-spawns the Forlorn-Ritualant dev encounter, and still includes scene-mounted `DroneManager` for allied combat drone V1 spawning plus a temporary grunt startup debug spawn gated by Operator distance from the initial spawn zone
-- `custodian/scenes/awakening_first_return.tscn` — Awakening / The First Return, the project main scene: sections 01-10 from the Crèche of Answerless Names to the Road of Witnesses South Reach as one continuous space.
+- `custodian/scenes/awakening_first_return.tscn` — Awakening / The First Return, the production default scene: sections 01-10 from the Crèche of Answerless Names to the Road of Witnesses South Reach as one continuous space.
 - `custodian/tools/iteration/scenarios/traversal/awakening_underlays_zones_01_05.json` and `custodian/tools/validation/fixtures/awakening_underlays_moment.*` — deterministic Moment Forge registration review for the first five production environment underlays and the art/blockout handoff.
 - `custodian/scenes/debug/awakening_first_return_mapper.tscn` — Awakening collision/POI mapper framed on the whole dungeon spine, with section envelopes, critical path, optional branch, camera reveals, encounter slots, interaction markers, and future-art anchors overlaid from `awakening_layout.gd`.
 - `custodian/scenes/debug/awakening_first_return_debug.tscn` — dev-only tour: zone selector, teleport to entry, collision/zone/landmark overlays, reset progression. Adds no global hotkeys.

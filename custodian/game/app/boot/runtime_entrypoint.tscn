@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/app/boot/runtime_entrypoint.gd" id="1_entrypoint"]
+
+[node name="RuntimeEntrypoint" type="Node"]
+script = ExtResource("1_entrypoint")

@@ -4,8 +4,14 @@
 
 > Runtime update (2026-08-08): the live game scene owns one runtime/session/world. Session resolution and Hub outcome application are exactly-once. Full strategic assault progression remains unported; `WaveManager` is physical spawn execution only.
 
+> Runtime update (2026-09-29): `res://game/app/boot/runtime_entrypoint.tscn` is
+> the project entrypoint and defaults to `res://scenes/awakening_first_return.tscn`.
+> Explicit development modes can open Twin Solaria or the Contract sandbox; they
+> do not change the production story start. Awakening still does not prewarm a
+> Contract or transition to `game.tscn`.
+>
 > Runtime update (2026-09-06): the campaign no longer begins at a Field Terminal
-> handoff. The project boots into `res://scenes/awakening_first_return.tscn`, the
+> handoff. The default boot enters `res://scenes/awakening_first_return.tscn`, the
 > ten-section Awakening prologue (`design/04_architecture/AWAKENING_FIRST_RETURN.md`).
 > That prologue surfaces no Contract, starts no world-contract prewarming, and does
 > not transition to `game.tscn`. The loop described below therefore begins at the

@@ -106,6 +106,20 @@ For production requirement registry, CLI, or generated-view changes, run
 
 ## Preferred Agent Entry Point
 
+For App/Boot startup routing, run the focused spine smoke and its existing
+bootstrap, Awakening, and Twin regressions:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test startup_world_entry --json
+python3 custodian/tools/validation/run_validation.py --test world_contract_prewarm --json
+python3 custodian/tools/validation/run_validation.py --test awakening_first_return --json
+python3 custodian/tools/validation/run_validation.py --test twin_solaria_runtime --json
+```
+
+The startup spine smoke tests no-argument Awakening routing, development mode
+targets, seed parsing, safe fallback, Twin's production Hub level/spawn, and
+single-bootstrap Contract handoff.
+
 From repository root, select changed-file-owned tests and receive one bounded,
 machine-readable result:
 
