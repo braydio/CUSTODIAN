@@ -272,12 +272,29 @@ def start(workstream_id: str, repo: Path | None = None) -> Path:
             raise WorkstreamError(f"matching branch is attached to the coordination checkout {path}; do not implement there")
         if not status_clean(path):
             raise WorkstreamError(f"branch is attached to a dirty worktree; preserved at {path}")
-        # A clean attached checkout is reused rather than duplicated.
+        # A clean attached checkout is reused rather than duplicated. A local-only
+        # branch is stale/recoverable residue, not a claim. It may be reused only
+        # when it contains no unique commits beyond origin/main.
         fetch(path)
-        remote_changed = sync_remote_branch(path, branch)
+        remote_exists = subprocess.run(
+            ["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"],
+            cwd=path,
+        ).returncode == 0
+        remote_changed = False
+        if remote_exists:
+            remote_changed = sync_remote_branch(path, branch)
+        else:
+            unique = git("rev-list", "origin/main..HEAD", cwd=path).splitlines()
+            if unique:
+                raise WorkstreamError(
+                    f"local-only attached worktree for {branch} has unique commits; explicit recovery required at {path}"
+                )
         main_changed = sync_main(path)
-        if remote_changed or main_changed:
-            git("push", "origin", branch, cwd=path)
+        if remote_exists:
+            if remote_changed or main_changed:
+                git("push", "origin", branch, cwd=path)
+        else:
+            git("push", "-u", "origin", branch, cwd=path)
         print(f"reusing clean attached worktree: {path}")
         return path
 

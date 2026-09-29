@@ -224,10 +224,29 @@ class DispatchTests(unittest.TestCase):
         self.assertEqual(git(existing, "branch", "--show-current"), "agent/existing-task")
         self.assertEqual((existing / "keep.txt").read_text(), "preserve me\n")
 
-    def test_local_attached_worktree_excludes_duplicate(self):
+    def test_local_only_clean_worktree_is_not_claim_authority_and_is_reused(self):
         self.add_packet("attached", dispatch_value="auto")
-        git(self.repo, "worktree", "add", "-b", "agent/attached", str(self.base / "attached-wt"), "origin/main")
-        self.assertIn("CLAIMED (1)\nattached", dispatch.status(self.repo, output=False))
+        path = self.base / "attached-wt"
+        git(self.repo, "worktree", "add", "-b", "agent/attached", str(path), "origin/main")
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("P2 attached", rendered.split("READY (", 1)[1])
+        self.assertNotIn("CLAIMED (1)\nattached", rendered)
+        with mock.patch("builtins.print"):
+            dispatch.claim(self.repo, "attached", "codex", False)
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/attached"))
+
+    def test_local_only_unique_worktree_fails_closed_on_reclaim(self):
+        self.add_packet("unique-local", dispatch_value="auto")
+        path = self.base / "unique-local-wt"
+        git(self.repo, "worktree", "add", "-b", "agent/unique-local", str(path), "origin/main")
+        (path / "unique.txt").write_text("preserve\n")
+        git(path, "add", "unique.txt")
+        git(path, "commit", "-m", "unique local work")
+        self.assertIn("P2 unique-local", dispatch.status(self.repo, output=False).split("READY (", 1)[1])
+        with self.assertRaisesRegex(dispatch.DispatchError, "unique commits; explicit recovery required"):
+            dispatch.claim(self.repo, "unique-local", "codex", False)
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/unique-local"))
+        self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/unique-local"))
 
     def test_lock_collision_names_holder_and_disjoint_locks_allow_claim(self):
         self.add_packet("holder", dispatch_value="auto", locks="asset-catalog")

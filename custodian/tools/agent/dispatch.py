@@ -133,12 +133,12 @@ def _archived_packets(repo: Path) -> list[Packet]:
 
 
 def _claimed(repo: Path) -> set[str]:
+    # Remote refs are claim authority. A successful dispatcher claim always has
+    # either a temporary dispatch-claim ref during acquisition or a published
+    # origin/agent/<id> branch after workstream.start(). Local-only worktrees are
+    # recovery/residue surfaces and must not poison the global queue.
     refs = git(repo, "for-each-ref", "--format=%(refname)", "refs/remotes/origin/agent").splitlines()
     claimed = {ref.removeprefix("refs/remotes/origin/agent/") for ref in refs}
-    for record in git(repo, "worktree", "list", "--porcelain").split("\n\n"):
-        branch = next((line.removeprefix("branch refs/heads/agent/") for line in record.splitlines() if line.startswith("branch refs/heads/agent/")), None)
-        if branch:
-            claimed.add(branch)
     claims, branches = _remote_claim_state(repo)
     claimed.update(claims & branches)
     return claimed
