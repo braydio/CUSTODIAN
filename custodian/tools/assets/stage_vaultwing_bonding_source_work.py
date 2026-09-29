@@ -19,7 +19,6 @@ REPO = Path(__file__).resolve().parents[3]
 CUSTODIAN = REPO / "custodian"
 SOURCE_WORK = CUSTODIAN / "asset_drop/source_work/fauna/ambient_vaultwing_common"
 INBOX = CUSTODIAN / "asset_drop/inbox/ambient_vaultwing_common"
-QUARANTINE = CUSTODIAN / "asset_drop/unresolved/vaultwing_bonding_rejected"
 RUNTIME = CUSTODIAN / "content/sprites/ambient_creatures/vaultwing_common/runtime/body"
 
 
@@ -152,11 +151,6 @@ def preserve_candidate(source: Path, spec: SourceSpec, ordinal: int, *, apply: b
         image, _alpha = source_rgba(source)
         image.close()
     except StageError as error:
-        quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-        if apply:
-            preserved_hash = copy_immutable(source, quarantine)
-            if preserved_hash != source_hash:
-                raise StageError(f"quarantine hash mismatch: {quarantine}")
         return False, source_hash, str(error)
 
     target = SOURCE_WORK / f"{spec.semantic_name}_source.png"
@@ -165,16 +159,6 @@ def preserve_candidate(source: Path, spec: SourceSpec, ordinal: int, *, apply: b
     elif target.exists() and sha256(target) != source_hash:
         raise StageError(f"refusing to overwrite different source master: {target}")
     return True, source_hash, ""
-
-
-def quarantine_candidate(source: Path, spec: SourceSpec, ordinal: int, *, apply: bool) -> str:
-    source_hash = sha256(source)
-    quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-    if apply:
-        preserved_hash = copy_immutable(source, quarantine)
-        if preserved_hash != source_hash:
-            raise StageError(f"quarantine hash mismatch: {quarantine}")
-    return source_hash
 
 
 def source_rgba(path: Path) -> tuple[Image.Image, np.ndarray]:
@@ -372,7 +356,7 @@ def main() -> int:
     parser.add_argument(
         "--remove-root-copies",
         action="store_true",
-        help="after verified copies, remove only matching untracked root input files",
+        help="after verified acceptance or rejection, remove only matching untracked root task input files",
     )
     parser.add_argument(
         "--ordinals",
@@ -424,15 +408,10 @@ def main() -> int:
         except (StageError, OSError, ValueError) as error:
             rejected.append(ordinal)
             print(f"REJECT {ordinal} {spec.semantic_name}: {error}")
-            source_hash = quarantine_candidate(source, spec, ordinal, apply=not args.dry_run)
-            quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-            if not args.dry_run:
-                print(f"QUARANTINE {quarantine.relative_to(REPO)} sha256={source_hash}")
+            source_hash = sha256(source)
             if args.remove_root_copies and not args.dry_run:
-                if not quarantine.is_file() or sha256(quarantine) != source_hash:
-                    raise StageError(f"refusing to remove source without verified quarantine: {source.name}")
                 remove_root_copy_if_untracked(source, source_hash)
-                print(f"REMOVED ROOT COPY {source.name}; verified quarantine retained")
+                print(f"DELETED REJECTED ROOT COPY {source.name}; sha256={source_hash}")
             continue
 
         is_accepted, source_hash, rejection_reason = preserve_candidate(
@@ -441,15 +420,9 @@ def main() -> int:
         if not is_accepted:
             rejected.append(ordinal)
             print(f"REJECT {ordinal} {spec.semantic_name}: {rejection_reason}")
-            if not args.dry_run:
-                quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-                print(f"QUARANTINE {quarantine.relative_to(REPO)} sha256={source_hash}")
             if args.remove_root_copies and not args.dry_run:
-                quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-                if not quarantine.is_file() or sha256(quarantine) != source_hash:
-                    raise StageError(f"refusing to remove source without verified quarantine: {source.name}")
                 remove_root_copy_if_untracked(source, source_hash)
-                print(f"REMOVED ROOT COPY {source.name}; verified quarantine retained")
+                print(f"DELETED REJECTED ROOT COPY {source.name}; sha256={source_hash}")
             continue
 
         target_source = SOURCE_WORK / f"{spec.semantic_name}_source.png"
