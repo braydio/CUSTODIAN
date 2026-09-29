@@ -16,6 +16,7 @@
 - Goal: Independently verify that Solarium I acquisition is presentation-only, Asset V2-compliant, fail-closed, and never becomes Crown passage.
 - Review focus: route truth remains Slice D-owned; V2 provenance/contracts; dormant/candidate/stable/warning/shutdown transitions; stale one-shot cancellation; no duplicate landmark art; no Passage or route exit; structured presentation-state/registration/alpha metrics first, with targeted ROI evidence only where pixels remain necessary; subjective FX/readability preference stays human-owned.
 - Acceptance: findings-first pass or bounded correction through review pipeline. No reviewer runtime patching.
+- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to the reviewed implementation. Repository/document mutations required for the durable review receipt, required review closing summary, review-packet lifecycle/archive metadata, and any bounded follow-up correction/re-review packets are allowed.`
 
 ## Required Checks
 
