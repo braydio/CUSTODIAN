@@ -70,8 +70,9 @@ is safe for a Codex terminal to claim without additional human selection.
 `dispatch.py status` reads packet truth from fetched `origin/main`; use
 `dispatch.py claim-next --agent codex` to claim the highest-priority eligible
 auto packet, or `dispatch.py claim <workstream-id> --agent codex` for explicit
-selection (including manual packets). Initial claims use unique remote Git
-claim refs so separate clones cannot both acquire the same task; interrupted
+selection (including manual packets). Initial claims and direct starts share
+unique remote Git claims and per-workstream local mutexes so separate clones
+cannot acquire the same task; interrupted
 claims require explicit operator recovery. `Priority` is `P0`–`P3` (default `P2`),
 `Depends on` lists workstream IDs that must be complete and archived on main,
 and `Locks` lists narrow contention IDs. A missing `Dispatch` remains manual.
@@ -247,7 +248,6 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
-- `AGENT_WORKFLOW_CLAIM_ATOMICITY_AND_FORENSICS.md` — P0 control-plane correction: make direct workstream starts use the same exclusive claim semantics as dispatch, prevent partial-worktree double starts, and emit operator-only non-main lifecycle trace exports.
 - `VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — P0 code-first presentation-validation tooling: richer Moment probes/assertions, deterministic image metrics, compact ROI evidence, and reusable direct adopters for high-visual-cost queued work; waits on `second-pass-review-contract-v2` so its own paired review can autocomplete safely.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — paired P0 code/architecture/workflow review of the visual-validation economy tooling; no subjective art review.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.

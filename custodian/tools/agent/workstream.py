@@ -9,8 +9,16 @@ import os
 import re
 import subprocess
 import sys
+import time
+from contextlib import nullcontext
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from workflow_control import (
+    RemoteClaim, RunTrace, WorkflowControlError, acquire_remote_claim,
+    release_remote_claim, workstream_mutex,
+)
 
 # TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
 _LFS_DEGRADED_MODE_EXPIRES_UTC = datetime(2026, 10, 1, 4, 0, tzinfo=timezone.utc)
@@ -347,68 +355,115 @@ def sync_remote_branch(path: Path, branch: str) -> bool:
     return True
 
 
-def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None) -> Path:
+def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None,
+          _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
+          _lock_held: bool = False) -> Path:
     repo = (repo or root_repo()).resolve()
     branch = branch_for(workstream_id)
-    fetch(repo)
-    records = worktree_records(repo)
-    attached = [r for r in records if r.get("branch") == f"refs/heads/{branch}"]
-    if attached:
-        path = Path(attached[0]["worktree"]).resolve()
-        if path == repo:
-            raise WorkstreamError(f"matching branch is attached to the coordination checkout {path}; do not implement there")
-        if not status_clean(path):
-            raise WorkstreamError(f"branch is attached to a dirty worktree; preserved at {path}")
-        # A clean attached checkout is reused rather than duplicated. A local-only
-        # branch is stale/recoverable residue, not a claim. It may be reused only
-        # when it contains no unique commits beyond origin/main.
-        fetch(path)
-        remote_exists = subprocess.run(
-            ["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"],
-            cwd=path,
-        ).returncode == 0
-        remote_changed = False
-        if remote_exists:
-            remote_changed = sync_remote_branch(path, branch)
-        else:
-            unique = git("rev-list", "origin/main..HEAD", cwd=path).splitlines()
-            if unique:
-                raise WorkstreamError(
-                    f"local-only attached worktree for {branch} has unique commits; explicit recovery required at {path}"
-                )
-        main_changed = sync_main(path)
-        if remote_exists:
-            if remote_changed or main_changed:
-                git("push", "origin", branch, cwd=path)
-        else:
+    trace = _trace
+    lock_started = time.monotonic()
+    lock_context = nullcontext() if _lock_held else workstream_mutex(repo, workstream_id)
+    claim = _claim
+    try:
+        with lock_context:
+            if trace is None:
+                trace = RunTrace.start(repo, workstream_id)
+            trace.record("mutex_acquired", scope="workstream", wait_ms=round((time.monotonic() - lock_started) * 1000))
+            before = worktree_records(repo)
+            trace.record("start_inspection", main_sha=git("rev-parse", "origin/main", cwd=repo, check=False), worktrees=before)
+            fetch(repo)
+            trace.record("remote_fetched", main_sha=git("rev-parse", "origin/main", cwd=repo), branch_ref=branch,
+                         remote_branch_present=subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode == 0)
+            records = worktree_records(repo)
+            attached = [r for r in records if r.get("branch") == f"refs/heads/{branch}"]
+            remote_exists = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode == 0
+            local_exists = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch}"], cwd=repo).returncode == 0
+            if remote_exists or attached or local_exists:
+                location = attached[0].get("worktree") if attached else "not attached"
+                if attached and not status_clean(Path(location)):
+                    raise WorkstreamError(f"branch is attached to a dirty worktree; preserved at {location}; use explicit resume after inspecting it")
+                if attached and not remote_exists:
+                    unique = git("rev-list", "origin/main..HEAD", cwd=Path(location)).splitlines()
+                    if unique:
+                        raise WorkstreamError(f"local-only attached worktree for {branch} has unique commits; explicit recovery required at {location}")
+                raise WorkstreamError(f"{branch} already exists or is attached ({location}); use explicit workstream.py resume after inspecting ownership; ordinary start will not adopt it")
+            if claim is None:
+                claim = acquire_remote_claim(repo, workstream_id, "codex", trace.run_id, trace=trace)
+            else:
+                trace.record("remote_claim_reused", remote_ref=claim.ref, claim_oid=claim.oid)
+            pool = repo.parent / ".custodian-worktrees"
+            pool.mkdir(parents=True, exist_ok=True)
+            path = pool / f"{workstream_id}-{trace.run_id}"
+            trace.record("worktree_create_begin", worktree=str(path), branch=branch, main_sha=git("rev-parse", "origin/main", cwd=repo))
+            git("worktree", "add", "-b", branch, str(path), "origin/main", cwd=repo)
             git("push", "-u", "origin", branch, cwd=path)
-        print(f"reusing clean attached worktree: {path}")
-        if report is not None:
-            report["checkout"] = "resumed"
+            fetch(repo)
+            if not path.is_dir() or git("branch", "--show-current", cwd=path) != branch or subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode != 0:
+                raise WorkstreamError(f"workstream post-create verification failed; recovery claim retained at origin/{claim.ref}")
+            trace.record("worktree_published", worktree=str(path), branch=branch, head=git("rev-parse", "HEAD", cwd=path), upstream=git("rev-parse", f"origin/{branch}", cwd=path), clean=status_clean(path))
+            trace.record("worktree_after", worktrees=worktree_records(repo))
+            if _lock_held:
+                trace.record("agent_branch_published_claim_held", remote_ref=claim.ref)
+            elif not release_remote_claim(repo, claim, trace=trace):
+                trace.record("claim_cleanup_pending", remote_ref=claim.ref)
+            if report is not None:
+                report["checkout"] = "created"
+            trace.record("start_completed", disposition="created", worktree=str(path), branch=branch)
+            trace.publish()
+            receipt = {"schema": "custodian.dispatch.claim.v1", "result": "started", "workstream": workstream_id,
+                       "branch": branch, "worktree": str(path), "verified": True, "run_id": trace.run_id,
+                       "trace_ref": trace.diagnostic_ref}
+            if not _lock_held:
+                print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt, sort_keys=True))
+            return path
+    except (WorkstreamError, WorkflowControlError) as exc:
+        if trace is None:
+            trace = RunTrace.start(repo, workstream_id)
+        trace.finish_blocked(str(exc))
+        raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
+
+
+def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, trace: RunTrace) -> Path:
+    """Explicitly resume an existing clean canonical workstream checkout."""
+    with workstream_mutex(repo, workstream_id, trace=trace):
+        fetch(repo)
+        branch = branch_for(workstream_id)
+        attached = [r for r in worktree_records(repo) if r.get("branch") == f"refs/heads/{branch}"]
+        remote_exists = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode == 0
+        if attached:
+            path = Path(attached[0]["worktree"]).resolve()
+            if path == repo or not status_clean(path):
+                raise WorkstreamError(f"resume requires a clean non-coordination checkout; preserved at {path} [run_id={trace.run_id}]")
+            fetch(path)
+            if remote_exists:
+                sync_remote_branch(path, branch)
+            sync_main(path)
+            trace.record("worktree_resumed", worktree=str(path), branch=branch, head=git("rev-parse", "HEAD", cwd=path))
+            if report is not None: report["checkout"] = "resumed"
+            trace.publish()
+            return path
+        if not remote_exists:
+            raise WorkstreamError(f"resume found no attached checkout or origin/{branch}; inspect recovery state [run_id={trace.run_id}]")
+        pool = repo.parent / ".custodian-worktrees"
+        pool.mkdir(parents=True, exist_ok=True)
+        path = pool / f"{workstream_id}-{trace.run_id}"
+        git("worktree", "add", "--track", "-b", branch, str(path), f"origin/{branch}", cwd=repo)
+        sync_main(path)
+        git("push", "origin", branch, cwd=path)
+        trace.record("worktree_resumed", worktree=str(path), branch=branch, head=git("rev-parse", "HEAD", cwd=path))
+        if report is not None: report["checkout"] = "resumed"
+        trace.publish()
         return path
 
-    local_exists = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch}"], cwd=repo).returncode == 0
-    remote_exists = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode == 0
-    if local_exists:
-        raise WorkstreamError(f"local branch {branch} exists but is not attached; inspect/remove it explicitly before start")
-    parent = repo.parent
-    pool = parent / ".custodian-worktrees"
-    pool.mkdir(parents=True, exist_ok=True)
-    run_id = datetime.now().strftime("%Y%m%dT%H%M%S")
-    path = pool / f"{workstream_id}-{run_id}"
-    if path.exists():
-        raise WorkstreamError(f"worktree path already exists: {path}")
-    if remote_exists:
-        git("worktree", "add", "--track", "-b", branch, str(path), f"origin/{branch}", cwd=repo)
-        if sync_main(path):
-            git("push", "origin", branch, cwd=path)
-    else:
-        git("worktree", "add", "-b", branch, str(path), "origin/main", cwd=repo)
-        git("push", "-u", "origin", branch, cwd=path)
-    print(f"workstream: {branch}\nworktree: {path}")
-    if report is not None:
-        report["checkout"] = "created"
-    return path
+
+def resume(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None) -> Path:
+    repo = (repo or root_repo()).resolve()
+    trace = RunTrace.resume(repo, workstream_id)
+    try:
+        return _resume_impl(workstream_id, repo, report, trace)
+    except Exception as exc:
+        trace.finish_blocked(str(exc))
+        raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
 def validation_green(report: Path) -> bool:
@@ -444,8 +499,8 @@ def administrative_worktree(repo: Path, excluded: Path) -> Path:
     raise WorkstreamError("cannot find a surviving worktree for safe task teardown")
 
 
-def checkpoint(workstream_id: str, remove_worktree: bool = False, repo: Path | None = None) -> None:
-    repo = (repo or root_repo()).resolve()
+def _checkpoint_impl(workstream_id: str, remove_worktree: bool, repo: Path, trace: RunTrace) -> None:
+    trace.record("checkpoint_started", remove_worktree=remove_worktree)
     branch = branch_for(workstream_id)
     path = find_worktree(repo, branch)
     if git("branch", "--show-current", cwd=path) != branch:
@@ -460,7 +515,19 @@ def checkpoint(workstream_id: str, remove_worktree: bool = False, repo: Path | N
         if not status_clean(path):
             raise WorkstreamError("cannot remove a dirty checkpoint worktree; dirty work is preserved")
         git("worktree", "remove", str(path), cwd=repo)
+    trace.record("checkpoint_completed", branch=branch, remote_head=remote, removed=remove_worktree)
+    trace.publish()
     print(f"checkpoint retained: origin/{branch} at {remote}; workstream remains active")
+
+
+def checkpoint(workstream_id: str, remove_worktree: bool = False, repo: Path | None = None) -> None:
+    repo = (repo or root_repo()).resolve()
+    trace = RunTrace.resume(repo, workstream_id)
+    try:
+        _checkpoint_impl(workstream_id, remove_worktree, repo, trace)
+    except Exception as exc:
+        trace.finish_blocked(str(exc))
+        raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
 def _expected_summary_filename(workstream_id: str) -> str:
@@ -535,7 +602,7 @@ def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path
     print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
 
 
-def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Path) -> None:
+def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Path, trace: RunTrace | None = None) -> None:
     """No attached worktree for this workstream: either genuinely already
     finished (report success, do not encourage recreating anything) or an
     unverifiable/bogus state (fail closed for investigation)."""
@@ -553,6 +620,9 @@ def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Pat
         for name in summary_names
     )
     if summary_landed:
+        if trace:
+            trace.record("finish_already_completed", branch=branch)
+            trace.publish()
         print(
             f"already finished: no attached worktree or remote branch for {branch}; "
             "its closing summary is present on origin/main"
@@ -564,14 +634,14 @@ def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Pat
     )
 
 
-def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None) -> None:
+def _finish_impl(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None, trace: RunTrace | None = None) -> None:
     repo = (repo or root_repo()).resolve()
     branch = branch_for(workstream_id)
     fetch(repo)
     try:
         path = find_worktree(repo, branch)
     except WorkstreamError:
-        _finish_without_attached_worktree(workstream_id, branch, repo)
+        _finish_without_attached_worktree(workstream_id, branch, repo, trace)
         return
     if git("branch", "--show-current", cwd=path) != branch:
         raise WorkstreamError("finish must run for its matching agent/<workstream-id> branch")
@@ -579,11 +649,15 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
     # PREPARED: artifacts, cleanliness, a durably committed summary, and green
     # validation are required regardless of whether this task already landed.
     artifact_preflight(workstream_id, path)
+    if trace: trace.record("artifact_preflight", result="passed", worktree=str(path))
     if not status_clean(path):
         raise WorkstreamError("finish requires a clean worktree and committed task files")
     closing_summary_committed_for_workstream(workstream_id, path)
     if not validation_green(validation_report):
         raise WorkstreamError("focused validation report is not green")
+    if trace:
+        import hashlib
+        trace.record("validation_report", path=validation_report.name, sha256=hashlib.sha256(validation_report.read_bytes()).hexdigest(), passed=True)
 
     git("push", "-u", "origin", branch, cwd=path)
     fetch(path)
@@ -594,14 +668,21 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
         # merged in some other way). Skip sync/land entirely and go straight
         # to verified teardown; do not rewrite or remerge task history.
         head = git("rev-parse", "HEAD", cwd=path)
+        if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
         _teardown_workstream(workstream_id, branch, repo, path, head)
+        if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
         return
 
     # SYNC_REQUIRED -> READY_TO_LAND
     changed = sync_main(path)
+    if trace: trace.record("main_sync", changed=changed, head=git("rev-parse", "HEAD", cwd=path), main_sha=git("rev-parse", "origin/main", cwd=path))
     if changed:
         if validation_report_after_sync is None or not validation_green(validation_report_after_sync):
             raise WorkstreamError("main synchronization changed the tree; provide a green --validation-report-after-sync; recovery state retained")
+        if trace:
+            import hashlib
+            trace.record("validation_after_sync", path=validation_report_after_sync.name,
+                         sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
     artifact_preflight(workstream_id, path)
     if not status_clean(path):
         raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
@@ -611,7 +692,9 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
         # Synchronization itself (a fast-forward merge, or a concurrent landing
         # of this exact history) already made HEAD reachable from main.
         head = git("rev-parse", "HEAD", cwd=path)
+        if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
         _teardown_workstream(workstream_id, branch, repo, path, head)
+        if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
         return
 
     # LANDED: hand off to the sole active landing authority. Never duplicate
@@ -633,7 +716,22 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
         raise WorkstreamError("landing did not verify as reachable from origin/main; recovery branch retained")
 
     # READY_TO_TEARDOWN -> FINISHED
+    if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
     _teardown_workstream(workstream_id, branch, repo, path, head)
+    if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
+
+
+def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None) -> None:
+    repo = (repo or root_repo()).resolve()
+    trace = RunTrace.resume(repo, workstream_id)
+    trace.record("finish_started", validation_report=str(validation_report), after_sync_report=str(validation_report_after_sync) if validation_report_after_sync else None)
+    try:
+        _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace)
+        trace.record("finish_completed", outcome="finished")
+        trace.complete("finished", clear_active=True)
+    except Exception as exc:
+        trace.finish_blocked(str(exc))
+        raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
 def status(workstream_id: str | None = None, repo: Path | None = None) -> None:
@@ -661,6 +759,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest="command", required=True)
     p = subs.add_parser("start"); p.add_argument("workstream_id")
+    p = subs.add_parser("resume"); p.add_argument("workstream_id")
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--remove-worktree", action="store_true")
     p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path, required=True); p.add_argument("--validation-report-after-sync", type=Path)
@@ -668,6 +767,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         if args.command == "start": start(args.workstream_id)
+        elif args.command == "resume": print(f"resumed worktree: {resume(args.workstream_id)}")
         elif args.command == "status": status(args.workstream_id)
         elif args.command == "checkpoint": checkpoint(args.workstream_id, args.remove_worktree)
         elif args.command == "finish": finish(args.workstream_id, args.validation_report, args.validation_report_after_sync)

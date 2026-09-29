@@ -4,6 +4,7 @@ import importlib.util
 import subprocess
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("workstream.py")
@@ -52,12 +53,62 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
         self.assertEqual(git(path, "rev-parse", "@{upstream}"), git(self.repo, "rev-parse", "origin/agent/sample-work"))
 
+    def test_concurrent_direct_start_has_one_winner_and_preserves_checkout(self):
+        def attempt():
+            try:
+                return ("ok", workstream.start("parallel-start", self.repo))
+            except workstream.WorkstreamError as error:
+                return ("blocked", str(error))
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(lambda _: attempt(), range(2)))
+        winners = [value for state, value in results if state == "ok"]
+        losers = [value for state, value in results if state == "blocked"]
+        self.assertEqual(len(winners), 1)
+        self.assertEqual(len(losers), 1)
+        self.assertTrue(winners[0].is_dir())
+        self.assertEqual(git(winners[0], "branch", "--show-current"), "agent/parallel-start")
+        self.assertIn("already exists", losers[0])
+
+    def test_independent_clone_direct_start_uses_remote_claim_cas(self):
+        clone = self.base / "second-clone"
+        git(self.base, "clone", str(self.remote), str(clone))
+        def attempt(repo):
+            try:
+                return ("ok", workstream.start("clone-race", repo))
+            except workstream.WorkstreamError as error:
+                return ("blocked", str(error))
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(attempt, (self.repo, clone)))
+        winners = [value for state, value in results if state == "ok"]
+        losers = [value for state, value in results if state == "blocked"]
+        self.assertEqual(len(winners), 1, results)
+        self.assertEqual(len(losers), 1, results)
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/clone-race"))
+        self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/clone-race"))
+
+    def test_failed_create_leaves_claim_and_ordinary_retry_does_not_adopt(self):
+        original = workstream.git
+        def injected(*args, **kwargs):
+            if args[:2] == ("worktree", "add"):
+                raise workstream.WorkstreamError("injected create failure")
+            return original(*args, **kwargs)
+        workstream.git = injected
+        try:
+            with self.assertRaisesRegex(workstream.WorkstreamError, "injected create failure"):
+                workstream.start("interrupted-create", self.repo)
+        finally:
+            workstream.git = original
+        claim = git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/interrupted-create")
+        self.assertTrue(claim)
+        with self.assertRaisesRegex(workstream.WorkstreamError, "remote claim exists"):
+            workstream.start("interrupted-create", self.repo)
+
     def test_start_report_records_created_then_resumed_disposition(self):
         report: dict[str, str] = {}
         path = workstream.start("disposition-work", self.repo, report=report)
         self.assertEqual(report["checkout"], "created")
         resumed_report: dict[str, str] = {}
-        resumed = workstream.start("disposition-work", self.repo, report=resumed_report)
+        resumed = workstream.resume("disposition-work", self.repo, report=resumed_report)
         self.assertEqual(resumed_report["checkout"], "resumed")
         self.assertEqual(resumed, path)
 
@@ -69,7 +120,7 @@ class WorkstreamTests(unittest.TestCase):
         (self.repo / "main-change").write_text("new\n"); git(self.repo, "add", "main-change"); git(self.repo, "commit", "-m", "main advances"); git(self.repo, "push", "origin", "main")
         git(self.repo, "worktree", "remove", str(task))
         git(self.repo, "branch", "-D", "agent/resume-me")
-        resumed = workstream.start("resume-me", self.repo)
+        resumed = workstream.resume("resume-me", self.repo)
         self.assertEqual(git(resumed, "branch", "--show-current"), "agent/resume-me")
         self.assertEqual(git(resumed, "rev-parse", "HEAD^"), task_head)
         self.assertTrue((resumed / "main-change").exists())
@@ -78,7 +129,7 @@ class WorkstreamTests(unittest.TestCase):
         path = workstream.start("fast-forward", self.repo)
         git(self.repo, "worktree", "remove", str(path)); git(self.repo, "branch", "-D", "agent/fast-forward")
         (self.repo / "main-ff").write_text("advance\n"); git(self.repo, "add", "main-ff"); git(self.repo, "commit", "-m", "advance main"); git(self.repo, "push", "origin", "main")
-        resumed = workstream.start("fast-forward", self.repo)
+        resumed = workstream.resume("fast-forward", self.repo)
         self.assertEqual(git(resumed, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
         self.assertTrue((resumed / "main-ff").exists())
 
@@ -89,7 +140,7 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "worktree", "remove", str(path)); git(self.repo, "branch", "-D", "agent/conflict-work")
         (self.repo / "base").write_text("main version\n"); git(self.repo, "add", "base"); git(self.repo, "commit", "-m", "main conflict"); git(self.repo, "push", "origin", "main")
         with self.assertRaisesRegex(workstream.WorkstreamError, "merge conflicted"):
-            workstream.start("conflict-work", self.repo)
+            workstream.resume("conflict-work", self.repo)
         attached = workstream.find_worktree(self.repo, "agent/conflict-work")
         self.assertTrue(attached.exists())
         self.assertNotEqual(git(attached, "status", "--porcelain"), "")
