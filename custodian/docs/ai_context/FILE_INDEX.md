@@ -1,4 +1,10 @@
 # FILE INDEX — CUSTODIAN
+
+## Asset Workbench
+
+- `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` — living slice roadmap for the general non-Operator Asset Workbench; V1 is FAMILY navigator, REVIEW studio, then safe PIPELINE actions, with later actor/sequence, design, creation/source-intake, and hardening slices.
+- `design/04_architecture/ASSET_PIPELINE_V2.md` and `custodian/tools/assets/` — technical authority consumed by Asset Workbench; the UI must project these contracts rather than create parallel asset truth.
+
 - `custodian/docs/ai_context/task_packets/archived/STARTUP_WORLD_ENTRY_SPINE_V1.md` / `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — completed App/Boot startup-mode spine and active independent review; keeps Awakening default while exposing Twin Solaria and seeded Contract sandbox direct-start paths.
 
 ## Operator Runtime Authority Migration (in progress)
