@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -12,8 +13,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
-import os
-
 _LFS_DEGRADED_MODE_EXPIRES_UTC = datetime(2026, 10, 1, 4, 0, tzinfo=timezone.utc)
 if datetime.now(timezone.utc) < _LFS_DEGRADED_MODE_EXPIRES_UTC:
     os.environ.setdefault("GIT_LFS_SKIP_SMUDGE", "1")
@@ -402,7 +401,15 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
     if not status_clean(path):
         raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
     git("push", "origin", branch, cwd=path)
-    landed = subprocess.run([sys.executable, str(Path(__file__).with_name("land_main.py"))], cwd=path, text=True, capture_output=True)
+    landing_env = os.environ.copy()
+    landing_env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
+    landed = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("land_main.py"))],
+        cwd=path,
+        env=landing_env,
+        text=True,
+        capture_output=True,
+    )
     if landed.returncode:
         raise WorkstreamError(f"land_main blocked; workstream preserved: {(landed.stderr or landed.stdout).strip()}")
     fetch(path)

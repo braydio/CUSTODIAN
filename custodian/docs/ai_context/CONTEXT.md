@@ -4,9 +4,9 @@
 
 Repository defaults are inherited from root and `custodian/AGENTS.md`; prompts
 and packets describe task-specific deltas only. Use isolated worktrees for
-substantial parallel tasks. Validated implementation work commits and lands
-automatically on `origin/main` through `custodian/tools/agent/land_main.py`;
-review is by exception. The helper serializes local landings, rebases onto the
+substantial parallel tasks. Validated implementation work commits and finishes automatically on `origin/main`
+through `custodian/tools/agent/workstream.py finish`; that lifecycle invokes
+`land_main.py` internally for the race-safe landing step. Review is by exception. The helper serializes local landings, rebases onto the
 latest main, retries bounded remote races, and aborts on conflicts without
 force-pushing. Review-only work must carry an explicit `TASK OVERRIDE:`.
 
