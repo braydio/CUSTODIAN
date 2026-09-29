@@ -164,6 +164,7 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` — P2 Slice 1 of the living Asset Workbench roadmap: read-only Asset V2 FAMILY navigator, truthful family/state lifecycle projection, pure search, transactional refresh, and Baby Opossum acceptance coverage.
 - `VAULTWING_BOND_GREET_FINAL_INGEST.md` — P0 auto-claimable convergence of the prior Vaultwing bonding-art checkpoint plus the four same-host `~/Downloads/vw1.png`–`vw4.png` `bond_greet` E/N/S/W strips through source_work → inbox → Asset V2, including bounded staging hardening and final 24/24 visual closure.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, visually verify/correct late seams without moving gameplay authority, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
