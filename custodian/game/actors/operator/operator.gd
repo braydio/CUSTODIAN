@@ -8307,6 +8307,7 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 	var resolved_base := "unarmed_block_enter" if base_animation == "unarmed_block_exit" else base_animation
 
 	if base_animation == "unarmed_block_exit":
+		_hide_modular_block_hold_fx()
 		# Exit: lower body uses directional locomotion (modular walking),
 		# only upper body plays the exit animation (enter played backwards).
 		var lower_base := _get_modular_lower_body_motion_base()
@@ -8325,6 +8326,8 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 
 	if base_animation == "unarmed_block_hold" and velocity.length() > 0.01:
 		return _sync_modular_block_hold_movement_presentation()
+	if base_animation != "unarmed_block_hold":
+		_hide_modular_block_hold_fx()
 
 	# Enter / hold / hitreact: both layers play the same animation
 	var lower_anim := _resolve_modular_body_animation(String(resolved_base), &"lower_body", direction)
@@ -8344,6 +8347,8 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 	modular_upper_body_sprite.speed_scale = 1.0
 	_animation_player.play(modular_lower_body_sprite, lower_anim)
 	_animation_player.play(modular_upper_body_sprite, upper_anim)
+	if base_animation == "unarmed_block_hold":
+		_sync_modular_block_hold_fx(direction)
 	return true
 
 
@@ -8385,11 +8390,37 @@ func _sync_modular_block_hold_movement_presentation() -> bool:
 	modular_upper_body_sprite.speed_scale = 1.0
 	if modular_upper_body_sprite.animation != upper_anim or not modular_upper_body_sprite.is_playing():
 		_animation_player.play(modular_upper_body_sprite, upper_anim)
-	if modular_upper_fx_sprite != null:
-		modular_upper_fx_sprite.visible = false
+	_sync_modular_block_hold_fx(upper_direction)
 	_hide_modular_cape_layer()
 	_claim_modular_body_owner()
 	return true
+
+
+func _sync_modular_block_hold_fx(direction: Vector2) -> bool:
+	if modular_upper_fx_sprite == null:
+		return false
+	var sector := _reduced_horizontal_sector(direction)
+	if not _has_fx_animation(&"unarmed", &"defense", &"block_hold_01", sector):
+		return _play_optional_fx(&"unarmed", &"defense", &"block_hold_01", sector)
+	var animation := _resolve_fx_animation(&"unarmed", &"defense", &"block_hold_01", sector)
+	if animation.is_empty() or not _has_playable_sprite_animation(
+		modular_upper_fx_sprite.sprite_frames, animation
+	):
+		return _play_optional_fx(&"unarmed", &"defense", &"block_hold_01", sector)
+	if _modular_upper_fx_action_animation != animation \
+			or modular_upper_fx_sprite.animation != animation \
+			or not modular_upper_fx_sprite.is_playing():
+		return _play_optional_fx(&"unarmed", &"defense", &"block_hold_01", sector)
+	_show_presentation_layer(modular_upper_fx_sprite)
+	modular_upper_fx_sprite.flip_h = false
+	return true
+
+
+func _hide_modular_block_hold_fx() -> void:
+	if modular_upper_fx_sprite == null:
+		return
+	_hide_presentation_layer(modular_upper_fx_sprite, true)
+	_modular_upper_fx_action_animation = &""
 
 
 func _is_modular_block_active() -> bool:

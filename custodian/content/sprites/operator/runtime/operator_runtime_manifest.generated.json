@@ -6723,6 +6723,14 @@
       "action": "block_hold_01",
       "direction": "e",
       "layers": {
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__fx__unarmed__defense__block_hold_01__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
         "lower_body": {
           "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__e__5f__96.png",
           "frames": 5,
@@ -6768,6 +6776,14 @@
       "action": "block_hold_01",
       "direction": "w",
       "layers": {
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__fx__unarmed__defense__block_hold_01__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
         "lower_body": {
           "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__w__5f__96.png",
           "frames": 5,
