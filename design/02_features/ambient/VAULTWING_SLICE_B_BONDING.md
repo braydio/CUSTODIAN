@@ -60,6 +60,10 @@ record, and semantic presentation contract are live; art ingest and Moment
 review precede production SFX, item acquisition, global persistence ownership,
 and Slice C commands.
 
+The pass notes below are dated implementation snapshots. Current production
+truth is recorded in **Bonding Art Finalization (2026-09-29)**, which supersedes
+their earlier partial-coverage and recovery instructions.
+
 ## Bonding Art Pass 1 — Partial Production Ingest (2026-09-26)
 
 Pass 1 ingested seven clean normalized inbox strips into nine canonical runtime
@@ -78,8 +82,9 @@ use a full visual capture only after the remaining art is ingested.
 
 Pass 2 corrected the Pass-1 rejected-source lifecycle: the `vw8` matte-bearing
 candidate was byte-compared against its canonical copy, removed from
-`source_work`, and retained as hash-named evidence under
-`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/`. The staging
+`source_work`, and briefly retained as hash-named evidence. At the user's later
+direction that rejected artifact was deleted from the repository. Rejected
+bonding candidates are not retained in a repository quarantine. The staging
 helper validates backgrounds before assigning canonical source names, so a
 clean replacement can occupy the previously rejected semantic slot without
 overwriting a different accepted master. The Vaultwing animation set now keeps
@@ -95,22 +100,33 @@ missing. First-bond evidence/full visual review is deferred until all six art
 families are complete; production SFX is still the next presentation task after
 art closure.
 
-## Next Agent Slice — Bonding Art Pass 2 and First-Bond Review
+## Bonding Art Finalization (2026-09-29)
 
-- **Goal:** Resolve missing/rejected ordinals 1, 8, and 10; author the next
-  numbered batch 11–18; then complete the six B.2 actions and review the
-  existing `combat/vaultwing_first_bond` Moment.
-- **Files:** Vaultwing art source under
-  `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`, family
-  inbox/runtime outputs, and validation/Moment reports.
-- **Constraints:** Preserve ordinal mapping and source masters; 256×256 RGBA
-  cells; E/S/N source masters; W mirrored by Asset V2 when valid. Do not change
-  frame/FPS contracts or generate `command_ack`. Keep gameplay timing
-  independent of animation completion.
-- **Acceptance:** All six action contracts ingest with expected counts and
-  directional coverage; focused Vaultwing asset/bond checks pass;
-  `combat/vaultwing_first_bond` passes with `--capture-mode evidence`; use one
-  `full` capture for final visual judgment after art completion.
+Asset V2 now publishes all six B.2 actions across four runtime directions each:
+`notice_bait`, `guarded_approach`, `inspect_bait`, `feed_accept`,
+`watch_player`, and `bond_greet` (24/24 runtime strips). The four
+`bond_greet` sources are authored E/N/S/W, so authored W takes precedence over
+the family's automatic mirror. For the other five actions, W is mirrored from
+E under the unchanged family contract. The full Vaultwing family now has 80/80
+runtime strips.
+The old rejected Pass-1 file is deleted; no rejected bonding candidate is
+stored in source_work, inbox, runtime, or quarantine. The focused stager leaves
+failed inputs at the user's local path for correction.
+
+The named source sheets `vw_east_facing.png`, `vw_north_facing.png`,
+`vw_south_facing.png`, and `vw_west_facing.png` are retained byte-for-byte as
+semantic source masters. Their 5792×724 RGBA canvas is eight separated
+724×724 cells; every seam is transparent. The existing per-frame normalizer
+registers them to approved wild references and emits 2048×256 inbox strips.
+Run `stage_vaultwing_bonding_source_work.py --downloads-batch [DIRECTORY]`
+for repeatable, all-four preflight and staging. This changes no frame/FPS
+contract and does not generate `command_ack`.
+
+The `vaultwing-bonding-animation-suite` registry requirement is fulfilled by
+the live Asset V2 states and remains in the registry as history. Production
+feed/recognition SFX and bait/global-save integration remain deferred; Slice C
+companion commands/behavior are unchanged. The first-bond Moment evidence run
+is recorded at `reports/moment_forge/combat/vaultwing_first_bond/`.
 
 ## Validation
 

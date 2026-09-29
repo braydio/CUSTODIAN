@@ -1,5 +1,38 @@
 # Common Vaultwing source art
 
+## Current bonding-art state (2026-09-29)
+
+The six Slice-B bonding actions are complete in Asset V2: 24/24 runtime
+directions and 80/80 total Vaultwing runtime strips. `bond_greet` has authored
+E/N/S/W directions; W for the other five states is mirrored from E under the
+family contract. The four raw greeting sheets were copied byte-for-byte to
+`bond_greet_{e,n,s,w}_source.png` from these named inputs:
+
+| Input | Direction | SHA-256 |
+| --- | --- | --- |
+| `vw_east_facing.png` | E | `4d2da93b93c46bc84ddfe71d745582bfd4d1db3da8d467c96c79666318e5dd94` |
+| `vw_north_facing.png` | N | `fd696c31037654a6de556f8ba850ebe42cb8a1e3b6e258a5bf8a0c52a0b06ffd` |
+| `vw_south_facing.png` | S | `087a1624f762805c17c66796658fe98b34a08cdd67435786d5c622621203a061` |
+| `vw_west_facing.png` | W | `19ac395ca8c0ffc95306217ab1a3089bfb79139938e7acf6c4635c4f4acaddac` |
+
+Use the named profile to validate and stage the 8×1 sheets:
+
+```bash
+python3 custodian/tools/assets/stage_vaultwing_bonding_source_work.py --downloads-batch [DIRECTORY]
+```
+Omitting the directory uses `~/Downloads`.
+The pass-history sections below describe their state on 2026-09-26 and are
+retained as historical records; their missing-art counts and rejection notes
+are not current production status. The `vaultwing-bonding-animation-suite`
+requirement is fulfilled and retained in the machine registry; the generated
+root `REQUIRED_ASSETS.md` omits it.
+
+Rejected bonding candidates stay at their user-provided local path for
+correction. The stager does not copy them into source_work, inbox, runtime, or
+repository quarantine, and does not delete them automatically. The old Pass-1
+`inspect_bait_s_vw8__2e75b561e102.png` quarantine artifact was removed from the
+repository as part of this finalization.
+
 The regenerated wild South and North replacements are complete at 14/14
 states per facing; this count describes the Slice-A wild baseline only. The wild
 Slice A runtime closeout is implemented with production marker/spawner wiring,
@@ -23,12 +56,11 @@ these temporary strips. The rejected `vw_3`/`vw_7` masters are preserved under
 
 ## Bonding art pass 1 (2026-09-26)
 
-Lifecycle: accepted source masters belong in this directory. Rejected generated
-candidates belong under
-`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/` and must never
-occupy a canonical source-master filename. The rejected Pass-1 `vw8` source was
-removed from source_work after byte comparison and retained as
-`inspect_bait_s_vw8__2e75b561e102.png` in durable quarantine.
+Historical Pass-1 lifecycle: accepted source masters belong in this directory.
+Rejected generated candidates must never occupy a canonical source-master
+filename. The rejected Pass-1 `vw8` source was initially retained in a
+hash-named quarantine; that repository artifact has since been deleted under
+the deletion-only rejection policy described above.
 
 Ordinal mapping is fixed by the pass contract. Accepted root inputs were copied
 byte-for-byte here and removed from the root only after hash checks; the
@@ -43,7 +75,7 @@ rejected vw8 input was quarantined instead:
 | 5 | `vw5.png` | `guarded_approach_s_source.png` | 2172×724 | accepted |
 | 6 | `vw6.png` | `guarded_approach_n_source.png` | 2172×724 | accepted |
 | 7 | `vw7.png` | `inspect_bait_e_source.png` | 1983×793 | accepted |
-| 8 | `vw8.png` | — | 1983×793 | rejected: generated matte; preserved at `custodian/asset_drop/unresolved/vaultwing_bonding_rejected/inspect_bait_s_vw8__2e75b561e102.png` |
+| 8 | `vw8.png` | — | 1983×793 | rejected for generated matte; the temporary quarantine copy was later deleted under the user's deletion-only policy |
 | 9 | `vw9.png` | `inspect_bait_n_source.png` | 1983×793 | accepted |
 | 10 | missing | `feed_accept_e_source.png` | — | not staged |
 

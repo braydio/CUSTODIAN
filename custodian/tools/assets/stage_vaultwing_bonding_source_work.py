@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Stage numbered Vaultwing bonding sheets as immutable sources and V2 inbox strips."""
+"""Stage Vaultwing bonding sheets as immutable sources and Asset V2 inbox strips."""
 from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
+import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -19,7 +22,6 @@ REPO = Path(__file__).resolve().parents[3]
 CUSTODIAN = REPO / "custodian"
 SOURCE_WORK = CUSTODIAN / "asset_drop/source_work/fauna/ambient_vaultwing_common"
 INBOX = CUSTODIAN / "asset_drop/inbox/ambient_vaultwing_common"
-QUARANTINE = CUSTODIAN / "asset_drop/unresolved/vaultwing_bonding_rejected"
 RUNTIME = CUSTODIAN / "content/sprites/ambient_creatures/vaultwing_common/runtime/body"
 
 
@@ -55,6 +57,14 @@ SPECS: dict[int, SourceSpec] = {
     17: SourceSpec("bond_greet", "s", 8, ("ground_idle", "perch_idle")),
     18: SourceSpec("bond_greet", "n", 8, ("ground_idle", "perch_idle")),
 }
+
+BOND_GREET_DOWNLOADS = {
+    "e": "vw_east_facing.png",
+    "n": "vw_north_facing.png",
+    "s": "vw_south_facing.png",
+    "w": "vw_west_facing.png",
+}
+BOND_GREET_SPEC = SourceSpec("bond_greet", "e", 8, ("ground_idle", "perch_idle"))
 
 CELL = 256
 TARGET_ANCHOR = (128, 232)
@@ -115,17 +125,12 @@ def copy_immutable(source: Path, target: Path) -> str:
 
 
 def preserve_candidate(source: Path, spec: SourceSpec, ordinal: int, *, apply: bool) -> tuple[bool, str, str]:
-    """Validate before assigning canonical provenance; rejected attempts stay quarantined."""
+    """Validate before assigning canonical provenance; rejected candidates stay local."""
     source_hash = sha256(source)
     try:
         image, _alpha = source_rgba(source)
         image.close()
     except StageError as error:
-        quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-        if apply:
-            preserved_hash = copy_immutable(source, quarantine)
-            if preserved_hash != source_hash:
-                raise StageError(f"quarantine hash mismatch: {quarantine}")
         return False, source_hash, str(error)
 
     target = SOURCE_WORK / f"{spec.semantic_name}_source.png"
@@ -134,16 +139,6 @@ def preserve_candidate(source: Path, spec: SourceSpec, ordinal: int, *, apply: b
     elif target.exists() and sha256(target) != source_hash:
         raise StageError(f"refusing to overwrite different source master: {target}")
     return True, source_hash, ""
-
-
-def quarantine_candidate(source: Path, spec: SourceSpec, ordinal: int, *, apply: bool) -> str:
-    source_hash = sha256(source)
-    quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-    if apply:
-        preserved_hash = copy_immutable(source, quarantine)
-        if preserved_hash != source_hash:
-            raise StageError(f"quarantine hash mismatch: {quarantine}")
-    return source_hash
 
 
 def source_rgba(path: Path) -> tuple[Image.Image, np.ndarray]:
@@ -261,12 +256,46 @@ def resize_premultiplied(frame: Image.Image, size: tuple[int, int]) -> Image.Ima
     return Image.fromarray(out, "RGBA")
 
 
-def normalize_strip(path: Path, spec: SourceSpec) -> tuple[Image.Image, dict[str, object]]:
+def normalize_strip(
+    path: Path, spec: SourceSpec, *, fixed_cells: bool = False
+) -> tuple[Image.Image, dict[str, object]]:
     sheet, alpha = source_rgba(path)
-    clusters = x_clusters(alpha)
-    if len(clusters) != spec.frames:
-        raise StageError(f"found {len(clusters)} alpha-X frame clusters; expected {spec.frames}")
-    bounds = [frame_bounds(alpha, cluster) for cluster in clusters]
+    if fixed_cells:
+        if sheet.width % spec.frames:
+            raise StageError(
+                f"sheet width {sheet.width} is not divisible into {spec.frames} equal frame cells"
+            )
+        cell_width = sheet.width // spec.frames
+        if sheet.height != cell_width:
+            raise StageError(
+                f"expected square {cell_width}x{cell_width} frame cells; got sheet {sheet.size}"
+            )
+        seams = [
+            int(np.count_nonzero(alpha[:, boundary - 1:boundary + 1] > ALPHA_THRESHOLD))
+            for boundary in range(cell_width, sheet.width, cell_width)
+        ]
+        if any(seams):
+            raise StageError(f"fixed-cell boundaries intersect visible pixels: {seams}")
+        bounds = []
+        for index in range(spec.frames):
+            left = index * cell_width
+            local = alpha[:, left:left + cell_width]
+            ys, xs = np.where(local > ALPHA_THRESHOLD)
+            if not len(xs):
+                raise StageError(f"empty fixed frame cell {index}")
+            box = (left + int(xs.min()), int(ys.min()), left + int(xs.max()), int(ys.max()))
+            x0, y0, x1, y1 = box
+            if x0 <= left + 1 or y0 <= 1 or x1 >= left + cell_width - 2 or y1 >= sheet.height - 2:
+                raise StageError(f"source frame {index} touches its cell edge and may be clipped: {box}")
+            bounds.append(box)
+        clusters: list[tuple[int, int]] = []
+        layout = "fixed_equal_cells"
+    else:
+        clusters = x_clusters(alpha)
+        if len(clusters) != spec.frames:
+            raise StageError(f"found {len(clusters)} alpha-X frame clusters; expected {spec.frames}")
+        bounds = [frame_bounds(alpha, cluster) for cluster in clusters]
+        layout = "alpha_x_clusters"
     anchors = [support_anchor(alpha, box) for box in bounds]
     anchor_x = float(np.median([point[0] for point in anchors]))
     anchor_y = float(np.median([point[1] for point in anchors]))
@@ -307,6 +336,7 @@ def normalize_strip(path: Path, spec: SourceSpec) -> tuple[Image.Image, dict[str
 
     info = {
         "source_dimensions": list(sheet.size),
+        "source_layout": layout,
         "source_alpha_bounds": bounds,
         "source_frame_x_clusters": clusters,
         "source_frame_anchor_medians": [anchor_x, anchor_y],
@@ -317,6 +347,108 @@ def normalize_strip(path: Path, spec: SourceSpec) -> tuple[Image.Image, dict[str
         "target_frame_bounds": normalized_bounds,
     }
     return strip, info
+
+
+def _encoded_png(image: Image.Image) -> bytes:
+    stream = io.BytesIO()
+    image.save(stream, format="PNG", optimize=True)
+    return stream.getvalue()
+
+
+def stage_downloads_batch(downloads: Path, *, dry_run: bool) -> dict[str, object]:
+    """Preflight the named four-direction greeting batch before creating any outputs."""
+    if not downloads.is_dir():
+        raise StageError(f"Downloads directory does not exist: {downloads}")
+    sources: dict[str, Path] = {direction: downloads / name for direction, name in BOND_GREET_DOWNLOADS.items()}
+    missing = [str(path) for path in sources.values() if not path.is_file()]
+    if missing:
+        raise StageError("missing named batch inputs: " + ", ".join(missing))
+    hashes = {direction: sha256(path) for direction, path in sources.items()}
+    if len(set(hashes.values())) != len(hashes):
+        raise StageError("named batch inputs are not unique; duplicate source hashes detected")
+
+    plans: list[dict[str, object]] = []
+    prepared: list[tuple[Path, bytes, Path, bytes, dict[str, object]]] = []
+    for direction, source in sources.items():
+        spec = SourceSpec(
+            BOND_GREET_SPEC.action,
+            direction,
+            BOND_GREET_SPEC.frames,
+            BOND_GREET_SPEC.reference_actions,
+        )
+        try:
+            strip, geometry = normalize_strip(source, spec, fixed_cells=True)
+        except (OSError, ValueError) as error:
+            raise StageError(f"{source.name}: could not decode/normalize: {error}") from error
+        except StageError as error:
+            raise StageError(f"{source.name}: {error}") from error
+        if sha256(source) != hashes[direction]:
+            raise StageError(f"{source.name}: source changed during preflight")
+        encoded = _encoded_png(strip)
+        source_target = SOURCE_WORK / f"bond_greet_{direction}_source.png"
+        inbox_target = INBOX / f"bond_greet__{direction}.png"
+        source_bytes = source.read_bytes()
+        if hashlib.sha256(source_bytes).hexdigest() != hashes[direction]:
+            raise StageError(f"{source.name}: source changed while reading immutable source bytes")
+        for target, content, label in (
+            (source_target, source_bytes, "source master"),
+            (inbox_target, encoded, "inbox strip"),
+        ):
+            if target.exists() and sha256(target) != hashlib.sha256(content).hexdigest():
+                raise StageError(f"refusing to overwrite conflicting {label}: {target}")
+        needs_write = not (source_target.exists() and inbox_target.exists())
+        item = {
+            "local_path": str(source),
+            "sha256": hashes[direction],
+            "direction": direction,
+            "source_dimensions": geometry["source_dimensions"],
+            "normalized_dimensions": geometry["target_dimensions"],
+            "normalized_frame_bounds": geometry["target_frame_bounds"],
+            "source_frame_bounds": geometry["source_alpha_bounds"],
+            "shared_scale": geometry["shared_scale"],
+            "source_work_target": str(source_target.relative_to(REPO)),
+            "inbox_target": str(inbox_target.relative_to(REPO)),
+            "disposition": "planned" if dry_run and needs_write else ("staged" if needs_write else "already_staged"),
+        }
+        plans.append(item)
+        prepared.append((source_target, source_bytes, inbox_target, encoded, item))
+
+    if not dry_run:
+        temporary_paths: list[Path] = []
+        created_paths: list[Path] = []
+        try:
+            for source_target, source_bytes, inbox_target, inbox_bytes, _item in prepared:
+                for target, data in ((source_target, source_bytes), (inbox_target, inbox_bytes)):
+                    if target.exists():
+                        continue
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    with tempfile.NamedTemporaryFile(dir=target.parent, prefix=f".{target.name}.", delete=False) as stream:
+                        stream.write(data)
+                        temp_path = Path(stream.name)
+                    if sha256(temp_path) != hashlib.sha256(data).hexdigest():
+                        raise StageError(f"temporary write verification failed: {target}")
+                    temporary_paths.append(temp_path)
+                    os.replace(temp_path, target)
+                    temporary_paths.remove(temp_path)
+                    created_paths.append(target)
+        except Exception:
+            for path in temporary_paths:
+                path.unlink(missing_ok=True)
+            for path in created_paths:
+                path.unlink(missing_ok=True)
+            raise
+
+    return {
+        "schema": "custodian.vaultwing_bond_greet_stage.v1",
+        "profile": "bond_greet_downloads_named_directions",
+        "dry_run": dry_run,
+        "requirements": plans,
+        "next_commands": [
+            "python3 custodian/tools/assets/asset.py plan ambient_vaultwing_common",
+            "python3 custodian/tools/assets/asset.py status ambient_vaultwing_common",
+            "python3 custodian/tools/assets/asset.py ingest ambient_vaultwing_common",
+        ],
+    }
 
 
 def remove_root_copy_if_untracked(source: Path, expected_hash: str) -> None:
@@ -339,6 +471,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true", help="analyze only; do not copy or write")
     parser.add_argument(
+        "--downloads-batch",
+        nargs="?",
+        const=str(Path.home() / "Downloads"),
+        metavar="DIRECTORY",
+        help="preflight and stage named vw_{east,north,south,west}_facing.png greeting sheets",
+    )
+    parser.add_argument("--json", action="store_true", help="emit stable structured JSON")
+    parser.add_argument(
         "--remove-root-copies",
         action="store_true",
         help="after verified copies, remove only matching untracked root input files",
@@ -351,6 +491,27 @@ def main() -> int:
         help="source ordinals to stage (default: Pass 1, 1 through 10; use 11 through 18 for Pass 2)",
     )
     args = parser.parse_args()
+    if args.json and args.downloads_batch is None:
+        parser.error("--json requires --downloads-batch")
+    if args.downloads_batch is not None:
+        if args.remove_root_copies:
+            parser.error("--remove-root-copies is only available for numbered root inputs")
+        try:
+            result = stage_downloads_batch(Path(args.downloads_batch).expanduser().resolve(), dry_run=args.dry_run)
+        except StageError as error:
+            if args.json:
+                print(json.dumps({"schema": "custodian.vaultwing_bond_greet_stage.v1", "error": str(error)}, sort_keys=True, separators=(",", ":")))
+            else:
+                print(f"stage_vaultwing_bonding_source_work: ERROR: {error}", file=sys.stderr)
+            return 2
+        if args.json:
+            print(json.dumps(result, sort_keys=True, separators=(",", ":")))
+        else:
+            print(json.dumps(result, indent=2, sort_keys=True))
+            print("\nAsset V2 next commands:")
+            for command in result["next_commands"]:
+                print(f"  {command}")
+        return 0
     if args.dry_run and args.remove_root_copies:
         parser.error("--remove-root-copies cannot be combined with --dry-run")
     if len(args.ordinals) != len(set(args.ordinals)) or any(value not in SPECS for value in args.ordinals):
@@ -375,15 +536,7 @@ def main() -> int:
         except (StageError, OSError, ValueError) as error:
             rejected.append(ordinal)
             print(f"REJECT {ordinal} {spec.semantic_name}: {error}")
-            source_hash = quarantine_candidate(source, spec, ordinal, apply=not args.dry_run)
-            quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-            if not args.dry_run:
-                print(f"QUARANTINE {quarantine.relative_to(REPO)} sha256={source_hash}")
-            if args.remove_root_copies and not args.dry_run:
-                if not quarantine.is_file() or sha256(quarantine) != source_hash:
-                    raise StageError(f"refusing to remove source without verified quarantine: {source.name}")
-                remove_root_copy_if_untracked(source, source_hash)
-                print(f"REMOVED ROOT COPY {source.name}; verified quarantine retained")
+            print(f"LEFT LOCAL {source.name}; no source_work, inbox, runtime, or quarantine file created")
             continue
 
         is_accepted, source_hash, rejection_reason = preserve_candidate(
@@ -392,15 +545,7 @@ def main() -> int:
         if not is_accepted:
             rejected.append(ordinal)
             print(f"REJECT {ordinal} {spec.semantic_name}: {rejection_reason}")
-            if not args.dry_run:
-                quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-                print(f"QUARANTINE {quarantine.relative_to(REPO)} sha256={source_hash}")
-            if args.remove_root_copies and not args.dry_run:
-                quarantine = QUARANTINE / f"{spec.semantic_name}_vw{ordinal}__{source_hash[:12]}.png"
-                if not quarantine.is_file() or sha256(quarantine) != source_hash:
-                    raise StageError(f"refusing to remove source without verified quarantine: {source.name}")
-                remove_root_copy_if_untracked(source, source_hash)
-                print(f"REMOVED ROOT COPY {source.name}; verified quarantine retained")
+            print(f"LEFT LOCAL {source.name}; no source_work, inbox, runtime, or quarantine file created")
             continue
 
         target_source = SOURCE_WORK / f"{spec.semantic_name}_source.png"
