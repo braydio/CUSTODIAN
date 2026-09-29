@@ -24,7 +24,6 @@ class SourceLifecycleTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         stage.REPO = self.root
         stage.SOURCE_WORK = self.root / "source_work"
-        stage.QUARANTINE = self.root / "unresolved/vaultwing_bonding_rejected"
 
     def tearDown(self) -> None:
         self.temporary.cleanup()
@@ -35,14 +34,13 @@ class SourceLifecycleTests(unittest.TestCase):
         image.save(path)
         return path
 
-    def test_rejected_quarantined_then_clean_replacement_accepted(self) -> None:
+    def test_rejected_never_enters_source_work_then_clean_replacement_accepted(self) -> None:
         spec = stage.SPECS[8]
         rejected = self.make_png("vw8.png", opaque=True)
-        accepted, rejected_hash, _reason = stage.preserve_candidate(rejected, spec, 8, apply=True)
+        accepted, _rejected_hash, _reason = stage.preserve_candidate(rejected, spec, 8, apply=True)
         self.assertFalse(accepted)
         self.assertFalse((stage.SOURCE_WORK / "inspect_bait_s_source.png").exists())
-        quarantine = stage.QUARANTINE / f"inspect_bait_s_vw8__{rejected_hash[:12]}.png"
-        self.assertEqual(stage.sha256(quarantine), rejected_hash)
+        self.assertFalse((self.root / "unresolved").exists())
 
         replacement = self.make_png("replacement.png", opaque=False)
         accepted, accepted_hash, reason = stage.preserve_candidate(replacement, spec, 8, apply=True)
