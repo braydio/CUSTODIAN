@@ -82,3 +82,87 @@ Measured high-visual-cost queued work at authoring time:
 - What worked: the generic-probe design needed zero bespoke fixture logic for registration/alpha/collision facts in the Awakening seam adopter — only camera-positioning commands — because probes read the real production `Sprite2D` nodes directly.
 
 See `VISUAL_VALIDATION_ECONOMY_TOOLING_V1_CLAUDE_SUMMARY.md` at the repository root for the full closing summary, including copy-paste templates for the four adopters whose runtime doesn't exist yet.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-visual-validation-economy-tooling-v1`
+- Reviewed on main: `dfaf9e269d4c12d98bc03f5800cc34ce3530a50a`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `4`
+- Material evidence gaps: `2`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02, R0-03, R0-04, R0-05, R0-06`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `visual-validation-economy-tooling-v1-review-corrections-1`
+
+### Findings
+
+#### R0-01 — ROI bounds are silently padded
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: Image metrics must accept named ROIs and emit reliable deterministic measurements.
+- Evidence: `custodian/tools/iteration/presentation_image_metrics.py:49` delegates to Pillow `crop` without validating the crop against the source dimensions. A 20×10 fully opaque image cropped at `[15, 0, 10, 10]` reports a 10×10 region with 50% coverage because Pillow pads the out-of-bounds half as transparent pixels.
+- Disposition: `correction`
+- Rationale: Invalid ROI geometry currently produces plausible but fabricated metrics rather than an explicit error.
+
+#### R0-02 — A one-pixel seam on the declared boundary is missed
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: The seam metric must distinguish clean and intentionally broken seam fixtures.
+- Evidence: `presentation_image_metrics.py:142` samples only `boundary - band` and `boundary + band`. In a black 20×10 image with a one-pixel red line at x=10, `seam_discontinuity(..., axis="vertical", boundary=10, band=2)` returns `mean_absolute_delta: 0.0`.
+- Disposition: `correction`
+- Rationale: The declared boundary itself can contain a visible discontinuity while the reported evidence says zero change.
+
+#### R0-03 — Minimum alpha coverage is ignored when both bounds are configured
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: Alpha coverage thresholds must be configurable and enforce their declared limits.
+- Evidence: `presentation_image_metrics.py:187` returns from the max-bound branch before checking the minimum. An all-transparent image with `min_coverage_ratio=0.5` and `max_coverage_ratio=1.0` passes.
+- Disposition: `correction`
+- Rationale: A valid two-sided threshold is evaluated as only its upper bound.
+
+#### R0-04 — Awakening evidence adapter exits successfully on failed metric checks
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: Evidence mode must provide trustworthy compact ROI/contact-sheet output plus machine metrics.
+- Evidence: `custodian/tools/validation/awakening_late_seams_evidence.py:47-67` writes `analyze()` results and returns normally without checking any `passed: false` entry. Its `max_void_ratio: 0.98` check fails for a fully transparent ROI, but `main()` still prints success and returns 0.
+- Disposition: `correction`
+- Rationale: Automation can accept failed evidence checks as successful completion.
+
+#### R0-05 — Four unavailable direct adopters have no tested reusable fixture/spec
+
+- Class: `evidence_gap`
+- Domain: `implementation`
+- Affected acceptance: The five direct-adopter paths must either be implemented or have a tested reusable fixture/spec where their runtime dependency is unavailable.
+- Evidence: The scenario catalog has 26 schema-valid entries and only one new direct adopter, `traversal/awakening_late_seams_v1`. The implementation closing summary contains four copy/paste snippets with unresolved tick placeholders; no test or committed fixture validates those adopter specifications. Required acceptance explicitly calls for tested reusable fixtures/specs.
+- Disposition: `correction`
+- Rationale: The current handoff requires downstream packet authors to fill in and validate the tooling design themselves, so the promised reusable adoption path is not yet proven.
+
+#### R0-06 — Live Awakening adopter outputs are not durably available to paired review
+
+- Class: `evidence_gap`
+- Domain: `implementation`
+- Affected acceptance: Paired reviews can reuse implementation report/metrics/evidence paths; the direct-adopter none/evidence checks expose the promised facts and compact ROI artifacts.
+- Evidence: The implementation summary states that the Awakening no-capture repeat and one evidence-mode run passed, but the corresponding run directory, structured JSON, ROI metrics, and contact sheet are not in the checkout or its tracked files. This review could not reproduce the outputs: the assertion DSL command returned 0 while Godot emitted missing imports, autoload failures, and parse errors from the unimported worktree. No adopter run or evidence-mode result is claimed by this review.
+- Disposition: `correction`
+- Rationale: The feature is available on current main and its implementation packet required one runnable none-mode proof plus one evidence-mode proof. Without durable machine evidence or a clean reproducible rerun, this paired review cannot independently confirm those acceptance claims.
+
+### Validation Evidence
+
+- `python3 -m unittest custodian.tools.iteration.test_build_moment_report custodian.tools.iteration.test_presentation_image_metrics` — 18 tests passed.
+- `python3 custodian/tools/validation/moment_forge_schema_smoke.py` — passed.
+- `python3 custodian/tools/validation/moment_forge_report_smoke.py` — passed.
+- `python3 custodian/tools/validation/moment_forge_changed_router_smoke.py` — passed.
+- `python3 custodian/tools/iteration/run_moment.py --list --json` — 26 existing scenarios, every entry `schema_valid: true`.
+- Synthetic probes confirmed R0-01 through R0-03.
+- `godot --headless --path . --script res://tools/validation/moment_assertion_dsl_smoke.gd` printed the DSL smoke PASS and exited 0, but also emitted thousands of missing-import, autoload, and parse errors due the worktree's unimported project state. This is not counted as a clean runtime pass; no direct adopter run or evidence-mode output is claimed.
+- Implementation summary reports prior live Awakening runs, but no corresponding structured result/metrics/contact-sheet artifact was present for review reuse.
+- Code review found no evidence that metrics mutate simulation state, confer route/collision authority, or encode aesthetic approval. Paired review instructions correctly prioritize structured evidence reuse.
