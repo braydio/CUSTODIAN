@@ -1,7 +1,7 @@
 # VAULTWING BONDING ART FINAL INGEST
 
 - Workstream: `vaultwing-bonding-art-final-ingest`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`
@@ -15,6 +15,8 @@
 - Acceptance: Explicit source mapping is regression-covered and does not change default numbered-source discovery; the eleven approved inputs produce eleven canonical accepted source masters and fifteen new runtime directional strips; the superseded input is retained only as rejected evidence; bonding coverage reaches 24/24 and total Vaultwing runtime reaches 80 strips; Asset V2 reports all six bonding actions complete; `vaultwing_asset_contract`, `vaultwing_runtime`, and `vaultwing_bond` pass; `combat/vaultwing_first_bond` passes evidence review and exactly one final full-capture review; active docs reflect 18 authored masters / 24 bonding strips / 80 total strips; no task-owned root `vw*.png` clutter remains after verified staging.
 - Task overrides: none
 - Deferred: production feed vocalization; bond-recognition call; bait pickup/InventoryManager consumption; global save ownership; Slice C commands/behavior.
+- Progress: Implemented explicit `--source-map ORDINAL=PATH` handling and focused regression coverage. Validation passed (6 tests). Blocked before art staging because the required local inputs `vw1.png` through `vw12.png` are absent from both the coordination checkout and the claimed worktree. Resume by placing the original twelve inputs in the coordination checkout root and copying them into this worktree; do not synthesize substitutes.
+- Agent/session: Codex 2026-09-28
 
 ## Work Surface
 

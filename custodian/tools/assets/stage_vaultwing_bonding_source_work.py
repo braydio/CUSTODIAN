@@ -101,6 +101,37 @@ def find_sources(ordinals: list[int]) -> tuple[dict[int, Path], set[int], list[s
     return found, ambiguous, messages
 
 
+def parse_source_map(entries: list[str], *, repo: Path = REPO) -> dict[int, Path]:
+    """Parse explicit ORDINAL=PATH inputs without changing numbered discovery."""
+    mapped: dict[int, Path] = {}
+    used_paths: set[Path] = set()
+    for entry in entries:
+        ordinal_text, separator, path_text = entry.partition("=")
+        if not separator or not ordinal_text or not path_text:
+            raise StageError(f"invalid --source-map {entry!r}; expected ORDINAL=PATH")
+        try:
+            ordinal = int(ordinal_text)
+        except ValueError as error:
+            raise StageError(f"invalid --source-map ordinal {ordinal_text!r}") from error
+        if ordinal not in SPECS:
+            raise StageError(f"--source-map ordinal must be from 1 through 18: {ordinal}")
+        if ordinal in mapped:
+            raise StageError(f"duplicate --source-map ordinal: {ordinal}")
+        path = Path(path_text)
+        if not path.is_absolute():
+            path = repo / path
+        path = path.resolve()
+        if path in used_paths:
+            raise StageError(f"duplicate --source-map path: {path}")
+        if not path.is_file():
+            raise StageError(f"--source-map input does not exist or is not a file: {path}")
+        mapped[ordinal] = path
+        used_paths.add(path)
+    if not mapped:
+        raise StageError("--source-map requires at least one ORDINAL=PATH entry")
+    return mapped
+
+
 def copy_immutable(source: Path, target: Path) -> str:
     target.parent.mkdir(parents=True, exist_ok=True)
     source_hash = sha256(source)
@@ -347,17 +378,35 @@ def main() -> int:
         "--ordinals",
         nargs="+",
         type=int,
-        default=list(range(1, 11)),
+        default=None,
         help="source ordinals to stage (default: Pass 1, 1 through 10; use 11 through 18 for Pass 2)",
+    )
+    parser.add_argument(
+        "--source-map",
+        action="append",
+        metavar="ORDINAL=PATH",
+        help="explicit semantic source input; repeat for each mapped source",
     )
     args = parser.parse_args()
     if args.dry_run and args.remove_root_copies:
         parser.error("--remove-root-copies cannot be combined with --dry-run")
-    if len(args.ordinals) != len(set(args.ordinals)) or any(value not in SPECS for value in args.ordinals):
+    if args.source_map and args.ordinals is not None:
+        parser.error("--source-map cannot be combined with --ordinals")
+    selected = args.ordinals if args.ordinals is not None else list(range(1, 11))
+    if len(selected) != len(set(selected)) or any(value not in SPECS for value in selected):
         parser.error("--ordinals must contain unique values from 1 through 18")
 
-    selected_ordinals = sorted(args.ordinals)
-    found, ambiguous, messages = find_sources(selected_ordinals)
+    if args.source_map:
+        try:
+            found = parse_source_map(args.source_map)
+        except StageError as error:
+            parser.error(str(error))
+        selected_ordinals = sorted(found)
+        ambiguous: set[int] = set()
+        messages: list[str] = []
+    else:
+        selected_ordinals = sorted(selected)
+        found, ambiguous, messages = find_sources(selected_ordinals)
     for message in messages:
         print(message)
     missing = sorted(set(selected_ordinals) - set(found) - ambiguous)

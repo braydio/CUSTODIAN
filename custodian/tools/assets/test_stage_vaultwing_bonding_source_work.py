@@ -75,6 +75,31 @@ class SourceLifecycleTests(unittest.TestCase):
         self.assertNotIn(8, found)
         self.assertEqual(ambiguous, {8})
 
+    def test_explicit_source_map_resolves_paths_relative_to_repo(self) -> None:
+        source = self.make_png("vw11.png", opaque=False)
+        mapped = stage.parse_source_map(["8=vw11.png"], repo=self.root)
+        self.assertEqual(mapped, {8: source.resolve()})
+
+    def test_explicit_source_map_rejects_bad_duplicate_and_missing_entries(self) -> None:
+        source = self.make_png("vw11.png", opaque=False)
+        cases = [
+            (["nope=vw11.png"], "invalid --source-map ordinal"),
+            (["19=vw11.png"], "ordinal must be from 1 through 18"),
+            (["8=vw11.png", "8=vw11.png"], "duplicate --source-map ordinal"),
+            (["8=vw11.png", "9=vw11.png"], "duplicate --source-map path"),
+            (["8=missing.png"], "does not exist"),
+            (["8="], "expected ORDINAL=PATH"),
+        ]
+        for entries, expected in cases:
+            with self.subTest(entries=entries), self.assertRaisesRegex(stage.StageError, expected):
+                stage.parse_source_map(entries, repo=self.root)
+
+    def test_numbered_discovery_remains_available(self) -> None:
+        source = self.make_png("vw8.png", opaque=False)
+        found, ambiguous, _messages = stage.find_sources([8])
+        self.assertEqual(found, {8: source})
+        self.assertFalse(ambiguous)
+
 
 if __name__ == "__main__":
     unittest.main()
