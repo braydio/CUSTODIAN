@@ -9,6 +9,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+# TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
+import os
+from datetime import datetime, timezone
+
+_LFS_DEGRADED_MODE_EXPIRES_UTC = datetime(2026, 10, 1, 4, 0, tzinfo=timezone.utc)
+if datetime.now(timezone.utc) < _LFS_DEGRADED_MODE_EXPIRES_UTC:
+    os.environ.setdefault("GIT_LFS_SKIP_SMUDGE", "1")
+# TEMP_LFS_DEGRADED_MODE_END
 
 class LandingError(RuntimeError):
     pass

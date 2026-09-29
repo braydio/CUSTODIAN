@@ -13356,6 +13356,18 @@ region = Rect2(480, 0, 96, 96)
 atlas = ExtResource("637_eaurn")
 region = Rect2(480, 0, 96, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_c87a726ce1e9"]
+atlas = ExtResource("333_tj48o")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_5141442e49d3"]
+atlas = ExtResource("333_tj48o")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_compat_d57266533b25"]
+atlas = ExtResource("333_tj48o")
+region = Rect2(192, 0, 96, 96)
+
 [resource]
 animations = [{
 "frames": [{
@@ -13449,7 +13461,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/e/full_body",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13484,7 +13496,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/e/fx",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13519,7 +13531,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/e/lower_body",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13554,7 +13566,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/e/upper_body",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13589,7 +13601,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/w/full_body",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13624,7 +13636,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/w/fx",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13659,7 +13671,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/w/lower_body",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13694,7 +13706,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_01/w/upper_body",
-"speed": 12.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13793,7 +13805,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/e/full_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13822,7 +13834,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/e/fx",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13851,7 +13863,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/e/lower_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13880,7 +13892,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/e/upper_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13909,7 +13921,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/w/full_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13938,7 +13950,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/w/fx",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13967,7 +13979,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/w/lower_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -13996,7 +14008,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"melee_1h/attack/fast_02/w/upper_body",
-"speed": 12.0
+"speed": 14.0
 }, {
 "frames": [{
 "duration": 1.0,

@@ -59,6 +59,7 @@ cannot be lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `AGENT_DISPATCH_CLAIM_RECEIPT_HARDENING.md` — P0 dispatcher correction: durable structured claim receipts, lost-output recovery, created/resumed checkout identity, post-start verification, and already-claimed diagnostics.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
 - `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening, blocked on `workstream-finish-landed-closeout-hardening`.
@@ -74,9 +75,6 @@ cannot be lost when the ephemeral worktree is removed.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
 - `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
 - `AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — P2 one-time conservative cleanup of pre-hardened stale `agent/*` branches and `Recently Complete` packet residue after finish hardening lands.
-### Ready / Manual
-
-- `OPERATOR_AUTHORING_SURFACE_HARDENING.md` — P1 manual packet to reconcile active Operator authoring docs with Workbench V5 / Operator V2, expose targeted/strict focused ingest controls, and add regression coverage for tooling-doc drift.
 
 ### In Progress
 
