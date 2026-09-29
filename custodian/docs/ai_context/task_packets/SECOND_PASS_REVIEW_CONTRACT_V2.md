@@ -4,7 +4,7 @@
 - Workstream: `second-pass-review-contract-v2`
 - Status: `ready`
 - Dispatch: `auto`
-- Priority: `P1`
+- Priority: `P0`
 - Depends on: `review-agent-review-pipeline-review-corrections-1`
 - Locks: `agent-workflow`
 - Kind: `implementation`
