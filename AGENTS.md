@@ -82,6 +82,10 @@ commit, or push.`
   push recovery work before landing and delete completed task branches only after
   verifying reachability from `origin/main`. See
   `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+- The normal completion entrypoint is `python3 custodian/tools/agent/workstream.py finish ...`.
+  Do not invoke `land_main.py` directly for destructive landing; it is an internal
+  race-safe landing primitive used by `workstream.py finish`. Direct dry-run
+  inspection remains allowed.
 - After landing a scoped task branch on `origin/main`, synchronize the user's
   project-root checkout by running `git -C <project-root> pull --ff-only origin main`.
   This is a required post-push step; updating only the scoped worktree is not

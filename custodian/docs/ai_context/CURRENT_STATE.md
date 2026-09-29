@@ -49,9 +49,11 @@ Every normal implementation run uses the ephemeral workstream lifecycle in
 and safe post-landing sync. `workstream.py` now runs a pre-teardown artifact gate:
 associated packets must be complete and archived, stale active packet-index
 entries block finish, and any untracked run artifact must be explicitly resolved
-before the disposable worktree can be removed. `workstream.py` pushes recovery work before landing,
-and `land_main.py` accepts the branch's own upstream while still rejecting
-publication on unrelated remote refs. Successful finish verifies ancestry from
+before the disposable worktree can be removed. `workstream.py` pushes recovery work before landing and is the required normal
+completion entrypoint. It invokes `land_main.py` internally; destructive direct
+`land_main.py` invocation is blocked while dry-run inspection remains available.
+The lander accepts the branch's own upstream while still rejecting publication
+on unrelated remote refs. Successful finish verifies ancestry from
 `origin/main` before removing completed branch/worktree state. Branch archive
 hygiene is ancestry-based and report-only by default. Review-only tasks require
 an explicit `TASK OVERRIDE:`.

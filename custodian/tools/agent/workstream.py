@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -12,8 +13,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
-import os
-
 _LFS_DEGRADED_MODE_EXPIRES_UTC = datetime(2026, 10, 1, 4, 0, tzinfo=timezone.utc)
 if datetime.now(timezone.utc) < _LFS_DEGRADED_MODE_EXPIRES_UTC:
     os.environ.setdefault("GIT_LFS_SKIP_SMUDGE", "1")
@@ -260,7 +259,7 @@ def sync_remote_branch(path: Path, branch: str) -> bool:
     return True
 
 
-def start(workstream_id: str, repo: Path | None = None) -> Path:
+def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None) -> Path:
     repo = (repo or root_repo()).resolve()
     branch = branch_for(workstream_id)
     fetch(repo)
@@ -296,6 +295,8 @@ def start(workstream_id: str, repo: Path | None = None) -> Path:
         else:
             git("push", "-u", "origin", branch, cwd=path)
         print(f"reusing clean attached worktree: {path}")
+        if report is not None:
+            report["checkout"] = "resumed"
         return path
 
     local_exists = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch}"], cwd=repo).returncode == 0
@@ -317,6 +318,8 @@ def start(workstream_id: str, repo: Path | None = None) -> Path:
         git("worktree", "add", "-b", branch, str(path), "origin/main", cwd=repo)
         git("push", "-u", "origin", branch, cwd=path)
     print(f"workstream: {branch}\nworktree: {path}")
+    if report is not None:
+        report["checkout"] = "created"
     return path
 
 
@@ -398,7 +401,15 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
     if not status_clean(path):
         raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
     git("push", "origin", branch, cwd=path)
-    landed = subprocess.run([sys.executable, str(Path(__file__).with_name("land_main.py"))], cwd=path, text=True, capture_output=True)
+    landing_env = os.environ.copy()
+    landing_env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
+    landed = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("land_main.py"))],
+        cwd=path,
+        env=landing_env,
+        text=True,
+        capture_output=True,
+    )
     if landed.returncode:
         raise WorkstreamError(f"land_main blocked; workstream preserved: {(landed.stderr or landed.stdout).strip()}")
     fetch(path)

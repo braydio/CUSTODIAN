@@ -115,11 +115,30 @@ matchpal() {
     --strength "$strength" --max-colors "$max_colors"
 }
 
-# -- Convert single sprites or spritesheets to pixel art (crisp/balanced/clustered)
-#    Usage: pixelart <source> [--size 96] [--choose balanced] [--sheet] [--frames N] [--grid WxH]
+# -- Convert single sprites or spritesheets to pixel art.
+#    Default conversion is crisp / method 1 (nearest-neighbor final reduction).
+#    Usage: pixelart <source> [--size 96] [--choose crisp] [--sheet] [--frames N] [--grid WxH]
 pixelart() {
   _update_usage "pixelart"
-  python3 "${CUSTODIAN_GODOT}/tools/art/custodian_pixelart_converter.py" "$@"
+
+  # CUSTODIAN Operator/Codex default: crisp method 1. Preserve an explicit
+  # --choose override only for the exceptional cases authorized by an active
+  # design specification.
+  local has_choose=0 arg
+  for arg in "$@"; do
+    case "${arg}" in
+      --choose|--choose=*)
+        has_choose=1
+        break
+        ;;
+    esac
+  done
+
+  if [[ "${has_choose}" -eq 0 ]]; then
+    python3 "${CUSTODIAN_GODOT}/tools/art/custodian_pixelart_converter.py" "$@" --choose 1
+  else
+    python3 "${CUSTODIAN_GODOT}/tools/art/custodian_pixelart_converter.py" "$@"
+  fi
 }
 
 # -- Batch-match all fast_strike_01 palettes to their fast_windup_01 counterparts

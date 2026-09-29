@@ -5,12 +5,12 @@ from __future__ import annotations
 
 import argparse
 import fcntl
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 # TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
-import os
 from datetime import datetime, timezone
 
 _LFS_DEGRADED_MODE_EXPIRES_UTC = datetime(2026, 10, 1, 4, 0, tzinfo=timezone.utc)
@@ -92,6 +92,11 @@ def fetch_main(root: Path, remote: str, target: str) -> str:
 
 
 def land(remote: str = "origin", target: str = "main", attempts: int = 3, dry_run: bool = False) -> int:
+    if not dry_run and os.environ.get("CUSTODIAN_WORKSTREAM_FINISH") != "1":
+        raise LandingError(
+            "direct landing is disabled; complete implementation work with "
+            "workstream.py finish <workstream-id> --validation-report <report>"
+        )
     root = repo_root()
     branch = branch_name(root)
     if branch == target:

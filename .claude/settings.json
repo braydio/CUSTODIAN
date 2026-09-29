@@ -15,7 +15,8 @@
   },
   "permissions": {
     "allow": [
-      "Bash(python3 custodian/tools/agent/land_main.py:*)"
+      "Bash(python3 custodian/tools/agent/workstream.py finish:*)",
+      "Bash(python3 custodian/tools/agent/land_main.py --dry-run:*)"
     ]
   }
 }

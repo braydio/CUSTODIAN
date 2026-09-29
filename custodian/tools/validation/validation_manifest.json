@@ -101,7 +101,8 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
-        ".github/workflows/expire-lfs-degraded-mode.yml"
+        ".github/workflows/expire-lfs-degraded-mode.yml",
+        ".claude/settings.json"
       ],
       "timeout_sec": 30,
       "needs_import": false

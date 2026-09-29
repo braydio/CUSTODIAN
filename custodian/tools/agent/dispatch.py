@@ -7,7 +7,9 @@ import argparse
 import contextlib
 import fcntl
 import importlib.util
+import inspect
 import io
+import json
 import os
 import re
 import subprocess
@@ -185,14 +187,58 @@ def _fetch(repo: Path) -> None:
     git(repo, "fetch", "--prune", "origin")
 
 
-def _mutex(repo: Path):
+def _git_common_dir(repo: Path) -> Path:
     common = Path(git(repo, "rev-parse", "--git-common-dir"))
     if not common.is_absolute():
         common = (repo / common).resolve()
+    return common
+
+
+def _mutex(repo: Path):
+    common = _git_common_dir(repo)
     common.mkdir(parents=True, exist_ok=True)
     handle = (common / "custodian-dispatch.lock").open("a")
     fcntl.flock(handle, fcntl.LOCK_EX)
     return handle
+
+
+def _last_claim_path(repo: Path) -> Path:
+    return _git_common_dir(repo) / "custodian-dispatch" / "last-claim.json"
+
+
+def _write_last_claim_receipt(repo: Path, receipt: dict) -> None:
+    """Persist the latest successful claim outside the worktree for stdout-loss recovery."""
+    path = _last_claim_path(repo)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(receipt, indent=2) + "\n")
+    os.replace(tmp, path)
+
+
+def _attached_local_worktree(repo: Path, branch: str) -> str | None:
+    for record in git(repo, "worktree", "list", "--porcelain").split("\n\n"):
+        lines = record.splitlines()
+        if lines and f"branch refs/heads/{branch}" in lines:
+            return lines[0].removeprefix("worktree ")
+    return None
+
+
+def _start_workstream(module, workstream_id: str, repo: Path) -> tuple[Path, str | None]:
+    """Call workstream.start(), passing a disposition side-channel only if supported.
+
+    Test doubles that mock module.start with a plain (work_id, repo) callable must
+    keep working unmodified, so the receiver capability is probed rather than assumed.
+    """
+    report: dict[str, str] = {}
+    try:
+        accepts_report = "report" in inspect.signature(module.start).parameters
+    except (TypeError, ValueError):
+        accepts_report = False
+    if accepts_report:
+        worktree = module.start(workstream_id, repo, report=report)
+    else:
+        worktree = module.start(workstream_id, repo)
+    return Path(worktree), report.get("checkout")
 
 
 def _load_workstream(repo: Path):
@@ -289,6 +335,15 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         if selected is None:
             if workstream_id and not candidates:
                 raise DispatchError(f"packet for workstream {workstream_id} does not exist on origin/main")
+            if workstream_id and workstream_id in claimed:
+                branch = f"agent/{workstream_id}"
+                attached = _attached_local_worktree(repo, branch)
+                raise DispatchError(
+                    "ALREADY CLAIMED\n"
+                    f"workstream: {workstream_id}\n"
+                    f"branch: {branch}\n"
+                    f"worktree: {attached or 'not attached locally'}"
+                )
             if workstream_id:
                 raise DispatchError("claim blocked: " + (reasons[0] if reasons else "not eligible"))
             print("NO ELIGIBLE AUTO TASK")
@@ -326,20 +381,59 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         # Suppress the legacy start banner so this command emits one stable result.
         try:
             with contextlib.redirect_stdout(io.StringIO()):
-                worktree = module.start(selected.workstream, repo)
+                worktree, checkout = _start_workstream(module, selected.workstream, repo)
         except module.WorkstreamError as error:
             raise DispatchError(f"workstream start blocked: {error}") from error
+
+        # Post-start identity verification: the receipt is the assignment authority,
+        # so nothing is printed/persisted as CLAIMED unless the checkout returned by
+        # workstream.py is actually the one selected, not merely some worktree that
+        # happens to exist. Any failure here leaves the recovery claim ref intact.
+        expected_branch = f"agent/{selected.workstream}"
+        if not worktree.is_dir():
+            raise DispatchError(
+                f"post-start verification failed: worktree does not exist at {worktree}; "
+                f"recovery claim retained at origin/{claim_ref}"
+            )
+        actual_branch = git(worktree, "branch", "--show-current", check=False)
+        if actual_branch != expected_branch:
+            raise DispatchError(
+                f"post-start verification failed: worktree {worktree} is on branch "
+                f"{actual_branch!r}, expected {expected_branch!r}; "
+                f"recovery claim retained at origin/{claim_ref}"
+            )
         _fetch(repo)
-        published = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/agent/{selected.workstream}"], cwd=repo).returncode == 0
+        published = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{expected_branch}"], cwd=repo).returncode == 0
         if not published:
             raise DispatchError(f"workstream branch was not confirmed published; recovery claim retained at origin/{claim_ref}")
+        claimed_after = _claimed(repo)
+        if selected.workstream not in claimed_after:
+            raise DispatchError(
+                f"post-start verification failed: dispatcher claimed-state logic does not yet "
+                f"recognize {selected.workstream} as claimed; recovery claim retained at origin/{claim_ref}"
+            )
         # The canonical workstream branch is now durable; deleting the temporary
         # claim is safe. If cleanup fails, both refs remain and status explains it.
         subprocess.run(["git", "push", "origin", f":{claim_ref}"], cwd=repo, text=True, capture_output=True)
         git(repo, "update-ref", "-d", local_claim_ref, check=False)
+
+        receipt = {
+            "schema": "custodian.dispatch.claim.v1",
+            "result": "claimed",
+            "workstream": selected.workstream,
+            "prior_status": selected.status,
+            "branch": expected_branch,
+            "worktree": str(worktree),
+            "packet": selected.path,
+            "checkout": checkout,
+            "verified": True,
+            "agent": agent,
+        }
+        _write_last_claim_receipt(repo, receipt)
+
         print("CLAIMED")
         print(f"workstream: {selected.workstream}")
-        print(f"branch: agent/{selected.workstream}")
+        print(f"branch: {expected_branch}")
         print(f"worktree: {worktree}")
         print(f"packet: {selected.path}")
         print("\nNEXT:")
@@ -347,7 +441,67 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         print(f"Read AGENTS.md, custodian/AGENTS.md, then {selected.path}.")
         print("Implement only this workstream and finish through workstream.py.")
         print(f"agent: {agent}")
+        print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt))
         return 0
+
+
+def last_claim(repo: Path, *, as_json: bool) -> int:
+    """Recover the last successful claim's identity after stdout loss.
+
+    Read-only: refreshes remote-tracking refs to judge freshness but never
+    mutates, re-claims, or recreates anything, even when the receipt is stale.
+    """
+    repo = _coordination_repo(repo)
+    path = _last_claim_path(repo)
+    if not path.is_file():
+        if as_json:
+            print(json.dumps({"schema": "custodian.dispatch.claim.v1", "result": "no-receipt"}))
+        else:
+            print("NO LAST CLAIM RECEIPT")
+        return 1
+
+    try:
+        receipt = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as error:
+        raise DispatchError(f"last-claim receipt is unreadable: {error}") from error
+
+    _fetch(repo)
+    branch = receipt.get("branch")
+    worktree = receipt.get("worktree")
+    stale_reasons: list[str] = []
+    if worktree:
+        worktree_path = Path(worktree)
+        if not worktree_path.is_dir():
+            stale_reasons.append("worktree path no longer exists locally")
+        elif branch:
+            actual_branch = git(worktree_path, "branch", "--show-current", check=False)
+            if actual_branch != branch:
+                stale_reasons.append(f"worktree is now on branch {actual_branch!r}, not {branch!r}")
+    if branch:
+        published = subprocess.run(
+            ["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo
+        ).returncode == 0
+        if not published:
+            stale_reasons.append(f"remote {branch} no longer exists")
+
+    freshness = "stale" if stale_reasons else "current"
+    if as_json:
+        output = dict(receipt)
+        output["freshness"] = freshness
+        output["freshness_reasons"] = stale_reasons
+        print(json.dumps(output))
+    else:
+        print("LAST CLAIM")
+        print(f"workstream: {receipt.get('workstream')}")
+        print(f"branch: {branch}")
+        print(f"worktree: {worktree}")
+        print(f"packet: {receipt.get('packet')}")
+        print(f"checkout: {receipt.get('checkout')}")
+        suffix = f" ({'; '.join(stale_reasons)})" if stale_reasons else ""
+        print(f"freshness: {freshness}{suffix}")
+        print("\nNEXT:")
+        print(f"cd {worktree}")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -356,9 +510,12 @@ def main(argv: list[str] | None = None) -> int:
     subs.add_parser("status")
     p = subs.add_parser("claim-next"); p.add_argument("--agent", default="codex")
     p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default="codex")
+    p = subs.add_parser("last-claim"); p.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args(argv)
     try:
         repo = Path(git(Path.cwd(), "rev-parse", "--show-toplevel")).resolve()
+        if args.command == "last-claim":
+            return last_claim(repo, as_json=args.as_json)
         if args.command == "status":
             status(repo)
             return 0

@@ -34,7 +34,11 @@ claims require explicit operator recovery. `Priority` is `P0`–`P3` (default `P
 and `Locks` lists narrow contention IDs. A missing `Dispatch` remains manual.
 Claims create/resume exactly one existing `agent/<id>` workstream and do not
 edit packet state on main; normal lifecycle progression and archival happen
-on the task branch. Continuous workers and cross-machine leases are deferred.
+on the task branch. A successful claim's `CLAIMED` banner and
+`CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line are the assignment authority; if
+that output is lost, recover it read-only with `dispatch.py last-claim` (or
+`--json`) rather than inferring ownership from worktree/branch activity.
+Continuous workers and cross-machine leases are deferred.
 
 ## Ownership
 
@@ -59,7 +63,6 @@ cannot be lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `AGENT_DISPATCH_CLAIM_RECEIPT_HARDENING.md` — P0 dispatcher correction: durable structured claim receipts, lost-output recovery, created/resumed checkout identity, post-start verification, and already-claimed diagnostics.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
 - `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening, blocked on `workstream-finish-landed-closeout-hardening`.
