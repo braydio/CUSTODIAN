@@ -84,6 +84,12 @@ Required quality:
   implementation that merely compiles.
 - **Validation** gives focused falsification first and the required closeout
   gate. Avoid broad sweeps when focused tests prove the slice.
+- **Visual evidence economy** applies whenever acceptance touches presentation.
+  Name the code/state/geometry/asset/pixel-metric checks that run before model
+  vision, justify any full-frame or motion capture that remains necessary, and
+  minimize renderer evidence to the smallest ROI/keyframe set that can falsify
+  the defect. Reuse durable implementation evidence in paired review instead of
+  recapturing equivalent frames. Subjective visual acceptance stays human-owned.
 - **Deferred** records intentional omissions so they are not rediscovered as
   accidental incompleteness.
 
@@ -107,6 +113,7 @@ Before setting `Status: ready`:
 [ ] Change, Preserve, and Non-goals bound the blast radius.
 [ ] Acceptance is measurable.
 [ ] Validation names focused checks before broad checks.
+[ ] Visual evidence is minimized and justified; non-visual alternatives are named first when presentation is in scope.
 [ ] Dependencies and Locks reflect actual ordering/contention.
 [ ] Review intent is explicit.
 [ ] Deferred work is intentional and visible.
