@@ -7,15 +7,15 @@
 - Depends on: `none`
 - Locks: `none`
 - Goal: Close Slice-B Vaultwing bonding body presentation by ingesting the remaining mapped source sheets through the existing Asset Pipeline V2 family, without changing bonding mechanics or generic ambient animation behavior.
-- Current measured state: On main at `06b0143ce0a4f2bcadaed072f312f502a157401c`, prior Pass 2 source-hygiene and direction-safe fallback fixes are live. Production coverage is 7/18 authored E/S/N bonding masters, 9/24 bonding runtime strips, and 65/80 total Vaultwing runtime strips. The user's twelve root files `vw1.png` through `vw12.png` are local task inputs, not semantic ordinal names.
-- Task-specific authority: `design/02_features/ambient/VAULTWING_SYSTEM.md`, `design/02_features/ambient/VAULTWING_SLICE_B_BONDING.md`, `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`, and the measured starting evidence in `VAULTWING_BONDING_ART_PASS_2_CLAUDE_SUMMARY.md`.
-- Change: Add a minimal explicit source-map input to `custodian/tools/assets/stage_vaultwing_bonding_source_work.py`; stage the eleven approved local sheets into canonical source_work/inbox paths; quarantine the superseded wrong-facing sheet; ingest through `ambient_vaultwing_common`; visually validate the completed first-bond presentation; update only docs made stale by the completed art coverage.
-- Preserve: Existing immutable accepted source masters; durable rejected-source quarantine; strict direction behavior for the six bonding actions; generic `AmbientCreatureAnimationSet` fallback behavior; all 56 wild Vaultwing runtime strips; existing bond progression/timing/allegiance/persistence/spawn behavior; unrelated shared-worktree changes.
+- Current measured state: Pass 3 has ingested eight accepted masters into eleven new runtime strips. Production coverage is now 15/18 authored E/S/N bonding masters, 20/24 bonding runtime strips, and 76/80 total Vaultwing runtime strips. The only missing production body art is `bond_greet` E/S/N plus mirrored W. The previously rejected `vw2`, `vw9`, `vw10`, and `vw12` inputs are deletion-only and are not production evidence.
+- Task-specific authority: `design/02_features/ambient/VAULTWING_SYSTEM.md`, `design/02_features/ambient/VAULTWING_SLICE_B_BONDING.md`, `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`, and the current measurements in `VAULTWING_BONDING_ART_FINAL_INGEST_CLAUDE_SUMMARY.md`.
+- Change: Remove the rejected bonding-art quarantine lifecycle; delete known wrong-facing/clipped inputs after hash verification; keep the existing explicit source-map seam; ingest corrected `bond_greet` E/S/N sheets through `ambient_vaultwing_common`; visually validate the completed first-bond presentation; update only docs made stale by the completed art coverage.
+- Preserve: Existing immutable accepted source masters; strict direction behavior for the six bonding actions; generic `AmbientCreatureAnimationSet` fallback behavior; all 56 wild Vaultwing runtime strips; the 20 currently accepted bonding runtime strips; existing bond progression/timing/allegiance/persistence/spawn behavior; unrelated shared-worktree changes.
 - Non-goals: Do not generate or repaint art; do not add feed/bond SFX; do not implement bait inventory consumption, global save orchestration, Slice C companion behavior, `command_ack`, mounting, or generic ambient resolver changes.
-- Acceptance: Explicit source mapping is regression-covered and does not change default numbered-source discovery; the eleven approved inputs produce eleven canonical accepted source masters and fifteen new runtime directional strips; the superseded input is retained only as rejected evidence; bonding coverage reaches 24/24 and total Vaultwing runtime reaches 80 strips; Asset V2 reports all six bonding actions complete; `vaultwing_asset_contract`, `vaultwing_runtime`, and `vaultwing_bond` pass; `combat/vaultwing_first_bond` passes evidence review and exactly one final full-capture review; active docs reflect 18 authored masters / 24 bonding strips / 80 total strips; no task-owned root `vw*.png` clutter remains after verified staging.
+- Acceptance: Explicit source mapping remains regression-covered; no rejected bonding image remains in `source_work`, inbox, runtime, or `asset_drop/unresolved/vaultwing_bonding_rejected`; corrected `bond_greet` E/S/N inputs produce the remaining four runtime directions; bonding coverage reaches 24/24 and total Vaultwing runtime reaches 80 strips; Asset V2 reports all six bonding actions complete; `vaultwing_asset_contract`, `vaultwing_runtime`, and `vaultwing_bond` pass; `combat/vaultwing_first_bond` passes evidence review and exactly one final full-capture review; the requirements registry is updated and root `REQUIRED_ASSETS.md` is regenerated, never hand-edited.
 - Task overrides: none
 - Deferred: production feed vocalization; bond-recognition call; bait pickup/InventoryManager consumption; global save ownership; Slice C commands/behavior.
-- Progress: Explicit `--source-map ORDINAL=PATH` handling is regression-covered (6 tests). All twelve local inputs were hash-checked; no source was downloaded from `main`. Eight accepted masters are staged and ingested, producing eleven runtime strips. Current state is 15/18 authored bonding masters, 20/24 bonding strips, and 76/80 total Vaultwing strips. The three `bond_greet` inputs (`vw9`, `vw10`, `vw12`) are quarantined because fixed-cell conversion visibly clips wing sections; `vw2` is quarantined as the superseded wrong-facing inspect attempt. The packet remains blocked pending corrected greeting sheets or reviewed segmentation. Project-root originals remain untouched. Focused Asset V2 smokes passed; behavior smoke assertions passed, while the validation wrapper reported unrelated pointer-only LFS resource errors and an invalid LimboAI library.
+- Progress: Explicit `--source-map ORDINAL=PATH` handling is regression-covered (6 tests). Eight accepted masters are staged and ingested, producing eleven runtime strips. Current state is 15/18 authored bonding masters, 20/24 bonding strips, and 76/80 total Vaultwing strips. The three prior `bond_greet` inputs (`vw9`, `vw10`, `vw12`) clip wing sections and `vw2` is the superseded wrong-facing inspect attempt; all four are rejected and deletion-only. The repo-side rejected copies are removed by this correction. Delete any matching project-root originals only after SHA-256 verification. The packet remains blocked pending corrected greeting sheets or reviewed segmentation. Focused Asset V2 smokes passed; behavior smoke assertions passed, while the validation wrapper reported unrelated pointer-only LFS resource errors and an invalid LimboAI library.
 - Agent/session: Codex 2026-09-28
 
 ## Work Surface
@@ -25,7 +25,6 @@
   - its focused Python regression coverage
   - `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`
   - `custodian/asset_drop/inbox/ambient_vaultwing_common/`
-  - `custodian/asset_drop/unresolved/vaultwing_bonding_rejected/`
   - `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/`
   - only stale Vaultwing status/tracker docs after successful ingest
 - Related consumers or tests:
@@ -42,7 +41,7 @@ The root filenames are batch order, not semantic ordinals. This mapping is autho
 | Local input | Semantic asset | Disposition |
 |---|---|---|
 | `vw1.png` | `notice_bait_e` | accept candidate |
-| `vw2.png` | superseded wrong-facing `inspect_bait_s` attempt | reject/quarantine only |
+| `vw2.png` | superseded wrong-facing `inspect_bait_s` attempt | reject and delete after hash verification; never stage |
 | `vw3.png` | `feed_accept_e` | accept candidate |
 | `vw4.png` | `feed_accept_n` | accept candidate |
 | `vw5.png` | `feed_accept_s` | accept candidate |
@@ -74,18 +73,68 @@ The semantic source-map passed to the stager is therefore:
 
 Because these inputs are local/untracked and normal implementation uses an isolated worktree, verify the twelve files in the coordination checkout before claiming this packet, then copy them into the claimed worktree without committing the root copies. If they are unavailable, block rather than synthesize substitutes.
 
-## Plan
+## Remaining Closure Plan
 
-1. Extend the existing stager with a repeatable explicit `--source-map ORDINAL=PATH` seam. Validate ordinals, duplicate mappings, missing paths, and preserve current automatic `vwN.png` / `vw_N.png` behavior when the option is absent. Add focused regression coverage.
-2. Hash and quarantine `vw2.png` as wrong-facing evidence. It must never populate canonical source_work or inbox.
-3. Dry-run the eleven approved mappings. Existing normalization contracts remain authoritative: 256x256 RGBA cells, exact family frame counts/FPS, shared strip scale, stable grounded anchor, no matte, no clipping, no synthesized repairs. Reject unsafe inputs rather than weakening the family contract.
-4. Apply staging and Asset Pipeline V2 ingest. W remains pipeline-mirrored from E. Expected delta is 11 accepted masters and 15 runtime strips, closing 18/18 authored masters and 24/24 bonding runtime strips.
-5. Run focused validation first:
+1. **Delete the known rejected images; do not quarantine them.**
+   - Remove all repo-side rejected copies under
+     `custodian/asset_drop/unresolved/vaultwing_bonding_rejected/`, including
+     the historical matte reject.
+   - In the coordination checkout, delete these task inputs only when SHA-256
+     still matches the rejected image:
+     ```text
+     vw2.png  bfa1cde36f35fa29e7f9a4d52be913b1bd68aa1d029ea1e27dbfdad5472e4876
+     vw9.png  14a96068cf030d224ac0ee73a96730d6d192b20012ed72f20866553ea82c1174
+     vw10.png e91f2314f4858b17faf77ca0292c2dad11b3646514578c3ff4cfa9c233faf9ed
+     vw12.png 930c6195808d592230534fd0e6cf191483306f12d49a4a474b06b1c4e85c98b4
+     ```
+     If a filename now contains a corrected replacement with a different hash,
+     keep it and evaluate it normally.
+   - The old rejected matte evidence
+     `inspect_bait_s_vw8__2e75b561e102.png`
+     (`2e75b561e1026ae24416f8305129cfcbb65b12a898ee7e1e1c7324438dfe10ad`)
+     is obsolete and should also be deleted.
+
+2. **Keep rejection cleanup fail-safe.** The staging helper must never create a
+   quarantine copy for rejected bonding art. With `--remove-root-copies`, a
+   rejected untracked task input may be deleted only after its current SHA-256
+   is measured and the rejection decision is complete. Accepted immutable
+   source masters remain unchanged. Preserve both numbered-source discovery and
+   explicit `--source-map ORDINAL=PATH` behavior.
+
+3. **Replace only the missing greeting art.** Supply corrected
+   `bond_greet_e`, `bond_greet_s`, and `bond_greet_n` sheets for semantic
+   ordinals 16, 17, and 18. Each must be 8 frames at 256×256 RGBA per frame,
+   10 FPS, non-looping, true alpha, complete silhouettes, stable grounded
+   registration, and no clipped wings. W remains Asset V2 mirrored from E when
+   symmetric. Do not resurrect a rejected image merely to satisfy counts if it
+   loses visible wing content.
+
+4. **Dry-run, stage, and ingest through Asset V2.** Do not hand-author runtime
+   filenames. Target closure is 18/18 authored bonding masters, 24/24 bonding
+   runtime strips, and 80/80 total Vaultwing runtime strips.
+
+5. **Validate narrowly first.**
    ```bash
+   python3 custodian/tools/assets/test_stage_vaultwing_bonding_source_work.py
    python3 custodian/tools/validation/run_validation.py --test vaultwing_asset_contract --json
    python3 custodian/tools/validation/run_validation.py --test vaultwing_runtime --json
    python3 custodian/tools/validation/run_validation.py --test vaultwing_bond --json
    ```
-   Then run `combat/vaultwing_first_bond` with `--capture-mode evidence`; if visually green and 24/24 is complete, run exactly one `--capture-mode full`.
-6. Run `run_validation.py --changed --json` once at closeout only. Do not expand scope for unrelated shared-worktree failures.
-7. Update `REQUIRED_ASSETS.md`, `CURRENT_STATE.md`, `FILE_INDEX.md`, Vaultwing design status text, and the source-work README only where the successful ingest changes current truth. Create `VAULTWING_BONDING_ART_FINAL_INGEST_CLAUDE_SUMMARY.md` with accepted/rejected inputs, measured geometry, runtime counts, validation, visual review, and deferred work.
+   Then run `combat/vaultwing_first_bond` with `--capture-mode evidence`.
+   After 24/24 art is complete and evidence review is visually green, run exactly
+   one final `--capture-mode full`. Run `run_validation.py --changed --json`
+   once at closeout only.
+
+6. **Reconcile requirements/docs from current authority.** Update
+   `custodian/content/metadata/assets/required_assets.registry.json`, then run
+   `python3 custodian/tools/assets/asset.py needs --write` to regenerate root
+   `REQUIRED_ASSETS.md`; never hand-edit the generated view. Run the current
+   needs check, family plan/status, and doctor equivalents discovered from
+   `asset.py --help`. Update `CURRENT_STATE.md`, `FILE_INDEX.md`, active
+   Vaultwing design docs, the source-work README, and this summary only where
+   final runtime truth changes.
+
+7. **Close only after the visual gate.** Keep production feed vocalization,
+   bond-recognition call, bait inventory consumption, global save ownership,
+   `command_ack`, and Slice C companion behavior deferred until this art slice
+   is complete.
