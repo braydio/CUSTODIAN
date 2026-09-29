@@ -2,6 +2,7 @@ extends SceneTree
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const CONTRACT_MAP_SCRIPT := preload("res://game/world/procgen/custodian_contract_map.gd")
+const CANDIDATE_EVALUATOR_SCRIPT := preload("res://game/world/procgen/generation/candidate_evaluator.gd")
 const CONTRACT_WORLD_LOADER_SCRIPT := preload("res://game/systems/core/systems/contract_world_loader.gd")
 
 const CONTRACT_SEEDS := [731101, 731211, 731333]
@@ -10,7 +11,7 @@ const ATTEMPTS_PER_SEED := 12
 const TERRAIN_RESCUE_LIMIT := 200
 const BASELINE_RESCUE_HARD_CAP := 500
 
-var _contract_metric_helper = null
+var _candidate_evaluator: Variant
 var _failures: Array[String] = []
 var _forced_failure_result: Dictionary = {}
 
@@ -20,9 +21,7 @@ func _init() -> void:
 
 
 func _run() -> void:
-	_contract_metric_helper = CONTRACT_MAP_SCRIPT.new()
-	_contract_metric_helper.terrain_rescue_reject_threshold = TERRAIN_RESCUE_LIMIT
-	_contract_metric_helper.pre_terrain_required_connectivity_min = 0.95
+	_candidate_evaluator = CANDIDATE_EVALUATOR_SCRIPT.new()
 
 	var all_metrics: Array[Dictionary] = []
 	for seed_index in range(CONTRACT_SEEDS.size()):
@@ -45,6 +44,15 @@ func _run() -> void:
 	quit(0)
 
 
+func _evaluation_settings() -> Dictionary:
+	return {
+		"terrain_rescue_reject_threshold": TERRAIN_RESCUE_LIMIT,
+		"pre_terrain_required_connectivity_min": 0.95,
+		"min_connected_room_ratio": 0.75,
+		"require_compound_ingress_connectivity": true,
+	}
+
+
 func _run_contract_seed(contract_seed: int, map_size: Vector2i) -> Array[Dictionary]:
 	var metrics_list: Array[Dictionary] = []
 	print("[ProcgenContractRescueDiagnosticSmoke] seed=%d map_size=%s attempts=%d" % [contract_seed, str(map_size), ATTEMPTS_PER_SEED])
@@ -53,7 +61,7 @@ func _run_contract_seed(contract_seed: int, map_size: Vector2i) -> Array[Diction
 		var attempt_seed := contract_seed + attempt * 7919
 		var map := await _generate_candidate_map(attempt_seed, map_size, attempt)
 		var level_data := map.get_level_data()
-		var metrics: Dictionary = _contract_metric_helper._get_map_layout_metrics(map, level_data)
+		var metrics: Dictionary = _candidate_evaluator.measure_candidate(map, level_data, _evaluation_settings())
 		var pre_terrain: Dictionary = level_data.get("pre_terrain_connectivity", {})
 		var pre_repair: Dictionary = pre_terrain.get("pre_terrain_before_repair", {})
 		metrics["pre_terrain_before_repair_missing_required_samples"] = pre_repair.get("pre_terrain_missing_required_samples", [])

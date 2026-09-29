@@ -830,6 +830,11 @@ Documentation updates this session:
   bounded mutation events without background tree scans. Recursive
   `collision_shape_count_runtime_walls` remains an explicit-export census,
   distinct from the active map's cached compact-body and shape counts.
+- Candidate selection policy now lives in `game/world/procgen/generation/candidate_evaluator.gd`:
+  it measures generated candidates and owns acceptance, rejection reasons, scoring,
+  required-ingress validation, terrain-failure classification, and degraded-fallback
+  ranking. `CustodianContractMap` retains deterministic seeds, profiles, attempt
+  ordering, candidate disposal, and final winner promotion.
 - Procgen health reports distinguish frozen incident snapshots from active or
   inactive last-known state. Incident classification treats dominant
   unaccounted wall time as server/render/unknown; F3 isolates runtime-wall

@@ -1,9 +1,9 @@
 # Procgen Generation
 
-- Belongs here: generation contexts, level-data builders, candidate metrics, construction summaries.
+- Belongs here: generation contexts, level-data builders, candidate evaluation policy and metrics, construction summaries.
 - Does not belong here: live actor behavior, HUD pages, persistent campaign mutation.
-- Current migration status: scaffold only; candidate metrics and level-data export still live in coordinator files.
-- Current source of truth: `game/world/procgen/proc_gen_tilemap.gd`, `game/world/procgen/custodian_contract_map.gd`.
+- Current migration status: `candidate_evaluator.gd` owns candidate measurement, acceptance/rejection, scoring, terrain failure classification, and fallback policy. `CustodianContractMap` retains seed/profile/attempt orchestration and final winner handoff.
+- Current source of truth: `game/world/procgen/generation/candidate_evaluator.gd` for selection policy; `game/world/procgen/proc_gen_tilemap.gd` for candidate construction and runtime topology.
 
 Runtime topology mutation remains in `ProcGenTilemap`. Its connector dry-run is
 also the placement precondition for isolated Ash-Bell pockets, so generation

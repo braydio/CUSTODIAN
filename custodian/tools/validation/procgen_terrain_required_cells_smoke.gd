@@ -2,6 +2,7 @@ extends SceneTree
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const CONTRACT_MAP_SCRIPT := preload("res://game/world/procgen/custodian_contract_map.gd")
+const CANDIDATE_EVALUATOR_SCRIPT := preload("res://game/world/procgen/generation/candidate_evaluator.gd")
 const CONTRACT_WORLD_LOADER_SCRIPT := preload("res://game/systems/core/systems/contract_world_loader.gd")
 
 const SEEDS := [420777, 420778, 420779]
@@ -94,9 +95,13 @@ func _generate_candidate_level_data(seed: int) -> Dictionary:
 
 
 func _assert_huge_baseline_rescue_invalid() -> void:
-	var contract_map := CONTRACT_MAP_SCRIPT.new()
-	contract_map.terrain_rescue_reject_threshold = 200
-	contract_map.pre_terrain_required_connectivity_min = 0.95
+	var evaluator: Variant = CANDIDATE_EVALUATOR_SCRIPT.new()
+	var settings := {
+		"terrain_rescue_reject_threshold": 200,
+		"pre_terrain_required_connectivity_min": 0.95,
+		"min_connected_room_ratio": 0.75,
+		"require_compound_ingress_connectivity": true,
+	}
 	var metrics := {
 		"layout_valid": true,
 		"candidate_valid": false,
@@ -108,10 +113,10 @@ func _assert_huge_baseline_rescue_invalid() -> void:
 		"terrain_baseline_rescue_carved": 5248,
 		"terrain_rescue_carved": 5248,
 	}
-	assert(not contract_map._is_map_layout_acceptable(metrics), "Huge baseline rescue candidate should be invalid.")
-	assert(contract_map._is_terrain_failed_candidate(metrics), "Huge baseline rescue candidate should be treated as terrain/pre-terrain failed.")
-	assert(not contract_map._can_use_degraded_fallback({}), "Empty degraded fallback metrics should be rejected.")
-	contract_map.free()
+	assert(not evaluator.is_candidate_acceptable(metrics, settings), "Huge baseline rescue candidate should be invalid.")
+	assert(evaluator.is_terrain_failed_candidate(metrics, settings), "Huge baseline rescue candidate should be treated as terrain/pre-terrain failed.")
+	assert(not evaluator.can_use_degraded_fallback({}, settings), "Empty degraded fallback metrics should be rejected.")
+	evaluator = null
 
 
 func _assert_contract_failure_does_not_mark_valid_world() -> void:
