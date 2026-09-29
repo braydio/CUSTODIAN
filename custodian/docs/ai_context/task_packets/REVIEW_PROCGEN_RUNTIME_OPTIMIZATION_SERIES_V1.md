@@ -14,7 +14,7 @@
 - Review focus: Correctness and determinism across all V1 slices; whether packet dependency edges matched real implementation prerequisites; whether any later slice compensated for a flawed earlier authority; benchmark validity; candidate/materializer ownership; rebuild/pause/chunk semantics; loader/ProcGenTilemap decomposition quality; render optimization safety; documentation/validation drift; and residual hotspots revealed by S11.
 - Acceptance: Produce a durable whole-series review on live `main` with concrete findings and evidence. Classify blocking defects, architecture debt, performance residuals, evidence gaps, and optional improvements separately. Do not patch runtime code in this review. Update the V1 roadmap review status/evidence. The dependent `procgen-runtime-optimization-v2-series-authoring` packet must be able to derive a bounded next series directly from this review without reconstructing chat history.
 - Non-goals: Do not redesign procgen speculatively, do not change performance baselines, do not fix implementation code, and do not create the V2 packets inside this review workstream.
-- Task overrides: `TASK OVERRIDE: review only with respect to the landed V1 implementation; repository mutations are limited to review evidence/receipts and truthful roadmap/index status.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Dependency-Chain Audit
 
