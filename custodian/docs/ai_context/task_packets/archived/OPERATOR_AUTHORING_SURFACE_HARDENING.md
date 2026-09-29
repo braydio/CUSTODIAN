@@ -1,7 +1,7 @@
 # Operator Authoring Surface Hardening
 
 - Workstream: `operator-authoring-surface-hardening`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`
@@ -18,10 +18,29 @@
 
 ## Ownership And Timing
 
-- Owner: unclaimed
-- Agent/session: unclaimed
+- Owner: Claude
+- Agent/session: Claude Sonnet 5, `agent/operator-authoring-surface-hardening`
 - Created: 2026-09-28
 - Last updated: 2026-09-28
+
+## Completion Notes
+
+- Corrected `custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md` and
+  `custodian/content/sprites/_pipeline/README.md` to live Workbench V5 modes
+  `1`–`5`, the `Ctrl+R` canvas-resize review flow, and the live
+  `operator/source/animations/` → `operator/runtime/animations/` sync route,
+  removing the retired `Shift+R`, `1`–`4`, `build_operator_modular_runtime.py`,
+  and `update_operator_curated_resources.gd` references.
+- Added `--profile`/`--strict` to `operator_ingest.sh`, forwarded to every
+  `sync_operator_runtime_assets.py` call; dry-run default and existing flags
+  unchanged.
+- Added and registered `operator_authoring_surface_contract_smoke.py` (derives
+  live modes/shortcut from `app.py`, fails on doc drift or legacy-path reintroduction)
+  and `operator_ingest_wrapper_smoke.py` (proves `--profile`/`--strict` forwarding
+  and real scoping) in `validation_manifest.json`.
+- Full acceptance criteria met; see
+  `OPERATOR_AUTHORING_SURFACE_HARDENING_CLAUDE_SUMMARY.md` at repo root for
+  validation evidence and deferred/awkward notes.
 
 ## Work Surface
 
