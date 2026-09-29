@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `visual-validation-economy-tooling-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `second-pass-review-contract-v2`
@@ -68,3 +68,17 @@ Measured high-visual-cost queued work at authoring time:
 - Next action: Auto-claim and implement the generic probe/metric primitives first, then the direct-adopter scenarios in the order above.
 - Best starting files: `moment_probe_collector.gd`, `moment_assertion_evidence.gd`, `moment_schema.json`, `run_moment.py`, report builder, existing Moment Forge schema/runtime/report smokes, and the named packet scenarios/fixtures.
 - Blockers or open questions: Dependency only on `second-pass-review-contract-v2`, so paired review artifact completion is hardened before this tooling enters its own review cycle. If a direct adopter is impossible to instantiate because its runtime feature has not landed yet, commit the reusable generic tool plus a schema-valid fixture/scenario template and leave feature-specific wiring to that dependency packet.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: a fresh ephemeral worktree silently rendered degenerate (1x1 fallback) textures instead of failing loud, which almost let a false-positive registration-match assertion through before real art was confirmed.
+- Root cause / contributing factors: worktree creation does not run `git lfs pull`, so the git-lfs-tracked LimboAI GDExtension `.so` stayed an unsmudged pointer stub, failed to load, and cascaded into ~9000 unrelated texture/audio import failures; `Sprite2D.get_rect()` degrades to a non-null `1x1` rect rather than erroring when its texture failed to load. Separately, even after that fix, a full project import in this worktree never reached the main checkout's completeness (~19.6-20k vs ~24.9k imported files), most likely available memory dropping as low as ~2.7Gi free with a full Godot editor running concurrently for the whole task; this resurfaced post-merge as newly-landed Operator VFX assets failing to load in otherwise-unrelated scenarios (verified not a code issue via a clean isolated `origin/main` worktree).
+- Prevention / pipeline improvement: `workstream.py`/`dispatch.py` worktree setup should run `git lfs pull` (or verify LFS smudge state) before any Godot invocation in a new worktree. A post-import completeness check (imported-file count vs. a tracked baseline) would catch silent partial-import gaps instead of relying on incidental discovery.
+- Tooling / docs drift discovered: `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1`'s `Validation` line forward-referenced a smoke script its own implementation is meant to create; the packet-index/validator tooling flagged that as a hard "missing validation script" block — fixed in this branch by rewording the line, but the validator itself checks `origin/main`, not the local branch, so this class of fix can only be proven green after landing.
+- Follow-up: `manual-follow-up` — LFS-smudge-on-worktree-create and a post-import completeness check are both good `agent-workstream-lifecycle`-adjacent correction packets; neither is fixed in this scope since both sit in other tools' ownership.
+- What worked: the generic-probe design needed zero bespoke fixture logic for registration/alpha/collision facts in the Awakening seam adopter — only camera-positioning commands — because probes read the real production `Sprite2D` nodes directly.
+
+See `VISUAL_VALIDATION_ECONOMY_TOOLING_V1_CLAUDE_SUMMARY.md` at the repository root for the full closing summary, including copy-paste templates for the four adopters whose runtime doesn't exist yet.

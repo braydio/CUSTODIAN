@@ -34,6 +34,46 @@ How it relates to other validation:
 - Generated reports under `reports/moment_forge/` are review-only evidence,
   not runtime authority.
 
+## Presentation/Visual Evidence Without Screenshot Review
+
+Use this when the ask is an objective visual fact (registration, alpha,
+draw order, seam continuity, collision-ownership) rather than a subjective
+game-feel judgment. See "Visual Evidence Economy" in `VALIDATION_RECIPES.md`
+for the full four-layer doctrine; this section is the tool routing table.
+
+```bash
+# 1. Structural probes/assertions in the scenario itself, no rendering:
+python3 custodian/tools/iteration/run_moment.py <scenario-id> --capture-mode none
+
+# 2. Only if pixels themselves are part of acceptance, measure them offline:
+python3 custodian/tools/iteration/presentation_image_metrics.py <spec.json>
+
+# 3. Only if renderer evidence is still needed, one compact ROI sheet:
+python3 custodian/tools/iteration/run_moment.py <scenario-id> --capture-mode evidence
+# then build_roi_contact_sheet() (see build_moment_report.py) over the keyframes
+```
+
+- Generic presentation probe fields (`moment_probe_collector.gd`): `visible`,
+  `effective_visible`, `modulate`, `self_modulate`, `effective_alpha`,
+  `z_index`, `z_as_relative`, `effective_z_index`, `global_bounds`,
+  `screen_bounds`, `texture_size`, `frame_progress`, `collision_shape_count`,
+  `navigation_node_count`. Point a role at any `Sprite2D`/`AnimatedSprite2D`
+  and read these without writing a task-local inspection helper.
+- Cross-record assertions (`moment_assertion_evidence.gd`): `probe_field_equal`,
+  `probe_field_delta`, `probe_sequence_equal` — compare one field across two
+  probes/ticks/roles (registration parity, numeric delta, or an N-point
+  forward/reverse equivalence check) generically.
+- `presentation_image_metrics.py` checks: `alpha_bounds`, `matte_void`,
+  `roi_diff`, `seam_discontinuity`, `crop`. Deterministic JSON, threshold-
+  configurable, technical facts only — never an aesthetic score.
+- Worked example: `traversal/awakening_late_seams_v1` scenario +
+  `custodian/tools/validation/awakening_late_seams_evidence.py` proves all five
+  late Awakening seams (registration parity, zero collision ownership on
+  presentation nodes, forward/backtrack alpha equivalence) with one structured
+  run and one compact ROI sheet instead of five routine full-frame captures.
+- Subjective art-direction/baseline calls stay human-owned; these tools settle
+  the objective technical questions only.
+
 ## Modular Operator Asset Audit
 
 Use this section when the ask is about new Operator modular animation drops, missing modular parts, upper/lower visual fit, or source/runtime review for `custodian/content/sprites/operator/source/animations/` (V2 editable source tree).

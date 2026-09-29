@@ -673,6 +673,19 @@ V1 probe fields:
 - `state`;
 - `custom_property`.
 
+Visual Validation Economy generic presentation fields (any `Sprite2D`/
+`AnimatedSprite2D` role, no task-local inspection helper required):
+
+- `effective_visible` (visibility including all `CanvasItem` ancestors);
+- `modulate`, `self_modulate`;
+- `effective_alpha` (self-modulate × own and ancestor modulate alpha);
+- `z_as_relative`, `effective_z_index` (accumulated draw order);
+- `global_bounds`, `screen_bounds` (presentation-rect AABB derived from
+  texture size, offset, and centering; `null` when not well-defined);
+- `texture_size`, `frame_progress`;
+- `collision_shape_count`, `navigation_node_count` (proves a presentation node
+  stays non-authoritative).
+
 Probe definitions are declarative. A missing required field fails the scenario. An optional field emits an unavailable record.
 
 The collector may use property reads and public getter calls from a fixed runner-side registry. Scenario JSON does not provide arbitrary getter names.
@@ -688,7 +701,10 @@ Collects runtime evidence required for offline assertion evaluation:
 - event counts;
 - warning counts;
 - output-write status;
-- requested metric source values.
+- requested metric source values;
+- cross-record probe field comparisons (`probe_field_equal`, `probe_field_delta`,
+  `probe_sequence_equal`) for registration parity, numeric delta, and
+  forward/reverse steady-state equivalence.
 
 Python performs final assertion evaluation so that one implementation handles both current-only and baseline-relative checks.
 
@@ -704,6 +720,8 @@ Owns:
 - audio onset/peak/RMS metrics;
 - visual keyframe metrics;
 - contact sheets;
+- compact ROI/multi-crop contact sheets (`build_roi_contact_sheet`) for
+  Visual Validation Economy escalation instead of routine full-frame review;
 - baseline contact sheets;
 - visual diff;
 - optional FFmpeg transcode;
@@ -726,6 +744,27 @@ Owns:
 - producing exact follow-up commands.
 
 It does not launch a scenario unless the top-level CLI receives `--execute-suggested`.
+
+### 8.9 `presentation_image_metrics.py`
+
+Deterministic offline presentation-image metrics for the Visual Validation
+Economy pixel layer (see "Visual Evidence Economy" in `VALIDATION_RECIPES.md`).
+Given one or more PNGs plus named ROIs, emits threshold-configurable JSON for:
+
+- `alpha_bounds` — bounding box and coverage ratio of pixels above an alpha
+  threshold;
+- `matte_void` — fully-transparent void ratio and uniform-color matte border
+  detection;
+- `roi_diff` — changed-pixel ratio and mean absolute difference between two
+  same-size regions;
+- `seam_discontinuity` — mean absolute pixel delta across a declared
+  horizontal/vertical boundary line;
+- `crop` — exact ROI extraction to a file.
+
+These are technical pixel measurements, not aesthetic scoring; a check's own
+threshold fields fold into a `passed` bool per entry. It is a standalone
+importable module plus CLI, not a second scenario runner — it consumes
+keyframes/crops that `run_moment.py --capture-mode evidence` already produced.
 
 ---
 
@@ -1217,6 +1256,11 @@ Initial allowed fixture command families:
 - `sundered_keep_world_vista.place_operator_at_reveal_progress`;
 - `sundered_keep_world_vista.begin_walkthrough`.
 
+(The live allow-list in `moment_action_driver.gd` has grown well beyond this
+V1 illustrative set as scenarios were added; treat that file as authoritative
+for the current registry, e.g. `awakening_late_seams_v1.show_seam_*` for the
+five late-Awakening-seam camera checkpoints.)
+
 If these cannot be implemented without duplicating gameplay authority, the associated scenario remains blocked rather than weakening the rule.
 
 ### 11.9 `probes`
@@ -1355,6 +1399,59 @@ Supports `exact`, `min`, and `max`.
 ```
 
 Exact event names for the first scenario pack must be taken from the live instrumentation during implementation. The scenario must not invent an event name merely to satisfy this document. Where current telemetry lacks a stable event required to prove a moment, add observability-only instrumentation through `DevObservatory` at the authoritative outcome boundary and update the Observatory design document in the same change.
+
+#### Probe Field Equal
+
+Cross-record exact/tolerance equality between one field on two probes/ticks
+(for example, an underlay and foreground Sprite2D sharing exact registration):
+
+```json
+{
+  "type": "probe_field_equal",
+  "probe_a": "zone_underlay_facts",
+  "tick_a": 30,
+  "probe_b": "zone_foreground_facts",
+  "tick_b": 30,
+  "field": "global_bounds",
+  "tolerance": 0.01
+}
+```
+
+#### Probe Field Delta
+
+Numeric delta between one field on two probes/ticks, compared with the usual
+`op`/`value` pair:
+
+```json
+{
+  "type": "probe_field_delta",
+  "probe_a": "target_health",
+  "tick_a": 0,
+  "probe_b": "target_health",
+  "tick_b": 54,
+  "field": "health",
+  "op": "<=",
+  "value": -10.0
+}
+```
+
+#### Probe Sequence Equal
+
+N-point equality across probes/ticks, for forward/reverse steady-state
+equivalence (revisiting a checkpoint must reproduce the same presentation
+facts, not merely the same on the way there):
+
+```json
+{
+  "type": "probe_sequence_equal",
+  "field": "effective_alpha",
+  "points": [
+    {"probe": "zone_underlay_facts", "tick": 30},
+    {"probe": "zone_underlay_facts", "tick": 355}
+  ],
+  "tolerance": 0.001
+}
+```
 
 ### 11.11 `stable_fingerprint`
 

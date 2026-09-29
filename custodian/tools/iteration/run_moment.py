@@ -65,6 +65,9 @@ SUPPORTED_ASSERTIONS = {
     "event_same_field",
     "event_between_ticks",
     "role_distance_compare",
+    "probe_field_equal",
+    "probe_field_delta",
+    "probe_sequence_equal",
 }
 ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_/-]*[a-z0-9]$")
 TAG_PATTERN = re.compile(r"^[a-z0-9_]+$")
@@ -261,7 +264,7 @@ def _validate_probes(probes: list[Any], role_ids: set[str], duration: int) -> se
 
 def _validate_assertions(assertions: list[Any], probe_ids: set[str], role_ids: set[str], duration: int) -> None:
     compare_kinds = {"warning_count", "event_count", "counter_value", "probe_compare", "metric_compare",
-                     "event_field_compare", "role_distance_compare"}
+                     "event_field_compare", "role_distance_compare", "probe_field_delta"}
     compare_ops = {"eq", "ne", "gt", "gte", "lt", "lte"}
     filtered_event_kinds = {"event_exactly_once", "event_absent", "event_field_compare"}
     for index, raw_assertion in enumerate(assertions):
@@ -318,6 +321,27 @@ def _validate_assertions(assertions: list[Any], probe_ids: set[str], role_ids: s
             role_a, role_b = raw_assertion.get("role_a"), raw_assertion.get("role_b")
             if role_a not in role_ids or role_b not in role_ids:
                 raise ScenarioError("role_distance_compare references an undefined role")
+        if kind in {"probe_field_equal", "probe_field_delta"}:
+            probe_a, probe_b = raw_assertion.get("probe_a"), raw_assertion.get("probe_b")
+            if probe_a not in probe_ids or probe_b not in probe_ids:
+                raise ScenarioError(f"{kind} references an undefined probe")
+            if not isinstance(raw_assertion.get("field"), str) or not raw_assertion.get("field"):
+                raise ScenarioError(f"{kind} requires field")
+            tolerance = raw_assertion.get("tolerance", 0.0)
+            if not isinstance(tolerance, (int, float)) or tolerance < 0:
+                raise ScenarioError(f"{kind}.tolerance must be a nonnegative number")
+        if kind == "probe_sequence_equal":
+            if not isinstance(raw_assertion.get("field"), str) or not raw_assertion.get("field"):
+                raise ScenarioError("probe_sequence_equal requires field")
+            points = raw_assertion.get("points")
+            if not isinstance(points, list) or len(points) < 2:
+                raise ScenarioError("probe_sequence_equal requires at least two points")
+            for point in points:
+                if not isinstance(point, dict) or str(point.get("probe")) not in probe_ids:
+                    raise ScenarioError("probe_sequence_equal points must reference a defined probe")
+            tolerance = raw_assertion.get("tolerance", 0.0)
+            if not isinstance(tolerance, (int, float)) or tolerance < 0:
+                raise ScenarioError("probe_sequence_equal.tolerance must be a nonnegative number")
 
 
 def validate_scenario(
