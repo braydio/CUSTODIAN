@@ -71,8 +71,10 @@ present during this run; all eleven remain missing.
 ## Bonding art pass 3 (2026-09-28)
 
 The task-local inputs `vw1.png`–`vw12.png` were mapped by semantic name and
-verified by SHA-256; the project-root originals remain with the user. Eight
-approved inputs are retained byte-for-byte here and produced eleven runtime
+verified by SHA-256. Pass 3 initially left the project-root originals untouched;
+under the current policy, rejected originals are deleted only when their hashes
+still match the recorded bad inputs, while corrected replacements are kept.
+Eight approved inputs are retained byte-for-byte here and produced eleven runtime
 strips through the existing Asset V2 family. Seven sheets passed the shared
 family-aware normalizer before balanced pixel-art conversion. `vw6` was
 processed as a fixed-cell six-frame sheet because adjacent source poses join at
