@@ -60,10 +60,11 @@ unresolved for recovery. The next authored batch is ordinals 11–18.
 ## Bonding art pass 2 source recovery
 
 Pass 2 corrected the staging order so background validation precedes canonical
-source_work assignment. Rejected art is hash-named in the durable quarantine;
-it creates no canonical master or inbox strip. Distinct accepted source masters
-remain immutable, while an accepted replacement can populate a slot that has
-only rejected history. The first-batch ordinal map remains fixed: 1
+source_work assignment. Its original hash-named rejected-art quarantine policy
+has since been retired. Rejected/wrong-facing bonding art creates no canonical
+master or inbox strip and is deletion-only after verification. Distinct accepted
+source masters remain immutable, while an accepted replacement can populate a
+slot that has only rejected history. The first-batch ordinal map remains fixed: 1
 `notice_bait_e`, 8 `inspect_bait_s`, 10–12 `feed_accept_e/s/n`, 13–15
 `watch_player_e/s/n`, and 16–18 `bond_greet_e/s/n`. No Pass-2 root masters were
 present during this run; all eleven remain missing.
@@ -81,9 +82,9 @@ cell's eight-pixel edge guard.
 
 The three eight-frame greeting sheets `vw9.png`, `vw10.png`, and `vw12.png`
 produce visibly clipped wings when divided into uniform cells. They are not
-accepted source masters and remain hash-verified in
-`custodian/asset_drop/unresolved/vaultwing_bonding_rejected/`. The superseded
-wrong-facing `vw2.png` is quarantined there as well. These inputs need corrected
-sheets or a reviewed segmentation before they can be ingested. Current totals
+accepted source masters. The superseded wrong-facing `vw2.png` is rejected as
+well. These bad inputs and the older matte reject are deleted rather than
+retained; corrected sheets or a reviewed lossless segmentation are required
+before greeting art can be ingested. Current totals
 are 15/18 authored bonding masters, 20/24 bonding runtime strips, and 76/80
 Vaultwing runtime strips overall.
