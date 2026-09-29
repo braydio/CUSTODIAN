@@ -1184,7 +1184,7 @@ Last updated: 2026-09-27
   same-instance bonded allegiance, stable spawn identity, versioned save/restore
   and lifecycle/target-release regressions; Pass 3 brings partial production
   bonding coverage to 20/24 strips (15/18 authored masters), with three clipped
-  greeting inputs quarantined and final first-bond visual judgment deferred
+  greeting inputs rejected/deleted and final first-bond visual judgment deferred
   until corrected greeting art is ingested.
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
@@ -1200,9 +1200,10 @@ Last updated: 2026-09-27
   — Asset V2 family contract for the 256px Common Vaultwing states; the WILD
   EAST/WEST, SOUTH, and NORTH baseline is complete at 14/14 states per facing.
   Slice-B bonding art is separate and remains partial (20/24 runtime strips,
-  15/18 authored masters after Pass 3); rejected bonding candidates are
-  preserved in hash-named quarantine, not source_work. Replacements preserve
-  semantic filenames/frame contracts and flow through targeted family ingest.
+  15/18 authored masters after Pass 3); rejected/wrong-facing bonding candidates
+  are deletion-only and must never occupy source_work, inbox, or runtime.
+  Replacements preserve semantic filenames/frame contracts and flow through
+  targeted family ingest.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
   runtime smoke covering flight bands, attack-window contact, dive commitment,
   live-player stagger persistence, retreat, death, presentation fallback, and
