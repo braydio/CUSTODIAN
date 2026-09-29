@@ -22,6 +22,8 @@ def git(*args: str, cwd: Path, check: bool = True) -> str:
 
 
 def classify(repo: Path, branch: str, protected: set[str]) -> tuple[str, str, int, int]:
+    if branch.startswith("agent-diagnostics/"):
+        return "DIAGNOSTIC_PRESERVE", git("rev-parse", f"refs/remotes/origin/{branch}", cwd=repo), 0, 0
     ref = f"refs/remotes/origin/{branch}"
     if branch in protected or branch.startswith(("release/", "hotfix/")):
         return "PROTECTED", git("rev-parse", ref, cwd=repo), 0, 0
@@ -71,6 +73,8 @@ def retire(repo: Path, branch: str, ledger: Path, note: str = "") -> None:
     state, head, _, ahead = classify(repo, branch, {"main"})
     if state == "PROTECTED":
         raise HygieneError(f"refusing to retire protected branch {branch}")
+    if state == "DIAGNOSTIC_PRESERVE":
+        raise HygieneError(f"refusing to retire unresolved diagnostic ref {branch}; cleanup is explicit")
     raw_worktrees = git("worktree", "list", "--porcelain", cwd=repo)
     attached: list[Path] = []
     current: dict[str, str] = {}

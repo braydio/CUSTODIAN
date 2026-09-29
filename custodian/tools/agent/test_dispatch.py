@@ -260,16 +260,18 @@ class DispatchTests(unittest.TestCase):
         self.assertEqual(git(existing, "branch", "--show-current"), "agent/existing-task")
         self.assertEqual((existing / "keep.txt").read_text(), "preserve me\n")
 
-    def test_local_only_clean_worktree_is_not_claim_authority_and_is_reused(self):
+    def test_local_only_clean_worktree_is_not_claim_authority_and_is_preserved(self):
         self.add_packet("attached", dispatch_value="auto")
         path = self.base / "attached-wt"
         git(self.repo, "worktree", "add", "-b", "agent/attached", str(path), "origin/main")
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("P2 attached", rendered.split("READY (", 1)[1])
         self.assertNotIn("CLAIMED (1)\nattached", rendered)
-        with mock.patch("builtins.print"):
+        with self.assertRaisesRegex(dispatch.DispatchError, "already exists or is attached"):
             dispatch.claim(self.repo, "attached", "codex", False)
-        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/attached"))
+        self.assertTrue(path.is_dir())
+        self.assertEqual(git(path, "branch", "--show-current"), "agent/attached")
+        self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/attached"))
 
     def test_local_only_unique_worktree_fails_closed_on_reclaim(self):
         self.add_packet("unique-local", dispatch_value="auto")
@@ -479,13 +481,15 @@ class DispatchTests(unittest.TestCase):
         self.assertIn(f"branch: {receipt['branch']}", rendered)
         self.assertIn(f"packet: {receipt['packet']}", rendered)
 
-    def test_real_start_reports_resumed_disposition_for_clean_local_worktree(self):
+    def test_dispatch_does_not_silently_adopt_clean_local_only_worktree(self):
         self.add_packet("resumed-task", dispatch_value="auto")
         path = self.base / "resumed-task-wt"
         git(self.repo, "worktree", "add", "-b", "agent/resumed-task", str(path), "origin/main")
-        _, receipt = self._real_claim("resumed-task")
-        self.assertEqual(receipt["checkout"], "resumed")
-        self.assertEqual(receipt["worktree"], str(path.resolve()))
+        with self.assertRaisesRegex(dispatch.DispatchError, "already exists or is attached"):
+            dispatch.claim(self.repo, "resumed-task", "codex", False)
+        self.assertTrue(path.is_dir())
+        self.assertEqual(git(path, "branch", "--show-current"), "agent/resumed-task")
+        self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/resumed-task"))
 
     # --- Durable last-claim recovery. ---
 

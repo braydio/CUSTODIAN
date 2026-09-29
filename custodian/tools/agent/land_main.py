@@ -107,6 +107,8 @@ def land(
         )
     root = repo_root()
     branch = branch_name(root)
+    if branch.startswith("agent-diagnostics/"):
+        raise LandingError("diagnostic refs contain evidence only and cannot be landed")
     if branch == target:
         raise LandingError("run from a task branch, not the target branch")
     ensure_clean(root)
@@ -213,7 +215,28 @@ def main() -> int:
     if args.max_attempts < 1:
         parser.error("--max-attempts must be at least 1")
     try:
-        return land(args.remote, args.target, args.max_attempts, args.dry_run, args.approved_operator_publication)
+        root = repo_root()
+        branch = branch_name(root)
+        trace = None
+        if branch.startswith("agent/"):
+            try:
+                sys.path.insert(0, str(Path(__file__).resolve().parent))
+                from workflow_control import RunTrace
+                trace = RunTrace.resume(root, branch.removeprefix("agent/"))
+                trace.record("landing_started", branch=branch, target=args.target, start_sha=git("rev-parse", "HEAD", cwd=root).stdout.strip())
+            except Exception:
+                trace = None
+        try:
+            result = land(args.remote, args.target, args.max_attempts, args.dry_run, args.approved_operator_publication)
+            if trace:
+                trace.record("landing_completed", outcome="landed", head=git("rev-parse", "HEAD", cwd=root).stdout.strip())
+                trace.publish()
+            return result
+        except LandingError as error:
+            if trace:
+                trace.record("landing_blocked", reason=str(error))
+                trace.publish()
+            raise
     except LandingError as error:
         print(f"land_main: BLOCKED: {error}", file=sys.stderr)
         return 2

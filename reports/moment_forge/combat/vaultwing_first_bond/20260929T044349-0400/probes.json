@@ -1,0 +1,145 @@
+{
+	"failures": [],
+	"records": [
+		{
+			"id": "bond",
+			"role": "fixture",
+			"tick": 20,
+			"values": {
+				"bond_completed": false,
+				"bond_completion_count": 0,
+				"bond_same_actor": false,
+				"bond_trial_started": true,
+				"controlled_approach_seen": false,
+				"guarded_observation_seen": false,
+				"hostile_attack_during_trial": false,
+				"operator_targetable_after_bond": true,
+				"trial_phase": "voluntary_approach",
+				"vaultwing_allegiance": "hostile",
+				"vaultwing_band": "high",
+				"vaultwing_stage": "accepting",
+				"vaultwing_state": "bond_approach"
+			}
+		},
+		{
+			"id": "bond",
+			"role": "fixture",
+			"tick": 80,
+			"values": {
+				"bond_completed": false,
+				"bond_completion_count": 0,
+				"bond_same_actor": false,
+				"bond_trial_started": true,
+				"controlled_approach_seen": false,
+				"guarded_observation_seen": false,
+				"hostile_attack_during_trial": false,
+				"operator_targetable_after_bond": true,
+				"trial_phase": "voluntary_approach",
+				"vaultwing_allegiance": "hostile",
+				"vaultwing_band": "high",
+				"vaultwing_stage": "accepting",
+				"vaultwing_state": "bond_approach"
+			}
+		},
+		{
+			"id": "bond",
+			"role": "fixture",
+			"tick": 130,
+			"values": {
+				"bond_completed": false,
+				"bond_completion_count": 0,
+				"bond_same_actor": false,
+				"bond_trial_started": true,
+				"controlled_approach_seen": false,
+				"guarded_observation_seen": true,
+				"hostile_attack_during_trial": false,
+				"operator_targetable_after_bond": true,
+				"trial_phase": "guarded_observation",
+				"vaultwing_allegiance": "hostile",
+				"vaultwing_band": "ground",
+				"vaultwing_stage": "accepting",
+				"vaultwing_state": "ground_idle"
+			}
+		},
+		{
+			"id": "bond",
+			"role": "fixture",
+			"tick": 180,
+			"values": {
+				"bond_completed": false,
+				"bond_completion_count": 0,
+				"bond_same_actor": false,
+				"bond_trial_started": true,
+				"controlled_approach_seen": false,
+				"guarded_observation_seen": true,
+				"hostile_attack_during_trial": false,
+				"operator_targetable_after_bond": true,
+				"trial_phase": "guarded_observation",
+				"vaultwing_allegiance": "hostile",
+				"vaultwing_band": "ground",
+				"vaultwing_stage": "accepting",
+				"vaultwing_state": "ground_idle"
+			}
+		},
+		{
+			"id": "bond",
+			"role": "fixture",
+			"tick": 205,
+			"values": {
+				"bond_completed": false,
+				"bond_completion_count": 0,
+				"bond_same_actor": false,
+				"bond_trial_started": true,
+				"controlled_approach_seen": true,
+				"guarded_observation_seen": true,
+				"hostile_attack_during_trial": false,
+				"operator_targetable_after_bond": true,
+				"trial_phase": "final_feed_ready",
+				"vaultwing_allegiance": "hostile",
+				"vaultwing_band": "ground",
+				"vaultwing_stage": "accepting",
+				"vaultwing_state": "ground_idle"
+			}
+		},
+		{
+			"id": "bond",
+			"role": "fixture",
+			"tick": 225,
+			"values": {
+				"bond_completed": true,
+				"bond_completion_count": 1,
+				"bond_same_actor": true,
+				"bond_trial_started": true,
+				"controlled_approach_seen": true,
+				"guarded_observation_seen": true,
+				"hostile_attack_during_trial": false,
+				"operator_targetable_after_bond": false,
+				"trial_phase": "",
+				"vaultwing_allegiance": "operator_allied",
+				"vaultwing_band": "ground",
+				"vaultwing_stage": "bonded",
+				"vaultwing_state": "takeoff"
+			}
+		},
+		{
+			"id": "bond",
+			"role": "fixture",
+			"tick": 240,
+			"values": {
+				"bond_completed": true,
+				"bond_completion_count": 1,
+				"bond_same_actor": true,
+				"bond_trial_started": true,
+				"controlled_approach_seen": true,
+				"guarded_observation_seen": true,
+				"hostile_attack_during_trial": false,
+				"operator_targetable_after_bond": false,
+				"trial_phase": "",
+				"vaultwing_allegiance": "operator_allied",
+				"vaultwing_band": "high",
+				"vaultwing_stage": "bonded",
+				"vaultwing_state": "takeoff"
+			}
+		}
+	]
+}

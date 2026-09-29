@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-workflow-claim-atomicity-forensics`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -56,6 +56,18 @@
 - Validation: Add focused `test_workstream.py` coverage for same-common-dir and separate-clone direct-start races plus interrupted-create recovery. Reuse/extend `test_dispatch.py` for shared-claim and receipt regression. Add focused trace tests for non-main publication, redaction, event ordering, failure persistence and ref isolation. Run existing agent workflow tests (`test_dispatch`, `test_workstream`, `test_workstream_artifacts`, `test_land_main`, `test_branch_hygiene`, review-pairing/agent workflow smoke) before one changed-file closeout. Use temporary bare remotes/worktrees only; tests must not create diagnostic refs in the developer's live repository.
 - Task overrides: `none`
 - Deferred: Cross-host liveness/heartbeat, TTL leases, automatic stale-claim recovery, centralized telemetry service, automatic diagnostics retention policy, and capture outside repository control-plane tools.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The summary used the packet title's `AND` token rather than the workstream-ID-derived canonical filename; finish reported the expected filename missing before completing.
+- Root cause / contributing factors: The packet title and stable workstream slug differ, and the completion review checked the title-derived name instead of the lifecycle's slug-derived contract.
+- Prevention / pipeline improvement: Derive the summary filename from the stable workstream ID and verify its exact path before invoking finish.
+- Tooling / docs drift discovered: The finish path emitted a fatal-looking missing-file probe while continuing; the final artifact gate did not make this mismatch obvious.
+- Follow-up: fixed-in-scope
+- What worked: Shared remote claim CAS and common-dir locks serialize new starts; diagnostic traces remain outside task/main refs.
 
 ## Incident Model
 
