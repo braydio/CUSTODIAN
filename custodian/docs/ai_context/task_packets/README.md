@@ -164,6 +164,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, visually verify/correct late seams without moving gameplay authority, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
+- `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — paired independent code/runtime/visual/asset review of the Awakening convergence and handoff-readiness slice.
 - `SECOND_PASS_REVIEW_CONTRACT_V2.md` — P1 V2 second-pass review hardening: stable finding IDs, correction thresholds, delta correction packets, and pipeline-feedback separation.
 - `REVIEW_SECOND_PASS_REVIEW_CONTRACT_V2.md` — paired independent review of the V2 second-pass review/correction contract; blocked on `second-pass-review-contract-v2`.
 - `STARTUP_WORLD_ENTRY_SPINE_V1.md` — P1 App/Boot slice: preserve Awakening default while adding deterministic Twin Solaria and Contract-sandbox startup modes plus single-bootstrap handoff validation.
