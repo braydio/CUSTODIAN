@@ -1,7 +1,7 @@
 # AGENT REVIEW PIPELINE
 
 - Workstream: `agent-review-pipeline`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-task-dispatch, agent-task-dispatch-review-corrections`
@@ -26,9 +26,41 @@
 ## Ownership And Timing
 
 - Owner: agent workflow / review orchestration
-- Agent/session: Codex auto-dispatch after `agent-task-dispatch`
+- Agent/session: Claude Sonnet 5, `agent/agent-review-pipeline`, picked up after a
+  stale prior claim (0 unique commits, ~4h idle) was released
 - Created: 2026-09-28
 - Last updated: 2026-09-28
+
+## Completion Notes
+
+- Extended `dispatch.py`'s packet parser with the full review metadata
+  contract (`Kind`, `Review`, `Review stage`, `Review modes`, `Paired review
+  workstream`, `Review cycle`, `Max automatic review cycles`, `Review target
+  workstream/packet`), all with the specified safe defaults so every existing
+  historical packet (125 of 144 active packets predate the `Workstream:`
+  header convention entirely) remains valid without edits.
+- Added `validate_review_pairing(packets) -> dict[workstream, error]`: the one
+  reusable validation authority, wired into `_decision` (so an invalid pairing
+  fails closed at claim time exactly like invalid packet metadata) and exposed
+  standalone via `custodian/tools/agent/validate_review_pairing.py`
+  (registered as `review_pairing_contract`). Confirmed 0 false positives
+  against the 5 real `Review: auto` packets already live on `main`.
+- Added `review_cycle_exhausted(packet)` so a reviewer at the configured cap
+  has a concrete check to decide `human_required` instead of another
+  automatic correction, rather than relying purely on manual convention.
+- `dispatch.py status` now labels review/correction packets (`(review of
+  <target>)`, `(correction)`) per the acceptance's "make review jobs legible"
+  requirement, without adding a second eligibility mechanism — review and
+  correction packets are ordinary `Dispatch`/`Depends on`/`Locks` packets.
+- Did not touch `REVIEW_AGENT_REVIEW_PIPELINE.md` (left active/ready, per
+  Self-Bootstrap) or `workstream.py finish` (review remains a follow-on
+  workstream, never a finish blocker, per Architectural Lock).
+- 15/15 packet-required focused proofs added to `test_dispatch.py` (53/53
+  passing total: 38 pre-existing + 15 new); `test_workstream.py` 9/9 passing
+  (untouched by this task); `agent_workflow_smoke.py` and the changed-file
+  closeout sweep green. See
+  `AGENT_REVIEW_PIPELINE_CLAUDE_SUMMARY.md` for the full validation/test
+  mapping and one awkward note.
 
 ## Architectural Lock
 

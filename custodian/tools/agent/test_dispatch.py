@@ -25,7 +25,11 @@ def git(cwd: Path, *args: str, check=True) -> str:
     return result.stdout.strip()
 
 
-def packet(workstream, *, status="ready", dispatch_value=None, priority=None, depends=None, locks=None):
+def packet(
+    workstream, *, status="ready", dispatch_value=None, priority=None, depends=None, locks=None,
+    kind=None, review=None, review_stage=None, review_modes=None, paired_review_workstream=None,
+    review_cycle=None, max_review_cycles=None, review_target_workstream=None, review_target_packet=None,
+):
     rows = [f"- Workstream: `{workstream}`", f"- Status: `{status}`"]
     if dispatch_value is not None:
         rows.append(f"- Dispatch: `{dispatch_value}`")
@@ -35,6 +39,24 @@ def packet(workstream, *, status="ready", dispatch_value=None, priority=None, de
         rows.append(f"- Depends on: `{depends}`")
     if locks is not None:
         rows.append(f"- Locks: `{locks}`")
+    if kind is not None:
+        rows.append(f"- Kind: `{kind}`")
+    if review is not None:
+        rows.append(f"- Review: `{review}`")
+    if review_stage is not None:
+        rows.append(f"- Review stage: `{review_stage}`")
+    if review_modes is not None:
+        rows.append(f"- Review modes: `{review_modes}`")
+    if paired_review_workstream is not None:
+        rows.append(f"- Paired review workstream: `{paired_review_workstream}`")
+    if review_cycle is not None:
+        rows.append(f"- Review cycle: `{review_cycle}`")
+    if max_review_cycles is not None:
+        rows.append(f"- Max automatic review cycles: `{max_review_cycles}`")
+    if review_target_workstream is not None:
+        rows.append(f"- Review target workstream: `{review_target_workstream}`")
+    if review_target_packet is not None:
+        rows.append(f"- Review target packet: `{review_target_packet}`")
     return "# Packet\n\n" + "\n".join(rows) + "\n"
 
 
@@ -528,6 +550,178 @@ class DispatchTests(unittest.TestCase):
         self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/mismatch-task"))
         self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/mismatch-task"))
         self.assertFalse(dispatch._last_claim_path(self.repo).is_file())
+
+    # --- Paired post-land review contract ---
+
+    def test_historical_packet_without_review_metadata_remains_valid(self):
+        self.add_packet("legacy-implementation", dispatch_value="auto")
+        packets = dispatch._packets(self.repo)
+        p = next(p for p in packets if p.workstream == "legacy-implementation")
+        self.assertIsNone(p.error)
+        self.assertEqual(p.kind, "implementation")
+        self.assertEqual(p.review, "none")
+        self.assertEqual(dispatch.validate_review_pairing(packets), {})
+        self.assertIn("legacy-implementation", dispatch.status(self.repo, output=False).split("READY (", 1)[1])
+
+    def test_review_none_requires_no_pair(self):
+        self.add_packet("solo-task", dispatch_value="auto", review="none")
+        packets = dispatch._packets(self.repo)
+        self.assertEqual(dispatch.validate_review_pairing(packets), {})
+        self.assertIn("solo-task", dispatch.status(self.repo, output=False).split("READY (", 1)[1])
+
+    def test_review_manual_does_not_require_pair_or_imply_auto(self):
+        self.add_packet("manual-review-task", dispatch_value="auto", review="manual")
+        packets = dispatch._packets(self.repo)
+        p = next(p for p in packets if p.workstream == "manual-review-task")
+        self.assertEqual(p.review, "manual")
+        self.assertEqual(dispatch.validate_review_pairing(packets), {})
+        self.assertIn("manual-review-task", dispatch.status(self.repo, output=False).split("READY (", 1)[1])
+
+    def test_review_auto_requires_paired_review_declaration(self):
+        self.add_packet("unpaired-auto", dispatch_value="auto", review="auto")
+        packets = dispatch._packets(self.repo)
+        p = next(p for p in packets if p.workstream == "unpaired-auto")
+        self.assertIn("Review: auto requires a Paired review workstream", p.error)
+        rendered = dispatch.status(self.repo, output=False)
+        ready_section = rendered.split("READY (", 1)[1].split("CLAIMED (", 1)[0]
+        self.assertNotIn("unpaired-auto", ready_section)
+
+    def test_paired_review_must_declare_kind_review(self):
+        self.add_packet("impl-a", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-a")
+        self.add_packet(
+            "review-impl-a", dispatch_value="auto", kind="implementation", review="none",
+            depends="impl-a", review_target_workstream="impl-a",
+        )
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        self.assertIn("Kind: review", errors.get("impl-a", ""))
+
+    def test_paired_review_must_declare_review_none(self):
+        self.add_packet("impl-b", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-b")
+        self.add_packet(
+            "review-impl-b", dispatch_value="auto", kind="review", review="auto",
+            paired_review_workstream="review-somewhere-else", depends="impl-b",
+            review_target_workstream="impl-b",
+        )
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        self.assertIn("Review: none", errors.get("impl-b", ""))
+
+    def test_paired_review_dependency_and_target_identity_must_match(self):
+        self.add_packet("impl-c", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-c")
+        self.add_packet("unrelated-task", dispatch_value="auto")
+        # Depends on and targets the wrong workstream.
+        self.add_packet(
+            "review-impl-c", dispatch_value="auto", kind="review", review="none",
+            depends="unrelated-task", review_target_workstream="unrelated-task",
+        )
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        message = errors.get("impl-c", "")
+        self.assertIn("must depend on 'impl-c'", message)
+        self.assertIn("Review target workstream must be 'impl-c'", message)
+
+    def test_review_blocked_until_implementation_dependency_complete(self):
+        self.add_packet("impl-d", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-d")
+        self.add_packet(
+            "review-impl-d", dispatch_value="auto", kind="review", review="none",
+            depends="impl-d", review_target_workstream="impl-d",
+        )
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("review-impl-d (review of impl-d) — dependency: impl-d", rendered)
+
+    def test_review_eligible_when_implementation_archived_complete(self):
+        # The implementation already completed and archived; only its review
+        # remains an active packet, exactly like a real post-land review.
+        self.add_packet(
+            "review-impl-e", dispatch_value="auto", kind="review", review="none",
+            depends="impl-e", review_target_workstream="impl-e",
+        )
+        self.add_packet("impl-e", status="complete", archived=True)
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("review-impl-e", rendered.split("READY (", 1)[1])
+
+    def test_passed_receipt_does_not_require_correction_packet(self):
+        self.add_packet("impl-f", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-f")
+        self.add_packet(
+            "review-impl-f", dispatch_value="auto", kind="review", review="none",
+            depends="impl-f", review_target_workstream="impl-f",
+        )
+        self.assertEqual(dispatch.validate_review_pairing(dispatch._packets(self.repo)), {})
+
+    def test_correction_packet_uses_ordinary_dispatcher_pairing(self):
+        # A correction is just another Review: auto packet using the same
+        # generic Depends on / Locks / paired-review machinery, per the
+        # packet's own "do not build a second scheduler" instruction.
+        self.add_packet(
+            "impl-g-review-corrections-1", dispatch_value="auto", kind="correction", priority="P0",
+            depends="review-impl-g", review="auto",
+            paired_review_workstream="review-impl-g-review-corrections-1",
+        )
+        self.add_packet(
+            "review-impl-g-review-corrections-1", dispatch_value="auto", kind="review", review="none",
+            depends="impl-g-review-corrections-1", review_target_workstream="impl-g-review-corrections-1",
+            review_cycle=1,
+        )
+        self.add_packet("review-impl-g", status="complete", archived=True)
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("impl-g-review-corrections-1 (correction)", rendered.split("READY (", 1)[1])
+        self.assertEqual(dispatch.validate_review_pairing(dispatch._packets(self.repo)), {})
+
+    def test_correction_paired_review_is_itself_validated(self):
+        # The correction's own Review: auto pairing is checked with the exact
+        # same rule as any implementation packet's, proving no special case.
+        self.add_packet(
+            "impl-h-review-corrections-1", dispatch_value="auto", kind="correction",
+            depends="review-impl-h", review="auto",
+            paired_review_workstream="review-impl-h-review-corrections-1",
+        )
+        errors = dispatch.validate_review_pairing(dispatch._packets(self.repo))
+        self.assertIn("no matching active packet", errors.get("impl-h-review-corrections-1", ""))
+
+    def test_review_cycle_parses_and_increments(self):
+        self.add_packet(
+            "review-impl-i-review-corrections-2", dispatch_value="auto", kind="review", review="none",
+            depends="impl-i-review-corrections-2", review_target_workstream="impl-i-review-corrections-2",
+            review_cycle=2, max_review_cycles=2,
+        )
+        packets = dispatch._packets(self.repo)
+        p = next(p for p in packets if p.workstream == "review-impl-i-review-corrections-2")
+        self.assertEqual(p.review_cycle, 2)
+        self.assertEqual(p.max_review_cycles, 2)
+
+    def test_max_review_cycle_reports_exhausted_for_escalation(self):
+        self.add_packet(
+            "review-impl-j-review-corrections-2", dispatch_value="auto", kind="review", review="none",
+            depends="impl-j-review-corrections-2", review_target_workstream="impl-j-review-corrections-2",
+            review_cycle=2, max_review_cycles=2,
+        )
+        self.add_packet(
+            "review-impl-k", dispatch_value="auto", kind="review", review="none",
+            depends="impl-k", review_target_workstream="impl-k",
+            review_cycle=0, max_review_cycles=2,
+        )
+        packets = {p.workstream: p for p in dispatch._packets(self.repo)}
+        self.assertTrue(dispatch.review_cycle_exhausted(packets["review-impl-j-review-corrections-2"]))
+        self.assertFalse(dispatch.review_cycle_exhausted(packets["review-impl-k"]))
+
+    def test_invalid_review_pairing_blocks_explicit_claim_until_fixed(self):
+        path = self.add_packet("impl-guarded", dispatch_value="auto", review="auto")
+        with self.assertRaisesRegex(dispatch.DispatchError, "Review: auto requires a Paired review workstream"):
+            dispatch.claim(self.repo, "impl-guarded", "codex", False)
+
+        path.write_text(packet(
+            "impl-guarded", dispatch_value="auto", review="auto",
+            paired_review_workstream="review-impl-guarded",
+        ))
+        git(self.repo, "add", str(path.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "fix pairing")
+        git(self.repo, "push", "origin", "main")
+        self.add_packet(
+            "review-impl-guarded", dispatch_value="auto", kind="review", review="none",
+            depends="impl-guarded", review_target_workstream="impl-guarded",
+        )
+        fake = mock.Mock(); fake.start.side_effect = publish_workstream
+        with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
+            result = dispatch.claim(self.repo, "impl-guarded", "codex", False)
+        self.assertEqual(result, 0)
 
 
 if __name__ == "__main__":

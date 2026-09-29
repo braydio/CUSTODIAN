@@ -21,10 +21,18 @@ python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.t
 Task dispatch uses temporary bare remotes and worktrees to verify metadata,
 queue ordering, dependency and lock blocking, stale-main discovery, branch
 claims, same-machine selection, independent-clone remote-claim races, interrupted
-claim recovery, and attached-worktree coordination:
+claim recovery, attached-worktree coordination, and the paired post-land
+review/correction contract (historical-packet safety, review pairing
+validity, dependency-gated eligibility, and the finite review-cycle cap):
 
 ```bash
 python3 custodian/tools/agent/test_dispatch.py
+```
+
+Check the live queue's review pairing against fetched `origin/main` directly:
+
+```bash
+python3 custodian/tools/agent/validate_review_pairing.py
 ```
 
 These temporary-repository tests do not launch Godot. Run the changed-file

@@ -51,23 +51,29 @@ narrow locks, serializes local claims, and delegates worktree lifecycle to
 remote Git ref to serialize initial claims across clones. Continuous workers and lease expiry remain deferred. Full README generation remains deferred; bounded Ready / Auto Dispatch index synchronization is queued in `task_packets/TASK_PACKET_INDEX_AUTOMODE_HARDENING.md`.
 
 
-### Next bootstrap stage — independent review
+## Implemented — Paired Post-Land Review
 
 The dispatcher is implemented, including its second-pass remote-claim and
-coordination-path corrections. The review pipeline is now claimed/in progress on
-`agent/agent-review-pipeline`; its paired self-review remains the next QC gate.
+coordination-path corrections. Independent post-land review is now implemented
+on top of it at `custodian/docs/ai_context/task_packets/archived/AGENT_REVIEW_PIPELINE.md`
+(archived, historical; the live authority is `dispatch.py`, `task_packets/README.md`'s
+Paired Review And Correction section, and `AGENT_REVIEW_PACKET_TEMPLATE.md`).
 
-Queued behind the dispatcher:
+`dispatch.py` extends its packet parser with the review metadata contract
+(`Kind`, `Review`, `Review stage`, `Review modes`, `Paired review workstream`,
+`Review cycle`, `Max automatic review cycles`, `Review target workstream/packet`)
+and a `validate_review_pairing` consistency guard, wired into both eligibility
+(`_decision`) and a standalone smoke
+(`custodian/tools/agent/validate_review_pairing.py`, registered in
+`validation_manifest.json` as `review_pairing_contract`). Review packets reuse
+ordinary `Dispatch`/`Depends on`/`Locks` — a review becomes eligible exactly
+when its implementation dependency completes and archives, with no second
+scheduler. `review-agent-review-pipeline` is this feature's own first paired
+review, per its self-bootstrap requirement.
 
-- `task_packets/AGENT_REVIEW_PIPELINE.md` — adds packet-level review contracts,
-  independent post-land reviewer workstreams, durable review receipts, bounded
-  correction/re-review generation, and human escalation for unresolved judgment.
-- `task_packets/REVIEW_AGENT_REVIEW_PIPELINE.md` — uses the new machinery to
-  independently review the review pipeline itself.
-
-The review stage reuses dispatcher/workstream primitives rather than adding a
-second queue. Pre-land review, continuous workers, distributed leasing, and
-automatic subjective baseline acceptance remain deferred.
+Pre-land review, continuous workers, distributed leasing, a historical review
+log beyond the single durable receipt per implementation packet, and automatic
+subjective baseline acceptance remain deferred.
 
 ## Priority 1 — AI Context Validator
 

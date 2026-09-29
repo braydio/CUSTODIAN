@@ -18,9 +18,17 @@ from dataclasses import dataclass
 from pathlib import Path
 
 PACKET_ROOT = "custodian/docs/ai_context/task_packets"
-FIELDS = ("Workstream", "Status", "Dispatch", "Priority", "Depends on", "Locks")
+FIELDS = (
+    "Workstream", "Status", "Dispatch", "Priority", "Depends on", "Locks",
+    "Kind", "Review", "Review stage", "Review modes", "Paired review workstream",
+    "Review cycle", "Max automatic review cycles",
+    "Review target workstream", "Review target packet",
+)
 ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PRIORITY = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+KINDS = {"implementation", "review", "correction"}
+REVIEW_INTENTS = {"auto", "manual", "none"}
+REVIEW_MODES = {"code", "architecture", "runtime", "visual", "asset-pipeline", "workflow"}
 
 
 class DispatchError(RuntimeError):
@@ -45,6 +53,15 @@ class Packet:
     dependencies: tuple[str, ...]
     locks: tuple[str, ...]
     error: str | None = None
+    kind: str = "implementation"
+    review: str = "none"
+    review_stage: str | None = None
+    review_modes: tuple[str, ...] = ()
+    paired_review_workstream: str | None = None
+    review_cycle: int = 0
+    max_review_cycles: int = 2
+    review_target_workstream: str | None = None
+    review_target_packet: str | None = None
 
 
 def parse_packet(path: str, text: str) -> Packet:
@@ -109,7 +126,62 @@ def parse_packet(path: str, text: str) -> Packet:
 
     dependencies = csv_ids("Depends on")
     locks = csv_ids("Locks")
-    return Packet(path, workstream, status, dispatch, dispatch_declared, priority, dependencies, locks, "; ".join(errors) or None)
+
+    # Review metadata contract. Safe defaults keep historical packets valid:
+    # missing Kind is implementation, missing Review is none, and missing
+    # Review stage defaults to post-land only when review is actually auto.
+    kind = values.get("Kind", "implementation").lower()
+    if kind not in KINDS:
+        errors.append("invalid Kind metadata")
+    review = values.get("Review", "none").lower()
+    if review not in REVIEW_INTENTS:
+        errors.append("invalid Review metadata")
+    review_stage_raw = values.get("Review stage")
+    if review_stage_raw is not None and review_stage_raw.lower() != "post-land":
+        errors.append("invalid Review stage metadata")
+    review_stage = "post-land" if review == "auto" else (review_stage_raw.lower() if review_stage_raw else None)
+    review_modes = csv_ids("Review modes")
+    if any(mode not in REVIEW_MODES for mode in review_modes):
+        errors.append("invalid Review modes metadata")
+    paired_raw = values.get("Paired review workstream", "none")
+    paired_review_workstream = None if paired_raw.lower() == "none" else paired_raw
+    if paired_review_workstream is not None and not ID_RE.fullmatch(paired_review_workstream):
+        errors.append("invalid Paired review workstream metadata")
+    if review == "auto" and paired_review_workstream is None:
+        errors.append("Review: auto requires a Paired review workstream")
+
+    def non_negative_int(key: str, default: int) -> int:
+        raw = values.get(key)
+        if raw is None:
+            return default
+        try:
+            parsed = int(raw)
+        except ValueError:
+            errors.append(f"invalid {key} metadata")
+            return default
+        if parsed < 0:
+            errors.append(f"invalid {key} metadata")
+            return default
+        return parsed
+
+    review_cycle = non_negative_int("Review cycle", 0)
+    max_review_cycles = non_negative_int("Max automatic review cycles", 2)
+
+    review_target_workstream = values.get("Review target workstream")
+    if review_target_workstream is not None and review_target_workstream.lower() == "none":
+        review_target_workstream = None
+    if review_target_workstream is not None and not ID_RE.fullmatch(review_target_workstream):
+        errors.append("invalid Review target workstream metadata")
+    review_target_packet = values.get("Review target packet") or None
+
+    return Packet(
+        path, workstream, status, dispatch, dispatch_declared, priority, dependencies, locks,
+        "; ".join(errors) or None,
+        kind=kind, review=review, review_stage=review_stage, review_modes=review_modes,
+        paired_review_workstream=paired_review_workstream, review_cycle=review_cycle,
+        max_review_cycles=max_review_cycles, review_target_workstream=review_target_workstream,
+        review_target_packet=review_target_packet,
+    )
 
 
 def _tree_paths(repo: Path, tree: str, prefix: str) -> list[str]:
@@ -154,9 +226,63 @@ def _remote_claim_state(repo: Path) -> tuple[set[str], set[str]]:
     return claims, branches
 
 
-def _decision(packet: Packet, packets: list[Packet], archived: list[Packet], claimed: set[str], *, auto_only: bool) -> tuple[bool, str | None]:
+def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
+    """Fail-fast consistency guard for the paired post-land review contract.
+
+    Every active `Review: auto` packet must have a matching active review
+    packet: same declared `Paired review workstream` id, `Kind: review`,
+    `Review: none`, a dependency back on the implementation workstream, and a
+    matching `Review target workstream`. Historical packets that omit review
+    metadata (`Review: none`, the default) are never required to pair.
+    Reusable by both dispatcher eligibility and standalone tooling/tests, per
+    the single reusable validation authority this contract requires.
+    """
+    by_workstream = {p.workstream: p for p in packets if p.workstream and not p.error}
+    errors: dict[str, list[str]] = {}
+
+    def add(workstream: str | None, message: str) -> None:
+        if workstream:
+            errors.setdefault(workstream, []).append(message)
+
+    for p in packets:
+        if p.error or p.review != "auto" or not p.workstream or p.paired_review_workstream is None:
+            continue
+        paired_id = p.paired_review_workstream
+        paired = by_workstream.get(paired_id)
+        if paired is None:
+            add(p.workstream, f"paired review workstream '{paired_id}' has no matching active packet")
+            continue
+        if paired.kind != "review":
+            add(p.workstream, f"paired review '{paired_id}' must declare Kind: review")
+        if paired.review != "none":
+            add(p.workstream, f"paired review '{paired_id}' must declare Review: none")
+        if p.workstream not in paired.dependencies:
+            add(p.workstream, f"paired review '{paired_id}' must depend on '{p.workstream}'")
+        if paired.review_target_workstream != p.workstream:
+            add(p.workstream, f"paired review '{paired_id}' Review target workstream must be '{p.workstream}'")
+
+    return {workstream: "; ".join(messages) for workstream, messages in errors.items()}
+
+
+def review_cycle_exhausted(packet: Packet) -> bool:
+    """True once a review/correction packet has reached its finite-loop cap.
+
+    Original implementation review is cycle 0; each automatic correction's
+    paired review increments the cycle. A reviewer at the cap escalates to
+    `human_required` in the durable review receipt instead of scaffolding
+    another automatic correction.
+    """
+    return packet.review_cycle >= packet.max_review_cycles
+
+
+def _decision(
+    packet: Packet, packets: list[Packet], archived: list[Packet], claimed: set[str],
+    *, auto_only: bool, pairing_errors: dict[str, str] | None = None,
+) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
+    if pairing_errors and packet.workstream in pairing_errors:
+        return False, f"invalid review pairing: {pairing_errors[packet.workstream]}"
     if packet.status != "ready":
         return False, f"status: {packet.status or 'missing'}"
     if auto_only and packet.dispatch != "auto":
@@ -260,9 +386,19 @@ def _coordination_repo(repo: Path) -> Path:
     return repo
 
 
+def _packet_label(packet: Packet) -> str:
+    name = packet.workstream or packet.path
+    if packet.kind == "review" and packet.review_target_workstream:
+        return f"{name} (review of {packet.review_target_workstream})"
+    if packet.kind == "correction":
+        return f"{name} (correction)"
+    return name
+
+
 def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], claimed: set[str]) -> str:
     groups: dict[str, list[str]] = {key: [] for key in ("READY", "CLAIMED", "BLOCKED", "MANUAL")}
     claims, branches = _remote_claim_state(repo)
+    pairing_errors = validate_review_pairing(packets)
     for work_id in sorted(claims - branches):
         groups["BLOCKED"].append(
             f"{work_id} — remote dispatch claim interrupted; recovery required. "
@@ -270,7 +406,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
             f"an operator may explicitly delete it with git push origin :refs/heads/dispatch-claims/{work_id}."
         )
     for packet in sorted(packets, key=lambda item: (PRIORITY.get(item.priority, 9), item.path)):
-        name = packet.workstream or packet.path
+        name = _packet_label(packet)
         if packet.workstream in claims - branches:
             continue
         if packet.workstream in claimed:
@@ -283,7 +419,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
         elif packet.dispatch == "manual":
             groups["MANUAL"].append(f"{name} [{packet.path}]")
         else:
-            ok, reason = _decision(packet, packets, archived, claimed, auto_only=True)
+            ok, reason = _decision(packet, packets, archived, claimed, auto_only=True, pairing_errors=pairing_errors)
             if ok:
                 groups["READY"].append(f"{packet.priority} {name} [{packet.path}]")
             else:
@@ -318,6 +454,7 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         archived = _archived_packets(repo)
         claimed = _claimed(repo)
         remote_claims, remote_branches = _remote_claim_state(repo)
+        pairing_errors = validate_review_pairing(packets)
         ordered = sorted(packets, key=lambda p: (PRIORITY.get(p.priority, 9), p.path))
         if workstream_id:
             candidates = [p for p in ordered if p.workstream == workstream_id]
@@ -326,7 +463,7 @@ def claim(repo: Path, workstream_id: str | None, agent: str, auto_only: bool) ->
         selected = None
         reasons: list[str] = []
         for packet in candidates:
-            ok, reason = _decision(packet, packets, archived, claimed, auto_only=auto_only)
+            ok, reason = _decision(packet, packets, archived, claimed, auto_only=auto_only, pairing_errors=pairing_errors)
             if ok:
                 selected = packet
                 break

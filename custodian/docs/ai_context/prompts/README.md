@@ -6,7 +6,10 @@ documentation, and Git defaults from `custodian/AGENTS.md` and the root
 delta. Mark deliberate task-level exceptions `TASK OVERRIDE:` with a reason.
 Substantial parallel work uses isolated worktrees. Validated implementation
 work lands automatically on `origin/main`; review is by exception. Review-only
-templates must explicitly override that default.
+templates must explicitly override that default. For automated, dispatcher-
+scheduled post-land review of a specific implementation packet (rather than an
+ad hoc requested review), see `task_packets/README.md`'s Paired Review And
+Correction section and `AGENT_REVIEW_PACKET_TEMPLATE.md` instead.
 
 ## Templates
 

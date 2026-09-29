@@ -114,6 +114,13 @@ python3 custodian/tools/agent/workstream.py finish <workstream-id> \
   --validation-report /path/to/validation.json
 ```
 
+If the implementation packet declared `Review: auto`, its paired independent
+review is a separate follow-on workstream that becomes eligible once this one
+lands and archives — it is never a condition of `finish` itself. `finish`
+closes this worktree normally regardless of review outcome; see
+`task_packets/README.md`'s Paired Review And Correction section for the full
+post-land review and correction lifecycle.
+
 If finish merges newer main into the published branch, provide a second green
 report with `--validation-report-after-sync`. Finish pushes before landing,
 uses `land_main.py` internally for serialized/race-safe landing, verifies the

@@ -40,6 +40,58 @@ that output is lost, recover it read-only with `dispatch.py last-claim` (or
 `--json`) rather than inferring ownership from worktree/branch activity.
 Continuous workers and cross-machine leases are deferred.
 
+## Paired Review And Correction
+
+Independent post-land review is opt-in per packet, decided when the
+implementation packet is created. It uses ordinary dispatcher primitives
+(`Dispatch`, `Depends on`, `Locks`) rather than a second scheduler, and
+happens after validated implementation already landed on `main` — it is never
+a `workstream.py finish` blocker.
+
+- Declare `Review: auto` on the implementation packet and create a paired
+  review packet from `AGENT_REVIEW_PACKET_TEMPLATE.md` on `main` in the same
+  change. The review packet declares `Kind: review`, `Review: none`,
+  `Depends on: <implementation-id>`, and `Review target workstream:
+  <implementation-id>`.
+- `dispatch.py`'s review-pairing consistency guard
+  (`custodian/tools/agent/validate_review_pairing.py`) fails closed for any
+  active `Review: auto` packet whose pair is missing, wrong `Kind`, wrong
+  `Review`, or whose dependency/target identity does not match. Historical
+  packets that omit review metadata (`Review: none`, the default) are never
+  required to pair.
+- The review becomes dispatcher-eligible once its implementation dependency
+  is `complete` and archived, exactly like any other dependency — no new
+  eligibility mechanism.
+- A reviewer works from fresh `origin/main` in its own workstream, never
+  modifies reviewed implementation/runtime code, and appends a durable `##
+  Independent Review` receipt to the archived implementation packet:
+
+  ```md
+  ## Independent Review
+
+  - Status: `pending | passed | findings | human_required`
+  - Review workstream: `review-...`
+  - Reviewed on main: `<short SHA/current target>`
+  - Review modes: `...`
+  - Blocking findings: `N`
+  - Non-blocking findings: `N`
+  - Detailed review summary: `<reviewer closing-summary path>`
+  - Follow-up workstream: `none | <correction-id>`
+  ```
+
+- Blocking findings scaffold `<implementation-id>-review-corrections-<n>.md`
+  (`Kind: correction`, `Review: auto`) plus its own paired
+  `REVIEW_..._REVIEW_CORRECTIONS_<n>.md` before the review workstream lands —
+  an ordinary `Review: auto` pair like any other, so the same consistency
+  guard covers it. `Review cycle` increments each correction round; cycle 0 is
+  the original review. At `Max automatic review cycles` (default `2`) with
+  findings still blocking, the reviewer sets the receipt to `human_required`
+  instead of generating another automatic correction, and may add a
+  `Dispatch: manual` decision packet.
+- Subjective calls (visual baselines, art direction, unresolved design
+  interpretation) are never auto-approved; the reviewer finishes technical
+  review, sets `human_required`, and states the exact decision needed.
+
 ## Ownership
 
 - Reuse a packet only when it is scoped to the current task.
@@ -66,9 +118,8 @@ cannot be lost when the ephemeral worktree is removed.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
 - `REVIEW_WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — paired independent review of landed-closeout hardening, blocked on `workstream-finish-landed-closeout-hardening`.
-- `AGENT_REVIEW_PIPELINE.md` — P0 independent-review bootstrap; currently claimed on `agent/agent-review-pipeline`, with dispatcher prerequisites complete.
-- `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself, blocked on `agent-review-pipeline`.
-- `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; waits on `agent-review-pipeline`.
+- `REVIEW_AGENT_REVIEW_PIPELINE.md` — paired P0 independent review of the review pipeline itself; its `agent-review-pipeline` dependency is now archived complete, so it is eligible subject to the shared `agent-workflow` lock.
+- `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — P1 production continuation of Twin Solaria: staged Second Crown forensic progression, recovered-plan overlay, route-state capture/restore, and canon-guard validation; its `agent-review-pipeline` dependency is now archived complete, so it is eligible subject to the shared `agent-workflow` lock.
 - `REVIEW_TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — paired independent review of the forensic slice, blocked on `twin-solaria-crown-incident-forensics`.
 - `TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — P1 Slice D: fail-closed route candidate/evidence/reciprocity authority and HOLD / ABORT / AUTHORIZE ACQUISITION decisions; blocked on reviewed Slice C.
 - `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — paired independent review of Slice D, blocked on `twin-solaria-route-review-authority`.

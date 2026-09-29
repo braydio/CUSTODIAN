@@ -108,6 +108,26 @@
       "needs_import": false
     },
     {
+      "id": "review_pairing_contract",
+      "type": "python",
+      "script": "custodian/tools/agent/validate_review_pairing.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "review",
+        "documentation"
+      ],
+      "owners": [
+        "custodian/tools/agent/dispatch.py",
+        "custodian/tools/agent/validate_review_pairing.py",
+        "custodian/docs/ai_context/task_packets/**",
+        "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "faction_canon_docs",
       "type": "python",
       "script": "custodian/tools/validation/faction_canon_docs_smoke.py",
