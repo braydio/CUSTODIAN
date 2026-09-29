@@ -387,7 +387,7 @@ Priority coherent authorities:
 2. authored claims / clearances / reservations;
 3. generation level-data/export state.
 
-If those prove independently landable during packet authoring, split S8 into bounded child packets while keeping S8 as the roadmap umbrella.
+V1 is already split into D1 road authority, D2 authored-claim registry, D3 generation-state extraction, and D4 façade contraction. D1-D3 are dependency siblings gated by G5+M6 and serialized by the shared procgen-runtime lock; D4 waits for all three.
 
 ### Exit
 
@@ -401,15 +401,7 @@ If those prove independently landable during packet authoring, split S8 into bou
 
 Reduce `ContractWorldLoader` from world attach + every generated placement policy into lifecycle orchestration plus focused placement services.
 
-Candidate services:
-
-- resources;
-- vehicles;
-- ARRN relays;
-- encounter markers/population;
-- authored world ingresses.
-
-Coordinate with the separate world-lifecycle program so this roadmap does not invent a competing transition manager.
+V1 is already split into P1 placement foundation; P2 resource, P3 vehicle, P4 ARRN relay, P5 encounter, and P6 authored-ingress sibling extractions; then P7 loader contraction. The siblings share one loader lock and may land in any order after P1. Coordinate with the separate world-lifecycle program so this roadmap does not invent a competing transition manager.
 
 ### Exit
 
@@ -423,14 +415,7 @@ Loader owns attach/rebind/activation orchestration, placement services own their
 
 Use S1/S11-compatible evidence to attack actual procgen presentation cost after generation and streaming architecture are stable.
 
-Potential targets are evidence-driven, not preselected:
-
-- unnecessary Sprite2D/node proliferation;
-- compatible batching or MultiMesh use;
-- hidden-but-instantiated presentation;
-- chunk-level presentation containers;
-- repeated overlay/material state;
-- distant macro-presentation realization.
+V1 is split into V1 render attribution and V2 render-load consolidation. Attribution first ranks actual presentation owners; consolidation then touches only the highest-cost compatible presentation-only owners. Candidate techniques include batching/MultiMesh, chunk-level containers, lazy realization, or removal of hidden-but-instantiated presentation, but the attribution report chooses the target rather than this roadmap guessing.
 
 ### Exit
 
