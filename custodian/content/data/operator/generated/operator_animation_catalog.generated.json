@@ -45,6 +45,20 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -53,6 +67,20 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "lower_body": {
@@ -61,6 +89,20 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -69,8 +111,39 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 18.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "melee_1h/attack/fast_01/w": {
@@ -85,6 +158,20 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -93,6 +180,20 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "lower_body": {
@@ -101,6 +202,20 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -109,8 +224,39 @@
           "frame_size": [
             96,
             96
+          ],
+          "fps": 18.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 18.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "melee_1h/attack/fast_01_legacy_3865ae8b/w": {
@@ -157,6 +303,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -165,6 +323,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "lower_body": {
@@ -173,6 +343,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -181,8 +363,35 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 14.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "melee_1h/attack/fast_02/w": {
@@ -197,6 +406,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "fx": {
@@ -205,6 +426,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "lower_body": {
@@ -213,6 +446,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "upper_body": {
@@ -221,8 +466,35 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 14.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 14.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
       }
     },
     "melee_1h/attack/fast_02_legacy_04ab0f51/w": {
@@ -277,6 +549,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 13.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.5
           ]
         },
         "lower_body": {
@@ -317,6 +601,18 @@
           "frame_size": [
             156,
             96
+          ],
+          "fps": 13.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.5
           ]
         },
         "lower_body": {
@@ -5225,8 +5521,8 @@
           "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__e__6f__96.png",
           "frames": 6,
           "frame_size": [
-            128,
-            128
+            96,
+            96
           ]
         }
       }
