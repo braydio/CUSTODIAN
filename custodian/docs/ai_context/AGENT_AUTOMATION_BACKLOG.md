@@ -48,8 +48,7 @@ Goal:
 eligible tasks by priority and packet path, enforces completed dependencies and
 narrow locks, serializes local claims, and delegates worktree lifecycle to
 `workstream.py`. V1 stops after one claim and uses a temporary create-only
-remote Git ref to serialize initial claims across clones. Continuous workers,
-lease expiry, and a generated packet README remain deferred.
+remote Git ref to serialize initial claims across clones. Continuous workers and lease expiry remain deferred. Full README generation remains deferred; bounded Ready / Auto Dispatch index synchronization is queued in `task_packets/TASK_PACKET_INDEX_AUTOMODE_HARDENING.md`.
 
 
 ### Next bootstrap stage — independent review
@@ -97,6 +96,19 @@ Why first:
 - fast to run
 - docs-only
 - catches the exact drift already found
+
+## Priority 1.5 — Task Packet Index Auto-Maintenance
+
+Queued implementation packet: `custodian/docs/ai_context/task_packets/TASK_PACKET_INDEX_AUTOMODE_HARDENING.md`.
+
+Purpose:
+
+- keep the visible Ready / Auto Dispatch board synchronized with packet metadata;
+- avoid a second queue grammar by reusing dispatcher/AI-context packet parsing;
+- provide deterministic read-only drift detection plus an explicit bounded write mode;
+- preserve manual-ready, in-progress, recently-complete, and prose sections outside the managed block.
+
+The scope is deliberately smaller than full README generation. Automatic lifecycle-state derivation and historical residue cleanup remain separate concerns.
 
 ## Priority 2 — Task Packet Linter
 
