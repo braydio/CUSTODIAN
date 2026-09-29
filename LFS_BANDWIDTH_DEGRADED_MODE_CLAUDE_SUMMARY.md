@@ -23,4 +23,8 @@ Temporary Git LFS conservation mode for the remainder of September 2026.
 
 ## Validation
 
-Branch CI is the closeout validation for this workflow-only patch.
+- Agent workflow contract tests passed on the first branch run: 7 workflow tests
+  plus 28 dispatcher tests.
+- The first changed-file gate correctly failed closed because the new cleanup
+  workflow lacked validation ownership. Added it to `agent_workflow_contract`;
+  the follow-up branch CI is the closeout gate.
