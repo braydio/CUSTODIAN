@@ -81,7 +81,10 @@ A worktree is disposable; its unresolved artifacts are not. If a task packet is
 used, give it the stable `Workstream` ID. Before finish, the associated packet
 must be `complete`, moved to `task_packets/archived/`, and absent from the
 packet README's active/recently-complete sections. The root closing summary is
-durable and committed. Validation JSON is normally an ephemeral input to finish
+durable and committed. Its `## Process Feedback` receipt records execution
+friction/prevention for every normal implementation. For V2 task packets, mirror
+the same receipt into `## Execution Feedback` before marking the packet complete
+and archiving it. Validation JSON is normally an ephemeral input to finish
 unless the task specifically needs it retained. Temporary logs/caches/previews
 may be deleted deliberately, while review evidence is retained only when it has
 future review value. Asset Pipeline V2 `source_work/` and `inbox/` material is

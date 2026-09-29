@@ -7,7 +7,8 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 ## Selection
 
 - Skip packets for narrow, low-risk, single-session work.
-- Use the compact template when scope, constraints, acceptance, or deferred work needs a durable record.
+- `../AGENT_TASK_PACKET_TEMPLATE.md` is the canonical authoring specification for new packets. New packets use `Packet schema: custodian.task_packet.v2`.
+- Use the compact template when scope, constraints, acceptance, evidence, or deferred work needs a durable record.
 - Add full-packet sections only for high-risk, multi-session, architecture, ownership, migration, or substantial handoff work.
 - Do not create a packet merely because several files change.
 
@@ -16,9 +17,51 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 1. Decide whether a packet adds enough value to justify maintaining it.
 2. If so, copy `../AGENT_TASK_PACKET_TEMPLATE.md` into this folder.
 3. Rename it after the task in uppercase snake case, for example `VALIDATION_RECIPES.md`.
-4. Fill the compact fields and delete unused optional sections.
-5. Keep it current when scope, blockers, acceptance, or deferred work materially changes.
-6. Mark it `complete` only after implementation, required docs updates, feasible validation, and completion notes are done.
+4. Review current `origin/main`, fill the V2 contract fields, and delete unused optional expansion sections.
+5. Do not set `ready` until the completion boundary, evidence, work surface, acceptance, validation, dependencies/locks, and review intent are implementation-ready.
+6. Keep the packet current when scope, blockers, acceptance, validation, or deferred work materially changes.
+7. Before `complete`, add the structured `Execution Feedback` receipt and mirror it in the required closing summary.
+8. Mark it `complete` only after implementation, required docs updates, feasible validation, feedback, and completion notes are done.
+
+## V2 Packet Contract
+
+New packets use `Packet schema: custodian.task_packet.v2`. Legacy packets
+without a schema remain valid and are not bulk-migrated.
+
+A ready V2 packet must carry enough live evidence and scope control for a fresh
+agent to execute it without reconstructing intent from chat history. At minimum
+it records the reviewed main SHA, coherent completion boundary, measured current
+state, concrete evidence, task-specific authorities, work surface, change,
+preservation/non-goals, measurable acceptance, focused validation, and deferred
+work. The template's Authoring Quality Gate is the canonical checklist.
+
+A packet should reference technical truth already owned by code/data/schema
+rather than copying it. Packet text owns the task closure contract, not duplicate
+runtime configuration.
+
+## Execution Feedback
+
+Every V2 packet gets a compact process receipt before completion:
+
+```text
+Feedback schema: custodian.task_feedback.v1
+Outcome: success | partial | blocked
+Friction severity: none | low | medium | high
+What went wrong
+Root cause / contributing factors
+Prevention / pipeline improvement
+Tooling / docs drift discovered
+Follow-up
+What worked (optional)
+```
+
+The useful signal is failure/friction and prevention. "What worked" may be one
+short line or omitted.
+
+If a repeatable medium/high-severity workflow issue is found, either fix the
+small safe correction in the current scope or name/create a follow-up before the
+packet becomes complete. The required closing summary mirrors the same fields so
+unpacketed tasks also leave process feedback.
 
 ## Dispatch
 
@@ -108,8 +151,9 @@ For implementation workstreams, set the packet's `Workstream` field to the
 stable kebab-case ID used by `agent/<workstream-id>`. Before
 `workstream.py finish`, an associated packet must be marked `complete`, moved
 under `archived/`, and removed from the `In Progress` or `Recently Complete
-(awaiting archive)` index sections. Finish now enforces this so packet cleanup
-cannot be lost when the ephemeral worktree is removed.
+(awaiting archive)` index sections. V2 packets must also contain a completed
+`Execution Feedback` receipt. Finish enforces packet cleanup so it cannot be
+lost when the ephemeral worktree is removed.
 
 ## Active Packets
 

@@ -134,6 +134,28 @@ diff.
 Say the awkward parts in it. A summary that only records what worked is not worth
 reading next to the diff, which already shows that.
 
+Every normal implementation closing summary also includes this compact process
+receipt:
+
+```text
+## Process Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success | partial | blocked
+- Friction severity: none | low | medium | high
+- What went wrong: none | ...
+- Root cause / contributing factors: none | ...
+- Prevention / pipeline improvement: none | ...
+- Tooling / docs drift discovered: none | ...
+- Follow-up: none | fixed-in-scope | <workstream-id> | manual-follow-up
+- What worked: optional
+```
+
+The purpose is to improve the agent pipeline, not praise the run. Keep
+`What worked` terse. For packeted V2 work, mirror the same receipt into the
+packet's `## Execution Feedback` section before archive. If a repeatable
+medium/high-severity process problem is found, fix the small safe issue in-scope
+or name/create the follow-up rather than burying it in prose.
+
 ## Run Artifact Finalization
 
 Before `workstream.py finish` may tear down an implementation worktree, run
