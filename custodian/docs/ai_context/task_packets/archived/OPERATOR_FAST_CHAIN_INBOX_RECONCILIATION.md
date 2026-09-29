@@ -2,7 +2,7 @@
 
 - Workstream: `operator-fast-chain-inbox-reconciliation`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -89,3 +89,14 @@ Record before/after hashes and dispositions in the closing summary.
 
 Archive complete and write
 `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION_CLAUDE_SUMMARY.md`.
+
+
+## Completion Record
+
+- All 12 specified PNGs were resolved from Git LFS and their names, decoded dimensions, frame counts, and runtime manifest entries were checked.
+- Nine entries have byte-identical archived intake PNGs and corresponding specialized pipeline logs. Fast 01–03 FX entries have byte-distinct PNG encodings but decoded pixels exactly match canonical source and runtime; canonical source carries an `sRGB` chunk absent from the inbox copy.
+- Removed the 12 stale duplicate inbox files. Canonical source/runtime PNG hashes, runtime manifest, and generated Operator catalog are unchanged.
+- `asset.py doctor`: healthy, zero issues (before: one `operator (12 PNGs)` warning).
+- `sync_operator_runtime_assets.py --dry-run --strict`: pass; 586 runtime sheets, zero warnings. `operator_animation_contract_report.py --strict --json`: pass; no missing required art (3 optional rows remain missing). Timing smoke passed.
+- The unarmed fast-chain continuity smoke passed after seeding the worktree's ignored Godot cache with the existing imported sample from the project-root checkout. Source WAV and `.import` metadata were byte-identical between worktrees. A first run before that cache seed timed out while Godot rejected the existing non-PCM WAVE import; the passing rerun emitted only the runner-classified ObjectDB/resource shutdown warnings. No audio or runtime files were changed.
+- Moment Forge not run: no runtime or presentation changes. `git diff --check` passed.
