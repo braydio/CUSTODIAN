@@ -65,8 +65,9 @@ and Slice C commands.
 Pass 1 ingested seven clean normalized inbox strips into nine canonical runtime
 strips. `guarded_approach` is READY N/E/S/W; `notice_bait` has authored N/S;
 `inspect_bait` has authored N/E plus mirrored W. The fixed inputs `vw1` and
-`vw10` were absent. `vw8` was retained in source_work and quarantined because
-its generated matte covered the sheet. No gameplay timing or mechanics changed.
+`vw10` were absent. At the time, `vw8` was rejected for a generated matte and
+briefly retained by the then-current quarantine policy; that obsolete rejected
+copy has since been deleted. No gameplay timing or mechanics changed.
 The manifest-driven asset validator now accepts partial recommended states
 while continuing to enforce every present strip and all required directions.
 
