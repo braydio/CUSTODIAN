@@ -5,7 +5,7 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `4dcbe371086eb63746df8a6a0a6d96ba3092569c`  
+**Reviewed main:** `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`  
 **Last Updated:** 2026-09-29  
 **Depends on:** none for measurement; slice dependencies below
 
@@ -65,45 +65,136 @@ Every slice must preserve these unless a later design authority explicitly chang
 7. **Profile before structural optimization.** Every performance slice must compare against the Slice 1 benchmark contract where applicable.
 8. **Focused validation first.** Full benchmark profiles are opt-in/slow and must not make normal changed-file validation unreasonably expensive.
 
-## Dependency Graph
+## V1 Full-Auto Packet Series
+
+**Series ID:** `procgen-runtime-optimization-v1`  
+**Packet count:** 26 implementation packets including S1/S11, plus 1 whole-series review and 1 next-series-authoring handoff.  
+**Dispatch contract:** every packet is pre-authored on `main`, `Status: ready`, and `Dispatch: auto`. Dependencies and locks, not future chat authoring, gate eligibility.
+
+This is a dependency DAG, not one giant workstream. Each packet lands independently. Multiple agents may execute independent eligible siblings in parallel; one agent may also run the serial order below.
+
+### Dependency Graph
 
 ```text
-S1  Performance baseline + benchmark contract
-├── S2  Candidate evaluator extraction
-│   └── S3  Semantics-only candidate generation
-│       └── S4  Accepted-candidate materializer
+S1  procgen-performance-baseline-v1
 │
-├── S5  Runtime mutation scheduler
-│   └── S6  Pause-aware streaming prepare/commit
-│       └── S7  Chunk lifecycle + cache
+├─ GENERATION LANE
+│  G1 procgen-candidate-evaluator-extraction
+│   └─ G2 procgen-candidate-semantic-model
+│       └─ G3 procgen-semantic-candidate-generation
+│           └─ G4 procgen-accepted-candidate-materializer
+│               └─ G5 procgen-candidate-runtime-path-demolition
 │
-└── S9  Contract-world placement extraction (may proceed after S1 when locks permit)
+├─ RUNTIME / STREAMING LANE
+│  M1 procgen-derived-rebuild-scheduler-foundation
+│   └─ M2 procgen-runtime-mutation-scheduler-cutover
+│       └─ M3 procgen-pause-aware-streaming
+│           └─ M4 procgen-chunk-lifecycle-state-machine
+│               └─ M5 procgen-chunk-payload-cache
+│                   └─ M6 procgen-distant-chunk-unload
+│
+└─ PLACEMENT LANE
+   P1 contract-world-placement-foundation
+    ├─ P2 contract-world-resource-placement-extraction
+    ├─ P3 contract-world-vehicle-placement-extraction
+    ├─ P4 contract-world-relay-placement-extraction
+    ├─ P5 contract-world-encounter-placement-extraction
+    └─ P6 contract-world-ingress-placement-extraction
+         \____________________________________________
+                                                      \
+P2 + P3 + P4 + P5 + P6 ──────────────────────────────> P7 contract-world-loader-contraction
 
-S4 + S7
-   └── S8  ProcGenTilemap decomplexification
+G5 + M6
+├─ D1 procgen-road-authority-extraction
+├─ D2 procgen-authored-claim-registry-extraction
+└─ D3 procgen-generation-state-extraction
+     \________________________________
+                                      \
+D1 + D2 + D3 ─────────────────────────> D4 procgen-tilemap-facade-contraction
 
-S4 + S7 + S8 + S9
-   └── S10 Renderer/node-load consolidation
-       └── S11 End-to-end soak + regression budget gate
+D4 + P7
+└─ V1 procgen-render-attribution-v1
+    └─ V2 procgen-render-load-consolidation
+        └─ F1 procgen-performance-soak-v1
+            └─ Q1 review-procgen-runtime-optimization-series-v1
+                └─ A1 procgen-runtime-optimization-v2-series-authoring
 ```
 
-S2-S4 and S5-S7 are intentionally separate lanes after S1 so generation work and runtime-streaming work can proceed independently when repository locks/worktrees permit.
+### Single-Agent Serial Auto-Run Order
 
-## Roadmap Status
+When the user has authorized one agent/session to run this full series unattended, use this deterministic traversal after each successful `workstream.py finish`:
 
-| Slice | Workstream | Status | Depends on | Completion evidence |
-| --- | --- | --- | --- | --- |
-| **S1 Performance Baseline V1** | `procgen-performance-baseline-v1` | **queued** | none | Packet: `custodian/docs/ai_context/task_packets/PROCGEN_PERFORMANCE_BASELINE_V1.md` |
-| **S2 Candidate Evaluator Extraction** | `procgen-candidate-evaluator-extraction` | planned | S1 | TBD |
-| **S3 Semantics-Only Candidate Generation** | `procgen-semantic-candidate-generation` | planned | S2 | TBD |
-| **S4 Accepted-Candidate Materializer** | `procgen-accepted-candidate-materializer` | planned | S3 | TBD |
-| **S5 Runtime Mutation Scheduler** | `procgen-runtime-mutation-scheduler` | planned | S1 | TBD |
-| **S6 Pause-Aware Streaming** | `procgen-pause-aware-streaming` | planned | S5 | TBD |
-| **S7 Chunk Lifecycle + Cache** | `procgen-chunk-lifecycle-cache` | planned | S6 | TBD |
-| **S8 ProcGenTilemap Decomplexification** | `procgen-tilemap-decomplexification` | planned | S4, S7 | TBD |
-| **S9 Contract-World Placement Extraction** | `contract-world-placement-extraction` | planned | S1 | TBD; coordinate with world-lifecycle work |
-| **S10 Renderer / Node-Load Consolidation** | `procgen-render-load-consolidation` | planned | S4, S7, S8, S9 | TBD |
-| **S11 End-to-End Performance Soak** | `procgen-performance-soak-v1` | planned | S10 | TBD |
+```text
+S1
+G1 -> G2 -> G3 -> G4 -> G5
+M1 -> M2 -> M3 -> M4 -> M5 -> M6
+P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> P7
+D1 -> D2 -> D3 -> D4
+V1 -> V2 -> F1 -> Q1 -> A1
+```
+
+After finishing a packet, return to the coordination checkout and explicitly claim the next packet in this order using the same agent identity. Do not use an unrelated `claim-next` result to wander into another project task. If the next packet is already complete because another agent landed it, advance to the next unmet item whose dependencies are complete. Stop the unattended chain only for:
+
+- failed required validation;
+- a packet becoming semantically invalid against live main;
+- an unresolved merge/dirty-worktree safety condition;
+- a `human_required` review decision;
+- or exhaustion of A1.
+
+This contract does not create a worker daemon. It makes the packet series self-contained and safe for an already-authorized agent to continue across workstreams without returning to chat for new packet authoring.
+
+### Macro-Slice Mapping
+
+| Roadmap slice | Packet(s) |
+| --- | --- |
+| S1 Baseline | S1 |
+| S2 Evaluator extraction | G1 |
+| S3 Semantics-only candidates | G2 + G3 |
+| S4 Accepted materialization | G4 + G5 |
+| S5 Runtime mutation scheduler | M1 + M2 |
+| S6 Pause-aware streaming | M3 |
+| S7 Chunk lifecycle/cache | M4 + M5 + M6 |
+| S8 ProcGenTilemap decomplexification | D1 + D2 + D3 + D4 |
+| S9 Contract-world placement extraction | P1 + P2 + P3 + P4 + P5 + P6 + P7 |
+| S10 Renderer/node-load work | V1 + V2 |
+| S11 Final soak/budgets | F1 |
+| Whole-series review | Q1 |
+| Next-series generation | A1 |
+
+## Packet Status
+
+| Code | Workstream | Status | Depends on |
+| --- | --- | --- | --- |
+| S1 | `procgen-performance-baseline-v1` | **queued/root** | none |
+| G1 | `procgen-candidate-evaluator-extraction` | queued | S1 |
+| G2 | `procgen-candidate-semantic-model` | queued | G1 |
+| G3 | `procgen-semantic-candidate-generation` | queued | G2 |
+| G4 | `procgen-accepted-candidate-materializer` | queued | G3 |
+| G5 | `procgen-candidate-runtime-path-demolition` | queued | G4 |
+| M1 | `procgen-derived-rebuild-scheduler-foundation` | queued | S1 |
+| M2 | `procgen-runtime-mutation-scheduler-cutover` | queued | M1 |
+| M3 | `procgen-pause-aware-streaming` | queued | M2 |
+| M4 | `procgen-chunk-lifecycle-state-machine` | queued | M3 |
+| M5 | `procgen-chunk-payload-cache` | queued | M4 |
+| M6 | `procgen-distant-chunk-unload` | queued | M5 |
+| P1 | `contract-world-placement-foundation` | queued | S1 |
+| P2 | `contract-world-resource-placement-extraction` | queued | P1 |
+| P3 | `contract-world-vehicle-placement-extraction` | queued | P1 |
+| P4 | `contract-world-relay-placement-extraction` | queued | P1 |
+| P5 | `contract-world-encounter-placement-extraction` | queued | P1 |
+| P6 | `contract-world-ingress-placement-extraction` | queued | P1 |
+| P7 | `contract-world-loader-contraction` | queued | P2+P3+P4+P5+P6 |
+| D1 | `procgen-road-authority-extraction` | queued | G5+M6 |
+| D2 | `procgen-authored-claim-registry-extraction` | queued | G5+M6 |
+| D3 | `procgen-generation-state-extraction` | queued | G5+M6 |
+| D4 | `procgen-tilemap-facade-contraction` | queued | D1+D2+D3 |
+| V1 | `procgen-render-attribution-v1` | queued | D4+P7 |
+| V2 | `procgen-render-load-consolidation` | queued | V1 |
+| F1 | `procgen-performance-soak-v1` | queued | V2 |
+| Q1 | `review-procgen-runtime-optimization-series-v1` | queued | F1 |
+| A1 | `procgen-runtime-optimization-v2-series-authoring` | queued | Q1 |
+
+Per-packet completion evidence is written into the roadmap during execution. A packet is not considered closed merely because code landed.
 
 ## Roadmap Maintenance Contract
 
@@ -114,9 +205,9 @@ Every procgen optimization slice must update this roadmap in the same landed cha
 1. set the slice status to `complete`, `blocked`, or the truthful current state;
 2. replace `TBD` completion evidence with the landed main SHA, closing summary, and high-signal before/after metric;
 3. update the **Current Program Position** section;
-4. promote the next executable slice from `planned` to `queued` only when its implementation contract is actually ready;
-5. mirror the same slice outcome into the `Cross-cutting Procgen Runtime Optimization` table in `design/00_meta/MASTER_ROADMAP.md`; map detailed `queued` to master `planned` until an implementation is actually in progress;
-6. add newly discovered work only when it is independently necessary and not already owned by another slice;
+4. do not author ordinary V1 successor packets: the complete V1 DAG is already published; update only truthful status/evidence unless a contract is proven invalid;
+5. mirror the same macro-slice outcome into the `Cross-cutting Procgen Runtime Optimization` table in `design/00_meta/MASTER_ROADMAP.md`; map detailed `queued` to master `planned` until an implementation is actually in progress;
+6. add newly discovered V1 work only when it is independently necessary and cannot be owned by an existing packet; otherwise carry it to Q1/A1 for V2 series authoring;
 7. never rewrite historical slice evidence to make later results look cleaner.
 
 A slice packet is not considered fully closed until this roadmap agrees with live runtime truth.
@@ -125,10 +216,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current slice:** S1 Performance Baseline V1  
-**State:** queued  
+**Current packet:** S1 `procgen-performance-baseline-v1`  
+**State:** queued/root of fully pre-authored V1 DAG  
 **Next gate:** land a reproducible structured generation + streaming benchmark with no gameplay/world-output changes.  
-**After S1:** S2 and S5 become the first high-value optimization lanes; S9 may proceed independently if world-lifecycle locks are clear.
+**After S1:** G1, M1, and P1 become eligible. The serial full-auto traversal takes G1 first; parallel agents may claim independent eligible siblings subject to locks.
 
 ---
 
