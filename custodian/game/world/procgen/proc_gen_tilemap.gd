@@ -1179,6 +1179,13 @@ func promote_evaluated_candidate_to_final() -> Dictionary:
 	phase_started = Time.get_ticks_msec()
 	_enforce_route_playability_walkability(map_size)
 	_enforce_runtime_blocker_route_clearance()
+	# Deferred from the eval-mode _fill_tilemaps() pass (see the matching
+	# generation_evaluation_mode guard there): shoreline decoration and the
+	# runtime walkable-boundary collision body only the accepted winner
+	# needs. Floor tile-variant painting already ran unconditionally in the
+	# original _fill_tilemaps() pass and is not redone here.
+	_rebuild_nonwalkable_surface_visuals()
+	_rebuild_runtime_walkable_boundary()
 	_run_route_playability_audit()
 	_build_encounter_plan()
 	marks["playability_audit"] = Time.get_ticks_msec() - phase_started
@@ -1411,7 +1418,7 @@ func _fill_tilemaps() -> void:
 
 	if enable_streaming_reveal and not generation_evaluation_mode:
 		_prepare_streaming_reveal()
-	elif build_runtime_wall_collision:
+	elif build_runtime_wall_collision and not generation_evaluation_mode:
 		_rebuild_runtime_wall_collision(map_size)
 	_marks["streaming_reveal_or_walls"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -1439,9 +1446,19 @@ func _fill_tilemaps() -> void:
 	_last = Time.get_ticks_msec()
 	_enforce_route_playability_walkability(map_size)
 	_enforce_runtime_blocker_route_clearance()
+	# _apply_sundered_keep_frontage_floor_visuals() repaints existing floor
+	# cells' tile source/atlas/alternative (cosmetic, but part of the
+	# accepted-candidate floor fingerprint contract) and must run in the same
+	# pass that establishes floor authority, so it stays unconditional here.
 	_apply_sundered_keep_frontage_floor_visuals()
-	_rebuild_nonwalkable_surface_visuals()
-	_rebuild_runtime_walkable_boundary()
+	# Shoreline decoration and the runtime walkable-boundary collision body
+	# are final-presentation/collision-only: they never write to level_data
+	# or any field CandidateEvaluator reads, so rejected eval-mode candidates
+	# skip them. The accepted winner still gets them via
+	# promote_evaluated_candidate_to_final().
+	if not generation_evaluation_mode:
+		_rebuild_nonwalkable_surface_visuals()
+		_rebuild_runtime_walkable_boundary()
 	_audit_sundered_keep_frontage_required_floor()
 	_run_route_playability_audit()
 	_build_encounter_plan()

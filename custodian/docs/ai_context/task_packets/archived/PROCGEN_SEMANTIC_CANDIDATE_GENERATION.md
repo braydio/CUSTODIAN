@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-semantic-candidate-generation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-candidate-semantic-model`
@@ -50,3 +50,14 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 - Next action: Land semantics-first attempt generation; procgen-accepted-candidate-materializer then becomes eligible.
 - Best starting files: proc_gen_tilemap.gd generation phases; generation/ semantic builder; CustodianContractMap; S1 timing report.
 - Blockers or open questions: None known at authoring time.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: one of four superficially-similar "skip during eval mode" gates was actually load-bearing for the accepted candidate's floor-tile fingerprint contract; applying uniform treatment to all four introduced a real regression, caught by the existing promotion smoke on the first validation run.
+- Root cause / contributing factors: `_apply_sundered_keep_frontage_floor_visuals()`'s naming and location alongside three genuinely-safe presentation/collision functions made it look like a peer of theirs; it actually mutates floor-cell tile identity data that a downstream correctness smoke fingerprints, while the other three only touch separate presentation layers or physics bodies never read by `level_data`/the evaluator.
+- Prevention / pipeline improvement: before gating a function behind a new mode check, trace what it actually writes (which TileMap layer, which `_last_*`/member field) rather than grouping by name or by physical proximity in the source; then run the most correctness-sensitive existing smoke (here, candidate promotion) before the broader suite.
+- Tooling / docs drift discovered: none new. The fixed-seed test corpus rarely exercises genuine multi-attempt candidate rejection, limiting direct timing evidence for this class of optimization; worth a note for whoever authors S11's soak corpus.
+- Follow-up: manual-follow-up (same pre-existing candidate-promotion streaming assertion tracked since S1). Consider a rejection-heavy fixed seed in S11's soak corpus for future generation-lane timing evidence.

@@ -272,7 +272,7 @@ state.
 |---------|--------|----------|
 | S1 Performance baseline + benchmark contract | complete | P0 |
 | S2 Candidate evaluator extraction | complete | P1 |
-| S3 Semantics-only candidate generation | in_progress | P0 |
+| S3 Semantics-only candidate generation | complete | P0 |
 | S4 Accepted-candidate materializer | planned | P1 |
 | S5 Runtime mutation scheduler | planned | P0 |
 | S6 Pause-aware streaming | planned | P1 |

@@ -168,7 +168,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | S1 | `procgen-performance-baseline-v1` | **complete** | none |
 | G1 | `procgen-candidate-evaluator-extraction` | **complete** | S1 |
 | G2 | `procgen-candidate-semantic-model` | **complete** | G1 |
-| G3 | `procgen-semantic-candidate-generation` | queued | G2 |
+| G3 | `procgen-semantic-candidate-generation` | **complete** | G2 |
 | G4 | `procgen-accepted-candidate-materializer` | queued | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | queued | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | queued | S1 |
@@ -216,10 +216,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** G3 `procgen-semantic-candidate-generation` (next in serial order after G2 lands)
-**State:** S1, G1, and G2 landed; G3, M1, and P1 are dependency-eligible.
-**Next gate:** stop building rejected candidates as near-runtime worlds using the G2 semantic model, while accepted seed/world fingerprints stay authoritative.
-**After G2:** G3 is now eligible. M1 and P1 remain independent siblings of the generation lane.
+**Current packet:** G4 `procgen-accepted-candidate-materializer` (next in serial order after G3 lands)
+**State:** S1, G1, G2, and G3 landed; G4, M1, and P1 are dependency-eligible.
+**Next gate:** make the accepted-candidate transition (eval -> accepted -> materialize -> final presentation) explicit, per S4's goal.
+**After G3:** G4 is now eligible. M1 and P1 remain independent siblings of the generation lane.
 
 ---
 
@@ -317,6 +317,19 @@ own Exit condition above is not yet met until G3 lands.
 - **Validation:** new `procgen_candidate_semantic_model_smoke.gd` PASS across S1 fixed seeds 420777/420779/771923 — snapshot fingerprints stable across two independent builds of the same candidate, and `evaluate_snapshot()` results (accepted, score, terrain_failed, full metrics dict including rejection reasons and required-ingress facts) match `evaluate_candidate()` exactly for every seed. G1's `procgen_candidate_evaluator_smoke.gd`, `procgen_contract_rescue_diagnostic_smoke.gd` (36/36 seeds), and `procgen_terrain_required_cells_smoke.gd` all PASS unchanged. S1 `procgen_performance_baseline_quick` PASS, `determinism_ok: true`. Changed-file closeout PASS (4/4 selected tests); `git diff --check` clean.
 - **Known independent failure:** `procgen_candidate_promotion_smoke.gd` still fails on the same pre-existing streamed-floor-cell equality assertion documented in S1/G1; unrelated to and unchanged by this diff.
 - **Next:** G3 `procgen-semantic-candidate-generation` is eligible.
+
+### G3 Completion Evidence
+
+G3 lands S3's Exit condition: rejected eval-mode candidates no longer pay
+for final-presentation/collision realization; accepted seed/world
+fingerprints remain authoritative and deterministic.
+
+- **Landed main SHA:** see `PROCGEN_SEMANTIC_CANDIDATE_GENERATION_CLAUDE_SUMMARY.md` at repo root.
+- Three purely presentation/collision phases inside `_fill_tilemaps()` — `_rebuild_runtime_wall_collision()` (O(map_size) physics-body creation, only reachable when `build_runtime_wall_collision` is true, which candidate attempts never override), `_rebuild_nonwalkable_surface_visuals()` (ocean/shoreline decal + coastline-presentation node instantiation), and `_rebuild_runtime_walkable_boundary()` (physics boundary body) — are now gated behind `not generation_evaluation_mode`, so every rejected attempt in `CustodianContractMap`'s candidate loop skips them entirely. None of the three ever wrote to `level_data` or any field `CandidateEvaluator` reads (verified by direct function-body inspection), so evaluation and acceptance are unaffected. `_apply_sundered_keep_frontage_floor_visuals()` was investigated as a fourth candidate but reverted to unconditional: it repaints existing floor cells' tile source/atlas/alternative, which is part of the accepted-candidate floor fingerprint contract `procgen_candidate_promotion_smoke.gd` enforces, and deferring it changed that fingerprint (caught immediately by that smoke, see Process Feedback below). The accepted winner still receives `_rebuild_nonwalkable_surface_visuals()` and `_rebuild_runtime_walkable_boundary()` via new calls added to `promote_evaluated_candidate_to_final()`; it already received wall collision through `_prepare_streaming_reveal()`'s own `_sync_runtime_wall_collision_with_visible_walls()` mechanism (streaming reveal defaults on and is never disabled for candidates), which was previously redundant with the eval-mode `_rebuild_runtime_wall_collision()` call this change removes.
+- **Validation:** `procgen_candidate_semantic_model_smoke.gd` (G2), `procgen_candidate_evaluator_smoke.gd`, `procgen_contract_rescue_diagnostic_smoke.gd` (36/36 seeds, ok), and `procgen_terrain_required_cells_smoke.gd` all PASS unchanged. S1 quick and full benchmarks PASS, `determinism_ok: true`; all 3 full-profile contract cases still accept on attempt 1/12 with loop/promotion timings within normal host variance of the S1/G2 baseline (24550/31267/11741 ms loop vs S1's 25201/32399/12637 ms). Changed-file closeout PASS (14/14 selected tests); `git diff --check` clean.
+- **Rejected-attempt timing evidence:** the S1 fixed-seed corpus and `procgen_contract_rescue_diagnostic_smoke.gd`'s 36 seeds accept almost every candidate on attempt 1/12, so genuine multi-attempt rejection inside a single contract is rare in the existing test corpus. The one available same-seed before/after data point (the diagnostic's forced max-attempts=1 rejection case, 176x176) shows `generate` time dropping from 21.4s (G2 baseline) to 20.8s (this change), a modest ~2.8% reduction consistent with removing O(map_size) collision/boundary work; the stronger, architecture-level guarantee is that the three functions above provably do not execute at all during any rejected eval-mode attempt, regardless of map size or wall count, which is the acceptance contract this packet actually specifies ("rejected attempts show zero final presentation/nav/collision/streaming realization"). A future soak (S11) with a rejection-heavy fixed corpus would make the aggregate wall-time delta more visible than this test suite currently can.
+- **Known independent failure:** `procgen_candidate_promotion_smoke.gd` still fails on the same pre-existing streamed-floor-cell equality assertion documented in S1/G1/G2; unrelated to and unchanged by this diff (confirmed identical failure message/line before and after).
+- **Next:** G4 `procgen-accepted-candidate-materializer` is eligible.
 
 ---
 
