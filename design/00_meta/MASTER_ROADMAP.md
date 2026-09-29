@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-04-04  
 **Status:** active  
-**Last Updated:** 2026-06-21
+**Last Updated:** 2026-09-29
 
 ---
 
@@ -257,6 +257,32 @@ state.
 **Docs:** 
 - `01_systems/COMMAND_TERMINAL_UI.md`
 - `03_architecture/COMPOUND_TILE_SYSTEM.md`
+
+---
+
+### Cross-cutting Procgen Runtime Optimization
+**Status:** in_progress  
+**Priority:** P1  
+**Doc:** `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`  
+**Depends on:** none for baseline measurement; per-slice dependencies in the detailed roadmap
+
+**Summary:** Measure, optimize, and decomplexify deterministic contract-world generation and runtime streaming without shrinking the game, weakening validation, or moving gameplay authority into presentation.
+
+| Slice | Status | Priority |
+|---------|--------|----------|
+| S1 Performance baseline + benchmark contract | planned | P0 |
+| S2 Candidate evaluator extraction | planned | P1 |
+| S3 Semantics-only candidate generation | planned | P0 |
+| S4 Accepted-candidate materializer | planned | P1 |
+| S5 Runtime mutation scheduler | planned | P0 |
+| S6 Pause-aware streaming | planned | P1 |
+| S7 Chunk lifecycle + cache | planned | P1 |
+| S8 ProcGenTilemap decomplexification | planned | P1 |
+| S9 Contract-world placement extraction | planned | P2 |
+| S10 Renderer / node-load consolidation | planned | P1 |
+| S11 End-to-end performance soak + regression budget gate | planned | P1 |
+
+The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
 ---
 
