@@ -27,7 +27,7 @@
   - active Twin Solaria documentation matches the live runtime after implementation.
 - Acceptance: Findings-first review of live `main` either records a clean pass or creates a bounded correction packet through the review pipeline. Reviewer must not patch the reviewed runtime directly.
 - Non-goals: Do not expand into route-review authority, acquisition FX, final camera/lighting/audio, Passage restoration, or campaign meta-progression.
-- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to the reviewed implementation. Repository/document mutations required for the durable review receipt, required review closing summary, review-packet lifecycle/archive metadata, and any bounded follow-up correction/re-review packets are allowed.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Required Review Checks
 

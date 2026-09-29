@@ -8,6 +8,7 @@
 - Depends on: `twin-solaria-route-review-authority`
 - Locks: `twin-solaria-runtime`
 - Review: `none`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Review target workstream: `twin-solaria-route-review-authority`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md`
 - Review modes: `code, architecture, runtime`

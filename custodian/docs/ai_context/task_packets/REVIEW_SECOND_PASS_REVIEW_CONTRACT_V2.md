@@ -26,7 +26,7 @@
 - Non-goals: Do not redesign the review architecture, create new features, add scoring/ranking, auto-approve subjective decisions, or fix reviewed implementation directly.
 - Acceptance: Confirm representative findings route correctly: blocking correctness defect to correction; material proof gap to correction; non-blocking issue to next-slice/deferred; optional improvement to deferred/no-action; subjective unresolved choice to human_required. Confirm correction packets reference finding IDs and remain delta-only. Confirm process findings use task feedback rather than polluting implementation corrections. Confirm structural validation and existing pairing tests remain green. If any blocking contract defect remains, scaffold the bounded correction pair.
 - Validation: Run focused review-pairing/dispatcher tests, V2 packet validator tests available on live main, prompt/template contract checks, and changed-file validation. Inspect at least one synthetic or fixture review/correction lineage proving the disposition model.
-- Task overrides: `TASK OVERRIDE: review only with respect to the reviewed implementation; do not stage, commit, or push changes to its workflow implementation. Repository/document mutations required for the review receipt and any bounded follow-up correction/review packets are allowed.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: Feedback analytics/dashboarding, review scoring, pre-land review, and subjective baseline automation.
 
 ## Review Focus

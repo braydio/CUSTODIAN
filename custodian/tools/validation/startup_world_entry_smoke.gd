@@ -5,6 +5,7 @@ const STARTUP_MODE_SCRIPT := preload("res://game/app/boot/startup_mode.gd")
 const PENDING_GENERATOR_SCRIPT := preload(
 	"res://tools/validation/fixtures/pending_world_contract_map.gd"
 )
+const AWAKENING_CONNECTOR_IMPORT := "res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png.import"
 
 var failures: Array[String] = []
 
@@ -20,6 +21,7 @@ func _run() -> void:
 		quit(1)
 		return
 	bootstrap.call("reset")
+	_assert_connector_import_metadata()
 	_assert(
 		ProjectSettings.get_setting("application/run/main_scene")
 		== "res://game/app/boot/runtime_entrypoint.tscn",
@@ -128,6 +130,17 @@ func _run() -> void:
 		for failure in failures:
 			push_error("startup_world_entry_smoke: %s" % failure)
 		quit(1)
+
+
+func _assert_connector_import_metadata() -> void:
+	var import_text := FileAccess.get_file_as_string(AWAKENING_CONNECTOR_IMPORT)
+	_assert(not import_text.is_empty(), "Awakening 04→05 connector import metadata is missing")
+	_assert(not import_text.contains("valid=false"),
+		"Awakening 04→05 connector import metadata regressed to valid=false")
+	_assert(import_text.contains("path=\"res://.godot/imported/"),
+		"Awakening 04→05 connector import metadata is missing its imported texture path")
+	_assert(import_text.contains("dest_files=["),
+		"Awakening 04→05 connector import metadata is missing imported destination metadata")
 
 
 func _assert_mode(args: PackedStringArray, expected_mode: String, expected_seed: Variant, warning_fragment: String) -> void:

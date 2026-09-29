@@ -1,6 +1,6 @@
 # AGENT AUTOMATION BACKLOG
 
-Last updated: 2026-09-28
+Last updated: 2026-09-29
 
 Prioritized automation candidates for CUSTODIAN agent workflow. These are intentionally lightweight checks first; avoid adding a large framework until the simple checks prove insufficient.
 
@@ -17,8 +17,9 @@ and aborts conflicts without force-pushing. `workstream.py` now owns normal
 implementation runs in isolated ephemeral worktrees, with push-first checkpoint
 and finish paths. Its published-history guard allows only the current branch's
 own upstream. `branch_hygiene.py` reports ancestry-based dispositions by default
-and archive-tags unique history before optional retirement. Review-only work is
-the explicit exception. Broader AI-context and task-packet validators below
+and archive-tags unique history before optional retirement. Truly read-only
+reviews remain the explicit exception; paired post-land reviews use bounded
+durable artifact commits. Broader AI-context and task-packet validators below
 remain follow-up proposals.
 
 Moment Forge is now implemented separately under
@@ -62,7 +63,10 @@ Paired Review And Correction section, and `AGENT_REVIEW_PACKET_TEMPLATE.md`).
 `dispatch.py` extends its packet parser with the review metadata contract
 (`Kind`, `Review`, `Review stage`, `Review modes`, `Paired review workstream`,
 `Review cycle`, `Max automatic review cycles`, `Review target workstream/packet`)
-and a `validate_review_pairing` consistency guard, wired into both eligibility
+and a `validate_review_pairing` consistency guard. It now also validates the
+bounded review-artifact override on auto review packets and resolves explicit
+validation script references in ready packets against tracked live tool paths,
+with closest-path diagnostics. These checks are wired into eligibility
 (`_decision`) and a standalone smoke
 (`custodian/tools/agent/validate_review_pairing.py`, registered in
 `validation_manifest.json` as `review_pairing_contract`). Review packets reuse
@@ -71,8 +75,13 @@ when its implementation dependency completes and archives, with no second
 scheduler. `review-agent-review-pipeline` is this feature's own first paired
 review, per its self-bootstrap requirement.
 
-Pre-land review, continuous workers, distributed leasing, a historical review
-log beyond the single durable receipt per implementation packet, and automatic
+The V2 review authoring contract now gives findings stable cycle-scoped IDs,
+class/domain/disposition fields and acceptance/evidence links. Correction
+thresholds route only confirmed defects and material proof gaps into delta
+correction packets; process findings use task feedback. Paired reviews may
+autonomously commit only their bounded durable review artifacts. Pre-land
+review, continuous workers, distributed leasing, a historical review log
+beyond the single durable receipt per implementation packet, and automatic
 subjective baseline acceptance remain deferred.
 
 ## Priority 1 — AI Context Validator

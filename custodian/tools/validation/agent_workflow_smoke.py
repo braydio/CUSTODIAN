@@ -13,6 +13,7 @@ def main() -> int:
         [sys.executable, "custodian/tools/agent/validate_prompt_contract.py", "--templates-only", "--strict", "--self-test"],
         [sys.executable, "custodian/tools/agent/test_land_main.py"],
         [sys.executable, "custodian/tools/agent/test_dispatch.py"],
+        [sys.executable, "custodian/tools/agent/test_review_contract.py"],
     ]
     for command in commands:
         result = subprocess.run(command, cwd=ROOT)

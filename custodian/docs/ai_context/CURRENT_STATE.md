@@ -42,7 +42,7 @@ projection drift. Asset family contracts remain the technical production
 authority; audio, Tiled, Operator, review, and manual rows retain declared
 statuses until their existing workflows update the registry.
 
-## Agent Workflow (2026-09-27)
+## Agent Workflow (2026-09-29)
 
 Prompts and task packets inherit repository defaults and carry only task deltas.
 Every normal implementation run uses the ephemeral workstream lifecycle in
@@ -59,8 +59,14 @@ still passes through the same serialized, race-safe `land_main.py` algorithm.
 The lander accepts the branch's own upstream while still rejecting publication
 on unrelated remote refs. Successful finish verifies ancestry from
 `origin/main` before removing completed branch/worktree state. Branch archive
-hygiene is ancestry-based and report-only by default. Review-only tasks require
-an explicit `TASK OVERRIDE:`.
+hygiene is ancestry-based and report-only by default. Paired post-land reviews
+now use stable cycle-scoped findings, explicit correction thresholds, and
+delta-only correction packets. Their bounded packet override permits commits
+only for the archived review receipt, required summary, review-packet lifecycle
+metadata, and correction/re-review packets; reviewed implementation and
+unrelated files remain prohibited. Dispatch rejects auto review packets with a
+missing/malformed override and ready packets with stale validation script
+paths. Ad hoc review-only tasks retain the explicit no-mutation override.
 
 ## Road Semantics V2 (2026-09-27)
 
