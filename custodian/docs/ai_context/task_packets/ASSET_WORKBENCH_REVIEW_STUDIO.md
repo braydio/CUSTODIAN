@@ -1,0 +1,187 @@
+# ASSET WORKBENCH — SLICE 2 REVIEW STUDIO
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `asset-workbench-review-studio`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P2`
+- Depends on: `asset-workbench-family-foundation`
+- Locks: `asset-workbench-ui, asset-workbench-review`
+- Kind: `implementation`
+- Review: `manual`
+- Reviewed main: `e9a239c`
+- Goal: Add a non-mutating REVIEW studio to Asset Workbench so selected Asset V2 states can be inspected at native pixel fidelity across staged source and runtime representations, including static and animated art, without leaving the UI.
+- Completion boundary: Deliver Slice 2 of `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` on top of a correctly implemented Slice 1 FAMILY navigator: source/runtime representation resolution, frame extraction for every Asset V2 source layout, native RGBA preview, filmstrip/scrub/playback, side-by-side/overlay/diff review where contracts permit, diagnostics for malformed/missing/LFS content, focused validation, Operator preview regression protection for any shared-widget extraction, and roadmap reconciliation. No asset mutation or pipeline ingest belongs in this workstream.
+- Current measured state:
+  - Slice 1 is currently queued, not yet landed on the reviewed main. This packet is intentionally dependency-gated and assumes Slice 1 delivers the roadmap contract: accepted immutable family/state projections, stable semantic selection, pure in-memory search, transactional refresh, and an optional Textual launch surface.
+  - Asset V2 source layouts are `copy`, `horizontal_strip`, `vertical_strip`, and `grid`; `asset_inspector.py` is the physical source-layout authority.
+  - `asset_plan.py::generate_plan()` is pure/read-only and already exposes staged inbox source paths, resolved state/direction, physical inspection, backend, and semantic resolution. Slice 2 may use this authority for review-source resolution but must not expose or apply ingest operations.
+  - Asset V2 runtime preview truth is available through `asset_catalog.generated.json`: family/state/direction, runtime path, frame count, frame size, hash, provenance, and mirrored source identity.
+  - The sprite-ingest backend normalizes animated runtime output to horizontal strips; static runtime-ready outputs remain single-frame files.
+  - Operator already has proven raster UX primitives in `custodian/tools/operator/ui/widgets/{preview_canvas.py,preview_controls.py,preview_filmstrip.py}` plus generic pixel helpers embedded in `operator/animation_preview.py`; those widgets are UX references, not Asset V2 authority.
+  - `ambient_baby_opossum` currently has 22 cataloged runtime entries spanning static holds and multi-frame animation. It includes authored and mirrored directions and provides a real 96×96 acceptance family.
+  - Git LFS pointer PNGs can currently reach Pillow in other tooling if hydration is absent; Review Studio must diagnose pointer content before image decode rather than crash.
+- Evidence:
+  - `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md`
+  - `design/04_architecture/ASSET_PIPELINE_V2.md`
+  - `custodian/tools/assets/asset_inspector.py`
+  - `custodian/tools/assets/asset_plan.py`
+  - `custodian/tools/assets/asset_catalog.py`
+  - `custodian/tools/assets/adapters/sprite_ingest.py`
+  - `custodian/tools/operator/ui/widgets/preview_canvas.py`
+  - `custodian/tools/operator/ui/widgets/preview_controls.py`
+  - `custodian/tools/operator/ui/widgets/preview_filmstrip.py`
+  - `custodian/tools/operator/animation_preview.py`
+  - `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`
+  - `custodian/content/metadata/assets/generated/asset_catalog.generated.json`
+- Task-specific authority:
+  - `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` owns sequencing and must be updated throughout this workstream.
+  - Asset V2 contracts, inspector, plan, catalog, and status code remain technical truth for non-Operator assets.
+  - Slice 1's landed Asset Workbench service/state layer is the UI selection/read-model authority. Extend it; do not replace it with a second review cache.
+  - Operator preview code may contribute generic UI/raster primitives only when the extraction is real reuse and Operator behavior remains unchanged.
+- Work surface:
+  - Primary: the landed Asset Workbench UI/service/state package from Slice 1.
+  - Expected Asset V2 read additions: focused review-source/frame helpers under `custodian/tools/assets/`; reuse existing inspector/plan/catalog authorities.
+  - Conditional shared UI extraction: neutral reusable preview widgets/raster helpers only if both Operator and Asset Workbench consume them in this slice.
+  - Validation: focused Asset Workbench REVIEW smoke plus Operator preview/UI regressions when shared code moves.
+  - Docs: roadmap plus concise current-truth/index updates only when durable interfaces are added.
+- Change:
+  - Add a REVIEW mode/panel tied to the current Slice 1 semantic selection.
+  - Represent review inputs with immutable projections. At minimum each representation must expose:
+    - representation kind: `staged` or `runtime`;
+    - family/state/direction/layer identity;
+    - source path;
+    - physical frame layout;
+    - frame count and frame size;
+    - authored/mirrored provenance where known;
+    - declared contract FPS where available;
+    - diagnostics / trust state.
+  - Resolve **staged source** through existing Asset V2 planning/inspection truth:
+    - use staged files already in `asset_drop/inbox/<family>/`;
+    - use `generate_plan()` or a thinner authority factored from it to resolve state/direction and `AssetInspection`;
+    - do not parse filenames independently when the existing classifier/plan owns resolution;
+    - a globally blocked plan must not prevent preview of an individually resolved source asset; surface the relevant selected-asset diagnostic and keep unrelated review usable;
+    - `asset_drop/source_work` is not an automatic review authority in this slice and remains deferred to Slice 6.
+  - Resolve **runtime** through Asset V2 catalog truth:
+    - enumerate all catalog entries for the selected state, not only `StateStatus.runtime_path`;
+    - verify the file exists and its SHA matches the catalog entry before treating it as trusted runtime;
+    - hash mismatch or missing runtime becomes a visible non-crashing diagnostic, not a silently previewed canonical asset.
+  - Implement exact frame extraction without resampling:
+    - `copy`: one exact frame;
+    - `horizontal_strip`: left-to-right frames;
+    - `vertical_strip`: top-to-bottom frames;
+    - `grid`: row-major using the inspector's explicit columns/rows;
+    - reject ambiguous/mismatched geometry rather than guessing;
+    - all frames are converted to RGBA only; pixel positions and dimensions remain exact.
+  - Runtime animated files must satisfy their catalog frame contract. Do not silently crop or infer around a catalog mismatch.
+  - Before Pillow decode, detect Git LFS pointer text and surface an explicit `LFS OBJECT NOT HYDRATED` review diagnostic including the affected path. Slice 2 must not fetch from the network automatically.
+  - Add native pixel preview:
+    - transparent RGBA rendering;
+    - integer zoom by default;
+    - fit mode may exist as a clearly labeled review representation;
+    - no bilinear/bicubic interpolation anywhere in native/integer review.
+  - Add animated review controls:
+    - filmstrip;
+    - click/scrub frame selection;
+    - play/pause;
+    - loop as UI review state;
+    - playback at the family's declared state FPS when present;
+    - if an animated state has no declared FPS, allow manual review and optionally a clearly labeled non-authoritative REVIEW FPS; never write that value back or imply it is runtime truth.
+  - Add representation selection:
+    - staged source when a resolved inbox source exists;
+    - runtime for each available direction/provenance entry;
+    - default to runtime when trusted runtime exists, otherwise staged if available;
+    - changing representation must preserve selected semantic family/state and clamp frame index safely.
+  - Add comparisons:
+    - side-by-side staged vs runtime is allowed whenever both exist;
+    - overlay and pixel-diff require compatible selected-frame dimensions; refuse with a clear contract-mismatch diagnostic rather than resampling one image to fit another;
+    - show enough diagnostics to make the comparison useful: dimensions, frame count, selected direction, provenance, alpha bounding box, and changed-pixel count/bounding box for a valid diff;
+    - do not treat source/runtime inequality as an error by itself because normalization/mirroring may be intentional.
+  - Keep review state disposable and UI-local: current frame, playing, loop, zoom, selected representation and comparison mode are not asset authority.
+  - Selection/refresh behavior must follow Slice 1's accepted-snapshot contract:
+    - if the selected semantic state survives a family refresh, keep review selection;
+    - if its current representation disappears, fall back deterministically within that state and emit one explicit activity/status event;
+    - review decode failure must not clear FAMILY navigation or replace accepted family/state truth.
+  - Shared UI extraction rules:
+    - do **not** import Asset Workbench from `custodian.tools.operator.ui`;
+    - if `PreviewCanvas`, `PreviewControls`, `PreviewFilmstrip`, exact strip splitting, or integer-nearest zoom are needed by both applications, extract only the genuinely generic contract into a neutral tooling package and make Operator consume the extracted primitive in the same change;
+    - keep Operator-only concepts in Operator: semantic identity, body/FX composition, Workbench source export, transition examiner, timeline, motion lab, contact markers, weapon context and Operator catalog logic;
+    - do not create a speculative universal Workbench framework.
+  - Add one static acceptance fixture/family in tests in addition to Baby Opossum so one-frame behavior is proven independently of actor animation.
+  - Use real `ambient_baby_opossum` runtime examples to prove:
+    - `idle_south` 4-frame review and authored/mirrored direction selection;
+    - a 1-frame hold such as `hide_hold` or `play_dead_hold`;
+    - a 6-frame animation such as `groom`, `scratch`, `waddle`, or `scurry`;
+    - no opossum-specific branching exists in review code.
+  - **Roadmap maintenance is required during implementation.**
+    - On claim/start, set Slice 2 to `in progress` and reconcile the roadmap against the actual landed Slice 1 architecture.
+    - If Slice 1 chose a materially different service/state/launcher seam, update this roadmap and implement through the landed authority rather than forcing packet pseudo-structure.
+    - If shared-widget extraction changes the planned Slice 7 hardening scope, record that immediately.
+    - Before completion, set Slice 2 to `complete`, record exact focused/Operator-regression evidence, update `Last reconciled main`, and re-evaluate Slice 3 assumptions.
+- Preserve:
+  - All Slice 1 FAMILY navigation/search/refresh behavior.
+  - Asset Pipeline V2 planning, catalog, status, ingest and transaction semantics.
+  - Existing asset pixels; REVIEW is read-only.
+  - Operator Workbench behavior and native pixel-review semantics.
+  - Existing CLI behavior and optional UI dependency separation.
+- Non-goals:
+  - No Asset V2 ingest, replace, archive, mirror publication or Git landing.
+  - No Aseprite editing or live bridge.
+  - No contract editing, `asset new`, source-work promotion or pixel conversion.
+  - No actor/NPC behavioral sequence/timeline mode.
+  - No layer composition rules that invent cross-state actor presentation.
+  - No automatic LFS/network hydration.
+  - No gameplay/runtime consumer changes.
+  - No broad Operator UI refactor beyond the smallest proven generic extraction.
+- Acceptance:
+  - A selected static runtime asset renders at exact source pixel dimensions with RGBA transparency and integer zoom.
+  - Horizontal, vertical and grid staged-source fixtures extract exact RGBA frames in deterministic order with zero resampling.
+  - Ambiguous or contract-mismatched source geometry produces a diagnostic and no guessed frames.
+  - Trusted runtime preview requires matching catalog path/hash/frame contract.
+  - LFS pointer content produces a clear review diagnostic before Pillow decode and does not crash the Workbench.
+  - Animated state playback uses declared Asset V2 FPS when present; scrub/filmstrip/frame count stay synchronized.
+  - Staged/runtime side-by-side works when both representations exist.
+  - Overlay/diff refuses incompatible frame dimensions without resampling; valid diff reports changed-pixel evidence.
+  - Real Baby Opossum tests cover a 4f directional state, a 1f hold, a 6f animation, and authored/mirrored runtime provenance.
+  - Review failures do not clear or mutate Slice 1 FAMILY accepted state.
+  - No REVIEW action creates or changes production files.
+  - If generic Operator preview code is extracted, existing Operator UI/preview focused regressions pass unchanged.
+  - Roadmap Slice 2 ends reconciled to actual landed architecture and Slice 3 is revised if needed.
+- Validation:
+  - First run the new focused Asset Workbench REVIEW smoke covering frame extraction, runtime trust, LFS detection, playback state and compare/diff behavior.
+  - Run the existing Slice 1 focused Asset Workbench UI/service smoke.
+  - Run:
+    - `python3 custodian/tools/validation/asset_pipeline_v2_smoke.py`
+    - `python3 custodian/tools/validation/asset_pipeline_cli_ux_smoke.py`
+  - If any Operator preview/widget/helper is moved or delegated, also run:
+    - `python3 custodian/tools/validation/operator_workbench_ui_smoke.py`
+    - the smallest existing Operator preview/animation smoke selected by validation ownership.
+  - Finish with `python3 custodian/tools/validation/run_validation.py --changed --json`.
+  - Run `git diff --check`.
+- Task overrides: `none`
+- Deferred:
+  - Slice 3 mutation: visual plan, ingest, isolated mutation checkout, validation, commit/landing and resumable publication.
+  - Slice 4 actor lens and cross-state review sequences.
+  - Slice 5 contract Design mode.
+  - Slice 6 creation/source-work intake and crisp pixel conversion.
+  - Slice 7 broad platform/domain hardening beyond generic primitives proven in this slice.
+
+## Execution Feedback
+
+Complete before this packet becomes `Status: complete`.
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome:
+- Friction severity:
+- What went wrong:
+- Root cause / contributing factors:
+- Prevention / pipeline improvement:
+- Tooling / docs drift discovered:
+- Follow-up:
+- What worked:
+
+## Handoff
+
+- Next action: Do not claim until `asset-workbench-family-foundation` is complete and archived. Then reconcile the living roadmap to the landed Slice 1 implementation before writing review code.
+- Best starting files: the landed Slice 1 Asset Workbench service/state/UI, `asset_inspector.py`, `asset_plan.py`, `asset_catalog.py`, and the three Operator preview widgets as reference.
+- Blockers or open questions: no design blocker. The packet intentionally avoids naming private Slice 1 helpers that do not exist yet.
