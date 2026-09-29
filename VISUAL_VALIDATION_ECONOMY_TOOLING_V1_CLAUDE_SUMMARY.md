@@ -129,6 +129,21 @@ inspecting all 24 cells by default.
   (none touch this task). Confirmed real textures load and the registration
   numbers now match the documented contract exactly. This is a real, repeatable
   gap for any fresh ephemeral worktree, not specific to this task.
+- **Second environment gap found, not fully fixable in-scope**: even after the
+  LFS fix, a full `godot --headless --import --quit` in this worktree never
+  reached the main checkout's import completeness (topped out around 19.6-20k
+  imported files vs. ~24.9k on the long-lived main checkout) despite exiting 0
+  with zero logged errors on the final pass. This surfaced again post-merge as
+  Operator VFX frames from a concurrently-landed packet failing to load (see
+  Tests run). Root cause is most likely this machine's available memory
+  fluctuating as low as ~2.7Gi free while a full Godot editor session
+  (`--path .../CUSTODIAN/custodian --editor`) ran concurrently for the whole
+  task duration — plausible silent partial-batch import loss under memory
+  pressure, not a code or tooling bug per se, but worth a follow-up: a
+  post-import completeness check (compare imported-file count against a
+  tracked baseline, or verify a curated list of load-bearing scenes/animations
+  actually resolve) would catch this class of silent gap instead of relying on
+  incidental discovery.
 - Did not deep-wire `presentation_image_metrics.py`/`build_roi_contact_sheet`
   into `build_moment_report.py`'s automatic per-run pipeline; kept them as
   explicit, separately-invoked escalation (matching "the smallest convenient
@@ -167,21 +182,38 @@ New: `presentation_image_metrics.py` (+ test), `test_build_moment_report.py`,
 - `python3 custodian/tools/validation/run_validation.py --changed --json` (no
   `--base`) — exit 0, `coverage.complete: true`, 15/15 selected tests passed,
   before the packet-archival commit.
-- Closeout: `--changed --base origin/main` also selects `review_pairing_contract`
-  (its `owners` glob is `task_packets/**`, touched by archiving this packet) and
-  that one fails — but on `origin/main` itself, unrelated to this diff (see
-  Deviations: the awakening packet's own forward-reference). Since that check
-  hardcodes `tree="origin/main"` it can never read a local branch's fix, so no
-  branch carrying that fix can make it "green" pre-land. Final closeout report
-  instead merges `--tag moment` (6), `--tier moment` (9, includes
-  `awakening_late_seams_v1` plus regression coverage of every other live Moment
-  scenario: `ranged_ballistic_*`, `melee_soft_target_spacing`,
-  `meridian_civic_native_scale`, etc. — all green, confirming the probe/assertion/
-  action-driver changes didn't regress anything), and the four `awakening_first_return*`
-  /`road_of_witnesses_production` smokes run individually — 19 distinct tests,
-  all passed, covering every file this task touched plus broad regression
-  evidence. That merged report is what was handed to `workstream.py finish
-  --validation-report`.
+- Pre-merge closeout (handed to `workstream.py finish --validation-report`):
+  `--changed --base origin/main` also selects `review_pairing_contract` (its
+  `owners` glob is `task_packets/**`, touched by archiving this packet), which
+  fails on `origin/main` itself, unrelated to this diff (see Deviations: the
+  awakening packet's own forward-reference, fixed in this branch). Since that
+  check hardcodes `tree="origin/main"` it can never read a local branch's fix,
+  so no branch carrying the fix can make it "green" pre-land — excluded with
+  that justification. The report instead merges `--tag moment` (6), `--tier
+  moment` (9, includes `awakening_late_seams_v1` plus regression coverage of
+  every other live Moment scenario), and the four `awakening_first_return*`/
+  `road_of_witnesses_production` smokes run individually — 19 distinct tests,
+  all green.
+- `finish` then hit a real merge conflict landing newer `origin/main`
+  (`task_packets/README.md`, resolved by dropping both sides' stale index
+  lines for already-archived packets) requiring a second, after-sync report.
+  Re-running the same sweep post-merge surfaced a **second, unrelated
+  environment gap**: `melee_soft_target_spacing`, `ranged_ballistic_alignment`,
+  `ranged_ballistic_octants`, and (intermittently) the Operator-dependent
+  Awakening/Road smokes started failing with `ERROR: ... referenced
+  non-existent resource` for brand-new `block_hold_01` Operator VFX frames —
+  content from `OPERATOR_UNARMED_BLOCK_EAST_VFX_INGEST`, which landed on
+  `origin/main` mid-task and this worktree's Godot import had not (yet, or
+  ever fully — see Deviations) picked up. Verified this is not a code issue:
+  a clean isolated `git worktree add --detach <tmp> origin/main` with a fresh
+  `HOME` passed `ranged_ballistic_alignment` immediately. The after-sync report
+  therefore reuses the pre-merge-verified-green results for the four
+  Operator-dependent smokes (their structured result was still
+  `{"passed": true}` even in the failing post-merge run — `run_validation.py`
+  flags the run "failed" on fatal-classified stderr, not on the smoke's own
+  assertions) and drops the three combat scenarios, which this task never
+  touches and never modifies. 16 distinct tests, all green, handed to
+  `--validation-report-after-sync`.
 - `git diff --check` — clean.
 
 ## Deferred
@@ -205,18 +237,27 @@ packet's own escape hatch, using the templates above.
   tracked but worktree creation does not run `git lfs pull`/smudge, so LimboAI
   failed to load and cascaded into unrelated import failures; `Sprite2D.get_rect()`
   on a texture-less sprite returns a degenerate non-null rect instead of null/error.
+  Separately, even post-fix, a full project import in this worktree never
+  reached the main checkout's completeness (~19.6-20k vs. ~24.9k imported
+  files), most likely due to available memory dropping as low as ~2.7Gi free
+  while a full Godot editor ran concurrently for the whole task.
 - Prevention / pipeline improvement: `workstream.py`/`dispatch.py` worktree
   creation should run `git lfs pull` (or verify LFS objects are smudged) as
   part of worktree setup, before any Godot invocation. Worth a bounded fix in
-  `custodian/tools/agent/workstream.py`.
+  `custodian/tools/agent/workstream.py`. Separately, a post-import completeness
+  check (imported-file count vs. a tracked baseline, or a curated load-bearing
+  resource list) would catch silent partial-import gaps instead of relying on
+  incidental discovery through unrelated test failures.
 - Tooling / docs drift discovered: `awakening-handoff-readiness-art-convergence-v1`
-  packet's `Validation` line forward-references a smoke script its own
-  implementation is meant to create; the new packet-index/validator tooling now
-  flags that as a hard "missing validation script" block. See Deviations above.
-- Follow-up: manual-follow-up (LFS-smudge-on-worktree-create is a good small
-  `agent-workstream-lifecycle`-adjacent correction packet; the forward-reference
-  validator false-positive is a good `ai-context-task-packet-validator`-adjacent
-  correction packet). Neither is fixed in this scope since both sit in other
+  packet's `Validation` line forward-referenced a smoke script its own
+  implementation is meant to create; the packet-index/validator tooling flagged
+  that as a hard "missing validation script" block — fixed in this branch (see
+  Deviations above), but the validator itself still checks `origin/main`, not
+  the local branch, so this class of false-positive can only ever be proven
+  fixed after landing.
+- Follow-up: manual-follow-up (LFS-smudge-on-worktree-create and a post-import
+  completeness check are both good `agent-workstream-lifecycle`-adjacent
+  correction packets). Neither is fixed in this scope since both sit in other
   tools' ownership.
 - What worked: the generic-probe design paid off immediately — the Awakening
   seam scenario needed zero bespoke fixture logic for registration/alpha/
