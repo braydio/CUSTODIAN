@@ -105,4 +105,31 @@ asset trees should not be restored without a proven dependency.
 - Prevention / pipeline improvement: Keep the measured sparse proof in the fixture, including exact-file-versus-sibling cases, and repeat the import after first-run UID cache population.
 - Tooling / docs drift discovered: Git LFS checkout can rewrite the tracked post-commit hook on this host; hook bytes are now preserved around scoped hydration. The existing developer art checkout is dirty and active, so the in-place migration was intentionally deferred by the fail-closed contract.
 - Follow-up: manual-follow-up
-- What worked: The temporary sparse checkout passed all focused Workbench, publish, compatibility, and animation-contract checks without modifying production art.
+- What worked: The temporary sparse checkout passed fixture, UI, Python Workbench, compatibility, and animation-contract checks without changing production art. The live Godot modular-layer smoke failure is recorded below.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-sparse-art-checkout`
+- Reviewed on main: `dfaf9e269`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-sparse-art-checkout-review-corrections-1`
+
+### Findings
+
+#### R0-01 — `block_hold_01` FX import metadata prevents the required Godot validation
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Disposition: `correction`
+- Affected acceptance: The final sparse profile must support the mandatory Workbench publication validation path, including `operator_modular_layers_smoke.gd`; missing-resource failures are blocking.
+- Evidence: In a real `operator-authoring-v1` worktree, both referenced FX PNGs exist, are tracked, and pass Pillow verification. Their tracked `.import` sidecars instead contain `valid=false` and omit the generated `path`/`dest_files` remap entries. Godot import followed by `operator_modular_layers_smoke.gd` reports those textures and `operator_runtime_frames.tres` as failed resources, then the smoke fails while loading the Operator actor. Repeating the modular smoke after import does not clear the failure. The sparse profile includes the complete Operator runtime tree, so this is not an omitted sparse path.
+- Rationale: The required validation path fails on live main even though the sparse checkout contains its declared dependencies. The implementation packet's completion notes report a passing modular smoke, but that result does not reproduce against the reviewed main state.
