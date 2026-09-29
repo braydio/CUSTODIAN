@@ -59,6 +59,7 @@ cannot be lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` — P1 fade-first visual closeout for the landed 04→05 connector: remove the remaining room-canvas seams without moving rooms or regenerating approved art; bounded compositor correction only if fade review still fails.
 - `AGENT_DISPATCH_CLAIM_RECEIPT_HARDENING.md` — P0 dispatcher correction: durable structured claim receipts, lost-output recovery, created/resumed checkout identity, post-start verification, and already-claimed diagnostics.
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — P2 Baby Opossum correctness pass: explicit reaction priority, arrival/contact-authoritative treat/retrieval, deterministic search ties, full contract timing parity, and focused regression coverage.
 - `WORKSTREAM_FINISH_LANDED_CLOSEOUT_HARDENING.md` — P0 workflow correction queued after review-pipeline self-review: already-landed finish fast path, durable summary proof, idempotent teardown, and dirty-root preservation.
@@ -75,10 +76,6 @@ cannot be lost when the ephemeral worktree is removed.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
 - `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
 - `AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — P2 one-time conservative cleanup of pre-hardened stale `agent/*` branches and `Recently Complete` packet residue after finish hardening lands.
-### Ready / Manual Dispatch
-
-- `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` — P1 closeout for the landed 04→05 architectural connector: remove the remaining room-canvas seams, preserve locked geometry/source art, refresh direct visual evidence, and correct stale connector docs.
-
 ### In Progress
 
 - `PROCGEN_MACRO_PRESENTATION_V1.md` — Validated migration ledger for the live region-first Rocky Upland macro presentation layer; ten SURFACE states are bound and hardened.
