@@ -2,7 +2,7 @@
 
 - Workstream: `agent-dispatch-claim-receipt-hardening`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-task-dispatch-review-corrections`
@@ -242,6 +242,39 @@ Before normal finish:
 - mark/archive this packet through current lifecycle;
 - write `AGENT_DISPATCH_CLAIM_RECEIPT_HARDENING_CLAUDE_SUMMARY.md`;
 - report the final receipt schema, receipt path, CLI recovery command, focused test count/results, changed-unit result, and any remaining intentionally deferred dispatch ergonomics.
+
+### Completion Notes
+
+- Receipt schema `custodian.dispatch.claim.v1` is emitted as one
+  `CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line after `CLAIMED`, and persisted at
+  `<git-common-dir>/custodian-dispatch/last-claim.json`.
+- Recovery CLI: `dispatch.py last-claim` / `last-claim --json`; read-only,
+  reports `current`/`stale` freshness without re-claiming.
+- `checkout: created|resumed` comes from `workstream.py start(..., report=...)`,
+  an additive keyword-only parameter that leaves the existing return type and
+  every other caller (`workstream.py`'s own CLI, `test_workstream.py`)
+  untouched; `dispatch.py` probes for the parameter via `inspect.signature`
+  before passing it, so pre-existing test doubles with a plain
+  `(work_id, repo)` signature keep working unmodified.
+- Post-start identity verification (worktree exists, branch matches
+  `agent/<id>`, remote branch published, dispatcher claimed-state recognizes
+  it) runs before anything is printed/persisted as `CLAIMED`; any failure
+  raises `dispatch: BLOCKED` and leaves the recovery claim ref in place.
+- Explicit `claim <id>` on an already-claimed workstream now reports
+  `ALREADY CLAIMED` with the canonical branch and attached local worktree path
+  when known.
+- Focused tests: `test_dispatch.py` 38/38 passed (29 pre-existing + 9 new,
+  covering the reported incident fixture, full schema, created/resumed
+  disposition, durable recovery including the no-receipt and stale cases,
+  already-claimed diagnostics, and post-start mismatch fail-closed);
+  `test_workstream.py` 9/9 passed (8 pre-existing + 1 new for the `report`
+  side-channel); `agent_workflow_smoke.py` passed.
+- Changed-unit closeout: `run_validation.py --changed --base origin/main --json`
+  passed (see `AGENT_DISPATCH_CLAIM_RECEIPT_HARDENING_CLAUDE_SUMMARY.md` for
+  the exact selected test set).
+- Deferred, unchanged from the packet's own scope: cross-host liveness beyond
+  existing Git refs, historical claim log beyond the single last receipt,
+  continuous workers, and any UI/dashboard presentation.
 
 ## Handoff
 

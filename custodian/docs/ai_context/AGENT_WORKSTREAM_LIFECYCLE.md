@@ -27,6 +27,33 @@ python3 custodian/tools/agent/dispatch.py claim-next --agent codex
 python3 custodian/tools/agent/dispatch.py claim <workstream-id> --agent codex
 ```
 
+A successful claim ends with `CLAIMED` and one
+`CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line: the receipt is the assignment
+authority. Never infer ownership from worktree creation, terminal activity,
+branch existence, or another task being active. Before entering the checkout,
+verify the receipt's workstream/branch/worktree; if stdout was lost, recover
+with:
+
+```bash
+python3 custodian/tools/agent/dispatch.py last-claim
+python3 custodian/tools/agent/dispatch.py last-claim --json
+```
+
+`last-claim` is read-only recovery: it reports whether the receipt still looks
+current (worktree present, on the expected branch, remote branch still
+published) or stale, but never re-claims or recreates anything. Do not require
+agents to manually re-run these checks when the dispatcher already reports
+`verified: true`; the commands above are recovery/debug proof, not normal
+duplicate ceremony. When verification is needed:
+
+```bash
+git -C <returned-worktree> branch --show-current
+python3 custodian/tools/agent/dispatch.py status
+```
+
+The branch must equal `agent/<returned-workstream>`, and status must recognize
+that same ID as claimed.
+
 The tool fetches and prunes `origin`, then creates or resumes
 `agent/<workstream-id>` in a sibling `.custodian-worktrees/` directory. An
 existing remote branch is canonical. It is synchronized with `origin/main` by

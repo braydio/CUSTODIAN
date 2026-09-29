@@ -260,7 +260,7 @@ def sync_remote_branch(path: Path, branch: str) -> bool:
     return True
 
 
-def start(workstream_id: str, repo: Path | None = None) -> Path:
+def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None) -> Path:
     repo = (repo or root_repo()).resolve()
     branch = branch_for(workstream_id)
     fetch(repo)
@@ -296,6 +296,8 @@ def start(workstream_id: str, repo: Path | None = None) -> Path:
         else:
             git("push", "-u", "origin", branch, cwd=path)
         print(f"reusing clean attached worktree: {path}")
+        if report is not None:
+            report["checkout"] = "resumed"
         return path
 
     local_exists = subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/heads/{branch}"], cwd=repo).returncode == 0
@@ -317,6 +319,8 @@ def start(workstream_id: str, repo: Path | None = None) -> Path:
         git("worktree", "add", "-b", branch, str(path), "origin/main", cwd=repo)
         git("push", "-u", "origin", branch, cwd=path)
     print(f"workstream: {branch}\nworktree: {path}")
+    if report is not None:
+        report["checkout"] = "created"
     return path
 
 

@@ -1,6 +1,7 @@
 """Temporary-repository tests for task discovery, claims, and locking."""
 
 import importlib.util
+import json
 import subprocess
 import shutil
 import sys
@@ -38,10 +39,14 @@ def packet(workstream, *, status="ready", dispatch_value=None, priority=None, de
 
 
 def publish_workstream(work_id, repo):
-    git(repo, "branch", f"agent/{work_id}", "origin/main")
-    git(repo, "push", "origin", f"agent/{work_id}")
+    # A real worktree, not just a branch: dispatch.py's post-start identity
+    # verification checks that the returned path actually exists and is checked
+    # out on the expected branch.
+    path = Path(repo).parent / f"{work_id}-worktree"
+    git(repo, "worktree", "add", "-b", f"agent/{work_id}", str(path), "origin/main")
+    git(path, "push", "-u", "origin", f"agent/{work_id}")
     git(repo, "fetch", "origin")
-    return Path(repo).parent / f"{work_id}-worktree"
+    return path
 
 
 class DispatchTests(unittest.TestCase):
@@ -269,10 +274,7 @@ class DispatchTests(unittest.TestCase):
         results = []
         fake = mock.Mock()
         def fake_start(work_id, repo):
-            git(repo, "branch", f"agent/{work_id}", "origin/main")
-            git(repo, "push", "origin", f"agent/{work_id}")
-            git(repo, "fetch", "origin")
-            return self.base / f"{work_id}-worktree"
+            return publish_workstream(work_id, repo)
         fake.start.side_effect = fake_start
         thread_output = threading.local()
         captured = {}
@@ -382,6 +384,150 @@ class DispatchTests(unittest.TestCase):
             result = dispatch.claim(self.repo, None, "codex", True)
         self.assertEqual(result, 0)
         return "\n".join(output)
+
+    def _publish_claimed_workstream(self, work_id):
+        """Simulate a workstream already fully claimed: local attached worktree + remote branch."""
+        path = self.base / f"{work_id}-attached"
+        git(self.repo, "worktree", "add", "-b", f"agent/{work_id}", str(path), "origin/main")
+        git(path, "push", "-u", "origin", f"agent/{work_id}")
+        git(self.repo, "fetch", "origin")
+        return path
+
+    def _real_claim(self, workstream_id, agent="codex", auto_only=False):
+        output = []
+        with mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
+            result = dispatch.claim(self.repo, workstream_id, agent, auto_only)
+        self.assertEqual(result, 0)
+        rendered = "\n".join(output)
+        sentinel = next(line for line in rendered.splitlines() if line.startswith("CUSTODIAN_DISPATCH_RESULT_JSON:"))
+        receipt = json.loads(sentinel.removeprefix("CUSTODIAN_DISPATCH_RESULT_JSON:"))
+        return rendered, receipt
+
+    # --- Reported incident fixture: claim-next must not confuse an unrelated
+    # already-claimed workstream's worktree with the actually selected task. ---
+
+    def test_claim_next_selects_ready_task_despite_unrelated_claimed_worktree(self):
+        self._publish_claimed_workstream("twin-like")
+        self.add_packet("twin-like", dispatch_value="auto", priority="P1")
+        self.add_packet("baby-like", dispatch_value="auto", priority="P2")
+        rendered_status = dispatch.status(self.repo, output=False)
+        self.assertIn("twin-like", rendered_status.split("CLAIMED (", 1)[1])
+        self.assertIn("baby-like", rendered_status.split("READY (", 1)[1])
+
+        rendered, receipt = self._real_claim(None, auto_only=True)
+        self.assertIn("workstream: baby-like", rendered)
+        self.assertNotIn("twin-like", rendered)
+        self.assertEqual(receipt["workstream"], "baby-like")
+        self.assertEqual(receipt["branch"], "agent/baby-like")
+        self.assertNotIn("twin-like", json.dumps(receipt))
+
+    def test_claim_next_does_not_block_on_higher_priority_already_claimed_task(self):
+        self._publish_claimed_workstream("urgent-claimed")
+        self.add_packet("urgent-claimed", dispatch_value="auto", priority="P0")
+        self.add_packet("lower-ready", dispatch_value="auto", priority="P2")
+        rendered, receipt = self._real_claim(None, auto_only=True)
+        self.assertEqual(receipt["workstream"], "lower-ready")
+        self.assertIn("workstream: lower-ready", rendered)
+
+    # --- Structured receipt schema and identity-derived disposition. ---
+
+    def test_claim_emits_structured_receipt_with_full_schema(self):
+        self.add_packet("schema-task", dispatch_value="auto")
+        rendered, receipt = self._real_claim(None, auto_only=True)
+        self.assertEqual(receipt["schema"], "custodian.dispatch.claim.v1")
+        self.assertEqual(receipt["result"], "claimed")
+        self.assertEqual(receipt["workstream"], "schema-task")
+        self.assertEqual(receipt["prior_status"], "ready")
+        self.assertEqual(receipt["branch"], "agent/schema-task")
+        self.assertIn("schema-task-", receipt["worktree"])
+        self.assertEqual(receipt["packet"], f"{dispatch.PACKET_ROOT}/SCHEMA_TASK.md")
+        self.assertEqual(receipt["checkout"], "created")
+        self.assertTrue(receipt["verified"])
+        self.assertEqual(receipt["agent"], "codex")
+        self.assertIn(f"workstream: {receipt['workstream']}", rendered)
+        self.assertIn(f"branch: {receipt['branch']}", rendered)
+        self.assertIn(f"packet: {receipt['packet']}", rendered)
+
+    def test_real_start_reports_resumed_disposition_for_clean_local_worktree(self):
+        self.add_packet("resumed-task", dispatch_value="auto")
+        path = self.base / "resumed-task-wt"
+        git(self.repo, "worktree", "add", "-b", "agent/resumed-task", str(path), "origin/main")
+        _, receipt = self._real_claim("resumed-task")
+        self.assertEqual(receipt["checkout"], "resumed")
+        self.assertEqual(receipt["worktree"], str(path.resolve()))
+
+    # --- Durable last-claim recovery. ---
+
+    def test_last_claim_recovers_identity_after_stdout_loss(self):
+        self.add_packet("recover-task", dispatch_value="auto")
+        with mock.patch("builtins.print"):
+            dispatch.claim(self.repo, None, "codex", True)
+        with mock.patch("builtins.print") as printer:
+            result = dispatch.last_claim(self.repo, as_json=True)
+        self.assertEqual(result, 0)
+        receipt = json.loads(printer.call_args.args[0])
+        self.assertEqual(receipt["workstream"], "recover-task")
+        self.assertEqual(receipt["freshness"], "current")
+        self.assertEqual(receipt["freshness_reasons"], [])
+
+    def test_last_claim_reports_no_receipt_when_none_exists(self):
+        output = []
+        with mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
+            result = dispatch.last_claim(self.repo, as_json=False)
+        self.assertEqual(result, 1)
+        self.assertIn("NO LAST CLAIM RECEIPT", "\n".join(output))
+
+    def test_last_claim_reports_stale_without_mutating_state(self):
+        self.add_packet("stale-task", dispatch_value="auto")
+        with mock.patch("builtins.print"):
+            dispatch.claim(self.repo, None, "codex", True)
+        for record in git(self.repo, "worktree", "list", "--porcelain").split("\n\n"):
+            lines = record.splitlines()
+            if lines and "branch refs/heads/agent/stale-task" in lines:
+                git(self.repo, "worktree", "remove", "--force", lines[0].removeprefix("worktree "))
+        git(self.repo, "push", "origin", "--delete", "agent/stale-task")
+        before = git(self.repo, "show-ref", "--heads")
+        with mock.patch("builtins.print") as printer:
+            result = dispatch.last_claim(self.repo, as_json=True)
+        self.assertEqual(result, 0)
+        receipt = json.loads(printer.call_args.args[0])
+        self.assertEqual(receipt["freshness"], "stale")
+        self.assertTrue(receipt["freshness_reasons"])
+        self.assertEqual(before, git(self.repo, "show-ref", "--heads"))
+        self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "agent/stale-task"))
+
+    # --- Already-claimed explicit diagnostic. ---
+
+    def test_explicit_claim_of_already_claimed_task_reports_branch_and_worktree(self):
+        attached = self._publish_claimed_workstream("held-task")
+        self.add_packet("held-task", dispatch_value="auto")
+        with self.assertRaises(dispatch.DispatchError) as ctx:
+            dispatch.claim(self.repo, "held-task", "codex", False)
+        message = str(ctx.exception)
+        self.assertIn("ALREADY CLAIMED", message)
+        self.assertIn("workstream: held-task", message)
+        self.assertIn("branch: agent/held-task", message)
+        self.assertIn(attached.name, message)
+
+    # --- Post-start identity verification fails closed. ---
+
+    def test_post_start_branch_mismatch_fails_closed_and_writes_no_receipt(self):
+        self.add_packet("mismatch-task", dispatch_value="auto")
+        wrong_path = self.base / "wrong-branch-worktree"
+
+        def wrong_branch_start(work_id, repo):
+            git(repo, "worktree", "add", "-b", "agent/decoy-branch", str(wrong_path), "origin/main")
+            git(wrong_path, "push", "-u", "origin", "agent/decoy-branch")
+            git(repo, "fetch", "origin")
+            return wrong_path
+
+        fake = mock.Mock(); fake.start.side_effect = wrong_branch_start
+        with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
+            with self.assertRaisesRegex(dispatch.DispatchError, "post-start verification failed"):
+                dispatch.claim(self.repo, "mismatch-task", "codex", False)
+        self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/mismatch-task"))
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/mismatch-task"))
+        self.assertFalse(dispatch._last_claim_path(self.repo).is_file())
 
 
 if __name__ == "__main__":

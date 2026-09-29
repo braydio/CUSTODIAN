@@ -52,6 +52,15 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
         self.assertEqual(git(path, "rev-parse", "@{upstream}"), git(self.repo, "rev-parse", "origin/agent/sample-work"))
 
+    def test_start_report_records_created_then_resumed_disposition(self):
+        report: dict[str, str] = {}
+        path = workstream.start("disposition-work", self.repo, report=report)
+        self.assertEqual(report["checkout"], "created")
+        resumed_report: dict[str, str] = {}
+        resumed = workstream.start("disposition-work", self.repo, report=resumed_report)
+        self.assertEqual(resumed_report["checkout"], "resumed")
+        self.assertEqual(resumed, path)
+
     def test_existing_remote_is_resumed_and_main_merge_is_non_rewriting(self):
         task = workstream.start("resume-me", self.repo)
         (task / "task").write_text("task\n"); git(task, "add", "task"); git(task, "commit", "-m", "task")
