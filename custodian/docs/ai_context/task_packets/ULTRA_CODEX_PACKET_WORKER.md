@@ -4,7 +4,7 @@
 - Status: `ready`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `agent-task-dispatch`
+- Depends on: `agent-dispatch-claim-receipt-hardening`
 - Locks: `agent-workflow`
 - Goal: Bootstrap and prove a persistent, bandwidth-conservative Codex worker on the user's Ultra.cc "Speedboat Ops" seedbox that can autonomously claim explicitly eligible CUSTODIAN task packets, implement them serially, validate, checkpoint/land safely, and return to an idle clean state without competing with Codex sessions on the user's local computer.
 - Current measured state: CUSTODIAN already has repository-native packet dispatch, remote claim refs, stable `agent/<workstream-id>` branches, push-first recovery, serialized `land_main.py` landing, artifact finalization, and packet metadata. The user's local machine already has an active CUSTODIAN checkout and Codex sessions; the seedbox has npm available to the non-root user but does not yet have the CUSTODIAN worker installed. The current normal lifecycle creates sibling ephemeral worktrees, while the desired Ultra footprint is one live repository working directory and one task at a time. Large media/asset types are Git LFS-backed in this repository and must not be silently downloaded on the seedbox.
