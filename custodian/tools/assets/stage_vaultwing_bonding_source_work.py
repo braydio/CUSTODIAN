@@ -145,7 +145,7 @@ def copy_immutable(source: Path, target: Path) -> str:
 
 
 def preserve_candidate(source: Path, spec: SourceSpec, ordinal: int, *, apply: bool) -> tuple[bool, str, str]:
-    """Validate before assigning canonical provenance; rejected attempts stay quarantined."""
+    """Validate before assigning canonical provenance; rejected attempts never become durable assets."""
     source_hash = sha256(source)
     try:
         image, _alpha = source_rgba(source)
