@@ -23,8 +23,9 @@ First-run migration copies legacy ignored `.ai/operator_animation_workbench`
 state into an empty art checkout, rewrites absolute checkout paths in JSON, and
 preserves the coordination copy. It refuses to migrate while Aseprite is
 running. Tracked coordination-side Operator edits are reported, never migrated.
-Operator LFS art is filled from the local cache only; no network download is
-triggered by `opui` setup. See
+Operator LFS art, including weapon-owned `source/operator` and `runtime/operator`
+overlays consumed by the Workbench, is filled from the local cache only; no network
+download is triggered by `opui` setup. See
 `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md` and
 `custodian/tools/validation/operator_art_worktree_smoke.py`.
 
