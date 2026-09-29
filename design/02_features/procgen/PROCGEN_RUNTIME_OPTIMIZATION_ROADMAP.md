@@ -115,8 +115,9 @@ Every procgen optimization slice must update this roadmap in the same landed cha
 2. replace `TBD` completion evidence with the landed main SHA, closing summary, and high-signal before/after metric;
 3. update the **Current Program Position** section;
 4. promote the next executable slice from `planned` to `queued` only when its implementation contract is actually ready;
-5. add newly discovered work only when it is independently necessary and not already owned by another slice;
-6. never rewrite historical slice evidence to make later results look cleaner.
+5. mirror the same slice outcome into the `Cross-cutting Procgen Runtime Optimization` table in `design/00_meta/MASTER_ROADMAP.md`; map detailed `queued` to master `planned` until an implementation is actually in progress;
+6. add newly discovered work only when it is independently necessary and not already owned by another slice;
+7. never rewrite historical slice evidence to make later results look cleaner.
 
 A slice packet is not considered fully closed until this roadmap agrees with live runtime truth.
 
