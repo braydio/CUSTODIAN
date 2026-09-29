@@ -2,33 +2,36 @@
 
 ## Outcome
 
-The workstream is blocked at input provenance and preflight. I treated the
-worktree's root `vw*.png` paths as the user's clarified local originals without
-verifying their provenance. That was incorrect: the paths are Git-LFS pointers
-present in `origin/main`, introduced by commit `302fef5b7` (`vaultwing source`).
-The task worktree inherited those pointers from main. `git lfs checkout` hydrated
-the payloads from the shared local LFS cache; no LFS fetch was run, but the
-cache's original source is unknown. I cannot claim these were the user's local
-Firefox saves or that their payloads were obtained independently from main.
+The user's actual files are now present in `~/Downloads`; these are distinct
+from the main-tracked LFS payloads previously inspected. SHA-256 values:
 
-The repo-tracked `vw1`–`vw4` payloads have 4, 5, 6, and 6 alpha-X frame clusters
-instead of the required eight, with visual direction mismatches in the assigned
-N/S/W slots. This describes only the repo-tracked payloads, not the user's
-separate originals. The older checkpoint also records `vw9`, `vw10`, and `vw12`
-as clipped greeting candidates. No alternate mapping was guessed.
+- `vw1.png`: `3b4e66cb0c96b6e2fdb41c3cce8eaac6c8a27eaec44967e74b631b7be448b7b2`
+- `vw2.png`: `19b33d38ba3c18bb747648af89d17541297a7613f4283702cee4d6752c0fdf49`
+- `vw3.png`: `c4d53e4d578318a8f25e8de8a1963b5c96fde558ffa920b62e0536b40c66e578`
+- `vw4.png`: `708df1d2707354d84f7eeb8616f99f5d8000843d062b5d7d6ea4d95f14e0627e`
 
-No source_work, inbox, runtime, catalog, quarantine, or production art was
-written. The workstream remains blocked until the user's actual local inputs can
-be found and provenance plus frame/orientation preflight are verified.
+All four decode as 2172×724 RGBA with transparency; visual review matches the
+packet's E/N/S/W assignment. The current normalizer detects only 5/6/5/4
+alpha-X groups rather than eight because adjacent poses connect. Equal 8-cell
+slicing places foreground on multiple frame seams (up to 121 active alpha
+pixels in a seam column) and visually cuts wing/body anatomy. For comparison,
+the previously accepted fixed-cell six-frame source had at most 9 active alpha
+pixels at a seam. The current images therefore cannot be safely normalized by
+the existing lossless extraction path without a reviewed segmentation method.
+
+No Downloads originals were modified. No source_work, inbox, runtime, catalog,
+quarantine, or production art was written. The task remains blocked pending
+separable frames/sheets with transparent margins or an approved lossless
+segmentation method.
 
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: blocked
-- Friction severity: high
-- What went wrong: repo-tracked LFS payloads were mistaken for the user's local source files.
-- Root cause / contributing factors: the task worktree inherited root pointers from main, and the shared LFS cache does not record where or when its objects were obtained.
-- Prevention / pipeline improvement: verify user-provided files from an independent local path or compare hashes supplied by the user before treating them as local originals; do not write assets until both provenance and contract checks pass.
-- Tooling / docs drift discovered: the packet's Downloads path was superseded by the user's project-root instruction, but those tracked paths are not independently verified local copies.
-- Follow-up: manual-follow-up — locate/receive the user's actual local `bond_greet` E/N/S/W sheets, verify provenance, and resume this workstream.
-- What worked: no LFS fetch was run and production destinations remain untouched.
+- Friction severity: medium
+- What went wrong: The actual local images are valid RGBA sheets and correctly oriented, but their adjacent poses overlap/connect; alpha clustering merges them and equal-cell cropping cuts anatomy.
+- Root cause / contributing factors: The current stager assumes separable alpha groups and has only a known fixed-cell exception for a prior six-frame sheet; this batch has more substantial foreground at cell seams.
+- Prevention / pipeline improvement: Require per-frame extraction evidence and edge-safety review before staging; do not force a cell grid through connected anatomy.
+- Tooling / docs drift discovered: packet input provenance is now verified against actual Downloads hashes; frame extraction remains the blocker.
+- Follow-up: manual-follow-up — obtain separated frames or agree on a reviewed lossless segmentation path, then resume this workstream.
+- What worked: source hashes, RGBA geometry, directional poses, alpha groups, and cell-edge evidence were checked before any production writes.
