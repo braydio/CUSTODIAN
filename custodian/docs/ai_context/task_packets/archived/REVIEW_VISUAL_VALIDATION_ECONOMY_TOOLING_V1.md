@@ -2,7 +2,7 @@
 
 - Workstream: `review-visual-validation-economy-tooling-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `visual-validation-economy-tooling-v1`
@@ -30,6 +30,18 @@
 7. Confirm no tool mutates gameplay/simulation state and no metric is treated as collision/navigation/route authority.
 8. Confirm paired-review documentation tells reviewers to reuse durable structured evidence instead of recapturing equivalent full-screen media.
 9. Confirm no baseline or aesthetic/art-direction result is auto-approved.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: The scoped Godot run completed the assertion DSL smoke but emitted broad project-load failures because this worktree lacks generated imports and global class registration; direct-adopter none/evidence runs could not be treated as valid proof.
+- Root cause / contributing factors: The isolated worktree does not carry the main checkout's `.godot` import/class cache; a live editor was also active in the project root. The engine smoke returned exit code 0 despite autoload/resource/script errors.
+- Prevention / pipeline improvement: Run focused Moment Forge runtime checks from a fully imported worktree and make the validation wrapper fail when engine logs contain load/parse errors even if the script exits zero.
+- Tooling / docs drift discovered: The implementation summary's four future-adopter snippets are copy/paste templates, not tested reusable fixture/spec artifacts as required by the parent packet.
+- Follow-up: `visual-validation-economy-tooling-v1-review-corrections-1`
+- What worked: Synthetic probes and Python schema/report smokes isolated deterministic metric behavior without renderer evidence.
 
 ## Human Gate
 

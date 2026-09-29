@@ -216,7 +216,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md` — paired P1 code/architecture/workflow review of sparse checkout isolation, ignored-state preservation, and unchanged scoped publish safety.
+- `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.
+- `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 code/workflow re-review of the `block_hold_01` FX import repair.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
@@ -248,7 +249,8 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
-- `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — paired P0 code/architecture/workflow review of the visual-validation economy tooling; no subjective art review.
+- `VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — P0 bounded correction round for review findings R0-01 through R0-06.
+- `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — paired P0 code/runtime/workflow re-review of the correction round.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` — P2 Slice 1 of the living Asset Workbench roadmap: read-only Asset V2 FAMILY navigator, truthful family/state lifecycle projection, pure search, transactional refresh, and Baby Opossum acceptance coverage.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, prove late joins code-first with seam metrics/targeted ROIs, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.

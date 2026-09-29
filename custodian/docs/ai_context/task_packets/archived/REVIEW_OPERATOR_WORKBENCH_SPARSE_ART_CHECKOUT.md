@@ -2,7 +2,7 @@
 
 - Workstream: `review-operator-workbench-sparse-art-checkout`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-workbench-sparse-art-checkout`
@@ -34,5 +34,6 @@
 
 ## Handoff
 
-- Next action: Auto-dispatch after the implementation lands.
-- Blockers or open questions: Dependency only.
+- Completion: Sparse isolation, state preservation, UI and scoped publication safety passed review. Finding `R0-01` blocks the required current-main Godot modular-layer validation; the bounded correction and paired review are ready and dependency-gated.
+- Next action: Auto-dispatch `operator-workbench-sparse-art-checkout-review-corrections-1` after this review lands.
+- Blockers or open questions: The two `block_hold_01` FX `.import` records must be repaired before the parent acceptance can be verified.

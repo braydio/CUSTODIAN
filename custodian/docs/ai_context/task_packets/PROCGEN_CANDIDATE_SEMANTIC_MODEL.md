@@ -24,6 +24,23 @@
 - Task overrides: `none`
 - Deferred: Direct semantics-first generation is the next packet.
 
+## Context Economy / Low-Token Execution
+
+This is a deliberate follow-up reminder for long-running Sonnet/Codex execution. Optimize context use without weakening correctness:
+
+- treat this packet's Goal, Completion boundary, Change, Preserve, Acceptance, Validation, and Handoff as primary context;
+- read the immediate predecessor closing summary and benchmark/roadmap evidence instead of rereading completed packets;
+- do not re-audit the whole repository unless a packet assumption fails or a required dependency cannot be resolved;
+- for very large files, especially `proc_gen_tilemap.gd`, search for the named functions/state first and read only the relevant ranges plus immediate callers/callees; do not load the full file by default;
+- reuse landed S1 benchmark artifacts, prior slice summaries, and existing validation evidence rather than rediscovering established facts;
+- inspect only the current authority, direct consumers, and direct dependencies needed for this slice;
+- during iteration run focused validation only; run one normal changed-file closeout sweep after focused work is green;
+- do not dump full logs, full diffs, or large source excerpts into progress/final responses; summarize failures and evidence compactly;
+- do not restate this packet or narrate broad architecture before implementation unless a contradiction requires a decision;
+- keep the closing summary factual and compact while still recording required evidence, drift, and handoff state.
+
+Context economy is subordinate to correctness: expand scope only when a concrete failed assumption, test, or dependency proves that more repository context is required.
+
 ## Series Contract
 
 This packet belongs to the pre-authored `procgen-runtime-optimization-v1` dependency DAG. Do not author its ordinary V1 successor during implementation: downstream packets already exist on `main` with `Dispatch: auto`. Update `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md` and the matching master-roadmap row at closeout, record landed evidence, then finish normally so declared dependents can become eligible. If live evidence invalidates a downstream contract, record the contradiction and leave that dependent blocked rather than silently broadening this workstream.

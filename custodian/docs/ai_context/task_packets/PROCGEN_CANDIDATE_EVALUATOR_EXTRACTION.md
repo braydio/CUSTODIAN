@@ -14,8 +14,8 @@
 - Completion boundary: Done when CustodianContractMap still owns seed/profile/attempt orchestration but delegates candidate measurement and selection policy to a focused evaluator; S1 fixed cases choose the same attempts with the same reasons/scores.
 - Current measured state: CustodianContractMap owns _is_map_layout_acceptable, _score_map_layout, _is_terrain_failed_candidate, _is_better_fallback_candidate, _can_use_degraded_fallback, _get_map_layout_metrics, flood-fill helpers, and attempt orchestration in one 1,216-line coordinator.
 - Evidence: S1 benchmark contract; live CustodianContractMap selection helpers; procgen_contract_rescue_diagnostic_smoke.gd; terrain-required/connectivity smokes.
-- Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; CustodianContractMap; current ingress/connectivity acceptance contracts.
-- Work surface: Primary new owner under game/world/procgen/generation/ plus narrow CustodianContractMap delegation; focused candidate/rescue tests and validation_manifest ownership.
+- Task-specific authority: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_PATH_INDEX.md` section `S2 / G1 — Candidate Evaluator Extraction`; `custodian/game/world/procgen/custodian_contract_map.gd`; current ingress/connectivity acceptance contracts.
+- Work surface: Use `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_PATH_INDEX.md#s2--g1--candidate-evaluator-extraction` as the primary exact-path navigation index. Most likely edits/creates are `custodian/game/world/procgen/custodian_contract_map.gd`, `custodian/game/world/procgen/generation/candidate_evaluator.gd`, optional `custodian/game/world/procgen/generation/candidate_evaluation_result.gd`, `custodian/game/world/procgen/generation/README.md`, `custodian/tools/validation/procgen_candidate_evaluator_smoke.gd`, `custodian/tools/validation/procgen_contract_rescue_diagnostic_smoke.gd`, and `custodian/tools/validation/validation_manifest.json`. Treat `custodian/game/world/procgen/proc_gen_tilemap.gd`, `procgen_candidate_promotion_smoke.gd`, `procgen_terrain_required_cells_smoke.gd`, `procgen_playability_smoke.gd`, and `procgen_spatial_normalization_smoke.gd` as read/validation references unless a concrete failing dependency requires an edit.
 - Change: Create a data-only candidate-evaluation result and evaluator API. Move metric extraction, accept/reject reasons, score calculation, terrain-failure classification, degraded-fallback eligibility, and fallback comparison behind that API. Keep attempt order/seed derivation/final promotion in CustodianContractMap. Preserve current reason keys and diagnostics or provide an explicit compatibility mapping covered by tests.
 - Preserve: Attempt cap, seed derivation, map-size bands, terrain/connectivity/ingress thresholds, fallback policy, deterministic tie ordering, accepted candidate identity, and S1 metrics schema.
 - Non-goals: No semantics-only generation, no TileMap/materialization changes, no scoring retune, no fewer attempts, no map-size changes.
@@ -24,6 +24,31 @@
 - Task overrides: `none`
 - Deferred: Candidate semantic data model and rejection-path optimization remain the next generation-lane packets.
 
+## Exact Path Reminder
+
+Before any broad repository search, open:
+
+`design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_PATH_INDEX.md`
+
+and use its **S2 / G1 — Candidate Evaluator Extraction** section as the most-likely reference for exact implementation, fixture, validation, predecessor-evidence, and closeout paths. Search within those named files for the listed evaluator symbols first. Expand beyond the index only when a concrete compile/test/dependency failure demonstrates that another path is involved. If live main requires a different new-file path, record the deviation and update the path index in the same landed change.
+
+## Context Economy / Low-Token Execution
+
+This is a deliberate follow-up reminder for long-running Sonnet/Codex execution. Optimize context use without weakening correctness:
+
+- treat this packet's Goal, Completion boundary, Change, Preserve, Acceptance, Validation, and Handoff as primary context;
+- read the immediate predecessor closing summary and benchmark/roadmap evidence instead of rereading completed packets;
+- do not re-audit the whole repository unless a packet assumption fails or a required dependency cannot be resolved;
+- for very large files, especially `proc_gen_tilemap.gd`, search for the named functions/state first and read only the relevant ranges plus immediate callers/callees; do not load the full file by default;
+- reuse landed S1 benchmark artifacts, prior slice summaries, and existing validation evidence rather than rediscovering established facts;
+- inspect only the current authority, direct consumers, and direct dependencies needed for this slice;
+- during iteration run focused validation only; run one normal changed-file closeout sweep after focused work is green;
+- do not dump full logs, full diffs, or large source excerpts into progress/final responses; summarize failures and evidence compactly;
+- do not restate this packet or narrate broad architecture before implementation unless a contradiction requires a decision;
+- keep the closing summary factual and compact while still recording required evidence, drift, and handoff state.
+
+Context economy is subordinate to correctness: expand scope only when a concrete failed assumption, test, or dependency proves that more repository context is required.
+
 ## Series Contract
 
 This packet belongs to the pre-authored `procgen-runtime-optimization-v1` dependency DAG. Do not author its ordinary V1 successor during implementation: downstream packets already exist on `main` with `Dispatch: auto`. Update `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md` and the matching master-roadmap row at closeout, record landed evidence, then finish normally so declared dependents can become eligible. If live evidence invalidates a downstream contract, record the contradiction and leave that dependent blocked rather than silently broadening this workstream.
@@ -31,5 +56,5 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 ## Handoff
 
 - Next action: Land the evaluator extraction; procgen-candidate-semantic-model then becomes eligible.
-- Best starting files: custodian_contract_map.gd; generation/; procgen_contract_rescue_diagnostic_smoke.gd; S1 benchmark outputs.
+- Best starting files: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_PATH_INDEX.md` first; then the exact S2/G1 paths it lists, beginning with `custodian/game/world/procgen/custodian_contract_map.gd`, `custodian/game/world/procgen/generation/README.md`, `custodian/tools/validation/procgen_contract_rescue_diagnostic_smoke.gd`, and landed S1 benchmark evidence.
 - Blockers or open questions: None known at authoring time.

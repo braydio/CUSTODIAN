@@ -1,0 +1,53 @@
+# CORRECTION: VISUAL VALIDATION ECONOMY TOOLING V1 REVIEW
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `visual-validation-economy-tooling-v1-review-corrections-1`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `review-visual-validation-economy-tooling-v1`
+- Locks: `moment-forge-tooling`
+- Kind: `correction`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, runtime, workflow`
+- Paired review workstream: `review-visual-validation-economy-tooling-v1-review-corrections-1`
+- Review cycle: `1`
+- Max automatic review cycles: `2`
+- Reviewed main: `dfaf9e269d4c12d98bc03f5800cc34ce3530a50a`
+- Parent implementation: `visual-validation-economy-tooling-v1` — `custodian/docs/ai_context/task_packets/archived/VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md`
+- Parent review: `review-visual-validation-economy-tooling-v1` — `custodian/docs/ai_context/task_packets/archived/REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md`
+- Findings addressed: `R0-01, R0-02, R0-03, R0-04, R0-05, R0-06`
+- Affected acceptance: Parent packet acceptance for deterministic configurable image metrics, trustworthy ROI/evidence checks, and five direct-adopter paths or tested reusable fixture/specs.
+- Current defect/evidence: The parent review confirmed silent padded out-of-bounds crops, a one-pixel boundary seam false-negative, ignored minimum alpha threshold when both bounds exist, an Awakening evidence adapter that exits 0 after failed metrics, four adopter snippets that are not covered by reusable fixture/spec tests, and no durable Awakening run output available to independently verify the implementation summary's claimed no-capture/evidence runs.
+- Goal: Make image metrics reject invalid geometry and correctly evaluate declared thresholds, propagate failed evidence checks as failures, provide tested reusable direct-adopter specifications for the four feature runtimes unavailable to this tooling slice, and make one clean live adopter proof available for paired review.
+- Completion boundary: Fix the four narrow metrics/adapter defects and add automated checks for their failure cases; package the four non-Awakening adopter patterns as reusable specs/fixtures with schema/contract validation and usage documentation; produce and record a reproducible Awakening no-capture run plus one compact evidence-mode proof after confirming the project import is healthy.
+- Current measured state: Parent review synthetic repros: padded ROI returned 0.5 coverage on an opaque image, a one-pixel red line on a declared seam returned delta 0.0, and transparent alpha coverage passed the `[0.5, 1.0]` bounds. A transparent ROI also yields a failed adapter metric while `main()` returns 0. The four summary templates contain unresolved tick placeholders and have no validating test. The review worktree's Godot invocation emitted project import/class errors, and no adopter run artifacts were available to reuse.
+- Evidence: `custodian/docs/ai_context/task_packets/archived/REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md`, findings R0-01 through R0-05; parent implementation packet direct-adopter acceptance.
+- Task-specific authority: `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`; parent implementation and review packets.
+- Work surface: `custodian/tools/iteration/presentation_image_metrics.py`, `custodian/tools/validation/awakening_late_seams_evidence.py`, `custodian/tools/iteration/test_presentation_image_metrics.py`, and tested reusable adopter specs/fixtures plus their focused validation.
+- Required correction: Validate all ROI edges against source image size before crop; include boundary pixels in seam measurements or otherwise detect a discontinuity located on the declared seam; combine minimum and maximum alpha constraints conjunctively; return nonzero from the Awakening evidence adapter whenever any required metric fails; add tested reusable adopter specs for Twin Crown, Solarium I, Operator mobile guard, and Vaultwing closure that downstream packets can instantiate without new probe/metric design; run the live Awakening adopter in none mode and once in evidence mode from a healthy import, then record the structured result and compact evidence locations in the closing summary or a committed machine-readable receipt.
+- Preserve: Existing image-metric schema and raw metric reporting where compatible, valid ROI behavior, Moment Forge V1 scenario compatibility, capture-mode semantics, the human gate for subjective art/baseline decisions, and the rule that presentation metrics do not become gameplay authority.
+- Non-goals: New art/runtime feature implementation, aesthetic scoring, changing existing gameplay or route authority, broad Moment Forge redesign, and full-frame evidence generation.
+- Acceptance:
+  - Out-of-bounds and negative-origin ROIs fail explicitly; valid in-bounds crops retain exact existing dimensions and values (`R0-01`).
+  - Synthetic positive and negative controls detect a one-pixel discontinuity exactly at a declared boundary, while a clean seam remains within its expected metric (`R0-02`).
+  - Alpha checks with both minimum and maximum thresholds fail below the minimum, fail above the maximum, and pass within the interval (`R0-03`).
+  - Awakening evidence adapter exits nonzero and identifies failed check indices when required metric checks fail; passing metrics still produce the sheet and manifest (`R0-04`).
+  - Four committed adopter specs/fixtures are exercised by a focused test or schema smoke and provide the required stage/state, probe/assertion, authority, and compact-evidence pattern for their parent feature packet (`R0-05`).
+  - A clean `traversal/awakening_late_seams_v1` no-capture run passes, and one evidence-mode run produces a metrics manifest plus five-cell contact sheet; the structured results and retained/reproducible paths are recorded for paired review (`R0-06`).
+- Validation: `python3 -m unittest custodian.tools.iteration.test_presentation_image_metrics custodian.tools.iteration.test_build_moment_report`; `python3 custodian/tools/validation/moment_forge_schema_smoke.py`; `python3 custodian/tools/validation/moment_forge_report_smoke.py`; `python3 custodian/tools/validation/moment_forge_changed_router_smoke.py`; `python3 custodian/tools/validation/run_validation.py --changed --json` after inspecting resource availability and ensuring no concurrent validation sweep.
+- Task overrides: `none`
+- Deferred: Any live feature-specific adopter wiring whose prerequisite runtime remains unavailable; visual baseline and art-direction judgments remain with each feature's human review.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success | partial | blocked`
+- Friction severity: `none | low | medium | high`
+- What went wrong: `<none or concise statement>`
+- Root cause / contributing factors: `<none or concise statement>`
+- Prevention / pipeline improvement: `<none or concise statement>`
+- Tooling / docs drift discovered: `<none or concise statement>`
+- Follow-up: `<none | fixed-in-scope | workstream-id | manual-follow-up>`
+- What worked: `<optional concise note>`
