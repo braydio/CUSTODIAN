@@ -19,8 +19,9 @@ Pass 3 used the twelve local task inputs without downloading them from `main`.
 Eight accepted source masters produced eleven Asset V2 runtime strips, bringing
 bonding coverage to 20/24 strips (15/18 authored masters) and total Vaultwing
 runtime coverage to 76/80 strips. Three greeting sheets visibly clip wing art
-under fixed-cell splitting and remain quarantined with the superseded wrong-
-facing `vw2` sheet; final first-bond visual review waits for corrected greeting
+under fixed-cell splitting and the superseded wrong-facing `vw2` sheet is also
+rejected. Rejected Vaultwing bonding images are deletion-only rather than
+durable quarantine; final first-bond visual review waits for corrected greeting
 inputs. The focused behavior smoke assertions pass, but the local validation
 wrapper reports unrelated missing-LFS-resource and invalid LimboAI-library
 errors because this worktree uses pointer-only checkout.
