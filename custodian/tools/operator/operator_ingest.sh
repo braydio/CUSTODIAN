@@ -6,8 +6,11 @@ SKIP_INBOX=0
 NO_IMPORT=0
 NO_VALIDATE=0
 NO_MIRROR=0
+PROFILE=""
+STRICT=0
 
-for arg in "$@"; do
+while [[ $# -gt 0 ]]; do
+  arg="$1"
   case "$arg" in
     --apply) APPLY=1 ;;
     --dry-run) APPLY=0 ;;
@@ -15,9 +18,21 @@ for arg in "$@"; do
     --no-import) NO_IMPORT=1 ;;
     --no-validate) NO_VALIDATE=1 ;;
     --no-mirror) NO_MIRROR=1 ;;
+    --strict) STRICT=1 ;;
+    --profile)
+      if [[ $# -lt 2 ]]; then
+        echo "--profile requires a value" >&2
+        exit 2
+      fi
+      PROFILE="$2"
+      shift
+      ;;
+    --profile=*)
+      PROFILE="${arg#--profile=}"
+      ;;
     -h|--help)
       cat <<'USAGE'
-Usage: tools/operator_ingest.sh [--dry-run|--apply] [--skip-inbox] [--no-import] [--no-validate] [--no-mirror]
+Usage: tools/operator_ingest.sh [--dry-run|--apply] [--skip-inbox] [--no-import] [--no-validate] [--no-mirror] [--profile PROFILE] [--strict]
 
 Default is --dry-run.
 
@@ -26,6 +41,10 @@ Default is --dry-run.
 --no-import   Skip Godot import.
 --no-validate Skip smoke/contract validation.
 --no-mirror   Do not generate horizontally mirrored direction counterparts.
+--profile PROFILE  Restrict sync_operator_runtime_assets.py source/runtime scanning to one animation
+                    profile (loadout), such as unarmed. Forwarded to every sync_operator_runtime_assets.py
+                    invocation; unset by default (all profiles).
+--strict      Forward strict validation to every sync_operator_runtime_assets.py invocation.
 USAGE
       exit 0
       ;;
@@ -34,7 +53,16 @@ USAGE
       exit 2
       ;;
   esac
+  shift
 done
+
+SYNC_ARGS=()
+if [[ -n "$PROFILE" ]]; then
+  SYNC_ARGS+=(--profile "$PROFILE")
+fi
+if [[ "$STRICT" -eq 1 ]]; then
+  SYNC_ARGS+=(--strict)
+fi
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
@@ -83,9 +111,9 @@ fi
 
 echo "== Operator modular runtime build =="
 if [[ "$APPLY" -eq 1 ]]; then
-  python3 custodian/tools/pipelines/sync_operator_runtime_assets.py
+  python3 custodian/tools/pipelines/sync_operator_runtime_assets.py "${SYNC_ARGS[@]}"
 else
-  python3 custodian/tools/pipelines/sync_operator_runtime_assets.py --dry-run --remove-superseded
+  python3 custodian/tools/pipelines/sync_operator_runtime_assets.py --dry-run --remove-superseded "${SYNC_ARGS[@]}"
 fi
 echo ""
 
@@ -113,7 +141,7 @@ godot --headless --path custodian --script res://tools/pipelines/build_operator_
 echo ""
 
 echo "== Operator superseded runtime cleanup =="
-python3 custodian/tools/pipelines/sync_operator_runtime_assets.py --remove-superseded
+python3 custodian/tools/pipelines/sync_operator_runtime_assets.py --remove-superseded "${SYNC_ARGS[@]}"
 echo ""
 
 if [[ "$NO_VALIDATE" -eq 0 ]]; then

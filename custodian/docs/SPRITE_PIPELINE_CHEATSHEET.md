@@ -44,7 +44,7 @@ For interactive work, install the optional dependency from
 `custodian/tools/operator/ui/requirements.txt` in a virtual environment and
 run `operator ui`. The TUI is a control cockpit over Workbench V2; Aseprite is
 still the editor and the CLI remains available for scripts.
-Use `1`–`4` for PLAN / WORKBENCH / PREVIEW / TIMELINE. Preview compares saved
+Use `1`–`5` for PLAN / WORKBENCH / PREVIEW / TIMELINE / MOTION. Preview compares saved
 Workbench, canonical source, and generated runtime at non-authoritative REVIEW
 FPS. Review sequences are disposable `.ai` JSON and allow duplicates and trims.
 Use `operator anim frame add ... --after N --dry-run` or `frame remove ...
@@ -52,7 +52,7 @@ Use `operator anim frame add ... --after N --dry-run` or `frame remove ...
 without `--dry-run` to stage it, edit the new timeline, then publish.
 Use `operator anim canvas resize unarmed fast_02 e --group attack --width 128
 --height 128 --scope animation --dry-run` to inspect a no-scale centered canvas
-migration. In WORKBENCH mode, `Shift+R` opens the same review flow. The migration
+migration. In WORKBENCH mode, `Ctrl+R` opens the same review flow. The migration
 adds transparent padding (or rejects a crop that would discard visible pixels),
 then explicit `operator anim publish` updates canonical size-token filenames and
 the generated runtime/catalog contract.
@@ -213,32 +213,38 @@ python custodian/tools/pipelines/generate_inbox_manifests.py --dry-run --remove-
 python custodian/tools/pipelines/generate_inbox_manifests.py --remove-superseded
 ```
 
-## 4. Build Operator Modular Runtime Directly
+## 4. Sync Operator Runtime From Canonical Source
 
-If Operator modular source PNGs already live here:
+Live Operator V2 authoring authority is:
 
 ```text
-custodian/content/sprites/operator/new_operator/modular/
+custodian/content/sprites/operator/source/animations/
 ```
 
-do not move them back through the inbox. Build the generated runtime modules directly:
+Execution authority is the generated runtime it syncs into:
+
+```text
+custodian/content/sprites/operator/runtime/animations/
+```
+
+`custodian/tools/operator/operator_ingest.sh` is the entrypoint; default is dry-run:
 
 ```bash
-python custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded
-python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded
+custodian/tools/operator/operator_ingest.sh --dry-run
+custodian/tools/operator/operator_ingest.sh --apply
 ```
 
-Generated stable modules land under:
+`--apply` also updates compatibility resources, imports, rebuilds the runtime frame
+catalog, and runs smoke validation. Restrict a sync to one loadout with `--profile`,
+and fail closed on missing/suspicious coverage with `--strict`:
 
-```text
-custodian/content/sprites/operator/runtime/modules/new_operator/
+```bash
+custodian/tools/operator/operator_ingest.sh --dry-run --profile unarmed --strict
 ```
 
-Some action-runtime compatibility outputs land under:
-
-```text
-custodian/content/sprites/operator/runtime/actions/
-```
+The older `content/sprites/operator/new_operator/modular/` source tree and its
+former standalone Python builder script are retired; that path is historical
+evidence only and is not part of the live sync.
 
 Runtime playback still requires deliberate state-machine and resource registration. A generated PNG is not
 automatically a new gameplay animation.
@@ -370,6 +376,6 @@ godot --headless --script tools/validation/operator_modular_layers_smoke.gd
 | Route new inbox PNGs | `generate_inbox_manifests.py`, then `ingest.py` |
 | Normalize/review Operator generated art | `operator art source-*`; handoff stages directly in `_pipeline/inbox/` |
 | Replace an existing Operator semantic strip | `source-handoff ... --replace --dry-run`, then `--replace`; ingest refreshes compatibility resources |
-| Rebuild existing Operator modular source sheets | `build_operator_modular_runtime.py` |
+| Sync Operator runtime from canonical source | `operator_ingest.sh --apply` (`--profile`/`--strict` to scope/tighten) |
 | Refresh Operator SpriteFrames | `reload_assets.py` or `update_operator_compatibility_resources.py` followed by `build_operator_runtime_frames.gd` |
 | Validate pure Python tooling | the three new `*_smoke.py` scripts |

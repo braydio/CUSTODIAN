@@ -74,10 +74,6 @@ cannot be lost when the ephemeral worktree is removed.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
 - `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
 - `AGENT_WORKSTREAM_RESIDUE_HYGIENE.md` — P2 one-time conservative cleanup of pre-hardened stale `agent/*` branches and `Recently Complete` packet residue after finish hardening lands.
-### Ready / Manual
-
-- `OPERATOR_AUTHORING_SURFACE_HARDENING.md` — P1 manual packet to reconcile active Operator authoring docs with Workbench V5 / Operator V2, expose targeted/strict focused ingest controls, and add regression coverage for tooling-doc drift.
-
 ### Ready / Manual Dispatch
 
 - `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` — P1 closeout for the landed 04→05 architectural connector: remove the remaining room-canvas seams, preserve locked geometry/source art, refresh direct visual evidence, and correct stale connector docs.

@@ -144,15 +144,19 @@ without changing Operator playback code.
 Ingest and runtime-module generation do not automatically grant a new gameplay animation state. Live playback
 must still be registered deliberately in the Operator state machine and curated `SpriteFrames`.
 
-When modular source PNGs already live under `operator/new_operator/modular/`, do not move them back through the
-inbox. Build and refresh them directly:
+The `operator/new_operator/modular/` source tree and its former builder are retired; that path
+is historical evidence only. Live Operator V2 authoring authority is
+`operator/source/animations/`, synced into `operator/runtime/animations/` via
+`custodian/tools/operator/operator_ingest.sh` (default dry-run):
 
 ```bash
-python custodian/tools/pipelines/build_operator_modular_runtime.py --dry-run --remove-superseded
-python custodian/tools/pipelines/build_operator_modular_runtime.py --remove-superseded
-godot --headless --path custodian --import --quit
-godot --headless --path custodian --script res://tools/pipelines/update_operator_curated_resources.gd
+custodian/tools/operator/operator_ingest.sh --dry-run
+custodian/tools/operator/operator_ingest.sh --apply
 ```
+
+Use `--profile <loadout>` to scope a sync to one loadout and `--strict` to fail
+closed on missing/suspicious coverage. `--apply` runs the Godot import and
+rebuilds the runtime frame catalog as part of its sequence.
 
 Use the contract report to inspect modular production coverage without modifying art:
 
