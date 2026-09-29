@@ -19,6 +19,8 @@ ART_BRANCH = "workbench/operator-art"
 OPERATOR_LFS_GLOBS = (
     "custodian/content/sprites/operator/source/animations/**",
     "custodian/content/sprites/operator/runtime/animations/**",
+    "custodian/content/sprites/weapons/*/source/operator/**",
+    "custodian/content/sprites/weapons/*/runtime/operator/**",
 )
 PENDING_RELATIVE = Path(".ai/operator_animation_workbench/publish_land_pending.json")
 CATALOG_RELATIVE = Path("custodian/content/data/operator/generated/operator_animation_catalog.generated.json")
@@ -75,7 +77,14 @@ def _worktrees(root: Path) -> list[tuple[Path, str]]:
 
 
 def _operator_art_lfs_pointers(root: Path) -> list[Path]:
-    prefixes = (root / "custodian/content/sprites/operator/source/animations", root / "custodian/content/sprites/operator/runtime/animations")
+    weapons_root = root / "custodian/content/sprites/weapons"
+    prefixes = [
+        root / "custodian/content/sprites/operator/source/animations",
+        root / "custodian/content/sprites/operator/runtime/animations",
+    ]
+    if weapons_root.exists():
+        prefixes.extend(sorted(path for path in weapons_root.glob("*/source/operator") if path.is_dir()))
+        prefixes.extend(sorted(path for path in weapons_root.glob("*/runtime/operator") if path.is_dir()))
     pointers = []
     for prefix in prefixes:
         if not prefix.exists():
