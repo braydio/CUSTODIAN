@@ -251,6 +251,7 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — paired P0 code/runtime/workflow re-review of the correction round.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` — P2 Slice 1 of the living Asset Workbench roadmap: read-only Asset V2 FAMILY navigator, truthful family/state lifecycle projection, pure search, transactional refresh, and Baby Opossum acceptance coverage.
+- `ASSET_WORKBENCH_REVIEW_STUDIO.md` — P2 Slice 2 dependency-gated on Slice 1: native static/animated Asset V2 review, all source layouts, runtime catalog trust, filmstrip/playback, staged/runtime compare, LFS diagnostics, and bounded generic Operator preview reuse.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — P1 full-scene Awakening convergence gate: lock Layout-to-art registration, prove late joins code-first with seam metrics/targeted ROIs, formalize South Reach completion for the later Hub handoff, and reconcile live art debt/docs.
 - `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — paired independent code/runtime/visual/asset review of the Awakening convergence and handoff-readiness slice.
 - `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — paired independent review of startup routing, bootstrap reuse, and story-default preservation.
