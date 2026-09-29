@@ -1,5 +1,7 @@
 # Vaultwing Bonding Art Pass 1 Summary
 
+> **Superseding handling note (2026-09-29):** the rejected-art quarantine described below is historical. Rejected/wrong-facing Vaultwing bonding images are now deletion-only after rejection/hash verification; do not preserve them as future task inputs.
+
 Date: 2026-09-26
 Starting HEAD: `668893aacaf0f251db8c9420cb1e0e0d1bca23b2`
 
