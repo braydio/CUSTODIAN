@@ -164,7 +164,7 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — P0 code-first presentation-validation tooling: richer Moment probes/assertions, deterministic image metrics, compact ROI evidence, and reusable direct adopters for high-visual-cost queued work.
+- `VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — P0 code-first presentation-validation tooling: richer Moment probes/assertions, deterministic image metrics, compact ROI evidence, and reusable direct adopters for high-visual-cost queued work; waits on `second-pass-review-contract-v2` so its own paired review can autocomplete safely.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1.md` — paired P0 code/architecture/workflow review of the visual-validation economy tooling; no subjective art review.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` — P2 Slice 1 of the living Asset Workbench roadmap: read-only Asset V2 FAMILY navigator, truthful family/state lifecycle projection, pure search, transactional refresh, and Baby Opossum acceptance coverage.
