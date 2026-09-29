@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-runtime-decomplexification`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -40,8 +40,27 @@
 - Task overrides: `none`
 - Deferred: C2b.3 is now queued as `operator-runtime-compatibility-residue` in `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md`; it inventories and retires the remaining compatibility presentation resources/nodes/tooling, reconciles stale reachability/orphan output, and preserves dormant source/runtime art where retirement rather than deletion is authoritative. After C2b residue closes, resume the original plan with Slice E action arbitration, six one-domain Slice F extraction packets, then Slice G shell collapse/final audit.
 
+## Completion
+
+- Completed on 2026-09-29 in workstream `operator-runtime-decomplexification`.
+- Removed the Operator animation resolver and directional fallback references; canonical damage reactions, exact dodge selection, validation gates, debt baseline, and active documentation now agree at 75 remaining violations.
+- Focused validation passed: architecture-debt audit; runtime-animation-authority smoke; canonical knockdown/reaction smoke; modular idle hit-react; dodge flow and FX; parry; Vigil Dagger; Sword Cleaver; unarmed fast chain; canonical animated sprite; immutable runtime spine; and visual ownership.
+- `run_validation.py --changed --json` ran. The Operator architecture/reachability/melee checks passed, but unrelated Baby Opossum, elevated-world asset, Meridian semantic-manifest, procgen-ocean, and Vaultwing asset checks failed or lacked source assets in this worktree. No Operator-focused regression failed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The fresh worktree had unhydrated Git LFS assets and an invalid LimboAI pointer, which blocked initial Godot resource loading. Godot import also rewrote thousands of unrelated `.import` sidecars. The first reaction smoke design assumed a single state machine could re-enter the same reaction repeatedly and sampled transient hit-stop timing; that produced false failures. The changed-files sweep exposed unrelated missing/corrupt art in other systems.
+- Root cause / contributing factors: Workstream creation does not hydrate LFS content. Running the editor import pass against pointer files wrote `valid=false` import metadata; after hydrating the relevant local LFS objects, restoring generated sidecars returned the worktree to source-controlled import metadata. The smoke coupled multiple reactions to state-machine re-entry instead of isolating canonical selection and presentation calls.
+- Prevention / pipeline improvement: Hydrate only the local LFS assets required by a focused run before importing, and restore generated `.import` changes after import. Keep selector/presentation smoke cases isolated from state-machine re-entry and do not assert transient hit-stop state at an arbitrary frame.
+- Tooling / docs drift discovered: The new canonical light reaction is authored at 10 FPS, not 12 FPS; the smoke now follows the generated runtime manifest. The `--changed` closeout included unrelated asset checks whose source material is absent/corrupt in a fresh worktree.
+- Follow-up: C2b.3 compatibility-resource/node cleanup remains queued in `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md`.
+- What worked: The code-level debt audit and authority smoke produced stable, fast evidence; locally cached LFS objects were sufficient to hydrate the Operator test dependency closure without network access.
+
 ## Handoff
 
-- Next action: Claim/resume `operator-runtime-decomplexification`, reproduce the canonical reaction-name mismatch with the focused smoke, then repair reaction selection before removing the remaining selector dependencies.
-- Best starting files: `custodian/game/actors/operator/operator.gd`; `custodian/tools/validation/operator_knockdown_animation_smoke.gd`; `custodian/game/actors/operator/animations/operator_animation_selector.gd`; `custodian/tools/validation/operator_architecture_debt_audit.py`; `custodian/tools/validation/operator_runtime_animation_authority_smoke.py`.
-- Blockers or open questions: None. Canonical mappings and the shared-fallback ownership distinction are already evidenced in live main.
+- Next action: Claim `operator-runtime-compatibility-residue` (C2b.3), which owns compatibility-resource/node cleanup and reachability reconciliation.
+- Best starting files: `custodian/docs/ai_context/task_packets/OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md`; `design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md`; the reachability and orphan evidence named by that packet.
+- Blockers or open questions: None for C2b.2. The changed-files sweep has unrelated asset-contract failures recorded above; focused Operator checks passed.

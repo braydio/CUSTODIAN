@@ -1,10 +1,10 @@
 # Task Packet — Operator Runtime Decomposition
 
-**Status:** Slices A, B, B-final, C1, **D** (through D.3) and **C2b in part**
-(through **C2b.1**) complete (2026-09-24). C2a/R4 landed some time ago --
+**Status:** Slices A, B, B-final, C1, **D** (through D.3), and **C2b.2**
+complete (2026-09-29). C2b.3 compatibility-resource residue is queued. C2a/R4 landed some time ago --
 `animated_sprite` is canonical and the modular body is canonical -- so the older
 "C2a blocked / R4 next" prose below is history, not present reality.
-Architecture debt is **97**, down from **347** at the start of the migration.
+Architecture debt is **75**, down from **347** at the start of the migration.
 
 **C2b.1 (blocker removal).** C2b discovered that equipping a melee weapon copied
 that weapon's `body_frames_resource` into the shared canonical `SpriteFrames`,
@@ -14,8 +14,10 @@ across equip/unequip/cycling, armed melee selects canonical semantic identities
 derived from weapon data, the per-weapon `SpriteFrames` fields and their six
 resources are deleted, and `actor_local_spriteframes` reached 0.
 `operator_runtime_spine_immutable` is the executable form of that invariant.
-`animation_resolver` (18) and `directional_animation_fallback` (4) remain for
-non-armed callers and retire in the C2b demolition pass. The figure previously given
+At that C2b.1 checkpoint, `animation_resolver` (16) and
+`directional_animation_fallback` (4) remained for non-armed callers. C2b.2
+removed both Operator-owned selection dependencies; C2b.3 handles the remaining
+compatibility resources. The figure previously given
 here as the migration's starting point, 201, was an intermediate state, not the
 opening balance.
 
@@ -56,8 +58,9 @@ D.1 set out to fix could still reappear. The router no longer sees a mouse posit
 at all.
 Gates `operator_input_frame` and `operator_fixed_tick_spine` own
 `operator/input/**`, and `operator_input_aim_source` carries the D.2 negative
-controls against the real actor. Still open and deliberately untouched: C2b, Slice E
-(`OperatorActionController`) and Slice F (domain extraction).
+controls against the real actor. C2b.2 completed the remaining canonical
+selection cutover. Still open and deliberately untouched: C2b.3 compatibility
+resource residue, Slice E (`OperatorActionController`) and Slice F (domain extraction).
 
 The C2a renderer cutover record, kept for its evidence (2026-09-15):
 

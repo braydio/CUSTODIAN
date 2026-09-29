@@ -116,28 +116,13 @@ pass with that flag, and the temporary SOUTH branch can then leave the selector.
 
 ## Next Agent Slice
 
-Preservation is complete. 42 verified strips now cover heavy attack/windup/
-recovery/guard, Sword-Cleaver and Vigil-Dagger three-link E/W packages, the
-retired melee stance, and the actor-installed critical hitspark and ranged
-fire-walk sheets. Every extraction is per-frame SHA256 verified, and the
-sheet-sourced ones are byte-identical to their sources.
+C2b.2 completed the active Operator selection cutover. Damage reaction and
+dodge now resolve exact canonical identities, all Operator
+`AnimationResolver` and `DirectionalAnimationFallback` dependencies are gone,
+and the 75-item architecture ledger contains only non-selection debt.
 
-The pipeline is done: `sync_operator_runtime_assets.py` validates source,
-synchronizes runtime, then scans runtime to emit the manifest;
-`build_operator_runtime_frames.gd` turns that manifest into the single
-`operator_runtime_frames.tres` (512 animations, authored FPS/loop/durations
-preserved from the timing sidecars).
-
-Remaining work is consumer cutover, in dependency order:
-
-1. `MeleeAttackProfile` presentation contract and the attack `.tres` resources.
-2. `operator.gd`: drop the raw PNG constants and dynamic frame registration,
-   install `OperatorAnimationSelector` over the generated SpriteFrames.
-3. States, guard controller, weapon definitions, socket/posture renames.
-4. `operator.tscn` collapsed onto the one SpriteFrames; Workbench browser and
-   publish moved onto the runtime manifest.
-5. Delete the compatibility resources and their updater, then clear legacy
-   residue with `--remove-legacy-runtime`.
-
-Do not delete a compatibility resource before its consumers are cut over.
-Preserve combat authority and all existing authored semantic art.
+The next slice is C2b.3, `operator-runtime-compatibility-residue`: inventory and
+retire the remaining compatibility SpriteFrames resources, scene nodes and
+tooling; reconcile stale reachability/orphan output; preserve dormant source and
+runtime art where retirement, rather than deletion, is authoritative. Do not
+reopen the completed consumer cutover or change combat authority/art timing.

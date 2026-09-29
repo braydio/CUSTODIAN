@@ -1844,6 +1844,27 @@
       "needs_import": false
     },
     {
+      "id": "operator_knockdown_animation",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_knockdown_animation_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "operator",
+        "hitreact",
+        "knockdown",
+        "canonical"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/animations/states/hit_recoil_state.gd",
+        "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
+        "custodian/tools/validation/operator_knockdown_animation_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "enemy_grunt_notice_and_attack_cadence",
       "type": "godot_script",
       "script": "res://tools/validation/enemy_grunt_notice_and_attack_cadence_smoke.gd",
