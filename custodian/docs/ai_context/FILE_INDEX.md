@@ -1202,9 +1202,8 @@ Last updated: 2026-09-29
   `custodian/tools/iteration/scenarios/combat/vaultwing_first_bond.json` — Slice
   B.1 behavioral feed/trial loop plus B.2 interaction-presentation ownership,
   same-instance bonded allegiance, stable spawn identity, versioned save/restore
-  and lifecycle/target-release regressions; bonding art pass 1 has nine runtime
-  strips and the first-bond evidence capture passes, with final visual judgment
-  deferred until the six bonding families are complete.
+  and lifecycle/target-release regressions; all six bonding art states publish
+  24/24 runtime directions and the full family has 80/80 runtime strips.
 - `custodian/game/systems/spawning/vaultwing_spawner.gd` — focused deterministic
   wild Vaultwing population/spawn authority, separate from passive critters and
   generic enemy camps.
@@ -1218,10 +1217,10 @@ Last updated: 2026-09-29
 - `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`
   — Asset V2 family contract for the 256px Common Vaultwing states; the WILD
   EAST/WEST, SOUTH, and NORTH baseline is complete at 14/14 states per facing.
-  Slice-B bonding art is separate and remains partial (nine runtime strips);
-  rejected bonding candidates are preserved in hash-named quarantine, not
-  source_work. Replacements preserve semantic filenames/frame contracts and
-  flow through targeted family ingest.
+  Slice-B bonding art publishes all 24 directions across six states, including
+  authored E/N/S/W `bond_greet`; Asset V2 owns mirrored W output for the other
+  states. Named Downloads imports use the bounded Vaultwing batch stager, and
+  replacements flow through targeted family ingest.
 - `custodian/tools/validation/vaultwing_runtime_smoke.gd` — deterministic Slice A
   runtime smoke covering flight bands, attack-window contact, dive commitment,
   live-player stagger persistence, retreat, death, presentation fallback, and

@@ -1857,24 +1857,17 @@ are covered. B.2 adds a behavior-owned presentation override for bait
 recognition, guarded approach, inspection, accepted feed, trial observation /
 readiness, and bond recognition; ordinary state playback cannot replace these
 cues each frame. Cue durations do not gate gameplay. The V2 family registers
-the six designed actions with existing wild-clip fallbacks until their art
-arrives, and root `REQUIRED_ASSETS.md` tracks the 18 E/S/N source masters, 24
-runtime directional strips, feed vocalization, and bond-recognition call.
-Bonding art pass 1 ingested seven clean strips into nine runtime directions:
-`guarded_approach` is READY N/E/S/W; `notice_bait` is partial N/S;
-`inspect_bait` is partial N/E/W; `feed_accept`, `watch_player`, and `bond_greet`
-remain missing. Inputs 1 and 10 were absent; input 8 was quarantined for
-generated matte. Pass 2 removes the rejected input from canonical source_work,
-preserves it under hash-named `unresolved/vaultwing_bonding_rejected/`, and
-makes the six bonding actions direction-strict so missing art reaches the
-correct-facing semantic fallback. No Pass-2 `vw1`, `vw8`, or `vw10`–`vw18`
-root sources are present; coverage remains partial. The
-`combat/vaultwing_first_bond` evidence capture passes at
-`reports/moment_forge/combat/vaultwing_first_bond/20260926T020356-0400`; it has
-no baseline capture, so defer final visual judgment until the remaining art is
-complete. Recover inputs 1, 8, and 10, then author ordinals 11–18. Production
-SFX and bait/global save ownership follow; companion commands/behavior remain
-Slice C.
+the six designed actions with existing wild-clip fallbacks. All six actions
+now publish 24/24 runtime directions; `bond_greet` is authored E/N/S/W, while
+the other five actions use the existing E-to-W mirror policy. The full
+Vaultwing family reports 80/80 runtime strips. The
+`vaultwing-bonding-animation-suite` requirement remains in
+`required_assets.registry.json` as fulfilled history and is omitted from the
+generated root `REQUIRED_ASSETS.md`. Named 5792×724 source sheets are preserved
+as immutable masters and staged through the bounded Downloads batch profile in
+`stage_vaultwing_bonding_source_work.py`. Production feed/recognition SFX,
+bait/global-save ownership, and companion commands/behavior remain deferred;
+companion commands/behavior remain Slice C.
 
 The `ambient_vaultwing_common` Asset V2 family contract is registered with a
 256×256 RGBA canvas. The full 14-state EAST baseline now publishes east-authored
