@@ -2,32 +2,33 @@
 
 ## Outcome
 
-The workstream is blocked at the required local-art preflight. The user directed
-this run to use the 12 `vw*.png` files in the project-root CUSTODIAN directory
-and explicitly prohibited downloading them from `main`. The checkout held LFS
-pointers; all 12 payloads were already in the local LFS cache and were
-materialized with `git lfs checkout` only. No fetch or network transfer occurred.
+The workstream is blocked at input provenance and preflight. I treated the
+worktree's root `vw*.png` paths as the user's clarified local originals without
+verifying their provenance. That was incorrect: the paths are Git-LFS pointers
+present in `origin/main`, introduced by commit `302fef5b7` (`vaultwing source`).
+The task worktree inherited those pointers from main. `git lfs checkout` hydrated
+the payloads from the shared local LFS cache; no LFS fetch was run, but the
+cache's original source is unknown. I cannot claim these were the user's local
+Firefox saves or that their payloads were obtained independently from main.
 
-The packet's assigned first-four mapping (`vw1=e`, `vw2=n`, `vw3=s`, `vw4=w`)
-does not satisfy the eight-frame contract. The existing stager found 4, 5, 6,
-and 6 alpha-X frame clusters, respectively. Each file decodes as RGBA with
-transparency, but visual review also found direction mismatches in the assigned
-N/S/W slots. The older checkpoint already records `vw9`, `vw10`, and `vw12` as
-greeting sheets with clipped wings. No alternative mapping was guessed.
+The repo-tracked `vw1`–`vw4` payloads have 4, 5, 6, and 6 alpha-X frame clusters
+instead of the required eight, with visual direction mismatches in the assigned
+N/S/W slots. This describes only the repo-tracked payloads, not the user's
+separate originals. The older checkpoint also records `vw9`, `vw10`, and `vw12`
+as clipped greeting candidates. No alternate mapping was guessed.
 
 No source_work, inbox, runtime, catalog, quarantine, or production art was
-written. The required staging-workflow implementation and checkpoint
-convergence were not started because the packet's explicit override requires
-this workstream to stop and checkpoint when the local input preflight fails.
+written. The workstream remains blocked until the user's actual local inputs can
+be found and provenance plus frame/orientation preflight are verified.
 
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: blocked
-- Friction severity: medium
-- What went wrong: packet inputs described as four new local greeting sheets were not the intended eight-frame E/N/S/W batch; the user-provided root batch contains previously tracked material with mismatched frame counts and orientations.
-- Root cause / contributing factors: the packet's Downloads path and four-file mapping did not match the user's clarified local source location and available batch.
-- Prevention / pipeline improvement: retain the fail-closed preflight; update the packet to accept the user's local source location and require corrected eight-frame directional inputs before any file writes.
-- Tooling / docs drift discovered: packet input-location prose was superseded by the user's instruction; packet handoff now records the local-batch preflight evidence.
-- Follow-up: manual-follow-up
-- What worked: local LFS cache allowed inspection without any fetch; staging destinations remained untouched.
+- Friction severity: high
+- What went wrong: repo-tracked LFS payloads were mistaken for the user's local source files.
+- Root cause / contributing factors: the task worktree inherited root pointers from main, and the shared LFS cache does not record where or when its objects were obtained.
+- Prevention / pipeline improvement: verify user-provided files from an independent local path or compare hashes supplied by the user before treating them as local originals; do not write assets until both provenance and contract checks pass.
+- Tooling / docs drift discovered: the packet's Downloads path was superseded by the user's project-root instruction, but those tracked paths are not independently verified local copies.
+- Follow-up: manual-follow-up — locate/receive the user's actual local `bond_greet` E/N/S/W sheets, verify provenance, and resume this workstream.
+- What worked: no LFS fetch was run and production destinations remain untouched.
