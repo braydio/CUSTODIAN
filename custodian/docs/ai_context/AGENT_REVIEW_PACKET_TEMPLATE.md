@@ -42,9 +42,10 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
 - Non-goals: Do not redesign the reviewed system, add a pre-land review gate,
   add continuous workers, or fix reviewed implementation directly.
 - Task overrides: `TASK OVERRIDE: review only with respect to the reviewed
-  implementation; do not stage, commit, or push changes to it. Repository/
-  document mutations required for the review receipt and any follow-up
-  correction/review packets are allowed.`
+  implementation; do not stage, commit, or push changes to the reviewed
+  implementation. Repository/document mutations required for the durable review
+  receipt, required review closing summary, review-packet lifecycle/archive
+  metadata, and any bounded follow-up correction/re-review packets are allowed.`
 
 ## Procedure
 
