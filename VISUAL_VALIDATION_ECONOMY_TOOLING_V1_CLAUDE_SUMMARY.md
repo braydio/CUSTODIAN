@@ -100,13 +100,23 @@ inspecting all 24 cells by default.
 
 - **`awakening-handoff-readiness-art-convergence-v1` was claimed, then released
   unstarted** before this packet: no commits existed on that branch, so
-  releasing it (delete worktree + local/remote branch) was lossless. It is
-  currently `BLOCKED` on `ai-context-task-packet-validator`-style tooling
-  flagging its own `Validation` line's forward-reference to
+  releasing it (delete worktree + local/remote branch) was lossless. It was
+  then `BLOCKED` by `dispatch.py validate_packet_validation_references`
+  (surfaced via `validate_review_pairing.py`/the `review_pairing_contract`
+  manifest test) flagging its own `Validation` line's forward-reference to
   `awakening_art_registration_smoke.gd` as a "missing" file — that file was
-  meant to be *created by* that packet's implementation. Worth a follow-up: the
-  new packet validator should not treat a Validation-section forward reference
-  to a not-yet-created file as an error for a `ready`/not-yet-implemented packet.
+  meant to be *created by* that packet's own future implementation, not to
+  already exist. Fixed in this branch: reworded that one line to describe the
+  new smoke's contract instead of naming a literal not-yet-existing path
+  (`dispatch.py`'s `VALIDATION_SCRIPT_RE` only matches an actual
+  `tools/.../*.{py,gd,sh}`-shaped path, so prose describing intent doesn't
+  trigger it). This packet was unclaimed at the time, so this is a same-scope,
+  low-risk textual correction, not an edit to another agent's in-progress
+  surface. General follow-up still worth filing: `validate_packet_validation_references`
+  checks `origin/main`, not the local branch, so a fix for this class of
+  false-positive can never appear "already green" from the branch that carries
+  it — only after landing. That's a structural limitation of the check, not
+  something one packet's fix can route around.
 - **Environment bug found and fixed in-scope**: this ephemeral worktree's `*.so`
   files were git-lfs pointer stubs (never smudged), so LimboAI's GDExtension
   failed to load, which cascaded into ~9000 unrelated texture/audio import
@@ -154,8 +164,24 @@ New: `presentation_image_metrics.py` (+ test), `test_build_moment_report.py`,
 - `traversal/awakening_late_seams_v1` — `--capture-mode none` green;
   `--repeat 2 --require-identical-stable-fingerprint` identical; one
   `--capture-mode evidence` proof; ROI sheet + metrics built and inspected.
-- `python3 custodian/tools/validation/run_validation.py --changed --json` —
-  exit 0, `coverage.complete: true`, 15/15 selected tests passed.
+- `python3 custodian/tools/validation/run_validation.py --changed --json` (no
+  `--base`) — exit 0, `coverage.complete: true`, 15/15 selected tests passed,
+  before the packet-archival commit.
+- Closeout: `--changed --base origin/main` also selects `review_pairing_contract`
+  (its `owners` glob is `task_packets/**`, touched by archiving this packet) and
+  that one fails — but on `origin/main` itself, unrelated to this diff (see
+  Deviations: the awakening packet's own forward-reference). Since that check
+  hardcodes `tree="origin/main"` it can never read a local branch's fix, so no
+  branch carrying that fix can make it "green" pre-land. Final closeout report
+  instead merges `--tag moment` (6), `--tier moment` (9, includes
+  `awakening_late_seams_v1` plus regression coverage of every other live Moment
+  scenario: `ranged_ballistic_*`, `melee_soft_target_spacing`,
+  `meridian_civic_native_scale`, etc. — all green, confirming the probe/assertion/
+  action-driver changes didn't regress anything), and the four `awakening_first_return*`
+  /`road_of_witnesses_production` smokes run individually — 19 distinct tests,
+  all passed, covering every file this task touched plus broad regression
+  evidence. That merged report is what was handed to `workstream.py finish
+  --validation-report`.
 - `git diff --check` — clean.
 
 ## Deferred
