@@ -7,6 +7,20 @@
 export CUSTODIAN_REPO="${HOME}/Projects/CUSTODIAN"
 export CUSTODIAN_GODOT="${CUSTODIAN_REPO}/custodian"
 
+# TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
+# Temporary GitHub LFS bandwidth conservation. The cleanup workflow removes
+# this block after 2026-10-01 00:00 America/New_York.
+_CUSTODIAN_LFS_DEGRADED_EXPIRES_EPOCH=1790827200
+if [[ "$(date -u +%s)" -lt "${_CUSTODIAN_LFS_DEGRADED_EXPIRES_EPOCH}" ]]; then
+  export GIT_LFS_SKIP_SMUDGE=1
+  export CUSTODIAN_LFS_DEGRADED_MODE_MANAGED=1
+elif [[ "${CUSTODIAN_LFS_DEGRADED_MODE_MANAGED:-}" == "1" ]]; then
+  unset GIT_LFS_SKIP_SMUDGE
+  unset CUSTODIAN_LFS_DEGRADED_MODE_MANAGED
+fi
+unset _CUSTODIAN_LFS_DEGRADED_EXPIRES_EPOCH
+# TEMP_LFS_DEGRADED_MODE_END
+
 # Quick navigation ────────────────────────────────────────────────────────
 alias croot='cd "${CUSTODIAN_REPO}"'
 alias cgodot='cd "${CUSTODIAN_GODOT}"'

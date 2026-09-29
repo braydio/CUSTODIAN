@@ -50,6 +50,11 @@ jobs:
                   "# TEMP_LFS_DEGRADED_MODE_START",
                   "# TEMP_LFS_DEGRADED_MODE_END",
               ),
+              (
+                  Path("tools/custodian_aliases.sh"),
+                  "# TEMP_LFS_DEGRADED_MODE_START",
+                  "# TEMP_LFS_DEGRADED_MODE_END",
+              ),
           ]
 
           def remove_block(path: Path, start_marker: str, end_marker: str) -> bool:
@@ -88,6 +93,7 @@ jobs:
           git add custodian/AGENTS.md \
                   custodian/tools/agent/workstream.py \
                   custodian/tools/agent/land_main.py \
+                  tools/custodian_aliases.sh \
                   .github/workflows/expire-lfs-degraded-mode.yml
           git commit -m "git lfs, expire degraded mode"
           git push origin HEAD:main
