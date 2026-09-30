@@ -1,11 +1,13 @@
 # TASK PACKET INDEX AUTOMODE HARDENING
 
 - Workstream: `task-packet-index-automode-hardening`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `ai-context-task-packet-validator`
 - Locks: `agent-workflow`
+> **Superseded:** The implementation scope of this packet is now absorbed by `task-packet-pipeline-execution-hardening-v1` so packet parsing, validation, index maintenance, completion truth, and lifecycle enforcement land as one shared architecture. Do not claim this packet independently.
+
 - Goal: Add a deterministic, bounded auto-maintenance path for the task-packet README index so new auto-dispatch packets cannot silently fall out of the visible job board while preserving manual packets, in-progress lifecycle state, and historical residue handling.
 - Current measured state: `task_packets/README.md` is hand-maintained. `dispatch.py` already treats packet metadata on fetched `origin/main` as queue truth, while the queued AI-context validator is read-only and intentionally does not rewrite docs. The README's `Ready / Auto Dispatch` section can therefore drift from packet metadata; manual-ready packets are intentionally not required there. Existing `In Progress` and `Recently Complete (awaiting archive)` sections also contain lifecycle/history information that cannot be safely regenerated from packet front matter alone.
 - Task-specific authority: `custodian/docs/ai_context/task_packets/README.md`, `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`, `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`, `custodian/tools/agent/dispatch.py`, and the completed `ai-context-task-packet-validator` parser/consistency contract.
