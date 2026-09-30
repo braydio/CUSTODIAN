@@ -218,6 +218,8 @@ lost when the ephemeral worktree is removed.
 
 - `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.
 - `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 code/workflow re-review of the `block_hold_01` FX import repair.
+- `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-correction Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off.
+- `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — paired P1 independent code/architecture/asset-pipeline review of FX layer adoption and new-source publication safety.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
