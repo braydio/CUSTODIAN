@@ -628,6 +628,9 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			# sync_operator_runtime_assets.py may have created new PNGs after this
 			# ingest process started. Import them in a fresh editor process before
 			# the SpriteFrames builder attempts to load their resources.
+			var preflight_result := _godot_import_preflight()
+			if not preflight_result.ok:
+				return preflight_result
 			var import_output: Array = []
 			var import_exit_code := OS.execute(
 				"godot",
@@ -672,6 +675,9 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			if _dry_run:
 				print("[DRY RUN] post_process %s" % step)
 				return {"ok": true}
+			var preflight_result := _godot_import_preflight()
+			if not preflight_result.ok:
+				return preflight_result
 			var output: Array = []
 			var exit_code := OS.execute(
 				"godot",
@@ -713,6 +719,23 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			return {"ok": true}
 		_:
 			return {"ok": false, "error": "unsupported post_process step %s" % step}
+
+
+func _godot_import_preflight() -> Dictionary:
+	var output: Array = []
+	var exit_code := OS.execute(
+		"python3",
+		[
+			ProjectSettings.globalize_path("res://tools/pipelines/godot_import_preflight.py"),
+			"--project-dir",
+			_project_root
+		],
+		output,
+		true
+	)
+	if exit_code != 0:
+		return {"ok": false, "error": "Godot import preflight failed:\n%s" % "\n".join(output)}
+	return {"ok": true}
 
 
 func _run_actor_spriteframes_post_process(step: String) -> Dictionary:

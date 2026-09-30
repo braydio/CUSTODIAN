@@ -146,6 +146,19 @@ All siblings in a tier run; a bad tier skips every higher tier. Individual comma
 debugging. Moment entries run with capture mode `none`; richer evidence remains
 an explicit `run_moment.py` decision.
 
+## Godot Import Preflight
+
+Before a project-wide import, use the repository preflight so Godot does not
+write invalid import sidecars for checked-out Git LFS pointer files:
+
+```bash
+python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
+```
+
+If it lists files, materialize cached payloads with `git lfs checkout` and run
+the preflight again before importing. Operator ingest, Workbench publication,
+and the shared import adapters run this guard automatically.
+
 ## Resource Budget Before Broad Sweeps
 
 Every `godot_script` entry in the manifest launches its own headless Godot

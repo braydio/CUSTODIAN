@@ -1082,6 +1082,27 @@
       "needs_import": false
     },
     {
+      "id": "godot_import_lfs_preflight",
+      "type": "python",
+      "script": "custodian/tools/validation/godot_import_preflight_smoke.py",
+      "tier": "unit",
+      "tags": ["assets", "import", "lfs", "operator"],
+      "owners": [
+        "custodian/tools/pipelines/godot_import_preflight.py",
+        "custodian/tools/assets/adapters/godot_import.py",
+        "custodian/tools/operator/operator_ingest.sh",
+        "custodian/tools/operator/animation_workbench.py",
+        "custodian/tools/operator/modular_alignment_repair.py",
+        "custodian/tools/pipelines/ingest_runtime.gd",
+        "custodian/tools/pipelines/runtime_ready_assets.py",
+        "custodian/tools/validation/run_validation.py",
+        "custodian/tools/validation/run_world_simulation_migration_suite.sh",
+        "custodian/tools/validation/godot_import_preflight_smoke.py"
+      ],
+      "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
       "id": "operator_runtime_spriteframes_imports",
       "type": "python",
       "script": "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py",

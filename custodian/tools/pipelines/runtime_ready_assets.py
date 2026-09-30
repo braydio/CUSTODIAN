@@ -259,6 +259,12 @@ def _print_results(results: list[RouteResult], summary: dict[str, int], apply: b
 
 
 def _run_godot_import(project_dir: Path) -> int:
+    preflight = Path(__file__).resolve().with_name("godot_import_preflight.py")
+    preflight_result = subprocess.run(
+        ["python3", str(preflight), "--project-dir", str(project_dir)], check=False
+    )
+    if preflight_result.returncode != 0:
+        return preflight_result.returncode
     command = ["godot", "--headless", "--path", str(project_dir), "--import", "--quit"]
     print("running:", " ".join(command))
     return subprocess.run(command, check=False).returncode
