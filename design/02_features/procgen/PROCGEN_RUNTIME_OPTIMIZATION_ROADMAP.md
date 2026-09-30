@@ -120,13 +120,17 @@ D4 + P7
                 └─ A1 procgen-runtime-optimization-v2-series-authoring
 ```
 
-**Correction edge (added by `task-packet-pipeline-execution-hardening-v1`):**
+**Correction edge (added by `task-packet-pipeline-execution-hardening-v1`,
+landed by `procgen-semantic-candidate-generation-correction-1`):**
 `G3 procgen-semantic-candidate-generation` did not fully close S3's Exit
 condition (see the G3 Completion Evidence correction note below).
-`procgen-semantic-candidate-generation-correction-1` depends on
-`review-task-packet-pipeline-execution-hardening-v1` and must land before
-`M2 procgen-runtime-mutation-scheduler-cutover` becomes eligible/resumed;
-M2's `Depends on` above now reads `M1 + G3-fix` accordingly.
+`procgen-semantic-candidate-generation-correction-1` re-derived the true gap
+(much larger than a bounded correction — see "Future Program Entry:
+Semantics-First Generation Pipeline Rewrite") and landed a docs-only
+correction rather than the original, infeasible-as-scoped code fix. M2's
+`Depends on` reads `M1 + G3-fix`; G3-fix is now complete, so M2 is
+eligible/resumed. The actual generation-pipeline rewrite that would fully
+close S3 is separate, unsliced, future work — not an M-lane dependency.
 
 ### Single-Agent Serial Auto-Run Order
 
@@ -177,7 +181,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | G1 | `procgen-candidate-evaluator-extraction` | **complete** | S1 |
 | G2 | `procgen-candidate-semantic-model` | **complete** | G1 |
 | G3 | `procgen-semantic-candidate-generation` | **complete** (narrower than originally claimed; see G3 Completion Evidence correction) | G2 |
-| G3-fix | `procgen-semantic-candidate-generation-correction-1` | ready | review-task-packet-pipeline-execution-hardening-v1 |
+| G3-fix | `procgen-semantic-candidate-generation-correction-1` | **complete** (docs-only re-derivation; rescoped mid-workstream, see G3 Completion Evidence second correction; real rewrite tracked as a new unsliced future initiative, not closed by this row) | review-task-packet-pipeline-execution-hardening-v1 |
 | G4 | `procgen-accepted-candidate-materializer` | **complete** | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | **complete** | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
@@ -225,10 +229,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (in progress in its own workstream) and `procgen-semantic-candidate-generation-correction-1` (queued behind `review-task-packet-pipeline-execution-hardening-v1`)
-**State:** S1, G1, G2, G3, G4, G5, and M1 landed; G3's closure claim was narrower than originally stated (see correction note in G3 Completion Evidence) and true semantics-first candidate construction remains open, tracked by `procgen-semantic-candidate-generation-correction-1`. M2's `Depends on` now includes that correction in addition to M1; it must land (and its paired review pass) before M2 becomes eligible/resumed. P1 remains independently dependency-eligible.
-**Next gate:** land the G3 correction so rejected candidate attempts can be evaluated from semantic data without instantiating `proc_gen_map.tscn`/`ProcGenTilemap`, then route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds.
-**After G5:** the generation lane (S2-S4) is fully closed for the narrower scope G3 actually delivered; S3's own Exit condition is not yet met. D1-D4 (ProcGenTilemap decomplexification) remain blocked on G5+M6; M6 is still several M-lane packets away.
+**Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (in progress in its own workstream); `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
+**State:** S1, G1, G2, G3, G4, G5, M1, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated, and the true gap is much larger than a bounded correction: closing S3's own Exit condition requires a semantics-first generation-pipeline rewrite comparable in scope to the entire G1-G5 lane, now tracked as its own future initiative (see "Future Program Entry: Semantics-First Generation Pipeline Rewrite" in G3 Completion Evidence) rather than a single packet. That rewrite is unsliced and unscheduled. M2's `Depends on` includes the G3-fix workstream's completion (landed) rather than the rewrite itself, so M2 is now eligible/resumed; P1 remains independently dependency-eligible.
+**Next gate:** route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds (M2, already in progress). The semantics-first generation-pipeline rewrite is separate future work, not gating the M-lane technically — whoever picks it up should slice it first (see the Future Program Entry).
+**After G5:** the generation lane (S2-S4) is fully closed for the narrower scope G3 actually delivered; S3's own Exit condition remains open behind the unsliced future rewrite above, not this workstream. D1-D4 (ProcGenTilemap decomplexification) remain blocked on G5+M6; M6 is still several M-lane packets away.
 
 ---
 
@@ -333,17 +337,84 @@ own Exit condition above is not yet met until G3 lands.
 > the line below overstated what G3 actually closed. G3 gates three
 > *presentation/collision rebuild* functions behind `generation_evaluation_mode`
 > inside an already-instantiated `ProcGenTilemap`; it does **not** stop
-> production from instantiating a live `ProcGenTilemap` (TileMap node,
-> presentation/collision/nav scaffolding) for every rejected candidate attempt
-> before the semantic snapshot is built. S3's Exit condition — "rejected
-> attempts die as data without... runtime nodes" — is therefore **not yet
-> met**. True semantics-first candidate construction (evaluating a candidate
-> from semantic data without ever instantiating `proc_gen_map.tscn`/
-> `ProcGenTilemap` for a rejected attempt) remains open work, tracked by
+> production from instantiating a live `ProcGenTilemap` for every rejected
+> candidate attempt before the semantic snapshot is built. S3's Exit condition
+> is therefore **not yet met**.
+>
+> **Second, deeper correction (`procgen-semantic-candidate-generation-correction-1`
+> re-derivation):** the first correction above still understated the gap.
+> Direct inspection of `custodian_contract_map.gd` and `proc_gen_tilemap.gd`
+> found that `ProcGenTilemap._fill_tilemaps()` — the function every candidate
+> attempt runs, gated or not — is not a thin presentation layer over a
+> separate pure-data generator. Its ~40 helper functions (substrate fill,
+> compound/interior/spawn layout, road carving, terrain/elevation building,
+> biome classification, macro-presentation planning, dressing clusters) use
+> the `floor_tilemap`/`walls_tilemap` `TileMapLayer` nodes as the generation
+> algorithm's own working data structure: 147 direct TileMapLayer
+> cell-operation call sites across an 11,325-line file. (`ProcGen` itself,
+> `procgen.gd`'s room/corridor/cellular-automaton algorithm, genuinely is
+> already pure-data and TileMap-free — it only produces the room/corridor
+> skeleton; everything that turns that skeleton into the walkable/route/
+> terrain/region facts `CandidateEvaluator` actually scores happens inside
+> `_fill_tilemaps()` against live TileMapLayer cells.) True semantics-first
+> candidate construction therefore requires extracting that generation
+> pipeline's working representation from TileMapLayer cell operations to a
+> plain data grid throughout — a rewrite comparable in scope to the entire
+> G1-G5 generation lane already completed, not a narrow correction. See
+> **Future Program Entry: Semantics-First Generation Pipeline Rewrite**
+> below, where this is now tracked as its own properly-sized future
+> initiative rather than a bounded correction.
+>
 > `procgen-semantic-candidate-generation-correction-1`
-> (`PROCGEN_SEMANTIC_CANDIDATE_GENERATION_CORRECTION_1.md`), which M2
-> (`procgen-runtime-mutation-scheduler-cutover`) now also depends on. The
-> original (overstated) claim is preserved below for history.
+> (`PROCGEN_SEMANTIC_CANDIDATE_GENERATION_CORRECTION_1.md`) itself is
+> docs-only and complete: it performed this re-derivation and recorded it
+> here rather than attempting the rewrite. `procgen-runtime-mutation-
+> scheduler-cutover` (M2) depends on that workstream's completion (not on
+> the rewrite itself landing) so the gap stays visible in the serial run
+> rather than silently skipped. The original (overstated) G3 claim is
+> preserved below for history.
+
+#### Future Program Entry: Semantics-First Generation Pipeline Rewrite
+
+**Status:** planned, not yet sliced into packets. **Not part of the V1
+auto-run series** — this is new future work discovered by
+`procgen-semantic-candidate-generation-correction-1`'s re-derivation, not a
+gap in the existing G/M/P/D/V lanes.
+
+- **Goal:** Make rejected-candidate evaluation possible from semantic data
+  alone, without instantiating `proc_gen_map.tscn`/`ProcGenTilemap`/TileMap/
+  presentation/collision/nav nodes for any rejected attempt — the outcome S3
+  originally intended and G3 did not fully deliver.
+- **Why it is its own initiative, not a packet:** `ProcGenTilemap._fill_tilemaps()`
+  (`custodian/game/world/procgen/proc_gen_tilemap.gd:1227-1492`) and its ~40
+  helper functions use the `floor_tilemap`/`walls_tilemap` `TileMapLayer`
+  nodes as the generation algorithm's working data structure throughout
+  (substrate fill, compound/interior/spawn layout, road carving,
+  terrain/elevation, biome classification, macro-presentation planning,
+  dressing clusters — 147 direct TileMapLayer cell-operation call sites).
+  Closing the gap means extracting that pipeline's working representation to
+  a plain data grid across all of it, painting TileMap cells only for the
+  final accepted candidate. That is comparable in size to the entire G1-G5
+  generation lane already completed.
+- **What already helps:** `procgen.gd`'s `ProcGen` class (309 lines) is
+  already a pure-data, TileMap-free room/corridor/cellular-automaton
+  algorithm exposing `is_full_at()`/`get_rooms()`/`get_corridor_areas()`
+  purely from its own internal grid state. It produces the skeleton that
+  `_fill_tilemaps()` currently paints directly into TileMapLayer cells; a
+  rewrite would extend this same pure-data approach through
+  `_fill_tilemaps()`'s helpers instead of reaching for `TileMapLayer.set_cell()`.
+  G2's `candidate_semantic_adapter.gd` and `CandidateEvaluator.evaluate_snapshot()`/
+  `measure_snapshot()` are already snapshot-only and would not need to change.
+- **First task for whoever picks this up:** inventory `_fill_tilemaps()`'s
+  ~40 helper functions, classify each as data-producing (must move to the
+  plain-grid representation) versus presentation-only (already correctly
+  gated by G3's `generation_evaluation_mode` check or safely deferrable to
+  accepted-candidate-only), and slice the result into an ordered packet
+  series the same way G1-G5 was sliced, before claiming/implementing
+  anything.
+- **Dependencies once sliced:** should depend on G5 (generation lane closed)
+  at minimum; likely independent of the M/P/D/V lanes, but confirm during
+  slicing.
 
 G3 lands S3's Exit condition: rejected eval-mode candidates no longer pay
 for final-presentation/collision realization; accepted seed/world
