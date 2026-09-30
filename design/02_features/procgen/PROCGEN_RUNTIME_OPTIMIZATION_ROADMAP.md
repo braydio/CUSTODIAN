@@ -110,7 +110,16 @@ G5 + M6
 └─ D3 procgen-generation-state-extraction
      \________________________________
                                       \
-D1 + D2 + D3 ─────────────────────────> D4 procgen-tilemap-facade-contraction
+D1 + D2 + D3
+  └─ X1 procgen-generation-data-model-audit
+      └─ XR1 review-procgen-generation-data-model-audit
+          └─ X2 procgen-generation-grid-foundation
+              └─ XR2 review-procgen-generation-grid-foundation
+                  └─ X3 procgen-generation-grid-migration-series-authoring
+                      └─ XR3 review-procgen-generation-grid-migration-series-authoring
+                          └─ [measured migration DAG authored by X3]
+                              └─ [reviewed convergence workstream]
+                                  └─ D4 procgen-tilemap-facade-contraction
 
 D4 + P7
 └─ V1 procgen-render-attribution-v1
@@ -166,7 +175,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | S5 Runtime mutation scheduler | M1 + M2 |
 | S6 Pause-aware streaming | M3 |
 | S7 Chunk lifecycle/cache | M4 + M5 + M6 |
-| S8 ProcGenTilemap decomplexification | D1 + D2 + D3 + D4 |
+| S8 ProcGenTilemap decomplexification | D1 + D2 + D3 + X1/XR1 + X2/XR2 + X3/XR3 + measured generated migration DAG + D4 |
 | S9 Contract-world placement extraction | P1 + P2 + P3 + P4 + P5 + P6 + P7 |
 | S10 Renderer/node-load work | V1 + V2 |
 | S11 Final soak/budgets | F1 |
@@ -200,7 +209,13 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | D1 | `procgen-road-authority-extraction` | queued | G5+M6 |
 | D2 | `procgen-authored-claim-registry-extraction` | queued | G5+M6 |
 | D3 | `procgen-generation-state-extraction` | queued | G5+M6 |
-| D4 | `procgen-tilemap-facade-contraction` | queued | D1+D2+D3 |
+| X1 | `procgen-generation-data-model-audit` | queued | D1+D2+D3 |
+| XR1 | `review-procgen-generation-data-model-audit` | queued | X1 |
+| X2 | `procgen-generation-grid-foundation` | queued | XR1 |
+| XR2 | `review-procgen-generation-grid-foundation` | queued | X2 |
+| X3 | `procgen-generation-grid-migration-series-authoring` | queued | XR2 |
+| XR3 | `review-procgen-generation-grid-migration-series-authoring` | queued | X3 |
+| D4 | `procgen-tilemap-facade-contraction` | **blocked/manual** | D1+D2+D3 + future reviewed migration convergence authored by X3 |
 | V1 | `procgen-render-attribution-v1` | queued | D4+P7 |
 | V2 | `procgen-render-load-consolidation` | queued | V1 |
 | F1 | `procgen-performance-soak-v1` | queued | V2 |
@@ -232,7 +247,7 @@ If an independent review creates a correction packet, keep the original slice `c
 **Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (in progress in its own workstream); `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
 **State:** S1, G1, G2, G3, G4, G5, M1, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated, and the true gap is much larger than a bounded correction: closing S3's own Exit condition requires a semantics-first generation-pipeline rewrite comparable in scope to the entire G1-G5 lane, now tracked as its own future initiative (see "Future Program Entry: Semantics-First Generation Pipeline Rewrite" in G3 Completion Evidence) rather than a single packet. That rewrite is unsliced and unscheduled. M2's `Depends on` includes the G3-fix workstream's completion (landed) rather than the rewrite itself, so M2 is now eligible/resumed; P1 remains independently dependency-eligible.
 **Next gate:** route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds (M2, already in progress). The semantics-first generation-pipeline rewrite is separate future work, not gating the M-lane technically — whoever picks it up should slice it first (see the Future Program Entry).
-**After G5:** the generation lane (S2-S4) is fully closed for the narrower scope G3 actually delivered; S3's own Exit condition remains open behind the unsliced future rewrite above, not this workstream. D1-D4 (ProcGenTilemap decomplexification) remain blocked on G5+M6; M6 is still several M-lane packets away.
+**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
 
@@ -374,47 +389,64 @@ own Exit condition above is not yet met until G3 lands.
 > rather than silently skipped. The original (overstated) G3 claim is
 > preserved below for history.
 
-#### Future Program Entry: Semantics-First Generation Pipeline Rewrite
+#### Active Program Entry: Semantics-First Generation Data Model Migration
 
-**Status:** planned, not yet sliced into packets. **Not part of the V1
-auto-run series** — this is new future work discovered by
-`procgen-semantic-candidate-generation-correction-1`'s re-derivation, not a
-gap in the existing G/M/P/D/V lanes.
+**Status:** packetized through the point current evidence supports. **Not an
+M-lane dependency.** This initiative now sits inside the S8 decomplexification
+path after D1/D2/D3 and before D4.
 
-- **Goal:** Make rejected-candidate evaluation possible from semantic data
-  alone, without instantiating `proc_gen_map.tscn`/`ProcGenTilemap`/TileMap/
-  presentation/collision/nav nodes for any rejected attempt — the outcome S3
-  originally intended and G3 did not fully deliver.
-- **Why it is its own initiative, not a packet:** `ProcGenTilemap._fill_tilemaps()`
-  (`custodian/game/world/procgen/proc_gen_tilemap.gd:1227-1492`) and its ~40
-  helper functions use the `floor_tilemap`/`walls_tilemap` `TileMapLayer`
-  nodes as the generation algorithm's working data structure throughout
-  (substrate fill, compound/interior/spawn layout, road carving,
-  terrain/elevation, biome classification, macro-presentation planning,
-  dressing clusters — 147 direct TileMapLayer cell-operation call sites).
-  Closing the gap means extracting that pipeline's working representation to
-  a plain data grid across all of it, painting TileMap cells only for the
-  final accepted candidate. That is comparable in size to the entire G1-G5
-  generation lane already completed.
-- **What already helps:** `procgen.gd`'s `ProcGen` class (309 lines) is
-  already a pure-data, TileMap-free room/corridor/cellular-automaton
-  algorithm exposing `is_full_at()`/`get_rooms()`/`get_corridor_areas()`
-  purely from its own internal grid state. It produces the skeleton that
-  `_fill_tilemaps()` currently paints directly into TileMapLayer cells; a
-  rewrite would extend this same pure-data approach through
-  `_fill_tilemaps()`'s helpers instead of reaching for `TileMapLayer.set_cell()`.
-  G2's `candidate_semantic_adapter.gd` and `CandidateEvaluator.evaluate_snapshot()`/
-  `measure_snapshot()` are already snapshot-only and would not need to change.
-- **First task for whoever picks this up:** inventory `_fill_tilemaps()`'s
-  ~40 helper functions, classify each as data-producing (must move to the
-  plain-grid representation) versus presentation-only (already correctly
-  gated by G3's `generation_evaluation_mode` check or safely deferrable to
-  accepted-candidate-only), and slice the result into an ordered packet
-  series the same way G1-G5 was sliced, before claiming/implementing
-  anything.
-- **Dependencies once sliced:** should depend on G5 (generation lane closed)
-  at minimum; likely independent of the M/P/D/V lanes, but confirm during
-  slicing.
+The architecture ruling from `procgen-semantic-candidate-generation-correction-1`
+remains authoritative:
+
+- pre-D-lane `ProcGenTilemap._fill_tilemaps()` and roughly 40 helpers used
+  `floor_tilemap` / `walls_tilemap` `TileMapLayer` nodes as generation
+  working memory, with 147 direct cell-operation call sites across the then
+  11,325-line file;
+- `procgen.gd` is already pure-data for the initial room/corridor/automaton
+  skeleton;
+- G2's semantic model/evaluator is already Node-free after the snapshot exists;
+- therefore true semantics-first candidate construction requires replacing the
+  downstream generation working representation, not merely skipping final
+  presentation/collision calls.
+
+**Architecture ordering:** D1 roads, D2 authored claims, and D3 accepted
+generation-state/export extraction run first. Their purpose is to remove known
+coherent domains before this rewrite sizes the remaining generation core.
+D4 is no longer allowed to follow D1/D2/D3 directly.
+
+**Published packets:**
+
+1. `procgen-generation-data-model-audit` — re-measure the post-D1/D2/D3
+   `_fill_tilemaps()` call graph, account for every remaining generation-time
+   TileMapLayer cell operation, classify semantic vs presentation/runtime state,
+   and define the minimum GenerationGrid contract and coherent migration graph.
+2. `review-procgen-generation-data-model-audit` — independently verify the
+   inventory is complete and non-speculative.
+3. `procgen-generation-grid-foundation` — implement the reviewed neutral
+   GenerationGrid contract and a behavior-preserving TileMap-backed compatibility
+   backend, with only the smallest safe canary integration if the audit proves one.
+4. `review-procgen-generation-grid-foundation` — verify the seam is semantic,
+   minimal, deterministic, and not a TileMap API in disguise.
+5. `procgen-generation-grid-migration-series-authoring` — use those two reviewed
+   artifacts to author the remaining helper-cluster migration DAG, pure-data
+   backend/parity, production rejected-candidate cutover, legacy-path demolition,
+   and final rejection-heavy convergence.
+6. `review-procgen-generation-grid-migration-series-authoring` — verify one
+   owner per audited cluster and keep D4 blocked until the generated reviewed
+   convergence workstream completes.
+
+**Why packet authoring intentionally stops there today:** the exact post-D1/D2/D3
+helper clusters do not yet exist as measured facts. Pre-authoring their
+implementation packets now would repeat the same mistake that created the
+over-scoped G3 correction. X3 is the bounded handoff that authors those packets
+only after X1/X2 establish the real post-extraction surface.
+
+**D4 gate:** `procgen-tilemap-facade-contraction` is now `blocked/manual`.
+X3/XR3 must update D4 with the final reviewed convergence workstream dependency
+and restore it to ready/auto only after the generated migration DAG is fully
+specified. The migration series itself must keep D4 blocked until convergence
+actually lands.
+
 
 G3 lands S3's Exit condition: rejected eval-mode candidates no longer pay
 for final-presentation/collision realization; accepted seed/world
