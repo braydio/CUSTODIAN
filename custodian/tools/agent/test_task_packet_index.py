@@ -4,6 +4,7 @@ import importlib.util
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("task_packet_index.py")
@@ -74,6 +75,11 @@ class TaskPacketIndexTests(unittest.TestCase):
 
     def _readme_text(self) -> str:
         return (self.repo / PACKET_ROOT / "README.md").read_text()
+
+    def test_goal_rendering_uses_shared_header_field_value(self):
+        with patch.object(tpi, "header_field", return_value="Shared parser result") as shared:
+            self.assertEqual(tpi._normalize_goal("- Goal: local duplicate would differ"), "Shared parser result")
+        shared.assert_called_once_with("- Goal: local duplicate would differ", "Goal")
 
     def test_missing_entry_is_repaired_by_write(self):
         self._write("ALPHA_WORK.md", ready_auto_packet("alpha-work", goal="Ship alpha."))
