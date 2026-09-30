@@ -272,19 +272,19 @@ state.
 |---------|--------|----------|
 | S1 Performance baseline + benchmark contract | complete | P0 |
 | S2 Candidate evaluator extraction | complete | P1 |
-| S3 Semantics-only candidate generation | planned (G3 delivered narrower eval-mode presentation/collision skips only; the generation algorithm itself is TileMap-coupled throughout `_fill_tilemaps()`, so true semantics-first construction is a future multi-slice rewrite comparable to G1-G5, unsliced; see roadmap "Future Program Entry") | P0 |
+| S3 Semantics-only candidate generation | planned (G3 delivered narrower eval-mode realization skips; true semantics-first construction is now packetized as a post-D1/D2/D3 GenerationGrid initiative: audit → reviewed grid foundation → measured migration-series authoring → generated migration DAG) | P0 |
 | S4 Accepted-candidate materializer | complete | P1 |
 | S5 Runtime mutation scheduler | in_progress | P0 |
 | S6 Pause-aware streaming | planned | P1 |
 | S7 Chunk lifecycle + cache | planned | P1 |
-| S8 ProcGenTilemap decomplexification | planned | P1 |
+| S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
 | S9 Contract-world placement extraction | planned | P2 |
 | S10 Renderer / node-load consolidation | planned | P1 |
 | S11 End-to-end performance soak + regression budget gate | planned | P1 |
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 is fully pre-authored as a dependency-driven auto-dispatch series: 26 implementation packets, one whole-series review, and one next-series-authoring handoff. The detailed roadmap owns packet-level dependencies and the single-agent serial auto-run order; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven, but the G3 re-derivation added a measured architecture branch inside S8: D1/D2/D3 now feed a reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and the single-agent serial auto-run order; this master table remains the macro feature-status mirror.
 
 ---
 
