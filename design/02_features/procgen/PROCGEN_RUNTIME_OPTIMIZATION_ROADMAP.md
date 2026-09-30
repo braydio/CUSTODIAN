@@ -134,12 +134,12 @@ landed by `procgen-semantic-candidate-generation-correction-1`):**
 `G3 procgen-semantic-candidate-generation` did not fully close S3's Exit
 condition (see the G3 Completion Evidence correction note below).
 `procgen-semantic-candidate-generation-correction-1` re-derived the true gap
-(much larger than a bounded correction — see "Future Program Entry:
-Semantics-First Generation Pipeline Rewrite") and landed a docs-only
-correction rather than the original, infeasible-as-scoped code fix. M2's
-`Depends on` reads `M1 + G3-fix`; G3-fix is now complete, so M2 is
-eligible/resumed. The actual generation-pipeline rewrite that would fully
-close S3 is separate, unsliced, future work — not an M-lane dependency.
+(much larger than a bounded correction — see the active Semantics-First
+Generation Data Model Migration entry below) and landed a docs-only correction
+rather than the original, infeasible-as-scoped code fix. M2's `Depends on`
+reads `M1 + G3-fix`; G3-fix is complete, so M2 is eligible/resumed. The actual
+generation-data migration that would fully close S3 is a separate post-D1/D2/D3
+initiative and is not an M-lane dependency.
 
 ### Single-Agent Serial Auto-Run Order
 
@@ -150,7 +150,9 @@ S1
 G1 -> G2 -> G3 -> G4 -> G5
 M1 -> M2 -> M3 -> M4 -> M5 -> M6
 P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> P7
-D1 -> D2 -> D3 -> D4
+D1 -> D2 -> D3
+X1 -> XR1 -> X2 -> XR2 -> X3 -> XR3
+[generated measured migration series] -> D4
 V1 -> V2 -> F1 -> Q1 -> A1
 ```
 
@@ -245,8 +247,8 @@ If an independent review creates a correction packet, keep the original slice `c
 ## Current Program Position
 
 **Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (in progress in its own workstream); `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
-**State:** S1, G1, G2, G3, G4, G5, M1, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated, and the true gap is much larger than a bounded correction: closing S3's own Exit condition requires a semantics-first generation-pipeline rewrite comparable in scope to the entire G1-G5 lane, now tracked as its own future initiative (see "Future Program Entry: Semantics-First Generation Pipeline Rewrite" in G3 Completion Evidence) rather than a single packet. That rewrite is unsliced and unscheduled. M2's `Depends on` includes the G3-fix workstream's completion (landed) rather than the rewrite itself, so M2 is now eligible/resumed; P1 remains independently dependency-eligible.
-**Next gate:** route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds (M2, already in progress). The semantics-first generation-pipeline rewrite is separate future work, not gating the M-lane technically — whoever picks it up should slice it first (see the Future Program Entry).
+**State:** S1, G1, G2, G3, G4, G5, M1, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. M2 remains independent of that rewrite and is eligible/resumed; P1 remains independently dependency-eligible.
+**Next gate:** route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds (M2, already in progress). The generation-data-model initiative is separately dependency-gated behind D1+D2+D3 and does not block the M/P lanes.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
