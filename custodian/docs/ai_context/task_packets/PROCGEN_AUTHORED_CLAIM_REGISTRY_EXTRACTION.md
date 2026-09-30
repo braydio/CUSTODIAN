@@ -30,6 +30,6 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 ## Handoff
 
-- Next action: Finish normally; ProcGenTilemap facade contraction waits for all three extraction siblings.
+- Next action: Finish normally. Once D1+D2+D3 are all complete, `procgen-generation-data-model-audit` becomes eligible. D4 no longer follows these siblings directly; it is blocked behind the measured GenerationGrid migration initiative.
 - Best starting files: ProcGenTilemap claim/reservation methods; authored_claims scaffold; terrain/ingress tests.
 - Blockers or open questions: None known at authoring time.
