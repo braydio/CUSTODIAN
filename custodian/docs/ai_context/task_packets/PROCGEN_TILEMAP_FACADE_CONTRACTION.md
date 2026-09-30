@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-tilemap-facade-contraction`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `procgen-road-authority-extraction, procgen-authored-claim-registry-extraction, procgen-generation-state-extraction`
 - Locks: `procgen-runtime`
@@ -30,6 +30,6 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 ## Handoff
 
-- Next action: Facade lane closes; procgen-render-attribution-v1 waits for this and contract-world-loader-contraction.
+- Next action: Do not claim yet. Complete D1+D2+D3, then `procgen-generation-data-model-audit` → reviewed grid foundation → reviewed migration-series authoring → generated migration implementation/convergence. That series will update this packet's dependency metadata and restore it to ready/auto only after the TileMap-backed generation working representation is no longer a production rejected-candidate dependency.
 - Best starting files: ProcGenTilemap; extracted roads/authored_claims/generation services; validation_manifest; ARCHITECTURE.md.
-- Blockers or open questions: None known at authoring time.
+- Blockers or open questions: Blocked on the newly measured GenerationGrid migration initiative. The final convergence workstream ID is intentionally not guessed here; `procgen-generation-grid-migration-series-authoring` owns that exact dependency once the reviewed audit establishes the real migration clusters.
