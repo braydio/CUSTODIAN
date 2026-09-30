@@ -10,9 +10,11 @@ signal contract_generation_failed(result: Dictionary)
 
 const CANDIDATE_EVALUATOR_SCRIPT := preload("res://game/world/procgen/generation/candidate_evaluator.gd")
 const CANDIDATE_SEMANTIC_ADAPTER_SCRIPT := preload("res://game/world/procgen/generation/candidate_semantic_adapter.gd")
+const CANDIDATE_MATERIALIZER_SCRIPT := preload("res://game/world/procgen/generation/procgen_candidate_materializer.gd")
 
 var _candidate_evaluator: Variant = CANDIDATE_EVALUATOR_SCRIPT.new()
 var _candidate_semantic_adapter: Variant = CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.new()
+var _candidate_materializer: Variant = CANDIDATE_MATERIALIZER_SCRIPT.new()
 
 @export var auto_generate_on_ready: bool = true
 @export var contract_seed: int = 0
@@ -327,12 +329,12 @@ func generate_contract(seed_value: int) -> void:
 	var map_instance: ProcGenTilemap = null
 	var level_data: Dictionary = {}
 	var map_generated := false
-	var best_map_instance: ProcGenTilemap = null
-	var best_level_data: Dictionary = {}
 	var best_map_score: float = -1.0
 	var best_map_terrain_failed := true
 	var best_attempt_index := -1
 	var best_attempt_metrics: Dictionary = {}
+	var best_candidate: Dictionary = {}
+	var selected_candidate: Dictionary = {}
 	var _attempt_total_start := Time.get_ticks_msec()
 	var attempts_run := 0
 	var accepted_attempt := -1
@@ -362,6 +364,16 @@ func generate_contract(seed_value: int) -> void:
 		var _t_metrics := Time.get_ticks_msec() - _attempt_start - _t_instantiate - _t_generate
 		var candidate_score := float(evaluation.get("score", -1.0))
 		var accepted := bool(evaluation.get("accepted", false))
+		var candidate_record := {
+			"semantic_snapshot": candidate_snapshot,
+			"evaluation": evaluation,
+			"acceptance_mode": "accepted" if accepted else "fallback_candidate",
+			"attempt": attempt,
+			"attempt_seed": attempt_seed,
+			"world_profile": world_profile.duplicate(true),
+			"procgen_settings": _capture_candidate_procgen_settings(candidate_map),
+			"materialization_settings": _capture_candidate_materialization_settings(candidate_map),
+		}
 		var _t_total_attempt := Time.get_ticks_msec() - _attempt_start
 		var candidate_terrain_failed := bool(evaluation.get("terrain_failed", true))
 		_last_generation_attempts.append({
@@ -405,36 +417,28 @@ func generate_contract(seed_value: int) -> void:
 					"[CustodianContractMap]   required_ingress_failures: %s"
 					% [candidate_metrics.get("required_ingress_failures", [])]
 				)
+		await _dispose_node(candidate_map)
+		if _active_map == candidate_map:
+			_active_map = null
 		if accepted:
-			if best_map_instance != null and best_map_instance != candidate_map:
-				await _dispose_node(best_map_instance)
-			best_map_instance = candidate_map
-			best_level_data = candidate_level_data
 			best_map_score = candidate_score
 			best_map_terrain_failed = candidate_terrain_failed
 			best_attempt_seed = attempt_seed
 			best_attempt_index = attempt
 			best_attempt_metrics = candidate_metrics.duplicate(true)
-			map_instance = candidate_map
-			level_data = candidate_level_data
+			best_candidate = candidate_record
+			selected_candidate = candidate_record
 			map_seed = attempt_seed
 			map_generated = true
 			accepted_attempt = attempt
 			break
-		elif best_map_instance == null or _candidate_evaluator.is_better_fallback_candidate(candidate_score, candidate_terrain_failed, best_map_score, best_map_terrain_failed):
-			if best_map_instance != null and best_map_instance != candidate_map:
-				await _dispose_node(best_map_instance)
-			best_map_instance = candidate_map
-			best_level_data = candidate_level_data
+		elif best_candidate.is_empty() or _candidate_evaluator.is_better_fallback_candidate(candidate_score, candidate_terrain_failed, best_map_score, best_map_terrain_failed):
 			best_map_score = candidate_score
 			best_map_terrain_failed = candidate_terrain_failed
 			best_attempt_seed = attempt_seed
 			best_attempt_index = attempt
 			best_attempt_metrics = candidate_metrics.duplicate(true)
-		else:
-			await _dispose_node(candidate_map)
-			if _active_map == candidate_map:
-				_active_map = null
+			best_candidate = candidate_record
 	var _loop_total_duration_ms := Time.get_ticks_msec() - _attempt_total_start
 	print("[CustodianContractMap] Attempt loop total: %.1fs attempts_run=%d max_attempts=%d accepted_attempt=%d" % [
 		_loop_total_duration_ms / 1000.0,
@@ -452,13 +456,14 @@ func generate_contract(seed_value: int) -> void:
 		"using_degraded_fallback": false,
 		"degraded_reason": "",
 		"final_promotion_duration_ms": 0,
+		"final_materialization_duration_ms": 0,
 		"attempts": _last_generation_attempts,
 	}
 
 	var using_degraded_fallback := false
 	if not map_generated and allow_degraded_best_candidate_fallback and _candidate_evaluator.can_use_degraded_fallback(best_attempt_metrics, _get_candidate_evaluation_settings()):
-		map_instance = best_map_instance
-		level_data = best_level_data
+		selected_candidate = best_candidate.duplicate(false)
+		selected_candidate["acceptance_mode"] = "degraded_fallback"
 		map_seed = best_attempt_seed
 		using_degraded_fallback = true
 		_last_contract_generation_report["using_degraded_fallback"] = true
@@ -475,8 +480,6 @@ func generate_contract(seed_value: int) -> void:
 			best_map_score,
 			best_attempt_metrics
 		)
-		if best_map_instance != null:
-			await _dispose_node(best_map_instance)
 		_active_map = null
 		_latest_contract = {}
 		_latest_generation_failure = failure
@@ -484,9 +487,9 @@ func generate_contract(seed_value: int) -> void:
 		contract_generation_failed.emit(failure)
 		return
 
-	if map_instance == null:
+	if selected_candidate.is_empty():
 		var failure := _build_generation_failure_result(
-			"no_map_instance",
+			"no_selected_candidate",
 			attempts_run,
 			best_attempt_index,
 			best_map_score,
@@ -499,12 +502,28 @@ func generate_contract(seed_value: int) -> void:
 		contract_generation_failed.emit(failure)
 		return
 
-	_active_map = map_instance
 	var _final_promotion_start := Time.get_ticks_msec()
-	level_data = await _generate_final_map_level_data(map_instance)
-	_last_contract_generation_report["final_promotion_duration_ms"] = (
-		Time.get_ticks_msec() - _final_promotion_start
-	)
+	level_data = await _generate_final_map_level_data(selected_candidate)
+	var final_materialization_duration_ms := Time.get_ticks_msec() - _final_promotion_start
+	_last_contract_generation_report["final_promotion_duration_ms"] = final_materialization_duration_ms
+	_last_contract_generation_report["final_materialization_duration_ms"] = final_materialization_duration_ms
+	if level_data.is_empty():
+		var failure := _build_generation_failure_result(
+			"candidate_materialization_failed",
+			attempts_run,
+			best_attempt_index,
+			best_map_score,
+			best_attempt_metrics
+		)
+		if _active_map != null:
+			await _dispose_node(_active_map)
+		_active_map = null
+		_latest_contract = {}
+		_latest_generation_failure = failure
+		push_error("[CustodianContractMap] Candidate materialization failed safely: %s" % str(failure))
+		contract_generation_failed.emit(failure)
+		return
+	map_instance = _active_map
 	if using_degraded_fallback:
 		level_data["degraded_fallback"] = true
 		level_data["degraded_reason"] = "terrain_rescue_above_limit"
@@ -739,7 +758,93 @@ func _instantiate_map(map_seed: int, attempt_index: int = 0, planet_world_profil
 		_apply_map_generation_profile(map_instance, attempt_index, planet_world_profile)
 		map_instance.set_seed(map_seed)
 
-	(map_instance as Node2D).position = map_offset
+	if map_instance is Node2D:
+		(map_instance as Node2D).position = map_offset
+	_active_map = map_instance
+	return map_instance
+
+
+func _capture_candidate_procgen_settings(map_instance: ProcGenTilemap) -> Dictionary:
+	if map_instance == null or map_instance.procgen_node == null:
+		return {}
+	var procgen := map_instance.procgen_node
+	return {
+		"map_size": procgen.map_size,
+		"room_amount": procgen.room_amount,
+		"room_center_ratio": procgen.room_center_ratio,
+		"corridor_edge_overlap_min_ratio": procgen.corridor_edge_overlap_min_ratio,
+		"corridor_cycle_chance": procgen.corridor_cycle_chance,
+		"automaton_iterations": procgen.automaton_iterations,
+		"automaton_noise_rate": procgen.automaton_noise_rate,
+		"automaton_corridor_fixed_width_expand": procgen.automaton_corridor_fixed_width_expand,
+		"automaton_corridor_non_fixed_width_expand": procgen.automaton_corridor_non_fixed_width_expand,
+	}
+
+
+func _capture_candidate_materialization_settings(map_instance: ProcGenTilemap) -> Dictionary:
+	if map_instance == null:
+		return {}
+	return {
+		"generation_output_enabled": map_instance.generation_output_enabled,
+		"enable_streaming_reveal": map_instance.enable_streaming_reveal,
+		"build_runtime_wall_collision": map_instance.build_runtime_wall_collision,
+		"show_runtime_wall_collision_debug": map_instance.show_runtime_wall_collision_debug,
+		"enable_final_foliage": map_instance.enable_final_foliage,
+		"enable_ruin_prop_spawning": map_instance.enable_ruin_prop_spawning,
+		"interior_prop_spawning_enabled": map_instance.interior_prop_spawning_enabled,
+		"auto_bake_nav": map_instance.auto_bake_nav,
+	}
+
+
+func _instantiate_accepted_final_map(candidate: Dictionary) -> ProcGenTilemap:
+	if map_scene == null:
+		return null
+	var map_value: Variant = map_scene.instantiate()
+	if not map_value is ProcGenTilemap:
+		return null
+	var map_instance := map_value as ProcGenTilemap
+	map_instance.generation_evaluation_mode = false
+	_disable_duplicate_tilemap_outputs(map_instance, map_instance)
+	var procgen: ProcGen = map_instance.procgen_node
+	if procgen == null:
+		procgen = _find_procgen_node(map_instance)
+	if procgen == null:
+		map_instance.free()
+		return null
+	procgen.auto_generate_on_ready = false
+	procgen.generate_seed = false
+	procgen.seed = int(candidate.get("attempt_seed", -1))
+
+	map_root.add_child(map_instance)
+	if not map_instance.is_node_ready():
+		await map_instance.ready
+	if map_instance.procgen_node == null:
+		map_instance.procgen_node = _find_procgen_node(map_instance)
+	procgen = map_instance.procgen_node
+	if procgen == null:
+		await _dispose_node(map_instance)
+		return null
+	if procgen.is_generating():
+		push_warning("[CustodianContractMap] Final candidate map had in-flight ProcGen work after auto-generation was disabled")
+		while procgen.is_generating():
+			await get_tree().process_frame
+
+	var profile: Dictionary = candidate.get("world_profile", {})
+	if not profile.is_empty():
+		map_instance.apply_planet_world_profile(profile)
+	var materialization_settings: Dictionary = candidate.get("materialization_settings", {})
+	for setting_variant: Variant in materialization_settings:
+		map_instance.set(String(setting_variant), materialization_settings[setting_variant])
+	var procgen_settings: Dictionary = candidate.get("procgen_settings", {})
+	for setting_variant: Variant in procgen_settings:
+		procgen.set(String(setting_variant), procgen_settings[setting_variant])
+	procgen.auto_generate_on_ready = false
+	procgen.generate_seed = false
+	procgen.seed = int(candidate.get("attempt_seed", -1))
+	map_instance.set_seed(int(candidate.get("attempt_seed", -1)))
+	var map_node: Variant = map_instance
+	if map_node is Node2D:
+		(map_node as Node2D).position = map_offset
 	_active_map = map_instance
 	return map_instance
 
@@ -761,24 +866,29 @@ func _find_procgen_node(node: Node) -> ProcGen:
 	return null
 
 
-func _generate_final_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:
+func _generate_final_map_level_data(candidate: Dictionary) -> Dictionary:
+	var map_instance: ProcGenTilemap = await _instantiate_accepted_final_map(candidate)
 	if map_instance == null:
+		push_error("[CustodianContractMap] Could not instantiate final accepted candidate runtime.")
 		return {}
 	print("[CustodianContractMap] FINAL_VISUAL_BEGIN map_path=%s eval_mode_before=%s" % [
 		str(map_instance.get_path()),
 		str(map_instance.generation_evaluation_mode),
 	])
-	if not map_instance.generation_evaluation_mode:
-		print("[CustodianContractMap] FINAL_VISUAL_ALREADY_READY")
-		return map_instance.get_level_data()
 	var _final_start := Time.get_ticks_msec()
-	var level_data: Dictionary = (
-		map_instance.promote_evaluated_candidate_to_final()
-	)
+	var materialization: Dictionary = _candidate_materializer.materialize(candidate, map_instance)
 	print("[CustodianContractMap] FINAL_PROMOTION_END total=%.1fs" % [
 		(Time.get_ticks_msec() - _final_start) / 1000.0
 	])
-	return level_data
+	if not bool(materialization.get("ok", false)):
+		_last_contract_generation_report["materialization_failure"] = materialization.duplicate(true)
+		push_error("[CustodianContractMap] Candidate materializer rejected selected world: %s" % str(materialization))
+		await _dispose_node(map_instance)
+		_active_map = null
+		return {}
+	_last_contract_generation_report["materialization"] = materialization.get("report", {}).duplicate(true)
+	_last_contract_generation_report["final_materialization_duration_ms"] = Time.get_ticks_msec() - _final_start
+	return materialization.get("level_data", {})
 
 
 func _generate_map_level_data(map_instance: ProcGenTilemap) -> Dictionary:

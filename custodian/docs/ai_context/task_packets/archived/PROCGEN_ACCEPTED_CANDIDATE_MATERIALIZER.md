@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-accepted-candidate-materializer`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-semantic-candidate-generation`
@@ -30,6 +30,18 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 ## Handoff
 
-- Next action: Land materializer parity; procgen-candidate-runtime-path-demolition then becomes eligible.
+- Next action: Claim `procgen-candidate-runtime-path-demolition` (G5), now eligible after G4 lands.
 - Best starting files: generation/; ProcGenTilemap generate/promote/finalization; CustodianContractMap final map handoff.
 - Blockers or open questions: None known at authoring time.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The S4 final-runtime realization caused the ambient real-world spawn integration test to exceed its 90-second timeout twice, after the test had completed most generation work.
+- Root cause / contributing factors: The existing timeout covered evaluation and in-place promotion costs but not evaluation plus a fresh final realization.
+- Prevention / pipeline improvement: Raised that single test's timeout to 180 seconds and verified its 106.3-second pass; kept S4 parity checks focused on authoritative topology and final runtime fingerprints.
+- Tooling / docs drift discovered: The promotion smoke assumed two distinct maps must have identical streamed-paint counts; fresh materialization correctly starts with its own reveal progress. The focused parity smoke also lacked validation-manifest ownership and was registered before closeout.
+- Follow-up: fixed-in-scope
+- What worked: Semantic parity and repeated final-runtime fingerprints held across fresh maps.

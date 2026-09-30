@@ -1,6 +1,10 @@
 class_name ProcgenPerformanceSnapshot
 extends RefCounted
 
+const CANDIDATE_SEMANTIC_ADAPTER_SCRIPT := preload(
+	"res://game/world/procgen/generation/candidate_semantic_adapter.gd"
+)
+
 ## Narrow normalizer for custodian.procgen_performance_baseline.v1 snapshots,
 ## consumed by custodian/tools/validation/procgen_performance_baseline_bench.gd.
 ##
@@ -15,16 +19,29 @@ extends RefCounted
 static func generation_snapshot(tilemap: ProcGenTilemap) -> Dictionary:
 	var snapshot := tilemap.get_last_generation_timing_snapshot()
 	snapshot["promotion"] = tilemap.get_last_promotion_timing_snapshot()
+	snapshot["materialization"] = tilemap.get_last_materialization_timing_snapshot()
 	snapshot["floor_cell_count"] = tilemap.debug_get_generated_floor_cells().size()
 	snapshot["wall_cell_count"] = tilemap.debug_get_generated_wall_cells().size()
-	snapshot["fingerprint"] = fingerprint_generation(tilemap)
+	snapshot["fingerprint"] = CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.fingerprint_runtime_state(tilemap)
 	return snapshot
 
 
 ## Structured candidate-loop timing/acceptance report already captured by
 ## CustodianContractMap during generate_contract().
 static func contract_snapshot(contract_map: CustodianContractMap) -> Dictionary:
-	return contract_map.get_last_contract_generation_report()
+	var snapshot := contract_map.get_last_contract_generation_report()
+	var contract: Dictionary = contract_map.get_latest_contract()
+	var map_record: Dictionary = contract.get("map", {})
+	var map_instance: Variant = map_record.get("instance")
+	if map_instance is ProcGenTilemap:
+		var tilemap := map_instance as ProcGenTilemap
+		snapshot["materialized_world"] = {
+			"fingerprint": CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.fingerprint_runtime_state(tilemap),
+			"floor_cell_count": tilemap.debug_get_generated_floor_cells().size(),
+			"wall_cell_count": tilemap.debug_get_generated_wall_cells().size(),
+			"materialization": tilemap.get_last_materialization_timing_snapshot(),
+		}
+	return snapshot
 
 
 ## Deterministic same-seed fingerprint over authoritative floor/wall cell
@@ -32,31 +49,7 @@ static func contract_snapshot(contract_map: CustodianContractMap) -> Dictionary:
 ## seed/config must produce the same fingerprint even if wall-clock timings
 ## differ.
 static func fingerprint_generation(tilemap: ProcGenTilemap) -> String:
-	var combined := PackedStringArray()
-	combined.append_array(_cell_fingerprint_rows(tilemap.debug_get_generated_floor_cells()))
-	combined.append("|WALLS|")
-	combined.append_array(_cell_fingerprint_rows(tilemap.debug_get_generated_wall_cells()))
-	return str(("\n".join(combined)).hash())
-
-
-static func _cell_fingerprint_rows(cells: Dictionary) -> PackedStringArray:
-	var rows := PackedStringArray()
-	for cell_variant: Variant in cells.keys():
-		if not cell_variant is Vector2i:
-			continue
-		var cell := cell_variant as Vector2i
-		var data := cells[cell] as Dictionary
-		rows.append(
-			"%d,%d:%d:%s:%d" % [
-				cell.x,
-				cell.y,
-				int(data.get("source_id", -1)),
-				str(data.get("atlas", Vector2i(-1, -1))),
-				int(data.get("alternative", 0)),
-			]
-		)
-	rows.sort()
-	return rows
+	return CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.fingerprint_runtime_state(tilemap)
 
 
 ## Structured runtime/streaming snapshot for the benchmark's scripted runtime

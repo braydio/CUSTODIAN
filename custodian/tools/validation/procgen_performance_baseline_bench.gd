@@ -229,10 +229,13 @@ func _print_summary(report: Dictionary, absolute_path: String) -> void:
 		])
 	for case in (report["contract_cases"] as Array):
 		var c := case as Dictionary
-		print("  contract   %-28s loop=%dms promotion=%dms attempts=%d/%d accepted=%d ok=%s" % [
+		var materialized_world: Dictionary = c.get("materialized_world", {})
+		print("  contract   %-28s loop=%dms promotion=%dms materialization=%dms fp=%s attempts=%d/%d accepted=%d ok=%s" % [
 			c.get("case_id", "?"),
 			int(c.get("total_candidate_loop_duration_ms", 0)),
 			int(c.get("final_promotion_duration_ms", 0)),
+			int(c.get("final_materialization_duration_ms", 0)),
+			str(materialized_world.get("fingerprint", "")),
 			int(c.get("attempts_run", 0)),
 			int(c.get("attempt_limit", 0)),
 			int(c.get("accepted_attempt", -1)),
