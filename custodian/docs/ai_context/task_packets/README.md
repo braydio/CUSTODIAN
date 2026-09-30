@@ -271,6 +271,7 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md` — P1 C2b.3 cleanup queued behind C2b.2: reconcile stale animation reachability, migrate direct Operator-PNG VFX consumers, disposition orphan/superseded canonical output, and retire compatibility SpriteFrames/resources only after zero-consumer proof.
 - `OPERATOR_ACTION_ARBITRATION.md` — P1 Slice E queued behind C2b.3: replace reflection-driven Operator animation states with explicit action arbitration + semantic presentation coordination and remove the 34 state→actor glue sites.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 post-Slice-E mobile guard composition: movement-owned lower locomotion through enter/hold/non-break recoil/exit with aim-owned upper defense, continuity guards, and runtime-scale strafe validation.
+- `OPERATOR_UNARMED_BLOCKING_ART_REFRESH.md` — P1 crisp-method refresh of the latest pushed high-resolution unarmed guard enter/hold/hit temp set into canonical 96 px lower+upper Operator V2 source/runtime art, focused ingest, and live guard consumption proof.
 
 ### In Progress
 
