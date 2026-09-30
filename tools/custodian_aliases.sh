@@ -186,7 +186,11 @@ pngaudit() {
 # -- Asset Pipeline V2.1 (unified non-Operator intake; Operator stays specialized)
 asset() {
   _update_usage "asset"
-  python3 "${CUSTODIAN_GODOT}/tools/assets/asset.py" "$@"
+  local asset_python="python3"
+  if [[ "${1:-}" == "ui" && -x "${CUSTODIAN_REPO}/.ai/operator-ui-venv/bin/python" ]]; then
+    asset_python="${CUSTODIAN_REPO}/.ai/operator-ui-venv/bin/python"
+  fi
+  "${asset_python}" "${CUSTODIAN_GODOT}/tools/assets/asset.py" "$@"
 }
 
 # -- Generate prioritized next-actions report (fit + contract joined)
