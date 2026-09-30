@@ -42,6 +42,7 @@ const NONWALKABLE_SURFACE_CLASSIFIER_SCRIPT := preload(
 )
 const TERRAIN_BALLISTICS_SCRIPT := preload("res://game/world/procgen/terrain/terrain_ballistics.gd")
 const REQUIRED_CELL_CLASSIFIER_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_required_cell_classifier.gd")
+const CANDIDATE_SEMANTIC_ADAPTER_SCRIPT := preload("res://game/world/procgen/generation/candidate_semantic_adapter.gd")
 const PRETERRAIN_DIAGNOSTICS_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preterrain_diagnostics.gd")
 const PRETERRAIN_AUTHORITY_REPAIR_SCRIPT := preload("res://game/world/procgen/diagnostics/procgen_preturn_authority_repair.gd")
 const WIND_AMBIENT_LOOP: AudioStream = preload("res://content/audio/sfx/ambience/wind_ambient_loop.wav")
@@ -501,6 +502,8 @@ var _sundered_keep_shoreline_plan: Dictionary = {}
 var _surface_claim_cells: Dictionary = {}
 var _nonwalkable_surface_summary: Dictionary = {}
 var _evaluated_candidate_ready: bool = false
+var _accepted_materialization_generation_id: int = -1
+var _accepted_materialization_invocation_count: int = 0
 var _runtime_prop_blocker_cells: Dictionary = {}
 var _runtime_prop_blocker_sources: Dictionary = {}
 var _revealed_chunks: Dictionary = {}
@@ -1066,6 +1069,7 @@ signal minimap_tile_changed(tile: Vector2i, terrain_kind: String)
 
 func _on_procgen_finished() -> void:
 	_debug_generation_id += 1
+	_last_promotion_timing_snapshot = {}
 	_reset_generation_prop_observability()
 	var mode := "EVAL_CANDIDATE" if generation_evaluation_mode else "FINAL_VISUAL"
 	var seed_text := "unknown"
@@ -1129,10 +1133,104 @@ func _on_procgen_finished() -> void:
 	}
 
 
-## Promotes the accepted evaluation result without clearing or regenerating
-## its structural TileMaps, semantic dictionaries, terrain, roads, or regions.
-## Only work deliberately skipped by EVAL_CANDIDATE is completed here.
+## Verifies the accepted semantic candidate is still bound to this evaluated
+## structural generation, then performs its one final-runtime realization.
+func materialize_accepted_candidate(semantic_snapshot: Dictionary) -> Dictionary:
+	if _accepted_materialization_generation_id == _debug_generation_id:
+		return {"ok": false, "reason": "candidate_already_materialized"}
+	if generation_evaluation_mode or _debug_generation_id != 0:
+		return {"ok": false, "reason": "final_map_must_be_fresh_and_unrealized"}
+	if String(semantic_snapshot.get("schema", "")) != "custodian.procgen_candidate_semantic_model.v1":
+		return {"ok": false, "reason": "unsupported_semantic_candidate_schema"}
+	if not bool(semantic_snapshot.get("has_map_instance", false)):
+		return {"ok": false, "reason": "semantic_candidate_has_no_runtime_source"}
+	if procgen_node == null:
+		return {"ok": false, "reason": "procgen_source_missing"}
+	var seed_identity: Dictionary = semantic_snapshot.get("seed_identity", {})
+	if int(seed_identity.get("attempt_seed", -1)) != int(procgen_node.seed):
+		return {"ok": false, "reason": "semantic_candidate_seed_mismatch"}
+	if semantic_snapshot.get("map_size", Vector2i.ZERO) != procgen_node.map_size:
+		return {"ok": false, "reason": "semantic_candidate_map_size_mismatch"}
+	var expected_runtime_fingerprint := String(semantic_snapshot.get("runtime_fingerprint", ""))
+	if expected_runtime_fingerprint.is_empty():
+		return {"ok": false, "reason": "semantic_candidate_runtime_fingerprint_missing"}
+
+	if _accepted_materialization_invocation_count != 0:
+		return {"ok": false, "reason": "candidate_materialization_already_invoked"}
+	_accepted_materialization_invocation_count += 1
+	var generation_before := _debug_generation_id
+	var semantic_fingerprint := String(semantic_snapshot.get("fingerprint", ""))
+	var materialization_started := Time.get_ticks_msec()
+	generate()
+	if _debug_generation_id != generation_before + 1:
+		return {"ok": false, "reason": "final_runtime_generation_did_not_complete_once"}
+	var data: Dictionary = get_level_data()
+	if data.is_empty():
+		return {"ok": false, "reason": "final_runtime_realization_failed"}
+	var observed_semantic_snapshot: Dictionary = CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.new().build_snapshot(
+		self,
+		data,
+		seed_identity
+	)
+	var observed_semantic_fingerprint := String(observed_semantic_snapshot.get("fingerprint", ""))
+	if observed_semantic_fingerprint != semantic_fingerprint:
+		return {
+			"ok": false,
+			"reason": "final_runtime_semantic_fingerprint_mismatch",
+			"expected_semantic_fingerprint": semantic_fingerprint,
+			"observed_semantic_fingerprint": observed_semantic_fingerprint,
+			"expected_floor_count": int(semantic_snapshot.get("runtime_floor_cell_count", 0)),
+			"observed_floor_count": _generated_floor_cells.size(),
+			"expected_wall_count": int(semantic_snapshot.get("runtime_wall_cell_count", 0)),
+			"observed_wall_count": _generated_wall_cells.size(),
+		}
+	_accepted_materialization_generation_id = _debug_generation_id
+	var generation_timing: Dictionary = get_last_generation_timing_snapshot()
+	var phase_timings: Dictionary = generation_timing.get("phase_timings_ms", {}).duplicate(true)
+	var phase_order := PackedStringArray(["structural_tilemap_generation"])
+	for phase_variant: Variant in phase_timings.keys():
+		phase_order.append(String(phase_variant))
+	phase_order.append("shadow_refresh")
+	if int(generation_timing.get("nav_bake_ms", 0)) > 0:
+		phase_order.append("navigation_bake")
+	var total_materialization_ms := Time.get_ticks_msec() - materialization_started
+	var observed_runtime_fingerprint := CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.fingerprint_runtime_state(self)
+	var report := {
+		"schema": "custodian.procgen_accepted_candidate_materialization.v1",
+		"generation_id": _debug_generation_id,
+		"semantic_fingerprint": semantic_fingerprint,
+		"verified_semantic_fingerprint": observed_semantic_fingerprint,
+		"runtime_fingerprint": observed_runtime_fingerprint,
+		"structural_runtime_materialization_count": 1,
+		"final_runtime_materialization_count": 1,
+		"phase_order": phase_order,
+		"phase_timings_ms": phase_timings,
+		"generation_ms": int(generation_timing.get("total_ms", 0)),
+		"shadow_refresh_ms": int(generation_timing.get("refresh_shadows_ms", 0)),
+		"navigation_bake_ms": int(generation_timing.get("nav_bake_ms", 0)),
+		"total_materialization_ms": total_materialization_ms,
+		"floor_cell_count": _generated_floor_cells.size(),
+		"wall_cell_count": _generated_wall_cells.size(),
+		"runtime_invocation_count": _accepted_materialization_invocation_count,
+	}
+	_last_promotion_timing_snapshot = report.duplicate(true)
+	return {
+		"ok": true,
+		"level_data": data,
+		"report": report,
+	}
+
+
+## Compatibility for existing debug callers. Contract generation now routes
+## accepted candidates through ProcgenCandidateMaterializer.
 func promote_evaluated_candidate_to_final() -> Dictionary:
+	return _finalize_accepted_candidate_to_final()
+
+
+## Realizes the accepted evaluation result without clearing or regenerating its
+## structural TileMaps, semantic dictionaries, terrain, roads, or regions.
+## Only work deliberately skipped by EVAL_CANDIDATE is completed here.
+func _finalize_accepted_candidate_to_final() -> Dictionary:
 	if not generation_evaluation_mode:
 		return get_level_data()
 	if not _evaluated_candidate_ready or _generated_floor_cells.is_empty():
@@ -1215,6 +1313,16 @@ func promote_evaluated_candidate_to_final() -> Dictionary:
 	_last_promotion_timing_snapshot = {
 		"generation_id": _debug_generation_id,
 		"phase_timings_ms": marks,
+		"phase_order": PackedStringArray([
+			"floor_value_clusters",
+			"macro_presentation",
+			"dressing_cluster_plan",
+			"foliage_finalize",
+			"ruin_props",
+			"interior_props",
+			"playability_audit",
+			"presentation_navigation",
+		]),
 		"total_ms": Time.get_ticks_msec() - started,
 	}
 	return data
@@ -10839,6 +10947,11 @@ func get_last_generation_timing_snapshot() -> Dictionary:
 ## promote_evaluated_candidate_to_final() call. Empty if the accepted
 ## candidate never required promotion (final-visual mode already ready).
 func get_last_promotion_timing_snapshot() -> Dictionary:
+	return get_last_materialization_timing_snapshot()
+
+
+## Structured timing/identity facts for the accepted-candidate materializer.
+func get_last_materialization_timing_snapshot() -> Dictionary:
 	return _last_promotion_timing_snapshot.duplicate(true)
 
 

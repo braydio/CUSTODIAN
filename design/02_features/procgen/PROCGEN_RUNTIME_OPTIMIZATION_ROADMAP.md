@@ -169,7 +169,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | G1 | `procgen-candidate-evaluator-extraction` | **complete** | S1 |
 | G2 | `procgen-candidate-semantic-model` | **complete** | G1 |
 | G3 | `procgen-semantic-candidate-generation` | **complete** | G2 |
-| G4 | `procgen-accepted-candidate-materializer` | queued | G3 |
+| G4 | `procgen-accepted-candidate-materializer` | **complete** | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | queued | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | queued | S1 |
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | queued | M1 |
@@ -216,10 +216,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** G4 `procgen-accepted-candidate-materializer` (next in serial order after G3 lands)
-**State:** S1, G1, G2, and G3 landed; G4, M1, and P1 are dependency-eligible.
-**Next gate:** make the accepted-candidate transition (eval -> accepted -> materialize -> final presentation) explicit, per S4's goal.
-**After G3:** G4 is now eligible. M1 and P1 remain independent siblings of the generation lane.
+**Current packet:** G5 `procgen-candidate-runtime-path-demolition` (next in serial order after G4 lands)
+**State:** S1, G1, G2, G3, and G4 landed; G5, M1, and P1 are dependency-eligible.
+**Next gate:** retire the superseded live rejected-candidate compatibility path while preserving the accepted semantic-to-runtime handoff established by G4.
+**After G4:** G5 is eligible. M1 and P1 remain independent siblings of the generation lane.
 
 ---
 
@@ -331,9 +331,55 @@ fingerprints remain authoritative and deterministic.
 - **Known independent failure:** `procgen_candidate_promotion_smoke.gd` still fails on the same pre-existing streamed-floor-cell equality assertion documented in S1/G1/G2; unrelated to and unchanged by this diff (confirmed identical failure message/line before and after).
 - **Next:** G4 `procgen-accepted-candidate-materializer` is eligible.
 
+### G4 Completion Evidence
+
+G4 lands S4's explicit accepted-candidate handoff. The candidate loop retains
+only the selected semantic snapshot, evaluation, acceptance mode, deterministic
+seed/profile/configuration, and materialization settings. It disposes each
+evaluation map, then creates a fresh final map and calls the materializer once.
+The materializer verifies the accepted semantic fingerprint against the final
+runtime snapshot and records its S1-compatible runtime fingerprint, floor/wall
+counts, ordered generation phases, timings, and invocation count.
+
+- **Landed main SHA:** recorded in the task closeout commit.
+- **Closing summary:** `PROCGEN_ACCEPTED_CANDIDATE_MATERIALIZER_CLAUDE_SUMMARY.md`.
+- **S1 quick:** PASS, `determinism_ok: true`; duplicate 48x48 seed-420777
+  generation fingerprints were both `1773840677`. The contract case accepted
+  attempt 0 and materialized final runtime fingerprint `2884730602`.
+- **S1 full:** PASS, `determinism_ok: true`; all nine 160/192/224 fixed-size
+  seed cases completed with stable fingerprints and their authoritative
+  floor/wall counts. Three contract cases accepted attempt 0/12 and each
+  recorded one materialization invocation, a verified semantic fingerprint,
+  and a final runtime fingerprint: seed 420777 `2884730602` (10212 floors,
+  951 walls), 420779 `392435093` (10372 floors, 805 walls), and 771923
+  `1672459047` (6317 floors, 1058 walls). Full materialization durations were
+  39837, 51489, and 20333 ms. Runtime case: 192x192 seed 420777, 7.006 ms
+  average over 60 samples, 25 chunks revealed, queue peak 362.
+- **Parity smoke:** PASS; accepted semantic topology, terrain, ocean/chasm
+  semantics, and final floor/wall positions match. A second fresh materializer
+  run reproduced the S1 runtime fingerprint. Runtime invocation and structural
+  materialization counts were both exactly one per output map.
+- **Validation:** candidate evaluator, semantic model, spatial normalization,
+  terrain required cells, road semantics v2, ingress spawner, S1 quick, and the
+  materializer parity smoke all PASS. Changed-file closeout PASS (19/19 tests,
+  complete ownership coverage). The ambient real-world spawn case exceeded its
+  former 90-second timeout while completing the new final realization; its
+  timeout was raised to 180 seconds and the full sweep passed in 106.6 seconds.
+  `git diff --check` clean.
+- **Process feedback:** the repeatable medium-severity validation timeout was
+  corrected in `validation_manifest.json`; changed-file validation also found
+  that the new parity smoke/materializer lacked an owner mapping, so the focused
+  smoke was registered and the final coverage-complete sweep passed. The
+  promotion smoke's obsolete cross-map streamed-paint count assumption was
+  removed because fresh maps legitimately begin at different reveal progress.
+  See the closing summary.
+- **Next:** G5 `procgen-candidate-runtime-path-demolition` is eligible.
+
 ---
 
 ## S4 - Accepted-Candidate Materializer
+
+**G4 status:** complete. S4's G5 legacy-path cleanup remains queued.
 
 ### Goal
 

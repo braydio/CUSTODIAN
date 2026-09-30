@@ -221,7 +221,6 @@ lost when the ephemeral worktree is removed.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
-- `PROCGEN_ACCEPTED_CANDIDATE_MATERIALIZER.md` — G4 accepted semantic candidate runtime materializer; depends on G3.
 - `PROCGEN_CANDIDATE_RUNTIME_PATH_DEMOLITION.md` — G5 retire superseded live rejected-candidate path; depends on G4.
 - `PROCGEN_DERIVED_REBUILD_SCHEDULER_FOUNDATION.md` — M1 dirty-region/rebuild scheduler foundation; depends on S1.
 - `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER.md` — M2 route runtime mutation producers through scheduler; depends on M1.

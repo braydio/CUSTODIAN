@@ -1,4 +1,5 @@
 extends RefCounted
+class_name CandidateSemanticAdapter
 
 ## Builds custodian.procgen_candidate_semantic_model.v1 snapshots: a
 ## deterministic, data-only projection of an already-generated candidate.
@@ -64,6 +65,9 @@ func build_snapshot(map_instance: Node, level_data: Dictionary, seed_identity: D
 		"has_map_instance": has_map_instance,
 		"required_ingresses_valid": required_ingresses_valid,
 		"required_ingress_failures": required_ingress_failures,
+		"runtime_fingerprint": fingerprint_runtime_state(map_instance) if has_map_instance else "",
+		"runtime_floor_cell_count": (map_instance.call("debug_get_generated_floor_cells") as Dictionary).size() if has_map_instance else 0,
+		"runtime_wall_cell_count": (map_instance.call("debug_get_generated_wall_cells") as Dictionary).size() if has_map_instance else 0,
 	}
 	snapshot["fingerprint"] = fingerprint_snapshot(snapshot)
 	return snapshot
@@ -85,6 +89,41 @@ func fingerprint_snapshot(snapshot: Dictionary) -> String:
 		str(snapshot.get("seed_identity", {})),
 	]
 	return str(("\n".join(rows) + "|" + identity).hash())
+
+
+## S1-compatible structural identity across final and evaluation-mode maps.
+## It fingerprints only authoritative generated floor/wall cells, not
+## presentation nodes or timings.
+static func fingerprint_runtime_state(map_instance: Node) -> String:
+	if map_instance == null:
+		return ""
+	var combined := PackedStringArray()
+	combined.append_array(_cell_fingerprint_rows(
+		map_instance.call("debug_get_generated_floor_cells") as Dictionary
+	))
+	combined.append("|WALLS|")
+	combined.append_array(_cell_fingerprint_rows(
+		map_instance.call("debug_get_generated_wall_cells") as Dictionary
+	))
+	return str(("\n".join(combined)).hash())
+
+
+static func _cell_fingerprint_rows(cells: Dictionary) -> PackedStringArray:
+	var rows := PackedStringArray()
+	for cell_variant: Variant in cells.keys():
+		if not cell_variant is Vector2i:
+			continue
+		var cell := cell_variant as Vector2i
+		var data := cells[cell] as Dictionary
+		rows.append("%d,%d:%d:%s:%d" % [
+			cell.x,
+			cell.y,
+			int(data.get("source_id", -1)),
+			str(data.get("atlas", Vector2i(-1, -1))),
+			int(data.get("alternative", 0)),
+		])
+	rows.sort()
+	return rows
 
 
 func _resolve_map_size(map_instance: Node, level_data: Dictionary) -> Vector2i:
