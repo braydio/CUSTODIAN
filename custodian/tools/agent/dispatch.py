@@ -5,43 +5,28 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import difflib
 import importlib.util
 import inspect
 import io
 import json
 import os
-import re
 import subprocess
 import sys
 import time
-from dataclasses import dataclass
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from workflow_control import (
     RunTrace, WorkflowControlError, acquire_remote_claim, common_mutex,
-    release_remote_claim, workstream_mutex,
+    release_remote_claim, resolve_agent_id, workstream_mutex,
 )
-
-PACKET_ROOT = "custodian/docs/ai_context/task_packets"
-FIELDS = (
-    "Workstream", "Status", "Dispatch", "Priority", "Depends on", "Locks",
-    "Kind", "Review", "Review stage", "Review modes", "Paired review workstream",
-    "Review cycle", "Max automatic review cycles",
-    "Review target workstream", "Review target packet", "Task overrides",
+from task_packet_contract import (
+    BOUNDED_REVIEW_OVERRIDE, FIELDS, ID_RE, KINDS, PACKET_ROOT, PRIORITY,
+    REVIEW_INTENTS, REVIEW_MODES, VALIDATION_SCRIPT_RE, Packet,
+    _bounded_review_override_error, _header_field_with_continuations,
+    _validation_script_references, parse_packet, review_cycle_exhausted,
+    validate_packet_validation_references, validate_review_pairing,
 )
-ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-PRIORITY = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
-KINDS = {"implementation", "review", "correction"}
-REVIEW_INTENTS = {"auto", "manual", "none"}
-REVIEW_MODES = {"code", "architecture", "runtime", "visual", "asset-pipeline", "workflow"}
-BOUNDED_REVIEW_OVERRIDE = (
-    "TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, "
-    "this review packet's lifecycle/archive metadata, its required closing summary, and bounded "
-    "correction/re-review packets; do not edit the reviewed implementation or unrelated work."
-)
-VALIDATION_SCRIPT_RE = re.compile(r"(?<![A-Za-z0-9_])((?:custodian/)?tools/[A-Za-z0-9_./-]+\.(?:py|gd|sh))(?=$|[\s`),.;:])")
 
 
 class DispatchError(RuntimeError):
@@ -53,197 +38,6 @@ def git(repo: Path, *args: str, check: bool = True) -> str:
     if check and result.returncode:
         raise DispatchError(f"git {' '.join(args)} failed: {(result.stderr or result.stdout).strip()}")
     return result.stdout.strip()
-
-
-@dataclass(frozen=True)
-class Packet:
-    path: str
-    workstream: str | None
-    status: str | None
-    dispatch: str
-    dispatch_declared: bool
-    priority: str
-    dependencies: tuple[str, ...]
-    locks: tuple[str, ...]
-    error: str | None = None
-    kind: str = "implementation"
-    review: str = "none"
-    review_stage: str | None = None
-    review_modes: tuple[str, ...] = ()
-    paired_review_workstream: str | None = None
-    review_cycle: int = 0
-    max_review_cycles: int = 2
-    review_target_workstream: str | None = None
-    review_target_packet: str | None = None
-    task_overrides: str | None = None
-    validation_scripts: tuple[str, ...] = ()
-
-
-def parse_packet(path: str, text: str) -> Packet:
-    found: dict[str, list[str]] = {field: [] for field in FIELDS}
-    header_started = False
-    title_seen = False
-    for line in text.splitlines():
-        if not title_seen:
-            if not line.strip():
-                continue
-            title_seen = True
-            if line.lstrip().startswith("#"):
-                continue
-        if not line.strip():
-            if header_started:
-                break
-            continue
-        if not line.lstrip().startswith("-"):
-            if header_started:
-                break
-            continue
-        header_started = True
-        match = re.match(r"^\s*-\s*([^:]+):\s*(.*?)\s*$", line)
-        if not match:
-            continue
-        key, value = match.groups()
-        key = key.strip()
-        if key in found:
-            found[key].append(value.strip().strip("`").strip())
-
-    errors: list[str] = []
-    values: dict[str, str] = {}
-    for key, vals in found.items():
-        if len(vals) > 1:
-            errors.append(f"duplicate {key} metadata")
-        elif vals:
-            values[key] = vals[0]
-    workstream = values.get("Workstream")
-    status = values.get("Status", "").lower() or None
-    dispatch_declared = bool(found["Dispatch"])
-    dispatch = values.get("Dispatch", "manual").lower()
-    priority = values.get("Priority", "P2").upper()
-
-    if not workstream or not ID_RE.fullmatch(workstream):
-        errors.append("invalid Workstream metadata")
-    if status is None:
-        errors.append("missing Status metadata")
-    if dispatch not in {"auto", "manual"}:
-        errors.append("invalid Dispatch metadata")
-    if priority not in PRIORITY:
-        errors.append("invalid Priority metadata")
-
-    def csv_ids(key: str) -> tuple[str, ...]:
-        raw = values.get(key, "none")
-        if raw.lower() == "none":
-            return ()
-        entries = tuple(part.strip() for part in raw.split(","))
-        if not entries or any(not ID_RE.fullmatch(part) for part in entries):
-            errors.append(f"invalid {key} metadata")
-            return ()
-        return entries
-
-    dependencies = csv_ids("Depends on")
-    locks = csv_ids("Locks")
-
-    # Review metadata contract. Safe defaults keep historical packets valid:
-    # missing Kind is implementation, missing Review is none, and missing
-    # Review stage defaults to post-land only when review is actually auto.
-    kind = values.get("Kind", "implementation").lower()
-    if kind not in KINDS:
-        errors.append("invalid Kind metadata")
-    review = values.get("Review", "none").lower()
-    if review not in REVIEW_INTENTS:
-        errors.append("invalid Review metadata")
-    review_stage_raw = values.get("Review stage")
-    if review_stage_raw is not None and review_stage_raw.lower() != "post-land":
-        errors.append("invalid Review stage metadata")
-    review_stage = "post-land" if review == "auto" else (review_stage_raw.lower() if review_stage_raw else None)
-    review_modes = csv_ids("Review modes")
-    if any(mode not in REVIEW_MODES for mode in review_modes):
-        errors.append("invalid Review modes metadata")
-    paired_raw = values.get("Paired review workstream", "none")
-    paired_review_workstream = None if paired_raw.lower() == "none" else paired_raw
-    if paired_review_workstream is not None and not ID_RE.fullmatch(paired_review_workstream):
-        errors.append("invalid Paired review workstream metadata")
-    if review == "auto" and paired_review_workstream is None:
-        errors.append("Review: auto requires a Paired review workstream")
-
-    def non_negative_int(key: str, default: int) -> int:
-        raw = values.get(key)
-        if raw is None:
-            return default
-        try:
-            parsed = int(raw)
-        except ValueError:
-            errors.append(f"invalid {key} metadata")
-            return default
-        if parsed < 0:
-            errors.append(f"invalid {key} metadata")
-            return default
-        return parsed
-
-    review_cycle = non_negative_int("Review cycle", 0)
-    max_review_cycles = non_negative_int("Max automatic review cycles", 2)
-
-    review_target_workstream = values.get("Review target workstream")
-    if review_target_workstream is not None and review_target_workstream.lower() == "none":
-        review_target_workstream = None
-    if review_target_workstream is not None and not ID_RE.fullmatch(review_target_workstream):
-        errors.append("invalid Review target workstream metadata")
-    review_target_packet = values.get("Review target packet") or None
-
-    task_overrides = _header_field_with_continuations(text, "Task overrides")
-    validation_scripts = _validation_script_references(text)
-
-    return Packet(
-        path, workstream, status, dispatch, dispatch_declared, priority, dependencies, locks,
-        "; ".join(errors) or None,
-        kind=kind, review=review, review_stage=review_stage, review_modes=review_modes,
-        paired_review_workstream=paired_review_workstream, review_cycle=review_cycle,
-        max_review_cycles=max_review_cycles, review_target_workstream=review_target_workstream,
-        review_target_packet=review_target_packet, task_overrides=task_overrides,
-        validation_scripts=validation_scripts,
-    )
-
-
-def _header_field_with_continuations(text: str, field: str) -> str | None:
-    """Read one top-level header field, folding its indented Markdown wraps."""
-    lines = text.splitlines()
-    for index, line in enumerate(lines):
-        match = re.match(rf"^\s*-\s*{re.escape(field)}:\s*(.*)$", line)
-        if not match:
-            continue
-        parts = [match.group(1).strip()]
-        for continuation in lines[index + 1:]:
-            if re.match(r"^\s*-\s*[A-Z][^:]*:\s*", continuation) or continuation.startswith("## "):
-                break
-            if continuation.startswith((" ", "\t")):
-                parts.append(continuation.strip())
-            elif not continuation.strip():
-                continue
-            else:
-                break
-        folded = re.sub(r"\s+", " ", " ".join(parts)).strip().strip("`").strip()
-        return folded or None
-    return None
-
-
-def _validation_script_references(text: str) -> tuple[str, ...]:
-    """Collect explicit script paths only from the packet's Validation field/section."""
-    blocks: list[str] = []
-    header = text.split("\n## ", 1)[0]
-    lines = header.splitlines()
-    for index, line in enumerate(lines):
-        match = re.match(r"^\s*-\s*Validation:\s*(.*)$", line)
-        if not match:
-            continue
-        parts = [match.group(1)]
-        for continuation in lines[index + 1:]:
-            if re.match(r"^\s*-\s*[A-Z][^:]*:\s*", continuation):
-                break
-            parts.append(continuation)
-        blocks.append("\n".join(parts))
-
-    for section in re.finditer(r"(?ms)^## Validation\s*\n(.*?)(?=^## |\Z)", text):
-        blocks.append(section.group(1))
-    return tuple(sorted({match.group(1).rstrip("/.") for block in blocks for match in VALIDATION_SCRIPT_RE.finditer(block)}))
 
 
 def _tree_paths(repo: Path, tree: str, prefix: str) -> list[str]:
@@ -286,105 +80,6 @@ def _remote_claim_state(repo: Path) -> tuple[set[str], set[str]]:
     refs = git(repo, "for-each-ref", "--format=%(refname)", "refs/remotes/origin/agent").splitlines()
     branches = {ref.removeprefix("refs/remotes/origin/agent/") for ref in refs}
     return claims, branches
-
-
-def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
-    """Fail-fast consistency guard for the paired post-land review contract.
-
-    Every active `Review: auto` packet must have a matching active review
-    packet: same declared `Paired review workstream` id, `Kind: review`,
-    `Review: none`, `Status: ready`, `Dispatch: auto`, a dependency back on the
-    implementation workstream, and matching target workstream and canonical
-    archived target-packet path. Historical packets that omit review metadata
-    (`Review: none`, the default) are never required to pair.
-    Reusable by both dispatcher eligibility and standalone tooling/tests, per
-    the single reusable validation authority this contract requires.
-    """
-    by_workstream = {p.workstream: p for p in packets if p.workstream and not p.error}
-    errors: dict[str, list[str]] = {}
-
-    def add(workstream: str | None, message: str) -> None:
-        if workstream:
-            errors.setdefault(workstream, []).append(message)
-
-    for p in packets:
-        if p.kind == "review" and p.dispatch == "auto":
-            override_error = _bounded_review_override_error(p.task_overrides)
-            if override_error:
-                add(p.workstream, override_error)
-        if p.error or p.review != "auto" or not p.workstream or p.paired_review_workstream is None:
-            continue
-        paired_id = p.paired_review_workstream
-        paired = by_workstream.get(paired_id)
-        if paired is None:
-            add(p.workstream, f"paired review workstream '{paired_id}' has no matching active packet")
-            continue
-        if paired.kind != "review":
-            add(p.workstream, f"paired review '{paired_id}' must declare Kind: review")
-        if paired.review != "none":
-            add(p.workstream, f"paired review '{paired_id}' must declare Review: none")
-        if paired.status != "ready":
-            add(p.workstream, f"paired review '{paired_id}' must declare Status: ready")
-        if paired.dispatch != "auto":
-            add(p.workstream, f"paired review '{paired_id}' must declare Dispatch: auto")
-        if p.workstream not in paired.dependencies:
-            add(p.workstream, f"paired review '{paired_id}' must depend on '{p.workstream}'")
-        if paired.review_target_workstream != p.workstream:
-            add(p.workstream, f"paired review '{paired_id}' Review target workstream must be '{p.workstream}'")
-        expected_target = f"{PACKET_ROOT}/archived/{Path(p.path).name}"
-        if paired.review_target_packet != expected_target:
-            add(
-                p.workstream,
-                f"paired review '{paired_id}' Review target packet must be '{expected_target}'",
-            )
-
-    return {workstream: "; ".join(messages) for workstream, messages in errors.items()}
-
-
-def _bounded_review_override_error(value: str | None) -> str | None:
-    if not value or "TASK OVERRIDE:" not in value:
-        return "auto review packet requires a bounded TASK OVERRIDE for review-artifact commits"
-    normalized = re.sub(r"\s+", " ", value).strip()
-    expected = re.sub(r"\s+", " ", BOUNDED_REVIEW_OVERRIDE).strip()
-    if normalized != expected:
-        return "auto review packet has malformed bounded TASK OVERRIDE; copy the exact authorized scope from AGENT_REVIEW_PACKET_TEMPLATE.md"
-    return None
-
-
-def validate_packet_validation_references(
-    repo: Path, packets: list[Packet], tree: str = "origin/main",
-    exclude_workstreams: set[str] | None = None,
-) -> dict[str, str]:
-    """Reject ready packets whose explicit validation scripts do not exist in the authority tree."""
-    tool_paths = set(git(repo, "ls-tree", "-r", "--name-only", tree, "--", "custodian/tools").splitlines())
-    errors: dict[str, str] = {}
-    for packet in packets:
-        if exclude_workstreams and packet.workstream in exclude_workstreams:
-            continue
-        if packet.status != "ready" or not packet.validation_scripts or not packet.workstream:
-            continue
-        missing = [path for path in packet.validation_scripts if path not in tool_paths]
-        if not missing:
-            continue
-        repo_tools = sorted(path for path in tool_paths if path.endswith((".py", ".gd", ".sh")))
-        details = []
-        for path in missing:
-            nearest = difflib.get_close_matches(path, repo_tools, n=1, cutoff=0.45)
-            suggestion = f"; nearest live path: {nearest[0]}" if nearest else ""
-            details.append(f"missing validation script '{path}'{suggestion}")
-        errors[packet.workstream] = "; ".join(details)
-    return errors
-
-
-def review_cycle_exhausted(packet: Packet) -> bool:
-    """True once a review/correction packet has reached its finite-loop cap.
-
-    Original implementation review is cycle 0; each automatic correction's
-    paired review increments the cycle. A reviewer at the cap escalates to
-    `human_required` in the durable review receipt instead of scaffolding
-    another automatic correction.
-    """
-    return packet.review_cycle >= packet.max_review_cycles
 
 
 def _decision(
@@ -777,8 +472,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest="command", required=True)
     subs.add_parser("status")
-    p = subs.add_parser("claim-next"); p.add_argument("--agent", default="codex")
-    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default="codex")
+    p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None)
+    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None)
     p = subs.add_parser("last-claim"); p.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args(argv)
     try:
@@ -788,7 +483,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "status":
             status(repo)
             return 0
-        return claim(repo, getattr(args, "workstream_id", None), args.agent, args.command == "claim-next")
+        agent = resolve_agent_id(args.agent)
+        return claim(repo, getattr(args, "workstream_id", None), agent, args.command == "claim-next")
     except (DispatchError, WorkflowControlError) as error:
         print(f"dispatch: BLOCKED: {error}", file=sys.stderr)
         return 2

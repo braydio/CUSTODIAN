@@ -142,9 +142,12 @@ override explicitly.
 ## CUSTODIAN Task Dispatch
 
 For “Take the next CUSTODIAN task,” run
-`python3 custodian/tools/agent/dispatch.py claim-next --agent codex`.
+`python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id>`
+(for example `--agent claude` or `--agent codex`).
 For “Take CUSTODIAN workstream `<id>`,” run
-`python3 custodian/tools/agent/dispatch.py claim <id> --agent codex`.
+`python3 custodian/tools/agent/dispatch.py claim <id> --agent <agent-id>`.
+Omitting `--agent` falls back to the `CUSTODIAN_AGENT_ID` environment variable,
+then a neutral `unspecified` — never a silently assumed brand.
 Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
 returned packet, then execute only that workstream through the lifecycle in
 `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.

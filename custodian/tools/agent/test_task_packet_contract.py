@@ -1,0 +1,238 @@
+"""Direct unit coverage for the shared task-packet grammar/validation module.
+
+dispatch.py's own test suite (test_dispatch.py) proves behavioral parity of
+the dispatcher after this module was extracted from it. This file covers
+task_packet_contract.py's public surface directly, including the pieces
+(Completion Truth parsing, V2 structural fields) that check_ai_context.py
+and workstream.py's finish-gate also depend on.
+"""
+
+import importlib.util
+import sys
+import unittest
+from pathlib import Path
+
+SCRIPT = Path(__file__).with_name("task_packet_contract.py")
+SPEC = importlib.util.spec_from_file_location("custodian_task_packet_contract_tests", SCRIPT)
+tpc = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = tpc
+SPEC.loader.exec_module(tpc)
+
+
+def legacy_packet(workstream_id: str, status: str = "ready", dispatch: str = "auto", extra: str = "") -> str:
+    return (
+        "# Legacy Packet\n\n"
+        f"- Workstream: `{workstream_id}`\n"
+        f"- Status: `{status}`\n"
+        f"- Dispatch: `{dispatch}`\n"
+        "- Priority: `P2`\n"
+        "- Depends on: `none`\n"
+        "- Locks: `none`\n"
+        f"{extra}"
+    )
+
+
+def v2_packet(workstream_id: str, kind: str = "implementation", status: str = "complete", extra: str = "") -> str:
+    return (
+        "# V2 Packet\n\n"
+        "- Packet schema: `custodian.task_packet.v2`\n"
+        f"- Workstream: `{workstream_id}`\n"
+        f"- Status: `{status}`\n"
+        "- Dispatch: `manual`\n"
+        "- Priority: `P2`\n"
+        "- Depends on: `none`\n"
+        "- Locks: `none`\n"
+        f"- Kind: `{kind}`\n"
+        "- Review: `none`\n"
+        f"{extra}"
+    )
+
+
+class ParsePacketTests(unittest.TestCase):
+    def test_minimal_legacy_packet_parses_clean(self):
+        packet = tpc.parse_packet("p.md", legacy_packet("sample-work"))
+        self.assertIsNone(packet.error)
+        self.assertEqual(packet.workstream, "sample-work")
+        self.assertEqual(packet.status, "ready")
+        self.assertEqual(packet.dispatch, "auto")
+        self.assertEqual(packet.kind, "implementation")
+        self.assertEqual(packet.review, "none")
+        self.assertIsNone(packet.schema)
+
+    def test_v2_packet_reports_schema_and_kind(self):
+        packet = tpc.parse_packet("p.md", v2_packet("v2-work", kind="correction"))
+        self.assertIsNone(packet.error)
+        self.assertEqual(packet.schema, "custodian.task_packet.v2")
+        self.assertEqual(packet.kind, "correction")
+        self.assertTrue(tpc.is_v2_packet(packet))
+
+    def test_invalid_workstream_id_is_reported(self):
+        packet = tpc.parse_packet("p.md", legacy_packet("Not Kebab"))
+        self.assertIsNotNone(packet.error)
+        self.assertIn("Workstream", packet.error)
+
+    def test_duplicate_field_is_reported(self):
+        text = legacy_packet("dup-work") + "- Status: `blocked`\n"
+        packet = tpc.parse_packet("p.md", text)
+        self.assertIsNotNone(packet.error)
+        self.assertIn("duplicate", packet.error)
+
+    def test_depends_on_and_locks_split_on_comma(self):
+        text = legacy_packet("multi-dep", extra="")
+        text = text.replace("- Depends on: `none`", "- Depends on: `a-b, c-d`")
+        text = text.replace("- Locks: `none`", "- Locks: `lock-one, lock-two`")
+        packet = tpc.parse_packet("p.md", text)
+        self.assertIsNone(packet.error)
+        self.assertEqual(packet.dependencies, ("a-b", "c-d"))
+        self.assertEqual(packet.locks, ("lock-one", "lock-two"))
+
+    def test_review_auto_requires_paired_review_workstream(self):
+        text = legacy_packet("needs-pair") + "- Review: `auto`\n"
+        packet = tpc.parse_packet("p.md", text)
+        self.assertIsNotNone(packet.error)
+        self.assertIn("Paired review workstream", packet.error)
+
+
+class ReviewPairingTests(unittest.TestCase):
+    def test_correctly_paired_auto_review_has_no_errors(self):
+        impl_text = (
+            legacy_packet("impl-work")
+            + "- Review: `auto`\n"
+            + "- Paired review workstream: `review-impl-work`\n"
+        )
+        review_text = (
+            "# Review Packet\n\n"
+            "- Workstream: `review-impl-work`\n"
+            "- Status: `ready`\n"
+            "- Dispatch: `auto`\n"
+            "- Priority: `P2`\n"
+            "- Depends on: `impl-work`\n"
+            "- Locks: `none`\n"
+            "- Kind: `review`\n"
+            "- Review: `none`\n"
+            "- Review target workstream: `impl-work`\n"
+            f"- Review target packet: `{tpc.PACKET_ROOT}/archived/IMPL_WORK.md`\n"
+            f"- Task overrides: `{tpc.BOUNDED_REVIEW_OVERRIDE}`\n"
+        )
+        impl = tpc.parse_packet(f"{tpc.PACKET_ROOT}/IMPL_WORK.md", impl_text)
+        review = tpc.parse_packet(f"{tpc.PACKET_ROOT}/REVIEW_IMPL_WORK.md", review_text)
+        errors = tpc.validate_review_pairing([impl, review])
+        self.assertEqual(errors, {})
+
+    def test_missing_paired_review_is_reported(self):
+        impl_text = (
+            legacy_packet("orphan-work")
+            + "- Review: `auto`\n"
+            + "- Paired review workstream: `review-orphan-work`\n"
+        )
+        impl = tpc.parse_packet(f"{tpc.PACKET_ROOT}/ORPHAN_WORK.md", impl_text)
+        errors = tpc.validate_review_pairing([impl])
+        self.assertIn("orphan-work", errors)
+        self.assertIn("no matching active packet", errors["orphan-work"])
+
+    def test_auto_review_without_bounded_override_is_reported(self):
+        review_text = (
+            "# Review Packet\n\n"
+            "- Workstream: `review-bad`\n"
+            "- Status: `ready`\n"
+            "- Dispatch: `auto`\n"
+            "- Priority: `P2`\n"
+            "- Depends on: `none`\n"
+            "- Locks: `none`\n"
+            "- Kind: `review`\n"
+            "- Review: `none`\n"
+        )
+        review = tpc.parse_packet(f"{tpc.PACKET_ROOT}/REVIEW_BAD.md", review_text)
+        errors = tpc.validate_review_pairing([review])
+        self.assertIn("review-bad", errors)
+        self.assertIn("TASK OVERRIDE", errors["review-bad"])
+
+
+class ReviewCycleTests(unittest.TestCase):
+    def test_review_cycle_exhausted_at_cap(self):
+        packet = tpc.parse_packet("p.md", legacy_packet("cycled") + "- Review cycle: `2`\n- Max automatic review cycles: `2`\n")
+        self.assertTrue(tpc.review_cycle_exhausted(packet))
+
+    def test_review_cycle_not_exhausted_below_cap(self):
+        packet = tpc.parse_packet("p.md", legacy_packet("cycled") + "- Review cycle: `1`\n- Max automatic review cycles: `2`\n")
+        self.assertFalse(tpc.review_cycle_exhausted(packet))
+
+
+class V2RequiredFieldTests(unittest.TestCase):
+    def test_v2_required_field_values_reads_populated_fields(self):
+        text = v2_packet("v2-fields")
+        text = text.replace("- Kind: `implementation`\n", "- Kind: `implementation`\n- Goal: Do the thing.\n")
+        values = tpc.v2_required_field_values(text)
+        self.assertEqual(values["Goal"], "Do the thing.")
+        self.assertIsNone(values["Completion boundary"])
+
+    def test_field_with_continuation_lines_is_folded(self):
+        text = (
+            "# P\n\n"
+            "- Goal: First line\n"
+            "  continues here\n"
+            "- Status: `ready`\n"
+        )
+        self.assertEqual(tpc._header_field_with_continuations(text, "Goal"), "First line continues here")
+
+
+class CompletionTruthTests(unittest.TestCase):
+    def test_missing_section_returns_none(self):
+        self.assertIsNone(tpc.parse_completion_truth(v2_packet("no-truth")))
+
+    def test_truthful_all_yes_receipt_parses_clean(self):
+        extra = (
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `yes`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Superseded/legacy production path disposition: `removed`\n"
+            "- Evidence: tests pass, old path deleted\n"
+        )
+        truth = tpc.parse_completion_truth(v2_packet("truthful") + extra)
+        self.assertIsNotNone(truth)
+        self.assertIsNone(truth.error)
+        self.assertTrue(truth.all_yes)
+
+    def test_any_no_is_not_all_yes_but_parses_without_error(self):
+        extra = (
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `no`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Superseded/legacy production path disposition: `n/a`\n"
+            "- Evidence: boundary not fully closed, see Deferred\n"
+        )
+        truth = tpc.parse_completion_truth(v2_packet("honest-partial") + extra)
+        self.assertIsNotNone(truth)
+        self.assertIsNone(truth.error)
+        self.assertFalse(truth.all_yes)
+
+    def test_missing_evidence_is_an_error(self):
+        extra = (
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `yes`\n"
+            "- Acceptance satisfied: `yes`\n"
+        )
+        truth = tpc.parse_completion_truth(v2_packet("no-evidence") + extra)
+        self.assertIsNotNone(truth)
+        self.assertIsNotNone(truth.error)
+        self.assertFalse(truth.all_yes)
+
+    def test_completion_truth_required_for_implementation_and_correction_not_review(self):
+        implementation = tpc.parse_packet("p.md", v2_packet("impl-kind", kind="implementation"))
+        correction = tpc.parse_packet("p.md", v2_packet("corr-kind", kind="correction"))
+        review = tpc.parse_packet("p.md", v2_packet("review-kind", kind="review"))
+        legacy = tpc.parse_packet("p.md", legacy_packet("legacy-kind"))
+        self.assertTrue(tpc.completion_truth_required(implementation))
+        self.assertTrue(tpc.completion_truth_required(correction))
+        self.assertFalse(tpc.completion_truth_required(review))
+        self.assertFalse(tpc.completion_truth_required(legacy))
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -29,6 +29,21 @@ class WorkflowControlError(RuntimeError):
     pass
 
 
+DEFAULT_AGENT_ID = "unspecified"
+
+
+def resolve_agent_id(explicit: str | None) -> str:
+    """Truthful agent identity shared by dispatch.py and workstream.py: an
+    explicit flag wins, then a documented environment identity, then a
+    neutral default. Never silently attribute an unspecified caller to any
+    one specific agent brand (traces and remote-claim commit authorship both
+    depend on this)."""
+    if explicit:
+        return explicit
+    env_value = os.environ.get("CUSTODIAN_AGENT_ID", "").strip()
+    return env_value or DEFAULT_AGENT_ID
+
+
 def git(repo: Path, *args: str, check: bool = True, input_text: str | None = None) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(["git", *args], cwd=repo, input=input_text, text=True, capture_output=True)
     if check and result.returncode:

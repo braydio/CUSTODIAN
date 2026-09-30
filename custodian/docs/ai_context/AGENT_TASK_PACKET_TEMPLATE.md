@@ -118,7 +118,20 @@ Before setting `Status: ready`:
 [ ] Review intent is explicit.
 [ ] Deferred work is intentional and visible.
 [ ] Repository-default workflow boilerplate is not duplicated.
+[ ] Acceptance actually proves the stated Goal and Completion boundary, not a
+    narrower local optimization that only partially satisfies them.
+[ ] An architecture/migration packet names the specific old authority or code
+    path whose removal, or intentional preservation, is what proves closure.
+[ ] Current measured state was re-derived against live repository state, not
+    carried over stale from an earlier packet, before any destructive
+    migration step.
+[ ] A macro-level architecture goal is not declared complete by a packet
+    whose actual change is a narrower local optimization; the Goal is scoped
+    to match what this packet truly closes.
 ```
+
+These four checks are objective closure facts, not subjective prose scoring:
+each either names a concrete authority/state or it does not.
 
 ### Review Metadata
 
@@ -150,6 +163,30 @@ for the full paired review/correction lifecycle. Auto review packets must carry
 the exact bounded review-artifact mutation override from that template; the
 dispatcher checks it before claim. Their explicit validation script paths must
 resolve to live scripts before an auto claim is allowed.
+
+## Completion Truth
+
+Required before a V2 `implementation` or `correction` packet may be set to
+`Status: complete`. `workstream.py finish` enforces this receipt at teardown
+time and fails closed if it is missing, malformed, or contains any `no` —
+even when validation is green. It is checked again after main-sync if the
+packet's bytes changed. Review packets are exempt: they verify someone
+else's claim rather than making one. This does not retroactively apply to
+already-archived historical packets.
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes | no`
+- Completion boundary satisfied: `yes | no`
+- Acceptance satisfied: `yes | no`
+- Superseded/legacy production path disposition: `removed | intentionally-preserved | n/a`
+- Evidence: concrete proof for each `yes` above (exact files/tests/runtime
+  observations); a `no` requires the same precision about what remains open
+
+Answer each satisfied field about the packet's own stated Goal/Completion
+boundary/Acceptance as authored, not about the work actually delivered post
+hoc. If delivered work fell short, say so honestly with `no` and record what
+remains in Deferred or a follow-up workstream; do not narrow the Goal
+retroactively to make a partial result read as complete.
 
 ## Execution Feedback
 

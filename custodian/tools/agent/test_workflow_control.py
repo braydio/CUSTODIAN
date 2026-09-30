@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
-from custodian.tools.agent.workflow_control import RunTrace, redact, sanitize_argv
+from custodian.tools.agent.workflow_control import DEFAULT_AGENT_ID, RunTrace, redact, resolve_agent_id, sanitize_argv
 
 
 class WorkflowControlTests(unittest.TestCase):
@@ -44,6 +46,31 @@ class WorkflowControlTests(unittest.TestCase):
         refs = subprocess.run(["git", "--git-dir", str(self.bare), "for-each-ref", "--format=%(refname)"], text=True, capture_output=True, check=True).stdout
         self.assertNotIn("refs/heads/agent/trace-check", refs)
         self.assertNotIn("refs/heads/dispatch-claims/trace-check", refs)
+
+
+class ResolveAgentIdTests(unittest.TestCase):
+    def test_explicit_flag_wins_over_environment(self):
+        with mock.patch.dict(os.environ, {"CUSTODIAN_AGENT_ID": "env-agent"}, clear=False):
+            self.assertEqual(resolve_agent_id("claude"), "claude")
+            self.assertEqual(resolve_agent_id("codex"), "codex")
+
+    def test_environment_used_when_no_explicit_flag(self):
+        with mock.patch.dict(os.environ, {"CUSTODIAN_AGENT_ID": "env-agent"}, clear=False):
+            self.assertEqual(resolve_agent_id(None), "env-agent")
+
+    def test_neutral_default_when_nothing_specified(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(resolve_agent_id(None), DEFAULT_AGENT_ID)
+            self.assertEqual(DEFAULT_AGENT_ID, "unspecified")
+
+    def test_blank_environment_value_is_treated_as_absent(self):
+        with mock.patch.dict(os.environ, {"CUSTODIAN_AGENT_ID": "   "}, clear=False):
+            self.assertEqual(resolve_agent_id(None), DEFAULT_AGENT_ID)
+
+    def test_never_silently_defaults_to_codex(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertNotEqual(resolve_agent_id(None), "codex")
+            self.assertNotEqual(resolve_agent_id(""), "codex")
 
 
 if __name__ == "__main__":

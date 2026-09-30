@@ -86,6 +86,12 @@ subjective baseline acceptance remain deferred.
 
 ## Priority 1 — AI Context Validator
 
+> **Implemented:** `custodian/tools/agent/check_ai_context.py` (landed by
+> `task-packet-pipeline-execution-hardening-v1`, absorbing the queued
+> `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` packet). Run
+> `python3 custodian/tools/agent/check_ai_context.py [--json]`. See
+> `VALIDATION_RECIPES.md`.
+
 Queued implementation packet: `custodian/docs/ai_context/task_packets/AI_CONTEXT_TASK_PACKET_VALIDATOR.md`.
 
 Suggested path: `custodian/tools/agent/check_ai_context.py`
@@ -113,6 +119,16 @@ Why first:
 - catches the exact drift already found
 
 ## Priority 1.5 — Task Packet Index Auto-Maintenance
+
+> **Implemented:** `custodian/tools/agent/task_packet_index.py` (landed by
+> `task-packet-pipeline-execution-hardening-v1`, absorbing the queued
+> `TASK_PACKET_INDEX_AUTOMODE_HARDENING.md` packet). Owns only the bounded
+> `<!-- task_packet_index:managed:start -->` / `...:end -->` block inside
+> `task_packets/README.md`'s `### Ready / Auto Dispatch` section. Run
+> `python3 custodian/tools/agent/task_packet_index.py` to check, or `--write`
+> to repair. The live README does not yet have the managed block initialized;
+> migrating its existing hand-curated Ready/Auto Dispatch entries is deferred
+> follow-up, not part of this landing.
 
 Queued implementation packet: `custodian/docs/ai_context/task_packets/TASK_PACKET_INDEX_AUTOMODE_HARDENING.md`.
 

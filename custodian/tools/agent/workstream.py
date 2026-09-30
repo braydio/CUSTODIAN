@@ -17,7 +17,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from workflow_control import (
     RemoteClaim, RunTrace, WorkflowControlError, acquire_remote_claim,
-    release_remote_claim, workstream_mutex,
+    release_remote_claim, resolve_agent_id, workstream_mutex,
+)
+from task_packet_contract import (
+    completion_truth_required, parse_completion_truth, parse_packet,
 )
 
 # TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
@@ -248,6 +251,37 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
     return packets
 
 
+def _completion_truth_preflight(packets: list[Path]) -> None:
+    """Fail closed before teardown when a current V2 implementation/correction
+    packet claims Status: complete without a truthful ## Completion Truth
+    receipt. Review packets verify someone else's claim rather than making
+    one, and legacy (non-V2) packets are never retroactively covered; both
+    are exempted by task_packet_contract.completion_truth_required. Called
+    again (with freshly re-read packet text) after main sync so a packet
+    whose bytes changed during landing is re-checked rather than trusted
+    from before the sync.
+    """
+    for packet in packets:
+        text = packet.read_text()
+        header = parse_packet(str(packet), text)
+        if not completion_truth_required(header):
+            continue
+        truth = parse_completion_truth(text)
+        if truth is None:
+            raise WorkstreamError(
+                f"finish completion-truth gate requires a ## Completion Truth receipt in {packet.name}"
+            )
+        if truth.error:
+            raise WorkstreamError(
+                f"finish completion-truth gate found a malformed ## Completion Truth receipt in {packet.name}: {truth.error}"
+            )
+        if not truth.all_yes:
+            raise WorkstreamError(
+                "finish completion-truth gate requires Goal satisfied, Completion boundary satisfied, "
+                f"and Acceptance satisfied to all be yes in {packet.name}"
+            )
+
+
 def _packet_header_value(text: str, field: str) -> str | None:
     for line in text.splitlines():
         match = re.match(rf"^\s*-\s*{re.escape(field)}:\s*(.*?)\s*$", line)
@@ -356,7 +390,7 @@ def sync_remote_branch(path: Path, branch: str) -> bool:
 
 
 def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None,
-          _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
+          agent: str | None = None, _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
           _lock_held: bool = False) -> Path:
     repo = (repo or root_repo()).resolve()
     branch = branch_for(workstream_id)
@@ -388,7 +422,7 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
                         raise WorkstreamError(f"local-only attached worktree for {branch} has unique commits; explicit recovery required at {location}")
                 raise WorkstreamError(f"{branch} already exists or is attached ({location}); use explicit workstream.py resume after inspecting ownership; ordinary start will not adopt it")
             if claim is None:
-                claim = acquire_remote_claim(repo, workstream_id, "codex", trace.run_id, trace=trace)
+                claim = acquire_remote_claim(repo, workstream_id, resolve_agent_id(agent), trace.run_id, trace=trace)
             else:
                 trace.record("remote_claim_reused", remote_ref=claim.ref, claim_oid=claim.oid)
             pool = repo.parent / ".custodian-worktrees"
@@ -648,8 +682,10 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
 
     # PREPARED: artifacts, cleanliness, a durably committed summary, and green
     # validation are required regardless of whether this task already landed.
-    artifact_preflight(workstream_id, path)
+    packets = artifact_preflight(workstream_id, path)
     if trace: trace.record("artifact_preflight", result="passed", worktree=str(path))
+    _completion_truth_preflight(packets)
+    if trace: trace.record("completion_truth_preflight", result="passed", worktree=str(path))
     if not status_clean(path):
         raise WorkstreamError("finish requires a clean worktree and committed task files")
     closing_summary_committed_for_workstream(workstream_id, path)
@@ -683,7 +719,8 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
             import hashlib
             trace.record("validation_after_sync", path=validation_report_after_sync.name,
                          sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
-    artifact_preflight(workstream_id, path)
+    packets = artifact_preflight(workstream_id, path)
+    _completion_truth_preflight(packets)
     if not status_clean(path):
         raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
     git("push", "origin", branch, cwd=path)
@@ -758,7 +795,7 @@ def gc(repo: Path | None = None) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest="command", required=True)
-    p = subs.add_parser("start"); p.add_argument("workstream_id")
+    p = subs.add_parser("start"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None)
     p = subs.add_parser("resume"); p.add_argument("workstream_id")
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--remove-worktree", action="store_true")
@@ -766,7 +803,7 @@ def main() -> int:
     subs.add_parser("gc")
     args = parser.parse_args()
     try:
-        if args.command == "start": start(args.workstream_id)
+        if args.command == "start": start(args.workstream_id, agent=args.agent)
         elif args.command == "resume": print(f"resumed worktree: {resume(args.workstream_id)}")
         elif args.command == "status": status(args.workstream_id)
         elif args.command == "checkpoint": checkpoint(args.workstream_id, args.remove_worktree)

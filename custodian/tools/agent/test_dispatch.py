@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import os
 import subprocess
 import shutil
 import sys
@@ -410,6 +411,66 @@ class DispatchTests(unittest.TestCase):
         rendered = "\n".join(output)
         for expected in ("workstream: output-task", "branch: agent/output-task", str(self.base / "output-task"), f"packet: {dispatch.PACKET_ROOT}/OUTPUT_TASK.md"):
             self.assertIn(expected, rendered)
+
+    def test_status_and_claim_never_mutate_packet_or_index_docs(self):
+        self.add_packet("mutation-check-task", dispatch_value="auto")
+        packet_root = self.repo / dispatch.PACKET_ROOT
+
+        def snapshot():
+            return {
+                path.relative_to(packet_root): path.read_bytes()
+                for path in packet_root.rglob("*.md")
+            }
+
+        before = snapshot()
+        dispatch.status(self.repo, output=False)
+        fake = mock.Mock(); fake.start.side_effect = publish_workstream
+        with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
+            dispatch.claim(self.repo, None, "codex", True)
+        after = snapshot()
+        self.assertEqual(before, after)
+
+    def _main_claim_receipt(self, argv, env=None):
+        """Run dispatch.main(argv) from inside self.repo, capturing the
+        CUSTODIAN_DISPATCH_RESULT_JSON receipt, to prove --agent CLI wiring
+        (not just the internal claim() function, which already receives a
+        pre-resolved agent string)."""
+        output = []
+        fake = mock.Mock(); fake.start.side_effect = publish_workstream
+        original_cwd = Path.cwd()
+        os.chdir(self.repo)
+        try:
+            with mock.patch.object(dispatch, "_load_workstream", return_value=fake), \
+                 mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))), \
+                 mock.patch.dict(os.environ, env or {}, clear=bool(env is not None)):
+                result = dispatch.main(argv)
+        finally:
+            os.chdir(original_cwd)
+        self.assertEqual(result, 0)
+        rendered = "\n".join(output)
+        sentinel = next(line for line in rendered.splitlines() if line.startswith("CUSTODIAN_DISPATCH_RESULT_JSON:"))
+        return json.loads(sentinel.removeprefix("CUSTODIAN_DISPATCH_RESULT_JSON:"))
+
+    def test_main_preserves_explicit_agent_claude(self):
+        self.add_packet("agent-claude-task", dispatch_value="auto")
+        receipt = self._main_claim_receipt(["claim-next", "--agent", "claude"])
+        self.assertEqual(receipt["agent"], "claude")
+
+    def test_main_preserves_explicit_agent_codex(self):
+        self.add_packet("agent-codex-task", dispatch_value="auto")
+        receipt = self._main_claim_receipt(["claim-next", "--agent", "codex"])
+        self.assertEqual(receipt["agent"], "codex")
+
+    def test_main_falls_back_to_environment_identity_when_agent_omitted(self):
+        self.add_packet("agent-env-task", dispatch_value="auto")
+        receipt = self._main_claim_receipt(["claim-next"], env={"CUSTODIAN_AGENT_ID": "some-other-agent"})
+        self.assertEqual(receipt["agent"], "some-other-agent")
+
+    def test_main_never_silently_defaults_omitted_agent_to_codex(self):
+        self.add_packet("agent-neutral-task", dispatch_value="auto")
+        receipt = self._main_claim_receipt(["claim-next"], env={})
+        self.assertEqual(receipt["agent"], "unspecified")
+        self.assertNotEqual(receipt["agent"], "codex")
 
     def _claim_output(self):
         output = []

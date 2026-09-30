@@ -68,9 +68,12 @@ unpacketed tasks also leave process feedback.
 Packets are manual by default. Add `Dispatch: auto` only when the ready packet
 is safe for a Codex terminal to claim without additional human selection.
 `dispatch.py status` reads packet truth from fetched `origin/main`; use
-`dispatch.py claim-next --agent codex` to claim the highest-priority eligible
-auto packet, or `dispatch.py claim <workstream-id> --agent codex` for explicit
-selection (including manual packets). Initial claims and direct starts share
+`dispatch.py claim-next --agent <agent-id>` (for example `--agent claude` or
+`--agent codex`) to claim the highest-priority eligible auto packet, or
+`dispatch.py claim <workstream-id> --agent <agent-id>` for explicit selection
+(including manual packets). Omitting `--agent` falls back to the
+`CUSTODIAN_AGENT_ID` environment variable, then a neutral `unspecified` —
+never a silently assumed agent brand. Initial claims and direct starts share
 unique remote Git claims and per-workstream local mutexes so separate clones
 cannot acquire the same task; interrupted
 claims require explicit operator recovery. `Priority` is `P0`–`P3` (default `P2`),
@@ -216,7 +219,6 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1.md` — **P0 immediate workflow gate**: unify packet parsing/validation/index authority, enforce Completion Truth at finish, harden context/subagent/identity/LFS execution rules, and reconcile the known procgen G3 false-closure before M2 resumes.
 - `REVIEW_TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1.md` — P0 paired post-land workflow/code/architecture review; becomes eligible only after the implementation packet lands and must pass before the procgen semantic-generation correction/M2 continuation.
 
 - `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.
@@ -226,7 +228,8 @@ lost when the ephemeral worktree is removed.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
-- `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER.md` — M2 route runtime mutation producers through scheduler; depends on M1.
+- `PROCGEN_SEMANTIC_CANDIDATE_GENERATION_CORRECTION_1.md` — G3 correction: make rejected-candidate evaluation reachable from semantic data without instantiating `ProcGenTilemap`/TileMap/presentation/collision/nav nodes, correcting G3's overstated S3 closure claim; depends on `review-task-packet-pipeline-execution-hardening-v1`; gates M2.
+- `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER.md` — M2 route runtime mutation producers through scheduler; depends on M1 and the G3 correction above.
 - `PROCGEN_PAUSE_AWARE_STREAMING.md` — M3 background prepare vs gameplay commit pause contract; depends on M2.
 - `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — M4 explicit chunk lifecycle authority; depends on M3.
 - `PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 deterministic reusable chunk payload cache; depends on M4.

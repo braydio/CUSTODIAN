@@ -1,11 +1,14 @@
 """Focused temporary-repository coverage for workstream lifecycle primitives."""
 
 import importlib.util
+import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from unittest import mock
 
 SCRIPT = Path(__file__).with_name("workstream.py")
 SPEC = importlib.util.spec_from_file_location("workstream", SCRIPT)
@@ -152,6 +155,29 @@ class WorkstreamTests(unittest.TestCase):
         with self.assertRaisesRegex(workstream.WorkstreamError, "dirty worktree"):
             workstream.start("dirty-work", self.repo)
         self.assertTrue(dirty.exists())
+
+    def test_start_threads_explicit_agent_into_remote_claim(self):
+        with mock.patch.object(workstream, "acquire_remote_claim", wraps=workstream.acquire_remote_claim) as spy:
+            workstream.start("agent-explicit-work", self.repo, agent="claude")
+        self.assertEqual(spy.call_args.args[2], "claude")
+
+    def test_start_never_silently_defaults_agent_to_codex(self):
+        with mock.patch.object(workstream, "acquire_remote_claim", wraps=workstream.acquire_remote_claim) as spy:
+            workstream.start("agent-default-work", self.repo)
+        self.assertEqual(spy.call_args.args[2], "unspecified")
+        self.assertNotEqual(spy.call_args.args[2], "codex")
+
+    def test_cli_start_preserves_explicit_agent_flag(self):
+        original_cwd = Path.cwd()
+        os.chdir(self.repo)
+        try:
+            with mock.patch.object(workstream, "acquire_remote_claim", wraps=workstream.acquire_remote_claim) as spy, \
+                 mock.patch.object(sys, "argv", ["workstream.py", "start", "agent-cli-work", "--agent", "codex"]):
+                result = workstream.main()
+        finally:
+            os.chdir(original_cwd)
+        self.assertEqual(result, 0)
+        self.assertEqual(spy.call_args.args[2], "codex")
 
     def test_checkpoint_pushes_and_retains_recovery_branch(self):
         path = workstream.start("checkpoint-me", self.repo)
@@ -312,6 +338,93 @@ class WorkstreamTests(unittest.TestCase):
         workstream.finish("dirty-root-finish", self._green_report(), repo=path)
         self.assertTrue((self.repo / "uncommitted-root-file").exists())
         self.assertNotEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+
+    # --- Completion Truth finish-gate ---
+
+    def _v2_packet_text(self, workstream_id: str, kind: str = "implementation", extra: str = "") -> str:
+        return (
+            "# Sample V2 Packet\n\n"
+            "- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Status: `complete`\n"
+            "- Dispatch: `manual`\n"
+            "- Priority: `P2`\n"
+            "- Depends on: `none`\n"
+            "- Locks: `none`\n"
+            f"- Kind: `{kind}`\n"
+            "- Review: `none`\n"
+            f"{extra}"
+        )
+
+    def _archive_packet(self, path: Path, workstream_id: str, text: str) -> None:
+        archive_dir = path / "custodian/docs/ai_context/task_packets/archived"
+        archive_dir.mkdir(parents=True, exist_ok=True)
+        filename = workstream_id.upper().replace("-", "_") + ".md"
+        (archive_dir / filename).write_text(text)
+        summary = workstream._expected_summary_filename(workstream_id)
+        (path / summary).write_text("completed\n")
+        git(path, "add", "-A")
+        git(path, "commit", "-m", "archive packet")
+
+    def test_finish_blocks_v2_packet_missing_completion_truth_receipt(self):
+        workstream_id = "completion-truth-missing"
+        path = workstream.start(workstream_id, self.repo)
+        self._archive_packet(path, workstream_id, self._v2_packet_text(workstream_id))
+        with self.assertRaisesRegex(workstream.WorkstreamError, "Completion Truth receipt"):
+            workstream.finish(workstream_id, self._green_report(), repo=path)
+        self.assertTrue(path.exists())
+
+    def test_finish_blocks_v2_packet_with_false_completion_truth(self):
+        workstream_id = "completion-truth-false"
+        path = workstream.start(workstream_id, self.repo)
+        completion_truth = (
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `no`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Superseded/legacy production path disposition: `n/a`\n"
+            "- Evidence: tests green\n"
+        )
+        self._archive_packet(path, workstream_id, self._v2_packet_text(workstream_id, extra=completion_truth))
+        with self.assertRaisesRegex(workstream.WorkstreamError, "all be yes"):
+            workstream.finish(workstream_id, self._green_report(), repo=path)
+        self.assertTrue(path.exists())
+
+    def test_finish_accepts_v2_packet_with_truthful_completion_truth(self):
+        workstream_id = "completion-truth-true"
+        path = workstream.start(workstream_id, self.repo)
+        completion_truth = (
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `yes`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Superseded/legacy production path disposition: `n/a`\n"
+            "- Evidence: tests green\n"
+        )
+        self._archive_packet(path, workstream_id, self._v2_packet_text(workstream_id, extra=completion_truth))
+        workstream.finish(workstream_id, self._green_report(), repo=path)
+        self.assertFalse(path.exists())
+
+    def test_finish_allows_v2_review_packet_without_completion_truth(self):
+        workstream_id = "completion-truth-review"
+        path = workstream.start(workstream_id, self.repo)
+        self._archive_packet(path, workstream_id, self._v2_packet_text(workstream_id, kind="review"))
+        workstream.finish(workstream_id, self._green_report(), repo=path)
+        self.assertFalse(path.exists())
+
+    def test_finish_allows_legacy_non_v2_complete_packet_without_completion_truth(self):
+        workstream_id = "legacy-complete-packet"
+        path = workstream.start(workstream_id, self.repo)
+        legacy_text = (
+            "# Legacy Packet\n\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Status: `complete`\n"
+        )
+        self._archive_packet(path, workstream_id, legacy_text)
+        workstream.finish(workstream_id, self._green_report(), repo=path)
+        self.assertFalse(path.exists())
 
 
 if __name__ == "__main__":
