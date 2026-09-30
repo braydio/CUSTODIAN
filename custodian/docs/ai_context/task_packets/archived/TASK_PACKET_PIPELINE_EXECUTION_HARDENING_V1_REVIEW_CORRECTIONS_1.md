@@ -62,6 +62,29 @@
 - Added the expiring procgen task routing note requested by the user; Claude is explicitly allowed to claim and work those packets until 2026-10-01 00:00 America/New_York.
 - Focused packet validation and workflow smoke are recorded in the closing summary.
 
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-task-packet-pipeline-execution-hardening-v1-review-corrections-1`
+- Reviewed on main: `12fa1208f`
+- Review modes: `code, architecture`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### R1-01 (non_blocking_issue, pipeline)
+
+- Affected acceptance: This correction packet's own Non-goals ("do not touch `dispatch.py`, `workstream.py`, `check_ai_context.py`, or any procgen content") and Work surface (scoped to `task_packet_contract.py`/`task_packet_index.py`/tests only).
+- Evidence: The landed commit (`c95a28d09`) also modified `custodian/AGENTS.md` (a new expiring "Temporary Procgen Packet Routing" policy block) and `.github/workflows/expire-lfs-degraded-mode.yml` (cron schedule + cleanup-target list), neither named in this packet's Work surface. The packet's own "Completion Notes" section states the routing note was "requested by the user," confirming it was authorized out-of-band rather than unilaterally added.
+- Disposition: `no_action`
+- Rationale: The core R0-01 fix (`header_field()` exposure, `task_packet_index.py` reuse, the coupling test) is correct, complete, and verified independently by import-graph inspection and a fresh test run — not affected by this finding. The bundled AGENTS.md/workflow change was user-directed, not a defect in the implementation. It is recorded here only so a future reader of this packet's own Non-goals/Work-surface isn't misled about what actually landed in the same commit; no correction is warranted since the deviation was authorized, not accidental.
+
 ## Handoff
 
 - Next action: Claim `task-packet-pipeline-execution-hardening-v1-review-corrections-1` once `review-task-packet-pipeline-execution-hardening-v1` is complete and archived (this correction is itself part of that same review cycle's required follow-through, dependency-gated on the review packet's own completion per the ordinary paired-review lifecycle).

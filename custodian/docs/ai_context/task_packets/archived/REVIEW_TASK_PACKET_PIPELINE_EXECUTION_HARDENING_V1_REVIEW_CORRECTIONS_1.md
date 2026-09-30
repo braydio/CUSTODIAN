@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-task-packet-pipeline-execution-hardening-v1-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `task-packet-pipeline-execution-hardening-v1-review-corrections-1`
@@ -33,7 +33,19 @@
 4. Append/refresh the archived correction packet's `## Independent Review` receipt.
 5. If clean, record `passed` and create no further correction. If a real defect remains, scaffold `task-packet-pipeline-execution-hardening-v1-review-corrections-2` plus its paired review.
 
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Nothing in the reviewed fix itself. One non-blocking pipeline finding (R1-01): the landed commit bundled an unrelated, user-requested `AGENTS.md` policy change and a workflow cron tweak into a packet whose own Non-goals/Work-surface didn't name them.
+- Root cause / contributing factors: Out-of-band user instructions given directly to the implementing session were folded into the same commit as the scoped correction rather than reflected in the packet's own contract fields.
+- Prevention / pipeline improvement: None needed in-scope; the user already authorized the bundled change. Noted for future packets: when an out-of-band instruction piggybacks on an in-flight workstream, recording it in the packet's own Work surface/Non-goals keeps the packet text an honest record of what actually landed.
+- Tooling / docs drift discovered: None.
+- Follow-up: `no_action`
+- What worked: Verifying the fix by import/call graph (confirmed `header_field()` is genuinely called, not just coincidentally identical output) and a monkeypatch test that proves real coupling rather than trusting the closing summary's claims.
+
 ## Handoff
 
-- Next action: If passed, this review-correction cycle is closed; no further action needed on the parent `task-packet-pipeline-execution-hardening-v1` workstream.
-- Blockers or open questions: None known at authoring time.
+- Next action: This review-correction cycle is closed; no further action needed on the parent `task-packet-pipeline-execution-hardening-v1` workstream.
+- Blockers or open questions: None.
