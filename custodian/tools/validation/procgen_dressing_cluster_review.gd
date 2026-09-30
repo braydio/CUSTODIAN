@@ -1,6 +1,8 @@
 extends SceneTree
 
 const MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
+const CANDIDATE_SEMANTIC_ADAPTER_SCRIPT := preload("res://game/world/procgen/generation/candidate_semantic_adapter.gd")
+const CANDIDATE_MATERIALIZER_SCRIPT := preload("res://game/world/procgen/generation/procgen_candidate_materializer.gd")
 const SEED := 824790
 const MAP_SIZE := Vector2i(96, 96)
 const VIEWPORT_SIZE := Vector2i(1600, 900)
@@ -107,9 +109,48 @@ func _capture(enabled: bool, label: String) -> Dictionary:
 			await process_frame
 		var candidate_fingerprint := String(map.debug_get_dressing_cluster_summary().get("fingerprint", ""))
 		result.candidate_foliage_absent = map._foliage_nodes.is_empty()
-		map.promote_evaluated_candidate_to_final()
-		for frame_index in range(4): await process_frame
-		result.promotion_fingerprint_matches = direct_fingerprint == candidate_fingerprint and candidate_fingerprint == String(map.debug_get_dressing_cluster_summary().get("fingerprint", ""))
+		# Canonical pipeline: build a semantic snapshot from the eval-mode
+		# candidate, then materialize onto a fresh, never-generated instance
+		# (materialize_accepted_candidate() requires this) rather than
+		# promoting the candidate in place, matching production's
+		# CustodianContractMap flow.
+		var adapter: Variant = CANDIDATE_SEMANTIC_ADAPTER_SCRIPT.new()
+		var snapshot: Dictionary = adapter.build_snapshot(
+			map, map.get_level_data(), {"attempt_seed": SEED}
+		)
+		var final_map := MAP_SCENE.instantiate() as ProcGenTilemap
+		world.add_child(final_map)
+		if not final_map.is_node_ready(): await final_map.ready
+		var final_duplicate := final_map.get_node_or_null("ProcGen")
+		if final_duplicate != null:
+			final_duplicate.queue_free()
+			await process_frame
+		var final_procgen := final_map.get_node("ProcGen2") as ProcGen
+		final_map.procgen_node = final_procgen
+		final_map.generation_evaluation_mode = false
+		final_procgen.auto_generate_on_ready = false
+		final_procgen.generate_seed = false
+		final_procgen.seed = SEED
+		final_procgen.map_size = MAP_SIZE
+		final_map.generation_output_enabled = true
+		final_map.enable_streaming_reveal = false
+		final_map.build_runtime_wall_collision = false
+		final_map.enable_final_foliage = true
+		final_map.dressing_clusters_enabled = enabled
+		final_map.apply_planet_world_profile({"biome_exposure_bias": 0.42})
+		var materializer: Variant = CANDIDATE_MATERIALIZER_SCRIPT.new()
+		var materialization: Dictionary = materializer.materialize(
+			{"acceptance_mode": "accepted", "semantic_snapshot": snapshot,
+					"evaluation": {"accepted": true}},
+			final_map
+		)
+		var final_fingerprint := String(final_map.debug_get_dressing_cluster_summary().get("fingerprint", "")) \
+				if bool(materialization.get("ok", false)) else ""
+		result.promotion_fingerprint_matches = bool(materialization.get("ok", false)) \
+				and direct_fingerprint == candidate_fingerprint \
+				and candidate_fingerprint == final_fingerprint
+		final_map.queue_free()
+		await process_frame
 	viewport.queue_free()
 	await process_frame
 	return result
