@@ -1954,3 +1954,16 @@ before first travel, then both registered endpoints share active state and use
 body-entry automatic travel. The 24-physics-frame
 `portal_teleport_lock_until_frame` contract prevents immediate return bounce;
 ACTIVE endpoints suppress the manual interaction prompt.
+
+## Procgen Derived Rebuild Scheduler (M1, 2026-09-29)
+
+`ProcGenDerivedRebuildScheduler` now provides one request ledger for topology,
+collision, walkable-boundary, navigation, shadow, and presentation dirtiness.
+Requests include deterministic reason/region snapshots and same-batch
+coalescing; runtime health exposes requested, coalesced, committed, and
+cumulative duration metrics by system. `ProcGenTilemap` adapters leave rebuild
+implementations and existing commit timing with their prior owners. This is
+foundation telemetry, not yet a broad producer cutover or batched rebuild
+implementation; those remain M2. Focused scheduler, wall compaction/destruction,
+runtime-health, navigation-elevation, and S1 quick checks passed, with S1
+`determinism_ok=true`.

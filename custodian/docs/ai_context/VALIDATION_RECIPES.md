@@ -1434,6 +1434,11 @@ runtime-streaming case (revealed/queued chunk counts, reveal-queue peak,
 node/draw-call counts, frame-time samples). This baseline is intentionally
 threshold-free: it proves reproducibility and schema stability, not a
 pass/fail millisecond gate. Absolute performance budgets are deferred to S11.
+Runtime health nested in the S1 snapshot also carries the
+`derived_rebuild_scheduler` ledger: per-system request/coalescing/commit counts
+and cumulative commit microseconds, plus deterministic pending reason/region
+records. M1 preserves existing commit timing; do not interpret these counters
+as evidence that rebuild work has been batched yet.
 
 ## Review Validation
 

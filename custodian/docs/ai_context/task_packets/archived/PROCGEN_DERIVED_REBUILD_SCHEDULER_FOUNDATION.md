@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-derived-rebuild-scheduler-foundation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-performance-baseline-v1`
@@ -30,6 +30,27 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 ## Handoff
 
-- Next action: Land scheduler foundation; procgen-runtime-mutation-scheduler-cutover becomes eligible.
+- Next action: `procgen-runtime-mutation-scheduler-cutover` is eligible; full producer cutover and commit batching remain its scope.
 - Best starting files: proc_gen_tilemap.gd rebuild/queue/flush helpers; runtime-health snapshot; prior stutter pass.
 - Blockers or open questions: None known at authoring time.
+
+## Completion Notes
+
+- Implementation commit / landed main SHA: `fd8c6241b` (`procgen derived rebuild scheduler, M1 foundation`).
+- Closing summary: `PROCGEN_DERIVED_REBUILD_SCHEDULER_FOUNDATION_CLAUDE_SUMMARY.md`.
+- Runtime health and S1 snapshots expose per-system request/coalesced/commit counts and cumulative commit durations; rebuild ownership and current commit timing are preserved.
+- Focused scheduler, runtime-health, wall collision compaction/destruction, and navigation-elevation smokes passed. S1 quick passed with matching seed-420777 fingerprints (`1773840677`).
+- Changed-file closeout: PASS; 21 selected tests passed, coverage complete, 5 files covered, 0 uncovered.
+- No performance reduction is claimed by M1; the next series slice owns producer cutover and batching.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: initial changed-file report had all tests green but lacked manifest coverage for the runtime-health smoke; two closeout attempts overlapped separate procgen sweeps; the first smoke ran before fresh-worktree LFS hydration/import.
+- Root cause / contributing factors: runtime-health smoke was absent from the validation manifest, separate worktrees share Godot's user cache, and fresh checkouts have no populated import cache.
+- Prevention / pipeline improvement: registered runtime health as a manifest test, serialized broad sweeps, and hydrated cached LFS objects before Godot import.
+- Tooling / docs drift discovered: the single-sweep policy is not enforced across worktree-local validation locks; follow-up needed for a shared Godot validation lock.
+- Follow-up: fixed-in-scope; manual-follow-up for shared cross-worktree validation lock.
+- What worked: cached LFS hydration avoided a network fetch; final closeout was green and coverage-complete.

@@ -171,7 +171,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | G3 | `procgen-semantic-candidate-generation` | **complete** | G2 |
 | G4 | `procgen-accepted-candidate-materializer` | queued | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | queued | G4 |
-| M1 | `procgen-derived-rebuild-scheduler-foundation` | queued | S1 |
+| M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | queued | M1 |
 | M3 | `procgen-pause-aware-streaming` | queued | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | queued | M3 |
@@ -217,9 +217,9 @@ If an independent review creates a correction packet, keep the original slice `c
 ## Current Program Position
 
 **Current packet:** G4 `procgen-accepted-candidate-materializer` (next in serial order after G3 lands)
-**State:** S1, G1, G2, and G3 landed; G4, M1, and P1 are dependency-eligible.
+**State:** S1, G1, G2, G3, and M1 landed; G4, M2, and P1 are dependency-eligible.
 **Next gate:** make the accepted-candidate transition (eval -> accepted -> materialize -> final presentation) explicit, per S4's goal.
-**After G3:** G4 is now eligible. M1 and P1 remain independent siblings of the generation lane.
+**After G3/M1:** G4 is next in the generation lane; M2 is now eligible for runtime mutation scheduler cutover, and P1 remains an independent sibling.
 
 ---
 
@@ -374,6 +374,21 @@ They do not independently trigger full rebuilds.
 ### Exit
 
 One logical mutation batch causes at most one required expensive rebuild per derived system, wall destruction remains exact to the contacted tile, and the ~258 ms navigation hitch class is measurable and reduced or amortized without weakening path correctness.
+
+### M1 Foundation — Complete
+
+`ProcGenDerivedRebuildScheduler` is the shared dirty-request ledger for topology,
+collision, walkable boundary, navigation, shadows, and presentation. Requests
+carry stable reason and region data, coalesce repeated requests by explicit
+logical batch, and report requested/coalesced/committed counts plus cumulative
+commit duration. `ProcGenTilemap` adapters register the existing rebuilds and
+preserve their commit timing; rebuild implementations remain in their original
+owners. Navigation retains its existing deferred flush and batch identity.
+
+- **Landed main SHA:** `fd8c6241b` (`procgen derived rebuild scheduler, M1 foundation`).
+- **Closing summary:** `PROCGEN_DERIVED_REBUILD_SCHEDULER_FOUNDATION_CLAUDE_SUMMARY.md`.
+- **Evidence:** scheduler smoke proves duplicate collision requests in one batch coalesce to one deterministic region with sorted reasons (2 requested, 1 coalesced, 1 committed); runtime-health smoke proves connector topology, boundary, navigation, shadow, and presentation requests/commits and durations are exposed. `runtime_wall_collision_compaction_smoke.gd`, `navigation_elevation_smoke.gd`, and S1 quick pass; S1 reports `determinism_ok=true` with matching 48x48 seed-420777 fingerprints (`1773840677`). No performance reduction is claimed at M1 because rebuild commit timing was deliberately preserved.
+- **Next:** M2 `procgen-runtime-mutation-scheduler-cutover` is eligible; broader producer cutover and commit batching remain there.
 
 ---
 
