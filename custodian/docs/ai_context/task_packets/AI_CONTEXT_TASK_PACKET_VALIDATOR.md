@@ -2,12 +2,14 @@
 
 - Workstream: `ai-context-task-packet-validator`
 - Kind: `implementation`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `review-agent-review-pipeline`
 - Locks: `agent-workflow`
 - Review: `none`
+> **Superseded:** The implementation scope of this packet is now absorbed by `task-packet-pipeline-execution-hardening-v1` so packet parsing, validation, index maintenance, completion truth, and lifecycle enforcement land as one shared architecture. Do not claim this packet independently.
+
 - Goal: Implement the lightweight AI-context/task-packet validator already prioritized in the automation backlog so stale paths, packet/index drift, malformed V2 task contracts, and broken workflow references fail visibly before agent handoff.
 - Current measured state: dispatcher/workstream/review tooling now relies heavily on docs and packet metadata as executable coordination truth. The repo still accumulates manual packet-index drift and the automation backlog explicitly lists `custodian/tools/agent/check_ai_context.py` as the next lightweight validator.
 - Task-specific authority: `AGENT_AUTOMATION_BACKLOG.md`, `FILE_INDEX.md`, `task_packets/README.md`, `AGENT_TASK_PACKET_TEMPLATE.md`, live dispatcher packet parser, and validation manifest conventions.
