@@ -57,9 +57,13 @@ def fixture(base: Path) -> tuple[Path, Path, Path]:
         "design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md",
         "custodian/content/sprites/enemies/unrelated/large.png",
         "custodian/content/sprites/effects/runtime/muzzle_flash_yellow.png",
+        "custodian/content/sprites/effects/runtime/muzzle_flash_yellow.png.import",
         "custodian/content/sprites/effects/runtime/unrelated_large_pack.png",
         "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav",
+        "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav.import",
         "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/unrelated.wav",
+        "custodian/scripts/debug/dev_observatory_overlay.gd",
+        "custodian/scripts/debug/dev_observatory_overlay.gd.uid",
         "reports/unrelated/report.json",
         "custodian/asset_drop/unrelated/source.png",
     ):
@@ -268,9 +272,13 @@ def smoke() -> None:
         assert art._sparse_profile_healthy(art_root), "new checkout did not apply the Operator sparse profile"
         assert not (art_root / "custodian/content/sprites/enemies/unrelated/large.png").exists()
         assert (art_root / "custodian/content/sprites/effects/runtime/muzzle_flash_yellow.png").exists()
+        assert (art_root / "custodian/content/sprites/effects/runtime/muzzle_flash_yellow.png.import").exists()
         assert not (art_root / "custodian/content/sprites/effects/runtime/unrelated_large_pack.png").exists()
         assert (art_root / "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav").exists()
+        assert (art_root / "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav.import").exists()
         assert not (art_root / "custodian/addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/unrelated.wav").exists()
+        assert (art_root / "custodian/scripts/debug/dev_observatory_overlay.gd").exists()
+        assert (art_root / "custodian/scripts/debug/dev_observatory_overlay.gd.uid").exists()
         assert not (art_root / "reports/unrelated/report.json").exists()
         assert not (art_root / "custodian/asset_drop/unrelated/source.png").exists()
         assert "sparse " + art.SPARSE_PROFILE in identity.sparse_profile
