@@ -140,10 +140,90 @@ S2 extracts selection/evaluation policy. It does not change candidate constructi
 
 ---
 
+## X1 / X2 — Generation Data Model Migration Prelude
+
+### X1 — `procgen-generation-data-model-audit`
+
+Start with these exact paths after D1/D2/D3 have landed:
+
+| Role | Exact repo-relative path | Use |
+| --- | --- | --- |
+| Remaining generation host | `custodian/game/world/procgen/proc_gen_tilemap.gd` | Primary call-graph and TileMapLayer operation inventory. Search `_fill_tilemaps` and its direct helper calls first; do not whole-read by default. |
+| Already-pure skeleton generator | `custodian/game/world/procgen/procgen.gd` | Boundary reference for what is already storage-independent. |
+| Contract orchestration | `custodian/game/world/procgen/custodian_contract_map.gd` | Verify candidate construction/evaluation/materialization boundaries; read only relevant call sites. |
+| Generation package ownership | `custodian/game/world/procgen/generation/README.md` | Reconcile generation package truth after D3 and before defining GenerationGrid ownership. |
+| Semantic snapshot adapter | `custodian/game/world/procgen/generation/candidate_semantic_adapter.gd` | Existing Node/live-candidate to data snapshot boundary. |
+| Snapshot evaluator | `custodian/game/world/procgen/generation/candidate_evaluator.gd` | Defines evaluator facts the future pure-data generation path must produce unchanged. |
+| D1 contract | `custodian/docs/ai_context/task_packets/PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` or its archived copy at execution | Use the landed summary/owner to avoid re-inventorying road code already extracted. |
+| D2 contract | `custodian/docs/ai_context/task_packets/PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` or archived copy | Exclude/match authored-claim state already moved. |
+| D3 contract | `custodian/docs/ai_context/task_packets/PROCGEN_GENERATION_STATE_EXTRACTION.md` or archived copy | Use final accepted-world state/export owner when classifying remaining working state. |
+| Determinism baseline | `custodian/tools/validation/procgen_performance_baseline_bench.gd` | Existing fixed-seed/fingerprint contract, not a reason to run the full profile during audit. |
+| Semantic parity | `custodian/tools/validation/procgen_candidate_semantic_model_smoke.gd` | Protect snapshot/evaluator facts. |
+| Evaluator parity | `custodian/tools/validation/procgen_candidate_evaluator_smoke.gd` | Protect acceptance/score semantics. |
+| Rescue corpus | `custodian/tools/validation/procgen_contract_rescue_diagnostic_smoke.gd` | Existing rejection/connectivity corpus; validation reference only during X1. |
+| Spatial invariant | `custodian/tools/validation/procgen_spatial_normalization_smoke.gd` | Protect native 32px spatial semantics once migration packets are authored. |
+
+Required X1 durable output should live under:
+
+`design/02_features/procgen/`
+
+Preferred filename:
+
+`PROCGEN_GENERATION_DATA_MODEL_AUDIT.md`
+
+If the execution agent chooses another exact name, it must update this index, FILE_INDEX, and the task packet in the same landed change.
+
+### X2 — `procgen-generation-grid-foundation`
+
+Preferred new implementation paths, subject to the reviewed X1 contract:
+
+```text
+custodian/game/world/procgen/generation/generation_grid.gd
+custodian/game/world/procgen/generation/tilemap_generation_grid.gd
+custodian/tools/validation/procgen_generation_grid_smoke.gd
+```
+
+These are **preferred**, not invented authority. If X1 proves a different package boundary or class split is necessary, follow X1 and update this index.
+
+X2 should not broadly migrate `_fill_tilemaps()`. Its default work surface is:
+
+```text
+reviewed X1 audit
+generation_grid.gd                 # new semantic contract
+tilemap_generation_grid.gd         # compatibility backend
+procgen_generation_grid_smoke.gd   # contract/parity proof
+proc_gen_tilemap.gd                # minimal canary injection only if X1 proves one
+candidate_semantic_model_smoke.gd  # regression
+candidate_evaluator_smoke.gd       # regression
+```
+
+### X3 — migration series authoring
+
+`procgen-generation-grid-migration-series-authoring` is documentation/coordination only.
+
+Primary exact paths:
+
+```text
+design/02_features/procgen/PROCGEN_GENERATION_DATA_MODEL_AUDIT.md
+design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md
+custodian/game/world/procgen/generation/generation_grid.gd
+custodian/docs/ai_context/task_packets/PROCGEN_TILEMAP_FACADE_CONTRACTION.md
+custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md
+custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md
+custodian/docs/ai_context/task_packets/README.md
+```
+
+X3 must use the reviewed audit's measured migration clusters. It must **not** infer helper slices from the old pre-D-lane “~40 helpers / 147 operations” number.
+
+---
+
 ## Future Sections
 
 Add one section here only when a later packet benefits materially from exact-path guidance. Do not turn this file into a dump of every procgen file.
 
-The packet currently using this index as a primary low-token navigation aid is:
+Packets currently using this index as a primary low-token navigation aid include:
 
 - `procgen-candidate-evaluator-extraction`
+- `procgen-generation-data-model-audit`
+- `procgen-generation-grid-foundation`
+- `procgen-generation-grid-migration-series-authoring`
