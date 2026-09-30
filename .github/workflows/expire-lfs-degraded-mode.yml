@@ -2,7 +2,7 @@ name: Expire temporary Git LFS degraded mode
 
 on:
   schedule:
-    - cron: "17 4 * * *"
+    - cron: "0 4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
           lfs: false
 
-      - name: Remove expired LFS degraded-mode guards
+      - name: Remove expired temporary agent instructions
         shell: bash
         run: |
           set -euo pipefail
@@ -35,6 +35,11 @@ jobs:
               raise SystemExit(0)
 
           targets = [
+              (
+                  Path("custodian/AGENTS.md"),
+                  "<!-- TEMP_PROCGEN_PACKET_ROUTING_START",
+                  "<!-- TEMP_PROCGEN_PACKET_ROUTING_END -->",
+              ),
               (
                   Path("custodian/AGENTS.md"),
                   "<!-- TEMP_LFS_DEGRADED_MODE_START",
@@ -80,7 +85,7 @@ jobs:
               workflow.unlink()
               changed = True
 
-          print("Expired temporary LFS degraded mode." if changed else "Nothing to expire.")
+          print("Expired temporary agent instructions." if changed else "Nothing to expire.")
           PY
 
           if git diff --quiet --exit-code; then

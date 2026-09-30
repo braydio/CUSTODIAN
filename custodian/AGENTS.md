@@ -273,6 +273,14 @@ Minimum adjacency check:
 
 ## Agent Task Packets
 
+<!-- TEMP_PROCGEN_PACKET_ROUTING_START expires=2026-10-01T04:00:00Z -->
+### Temporary Procgen Packet Routing
+
+Until 2026-10-01 00:00 America/New_York, agents other than Claude must skip all procgen-family task packets and must not claim or work them. Claude is explicitly allowed to claim and work procgen-family task packets during this window.
+
+This instruction block is scheduled for automatic removal at its expiry time.
+<!-- TEMP_PROCGEN_PACKET_ROUTING_END -->
+
 Task packets are optional risk-control and handoff records, not mandatory ceremony.
 When a packet is used, give it the stable workstream ID. Before a completed
 implementation workstream is torn down, mark its packet complete, move it to

@@ -219,7 +219,6 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1_REVIEW_CORRECTIONS_1.md` — P1 review-correction: make `task_packet_index.py` reuse `task_packet_contract.py`'s field-folding instead of its own copy (finding R0-01); depends on the now-archived review.
 - `REVIEW_TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1_REVIEW_CORRECTIONS_1.md` — paired P1 re-review of that correction.
 
 - `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.

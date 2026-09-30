@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from task_packet_contract import PACKET_ROOT, PRIORITY, parse_packet
+from task_packet_contract import PACKET_ROOT, PRIORITY, header_field, parse_packet
 
 MANAGED_BLOCK_START = "<!-- task_packet_index:managed:start -->"
 MANAGED_BLOCK_END = "<!-- task_packet_index:managed:end -->"
@@ -46,20 +46,9 @@ def git(repo: Path, *args: str, check: bool = True) -> str:
 
 
 def _normalize_goal(text: str) -> str:
-    match = re.search(r"^\s*-\s*Goal:\s*(.*)$", text, re.MULTILINE)
-    if not match:
+    normalized = header_field(text, "Goal")
+    if normalized is None:
         return "(no Goal recorded)"
-    parts = [match.group(1).strip()]
-    lines = text.splitlines()
-    start = next(i for i, line in enumerate(lines) if re.match(r"^\s*-\s*Goal:\s*", line))
-    for continuation in lines[start + 1:]:
-        if re.match(r"^-\s*[A-Z][^:]*:\s*", continuation) or continuation.startswith("## "):
-            break
-        if continuation.strip():
-            parts.append(continuation.strip())
-        else:
-            break
-    normalized = re.sub(r"\s+", " ", " ".join(parts)).strip().strip("`").strip()
     if len(normalized) > 160:
         normalized = normalized[:157].rstrip() + "..."
     return normalized or "(no Goal recorded)"

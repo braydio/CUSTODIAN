@@ -245,6 +245,11 @@ def _header_field_with_continuations(text: str, field: str) -> str | None:
     return None
 
 
+def header_field(text: str, field: str) -> str | None:
+    """Return a folded top-level header field using the shared packet grammar."""
+    return _header_field_with_continuations(text, field)
+
+
 def _validation_script_references(text: str) -> tuple[str, ...]:
     """Collect explicit script paths only from the packet's Validation field/section."""
     blocks: list[str] = []

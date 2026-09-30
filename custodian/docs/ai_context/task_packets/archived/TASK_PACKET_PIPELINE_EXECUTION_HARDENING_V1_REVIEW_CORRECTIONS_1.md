@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `task-packet-pipeline-execution-hardening-v1-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-task-packet-pipeline-execution-hardening-v1`
@@ -33,6 +33,31 @@
 - Validation: `python3 custodian/tools/agent/test_task_packet_index.py`; `python3 custodian/tools/agent/test_task_packet_contract.py`; `python3 -m py_compile` on both changed files; `python3 custodian/tools/agent/check_ai_context.py`; `git diff --check`. No broader sweep needed; this is a narrow internal refactor.
 - Task overrides: `none`
 - Deferred: Nothing further deferred by this correction; it fully closes finding R0-01.
+
+## Completion Truth
+
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance evidence: `task_packet_index.py::_normalize_goal` calls the public `task_packet_contract.py::header_field` helper; its own continuation-folding loop is removed. The focused monkeypatch test proves rendered Goal text follows the shared helper. Existing index output assertions pass unchanged.
+- Superseded/legacy production path disposition: `n/a`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The tasking-instructions request added a timed expiry requirement beyond the correction packet's parser scope.
+- Root cause / contributing factors: The repository already had a self-removing temporary-instruction workflow, so the request could be implemented by extending its target list and schedule.
+- Prevention / pipeline improvement: Added a smoke assertion for expiry time, skip policy, Claude exemption, and cleanup markers.
+- Tooling / docs drift discovered: The existing cleanup schedule was 17 minutes after midnight; changed it to midnight UTC, matching midnight in America/New_York on the stated date.
+- Follow-up: `fixed-in-scope`
+- What worked: Reused the existing timed cleanup workflow and its marked-block convention.
+
+## Completion Notes
+
+- Exposed the existing field-folding behavior through `header_field` without changing parsing semantics and removed the indexer's duplicate fold loop.
+- Added the expiring procgen task routing note requested by the user; Claude is explicitly allowed to claim and work those packets until 2026-10-01 00:00 America/New_York.
+- Focused packet validation and workflow smoke are recorded in the closing summary.
 
 ## Handoff
 
