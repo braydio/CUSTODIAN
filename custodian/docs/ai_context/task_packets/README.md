@@ -243,7 +243,12 @@ lost when the ephemeral worktree is removed.
 - `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — D1 road authority extraction; depends on G5 + M6.
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — D2 authored claim registry extraction; depends on G5 + M6.
 - `PROCGEN_GENERATION_STATE_EXTRACTION.md` — D3 generation-state/level-data extraction; depends on G5 + M6.
-- `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` — D4 ProcGenTilemap façade contraction after D1+D2+D3.
+- `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — X1 post-D1/D2/D3 audit: re-measure remaining generation helpers/TileMapLayer operations, classify semantic vs presentation state, and lock the minimum GenerationGrid contract.
+- `REVIEW_PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — XR1 independent architecture/code review of the complete post-D extraction inventory.
+- `PROCGEN_GENERATION_GRID_FOUNDATION.md` — X2 implement the reviewed semantic GenerationGrid contract plus behavior-preserving TileMap-backed compatibility backend; broad migration remains deferred.
+- `REVIEW_PROCGEN_GENERATION_GRID_FOUNDATION.md` — XR2 verify the grid seam is minimal, Node-free at the contract layer, deterministic, and parity-safe.
+- `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` — X3 use reviewed audit+grid evidence to author the actual helper-cluster migration DAG, pure-data backend/cutover/demolition/convergence packets, and D4's final dependency.
+- `REVIEW_PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` — XR3 verify complete one-owner cluster coverage and keep D4 blocked until reviewed convergence.
 - `PROCGEN_RENDER_ATTRIBUTION_V1.md` — V1 presentation cost attribution after D4 + P7.
 - `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` — V2 evidence-driven presentation node/draw consolidation; depends on V1.
 - `PROCGEN_PERFORMANCE_SOAK_V1.md` — F1 final deterministic V1 soak and regression budgets; depends on V2.
