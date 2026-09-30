@@ -308,6 +308,29 @@ Update only current authority/index/docs whose truth changes. Historical summari
 - Follow-up: `fixed-in-scope` for the parser/spec-text bugs above. `manual-follow-up` for: (1) the three unrelated live README/index drift findings `check_ai_context.py` now surfaces (owned by whoever owns those workstreams, not this one); (2) migrating the live `task_packets/README.md`'s existing hand-curated `Ready / Auto Dispatch` entries into `task_packet_index.py`'s managed block, deliberately deferred rather than force-rewritten in this same change; (3) the deferred deep `Kind: review`/`Kind: correction` finding-ID/disposition structural contract in `check_ai_context.py`.
 - What worked: Validating `check_ai_context.py` against this repository's real, large, structurally diverse packet corpus (rather than only synthetic fixtures) caught three genuine parser bugs before they could ship as silent false positives across the whole team's packet backlog.
 
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-task-packet-pipeline-execution-hardening-v1`
+- Reviewed on main: `7287fd62a`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `task-packet-pipeline-execution-hardening-v1-review-corrections-1`
+
+### R0-01 (blocking_defect, implementation)
+
+- Affected acceptance: "One shared parser/contract authority is used by dispatch plus new validator/index/finish checks" (this packet's own Acceptance, line 27 above) and Required Architecture item 1 ("there must be one parser/validation authority rather than dispatcher, validator, indexer, and finish each inventing their own front-matter grammar").
+- Evidence: `custodian/tools/agent/task_packet_index.py`'s `_normalize_goal()` (lines ~47-61) reimplements `task_packet_contract.py`'s `_header_field_with_continuations()` Goal-field-folding algorithm from scratch — including duplicating the exact same unindented-only break-condition fix (`r"^-\s*[A-Z][^:]*:\s*"`) applied to the shared helper during this same workstream — instead of importing and reusing it (or a new public wrapper around it) from `task_packet_contract.py`. `task_packet_index.py` does already import `parse_packet`/`PACKET_ROOT`/`PRIORITY` from the shared module, so this is a partial, not total, violation: three of four field-derivation needs are shared, one (Goal-text rendering) is not.
+- Disposition: `correction`
+- Rationale: The review's own Correction threshold explicitly names "duplicate packet grammar authorities" as a blocking workflow defect regardless of whether the duplicate currently behaves correctly, because a second copy of the same folding algorithm will silently diverge the next time the shared one changes (exactly the kind of latent inconsistency this whole packet exists to prevent). Fix is narrow: expose the shared field-folding function (or a thin public wrapper) from `task_packet_contract.py` and have `task_packet_index.py` call it instead of its own copy.
+
 ## Handoff
 
 - Next action: Explicitly claim `task-packet-pipeline-execution-hardening-v1` with the actual executing agent identity. After it lands, run its paired independent review. Only after that review passes should the newly authored `procgen-semantic-candidate-generation-correction-1` become eligible; M2 must remain blocked behind that correction.
