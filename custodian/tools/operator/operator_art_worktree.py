@@ -134,11 +134,31 @@ def _git_without_hooks(root: Path, *args: str) -> str:
 
 
 def _sparse_paths(root: Path) -> list[str]:
-    """Return existing profile paths, including only Operator-facing weapon art."""
-    paths = [path for path in SPARSE_PROFILE_PATHS if subprocess.run(
-        ["git", "cat-file", "-e", f"HEAD:{path}"], cwd=root,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
-    ).returncode == 0]
+    """Return existing profile paths plus tracked Godot sidecars for explicit files."""
+    def tracked(relative: str) -> bool:
+        return subprocess.run(
+            ["git", "cat-file", "-e", f"HEAD:{relative}"], cwd=root,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
+        ).returncode == 0
+
+    def tracked_directory(relative: str) -> bool:
+        return subprocess.run(
+            ["git", "cat-file", "-e", f"HEAD:{relative}/."], cwd=root,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
+        ).returncode == 0
+
+    paths = [path for path in SPARSE_PROFILE_PATHS if tracked(path)]
+    # Explicit one-file dependencies must bring their already-tracked Godot metadata
+    # with them. Otherwise Godot recreates the omitted sidecar during validation and
+    # the publish firewall correctly rejects that unrelated worktree change.
+    for path in tuple(paths):
+        if tracked_directory(path):
+            continue
+        for suffix in (".import", ".uid"):
+            sidecar = f"{path}{suffix}"
+            if tracked(sidecar):
+                paths.append(sidecar)
+
     weapon_tree = "custodian/content/sprites/weapons"
     listing = subprocess.run(
         ["git", "ls-tree", "-d", "--name-only", f"HEAD:{weapon_tree}"],
@@ -148,18 +168,13 @@ def _sparse_paths(root: Path) -> list[str]:
         for family in listing.stdout.splitlines():
             for role in ("source", "runtime"):
                 relative = f"{weapon_tree}/{family}/{role}/operator"
-                if subprocess.run(["git", "cat-file", "-e", f"HEAD:{relative}"], cwd=root,
-                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                                  check=False).returncode == 0:
+                if tracked(relative):
                     paths.append(relative)
     patterns = []
     for path in sorted(set(paths)):
         # Sparse-checkout's non-cone patterns let the one-file runtime dependencies
         # stay narrow instead of materializing their unrelated sibling directories.
-        patterns.append(f"/{path}/**" if subprocess.run(
-            ["git", "cat-file", "-e", f"HEAD:{path}/."], cwd=root,
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
-        ).returncode == 0 else f"/{path}")
+        patterns.append(f"/{path}/**" if tracked_directory(path) else f"/{path}")
     return patterns
 
 
