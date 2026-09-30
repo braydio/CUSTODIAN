@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-candidate-runtime-path-demolition`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-accepted-candidate-materializer`
@@ -33,3 +33,14 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 - Next action: Generation lane closes. Decomplexification packets unlock only after runtime chunk lane also completes.
 - Best starting files: CustodianContractMap; ProcGenTilemap generation_evaluation_mode/promote paths; generation/ adapters.
 - Blockers or open questions: None known at authoring time.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: nothing structurally surprising; the main cost was re-establishing an accurate mental model of `custodian_contract_map.gd`/`proc_gen_tilemap.gd` after G4's architecture shift before making any edits, plus a pre-existing (unrelated) headless-mode limitation in a non-gating review tool.
+- Root cause / contributing factors: this packet's own "Current measured state" description undersold that G4 had already fully replaced the promotion call site in production; the dead code really was dead by the time this packet started, making the deletion itself low-risk once confirmed.
+- Prevention / pipeline improvement: for demolition/cleanup packets depending on a just-landed architecture-shifting predecessor, read that predecessor's closing summary and re-derive the current call graph (grep for the function(s) being retired) before planning the diff, rather than trusting the packet's authored-time description of "current state."
+- Tooling / docs drift discovered: `procgen_dressing_cluster_review.gd` cannot run its baseline capture under plain `--headless` (no rendering device); worth a header note if anyone expects to run it unattended. The pre-existing candidate-promotion streaming-reveal assertion tracked since S1 appears resolved by G4's rewrite of that smoke — no longer observed in this task's validation.
+- Follow-up: manual-follow-up (document `procgen_dressing_cluster_review.gd`'s rendering-backend requirement; not blocking).

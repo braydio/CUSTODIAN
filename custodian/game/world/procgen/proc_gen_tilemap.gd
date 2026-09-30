@@ -768,7 +768,7 @@ var _encounter_reserved_cells: Dictionary = {}
 var _world_progress_marker_parent: Node2D = null
 var _debug_generation_id: int = 0
 ## Structured facts for custodian.procgen_performance_baseline.v1. Populated
-## by _on_procgen_finished()/_fill_tilemaps() and promote_evaluated_candidate_to_final();
+## by _on_procgen_finished()/_fill_tilemaps() and materialize_accepted_candidate();
 ## never recomputed by reading this back, only reshaped by benchmark/diagnostic callers.
 var _last_generation_timing_snapshot: Dictionary = {}
 var _last_promotion_timing_snapshot: Dictionary = {}
@@ -1224,113 +1224,6 @@ func materialize_accepted_candidate(semantic_snapshot: Dictionary) -> Dictionary
 	}
 
 
-## Compatibility for existing debug callers. Contract generation now routes
-## accepted candidates through ProcgenCandidateMaterializer.
-func promote_evaluated_candidate_to_final() -> Dictionary:
-	return _finalize_accepted_candidate_to_final()
-
-
-## Realizes the accepted evaluation result without clearing or regenerating its
-## structural TileMaps, semantic dictionaries, terrain, roads, or regions.
-## Only work deliberately skipped by EVAL_CANDIDATE is completed here.
-func _finalize_accepted_candidate_to_final() -> Dictionary:
-	if not generation_evaluation_mode:
-		return get_level_data()
-	if not _evaluated_candidate_ready or _generated_floor_cells.is_empty():
-		push_error(
-			"[ProcGenTilemap] Cannot promote: evaluated candidate state is unavailable."
-		)
-		return {}
-
-	var started := Time.get_ticks_msec()
-	var marks: Dictionary = {}
-	var phase_started := started
-	var map_size: Vector2i = procgen_node.map_size
-	generation_evaluation_mode = false
-
-	_apply_floor_value_clusters(
-		_last_terrain_result,
-		int(procgen_node.seed)
-	)
-	marks["floor_value_clusters"] = Time.get_ticks_msec() - phase_started
-
-	phase_started = Time.get_ticks_msec()
-	_rebuild_macro_presentation(map_size)
-	marks["macro_presentation"] = Time.get_ticks_msec() - phase_started
-
-	phase_started = Time.get_ticks_msec()
-	_build_dressing_cluster_plan(map_size)
-	marks["dressing_cluster_plan"] = Time.get_ticks_msec() - phase_started
-	if enable_streaming_reveal and not generation_evaluation_mode:
-		_prepare_streaming_reveal()
-
-	phase_started = Time.get_ticks_msec()
-	if not enable_streaming_reveal and enable_final_foliage:
-		_generate_foliage(map_size)
-	marks["foliage_finalize"] = Time.get_ticks_msec() - phase_started
-
-	phase_started = Time.get_ticks_msec()
-	_generate_ruin_props(map_size)
-	marks["ruin_props"] = Time.get_ticks_msec() - phase_started
-
-	phase_started = Time.get_ticks_msec()
-	_generate_interior_props(map_size)
-	marks["interior_props"] = Time.get_ticks_msec() - phase_started
-
-	phase_started = Time.get_ticks_msec()
-	_enforce_route_playability_walkability(map_size)
-	_enforce_runtime_blocker_route_clearance()
-	# Deferred from the eval-mode _fill_tilemaps() pass (see the matching
-	# generation_evaluation_mode guard there): shoreline decoration and the
-	# runtime walkable-boundary collision body only the accepted winner
-	# needs. Floor tile-variant painting already ran unconditionally in the
-	# original _fill_tilemaps() pass and is not redone here.
-	_rebuild_nonwalkable_surface_visuals()
-	_rebuild_runtime_walkable_boundary()
-	_run_route_playability_audit()
-	_build_encounter_plan()
-	marks["playability_audit"] = Time.get_ticks_msec() - phase_started
-
-	phase_started = Time.get_ticks_msec()
-	if not enable_streaming_reveal:
-		_rebuild_horizontal_wall_overlays()
-	_refresh_shadows()
-	_refresh_navigation_after_wall_change(true)
-	if auto_bake_nav and nav_region != null:
-		nav_region.bake_navigation_polygon(false)
-	marks["presentation_navigation"] = Time.get_ticks_msec() - phase_started
-
-	_evaluated_candidate_ready = false
-	_publish_generation_complexity_gauges()
-	var data: Dictionary = get_level_data()
-	level_data_ready.emit(data)
-
-	print("[ProcGenTilemap] PROMOTE_EVALUATED_CANDIDATE")
-	for label_variant: Variant in marks:
-		var label := String(label_variant)
-		print("[ProcGen]   promote_%s: %d ms" % [label, marks[label]])
-	print(
-		"[ProcGen]   PROMOTION TOTAL: %d ms"
-		% (Time.get_ticks_msec() - started)
-	)
-	_last_promotion_timing_snapshot = {
-		"generation_id": _debug_generation_id,
-		"phase_timings_ms": marks,
-		"phase_order": PackedStringArray([
-			"floor_value_clusters",
-			"macro_presentation",
-			"dressing_cluster_plan",
-			"foliage_finalize",
-			"ruin_props",
-			"interior_props",
-			"playability_audit",
-			"presentation_navigation",
-		]),
-		"total_ms": Time.get_ticks_msec() - started,
-	}
-	return data
-
-
 func _fill_tilemaps() -> void:
 	var _t_start := Time.get_ticks_msec()
 	var _marks := {}
@@ -1565,8 +1458,10 @@ func _fill_tilemaps() -> void:
 	# Shoreline decoration and the runtime walkable-boundary collision body
 	# are final-presentation/collision-only: they never write to level_data
 	# or any field CandidateEvaluator reads, so rejected eval-mode candidates
-	# skip them. The accepted winner still gets them via
-	# promote_evaluated_candidate_to_final().
+	# skip them. The accepted winner always gets them, since
+	# materialize_accepted_candidate() realizes the winner through one fresh
+	# generate() call that starts with generation_evaluation_mode already
+	# false.
 	if not generation_evaluation_mode:
 		_rebuild_nonwalkable_surface_visuals()
 		_rebuild_runtime_walkable_boundary()
@@ -10976,9 +10871,9 @@ func get_last_generation_timing_snapshot() -> Dictionary:
 	return _last_generation_timing_snapshot.duplicate(true)
 
 
-## Structured phase-timing facts from the most recent
-## promote_evaluated_candidate_to_final() call. Empty if the accepted
-## candidate never required promotion (final-visual mode already ready).
+## Deprecated alias for get_last_materialization_timing_snapshot(), kept for
+## existing callers/benchmark schema compatibility. Prefer the
+## materialization-named getter in new code.
 func get_last_promotion_timing_snapshot() -> Dictionary:
 	return get_last_materialization_timing_snapshot()
 

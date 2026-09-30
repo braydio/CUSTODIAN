@@ -170,7 +170,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | G2 | `procgen-candidate-semantic-model` | **complete** | G1 |
 | G3 | `procgen-semantic-candidate-generation` | **complete** | G2 |
 | G4 | `procgen-accepted-candidate-materializer` | **complete** | G3 |
-| G5 | `procgen-candidate-runtime-path-demolition` | queued | G4 |
+| G5 | `procgen-candidate-runtime-path-demolition` | **complete** | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | queued | M1 |
 | M3 | `procgen-pause-aware-streaming` | queued | M2 |
@@ -216,10 +216,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** G5 `procgen-candidate-runtime-path-demolition` (next in serial order after G4 lands)
-**State:** S1, G1, G2, G3, G4, and M1 landed; G5, M2, and P1 are dependency-eligible.
-**Next gate:** retire the superseded live rejected-candidate compatibility path while preserving the accepted semantic-to-runtime handoff established by G4.
-**After G4/M1:** G5 is next in the generation lane; M2 is eligible for runtime mutation scheduler cutover, and P1 remains an independent sibling.
+**Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (next in serial order; generation lane G1-G5 is fully closed)
+**State:** S1, G1, G2, G3, G4, G5, and M1 landed; M2 and P1 are dependency-eligible.
+**Next gate:** route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds.
+**After G5:** the generation lane (S2-S4) is fully closed. D1-D4 (ProcGenTilemap decomplexification) remain blocked on G5+M6; M6 is still several M-lane packets away.
 
 ---
 
@@ -379,7 +379,7 @@ counts, ordered generation phases, timings, and invocation count.
 
 ## S4 - Accepted-Candidate Materializer
 
-**G4 status:** complete. S4's G5 legacy-path cleanup remains queued.
+**G4 status:** complete. **G5 status:** complete. S4 is fully landed.
 
 ### Goal
 
@@ -397,6 +397,15 @@ Only the accepted candidate receives runtime TileMap realization, final visual c
 ### Exit
 
 Candidate selection no longer depends on a live near-final `ProcGenTilemap` instance, final worlds match authoritative S1 fingerprints, and accepted-world realization has its own benchmark phase.
+
+### G5 Completion Evidence
+
+- **Landed main SHA:** see `PROCGEN_CANDIDATE_RUNTIME_PATH_DEMOLITION_CLAUDE_SUMMARY.md` at repo root.
+- Deleted the superseded in-place promotion path entirely: `ProcGenTilemap.promote_evaluated_candidate_to_final()` (public compatibility wrapper) and `_finalize_accepted_candidate_to_final()` (its ~100-line body) are removed. `materialize_accepted_candidate()` — G4's fresh-generation materializer entry point — is now the only accepted-candidate realization path; `CustodianContractMap.generate_contract()` already routed through it before this packet, so no production call site changed.
+- Migrated the deleted function's last two callers to the canonical pipeline: `tools/validation/procgen_dressing_cluster_review.gd` now builds a semantic snapshot from its eval-mode candidate and materializes onto a fresh second `ProcGenTilemap` instance (matching `CustodianContractMap`'s own flow) instead of promoting the candidate in place; `tools/validation/procgen_macro_presentation_smoke.gd`'s `_validate_pipeline_order()` now proves the macro -> dressing-clusters -> foliage phase ordering once, inside `_fill_tilemaps()`'s own final-mode branches, instead of re-checking it inside the now-deleted promotion function's separate source block.
+- Left the small `get_last_promotion_timing_snapshot()` alias in place (delegates to G4's `get_last_materialization_timing_snapshot()`) rather than deleting it: it is load-bearing for the `custodian.procgen_performance_baseline.v1` benchmark schema's `"promotion"` field, and this packet's own Preserve clause covers benchmark schema.
+- **Validation:** `procgen_candidate_promotion_smoke.gd`, `procgen_candidate_semantic_model_smoke.gd`, `procgen_candidate_evaluator_smoke.gd`, `procgen_macro_presentation_smoke.gd` (edited), `procgen_contract_rescue_diagnostic_smoke.gd` (36/36 seeds), and `procgen_terrain_required_cells_smoke.gd` all PASS. S1 quick and full benchmarks PASS, `determinism_ok: true`; all 3 full-profile contract cases reproduced G4's exact documented fingerprints byte-for-byte (`2884730602`, `392435093`, `1672459047`), proving the deletion changed no accepted-world output. Changed-file closeout PASS (17/17 selected tests); `git diff --check` clean. `procgen_dressing_cluster_review.gd`'s baseline capture pass fails under plain `--headless` (no rendering device for `viewport.get_texture()`); this is a pre-existing limitation of that non-gating review tool unrelated to this change — it fails before reaching the migrated code, and the tool is not a `validation_manifest.json` entry.
+- **Next:** Generation lane (G1-G5) is fully closed. M1-M6 (runtime/streaming lane) and P1-P7 (placement lane) proceed independently; D1-D4 (`ProcGenTilemap` decomplexification) wait on G5+M6 per the dependency graph.
 
 ---
 
