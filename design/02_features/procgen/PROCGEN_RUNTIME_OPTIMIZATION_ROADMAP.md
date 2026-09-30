@@ -341,7 +341,7 @@ The materializer verifies the accepted semantic fingerprint against the final
 runtime snapshot and records its S1-compatible runtime fingerprint, floor/wall
 counts, ordered generation phases, timings, and invocation count.
 
-- **Landed main SHA:** recorded in the task closeout commit.
+- **Landed main SHA:** `b2e4d9409` (`procgen accepted candidate materializer, G4 handoff`).
 - **Closing summary:** `PROCGEN_ACCEPTED_CANDIDATE_MATERIALIZER_CLAUDE_SUMMARY.md`.
 - **S1 quick:** PASS, `determinism_ok: true`; duplicate 48x48 seed-420777
   generation fingerprints were both `1773840677`. The contract case accepted
