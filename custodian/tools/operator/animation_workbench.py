@@ -220,6 +220,8 @@ def _compatibility_check():
     subprocess.run(["python3",str(COMPATIBILITY_SCRIPT),"--check"],check=True,cwd=m.REPO_ROOT)
 
 def _godot_import():
+    preflight=m.CUSTODIAN_ROOT/"tools/pipelines/godot_import_preflight.py"
+    subprocess.run(["python3",str(preflight),"--project-dir",str(m.CUSTODIAN_ROOT)],check=True)
     subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--import","--quit"],check=True)
 
 def _catalog_build():

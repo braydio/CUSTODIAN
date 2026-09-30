@@ -22,6 +22,8 @@ REPO_ROOT = CUSTODIAN_DIR.parent
 
 sys.path.insert(0, str(CUSTODIAN_DIR / "tools"))
 from godot_project_lock import GodotProjectBusy, GodotProjectLock  # noqa: E402
+sys.path.insert(0, str(CUSTODIAN_DIR / "tools" / "pipelines"))
+from godot_import_preflight import preflight_detail  # noqa: E402
 ITERATION_DIR = CUSTODIAN_DIR / "tools" / "iteration"
 sys.path.insert(0, str(ITERATION_DIR))
 from changed_file_router import changed_files  # noqa: E402
@@ -319,6 +321,16 @@ def main(argv: list[str] | None = None) -> int:
     try:
         with lock:
             if any(bool(test.get("needs_import")) for test in selected):
+                preflight_failure = preflight_detail(CUSTODIAN_DIR)
+                if preflight_failure:
+                    result = {
+                        "schema": "custodian.validation.result.v1",
+                        "passed": False,
+                        "infrastructure_failure": "import_preflight",
+                        "message": preflight_failure,
+                    }
+                    print(json.dumps(result) if args.json else preflight_failure)
+                    return EXIT_PREFLIGHT
                 ok, import_result = _run_import()
                 if not ok:
                     print(json.dumps({"schema":"custodian.validation.result.v1","passed":False,"infrastructure_failure":"import","import":import_result}))

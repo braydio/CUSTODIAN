@@ -3,8 +3,15 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+PIPELINES_DIR = Path(__file__).resolve().parents[2] / "pipelines"
+if str(PIPELINES_DIR) not in sys.path:
+    sys.path.insert(0, str(PIPELINES_DIR))
+
+from godot_import_preflight import preflight_detail
 
 # A cold full-project import routinely runs past two minutes, so the default has
 # to leave room for one. This is the single authority for the import timeout;
@@ -23,6 +30,10 @@ def run_godot_import(
     timeout_sec: float = DEFAULT_GODOT_IMPORT_TIMEOUT_SEC,
 ) -> ImportResult:
     """Run `godot --headless --import` to process newly placed assets."""
+    detail = preflight_detail(project_dir)
+    if detail:
+        return ImportResult(ok=False, detail=detail)
+
     godot_bin = _find_godot()
     if godot_bin is None:
         return ImportResult(ok=False, detail="godot binary not found on PATH")

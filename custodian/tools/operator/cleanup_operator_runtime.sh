@@ -169,6 +169,7 @@ fi
 log ""
 log "Next validation commands:"
 log "  python3 custodian/tools/pipelines/sync_operator_runtime_assets.py --remove-superseded"
+log "  python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian"
 log "  godot --headless --path custodian --import --quit"
 log "  godot --headless --path custodian --script res://tools/pipelines/build_operator_animation_resources.gd"
 log "  godot --headless --path custodian --script res://tools/validation/operator_modular_layers_smoke.gd"

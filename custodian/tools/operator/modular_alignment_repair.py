@@ -862,6 +862,12 @@ def main(argv: list[str] | None = None) -> int:
         sys.executable,
         str(REPO_ROOT / "custodian/tools/pipelines/update_operator_compatibility_resources.py"),
     ], check=True)
+    subprocess.run([
+        sys.executable,
+        str(REPO_ROOT / "custodian/tools/pipelines/godot_import_preflight.py"),
+        "--project-dir",
+        str(REPO_ROOT / "custodian"),
+    ], check=True)
     subprocess.run(["godot", "--headless", "--path", str(REPO_ROOT / "custodian"), "--import", "--quit"], check=True)
     subprocess.run([
         "godot", "--headless", "--path", str(REPO_ROOT / "custodian"),
