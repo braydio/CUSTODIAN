@@ -36,10 +36,13 @@
 
 ## Completion Truth
 
+- Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Acceptance evidence: `task_packet_index.py::_normalize_goal` calls the public `task_packet_contract.py::header_field` helper; its own continuation-folding loop is removed. The focused monkeypatch test proves rendered Goal text follows the shared helper. Existing index output assertions pass unchanged.
 - Superseded/legacy production path disposition: `n/a`
+- Evidence: `python3 custodian/tools/agent/test_task_packet_index.py` (11 passed); `python3 custodian/tools/agent/test_task_packet_contract.py` (18 passed); `python3 custodian/tools/validation/agent_workflow_smoke.py` (passed); `py_compile` and `git diff --check` passed. `check_ai_context.py` retains three unrelated existing README-index findings recorded below.
 
 ## Execution Feedback
 
