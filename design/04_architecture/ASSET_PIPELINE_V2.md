@@ -133,6 +133,7 @@ Required completeness is based on catalog-backed runtime art, not inbox presence
 | `asset needs [<requirement-id>]` | Track active production requirements and fulfillment routes |
 | `asset needs --json` | Emit stable requirement and derived-status data |
 | `asset needs --write` / `--check` | Regenerate or verify root `REQUIRED_ASSETS.md` |
+| `asset ui` | Launch the optional read-only Asset Workbench FAMILY navigator; Textual dependencies are loaded only for this command |
 | `asset doctor` | Health checks for contracts, inboxes, catalog, and consumers |
 
 ### Production requirements

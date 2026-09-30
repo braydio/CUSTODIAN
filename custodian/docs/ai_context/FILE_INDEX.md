@@ -4,6 +4,8 @@
 
 - `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` — living slice roadmap for the general non-Operator Asset Workbench; V1 is FAMILY navigator, REVIEW studio, then safe PIPELINE actions, with later actor/sequence, design, creation/source-intake, and hardening slices.
 - `design/04_architecture/ASSET_PIPELINE_V2.md` and `custodian/tools/assets/` — technical authority consumed by Asset Workbench; the UI must project these contracts rather than create parallel asset truth.
+- `custodian/tools/assets/asset_workbench/` — optional Textual FAMILY navigator, immutable Asset V2 projections, and transactional refresh/search state; starts read-only and imports no Operator backend. `requirements.txt` lists its optional UI dependency.
+- `custodian/tools/validation/asset_workbench_ui_smoke.py` — focused fixture/service/Pilot coverage and real `ambient_baby_opossum` projection acceptance, selected by the `asset_workbench_ui` validation owner.
 
 - `custodian/docs/ai_context/task_packets/archived/STARTUP_WORLD_ENTRY_SPINE_V1.md` / `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — completed App/Boot startup-mode spine and active independent review; keeps Awakening default while exposing Twin Solaria and seeded Contract sandbox direct-start paths.
 

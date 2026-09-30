@@ -19,7 +19,7 @@ Domain. Archive Engines stabilize damaged reality; they do not create worlds.
 The Pale is an unstable continuity condition, provenance is forensic, and route
 restoration remains reciprocal and dangerous.
 
-Last updated: 2026-09-29
+Last updated: 2026-09-30
 
 Simulation boundary update (2026-08-08): use `WorldSimulationRuntime` and typed command ingress for live campaign-world access. Never launch Python from Godot. `GameState`, local power, `WaveManager`, and `FabPipeline` are compatibility/adapters. Validate with `run_world_simulation_migration_suite.sh`.
 
@@ -28,6 +28,12 @@ non-Operator families. V2.1 JSON schemas own semantic planning while the mature
 runtime-ready and sprite-ingest backends own physical processing. Operator
 assets retain their specialized key/builder, and the generated asset catalog is
 tooling metadata rather than gameplay authority.
+
+Asset Workbench update (2026-09-30): `asset ui` launches the optional read-only
+FAMILY navigator over Asset V2 contracts and status. It keeps an immutable
+accepted snapshot, filters search in memory, and preserves the last view when
+refresh fails. The UI does not own asset truth or mutate production files;
+follow `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` for later slices.
 
 ## Purpose
 

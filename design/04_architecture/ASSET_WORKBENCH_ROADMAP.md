@@ -1,10 +1,10 @@
 # Asset Workbench Roadmap
 
 **Status:** active implementation roadmap  
-**Baseline reviewed main:** `a9be70ded8c7d0f63cfc471d684086ef1c5ed287`  
+**Baseline reviewed main:** `7287fd62afcda9abe3847f5fea6c60c8ac27bfe3`
 **Owner:** tooling / Asset Pipeline V2  
 **Runtime target:** CUSTODIAN non-Operator asset authoring and review  
-**Last updated:** 2026-09-29
+**Last updated:** 2026-09-30
 
 ## Purpose
 
@@ -110,15 +110,15 @@ As of the baseline above:
 
 | Slice | Workstream | Status | Completion focus | Evidence |
 |---|---|---|---|---|
-| **1. Family Navigator Foundation** | `asset-workbench-family-foundation` | ready | Read-only Asset V2 family/state cockpit and stable UI/read-model boundary | `ASSET_WORKBENCH_FAMILY_FOUNDATION.md` queued on main |
-| **2. Review Studio** | `asset-workbench-review-studio` | ready · dependency-gated | Raster preview, playback, filmstrip, source/runtime comparison and diagnostics | `ASSET_WORKBENCH_REVIEW_STUDIO.md` queued on main; depends on Slice 1 |
+| **1. Family Navigator Foundation** | `asset-workbench-family-foundation` | complete | Read-only Asset V2 family/state cockpit and stable UI/read-model boundary | `asset_workbench_ui_smoke.py` passes with Textual Pilot; Asset V2 CLI/requirements regressions pass |
+| **2. Review Studio** | `asset-workbench-review-studio` | ready | Raster preview, playback, filmstrip, source/runtime comparison and diagnostics | `ASSET_WORKBENCH_REVIEW_STUDIO.md` queued; Slice 1 dependency is complete |
 | **3. Safe Pipeline Actions** | `asset-workbench-pipeline-actions` | planned | Plan/ingest UI, isolated mutation checkout, validation, commit/land, refresh | pending |
 | **4. Actor Lens + Sequence Review** | `asset-workbench-actor-sequences` | planned | NPC/enemy/fauna ergonomics and disposable behavioral review sequences | pending |
 | **5. Design Mode** | `asset-workbench-design-mode` | planned | Schema-aware family/state contract editing and reviewed contract publication | pending |
 | **6. Creation + Source Intake** | `asset-workbench-creation-source-intake` | planned | New family/state creation, source staging, crisp conversion and authoring handoff | pending |
 | **7. Platform Hardening + Domain Expansion** | `asset-workbench-platform-hardening` | planned | Proven shared UI extraction, large-family performance, broader domains, docs/QA | pending |
 
-**Last reconciled main:** `24690f8`
+**Last reconciled main:** `7287fd62afcda9abe3847f5fea6c60c8ac27bfe3`
 
 ---
 

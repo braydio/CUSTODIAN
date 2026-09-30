@@ -1339,6 +1339,29 @@
       "needs_import": false
     },
     {
+      "id": "asset_workbench_ui",
+      "type": "python",
+      "script": "custodian/tools/validation/asset_workbench_ui_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "asset_workbench",
+        "tooling",
+        "ui"
+      ],
+      "owners": [
+        "custodian/tools/assets/asset_workbench/**",
+        "custodian/tools/assets/asset.py",
+        "custodian/tools/validation/asset_workbench_ui_smoke.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "design/04_architecture/ASSET_WORKBENCH_ROADMAP.md",
+        "custodian/docs/ai_context/CURRENT_STATE.md",
+        "custodian/docs/ai_context/FILE_INDEX.md"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "asset_pipeline_v2",
       "type": "python",
       "script": "custodian/tools/validation/asset_pipeline_v2_smoke.py",
