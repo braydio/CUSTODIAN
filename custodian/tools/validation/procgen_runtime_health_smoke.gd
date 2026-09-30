@@ -50,6 +50,13 @@ func _run() -> void:
 	_check(int(after.get("runtime_connector_commit_count", 0)) == int(before.get("runtime_connector_commit_count", 0)) + 1, "connector commit was not counted exactly once")
 	_check(int(after.get("walkable_boundary_rebuild_count", 0)) == int(before.get("walkable_boundary_rebuild_count", 0)) + 1, "boundary rebuild was not counted exactly once")
 	_check(int(after.get("navigation_rebuild_completed_count", 0)) >= int(before.get("navigation_rebuild_completed_count", 0)) + 1, "navigation completion was not counted")
+	var scheduler_before: Dictionary = before.get("derived_rebuild_scheduler", {}).get("systems", {})
+	var scheduler_after: Dictionary = after.get("derived_rebuild_scheduler", {}).get("systems", {})
+	for system in [&"topology", &"walkable_boundary", &"navigation", &"shadows", &"presentation"]:
+		var key := String(system)
+		_check(int(scheduler_after.get(key, {}).get("requested", 0)) > int(scheduler_before.get(key, {}).get("requested", 0)), "%s scheduler request was not recorded" % key)
+		_check(int(scheduler_after.get(key, {}).get("committed", 0)) > int(scheduler_before.get(key, {}).get("committed", 0)), "%s scheduler commit was not recorded" % key)
+		_check(int(scheduler_after.get(key, {}).get("duration_usec_total", 0)) >= int(scheduler_before.get(key, {}).get("duration_usec_total", 0)), "%s scheduler duration regressed" % key)
 	_check(int(after.get("walkable_boundary_shape_count", 0)) > 0, "boundary shape count is empty")
 	var observatory := root.get_node_or_null("DevObservatory")
 	if observatory != null:

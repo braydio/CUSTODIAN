@@ -15,6 +15,7 @@ const RUNTIME_WALL_CHUNK_SCRIPT := preload("res://game/world/procgen/runtime_wal
 const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 	"res://game/world/procgen/runtime_walkable_boundary_chunk.gd"
 )
+const DERIVED_REBUILD_SCHEDULER_SCRIPT := preload("res://game/world/procgen/derived_rebuild_scheduler.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
@@ -771,6 +772,8 @@ var _last_promotion_timing_snapshot: Dictionary = {}
 var _last_fill_tilemaps_marks: Dictionary = {}
 var _last_fill_tilemaps_total_ms: int = 0
 var _runtime_wall_body_peak: int = 0
+var _derived_rebuild_scheduler: RefCounted = DERIVED_REBUILD_SCHEDULER_SCRIPT.new()
+var _navigation_scheduler_batch_id: int = -1
 var _runtime_wall_shape_count: int = 0
 var _runtime_wall_rebuild_count: int = 0
 var _runtime_wall_last_rebuild_usec: int = 0
@@ -3372,6 +3375,14 @@ func commit_runtime_walkable_connector_plan(
 		if _generated_wall_cells.has(cell):
 			return {"ok": false, "reason": "connector plan became blocked", "blocked_cell": cell}
 	var commit_started_usec := Time.get_ticks_usec()
+	var scheduler_batch_id := Engine.get_process_frames()
+	var connector_region := Rect2i()
+	if not ordered_cells.is_empty():
+		connector_region = Rect2i(ordered_cells[0] as Vector2i, Vector2i.ONE)
+		for cell_variant in ordered_cells:
+			var cell := cell_variant as Vector2i
+			connector_region = connector_region.merge(Rect2i(cell, Vector2i.ONE))
+	_derived_rebuild_scheduler.call("request", &"topology", "runtime_connector", connector_region, scheduler_batch_id)
 	var committed_new_cells := 0
 	for cell_variant in ordered_cells:
 		var cell := cell_variant as Vector2i
@@ -3396,6 +3407,7 @@ func commit_runtime_walkable_connector_plan(
 	_runtime_terrain_last_commit_usec = Time.get_ticks_usec() - commit_started_usec
 	_runtime_terrain_last_commit_reason = region_type
 	_runtime_terrain_last_changed_cell_count = committed_new_cells
+	_derived_rebuild_scheduler.call("commit", &"topology", _runtime_terrain_last_commit_usec, scheduler_batch_id)
 	_record_runtime_mutation(&"procgen_runtime_terrain_committed", region_type, _runtime_terrain_last_commit_usec, _generated_floor_cells.size() - committed_new_cells, _generated_floor_cells.size(), committed_new_cells)
 	_obs_log(&"procgen_runtime_connector_resolved", _runtime_mutation_payload(region_type, _runtime_terrain_last_commit_usec, 0, ordered_cells.size(), committed_new_cells))
 	var result := plan.duplicate(true)
@@ -6135,6 +6147,12 @@ func validate_no_stuck_pockets(remediate: bool = true) -> Dictionary:
 					"seed": _get_generation_seed(),
 				})
 	if remediated > 0:
+		var repair_batch_id := Engine.get_process_frames()
+		var repair_region := Rect2i(flagged[0], Vector2i.ONE)
+		for tile in flagged:
+			repair_region = repair_region.merge(Rect2i(tile, Vector2i.ONE))
+		_derived_rebuild_scheduler.call("request", &"topology", "stuck_pocket_collision", repair_region, repair_batch_id)
+		_derived_rebuild_scheduler.call("commit", &"topology", 0, repair_batch_id)
 		_runtime_topology_repair_count += remediated
 		_record_runtime_mutation(&"procgen_runtime_topology_repaired", "stuck_pocket_collision", 0, flagged.size(), remediated, remediated)
 		_queue_navigation_rebuild("stuck_pocket_collision")
@@ -6699,6 +6717,8 @@ func get_intensity_at_tile(tile: Vector2i) -> float:
 
 
 func _rebuild_runtime_wall_collision(map_size: Vector2i, reason: String = "generation") -> void:
+	var batch_id := Engine.get_process_frames()
+	_derived_rebuild_scheduler.call("request", &"collision", reason, Rect2i(Vector2i.ZERO, map_size), batch_id)
 	var started_usec := Time.get_ticks_usec()
 	var before := _runtime_wall_shape_count
 	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D
@@ -6726,16 +6746,22 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i, reason: String = "gener
 	_runtime_wall_rebuild_count += 1
 	_runtime_wall_last_rebuild_usec = Time.get_ticks_usec() - started_usec
 	_runtime_wall_last_rebuild_reason = reason
+	_derived_rebuild_scheduler.call("commit", &"collision", _runtime_wall_last_rebuild_usec, batch_id)
 	_record_runtime_mutation(&"procgen_runtime_wall_rebuilt", reason, _runtime_wall_last_rebuild_usec, before, _runtime_wall_shape_count, absi(_runtime_wall_shape_count - before))
 
 
 func _rebuild_runtime_walkable_boundary(reason: String = "generation") -> void:
 	if walls_tilemap == null:
 		return
+	var batch_id := Engine.get_process_frames()
+	var boundary_region := Rect2i(Vector2i.ZERO, procgen_node.map_size if procgen_node != null else Vector2i.ZERO)
+	_derived_rebuild_scheduler.call("request", &"walkable_boundary", reason, boundary_region, batch_id)
 	var started_usec := Time.get_ticks_usec()
 	var before := _walkable_boundary_shape_count
 	_clear_runtime_walkable_boundary()
 	if _generated_floor_cells.is_empty():
+		_walkable_boundary_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+		_derived_rebuild_scheduler.call("commit", &"walkable_boundary", _walkable_boundary_last_rebuild_usec, batch_id)
 		return
 	var boundary := RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT.new() as StaticBody2D
 	boundary.call("setup")
@@ -6777,6 +6803,7 @@ func _rebuild_runtime_walkable_boundary(reason: String = "generation") -> void:
 	_walkable_boundary_rebuild_count += 1
 	_walkable_boundary_last_rebuild_usec = Time.get_ticks_usec() - started_usec
 	_walkable_boundary_last_rebuild_reason = reason
+	_derived_rebuild_scheduler.call("commit", &"walkable_boundary", _walkable_boundary_last_rebuild_usec, batch_id)
 	_publish_runtime_health_gauges()
 	_record_runtime_mutation(&"procgen_walkable_boundary_rebuilt", reason, _walkable_boundary_last_rebuild_usec, before, _walkable_boundary_shape_count, absi(_walkable_boundary_shape_count - before))
 
@@ -6936,11 +6963,14 @@ func _refresh_navigation_after_wall_change(force_immediate: bool = false, reason
 
 
 func _queue_navigation_rebuild(reason: String = "runtime_mutation") -> void:
+	var batch_id := _navigation_scheduler_batch_id if _navigation_rebuild_deferred else Engine.get_process_frames()
+	_derived_rebuild_scheduler.call("request", &"navigation", reason, Rect2i(Vector2i.ZERO, procgen_node.map_size if procgen_node != null else Vector2i.ZERO), batch_id)
 	if _navigation_rebuild_deferred:
 		if _navigation_pending_reason.is_empty():
 			_navigation_pending_reason = reason
 		return
 	_navigation_rebuild_deferred = true
+	_navigation_scheduler_batch_id = batch_id
 	_navigation_rebuild_requested_count += 1
 	_navigation_pending_reason = reason
 	_publish_runtime_health_gauges()
@@ -6969,6 +6999,9 @@ func _flush_navigation_rebuild() -> void:
 		_navigation_revision += 1
 	_navigation_last_rebuild_usec = Time.get_ticks_usec() - started_usec
 	_navigation_last_rebuild_reason = reason
+	if rebuilt:
+		_derived_rebuild_scheduler.call("commit", &"navigation", _navigation_last_rebuild_usec, _navigation_scheduler_batch_id)
+	_navigation_scheduler_batch_id = -1
 	_publish_runtime_health_gauges()
 	_record_runtime_mutation(&"procgen_navigation_rebuild_finished", reason, _navigation_last_rebuild_usec, _navigation_revision - (1 if rebuilt else 0), _navigation_revision, 0)
 
@@ -10871,6 +10904,7 @@ func get_runtime_health_snapshot() -> Dictionary:
 		"last_mutation_kind": _last_runtime_mutation_kind,
 		"last_mutation_uptime_sec": _last_runtime_mutation_uptime_sec,
 		"last_mutation_duration_usec": _last_runtime_mutation_duration_usec,
+		"derived_rebuild_scheduler": _derived_rebuild_scheduler.call("get_snapshot"),
 	}
 	var cliff_state := void_cliff_face.get_debug_state() if void_cliff_face != null else {}
 	snapshot["void_cliff_frontier_cells"] = int(cliff_state.get("frontier_cells", 0))
@@ -10931,6 +10965,10 @@ func _record_runtime_mutation(kind: StringName, reason: String, duration_usec: i
 func _refresh_shadows() -> void:
 	if shadow_system == null or not _wall_shadow_isolation_enabled:
 		return
+	var batch_id := Engine.get_process_frames()
+	var presentation_region := Rect2i(Vector2i.ZERO, procgen_node.map_size if procgen_node != null else Vector2i.ZERO)
+	_derived_rebuild_scheduler.call("request", &"shadows", "terrain_or_wall_refresh", presentation_region, batch_id)
+	_derived_rebuild_scheduler.call("request", &"presentation", "terrain_or_wall_refresh", presentation_region, batch_id)
 	var started_usec := Time.get_ticks_usec()
 	if shadow_system.has_method("initialize"):
 		shadow_system.call("initialize", floor_tilemap, walls_tilemap)
@@ -10938,6 +10976,8 @@ func _refresh_shadows() -> void:
 		shadow_system.call("request_regenerate")
 	_shadow_rebuild_requested_count += 1
 	_shadow_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+	_derived_rebuild_scheduler.call("commit", &"shadows", _shadow_last_rebuild_usec, batch_id)
+	_derived_rebuild_scheduler.call("commit", &"presentation", _shadow_last_rebuild_usec, batch_id)
 	_record_runtime_mutation(&"procgen_shadow_rebuild_requested", "terrain_or_wall_refresh", _shadow_last_rebuild_usec, _shadow_rebuild_requested_count - 1, _shadow_rebuild_requested_count, 0)
 
 
