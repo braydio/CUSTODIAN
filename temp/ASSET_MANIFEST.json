@@ -1,0 +1,102 @@
+{
+  "asset_family": {
+    "owner": "operator",
+    "profile": "unarmed",
+    "group": "defense",
+    "direction": "e",
+    "source_role": "full_body_reference",
+    "target_presentation": "modular lower_body + upper_body"
+  },
+  "files": [
+    {
+      "name": "operator__full_body__unarmed__defense__block_hold_01__e__5f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__block_exit_01__e__4f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__block_break_01__e__3f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__block_break_recovery_01__e__6f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__block_heavy_recoil_01__e__4f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__block_light_recoil_01__e__3f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__block_enter_01__e__4f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__parry_success_01__e__5f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__parry_miss_01__e__8f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    },
+    {
+      "name": "operator__full_body__unarmed__defense__parry_01__e__5f__96.png",
+      "generated_size_px": [
+        2172,
+        724
+      ],
+      "mode": "RGBA",
+      "has_alpha": true
+    }
+  ]
+}
