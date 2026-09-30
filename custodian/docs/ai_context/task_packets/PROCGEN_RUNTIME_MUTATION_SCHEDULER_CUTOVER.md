@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `procgen-derived-rebuild-scheduler-foundation`
+- Depends on: `procgen-derived-rebuild-scheduler-foundation, procgen-semantic-candidate-generation-correction-1`
 - Locks: `procgen-runtime-mutation`
 - Kind: `implementation`
 - Review: `none`

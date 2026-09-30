@@ -120,6 +120,14 @@ D4 + P7
                 └─ A1 procgen-runtime-optimization-v2-series-authoring
 ```
 
+**Correction edge (added by `task-packet-pipeline-execution-hardening-v1`):**
+`G3 procgen-semantic-candidate-generation` did not fully close S3's Exit
+condition (see the G3 Completion Evidence correction note below).
+`procgen-semantic-candidate-generation-correction-1` depends on
+`review-task-packet-pipeline-execution-hardening-v1` and must land before
+`M2 procgen-runtime-mutation-scheduler-cutover` becomes eligible/resumed;
+M2's `Depends on` above now reads `M1 + G3-fix` accordingly.
+
 ### Single-Agent Serial Auto-Run Order
 
 When the user has authorized one agent/session to run this full series unattended, use this deterministic traversal after each successful `workstream.py finish`:
@@ -168,11 +176,12 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | S1 | `procgen-performance-baseline-v1` | **complete** | none |
 | G1 | `procgen-candidate-evaluator-extraction` | **complete** | S1 |
 | G2 | `procgen-candidate-semantic-model` | **complete** | G1 |
-| G3 | `procgen-semantic-candidate-generation` | **complete** | G2 |
+| G3 | `procgen-semantic-candidate-generation` | **complete** (narrower than originally claimed; see G3 Completion Evidence correction) | G2 |
+| G3-fix | `procgen-semantic-candidate-generation-correction-1` | ready | review-task-packet-pipeline-execution-hardening-v1 |
 | G4 | `procgen-accepted-candidate-materializer` | **complete** | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | **complete** | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
-| M2 | `procgen-runtime-mutation-scheduler-cutover` | queued | M1 |
+| M2 | `procgen-runtime-mutation-scheduler-cutover` | queued | M1 + G3-fix |
 | M3 | `procgen-pause-aware-streaming` | queued | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | queued | M3 |
 | M5 | `procgen-chunk-payload-cache` | queued | M4 |
@@ -216,10 +225,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (next in serial order; generation lane G1-G5 is fully closed)
-**State:** S1, G1, G2, G3, G4, G5, and M1 landed; M2 and P1 are dependency-eligible.
-**Next gate:** route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds.
-**After G5:** the generation lane (S2-S4) is fully closed. D1-D4 (ProcGenTilemap decomplexification) remain blocked on G5+M6; M6 is still several M-lane packets away.
+**Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (in progress in its own workstream) and `procgen-semantic-candidate-generation-correction-1` (queued behind `review-task-packet-pipeline-execution-hardening-v1`)
+**State:** S1, G1, G2, G3, G4, G5, and M1 landed; G3's closure claim was narrower than originally stated (see correction note in G3 Completion Evidence) and true semantics-first candidate construction remains open, tracked by `procgen-semantic-candidate-generation-correction-1`. M2's `Depends on` now includes that correction in addition to M1; it must land (and its paired review pass) before M2 becomes eligible/resumed. P1 remains independently dependency-eligible.
+**Next gate:** land the G3 correction so rejected candidate attempts can be evaluated from semantic data without instantiating `proc_gen_map.tscn`/`ProcGenTilemap`, then route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds.
+**After G5:** the generation lane (S2-S4) is fully closed for the narrower scope G3 actually delivered; S3's own Exit condition is not yet met. D1-D4 (ProcGenTilemap decomplexification) remain blocked on G5+M6; M6 is still several M-lane packets away.
 
 ---
 
@@ -319,6 +328,22 @@ own Exit condition above is not yet met until G3 lands.
 - **Next:** G3 `procgen-semantic-candidate-generation` is eligible.
 
 ### G3 Completion Evidence
+
+> **Correction (`task-packet-pipeline-execution-hardening-v1` postmortem):**
+> the line below overstated what G3 actually closed. G3 gates three
+> *presentation/collision rebuild* functions behind `generation_evaluation_mode`
+> inside an already-instantiated `ProcGenTilemap`; it does **not** stop
+> production from instantiating a live `ProcGenTilemap` (TileMap node,
+> presentation/collision/nav scaffolding) for every rejected candidate attempt
+> before the semantic snapshot is built. S3's Exit condition — "rejected
+> attempts die as data without... runtime nodes" — is therefore **not yet
+> met**. True semantics-first candidate construction (evaluating a candidate
+> from semantic data without ever instantiating `proc_gen_map.tscn`/
+> `ProcGenTilemap` for a rejected attempt) remains open work, tracked by
+> `procgen-semantic-candidate-generation-correction-1`
+> (`PROCGEN_SEMANTIC_CANDIDATE_GENERATION_CORRECTION_1.md`), which M2
+> (`procgen-runtime-mutation-scheduler-cutover`) now also depends on. The
+> original (overstated) claim is preserved below for history.
 
 G3 lands S3's Exit condition: rejected eval-mode candidates no longer pay
 for final-presentation/collision realization; accepted seed/world

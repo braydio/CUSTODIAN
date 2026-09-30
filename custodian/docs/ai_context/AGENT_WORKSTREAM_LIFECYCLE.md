@@ -1,8 +1,11 @@
 # Agent Workstream Lifecycle
 
 Normal implementation runs use an isolated ephemeral worktree. For queued
-packet work, prefer `dispatch.py claim-next --agent codex`, or use
-`dispatch.py claim <id> --agent codex` for explicit selection. The dispatcher
+packet work, prefer `dispatch.py claim-next --agent <agent-id>` (for example
+`--agent claude` or `--agent codex`), or use `dispatch.py claim <id> --agent
+<agent-id>` for explicit selection. Omitting `--agent` falls back to the
+`CUSTODIAN_AGENT_ID` environment variable, then a neutral `unspecified` —
+never a silently assumed agent brand. The dispatcher
 reads fetched `origin/main`, checks packet dependencies and locks, then
 delegates branch/worktree creation to `workstream.py` under the same local
 mutex and remote unique-claim protocol. Direct `workstream.py start <id>` uses
@@ -44,8 +47,8 @@ Queued packet front door:
 
 ```bash
 python3 custodian/tools/agent/dispatch.py status
-python3 custodian/tools/agent/dispatch.py claim-next --agent codex
-python3 custodian/tools/agent/dispatch.py claim <workstream-id> --agent codex
+python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id>
+python3 custodian/tools/agent/dispatch.py claim <workstream-id> --agent <agent-id>
 ```
 
 A successful claim ends with `CLAIMED` and one
@@ -117,6 +120,50 @@ classified as task-packet, closing-summary, Asset V2 source, review evidence,
 disposable candidate, or unclassified. The agent must explicitly commit durable
 material or remove disposable material; ambiguous files are never silently
 removed.
+
+## Default Execution Economy
+
+These are repository-default execution steps for claimed packet work; do not
+copy this list into individual task packets.
+
+1. Read the current packet.
+2. Read the immediate predecessor closing summary when the task depends on an
+   architecture-shifting predecessor.
+3. Use the code-review graph first when available.
+4. Otherwise search exact symbols/paths before reading large files. For large
+   files, prefer targeted symbol/range retrieval over a default whole-file read.
+5. Read direct callers/callees only as needed.
+6. Do not reread completed packets or broad roadmaps unless a concrete
+   contradiction requires it.
+7. Reuse landed benchmark/validation evidence instead of rediscovering it.
+8. Run the highest-risk focused falsification first, then one normal closeout
+   sweep.
+
+A packet's `Status: complete` is not itself proof that its stated Goal/
+Completion boundary hold; see `AGENT_TASK_PACKET_TEMPLATE.md`'s `## Completion
+Truth` receipt, which `workstream.py finish` enforces for current V2
+`implementation`/`correction` packets before teardown.
+
+## Subagent/Fork Safety
+
+Default to a single agent implementing one packet. Use research forks/subagents
+only when the work is genuinely independent and parallelism materially reduces
+wall time.
+
+- A read-only research fork must not share writable authority over the parent
+  implementation worktree. Use tool restrictions or a separate isolated
+  checkout/context; if the platform cannot enforce read-only mutation, do the
+  targeted research in the parent instead.
+- Never allow two implementation-capable forks to concurrently edit the same
+  worktree without an explicitly scoped multi-writer task contract.
+- If a fork stalls and the parent can obtain the fact with a few targeted
+  reads/searches, stop the fork rather than waiting/polling repeatedly.
+- Verify fork claims against live code before implementation when the result
+  names APIs/paths not already known; a fork's summary describes what it
+  intended to do, not necessarily what it verified.
+
+This is instruction/contract hardening, not a requirement to build a general
+subagent manager.
 
 ## Exit paths
 

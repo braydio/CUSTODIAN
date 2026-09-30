@@ -19,7 +19,44 @@ Run focused lifecycle tests after changes to agent Git tooling:
 ```bash
 python3 -m unittest custodian.tools.agent.test_land_main custodian.tools.agent.test_workstream custodian.tools.agent.test_workstream_artifacts custodian.tools.agent.test_branch_hygiene
 python3 -m unittest custodian.tools.agent.test_workflow_control
+python3 custodian/tools/agent/test_task_packet_contract.py
 ```
+
+`dispatch.py`, `workstream.py`, `check_ai_context.py`, and `task_packet_index.py`
+all consume one shared packet grammar/validation authority,
+`custodian/tools/agent/task_packet_contract.py`; change packet parsing there,
+not in any of the four consumers. `workstream.py finish` fails closed before
+teardown if a current `custodian.task_packet.v2` `implementation`/`correction`
+packet is `Status: complete` without a truthful `## Completion Truth` receipt
+(`Goal satisfied` / `Completion boundary satisfied` / `Acceptance satisfied`
+all `yes`); this is never retroactive over already-archived history. `--agent`
+on `dispatch.py claim`/`claim-next` and `workstream.py start` resolves as:
+explicit flag wins, then `CUSTODIAN_AGENT_ID`, then the neutral `unspecified`
+— never a silently assumed agent brand.
+
+Validate AI-context/task-packet coordination truth and the Ready/Auto Dispatch
+README index after packet or docs changes:
+
+```bash
+python3 custodian/tools/agent/check_ai_context.py
+python3 custodian/tools/agent/check_ai_context.py --json
+python3 custodian/tools/agent/task_packet_index.py
+python3 custodian/tools/agent/test_check_ai_context.py
+python3 custodian/tools/agent/test_task_packet_index.py
+```
+
+`check_ai_context.py` is read-only; it never rewrites docs. It flags dispatcher
+metadata errors only for packets that actually declare `Dispatch:` (pre-dispatcher
+narrative docs under `task_packets/` are tolerated exactly as `dispatch.py status`
+already tolerates them), and never re-litigates already-archived historical
+packets against today's V2/Completion Truth contract. `task_packet_index.py`
+owns only the bounded `<!-- task_packet_index:managed:start/end -->` block
+inside `task_packets/README.md`'s `### Ready / Auto Dispatch` section; run
+with `--write` to repair drift. The live README does not yet have that block
+initialized — initializing it would replace the section's current hand-curated
+entries with deterministic filename+Goal renderings, which is a deliberate,
+separately reviewable migration, not an automatic side effect of routine
+validation.
 
 Task dispatch uses temporary bare remotes and worktrees to verify metadata,
 queue ordering, dependency and lock blocking, stale-main discovery, branch
