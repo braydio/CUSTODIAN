@@ -216,6 +216,9 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1.md` — **P0 immediate workflow gate**: unify packet parsing/validation/index authority, enforce Completion Truth at finish, harden context/subagent/identity/LFS execution rules, and reconcile the known procgen G3 false-closure before M2 resumes.
+- `REVIEW_TASK_PACKET_PIPELINE_EXECUTION_HARDENING_V1.md` — P0 paired post-land workflow/code/architecture review; becomes eligible only after the implementation packet lands and must pass before the procgen semantic-generation correction/M2 continuation.
+
 - `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.
 - `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 code/workflow re-review of the `block_hold_01` FX import repair.
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-correction Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off.
@@ -264,8 +267,6 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md` — P1 C2b.3 cleanup queued behind C2b.2: reconcile stale animation reachability, migrate direct Operator-PNG VFX consumers, disposition orphan/superseded canonical output, and retire compatibility SpriteFrames/resources only after zero-consumer proof.
 - `OPERATOR_ACTION_ARBITRATION.md` — P1 Slice E queued behind C2b.3: replace reflection-driven Operator animation states with explicit action arbitration + semantic presentation coordination and remove the 34 state→actor glue sites.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 post-Slice-E mobile guard composition: movement-owned lower locomotion through enter/hold/non-break recoil/exit with aim-owned upper defense, continuity guards, and runtime-scale strafe validation.
-- `AI_CONTEXT_TASK_PACKET_VALIDATOR.md` — P2 read-only validator for required AI context, task-packet/index consistency, auto-dispatch metadata, and bounded authority-path drift.
-- `TASK_PACKET_INDEX_AUTOMODE_HARDENING.md` — P2 bounded auto-index hardening queued after the AI-context validator: deterministically check/write only the Ready / Auto Dispatch block from packet metadata while preserving manual, in-progress, and historical sections.
 
 ### In Progress
 
