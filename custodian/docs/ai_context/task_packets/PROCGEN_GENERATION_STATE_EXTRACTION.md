@@ -22,7 +22,7 @@
 - Acceptance: S1 fixed fingerprints and all direct level-data consumers match; ProcGenTilemap delegates export/capture; immutable base state is clearly separated from runtime mutation overlays.
 - Validation: Spatial normalization + candidate/materializer determinism + level-data consumer/loader representative tests + S1 quick + changed-file closeout.
 - Task overrides: `none`
-- Deferred: Facade contraction follows all ProcGenTilemap extraction siblings.
+- Deferred: Facade contraction follows all ProcGenTilemap extraction siblings. The post-D1/D2/D3 GenerationGrid audit/migration initiative now sits before D4.
 
 ## Series Contract
 
@@ -30,6 +30,6 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 ## Handoff
 
-- Next action: Finish normally; ProcGenTilemap facade contraction waits for all three extraction siblings.
+- Next action: Finish normally. Once D1+D2+D3 are all complete, `procgen-generation-data-model-audit` becomes eligible. D4 no longer follows these siblings directly; it is blocked behind the measured GenerationGrid migration initiative.
 - Best starting files: _capture_generated_tile_state, get_level_data, debug fingerprint helpers, generation/ semantic types.
 - Blockers or open questions: None known at authoring time.
