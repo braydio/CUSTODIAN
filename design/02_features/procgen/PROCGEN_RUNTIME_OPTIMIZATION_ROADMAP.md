@@ -68,7 +68,7 @@ Every slice must preserve these unless a later design authority explicitly chang
 ## V1 Full-Auto Packet Series
 
 **Series ID:** `procgen-runtime-optimization-v1`  
-**Packet count:** 26 implementation packets including S1/S11, plus 1 whole-series review and 1 next-series-authoring handoff.  
+**Packet series:** original V1 DAG plus 3 GenerationGrid prelude implementation packets and 3 paired reviews; the remaining migration packet count is intentionally deferred to X3 after X1/X2 establish the measured post-D surface.  
 **Dispatch contract:** every packet is pre-authored on `main`, `Status: ready`, and `Dispatch: auto`. Dependencies and locks, not future chat authoring, gate eligibility.
 
 This is a dependency DAG, not one giant workstream. Each packet lands independently. Multiple agents may execute independent eligible siblings in parallel; one agent may also run the serial order below.
