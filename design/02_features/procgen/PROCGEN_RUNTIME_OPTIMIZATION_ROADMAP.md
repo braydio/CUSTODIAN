@@ -192,7 +192,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | G1 | `procgen-candidate-evaluator-extraction` | **complete** | S1 |
 | G2 | `procgen-candidate-semantic-model` | **complete** | G1 |
 | G3 | `procgen-semantic-candidate-generation` | **complete** (narrower than originally claimed; see G3 Completion Evidence correction) | G2 |
-| G3-fix | `procgen-semantic-candidate-generation-correction-1` | **complete** (docs-only re-derivation; rescoped mid-workstream, see G3 Completion Evidence second correction; real rewrite tracked as a new unsliced future initiative, not closed by this row) | review-task-packet-pipeline-execution-hardening-v1 |
+| G3-fix | `procgen-semantic-candidate-generation-correction-1` | **complete** (docs-only re-derivation; real rewrite is now packetized as the post-D1/D2/D3 X1→XR1→X2→XR2→X3→XR3 GenerationGrid initiative, with measured migration implementation packets intentionally deferred to X3) | review-task-packet-pipeline-execution-hardening-v1 |
 | G4 | `procgen-accepted-candidate-materializer` | **complete** | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | **complete** | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
