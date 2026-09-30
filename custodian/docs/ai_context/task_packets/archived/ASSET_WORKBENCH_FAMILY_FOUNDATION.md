@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `asset-workbench-family-foundation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -130,22 +130,29 @@
   - Slice 6 family/state creation and source intake/pixel conversion.
   - Slice 7 platform hardening/domain expansion.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `custodian/tools/assets/asset_workbench/` supplies immutable family/state projections, read-only status composition, pure search, and transactional refresh; `asset ui` lazily launches the optional FAMILY UI. `custodian/tools/validation/asset_workbench_ui_smoke.py` passes with Textual Pilot in the supported UI virtual environment, covers fixture refresh/search/mirroring and the real 50-state Baby Opossum family, and confirms non-UI CLI independence. `asset_pipeline_v2_smoke.py`, `asset_pipeline_cli_ux_smoke.py`, `asset_requirements_smoke.py`, changed-file validation, and `git diff --check` pass. Roadmap Slice 1 is complete and Slice 2 is ready after this landing.
+
 ## Execution Feedback
 
-Complete before this packet becomes `Status: complete`.
-
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome:
-- Friction severity:
-- What went wrong:
-- Root cause / contributing factors:
-- Prevention / pipeline improvement:
-- Tooling / docs drift discovered:
-- Follow-up:
-- What worked:
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first Textual Pilot exposed that Textual 0.89.1 accepts `Tree.show_root` as a property, not a constructor keyword. Baby Opossum's 22 cataloged runtime files were LFS pointers in this worktree, so status initially appeared empty.
+- Root cause / contributing factors: The installed Textual API differs from the assumed constructor shape; degraded LFS smudge leaves pointer files even though all required objects were already cached locally.
+- Prevention / pipeline improvement: Exercise the supported Textual environment with Pilot. Before interpreting missing catalog-backed art as production absence, distinguish LFS pointers from missing files and use only already-cached LFS objects for local validation.
+- Tooling / docs drift discovered: The Asset Pipeline V2 command table omitted the new `asset ui` entrypoint; the table now documents its optional dependency boundary.
+- Follow-up: `fixed-in-scope`
+- What worked: The dedicated fixture smoke caught lifecycle, search, and UI regressions without touching production files.
 
 ## Handoff
 
-- Next action: Claim this packet from fresh `origin/main`, mark roadmap Slice 1 `in progress`, then build the read-only service/state boundary before composing the Textual shell.
+- Next action: Continue with `asset-workbench-review-studio` after this implementation lands; extend the accepted Slice 1 projections without adding a second asset-truth cache.
 - Best starting files: `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md`, `custodian/tools/assets/asset_contract.py`, `asset_status.py`, `asset.py`, `custodian/tools/validation/validation_manifest.json`.
-- Blockers or open questions: none. Do not broaden Slice 1 into REVIEW or PIPELINE mutation.
+- Blockers or open questions: none. Slice 1 remains read-only; Slice 2 owns raster REVIEW and does not add ingest mutation.

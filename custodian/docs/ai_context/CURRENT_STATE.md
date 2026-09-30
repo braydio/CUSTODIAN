@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Asset Workbench FAMILY Navigator (2026-09-30)
+
+The read-only Asset Workbench launches through `asset ui` and projects
+registered Asset V2 family contracts plus `get_family_status()` into a Textual
+family/state navigator. Its immutable service snapshot and transactional
+refresh preserve the last accepted view and semantic selection on discovery
+errors. Search filters only the accepted in-memory snapshot. Textual is an
+optional dependency; all existing non-UI `asset` commands remain usable
+without it. Slice 1 contains no raster preview or production mutation. Focused
+coverage lives in `custodian/tools/validation/asset_workbench_ui_smoke.py` and
+is selected by the `asset_workbench_ui` validation owner. Sequencing remains in
+`design/04_architecture/ASSET_WORKBENCH_ROADMAP.md`.
+
 ## Operator Workbench Isolated Art Checkout (2026-09-28)
 
 Normal `opui` launch ensures the persistent sibling `CUSTODIAN-operator-art`

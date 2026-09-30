@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shlex
 import shutil
 import subprocess
 import sys
@@ -637,6 +638,22 @@ def _output_flags(parser, *, verbose: bool = False) -> None:
     parser.add_argument("--json", action="store_true", help="Print stable machine-readable output.")
 
 
+def cmd_ui(_args) -> int:
+    """Launch the optional Textual UI without importing it for other commands."""
+    try:
+        from asset_workbench.app import run_app
+    except ImportError as exc:
+        print(
+            f"{MARK['error']} Asset Workbench UI dependencies are unavailable: {exc}\n\n"
+            "Install the optional requirements into the Python environment used for asset:\n"
+            f"  {shlex.quote(sys.executable)} -m pip install -r "
+            f"{shlex.quote(str(ASSETS_DIR / 'asset_workbench/requirements.txt'))}"
+        )
+        return 2
+    run_app()
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="asset")
     subs = parser.add_subparsers(dest="command", required=True)
@@ -690,11 +707,14 @@ def build_parser() -> argparse.ArgumentParser:
     mode.add_argument("--write", action="store_true", help="Regenerate the root REQUIRED_ASSETS.md projection.")
     mode.add_argument("--check", action="store_true", help="Fail when the generated Markdown is stale.")
     command.add_argument("--json", action="store_true", help="Print stable machine-readable requirement data.")
+    subs.add_parser("ui", help="Launch the optional read-only Asset Workbench FAMILY navigator.")
     return parser
 
 
 def main():
     args = build_parser().parse_args()
+    if args.command == "ui":
+        return cmd_ui(args)
     families = load_all_families()
     return globals()[f"cmd_{args.command}"](args, families)
 
