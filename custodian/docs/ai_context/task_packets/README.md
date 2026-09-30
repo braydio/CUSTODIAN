@@ -229,8 +229,7 @@ lost when the ephemeral worktree is removed.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
-- `PROCGEN_SEMANTIC_CANDIDATE_GENERATION_CORRECTION_1.md` — G3 correction: make rejected-candidate evaluation reachable from semantic data without instantiating `ProcGenTilemap`/TileMap/presentation/collision/nav nodes, correcting G3's overstated S3 closure claim; depends on `review-task-packet-pipeline-execution-hardening-v1`; gates M2.
-- `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER.md` — M2 route runtime mutation producers through scheduler; depends on M1 and the G3 correction above.
+- `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER.md` — M2 route runtime mutation producers through scheduler; depends on M1 and the now-landed (docs-only) G3 re-derivation; eligible/resumed.
 - `PROCGEN_PAUSE_AWARE_STREAMING.md` — M3 background prepare vs gameplay commit pause contract; depends on M2.
 - `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — M4 explicit chunk lifecycle authority; depends on M3.
 - `PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 deterministic reusable chunk payload cache; depends on M4.
