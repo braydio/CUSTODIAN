@@ -199,8 +199,8 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | **complete** | M1 + G3-fix |
 | M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
-| M4 | `procgen-chunk-lifecycle-state-machine` | **ready / eligible** | M3 |
-| MR4 | `review-procgen-chunk-lifecycle-state-machine` | queued | M4 |
+| M4 | `procgen-chunk-lifecycle-state-machine` | **complete** | M3 |
+| MR4 | `review-procgen-chunk-lifecycle-state-machine` | **eligible** | M4 |
 | M5 | `procgen-chunk-payload-cache` | **blocked / manual refresh gate** | MR4 |
 | M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | M5 |
 | P1 | `contract-world-placement-foundation` | queued | S1 |
@@ -248,9 +248,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 `procgen-chunk-lifecycle-state-machine` is eligible with a current-main audit/fix + lifecycle implementation contract and paired post-land review `review-procgen-chunk-lifecycle-state-machine`.
-**State:** S1, G1, G2, G3, G4, G5, M1, M2, M3, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. P1 remains independently dependency-eligible.
-**Next gate:** M4 replaces `_revealed_chunks` / `_queued_chunks` with one truthful chunk lifecycle authority, fixes the measured false-visible side effect in chunk enumeration, and preserves M3 tile-level PREPARE/COMMIT plus M2 derived-rebuild scheduling. Its paired review must pass before M5 is refreshed back to executable status. M5 and M6 are intentionally blocked/manual until the immediately preceding measured architecture lands; the GenerationGrid initiative remains separately gated behind D1+D2+D3.
+**Current packet:** M4 landed; its paired post-land review `review-procgen-chunk-lifecycle-state-machine` (MR4) is now eligible and must pass before M5 is refreshed back to executable status.
+**State:** S1, G1, G2, G3, G4, G5, M1, M2, M3, M4, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. P1 remains independently dependency-eligible.
+**Next gate:** M4 replaced `_revealed_chunks` / `_queued_chunks` with one truthful `ProcGenChunkLifecycle` authority, fixed the measured false-visible side effect in chunk enumeration, and preserved M3 tile-level PREPARE/COMMIT plus M2 derived-rebuild scheduling. MR4 (its paired review) is next and must pass before M5 is refreshed back to executable status. M5 and M6 remain intentionally blocked/manual until that review lands; the GenerationGrid initiative remains separately gated behind D1+D2+D3.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
@@ -668,6 +668,33 @@ Cache reusable chunk payloads such as structural tile data, prop/foliage plans, 
 ### Exit
 
 Reveal/unload/re-reveal is deterministic, avoids recomputing immutable chunk semantics, and distant unload can be enabled only after lifecycle correctness is proven.
+
+### M4 Chunk Lifecycle State Machine — Complete (pending MR4 review)
+
+`ProcGenChunkLifecycle` (`custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd`)
+is the single owner of per-chunk lifecycle state: `UNSEEN -> QUEUED ->
+PREPARED -> REVEALING -> VISIBLE -> DORMANT -> UNLOADED`. It replaces
+`_revealed_chunks`/`_queued_chunks`, which were not truthful: they marked a
+chunk "revealed" the instant its tiles were enumerated for queueing, before
+any tile actually committed. `ProcGenTilemap`'s chunk adapters
+(`_queue_chunk_for_reveal`, `_reveal_chunk_immediately`, `_update_streaming_chunks`,
+`_unload_chunk`) now register/query chunk state through this authority instead
+of the old dictionaries, and `_get_chunk_tiles()` is pure enumeration with no
+side effects. `ProcGenPauseAwareStreaming` (M3) gained two narrow optional
+progress callbacks (`on_tile_prepared`/`on_tile_committed`) so the lifecycle
+authority learns tile-level PREPARE/COMMIT progress without M3 knowing
+anything about chunk semantics, and without a second tile queue. `_is_tile_
+currently_visible()` was repaired to query canonical painted-cell TileMap
+state directly (exact per-tile truth even while its chunk is REVEALING)
+instead of chunk-level membership. Production automatic unload stays
+disabled (`streaming_unload_distant_chunks` defaults false); `UNLOADED` is
+reachable only through that already-gated path and is sticky in M4 -- M6
+owns the real reload policy.
+
+- **Landed main SHA:** `<fill at commit time>`.
+- **Closing summary:** `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE_CLAUDE_SUMMARY.md`.
+- **Evidence:** New `procgen_chunk_lifecycle_smoke.gd` proves deterministic state progression for queued unpaused reveal, pause PREPARE -> resume commit, immediate reveal, a zero-content chunk, active-radius exit to DORMANT and re-entry to VISIBLE without duplicate work, and the debug-only UNLOADED seam, plus illegal-transition detection and idempotent re-requests. `procgen_pause_aware_streaming_smoke.gd`, `procgen_candidate_promotion_smoke.gd` (restored to required regression status -- its obsolete strict streamed-floor assertion is gone), `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_macro_presentation_smoke.gd`, and `procgen_road_semantics_v2_smoke.gd` all pass unchanged (the last required one small fix: it used to poke `_revealed_chunks` directly to fake residency before testing unload/re-reveal, now calls the real `_reveal_chunk_immediately` adapter instead). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint as M1-M3, confirming no deterministic-output regression. `procgen_performance_baseline_bench.gd`'s and `procgen_performance_snapshot.gd`'s external `_revealed_chunks`/`_queued_chunks` telemetry reads were migrated to the new `ProcGenTilemap.get_resident_chunk_count()`/`get_pending_chunk_count()` public API.
+- **Next:** MR4 `review-procgen-chunk-lifecycle-state-machine` is eligible; M5 stays refresh-gated behind it.
 
 ---
 

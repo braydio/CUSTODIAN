@@ -186,8 +186,8 @@ func _run_runtime_case(map_size: Vector2i, seed_value: int) -> Dictionary:
 	await _generate_and_wait(map)
 
 	var queue_peak := (map.get("_streaming_reveal_queue") as Array).size()
-	var revealed_peak := (map.get("_revealed_chunks") as Dictionary).size()
-	var revealed_before := int((map.get("_revealed_chunks") as Dictionary).size())
+	var revealed_peak := map.get_resident_chunk_count()
+	var revealed_before := revealed_peak
 	var frame_time_ms_samples: Array = []
 
 	for _frame in range(RUNTIME_FRAME_SAMPLES):
@@ -195,9 +195,9 @@ func _run_runtime_case(map_size: Vector2i, seed_value: int) -> Dictionary:
 		await process_frame
 		frame_time_ms_samples.append(float(Time.get_ticks_usec() - started) / 1000.0)
 		queue_peak = maxi(queue_peak, (map.get("_streaming_reveal_queue") as Array).size())
-		revealed_peak = maxi(revealed_peak, (map.get("_revealed_chunks") as Dictionary).size())
+		revealed_peak = maxi(revealed_peak, map.get_resident_chunk_count())
 
-	var revealed_after := int((map.get("_revealed_chunks") as Dictionary).size())
+	var revealed_after := map.get_resident_chunk_count()
 
 	var snapshot := SNAPSHOT_SCRIPT.runtime_snapshot(
 		map, self, queue_peak, revealed_peak, frame_time_ms_samples

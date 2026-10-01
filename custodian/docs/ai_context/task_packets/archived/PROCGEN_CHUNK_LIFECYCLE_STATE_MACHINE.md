@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-chunk-lifecycle-state-machine`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-pause-aware-streaming`
@@ -40,26 +40,26 @@ This packet remains M4 of `procgen-runtime-optimization-v1`, but its post-land i
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `removed`
-- Evidence: `<fill with old-state inventory disposition, lifecycle owner/API, focused lifecycle + M3 + regression results, deterministic lifecycle snapshot, S1 evidence, docs/index/roadmap reconciliation, and exact removal of old chunk dictionaries>`
+- Evidence: Pre-change audit confirmed exactly 9 live references to `_revealed_chunks` and 5 to `_queued_chunks` in `custodian/game/world/procgen/proc_gen_tilemap.gd`, all migrated; `ProcGenChunkLifecycle` (`custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd`) is the single new owner, wired through `_queue_chunk_for_reveal`, `_reveal_chunk_immediately`, `_update_streaming_chunks`, `_unload_chunk`, `_prepare_streaming_reveal`, and two new narrow `ProcGenPauseAwareStreaming` progress callbacks (`on_tile_prepared`/`on_tile_committed`). `_get_chunk_tiles()` is now pure enumeration with zero side effects (proved directly: calling it twice before any request leaves the chunk UNSEEN). `_is_tile_currently_visible()` now queries canonical painted-cell TileMap state directly instead of chunk membership, fixing the measured false-visible bug (a QUEUED/PREPARED chunk is no longer reported visible, and a REVEALING chunk reports exact per-tile truth). `procgen_chunk_lifecycle_smoke.gd` (new) proves, in one unit-level contract pass plus one live-ProcGenTilemap integration pass: idempotent requests, zero-content chunks resolving straight to VISIBLE, QUEUED->PREPARED->REVEALING->VISIBLE under a tile-budgeted multi-frame drain with truthful per-tile visibility throughout, DORMANT/VISIBLE active-window exit/re-entry with zero duplicate commit work and zero presentation change, the debug-only UNLOADED seam (plus the re-request-after-unload mechanism needed by an existing regression, distinct from M6's reload *policy*), and illegal-transition detection with no state coercion. `procgen_pause_aware_streaming_smoke.gd`, `procgen_candidate_promotion_smoke.gd` (restored to required regression status), `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_macro_presentation_smoke.gd`, `procgen_road_semantics_v2_smoke.gd` (one small required fix: it used to poke `_revealed_chunks` directly, now calls the real `_reveal_chunk_immediately` adapter), and `runtime_wall_collision_compaction_smoke.gd` (19 bodies/443 shapes, unchanged from M1/M2 baseline) all pass. S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint (`1773840677`) as M1-M3. A full `run_validation.py --changed` sweep (25 selected tests) and `git diff --check` are both clean. `procgen_performance_baseline_bench.gd` and `procgen_performance_snapshot.gd`'s external `_revealed_chunks`/`_queued_chunks` telemetry reads were migrated to new `ProcGenTilemap.get_resident_chunk_count()`/`get_pending_chunk_count()` public API. `STREAMING_PROCGEN_REVEAL.md`, `FILE_INDEX.md`, the detailed roadmap, and the master roadmap's S7 row were reconciled to landed truth (S5's stale status was already corrected by other concurrent work before this packet started).
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none` or concrete failures/near-misses
-- Root cause / contributing factors: `none` or concise cause
-- Prevention / pipeline improvement: `none` or smallest repeatable fix
-- Tooling / docs drift discovered: `none` or exact stale/missing authority
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
-- What worked: optional, one short line at most
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: Three issues surfaced only once real behavior was exercised, not from reading the code: (1) The first UNLOADED design made it a sticky/terminal state (no re-request allowed), reasoning that "M6 owns the real DORMANT -> UNLOADED -> reload policy" meant M4 shouldn't support re-entry at all -- this broke the existing, already-required `procgen_road_semantics_v2_smoke.gd`, which legitimately unloads then immediately re-reveals a chunk to prove decal persistence. The fix was to separate the reload *mechanism* (re-requesting an unloaded chunk, which must keep working) from the reload *policy* (deciding when/whether to do so, which is genuinely M6's). (2) The validation harness (`run_validation.py`) classifies any stderr line containing `ERROR:` as fatal regardless of the script's own exit code or printed PASS, which meant the new smoke's deliberate illegal-transition `push_error` calls (proving "fail loudly, never silently coerce") failed the harness-level run even though the script itself passed. (3) The full `--changed` sweep is expensive and not previewable without actually running it (`--list` ignores selection filters), so verifying it required two full sequential runs rather than one.
+- Root cause / contributing factors: (1) was an overly literal reading of a non-goal describing policy ownership as if it also meant mechanism ownership. (2) is a structural harness limitation: `known_headless_warnings.json` matches by global message pattern with no per-test "this exact error is this test's expected assertion output" concept.
+- Prevention / pipeline improvement: (1) fixed in scope: `is_requested()`/`request()` now treat UNLOADED as not-currently-requested, so a fresh `request()` legitimately restarts the lifecycle from UNLOADED, while M4 still never calls this path in production (`streaming_unload_distant_chunks` stays false). (2) fixed in scope by adding two narrow, exactly-scoped patterns to `known_headless_warnings.json` (`known_chunk_lifecycle_illegal_transition_test`, `known_chunk_lifecycle_force_unload_illegal_test`) matching only this class's own illegal-transition message prefix. (3) no fix attempted; noted as a harness ergonomics gap, not blocking.
+- Tooling / docs drift discovered: `run_validation.py`'s known-warning registry has no concept of a test-scoped "this error is this test's own expected assertion," only a global message-pattern allowlist; a test that deliberately triggers `push_error` to prove fail-loudly behavior has no way to declare that locally, and must instead widen a global allowlist that could in principle also mask an unrelated real bug hitting the same message prefix in some other future test.
+- Follow-up: `manual-follow-up` on the known-warnings registry's lack of per-test scoping (see Tooling / docs drift discovered); this is a repeat flavor of the same "pipeline/tooling gap discovered mid-task" category as M3's dispatcher findings, not something to fix inside this procgen workstream.
+- What worked: Deriving tile-level visibility truth directly from canonical painted-cell TileMap state (rather than inventing new per-tile lifecycle bookkeeping) made the "truthful during REVEALING" acceptance point fall out for free, with no new state to keep consistent. Reusing M3's existing tile queue by reference (never migrating `_streaming_reveal_queue`'s storage) again meant zero changes to the two existing external telemetry consumers once their one dynamic-dictionary-access pattern was replaced with a real public API call.
 
 ## Handoff
 
-- Next action: Claim `procgen-chunk-lifecycle-state-machine` from current `origin/main`. Implement the audit/fix plus canonical lifecycle authority, then finish normally so the paired review can run.
-- Best starting files: `PROCGEN_PAUSE_AWARE_STREAMING_CLAUDE_SUMMARY.md`; `custodian/game/world/procgen/proc_gen_tilemap.gd` streaming section; `custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd`; `custodian/tools/validation/procgen_pause_aware_streaming_smoke.gd`; `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`; `custodian/tools/validation/validation_manifest.json`.
-- Blockers or open questions: None for M4. Do not solve the known dispatcher/landing-tool follow-ups inside this procgen workstream.
+- Next action: `review-procgen-chunk-lifecycle-state-machine` (MR4) is now dependency-eligible and must pass before M5 (`procgen-chunk-payload-cache`) is refreshed back to executable status.
+- Best starting files: `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE_CLAUDE_SUMMARY.md`; `custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd`; `custodian/game/world/procgen/proc_gen_tilemap.gd` streaming section; `custodian/tools/validation/procgen_chunk_lifecycle_smoke.gd`.
+- Blockers or open questions: None for M4 itself. The known-warnings registry's lack of per-test scoping (see Execution Feedback) is a process follow-up, not a blocker on this packet's own completion.

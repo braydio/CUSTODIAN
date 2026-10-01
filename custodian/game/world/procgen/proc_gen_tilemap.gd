@@ -17,6 +17,7 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 )
 const DERIVED_REBUILD_SCHEDULER_SCRIPT := preload("res://game/world/procgen/derived_rebuild_scheduler.gd")
 const PAUSE_AWARE_STREAMING_SCRIPT := preload("res://game/world/procgen/streaming/procgen_pause_aware_streaming.gd")
+const CHUNK_LIFECYCLE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_lifecycle.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
@@ -508,10 +509,9 @@ var _accepted_materialization_generation_id: int = -1
 var _accepted_materialization_invocation_count: int = 0
 var _runtime_prop_blocker_cells: Dictionary = {}
 var _runtime_prop_blocker_sources: Dictionary = {}
-var _revealed_chunks: Dictionary = {}
-var _queued_chunks: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
 var _pause_aware_streaming: ProcGenPauseAwareStreaming = null
+var _chunk_lifecycle: ProcGenChunkLifecycle = null
 var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
 var _navigation_rebuild_pending: bool = false
@@ -827,13 +827,16 @@ var _wall_shadow_isolation_enabled: bool = true
 func _ready() -> void:
 	if not generation_output_enabled:
 		return
+	_chunk_lifecycle = CHUNK_LIFECYCLE_SCRIPT.new()
 	_pause_aware_streaming = PAUSE_AWARE_STREAMING_SCRIPT.new()
 	add_child(_pause_aware_streaming)
 	_pause_aware_streaming.configure(
 		_streaming_reveal_queue,
 		_build_tile_reveal_prepare_record,
 		_commit_tile_reveal_record,
-		func() -> int: return streaming_reveal_tiles_per_frame
+		func() -> int: return streaming_reveal_tiles_per_frame,
+		_on_streaming_tile_prepared,
+		_on_streaming_tile_committed
 	)
 	add_to_group("procgen_render_isolation")
 	_cache_procgen_major_visual_items()
@@ -5770,6 +5773,32 @@ func debug_get_road_semantics_summary() -> Dictionary:
 	return _road_semantics_summary.duplicate(true)
 
 
+func debug_get_chunk_lifecycle_state(chunk_pos: Vector2i) -> int:
+	return _chunk_lifecycle.get_state(chunk_pos)
+
+
+## Count of chunks whose presentation is currently resident (VISIBLE or
+## DORMANT), the exact replacement for the old `_revealed_chunks.size()`
+## external telemetry reads now that chunk state is lifecycle-owned.
+func get_resident_chunk_count() -> int:
+	return _chunk_lifecycle.get_resident_chunks().size()
+
+
+## Chunks requested but not yet fully resident (QUEUED/PREPARED/REVEALING),
+## the exact replacement for the old `_queued_chunks.size()` external
+## telemetry reads.
+func get_pending_chunk_count() -> int:
+	return _chunk_lifecycle.get_pending_chunks().size()
+
+
+func debug_get_chunk_lifecycle_states() -> Array[Dictionary]:
+	return _chunk_lifecycle.get_debug_chunk_states()
+
+
+func debug_force_unload_chunk(chunk_pos: Vector2i) -> void:
+	_unload_chunk(chunk_pos)
+
+
 func debug_get_generated_floor_cells() -> Dictionary:
 	return _generated_floor_cells.duplicate(true)
 
@@ -8916,10 +8945,17 @@ func _configure_portal_pair(candidate_tiles: Array[Vector2i], spawned: Array[Pro
 	_portal_teleporters = [first, second]
 
 
+## Exact tile-level truth: a tile is visible iff its committed presentation
+## is actually painted right now. Chunk-level lifecycle state alone cannot
+## answer this for a REVEALING chunk, where some of its tiles are committed
+## and some are not; querying the canonical painted-cell TileMap state is
+## exact in every lifecycle state (QUEUED/PREPARED = not painted, REVEALING =
+## true only for the subset actually committed, VISIBLE/DORMANT = painted,
+## UNLOADED = erased) without needing per-tile bookkeeping of its own.
 func _is_tile_currently_visible(tile: Vector2i) -> bool:
 	if not enable_streaming_reveal:
 		return true
-	return _revealed_chunks.has(_tile_to_chunk(tile))
+	return floor_tilemap.get_cell_source_id(tile) != -1 or walls_tilemap.get_cell_source_id(tile) != -1
 
 
 func _set_floor_tile_and_generated_state(
@@ -10072,8 +10108,7 @@ func _get_chasm_presentation_cells() -> Array:
 
 
 func _prepare_streaming_reveal() -> void:
-	_revealed_chunks.clear()
-	_queued_chunks.clear()
+	_chunk_lifecycle.reset()
 	if _pause_aware_streaming != null:
 		_pause_aware_streaming.reset()
 	else:
@@ -10109,6 +10144,7 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 				_reveal_chunk_immediately(chunk)
 			else:
 				_queue_chunk_for_reveal(chunk, center_tile)
+	_chunk_lifecycle.sync_active_window(center_chunk, streaming_active_chunk_radius)
 	_sync_runtime_wall_collision_with_visible_walls()
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
@@ -10130,14 +10166,12 @@ func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> 
 	for x in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 		for y in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 			_queue_chunk_for_reveal(center_chunk + Vector2i(x, y), center_tile)
+	_chunk_lifecycle.sync_active_window(center_chunk, streaming_active_chunk_radius)
 	if streaming_unload_distant_chunks:
-		var chunk_keys := _revealed_chunks.keys()
-		for key in chunk_keys:
-			if key is Vector2i:
-				var chunk_pos := key as Vector2i
-				if maxi(abs(chunk_pos.x - center_chunk.x), abs(chunk_pos.y - center_chunk.y)) > streaming_unload_chunk_distance:
-					_unload_chunk(chunk_pos)
-					unloaded_any = true
+		for chunk_pos in _chunk_lifecycle.get_resident_chunks():
+			if maxi(abs(chunk_pos.x - center_chunk.x), abs(chunk_pos.y - center_chunk.y)) > streaming_unload_chunk_distance:
+				_unload_chunk(chunk_pos)
+				unloaded_any = true
 	if unloaded_any:
 		_flush_streaming_visual_rebuilds()
 
@@ -10183,13 +10217,13 @@ func _flush_streaming_visual_rebuilds() -> void:
 
 
 func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void:
-	if _revealed_chunks.has(chunk_pos) or _queued_chunks.has(chunk_pos):
+	if _chunk_lifecycle.is_requested(chunk_pos):
 		return
-	_queued_chunks[chunk_pos] = true
 	var tiles := _get_chunk_tiles(chunk_pos)
 	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return _streaming_reveal_priority(a, center_tile) < _streaming_reveal_priority(b, center_tile)
 	)
+	_chunk_lifecycle.request(chunk_pos, tiles.size())
 	if _pause_aware_streaming != null:
 		_pause_aware_streaming.enqueue_many(tiles)
 	else:
@@ -10225,13 +10259,17 @@ func _streaming_reveal_priority(tile: Vector2i, center_tile: Vector2i) -> float:
 
 
 func _reveal_chunk_immediately(chunk_pos: Vector2i) -> void:
-	if _revealed_chunks.has(chunk_pos):
+	if _chunk_lifecycle.is_requested(chunk_pos):
 		return
 	var tiles := _get_chunk_tiles(chunk_pos)
+	_chunk_lifecycle.request(chunk_pos, tiles.size())
 	for tile in tiles:
 		_reveal_tile(tile)
+		_chunk_lifecycle.note_committed(chunk_pos)
 
 
+## Pure chunk-tile enumeration: deterministic membership only, no lifecycle
+## or other state mutation. Legal to call repeatedly/speculatively.
 func _get_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
 	var tiles: Array[Vector2i] = []
 	var start_x := chunk_pos.x * streaming_chunk_size_tiles
@@ -10241,13 +10279,15 @@ func _get_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
 			var tile := Vector2i(x, y)
 			if _generated_floor_cells.has(tile) or _generated_wall_cells.has(tile):
 				tiles.append(tile)
-	_revealed_chunks[chunk_pos] = true
-	_queued_chunks.erase(chunk_pos)
 	return tiles
 
 
+## Disabled in production (`streaming_unload_distant_chunks` defaults false);
+## the only call site is dependency-gated behind that flag. Exercises the
+## lifecycle contract's UNLOADED state through its narrow debug/test seam.
 func _unload_chunk(chunk_pos: Vector2i) -> void:
-	if not _revealed_chunks.has(chunk_pos):
+	var state := _chunk_lifecycle.get_state(chunk_pos)
+	if state != ProcGenChunkLifecycle.State.VISIBLE and state != ProcGenChunkLifecycle.State.DORMANT:
 		return
 	var start_x := chunk_pos.x * streaming_chunk_size_tiles
 	var start_y := chunk_pos.y * streaming_chunk_size_tiles
@@ -10259,13 +10299,25 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			_remove_foliage(tile)
 			_remove_road_piece_decal(tile)
 			_remove_runtime_wall_body(tile, false, false)
-	_revealed_chunks.erase(chunk_pos)
+	_chunk_lifecycle.force_unload(chunk_pos)
 	_streaming_visual_rebuild_pending = true
 	_refresh_macro_streaming_visibility()
 
 
 func _reveal_tile(tile: Vector2i) -> void:
 	_commit_tile_reveal_record(_build_tile_reveal_prepare_record(tile))
+
+
+## Narrow M3 -> M4 progress seam: ProcGenPauseAwareStreaming reports tile-level
+## PREPARE/COMMIT events here; this adapter is the only place that converts a
+## tile to its chunk and forwards the event to the chunk lifecycle authority.
+## Neither M3 nor the lifecycle authority know about the other directly.
+func _on_streaming_tile_prepared(tile: Vector2i) -> void:
+	_chunk_lifecycle.note_prepared(_tile_to_chunk(tile))
+
+
+func _on_streaming_tile_committed(tile: Vector2i) -> void:
+	_chunk_lifecycle.note_committed(_tile_to_chunk(tile))
 
 
 ## PREPARE: pure, deterministic lookup into already-generated (seed-authored,
@@ -11009,6 +11061,9 @@ func get_runtime_health_snapshot() -> Dictionary:
 		"derived_rebuild_scheduler": _derived_rebuild_scheduler.call("get_snapshot"),
 		"pause_aware_streaming": (
 			_pause_aware_streaming.get_snapshot() if _pause_aware_streaming != null else {}
+		),
+		"chunk_lifecycle": (
+			_chunk_lifecycle.get_snapshot() if _chunk_lifecycle != null else {}
 		),
 	}
 	var cliff_state := void_cliff_face.get_debug_state() if void_cliff_face != null else {}

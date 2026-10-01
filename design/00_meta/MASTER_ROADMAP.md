@@ -276,7 +276,7 @@ state.
 | S4 Accepted-candidate materializer | complete | P1 |
 | S5 Runtime mutation scheduler | complete | P0 |
 | S6 Pause-aware streaming | complete | P1 |
-| S7 Chunk lifecycle + cache | planned | P1 |
+| S7 Chunk lifecycle + cache | in_progress | P1 |
 | S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
 | S9 Contract-world placement extraction | planned | P2 |
 | S10 Renderer / node-load consolidation | planned | P1 |
