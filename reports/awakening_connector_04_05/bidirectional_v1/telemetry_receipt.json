@@ -1,0 +1,219 @@
+{
+  "schema": "custodian.awakening_connector_transition_evidence.v1",
+  "scenario": "traversal/awakening_connector_bidirectional_v1",
+  "capture_run_id": "20261001T002104-0400",
+  "evidence_frames": {
+    "tick_000008": "forward_dust_lung_handoff.png",
+    "tick_000168": "forward_reliquary_handoff.png",
+    "tick_000217": "reverse_reliquary_handoff.png",
+    "tick_000377": "reverse_dust_lung_handoff.png"
+  },
+  "capture_contract": {
+    "captured_keyframes": 6,
+    "durable_handoff_midpoints": 4,
+    "resolution": [
+      1280,
+      720
+    ]
+  },
+  "assertions": {
+    "total": 109,
+    "passed": 109,
+    "failed": 0
+  },
+  "samples": [
+    {
+      "tick": 8,
+      "checkpoint": "forward_z05_midpoint",
+      "position": [
+        0.0,
+        -2720.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.5,
+      "connector_alpha": 0.5
+    },
+    {
+      "tick": 17,
+      "checkpoint": "forward_z05_threshold",
+      "position": [
+        0.0,
+        -2656.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 24,
+      "checkpoint": "forward_c",
+      "position": [
+        0.0,
+        -2608.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 84,
+      "checkpoint": "forward_b",
+      "position": [
+        352.0,
+        -2496.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 148,
+      "checkpoint": "forward_a",
+      "position": [
+        704.0,
+        -2352.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 159,
+      "checkpoint": "forward_z04_threshold",
+      "position": [
+        704.0,
+        -2272.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 168,
+      "checkpoint": "forward_z04_midpoint",
+      "position": [
+        704.0,
+        -2208.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.5,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 0.5
+    },
+    {
+      "tick": 177,
+      "checkpoint": "forward_room04",
+      "position": [
+        704.0,
+        -2144.0
+      ],
+      "settled": true,
+      "zone04_alpha": 1.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 0.0
+    },
+    {
+      "tick": 217,
+      "checkpoint": "reverse_z04_midpoint",
+      "position": [
+        704.0,
+        -2208.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.5,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 0.5
+    },
+    {
+      "tick": 226,
+      "checkpoint": "reverse_z04_threshold",
+      "position": [
+        704.0,
+        -2272.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 237,
+      "checkpoint": "reverse_a",
+      "position": [
+        704.0,
+        -2352.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 301,
+      "checkpoint": "reverse_b",
+      "position": [
+        352.0,
+        -2496.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 361,
+      "checkpoint": "reverse_c",
+      "position": [
+        0.0,
+        -2608.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 368,
+      "checkpoint": "reverse_z05_threshold",
+      "position": [
+        0.0,
+        -2656.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.0,
+      "connector_alpha": 1.0
+    },
+    {
+      "tick": 377,
+      "checkpoint": "reverse_z05_midpoint",
+      "position": [
+        0.0,
+        -2720.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 0.5,
+      "connector_alpha": 0.5
+    },
+    {
+      "tick": 386,
+      "checkpoint": "reverse_room05",
+      "position": [
+        0.0,
+        -2784.0
+      ],
+      "settled": true,
+      "zone04_alpha": 0.0,
+      "zone05_alpha": 1.0,
+      "connector_alpha": 0.0
+    }
+  ],
+  "warnings": 0
+}

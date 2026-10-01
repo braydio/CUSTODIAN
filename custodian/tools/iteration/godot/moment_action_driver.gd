@@ -241,6 +241,15 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"show_seam_08_10",
 			"show_seam_08_09",
 		],
+		"awakening_connector_bidirectional_v1": [
+			"forward_z05_midpoint", "forward_z05_threshold", "forward_c",
+			"forward_connector_entry", "forward_b", "forward_a_approach",
+			"forward_a", "forward_z04_threshold", "forward_z04_midpoint",
+			"forward_room04", "reverse_z04_midpoint", "reverse_z04_threshold",
+			"reverse_a", "reverse_a_approach", "reverse_b",
+			"reverse_c_approach", "reverse_c", "reverse_z05_threshold",
+			"reverse_z05_midpoint", "reverse_room05",
+		],
 	}
 	if command not in allowed.get(fixture_id, []):
 		result.ok = false

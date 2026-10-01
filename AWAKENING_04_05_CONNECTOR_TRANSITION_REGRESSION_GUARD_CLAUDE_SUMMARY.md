@@ -1,0 +1,19 @@
+# Awakening 04→05 Connector Transition Regression Guard — Summary
+
+The new Moment Forge scenario traverses the true L-shaped 04→05 route at fixed eight-pixel physics steps: Dust Lung → C → horizontal dogleg B → A → Locker Reliquary, then the exact reverse. The first diagonal prototype left the authored connector rectangles; it was replaced with explicit throat/dogleg waypoints before validation.
+
+At each room join, the fixture records the operator position plus effective Zone04, Zone05, and connector alpha at the handoff midpoint, threshold, and connector checkpoint. It also checks matched forward/reverse alpha, connector visibility through C/B/A, and room restoration. The no-capture run passed all 109 assertions. The evidence run captured six authored frames, including the required four midpoint views (each join in both directions); those four 1280×720 frames and the compact alpha/position receipt are durable under `reports/awakening_connector_04_05/bidirectional_v1/`. Four full views are retained because pixel continuity at two room joins in both travel directions is part of acceptance; the structured telemetry alone cannot prove seam appearance. The two other captures are dogleg checkpoints already covered by alpha telemetry and were not retained.
+
+The existing `awakening_first_return`, `awakening_first_return_geometry`, and `awakening_first_return_progression` validations all passed. The one required `run_validation.py --changed --json` closeout sweep exited 4: the unrelated `review_pairing_contract` unit test rejected two other ready packets with missing validation-script paths, so five selected Moment checks (including this new manifest entry) were skipped after the lower-tier failure. `check_ai_context.py --json` also reports pre-existing unrelated drift for `ASH_BELL_FORLORN_RITUALANT.md`, `BLACK_RELIQUARY_LIVE_MINIMAP.md`, and archived `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md`. No unrelated packets were edited. The first scene/progression smokes reported two invalid UID warnings for the active `block_hold_01` east/west FX resources; this workstream did not edit them. Their runtime text paths resolved and the smokes passed. Godot import initialized the isolated worktree’s ignored `.godot` cache; no imported/generated cache files were staged. No runtime controller, art, compositor, or Layout geometry changed.
+
+## Process Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: The first Moment Forge launch failed on an intentionally unbound connector foreground role; the fresh worktree lacked Godot import/class cache; and an early draft violated the six-keyframe schema. After those corrections, all scoped tests passed. The required changed-file sweep exited 4 because `review_pairing_contract` found two unrelated ready packets with missing validation-script paths, which skipped all Moment-tier cases in the sweep.
+- Root cause / contributing factors: The flattened connector master has no foreground node; isolated worktrees lack ignored Godot import state; other ready packets reference missing validation scripts.
+- Prevention / pipeline improvement: Fixed the fixture, initialized local import state, and registered the scenario as a Moment-tier validation owner. The unrelated queue metadata needs a separate owner before the changed-file sweep can pass.
+- Tooling / docs drift discovered: Added the scenario's validation manifest, recipe, and FILE_INDEX entries. `check_ai_context.py` reports existing inconsistencies for `ASH_BELL_FORLORN_RITUALANT.md`, `BLACK_RELIQUARY_LIVE_MINIMAP.md`, and archived `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md`; the managed Ready/Auto Dispatch block is not initialized.
+- Follow-up: manual-follow-up
+- What worked: Fixed-step L-dogleg traversal with paired alpha probes made both directions reproducible.

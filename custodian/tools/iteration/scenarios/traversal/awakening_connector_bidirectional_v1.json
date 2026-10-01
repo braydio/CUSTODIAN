@@ -1,0 +1,239 @@
+{
+  "assertions": [
+    {"role":"operator","severity":"error","type":"role_exists"},
+    {"role":"connector","severity":"error","type":"role_exists"},
+    {"severity":"error","type":"no_unreleased_inputs"},
+    {"path":"telemetry.json","severity":"error","type":"output_exists"},
+    {"field":"moving","message":"forward_z05_midpoint must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":8,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":8,"type":"probe_compare","value":"forward_z05_midpoint"},
+    {"field":"moving","message":"forward_z05_threshold must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":17,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":17,"type":"probe_compare","value":"forward_z05_threshold"},
+    {"field":"moving","message":"forward_c must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":24,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":24,"type":"probe_compare","value":"forward_c"},
+    {"field":"moving","message":"forward_b must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":84,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":84,"type":"probe_compare","value":"forward_b"},
+    {"field":"moving","message":"forward_a must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":148,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":148,"type":"probe_compare","value":"forward_a"},
+    {"field":"moving","message":"forward_z04_threshold must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":159,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":159,"type":"probe_compare","value":"forward_z04_threshold"},
+    {"field":"moving","message":"forward_z04_midpoint must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":168,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":168,"type":"probe_compare","value":"forward_z04_midpoint"},
+    {"field":"moving","message":"forward_room04 must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":177,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":177,"type":"probe_compare","value":"forward_room04"},
+    {"field":"moving","message":"reverse_z04_midpoint must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":217,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":217,"type":"probe_compare","value":"reverse_z04_midpoint"},
+    {"field":"moving","message":"reverse_z04_threshold must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":226,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":226,"type":"probe_compare","value":"reverse_z04_threshold"},
+    {"field":"moving","message":"reverse_a must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":237,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":237,"type":"probe_compare","value":"reverse_a"},
+    {"field":"moving","message":"reverse_b must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":301,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":301,"type":"probe_compare","value":"reverse_b"},
+    {"field":"moving","message":"reverse_c must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":361,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":361,"type":"probe_compare","value":"reverse_c"},
+    {"field":"moving","message":"reverse_z05_threshold must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":368,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":368,"type":"probe_compare","value":"reverse_z05_threshold"},
+    {"field":"moving","message":"reverse_z05_midpoint must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":377,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":377,"type":"probe_compare","value":"reverse_z05_midpoint"},
+    {"field":"moving","message":"reverse_room05 must be settled at its authored evidence tick","op":"eq","probe":"fixture_state","severity":"error","tick":386,"type":"probe_compare","value":false},
+    {"field":"checkpoint","op":"eq","probe":"fixture_state","severity":"error","tick":386,"type":"probe_compare","value":"reverse_room05"},
+    {"field":"effective_alpha","op":"gte","probe":"zone05_alpha","severity":"error","tick":8,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"zone05_alpha","severity":"error","tick":8,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","op":"gte","probe":"zone05_alpha","severity":"error","tick":17,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone05_alpha","severity":"error","tick":17,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone05_alpha","severity":"error","tick":24,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone05_alpha","severity":"error","tick":24,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone05_alpha","severity":"error","tick":361,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone05_alpha","severity":"error","tick":361,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone05_alpha","severity":"error","tick":368,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone05_alpha","severity":"error","tick":368,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone05_alpha","severity":"error","tick":377,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"zone05_alpha","severity":"error","tick":377,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","op":"gte","probe":"zone05_alpha","severity":"error","tick":386,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"zone05_alpha","severity":"error","tick":386,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone04_alpha","severity":"error","tick":148,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone04_alpha","severity":"error","tick":148,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone04_alpha","severity":"error","tick":159,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone04_alpha","severity":"error","tick":159,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone04_alpha","severity":"error","tick":168,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"zone04_alpha","severity":"error","tick":168,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","op":"gte","probe":"zone04_alpha","severity":"error","tick":177,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"zone04_alpha","severity":"error","tick":177,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone04_alpha","severity":"error","tick":217,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"zone04_alpha","severity":"error","tick":217,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","op":"gte","probe":"zone04_alpha","severity":"error","tick":226,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone04_alpha","severity":"error","tick":226,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"zone04_alpha","severity":"error","tick":237,"type":"probe_compare","value":-0.001},
+    {"field":"effective_alpha","op":"lte","probe":"zone04_alpha","severity":"error","tick":237,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":8,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":8,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":17,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":17,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":24,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":24,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":84,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":84,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":148,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":148,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":159,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":159,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":168,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":168,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":217,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":217,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":226,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":226,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":237,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":237,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":301,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":301,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":361,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":361,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":368,"type":"probe_compare","value":0.999},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":368,"type":"probe_compare","value":1.001},
+    {"field":"effective_alpha","op":"gte","probe":"connector_alpha","severity":"error","tick":377,"type":"probe_compare","value":0.49},
+    {"field":"effective_alpha","op":"lte","probe":"connector_alpha","severity":"error","tick":377,"type":"probe_compare","value":0.51},
+    {"field":"effective_alpha","message":"room plates must not be forced opaque by connector occupancy","op":"lte","probe":"zone04_alpha","severity":"error","tick":84,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","message":"room plates must not be forced opaque by connector occupancy","op":"lte","probe":"zone04_alpha","severity":"error","tick":301,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","message":"room plates must not be forced opaque by connector occupancy","op":"lte","probe":"zone05_alpha","severity":"error","tick":84,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","message":"room plates must not be forced opaque by connector occupancy","op":"lte","probe":"zone05_alpha","severity":"error","tick":301,"type":"probe_compare","value":0.001},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"zone05_alpha","probe_b":"zone05_alpha","severity":"error","tick_a":8,"tick_b":377,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"zone05_alpha","probe_b":"zone05_alpha","severity":"error","tick_a":17,"tick_b":368,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"zone05_alpha","probe_b":"zone05_alpha","severity":"error","tick_a":24,"tick_b":361,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"zone04_alpha","probe_b":"zone04_alpha","severity":"error","tick_a":159,"tick_b":226,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"zone04_alpha","probe_b":"zone04_alpha","severity":"error","tick_a":168,"tick_b":217,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"zone04_alpha","probe_b":"zone04_alpha","severity":"error","tick_a":148,"tick_b":237,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"connector_alpha","probe_b":"connector_alpha","severity":"error","tick_a":8,"tick_b":377,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"connector_alpha","probe_b":"connector_alpha","severity":"error","tick_a":17,"tick_b":368,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"connector_alpha","probe_b":"connector_alpha","severity":"error","tick_a":24,"tick_b":361,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"connector_alpha","probe_b":"connector_alpha","severity":"error","tick_a":84,"tick_b":301,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"connector_alpha","probe_b":"connector_alpha","severity":"error","tick_a":148,"tick_b":237,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"connector_alpha","probe_b":"connector_alpha","severity":"error","tick_a":168,"tick_b":217,"tolerance":0.001,"type":"probe_field_equal"},
+    {"field":"effective_alpha","message":"forward/reverse alpha must match at equivalent authored transition positions","probe_a":"connector_alpha","probe_b":"connector_alpha","severity":"error","tick_a":159,"tick_b":226,"tolerance":0.001,"type":"probe_field_equal"}
+  ],
+  "stable_fingerprint": {
+    "counters": [],
+    "event_payload_fields": {},
+    "float_quantum": 0.0001,
+    "position_quantum_px": 0.25,
+    "probes": [
+      "fixture_state",
+      "operator_position",
+      "zone04_alpha",
+      "zone05_alpha",
+      "connector_alpha"
+    ]
+  },
+  "tags": [
+    "traversal",
+    "awakening",
+    "visual_review",
+    "seam_evidence",
+    "bidirectional"
+  ],
+  "timeline": [
+    {
+      "action": "fixture_command",
+      "name": "forward_z05_midpoint",
+      "tick": 1
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_z05_threshold",
+      "tick": 10
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_c",
+      "tick": 19
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_connector_entry",
+      "tick": 26
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_b",
+      "tick": 41
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_a_approach",
+      "tick": 86
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_a",
+      "tick": 131
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_z04_threshold",
+      "tick": 150
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_z04_midpoint",
+      "tick": 161
+    },
+    {
+      "action": "fixture_command",
+      "name": "forward_room04",
+      "tick": 170
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_z04_midpoint",
+      "tick": 210
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_z04_threshold",
+      "tick": 219
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_a",
+      "tick": 228
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_a_approach",
+      "tick": 239
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_b",
+      "tick": 258
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_c_approach",
+      "tick": 303
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_c",
+      "tick": 348
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_z05_threshold",
+      "tick": 363
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_z05_midpoint",
+      "tick": 370
+    },
+    {
+      "action": "fixture_command",
+      "name": "reverse_room05",
+      "tick": 379
+    },
+    {
+      "action": "finish",
+      "tick": 419
+    }
+  ]
+}

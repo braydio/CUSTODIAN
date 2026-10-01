@@ -319,6 +319,14 @@ remain human-owned even when objective technical image checks are automated.
 - Renderer ROI: `build_roi_contact_sheet()` in `build_moment_report.py` composes
   several small named crops into one compact sheet instead of N full-resolution
   frames.
+- The 04→05 Reliquary ↔ Dust Lung connector regression is
+  `python3 custodian/tools/iteration/run_moment.py traversal/awakening_connector_bidirectional_v1 --capture-mode none`
+  (or `--capture-mode evidence` for its six authored keyframes). It fixed-step
+  traverses the actual C/B/A dogleg in both directions and asserts synchronized
+  room/connector alpha at the two 128px handoff fades, midpoint and threshold,
+  plus equivalent forward/reverse alpha. The four durable midpoint frames and
+  compact telemetry receipt live in
+  `reports/awakening_connector_04_05/bidirectional_v1/`.
 - Worked example covering all four layers at once:
   `custodian/tools/iteration/scenarios/traversal/awakening_late_seams_v1.json`
   (registration/alpha/collision-ownership/forward-backward-equivalence probes

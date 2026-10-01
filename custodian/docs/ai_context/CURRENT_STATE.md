@@ -1710,6 +1710,14 @@ collision remain Layout-owned. The first five Road modular presentation
 families require new native-size art. The sealed central Gate
 body's passage composition remains an authored-state decision.
 
+The 04→05 Reliquary ↔ Dust Lung crossfade now has a named bidirectional
+Moment Forge regression. It walks the actual C/B/A L-dogleg at fixed steps in
+both directions, records Zone04/Zone05/connector alpha through both midpoint
+and threshold transitions, and asserts equivalent forward/reverse states. The
+six-keyframe capture contract is in `traversal/awakening_connector_bidirectional_v1`;
+four handoff midpoint frames and their telemetry receipt are committed under
+`reports/awakening_connector_04_05/bidirectional_v1/`.
+
 The traversal connector/inlay blockout layer now yields to the production
 plates while Layout retains collision authority. Console and lift stations use
 Layout markers; camera reveal releases are generation-safe; debug reset cancels
