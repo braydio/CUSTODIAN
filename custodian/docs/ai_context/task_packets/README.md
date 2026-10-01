@@ -11,6 +11,16 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - Design authority: `../../../design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`.
 - Only R1 is authored at program start. Per the roadmap, author each later packet against the landed live surface of its predecessor rather than freezing speculative runtime contracts up front.
 
+## Active Non-Player Actor Runtime Refactor Series
+
+- Program tracker / architecture authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
+- Expected program size: 11 implementation packets spanning standard combat-agent decomplexification, then commanded allies, fauna, encounter/social NPCs, static autonomous agents, and final compatibility cleanup.
+- Starter packets authored against `main@02ca0025b8`:
+  - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1, ready/auto, no dependency.
+  - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2, ready/auto, depends on NPA-1.
+  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3, ready/auto, depends on NPA-2.
+- Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
+
 ## Selection
 
 - Skip packets for narrow, low-risk, single-session work.
