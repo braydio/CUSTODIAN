@@ -70,7 +70,7 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `blocked`
 - Friction severity: `medium`
-- What went wrong: `pending exact pushed high-resolution source commit and paths`
+- What went wrong: `the required pushed high-resolution source commit and paths were unavailable at execution time`
 - Root cause / contributing factors: `local source candidate is unpushed and does not match the packet's expected action identities`
 - Prevention / pipeline improvement: `publish the immutable high-resolution source set on a named remote ref and record its SHA and paths in the packet before conversion`
 - Tooling / docs drift discovered: `packet source handoff still points to a missing pushed set; local temp commit is a distinct unpushed set`
