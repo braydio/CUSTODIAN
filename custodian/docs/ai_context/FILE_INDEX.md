@@ -35,7 +35,9 @@ Last updated: 2026-09-29
 ## Persistent Recovery + Armament Registration
 
 - `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md` — persistent design authority for recoverable Custodian death, local/existing/fabricated Crèche infrastructure, field-acquired → recovered → registered equipment, capped Recovered Armory and designation assignments, initial deployment loadout, unregistered death-site retrieval, and registered-weapon field-instance invalidation. It explicitly keeps the recovery mechanism underexplained, treats current one-life game over as transitional, and defers imperfect historical designation-resolution evidence.
-- Future death, campaign-failure, inventory, weapon-loot, registration, provisioning, local recovery, and recovery-fabrication work must converge on this authority rather than creating a parallel lives/checkpoint/insurance model.
+- `design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md` — implementation tracker with a locked expected count of 8 implementation packets, explicit live-program beginning/end conditions, dependency graph, per-slice boundaries, and closeout rules.
+- `custodian/docs/ai_context/task_packets/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — active R1 V2 packet: Operator death becomes an exactly-once campaign failure handoff; current global Game Over is intentionally retained only as a compatibility fallback until R2 Post recovery/reintegration.
+- Future death, campaign-failure, inventory, weapon-loot, registration, provisioning, local recovery, and recovery-fabrication work must converge on this authority/roadmap rather than creating a parallel lives/checkpoint/insurance model.
 
 ## Map + AI Coherence
 
