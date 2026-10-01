@@ -791,6 +791,9 @@ var _walkable_boundary_last_rebuild_reason: String = ""
 var _walkable_boundary_chunks_created_total: int = 0
 var _walkable_boundary_chunks_freed_total: int = 0
 var _walkable_boundary_shape_count: int = 0
+var _walkable_boundary_rebuild_deferred: bool = false
+var _walkable_boundary_scheduler_batch_id: int = -1
+var _walkable_boundary_pending_reason: String = ""
 var _navigation_rebuild_requested_count: int = 0
 var _navigation_rebuild_completed_count: int = 0
 var _navigation_last_rebuild_usec: int = 0
@@ -805,6 +808,9 @@ var _runtime_terrain_last_commit_reason: String = ""
 var _runtime_terrain_last_changed_cell_count: int = 0
 var _shadow_rebuild_requested_count: int = 0
 var _shadow_last_rebuild_usec: int = 0
+var _shadow_rebuild_deferred: bool = false
+var _shadow_scheduler_batch_id: int = -1
+var _shadow_pending_reason: String = ""
 var _last_runtime_mutation_kind: String = ""
 var _last_runtime_mutation_uptime_sec: float = 0.0
 var _last_runtime_mutation_duration_usec: int = 0
@@ -3093,7 +3099,9 @@ func _claim_isolated_world_overlook_pocket(
 		_clear_procgen_road_authority_at(cell)
 	_rebuild_nonwalkable_surface_regions(map_size)
 	_rebuild_nonwalkable_surface_visuals()
-	_rebuild_runtime_walkable_boundary()
+	# Isolated pockets must be physically impassable the instant this call
+	# returns (callers query walkability immediately), so flush synchronously.
+	_rebuild_runtime_walkable_boundary("world_overlook_pocket", true)
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
 	_refresh_navigation_after_wall_change(true)
@@ -6753,12 +6761,41 @@ func _rebuild_runtime_wall_collision(map_size: Vector2i, reason: String = "gener
 	_record_runtime_mutation(&"procgen_runtime_wall_rebuilt", reason, _runtime_wall_last_rebuild_usec, before, _runtime_wall_shape_count, absi(_runtime_wall_shape_count - before))
 
 
-func _rebuild_runtime_walkable_boundary(reason: String = "generation") -> void:
+## Marks the walkable boundary dirty for the current scheduler batch and defers
+## the actual rebuild to end-of-frame so multiple producers mutating within the
+## same batch (connector commits, pocket claims) collapse into one rebuild.
+## Pass flush_now when the caller returns a result the next line depends on
+## the physical frontier already existing for (e.g. an isolated pocket claim
+## that must be impassable the instant it returns).
+func _rebuild_runtime_walkable_boundary(reason: String = "generation", flush_now: bool = false) -> void:
 	if walls_tilemap == null:
 		return
-	var batch_id := Engine.get_process_frames()
+	var batch_id := _walkable_boundary_scheduler_batch_id if _walkable_boundary_rebuild_deferred else Engine.get_process_frames()
 	var boundary_region := Rect2i(Vector2i.ZERO, procgen_node.map_size if procgen_node != null else Vector2i.ZERO)
 	_derived_rebuild_scheduler.call("request", &"walkable_boundary", reason, boundary_region, batch_id)
+	if _walkable_boundary_rebuild_deferred and not flush_now:
+		if _walkable_boundary_pending_reason.is_empty():
+			_walkable_boundary_pending_reason = reason
+		return
+	_walkable_boundary_rebuild_deferred = true
+	_walkable_boundary_scheduler_batch_id = batch_id
+	_walkable_boundary_pending_reason = reason
+	if flush_now:
+		_flush_walkable_boundary_rebuild()
+	else:
+		call_deferred("_flush_walkable_boundary_rebuild")
+
+
+func _flush_walkable_boundary_rebuild() -> void:
+	if not _walkable_boundary_rebuild_deferred:
+		return
+	var reason := _walkable_boundary_pending_reason if not _walkable_boundary_pending_reason.is_empty() else "generation"
+	var batch_id := _walkable_boundary_scheduler_batch_id
+	_walkable_boundary_rebuild_deferred = false
+	_walkable_boundary_pending_reason = ""
+	_walkable_boundary_scheduler_batch_id = -1
+	if walls_tilemap == null:
+		return
 	var started_usec := Time.get_ticks_usec()
 	var before := _walkable_boundary_shape_count
 	_clear_runtime_walkable_boundary()
@@ -10970,10 +11007,14 @@ func _record_runtime_mutation(kind: StringName, reason: String, duration_usec: i
 	_obs_log(kind, _runtime_mutation_payload(reason, duration_usec, before_count, after_count, changed_cells))
 
 
+## shadow_system.request_regenerate() already coalesces its own expensive
+## redraw into one deferred pass; this wrapper mirrors that coalescing in the
+## scheduler ledger so repeated requests within one batch commit once instead
+## of once per caller.
 func _refresh_shadows() -> void:
 	if shadow_system == null or not _wall_shadow_isolation_enabled:
 		return
-	var batch_id := Engine.get_process_frames()
+	var batch_id := _shadow_scheduler_batch_id if _shadow_rebuild_deferred else Engine.get_process_frames()
 	var presentation_region := Rect2i(Vector2i.ZERO, procgen_node.map_size if procgen_node != null else Vector2i.ZERO)
 	_derived_rebuild_scheduler.call("request", &"shadows", "terrain_or_wall_refresh", presentation_region, batch_id)
 	_derived_rebuild_scheduler.call("request", &"presentation", "terrain_or_wall_refresh", presentation_region, batch_id)
@@ -10984,9 +11025,23 @@ func _refresh_shadows() -> void:
 		shadow_system.call("request_regenerate")
 	_shadow_rebuild_requested_count += 1
 	_shadow_last_rebuild_usec = Time.get_ticks_usec() - started_usec
+	if _shadow_rebuild_deferred:
+		return
+	_shadow_rebuild_deferred = true
+	_shadow_scheduler_batch_id = batch_id
+	_shadow_pending_reason = "terrain_or_wall_refresh"
+	call_deferred("_flush_shadow_rebuild_commit")
+
+
+func _flush_shadow_rebuild_commit() -> void:
+	var reason := _shadow_pending_reason if not _shadow_pending_reason.is_empty() else "terrain_or_wall_refresh"
+	var batch_id := _shadow_scheduler_batch_id
+	_shadow_rebuild_deferred = false
+	_shadow_pending_reason = ""
+	_shadow_scheduler_batch_id = -1
 	_derived_rebuild_scheduler.call("commit", &"shadows", _shadow_last_rebuild_usec, batch_id)
 	_derived_rebuild_scheduler.call("commit", &"presentation", _shadow_last_rebuild_usec, batch_id)
-	_record_runtime_mutation(&"procgen_shadow_rebuild_requested", "terrain_or_wall_refresh", _shadow_last_rebuild_usec, _shadow_rebuild_requested_count - 1, _shadow_rebuild_requested_count, 0)
+	_record_runtime_mutation(&"procgen_shadow_rebuild_requested", reason, _shadow_last_rebuild_usec, _shadow_rebuild_requested_count - 1, _shadow_rebuild_requested_count, 0)
 
 
 ## Returns the largest room's center tile (good for player spawn)
