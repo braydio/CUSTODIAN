@@ -5,8 +5,8 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`  
-**Last Updated:** 2026-09-29  
+**Reviewed main:** `fb8f4b4cb81abaaa742f5f1a1d213be45947a738`  
+**Last Updated:** 2026-10-01  
 **Depends on:** none for measurement; slice dependencies below
 
 ## Purpose
@@ -69,7 +69,7 @@ Every slice must preserve these unless a later design authority explicitly chang
 
 **Series ID:** `procgen-runtime-optimization-v1`  
 **Packet series:** original V1 DAG plus 3 GenerationGrid prelude implementation packets and 3 paired reviews; the remaining migration packet count is intentionally deferred to X3 after X1/X2 establish the measured post-D surface.  
-**Dispatch contract:** every packet is pre-authored on `main`, `Status: ready`, and `Dispatch: auto`. Dependencies and locks, not future chat authoring, gate eligibility.
+**Dispatch contract:** the V1 DAG identities are pre-authored, but packets whose exact implementation contract depends on not-yet-landed measured architecture may be held `blocked` / `manual` until their prerequisite implementation and review establish the real seam. `ready` / `auto` means executable from current live evidence; dependencies, reviews, refresh gates, and locks jointly control eligibility.
 
 This is a dependency DAG, not one giant workstream. Each packet lands independently. Multiple agents may execute independent eligible siblings in parallel; one agent may also run the serial order below.
 
@@ -90,8 +90,9 @@ S1  procgen-performance-baseline-v1
 │   └─ M2 procgen-runtime-mutation-scheduler-cutover
 │       └─ M3 procgen-pause-aware-streaming
 │           └─ M4 procgen-chunk-lifecycle-state-machine
-│               └─ M5 procgen-chunk-payload-cache
-│                   └─ M6 procgen-distant-chunk-unload
+│               └─ MR4 review-procgen-chunk-lifecycle-state-machine
+│                   └─ M5 procgen-chunk-payload-cache [refresh-gated]
+│                       └─ M6 procgen-distant-chunk-unload [refresh-gated]
 │
 └─ PLACEMENT LANE
    P1 contract-world-placement-foundation
@@ -148,7 +149,7 @@ When the user has authorized one agent/session to run this full series unattende
 ```text
 S1
 G1 -> G2 -> G3 -> G4 -> G5
-M1 -> M2 -> M3 -> M4 -> M5 -> M6
+M1 -> M2 -> M3 -> M4 -> MR4 -> [refresh M5] -> M5 -> [refresh M6] -> M6
 P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> P7
 D1 -> D2 -> D3
 X1 -> XR1 -> X2 -> XR2 -> X3 -> XR3
@@ -176,7 +177,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | S4 Accepted materialization | G4 + G5 |
 | S5 Runtime mutation scheduler | M1 + M2 |
 | S6 Pause-aware streaming | M3 |
-| S7 Chunk lifecycle/cache | M4 + M5 + M6 |
+| S7 Chunk lifecycle/cache | M4 + MR4 + refreshed M5 + refreshed M6 |
 | S8 ProcGenTilemap decomplexification | D1 + D2 + D3 + X1/XR1 + X2/XR2 + X3/XR3 + measured generated migration DAG + D4 |
 | S9 Contract-world placement extraction | P1 + P2 + P3 + P4 + P5 + P6 + P7 |
 | S10 Renderer/node-load work | V1 + V2 |
@@ -198,9 +199,10 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | **complete** | M1 + G3-fix |
 | M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
-| M4 | `procgen-chunk-lifecycle-state-machine` | queued | M3 |
-| M5 | `procgen-chunk-payload-cache` | queued | M4 |
-| M6 | `procgen-distant-chunk-unload` | queued | M5 |
+| M4 | `procgen-chunk-lifecycle-state-machine` | **ready / eligible** | M3 |
+| MR4 | `review-procgen-chunk-lifecycle-state-machine` | queued | M4 |
+| M5 | `procgen-chunk-payload-cache` | **blocked / manual refresh gate** | MR4 |
+| M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | M5 |
 | P1 | `contract-world-placement-foundation` | queued | S1 |
 | P2 | `contract-world-resource-placement-extraction` | queued | P1 |
 | P3 | `contract-world-vehicle-placement-extraction` | queued | P1 |
@@ -235,7 +237,7 @@ Every procgen optimization slice must update this roadmap in the same landed cha
 1. set the slice status to `complete`, `blocked`, or the truthful current state;
 2. replace `TBD` completion evidence with the landed main SHA, closing summary, and high-signal before/after metric;
 3. update the **Current Program Position** section;
-4. do not author ordinary V1 successor packets: the complete V1 DAG is already published; update only truthful status/evidence unless a contract is proven invalid;
+4. preserve the published V1 workstream identities, but re-derive a downstream packet in place when its prior measured-state assumptions depend on architecture that has not landed yet; do not create duplicate `_v2` packet authorities;
 5. mirror the same macro-slice outcome into the `Cross-cutting Procgen Runtime Optimization` table in `design/00_meta/MASTER_ROADMAP.md`; map detailed `queued` to master `planned` until an implementation is actually in progress;
 6. add newly discovered V1 work only when it is independently necessary and cannot be owned by an existing packet; otherwise carry it to Q1/A1 for V2 series authoring;
 7. never rewrite historical slice evidence to make later results look cleaner.
@@ -246,9 +248,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 `procgen-chunk-lifecycle-state-machine` is eligible; `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
+**Current packet:** M4 `procgen-chunk-lifecycle-state-machine` is eligible with a current-main audit/fix + lifecycle implementation contract and paired post-land review `review-procgen-chunk-lifecycle-state-machine`.
 **State:** S1, G1, G2, G3, G4, G5, M1, M2, M3, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. P1 remains independently dependency-eligible.
-**Next gate:** M3 landed — `ProcGenPauseAwareStreaming` now owns the pause-aware PREPARE/COMMIT lifecycle for already-requested streaming-reveal work, proven to freeze authoritative topology/collision/navigation publication while paused and drain exactly once under bounded budgets on resume. M4 `procgen-chunk-lifecycle-state-machine` is next. The generation-data-model initiative is separately dependency-gated behind D1+D2+D3 and does not block the M/P lanes.
+**Next gate:** M4 replaces `_revealed_chunks` / `_queued_chunks` with one truthful chunk lifecycle authority, fixes the measured false-visible side effect in chunk enumeration, and preserves M3 tile-level PREPARE/COMMIT plus M2 derived-rebuild scheduling. Its paired review must pass before M5 is refreshed back to executable status. M5 and M6 are intentionally blocked/manual until the immediately preceding measured architecture lands; the GenerationGrid initiative remains separately gated behind D1+D2+D3.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
