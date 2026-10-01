@@ -9,18 +9,18 @@
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - Completion boundary: Done when resource candidate building, scoring, spacing, presets, instantiation/positioning, and placement telemetry are service-owned; loader only invokes the service through the placement context.
-- Current measured state: ContractWorldLoader owns _position_tutorial_resource_nodes, _position_expedition_resource_nodes, candidate builders, stable scoring/pickers, resource spacing, presets, and resource node creation.
-- Evidence: contract_resource_node_smoke.gd; EXPEDITION_RESOURCE_PLACEMENT_STEP_1.md; placement foundation.
+- Current measured state: Resource placement is still entirely live in `custodian/game/systems/core/systems/contract_world_loader.gd`: `_position_tutorial_resource_nodes`, `_position_expedition_resource_nodes`, `_instantiate_generated_resource_node`, tutorial/expedition candidate builders, fallback eligibility, stable score/pickers, spacing, preset tables, preset application, and excluded-region checks. `custodian/game/world/placement/` contains no service implementation yet.
+- Evidence: `custodian/game/systems/core/systems/contract_world_loader.gd`; `custodian/game/world/placement/README.md`; `custodian/tools/validation/contract_resource_node_smoke.gd`; `custodian/tools/validation/contract_world_population_placement_smoke.gd`; P1 placement-context contract.
 - Task-specific authority: world placement README; resource-node current behavior; placement foundation.
-- Work surface: game/world/placement/resource_placement_service.gd (or equivalent), loader delegation, resource placement tests/manifest.
+- Work surface: `custodian/game/world/placement/resource_placement_service.gd` (or a clearly equivalent resource-domain file inside that existing directory), `custodian/game/systems/core/systems/contract_world_loader.gd` delegation only, `custodian/game/world/placement/README.md`, and focused resource-placement validation.
 - Change: Extract current resource placement as-is, preserving stable score/tie semantics and tutorial/expedition separation. Service requests placement through context and emits the same observability payloads; it does not own map generation or inventory/resource-node simulation.
 - Preserve: Exact fixed-seed positions/presets/counts, spawn/compound clearances, current missing-candidate fallback behavior.
 - Non-goals: No resource-economy redesign, node art changes, extraction loop, or power/logistics changes.
 - Acceptance: Fixed-seed resource placement snapshots equal pre-extraction results and loader contains no resource-domain candidate/scoring policy beyond service invocation.
-- Validation: contract_resource_node_smoke + population placement smoke + new service unit/snapshot test + changed-file closeout.
+- Validation: `res://tools/validation/contract_resource_node_smoke.gd` first, then `res://tools/validation/contract_world_population_placement_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, any implementation-created resource service snapshot/unit smoke after it exists, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains remain independent packets.
 
