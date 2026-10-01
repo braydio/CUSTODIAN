@@ -106,6 +106,12 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
         root = Path(temporary)
         manifest_path, east, west = fixture(root, 20)
         originals = {path: path.read_bytes() for path in (*east.values(), *west.values())}
+        canonical_frames = root / "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
+        compatibility_frames = root / "custodian/game/actors/operator/operator_runtime_frames.tres"
+        for resource, content in ((canonical_frames, b"canonical frames before"), (compatibility_frames, b"compatibility frames before")):
+            resource.parent.mkdir(parents=True, exist_ok=True)
+            resource.write_bytes(content)
+        original_resources = {canonical_frames: canonical_frames.read_bytes(), compatibility_frames: compatibility_frames.read_bytes()}
         timing_paths = tuple(model.BUILDER.timing_sidecar_path(paths["lower_body"]) for paths in (east, west))
         original_timing = {path: path.read_bytes() for path in timing_paths}
         exported = {layer: root / f"edited_{layer}.png" for layer in LAYERS}
@@ -132,12 +138,15 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
         def downstream(*_args, **_kwargs):
             nonlocal calls
             calls += 1
+            if calls == 1:
+                canonical_frames.write_bytes(b"canonical frames regenerated")
+                compatibility_frames.write_bytes(b"compatibility frames regenerated")
             if fail_downstream and calls == 1: raise subprocess.CalledProcessError(91, "injected-runtime-build")
             return subprocess.CompletedProcess([], 0)
         try:
             model.REPO_ROOT=root; model.CUSTODIAN_ROOT=root/"custodian"; model.PIPELINES=root/"custodian/tools/pipelines"
             model.rel=lambda path,repo_root=root:str(Path(path).relative_to(repo_root))
-            model.source_index=source_index; workbench.GENERATED_OPERATOR_RESOURCES=[]
+            model.source_index=source_index; workbench.GENERATED_OPERATOR_RESOURCES=[canonical_frames, compatibility_frames]
             workbench.aseprite_run=aseprite_run; workbench.resolve_aseprite=lambda *_args,**_kwargs:Path("/bin/true")
             workbench._validation_commands=lambda *_args,**_kwargs:[]
             workbench._compatibility_update=lambda:None; workbench._compatibility_check=lambda:None
@@ -149,8 +158,13 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
                 else: raise AssertionError("injected downstream failure did not escape publish")
                 assert all(path.read_bytes() == content for path, content in originals.items())
                 assert all(path.read_bytes() == content for path, content in original_timing.items())
+                assert all(path.read_bytes() == content for path, content in original_resources.items())
                 journal = json.loads(sorted((manifest_path.parent / "transactions").glob("*/transaction.json"))[-1].read_text())
                 assert journal["state"] == "ROLLED_BACK" and journal["mirror_promotion"]["enabled"] is mirror
+                resource_backups = {item["backup_path"] for item in journal["resources"]}
+                assert any(path.endswith("custodian/content/sprites/operator/runtime/operator_runtime_frames.tres") for path in resource_backups)
+                assert any(path.endswith("custodian/game/actors/operator/operator_runtime_frames.tres") for path in resource_backups)
+                assert len(resource_backups) == len(journal["resources"]), "resource backups must not collide by basename"
             else:
                 workbench.publish(manifest_path, mirror_counterpart=mirror)
                 for layer in LAYERS: assert east[layer].read_bytes() == exported[layer].read_bytes()
@@ -171,6 +185,10 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
 
 
 def main() -> None:
+    canonical_resource = model.CUSTODIAN_ROOT / "content/sprites/operator/runtime/operator_runtime_frames.tres"
+    assert canonical_resource in workbench.GENERATED_OPERATOR_RESOURCES
+    resource_paths = [path.resolve() for path in workbench.GENERATED_OPERATOR_RESOURCES]
+    assert len(resource_paths) == len(set(resource_paths)), "generated resource backups must be path-unique"
     run_case(mirror=False, fail_downstream=False)
     run_case(mirror=True, fail_downstream=False)
     run_case(mirror=True, fail_downstream=True)
