@@ -23,12 +23,6 @@ from task_packet_contract import (
     completion_truth_required, parse_completion_truth, parse_packet,
 )
 
-# TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z
-_LFS_DEGRADED_MODE_EXPIRES_UTC = datetime(2026, 10, 1, 4, 0, tzinfo=timezone.utc)
-if datetime.now(timezone.utc) < _LFS_DEGRADED_MODE_EXPIRES_UTC:
-    os.environ.setdefault("GIT_LFS_SKIP_SMUDGE", "1")
-# TEMP_LFS_DEGRADED_MODE_END
-
 class WorkstreamError(RuntimeError):
     pass
 
