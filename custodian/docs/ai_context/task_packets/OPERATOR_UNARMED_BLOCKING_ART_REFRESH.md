@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-unarmed-blocking-art-refresh`
-- Status: `ready`
+- Status: `in_progress`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -63,15 +63,15 @@
 
 - Next action: Auto-claim this workstream, resolve the exact pushed high-resolution temp source SHA/paths first, then run one crisp conversion + recomposition proof on guard enter before batching hold and hit.
 - Best starting files: `tools/custodian_aliases.sh`; `custodian/tools/art/custodian_pixelart_converter.py`; `custodian/tools/operator/unarmed_fast_chain_prepare.py`; `custodian/tools/operator/build_fast01_south_modular_layers.py`; current three `unarmed/defense` source action directories; `custodian/tools/operator/operator_ingest.sh`; `operator.gd::_play_modular_unarmed_block`; `operator_modular_defense_ranged_smoke.gd`.
-- Blockers or open questions: The high-resolution temp input paths are not visible as standalone tracked files on reviewed `main`, and the latest dedicated art-branch commit contains already-normalized 96 px output. The task is intentionally fail-closed until the pushed high-resolution temp commit/paths are positively resolved; no art-direction choice remains once those inputs are found.
+- Blockers or open questions: The pushed high-resolution temp input commit/paths remain unresolved. The local coordination checkout has commit `59329a1875dca079002f015c7293a64e9147d8dc` (`temp block source files`), but it is not reachable from `origin/main`, `origin/workbench/operator-art`, or this task branch. Its cached 2172x724 sheets use a different action set (`block_enter_01`, `block_hold_01`, light/heavy recoil, etc.) and do not establish the packet's expected `enter_block_01`, `block_loop_01`, and `block_hit_01` sources. Do not publish or substitute them without resolving source identity. The task remains fail-closed until the exact pushed high-resolution sources are identified; no art-direction choice remains once those inputs are found.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
+- Outcome: `blocked`
+- Friction severity: `medium`
+- What went wrong: `pending exact pushed high-resolution source commit and paths`
+- Root cause / contributing factors: `local source candidate is unpushed and does not match the packet's expected action identities`
+- Prevention / pipeline improvement: `publish the immutable high-resolution source set on a named remote ref and record its SHA and paths in the packet before conversion`
+- Tooling / docs drift discovered: `packet source handoff still points to a missing pushed set; local temp commit is a distinct unpushed set`
+- Follow-up: `manual-follow-up`
