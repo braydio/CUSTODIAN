@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-operator-workbench-sparse-art-checkout-review-corrections-1`
+- Depends on: `review-operator-workbench-browser-preview-refresh-hardening`
 - Locks: `operator-workbench-ui, operator-workbench-publish`
 - Kind: `implementation`
 - Review: `auto`
