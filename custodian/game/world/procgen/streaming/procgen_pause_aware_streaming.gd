@@ -34,6 +34,8 @@ var _prepared: Array[Dictionary] = []
 var _build_record: Callable = Callable()
 var _commit_record: Callable = Callable()
 var _get_prepare_budget: Callable = Callable()
+var _on_tile_prepared: Callable = Callable()
+var _on_tile_committed: Callable = Callable()
 var _resume_event_pending: bool = false
 
 
@@ -44,16 +46,24 @@ func _ready() -> void:
 ## `queue_ref` must be the exact Array[Vector2i] the owner also exposes as its
 ## own pending-reveal field; it is shared by reference (never duplicated) so
 ## owner introspection and this authority's bookkeeping always agree.
+## `on_tile_prepared`/`on_tile_committed` are optional narrow progress
+## callbacks (each takes one `Vector2i` tile) for an external chunk-lifecycle
+## owner (M4); this authority stays unaware of chunk semantics and just
+## reports tile-level PREPARE/COMMIT events as they happen.
 func configure(
 	queue_ref: Array[Vector2i],
 	build_record: Callable,
 	commit_record: Callable,
-	get_prepare_budget: Callable
+	get_prepare_budget: Callable,
+	on_tile_prepared: Callable = Callable(),
+	on_tile_committed: Callable = Callable()
 ) -> void:
 	_queue = queue_ref
 	_build_record = build_record
 	_commit_record = commit_record
 	_get_prepare_budget = get_prepare_budget
+	_on_tile_prepared = on_tile_prepared
+	_on_tile_committed = on_tile_committed
 
 
 func reset() -> void:
@@ -114,17 +124,25 @@ func drain_commit(max_count: int) -> int:
 	var remaining := max_count
 	var committed := 0
 	while remaining > 0 and not _prepared.is_empty():
-		_commit_record.call(_prepared.pop_front())
+		var record: Dictionary = _prepared.pop_front()
+		_commit_record.call(record)
+		_notify_committed(record.get("tile"))
 		committed += 1
 		committed_count += 1
 		remaining -= 1
 	while remaining > 0 and not _queue.is_empty():
 		var tile: Vector2i = _queue.pop_front()
 		_commit_record.call(_build_record.call(tile))
+		_notify_committed(tile)
 		committed += 1
 		committed_count += 1
 		remaining -= 1
 	return committed
+
+
+func _notify_committed(tile: Vector2i) -> void:
+	if _on_tile_committed.is_valid():
+		_on_tile_committed.call(tile)
 
 
 func _process(_delta: float) -> void:
@@ -150,5 +168,7 @@ func _advance_prepare() -> void:
 		prepared_count += 1
 		prepared_any = true
 		budget -= 1
+		if _on_tile_prepared.is_valid():
+			_on_tile_prepared.call(tile)
 	if prepared_any:
 		_resume_event_pending = true

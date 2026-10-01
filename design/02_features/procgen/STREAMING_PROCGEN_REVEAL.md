@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Status:** In Progress  
 **Created:** 2026-03-26
-**Last Updated:** 2026-04-08
+**Last Updated:** 2026-10-01
 **Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
 ## Goal
@@ -41,6 +41,13 @@ This preserves:
 - Outer chunks are queued and revealed over subsequent frames.
 - Reveal order is distance-biased so tiles appear to build outward from the player.
 - As content systems deepen, reveal order may also prioritize structurally or fictionally important signals (ingress, terminal zones, relay anchors, obvious machine warnings) as long as determinism is preserved.
+
+## Runtime Lifecycle, Scheduling, and Pause (M2-M4)
+
+- Derived rebuild publication (walkable boundary, shadows/presentation, navigation, collision, topology) batches through `ProcGenDerivedRebuildScheduler`: the first request in a scheduler batch schedules the real rebuild via a dirty-flag + `call_deferred` flush, and repeated requests within the same batch coalesce into that one flush/commit instead of one rebuild per caller. `_claim_isolated_world_overlook_pocket` is the sole exception requiring a synchronous, same-call `flush_now` postcondition.
+- Tile-level reveal has explicit PREPARE/COMMIT phases owned by `ProcGenPauseAwareStreaming`. While the game is paused, already-queued tiles may be deterministically PREPAREd (a pure lookup into already-generated floor/wall data) without mutating any live TileMap/collision/navigation/foliage state and without accepting new player-driven discovery. COMMIT (the actual authoritative mutation) stays frozen while paused; on resume, prepared work drains first in original order, then any remaining queued tiles, under the same bounded per-frame budget as normal play.
+- Per-chunk state is owned by `ProcGenChunkLifecycle`, a deterministic state machine: `UNSEEN -> QUEUED -> PREPARED -> REVEALING -> VISIBLE -> DORMANT -> UNLOADED`. A chunk is `QUEUED` once requested, `PREPARED` once every planned tile is prepared with none yet committed, `REVEALING` from its first authoritative tile commit, and `VISIBLE` once every planned tile has committed; a zero-content chunk becomes `VISIBLE` immediately. `VISIBLE` chunks that fall outside the current active interest radius become `DORMANT` (tracked for future interest/eviction decisions) and return to `VISIBLE` on re-entry without any duplicate queue/commit work -- M4 never removes a `DORMANT` chunk's presentation. `UNLOADED` exists in the contract and is reachable only through the already-disabled-by-default distant-unload path (`streaming_unload_distant_chunks`); production never reaches it, and reload from `UNLOADED` is not yet implemented.
+- Exact per-tile visibility (used, for example, when a runtime mutation needs to know whether to paint its own result immediately) is answered by querying canonical painted-cell TileMap state directly, not chunk-level state -- a `REVEALING` chunk can have some committed tiles and some not, and only the TileMap itself knows which.
 
 ## Collision + Navigation
 

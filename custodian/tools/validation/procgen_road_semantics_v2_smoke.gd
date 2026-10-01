@@ -277,7 +277,7 @@ func _test_production_integration() -> void:
 		var expected_role := tilemap.debug_get_ruined_road_surface_role_at(sample)
 		var chunk_size := tilemap.streaming_chunk_size_tiles
 		var chunk := Vector2i(sample.x / chunk_size, sample.y / chunk_size)
-		tilemap._revealed_chunks[chunk] = true
+		tilemap.call("_reveal_chunk_immediately", chunk)
 		tilemap.call("_unload_chunk", chunk)
 		await process_frame
 		_require(not tilemap.debug_has_ruined_road_surface_decal_at(sample), "unloaded chunk retained a ruined-road decal")

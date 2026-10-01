@@ -63,8 +63,6 @@ static func runtime_snapshot(
 	revealed_chunk_count_peak: int,
 	frame_time_ms_samples: Array
 ) -> Dictionary:
-	var revealed_chunks: Dictionary = tilemap.get("_revealed_chunks")
-	var queued_chunks: Dictionary = tilemap.get("_queued_chunks")
 	var reveal_queue: Array = tilemap.get("_streaming_reveal_queue")
 	var blocker_cells: Dictionary = tilemap.get("_runtime_prop_blocker_cells")
 	var node_stats := {}
@@ -73,8 +71,8 @@ static func runtime_snapshot(
 		node_stats = observatory.call("_collect_node_stats", tree.root) as Dictionary
 	return {
 		"runtime_health": tilemap.get_runtime_health_snapshot(),
-		"revealed_chunk_count": revealed_chunks.size(),
-		"queued_chunk_count": queued_chunks.size(),
+		"revealed_chunk_count": tilemap.get_resident_chunk_count(),
+		"queued_chunk_count": tilemap.get_pending_chunk_count(),
 		"revealed_chunk_count_peak": revealed_chunk_count_peak,
 		"streaming_reveal_queue_current": reveal_queue.size(),
 		"streaming_reveal_queue_peak": streaming_reveal_queue_peak,
