@@ -235,34 +235,14 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 code/workflow re-review of the `block_hold_01` FX import repair.
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-hardening Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off; dependency-gated behind the browser/PREVIEW hardening review.
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — paired P1 independent code/architecture/asset-pipeline review of FX layer adoption and new-source publication safety.
-#### Procgen Runtime Optimization V1 Full-Auto Series
+#### Procgen Runtime Optimization V1 Dependency-Gated Series
 
-- Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are pre-authored, but execution readiness is evidence-gated: packets whose exact contract depends on not-yet-landed architecture may remain `blocked` / `manual` until refreshed in place. Dependencies, paired reviews, refresh gates, and locks control eligibility.
-- `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — M4 current-main audit/fix + explicit chunk lifecycle authority; ready after M3. Repairs the false-visible chunk-bookkeeping defect and adds truthful partial-reveal lifecycle semantics.
-- `REVIEW_PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — paired post-land code/architecture/runtime review of M4; required before M5 refresh.
-- `PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 identity reserved, currently blocked/manual; re-derive against reviewed M4 before returning to ready/auto.
-- `PROCGEN_DISTANT_CHUNK_UNLOAD.md` — M6 identity reserved, currently blocked/manual; re-derive against landed M5 before returning to ready/auto.
-- `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 shared world-placement context/service seam; depends on S1.
-- `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — P2 resource placement extraction; depends on P1.
-- `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — P3 vehicle placement extraction; depends on P1.
-- `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — P4 ARRN relay placement extraction; depends on P1.
-- `CONTRACT_WORLD_ENCOUNTER_PLACEMENT_EXTRACTION.md` — P5 encounter/ambient marker placement extraction; depends on P1.
-- `CONTRACT_WORLD_INGRESS_PLACEMENT_EXTRACTION.md` — P6 authored ingress placement extraction; depends on P1.
-- `CONTRACT_WORLD_LOADER_CONTRACTION.md` — P7 loader cleanup after all placement siblings complete.
-- `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — D1 road authority extraction; depends on G5 + M6.
-- `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — D2 authored claim registry extraction; depends on G5 + M6.
-- `PROCGEN_GENERATION_STATE_EXTRACTION.md` — D3 generation-state/level-data extraction; depends on G5 + M6.
-- `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — X1 post-D1/D2/D3 audit: re-measure remaining generation helpers/TileMapLayer operations, classify semantic vs presentation state, and lock the minimum GenerationGrid contract.
-- `REVIEW_PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — XR1 independent architecture/code review of the complete post-D extraction inventory.
-- `PROCGEN_GENERATION_GRID_FOUNDATION.md` — X2 implement the reviewed semantic GenerationGrid contract plus behavior-preserving TileMap-backed compatibility backend; broad migration remains deferred.
-- `REVIEW_PROCGEN_GENERATION_GRID_FOUNDATION.md` — XR2 verify the grid seam is minimal, Node-free at the contract layer, deterministic, and parity-safe.
-- `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` — X3 use reviewed audit+grid evidence to author the actual helper-cluster migration DAG, pure-data backend/cutover/demolition/convergence packets, and D4's final dependency.
-- `REVIEW_PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` — XR3 verify complete one-owner cluster coverage and keep D4 blocked until reviewed convergence.
-- `PROCGEN_RENDER_ATTRIBUTION_V1.md` — V1 presentation cost attribution after D4 + P7.
-- `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` — V2 evidence-driven presentation node/draw consolidation; depends on V1.
-- `PROCGEN_PERFORMANCE_SOAK_V1.md` — F1 final deterministic V1 soak and regression budgets; depends on V2.
-- `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
-- `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
+- Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are stable, but execution readiness is evidence-gated. A packet is `ready/auto` only when its current measured state and implementation surface exist on live main; architecture-dependent downstream packets stay `blocked/manual` and are refreshed in place after the named predecessor/review lands.
+- **Runtime/streaming:** `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` is currently claimed/in progress; `REVIEW_PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` follows. `PROCGEN_CHUNK_PAYLOAD_CACHE.md` and `PROCGEN_DISTANT_CHUNK_UNLOAD.md` are blocked/manual refresh gates, not executable specifications yet.
+- **Placement:** `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` is the live P-lane entry against the real scaffold `custodian/game/world/placement/README.md` and the current 2,001-line `custodian/game/systems/core/systems/contract_world_loader.gd`. P2-P6 remain dependency-ready extractions with exact current loader/domain paths. `CONTRACT_WORLD_LOADER_CONTRACTION.md` is blocked/manual until P2-P6 actually exist, then must be re-derived from the surviving loader.
+- **ProcGen decomplexification:** `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`, `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`, and `PROCGEN_GENERATION_STATE_EXTRACTION.md` are blocked/manual refresh gates after M6. D1 targets the existing `custodian/game/world/procgen/roads/` scaffold but explicitly preserves the already-extracted `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`; D2 targets `procgen/authored_claims/`; D3 reuses the existing `procgen/generation/` package.
+- **GenerationGrid:** `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` / XR1 remain the first executable post-D audit. `PROCGEN_GENERATION_GRID_FOUNDATION.md` is blocked/manual until XR1 defines the real minimum grid seam. `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` is blocked/manual until XR2. Their paired reviews remain dependency-gated. `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` stays hard-blocked until X3 authors and the generated migration DAG reaches a concrete final reviewed convergence workstream.
+- **Render/soak:** `PROCGEN_RENDER_ATTRIBUTION_V1.md` remains the post-D4/P7 measurement slice and must re-inventory live presentation owners at execution. `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` is blocked/manual until attribution identifies the actual safe target. `PROCGEN_PERFORMANCE_SOAK_V1.md`, `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md`, and `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` remain dependency-gated end-of-series work; A1 now carries the same refresh-gate discipline rather than requiring speculative future packets to be ready up front.
 
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — paired P0 code/runtime/workflow re-review of the correction round.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
