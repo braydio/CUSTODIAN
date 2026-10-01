@@ -2,25 +2,25 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-authored-claim-registry-extraction`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `procgen-candidate-runtime-path-demolition, procgen-distant-chunk-unload`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Extract authored floor/overlook/ingress-clearance/reservation ownership from ProcGenTilemap into one canonical claim registry.
-- Completion boundary: Done when authored-scene floor claims, overlook pockets, ingress dressing clearances, terrain reservations, encounter reservations, and claim queries mutate/query one registry with ProcGenTilemap delegating.
-- Current measured state: ProcGenTilemap owns claim_procgen_floor_rect_for_authored_scene_*, claim_world_overlook_pocket, claim_world_ingress_dressing_clearance and multiple reserved-region/cell dictionaries/helpers.
-- Evidence: Ash-Bell authored reservation work; Sundered Keep frontage/ingress smokes; terrain required-cell diagnostics; chunk lifecycle/cache.
+- Completion boundary: REFRESH-GATED on M6. Re-audit post-M6 claim/reservation state before execution. The eventual slice closes when authored-scene floor claims, overlook-pocket plans/commits, ingress dressing-clearance claims, worldgen/terrain reservations that are genuinely the same claim concept, and claim/conflict queries mutate/query one canonical registry under the existing `custodian/game/world/procgen/authored_claims/` package, while runtime prop blockers and unrelated playability state remain with their current owners.
+- Current measured state: `custodian/game/world/procgen/authored_claims/README.md` is scaffold-only and still points to `ProcGenTilemap`. Live claim APIs include `claim_procgen_floor_rect_for_authored_scene_world`, `claim_procgen_floor_rect_for_authored_scene_tiles`, `claim_world_overlook_pocket`, `plan_world_overlook_pocket`, `commit_world_overlook_pocket_plan`, `_claim_isolated_world_overlook_pocket`, `claim_world_ingress_dressing_clearance`, `is_inside_world_ingress_dressing_clearance`, and `clear_world_ingress_dressing_clearances`, alongside several reservation dictionaries/terrain-required-cell adapters. Runtime prop blockers are a separate mutation concern and must not be swept into the claim registry by name similarity.
+- Evidence: `custodian/game/world/procgen/authored_claims/README.md`; current claim/reservation functions/state in `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/game/world/procgen/diagnostics/procgen_required_cell_classifier.gd`; `custodian/tools/validation/ash_bell_threadway_generation_contract_smoke.gd`; `custodian/tools/validation/sundered_keep_procgen_frontage_smoke.gd`; `custodian/tools/validation/sundered_keep_ingress_smoke.gd`; `custodian/tools/validation/procgen_terrain_required_cells_smoke.gd`; eventual M6 state.
 - Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; authored-scene procgen authority reservation API; current terrain/ingress clearance contracts.
-- Work surface: game/world/procgen/authored_claims/ registry, ProcGenTilemap delegation, reservation/ingress/terrain tests.
-- Change: Create one deterministic registry for claim type, bounds/cells, owner/source, and optional clearance metadata. Migrate existing claim APIs to it without changing callers where unnecessary. Registry owns data/conflict queries, not authored-scene traversal or presentation.
+- Work surface: Intentionally refresh-gated. Expected canonical package is the existing `custodian/game/world/procgen/authored_claims/` scaffold, with narrow compatibility methods retained on `ProcGenTilemap` only where live callers need them. `custodian/game/world/procgen/diagnostics/procgen_required_cell_classifier.gd` remains diagnostics/classification unless the post-M6 audit proves ownership belongs elsewhere.
+- Change: None while blocked. After M6, classify every claim/reservation dictionary and API by semantic ownership first, then extract only the unified authored/worldgen claim concept. Preserve existing public claim APIs as façade delegates where callers depend on them; do not absorb runtime blockers, authored-level gameplay state, or presentation.
 - Preserve: All claim extents, conflict/clearance behavior, ingress frontage, terrain required cells, encounter clearances and fixed-seed results.
 - Non-goals: No authored-level redesign, no new claim kinds unless required to faithfully represent current state, no generation export extraction.
-- Acceptance: Existing claim/terrain/ingress tests match exactly; no duplicate claim dictionaries remain in ProcGenTilemap; registry snapshot is deterministic.
-- Validation: Ash-Bell reservation/Threadway + Sundered Keep frontage/ingress + terrain required-cells + stuck-pocket protections + changed-file closeout.
+- Acceptance: Not implementation-ready until refreshed post-M6. Final acceptance must enumerate every migrated and intentionally-unmigrated claim/reservation store, leave no duplicate authoritative claim dictionaries, preserve exact claim extents/conflicts/required-cell effects, and expose a deterministic registry snapshot.
+- Validation: Refresh after M6. Expected focused suite includes `res://tools/validation/ash_bell_threadway_generation_contract_smoke.gd`, `res://tools/validation/sundered_keep_procgen_frontage_smoke.gd`, `res://tools/validation/sundered_keep_ingress_smoke.gd`, `res://tools/validation/procgen_terrain_required_cells_smoke.gd`, stuck-pocket/connector regressions selected by the manifest, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Generation state/export extraction and façade contraction.
 
