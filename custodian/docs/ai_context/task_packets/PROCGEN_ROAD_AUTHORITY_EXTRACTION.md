@@ -2,25 +2,25 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-road-authority-extraction`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `procgen-candidate-runtime-path-demolition, procgen-distant-chunk-unload`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
-- Goal: Extract coherent road generation/repair/surface-state ownership from ProcGenTilemap after generation and streaming seams are stable.
-- Completion boundary: Done when main/soft/ruined road topology state, repair/component logic, road visual descriptors/decals, and road debug summary are owned behind one road authority with a narrow ProcGenTilemap façade.
-- Current measured state: ProcGenTilemap still contains main-road carving, connectivity repair/pruning, road authority clearing, road semantics, road piece/surface decals, connected-road queries and debug helpers across a very large file.
-- Evidence: Road Semantics V2 smokes; archived main-road opt-in behavior; S1 baseline; canonical generation/materialization and chunk cache.
-- Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; Road Semantics V2/current road surface contracts.
-- Work surface: game/world/procgen/roads/ authority/service plus ProcGenTilemap façade/delegation and road/streaming tests.
-- Change: Move road-owned state and methods as one stateful subsystem. Preserve disabled-by-default archived wide-road generation, active narrow route/ruined-road semantics, deterministic component/repair ordering, surface-role decals, and streaming hooks. ProcGenTilemap exposes only required queries/requests.
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Goal: Extract the road/parking topology, repair/pruning, and road-authority state still embedded in `ProcGenTilemap` into the existing `custodian/game/world/procgen/roads/` package **without** duplicating the already-extracted Road Semantics V2 resolver in `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`.
+- Completion boundary: REFRESH-GATED on M6. Before this packet returns to `ready`, re-audit the post-M6 `ProcGenTilemap` road inventory. The eventual slice closes when the state/algorithms named by `custodian/game/world/procgen/roads/README.md` (road/parking graph building, repair, pruning, road authority helpers, connected-road/path metrics) have one stateful owner under `procgen/roads/`; `ProcgenRoadSemanticsResolver` and `ProcgenSurfaceMaterialResolver` remain in `procgen/surfaces/`; presentation-only road decal realization is left with its actual presentation owner unless the post-M6 audit proves it inseparable.
+- Current measured state: `custodian/game/world/procgen/roads/README.md` is scaffold-only and names `ProcGenTilemap` as current road source of truth. `ProcGenTilemap` is currently 11,441 lines / 588 functions and still contains `_carve_main_roads`, connectivity repair/pruning/component analysis, parking anchor/stamping, `_clear_procgen_road_authority_at`, connected-road queries, and road walkability/authority helpers. Separately, active Road Semantics V2 is already extracted to `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`, with material classification in `surface_material_resolver.gd`; those existing owners must not be reabsorbed or cloned. Wide-road carving remains production-disabled.
+- Evidence: `custodian/game/world/procgen/roads/README.md`; current `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`; `custodian/game/world/procgen/surfaces/surface_material_resolver.gd`; `custodian/tools/validation/procgen_road_semantics_v2_smoke.gd`; `custodian/tools/validation/procgen_road_surface_roles_smoke.gd`; `custodian/tools/validation/procgen_placeholder_roads_smoke.gd`; `custodian/tools/validation/compound_road_wall_smoke.gd`; G5 and eventual M6 summaries.
+- Task-specific authority: `custodian/game/world/procgen/roads/README.md`; `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; live Road Semantics V2 owner at `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`; current surface-material contract.
+- Work surface: Intentionally refresh-gated. Expected owner package is the existing `custodian/game/world/procgen/roads/` scaffold, with narrow delegation from `custodian/game/world/procgen/proc_gen_tilemap.gd`. Preserve `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd` and `surface_material_resolver.gd` as separate already-extracted semantic/material owners. Update `roads/README.md`, FILE_INDEX, and validation ownership when the owner becomes real.
+- Change: None while blocked. After M6, refresh this packet from the live function/state inventory. The implementation should move only coherent road/parking topology and authority state, preserving disabled archived wide-road generation and active route-backed ruined-road/service-apron semantics. Do not move presentation/surface classification merely to maximize line reduction.
 - Preserve: All road topology/fingerprints, walkability, parking/service apron behavior, decals/material roles, streaming visibility.
 - Non-goals: No road redesign, no enabling archived wide roads, no art changes, no claim/export extraction in this packet.
-- Acceptance: Road semantic/role/streaming fixed-seed tests match; road state has one owner; ProcGenTilemap no longer contains road-domain algorithms except façade glue.
-- Validation: road semantics v2 + road surface roles + placeholder/compound road where applicable + S1 quick + changed-file closeout.
+- Acceptance: Not implementation-ready until the post-M6 inventory is refreshed. Final acceptance must prove one owner for the road/parking topology/repair/authority state selected by that audit; no duplicate migrated state in `ProcGenTilemap`; Road Semantics V2/material resolver ownership unchanged; fixed-seed road/parking fingerprints, walkability and relevant presentation outputs unchanged.
+- Validation: Refresh after M6. Expected focused suite: `res://tools/validation/procgen_road_semantics_v2_smoke.gd`, `res://tools/validation/procgen_road_surface_roles_smoke.gd`, `res://tools/validation/procgen_placeholder_roads_smoke.gd`, `res://tools/validation/compound_road_wall_smoke.gd`, S1 quick, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Authored claims and generation-state extraction proceed as sibling dependents; façade contraction waits on all.
 

@@ -224,6 +224,15 @@ lost when the ephemeral worktree is removed.
 
 ## Active Packets
 
+### Procgen Runtime Optimization V1
+
+- Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are stable, but execution readiness is evidence-gated. A packet is `ready/auto` only when its current measured state and implementation surface exist on live main; architecture-dependent downstream packets stay `blocked/manual` and are refreshed in place after the named predecessor/review lands.
+- **Runtime/streaming:** `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` (M4) is landed; `REVIEW_PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` is now eligible and required before `PROCGEN_CHUNK_PAYLOAD_CACHE.md` (M5) refreshes. `PROCGEN_CHUNK_PAYLOAD_CACHE.md` and `PROCGEN_DISTANT_CHUNK_UNLOAD.md` remain blocked/manual refresh gates, not executable specifications yet.
+- **Placement:** `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` is the live P-lane entry against the real scaffold `custodian/game/world/placement/README.md` and the current 2,001-line `custodian/game/systems/core/systems/contract_world_loader.gd`. P2-P6 remain dependency-ready extractions with exact current loader/domain paths. `CONTRACT_WORLD_LOADER_CONTRACTION.md` is blocked/manual until P2-P6 actually exist, then must be re-derived from the surviving loader.
+- **ProcGen decomplexification:** `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`, `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`, and `PROCGEN_GENERATION_STATE_EXTRACTION.md` are blocked/manual refresh gates after M6. D1 targets the existing `custodian/game/world/procgen/roads/` scaffold but explicitly preserves the already-extracted `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`; D2 targets `procgen/authored_claims/`; D3 reuses the existing `procgen/generation/` package.
+- **GenerationGrid:** `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` / XR1 remain the first executable post-D audit. `PROCGEN_GENERATION_GRID_FOUNDATION.md` is blocked/manual until XR1 defines the real minimum grid seam. `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` is blocked/manual until XR2. Their paired reviews remain dependency-gated. `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` stays hard-blocked until X3 authors and the generated migration DAG reaches a concrete final reviewed convergence workstream.
+- **Render/soak:** `PROCGEN_RENDER_ATTRIBUTION_V1.md` remains the post-D4/P7 measurement slice and must re-inventory live presentation owners at execution. `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` is blocked/manual until attribution identifies the actual safe target. `PROCGEN_PERFORMANCE_SOAK_V1.md`, `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md`, and `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` remain dependency-gated end-of-series work; A1 now carries the same refresh-gate discipline rather than requiring speculative future packets to be ready up front.
+
 ### Ready / Auto Dispatch
 
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication hardening: classify/preflight the dedicated art checkout, safely prepare clean-behind/local-cache state, reject stale baselines before mutation, and restore only proven transaction-generated Godot metadata churn; depends on the sparse-checkout correction re-review.
@@ -261,6 +270,8 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
+- `OPERATOR_ART_REGISTRATION_PROFILE.md` — P1 Operator Art Agent/Source Session calibration slice: one accepted 96x96 registration profile drives Aseprite guides, landmark-aware shared-scale planning, registration reports/overlays, and exact `pixelart --choose 1` plan replay without per-frame scaling.
+- `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE.md` — paired P1 code/architecture/asset-pipeline/workflow review of registration-profile authority, clipping/pose-preservation guards, MCP confinement, and crisp production-plan replay.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — paired P0 code/runtime/workflow re-review of the correction round.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_REVIEW_STUDIO.md` — P2 Slice 2: native static/animated Asset V2 review, all source layouts, runtime catalog trust, filmstrip/playback, staged/runtime compare, LFS diagnostics, and bounded generic Operator preview reuse; eligible after Slice 1 lands.
@@ -279,7 +290,10 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md` — P1 C2b.3 cleanup queued behind C2b.2: reconcile stale animation reachability, migrate direct Operator-PNG VFX consumers, disposition orphan/superseded canonical output, and retire compatibility SpriteFrames/resources only after zero-consumer proof.
 - `OPERATOR_ACTION_ARBITRATION.md` — P1 Slice E queued behind C2b.3: replace reflection-driven Operator animation states with explicit action arbitration + semantic presentation coordination and remove the 34 state→actor glue sites.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 post-Slice-E mobile guard composition: movement-owned lower locomotion through enter/hold/non-break recoil/exit with aim-owned upper defense, continuity guards, and runtime-scale strafe validation.
-- `OPERATOR_UNARMED_BLOCKING_ART_REFRESH.md` — P1 crisp-method refresh of the latest pushed high-resolution unarmed guard enter/hold/hit temp set into canonical 96 px lower+upper Operator V2 source/runtime art, focused ingest, and live guard consumption proof.
+
+### Blocked / Manual Refresh
+
+- `OPERATOR_UNARMED_BLOCKING_ART_REFRESH.md` — P1 stale art-refresh scope held behind `review-operator-art-registration-profile`; current main already contains newer hold/hit publications, so the remaining guard-art delta must be freshly re-derived before this packet may return to ready/auto.
 
 ### In Progress
 

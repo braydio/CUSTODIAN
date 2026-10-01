@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-generation-grid-foundation`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-procgen-generation-data-model-audit`
 - Locks: `procgen-generation`
@@ -14,20 +14,20 @@
 - Paired review workstream: `review-procgen-generation-grid-foundation`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `f2bc848515b8454f362167f57eb87bfe823ac184`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Introduce the neutral generation-cell storage seam proven by the audited post-D1/D2/D3 call graph, with a TileMap-backed compatibility backend that preserves current behavior and a plain-data-capable contract that later migration slices can target without inventing another storage API.
-- Completion boundary: Done when one focused GenerationGrid contract owns the exact semantic cell operations identified by the reviewed audit; a TileMap-backed implementation can satisfy that contract against the existing live generation path without behavior change; semantic cell state is explicitly separated from render/materialization metadata; focused contract/parity tests exist; and only the smallest evidence-backed canary integration needed to prove the seam is usable is routed through it. Broad helper migration is not part of this packet.
-- Current measured state: The reviewed predecessor audit is the authority for the exact remaining helper count, cell-operation count/categories, semantic-vs-presentation split, and minimum API. Before that audit, pre-D-lane ProcGenTilemap had ~40 generation helpers and 147 direct TileMapLayer cell-operation call sites, but those numbers must not be assumed current here.
-- Evidence: Reviewed `procgen-generation-data-model-audit` inventory; live `proc_gen_tilemap.gd`; `procgen.gd`; post-D1/D2/D3 owners; G2 candidate semantic model/evaluator; S1 fixed fingerprints.
-- Task-specific authority: Reviewed audit's versioned GenerationGrid contract and migration graph; `PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; current generation/fingerprint contracts.
-- Work surface: Prefer new focused files under `custodian/game/world/procgen/generation/`, e.g. `generation_grid.gd` and `tilemap_generation_grid.gd`, unless the reviewed audit establishes a better exact seam. Add focused validation under `custodian/tools/validation/`. Touch `proc_gen_tilemap.gd` only for the minimal canary/dependency injection proven safe by the audit.
-- Change: Implement only the capabilities the reviewed audit proves current generation requires. The contract must model generation-semantic floor/wall/blocker state independent of Node/TileMap types and must not expose TileMapLayer-specific atlas/source/render details as core semantic storage. Implement a TileMap-backed compatibility backend that reads/writes the existing TileMapLayer state with identical semantics. Add deterministic snapshot/fingerprint support sufficient to compare backend-visible semantic state. Route a minimal canary helper or narrowly bounded operation group through the seam only if the audit identifies one that can prove integration without beginning the broad migration; otherwise prove the backend contract directly in tests and leave production routing for the generated migration series.
+- Completion boundary: REFRESH-GATED on the passed `review-procgen-generation-data-model-audit`. Do not implement a GenerationGrid API from this pre-audit packet. After XR1, rewrite this same packet in place to the exact minimum capabilities, exact owner paths, parity contract, and smallest canary proven by the reviewed post-D audit.
+- Current measured state: The prerequisite post-D1/D2/D3 audit has not run yet, so there is no reviewed helper inventory, cell-operation count, semantic-vs-presentation split, or minimum GenerationGrid interface to implement. Current live generation still uses `custodian/game/world/procgen/proc_gen_tilemap.gd` as TileMap-backed working memory; existing generation package files are `candidate_evaluator.gd`, `candidate_semantic_adapter.gd`, and `procgen_candidate_materializer.gd`. Any concrete `generation_grid.gd` API authored now would be speculative.
+- Evidence: blocked/ready X1 audit packet and paired review; current `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/game/world/procgen/procgen.gd`; existing `custodian/game/world/procgen/generation/README.md` and candidate owner files; D1/D2/D3 refresh-gated packets.
+- Task-specific authority: The **reviewed** X1 audit once it exists; `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; current generation/fingerprint contracts.
+- Work surface: Intentionally not frozen while blocked. The eventual seam belongs in the existing `custodian/game/world/procgen/generation/` package, but exact filenames/classes/API/canary must be taken from the reviewed X1 inventory. Do not pre-create a parallel storage abstraction before that review.
+- Change: None while blocked. After XR1 passes, rewrite this packet from the audit's exact capability table, then implement only that reviewed semantic-storage seam with a compatibility backend/parity proof and the smallest justified integration.
 - Preserve: Current production generation path/output, TileMap painting, G1-G5 evaluator/materializer behavior, D1/D2/D3 ownership, M/P lanes, S1 fingerprints and deterministic ordering.
 - Non-goals: No pure-data backend used by production; no broad `_fill_tilemaps()` migration; no candidate-loop cutover; no deletion of TileMap-backed generation; no D4 façade cleanup.
-- Acceptance: One canonical GenerationGrid API exactly covers the reviewed audit's minimum semantic capabilities and no speculative extras; TileMap-backed backend parity is proven against current semantic reads/writes; contract types contain no Node/TileMapLayer dependency; semantic snapshot/fingerprint parity is deterministic; any canary production integration preserves fixed-seed world/evaluator fingerprints; no helper outside the explicitly bounded canary is silently migrated.
-- Validation: New GenerationGrid contract/backend smoke; fixed-seed semantic snapshot parity; any canary-specific regression; G2 candidate semantic-model/evaluator smoke; S1 quick determinism; `check_ai_context.py --json`; one changed-file closeout; `git diff --check`.
+- Acceptance: Not implementation-ready. The refreshed packet must bind every API method to a reviewed X1 capability/operation category, name the exact legacy path disposition, prove TileMap-backed parity, separate semantic state from render metadata, and forbid speculative extras.
+- Validation: Not implementation-ready. Re-author after XR1 using exact audit outputs and then name only existing focused tests plus any new smoke created within the implementation workstream.
 - Task overrides: `none`
-- Deferred: Broad helper migration, pure-data backend, production candidate cutover, legacy evaluation backend demolition.
+- Deferred: Broad helper migration, pure-data backend, candidate cutover, and legacy rejected-candidate path demolition remain for the later measured migration series.
 
 ## Completion Truth
 
