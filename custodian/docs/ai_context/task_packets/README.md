@@ -4,6 +4,13 @@ Last updated: 2026-09-30
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
+## Active Persistent Recovery Series
+
+- `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 of the expected 8-packet persistent recovery/armament-registration implementation series. It removes ordinary Operator death consequence ownership from the actor, resolves the live CampaignSession exactly once, and intentionally retains current Game Over only as the R1 compatibility fallback.
+- Program tracker: `../../../design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`.
+- Design authority: `../../../design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`.
+- Only R1 is authored at program start. Per the roadmap, author each later packet against the landed live surface of its predecessor rather than freezing speculative runtime contracts up front.
+
 ## Selection
 
 - Skip packets for narrow, low-risk, single-session work.
