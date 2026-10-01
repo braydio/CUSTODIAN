@@ -9,18 +9,18 @@
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Move ARRN relay tile selection and placement from ContractWorldLoader into the world-placement layer.
 - Completion boundary: Done when relay candidate picking, spacing/sector semantics, and node placement are service-owned while ARRN state/simulation remains ARRN-owned.
-- Current measured state: ContractWorldLoader owns _position_arrn_relays and _pick_arrn_relay_tile in the same coordinator as world attach and unrelated placement domains.
-- Evidence: ARRN relay runtime/placement tests; loader functions; placement foundation.
+- Current measured state: ARRN relay positioning is still loader-owned in `custodian/game/systems/core/systems/contract_world_loader.gd` through `_position_arrn_relays` and `_pick_arrn_relay_tile`; ARRN simulation/state remains under `custodian/game/systems/core/systems/arrn/`. `custodian/game/world/placement/` has no relay service yet.
+- Evidence: `custodian/game/systems/core/systems/contract_world_loader.gd`; `custodian/game/systems/core/systems/arrn/`; `custodian/game/world/placement/README.md`; `custodian/tools/validation/world_contract_prewarm_smoke.gd`; P1 placement-context contract.
 - Task-specific authority: world placement README; ARRN current runtime ownership; placement context.
-- Work surface: world/placement/relay_placement_service.gd or equivalent, loader delegation, ARRN placement regressions.
+- Work surface: `custodian/game/world/placement/relay_placement_service.gd` (or clearly equivalent placement-package file), loader delegation, existing ARRN runtime owner untouched, placement README/index, and focused relay placement validation.
 - Change: Extract deterministic relay placement policy and any relay-only candidate logic. Service receives current relay nodes/config plus placement context; it must not own ARRN stabilization/state/tick logic.
 - Preserve: Relay count/identity, fixed-seed positions, sector/clearance constraints, ARRN state initialization.
 - Non-goals: No ARRN redesign, benefit/tick tuning, asset changes, or generation changes.
 - Acceptance: Existing relay placements and state handoff match pre-extraction fixed-seed results; loader contains only service invocation for relay positioning.
-- Validation: ARRN focused tests + world population placement + service snapshot test + changed-file closeout.
+- Validation: `res://tools/validation/world_contract_prewarm_smoke.gd` plus the current ARRN-focused validation selected by `custodian/tools/validation/validation_manifest.json`; add a deterministic relay-placement snapshot inside this workstream if exact position parity is otherwise unproved; then changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains and loader contraction.
 
