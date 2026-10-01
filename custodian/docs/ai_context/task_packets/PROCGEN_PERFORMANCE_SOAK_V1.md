@@ -9,18 +9,18 @@
 - Locks: `procgen-runtime, contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Run the complete optimized procgen stack through a deterministic production-size soak, compare it to the S1 baseline, and establish stable regression budgets for future work.
 - Completion boundary: Done when fixed generation cases and a scripted generate->spawn->traverse->reveal->pause/unpause->mutate->ingress/return->re-reveal sequence have durable before/after JSON, deterministic correctness remains green, and evidence-backed performance budgets are written into the benchmark contract/roadmap.
-- Current measured state: All V1 optimization branches have converged: semantics-only candidate generation/materialization, rebuild scheduling, pause-aware chunk streaming/cache/unload, coordinator/loader extraction, and measured render consolidation.
-- Evidence: S1 baseline JSON/schema and every landed V1 slice summary; S10b attribution/consolidation metrics.
+- Current measured state: V1 has **not** converged yet. S1, G1-G5, M1-M3 are complete; M4 is active; M5/M6 are refresh-gated; placement extraction has not started; D1-D3 are refresh-gated; GenerationGrid migration has not begun; D4/P7/render consolidation are future. This packet remains dependency-gated behind `procgen-render-load-consolidation`; its soak contract is intentionally end-state-oriented rather than evidence that the end state exists today.
+- Evidence: S1 baseline/schema; live procgen roadmap packet states; completed G/M summaries; current M/P/D/X/V packet contracts. At execution time, use every landed V1 closing summary plus V1/V2 render evidence rather than this pre-convergence inventory.
 - Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; S1 benchmark schema; active deterministic/streaming/ingress contracts.
-- Work surface: Benchmark/soak harness and only small diagnostics/budget config needed to formalize regression gates; runtime code changes are bug fixes only if required to make existing V1 contracts pass.
-- Change: Add one deterministic soak profile using production-size fixed seeds and scripted traversal/mutation/ingress lifecycle. Compare generation attempt cost, accepted realization, derived rebuild p50/p95/worst, streaming queue/cache/unload, pause behavior, node/render load, frame-time samples and authoritative fingerprints to S1. Establish host-relative or fixed-environment budgets with explicit headroom from repeated optimized runs; do not invent universal FPS thresholds.
+- Work surface: Existing benchmark/diagnostics stack (`custodian/tools/validation/procgen_performance_baseline_bench.gd`, `custodian/game/world/procgen/diagnostics/procgen_performance_snapshot.gd`) plus the smallest new soak driver/fixtures and budget metadata required after V2. Runtime implementation changes are bug fixes only when a failing V1 contract proves one is needed.
+- Change: Once dependency-eligible, re-read the final V1 architecture and run a deterministic production-size sequence covering generation/candidate acceptance, spawn, streaming traversal, pause/resume, runtime mutation/destruction, authored ingress/return, re-entry/re-reveal and measured render load. Compare against S1 using the final lifecycle/cache/unload/placement/generation/render telemetry names that actually landed; do not hard-code stale pre-M4 metric keys.
 - Preserve: All gameplay/content semantics, map sizes/attempts, deterministic output, pause gameplay freeze, ingress/return behavior.
 - Non-goals: No new optimization initiative beyond small correctness fixes; no new content/art; no changing benchmark cases to make results look better.
 - Acceptance: Complete soak passes determinism and lifecycle assertions; report quantifies S1->V1 changes for every roadmap target; stable budgets are documented with environment and tolerance; no V1 slice's targeted metric is silently worse without an explained accepted tradeoff.
-- Validation: Run full soak repeatedly enough to derive stable budgets, all critical focused procgen suites, one changed-file closeout, and diff check; avoid overlapping broad Godot sweeps.
+- Validation: Run the final soak repeatedly enough to establish environment/tolerance, then the critical focused suites named by the landed M/P/D/X/V summaries, one changed-file closeout and diff check. Respect the repository broad-Godot-sweep memory budget and do not overlap broad runs.
 - Task overrides: `none`
 - Deferred: Whole-series independent review and dependency-chain audit are the next packet.
 
