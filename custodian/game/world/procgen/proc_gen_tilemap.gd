@@ -16,6 +16,7 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 	"res://game/world/procgen/runtime_walkable_boundary_chunk.gd"
 )
 const DERIVED_REBUILD_SCHEDULER_SCRIPT := preload("res://game/world/procgen/derived_rebuild_scheduler.gd")
+const PAUSE_AWARE_STREAMING_SCRIPT := preload("res://game/world/procgen/streaming/procgen_pause_aware_streaming.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
@@ -510,6 +511,7 @@ var _runtime_prop_blocker_sources: Dictionary = {}
 var _revealed_chunks: Dictionary = {}
 var _queued_chunks: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
+var _pause_aware_streaming: ProcGenPauseAwareStreaming = null
 var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
 var _navigation_rebuild_pending: bool = false
@@ -825,6 +827,14 @@ var _wall_shadow_isolation_enabled: bool = true
 func _ready() -> void:
 	if not generation_output_enabled:
 		return
+	_pause_aware_streaming = PAUSE_AWARE_STREAMING_SCRIPT.new()
+	add_child(_pause_aware_streaming)
+	_pause_aware_streaming.configure(
+		_streaming_reveal_queue,
+		_build_tile_reveal_prepare_record,
+		_commit_tile_reveal_record,
+		func() -> int: return streaming_reveal_tiles_per_frame
+	)
 	add_to_group("procgen_render_isolation")
 	_cache_procgen_major_visual_items()
 	var dev_mode := get_node_or_null("/root/DevMode")
@@ -6994,7 +7004,10 @@ func _refresh_wall_neighbors(center_tile: Vector2i) -> void:
 
 
 func _refresh_navigation_after_wall_change(force_immediate: bool = false, reason: String = "wall_change") -> void:
-	if not force_immediate and enable_streaming_reveal and not _streaming_reveal_queue.is_empty():
+	var streaming_reveal_outstanding := not _streaming_reveal_queue.is_empty() or (
+		_pause_aware_streaming != null and _pause_aware_streaming.has_prepared()
+	)
+	if not force_immediate and enable_streaming_reveal and streaming_reveal_outstanding:
 		_navigation_rebuild_pending = true
 		_navigation_pending_reason = reason
 		_publish_runtime_health_gauges()
@@ -10061,7 +10074,10 @@ func _get_chasm_presentation_cells() -> Array:
 func _prepare_streaming_reveal() -> void:
 	_revealed_chunks.clear()
 	_queued_chunks.clear()
-	_streaming_reveal_queue.clear()
+	if _pause_aware_streaming != null:
+		_pause_aware_streaming.reset()
+	else:
+		_streaming_reveal_queue.clear()
 	_streaming_player = null
 	_streaming_current_chunk = Vector2i(999999, 999999)
 	_navigation_rebuild_pending = false
@@ -10103,6 +10119,13 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 
 
 func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> void:
+	# Defense in depth: this is the only producer of new (player-driven) reveal
+	# work. ProcGenTilemap's own _process already stops calling this while
+	# SceneTree.paused is true, but the guard is kept explicit here too so the
+	# "pausing never enqueues new discovery" contract holds even if the outer
+	# gate ever changes.
+	if get_tree() != null and get_tree().paused:
+		return
 	var unloaded_any := false
 	for x in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 		for y in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
@@ -10120,19 +10143,28 @@ func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> 
 
 
 func _process_streaming_reveal_queue(delta: float = 0.0) -> void:
-	if _streaming_reveal_queue.is_empty() and not _streaming_visual_rebuild_pending:
+	if _pause_aware_streaming != null and _pause_aware_streaming.take_resume_event():
+		_obs_log(&"procgen_pause_aware_streaming_resumed", _pause_aware_streaming.get_snapshot())
+	if _streaming_reveal_queue.is_empty() and not _streaming_visual_rebuild_pending \
+			and (_pause_aware_streaming == null or not _pause_aware_streaming.has_prepared()):
 		return
-	var remaining := streaming_reveal_tiles_per_frame
 	var revealed_any := false
-	while remaining > 0 and not _streaming_reveal_queue.is_empty():
-		var tile: Vector2i = _streaming_reveal_queue.pop_front()
-		_reveal_tile(tile)
-		revealed_any = true
-		remaining -= 1
+	if _pause_aware_streaming != null:
+		revealed_any = _pause_aware_streaming.drain_commit(streaming_reveal_tiles_per_frame) > 0
+	else:
+		var remaining := streaming_reveal_tiles_per_frame
+		while remaining > 0 and not _streaming_reveal_queue.is_empty():
+			var tile: Vector2i = _streaming_reveal_queue.pop_front()
+			_reveal_tile(tile)
+			revealed_any = true
+			remaining -= 1
 	if revealed_any:
 		_streaming_visual_rebuild_pending = true
 		_streaming_visual_rebuild_accum += maxf(0.0, delta)
-	if _streaming_reveal_queue.is_empty():
+	var queue_drained := _streaming_reveal_queue.is_empty() and (
+		_pause_aware_streaming == null or not _pause_aware_streaming.has_prepared()
+	)
+	if queue_drained:
 		validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
 		_flush_streaming_visual_rebuilds()
 	elif _streaming_visual_rebuild_accum >= streaming_visual_rebuild_interval_sec:
@@ -10158,8 +10190,11 @@ func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void
 	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return _streaming_reveal_priority(a, center_tile) < _streaming_reveal_priority(b, center_tile)
 	)
-	for tile in tiles:
-		_streaming_reveal_queue.append(tile)
+	if _pause_aware_streaming != null:
+		_pause_aware_streaming.enqueue_many(tiles)
+	else:
+		for tile in tiles:
+			_streaming_reveal_queue.append(tile)
 
 
 func _streaming_reveal_priority(tile: Vector2i, center_tile: Vector2i) -> float:
@@ -10230,8 +10265,30 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 
 
 func _reveal_tile(tile: Vector2i) -> void:
+	_commit_tile_reveal_record(_build_tile_reveal_prepare_record(tile))
+
+
+## PREPARE: pure, deterministic lookup into already-generated (seed-authored,
+## never mutated by reveal) floor/wall cell data. Safe to call while paused --
+## does not touch TileMap/Node/collision/foliage state. The foliage/decal/
+## collision siting decisions themselves stay in _commit_tile_reveal_record
+## because they depend on already-committed neighbor state and must keep
+## happening in committed reveal order to stay deterministic.
+func _build_tile_reveal_prepare_record(tile: Vector2i) -> Dictionary:
+	var record := {"tile": tile}
 	if _generated_floor_cells.has(tile):
-		var floor_data: Dictionary = _generated_floor_cells[tile]
+		record["floor_data"] = _generated_floor_cells[tile]
+	if _generated_wall_cells.has(tile):
+		record["wall_data"] = _generated_wall_cells[tile]
+	return record
+
+
+## COMMIT: authoritative mutation of live TileMap/collision/foliage state from
+## a prepared record. Never runs while paused.
+func _commit_tile_reveal_record(record: Dictionary) -> void:
+	var tile: Vector2i = record.get("tile")
+	if record.has("floor_data"):
+		var floor_data: Dictionary = record["floor_data"]
 		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord), int(floor_data.get("alternative", 0)))
 		_reveal_road_piece_decal(tile)
 		if _dressing_cluster_child_by_cell.has(tile):
@@ -10240,8 +10297,8 @@ func _reveal_tile(tile: Vector2i) -> void:
 			_foliage_spawner.place_at_kind(_build_foliage_spawner_context(), tile, StringName(child.kind))
 		elif _should_place_foliage(tile):
 			_place_foliage(tile)
-	if _generated_wall_cells.has(tile):
-		var wall_data: Dictionary = _generated_wall_cells[tile]
+	if record.has("wall_data"):
+		var wall_data: Dictionary = record["wall_data"]
 		walls_tilemap.set_cell(tile, int(wall_data.get("source_id", walls_source_id)), wall_data.get("atlas", wall_atlas_coord), int(wall_data.get("alternative", 0)))
 		_remove_foliage(tile)
 		if build_runtime_wall_collision:
@@ -10950,6 +11007,9 @@ func get_runtime_health_snapshot() -> Dictionary:
 		"last_mutation_uptime_sec": _last_runtime_mutation_uptime_sec,
 		"last_mutation_duration_usec": _last_runtime_mutation_duration_usec,
 		"derived_rebuild_scheduler": _derived_rebuild_scheduler.call("get_snapshot"),
+		"pause_aware_streaming": (
+			_pause_aware_streaming.get_snapshot() if _pause_aware_streaming != null else {}
+		),
 	}
 	var cliff_state := void_cliff_face.get_debug_state() if void_cliff_face != null else {}
 	snapshot["void_cliff_frontier_cells"] = int(cliff_state.get("frontier_cells", 0))
