@@ -8,7 +8,7 @@
 - Depends on: `procgen-performance-soak-v1`
 - Locks: `none`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Review modes: `code, architecture, runtime, workflow`
 - Goal: Independently review the entire landed Procgen Runtime Optimization V1 implementation and its dependency DAG after the final soak, then produce one findings-first program verdict that becomes the input to automatic V2-series authoring.
 - Review focus: Correctness and determinism across all V1 slices; whether packet dependency edges matched real implementation prerequisites; whether any later slice compensated for a flawed earlier authority; benchmark validity; candidate/materializer ownership; rebuild/pause/chunk semantics; loader/ProcGenTilemap decomposition quality; render optimization safety; documentation/validation drift; and residual hotspots revealed by S11.
