@@ -6,7 +6,7 @@
 > **Source:** Two-section lore drop. SECTION 1 = **First Draft**; SECTION 2 = **Refinement**.
 > **Precedence:** SECTION 2 (the refinement) **takes precedence** wherever it conflicts with SECTION 1. Where SECTION 2 is silent, SECTION 1 stands.
 > **Lore Canon Authority:** `design/03_world/lore/CORE_LORE.md` — this document is a content-facing lore reference and must stay consistent with that canon.
-> **Related Docs:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/AWAKENING_FIRST_RETURN.md`, `design/02_features/operator/SIDEARM_UNLOCK.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
+> **Related Docs:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`, `design/04_architecture/AWAKENING_FIRST_RETURN.md`, `design/02_features/operator/SIDEARM_UNLOCK.md`, `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`, `custodian/docs/ai_context/CURRENT_STATE.md`
 
 ---
 
