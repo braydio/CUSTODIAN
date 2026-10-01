@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-04-04  
 **Status:** active  
-**Last Updated:** 2026-09-29
+**Last Updated:** 2026-10-01
 
 ---
 
@@ -274,7 +274,7 @@ state.
 | S2 Candidate evaluator extraction | complete | P1 |
 | S3 Semantics-only candidate generation | planned (G3 delivered narrower eval-mode realization skips; true semantics-first construction is now packetized as a post-D1/D2/D3 GenerationGrid initiative: audit → reviewed grid foundation → measured migration-series authoring → generated migration DAG) | P0 |
 | S4 Accepted-candidate materializer | complete | P1 |
-| S5 Runtime mutation scheduler | in_progress | P0 |
+| S5 Runtime mutation scheduler | complete | P0 |
 | S6 Pause-aware streaming | complete | P1 |
 | S7 Chunk lifecycle + cache | planned | P1 |
 | S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
