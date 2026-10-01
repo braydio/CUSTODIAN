@@ -143,7 +143,7 @@ Last updated: 2026-09-29
 - `custodian/docs/ai_context/task_packets/ROUTE_TRAVERSAL_V1.md` — implementation/validation record for directed intra-campaign traversal and the Sundered Keep migration
 - `custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md` — ask-specific tooling router for agent work, currently covering modular Operator asset audit/review scripts and their caveats
 - `custodian/docs/ai_context/ARCHITECTURE_OWNERSHIP_MAP.md` — compact agent-facing ownership map answering who owns persistent state, campaign state, world lifecycle, procgen, authored maps, combat, actors, UI, and debug; lists overburdened coordinator files and extraction targets
-- `custodian/docs/ai_context/VALIDATION_RECIPES.md` — canonical validation command selection guide for docs, Godot, asset pipeline, tile pipeline, architecture organization, and review work
+- `design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md` — master six-family non-player actor architecture and 11-slice migration tracker; keeps allegiance orthogonal, keeps `enemy.gd` scoped to standard combat agents, and sequences Marine/Savage extraction before broader family convergence.\n- `custodian/docs/ai_context/VALIDATION_RECIPES.md` — canonical validation command selection guide for docs, Godot, asset pipeline, tile pipeline, architecture organization, and review work
 - `custodian/docs/ai_context/prompts/README.md` — reusable agent prompt index and usage rules
 - `custodian/tools/agent/validate_prompt_contract.py` — reports repository-default boilerplate repeated in prompts and active task packets; supports `TASK OVERRIDE:` and strict template-only checks
 - `custodian/docs/ai_context/task_packets/README.md` — task packet workflow and active packet index
