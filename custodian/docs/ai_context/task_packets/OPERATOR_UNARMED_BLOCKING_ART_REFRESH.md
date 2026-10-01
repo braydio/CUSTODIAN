@@ -2,20 +2,17 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-unarmed-blocking-art-refresh`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `in_progress`
+- Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-operator-art-registration-profile`
+- Depends on: `none`
 - Locks: `operator-assets, operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `565168b442708575de2670b07a34f1282d50c218`
-- Refresh gate: This packet predates the landed hold/hit replacements and must be re-derived from fresh main after `review-operator-art-registration-profile`; do not dispatch the old all-three conversion contract as written.
+- Reviewed main: `7287fd62afcda9abe3847f5fea6c60c8ac27bfe3`
 - Goal: Promote the user's latest pushed high-resolution unarmed blocking animation set into crisp 96 px canonical Operator V2 lower/upper body assets and make the live unarmed guard consume the refreshed art, using the repository-required `pixelart` crisp method and the normal source -> inbox -> ingest/runtime authority.
 - Completion boundary: This slice is complete when the exact pushed temp sources for guard enter, held block, and blocked-hit recoil have been identified and recorded; each has been converted with `pixelart --choose 1` to its locked 96 px frame contract; every converted full-body strip has been decomposed into disjoint `lower_body` and `upper_body` sheets that recompose pixel-exactly; canonical source sheets and timing contracts are updated; runtime-bound copies are staged through `content/sprites/_pipeline/inbox/`; the focused Operator ingest runs dry first and then applies under `--profile unarmed --strict`; generated runtime/catalog resources resolve the refreshed art; and guard enter/hold/hit presentation proves the new assets are the ones played in game. Do not introduce a new unarmed block-exit action in this slice.
 - Current measured state:
-  - Fresh re-audit found that two actions this packet still describes as pending have already landed through the dedicated Operator art publisher: `block_hold_01/e` plus mirrored W in `affc8adb4e749dfce55955edd2e01525767d066a`, and `block_hit_01/e` plus mirrored W in `7913903704aee8fdd2c645891df441fa31fb6cca`. Re-running the original all-three refresh would risk overwriting current art.
-  - `block_enter_01` and any remaining body-scale/registration delta must be re-compared against fresh canonical source after the registration-profile implementation/review. Do not assume the old high-resolution temp-source plan remains the correct next action.
   - Live canonical unarmed guard art is already semantic Operator V2 content under `custodian/content/sprites/operator/{source,runtime}/animations/unarmed/defense/`: `block_enter_01/{e,w}/{lower_body,upper_body}` is 4 frames at 10 FPS non-looping; `block_hold_01/{e,w}/{lower_body,upper_body}` is 5 frames at 8 FPS looping; `block_hit_01/{e,w}/{lower_body,upper_body}` is 5 frames at 14 FPS non-looping.
   - `block_hold_01` also owns a live 5-frame E/W `fx` layer. This task replaces blocking body art only; that FX clock and pixels are preserved.
   - `unarmed_definition.tres` maps the existing guard keys to `unarmed_block_enter`, `unarmed_block_hold`, `unarmed_block_hitreact`, and `unarmed_block_exit`. `operator.gd::_play_modular_unarmed_block()` resolves enter/hold/hit to the canonical defense identities. Unarmed exit currently reuses `block_enter_01` backwards, and the reachability ledger explicitly records that no canonical `block_exit_01` art exists.
@@ -64,17 +61,17 @@
 
 ## Handoff
 
-- Next action: Wait for `review-operator-art-registration-profile` to complete, then re-audit current `block_enter_01`, `block_hold_01`, and `block_hit_01` against the approved registration profile and rewrite this packet in place to only the still-real art delta before returning it to `ready`.
+- Next action: Auto-claim this workstream, resolve the exact pushed high-resolution temp source SHA/paths first, then run one crisp conversion + recomposition proof on guard enter before batching hold and hit.
 - Best starting files: `tools/custodian_aliases.sh`; `custodian/tools/art/custodian_pixelart_converter.py`; `custodian/tools/operator/unarmed_fast_chain_prepare.py`; `custodian/tools/operator/build_fast01_south_modular_layers.py`; current three `unarmed/defense` source action directories; `custodian/tools/operator/operator_ingest.sh`; `operator.gd::_play_modular_unarmed_block`; `operator_modular_defense_ranged_smoke.gd`.
-- Blockers or open questions: Dependency on the registration-profile review plus stale scope: hold and hit are already replaced on current main, so the remaining art work must be re-measured before implementation. The earlier unresolved high-resolution temp provenance may still matter for any surviving delta, but it is no longer sufficient reason to rerun the old packet wholesale.
+- Blockers or open questions: The pushed high-resolution temp input commit/paths remain unresolved. The local coordination checkout has commit `59329a1875dca079002f015c7293a64e9147d8dc` (`temp block source files`), but it is not reachable from `origin/main`, `origin/workbench/operator-art`, or this task branch. Its cached 2172x724 sheets use a different action set (`block_enter_01`, `block_hold_01`, light/heavy recoil, etc.) and do not establish the packet's expected `enter_block_01`, `block_loop_01`, and `block_hit_01` sources. Do not publish or substitute them without resolving source identity. The task remains fail-closed until the exact pushed high-resolution sources are identified; no art-direction choice remains once those inputs are found.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
+- Outcome: `blocked`
+- Friction severity: `medium`
+- What went wrong: `pending exact pushed high-resolution source commit and paths`
+- Root cause / contributing factors: `local source candidate is unpushed and does not match the packet's expected action identities`
+- Prevention / pipeline improvement: `publish the immutable high-resolution source set on a named remote ref and record its SHA and paths in the packet before conversion`
+- Tooling / docs drift discovered: `packet source handoff still points to a missing pushed set; local temp commit is a distinct unpushed set`
+- Follow-up: `manual-follow-up`
