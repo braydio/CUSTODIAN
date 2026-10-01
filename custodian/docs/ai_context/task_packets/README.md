@@ -293,6 +293,8 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.
 - `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 code/workflow re-review of the `block_hold_01` FX import repair.
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-hardening Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off; dependency-gated behind the browser/PREVIEW hardening review.
+- `OPERATOR_ART_REGISTRATION_PROFILE.md` — P1 Operator Art Agent/Source Session calibration slice: one accepted 96x96 registration profile drives Aseprite guides, landmark-aware shared-scale planning, registration reports/overlays, and exact `pixelart --choose 1` plan replay without per-frame scaling.
+- `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE.md` — paired P1 code/architecture/asset-pipeline/workflow review of registration-profile authority, clipping/pose-preservation guards, MCP confinement, and crisp production-plan replay.
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — paired P1 independent code/architecture/asset-pipeline review of FX layer adoption and new-source publication safety.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
