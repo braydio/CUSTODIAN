@@ -226,10 +226,14 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication hardening: classify/preflight the dedicated art checkout, safely prepare clean-behind/local-cache state, reject stale baselines before mutation, and restore only proven transaction-generated Godot metadata churn; depends on the sparse-checkout correction re-review.
+- `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — paired P0 code/architecture/asset-pipeline/workflow review of the publish-readiness and clean-or-RECOVERY_REQUIRED contract.
+- `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — P0 browser/PREVIEW concurrency hardening: accepted browser snapshot, latest-request-wins refresh, page-3 atomic F5 replacement, stale async rejection, and deterministic race coverage; depends on the publish-readiness review.
+- `REVIEW_OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — paired P0 code/architecture/runtime/workflow review of browser/PREVIEW refresh hardening and the page-3 crash-class regressions.
 - `ASSET_HANDOFF_BUNDLE_INSTALLER_V1.md` — P1 self-installing ChatGPT→repo asset handoff: standalone manifest-driven installer, Game32 per-image signoff/package prompt, source_work/inbox-only writes, conflict/hash/path hardening, and focused smoke coverage.
 - `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.
 - `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 code/workflow re-review of the `block_hold_01` FX import repair.
-- `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-correction Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off.
+- `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-hardening Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off; dependency-gated behind the browser/PREVIEW hardening review.
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — paired P1 independent code/architecture/asset-pipeline review of FX layer adoption and new-source publication safety.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
