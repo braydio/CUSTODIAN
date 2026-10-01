@@ -53,6 +53,40 @@ runtime-ready backend    sprite-ingest backend
 
 ---
 
+## Reviewed Source Handoff Bundles
+
+Generated or externally authored art can arrive in a reviewed
+`custodian.asset_handoff.v1` ZIP. Its manifest carries transport and review
+metadata: family/state identity, package-relative files, source_work/inbox
+destinations, per-file SHA-256 and byte size, optional PNG dimensions, review
+status, and install flags. `custodian.asset_family.v2` remains the semantic and
+physical runtime contract; a handoff manifest does not create or edit one.
+
+The copied standalone installer is
+`custodian/tools/assets/asset_handoff_installer.py`, bundled as
+`INSTALL_INTO_REPO.py`. It validates the package and destination checkout
+before writing and is restricted to:
+
+```text
+custodian/asset_drop/source_work/
+custodian/asset_drop/inbox/
+```
+
+`RUNTIME_READY` source may be staged when enabled, and normalized inbox input
+requires both `RUNTIME_READY` and `install_inbox: true`.
+`SOURCE_READY_NEEDS_TUNE` may stage its source master but cannot promote its
+inbox file. `REJECT_REGENERATE` stages no image. Conflicting destination bytes,
+checksum/size/dimension mismatches, traversal, absolute paths, and package or
+repository symlink escapes fail closed. Dry-run applies the same checks without
+creating files. The original ZIP remains source evidence.
+
+The installer never invokes ingest, edits family contracts, updates generated
+catalogs, binds consumers, or publishes runtime assets. After it stages source
+and inbox files, the existing Asset V2 owner inspects or updates the family
+contract as needed, then uses the normal plan/status/doctor/ingest workflow.
+Specialized Operator source-to-runtime tooling remains authoritative for
+Operator artwork.
+
 ## User Workflow
 
 ### 1. Create a Family Contract (one-time)

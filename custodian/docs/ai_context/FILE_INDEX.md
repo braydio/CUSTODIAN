@@ -7,6 +7,13 @@
 - `custodian/tools/assets/asset_workbench/` — optional Textual FAMILY navigator, immutable Asset V2 projections, and transactional refresh/search state; starts read-only and imports no Operator backend. `requirements.txt` lists its optional UI dependency.
 - `custodian/tools/validation/asset_workbench_ui_smoke.py` — focused fixture/service/Pilot coverage and real `ambient_baby_opossum` projection acceptance, selected by the `asset_workbench_ui` validation owner.
 
+## Asset V2 Handoff Bundles
+
+- `design/04_architecture/ASSET_PIPELINE_V2.md` — Asset V2 remains the runtime publication authority; reviewed handoff bundles end at `asset_drop/source_work/` and `asset_drop/inbox/`.
+- `custodian/tools/assets/asset_handoff_installer.py` — standalone, stdlib-only `custodian.asset_handoff.v1` installer copied into reviewed ZIPs as `INSTALL_INTO_REPO.py`; writes only source_work/inbox and never invokes Asset V2 ingest.
+- `custodian/docs/ai_context/prompts/generate_asset_handoff_bundle.md` — package layout, per-image review, Game32 metadata, checksums, routing, and implementation handoff requirements.
+- `custodian/tools/validation/asset_handoff_installer_smoke.py` — isolated install, dry-run, review gating, integrity, conflict, and path-containment acceptance for the copied installer.
+
 - `custodian/docs/ai_context/task_packets/archived/STARTUP_WORLD_ENTRY_SPINE_V1.md` / `REVIEW_STARTUP_WORLD_ENTRY_SPINE_V1.md` — completed App/Boot startup-mode spine and active independent review; keeps Awakening default while exposing Twin Solaria and seeded Contract sandbox direct-start paths.
 
 ## Operator Runtime Authority Migration (in progress)
