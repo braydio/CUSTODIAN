@@ -4,6 +4,7 @@
 > **Scope:** Custodian death/recovery, local recovery infrastructure, field-acquired equipment, recovered armory persistence, armament registration, deployment capacity, and registration progression
 > **Related lore:** `design/03_world/lore/CUSTODIAN_MANDATE_AND_HUB.md`, `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`
 > **Related systems:** `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`, `design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md`, `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md`
+> **Implementation tracker:** `design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`
 > **Runtime note:** current one-life Custodian game-over behavior is transitional and does not supersede this target design.
 
 This document defines the intended relationship between:
