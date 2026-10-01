@@ -69,45 +69,6 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
 - Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
 
-<!-- TEMP_LFS_DEGRADED_MODE_START expires=2026-10-01T04:00:00Z -->
-## Temporary Git LFS Degraded Mode
-
-Active through **2026-10-01 00:00 America/New_York** while the GitHub LFS
-bandwidth allowance is exhausted.
-
-- Agent worktree/landing tooling automatically sets `GIT_LFS_SKIP_SMUDGE=1`
-  during this window, so branch/worktree synchronization does not try to
-  download missing LFS objects.
-- For manual clone/pull/checkout operations that could materialize LFS content,
-  use `GIT_LFS_SKIP_SMUDGE=1`. Do not run `git lfs pull` or `git lfs fetch`
-  during the window unless the user explicitly chooses paid/additional bandwidth.
-- Existing locally cached LFS objects may be used normally. If a required
-  binary is not cached, defer only the validation/art step that truly needs it
-  and report the missing LFS payload. Do not replace LFS pointers with ordinary
-  Git blobs or move production assets out of LFS as a workaround.
-- If a worktree's own procgen/asset validation fails on missing/broken
-  textures despite the files existing on disk, check whether the LFS objects
-  are already locally cached (`git lfs ls-files -l`, then check
-  `$(git rev-parse --git-common-dir)/lfs/objects/<oid[0:2]>/<oid[2:4]>/<oid>`)
-  before assuming a real content gap; a full `git lfs checkout` of already-cached
-  objects is a local disk operation, not a network fetch, and is explicitly
-  permitted by the rule above. Run this **before** any `godot --headless
-  --import` pass in that worktree: importing while assets are still
-  unmaterialized pointer stubs leaves stale `valid=false` `.import` sidecars
-  that later reimport passes do not automatically retry, forcing a bulk
-  `grep -rl '^valid=false' --include=*.import` cleanup and reimport to
-  recover. That cleanup is local cache churn only — never commit it; discard
-  with `git checkout -- '*.import'` once materialization is confirmed, and
-  reimport fresh.
-- Avoid unnecessary new LFS asset churn until the reset. Code, docs, metadata,
-  task packets, and non-LFS work continue normally.
-- GitHub Actions currently use pointer-only checkout (no `lfs: true`), so no
-  CI validation gate is weakened or disabled by this temporary mode.
-
-A scheduled repository cleanup removes this note and the temporary agent-tool
-guards after expiry.
-<!-- TEMP_LFS_DEGRADED_MODE_END -->
-
 ## Production Asset Requirements
 
 - Discovery: update `content/metadata/assets/required_assets.registry.json`, choose the real fulfillment route, regenerate/check the generated view, and report the added need.
@@ -272,14 +233,6 @@ Minimum adjacency check:
 - the validation recipe and prompt template when the work matches one
 
 ## Agent Task Packets
-
-<!-- TEMP_PROCGEN_PACKET_ROUTING_START expires=2026-10-01T04:00:00Z -->
-### Temporary Procgen Packet Routing
-
-Until 2026-10-01 00:00 America/New_York, agents other than Claude must skip all procgen-family task packets and must not claim or work them. Claude is explicitly allowed to claim and work procgen-family task packets during this window.
-
-This instruction block is scheduled for automatic removal at its expiry time.
-<!-- TEMP_PROCGEN_PACKET_ROUTING_END -->
 
 Task packets are optional risk-control and handoff records, not mandatory ceremony.
 When a packet is used, give it the stable workstream ID. Before a completed
