@@ -219,6 +219,7 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `ASSET_HANDOFF_BUNDLE_INSTALLER_V1.md` — P1 self-installing ChatGPT→repo asset handoff: standalone manifest-driven installer, Game32 per-image signoff/package prompt, source_work/inbox-only writes, conflict/hash/path hardening, and focused smoke coverage.
 - `OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — P1 repair for invalid tracked `block_hold_01` FX import metadata that prevents the required sparse Workbench modular-layer validation from passing; paired review is dependency-gated.
 - `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 code/workflow re-review of the `block_hold_01` FX import repair.
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-correction Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off.
