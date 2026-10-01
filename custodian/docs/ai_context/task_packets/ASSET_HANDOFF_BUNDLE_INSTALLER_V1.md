@@ -136,7 +136,7 @@
   - `FILE_INDEX.md` points future agents to the installer and reusable prompt.
   - No duplicate/stale new authority is introduced; docs drift found during implementation is corrected in the same slice when owned by the touched workflow.
 - Validation:
-  - `python3 custodian/tools/validation/asset_handoff_installer_smoke.py`
+  - Add and run the new focused standalone-installer smoke created by this slice under the repository validation tooling; it must exercise the installer acceptance cases above without naming a not-yet-created entrypoint on `main`.
   - `python3 custodian/tools/agent/validate_prompt_contract.py --templates-only --strict`
   - Run the current focused AI-context/docs validator if the live repository provides one for changed prompt/index files; use the live command rather than inventing a stale path.
   - Use temporary fixture repositories/directories only; this tooling slice does not require Godot launch, renderer evidence, or broad gameplay validation.
