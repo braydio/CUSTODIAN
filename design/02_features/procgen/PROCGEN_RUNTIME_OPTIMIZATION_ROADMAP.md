@@ -39,8 +39,8 @@ Reviewed on `main@565168b4`:
 
 Current generation/runtime contracts include:
 
-- candidate evaluation already skips some final decoration and promotes the accepted structural candidate in place;
-- candidate evaluation is **not** semantics-only and still constructs substantial structural TileMap/terrain/road state before rejection;
+- candidate orchestration in `custodian/game/world/procgen/custodian_contract_map.gd` evaluates deterministic semantic snapshots of live TileMap-backed candidates through `generation/candidate_evaluator.gd`; the selected candidate is validated by `generation/procgen_candidate_materializer.gd` and realized as a fresh final runtime map rather than reusing the evaluation node;
+- candidate evaluation is **not** semantics-only at construction time: rejected attempts still instantiate substantial `ProcGenTilemap`/TileMap/terrain/road working state before the data-only evaluator scores them, which is the GenerationGrid initiative's remaining S3 target;
 - normal contract generation allows up to `12` candidate attempts;
 - generated maps are typically `160x160` through `224x224`;
 - streaming reveal defaults to `16x16` chunks, immediate radius `1`, active radius `2`, `96` tiles/frame, and `0.15 s` derived-visual rebuild cadence;
