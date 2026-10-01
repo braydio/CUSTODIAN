@@ -3045,7 +3045,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"unarmed_fast_windup_lower_up",
-"speed": 12.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -3664,7 +3664,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"unarmed_run_up_right",
-"speed": 12.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -3877,5 +3877,5 @@ animations = [{
 }],
 "loop": true,
 "name": &"unarmed_walk_up_right",
-"speed": 10.0
+"speed": 8.0
 }]
