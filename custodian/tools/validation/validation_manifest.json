@@ -326,6 +326,35 @@
       "needs_import": true
     },
     {
+      "id": "procgen_walkable_boundary",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_walkable_boundary_smoke.gd",
+      "tier": "actor",
+      "tags": ["procgen", "streaming", "walkable-boundary", "collision"],
+      "owners": [
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/runtime_walkable_boundary_chunk.gd",
+        "custodian/tools/validation/procgen_walkable_boundary_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "runtime_wall_collision_compaction",
+      "type": "godot_script",
+      "script": "res://tools/validation/runtime_wall_collision_compaction_smoke.gd",
+      "tier": "actor",
+      "tags": ["procgen", "runtime-wall", "collision", "destruction", "streaming"],
+      "owners": [
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/runtime_wall_chunk.gd",
+        "custodian/game/world/procgen/runtime_wall_segment.gd",
+        "custodian/tools/validation/runtime_wall_collision_compaction_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "procgen_runtime_health",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_runtime_health_smoke.gd",
