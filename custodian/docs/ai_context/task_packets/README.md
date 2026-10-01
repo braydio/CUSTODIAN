@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-09-30
+Last updated: 2026-10-01
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -237,10 +237,11 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — paired P1 independent code/architecture/asset-pipeline review of FX layer adoption and new-source publication safety.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
-- Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. All packets below are already authored as `Status: ready` / `Dispatch: auto`; dependencies and locks gate eligibility. One authorized agent may follow the roadmap's serial auto-run order, while parallel agents may claim independent eligible siblings.
-- `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — M4 explicit chunk lifecycle authority; depends on M3.
-- `PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 deterministic reusable chunk payload cache; depends on M4.
-- `PROCGEN_DISTANT_CHUNK_UNLOAD.md` — M6 production distant unload/reload after cache proof; depends on M5.
+- Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are pre-authored, but execution readiness is evidence-gated: packets whose exact contract depends on not-yet-landed architecture may remain `blocked` / `manual` until refreshed in place. Dependencies, paired reviews, refresh gates, and locks control eligibility.
+- `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — M4 current-main audit/fix + explicit chunk lifecycle authority; ready after M3. Repairs the false-visible chunk-bookkeeping defect and adds truthful partial-reveal lifecycle semantics.
+- `REVIEW_PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — paired post-land code/architecture/runtime review of M4; required before M5 refresh.
+- `PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 identity reserved, currently blocked/manual; re-derive against reviewed M4 before returning to ready/auto.
+- `PROCGEN_DISTANT_CHUNK_UNLOAD.md` — M6 identity reserved, currently blocked/manual; re-derive against landed M5 before returning to ready/auto.
 - `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 shared world-placement context/service seam; depends on S1.
 - `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — P2 resource placement extraction; depends on P1.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — P3 vehicle placement extraction; depends on P1.
