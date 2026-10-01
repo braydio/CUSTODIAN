@@ -157,9 +157,9 @@ func get_pending_chunks() -> Array[Vector2i]:
 
 ## Narrow debug/test seam for the UNLOADED state the lifecycle contract
 ## declares but M4 never reaches in production (`streaming_unload_distant_chunks`
-## defaults false and this is the only call site). UNLOADED is sticky in M4;
-## M6 owns the real DORMANT -> UNLOADED -> reload policy, so a chunk unloaded
-## here is not re-requestable within this slice.
+## defaults false and this is the only call site). Re-requesting an UNLOADED
+## chunk intentionally restarts its lifecycle; M6 owns the production policy
+## for when/why to unload and reload, not the underlying reload mechanism.
 func force_unload(chunk_pos: Vector2i) -> void:
 	var record: ChunkRecord = _records.get(chunk_pos)
 	if record == null or (record.state != State.VISIBLE and record.state != State.DORMANT):
