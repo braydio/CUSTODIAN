@@ -196,7 +196,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | G4 | `procgen-accepted-candidate-materializer` | **complete** | G3 |
 | G5 | `procgen-candidate-runtime-path-demolition` | **complete** | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
-| M2 | `procgen-runtime-mutation-scheduler-cutover` | queued | M1 + G3-fix |
+| M2 | `procgen-runtime-mutation-scheduler-cutover` | **complete** | M1 + G3-fix |
 | M3 | `procgen-pause-aware-streaming` | queued | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | queued | M3 |
 | M5 | `procgen-chunk-payload-cache` | queued | M4 |
@@ -246,9 +246,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M2 `procgen-runtime-mutation-scheduler-cutover` (in progress in its own workstream); `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
-**State:** S1, G1, G2, G3, G4, G5, M1, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. M2 remains independent of that rewrite and is eligible/resumed; P1 remains independently dependency-eligible.
-**Next gate:** route runtime mutation producers (topology, collision, walkable boundary, navigation, shadows, derived presentation) through M1's dirty-region scheduler instead of triggering independent rebuilds (M2, already in progress). The generation-data-model initiative is separately dependency-gated behind D1+D2+D3 and does not block the M/P lanes.
+**Current packet:** M3 `procgen-pause-aware-streaming` is eligible; `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
+**State:** S1, G1, G2, G3, G4, G5, M1, M2, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. P1 remains independently dependency-eligible.
+**Next gate:** M2 landed — the walkable-boundary and shadow/presentation producers now batch through M1's scheduler the same way navigation already did; collision has no second producer to coalesce against yet. M3 `procgen-pause-aware-streaming` is next. The generation-data-model initiative is separately dependency-gated behind D1+D2+D3 and does not block the M/P lanes.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
@@ -574,6 +574,30 @@ owners. Navigation retains its existing deferred flush and batch identity.
 - **Closing summary:** `PROCGEN_DERIVED_REBUILD_SCHEDULER_FOUNDATION_CLAUDE_SUMMARY.md`.
 - **Evidence:** scheduler smoke proves duplicate collision requests in one batch coalesce to one deterministic region with sorted reasons (2 requested, 1 coalesced, 1 committed); runtime-health smoke proves connector topology, boundary, navigation, shadow, and presentation requests/commits and durations are exposed. `runtime_wall_collision_compaction_smoke.gd`, `navigation_elevation_smoke.gd`, and S1 quick pass; S1 reports `determinism_ok=true` with matching 48x48 seed-420777 fingerprints (`1773840677`). No performance reduction is claimed at M1 because rebuild commit timing was deliberately preserved.
 - **Next:** M2 `procgen-runtime-mutation-scheduler-cutover` is eligible; broader producer cutover and commit batching remain there.
+
+### M2 Cutover — Complete
+
+`_rebuild_runtime_walkable_boundary` and `_refresh_shadows` now mirror
+navigation's existing dirty-flag/`call_deferred` pattern: a request marks the
+scheduler batch dirty and only the first request in a batch schedules the
+actual rebuild, so repeated producers (connector commits, streaming-reveal
+flushes) within one engine frame collapse into a single rebuild and a single
+scheduler commit. `_claim_isolated_world_overlook_pocket` opts into an
+explicit `flush_now` synchronous path because its caller queries walkability
+on the pocket the instant the call returns (proven by
+`ash_bell_threadway_causeway_smoke.gd`'s pre-Knot frontier check). Shadow
+regeneration itself was already coalesced inside `shadow_system.gd`
+(`_regeneration_queued` + its own deferred call); the cutover only makes the
+scheduler ledger's commit count match that existing coalescing instead of
+reporting one commit per caller. Full wall-collision rebuild
+(`_rebuild_runtime_wall_collision`) was measured to have exactly one call site
+(initial generation) with no second producer to coalesce against, so it is
+left synchronous and unmigrated — there is no batching opportunity there yet.
+
+- **Landed main SHA:** `0ca95441d` (`procgen runtime mutation scheduler cutover, batch walkable boundary and shadow rebuilds`).
+- **Closing summary:** `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER_CLAUDE_SUMMARY.md`.
+- **Evidence:** `procgen_derived_rebuild_scheduler_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_runtime_health_smoke.gd`, `ash_bell_threadway_causeway_smoke.gd`, `ash_bell_threadway_generation_contract_smoke.gd` (seeds=16), `runtime_wall_collision_compaction_smoke.gd` (19 bodies/443 shapes, matches M1 baseline), `procgen_stuck_pocket_smoke.gd`, `navigation_elevation_smoke.gd`, `compound_wall_smoke.gd`, `compound_road_wall_smoke.gd`, `procgen_authored_scene_authority_smoke.gd`, and `procgen_road_surface_roles_smoke.gd` all pass. S1 quick pass reports `determinism_ok=true` with the same 48x48 seed-420777 fingerprint (`1773840677`) as M1, confirming no deterministic-output regression. S1's runtime-streaming case shows real request>commit coalescing for the first time: `shadows`/`presentation` 5 requested → 1 committed (4 coalesced), `navigation` 2 requested → 1 committed (1 coalesced, unchanged from M1); `walkable_boundary`/`collision`/`topology` were not exercised by that particular scripted scenario (0 or 1 requested, no repeat caller in-batch).
+- **Next:** M3 `procgen-pause-aware-streaming` is eligible.
 
 ---
 

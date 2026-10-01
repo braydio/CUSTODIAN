@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-runtime-mutation-scheduler-cutover`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-derived-rebuild-scheduler-foundation, procgen-semantic-candidate-generation-correction-1`
@@ -33,3 +33,24 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 - Next action: Land cutover; procgen-pause-aware-streaming becomes eligible.
 - Best starting files: ProcGenTilemap runtime mutation/reveal methods; scheduler; runtime blocker and connector tests.
 - Blockers or open questions: None known at authoring time.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a` (no superseded production path; this is additive batching behavior on existing rebuild functions, not a path replacement)
+- Evidence: `_rebuild_runtime_walkable_boundary` and `_refresh_shadows` in `custodian/game/world/procgen/proc_gen_tilemap.gd` now use the dirty-flag/`call_deferred` batching pattern (mirroring `_queue_navigation_rebuild`/`_flush_navigation_rebuild`); `_claim_isolated_world_overlook_pocket` uses the new `flush_now` synchronous path. `procgen_derived_rebuild_scheduler_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_runtime_health_smoke.gd`, `ash_bell_threadway_causeway_smoke.gd`, `ash_bell_threadway_generation_contract_smoke.gd` (seeds=16), `runtime_wall_collision_compaction_smoke.gd` (19 bodies/443 shapes, matches M1), `procgen_stuck_pocket_smoke.gd`, `navigation_elevation_smoke.gd`, `compound_wall_smoke.gd`, `compound_road_wall_smoke.gd`, `procgen_authored_scene_authority_smoke.gd`, and `procgen_road_surface_roles_smoke.gd` all pass. S1 quick benchmark: `determinism_ok=true`, fingerprint `1773840677` unchanged from M1. S1's runtime-streaming scenario's `derived_rebuild_scheduler` snapshot shows `shadows`/`presentation` at 5 requested → 1 committed (4 coalesced), proving request>commit coalescing with no correctness regression. Collision full-rebuild was measured to have exactly one call site (generation) and was left unmigrated as a documented negative finding, not an oversight.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: the first deferred-batching pass on `_rebuild_runtime_walkable_boundary` broke `ash_bell_threadway_causeway_smoke.gd` because `_claim_isolated_world_overlook_pocket` is a synchronous API whose caller checks the physical frontier immediately after the call returns, with no frame yield.
+- Root cause / contributing factors: three call sites share one rebuild function; only one of the three needs a synchronous postcondition, and nothing in the function signature flagged which.
+- Prevention / pipeline improvement: added an explicit `flush_now: bool` parameter plus comments at the function and its one synchronous call site, giving the next migration (M3 pause-aware streaming) a visible precedent.
+- Tooling / docs drift discovered: `none`.
+- Follow-up: `none` — M3 `procgen-pause-aware-streaming` is eligible next.
+- What worked: running the full adjacent smoke set (not just the two most obviously relevant tests) caught the one real regression before closeout.
