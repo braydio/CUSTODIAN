@@ -40,7 +40,7 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Superseded/legacy production path disposition: `n/a` (no superseded production path; this is additive batching behavior on existing rebuild functions, not a path replacement)
+- Superseded/legacy production path disposition: `n/a`
 - Evidence: `_rebuild_runtime_walkable_boundary` and `_refresh_shadows` in `custodian/game/world/procgen/proc_gen_tilemap.gd` now use the dirty-flag/`call_deferred` batching pattern (mirroring `_queue_navigation_rebuild`/`_flush_navigation_rebuild`); `_claim_isolated_world_overlook_pocket` uses the new `flush_now` synchronous path. `procgen_derived_rebuild_scheduler_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_runtime_health_smoke.gd`, `ash_bell_threadway_causeway_smoke.gd`, `ash_bell_threadway_generation_contract_smoke.gd` (seeds=16), `runtime_wall_collision_compaction_smoke.gd` (19 bodies/443 shapes, matches M1), `procgen_stuck_pocket_smoke.gd`, `navigation_elevation_smoke.gd`, `compound_wall_smoke.gd`, `compound_road_wall_smoke.gd`, `procgen_authored_scene_authority_smoke.gd`, and `procgen_road_surface_roles_smoke.gd` all pass. S1 quick benchmark: `determinism_ok=true`, fingerprint `1773840677` unchanged from M1. S1's runtime-streaming scenario's `derived_rebuild_scheduler` snapshot shows `shadows`/`presentation` at 5 requested → 1 committed (4 coalesced), proving request>commit coalescing with no correctness regression. Collision full-rebuild was measured to have exactly one call site (generation) and was left unmigrated as a documented negative finding, not an oversight.
 
 ## Execution Feedback
