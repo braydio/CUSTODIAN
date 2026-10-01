@@ -5,22 +5,22 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `procgen-road-authority-extraction, procgen-authored-claim-registry-extraction, procgen-generation-state-extraction`
+- Depends on: `review-procgen-generation-grid-migration-series-authoring`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
-- Completion boundary: Done when ProcGenTilemap is a runtime state/TileMap host and coordinator with narrow delegation to generation, roads, claims, terrain, foliage, diagnostics, presentation, streaming and mutation services, with zero duplicated migrated algorithms.
-- Current measured state: At this packet's current blocked state, D1 road authority, D2 authored-claim registry, and D3 generation-state extraction are still dependency-gated future work, not already-landed facts. The G3 correction additionally proved that ProcGenTilemap's remaining generation core uses TileMapLayer as working memory and requires the post-D1/D2/D3 GenerationGrid migration initiative before a truthful final façade contraction can begin.
-- Evidence: `PROCGEN_SEMANTIC_CANDIDATE_GENERATION_CORRECTION_1_CLAUDE_SUMMARY.md`; `PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; D1/D2/D3 packet contracts; the current blocked GenerationGrid X1/X2/X3 chain; S1 line/function baseline. Re-derive final line/function counts and read the actual D1/D2/D3/migration summaries before this packet is reactivated.
+- Completion boundary: HARD BLOCKED. XR3 is only the gate that authors/reviews the measured migration DAG; D4 still must not return to `ready` until that generated DAG has executed through its **final reviewed convergence workstream**. X3/XR3 must rewrite this packet's `Depends on` to that concrete final review ID. Only then re-audit `ProcGenTilemap` and define the exact contraction residue.
+- Current measured state: `ProcGenTilemap` is currently 11,441 lines / 588 functions and still owns generation working state, road/parking topology, authored claims, accepted-state export, streaming adapters, terrain integration, props/foliage, presentation and runtime mutation glue. D1/D2/D3 are now explicitly refresh-gated on M6; X1 is an audit after them; X2 and X3 are refresh-gated on their paired reviews; the measured migration DAG does not exist yet. Therefore no truthful D4 deletion list or final dependency exists today.
+- Evidence: current `custodian/game/world/procgen/proc_gen_tilemap.gd`; D1/D2/D3 packets; X1/XR1; blocked X2/XR2 and X3/XR3; `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; S1 baseline.
 - Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; ARCHITECTURE.md ownership model; extracted service APIs.
-- Work surface: ProcGenTilemap cleanup, validation manifest, architecture/current-state/file index docs, focused façade/ownership smoke.
-- Change: Delete zero-consumer migrated functions/state, simplify façade methods to delegation, tighten service initialization/lifecycle, and update validation ownership so edits to an extracted service select focused tests instead of broad ProcGenTilemap coverage. Measure lines/functions after cleanup but do not remove useful façade APIs solely for a number.
+- Work surface: Intentionally not frozen. After final migration convergence, re-inventory the surviving `custodian/game/world/procgen/proc_gen_tilemap.gd` façade, its actual extracted owners under `procgen/roads/`, `procgen/authored_claims/`, `procgen/generation/`, `procgen/streaming/`, plus existing terrain/foliage/diagnostics/presentation packages; then rewrite this packet to exact zero-consumer residue and focused ownership tests.
+- Change: None while blocked. Final contraction is deletion/delegation cleanup only after the generation-data migration truly converges; do not use D4 as a substitute for unfinished migration work.
 - Preserve: All runtime behavior/fingerprints, public methods required by current consumers, scene/node paths where consumers depend on them.
 - Non-goals: No renderer consolidation, no gameplay retuning, no arbitrary helper extraction outside the three completed domains.
-- Acceptance: No duplicate migrated road/claim/export algorithms remain; focused ownership tests prove callers route through service owners; ProcGenTilemap line/function count materially drops from S1 baseline with behavior green.
-- Validation: Ownership/architecture smoke + representative road/claim/state/streaming/runtime health suites + S1 quick + changed-file closeout.
+- Acceptance: Not implementation-ready. The refreshed post-convergence packet must name exact old functions/state to remove or intentionally preserve, prove no duplicate migrated algorithms remain, preserve required façade APIs/scene paths, and measure line/function reduction without using a numeric target as architecture authority.
+- Validation: Not implementation-ready. Re-derive after final migration convergence from the actual extracted owners and surviving façade; expected closeout includes focused ownership tests, representative road/claim/generation/streaming/runtime-health suites, S1 quick, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Renderer/node attribution follows after placement loader contraction also completes.
 
