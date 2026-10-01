@@ -91,8 +91,9 @@ S1  procgen-performance-baseline-v1
 │       └─ M3 procgen-pause-aware-streaming
 │           └─ M4 procgen-chunk-lifecycle-state-machine
 │               └─ MR4 review-procgen-chunk-lifecycle-state-machine
-│                   └─ M5 procgen-chunk-payload-cache [refresh-gated]
-│                       └─ M6 procgen-distant-chunk-unload [refresh-gated]
+│                   └─ M5 procgen-chunk-payload-cache
+│                       └─ MR5 review-procgen-chunk-payload-cache
+│                           └─ M6 procgen-distant-chunk-unload [refresh-gated]
 │
 └─ PLACEMENT LANE
    P1 contract-world-placement-foundation
@@ -149,7 +150,7 @@ When the user has authorized one agent/session to run this full series unattende
 ```text
 S1
 G1 -> G2 -> G3 -> G4 -> G5
-M1 -> M2 -> M3 -> M4 -> MR4 -> [refresh M5] -> M5 -> [refresh M6] -> M6
+M1 -> M2 -> M3 -> M4 -> MR4 -> M5 -> MR5 -> [refresh M6] -> M6
 P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> [refresh P7] -> P7
 [refresh D1/D2/D3 after M6] -> D1 -> D2 -> D3
 X1 -> XR1 -> [refresh X2] -> X2 -> XR2 -> [refresh X3] -> X3 -> XR3
@@ -177,7 +178,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | S4 Accepted materialization | G4 + G5 |
 | S5 Runtime mutation scheduler | M1 + M2 |
 | S6 Pause-aware streaming | M3 |
-| S7 Chunk lifecycle/cache | M4 + MR4 + refreshed M5 + refreshed M6 |
+| S7 Chunk lifecycle/cache | M4 + MR4 + M5 + MR5 + refreshed M6 |
 | S8 ProcGenTilemap decomplexification | D1 + D2 + D3 + X1/XR1 + X2/XR2 + X3/XR3 + measured generated migration DAG + D4 |
 | S9 Contract-world placement extraction | P1 + P2 + P3 + P4 + P5 + P6 + P7 |
 | S10 Renderer/node-load work | V1 + V2 |
@@ -201,8 +202,9 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | **complete** | M3 |
 | MR4 | `review-procgen-chunk-lifecycle-state-machine` | **complete — passed, non-blocking-only** | M4 |
-| M5 | `procgen-chunk-payload-cache` | **blocked / manual refresh gate** | MR4 |
-| M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | M5 |
+| M5 | `procgen-chunk-payload-cache` | **ready / eligible** | MR4 |
+| MR5 | `review-procgen-chunk-payload-cache` | queued | M5 |
+| M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | MR5 |
 | P1 | `contract-world-placement-foundation` | **ready / eligible** | S1 |
 | P2 | `contract-world-resource-placement-extraction` | queued | P1 |
 | P3 | `contract-world-vehicle-placement-extraction` | queued | P1 |
@@ -248,9 +250,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 and its paired review MR4 are complete. MR4 passed with 0 blocking defects, 0 material evidence gaps, and one next-slice documentation-drift finding (`R0-01`). M5 `procgen-chunk-payload-cache` is now refresh-eligible against the reviewed M4 lifecycle authority. P1 `contract-world-placement-foundation` remains independently ready/eligible in parallel.
+**Current packet:** M4 and MR4 are complete. M5 `procgen-chunk-payload-cache` has now been fully re-derived against the reviewed lifecycle/runtime architecture and is `ready / auto`; its paired review MR5 is pre-authored and dependency-gated behind M5. P1 `contract-world-placement-foundation` remains independently ready/eligible in parallel.
 **State:** S1, G1-G5, M1-M4, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. The placement package is still README-only, so P1 is the live P-lane entry and P7 is refresh-gated after P2-P6. D1-D3 are refresh-gated after M6; X2/X3 are refresh-gated on their predecessor reviews; V2 is refresh-gated on V1 attribution.
-**Next gate:** Re-derive M5 `procgen-chunk-payload-cache` in place from the reviewed live M4 lifecycle authority before returning it to `ready/auto`. Carry MR4 `R0-01` into that refresh as a bounded documentation/comment correction: `UNLOADED` is reloadable by mechanism, while M6 owns production unload/reload policy. M6 remains intentionally blocked/manual until M5 lands and is measured. The GenerationGrid initiative remains separately gated behind D1+D2+D3. In parallel, P1 may proceed from the real `custodian/game/world/placement/README.md` scaffold and live `ContractWorldLoader`.
+**Next gate:** Claim M5 `procgen-chunk-payload-cache`. It must land one invalidatable generation-scoped derived cache with exact mutation/stale-record protection while preserving M3/M4 ownership. Then run MR5. Only a passed reviewed cache makes M6 refresh-eligible. M6 remains blocked/manual until that review closes. P1 may proceed independently in parallel.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
@@ -688,13 +690,13 @@ currently_visible()` was repaired to query canonical painted-cell TileMap
 state directly (exact per-tile truth even while its chunk is REVEALING)
 instead of chunk-level membership. Production automatic unload stays
 disabled (`streaming_unload_distant_chunks` defaults false); `UNLOADED` is
-reachable only through that already-gated path and is sticky in M4 -- M6
+reachable only through that already-gated path; re-requesting an `UNLOADED` chunk is already a valid mechanism, while M6
 owns the real reload policy.
 
 - **Landed main SHA:** `6588093c2` (`procgen chunk lifecycle state machine, M4 ProcGenChunkLifecycle authority`).
 - **Closing summary:** `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE_CLAUDE_SUMMARY.md`.
 - **Evidence:** New `procgen_chunk_lifecycle_smoke.gd` proves deterministic state progression for queued unpaused reveal, pause PREPARE -> resume commit, immediate reveal, a zero-content chunk, active-radius exit to DORMANT and re-entry to VISIBLE without duplicate work, and the debug-only UNLOADED seam, plus illegal-transition detection and idempotent re-requests. `procgen_pause_aware_streaming_smoke.gd`, `procgen_candidate_promotion_smoke.gd` (restored to required regression status -- its obsolete strict streamed-floor assertion is gone), `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_macro_presentation_smoke.gd`, and `procgen_road_semantics_v2_smoke.gd` all pass unchanged (the last required one small fix: it used to poke `_revealed_chunks` directly to fake residency before testing unload/re-reveal, now calls the real `_reveal_chunk_immediately` adapter instead). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint as M1-M3, confirming no deterministic-output regression. `procgen_performance_baseline_bench.gd`'s and `procgen_performance_snapshot.gd`'s external `_revealed_chunks`/`_queued_chunks` telemetry reads were migrated to the new `ProcGenTilemap.get_resident_chunk_count()`/`get_pending_chunk_count()` public API.
-- **Next:** MR4 `review-procgen-chunk-lifecycle-state-machine` is eligible; M5 stays refresh-gated behind it.
+- **Next:** MR4 passed. M5 `procgen-chunk-payload-cache` is ready/eligible; MR5 follows it, and M6 stays refresh-gated until MR5 passes.
 
 ---
 
