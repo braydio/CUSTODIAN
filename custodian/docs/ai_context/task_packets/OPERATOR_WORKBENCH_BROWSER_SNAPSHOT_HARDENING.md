@@ -1,680 +1,181 @@
-# OPERATOR WORKBENCH BROWSER SNAPSHOT HARDENING
-
-Status: implementation  
-Primary subsystem: Operator Workbench UI  
-Scope: one coherent browser/discovery consistency slice
-
-## Objective
-
-Make Operator Workbench animation discovery transactional from the user's perspective.
-
-A transient or superseded canonical-source scan must never:
-
-- make an existing animation temporarily disappear;
-- expose a half-migrated modular body as healthy;
-- silently change the selected animation;
-- allow an older asynchronous refresh to overwrite newer browser state.
-
-Canonical Operator source remains authoring authority.
-
-Do not change animation art or gameplay/runtime animation behavior.
-
-## Current failure surfaces
-
-Verify these against current main before editing.
-
-### 1. Browser applies one filesystem scan directly
-
-`custodian/tools/operator/ui/app.py::_reload_browser()` currently:
-
-- awaits `AnimationFeature.refresh()` in a worker thread;
-- filters that result;
-- immediately calls `AnimationTree.set_records()`;
-- falls back to `filtered[0]` when current selection is absent.
-
-There is no accepted/last-known-good browser snapshot.
-
-### 2. AnimationFeature mutates cache from a worker thread
-
-`custodian/tools/operator/ui/features/animations.py` currently stores `_records`.
-
-`refresh()` mutates `_records` and is called through `asyncio.to_thread()`.
-
-Cancellation of the awaiting Textual worker does not stop that Python thread,
-so a canceled older refresh may mutate `_records` after a newer request exists.
-
-Remove this background-thread side effect.
-
-### 3. Canonical publication can temporarily expose an incomplete source tree
-
-`custodian/tools/operator/animation_workbench.py::publish()` currently performs
-path-changing contract publication by removing an old canonical path before
-installing the replacement path.
-
-This means a frame/canvas contract migration can briefly expose an incomplete
-canonical semantic action to concurrent readers.
-
-This packet must make OPUI resilient to that fact.
-
-Do NOT redesign Workbench publication in this slice.
-
-### 4. Search and refresh selection semantics are coupled incorrectly
-
-A search filter may legitimately hide the selected row.
-
-Refreshing while that filter is active must not interpret "not visible under
-this filter" as "the canonical animation disappeared."
-
-Search is presentation state, not animation authority.
-
-### 5. Superseded visibility has two owners
-
-Both:
-
-- `WorkbenchUIState.show_superseded`
-- `WorkbenchService.show_superseded`
-
-currently carry mutable presentation state.
-
-Leave one owner.
-
-### 6. Reachability projection is not snapshot-consistent
-
-`WorkbenchService._reachability_status()` rereads
-`operator_animation_reachability.json` per animation record.
-
-One browser discovery must parse reachability exactly once.
-
-Action status must prefer the action-level reachability entry. A layer-level
-DORMANT / ALTERNATE_LAYER / SUPERSEDED row must not accidentally classify the
-entire action.
-
-### 7. Browser COMPLETE does not currently prove synchronization
-
-The active design document says synchronized lower+upper body presentation is
-COMPLETE.
-
-Current `classify_layers()` only proves both layer names exist.
-
-For browser projection, modular body presentation is COMPLETE only when its
-required lower+upper clocks agree.
-
-Existing legitimate weapon-only / FX-only / fragment records remain PARTIAL
-and visible.
-
-## Authority
-
-Use the existing boundaries:
-
-- `animation_workbench_model.source_index()`:
-  canonical semantic source discovery
-
-- `WorkbenchService`:
-  pure source/reachability -> browser-record projection
-
-- `WorkbenchUIState`:
-  accepted UI browser state and presentation preferences
-
-- `OperatorWorkbenchApp`:
-  asynchronous refresh orchestration and application
-
-- `AnimationTree`:
-  rendering/navigation only
-
-Do not create another persistent browser cache authority.
-
-If local helper/class names differ from this packet, preserve these ownership
-boundaries rather than forcing the suggested names.
-
-## Behavioral contract
-
-### A. Side-effect-free discovery
-
-A browser filesystem discovery performed in a worker thread must return a
-candidate value only.
-
-It must not mutate:
-
-- accepted browser records;
-- search state;
-- selected animation;
-- AnimationTree;
-- a feature-level cache subsequently consumed by search.
-
-Remove or retire `AnimationFeature._records` as an independent source of truth.
-
-`AnimationFeature.refresh()` may remain as a thin provider facade if useful,
-but worker-thread execution must be side-effect-free.
-
-### B. One accepted browser snapshot
-
-Keep exactly one accepted, unfiltered canonical browser snapshot in UI state.
-
-A tuple of immutable `AnimationRecord` projections is sufficient unless the
-live code benefits from a small dedicated value object.
-
-Search and visibility filters derive from that accepted snapshot.
-
-Do not use AnimationTree contents as source state.
-
-### C. Latest-request-wins refresh ordering
-
-Every asynchronous browser refresh must have a monotonically increasing request
-generation.
-
-After every await / thread completion / stabilization delay:
-
-    if this request is no longer the newest request:
-        discard it without touching UI state
-
-An older slow scan must never replace a newer accepted snapshot.
-
-Do not rely only on Textual `exclusive=True`; canceled `asyncio.to_thread()`
-work can continue executing.
-
-### D. Destructive candidate stabilization
-
-Ordinary additive/non-destructive discoveries may apply immediately.
-
-A candidate is destructive relative to the last accepted canonical snapshot if
-at least one previously accepted directional identity:
-
-1. disappears; or
-2. loses required body presentation such that COMPLETE becomes PARTIAL; or
-3. loses one of the previously accepted body layers.
-
-Do not compare against the currently filtered/search-visible tree.
-
-For a destructive candidate use bounded confirmation:
-
-    initial destructive candidate
-        wait ~100 ms
-        rescan
-
-    if scan 2 has the same semantic browser signature:
-        accept it
-
-    if scan 2 differs:
-        wait ~250 ms
-        perform one final scan
-
-    accept only if two consecutive candidate signatures agree
-
-    otherwise:
-        retain the previous accepted snapshot
-        report that canonical source remained unstable
-
-Maximum discovery attempts for one request:
-
-    3
-
-Maximum stabilization delay budget:
-
-    approximately 350 ms
-
-Tests must inject/fake the delay rather than sleeping in real time.
-
-A genuine deletion therefore becomes visible after confirmation while a brief
-source-swap hole never reaches the tree.
-
-### E. Candidate signature
-
-Use semantic records, not filenames or mtimes.
-
-The stability signature must account for enough browser contract data to detect
-a half migration:
-
-    profile
-    group
-    action
-    direction
-    body/presentation layers
-    frame contract relevant to browser completeness
-
-Do not use file modification time or arbitrary directory ordering as identity.
-
-### F. In-app publish coordination
-
-A user-triggered F5/full-browser refresh must not start a canonical scan while
-this same OPUI instance is inside its canonical PUBLISH mutation.
-
-Coalesce/defer that request.
-
-Exactly one normal browser refresh must run when publication has completed.
-
-Do not block unrelated preview rendering or Aseprite live events.
-
-Canvas/frame migration staging itself remains workspace-local; canonical
-publication is the dangerous boundary.
-
-### G. Search is a pure view
-
-Typing or clearing Search must:
-
-- perform no filesystem discovery;
-- filter only the accepted browser snapshot;
-- never mutate canonical source;
-- never change `state.selection` merely because the selected row is hidden.
-
-If the current selected identity matches the current filter, restore its tree
-selection silently.
-
-If it does not match:
-
-- the tree may omit it;
-- the current Workbench/session selection remains unchanged.
-
-When the filter is cleared, restore the selected semantic leaf if it still
-exists.
-
-### H. Superseded visibility has one owner
-
-`WorkbenchUIState.show_superseded` is the presentation preference authority.
-
-Remove mutable `WorkbenchService.show_superseded` ownership.
-
-Expose action-level reachability status in the browser projection sufficiently
-for the UI to hide/show SUPERSEDED records without creating a second authority.
-
-Shift+U remains the UX.
-
-Do not let SUPERSEDED records leak into transition/timeline candidate behavior
-merely because the browser projection now carries their status.
-
-### I. Reachability is read once per discovery
-
-Read and parse:
-
-`custodian/content/data/operator/operator_animation_reachability.json`
-
-once per browser discovery.
-
-Build an action lookup keyed by:
-
-    profile / group / action
-
-Classification rule:
-
-1. use the action-level row where `layer` is absent;
-2. layer-specific entries describe layers and do not supersede action status;
-3. absence of an action-level classification must not be inferred as
-   SUPERSEDED merely because one layer is classified separately.
-
-Preserve existing reachability-audit authority. This packet does not edit
-reachability classifications.
-
-### J. Modular completeness must be truthful
-
-For browser records:
-
-- valid full_body presentation -> COMPLETE;
-- lower_body + upper_body with synchronized body clock -> COMPLETE;
-- lower+upper with mismatched frame clocks -> PARTIAL / contract mismatch;
-- only one required modular body layer -> PARTIAL;
-- weapon-only / FX-only fragments remain PARTIAL;
-- reference-only semantics retain existing reference/legacy presentation.
-
-Do not globally outlaw independent FX/weapon clocks.
-
-The synchronization check applies to the required modular body pair.
-
-### K. Selection restoration
-
-When an accepted snapshot is applied:
-
-If current semantic selection still exists in the unfiltered accepted snapshot:
-
-    preserve it
-
-If current search hides it:
-
-    preserve session selection without selecting another animation
-
-If it is genuinely removed after stabilization:
-
-    select a deterministic visible fallback
-    and emit one explicit activity message identifying:
-        removed identity
-        replacement selection
-
-Never silently fall back to `filtered[0]` because of a transient scan or search
-filter.
-
-### L. Tree application must not duplicate session loads
-
-`AnimationTree.set_records()` already preserves expanded semantic branch keys.
-
-Retain that behavior.
-
-Programmatic restoration of the selected leaf must not accidentally emit a
-second user-selection event that causes duplicate `_load_session()` work.
-
-Use the cleanest Textual seam available:
-
-- silent programmatic selection; or
-- a bounded selection-event suppression guard.
-
-Do not invent a second selection authority.
-
-One completed browser refresh should cause at most one intentional session
-reload for an unchanged selected identity.
-
-### M. Refresh failures preserve usable state
-
-If source discovery or reachability projection raises after a last-known-good
-snapshot exists:
-
-- retain the accepted records;
-- retain the visible tree;
-- retain selection/session state;
-- report:
-
-    browser refresh failed; previous snapshot retained
-
-Then surface the useful underlying error through the existing error path.
-
-Do not replace the tree with an empty set on refresh failure.
-
-## Fast-chain regression fixture
-
-Extend the existing focused UI smoke with the observed class of failure.
-
-Accepted initial snapshot:
-
-    unarmed/attack/fast_01/e
-    unarmed/attack/fast_02/e
-    unarmed/attack/fast_03/e
-    unarmed/attack/fast_04/e
-
-Select:
-
-    unarmed/attack/fast_02/e
-
-Candidate discovery 1 temporarily returns:
-
-    fast_01
-    fast_04
-
-Candidate discovery 2 returns:
-
-    fast_01
-    fast_02
-    fast_03
-    fast_04
-
-Expected:
-
-- Fast 02/03 never disappear from the rendered accepted tree;
-- Fast 02 remains selected;
-- no fallback session is loaded;
-- one stabilization/recovery activity event is sufficient.
-
-## Additional focused regressions
-
-Add focused deterministic coverage for:
-
-### Stable removal
-
-Two consecutive destructive scans omit Fast 03.
-
-Expected:
-
-- omission is accepted after confirmation;
-- Fast 03 disappears;
-- if it was selected, explicit deterministic fallback behavior occurs.
-
-### Half modular migration
-
-Accepted Fast 02:
-
-    lower_body 6f
-    upper_body 6f
-    COMPLETE
-
-Transient candidate:
-
-    lower_body 7f
-    upper_body 6f
-
-Expected:
-
-    candidate is not exposed as COMPLETE
-    destructive stabilization protects the accepted browser view
-
-Stable synchronized replacement:
-
-    lower_body 7f
-    upper_body 7f
-
-Expected:
-
-    new contract is accepted
-
-### Out-of-order completion
-
-Refresh A starts.
-Refresh B starts afterward.
-B completes first and is accepted.
-A completes later.
-
-Expected:
-
-    A cannot mutate accepted browser state or feature cache
-
-### Search + F5
-
-Select Fast 02.
-Search for Fast 01.
-Press full refresh.
-
-Expected:
-
-    Fast 02 remains the actual selected session
-    only Fast 01 is visible under the filter
-
-Clear Search.
-
-Expected:
-
-    all accepted records return without filesystem discovery
-    Fast 02 is restored as the selected tree leaf
-
-### Refresh exception
-
-Accepted snapshot exists.
-Next discovery raises.
-
-Expected:
-
-    tree and selection remain unchanged
-    previous-snapshot-retained message is emitted
-
-### Reachability projection
-
-Fixture contains:
-
-    action-level LIVE
-    layer-level ALTERNATE_LAYER
-
-Expected:
-
-    action remains LIVE
-
-Prove reachability source is parsed once for the discovery rather than once per
-record.
-
-### Programmatic selection
-
-Refresh while current identity survives.
-
-Expected:
-
-    exactly one intended session projection/reload
-    no duplicate selection-event session load
-
-## Preserve existing Ctrl+R contract
-
-Current main already has the desired contextual shortcut:
-
-WORKBENCH:
-    Ctrl+R -> Resize Canvas
-
-MOTION:
-    Ctrl+R -> Reset Motion
-
-text entry:
-    Ctrl+R -> no app mutation
-
-Do not restore Shift+R.
-
-Retain the existing real Textual Pilot coverage for this behavior.
-
-## Files expected to change
-
-Primary:
-
-- `custodian/tools/operator/ui/app.py`
-- `custodian/tools/operator/ui/service.py`
-- `custodian/tools/operator/ui/state.py`
-- `custodian/tools/operator/ui/features/animations.py`
-- `custodian/tools/validation/operator_workbench_ui_smoke.py`
-
-Conditional:
-
-- `custodian/tools/operator/ui/widgets/animation_tree.py`
-  only if needed for silent programmatic selection
-
-Docs:
-
-- `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`
-- `custodian/docs/ai_context/CURRENT_STATE.md`
-
-The existing validation manifest already maps
-`custodian/tools/operator/ui/**` to `operator_workbench_ui`.
-
-Do not edit `validation_manifest.json` unless the implementation creates a new
-owner outside that existing wildcard.
-
-## Documentation contract
-
-Update the active Workbench design document to state concisely:
-
-- canonical source remains authoring authority;
-- browser discovery is applied as an accepted snapshot;
-- destructive source regressions receive bounded stability confirmation;
-- search/superseded are presentation filters over accepted state;
-- current selection survives refresh/filtering while its canonical identity
-  remains valid;
-- synchronized modular lower+upper clocks are required for browser COMPLETE;
-- Ctrl+R remains contextual Resize/Reset behavior.
-
-Add only a concise current-truth note to `CURRENT_STATE.md`.
-
-Do not rewrite historical task packets.
-
-## Explicit non-goals
-
-Do NOT:
-
-- change Fast 01/02/03/04 art;
-- change animation timing or gameplay hit windows;
-- change `operator.gd`;
-- rebuild or reinterpret runtime combat behavior;
-- modify reachability classifications;
-- make runtime/catalog data authoring authority;
-- use `reports/operator/operator_runtime_build_v2.json` as browser authority;
-- redesign Workbench publish transactions in this slice;
-- redesign Asset Pipeline V2;
-- add polling or permanent background filesystem watchers;
-- add a second browser cache;
-- add broad per-frame telemetry;
-- alter the newly fixed Ctrl+R behavior.
-
-## Deferred architectural risk
-
-Do not implement this in the current packet, but report if still present:
-
-Canonical Workbench path-changing publication is not transactionally invisible
-to arbitrary external filesystem readers because old paths are removed while a
-multi-file replacement is being committed.
-
-The generated runtime builder likewise performs ordinary file copies and direct
-manifest/catalog writes.
-
-The browser stabilization contract in this packet protects OPUI from these
-short windows.
-
-A repository-wide writer/reader publication boundary, if desired, is a
-separate pipeline task because it must cover every canonical writer rather
-than patch only Workbench publish.
-
-## Validation order
-
-Run the smallest useful test first:
-
-    python3 custodian/tools/validation/operator_workbench_ui_smoke.py
-
-It must include the new deterministic browser-race fixtures without depending
-on real sleeps or mutating canonical production assets.
-
-Then run:
-
-    python3 custodian/tools/validation/run_validation.py --changed --json
-
-Only if implementation changes `animation_workbench_model.source_index()` or
-pipeline source-discovery semantics, additionally run:
-
-    python3 custodian/tools/validation/operator_animation_contract_report.py --strict
-
-Prefer not to alter `source_index()` in this slice.
-
-## Acceptance
-
-Complete when all are true:
-
-[ ] worker-thread browser discovery has no mutable cache/UI side effects
-
-[ ] latest refresh request always wins
-
-[ ] transient Fast 02/03 disappearance cannot reach the visible tree
-
-[ ] transient COMPLETE -> PARTIAL body migration cannot reach the visible tree
-
-[ ] a genuine stable deletion still becomes visible after bounded confirmation
-
-[ ] a refresh exception leaves the last usable browser intact
-
-[ ] Search performs zero canonical source scans
-
-[ ] Search + F5 cannot silently change the selected animation
-
-[ ] superseded visibility has one mutable owner
-
-[ ] reachability is parsed once per browser discovery
-
-[ ] layer-level status cannot wrongly supersede action-level reachability
-
-[ ] modular body clock mismatch is not reported COMPLETE
-
-[ ] programmatic refresh restoration does not duplicate session loading
-
-[ ] Ctrl+R Resize Canvas remains functional with AnimationTree/DataTable focus
-
-[ ] Ctrl+R Motion Reset remains functional only in Motion mode
-
-[ ] focused UI smoke passes
-
-[ ] changed validation passes
-
-## Completion report
-
-Return only:
-
-- files changed;
-- final browser ownership/stabilization contract;
-- focused smoke result;
-- changed-validation result;
-- docs updated;
-- intentionally deferred item, if any;
-- discovered architectural conflict/risk, if any;
-- commit SHA.
+# OPERATOR WORKBENCH BROWSER / PREVIEW REFRESH HARDENING
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `operator-workbench-browser-preview-refresh-hardening`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `review-operator-workbench-publish-readiness-recovery`
+- Locks: `operator-workbench-ui, operator-workbench-publish`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-operator-workbench-browser-preview-refresh-hardening`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Reviewed main: `4df3611c`
+- Goal: Make Operator Workbench browser refresh and page-3 PREVIEW reload transactional from the user's perspective: repeated F5, source scans, live Workbench updates, mode changes, and asynchronous preview/comparison/transition loads must never expose a transient half-state, silently change the selected animation, apply an older result over a newer request, or crash the UI.
+- Completion boundary: Replace mutable worker-thread browser discovery with one accepted canonical browser snapshot and latest-request-wins application; add generation/identity guards around asynchronous PREVIEW state; make F5 on page 3 retain the last usable preview until one coherent replacement is ready; preserve search/selection semantics across refresh; and add deterministic Textual/service regressions for the observed race classes. This packet owns UI/browser/preview orchestration only. It does not change Operator animation art, runtime combat behavior, canonical publication semantics, or the dedicated art-worktree Git transaction.
+- Current measured state:
+  - `custodian/tools/operator/ui/features/animations.py::AnimationFeature.refresh()` mutates feature-owned `_records` and is called through `asyncio.to_thread()`. Canceling/replacing the Textual worker does not stop the Python thread, so an older canceled refresh can still mutate that cache after a newer request exists.
+  - `OperatorWorkbenchApp::_reload_browser()` awaits that worker scan, filters the result, immediately calls `AnimationTree.set_records()`, and, when the current selection is absent from the filtered result, falls back to the first visible record. There is no accepted/last-known-good unfiltered browser snapshot and no request generation guard.
+  - Search currently reads `AnimationFeature._records`; therefore filesystem-discovery cache state and presentation filtering share one mutable owner.
+  - Page 3 is PREVIEW. Entering it starts asynchronous `_load_preview()`; PREVIEW also has a 30 Hz `_preview_tick()`, optional asynchronous comparison and transition-examiner loads, Live Bridge preview export/result handling, and the one-second `_watch_selected()` session refresh.
+  - `action_full_refresh()` starts `_reload_browser()` with Textual `exclusive=True`, but that only cancels/replaces the awaiting worker. It does not terminate a running `asyncio.to_thread()` source scan.
+  - `_load_preview()`, `_load_preview_comparison()`, `_load_transition_examiner()`, and ordinary preview loads do not carry a common semantic/session generation token. They can complete after selection, mode, source, or session state has changed.
+  - Live Bridge preview application already verifies current document path, revision, output path, and mode/source, which is a useful narrow guard, but it does not replace a common UI preview-generation contract for non-live worker results.
+  - `_preview_tick()` assumes that the current `preview_view`, frame index, selection/session, and active preview mode belong to one coherent generation. During an overlapping browser/session/preview refresh, those fields can temporarily describe different requests.
+  - `_watch_selected()` can reload the selected session and then refresh PREVIEW comparison/transition state while an F5 browser refresh or preview load is concurrently in flight.
+  - User-observed production symptom on 2026-10-01: OPUI intermittently crashes/reloads poorly when F5/reload is used while on page 3 PREVIEW. The exact exception is not yet durably captured, so this packet must fix the confirmed stale-async/browser ownership defects and add deterministic race coverage without claiming a single unverified crash root cause.
+  - A legacy packet at this same path already specified accepted-browser-snapshot, destructive-candidate stabilization, pure search, selection restoration, latest-request-wins browser refresh, and source-discovery consistency. It was not V2/indexed. This packet intentionally migrates and expands that same semantic task instead of creating a duplicate browser-hardening authority.
+- Evidence:
+  - `custodian/tools/operator/ui/app.py::{_reload_browser,_load_session,action_full_refresh,_set_mode,_load_preview,_load_preview_comparison,_load_transition_examiner,_apply_live_preview,_preview_tick,_watch_selected}`
+  - `custodian/tools/operator/ui/features/animations.py::{refresh,build_navigation}`
+  - `custodian/tools/operator/ui/state.py::WorkbenchUIState`
+  - `custodian/tools/operator/ui/service.py::{browser_records,filter_records,session,preview,transition_candidates,transition_preview}`
+  - `custodian/tools/operator/ui/widgets/animation_tree.py`
+  - `custodian/tools/validation/operator_workbench_ui_smoke.py`
+  - `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`
+  - current Textual dependency contract in `custodian/tools/operator/ui/requirements.txt`
+  - user-observed page-3 reload crashes on 2026-10-01
+- Task-specific authority:
+  - `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md` for shared-selection modes, PREVIEW semantics, canonical-source authority, saved/live Workbench preview behavior, and UI/backend ownership.
+  - `custodian/tools/operator/ui/service.py` remains the UI/backend boundary; filesystem and canonical-source projection belongs below the Textual widgets.
+  - `WorkbenchUIState` owns accepted UI/session/presentation state. Do not turn `AnimationTree` or `AnimationFeature` into a second state authority.
+  - `AnimationTree` remains rendering/navigation only.
+  - Existing Live Bridge revision/document guards remain authoritative for live Aseprite preview results and should be composed with, not replaced by, the new preview-generation guard.
+  - The completed `operator-workbench-publish-readiness-recovery` workstream owns Git/publication readiness; this packet may coordinate F5 around active Publish mutation but must not redesign checkout/publish recovery.
+- Work surface:
+  - Primary owners: `custodian/tools/operator/ui/app.py`, `custodian/tools/operator/ui/state.py`, `custodian/tools/operator/ui/features/animations.py`, and `custodian/tools/operator/ui/service.py`.
+  - Conditional widget touch: `custodian/tools/operator/ui/widgets/animation_tree.py` only if silent programmatic selection/event suppression cannot be achieved cleanly from the app layer.
+  - Focused regression owner: `custodian/tools/validation/operator_workbench_ui_smoke.py`.
+  - Supporting regression: `custodian/tools/validation/operator_animation_workbench_smoke.py` only where browser/session projections depend on source-plan behavior.
+  - Docs: `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`, `custodian/docs/ai_context/CURRENT_STATE.md`, and `FILE_INDEX.md` only where live ownership/behavior changes.
+- Change:
+  1. Make filesystem/browser discovery side-effect free. A worker-thread discovery must return an immutable candidate value only. It must not mutate accepted browser records, search state, selection, tree contents, session state, or any feature-level cache later consumed by Search. Remove `AnimationFeature._records` as an independent authority or reduce `AnimationFeature` to a stateless provider facade.
+  2. Add exactly one accepted, unfiltered canonical browser snapshot to UI state. Search and superseded visibility derive from that accepted snapshot. `AnimationTree` contents are a rendered view, not source state.
+  3. Add monotonically increasing browser-refresh generation. Every asynchronous browser request captures its generation and, after each await/thread completion/stabilization delay, discards itself without mutation if it is no longer the newest request. Do not rely on Textual `exclusive=True` as thread cancellation.
+  4. Preserve bounded destructive-candidate stabilization from the legacy packet. A candidate is destructive relative to the accepted snapshot when a previously accepted directional identity disappears, loses a previously accepted required body layer, or drops from truthful COMPLETE body presentation to PARTIAL/contract-mismatch. For destructive candidates:
+     - initial candidate -> wait about 100 ms -> rescan;
+     - if two consecutive semantic signatures agree, accept;
+     - otherwise wait about 250 ms and perform one final scan;
+     - accept only when two consecutive signatures agree; otherwise keep the previous accepted snapshot and report unstable canonical source.
+     Tests must inject/fake timing rather than sleep in real time. Ordinary additive/non-destructive candidates may apply immediately.
+  5. Candidate signatures must be semantic and deterministic: profile/group/action/direction, relevant presentation layer membership, and frame/body-clock contract needed to determine browser completeness. Do not use mtime, directory order, arbitrary glob recency, or rendered-tree state.
+  6. Keep Search a pure presentation operation. Typing/clearing Search performs zero filesystem discovery, filters only the accepted snapshot, and never changes the actual Workbench/session selection merely because the selected row is hidden. Clearing Search restores the selected semantic leaf when it still exists.
+  7. Preserve selection across accepted refreshes. If the current semantic identity still exists in the unfiltered accepted snapshot, keep it. Do not silently choose `filtered[0]` because Search hides the current row or because one transient scan omitted it. A deterministic fallback is allowed only after a stable confirmed deletion; emit one explicit activity event naming removed identity and replacement.
+  8. Preserve reachability/browser completeness behavior from the legacy packet: read reachability once per discovery, prefer action-level status over layer-specific classifications, keep one mutable `show_superseded` owner in UI state, and report modular lower+upper COMPLETE only when their required body clocks are synchronized. Existing valid full-body presentation is COMPLETE; weapon/FX fragments remain PARTIAL as designed. Do not change reachability classifications.
+  9. Add a separate monotonically increasing preview/session generation for asynchronous page-3 work. Increment/invalidate it whenever accepted semantic selection changes, PREVIEW is entered or left, preview source changes, or a browser/session refresh requires a replacement preview. Each async preview/comparison/transition result must carry enough identity to prove it still belongs to the active generation before mutating UI state.
+  10. Apply the preview-generation guard to at least:
+      - ordinary `_load_preview()` results;
+      - `_load_preview_comparison()`;
+      - `_load_transition_examiner()`;
+      - delayed/debounced Workbench/live-preview export orchestration in addition to the existing document/revision guard;
+      - any F5-triggered session reload path that schedules one of those loaders.
+      An older completed thread/task must be silently discarded, not rendered or turned into a new selection.
+  11. Make F5 on PREVIEW an atomic handoff:
+      - capture whether preview playback was running;
+      - pause advancement for the replacement handoff;
+      - retain the current usable rendered preview/view state while browser/session replacement is in flight;
+      - refresh and accept browser state using the rules above;
+      - preserve semantic selection when valid;
+      - reload the selected session only as needed;
+      - request one replacement preview for the current generation;
+      - atomically apply the coherent replacement;
+      - restore prior play/pause intent only if the same semantic preview remains valid.
+      Do not blank the preview or expose a partially reset frame/comparison state while replacement loads.
+  12. Coalesce/defer F5 when this same OPUI instance is inside canonical PUBLISH mutation. Exactly one normal browser/session refresh runs when publication completes. Do not block unrelated preview playback, saved Workbench file watching, or Live Bridge events longer than required for the canonical mutation boundary.
+  13. Harden the 30 Hz preview tick. It must no-op rather than index/render when the active preview generation is being replaced, the frame list is empty, the preview identity/source does not match active state, or frame state is not valid for the current generation. Clamp frame indices only against the active coherent view.
+  14. Prevent duplicate session loads from programmatic selection restoration. One completed browser refresh with an unchanged selected identity must cause at most one intentional session projection/reload. Use the cleanest Textual seam available: silent tree selection or a bounded selection-event suppression guard. Do not create another selection authority.
+  15. Preserve last-known-good state on refresh exceptions. Once an accepted snapshot/session/preview exists, a discovery/projection/preview replacement failure keeps that usable state and emits an actionable activity/error message; it must not clear the browser or replace it with an empty candidate.
+  16. Keep the current contextual `Ctrl+R` contract intact: WORKBENCH -> Resize Canvas, MOTION -> Reset Motion, text entry -> no app mutation. F5 remains the global browser/session reload action and must be safe from all five modes.
+- Preserve:
+  - Canonical Operator source remains browser/authoring authority; runtime/catalog data does not become browser authority.
+  - Existing PLAN, WORKBENCH, PREVIEW, TIMELINE, MOTION mode identities and key bindings.
+  - Existing preview source choices, compare/diff/transition examiner semantics, REVIEW FPS, zoom, looping, timeline semantics, and motion-lab behavior.
+  - Existing Live Bridge document/revision/output-path safety and unsaved Workbench preview behavior.
+  - Existing Workbench context mismatch handling, saved-document publication boundary, and Publish transaction ownership.
+  - Existing semantic animation selection and weapon/linked-profile context unless a canonical identity is stably confirmed removed.
+  - Existing reachability source and classification authority.
+  - The dedicated art checkout/publish readiness contract implemented by the predecessor packet.
+- Non-goals:
+  - Do not change Fast-chain or any other Operator art.
+  - Do not change animation timing, gameplay hit windows, guard/combat logic, runtime selectors, or generated SpriteFrames behavior.
+  - Do not redesign Workbench publication/Git recovery, Asset Pipeline V2, or the Aseprite authoring transaction.
+  - Do not add filesystem polling/watch daemons; the existing explicit refresh/watch surfaces remain sufficient.
+  - Do not add another persistent browser cache outside UI state.
+  - Do not use runtime/catalog data as authoring/browser authority.
+  - Do not hide the crash by disabling F5 in PREVIEW or by making PREVIEW non-interactive during ordinary operation.
+  - Do not add broad per-frame telemetry or renderer capture for this logic task.
+  - Do not reinterpret subjective art quality or create new visual baselines.
+- Acceptance:
+  - Worker-thread browser discovery is side-effect free; an intentionally delayed older scan completing after a newer scan cannot alter accepted records, Search results, selection, tree contents, or session.
+  - The accepted unfiltered browser snapshot is the only browser-record state authority consumed by Search/superseded filtering.
+  - Fast-chain transient-disappearance fixture: accepted `fast_01/e, fast_02/e, fast_03/e, fast_04/e`, with `fast_02/e` selected; first destructive candidate temporarily contains only Fast 01/04; recovery candidate restores all four. Fast 02/03 never disappear from the accepted rendered tree, Fast 02 remains the actual session selection, and no fallback session loads.
+  - Stable-deletion fixture: two consecutive stable destructive candidates omit the same identity; the deletion is accepted after bounded confirmation, and if the deleted row was selected exactly one deterministic fallback + explicit activity event occurs.
+  - Half-migration fixture: accepted synchronized lower+upper 6f COMPLETE; transient lower 7f / upper 6f candidate is not exposed as COMPLETE or accepted as stable current state; synchronized 7f/7f replacement is accepted once stable.
+  - Reachability fixture proves one source parse per discovery and action-level LIVE is not overridden by layer-level ALTERNATE_LAYER/DORMANT metadata.
+  - Search + F5 fixture: select Fast 02, filter to Fast 01, press F5. Fast 02 remains actual session selection while hidden; clearing Search performs zero filesystem scans and restores the Fast 02 tree leaf.
+  - Out-of-order browser fixture: refresh A starts, refresh B starts later, B completes/accepts first, A completes afterward; A performs zero accepted/UI mutation.
+  - Page-3 PREVIEW regression uses Textual's headless pilot or equivalent deterministic app harness: with PREVIEW loaded and playing, repeatedly issue F5 while browser discovery and preview loads are intentionally delayed/out-of-order. The app remains mounted, no exception escapes, the selected semantic identity remains correct, and the final preview belongs to the newest generation.
+  - Atomic PREVIEW handoff fixture proves the previously rendered usable frame remains present until the coherent replacement is ready; playback does not advance a stale generation during the swap; prior play/pause intent is restored only for the current replacement.
+  - Preview out-of-order fixture: an old ordinary preview/comparison/transition task completing after selection/source/mode generation changes cannot mutate `preview_view`, comparison/transition state, frame index, or widgets.
+  - Live Bridge delayed result remains guarded by document/revision/output path and additionally cannot apply across a stale UI preview generation.
+  - 30 Hz tick negative controls cover empty frames, replacement-in-progress, stale preview identity/source, and out-of-range stored frame index without crashing or rendering stale data.
+  - Refresh exception fixture preserves accepted browser tree, selection, loaded session, and last usable PREVIEW while surfacing one useful error/activity message.
+  - Programmatic selection restoration causes no duplicate `_load_session()` for unchanged identity.
+  - F5 requested during PUBLISH mutation is coalesced/deferred; one refresh occurs after mutation completes and no canonical scan observes the in-flight path-changing publish window.
+  - Existing contextual Ctrl+R Textual Pilot coverage remains green.
+  - No renderer image/model-vision review is required: acceptance is deterministic UI state, worker ordering, selection/session identity, and exception behavior.
+  - Active Workbench design/current-state docs describe accepted-snapshot and latest-generation behavior rather than mutable worker cache semantics.
+- Validation:
+  - Extend and run `python3 custodian/tools/validation/operator_workbench_ui_smoke.py` first. Use deterministic fake/barrier-controlled discovery and preview providers; do not use real sleeps for race correctness. Include the transient Fast 02/03 disappearance, stable deletion, half modular migration, out-of-order browser completion, Search+F5, page-3 repeated F5 while playing, stale preview/comparison/transition completion, refresh exception, publish-coalesced refresh, and duplicate-session-load cases.
+  - Run the existing optional real Textual Pilot portion of `python3 custodian/tools/validation/operator_workbench_ui_smoke.py` when the repository's UI environment provides its pinned Textual dependencies; absence of the optional dependency must remain a truthful skip rather than a false pass.
+  - Run `python3 custodian/tools/validation/operator_animation_workbench_smoke.py` if implementation changes source-discovery projection semantics below the UI service boundary; otherwise keep source-index behavior untouched.
+  - Run `python3 custodian/tools/validation/run_validation.py --changed --json` once at closeout and `git diff --check`.
+  - No Moment Forge, game renderer, full-motion capture, or model-vision review is required; the defect surface is UI concurrency/state ownership, and deterministic state assertions are stronger evidence.
+- Task overrides: `none`
+- Deferred:
+  - Process-level crash dump/telemetry beyond deterministic Workbench activity/error state is deferred unless the new race fixtures fail to reproduce the user's symptom after the confirmed stale-async defects are removed. If crashes persist after this packet lands, create a narrow diagnostic follow-up from an actual traceback rather than speculating.
+  - Repository-wide filesystem-reader/writer transactional publication remains outside OPUI; the predecessor publisher hardening owns only the Operator path.
+  - New FX layer adoption and CREATE-capable publication remain in `operator-workbench-fx-layer-adoption`.
+  - Broad shared-widget extraction for generic Asset Workbench remains owned by the Asset Workbench roadmap.
+
+## Plan
+
+1. Migrate browser discovery to side-effect-free candidate production and one accepted UI snapshot.
+2. Add browser generation + destructive stabilization and prove selection/Search invariants.
+3. Add preview/session generation and atomic PREVIEW replacement semantics.
+4. Add F5/PUBLISH coalescing and 30 Hz tick guards.
+5. Build deterministic race fixtures before relying on manual reproduction.
+6. Reconcile Workbench design/current-state/index docs and close through the normal workstream lifecycle.
+
+## Handoff
+
+- Next action: Auto-claim `operator-workbench-browser-preview-refresh-hardening` after the publish-readiness paired review lands.
+- Best starting files: `custodian/tools/operator/ui/app.py`, `custodian/tools/operator/ui/state.py`, `custodian/tools/operator/ui/features/animations.py`, `custodian/tools/validation/operator_workbench_ui_smoke.py`.
+- Blockers or open questions: The exact historic page-3 crash traceback is not available. That does not block this packet because the stale worker-thread browser mutation, missing latest-request guard, silent filtered fallback, and unguarded async preview-result application are independently measurable defects. If crashes remain after those contracts are fixed, capture and packet the residual defect from concrete evidence.
+
+## Completion Truth
+
+Required before completion.
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes | no`
+- Completion boundary satisfied: `yes | no`
+- Acceptance satisfied: `yes | no`
+- Superseded/legacy production path disposition: `removed`
+- Evidence: fill with exact implementation paths and deterministic race/refresh validation results. `removed` means the legacy mutable `AnimationFeature._records`/direct-worker-to-tree authority described by the superseded pre-V2 packet no longer exists as production state authority.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success | partial | blocked`
+- Friction severity: `none | low | medium | high`
+- What went wrong: `none` or concrete failures/near-misses
+- Root cause / contributing factors: `none` or concise cause
+- Prevention / pipeline improvement: `none` or smallest repeatable fix
+- Tooling / docs drift discovered: `none` or exact stale/missing authority
+- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
+- What worked: optional, one short line at most
