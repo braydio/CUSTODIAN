@@ -12,6 +12,8 @@ DEFAULT_ROOT=m.REPO_ROOT/".ai/operator_animation_workbench"
 LUA=m.CUSTODIAN_ROOT/"tools/aseprite/operator_animation_workbench.lua"
 COMPATIBILITY_SCRIPT=m.PIPELINES/"update_operator_compatibility_resources.py"
 GENERATED_OPERATOR_RESOURCES=[
+    m.CUSTODIAN_ROOT/"content/sprites/operator/runtime/operator_runtime_frames.tres",
+] + [
     m.CUSTODIAN_ROOT/"game/actors/operator"/name for name in (
         "operator_runtime_frames.tres",
         "operator_weapon_frames.tres",
@@ -285,7 +287,7 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         if timing.exists(): shutil.copy2(timing,saved_timing)
         journal["sources"].append({"binding_id":b["binding_id"],"mirror":item["mirror"],"operation":"REPLACE" if item["existed"] else "CREATE","old_path":m.rel(old),"old_sha256":m.file_sha256(old) if item["existed"] else None,"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved) if saved.exists() else "","import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else "","timing_backup_path":m.rel(saved_timing) if saved_timing.exists() else ""})
     for resource in GENERATED_OPERATOR_RESOURCES:
-        saved=resource_backup/resource.name; shutil.copy2(resource,saved)
+        saved=resource_backup/m.rel(resource); saved.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(resource,saved)
         journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":m.rel(saved)})
     save(journal_path,journal)
     try:
@@ -333,7 +335,7 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
                 old_timing=m.BUILDER.timing_sidecar_path(old); old_timing.unlink(missing_ok=True)
                 timing=source_backup/f"{prefix}{b['binding_id']}.animation.json"
                 if timing.exists(): shutil.copy2(timing,old_timing)
-            for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/resource.name,resource)
+            for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/m.rel(resource),resource)
             subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
             _compatibility_update(); _compatibility_check(); _godot_import(); _catalog_build(); _operator_scene_consistency()
             _journal_stage(journal_path,journal,"ROLLED_BACK","rollback_consistency")

@@ -18,6 +18,7 @@ import operator_art_worktree as art
 LAND_MAIN = Path(__file__).resolve().parents[1] / "agent/land_main.py"
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SOURCE = "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_01/lower.png"
+CANONICAL_RUNTIME_FRAMES = "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
 
 
 def git(root: Path, *args: str, check: bool = True) -> str:
@@ -295,9 +296,12 @@ def smoke() -> None:
         commit_remote(coordination, "README.md", b"unrelated upstream change\n", "unrelated upstream")
         paths = {SOURCE}
         allowlist = art.publication_allowlist(art_root, paths)
+        assert CANONICAL_RUNTIME_FRAMES in allowlist
+        assert "custodian/game/actors/operator/operator_runtime_frames.tres" in allowlist
 
         def publish_once():
             (art_root / SOURCE).write_bytes(b"published art\n")
+            (art_root / CANONICAL_RUNTIME_FRAMES).write_bytes(b"generated SpriteFrames\n")
             return [SOURCE]
 
         result = art.publish_to_main(
@@ -309,6 +313,7 @@ def smoke() -> None:
         )
         assert result["status"] == "landed"
         assert SOURCE in result["staged_paths"]
+        assert CANONICAL_RUNTIME_FRAMES in result["staged_paths"]
         assert not art._status_paths(art_root)
         git(coordination, "fetch", "origin", "main")
         assert subprocess.run(["git", "merge-base", "--is-ancestor", result["commit"], "origin/main"], cwd=coordination).returncode == 0
