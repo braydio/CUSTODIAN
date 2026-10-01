@@ -1368,6 +1368,30 @@
       "needs_import": false
     },
     {
+      "id": "asset_handoff_installer",
+      "type": "python",
+      "script": "custodian/tools/validation/asset_handoff_installer_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "asset_pipeline",
+        "handoff",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/assets/asset_handoff_installer.py",
+        "custodian/tools/validation/asset_handoff_installer_smoke.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "design/04_architecture/ASSET_PIPELINE_V2.md",
+        "custodian/docs/ai_context/prompts/generate_asset_handoff_bundle.md",
+        "custodian/docs/ai_context/prompts/README.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/docs/ai_context/CURRENT_STATE.md"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "asset_workbench_ui",
       "type": "python",
       "script": "custodian/tools/validation/asset_workbench_ui_smoke.py",

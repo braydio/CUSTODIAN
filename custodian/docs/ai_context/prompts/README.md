@@ -16,6 +16,8 @@ Paired Review And Correction section and `AGENT_REVIEW_PACKET_TEMPLATE.md`.
 - `implement_runtime_feature.md` — delta-only runtime implementation.
 - `review_docs_drift.md` — documentation drift review.
 - `update_sprite_pipeline.md` — sprite intake and pipeline work.
+- `generate_asset_handoff_bundle.md` — reviewed generated-art ZIPs that stage
+  source masters and normalized inbox files for the existing Asset V2 workflow.
 - `inspect_procgen_handoff.md` — procgen-to-consumer handoff inspection.
 - `flip_spritesheet_frames.md` — mirror a spritesheet by frame grid.
 - `tune_combat_feel.md` — combat feel tuning.

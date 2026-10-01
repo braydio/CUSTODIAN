@@ -1,5 +1,19 @@
 # CURRENT STATE — CUSTODIAN
 
+## Asset V2 Handoff Bundle Installer (2026-10-01)
+
+Reviewed generated art batches can use `custodian.asset_handoff.v1` ZIPs with a
+standalone copy of `custodian/tools/assets/asset_handoff_installer.py`. The
+installer verifies package hashes, sizes, and declared PNG dimensions, enforces
+review-state gates and source_work/inbox-only destinations, and supports a
+zero-write dry run. It preserves the source bundle and reports the family
+contract target plus the next existing Asset V2 action. It never edits family
+contracts, ingests, binds consumers, writes runtime art, or changes generated
+catalogs. `custodian.asset_family.v2` remains the family/runtime authority.
+`custodian/docs/ai_context/prompts/generate_asset_handoff_bundle.md` defines the
+ZIP and per-image Game32 review metadata; the focused smoke is
+`custodian/tools/validation/asset_handoff_installer_smoke.py`.
+
 ## Asset Workbench FAMILY Navigator (2026-09-30)
 
 The read-only Asset Workbench launches through `asset ui` and projects
