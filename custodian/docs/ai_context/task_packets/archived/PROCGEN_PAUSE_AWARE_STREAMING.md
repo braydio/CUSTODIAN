@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-pause-aware-streaming`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-runtime-mutation-scheduler-cutover`
@@ -33,26 +33,26 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 Required before completion.
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `<fill with exact owner/integration files, pause/resume smoke results, M2 scheduler telemetry, synchronous-exception regression, and S1 fingerprint/runtime evidence>`
+- Evidence: `ProcGenPauseAwareStreaming` (custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd) is the single PREPARE/COMMIT owner, wired into `custodian/game/world/procgen/proc_gen_tilemap.gd` via `_build_tile_reveal_prepare_record`/`_commit_tile_reveal_record`/`_queue_chunk_for_reveal`/`_process_streaming_reveal_queue`/`_prepare_streaming_reveal`/`_refresh_navigation_after_wall_change`, plus a defense-in-depth pause guard in `_update_streaming_chunks`. `procgen_pause_aware_streaming_smoke.gd` (new) proves, in one scenario: authoritative floor topology, navigation completion count, walkable-boundary rebuild count, and wall rebuild count are all unchanged across 6 paused ticks; PREPARE's `prepared` counter advances for already-queued tiles while paused with zero duplication/loss against the queue; COMMIT stays at zero while paused; resume commits a bounded (<= streaming_reveal_tiles_per_frame) slice on its first unpaused frame, takes multiple frames to fully drain, records the resume transition exactly once, and ends with requested==committed (no duplicate/missing commits); the M2 navigation scheduler shows a small coalesced commit count relative to drained frames, not one-per-tile. Four M2/streaming regressions pass unchanged: `procgen_derived_rebuild_scheduler_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_runtime_health_smoke.gd`, `ash_bell_threadway_causeway_smoke.gd` (the last proving the M2 `flush_now` synchronous exception is untouched). `procgen_performance_baseline_bench.gd` S1 quick reports `determinism_ok=true` with the same 48x48 seed-420777 fingerprint (`1773840677`) as M1/M2, confirming no deterministic-output regression. `procgen_candidate_promotion_smoke.gd` was run informationally only (per this packet's explicit non-gate instruction) and passed.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none` or concrete failures/near-misses
-- Root cause / contributing factors: `none` or concise cause
-- Prevention / pipeline improvement: `none` or smallest repeatable fix
-- Tooling / docs drift discovered: `none` or exact stale/missing authority
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
-- What worked: optional, one short line at most
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: Claiming this packet was blocked before any implementation could start: `dispatch.py`'s structural validation-reference gate (`task_packet_contract.validate_packet_validation_references`, landed earlier the same day as this packet's last alignment) rejects a ready/auto packet whose `Validation` field names a script that does not yet exist on `origin/main` -- but this packet's own `Work surface` requires authoring exactly that script (`procgen_pause_aware_streaming_smoke.gd`) as part of its implementation, producing a claim deadlock. `dispatch.py status` showed a second packet (`asset-handoff-bundle-installer-v1`) blocked by the identical pattern, confirming it is systemic, not specific to this packet. Separately, the new smoke's first two draft iterations had false failures from test-harness issues, not implementation bugs: (1) `ProcGenTilemap._process()` only does any per-frame streaming work when its parent is literally named `"ProcGenRuntime"` (`_is_attached_to_runtime_world`), so a naive `root.add_child(map)` silently made every per-frame commit/drain assertion look broken; (2) the pre-pause baseline must be captured after generation's own immediate-chunk `call_deferred` navigation/boundary/shadow flush settles (that deferred flush fires on the next idle frame regardless of pause state), and cumulative `committed`/`resumed` counters must be compared as deltas from that baseline, not against an absolute zero, since normal unpaused draining already runs during the settle frames.
+- Root cause / contributing factors: The claim-gate's path-existence check (`custodian/tools/agent/task_packet_contract.py::validate_packet_validation_references`) has no allowance for a path a ready packet's own `Work surface` declares it will create; it treats "new validation file this task will author" identically to "stale/renamed path," which is the case it was actually designed to catch. The test-harness issues were incomplete understanding of `ProcGenTilemap`'s runtime-attachment contract and of `call_deferred`'s pause-independence going into the first draft.
+- Prevention / pipeline improvement: Fixed in scope for this workstream only by pre-seeding an honest, intentionally-failing placeholder stub for the exact missing path directly on `main` (commit `bbecf6b3e`, explicitly approved by the user before pushing) so the claim gate could resolve it, then replacing that stub with the real smoke inside this workstream as originally intended. The underlying gate behavior itself is unchanged and will reproduce for any future ready/auto packet whose `Work surface` introduces a brand-new validation script -- `asset-handoff-bundle-installer-v1` is a live example still blocked by it today.
+- Tooling / docs drift discovered: `validate_packet_validation_references` in `custodian/tools/agent/task_packet_contract.py` should exempt (or otherwise special-case) validation paths that a ready packet's own `Work surface`/`Validation` text identifies as new-to-this-task, rather than requiring them to pre-exist on `origin/main` before the packet implementing them can even be claimed.
+- Follow-up: `manual-follow-up` (a human/dispatcher-maintainer decision is needed on how `validate_packet_validation_references` should distinguish "new file this packet will create" from "stale/renamed path"; `asset-handoff-bundle-installer-v1` remains blocked by the same gate today).
+- What worked: Keeping `_streaming_reveal_queue` as a real, unmoved field (sharing its Array by reference with the new authority) rather than migrating its storage preserved every existing external introspection point (`procgen_performance_baseline_bench.gd`, `procgen_candidate_promotion_smoke.gd`) with zero changes to them.
 
 ## Handoff
 
-- Next action: Claim `procgen-pause-aware-streaming` from current `origin/main`; implement the focused PREPARE/COMMIT owner against the landed M2 scheduler contract. On successful finish, `procgen-chunk-lifecycle-state-machine` becomes eligible.
-- Best starting files: `PROCGEN_RUNTIME_MUTATION_SCHEDULER_CUTOVER_CLAUDE_SUMMARY.md`; `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/game/world/procgen/derived_rebuild_scheduler.gd`; `custodian/game/ui/hud/pause_ui.gd`; `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`; the four M2 regression smokes named in Validation.
-- Blockers or open questions: None. M2 is complete on main; M3 is now dependency-eligible. Preserve the M2 `flush_now` exception and do not pull M4/M5/M6 semantics forward.
+- Next action: `procgen-chunk-lifecycle-state-machine` (M4) is now dependency-eligible. A separate, unrelated dispatcher follow-up is still needed for the `validate_packet_validation_references` gate (see Tooling / docs drift discovered above) before any other packet whose `Work surface` introduces a brand-new validation script can be claimed through the normal pipeline.
+- Best starting files: `PROCGEN_PAUSE_AWARE_STREAMING_CLAUDE_SUMMARY.md`; `custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd`; `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/tools/validation/procgen_pause_aware_streaming_smoke.gd`.
+- Blockers or open questions: None for M4 itself. The dispatcher claim-gate issue above is a process follow-up, not a blocker on this packet's own completion.

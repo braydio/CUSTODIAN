@@ -197,7 +197,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | G5 | `procgen-candidate-runtime-path-demolition` | **complete** | G4 |
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | **complete** | M1 + G3-fix |
-| M3 | `procgen-pause-aware-streaming` | queued | M2 |
+| M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | queued | M3 |
 | M5 | `procgen-chunk-payload-cache` | queued | M4 |
 | M6 | `procgen-distant-chunk-unload` | queued | M5 |
@@ -246,9 +246,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M3 `procgen-pause-aware-streaming` is eligible; `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
-**State:** S1, G1, G2, G3, G4, G5, M1, M2, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. P1 remains independently dependency-eligible.
-**Next gate:** M2 landed — the walkable-boundary and shadow/presentation producers now batch through M1's scheduler the same way navigation already did; collision has no second producer to coalesce against yet. M3 `procgen-pause-aware-streaming` is next. The generation-data-model initiative is separately dependency-gated behind D1+D2+D3 and does not block the M/P lanes.
+**Current packet:** M4 `procgen-chunk-lifecycle-state-machine` is eligible; `procgen-semantic-candidate-generation-correction-1` has landed (docs-only re-derivation, rescoped mid-workstream — see G3 Completion Evidence's second correction).
+**State:** S1, G1, G2, G3, G4, G5, M1, M2, M3, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. P1 remains independently dependency-eligible.
+**Next gate:** M3 landed — `ProcGenPauseAwareStreaming` now owns the pause-aware PREPARE/COMMIT lifecycle for already-requested streaming-reveal work, proven to freeze authoritative topology/collision/navigation publication while paused and drain exactly once under bounded budgets on resume. M4 `procgen-chunk-lifecycle-state-machine` is next. The generation-data-model initiative is separately dependency-gated behind D1+D2+D3 and does not block the M/P lanes.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
@@ -620,6 +620,34 @@ On resume, prepared work commits under frame budgets.
 ### Exit
 
 Pausing never advances gameplay state, but pre-approved background preparation can make the world more ready. Tests prove both halves of the contract.
+
+### M3 Pause-Aware Streaming — Complete
+
+`ProcGenPauseAwareStreaming` (`custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd`)
+is the single PREPARE/COMMIT owner for already-requested streaming-reveal
+work. `ProcGenTilemap` keeps owning tile/world semantics (TileMap cells,
+foliage, collision, decals) and the shared `_streaming_reveal_queue` field;
+it delegates queueing/draining to the new authority through two narrow
+Callables (a pure build-record lookup, a mutating commit-record
+application). While `SceneTree.paused` is true, the authority's own
+`PROCESS_MODE_ALWAYS` tick budgets deterministic build-record calls for
+tiles already queued before pause, without mutating live
+TileMap/collision/navigation/foliage state and without enqueueing new
+player-driven discovery (the only producer already lives in
+`ProcGenTilemap`'s own pause-gated `_process`; a defense-in-depth guard was
+also added directly to `_update_streaming_chunks`). On resume,
+`drain_commit` applies prepared records first in original order, then any
+remaining queued tiles, under the existing per-frame reveal budget --
+identical to the pre-M3 unpaused path whenever nothing was ever prepared, so
+normal (never-paused) streaming is unchanged. M2's explicit `flush_now`
+synchronous exception for `_claim_isolated_world_overlook_pocket` was left
+untouched.
+
+- **Landed main SHA:** `7c2749508` (`procgen pause aware streaming, M3 PREPARE/COMMIT authority`).
+- **Closing summary:** `PROCGEN_PAUSE_AWARE_STREAMING_CLAUDE_SUMMARY.md`.
+- **Evidence:** New `procgen_pause_aware_streaming_smoke.gd` proves, in one scenario: authoritative floor topology, navigation completion count, walkable-boundary rebuild count, and wall rebuild count are all unchanged across 6 paused ticks; PREPARE's `prepared` counter advances for already-queued tiles while paused with zero duplication/loss against the queue; COMMIT stays at zero while paused; resume commits a bounded (<= `streaming_reveal_tiles_per_frame`) slice on its first unpaused frame, takes multiple frames to fully drain, records the resume transition exactly once, and ends with `requested == committed` (no duplicate/missing commits); the M2 navigation scheduler shows a small coalesced commit count relative to drained frames, not one-per-tile. `procgen_derived_rebuild_scheduler_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_runtime_health_smoke.gd`, and `ash_bell_threadway_causeway_smoke.gd` (the `flush_now` regression) all pass unchanged. S1 quick reports `determinism_ok=true` with the same 48x48 seed-420777 fingerprint (`1773840677`) as M1/M2, confirming no deterministic-output regression. `procgen_candidate_promotion_smoke.gd` was run informationally only (per this packet's explicit non-gate instruction) and passed.
+- **Process note:** `dispatch.py`'s structural validation-reference gate initially deadlocked this claim because this packet's own `Work surface` required authoring the exact smoke script the gate also required to already exist on `origin/main`; a user-approved placeholder stub unblocked the claim, then the real smoke replaced it inside the workstream. The gate behavior itself is unchanged and will reproduce for any future packet introducing a brand-new validation script — see this packet's archived `Execution Feedback` for the open follow-up.
+- **Next:** M4 `procgen-chunk-lifecycle-state-machine` is eligible.
 
 ---
 
