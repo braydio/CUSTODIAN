@@ -200,7 +200,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | **complete** | M1 + G3-fix |
 | M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | **complete** | M3 |
-| MR4 | `review-procgen-chunk-lifecycle-state-machine` | **eligible** | M4 |
+| MR4 | `review-procgen-chunk-lifecycle-state-machine` | **complete — passed, non-blocking-only** | M4 |
 | M5 | `procgen-chunk-payload-cache` | **blocked / manual refresh gate** | MR4 |
 | M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | M5 |
 | P1 | `contract-world-placement-foundation` | **ready / eligible** | S1 |
@@ -248,9 +248,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 landed; its paired post-land review `review-procgen-chunk-lifecycle-state-machine` (MR4) is now eligible and must pass before M5 is refreshed back to executable status. P1 `contract-world-placement-foundation` remains independently ready/eligible in parallel.
+**Current packet:** M4 and its paired review MR4 are complete. MR4 passed with 0 blocking defects, 0 material evidence gaps, and one next-slice documentation-drift finding (`R0-01`). M5 `procgen-chunk-payload-cache` is now refresh-eligible against the reviewed M4 lifecycle authority. P1 `contract-world-placement-foundation` remains independently ready/eligible in parallel.
 **State:** S1, G1-G5, M1-M4, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. The placement package is still README-only, so P1 is the live P-lane entry and P7 is refresh-gated after P2-P6. D1-D3 are refresh-gated after M6; X2/X3 are refresh-gated on their predecessor reviews; V2 is refresh-gated on V1 attribution.
-**Next gate:** M4 replaced `_revealed_chunks` / `_queued_chunks` with one truthful `ProcGenChunkLifecycle` authority, fixed the measured false-visible side effect in chunk enumeration, and preserved M3 tile-level PREPARE/COMMIT plus M2 derived-rebuild scheduling. MR4 (its paired review) is next and must pass before M5 is refreshed back to executable status. M5 and M6 remain intentionally blocked/manual until that review lands; the GenerationGrid initiative remains separately gated behind D1+D2+D3. In parallel, P1 may proceed from the real `custodian/game/world/placement/README.md` scaffold and live `ContractWorldLoader`. Do not auto-claim any packet marked refresh-gated until its packet is re-derived in place from the named predecessor evidence.
+**Next gate:** Re-derive M5 `procgen-chunk-payload-cache` in place from the reviewed live M4 lifecycle authority before returning it to `ready/auto`. Carry MR4 `R0-01` into that refresh as a bounded documentation/comment correction: `UNLOADED` is reloadable by mechanism, while M6 owns production unload/reload policy. M6 remains intentionally blocked/manual until M5 lands and is measured. The GenerationGrid initiative remains separately gated behind D1+D2+D3. In parallel, P1 may proceed from the real `custodian/game/world/placement/README.md` scaffold and live `ContractWorldLoader`.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
