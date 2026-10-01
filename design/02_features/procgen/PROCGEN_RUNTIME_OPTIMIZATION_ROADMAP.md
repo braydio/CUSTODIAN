@@ -5,7 +5,7 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `fb8f4b4cb81abaaa742f5f1a1d213be45947a738`  
+**Reviewed main:** `565168b442708575de2670b07a34f1282d50c218`  
 **Last Updated:** 2026-10-01  
 **Depends on:** none for measurement; slice dependencies below
 
@@ -29,13 +29,13 @@ It does not own Hub/Twin Solaria access, campaign-world transitions, authored-le
 
 ## Current Measured State
 
-Reviewed on `main@4dcbe371`:
+Reviewed on `main@565168b4`:
 
 | Authority | Current size | Current role |
 | --- | ---: | --- |
-| `custodian/game/world/procgen/proc_gen_tilemap.gd` | 11,221 lines / 581 funcs / 439,746 chars | Procgen façade/state host plus construction orchestration, roads, terrain integration, foliage/props, streaming, runtime collision/mutation, presentation, authored claims, portals, diagnostics, and export |
-| `custodian/game/world/procgen/custodian_contract_map.gd` | 1,216 lines / 35 funcs | Contract seed/profile creation, up-to-12 candidate loop, acceptance/scoring, fallback selection, final promotion |
-| `custodian/game/systems/core/systems/contract_world_loader.gd` | 2,001 lines / 98 funcs | Runtime world attach/rebind plus resources, vehicles, relays, encounters, ingresses, authored destinations, camera/navigation handoff |
+| `custodian/game/world/procgen/proc_gen_tilemap.gd` | 11,441 lines / 588 funcs / 453,102 chars | Procgen façade and live TileMap-backed generation working-state host; roads/claims/export/streaming/presentation extraction remains in flight |
+| `custodian/game/world/procgen/custodian_contract_map.gd` | 1,068 lines / 29 funcs / 41,241 chars | Contract seed/profile creation, candidate orchestration, semantic snapshot evaluation, fallback selection, final materialization handoff |
+| `custodian/game/systems/core/systems/contract_world_loader.gd` | 2,001 lines / 98 funcs / 79,340 chars | Runtime world attach/rebind plus resource, vehicle, relay, encounter/Vaultwing, ingress, camera/navigation/UI placement orchestration pending P-lane extraction |
 
 Current generation/runtime contracts include:
 
@@ -45,8 +45,8 @@ Current generation/runtime contracts include:
 - generated maps are typically `160x160` through `224x224`;
 - streaming reveal defaults to `16x16` chunks, immediate radius `1`, active radius `2`, `96` tiles/frame, and `0.15 s` derived-visual rebuild cadence;
 - distant chunk unload remains disabled by default;
-- pause sets `SceneTree.paused = true`; procgen reveal work currently runs from ordinary `ProcGenTilemap._process()`, so live reveal/streaming processing stops while paused;
-- runtime performance work has already added deferred reveal rebuilds, compact wall bodies, bounded foliage work, shared foliage materials, and mutation gauges;
+- pause still freezes gameplay/world commits, but M3 `custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd` now runs `PROCESS_MODE_ALWAYS` and may PREPARE already-requested reveal records while paused; authoritative TileMap/collision/foliage/navigation COMMIT remains frozen until resume;
+- runtime performance work now includes M2 `derived_rebuild_scheduler.gd` request/commit coalescing, M3 pause-aware PREPARE/COMMIT, deferred reveal rebuilds, compact wall bodies, bounded foliage work, shared foliage materials, and mutation gauges;
 - existing Observatory captures show approximately `10.8k` total nodes, `1,276` procgen nodes, `2.8k` rendered objects, and about `696-699` draw calls in one production-size capture;
 - the same capture recorded a navigation rebuild around `257,894 usec` (~258 ms), while runtime wall sync was around `1.4 ms` and a walkable-boundary rebuild around `13.2 ms`.
 
@@ -65,10 +65,10 @@ Every slice must preserve these unless a later design authority explicitly chang
 7. **Profile before structural optimization.** Every performance slice must compare against the Slice 1 benchmark contract where applicable.
 8. **Focused validation first.** Full benchmark profiles are opt-in/slow and must not make normal changed-file validation unreasonably expensive.
 
-## V1 Full-Auto Packet Series
+## V1 Dependency-Gated Packet Series
 
 **Series ID:** `procgen-runtime-optimization-v1`  
-**Packet series:** original V1 DAG plus 3 GenerationGrid prelude implementation packets and 3 paired reviews; the remaining migration packet count is intentionally deferred to X3 after X1/X2 establish the measured post-D surface.  
+**Packet series:** stable V1 workstream identities plus three GenerationGrid prelude implementation packets and three paired reviews. Architecture-dependent downstream packets are now explicitly refresh-gated instead of asserting predecessor output before it exists; the measured migration packet count remains deferred to X3 after X1/X2 establish the reviewed post-D surface.  
 **Dispatch contract:** the V1 DAG identities are pre-authored, but packets whose exact implementation contract depends on not-yet-landed measured architecture may be held `blocked` / `manual` until their prerequisite implementation and review establish the real seam. `ready` / `auto` means executable from current live evidence; dependencies, reviews, refresh gates, and locks jointly control eligibility.
 
 This is a dependency DAG, not one giant workstream. Each packet lands independently. Multiple agents may execute independent eligible siblings in parallel; one agent may also run the serial order below.
@@ -150,11 +150,11 @@ When the user has authorized one agent/session to run this full series unattende
 S1
 G1 -> G2 -> G3 -> G4 -> G5
 M1 -> M2 -> M3 -> M4 -> MR4 -> [refresh M5] -> M5 -> [refresh M6] -> M6
-P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> P7
-D1 -> D2 -> D3
-X1 -> XR1 -> X2 -> XR2 -> X3 -> XR3
-[generated measured migration series] -> D4
-V1 -> V2 -> F1 -> Q1 -> A1
+P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> [refresh P7] -> P7
+[refresh D1/D2/D3 after M6] -> D1 -> D2 -> D3
+X1 -> XR1 -> [refresh X2] -> X2 -> XR2 -> [refresh X3] -> X3 -> XR3
+[generated measured migration series] -> [refresh D4 to final reviewed convergence] -> D4
+V1 -> [refresh V2 from attribution] -> V2 -> F1 -> Q1 -> A1
 ```
 
 After finishing a packet, return to the coordination checkout and explicitly claim the next packet in this order using the same agent identity. Do not use an unrelated `claim-next` result to wander into another project task. If the next packet is already complete because another agent landed it, advance to the next unmet item whose dependencies are complete. Stop the unattended chain only for:
@@ -199,29 +199,29 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M1 | `procgen-derived-rebuild-scheduler-foundation` | **complete** | S1 |
 | M2 | `procgen-runtime-mutation-scheduler-cutover` | **complete** | M1 + G3-fix |
 | M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
-| M4 | `procgen-chunk-lifecycle-state-machine` | **ready / eligible** | M3 |
+| M4 | `procgen-chunk-lifecycle-state-machine` | **in_progress / claimed** | M3 |
 | MR4 | `review-procgen-chunk-lifecycle-state-machine` | queued | M4 |
 | M5 | `procgen-chunk-payload-cache` | **blocked / manual refresh gate** | MR4 |
 | M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | M5 |
-| P1 | `contract-world-placement-foundation` | queued | S1 |
+| P1 | `contract-world-placement-foundation` | **ready / eligible** | S1 |
 | P2 | `contract-world-resource-placement-extraction` | queued | P1 |
 | P3 | `contract-world-vehicle-placement-extraction` | queued | P1 |
 | P4 | `contract-world-relay-placement-extraction` | queued | P1 |
 | P5 | `contract-world-encounter-placement-extraction` | queued | P1 |
 | P6 | `contract-world-ingress-placement-extraction` | queued | P1 |
-| P7 | `contract-world-loader-contraction` | queued | P2+P3+P4+P5+P6 |
-| D1 | `procgen-road-authority-extraction` | queued | G5+M6 |
-| D2 | `procgen-authored-claim-registry-extraction` | queued | G5+M6 |
-| D3 | `procgen-generation-state-extraction` | queued | G5+M6 |
+| P7 | `contract-world-loader-contraction` | **blocked / manual refresh gate** | P2+P3+P4+P5+P6 |
+| D1 | `procgen-road-authority-extraction` | **blocked / manual refresh gate** | G5+M6 |
+| D2 | `procgen-authored-claim-registry-extraction` | **blocked / manual refresh gate** | G5+M6 |
+| D3 | `procgen-generation-state-extraction` | **blocked / manual refresh gate** | G5+M6 |
 | X1 | `procgen-generation-data-model-audit` | queued | D1+D2+D3 |
 | XR1 | `review-procgen-generation-data-model-audit` | queued | X1 |
-| X2 | `procgen-generation-grid-foundation` | queued | XR1 |
+| X2 | `procgen-generation-grid-foundation` | **blocked / manual refresh gate** | XR1 |
 | XR2 | `review-procgen-generation-grid-foundation` | queued | X2 |
-| X3 | `procgen-generation-grid-migration-series-authoring` | queued | XR2 |
+| X3 | `procgen-generation-grid-migration-series-authoring` | **blocked / manual refresh gate** | XR2 |
 | XR3 | `review-procgen-generation-grid-migration-series-authoring` | queued | X3 |
-| D4 | `procgen-tilemap-facade-contraction` | **blocked/manual** | D1+D2+D3 + future reviewed migration convergence authored by X3 |
+| D4 | `procgen-tilemap-facade-contraction` | **blocked / manual final-convergence gate** | XR3 + future final reviewed migration convergence authored by X3 |
 | V1 | `procgen-render-attribution-v1` | queued | D4+P7 |
-| V2 | `procgen-render-load-consolidation` | queued | V1 |
+| V2 | `procgen-render-load-consolidation` | **blocked / manual refresh gate** | V1 |
 | F1 | `procgen-performance-soak-v1` | queued | V2 |
 | Q1 | `review-procgen-runtime-optimization-series-v1` | queued | F1 |
 | A1 | `procgen-runtime-optimization-v2-series-authoring` | queued | Q1 |
@@ -248,9 +248,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 `procgen-chunk-lifecycle-state-machine` is eligible with a current-main audit/fix + lifecycle implementation contract and paired post-land review `review-procgen-chunk-lifecycle-state-machine`.
-**State:** S1, G1, G2, G3, G4, G5, M1, M2, M3, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. P1 remains independently dependency-eligible.
-**Next gate:** M4 replaces `_revealed_chunks` / `_queued_chunks` with one truthful chunk lifecycle authority, fixes the measured false-visible side effect in chunk enumeration, and preserves M3 tile-level PREPARE/COMMIT plus M2 derived-rebuild scheduling. Its paired review must pass before M5 is refreshed back to executable status. M5 and M6 are intentionally blocked/manual until the immediately preceding measured architecture lands; the GenerationGrid initiative remains separately gated behind D1+D2+D3.
+**Current packet:** M4 `procgen-chunk-lifecycle-state-machine` is actively claimed on `agent/procgen-chunk-lifecycle-state-machine`; P1 `contract-world-placement-foundation` is independently ready/eligible.
+**State:** S1, G1-G5, M1-M3 and G3-fix are landed. M4 is in progress. M5/M6 are refresh-gated on reviewed lifecycle/cache reality. The placement package is still README-only, so P1 is the live P-lane entry and P7 is refresh-gated after P2-P6. D1-D3 are refresh-gated after M6; X1 remains the post-D audit; X2/X3 are refresh-gated on their predecessor reviews; V2 is refresh-gated on V1 attribution.
+**Next gate:** Finish M4, then run MR4 and refresh M5 from the reviewed lifecycle owner. In parallel, P1 may proceed from the real `custodian/game/world/placement/README.md` scaffold and live 2,001-line `ContractWorldLoader`. Do not auto-claim any packet marked refresh-gated until its packet is re-derived in place from the named predecessor evidence.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
