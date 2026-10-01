@@ -2,27 +2,27 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `contract-world-loader-contraction`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `contract-world-resource-placement-extraction, contract-world-vehicle-placement-extraction, contract-world-relay-placement-extraction, contract-world-encounter-placement-extraction, contract-world-ingress-placement-extraction`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `6a11a14ef42eef4b0eeecae0bc669594b7adb4ee`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Collapse ContractWorldLoader back to world attach/rebind/activation orchestration after all placement domains have migrated.
-- Completion boundary: Done when loader owns accepted-map attach, Operator/spawn/static-sector positioning, camera/navigation/UI rebind, service invocation, activation/failure cleanup, and no duplicated domain placement policy remains.
-- Current measured state: Five placement domains have moved to world/placement, but loader still contains migration adapters/obsolete helpers and may retain duplicated policy unless explicitly demolished.
-- Evidence: All placement service summaries/tests; S1 baseline; loader function inventory.
+- Completion boundary: REFRESH-GATED. Do not execute contraction from this packet until P2-P6 have landed. At that point, re-audit the live loader and placement package, then rewrite this same packet in place to the exact surviving lifecycle/adapter residue. Done will mean `ContractWorldLoader` owns accepted-map attach/rebind/activation, static/operator/spawn/camera/navigation/UI handoff, ordered placement-service invocation, failure cleanup, and no duplicated domain placement policy.
+- Current measured state: The prerequisite extraction services have **not** moved yet. `custodian/game/world/placement/` is still README-only and `custodian/game/systems/core/systems/contract_world_loader.gd` remains 2,001 lines / 98 functions with resource, vehicle, relay, encounter/Vaultwing, authored-ingress, and generic world-lifecycle code together. The previous packet text incorrectly described five placement domains as already migrated.
+- Evidence: current `custodian/game/world/placement/README.md`; current 2,001-line `custodian/game/systems/core/systems/contract_world_loader.gd`; P1-P6 packet contracts; `custodian/tools/validation/startup_world_entry_smoke.gd`; `custodian/tools/validation/world_contract_prewarm_smoke.gd`; `custodian/tools/validation/contract_world_population_placement_smoke.gd`.
 - Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; world placement README; RUNTIME_WORLD_AND_CAMERA_STABILIZATION.md; world transition contract.
-- Work surface: ContractWorldLoader cleanup, world placement README/docs, validation ownership and loader lifecycle tests.
-- Change: Delete zero-consumer migrated helpers, centralize service construction/invocation order, keep lifecycle operations explicit, and document the final loader API. Do not move lifecycle code merely to hit a line target. Update architecture coordinator size/current ownership truth.
+- Work surface: Intentionally not frozen while blocked. After P2-P6 land, re-measure `custodian/game/systems/core/systems/contract_world_loader.gd`, inventory actual remaining service adapters/lifecycle methods, update `custodian/game/world/placement/README.md`, `custodian/game/world/lifecycle/README.md` if lifecycle ownership changes, `custodian/docs/ai_context/FILE_INDEX.md`, and exact focused loader tests. Do not move lifecycle code merely to hit a line count.
+- Change: None while blocked. Refresh this packet in place from the landed P2-P6 surface. The refreshed contraction must delete zero-consumer migrated helpers, centralize service construction/invocation order, preserve explicit lifecycle/rebind/failure handling, and update ownership docs/tests. No speculative helper deletion before the domain services exist.
 - Preserve: Map attach, static sectors, Operator/spawn, camera, navigation, UI/world anchors, failure recovery and service ordering.
 - Non-goals: No new WorldTransitionManager, no gameplay-placement retune, no procgen generation changes.
-- Acceptance: All placement regressions green; loader has zero domain-specific candidate/scoring helpers for migrated services; architecture docs identify placement services as owners; fixed-seed world startup unchanged.
-- Validation: World loader/population/ingress/resource/vehicle/relay/ambient focused suite + startup world/contract handoff where selected + changed-file closeout.
+- Acceptance: Not implementation-ready. Before returning to `ready`, the refreshed packet must list the exact surviving loader functions, exact migrated service files, and measurable zero-duplicate-policy checks. Final acceptance must include all placement regressions green, fixed-seed startup unchanged, and no resource/vehicle/relay/encounter/ingress candidate/scoring policy remaining in the loader beyond bounded adapter/orchestration code.
+- Validation: Not implementation-ready. Re-derive after P2-P6 using the live service files. Expected closeout set includes `startup_world_entry_smoke.gd`, `world_contract_prewarm_smoke.gd`, `contract_world_population_placement_smoke.gd`, resource/vehicle/relay/ambient/ingress focused tests, and changed-file closeout.
 - Task overrides: `none`
-- Deferred: Rendering/node-load work waits for ProcGenTilemap contraction as well.
+- Deferred: Renderer/node-load work still waits for this contraction and ProcGenTilemap contraction to converge.
 
 ## Series Contract
 
