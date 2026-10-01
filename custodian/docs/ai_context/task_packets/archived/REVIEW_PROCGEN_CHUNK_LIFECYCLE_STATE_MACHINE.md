@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-chunk-lifecycle-state-machine`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-chunk-lifecycle-state-machine`
@@ -27,5 +27,7 @@
 
 ## Handoff
 
-- Next action: Claim after M4 completes and archives. On a clean/non-blocking pass, refresh M5 from the reviewed lifecycle contract before returning it to ready/auto.
-- Blockers or open questions: None at authoring time.
+- Completion: Review passed (non-blocking-only) on live main at `5ee2018ce`. 0 blocking defects, 0 material evidence gaps, 1 non-blocking documentation-drift finding (`R0-01`, routed to next-slice, not a correction). Full receipt: the `## Independent Review` section appended to `custodian/docs/ai_context/task_packets/archived/PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md`. Detailed summary: `REVIEW_PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE_CLAUDE_SUMMARY.md`.
+- Validation: Fresh (not reused) re-run of `procgen_chunk_lifecycle_smoke.gd`, `procgen_pause_aware_streaming_smoke.gd`, `procgen_candidate_promotion_smoke.gd`, `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_macro_presentation_smoke.gd`, `procgen_road_semantics_v2_smoke.gd`, and `runtime_wall_collision_compaction_smoke.gd` all PASS; wall-collision baseline reproduced exactly (`bodies=19 shapes=443`). S1 quick re-run: `determinism_ok=true`, fingerprint `1773840677` matches the M1-M4 baseline.
+- Next action: M5 (`procgen-chunk-payload-cache`) is now refresh-eligible against the reviewed M4 lifecycle authority; refreshing and re-dispatching its packet is separate follow-up work, not performed by this review workstream (out of this packet's bounded task-override scope).
+- Blockers or open questions: None. `R0-01` (stale UNLOADED-reload prose in `procgen_chunk_lifecycle.gd`'s `force_unload()` docstring and `STREAMING_PROCGEN_REVEAL.md`) is next-slice, not a blocker.
