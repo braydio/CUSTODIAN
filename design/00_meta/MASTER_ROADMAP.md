@@ -276,7 +276,7 @@ state.
 | S4 Accepted-candidate materializer | complete | P1 |
 | S5 Runtime mutation scheduler | complete | P0 |
 | S6 Pause-aware streaming | complete | P1 |
-| S7 Chunk lifecycle + cache | planned | P1 |
+| S7 Chunk lifecycle + cache | in_progress | P1 |
 | S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
 | S9 Contract-world placement extraction | planned | P2 |
 | S10 Renderer / node-load consolidation | planned | P1 |
@@ -284,7 +284,7 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven, but the G3 re-derivation added a measured architecture branch inside S8: D1/D2/D3 now feed a reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and the single-agent serial auto-run order; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven, but readiness is now evidence-gated rather than speculative: M4 is the active S7 implementation; M5/M6 refresh from landed lifecycle/cache evidence; P7 refreshes only after P2-P6 exist; D1-D3 refresh after M6; X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
