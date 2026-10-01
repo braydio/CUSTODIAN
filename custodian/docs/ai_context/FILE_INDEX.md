@@ -32,6 +32,11 @@ reciprocity, and runtime-vs-fiction lifecycle terminology.
 
 Last updated: 2026-09-29
 
+## Persistent Recovery + Armament Registration
+
+- `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md` — persistent design authority for recoverable Custodian death, local/existing/fabricated Crèche infrastructure, field-acquired → recovered → registered equipment, capped Recovered Armory and designation assignments, initial deployment loadout, unregistered death-site retrieval, and registered-weapon field-instance invalidation. It explicitly keeps the recovery mechanism underexplained, treats current one-life game over as transitional, and defers imperfect historical designation-resolution evidence.
+- Future death, campaign-failure, inventory, weapon-loot, registration, provisioning, local recovery, and recovery-fabrication work must converge on this authority rather than creating a parallel lives/checkpoint/insurance model.
+
 ## Map + AI Coherence
 
 - `game/world/procgen/encounters/encounter_cadence_planner.gd` — pure,
