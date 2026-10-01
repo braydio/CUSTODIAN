@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `custodian-death-handoff-foundation`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -28,4 +28,35 @@
 
 - Next action: Execute this packet, land the exactly-once death handoff, update the recovery roadmap with landed evidence, then author R2 from the resulting live transition surface.
 - Best starting files: `custodian/game/actors/operator/operator.gd`; `custodian/game/systems/simulation/world_simulation_runtime.gd`; `custodian/game/state/run/campaign_session.gd`; `custodian/game/systems/core/state/game_state.gd`; existing files under `custodian/game/world/bindings/`.
-- Blockers or open questions: None requiring user judgment. R1 intentionally preserves current Game Over after campaign failure as a compatibility fallback; removing it belongs to R2.
+- Blockers or open questions: Required changed-file closeout fails on expired agent workflow expectations and unrelated active-packet validation paths; see `agent-closeout-validation-drift-repair`. No user judgment required. R1 intentionally preserves current Game Over after campaign failure as a compatibility fallback; removing it belongs to R2.
+
+## Validation Blocker
+
+Implementation and focused runtime regressions pass, but required changed-file
+closeout selected 50 tests: 10 pass, 2 unit failures, 38 skipped by tier gating.
+`agent_workflow_contract` requires the removed expired procgen routing workflow;
+`review_pairing_contract` rejects stale validation references in unrelated active
+packets. No finish/landing was attempted. R2 is authored but dependency-blocked.
+Resume R1 after the follow-up repair lands and rerun required closeout.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `no`
+- Acceptance satisfied: `no`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Focused death-handoff smoke and three required regressions pass; actor life decrement is removed and campaign failure precedes compatibility fallback. Required changed-file closeout fails two pre-existing unit gates, so no landing/completion claim is made. R2 remains blocked; repair validation drift and rerun closeout before archive/finish.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `blocked`
+- Friction severity: `medium`
+- What went wrong: Required changed-file closeout failed on two pre-existing unit gates; higher tiers were skipped.
+- Root cause / contributing factors: The workflow smoke still demands expired routing artifacts; unrelated ready packets carry stale or absent validation script paths.
+- Prevention / pipeline improvement: Authored bounded `agent-closeout-validation-drift-repair`; retain strict gates and resume R1 after repair.
+- Tooling / docs drift discovered: `agent_workflow_smoke.py` expiry assumptions and active-packet validation references; `--list` lists all tests even with `--changed`.
+- Follow-up: `agent-closeout-validation-drift-repair`
+
+Selected actor regressions after the unit-gated closeout: 34 / 34 PASS, zero failures/timeouts. This does not waive the required unit gates.

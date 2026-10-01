@@ -6,10 +6,11 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 ## Active Persistent Recovery Series
 
-- `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 of the expected 8-packet persistent recovery/armament-registration implementation series. It removes ordinary Operator death consequence ownership from the actor, resolves the live CampaignSession exactly once, and intentionally retains current Game Over only as the R1 compatibility fallback.
+- `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — R2: replace the R1 compatibility modal after its landing with transactional Post recovery and exactly-once outcome application.
 - Program tracker: `../../../design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`.
 - Design authority: `../../../design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`.
-- Only R1 is authored at program start. Per the roadmap, author each later packet against the landed live surface of its predecessor rather than freezing speculative runtime contracts up front.
+- `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 implemented on its recovery branch; required closeout is blocked by validation drift. R2 remains dependency-blocked.
+- `AGENT_CLOSEOUT_VALIDATION_DRIFT_REPAIR.md` — repair expired smoke expectations and stale active-packet validation paths, then resume R1.
 
 ## Selection
 

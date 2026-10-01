@@ -211,3 +211,8 @@ Macro-game extraction is now scaffolded under `game/state/` and `game/systems/si
 ## World Environment authority
 
 Static ecological biome semantics belong to accepted `ProcGenTilemap`; changing clock/weather state belongs to the world-local `WorldEnvironmentDirector`; final lighting and fullscreen atmosphere remain owned by their existing directors. Spatial exposure is map-agnostic through `environment_region_provider`, currently implemented by procgen and Carrow Yard. Environment V1 is presentation-only.
+
+Custodian death R1 (2026-10-01): consume `Operator.operator_down` through
+`OperatorDeathCampaignBinding`; seal campaign failure in `CampaignSession` via
+`WorldSimulationRuntime` before the transitional Game Over fallback. Ordinary
+Operator death does not call `GameState.lose_life`; Post recovery remains R2.

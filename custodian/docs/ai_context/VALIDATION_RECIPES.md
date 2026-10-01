@@ -1634,3 +1634,12 @@ SOUTH warning while asserting empty results/identity isolation; success is its
 PASS marker and exit 0. The materializer must emit no errors and verifies 32
 mapped strips. Its source timing sidecars are not yet consumed by the old
 builder. Do not publish them through that builder as a completed migration.
+
+## Custodian Death Handoff R1
+
+Run `python3 custodian/tools/validation/run_validation.py --test operator_death_campaign_handoff --json`
+for structured death context, exactly-once/reentrant campaign failure, outcome-before-Game-Over,
+no-runtime/unstarted/resolved-session fallbacks and no-revive assertions. Required
+regressions are `game_over_flow_smoke.gd`, `campaign_outcome_exactly_once_smoke.gd`
+and `world_simulation_live_scene_smoke.gd`, followed by changed-file closeout.
+Moment Forge is unnecessary when death presentation/timing remain unchanged.

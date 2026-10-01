@@ -316,3 +316,13 @@ The following files own too many concerns and are the first extraction targets:
 # Deterministic simulation extraction
 
 The macro-game migration is governed by `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md`. Godot remains the sole runtime authority: pure campaign/world state is under `game/state/`, deterministic kernel systems under `game/systems/simulation/`, and future scene bindings under `game/world/bindings/`. The Python simulation is a parity oracle, never a subprocess or synchronized runtime. `GameState` remains a compatibility phase/failure façade while state lifetimes are extracted.
+
+## Operator death campaign handoff (R1)
+
+The actor emits `operator_down(context)` once after cancellation and death
+presentation requests. Its attached `OperatorDeathCampaignBinding` owns routing
+to the live `WorldSimulationRuntime.resolve_campaign` seam; only
+`CampaignSession.resolve_once` seals outcomes. The binding latches before signal
+callbacks and invokes transitional Game Over after campaign resolution, or
+directly when no started unresolved session exists. R2 owns Post recovery and
+reintegration; no inventory or facility-terminal-failure authority changes here.

@@ -1,11 +1,11 @@
 # PERSISTENT RECOVERY IMPLEMENTATION ROADMAP
 
-**Project:** CUSTODIAN  
-**Program ID:** `persistent-recovery-armament-registration`  
-**Status:** planned / first packet ready  
-**Priority:** P1  
-**Reviewed main:** `22539b8d602cfbccb5399277ad302dd756824710`  
-**Last Updated:** 2026-10-01  
+**Project:** CUSTODIAN
+**Program ID:** `persistent-recovery-armament-registration`
+**Status:** R1 implemented / closeout blocked
+**Priority:** P1
+**Reviewed main:** `22539b8d602cfbccb5399277ad302dd756824710`
+**Last Updated:** 2026-10-01
 **Design authority:** `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`
 
 ## Purpose
@@ -93,8 +93,8 @@ That is the finish line.
 
 | Code | Workstream | Slice | Status | Depends on |
 | --- | --- | --- | --- | --- |
-| R1 | `custodian-death-handoff-foundation` | Operator death -> campaign outcome handoff, with current Game Over retained only as a compatibility fallback | **ready** | none |
-| R2 | `custodian-post-recovery-reintegration` | Replace the R1 compatibility fallback with Post recovery and return/reintegration after campaign-ending death | planned | R1 |
+| R1 | `custodian-death-handoff-foundation` | Operator death -> campaign outcome handoff, with current Game Over retained only as a compatibility fallback | **blocked (validation drift)** | none |
+| R2 | `custodian-post-recovery-reintegration` | Replace the R1 compatibility fallback with Post recovery and return/reintegration after campaign-ending death | planned / packet authored | R1 |
 | R3 | `armament-persistence-registration-core` | Field-acquired / recovered / registered armament data, Recovered Armory ownership, registration records, and three-capacity contract | planned | R2 |
 | R4 | `armament-death-site-recovery-semantics` | Registered re-provisioning, persisted inoperable prior instances, and unregistered death-site retrieval semantics | planned | R3 |
 | R5 | `local-creche-recovery` | Existing/restored local Crèche recovery path that continues the same campaign without rewind | planned | R2 + R4 |
@@ -150,6 +150,16 @@ unchanged.
 
 Packet:
 `custodian/docs/ai_context/task_packets/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md`
+
+R1 evidence: `operator_death_campaign_handoff_smoke.gd` proves one structured
+handoff/outcome, resolution-before-fallback, reentrancy suppression, unchanged
+legacy lives and no revive, including no-runtime/unstarted/resolved controls.
+`game_over_flow_smoke.gd`, `campaign_outcome_exactly_once_smoke.gd` and
+`world_simulation_live_scene_smoke.gd` pass. The live-scene test reports existing
+missing Vaultwing bonding textures; this slice does not change those assets.
+Landing: pending; required changed-file closeout fails on pre-existing agent
+workflow/packet validation drift. Recovery branch is retained; see
+`CUSTODIAN_DEATH_HANDOFF_FOUNDATION_CLAUDE_SUMMARY.md`.
 
 ### R2 — Post Recovery / Reintegration
 
@@ -275,9 +285,23 @@ At closeout:
 
 ## Current Program Position
 
-**Current slice:** R1 `custodian-death-handoff-foundation`  
-**State:** design authority landed; implementation series initialized; R1
-packet authored against `main@22539b8`.  
-**Next gate:** execute R1, land exactly-once Operator death -> campaign outcome
-handoff, then author R2 against the resulting live transition surface.  
-**Expected remaining implementation packets after R1:** 7.
+**Current slice:** R1 `custodian-death-handoff-foundation`
+**State:** R1 death handoff implemented but not landed; required closeout is
+blocked by unrelated validation drift. Current Game Over is the explicit
+transitional fallback, and recovery remains unimplemented.
+**Next gate:** repair `agent-closeout-validation-drift-repair`, rerun R1 closeout
+and land R1, then execute the authored R2 packet against the R1 binding, `HubState`
+application and existing authored-level return seams; add the minimum real Post
+return/reintegration authority without treating local origin return as Post.
+**Expected remaining implementation packets:** 7.
+
+## Next Agent Slice
+
+Goal: replace the R1 campaign-active compatibility fallback with one transactional
+Post return and exactly-once Hub outcome application. Files: R1 binding, campaign
+runtime, persistent Hub ownership, world lifecycle/boot and Operator reset. Keep
+equipment persistence, local Crèches and fabrication deferred. Acceptance: one
+outcome/application, playable recovered Operator at Post, frozen resolved
+campaign, duplicate-safe callbacks, safe failed/no-session fallback, unchanged
+terminal Game Over and inventory behavior. Packet:
+`custodian/docs/ai_context/task_packets/CUSTODIAN_POST_RECOVERY_REINTEGRATION.md`.

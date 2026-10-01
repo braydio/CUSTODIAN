@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Custodian Death Handoff R1 — Pending Landing (2026-10-01)
+
+Operator lethal damage emits one `operator_down` structured death snapshot.
+`OperatorDeathCampaignBinding` resolves a started unresolved live campaign through
+`WorldSimulationRuntime.resolve_campaign(FAILURE, reason)` before invoking the
+transitional Game Over fallback. The actor no longer decrements legacy lives.
+Reentrant death and binding calls are latched; no campaign is fabricated for
+authored worlds without a runtime. Facility terminal failures remain unchanged.
+Post recovery, reintegration and armament persistence remain unimplemented (R2+).
+Focused coverage: `operator_death_campaign_handoff_smoke.gd`. Required closeout
+is blocked by agent workflow/packet validation drift; the implementation remains
+on `agent/custodian-death-handoff-foundation` until the repair and revalidation.
+
 ## Asset V2 Handoff Bundle Installer (2026-10-01)
 
 Reviewed generated art batches can use `custodian.asset_handoff.v1` ZIPs with a
