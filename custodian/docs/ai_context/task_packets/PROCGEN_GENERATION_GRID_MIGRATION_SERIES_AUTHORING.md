@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-generation-grid-migration-series-authoring`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-procgen-generation-grid-foundation`
 - Locks: `procgen-generation-roadmap`
@@ -14,20 +14,20 @@
 - Paired review workstream: `review-procgen-generation-grid-migration-series-authoring`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `f2bc848515b8454f362167f57eb87bfe823ac184`
+- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
 - Goal: Convert the reviewed post-D audit and reviewed GenerationGrid seam into the complete, dependency-correct implementation packet series needed to migrate the remaining generation pipeline to storage-agnostic semantics, add a pure-data backend, cut rejected candidate evaluation over to it, and retire the live-TileMap rejected-candidate path before D4.
-- Completion boundary: Done when every remaining audited generation helper/cell-operation cluster has exactly one bounded migration owner; migration ordering reflects real read/write dependencies; a pure-data backend/parity packet, production candidate cutover packet, legacy evaluation-path demolition packet, final convergence/soak packet, and paired reviews are authored; D4's blocked state is replaced with an explicit dependency on the final reviewed convergence workstream; and no runtime implementation occurs in this authoring workstream.
-- Current measured state: The reviewed audit provides the exact post-D1/D2/D3 helper/operation inventory and migration dependency graph. The reviewed GenerationGrid foundation provides the canonical storage API and TileMap-backed compatibility backend. Those two artifacts are the minimum evidence required to slice the broad migration honestly; before them, helper cluster boundaries were intentionally unknown.
-- Evidence: Reviewed `procgen-generation-data-model-audit`; reviewed `procgen-generation-grid-foundation`; live post-foundation call graph; S1 benchmark; G1-G5 evaluator/materializer contracts; current D4 packet.
-- Task-specific authority: Reviewed audit + reviewed grid foundation; `AGENT_TASK_PACKET_TEMPLATE.md`; procgen roadmap; current task-packet/review lifecycle.
-- Work surface: Procgen roadmap/master roadmap, active task packet directory/index, D4 dependency/status metadata, FILE_INDEX, and only documentation/coordination artifacts needed to publish the migration DAG.
-- Change: Author the remaining migration series from measured clusters, not arbitrary file chunks. Each implementation packet must name exact helpers/owners and old TileMap-backed path disposition; preserve deterministic fingerprints; use the shared GenerationGrid contract; have focused validation; include Completion Truth; and pair substantial architecture changes with independent review. The generated series must include, at minimum, stages that collectively: migrate every audited semantic-generation cluster off direct TileMapLayer storage access; implement a pure-data GenerationGrid backend; prove TileMap-backed vs pure-data semantic/fingerprint parity; switch rejected candidate construction/evaluation to the pure-data backend without Node/TileMap instantiation; keep accepted candidate materialization through G4/G5; remove production reachability of the legacy live-TileMap rejected-candidate path; run a rejection-heavy fixed-seed performance/correctness convergence; and only then unblock D4.
+- Completion boundary: REFRESH-GATED on the passed `review-procgen-generation-grid-foundation`. The exact migration cluster graph and even the canonical GenerationGrid API do not exist yet, so this packet must not author implementation work from stale pre-foundation assumptions. After XR2, rewrite this same packet in place from the reviewed X1 inventory + reviewed X2 seam, then publish only the migration DAG that live evidence supports.
+- Current measured state: X1/X2 have not landed, so there is currently no reviewed post-D helper inventory, no canonical GenerationGrid seam, no pure-data backend, and no evidence-backed migration cluster dependency graph. `ProcGenTilemap` remains the live TileMap-backed generation working-state host. The previous packet text described reviewed predecessors as if they already existed.
+- Evidence: current X1/XR1 and blocked X2/XR2 packet contracts; live `custodian/game/world/procgen/generation/` package; current `proc_gen_tilemap.gd`; current D4 blocked packet; S1/G1-G5 historical evidence.
+- Task-specific authority: Reviewed X1 audit + reviewed X2 foundation once they exist; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; procgen roadmap and task-packet/review lifecycle.
+- Work surface: Intentionally not locked while blocked. After XR2, this remains a docs/coordination-only workstream over the procgen roadmap, master roadmap, active task-packet directory/index, D4 dependency metadata, FILE_INDEX, and exact reviewed X1/X2 artifacts. No runtime `.gd` changes.
+- Change: None while blocked. After XR2, author measured implementation/review packets for every remaining semantic-generation cluster exactly once, including pure-data backend parity, rejected-candidate cutover, legacy live-TileMap rejected-path demolition, and final convergence/soak; then rewrite D4's dependency to the actual final reviewed convergence workstream.
 - Preserve: Current runtime code; reviewed audit/grid artifacts; historical G1-G5 evidence; M/P lanes; D1-D3 ownership; D4 intent as final façade contraction after the real generation-data migration.
 - Non-goals: No runtime implementation; no helper migration; no guessing packet boundaries unsupported by the reviewed audit; no changes to gameplay/design content.
-- Acceptance: Generated DAG is acyclic and fully pre-authored as far as reviewed evidence supports; every audited semantic helper/cell-operation cluster maps to exactly one implementation owner; no cluster is duplicated or orphaned; pure-data backend/cutover/demolition/convergence stages are explicit; each packet's Goal/Completion boundary/Acceptance collectively prove its own migration claim; D4 is updated to depend on the final reviewed convergence workstream rather than merely D1+D2+D3; dispatcher/task-packet validation and index checks are green.
-- Validation: `check_ai_context.py --json`; task-packet index check; review-pairing validator; dependency-cycle/duplicate-workstream checks; dispatcher status confirms expected blocking/eligibility; `git diff --check`. No Godot run is required for docs-only packet authoring.
+- Acceptance: Not authoring-ready until XR2. The refreshed packet must prove the generated DAG is acyclic, covers every audited cluster exactly once, names exact live helpers/owners and old-path disposition, includes pure-data/cutover/demolition/convergence stages, and rewires D4 only to a concrete final reviewed convergence workstream.
+- Validation: After refresh, run `check_ai_context.py --json`, packet index checks, review-pairing validator, dependency-cycle/duplicate-workstream checks, dispatcher status, and `git diff --check`; no Godot run for the authoring-only slice.
 - Task overrides: `none`
-- Deferred: Runtime execution of the newly authored migration series.
+- Deferred: Runtime execution of the migration DAG generated after XR2.
 
 ## Completion Truth
 
