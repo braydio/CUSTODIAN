@@ -1,0 +1,176 @@
+# ASSET HANDOFF BUNDLE INSTALLER V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `asset-handoff-bundle-installer-v1`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `none`
+- Locks: `asset-handoff-bundle-tooling`
+- Kind: `implementation`
+- Review: `manual`
+- Reviewed main: `5c054bd`
+- Goal: Make ChatGPT-generated CUSTODIAN asset batches arrive as self-contained, self-installing source-work handoffs: a ZIP can carry reviewed Game32 metadata plus a standalone installer that safely copies approved source masters and normalized inbox files into the live repository without hand-renaming files or bypassing Asset Pipeline V2.
+- Completion boundary: Define the repository-side handoff-bundle contract, add one canonical standalone installer suitable for copying verbatim into generated ZIPs as `INSTALL_INTO_REPO.py`, add focused validation and reusable prompt guidance, and reconcile active Asset Pipeline V2/current-state/index documentation. Done means a fresh generated bundle following the contract can be installed into an arbitrary CUSTODIAN checkout with one command, is idempotent for identical bytes, fails closed on conflicts/tampering/path escapes, never writes runtime assets directly, and leaves Asset V2 family registration/ingest/binding to existing authorities.
+- Current measured state:
+  - Asset Pipeline V2 already owns semantic family contracts, `asset_drop/inbox/<family>/` intake, canonical runtime naming/routing, plan/ingest/status/doctor, and generated catalog truth.
+  - Generated/unprocessed art is already preserved under `custodian/asset_drop/source_work/<area>/<family>/` in multiple production workflows.
+  - `custodian/tools/assets/` has no generic handoff-bundle installer or validator and no `custodian.asset_handoff.v1` package schema.
+  - `custodian/docs/ai_context/prompts/update_sprite_pipeline.md` covers pipeline updates and `inspect_procgen_handoff.md` covers runtime handoffs, but there is no reusable prompt for packaging a generated art batch with per-image review, Game32 metadata, installer routing, checksums, and implementation handoff.
+  - The current Asset V2 architecture intentionally keeps human source/inbox material outside canonical runtime publication; canonical runtime filenames remain pipeline-derived.
+- Evidence:
+  - `design/04_architecture/ASSET_PIPELINE_V2.md`
+  - `custodian/tools/assets/asset.py`
+  - `custodian/tools/assets/asset_contract.py`
+  - `custodian/tools/assets/asset_plan.py`
+  - `custodian/tools/assets/asset_transaction.py`
+  - `custodian/docs/ai_context/prompts/update_sprite_pipeline.md`
+  - `custodian/docs/ai_context/prompts/inspect_procgen_handoff.md`
+  - `custodian/docs/ai_context/prompts/README.md`
+  - `custodian/docs/ai_context/FILE_INDEX.md`
+- Task-specific authority:
+  - `design/04_architecture/ASSET_PIPELINE_V2.md` remains the asset intake/runtime publication authority.
+  - Existing Asset V2 family contracts remain canonical semantic/physical runtime contracts; the handoff manifest is transport/review metadata only.
+  - Specialized Operator source-to-runtime tooling remains authoritative for Operator main-character art and must not be replaced or bypassed.
+- Work surface:
+  - New primary tool: `custodian/tools/assets/asset_handoff_installer.py`.
+  - New focused validation: `custodian/tools/validation/asset_handoff_installer_smoke.py`.
+  - New reusable generation/handoff prompt: `custodian/docs/ai_context/prompts/generate_asset_handoff_bundle.md`.
+  - Update `custodian/docs/ai_context/prompts/README.md`.
+  - Update `design/04_architecture/ASSET_PIPELINE_V2.md` with the bundle/install boundary and manifest-vs-family-contract distinction.
+  - Update `custodian/docs/ai_context/FILE_INDEX.md` and `CURRENT_STATE.md` only with durable live tooling truth created by this slice.
+  - Touch `custodian/tools/assets/asset.py` only if a thin delegating command materially improves discoverability; do not duplicate installer logic there.
+- Change:
+  - Add a standalone stdlib-only installer at `custodian/tools/assets/asset_handoff_installer.py`. It must be copyable byte-for-byte into a downloaded bundle as `INSTALL_INTO_REPO.py` and remain runnable outside the repository.
+  - Installer invocation contract:
+    - `python3 INSTALL_INTO_REPO.py --repo /path/to/CUSTODIAN`
+    - when `--repo` is omitted, safely discover a Git root from the caller/cwd when possible;
+    - support `--dry-run` with zero repository mutation.
+  - The installer reads package-local `MANIFEST.json`; the minimum package schema is `custodian.asset_handoff.v1`. This is explicitly a handoff/transport schema, not a replacement for `custodian.asset_family.v2`.
+  - Minimum manifest routing per state must support:
+    - `state_id`;
+    - `package_source` and `repo_source_destination`;
+    - optional `package_inbox` and `repo_inbox_destination`;
+    - `review_status`;
+    - `install_source` / `install_inbox`;
+    - SHA-256 and byte size for packaged installable files;
+    - generated and normalized dimensions when supplied;
+    - enough family identity to report the family contract target and next action.
+  - Recognized review statuses are:
+    - `RUNTIME_READY`;
+    - `SOURCE_READY_NEEDS_TUNE`;
+    - `REJECT_REGENERATE`.
+  - Enforce review gating:
+    - source masters may install only when `install_source=true`;
+    - inbox files may install only when `review_status=RUNTIME_READY` and `install_inbox=true`;
+    - `SOURCE_READY_NEEDS_TUNE` must never be silently promoted to inbox;
+    - `REJECT_REGENERATE` installs nothing by default.
+  - Verify package integrity before any write:
+    - every installable file's declared SHA-256 and byte size;
+    - PNG dimensions against declared dimensions when those fields are present, using stdlib PNG header parsing rather than requiring Pillow;
+    - reject malformed package metadata before creating destination files.
+  - Locate/validate the repository using stable markers compatible with ordinary checkouts and Git worktrees. At minimum prove the target contains current CUSTODIAN entrypoints such as root `AGENTS.md`, `custodian/project.godot`, and `custodian/tools/assets/asset.py`.
+  - Restrict repository writes to these roots:
+    - `custodian/asset_drop/source_work/`;
+    - `custodian/asset_drop/inbox/`.
+  - Reject:
+    - absolute manifest destinations;
+    - `..` traversal;
+    - symlink resolution that escapes package or repository roots;
+    - destinations in `custodian/content/` or any other canonical runtime path;
+    - source package paths escaping the unpacked bundle;
+    - malformed status/install combinations.
+  - Installation semantics:
+    - create missing parent directories;
+    - copy, never move/delete, package files so the downloaded/unpacked handoff remains intact evidence;
+    - use safe temp-file + atomic replace semantics for new copies where practical;
+    - if destination already has identical bytes/hash, report `unchanged` and succeed;
+    - if destination exists with different bytes, fail closed without overwriting it;
+    - do not add a generic `--force` overwrite in V1.
+  - Installation must never:
+    - run `asset ingest` automatically;
+    - edit/create family contracts automatically;
+    - bind gameplay consumers automatically;
+    - write canonical runtime assets;
+    - mutate generated catalogs;
+    - delete/archive source masters;
+    - bypass specialized Operator tooling.
+  - After a successful or dry-run install, print a compact receipt listing copied/unchanged/skipped files, family IDs/contract targets, and the exact next Asset V2 action class: inspect/update family contract as required, then use the current `asset.py` plan/status/doctor/ingest workflow. Do not hard-code stale CLI syntax beyond commands verified from the live tool.
+  - Add `generate_asset_handoff_bundle.md` as the reusable repo prompt for future generated-source batches. It should require:
+    - downloadable ZIP;
+    - `README.md`;
+    - human-readable `MANIFEST_GAME32.md`;
+    - machine-readable `MANIFEST.json`;
+    - per-image review and one of the three signoff statuses;
+    - `CODEX_IMPLEMENTATION.md`;
+    - canonical installer copied into the bundle as `INSTALL_INTO_REPO.py`;
+    - exact `source_work` and `inbox` destinations;
+    - SHA-256/size metadata;
+    - generated/remaining/runtime-ready/source-ready/rejected counts;
+    - procgen Game32 fields when the family is procgen/environmental: semantic placement role, scale/footprint, traversal, collision, LOS, cover, variation, blend/alpha behavior, placement constraints, density/repetition guidance, and intended procgen consumer.
+  - The reusable prompt must explicitly require live-main inspection before paths/contracts are finalized and a documentation-drift check against the requirement registry/tracker when relevant.
+  - Extend `ASSET_PIPELINE_V2.md` rather than creating a parallel pipeline design: document that handoff bundles terminate at source_work/inbox and existing Asset V2 remains runtime publication authority.
+- Preserve:
+  - Existing `asset plan`, `asset ingest`, `asset status`, `asset doctor`, transaction rollback, generated catalog, family schema, and requirement-tracker behavior.
+  - Existing source_work contents and current asset family paths.
+  - Operator specialized ingest/semantic animation authority.
+  - The downloaded bundle as immutable source evidence after installation.
+- Non-goals:
+  - Do not implement automatic image generation.
+  - Do not add network download/upload behavior.
+  - Do not auto-run Asset V2 ingest or edit runtime consumers.
+  - Do not introduce a watch daemon.
+  - Do not redesign Asset V2 family schema, canonical filename grammar, or transaction model.
+  - Do not migrate historical source_work batches into the new handoff schema.
+  - Do not add visual-review UI; Asset Workbench owns that broader review-studio direction.
+- Acceptance:
+  - `custodian/tools/assets/asset_handoff_installer.py` runs standalone when copied into a fixture bundle and does not depend on repository Python imports.
+  - A valid fixture installs a reviewed source master to exact `source_work` and a `RUNTIME_READY` normalized file to exact `inbox`.
+  - Running the same bundle twice is idempotent: second run reports identical destinations unchanged and does not rewrite differing bytes.
+  - `SOURCE_READY_NEEDS_TUNE` source installs while its inbox path remains untouched.
+  - `REJECT_REGENERATE` installs no asset bytes.
+  - Tampered package bytes/hash, wrong declared size, malformed PNG dimensions, destination collision with different bytes, wrong repo root, absolute paths, traversal, symlink escape, and runtime/content destination attempts all fail before unsafe mutation.
+  - `--dry-run` performs the same validation and reports intended actions with zero writes.
+  - Installer never invokes Asset V2 ingest, edits family contracts, or writes canonical runtime assets.
+  - The reusable prompt and Asset Pipeline V2 docs describe one coherent bundle contract and make the handoff-manifest/family-contract distinction explicit.
+  - `FILE_INDEX.md` points future agents to the installer and reusable prompt.
+  - No duplicate/stale new authority is introduced; docs drift found during implementation is corrected in the same slice when owned by the touched workflow.
+- Validation:
+  - `python3 custodian/tools/validation/asset_handoff_installer_smoke.py`
+  - `python3 custodian/tools/agent/validate_prompt_contract.py --templates-only --strict`
+  - Run the current focused AI-context/docs validator if the live repository provides one for changed prompt/index files; use the live command rather than inventing a stale path.
+  - Use temporary fixture repositories/directories only; this tooling slice does not require Godot launch, renderer evidence, or broad gameplay validation.
+- Task overrides: `none`
+- Deferred:
+  - A future packaging CLI that builds ZIPs from repository-local source art may be added only if repeated real use shows value; ChatGPT itself can construct the handoff ZIP today.
+  - Asset Workbench ingestion/review buttons remain owned by its roadmap and are not part of this installer slice.
+  - Automatic family-contract creation or ingest from handoff manifests is intentionally excluded from V1.
+
+## Completion Truth
+
+Required before completion.
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes | no`
+- Completion boundary satisfied: `yes | no`
+- Acceptance satisfied: `yes | no`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: fill with exact implemented files and focused validation results
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success | partial | blocked`
+- Friction severity: `none | low | medium | high`
+- What went wrong: `none` or concrete failures/near-misses
+- Root cause / contributing factors: `none` or concise cause
+- Prevention / pipeline improvement: `none` or smallest repeatable fix
+- Tooling / docs drift discovered: `none` or exact stale/missing authority
+- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
+- What worked: optional, one short line at most
+
+### Handoff
+
+- Next action: Claim `asset-handoff-bundle-installer-v1` and implement the standalone installer + reusable generation prompt + focused smoke.
+- Best starting files: `design/04_architecture/ASSET_PIPELINE_V2.md`, `custodian/tools/assets/asset.py`, `custodian/docs/ai_context/prompts/update_sprite_pipeline.md`, `custodian/docs/ai_context/prompts/README.md`.
+- Blockers or open questions: None. Keep the installer standalone and bundle-driven; do not turn it into a second ingest system.
