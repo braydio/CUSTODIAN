@@ -273,7 +273,7 @@ lost when the ephemeral worktree is removed.
 ### Procgen Runtime Optimization V1
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are stable, but execution readiness is evidence-gated. A packet is `ready/auto` only when its current measured state and implementation surface exist on live main; architecture-dependent downstream packets stay `blocked/manual` and are refreshed in place after the named predecessor/review lands.
-- **Runtime/streaming:** M4/MR4 and M5/MR5 are complete; M6 is landed. Cycle-0 MR6 completed with one blocking defect (`R0-01`: eviction-triggered presentation flush bypasses reveal coalescing) and four material proof gaps (`R0-02`..`R0-05`). `PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` is the active bounded correction packet (`ready/manual`) and `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` is its cycle-1 paired re-review (`ready/auto`). S7 stays open and no downstream packet may treat cycle-0 MR6 as approval.
+- **Runtime/streaming:** M4/MR4 and M5/MR5 are complete; M6 is landed. Cycle-0 MR6 completed with one blocking defect (`R0-01`: eviction-triggered presentation flush bypasses reveal coalescing) and four material proof gaps (`R0-02`..`R0-05`). `PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` is the active bounded correction packet (`ready/auto`) and `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` is its cycle-1 paired re-review (`ready/auto`). S7 stays open and no downstream packet may treat cycle-0 MR6 as approval.
 - **Post-M6 world presentation:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` (RF1) is fully re-derived and `ready/auto`, dependency-gated on the clean cycle-1 M6 re-review. Its paired `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` is pre-authored. `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` remains blocked behind RF1 review + six approved 1536×1024 source images. Archive Resolve AR1 remains blocked/manual behind the same cycle-1 re-review and still needs its final seam refresh before dispatch; AR2/AR3 remain refresh-gated behind AR1/AR2.
 - **Placement:** P1 `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` has landed `WorldPlacementContext` as the accepted-world read seam while leaving placement policies in `ContractWorldLoader`. `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (PR1) is now the next review gate and must pass before resource, vehicle, relay, encounter, or ingress extraction; those packets remain serialized by the `contract-world-loader` lock. `CONTRACT_WORLD_LOADER_CONTRACTION.md` (P7) remains blocked/manual until P2-P6 land, then must be re-derived from the surviving loader.
 - **ProcGen decomplexification:** D1 `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`, D2 `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`, and D3 `PROCGEN_GENERATION_STATE_EXTRACTION.md` now depend on G5 + `review-procgen-distant-chunk-unload-review-corrections-1`. They remain blocked/manual because each still requires its own post-review live inventory refresh before it may become executable.
@@ -282,6 +282,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — P1 bounded M6 correction cycle 1 closing R0-01 through R0-05; paired re-review is dependency-gated.
+- `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — paired cycle-1 code/architecture/runtime re-review; auto-claims after the correction lands.
 - `HUB_FIRST_SET_BLOCKOUT_V1.md` — P1 runtime-ready Hub first-set blockout from South Reach through Ashen Forum, Sepulcher loop, Archive/Crown Transfer branch, and Muster Court/Continuity Port deployment wing; spatial only, no world transitions.
 - `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — paired independent review of first-set geometry, navigation, Road presentation reuse, inert handoff markers, and human blockout overview approval.
 - `TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — P1 first-pass Solarium I Route Vista sample ingest/presentation: three neutral V2 candidate contents from the new archway-view drop, exact 465×280 registration, playtest sampler, and human capture review.
@@ -302,10 +304,9 @@ lost when the ephemeral worktree is removed.
 - `archived/REVIEW_PROCGEN_CHUNK_PAYLOAD_CACHE.md` — paired post-land review of M5; complete/passed with one optional M6-owned cache-memory improvement.
 - `archived/PROCGEN_DISTANT_CHUNK_UNLOAD.md` — M6 bounded production chunk-residency unload; complete/landed.
 - `archived/REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD.md` — cycle-0 MR6 independent review; complete with findings `R0-01`..`R0-05`, not a pass.
-- `PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — bounded M6 correction cycle 1; ready/manual.
+- `PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — bounded M6 correction cycle 1; ready/auto.
 - `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — cycle-1 paired re-review; ready/auto behind the correction.
-- `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD.md` — MR6 paired post-land code/architecture/runtime review; active gate before S7 closes or D1-D3 refresh.
-- `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — RF1 data-driven region-frame + true exterior-void presentation foundation; blocked until MR6.
+- - `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — RF1 data-driven region-frame + true exterior-void presentation foundation; ready/auto, dependency-gated on clean MR6R1.
 - `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — paired RF1 review.
 - `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` — six-state Asset V2 Alpine FAR/MIDDLE/NEAR underlay family; blocked on RF1 review + source art.
 - `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 presentation-only streaming frontier spine; refreshed to landed M6, blocked until MR6.
