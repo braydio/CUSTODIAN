@@ -349,9 +349,22 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — paired independent review of Slice E; no automatic Passage slice follows.
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
-- `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 post-Slice-E mobile guard composition: movement-owned lower locomotion through enter/hold/non-break recoil/exit with aim-owned upper defense, continuity guards, and runtime-scale strafe validation.
+- `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 immediate post-Slice-E proving slice: establishes the bounded semantic movement-owned-lower + action-owned-upper composition seam, then applies it to moving unarmed guard enter/hold/non-break recoil/exit with lower cadence continuity.
+- `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — P1 follow-up after mobile guard: applies the proven seam to Vigil armed guard plus movement-permissive unarmed parry attempt/recovery without weakening real contact/guard-break commitment.
+- `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — P1 Slice F0: retires all 38 remaining absolute Operator scene-tree lookups before the domain controllers are extracted.
+- `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — P1 Slice F1: loadout/selection authority + `OperatorWeaponRuntimeState`, eliminates the three mutable weapon-definition fields, and makes moving draw/sheathe preserve lower cadence.
+- `OPERATOR_MELEE_DOMAIN_EXTRACTION.md` — P1 Slice F2: melee timeline/drive/target/contact authority, moving-fast asset wiring, quality-gated armed strafe/READY posture composition, and preservation of authored committed full-body attacks.
+- `OPERATOR_RANGED_DOMAIN_EXTRACTION.md` — P1 Slice F3 after F1: ranged/ammo/heat/reload/sidearm authority plus movement-permissive primary raise/lower and sidearm held/fire/recover; reload remains committed.
+- `OPERATOR_DODGE_DOMAIN_EXTRACTION.md` — P1 Slice F4: extracts dodge/charge/Flow/chain state while explicitly retaining full-body displacement-owning dodge presentation.
+- `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — P1 Slice F5: extracts Operator target/build/repair/terminal coordination and introduces opt-in `interaction/success_01` acknowledgement presentation without gating simulation.
+- `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — P1 Slice F6 after the campaign death-handoff foundation: separates damage/recovery ownership and makes the existing moving Field Patch contract use locomotion lower + upper/FX while stationary use retains the authored pair.
+- `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` — P1 post-F3 ranged presentation closeout: static Carbine `WeaponSprite` becomes the sole primary-ranged weapon renderer for supported socketed phases, animated weapon-strip residue is retired, and relaxed/source socket calibration is closed.
+- `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — P1 Slice G after F0/F1-F6 plus defensive/ranged presentation closure: collapses `operator.gd`/`operator.tscn` to the thin chassis and turns architecture/path/animation audits into hard-zero final gates.
 
 ### Blocked / Manual Refresh
+
+- `OPERATOR_GUARD_BREAK_PRESENTATION.md` — P2 blocked/manual until reviewed Asset V2 `block_break_01` body+FX pixels exist; guard break intentionally stays movement-locked/full-body.
+- `OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` — P2 draft/manual after the runtime composition slices; human review chooses only visibly harmful directional/layer gaps for Asset V2 fulfillment rather than forcing eight-way completeness.
 
 #### Operator Workbench UX Hierarchy V1
 
