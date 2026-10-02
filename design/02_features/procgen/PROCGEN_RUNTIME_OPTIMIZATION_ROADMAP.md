@@ -5,8 +5,8 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `ce4fe06ce60c34fc2eeab7624e97f0b6bf9e07f5`  
-**Last Updated:** 2026-10-01  
+**Reviewed main:** `81494285dfdb41240045a55cb6117586b32f539f`  
+**Last Updated:** 2026-10-02  
 **Depends on:** none for measurement; slice dependencies below
 
 ## Purpose
@@ -209,7 +209,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | MR5 | `review-procgen-chunk-payload-cache` | **complete — passed, optional-improvement-only** | M5 |
 | M6 | `procgen-distant-chunk-unload` | **complete — implementation landed** | MR5 |
 | MR6 | `review-procgen-distant-chunk-unload` | **complete — findings: R0-01 blocking + R0-02..R0-05 evidence gaps** | M6 |
-| M6C1 | `procgen-distant-chunk-unload-review-corrections-1` | **ready / auto correction gate** | MR6 |
+| M6C1 | `procgen-distant-chunk-unload-review-corrections-1` | **complete — coalescing correction + proof expansion landed** | MR6 |
 | MR6R1 | `review-procgen-distant-chunk-unload-review-corrections-1` | queued / auto | M6C1 |
 | P1 | `contract-world-placement-foundation` | **complete — accepted-world read context landed** | S1 |
 | PR1 | `review-contract-world-placement-foundation` | **ready / auto post-land review** | P1 |
@@ -267,9 +267,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M6 implementation is landed. Cycle-0 MR6 completed with one blocking defect (`R0-01`: eviction-triggered full presentation flush bypasses reveal coalescing) and four required proof gaps (`R0-02` real NavigationSystem rebuild, `R0-03` real portal/ingress protection, `R0-04` foliage metadata/blocker/collision parity, `R0-05` combined before/after residency reduction). `procgen-distant-chunk-unload-review-corrections-1` and its paired cycle-1 re-review are the active S7 gate. RF1 has been re-derived against the unchanged nonwalkable/underlay owners and is ready/auto behind MR6R1. Placement P1 has landed its read-only accepted-world context; PR1 is the next placement gate.
-**State:** S1, G1-G5, M1-M6, MR4, MR5 and cycle-0 MR6 are landed. MR6 did not pass cleanly, so S7 remains open through M6C1 -> MR6R1. D1-D3 now wait on G5 + MR6R1 and still require their own live refresh before execution. The separate Procgen World Presentation lane has RF1 ready behind MR6R1, its paired RFR1 pre-authored, Alpine Asset V2 blocked behind RFR1 + source art, and AR1 still refresh-gated behind MR6R1. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
-**Next gate:** Land `procgen-distant-chunk-unload-review-corrections-1`, then run `review-procgen-distant-chunk-unload-review-corrections-1`. A clean/non-blocking-only cycle-1 receipt closes S7. RF1 becomes immediately claimable from its already-ready packet; D1-D3 become refresh-eligible but remain blocked until each live inventory is rewritten in place. AR1 then receives its final seam refresh.
+**Current packet:** M6C1 is landed and archived on `main@81494285`, closing the production R0-01 coalescing defect and expanding proof for R0-02..R0-05. MR6R1 is now the sole active S7 gate. A manual second-pass found the production coalescing control flow structurally sound and R0-03/R0-04 materially proven, with three proof-shape hardening items carried into refreshed RF1: deterministic multi-frame coalescing observation, actual A* reachability, and guaranteed road-removal proof. RF1 remains ready/auto behind MR6R1. Placement P1 has landed its read-only accepted-world context; PR1 is the next placement gate.
+**State:** S1, G1-G5, M1-M6, MR4, MR5, cycle-0 MR6 and M6C1 are landed. S7 remains open only through MR6R1. D1-D3 wait on G5 + MR6R1 and still require their own live refresh before execution. The separate Procgen World Presentation lane has RF1 refreshed against M6C1 and ready behind MR6R1, its paired RFR1 pre-authored, Alpine Asset V2 blocked behind RFR1 + source art, and AR1 still refresh-gated behind MR6R1. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
+**Next gate:** Run `review-procgen-distant-chunk-unload-review-corrections-1`. A clean/non-blocking-only cycle-1 receipt closes S7; proof-only hardening already identified by the manual second-pass is owned by RF1 and must not spawn duplicate correction work unless MR6R1 exposes an actual runtime failure. RF1 then becomes claimable from its refreshed packet; D1-D3 become refresh-eligible but remain blocked until each live inventory is rewritten in place. AR1 then receives its final seam refresh.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+MR6R1; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
