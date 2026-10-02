@@ -11,18 +11,19 @@ ROOT = Path(__file__).resolve().parents[3]
 def validate_procgen_packet_routing_expiry() -> None:
     """Keep removed temporary routing controls absent after their expiry."""
     assert not (ROOT / ".github/workflows/expire-lfs-degraded-mode.yml").exists()
-    markers = (
-        "TEMP_PROCGEN_PACKET_ROUTING_START",
-        "TEMP_PROCGEN_PACKET_ROUTING_END",
-        "agents other than Claude must skip all procgen-family task packets",
-        "Claude is explicitly allowed to claim and work procgen-family task packets",
-    )
-    for relative in (
-        "custodian/AGENTS.md",
-        "custodian/tools/agent/workstream.py",
-        "custodian/tools/agent/land_main.py",
-        "tools/custodian_aliases.sh",
-    ):
+    marker_targets = {
+        "custodian/AGENTS.md": (
+            "TEMP_PROCGEN_PACKET_ROUTING_START",
+            "TEMP_PROCGEN_PACKET_ROUTING_END",
+            "TEMP_LFS_DEGRADED_MODE_START",
+            "agents other than Claude must skip all procgen-family task packets",
+            "Claude is explicitly allowed to claim and work procgen-family task packets",
+        ),
+        "custodian/tools/agent/workstream.py": ("TEMP_LFS_DEGRADED_MODE_START",),
+        "custodian/tools/agent/land_main.py": ("TEMP_LFS_DEGRADED_MODE_START",),
+        "tools/custodian_aliases.sh": ("TEMP_LFS_DEGRADED_MODE_START",),
+    }
+    for relative, markers in marker_targets.items():
         content = (ROOT / relative).read_text()
         for marker in markers:
             assert marker not in content, f"expired routing marker remains in {relative}: {marker}"

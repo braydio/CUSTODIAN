@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-validation-gate-drift-repair-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-validation-gate-drift-repair`
@@ -36,3 +36,25 @@
 - Validation: Run `python3 custodian/tools/validation/agent_workflow_smoke.py`, `python3 custodian/tools/validation/run_validation.py --test agent_workflow_contract --json`, and `git diff --check`.
 - Task overrides: `none`
 - Deferred: No additional expiry-marker families beyond those removed by the cited expiry commit.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Acceptance evidence: The post-expiry smoke checks TEMP_LFS_DEGRADED_MODE_START in all four former files, retains procgen checks in custodian/AGENTS.md, and a temporary negative control proved an injected LFS marker fails. The focused smoke and agent_workflow_contract gate pass.
+- Superseded/legacy production path disposition: `removed`
+- Evidence: `python3 custodian/tools/validation/agent_workflow_smoke.py`; `python3 custodian/tools/validation/run_validation.py --test agent_workflow_contract --json`; temporary LFS-marker negative control; `git diff --check`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The original post-expiry assertion omitted the former LFS guard marker family.
+- Root cause / contributing factors: The implementation retained the old procgen-specific marker list while checking all four former target files.
+- Prevention / pipeline improvement: Added explicit per-file marker targets and verified a synthetic reintroduction fails.
+- Tooling / docs drift discovered: none.
+- Follow-up: `review-agent-validation-gate-drift-repair-review-corrections-1`
+- What worked: The existing manifest gate exercised the smoke without changing gate ownership.
