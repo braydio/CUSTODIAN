@@ -5,7 +5,7 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `51bea8bf968690e90dadfc9a693a992645f579aa`  
+**Reviewed main:** `416462da40d0d88d8b470597c26f703aff646a14`  
 **Last Updated:** 2026-10-01  
 **Depends on:** none for measurement; slice dependencies below
 
@@ -542,7 +542,7 @@ Candidate selection no longer depends on a live near-final `ProcGenTilemap` inst
 - Migrated the deleted function's last two callers to the canonical pipeline: `tools/validation/procgen_dressing_cluster_review.gd` now builds a semantic snapshot from its eval-mode candidate and materializes onto a fresh second `ProcGenTilemap` instance (matching `CustodianContractMap`'s own flow) instead of promoting the candidate in place; `tools/validation/procgen_macro_presentation_smoke.gd`'s `_validate_pipeline_order()` now proves the macro -> dressing-clusters -> foliage phase ordering once, inside `_fill_tilemaps()`'s own final-mode branches, instead of re-checking it inside the now-deleted promotion function's separate source block.
 - Left the small `get_last_promotion_timing_snapshot()` alias in place (delegates to G4's `get_last_materialization_timing_snapshot()`) rather than deleting it: it is load-bearing for the `custodian.procgen_performance_baseline.v1` benchmark schema's `"promotion"` field, and this packet's own Preserve clause covers benchmark schema.
 - **Validation:** `procgen_candidate_promotion_smoke.gd`, `procgen_candidate_semantic_model_smoke.gd`, `procgen_candidate_evaluator_smoke.gd`, `procgen_macro_presentation_smoke.gd` (edited), `procgen_contract_rescue_diagnostic_smoke.gd` (36/36 seeds), and `procgen_terrain_required_cells_smoke.gd` all PASS. S1 quick and full benchmarks PASS, `determinism_ok: true`; all 3 full-profile contract cases reproduced G4's exact documented fingerprints byte-for-byte (`2884730602`, `392435093`, `1672459047`), proving the deletion changed no accepted-world output. Changed-file closeout PASS (17/17 selected tests); `git diff --check` clean. `procgen_dressing_cluster_review.gd`'s baseline capture pass fails under plain `--headless` (no rendering device for `viewport.get_texture()`); this is a pre-existing limitation of that non-gating review tool unrelated to this change — it fails before reaching the migrated code, and the tool is not a `validation_manifest.json` entry.
-- **Next:** Generation lane (G1-G5) is fully closed. M1-M6 + paired reviews (runtime/streaming lane) and P1-P7 (placement lane) proceed independently; D1-D4 (`ProcGenTilemap` decomplexification) wait on G5+M6 per the dependency graph.
+- **Next:** Generation lane (G1-G5) is fully closed. The runtime/streaming lane is currently at ready M6 followed by MR6, while placement proceeds independently from P1/PR1. D1-D3 wait on G5+MR6; D4 remains downstream of the reviewed GenerationGrid convergence.
 
 ---
 
@@ -674,7 +674,7 @@ Cache reusable chunk payloads such as structural tile data, prop/foliage plans, 
 
 Reveal/unload/re-reveal is deterministic, avoids recomputing immutable chunk semantics, and distant unload can be enabled only after lifecycle correctness is proven.
 
-### M4 Chunk Lifecycle State Machine — Complete (pending MR4 review)
+### M4 Chunk Lifecycle State Machine — Complete + MR4 Passed
 
 `ProcGenChunkLifecycle` (`custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd`)
 is the single owner of per-chunk lifecycle state: `UNSEEN -> QUEUED ->
@@ -699,9 +699,9 @@ owns the real reload policy.
 - **Landed main SHA:** `6588093c2` (`procgen chunk lifecycle state machine, M4 ProcGenChunkLifecycle authority`).
 - **Closing summary:** `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE_CLAUDE_SUMMARY.md`.
 - **Evidence:** New `procgen_chunk_lifecycle_smoke.gd` proves deterministic state progression for queued unpaused reveal, pause PREPARE -> resume commit, immediate reveal, a zero-content chunk, active-radius exit to DORMANT and re-entry to VISIBLE without duplicate work, and the debug-only UNLOADED seam, plus illegal-transition detection and idempotent re-requests. `procgen_pause_aware_streaming_smoke.gd`, `procgen_candidate_promotion_smoke.gd` (restored to required regression status -- its obsolete strict streamed-floor assertion is gone), `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_macro_presentation_smoke.gd`, and `procgen_road_semantics_v2_smoke.gd` all pass unchanged (the last required one small fix: it used to poke `_revealed_chunks` directly to fake residency before testing unload/re-reveal, now calls the real `_reveal_chunk_immediately` adapter instead). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint as M1-M3, confirming no deterministic-output regression. `procgen_performance_baseline_bench.gd`'s and `procgen_performance_snapshot.gd`'s external `_revealed_chunks`/`_queued_chunks` telemetry reads were migrated to the new `ProcGenTilemap.get_resident_chunk_count()`/`get_pending_chunk_count()` public API.
-- **Next:** MR4 passed. M5 `procgen-chunk-payload-cache` is complete (see below); MR5 follows it, and M6 stays refresh-gated until MR5 passes.
+- **Next:** MR4 passed; M5 and MR5 are now complete. M6 is refreshed and ready, with MR6 required after M6 lands.
 
-### M5 Chunk Payload Cache — Complete (pending MR5 review)
+### M5 Chunk Payload Cache — Complete + MR5 Passed
 
 `ProcGenChunkPayloadCache` (`custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd`)
 is a plain-data, generation-scoped, invalidatable `RefCounted` cache behind
@@ -739,7 +739,7 @@ M6 is not unblocked by this packet alone.
 - **Landed main SHA:** `91ea694f4` (`procgen chunk payload cache, M5 ProcGenChunkPayloadCache authority`).
 - **Closing summary:** `PROCGEN_CHUNK_PAYLOAD_CACHE_CLAUDE_SUMMARY.md`.
 - **Evidence:** New `procgen_chunk_payload_cache_smoke.gd` proves (against a live `ProcGenTilemap`): lazy population (an untouched chunk has no entry until first access); miss->hit reuse for both chunk membership and per-tile PREPARE records; dynamic reveal order recomputed from a live `center_tile` over reused cached membership; a debug unload/re-reveal round trip producing cache hits with zero rebuilds when no semantic mutation occurred; wall-destruction invalidation (`damage_wall_tile`) restoring the destroyed floor and never resurrecting the wall across unload/re-reveal; authored-scene floor-claim invalidation reloading the new region truth; a stale PREPARE record (captured before a wall was destroyed, exactly like one still sitting in M3's `_prepared` queue) being detected and refreshed immediately before COMMIT instead of resurrecting the destroyed wall; presentation/telemetry-only reads never spuriously invalidating; and generation-scoped reset separating cache state across a regeneration. `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_materializer_parity`, `procgen_macro_presentation`, `procgen_road_semantics_v2`, and `procgen_dressing_clusters` all pass unchanged via `run_validation.py --test`; `procgen_authored_scene_authority_smoke.gd` passes via direct invocation (still unregistered in the manifest). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint (`1773840677`) as M1-M4, confirming no deterministic-output regression. A full `run_validation.py --changed` sweep (25 selected tests) and `git diff --check` are both clean.
-- **Next:** MR5 `review-procgen-chunk-payload-cache` is now dependency-eligible. On a clean/non-blocking-only pass, M6 `procgen-distant-chunk-unload` must be refreshed in place against this reviewed cache before it becomes executable.
+- **Next:** MR5 passed with 0 blocking defects / 0 material evidence gaps and one optional cache-memory-shape finding (`R0-01`) folded into M6. M6 `procgen-distant-chunk-unload` is now refreshed/ready; paired MR6 is the next runtime correctness gate after implementation.
 
 ---
 
@@ -755,7 +755,7 @@ Priority coherent authorities:
 2. authored claims / clearances / reservations;
 3. generation level-data/export state.
 
-V1 is already split into D1 road authority, D2 authored-claim registry, D3 generation-state extraction, and D4 façade contraction. D1-D3 are dependency siblings gated by G5+M6 and serialized by the shared procgen-runtime lock; D4 waits for all three.
+V1 is already split into D1 road authority, D2 authored-claim registry, D3 generation-state extraction, and D4 façade contraction. D1-D3 are dependency siblings gated by G5+MR6 and serialized by the shared procgen-runtime lock; after those extractions, the reviewed GenerationGrid migration initiative must converge before D4 becomes executable.
 
 ### Exit
 
