@@ -837,7 +837,7 @@ success, and found one additional blocking defect by code review:
   test records one combined before/after painted-cell/cache/road count
   fixture (Acceptance item 15).
 
-- **Landed main SHA:** `<to be filled at landing>` (`procgen distant chunk unload, MR6 independent review finds frame-coalescing defect and evidence gaps`).
+- **Landed main SHA:** `dba96f810` (`procgen distant chunk unload, MR6 independent review finds frame-coalescing defect and evidence gaps`).
 - **Closing summary:** `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_CLAUDE_SUMMARY.md`.
 - **Next:** Claim `procgen-distant-chunk-unload-review-corrections-1` (ready/manual) to coalesce the eviction-triggered flush and extend the M6 smoke with the four missing proof sections, then its paired cycle-1 re-review (ready/auto). Only a clean/non-blocking-only cycle-1 pass closes S7 and makes D1-D3 refresh-eligible.
 
