@@ -1196,6 +1196,8 @@
       "owners": [
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
         "custodian/content/sprites/operator/runtime/animations/**/*.png.import",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/*.png",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/*.png",
         "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py"
       ],
       "timeout_sec": 15,
@@ -1461,6 +1463,10 @@
         "custodian/tools/validation/asset_contract_schema_smoke.py",
         "custodian/content/metadata/assets/**",
         "custodian/content/sprites/_pipeline/inbox/color_matched/**",
+        "custodian/content/sprites/_pipeline/inbox/operator__lower_body__unarmed__defense__block_enter_02__e__4f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__lower_body__unarmed__defense__block_hold_02__e__5f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__upper_body__unarmed__defense__block_enter_02__e__4f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__upper_body__unarmed__defense__block_hold_02__e__5f__96.*",
         "custodian/content/sprites/_pipeline/normalized/**",
         "custodian/asset_drop/**",
         "design/04_architecture/ASSET_PIPELINE_V2.md",

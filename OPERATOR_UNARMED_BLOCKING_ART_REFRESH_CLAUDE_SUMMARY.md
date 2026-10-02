@@ -1,36 +1,37 @@
-# Operator Unarmed Blocking Art Refresh — Handoff
+# Operator Unarmed Blocking Art Refresh — Closing Summary
 
-## State
+Implemented the approved preserve-and-add scope in worktree `agent/operator-unarmed-blocking-art-refresh`.
 
-Production implementation remains paused pending review of source identity. I made scratch-only crisp conversions and lower/upper splits from the sheets in `~/Downloads` to prepare the requested comparison; no canonical art replacement, inbox staging, or ingest was performed.
+- Preserved current-main `_01` enter/hold/hit art and `block_hold_01` FX byte-for-byte. Shared `block_hit_01` remains the sole hit sheet.
+- Added `block_enter_02` and `block_hold_02` as dormant secondary art. No live selector or gameplay clock changed.
+- Published E source layers through selected inbox manifests; the standard pipeline generated W by per-frame mirroring. Runtime manifest/catalog and the full 596-animation SpriteFrames resource include the eight new identities.
+- Updated `operator_animation_reachability.json` with DORMANT records, the active task packet, focused validation ownership, and this summary.
 
-## Source investigation
+## Evidence
 
-- Cleared the stale `operator-runtime-compatibility-residue` claim after verifying its worktree was clean and `origin/agent/operator-runtime-compatibility-residue` was 111 commits behind `origin/main` with zero unique commits. Its packet remains `ready` on `main`.
-- Claimed `operator-unarmed-blocking-art-refresh` as `codex` in an isolated worktree.
-- The exact packet candidate, local commit `59329a1875dca079002f015c7293a64e9147d8dc` (`temp block source files`), is not reachable from `origin/main`, `origin/workbench/operator-art`, or the task branch. Its cached PNGs decode as 2172×724 RGBA sheets and include `block_enter_01`, `block_hold_01`, `block_light_recoil_01`, and `block_heavy_recoil_01`; it does not establish the expected `enter_block_01`, `block_loop_01`, and `block_hit_01` source set.
-- The four downloaded source PNGs are byte-identical to the LFS payloads referenced by that local-only commit. The held-block sheet had two fully transparent trailing columns; I removed only those columns in the scratch copy to resolve its 5×1 frame grid.
-- The latest pushed dedicated art commit `eaee83f97ec5709b80bd108c658fe16526a17c1d` contains normalized 96 px `block_hold_01` assets, not acceptable conversion inputs.
-- No source pixels were copied from the user's divergent project-root checkout. No Git LFS fetch/pull was run.
+- Inputs were verified against LFS payloads at `5c6d7b8e1c15257146c4325732532f62dca2e2fd`: enter source `c8a29e80d451809d30b8769b97c3e1dc0a5afcf11466c7e0b7e8fcb24c22251d`; hold source `696d9922d9055921d22d047a6586c24811601af58ab76ca665fe37b46d3f61d7`.
+- Both resized via the required `pixelart --choose 1` alias path. Enter is 384x96 / 4f / 10 FPS / non-looping; hold is 480x96 / 5f / 8 FPS / looping.
+- Automated pixel checks passed: exact lower/upper recomposition, disjoint authored layers, correct dimensions, exact E/W per-frame mirrors, and unchanged current-main `_01` enter/hold/hit runtime art.
+- `godot --headless --path custodian --script res://tools/pipelines/build_operator_runtime_frames.gd` passed; a Godot resource-load check verified all eight `_02` SpriteFrames identities and timing.
+- Passed `operator_modular_defense_ranged_smoke.gd`, `operator_guard_flow_smoke.gd`, `operator_runtime_animation_authority_smoke.py`, and the changed animation timing/reachability checks.
+- `git diff --check` passed before the final packet/summary edits; it will be rerun at checkpoint.
 
-## Changes and validation
+## Open validation and drift
 
-- Updated the task packet with the source blocker and execution feedback.
-- Created `/tmp/operator_unarmed_blocking_preview_20261001/operator_blocking_runtime_vs_candidates.png`, comparing current east runtime strips with the crisp candidates. The impact comparison shows heavy recoil (4f) and light recoil (3f) separately beside current `block_hit_01` (5f); the exact `block_hit_01` source remains unresolved.
-- Conversions used the sourced `pixelart` alias with `--choose 1 --sheet --frames N --size 96`. Preview outputs are 384×96 (enter, 4f), 480×96 (hold, 5f), 384×96 (heavy recoil, 4f), and 288×96 (light recoil, 3f). Each candidate was split at y=58 into lower/upper layers; deterministic checks confirmed binary alpha, disjoint layers, real pixels/transparency in both layers, and byte-exact recomposition.
-- No production assets, runtime code, generated resources, or inbox files were changed. No gameplay tests or ingest validation were run.
-- Repository graph initialized in the isolated task worktree (19,363 nodes; 191,310 edges).
-- The task worktree remains claimed and checkpointed for continuation after the exact source set is pushed and identified.
-- The persistent project-root checkout remains untouched; it is still divergent from `origin/main`.
+`python3 custodian/tools/validation/run_validation.py --changed --max-tier unit --json` returned exit 4. Four scoped tests passed and one repository-wide `review_pairing_contract` failed: its packet still points to missing `tools/validation/...` scripts instead of live `custodian/tools/validation/...` paths. Eight unrelated tests were skipped. This prevents the required green closeout report, so the workstream remains active and is checkpointed rather than landed.
+
+The normal unscoped Operator inbox dry-run also found pre-existing tracked `block_hold_01` FX inbox inputs. Its east sheet differs from canonical source/runtime while west matches. I left those inbox files and the canonical FX unchanged and only processed the four selected `_02` manifests. The broad wrapper apply was not used because it would consume the unrelated FX input.
+
+The sparse worktree initially lacked Godot import caches; I completed a one-time full project import in the isolated task worktree, after which the focused Godot checks passed. The project-root checkout was not modified.
 
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: blocked
+- Outcome: partial
 - Friction severity: medium
-- What went wrong: the required pushed high-resolution source commit and paths were not available; a local-only candidate did not match the task's action identities.
-- Root cause / contributing factors: the source handoff in the packet predates the current pushed refs, while the local coordination checkout contains a distinct unpushed temp set.
-- Prevention / pipeline improvement: publish the immutable source set on a named remote ref and record its SHA and paths before conversion.
-- Tooling / docs drift discovered: the packet names a pushed source set that could not be found on current remote refs.
+- What went wrong: task branch began 98 commits behind current main; blanket inbox discovery included a divergent pre-existing FX candidate; changed-unit gate exposed stale review-pairing paths
+- Root cause / contributing factors: stale task baseline, non-scoped inbox dry-run, and outdated review contract paths
+- Prevention / pipeline improvement: sync before comparing production art; pass explicit inbox manifests; keep review-pairing contracts aligned with the active validation tree
+- Tooling / docs drift discovered: `block_hold_01` east FX inbox differs from canonical art; review-pairing contract references absent `tools/validation` paths
 - Follow-up: manual-follow-up
-- What worked: dispatcher verification and source-provenance checks prevented substituting unrelated art.
+- What worked: current-main `_01` preservation, exact input provenance, selected-manifest intake, and focused runtime/pixel verification

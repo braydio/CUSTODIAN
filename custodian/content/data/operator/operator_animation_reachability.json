@@ -1074,6 +1074,20 @@
       "status": "LIVE",
       "consumer": "operator._update_unarmed_presentation_posture -> _sync_unarmed_posture",
       "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector()."
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_enter_02",
+      "status": "DORMANT",
+      "reason": "Secondary guard-entry art variant added 2026-10-01. Not selected by gameplay; live guard entry remains on block_enter_01."
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hold_02",
+      "status": "DORMANT",
+      "reason": "Secondary held-guard art variant added 2026-10-01. Not selected by gameplay; live guard hold remains on block_hold_01."
     }
   ]
 }
