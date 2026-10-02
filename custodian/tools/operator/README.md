@@ -160,6 +160,15 @@ with old/new hashes and frame contracts. It does not publish canonical source
 or runtime assets; specialized ingest runs the existing runtime and
 compatibility-resource refresh.
 
+The accepted 96x96 registration guide is authoritative in
+`content/data/operator/authoring/operator_art_profile.json`. Existing plans use
+`contain`; `source-plan --mode operator_profile` requires source landmarks and
+derives one shared scale and anchor from reviewed semantic evidence. Read-only
+source render, landmark, registration-report, and production-command actions
+keep observation inside the Source Session boundary. Only a source- and
+plan-hash-verified crisp output from `pixelart --choose 1
+--normalization-plan ...` can satisfy profile-mode handoff.
+
 Sessions live under
 `.ai/operator_art_agent/<profile>/<group>/<action>/<direction>/<session-id>/`.
 Every mutation takes a complete pre-operation `.aseprite` backup, uses a

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-art-registration-profile`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -210,7 +210,7 @@
   - `qa.py` consumes accepted structural registration data while `enforcement.artistic` remains false; a deliberately recoiled pose can report advisory deviations without becoming a false structural failure.
   - Active Art Agent/current-state/tooling docs describe the now-live profile-aware registration path accurately, and the stale unarmed-blocking refresh packet is no longer auto-dispatchable until re-derived.
 - Validation:
-  - Add/run the registration-profile smoke first. Cover profile schema/coordinates/hash, deterministic weighted-median scale, alpha-union clipping guard, anchor placement, no-auto-frame-translation, intentional-motion preservation, v1-plan compatibility, converter `--normalization-plan` identity checks, and crisp byte equivalence. Name the exact smoke path here once it has been created.
+  - `python3 custodian/tools/validation/operator_art_registration_profile_smoke.py` covers accepted profile geometry, v1-plan compatibility, source landmark bounds/hash, shared profile scale/anchor, deterministic registrations, converter `--normalization-plan` replay, crisp byte equivalence, and proof hashes.
   - Run `python3 custodian/tools/validation/operator_art_source_smoke.py` for existing Source Session regression plus source-landmark/profile mode.
   - Run `python3 custodian/tools/validation/operator_art_agent_semantic_smoke.py` for profile-backed report/QA semantics.
   - Run `python3 custodian/tools/validation/operator_art_agent_mcp_smoke.py` for explicit new tool schemas and privileged-surface negative controls.
@@ -223,18 +223,29 @@
 
 ## Handoff
 
-- Next action: Claim this workstream, add the profile loader/fixture first, then prove profile-mode planning and converter-plan replay on synthetic source art before touching MCP/Aseprite clients.
+- Next action: Paired independent review, then re-measure the remaining blocking-art delta.
 - Best starting files: `operator_art_profile.json`; `registration_profile.py` (new); `source_normalization.py`; `source_models.py`; `source_service.py`; `custodian_pixelart_converter.py`; `mcp_server.py`; `operator_anchor_guides.lua` (new); registration-profile smoke (new).
 - Blockers or open questions: None. The registration coordinates are user-approved; artistic tolerances remain explicitly out of scope.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Acceptance satisfied: yes
+- Preserved constraints: yes
+- Deferred items: intentionally-preserved
+- Evidence: registration-profile, source, semantic, MCP, and Aseprite smokes passed; changed-file unit gate passed (17 selected, 17 passed, 0 failed); `git diff --check` passed.
+- Production art changed: no
+- Existing Source Session v1 plan compatibility: verified
+- Registration guide clean-render exclusion and idempotence: verified
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
-- What worked: `pending`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: An already-running local relay interfered with temporary-root smoke fixtures; the first changed-file gate failed two unrelated fixture requests.
+- Root cause / contributing factors: Existing relay tests did not isolate the external relay when using temporary repository roots.
+- Prevention / pipeline improvement: Fixed in-scope by injecting an unavailable relay in the affected fixture harnesses; focused smokes and the changed-file gate then passed.
+- Tooling / docs drift discovered: Current `main` advanced during the push and overlaps the current-state and file-index docs; the published workstream must merge current `main` normally before landing.
+- Follow-up: `review-operator-art-registration-profile`
+- What worked: Deterministic profile math, hash-bound crisp replay, exact pixel proof, and isolated Aseprite guide validation.

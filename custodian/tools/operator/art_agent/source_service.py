@@ -27,6 +27,8 @@ from .source_models import (
 )
 from .source_normalization import build_plan, shared_transform_from_plan
 from .source_review import review_normalization
+from . import landmarks as landmark_store
+from .registration_profile import load_profile, profile_report
 from . import palette as palette_core
 from . import recolor as recolor_store
 
@@ -181,6 +183,7 @@ class SourceArtService:
         anchor: str = "feet",
         method: str = "balanced",
         global_scale: float | None = None,
+        mode: str = "contain",
     ) -> dict[str, Any]:
         session, root, path = self.load(session_path)
         analysis_path = root / "analysis.json"
@@ -189,12 +192,16 @@ class SourceArtService:
         analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
         if analysis.get("source_sha256") != session.source_sha256:
             raise model.WorkbenchError("analysis belongs to a different source")
+        if mode == "operator_profile":
+            method = "crisp"
         plan = build_plan(
             session=session,
             analysis=analysis,
             method=method,
             anchor=anchor,
             global_scale=global_scale,
+            mode=mode,
+            landmarks=self._load_source_landmarks(session, root),
         )
         write_json(root / "normalization_plan.json", plan.to_json())
         session.state = "PLANNED"
@@ -206,9 +213,134 @@ class SourceArtService:
         if not plan_path.exists():
             raise model.WorkbenchError("normalization plan does not exist")
         value = json.loads(plan_path.read_text(encoding="utf-8"))
-        if value.get("schema") != NORMALIZATION_PLAN_SCHEMA:
+        if value.get("schema") not in {NORMALIZATION_PLAN_SCHEMA, "custodian.operator_art_normalization_plan.v1"}:
             raise model.WorkbenchError("normalization plan has unsupported schema")
         return NormalizationPlan.from_json(value)
+
+    def _load_source_landmarks(self, session: SourceSession, root: Path) -> list[dict[str, Any]]:
+        path = root / "source_landmarks.json"
+        if not path.exists():
+            return []
+        value = json.loads(path.read_text(encoding="utf-8"))
+        if value.get("source_sha256") != session.source_sha256:
+            raise model.WorkbenchError("source landmark record belongs to a different source")
+        if value.get("coordinate_space") != "source_cell_pixels" or value.get("frame_count") != session.geometry.frame_count:
+            raise model.WorkbenchError("source landmark record has incompatible frame or coordinate contract")
+        return value.get("landmarks", [])
+
+    def get_source_landmarks(self, session_path: Path | str) -> dict[str, Any]:
+        session, root, _path = self.load(session_path)
+        return {"schema": "custodian.operator_source_landmarks.v1", "source_sha256": session.source_sha256,
+                "coordinate_space": "source_cell_pixels", "frame_count": session.geometry.frame_count,
+                "cell_size": [session.geometry.source_cell_width, session.geometry.source_cell_height],
+                "landmarks": self._load_source_landmarks(session, root)}
+
+    def set_source_landmarks(self, session_path: Path | str, items: list[dict[str, Any]]) -> dict[str, Any]:
+        session, root, _path = self.load(session_path)
+        validated = []
+        for raw in items:
+            try:
+                item = landmark_store.Landmark(**{**raw, "source_hash": session.source_sha256, "status": "CURRENT"})
+                landmark_store.validate(item, frame_count=session.geometry.frame_count,
+                                        width=session.geometry.source_cell_width, height=session.geometry.source_cell_height)
+            except (TypeError, ValueError) as error:
+                raise model.WorkbenchError(str(error)) from error
+            validated.append(asdict(item))
+        seen: set[tuple[int, str]] = set()
+        for item in validated:
+            key = (item["frame"], item["name"])
+            if key in seen:
+                raise model.WorkbenchError(f"duplicate source landmark {key[1]} in frame {key[0]}")
+            seen.add(key)
+        payload = {"schema": "custodian.operator_source_landmarks.v1", "source_sha256": session.source_sha256,
+                   "coordinate_space": "source_cell_pixels", "frame_count": session.geometry.frame_count,
+                   "cell_size": [session.geometry.source_cell_width, session.geometry.source_cell_height], "landmarks": validated}
+        write_json(root / "source_landmarks.json", payload)
+        return payload
+
+    def validate_source_landmarks(self, session_path: Path | str) -> dict[str, Any]:
+        session, root, _path = self.load(session_path)
+        items = self._load_source_landmarks(session, root)
+        for raw in items:
+            landmark_store.validate(landmark_store.Landmark(**raw), frame_count=session.geometry.frame_count,
+                                    width=session.geometry.source_cell_width, height=session.geometry.source_cell_height)
+        return {"valid": True, "count": len(items), "source_sha256": session.source_sha256}
+
+    def render_source(self, session_path: Path | str) -> dict[str, Any]:
+        session, root, _path = self.load(session_path)
+        with Image.open(session.source_original) as source:
+            frames = extract_frames(source, columns=session.geometry.columns, rows=session.geometry.rows, frame_count=session.geometry.frame_count)
+        folder = root / "review/source_frames"
+        folder.mkdir(parents=True, exist_ok=True)
+        paths = []
+        for index, frame in enumerate(frames, 1):
+            destination = folder / f"frame_{index:02d}.png"
+            frame.save(destination)
+            paths.append(destination)
+        contact = root / "review/source_contact_sheet.png"
+        make_contact_sheet(paths, contact)
+        return {"source_sha256": session.source_sha256, "frames": [str(p.resolve()) for p in paths],
+                "contact_sheet": str(contact.resolve()), "read_only": True}
+
+    def source_registration_report(self, session_path: Path | str) -> dict[str, Any]:
+        session, root, _path = self.load(session_path)
+        analysis_path = root / "analysis.json"
+        if not analysis_path.exists():
+            raise model.WorkbenchError("source must be analyzed before registration report")
+        analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
+        plan = self._load_plan(root) if (root / "normalization_plan.json").exists() else None
+        current_profile = load_profile()
+        if plan and plan.mode == "operator_profile" and plan.profile_sha256 != current_profile["sha256"]:
+            raise model.WorkbenchError("registration profile changed after planning; create a new plan")
+        report = profile_report(landmarks=self._load_source_landmarks(session, root), frames=analysis["frames"],
+                                global_scale=plan.global_scale if plan and plan.mode == "operator_profile" else None,
+                                clipping_safe_scale=plan.clipping_safe_scale if plan else None,
+                                profile=current_profile,
+                                plan=plan if plan and plan.mode == "operator_profile" else None)
+        path = root / "review/registration_report.json"
+        write_json(path, report)
+        report["report"] = str(path.resolve())
+        return report
+
+    def production_command(self, session_path: Path | str) -> dict[str, Any]:
+        session, root, _path = self.load(session_path)
+        plan = self._load_plan(root)
+        if plan.mode != "operator_profile":
+            raise model.WorkbenchError("production command requires operator_profile normalization")
+        output = root / "production/crisp.png"
+        command = ["pixelart", str(Path(session.source_original)), str(output), "--sheet", "--frames",
+                   str(session.geometry.frame_count), "--source-cell", f"{session.geometry.source_cell_width}x{session.geometry.source_cell_height}",
+                   "--size", "96", "--choose", "1", "--force", "--normalization-plan", str(root / "normalization_plan.json")]
+        return {"command": command, "output": str(output.resolve()), "executes": False}
+
+    def verify_production(self, session_path: Path | str) -> dict[str, Any]:
+        session, root, session_path = self.load(session_path)
+        plan_path = root / "normalization_plan.json"
+        plan = self._load_plan(root)
+        if plan.mode != "operator_profile" or plan.method != "crisp":
+            raise model.WorkbenchError("production verification requires a crisp operator_profile plan")
+        if plan.profile_sha256 != load_profile()["sha256"]:
+            raise model.WorkbenchError("registration profile changed after planning")
+        output = root / "production/crisp.png"
+        if not output.is_file():
+            raise model.WorkbenchError("fixed session production output is missing")
+        request = SheetConversionRequest(source=Path(session.source_original), columns=session.geometry.columns,
+                                         rows=session.geometry.rows, frame_count=session.geometry.frame_count,
+                                         source_cell=(session.geometry.source_cell_width, session.geometry.source_cell_height),
+                                         target_size=(96, 96), method="crisp", transform=shared_transform_from_plan(plan),
+                                         registrations=tuple((item.dx, item.dy) for item in plan.registrations))
+        expected = convert_sheet_request(request)
+        with Image.open(output) as actual:
+            if actual.convert("RGBA").tobytes() != expected.convert("RGBA").tobytes():
+                raise model.WorkbenchError("production output does not match source and normalization plan")
+        proof = {"schema": "custodian.operator_art_source_production_proof.v1", "source_sha256": session.source_sha256,
+                 "plan_sha256": sha256(plan_path), "output_sha256": sha256(output), "method": "crisp", "verified": True}
+        write_json(root / "production/verification.json", proof)
+        session.selected_candidate = str(output.resolve())
+        session.reviewed_candidate_sha256 = proof["output_sha256"]
+        session.state = "CONVERTED"
+        self.save(session_path, session)
+        return proof
 
     def set_frame_registration(
         self, session_path: Path | str, *, frame: int, dx: int, dy: int
@@ -305,7 +437,16 @@ class SourceArtService:
         session, root, path = self.load(session_path)
         if not session.selected_candidate:
             raise model.WorkbenchError("select or convert a candidate before review")
-        candidate = require_under(root / "registered", Path(session.selected_candidate), label="source candidate").resolve(strict=True)
+        if self._load_plan(root).mode == "operator_profile" and session.selected_candidate == str((root / "production/crisp.png").resolve()):
+            proof_path = root / "production/verification.json"
+            if not proof_path.exists():
+                raise model.WorkbenchError("production output must be verified before review")
+            proof = json.loads(proof_path.read_text(encoding="utf-8"))
+            if proof.get("plan_sha256") != sha256(root / "normalization_plan.json") or proof.get("output_sha256") != sha256(root / "production/crisp.png"):
+                raise model.WorkbenchError("production proof is stale; verify again")
+            candidate = require_under(root, Path(session.selected_candidate), label="production output").resolve(strict=True)
+        else:
+            candidate = require_under(root / "registered", Path(session.selected_candidate), label="source candidate").resolve(strict=True)
         with Image.open(candidate) as sheet:
             expected_size = (session.geometry.frame_count * session.target_width, session.target_height)
             if sheet.size != expected_size:
@@ -354,12 +495,22 @@ class SourceArtService:
         replace: bool = False,
         dry_run: bool = False,
     ) -> dict[str, Any]:
-        session, _root, path = self.load(session_path)
+        session, root, path = self.load(session_path)
         if session.state != "REVIEWED":
             raise model.WorkbenchError("source must pass review before ingest handoff")
         if Path(destination_name).name != destination_name or not destination_name.lower().endswith(".png"):
             raise model.WorkbenchError("handoff destination must be a plain PNG filename")
-        candidate = Path(session.selected_candidate).resolve(strict=True)
+        if (root / "normalization_plan.json").exists() and self._load_plan(root).mode == "operator_profile":
+            output = root / "production/crisp.png"
+            proof_path = root / "production/verification.json"
+            if not proof_path.exists():
+                raise model.WorkbenchError("operator_profile handoff requires verified crisp production output")
+            proof = json.loads(proof_path.read_text(encoding="utf-8"))
+            if proof.get("verified") is not True or proof.get("output_sha256") != sha256(output) or proof.get("plan_sha256") != sha256(root / "normalization_plan.json") or session.selected_candidate != str(output.resolve()):
+                raise model.WorkbenchError("operator_profile production proof is stale; verify again")
+            candidate = output.resolve(strict=True)
+        else:
+            candidate = require_under(root / "registered", Path(session.selected_candidate), label="source candidate").resolve(strict=True)
         candidate_sha256 = sha256(candidate)
         if not session.reviewed_candidate_sha256 or candidate_sha256 != session.reviewed_candidate_sha256:
             raise model.WorkbenchError("selected candidate changed after review; requires re-review")
@@ -420,7 +571,7 @@ class SourceArtService:
             "staging_boundary": str(self.handoff_root.resolve()),
             "next_action": "run generate_inbox_manifests.py with --remove-superseded, then specialized Operator ingest",
         }
-        write_json(_root / "handoff/replacement_report.json", report)
+        write_json(root / "handoff/replacement_report.json", report)
         if dry_run:
             return {"status": "DRY_RUN", **report, "source_session": str(path.resolve())}
         temporary = destination.with_name(f".{destination.name}.{uuid.uuid4().hex}.tmp")

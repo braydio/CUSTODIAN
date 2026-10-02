@@ -1,5 +1,19 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Art Registration Profile (2026-10-02)
+
+The accepted structural Operator 96x96 ruler is defined once in
+`content/data/operator/authoring/operator_art_profile.json`; its neutral pose
+rails remain advisory and artistic enforcement remains disabled. Source
+Sessions retain `contain` compatibility and can opt into `operator_profile`,
+which requires source-cell semantic landmarks, derives one weighted-median
+shared scale/anchor, rejects clipping rather than shrinking the body, and
+records profile/source evidence. The `pixelart --normalization-plan` bridge
+replays that exact plan and profile-mode handoff requires verified crisp output.
+The focused proof is
+`custodian/tools/validation/operator_art_registration_profile_smoke.py`.
+
+
 ## Asset V2 Handoff Bundle Installer (2026-10-01)
 
 Reviewed generated art batches can use `custodian.asset_handoff.v1` ZIPs with a
