@@ -5,13 +5,13 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `procgen-candidate-runtime-path-demolition, review-procgen-distant-chunk-unload`
+- Depends on: `procgen-candidate-runtime-path-demolition, review-procgen-distant-chunk-unload-review-corrections-1`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `30df23bb4bb2736aeebbf6032fc9560d0b494117`
+- Reviewed main: `cdf5a2d4a1259df11d27605208a01401a7d80627`
 - Goal: Extract accepted-world generation snapshot/level-data export ownership from ProcGenTilemap into a focused generation-state authority.
-- Completion boundary: REFRESH-GATED on reviewed M6 / MR6. Before execution, re-audit the post-MR6 accepted-world/export surface and rewrite this packet in place. The eventual slice closes when immutable/base accepted-world generated-state capture, level-data assembly/serialization, deterministic fingerprints, and terrain/result export live behind one focused owner in the existing `custodian/game/world/procgen/generation/` package, with runtime mutation overlays represented separately and `ProcGenTilemap` delegating.
+- Completion boundary: REFRESH-GATED on reviewed M6 / cycle-1 re-review. Before execution, re-audit the post-cycle-1 M6 review accepted-world/export surface and rewrite this packet in place. The eventual slice closes when immutable/base accepted-world generated-state capture, level-data assembly/serialization, deterministic fingerprints, and terrain/result export live behind one focused owner in the existing `custodian/game/world/procgen/generation/` package, with runtime mutation overlays represented separately and `ProcGenTilemap` delegating.
 - Current measured state: `custodian/game/world/procgen/generation/README.md` already contains `candidate_evaluator.gd`, `candidate_semantic_adapter.gd`, and `procgen_candidate_materializer.gd`; it explicitly still names `ProcGenTilemap` as runtime topology/final-realization authority. `ProcGenTilemap` currently owns `_capture_generated_tile_state`, `get_level_data`, `_get_terrain_builder_level_data`, generated floor/wall debug/fingerprint accessors, terrain/result export, and numerous exported semantic dictionaries. Rejected candidates still construct live TileMap-backed state, so this D3 extraction must preserve the exact G2/G4/G5 contracts that feed the later GenerationGrid audit.
 - Evidence: `custodian/game/world/procgen/generation/README.md`; `candidate_evaluator.gd`; `candidate_semantic_adapter.gd`; `procgen_candidate_materializer.gd`; current `proc_gen_tilemap.gd` capture/export functions; `custodian/tools/validation/procgen_candidate_promotion_smoke.gd`; `procgen_candidate_semantic_model_smoke.gd`; `procgen_spatial_normalization_smoke.gd`; `world_contract_prewarm_smoke.gd`; S1 fingerprint schema.
 - Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; S1 benchmark schema; current level-data consumers.
@@ -19,8 +19,8 @@
 - Change: None while blocked. After M6, re-derive which state is immutable accepted-world data versus runtime mutation overlay, then extract capture/export/serialization as one coherent owner. Preserve externally consumed level-data keys unless a versioned migration is unavoidable and explicitly tested.
 - Preserve: Fingerprints, level-data keys, terrain/road/region/intent data, ContractWorldLoader consumers, minimap/debug consumers.
 - Non-goals: No save-system work, no loader placement extraction here, no semantic model redesign.
-- Acceptance: Not implementation-ready until refreshed post-MR6. Final acceptance must prove fixed fingerprints/level-data parity, one accepted-world capture/export owner, explicit separation from mutable runtime overlays, no duplicate candidate snapshot/evaluator authority, and `ProcGenTilemap` delegation for migrated export/capture paths.
-- Validation: Refresh after MR6. Expected focused suite: `res://tools/validation/procgen_candidate_promotion_smoke.gd`, `res://tools/validation/procgen_candidate_semantic_model_smoke.gd`, `res://tools/validation/procgen_spatial_normalization_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, S1 quick, and changed-file closeout.
+- Acceptance: Not implementation-ready until refreshed post-cycle-1 M6 review. Final acceptance must prove fixed fingerprints/level-data parity, one accepted-world capture/export owner, explicit separation from mutable runtime overlays, no duplicate candidate snapshot/evaluator authority, and `ProcGenTilemap` delegation for migrated export/capture paths.
+- Validation: Refresh after the cycle-1 M6 re-review. Expected focused suite: `res://tools/validation/procgen_candidate_promotion_smoke.gd`, `res://tools/validation/procgen_candidate_semantic_model_smoke.gd`, `res://tools/validation/procgen_spatial_normalization_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, S1 quick, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Facade contraction follows all ProcGenTilemap extraction siblings. The post-D1/D2/D3 GenerationGrid audit/migration initiative now sits before D4.
 
@@ -32,7 +32,7 @@ Archive Resolve is now a locked presentation program under
 AR1/AR2/AR3 packets under this task-packet directory.
 
 Before implementing this procgen rewrite slice, the agent must confirm that the
-Archive Resolve packet set has been refreshed against the reviewed post-MR6 live
+Archive Resolve packet set has been refreshed against the reviewed post-cycle-1 M6 review live
 streaming surface. If Archive Resolve has already landed, re-audit and preserve
 its request/commit/unload/reacquisition observation seams as presentation-only
 consumers; do not absorb its state into road, claim, generation, or façade
