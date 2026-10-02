@@ -58,3 +58,26 @@
 - Tooling / docs drift discovered: none.
 - Follow-up: `review-agent-validation-gate-drift-repair-review-corrections-1`
 - What worked: The existing manifest gate exercised the smoke without changing gate ownership.
+
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-agent-validation-gate-drift-repair-review-corrections-1`
+- Reviewed on main: `35b670d4c`
+- Review modes: `code, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Review Notes
+
+- Parent finding `R0-01` is fixed. The smoke checks `TEMP_LFS_DEGRADED_MODE_START` in all four former targets, retains the procgen absence checks in `custodian/AGENTS.md`, and still asserts that the expiry workflow is absent.
+- The focused smoke and manifest-backed `agent_workflow_contract` gate pass on live main. Isolated fixtures confirmed that reintroducing each LFS marker, either procgen marker, or the expiry workflow causes rejection.
+- The implementation commit changes only the workflow smoke, task packet/index metadata, and its closing summary; no runtime/game files changed.
