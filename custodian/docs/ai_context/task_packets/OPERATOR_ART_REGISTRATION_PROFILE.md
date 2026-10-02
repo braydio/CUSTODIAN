@@ -37,7 +37,7 @@
   - **Clients:** `cli.py`, `mcp_server.py`.
   - **Production conversion bridge:** `custodian/tools/art/custodian_pixelart_converter.py`; `tools/custodian_aliases.sh` should not need behavioral changes because it already forwards converter arguments and supplies crisp method 1.
   - **Aseprite:** add `custodian/tools/aseprite/operator_anchor_guides.lua`; update `custodian/tools/aseprite/README.md`. Reuse the existing `__ART_GUIDE_` non-export convention.
-  - **Validation:** add `custodian/tools/validation/operator_art_registration_profile_smoke.py` and extend the existing source/MCP/Aseprite smokes only for directly affected integration seams; update `validation_manifest.json` ownership.
+  - **Validation:** add focused registration-profile coverage for profile schema/coordinates/hash, shared-scale planning, clipping guards, placement, and plan replay; extend existing source/MCP/Aseprite smokes only for directly affected integration seams. Once the registration-profile smoke exists, add its exact live path to this packet's Validation section before closeout, and update `validation_manifest.json` ownership.
   - **Docs made stale by implementation:** `OPERATOR_ART_AGENT_SYSTEM.md`, `OPERATOR_ART_STYLE_BIBLE.md`, `custodian/tools/operator/README.md`, `CURRENT_STATE.md`, and `FILE_INDEX.md`.
 - Change:
   1. **Make the profile the only numeric registration authority.** Upgrade `operator_art_profile.json` to a backward-readable v2 shape. Preserve `status: provisional`, `enforcement.artistic: false`, and the existing `measurements` field. Add an explicitly human-accepted structural `registration` block carrying the user's guide coordinates and provenance. Do not mark unrelated artistic measurements/tolerances accepted.
@@ -210,7 +210,7 @@
   - `qa.py` consumes accepted structural registration data while `enforcement.artistic` remains false; a deliberately recoiled pose can report advisory deviations without becoming a false structural failure.
   - Active Art Agent/current-state/tooling docs describe the now-live profile-aware registration path accurately, and the stale unarmed-blocking refresh packet is no longer auto-dispatchable until re-derived.
 - Validation:
-  - Add/run `python3 custodian/tools/validation/operator_art_registration_profile_smoke.py` first. Cover profile schema/coordinates/hash, deterministic weighted-median scale, alpha-union clipping guard, anchor placement, no-auto-frame-translation, intentional-motion preservation, v1-plan compatibility, converter `--normalization-plan` identity checks, and crisp byte equivalence.
+  - Add/run the registration-profile smoke first. Cover profile schema/coordinates/hash, deterministic weighted-median scale, alpha-union clipping guard, anchor placement, no-auto-frame-translation, intentional-motion preservation, v1-plan compatibility, converter `--normalization-plan` identity checks, and crisp byte equivalence. Name the exact smoke path here once it has been created.
   - Run `python3 custodian/tools/validation/operator_art_source_smoke.py` for existing Source Session regression plus source-landmark/profile mode.
   - Run `python3 custodian/tools/validation/operator_art_agent_semantic_smoke.py` for profile-backed report/QA semantics.
   - Run `python3 custodian/tools/validation/operator_art_agent_mcp_smoke.py` for explicit new tool schemas and privileged-surface negative controls.
@@ -224,7 +224,7 @@
 ## Handoff
 
 - Next action: Claim this workstream, add the profile loader/fixture first, then prove profile-mode planning and converter-plan replay on synthetic source art before touching MCP/Aseprite clients.
-- Best starting files: `operator_art_profile.json`; `registration_profile.py` (new); `source_normalization.py`; `source_models.py`; `source_service.py`; `custodian_pixelart_converter.py`; `mcp_server.py`; `operator_anchor_guides.lua` (new); `operator_art_registration_profile_smoke.py` (new).
+- Best starting files: `operator_art_profile.json`; `registration_profile.py` (new); `source_normalization.py`; `source_models.py`; `source_service.py`; `custodian_pixelart_converter.py`; `mcp_server.py`; `operator_anchor_guides.lua` (new); registration-profile smoke (new).
 - Blockers or open questions: None. The registration coordinates are user-approved; artistic tolerances remain explicitly out of scope.
 
 ## Execution Feedback

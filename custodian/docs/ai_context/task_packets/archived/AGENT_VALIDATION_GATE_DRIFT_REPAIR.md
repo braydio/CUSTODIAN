@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-validation-gate-drift-repair`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -130,11 +130,21 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
-- What worked: `pending`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first candidate-tree manifest run still read the uncommitted packet from `origin/main`/`HEAD`, so it reproduced the known forward-reference failure until the task packet itself was committed.
+- Root cause / contributing factors: The gate intentionally validates committed tree contents; uncommitted metadata edits do not change the candidate tree used by the wrapper.
+- Prevention / pipeline improvement: Run candidate-tree gates after committing the packet lifecycle/archive update, then use the green reports for workstream finish.
+- Tooling / docs drift discovered: Validation reference syntax and tracked-tree roots had diverged from live packet conventions; the workflow smoke also retained a pre-expiry assertion.
+- Follow-up: `fixed-in-scope`
+- What worked: Focused parser and dispatch coverage exercised path resolution and fail-closed diagnostics.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Acceptance evidence: Both manifest-backed gate IDs pass on the committed candidate; the packet validator accepts the eight known live paths, keeps missing paths blocking, and the post-expiry smoke passes.
+- Superseded/legacy production path disposition: `removed`
+- Evidence: `test_task_packet_contract.py` (20 passed); `test_dispatch.py` (69 passed); `test_review_contract.py` (5 passed); `agent_workflow_smoke.py` passed; `run_validation.py --test agent_workflow_contract --json` and `--test review_pairing_contract --json` passed; changed unit sweep passed; `git diff --check` passed.

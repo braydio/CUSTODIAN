@@ -9,19 +9,23 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 def validate_procgen_packet_routing_expiry() -> None:
-    instructions = (ROOT / "custodian/AGENTS.md").read_text()
-    workflow = (ROOT / ".github/workflows/expire-lfs-degraded-mode.yml").read_text()
-    start = "<!-- TEMP_PROCGEN_PACKET_ROUTING_START expires=2026-10-01T04:00:00Z -->"
-    end = "<!-- TEMP_PROCGEN_PACKET_ROUTING_END -->"
-    assert start in instructions and end in instructions
-    note = instructions[instructions.index(start):instructions.index(end)]
-    assert "Until 2026-10-01 00:00 America/New_York" in note
-    assert "agents other than Claude must skip all procgen-family task packets" in note
-    assert "Claude is explicitly allowed to claim and work procgen-family task packets" in note
-    assert 'cron: "0 4 * * *"' in workflow
-    assert "datetime(2026, 10, 1, 4, 0, tzinfo=timezone.utc)" in workflow
-    assert "TEMP_PROCGEN_PACKET_ROUTING_START" in workflow
-    assert end in workflow
+    """Keep removed temporary routing controls absent after their expiry."""
+    assert not (ROOT / ".github/workflows/expire-lfs-degraded-mode.yml").exists()
+    markers = (
+        "TEMP_PROCGEN_PACKET_ROUTING_START",
+        "TEMP_PROCGEN_PACKET_ROUTING_END",
+        "agents other than Claude must skip all procgen-family task packets",
+        "Claude is explicitly allowed to claim and work procgen-family task packets",
+    )
+    for relative in (
+        "custodian/AGENTS.md",
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/land_main.py",
+        "tools/custodian_aliases.sh",
+    ):
+        content = (ROOT / relative).read_text()
+        for marker in markers:
+            assert marker not in content, f"expired routing marker remains in {relative}: {marker}"
 
 
 def main() -> int:
