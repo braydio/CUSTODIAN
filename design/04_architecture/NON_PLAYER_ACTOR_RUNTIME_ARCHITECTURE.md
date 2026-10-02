@@ -115,7 +115,11 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 | NPA-10 | TBD | Converge static autonomous agents (Defense Turret/sentries) on shared non-locomotion combat/relationship contracts | planned |
 | NPA-11 | TBD | Remove proven compatibility residue, audit legacy group fallbacks/private callers, close architecture docs/validation | planned |
 
-Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete.\n\nCross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. NPA-8 must reuse it if available rather than inventing Vaultwing-only hearing or importing Enemy behavior policy. Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
+Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete.
+
+Cross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. NPA-8 must reuse it if available rather than inventing Vaultwing-only hearing or importing Enemy behavior policy.
+
+Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
 
 ## Measured Baseline
 
