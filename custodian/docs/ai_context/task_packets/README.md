@@ -250,7 +250,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR.md` — paired P0 code/architecture/workflow review of expiry-state truth, validation-path resolution, and fail-closed gate preservation.
+- `AGENT_VALIDATION_GATE_DRIFT_REPAIR_REVIEW_CORRECTIONS_1.md` — P0 correction for R0-01: include removed TEMP_LFS_DEGRADED_MODE markers in the post-expiry smoke invariant; dependency-gated on the parent review.
+- `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR_REVIEW_CORRECTIONS_1.md` — paired P0 workflow/code re-review of the TEMP_LFS_DEGRADED_MODE expiry-marker coverage correction.
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication hardening: classify/preflight the dedicated art checkout, safely prepare clean-behind/local-cache state, reject stale baselines before mutation, and restore only proven transaction-generated Godot metadata churn; depends on the sparse-checkout correction re-review.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — paired P0 code/architecture/asset-pipeline/workflow review of the publish-readiness and clean-or-RECOVERY_REQUIRED contract.
 - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — P0 browser/PREVIEW concurrency hardening: accepted browser snapshot, latest-request-wins refresh, page-3 atomic F5 replacement, stale async rejection, and deterministic race coverage; depends on the publish-readiness review.

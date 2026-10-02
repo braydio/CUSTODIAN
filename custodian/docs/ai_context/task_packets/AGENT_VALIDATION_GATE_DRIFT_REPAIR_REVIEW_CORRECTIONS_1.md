@@ -1,0 +1,38 @@
+# AGENT VALIDATION GATE DRIFT REPAIR REVIEW CORRECTIONS 1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-validation-gate-drift-repair-review-corrections-1`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `review-agent-validation-gate-drift-repair`
+- Locks: `agent-workflow, task-packet-validation`
+- Kind: `correction`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, workflow`
+- Paired review workstream: `review-agent-validation-gate-drift-repair-review-corrections-1`
+- Review cycle: `1`
+- Max automatic review cycles: `2`
+- Reviewed main: `36cb18230796ec844a7796f0a246085c96179e20`
+- Parent implementation: `agent-validation-gate-drift-repair` (`custodian/docs/ai_context/task_packets/archived/AGENT_VALIDATION_GATE_DRIFT_REPAIR.md`)
+- Parent review: `review-agent-validation-gate-drift-repair` (`custodian/docs/ai_context/task_packets/archived/REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR.md`)
+- Findings addressed: `R0-01`
+- Affected acceptance: The post-expiry workflow smoke proves expired temporary LFS/procgen markers remain absent from their former policy/tool targets.
+- Current defect/evidence: `agent_workflow_smoke.py` checks only TEMP_PROCGEN_PACKET_ROUTING markers and policy text; it omits the `TEMP_LFS_DEGRADED_MODE_START` markers formerly present in four target files.
+- Goal: Make the post-expiry regression check cover both removed temporary marker families.
+- Completion boundary: The smoke rejects any reintroduced LFS start marker in `custodian/AGENTS.md`, `custodian/tools/agent/workstream.py`, `custodian/tools/agent/land_main.py`, or `tools/custodian_aliases.sh`, while keeping the procgen expiry checks and deleted-workflow assertion intact.
+- Current measured state: The four live files contain no LFS marker, but the smoke does not search for it. `agent_workflow_contract` currently passes without proving that invariant.
+- Evidence: Parent review finding `R0-01`; expiry commit `761d901c9ffe6c919f52168acecef24a9c7e95c6`; `custodian/tools/validation/agent_workflow_smoke.py`.
+- Task-specific authority: The archived parent implementation packet's post-expiry smoke requirements; the former marker targets in commit `761d901c9ffe6c919f52168acecef24a9c7e95c6`; `custodian/tools/validation/agent_workflow_smoke.py` and `validation_manifest.json`.
+- Work surface: `custodian/tools/validation/agent_workflow_smoke.py`; `custodian/tools/validation/validation_manifest.json` only if ownership must change; focused workflow validation.
+- Required correction: Add `TEMP_LFS_DEGRADED_MODE_START` to the exact former marker targets in the post-expiry check, including the `custodian/AGENTS.md` target alongside its procgen markers. Preserve the assertion that `.github/workflows/expire-lfs-degraded-mode.yml` is absent.
+- Preserve: Existing procgen marker assertions, deleted workflow state, validation manifest gate, packet path resolution, and all gameplay/runtime files.
+- Non-goals: Do not restore the temporary workflow or guards; do not change packet path mapping; do not modify reviewed implementation outside this focused smoke correction.
+- Acceptance:
+  - The smoke asserts the LFS marker is absent from all four former targets and continues asserting procgen markers are absent from their former policy target.
+  - `python3 custodian/tools/validation/agent_workflow_smoke.py` and `python3 custodian/tools/validation/run_validation.py --test agent_workflow_contract --json` pass.
+  - The expiry workflow remains absent and no runtime/game files change.
+- Validation: Run `python3 custodian/tools/validation/agent_workflow_smoke.py`, `python3 custodian/tools/validation/run_validation.py --test agent_workflow_contract --json`, and `git diff --check`.
+- Task overrides: `none`
+- Deferred: No additional expiry-marker families beyond those removed by the cited expiry commit.

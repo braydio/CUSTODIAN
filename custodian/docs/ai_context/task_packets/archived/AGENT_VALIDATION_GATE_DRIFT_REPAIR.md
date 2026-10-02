@@ -139,6 +139,25 @@
 - Follow-up: `fixed-in-scope`
 - What worked: Focused parser and dispatch coverage exercised path resolution and fail-closed diagnostics.
 
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-agent-validation-gate-drift-repair`
+- Reviewed on main: `36cb18230796ec844a7796f0a246085c96179e20`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Detailed review summary: `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `agent-validation-gate-drift-repair-review-corrections-1`
+
+### R0-01 (evidence_gap, pipeline)
+
+- Affected acceptance: The post-expiry workflow smoke should prove expired temporary LFS/procgen state remains absent from its former policy/tool targets.
+- Evidence: `custodian/tools/validation/agent_workflow_smoke.py:14-28` checks the procgen marker strings and natural-language policy only. It does not assert `TEMP_LFS_DEGRADED_MODE_START` is absent from `custodian/AGENTS.md`, `custodian/tools/agent/workstream.py`, `custodian/tools/agent/land_main.py`, or `tools/custodian_aliases.sh`, even though commit `761d901c9ffe6c919f52168acecef24a9c7e95c6` removed those marked blocks and the expiry packet's recommended invariant names them.
+- Disposition: `correction`
+- Rationale: The current files are clean and both gates pass, but the smoke would remain green if an expired LFS guard were reintroduced. That leaves part of the required post-expiry invariant without regression protection.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`

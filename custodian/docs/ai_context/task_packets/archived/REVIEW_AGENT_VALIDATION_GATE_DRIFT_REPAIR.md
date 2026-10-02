@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-validation-gate-drift-repair`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-validation-gate-drift-repair`
@@ -36,5 +36,18 @@
 
 ## Handoff
 
-- Next action: Auto-dispatch immediately after the P0 implementation packet completes.
+- Outcome: Review of live main found one material proof gap: the expiry smoke omits `TEMP_LFS_DEGRADED_MODE_START` assertions. See the archived implementation packet's Independent Review receipt and `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR_CLAUDE_SUMMARY.md`.
+- Next action: Claim `agent-validation-gate-drift-repair-review-corrections-1` after this review lands and archives.
 - Blockers or open questions: none.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The landed smoke checks the procgen routing markers but omits the four former LFS marker targets.
+- Root cause / contributing factors: The replacement invariant retained the old procgen-specific marker list while broadening its docstring to all temporary routing controls.
+- Prevention / pipeline improvement: Created a bounded correction packet that names each former LFS marker target and its focused proof.
+- Tooling / docs drift discovered: none beyond finding R0-01.
+- Follow-up: `agent-validation-gate-drift-repair-review-corrections-1`
+- What worked: Reused landed evidence and confirmed the focused tests and both global gates on live main.
