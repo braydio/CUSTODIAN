@@ -6,7 +6,7 @@
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
-- Locks: `custodian-death-flow`
+- Locks: `custodian-death-flow, operator-runtime`
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `0d5bbb964727f3683f430622681d128f2a8ea8cb`
