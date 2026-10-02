@@ -2,7 +2,7 @@
 
 Branch `main`. This file is overwritten as Part C advances; it is not a changelog.
 Full derivation lives in
-`custodian/docs/ai_context/task_packets/OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`.
+`custodian/docs/ai_context/task_packets/archived/OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`.
 
 ## Status — **PART C CLOSED**
 
