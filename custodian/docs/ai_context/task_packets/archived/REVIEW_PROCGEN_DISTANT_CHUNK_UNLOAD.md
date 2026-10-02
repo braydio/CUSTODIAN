@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-distant-chunk-unload`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-distant-chunk-unload`
@@ -30,7 +30,7 @@
 - Focused validation: Run `procgen_distant_chunk_unload` first. Then run `procgen_chunk_payload_cache`, `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_materializer_parity`, `procgen_macro_presentation`, `procgen_road_semantics_v2`, `procgen_dressing_clusters`, `navigation_elevation_smoke.gd`, and `procgen_authored_scene_authority_smoke.gd`. Inspect whether those existing tests actually close the four Known proof questions; if not, report an evidence gap rather than treating “green suite” as sufficient. Run S1 quick and require `determinism_ok=true` with fingerprint `1773840677` unless main has an independently justified new baseline. Run packet/review-pairing/docs/manifest checks and `git diff --check`.
 - Acceptance: Produce a findings-first independent review receipt on current live main. A clean/non-blocking-only pass closes S7 and makes D1/D2/D3 refresh-eligible. Any blocking defect/material evidence gap creates the bounded correction/re-review pair and leaves D1-D3 blocked. The review does not itself modify M6 runtime code.
 - Non-goals: No D1-D3 implementation; no Region Frame/Archive Resolve implementation; no GenerationGrid; no renderer batching; no simulation-tier retune; no generic pooling; no unrelated agent-tooling repair.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed M6 implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Agent Search Budget
 
@@ -62,7 +62,6 @@ Do not reproduce broad code summaries when there are no findings.
 
 ## Handoff
 
-- Next action: Claim `review-procgen-distant-chunk-unload`.
-- On clean/non-blocking-only pass: mark S7 complete, refresh D1/D2/D3 in place, and refresh the post-MR6 presentation packets against the reviewed seam.
-- On material finding: scaffold `procgen-distant-chunk-unload-review-corrections-1` + paired re-review and keep downstream gates closed.
-- Blockers or open questions: None at authoring time; the four Known proof questions are review obligations, not assumed failures.
+- Next action: Review complete with findings. Claim `procgen-distant-chunk-unload-review-corrections-1` to resolve `R0-01`-`R0-05` on the archived M6 packet, then its paired `review-procgen-distant-chunk-unload-review-corrections-1`.
+- Outcome: Not a clean pass. All four Known Proof Questions were genuine evidence gaps (not yet independently proven), and code review of the per-frame eviction drain found one real blocking defect: `_drain_residency_eviction()` forces an unthrottled full resident-window presentation resync on every eviction-frame instead of coalescing on the same cadence ordinary reveal already uses. S7 remains open; D1-D3 stay blocked until a clean/non-blocking-only cycle-1 re-review.
+- Blockers or open questions: None. See the archived M6 packet's `## Independent Review` receipt for full finding detail.

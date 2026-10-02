@@ -91,6 +91,47 @@ This is M6 of `procgen-runtime-optimization-v1`. On successful implementation, a
 - Follow-up: `fixed-in-scope`
 - What worked: The M5-era `_is_tile_currently_visible()` helper (checks `enable_streaming_reveal` first, then live paint state) turned out to already be the exact streaming-paint guard M6 needed almost everywhere it was threaded through, rather than requiring a new parallel concept.
 
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-procgen-distant-chunk-unload`
+- Reviewed on main: `035aaafdd`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `1`
+- Material evidence gaps: `4`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02, R0-03, R0-04, R0-05`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `procgen-distant-chunk-unload-review-corrections-1`
+
+### Findings
+
+- **R0-01** — class: `blocking_defect`; domain: `implementation`; affected acceptance: Completion boundary ("without creating frame spikes"), Acceptance item 15, Known Proof Question 5.
+  - Evidence: `proc_gen_tilemap.gd` `_drain_residency_eviction()` calls `_flush_streaming_visual_rebuilds()` unconditionally and synchronously whenever `evicted_any` is true, bypassing the `streaming_visual_rebuild_interval_sec` coalescing accumulator that ordinary tile-reveal (`_process_streaming_reveal_queue()`) already uses for the same flush. The flush performs an O(entire-resident-window) wall-collision rebuild (`_sync_runtime_wall_collision_with_visible_walls()` scans `walls_tilemap.get_used_cells()` and every `RuntimeWallCollision` child) and a full clear+rebuild of horizontal wall overlays (`_rebuild_horizontal_wall_overlays()`), plus navigation/shadow rebuild requests whose `_derived_rebuild_scheduler` batch id is keyed to `Engine.get_process_frames()`, so it only coalesces calls within one frame, not across the multi-frame eviction drain.
+  - Why it violates acceptance: with the default `streaming_unload_chunks_per_frame = 1`, draining a backlog of N DORMANT-eligible candidates (e.g. after the player fast-travels far away, making many chunks DORMANT at once) performs the full resident-window resync on N consecutive frames instead of the batched ~0.15s cadence reveal already uses. This is literally "an all-resident scan" "sneak[ing] into per-frame drain" -- the exact risk the implementation packet and this review's Known Proof Question 5 named. No test (including the new focused M6 smoke) drives a multi-candidate backlog and measures per-frame cost, so the regression is real but unmeasured.
+  - Disposition: `correction`.
+  - Suggested smallest fix: in `_drain_residency_eviction()`, after a successful `_unload_chunk()` (which already sets `_streaming_visual_rebuild_pending = true`), do not call `_flush_streaming_visual_rebuilds()` directly; instead feed the same `_streaming_visual_rebuild_accum` timer `_process_streaming_reveal_queue()` uses (or call that function's existing flush path) so eviction-triggered flushes batch on the same interval reveal already does, rather than once per eviction-frame.
+
+- **R0-02** — class: `evidence_gap`; domain: `implementation`; affected acceptance: Acceptance item 7 ("navigation point/reachability authority ... survives unload and an explicit NavigationSystem rebuild"), Known Proof Question 1.
+  - Evidence: `procgen_distant_chunk_unload_smoke.gd` only calls `ProcGenTilemap.get_runtime_navigation_floor_cells()` / `is_runtime_navigation_walkable()` directly; it never instantiates or rebuilds a real `NavigationSystem` node. `procgen_candidate_promotion_smoke.gd` instantiates a real `NavigationSystem` (confirmed via its `[NavigationSystem] Initialized with N walkable tiles` log output) but never exercises M6 unload. `navigation_elevation_smoke.gd` exercises neither unload nor `NavigationSystem` together with it.
+  - Why it is material: code review of `navigation_system.gd`'s new provider-aware branches in `_build_navigation_graph()`/`_is_walkable()` is straightforward and appears correct, but "an explicit NavigationSystem rebuild retention" is only asserted in the closing summary's prose, never independently proven by a running test that builds a real graph after a chunk unloads.
+  - Disposition: `correction`.
+
+- **R0-03** — class: `evidence_gap`; domain: `implementation`; affected acceptance: Acceptance item 2 ("excludes protected entry/portal/spawn chunks"), Known Proof Question 2.
+  - Evidence: `_protected_streaming_chunks()` in `proc_gen_tilemap.gd` correctly derives protected chunks from `_portal_teleporters`, `_last_compound_ingress`, and `_world_ingress_dressing_clearance_rects` on code inspection, but `procgen_distant_chunk_unload_smoke.gd`'s only integration-level protected-anchor assertion is the spawn chunk. The pure-policy fixture (section 0) only proves the policy correctly *excludes whatever is in the protected dict it is given*; it does not prove `ProcGenTilemap` populates that dict correctly from real portal/ingress/clearance data.
+  - Disposition: `correction`.
+
+- **R0-04** — class: `evidence_gap`; domain: `implementation`; affected acceptance: Acceptance item 8 ("foliage ... retains exact node identity/kind/cluster data, trunk collision and runtime blocker registration"), Known Proof Question 3.
+  - Evidence: the smoke asserts only `debug_get_foliage_node_id()` equality and `.visible`. `_hide_foliage_for_unload()`/`_show_foliage_if_hidden()` never touch the `_foliage_nodes[tile]` dictionary's `kind`/`cluster_id`/`has_collision` fields and never call `unregister_runtime_prop_blocker`, and a `StaticBody2D` trunk-collision child's physics participation is independent of an ancestor `Sprite2D`'s `visible` flag in Godot -- both support correctness by construction, but kind/cluster/collision-body/blocker-registration parity is not independently asserted.
+  - Disposition: `correction`.
+
+- **R0-05** — class: `evidence_gap`; domain: `implementation`; affected acceptance: Acceptance item 15 ("records before/after painted-cell/cache/road counts as evidence").
+  - Evidence: the smoke checks `chunk_payload_cache.eviction_count > 0` and that new `get_runtime_health_snapshot()` fields are present, but never reads `floor_tilemap.get_used_cells().size()` / `walls_tilemap.get_used_cells().size()` before and after eviction, nor combines a painted-cell count delta with the cache/road counts in one recorded bounded-traversal fixture.
+  - Disposition: `correction`.
+
 ## Handoff
 
 - Next action: Run paired `review-procgen-distant-chunk-unload` (MR6) against this landed commit.
