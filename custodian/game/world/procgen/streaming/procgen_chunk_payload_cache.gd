@@ -63,14 +63,13 @@ func reset() -> void:
 	reset_count += 1
 
 
-## Bulk late-generation-finalization boundary: drop every cached payload
-## without changing generation identity. Used when finalization passes (route
-## playability repair, Sundered Keep frontage visuals, ...) run after
-## streaming already primed some chunks; simpler and behavior-preserving
-## versus auditing every finalization write site individually. Chunk
-## revisions are intentionally preserved -- they stay valid monotonically
-## increasing identities, they just no longer have any cached payload to
-## match against until something is accessed again.
+## Explicit bulk invalidation primitive: drop every cached payload without
+## changing generation identity. The current generation/runtime path uses
+## precise per-chunk invalidation instead, so this remains available only for
+## a future boundary that genuinely requires clearing all derived payloads.
+## Chunk revisions are intentionally preserved -- they stay valid
+## monotonically increasing identities, they just no longer have cached
+## payload to match until something is accessed again.
 func invalidate_all() -> void:
 	if _chunk_membership.is_empty() and _tile_records.is_empty():
 		return
