@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-mobile-guard-composition`
+- Depends on: `none`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `931b830d54f2a217d1b473109f708636ac89f21f`
+- Reviewed main: `03b6221adb01402b1cf4393b9a1773cdd519f6ae`
 - Goal: Retire the remaining absolute scene-tree lookup debt before domain extraction so every later Operator controller receives explicit dependencies instead of rediscovering global services through `/root/...`.
 - Completion boundary: Done when `operator.gd` and newly touched Operator-owned runtime helpers contain zero production absolute `/root/...` scene lookups; the actor/facade receives or binds the required services through one explicit integration seam; each domain can be extracted without importing global scene topology; behavior is unchanged; and `absolute_scene_lookups` moves 38 -> 0 in the architecture debt baseline.
 - Current measured state: Latest main has 41 architecture-debt findings: 38 `absolute_scene_lookups` in `operator.gd` and 3 mutable weapon-definition runtime fields. The 38 lookups span InventoryManager/WeaponDefinitionFactory, CognitiveState, projectile/world containers, DevObservatory, heatmap/material intelligence, camera, NoiseEventBus, InputPromptService, WorldHistory/GameState, debug DevMode, build/terminal services and UI. Action arbitration/presentation are already extracted; six domain controllers are still absent.
