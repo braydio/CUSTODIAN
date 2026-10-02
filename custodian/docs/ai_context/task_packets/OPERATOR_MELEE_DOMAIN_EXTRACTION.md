@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine`
+- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `931b830d54f2a217d1b473109f708636ac89f21f`
+- Reviewed main: `03b6221adb01402b1cf4393b9a1773cdd519f6ae`
 - Goal: Extract melee timeline/drive/target/contact state into one focused authority and cash in the existing modular art where it genuinely improves moving combat presentation, while preserving authored whole-body footwork wherever that produces the stronger animation.
 - Completion boundary: Done when fast/heavy chain lifecycle, buffering/commit timing, attack drive, hit-window/contact bookkeeping and melee target solution are owned behind an `OperatorMeleeController`-class authority; Operator public attack APIs remain thin delegates; unarmed/armed posture and moving-fast presentation use the semantic presentation layer; already-ingested moving-fast assets have a real runtime consumer where appropriate; and full-body committed attacks remain supported rather than being mechanically split.
 - Current measured state: Melee gameplay/profile data is already largely centralized in `MeleeAttackProfile`, and Fists Fast 01-04 is a live modular E/W 6/6/7/8-frame chain with authored FX and presentation-duration ownership. Armed melee fast attacks still primarily use full-body+FX authority even though alternate lower/upper layers exist. Dedicated moving-fast melee body/weapon/FX strips were ingested previously and remain unwired. Armed melee locomotion is modular but uses one shared facing for lower/upper/weapon, and its direction/frame coverage is uneven (for example south run is 12f while E/W run is 6f). READY/RELAXED posture transitions are modular but stationary-only. The legacy `OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md` work is functionally closed even though its header still says in progress.
