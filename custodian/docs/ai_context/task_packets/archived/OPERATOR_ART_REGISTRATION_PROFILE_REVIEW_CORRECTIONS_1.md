@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-art-registration-profile-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-art-registration-profile`
@@ -44,3 +44,23 @@
 - Task overrides: `none`
 - Deferred: Any further profile calibration, multi-character generalization, automatic anatomical correction, and art-direction approval.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `custodian/tools/operator/art_agent/source_service.py` stores the approved plan SHA-256 in `session.json`, checks it before replay/verification/report/review/handoff, and invalidates proof/review on explicit plan revision; `custodian/tools/art/custodian_pixelart_converter.py` requires and verifies the expected digest for plan replay. The registration smoke proves an in-bounds `destination_x` edit is rejected by CLI, verifier, source report, review, and handoff; an explicit bounded frame-registration revision changes the approved digest and removes old proof. Positive CLI crisp output remains byte-identical to the internal crisp candidate. Workbench report fixture proves profile/frame/anchor context, current coordinates, measured ratios, advisory residuals, and explicit no-Source-Session-normalization labeling. Focused profile/source/semantic smokes pass; changed unit gate passes 6/6 with complete coverage; `git diff --check` passes.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: A patch attempt used stale smoke context and did not apply; initial changed-unit runs exposed fixture sequencing/expectation errors around content-addressed plan revision and the report's advisory status field.
+- Root cause / contributing factors: The fixture expected unchanged deterministic plan bytes to change digest, tried a registration edit before re-approving a deliberately tampered plan, and asserted prose instead of the report's structured advisory status.
+- Prevention / pipeline improvement: Re-read narrow patch targets; reset tampered plan through explicit planning before revising it, and assert the report's structured status. Corrected in-scope.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: Focused negative controls covered each protected plan consumer.

@@ -332,7 +332,6 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
-- `OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — P1 corrections for mutable approved-plan acceptance and missing Workbench transform/residual evidence; depends on the parent review.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — paired P1 code/architecture/asset-pipeline/workflow re-review of plan-digest binding and Workbench report semantics.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — paired P0 code/runtime/workflow re-review of the correction round.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
