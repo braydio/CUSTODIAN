@@ -753,7 +753,7 @@ Last updated: 2026-09-29
 - `design/02_features/animation/ENEMY_GRUNT_RUNTIME_WIRING.md` — implementation note documenting the `enemy_grunt` scene, current partial art coverage, and wave wiring acceptance
 - `design/02_features/enemy_objective/GRUNT_LOOT_TABLE.md` — practical salvage/provenance table for baseline grunts; successful rolls remain corpse-bound until collection
 - `design/02_features/loot/LOOTABLE_CORPSE_BEACON_SYSTEM.md` — lifecycle, payload delivery, VFX, cleanup, persistence limitation, asset contract, and validation authority for lootable corpses
-- `custodian/tools/validation/authored_vault_grunt_loot_marine_smoke.gd` — focused headless smoke check for typed grunt loot, marine 8-direction idle frame wiring, heavy dash tuning/export availability, and retained service storage in the East Machine House
+- `custodian/tools/validation/authored_vault_grunt_loot_marine_smoke.gd` — focused headless smoke check for typed grunt loot, marine 8-direction idle frame wiring, typed Marine ability/config tuning and deterministic dash equivalence, and retained service storage in the East Machine House
 - `custodian/tools/validation/carrow_yard_interior_smoke.gd` — focused connected-map smoke for Carrow identity, exact 14×10 interior layout, paired traversal, active-route auto-travel/cooldown, hidden embedded-storage visuals, lighting, and independent environment/weather exposure
 - `custodian/tools/validation/carrow_backdrop_isolation_smoke.gd` — four-transition smoke proving procgen backdrop hide/restore across procgen→Carrow→Machine House→Carrow→procgen
 - `custodian/tools/validation/lootable_corpse_beacon_smoke.gd` — focused roll-once/deliver-once corpse payload, marker phase, duplicate-collection, cleanup immunity, and typed/carried reward destination smoke
@@ -955,7 +955,7 @@ Last updated: 2026-09-29
 - `custodian/tools/validation/debug_screen_smoke.gd` — validates the dedicated debug screen scene load, API, visibility toggle, and snapshot update path.
 - `custodian/tools/validation/terminal_overlay_visibility_smoke.gd` — validates that opening the terminal hides gameplay overlay HUD scenes and masks the debug screen, then restores them on close.
 - `custodian/tools/validation/sundered_keep_layout_smoke.gd` — validates the Sundered Keep Return Mooring, key, portcullis, Great Hall door, blockers, and texture basics
-- `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — validates the large JSON functional layout, production underlay, absence of retired static visual placements, retained Return Mooring/module presentation, elevation transitions, underpass/roof regions, stateful gate and Great Hall presentation/blockers, marine ambush, minimap conversion, siege activation/objectives/repair/turret, and missing asset count
+- `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` — validates the large JSON functional layout, production underlay, absence of retired static visual placements, retained Return Mooring/module presentation, elevation transitions, underpass/roof regions, stateful gate and Great Hall presentation/blockers, marine ambush, minimap conversion, siege activation/objectives/repair/turret, and missing asset count (legacy preservation checks currently drift; see the layout smoke refresh packet)
 - `custodian/tools/validation/awakening_first_return_smoke.gd` — locked section coordinates, connectors, scene skeleton, Road offset and translation-safety, mapper/debug-tour wiring, and the deliberate absence of Terminal/prewarm/handoff logic.
 - `custodian/tools/validation/awakening_first_return_geometry_smoke.gd` — 16px occupancy grid proving a continuous Operator-width route from `(0, 160)` to `(0, -6464)` across every mandatory section.
 - `custodian/tools/validation/awakening_first_return_progression_smoke.gd` — console/P-9 progression, bidirectional lift, reveal ownership and reset lifecycle, completion trigger, and disabled encounter slots.
@@ -1289,3 +1289,7 @@ Last updated: 2026-09-29
 - `scenes/twin_solaria_playtest.tscn` and `tools/validation/twin_solaria_runtime_smoke.gd` — standalone movement wrapper and production registration/native-size/collision/POI smoke.
 
 - `custodian/tools/validation/python_sim_remap2_smoke.gd` — deterministic REMAP-2 regression coverage for macro wear/fidelity, repair/fabrication contracts, relay/assault corrections, and snapshot continuation.
+- `custodian/game/actors/enemies/abilities/marine_dash.gd` — complete Marine tactical dash authority; actor-hosted shared services, one-shot prediction, exact phase/cadence/reset ownership and fresh diagnostic snapshots.
+- `custodian/game/actors/enemies/abilities/marine_dash_config.gd`, `configs/marine_dash_default.tres` — original actor defaults and unchanged tuned Marine scene resource.
+
+- `custodian/tools/validation/sundered_keep_marine_ambush_smoke.gd` — focused production-map ambush staging, explicit dash request/animation, unchanged tuning/initial cadence, and idle/active/completed route restoration.

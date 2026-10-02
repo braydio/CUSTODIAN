@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://enemy_marine_001"]
+[gd_scene load_steps=8 format=3 uid="uid://enemy_marine_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_objective_sensor.gd" id="4_sensor"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="5_carrier"]
 [ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="6_behavior"]
+
+[ext_resource type="Resource" path="res://game/actors/enemies/abilities/configs/marine_dash_default.tres" id="7_dash"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_marine"]
 size = Vector2(28, 28)
@@ -27,32 +29,7 @@ custom_enemy_animation_set = "enemy_marine"
 custom_enemy_animation_scale = Vector2(1, 1)
 custom_enemy_fx_scale = Vector2(1, 1)
 marine_dash_enabled = true
-marine_dash_windup_time = 0.32
-marine_dash_time = 0.18
-marine_dash_impact_lock_time = 0.08
-marine_dash_recovery_time = 0.42
-marine_dash_distance_px = 150.0
-marine_dash_damage = 32.0
-marine_dash_poise_damage = 55.0
-marine_dash_knockback_px = 105.0
-marine_dash_attacker_hitstop = 0.045
-marine_dash_victim_hitstop = 0.09
-marine_dash_camera_shake_strength = 0.45
-marine_dash_camera_shake_duration = 0.16
-marine_dash_cooldown = 1.1
-marine_dash_hit_radius = 24.0
-marine_dash_hit_active_start_ratio = 0.28
-marine_dash_hit_active_end_ratio = 0.9
-marine_dash_hit_forward_reach_px = 30.0
-marine_dash_hit_lateral_reach_px = 22.0
-marine_dash_launch_band_min = 96.0
-marine_dash_launch_band_max = 240.0
-marine_dash_charge_extra_windup = 0.56
-marine_dash_charge_distance_bonus = 0.72
-marine_dash_charge_damage_bonus = 0.66
-marine_dash_prediction_time = 0.3
-marine_dash_reset_time = 0.48
-marine_dash_reset_speed = 100.0
+marine_dash_config = ExtResource("7_dash")
 behavior_state_machine_enabled = true
 behavior_profile_id = &"raider_marine"
 resists_light_flinch = true

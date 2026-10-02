@@ -1634,3 +1634,19 @@ SOUTH warning while asserting empty results/identity isolation; success is its
 PASS marker and exit 0. The materializer must emit no errors and verifies 32
 mapped strips. Its source timing sidecars are not yet consumed by the old
 builder. Do not publish them through that builder as a completed migration.
+
+## Marine Dash Extraction Equivalence
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test authored_vault_grunt_loot_marine --json
+python3 custodian/tools/validation/run_validation.py --test enemy_hit_spatial_telemetry --json
+python3 custodian/tools/validation/run_validation.py --test sundered_keep_marine_ambush --json
+```
+
+These cover typed tuning, exact phase clocks, one-shot prediction, cadence, reset,
+static-wall termination, one-hit contact and defense outcomes, stable spatial
+attack IDs/terminals, plus production-map ambush staging/request/restore. The
+legacy unregistered `sundered_keep_large_layout_smoke.gd` currently fails five
+pre-relayout preservation assertions on untouched main level metadata; see
+`task_packets/SUNDERED_KEEP_LARGE_LAYOUT_SMOKE_REFRESH.md`. Its ambush assertions
+pass; the focused gate avoids coupling Marine edits to that unrelated drift.

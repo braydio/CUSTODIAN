@@ -1,0 +1,25 @@
+# SUNDERED KEEP LARGE LAYOUT SMOKE REFRESH
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `sundered-keep-large-layout-smoke-refresh`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P2`
+- Depends on: `none`
+- Locks: `sundered-keep-layout`
+- Kind: `implementation`
+- Review: `none`
+- Reviewed main: `735c8c6914`
+- Goal: Reconcile the legacy large-layout preservation smoke with current authored Sundered Keep authority without weakening genuine gameplay preservation contracts.
+- Completion boundary: Identify whether each of five failed preservation claims is superseded or a real regression, then repair the test or map against active design; register the resulting appropriate layout gate.
+- Current measured state: The unregistered `sundered_keep_large_layout_smoke.gd` fails five assertions on current level metadata: shore_walk_regions, return_mooring_origin_tile, key_pickup_tile, SunderedGateKeyPickup, and MainGateInteraction. The same five failures reproduce with pre-extraction main Enemy/Marine/ambush runtime and the Marine Dash extraction; ambush animation/handoff assertions pass in both.
+- Evidence: `custodian/tools/validation/sundered_keep_large_layout_smoke.gd` lines 22–45; `custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json`; its `.before_cheatsheet_relayout.json` reference; `ENEMY_MARINE_DASH_ABILITY_EXTRACTION_CLAUDE_SUMMARY.md` records the baseline comparison.
+- Task-specific authority: Current Sundered Keep design under `design/02_features/`, mapper metadata, and the preserved-layout contract; resolve intentional authored changes before promoting this packet to ready.
+- Work surface: Large-layout smoke, current/preservation JSON, validation manifest, consequence-driven layout docs.
+- Change: Classify the five mismatches against current authored design, preserve meaningful assertions, fix confirmed drift/regressions, and register focused ownership after the gate passes.
+- Preserve: Authored gameplay placement, shore/elevation ownership, interactable behavior, Marine ambush, route-state restoration, and legitimate preservation checks.
+- Non-goals: No Marine ability changes; no speculative map rebalance or blanket removal of preservation checks.
+- Acceptance: Each mismatch has an authority-grounded disposition; the resulting large-layout smoke passes and selects on relevant layout changes.
+- Validation: Focused large-layout smoke and any changed behavioral owner first; changed-file validation at closeout.
+- Task overrides: `none`
+- Deferred: Resolve active layout-authority intent before readiness; the production-map Marine ambush has its separate green focused gate.

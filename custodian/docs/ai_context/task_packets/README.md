@@ -16,7 +16,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - Program tracker / architecture authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Expected program size: 11 implementation packets spanning standard combat-agent decomplexification, then commanded allies, fauna, encounter/social NPCs, static autonomous agents, and final compatibility cleanup.
 - Starter packets authored against `main@02ca0025b8`:
-  - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1, ready/auto, no dependency.
+  - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1, implemented, blocked/manual pending baseline workflow validation repair.
   - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2, ready/auto, depends on NPA-1.
   - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3, ready/auto, depends on NPA-2.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
@@ -321,3 +321,8 @@ lost when the ephemeral worktree is removed.
 ### Recently Complete (awaiting archive)
 
 _None._
+## Draft Validation Follow-up
+
+- `SUNDERED_KEEP_LARGE_LAYOUT_SMOKE_REFRESH.md` — manual/draft; reconcile five pre-existing legacy layout-preservation failures against current authored authority. Marine ambush validation is independently registered and green.
+
+- `AGENT_VALIDATION_BASELINE_REPAIR.md` — manual/draft; restore expired-routing and ready-packet path validation gates blocking Marine closeout.

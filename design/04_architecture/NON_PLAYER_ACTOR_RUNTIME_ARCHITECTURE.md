@@ -73,6 +73,17 @@ Existing extracted authorities prove the intended shape:
 
 The next extractions should follow that same rule: move a complete stateful authority, keep a narrow actor integration seam, preserve behavior equivalence, then delete the old duplicate state/path.
 
+## NPA-1 Implemented Ownership (2026-10-01)
+
+`MarineDash` now owns the complete tactical state/clock/charge/predictive-lock/
+contact/impact/recovery/reset/cadence machine. `MarineDashConfig` owns original
+actor defaults; the Marine scene binds its unchanged tuned resource. `Enemy`
+retains only integration, shared services, presentation resolution and snapshot
+delegation. The ambush uses `request_marine_dash`; no private Marine phase
+helpers or duplicate Marine state remain on Enemy. `enemy.gd` decreases from
+4,958 to 4,615 lines. Focused manifest ownership follows the new module/config.
+Savage machines remain actor-hosted until NPA-2/NPA-3.
+
 ## Family Matrix
 
 | Family | Live proof/examples | Shared substrate expected | Family-local authority |
@@ -103,7 +114,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 | Slice | Workstream | Scope | Status |
 | --- | --- | --- | --- |
-| NPA-1 | `enemy-marine-dash-ability-extraction` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **packet authored / ready** |
+| NPA-1 | `enemy-marine-dash-ability-extraction` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **implemented / checkpoint blocked by baseline unit gates** |
 | NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the landed ability seam | **packet authored / dependency-gated** |
 | NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **packet authored / dependency-gated** |
 | NPA-4 | TBD after NPA-3 | Extract ordinary standard-enemy melee execution/cadence authority | planned |
@@ -126,7 +137,7 @@ Reviewed `main@02ca0025b8`:
 - `vaultwing.gd`: ~252 lines with species-local behavior controller, presentation, allegiance, and bond state.
 - `forlorn_ritualant_npc.gd`: ~385 lines with encounter-local phases and combat.
 - `turret.gd`: ~441 lines, extends `Damageable`, uses `ActorRelationshipResolver`, and has no locomotion requirement.
-- Marine/Savage phase machines still live in `enemy.gd`.
+- At the reviewed baseline Marine/Savage phase machines lived in `enemy.gd`; NPA-1 has since removed Marine state and phase methods.
 - Falcon Punch is already extracted and is the reference actor-local ability seam.
 - The active relationship architecture explicitly says it is **not** a universal NPC base class.
 
@@ -148,3 +159,10 @@ This program is complete only when:
 - `custodian/docs/ai_context/ARCHITECTURE_OWNERSHIP_MAP.md` correctly describes current Enemy ownership but does not yet name the six-family target; this tracker becomes the durable target authority.
 - Legacy completed Marine packets `ENEMY_MARINE_TACTICAL_DASH_V2.md` and `ENEMY_MARINE_DASH_TUNING.md` still sit in the active task-packet directory even though they are historical/complete. Do not use them as current migration authority; archive cleanup is deferred unless a packet lifecycle pass proves it safe.
 - `ACTOR_RELATIONSHIP_AND_TARGETABILITY.md` already rejects a universal NPC base and remains authoritative for allegiance/targetability semantics.
+
+## Next Agent Slice
+
+Claim `enemy-savage-pounce-ability-extraction` after NPA-1 lands. Read the landed
+Marine ability/config and shared Enemy seam, then move the complete Savage
+pounce authority without changing tuning, BSM strategy, or Marine/Falcon.
+Acceptance and focused gates remain in that packet.

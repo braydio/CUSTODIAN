@@ -1,0 +1,25 @@
+# AGENT VALIDATION BASELINE REPAIR
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-validation-baseline-repair`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `none`
+- Locks: `agent-workflow`
+- Kind: `implementation`
+- Review: `none`
+- Reviewed main: `735c8c6914`
+- Goal: Restore truthful baseline workflow and queue validation so unrelated implementation slices can complete their required changed-file closeout.
+- Completion boundary: Repair expired temporary-routing smoke expectations and resolve the ready-packet validation-path guard findings against repository-native packet semantics; retain fail-closed detection of genuinely stale validation references.
+- Current measured state: `agent_workflow_smoke.py` unconditionally reads removed `.github/workflows/expire-lfs-degraded-mode.yml` and asserts an expired temporary AGENTS block. `validate_review_pairing.py` reports eight unrelated ready workstreams: seven use project-relative tools/validation paths, and Operator registration lists a planned new smoke in Validation. Changed-file validation fails its unit tier and skips all runtime tiers. `check_ai_context.py` also reports 11 existing unrelated packet/index findings. `task_packet_index.py` has no managed block, which the validation recipe explicitly documents as an intentional deferred migration.
+- Evidence: `custodian/tools/validation/agent_workflow_smoke.py` lines 11–24; `custodian/tools/agent/task_packet_contract.py::_validation_script_references` and `validate_packet_validation_paths`; `custodian/docs/ai_context/task_packets/OPERATOR_ART_REGISTRATION_PROFILE.md`; `ENEMY_MARINE_DASH_ABILITY_EXTRACTION_CLAUDE_SUMMARY.md` records failing gates and runtime validation.
+- Task-specific authority: Root and custodian AGENTS, agent lifecycle, packet template, validation recipes and shared packet grammar.
+- Work surface: Workflow smoke, packet validation-path policy/tests, affected queue metadata after checking live claimant ownership, narrowly relevant index findings.
+- Change: Test retired temporary-routing cleanup as retired state; define or clarify path-root and planned-new-test semantics before modifying the shared guard; correct genuine stale references and preserve independent active agent work.
+- Preserve: Remote claim safety, review pairing, genuine missing-script refusal, explicit workstream ownership, existing user/agent dirty work, and truthful validation outcomes.
+- Non-goals: No Marine ability changes; no automatic deletion of historical packets; no weakening of landing/artifact checks; no bulk task-index migration merely to silence an acknowledged unmanaged-block diagnostic.
+- Acceptance: Workflow and review-pairing gates pass against current main for valid queue entries, their negative controls still fail malformed/stale inputs, and resumed Marine closeout can run all selected tiers.
+- Validation: Focused workflow and packet-contract/review-pairing tests first, affected live queue checks, then changed-file closeout.
+- Task overrides: `none`
+- Deferred: Path-root and planned-new-test policy needs a bounded authority decision before this draft is ready; preserve unrelated queue metadata ownership.
