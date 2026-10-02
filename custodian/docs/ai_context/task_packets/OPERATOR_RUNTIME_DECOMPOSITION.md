@@ -955,6 +955,23 @@ existing 35% movement contract with locomotion lower + upper/FX while stationary
 use keeps the authored pair. The heal commit remains gameplay-timed and only
 publishes a presentation beat.
 
+## Slice F execution ordering
+
+F0 dependency binding and the mobile-guard presentation-seam proof are intentionally
+independent and may land in either order. The domain slices that actually consume
+movement-permissive layered composition are dependency-gated on **both**:
+loadout F1, melee F2, ranged F3, interaction F5, and recovery F6. Dodge F4 only
+depends on F0 because it deliberately keeps committed full-body presentation and
+does not consume the mobile composition seam. This prevents the architecture
+cleanup from being blocked by guard art while also preventing later domains from
+inventing their own second compositor.
+
+The raw ten-file east-facing defense generator set is not part of Slice F.
+`OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` is a separate manual Asset V2
+boundary. Runtime/domain packets use current canonical art unless an approved
+promotion has already landed; they never read `asset_drop/source_work/**`
+directly.
+
 ## Defensive presentation program
 
 Before/alongside F0, `OPERATOR_MOBILE_GUARD_COMPOSITION.md` is the proving
@@ -962,9 +979,12 @@ slice for the bounded movement-owned-lower + action-owned-upper semantic
 composition seam now that Slice E is live. Then
 `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` applies it to Vigil guard and
 movement-permissive parry attempt/recovery without weakening contact weight.
-`OPERATOR_GUARD_BREAK_PRESENTATION.md` is a separate blocked Asset V2/content
-slice because guard break is intentionally committed and needs dedicated pixels,
-not locomotion reuse.
+`OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` owns review/normalization of
+the new raw 2172×724 east-facing defense source-work set. It is deliberately
+manual and non-blocking for the runtime migration. `OPERATOR_GUARD_BREAK_PRESENTATION.md`
+then depends on that promotion for its 3-frame break + 6-frame recovery body
+candidates and still requires dedicated break FX; guard break remains intentionally
+committed and never reuses locomotion lower-body composition.
 
 `OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` is deliberately manual and
 post-runtime: it fulfills only direction/layer gaps that remain visibly harmful
