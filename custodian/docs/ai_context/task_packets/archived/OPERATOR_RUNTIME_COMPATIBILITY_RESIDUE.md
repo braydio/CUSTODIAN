@@ -67,10 +67,11 @@
 
 ## Execution Feedback
 
-- Validation outcome: complete. The changed-unit gate selected 24 checks; all 24 passed with complete changed-file coverage.
+- Validation outcome: complete. The final changed-unit gate selected 25 checks; all 25 passed with complete changed-file coverage.
 - Runtime publication: 596 canonical outputs before retirement; 562 after. The 34 retired sheets from 13 action families remain under `custodian/content/sprites/operator/source/legacy/c2b_runtime_retirement/` as provenance, with no active runtime publication.
 - Consumer report: 538 active canonical layer identities and 34 archived retired identities; 11 compatibility SpriteFrames are explicitly dispositioned.
 - Acceptance: all eleven actor-local compatibility SpriteFrames and the updater are removed; Operator consumers and DodgeChargeFeedback use the generated runtime database; reachability has 117 classifications and the runtime audit checks 237 actions. No active action/layer report row is unclassified.
+
 - Verification: compatibility-resource, runtime-authority, timing, Workbench mirror/UI/art-worktree, runtime-path, reachability, melee point-blank, and modular-layer checks passed. `operator_runtime_animation_authority_smoke.py` retains its separate 188-file legacy-runtime TODO gate; `--final` therefore remains intentionally red for that independent migration debt.
 - Corrections during validation: a deleted sheet-map identifier still remained in paired-execution selection, and shared presentation declarations had been removed along with retired compatibility code. Both were corrected; canonical body/FX selection now checks the generated SpriteFrames. Validation ownership was narrowed to the retired families and their affected fixture/smoke files.
 - Production art changed: none. Retained authored timing and pixels were not edited.
@@ -84,6 +85,15 @@
   - Tooling / docs drift discovered: validation ownership omitted the retired runtime sheet folders, removed scene properties, and new DodgeChargeFeedback conversion fixtures; ownership is now explicit.
   - Follow-up: fixed-in-scope
   - What worked: generated consumer report and focused canonical SpriteFrames checks made the dispositions deterministic.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: final changed-unit validation selected 25 tests and passed all 25; focused Operator runtime, compatibility, reachability, modular-layer, and consumer-report checks passed. The separate 188-file legacy-runtime TODO gate and 25 legacy identity TODOs remain explicitly deferred.
 
 ## Handoff
 

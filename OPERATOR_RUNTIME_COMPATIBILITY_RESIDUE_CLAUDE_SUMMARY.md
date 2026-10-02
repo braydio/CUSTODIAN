@@ -8,7 +8,7 @@ C2b.3 retired all eleven actor-local Operator compatibility SpriteFrames and the
 - Consumer disposition: 538 active canonical identities plus 34 archived retired identities; all eleven compatibility resources accounted for.
 - Reachability audit: 237 runtime actions checked, 117 classifications.
 - `operator_runtime_animation_authority_smoke.py`: compatibility gates clear; one separate TODO remains for 188 legacy runtime files. Its `--final` mode therefore remains red for that pre-existing migration debt.
-- `run_validation.py --changed --max-tier unit --json`: 24 selected, 24 passed, 0 failed, complete ownership.
+- `run_validation.py --changed --max-tier unit --json`: 25 selected, 25 passed, 0 failed, complete ownership.
 - Focused compatibility, timing, Workbench mirror/UI/art-worktree, runtime-path, reachability, melee point-blank and modular-layer checks passed. The Textual UI pilot was skipped because its optional dependency is not installed.
 - `git diff --check`: pass.
 
