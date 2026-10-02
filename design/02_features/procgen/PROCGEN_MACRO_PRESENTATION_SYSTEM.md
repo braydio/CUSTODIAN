@@ -5,7 +5,10 @@ Status: implementation
 Last updated: 2026-09-08
 
 Surface Materials V1 is a separate implementation slice governed by
-`SURFACE_MATERIALS_V1.md`. It classifies final floor presentation before
+`SURFACE_MATERIALS_V1.md`.
+
+Resolved first-campaign-world composition is governed by
+`FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`. Macro stamps, hardstands, depth chunks and landmarks must fit that cold alpine / hardened-infrastructure identity rather than introducing a competing biome or palette. It classifies final floor presentation before
 macro composition without changing the macro stamp subsystem or gameplay
 authority.
 
