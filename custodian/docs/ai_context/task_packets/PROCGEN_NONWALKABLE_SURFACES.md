@@ -2,7 +2,7 @@
 
 - Status: `review`
 - Authority: `design/02_features/procgen/NONWALKABLE_SURFACE_REGIONS.md`
-- Visual authority: `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` for first-campaign-world cliff/ocean/depth palette and composition; this packet does not override Archive Resolve.
+- Visual authority: `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` for permanent exterior-border/underlay selection, with `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md` for the first starting frame; this packet does not override Archive Resolve.
 - Goal: Add deterministic complete CHASM/OCEAN semantics and connect a bounded Sundered Keep ocean claim to near-field visuals and the existing vista.
 - Files: procgen classifier/tilemap/scene/TileSet/tile IDs, Sundered frontage and vista, focused smokes, active procgen/level docs and context indexes.
 - Constraints: Final floor remains ground/traversal/navigation authority; RuntimeWalkableBoundary remains physical authority; walls never influence surface floods; current depth-backdrop mode remains live; no new art; preserve unrelated worktree edits.
