@@ -5,9 +5,9 @@ Last updated: 2026-07-13
 
 ## Summary
 
-Black Reliquary is the current CUSTODIAN gothic/brass runtime UI family. It replaces debug-looking normal-play HUD text with dark charcoal/graphite framing, warm ivory text, restrained brass/gold lines, compact icons and styled interaction prompts. The first campaign-world field-HUD application is further locked by `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`: sparse survey/archival framing, thin technical rules, geometric glyphs and restrained marker/beacon tags over generous world-space negative space.
+Black Reliquary is the current CUSTODIAN gothic/brass runtime UI family. It replaces debug-looking normal-play HUD text with dark charcoal/graphite framing, warm ivory text, restrained brass/gold lines, compact icons and styled interaction prompts. The first generated Alpine Plateau field-HUD application is further locked by `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`: sparse survey/archival framing, thin technical rules, geometric glyphs and restrained marker/beacon tags over generous world-space negative space.
 
-## First Campaign World Field HUD
+## Alpine Plateau Starting-Region Field HUD
 
 For the current generated campaign world:
 
