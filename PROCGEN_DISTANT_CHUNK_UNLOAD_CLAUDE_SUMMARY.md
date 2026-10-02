@@ -1,6 +1,6 @@
 # Procgen Distant Chunk Unload (M6) — Closing Summary
 
-Landed main SHA: `<fill after workstream.py finish>` (`procgen distant chunk unload, M6 ProcGenChunkResidencyPolicy authority`).
+Landed main SHA: `9fe8cd4d6` (`procgen distant chunk unload, M6 ProcGenChunkResidencyPolicy authority`).
 
 M4 gave chunk presentation a real `DORMANT`/`UNLOADED` lifecycle and M5 gave
 reveal a derived payload cache, but production distant-chunk unload stayed
