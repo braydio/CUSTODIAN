@@ -151,7 +151,7 @@ When the user has authorized one agent/session to run this full series unattende
 S1
 G1 -> G2 -> G3 -> G4 -> G5
 M1 -> M2 -> M3 -> M4 -> MR4 -> M5 -> MR5 -> [refresh M6] -> M6
-P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> [refresh P7] -> P7
+P1 -> PR1 -> P2 -> P3 -> P4 -> P5 -> P6 -> [refresh P7] -> P7
 [refresh D1/D2/D3 after M6] -> D1 -> D2 -> D3
 X1 -> XR1 -> [refresh X2] -> X2 -> XR2 -> [refresh X3] -> X3 -> XR3
 [generated measured migration series] -> [refresh D4 to final reviewed convergence] -> D4
@@ -206,11 +206,12 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | MR5 | `review-procgen-chunk-payload-cache` | queued | M5 |
 | M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | MR5 |
 | P1 | `contract-world-placement-foundation` | **ready / eligible** | S1 |
-| P2 | `contract-world-resource-placement-extraction` | queued | P1 |
-| P3 | `contract-world-vehicle-placement-extraction` | queued | P1 |
-| P4 | `contract-world-relay-placement-extraction` | queued | P1 |
-| P5 | `contract-world-encounter-placement-extraction` | queued | P1 |
-| P6 | `contract-world-ingress-placement-extraction` | queued | P1 |
+| PR1 | `review-contract-world-placement-foundation` | queued | P1 |
+| P2 | `contract-world-resource-placement-extraction` | queued | PR1 |
+| P3 | `contract-world-vehicle-placement-extraction` | queued | PR1 |
+| P4 | `contract-world-relay-placement-extraction` | queued | PR1 |
+| P5 | `contract-world-encounter-placement-extraction` | queued | PR1 |
+| P6 | `contract-world-ingress-placement-extraction` | queued | PR1 |
 | P7 | `contract-world-loader-contraction` | **blocked / manual refresh gate** | P2+P3+P4+P5+P6 |
 | D1 | `procgen-road-authority-extraction` | **blocked / manual refresh gate** | G5+M6 |
 | D2 | `procgen-authored-claim-registry-extraction` | **blocked / manual refresh gate** | G5+M6 |
@@ -250,9 +251,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 and MR4 are complete. M5 `procgen-chunk-payload-cache` has now been fully re-derived against the reviewed lifecycle/runtime architecture and is `ready / auto`; its paired review MR5 is pre-authored and dependency-gated behind M5. P1 `contract-world-placement-foundation` remains independently ready/eligible in parallel.
+**Current packet:** M4 and MR4 are complete. M5 `procgen-chunk-payload-cache` is `ready / auto` with MR5 behind it. In the independent placement lane, P1 `contract-world-placement-foundation` is `ready / auto` and now has a required paired review PR1 `review-contract-world-placement-foundation`; P2-P6 depend on PR1 rather than directly on P1.
 **State:** S1, G1-G5, M1-M4, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. The placement package is still README-only, so P1 is the live P-lane entry and P7 is refresh-gated after P2-P6. D1-D3 are refresh-gated after M6; X2/X3 are refresh-gated on their predecessor reviews; V2 is refresh-gated on V1 attribution.
-**Next gate:** Claim M5 `procgen-chunk-payload-cache`. It must land one invalidatable generation-scoped derived cache with exact mutation/stale-record protection while preserving M3/M4 ownership. Then run MR5. Only a passed reviewed cache makes M6 refresh-eligible. M6 remains blocked/manual until that review closes. P1 may proceed independently in parallel.
+**Next gate:** M5 and P1 may execute in parallel because they hold different locks (`procgen-streaming` vs `contract-world-loader`). M5 -> MR5 gates M6 refresh. P1 -> PR1 gates P2-P6; PR1 must verify a minimal deterministic read-only placement context before any domain extraction begins. P2-P6 remain serialized by the shared loader lock, and P7 remains refresh-gated after they land.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
