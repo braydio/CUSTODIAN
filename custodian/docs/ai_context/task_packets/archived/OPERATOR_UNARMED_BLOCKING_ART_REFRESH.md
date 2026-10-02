@@ -62,9 +62,12 @@
 
 ## Completion Truth
 
-- Goal satisfied: yes — the user's approved enter/hold candidates are published as dormant `_02` assets while the existing `_01` primary art and gameplay selection remain unchanged.
-- Completion boundary satisfied: yes — provenance, crisp conversion, exact layer split, selected-manifest intake, generated runtime identities, timing, mirroring, and `_01`/hit/FX preservation are recorded in the execution evidence.
-- Acceptance satisfied: yes — focused Operator checks and the fresh-main changed-unit gate passed; the profile remeasurement proved no structural defect requiring pixel changes.
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `block_enter_02` and `block_hold_02` source/runtime identities, input hashes, exact layer recomposition, E/W mirrors, 4f/10 FPS enter and 5f/8 FPS hold clocks, unchanged `_01`/hit/hold-FX hashes, dormant reachability state, passing Operator defense and guard-flow smokes, 596-import SpriteFrames smoke, passing post-sync changed-unit run (8/8), and clean diff check; registration-profile remeasurement found no proven structural defect requiring changes.
 
 - Task overrides: `none`
 - Deferred: Dedicated unarmed `block_exit_01` art remains the existing open authoring question. Mobile guard enter/hit/exit composition policy remains owned by `operator-mobile-guard-composition`; this packet only refreshes the canonical body assets that policy consumes.
