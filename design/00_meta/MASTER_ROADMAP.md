@@ -276,7 +276,7 @@ state.
 | S4 Accepted-candidate materializer | complete | P1 |
 | S5 Runtime mutation scheduler | complete | P0 |
 | S6 Pause-aware streaming | complete | P1 |
-| S7 Chunk lifecycle + cache | in_progress (M6 landed; MR6 findings, correction cycle 1 queued) | P1 |
+| S7 Chunk lifecycle + cache | in_progress (M6 landed; MR6 review gate active) | P1 |
 | S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
 | S9 Contract-world placement extraction | planned | P2 |
 | S10 Renderer / node-load consolidation | planned | P1 |
@@ -284,7 +284,7 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated: M4/MR4 and M5/MR5 are complete; M6 has landed (`ProcGenChunkResidencyPolicy` bounded production distant-chunk unload, `streaming_unload_distant_chunks` now defaults true). MR6 ran and returned findings, not a clean pass: one blocking defect (eviction-triggered presentation flush bypasses the existing visual-rebuild coalescing accumulator) plus four confirmed evidence gaps against the pre-identified proof obligations (NavigationSystem rebuild retention, real protected-anchor sources, foliage parity, combined residency-reduction evidence). `procgen-distant-chunk-unload-review-corrections-1` plus its paired cycle-1 re-review now carry the fix; S7 stays open until that cycle passes clean. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. D1-D3 now wait on G5 + a clean cycle-1 MR6 re-review; X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated: M4/MR4 and M5/MR5 are complete; M6 has landed (`ProcGenChunkResidencyPolicy` bounded production distant-chunk unload, `streaming_unload_distant_chunks` now defaults true), with paired MR6 ready/eligible and required before S7 closes or D1-D3 refresh. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. D1-D3 now wait on G5 + MR6; X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
