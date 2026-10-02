@@ -1,5 +1,7 @@
 # Procgen Chunk Payload Cache (M5) — Closing Summary
 
+Landed main SHA: `91ea694f4` (`procgen chunk payload cache, M5 ProcGenChunkPayloadCache authority`).
+
 M4 replaced truthless chunk bookkeeping with a real lifecycle state machine,
 but `ProcGenTilemap._get_chunk_tiles()` still rescanned a chunk's full
 `streaming_chunk_size_tiles` square against `_generated_floor_cells`/
@@ -187,8 +189,8 @@ paths.
   shared low-level setters those finalization passes already call could each
   carry one precise per-tile invalidation call instead -- they could.
 - Prevention / pipeline improvement: fixed in scope, described above.
-- Tooling / docs drift discovered: none beyond what MR4 already recorded.
-- Follow-up: none.
+- Tooling / docs drift discovered: `run_validation.py --changed` selects `review_pairing_contract` whenever `custodian/docs/ai_context/task_packets/**` changes, and that check already fails on unmodified `origin/main` (confirmed via `git stash` A/B comparison) because several unrelated already-landed packets reference validation script paths without the `custodian/` prefix the checker now expects. Not caused by this packet; the `--validation-report` used for `workstream.py finish` is this packet's own explicit test set (all green) rather than the raw `--changed` selection.
+- Follow-up: `manual-follow-up` on the pre-existing `review_pairing_contract` path-prefix drift (unrelated repo-wide issue, not this workstream).
 - What worked: writing the cache smoke's hit/miss assertions against the
   actual post-generation state (rather than assuming priming-time caching
   survives untouched to test time) surfaced the invalidate-everything design
