@@ -1,5 +1,16 @@
 # CURRENT STATE — CUSTODIAN
 
+## Contract World Placement Foundation (2026-10-02)
+
+`WorldPlacementContext` is the accepted-world read seam for focused placement
+services. It keeps the live map private, returns defensive level-data copies,
+and centralizes typed anchor/compound queries, narrow map reads, a stable seed
+primitive, and explicit observability. `ContractWorldLoader` remains world
+lifecycle and placement-order authority; resource, vehicle, relay, encounter,
+and ingress policies remain there until their post-PR1 extraction packets.
+`world_placement_context_smoke.gd` owns the focused contract and is registered
+as a unit validation.
+
 ## Operator Art Registration Profile (2026-10-02)
 
 The accepted structural Operator 96x96 ruler is defined once in

@@ -1355,6 +1355,19 @@ Check:
 - `reports/fabrication_balance/proposed_changes.json` is proposal-only JSON and does not imply runtime data was applied.
 - Lore violations are understood before using `--strict-lore` in automated checks.
 
+## Contract World Placement Context
+
+Run after changes to the shared accepted-world placement input/query seam:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/world_placement_context_smoke.gd
+```
+
+The context smoke covers detached level-data results, accepted-map query
+delegation, deterministic seed parity, explicit observability, construction
+without placement side effects, and safe behavior after the accepted map exits.
+
 ## Compound Infrastructure Powered Fabricator Validation
 
 Use after changes to infrastructure definitions/components, power registration, fabrication service scaling, construction placement, or registry persistence.
