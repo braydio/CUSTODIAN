@@ -251,3 +251,34 @@
 - Tooling / docs drift discovered: Current `main` advanced during the push and overlaps the current-state and file-index docs; the published workstream must merge current `main` normally before landing.
 - Follow-up: `review-operator-art-registration-profile`
 - What worked: Deterministic profile math, hash-bound crisp replay, exact pixel proof, and isolated Aseprite guide validation.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-art-registration-profile`
+- Reviewed on main: `907dc2bf0`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02`
+- Detailed review summary: `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-art-registration-profile-review-corrections-1`
+
+### R0-01 (correctness, asset-pipeline)
+
+- Affected acceptance: The `pixelart --normalization-plan` route rejects a modified registration plan, and Source Session production verification only accepts output generated from the approved plan.
+- Evidence: In a fresh temporary Source Session using the smoke's 768×768 synthetic fixture, changing the planned `destination_x` from 248 to 250 remained within bounds. The converter accepted the modified plan and `SourceArtService.verify_production()` returned `verified: true` for output produced from it.
+- Disposition: `correction`
+- Rationale: The plan digest is only calculated after reading the mutable plan and is then stored in the proof. No prior expected digest binds the approved plan contents, so a valid in-bounds edit is treated as authorized production input.
+
+### R0-02 (evidence_gap, tooling)
+
+- Affected acceptance: Workbench registration reports include profile hash, scale/anchor evidence, transformed landmarks, and residuals.
+- Evidence: `ArtAgentService.registration_report()` calls `profile_report()` without a normalization plan. `profile_report()` only populates `transformed_landmarks` and `advisory_residuals` when a plan is supplied; therefore the Workbench report emits empty transformed/residual data and no measured scale evidence.
+- Disposition: `correction`
+- Rationale: Source Session reports carry plan-derived metrics, but the Workbench report currently does not provide the corresponding structured comparison promised by the packet.
+
+- Focused review validation: registration-profile smoke PASS; Source Session smoke PASS; semantic smoke PASS; MCP smoke PASS; Aseprite smoke PASS (including real guide application, repeated application, clean-render equality, and no manifest binding).
+- Graph tooling: The fresh review checkout had no graph database; a minimal graph build remained unavailable, so the review used direct implementation inspection and independent fixture reproduction.
