@@ -5,7 +5,7 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `416462da40d0d88d8b470597c26f703aff646a14`  
+**Reviewed main:** `ce4fe06ce60c34fc2eeab7624e97f0b6bf9e07f5`  
 **Last Updated:** 2026-10-01  
 **Depends on:** none for measurement; slice dependencies below
 
@@ -233,6 +233,16 @@ This contract does not create a worker daemon. It makes the packet series self-c
 
 Per-packet completion evidence is written into the roadmap during execution. A packet is not considered closed merely because code landed.
 
+## Post-MR6 Presentation Work (separate from the optimization DAG)
+
+The following packets consume the reviewed M6 seam but are **not** part of S7/S8 completion accounting:
+
+- `procgen-region-frame-presentation-foundation` -> paired review: data-driven Region Frame + true exterior CHASM underlay seam.
+- `procgen-alpine-plateau-underlay-assets`: six required 1536x1024 Asset V2 states after RF1 review + human-provided source art.
+- `procgen-archive-resolve-presentation-spine` (AR1) -> AR2 shader -> AR3 semantic echo/spawn/reacquisition.
+
+RF1 and AR1 remain blocked until MR6. They are sibling presentation consumers and must preserve one another's ownership; neither is a prerequisite for D1-D3 unless a live post-MR6 seam conflict is discovered during refresh.
+
 ## Roadmap Maintenance Contract
 
 This file is the program tracker for this workstream family.
@@ -253,9 +263,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4/MR4 and M5/MR5 are complete and independently reviewed. MR5 passed with 0 blocking defects / 0 material evidence gaps and one optional cache-memory-shape finding, closed by M6's `evict_chunk()`. M6 `procgen-distant-chunk-unload` has now landed: `ProcGenChunkResidencyPolicy` owns bounded DORMANT-only eviction selection with protected-anchor exclusion; `_sync_runtime_wall_collision_with_visible_walls()` cleans up collision from canonical `_generated_wall_cells` instead of painted visibility; `NavigationSystem` consumes `get_runtime_navigation_floor_cells()`/`is_runtime_navigation_walkable()` when ProcGenTilemap provides them; foliage is hidden/re-shown by identity instead of destroyed/rerolled; and `streaming_unload_distant_chunks` now defaults `true`. Paired MR6 is ready/auto behind it. In the independent placement lane, P1 remains the current entry and PR1 gates P2-P6.
-**State:** S1, G1-G5, M1-M6, MR4 and MR5 are landed; MR5 passed; M6 is implemented and validated (focused M6 smoke plus the full M3/M4/M5/navigation/road/macro/dressing/authored-claim regression list green, S1 quick `determinism_ok=true` at fingerprint `1773840677`). MR6 is ready/eligible. The full S3 Exit condition remains the post-D1/D2/D3 GenerationGrid initiative. Placement remains independently gated P1 -> PR1 -> P2-P6 -> refreshed P7. D1-D3 now wait on reviewed MR6; X2/X3 remain refresh-gated on their predecessor reviews; V2 remains refresh-gated on V1 attribution.
-**Next gate:** Run MR6 against landed M6. Only a clean/non-blocking-only MR6 pass closes S7 and makes D1-D3 refresh-eligible. P1/PR1 may continue independently under `contract-world-loader`.
+**Current packet:** M4/MR4 and M5/MR5 are complete; M6 has landed with production distant unload enabled by default. Static post-land audit found no clear code-level blocker, but the M6 closeout overstates four pieces of acceptance proof: the focused smoke does not perform a real NavigationSystem rebuild after unload, proves only the spawn protected anchor rather than real portal/ingress anchors, does not assert foliage blocker/trunk-collision/cluster parity, and does not record one combined before/after painted/cache/road residency-reduction fixture. MR6 has been rewritten to treat those as explicit review obligations rather than inferred success. P1/PR1 remain independent.
+**State:** S1, G1-G5, M1-M6, MR4 and MR5 are landed; MR6 is ready/eligible with targeted proof obligations. D1-D3 still wait on reviewed MR6. The separate Procgen World Presentation lane is now packetized: RF1 + RFR1 for region-frame/exterior-underlay separation, a blocked six-state Alpine underlay Asset V2 packet, and existing AR1-AR3 Archive Resolve packets. These presentation packets do not change the V1 optimization DAG. Placement remains independently gated P1 -> PR1 -> P2-P6 -> refreshed P7; the full S3 Exit condition remains the post-D1/D2/D3 GenerationGrid initiative.
+**Next gate:** Run MR6 against landed M6. A clean/non-blocking-only receipt closes S7 and unlocks the required in-place refresh of D1-D3 plus the post-MR6 presentation packets. A material evidence gap or defect creates the bounded M6 review-correction/re-review cycle instead. Region Frame RF1 and Archive Resolve AR1 are pre-authored but remain blocked until that review gate.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+MR6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
