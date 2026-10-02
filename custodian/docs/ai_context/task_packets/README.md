@@ -4,6 +4,29 @@ Last updated: 2026-10-01
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
+
+## Active Archive Resolve Presentation Series
+
+Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
+
+The three implementation packets are intentionally pre-authored and
+refresh-gated. They remain `blocked/manual` until their named predecessor has
+landed and the packet has been re-derived from live main; each packet contains a
+temporary refresh section that must be deleted during that refresh before it may
+become `ready`.
+
+- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, presentation-only
+  request/commit/unload spine and flat diagnostic veil; refresh after reviewed
+  M6/MR6.
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither +
+  restrained brass/amber Archive Resolve shader; refresh after AR1.
+- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo,
+  spawn resolve, and shortened reacquisition; refresh after AR2.
+
+The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
+so extraction/contraction work cannot move or absorb the reveal seams before the
+AR packet set is refreshed.
+
 ## Active Persistent Recovery Series
 
 - `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 of the expected 8-packet persistent recovery/armament-registration implementation series. It removes ordinary Operator death consequence ownership from the actor, resolves the live CampaignSession exactly once, and intentionally retains current Game Over only as the R1 compatibility fallback.

@@ -24,6 +24,27 @@
 - Task overrides: `none`
 - Deferred: Generation state/export extraction and façade contraction.
 
+
+## Temporary Archive Resolve Refresh Guard — REMOVE DURING THIS PACKET'S REQUIRED REFRESH
+
+Archive Resolve is now a locked presentation program under
+`design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`, with pre-authored
+AR1/AR2/AR3 packets under this task-packet directory.
+
+Before implementing this procgen rewrite slice, the agent must confirm that the
+Archive Resolve packet set has been refreshed against the reviewed post-MR6 live
+streaming surface. If Archive Resolve has already landed, re-audit and preserve
+its request/commit/unload/reacquisition observation seams as presentation-only
+consumers; do not absorb its state into road, claim, generation, or façade
+authority. If the AR packets are still pre-refresh or the ordering is unclear,
+stop and leave this packet blocked rather than moving the seam out from under
+them.
+
+When this packet is refreshed from live main and made implementation-ready,
+replace this temporary guidance with the exact live preservation/ownership
+contract and **delete this entire Temporary Archive Resolve Refresh Guard
+section**. Its continued presence means this packet is not ready to implement.
+
 ## Series Contract
 
 This packet belongs to the pre-authored `procgen-runtime-optimization-v1` dependency DAG. Do not author its ordinary V1 successor during implementation: downstream packets already exist on `main` with `Dispatch: auto`. Update the detailed procgen roadmap and matching master-roadmap row at closeout, record landed evidence, then finish normally so declared dependents can become eligible. If live evidence invalidates a downstream contract, record the contradiction and leave that dependent blocked rather than silently broadening this workstream.
