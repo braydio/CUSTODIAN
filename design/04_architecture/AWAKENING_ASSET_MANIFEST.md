@@ -435,6 +435,77 @@ This pass is complete when:
 6. The required-assets registry routes mapped Awakening needs to V2 family/state IDs; root `REQUIRED_ASSETS.md` remains a generated view and does not own technical naming/routing.
 7. Asset Pipeline V2 focused validation passes.
 
+## Live production status and Batch 02 queue — 2026-10-01
+
+This status is a snapshot of live `main@440dccbb274707869eb0a9eebf109e6588a4f26c`,
+the Asset V2 family contracts, the production-demand registry, and the current
+Awakening handoff audit.
+
+For current P0/P1 sections 01–10, including the required 04↔05 connector
+underlay, the production contract contains **91 required states**:
+
+- **45/91** are published/runtime-verified.
+- **46/91** remain open.
+- All nine zone environment underlay/foreground pairs are published and bound.
+- Core hero/interactable art is complete except
+  `awakening_late_service_relay_lamp/idle`.
+- Crèche fixtures are 7/7 published and Ambulatory fixtures are 5/6. Their
+  published standalone fixture files are currently **BAKED_ONLY** in the live
+  production plates rather than separate scene-bound props.
+- Later Attestation/Reliquary/Dust Lung/Undergate/Approach/Late Service fixture
+  families remain registered but **NOT_READY** as standalone runtime consumers.
+- The authority-inlay, ruin-decal, and three required ambient-FX families are
+  registered and wholly unpublished.
+
+### Next ten runtime assets — Batch 02
+
+The prepared Batch 02 reference bundle targets the reusable detail/ambient layer
+rather than continuing to generate standalone fixtures that have no independent
+runtime binding yet.
+
+| # | Family / state | Runtime contract |
+|---:|---|---|
+| 1 | `awakening_authority_inlay/straight` | 32×32, 1 frame, RGBA |
+| 2 | `awakening_authority_inlay/corner` | 32×32, 1 frame, RGBA |
+| 3 | `awakening_authority_inlay/t_junction` | 32×32, 1 frame, RGBA |
+| 4 | `awakening_authority_inlay/cross` | 32×32, 1 frame, RGBA |
+| 5 | `awakening_authority_inlay/ring_node` | 32×32, 1 frame, RGBA |
+| 6 | `awakening_authority_inlay/threshold` | 32×32, 1 frame, RGBA |
+| 7 | `awakening_dust_motes/loop` | 8×1 strip, 64×64 frames, 512×64 total, 6 FPS, loop |
+| 8 | `awakening_falling_ash/loop` | 8×1 strip, 64×64 frames, 512×64 total, 6 FPS, loop |
+| 9 | `awakening_gate_wind_dust/loop` | 8×1 strip, 128×128 frames, 1024×128 total, 8 FPS, loop |
+| 10 | `awakening_ruin_decal/floor_crack_a` | 64×64, 1 frame, RGBA |
+
+This ordering closes the entire six-state `awakening_authority_inlay` family
+and all three required ambient-FX families in one ten-asset ingest, then starts
+the ruin-decal family. If all ten pass Asset Pipeline V2 and are published,
+the required-state snapshot becomes **55/91 complete, 36 open**.
+
+The machine-readable batch contract and full complete/needed snapshot live at:
+
+`custodian/asset_drop/source_work/awakening/next10_20261001/ASSET_BUNDLE_MANIFEST.json`
+
+Raw/generated art for this batch must be saved first as:
+
+`custodian/asset_drop/source_work/awakening/<family>/<state>_source.png`
+
+Normalized Asset V2 intake remains:
+
+`custodian/asset_drop/inbox/<family>/<state>.png`
+
+Do not hand-author canonical runtime filenames; Asset Pipeline V2 owns runtime
+routing and naming.
+
+### Current drift note
+
+`custodian/asset_drop/inbox/awakening_ingest_manifest.json` still records the
+Undergate environment as 896×1216 even though the live family/runtime contract
+is 1536×1216. It is not current authority until regenerated or explicitly
+archived. The older
+`custodian/asset_drop/source_work/awakening/next10_20260920/ASSET_BUNDLE_MANIFEST.json`
+is a historical Batch 01 snapshot and likewise must not be used as current
+production status.
+
 ## Art generation order
 
 1. `awakening_creche_environment`
