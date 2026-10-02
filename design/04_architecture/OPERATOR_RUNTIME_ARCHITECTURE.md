@@ -427,40 +427,36 @@ custodian/game/actors/operator/
 ├── operator.gd                          # thin actor facade/chassis
 ├── operator.tscn
 ├── AGENTS.md
-├── core/
-│   ├── operator_input_frame.gd
-│   ├── operator_runtime_snapshot.gd
-│   └── operator_action_controller.gd
 ├── input/
-│   ├── operator_input_router.gd
-│   └── operator_aim_controller.gd
-├── movement/
-│   └── operator_locomotion_controller.gd
+│   ├── operator_input_frame.gd          # live
+│   ├── operator_input_router.gd         # live
+│   └── operator_aim_controller.gd       # live
 ├── combat/
-│   ├── operator_melee_controller.gd
-│   ├── operator_ranged_controller.gd
-│   ├── operator_guard_controller.gd     # existing
-│   ├── operator_integrity_reclaim.gd    # existing
-│   └── operator_damage_controller.gd
+│   ├── operator_action_controller.gd    # live action-arbitration authority
+│   ├── operator_guard_controller.gd     # live
+│   ├── operator_integrity_reclaim.gd    # live
+│   ├── operator_melee_controller.gd     # Slice F2 target
+│   ├── operator_ranged_controller.gd    # Slice F3 target
+│   └── operator_damage_controller.gd    # Slice F6 target
 ├── traversal/
-│   └── operator_dodge_controller.gd
+│   └── operator_dodge_controller.gd     # Slice F4 target
 ├── loadout/
-│   ├── operator_loadout_controller.gd
-│   └── operator_weapon_runtime_state.gd
+│   ├── operator_loadout_controller.gd   # Slice F1 target
+│   └── operator_weapon_runtime_state.gd # Slice F1 target
 ├── interaction/
-│   ├── operator_interaction_controller.gd
-│   └── operator_recovery_controller.gd
+│   ├── operator_interaction_controller.gd # Slice F5 target
+│   └── operator_recovery_controller.gd    # Slice F6 target
 ├── animations/
-│   ├── operator_animation_selector.gd   # existing, survives
+│   ├── operator_animation_selector.gd
 │   ├── operator_weapon_socket_library.gd
 │   └── ...data helpers only
 └── presentation/
-    ├── operator_presentation_controller.gd
+    ├── operator_presentation_controller.gd # live semantic coordinator
     ├── operator_body_presenter.gd
     ├── operator_animation_player.gd
-    ├── operator_melee_presenter.gd
-    ├── operator_ranged_presenter.gd
-    ├── operator_reaction_presenter.gd
+    ├── operator_melee_presenter.gd       # optional extraction seam as F2 lands
+    ├── operator_ranged_presenter.gd      # optional extraction seam as F3 lands
+    ├── operator_reaction_presenter.gd    # optional extraction seam as F6 lands
     ├── melee_posture_state.gd
     └── operator_presentation_rig_2d.gd  # cinematic puppet, separate purpose
 ```
@@ -483,14 +479,43 @@ counter is left without a home.
 | C2b.2 | Canonical semantic selection in active Operator consumers | `animation_resolver` 16 → 0, Operator `directional_animation_fallback` 4 → 0 | **done** |
 | C2b.3 | Retire compatibility resources, nodes and updater; reconcile reachability/orphan output | Compatibility residue (not counted in the 75-item architecture ledger) | **done** |
 | D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | **done** |
-| E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | pending |
-| F | Extract melee, dodge, ranged, loadout, interaction, recovery behind injected dependencies; remove the temporary presenter compatibility seams | `absolute_scene_lookups` 38 → 0, `weapon_definition_runtime_state` 3 → 0 | pending |
-| G | Collapse `operator.tscn` and `operator.gd`, delete compatibility infra, final audits | `--final` on every audit | pending |
+| E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | **done** |
+| F0 | Bind/inject Operator external dependencies before domain extraction | `absolute_scene_lookups` 38 → 0 | **queued** |
+| F1 | Extract loadout + per-weapon runtime state | `weapon_definition_runtime_state` 3 → 0 | **queued** |
+| F2–F6 | Extract melee, ranged, dodge, interaction, and recovery/survivability behind the facade; move scoped presentation policy with the owning domain | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
+| G | Collapse `operator.tscn` and `operator.gd`, delete compatibility infra, final audits | `--final` on every audit | **queued** |
 
 Slice C was split because the repo gave better information than the original
 plan: the playback funnel and the selector cutover have different blast radii and
 different failure modes, and bundling them would have made one monster slice whose
 regression surface could not be reasoned about.
+
+### Current queued Operator program
+
+Slice E is complete on live main. The remaining architecture work is intentionally
+split so presentation improvements land with the domain that owns the underlying
+gameplay facts instead of becoming another cross-cutting actor subsystem:
+
+- `OPERATOR_MOBILE_GUARD_COMPOSITION.md` first proves the bounded
+  movement-owned-lower + action-owned-upper composition seam on the existing
+  semantic presentation controller.
+- `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes that seam for Vigil
+  guard and movement-permissive parry attempt/recovery.
+- `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` is F0 and retires the remaining 38
+  absolute scene lookups before domain controllers are extracted.
+- F1–F6 are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
+  `OPERATOR_MELEE_DOMAIN_EXTRACTION.md`, `OPERATOR_RANGED_DOMAIN_EXTRACTION.md`,
+  `OPERATOR_DODGE_DOMAIN_EXTRACTION.md`,
+  `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md`, and
+  `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md`.
+- `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` finishes the already-live
+  static Carbine/socket presentation after ranged extraction.
+- `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` is Slice G and owns final shell/scene
+  contraction and hard-zero audits.
+- `OPERATOR_GUARD_BREAK_PRESENTATION.md` and
+  `OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` are content/polish
+  follow-ups. They do not block architecture closure and may require reviewed
+  Asset V2 art rather than code-only work.
 
 ### Migration floor
 
@@ -498,13 +523,11 @@ The three-sweep validation baseline established by Slice B.5 is the floor:
 `run_validation.py --tier actor` selects **41** checks and all 41 pass, three
 sweeps in a row. No slice may land below it.
 
-**Current status: 40/41 or 41/41 — `lootable_corpse_beacon` is INTERMITTENT.**
-It fails on "enemy corpse collection must show typed and recovered-resource
-toasts", and across six recorded C1/B-final sweeps it failed four and passed two.
-It is unrelated to Operator body presentation and reproduces with the Operator
-changes stashed, so it comes from neither slice. Treat it as a flaky test to be
-diagnosed on its own terms — not as a deterministic red, and not as noise to be
-ignored, since a test that passes sometimes is hiding a real nondeterminism.
+The original 41-test three-sweep result remains a historical migration floor,
+not a current test-count claim. The actor tier has expanded since then.
+`lootable_corpse_beacon` has remained independently intermittent in later
+Operator work and must be diagnosed on its own terms rather than attributed to
+this migration or ignored as deterministic noise.
 
 Slice detail lives in the task packet.
 
@@ -523,4 +546,7 @@ Slice detail lives in the task packet.
 - `operator_runtime_path_audit --final` passes;
 - `operator_architecture_debt_audit --final` passes.
 
-No new art assets are required for this migration.
+The architecture migration itself does not require new art. Optional presentation
+follow-ups may add reviewed Asset V2 art where existing authored coverage is
+visibly insufficient; those content packets are explicitly non-blocking for
+Slice G.
