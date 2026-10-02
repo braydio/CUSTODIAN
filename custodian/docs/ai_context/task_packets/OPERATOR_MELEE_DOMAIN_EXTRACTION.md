@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition`
+- Depends on: `operator-loadout-domain-extraction, operator-dependency-injection-spine, operator-mobile-guard-composition`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
@@ -35,6 +35,6 @@
 
 ## Handoff
 
-- Next action: Extract controller ownership first, then migrate presentation call sites while their live behavior is characterized.
+- Next action: Execute after F1 loadout/runtime-state is complete so melee reads stable loadout/runtime-state APIs; extract controller ownership first, then migrate presentation call sites while their live behavior is characterized.
 - Best starting files: melee lifecycle/drive/targeting regions of `operator.gd`; `MeleeAttackProfile`; melee posture resolver; presentation controller; focused melee smokes.
 - Blockers or open questions: None.
