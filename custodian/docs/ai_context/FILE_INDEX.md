@@ -1,5 +1,10 @@
 # FILE INDEX — CUSTODIAN
 
+## Operator Workbench UX Hierarchy
+
+- `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md` - refresh-gated five-slice OPUI UX hierarchy plan covering artist-facing state, preview-first Workbench home, changes-first Publish, actionable Queue, and final cross-mode UX closeout. It consumes, rather than duplicates, the existing publish-readiness, browser-snapshot and FX-adoption authorities.
+- Planning packets live under `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_*.md`; all remain blocked/manual until their top refresh banner is removed after a fresh main review and sign-off.
+
 ## Asset Workbench
 
 - `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` — living slice roadmap for the general non-Operator Asset Workbench; V1 is FAMILY navigator, REVIEW studio, then safe PIPELINE actions, with later actor/sequence, design, creation/source-intake, and hardening slices.
