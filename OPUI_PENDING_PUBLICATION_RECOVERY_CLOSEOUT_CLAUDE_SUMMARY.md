@@ -10,7 +10,7 @@ Preserved the entire old checkout, including ignored workspaces and pending rece
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: medium
-- What went wrong: earlier rebase changed the publish commit ID without updating its ignored pending receipt; divergent history prevented ordinary recovery
+- What went wrong: earlier rebase changed the publish commit ID without updating its ignored pending receipt; divergent history prevented ordinary recovery. Closeout finish initially rejected the prior slice summary filename; renamed the single summary to match the closeout workstream.
 - Root cause / contributing factors: pending publication is identified by exact HEAD; startup repair restored access but did not reconcile publication history
 - Prevention / pipeline improvement: preserve full checkout and recover only the verified publication patch through the normal lifecycle
 - Tooling / docs drift discovered: pending receipt referenced pre-rebase commit
