@@ -196,6 +196,16 @@ only.
 
 Exactly **5 implementation slices** are planned for UX Hierarchy V1.
 
+Packet files:
+
+```text
+UX1  custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_STATE_HIERARCHY.md
+UX2  custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_WORKBENCH_HOME.md
+UX3  custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_PUBLISH_DECISION.md
+UX4  custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_WORK_QUEUE.md
+UX5  custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_CONSISTENCY_CLOSEOUT.md
+```
+
 | Slice | Execution workstream | Status | Focus |
 |---|---|---|---|
 | UX1 | `operator-workbench-ux-state-hierarchy` | blocked / refresh required | Artist-facing workflow state, global shell, debug disclosure, compact activity |
