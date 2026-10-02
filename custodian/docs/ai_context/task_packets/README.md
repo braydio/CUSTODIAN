@@ -190,6 +190,11 @@ a `workstream.py finish` blocker.
   path blocks claim and reports the exact path plus the nearest replacement
   when one can be identified. This is structural path checking, not command or
   semantic validation.
+- Validation paths may be written as `custodian/tools/...`, `res://tools/...`,
+  or `tools/...`. The last form prefers a matching root `tools/` entrypoint and
+  falls back to `custodian/tools/`. Describe implementation-created future
+  smoke scripts generically until they exist, then add their exact live path
+  to the packet before closeout.
 
 - Blocking findings scaffold `<implementation-id>-review-corrections-<n>.md`
   (`Kind: correction`, `Review: auto`) plus its own paired
@@ -245,7 +250,6 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `AGENT_VALIDATION_GATE_DRIFT_REPAIR.md` — P0 repository gate repair: remove the expired LFS/procgen workflow assumption, normalize valid `res://tools` / project-root validation paths through the shared packet contract, preserve fail-closed missing-script checks, and clear the current eight false-positive packet failures.
 - `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR.md` — paired P0 code/architecture/workflow review of expiry-state truth, validation-path resolution, and fail-closed gate preservation.
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication hardening: classify/preflight the dedicated art checkout, safely prepare clean-behind/local-cache state, reject stale baselines before mutation, and restore only proven transaction-generated Godot metadata churn; depends on the sparse-checkout correction re-review.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — paired P0 code/architecture/asset-pipeline/workflow review of the publish-readiness and clean-or-RECOVERY_REQUIRED contract.

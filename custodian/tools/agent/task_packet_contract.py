@@ -34,7 +34,7 @@ BOUNDED_REVIEW_OVERRIDE = (
     "this review packet's lifecycle/archive metadata, its required closing summary, and bounded "
     "correction/re-review packets; do not edit the reviewed implementation or unrelated work."
 )
-VALIDATION_SCRIPT_RE = re.compile(r"(?<![A-Za-z0-9_])((?:custodian/)?tools/[A-Za-z0-9_./-]+\.(?:py|gd|sh))(?=$|[\s`),.;:])")
+VALIDATION_SCRIPT_RE = re.compile(r"(?<![A-Za-z0-9_])((?:custodian/tools|res://tools|tools)/[A-Za-z0-9_./-]+\.(?:py|gd|sh))(?=$|[\s`),.;:])")
 
 # V2 packet header fields that AGENT_TASK_PACKET_TEMPLATE.md's Authoring
 # Quality Gate requires to be non-empty on a ready `custodian.task_packet.v2`
@@ -268,7 +268,18 @@ def _validation_script_references(text: str) -> tuple[str, ...]:
 
     for section in re.finditer(r"(?ms)^## Validation\s*\n(.*?)(?=^## |\Z)", text):
         blocks.append(section.group(1))
-    return tuple(sorted({match.group(1).rstrip("/.") for block in blocks for match in VALIDATION_SCRIPT_RE.finditer(block)}))
+    return tuple(sorted({match.group(1) for block in blocks for match in VALIDATION_SCRIPT_RE.finditer(block)}))
+
+
+def _validation_reference_candidates(reference: str) -> tuple[str, ...]:
+    """Map a packet spelling to its permitted tracked repository path(s)."""
+    if reference.startswith("custodian/tools/"):
+        return (reference,)
+    if reference.startswith("res://tools/"):
+        return ("custodian/" + reference.removeprefix("res://"),)
+    if reference.startswith("tools/"):
+        return (reference, "custodian/" + reference)
+    return ()
 
 
 def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
@@ -348,14 +359,17 @@ def validate_packet_validation_references(
     """Reject ready packets whose explicit validation scripts do not exist in the authority tree."""
     import difflib
 
-    tool_paths = set(_contract_git(repo, "ls-tree", "-r", "--name-only", tree, "--", "custodian/tools").splitlines())
+    tool_paths = set(_contract_git(repo, "ls-tree", "-r", "--name-only", tree, "--", "custodian/tools", "tools").splitlines())
     errors: dict[str, str] = {}
     for packet in packets:
         if exclude_workstreams and packet.workstream in exclude_workstreams:
             continue
         if packet.status != "ready" or not packet.validation_scripts or not packet.workstream:
             continue
-        missing = [path for path in packet.validation_scripts if path not in tool_paths]
+        missing = [
+            path for path in packet.validation_scripts
+            if not any(candidate in tool_paths for candidate in _validation_reference_candidates(path))
+        ]
         if not missing:
             continue
         repo_tools = sorted(path for path in tool_paths if path.endswith((".py", ".gd", ".sh")))

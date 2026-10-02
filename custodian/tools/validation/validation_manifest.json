@@ -94,6 +94,7 @@
         "custodian/AGENTS.md",
         "custodian/tools/agent/**",
         "custodian/tools/validation/agent_workflow_smoke.py",
+        "tools/custodian_aliases.sh",
         "custodian/docs/ai_context/prompts/**",
         "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
         "custodian/docs/ai_context/CONTEXT.md",
@@ -101,7 +102,6 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
-        ".github/workflows/expire-lfs-degraded-mode.yml",
         ".claude/settings.json"
       ],
       "timeout_sec": 30,

@@ -820,6 +820,48 @@ class DispatchTests(unittest.TestCase):
         parsed = dispatch.parse_packet("packet.md", content)
         self.assertEqual(parsed.validation_scripts, ("custodian/tools/agent/not_here.py",))
 
+    def test_res_validation_path_resolves_to_project_tools(self):
+        script = self.repo / "custodian/tools/validation/project_smoke.py"
+        script.parent.mkdir(parents=True, exist_ok=True)
+        script.write_text("# live project script\n")
+        git(self.repo, "add", str(script.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "add project validation script")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        content = packet("res-validation", dispatch_value="auto") + (
+            "\n## Validation\n\nRun `python3 res://tools/validation/project_smoke.py`.\n"
+        )
+        self.add_packet("res-validation", dispatch_value="auto", text=content)
+        self.assertEqual(dispatch.validate_packet_validation_references(self.repo, dispatch._packets(self.repo)), {})
+
+    def test_project_root_validation_path_falls_back_to_custodian_tree(self):
+        script = self.repo / "custodian/tools/validation/fallback_smoke.py"
+        script.parent.mkdir(parents=True, exist_ok=True)
+        script.write_text("# live project script\n")
+        git(self.repo, "add", str(script.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "add project validation fallback")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        content = packet("fallback-validation", dispatch_value="auto") + (
+            "\n## Validation\n\nRun `python3 tools/validation/fallback_smoke.py`.\n"
+        )
+        self.add_packet("fallback-validation", dispatch_value="auto", text=content)
+        self.assertEqual(dispatch.validate_packet_validation_references(self.repo, dispatch._packets(self.repo)), {})
+
+    def test_exact_root_validation_path_is_preferred(self):
+        script = self.repo / "tools/validation/root_smoke.py"
+        script.parent.mkdir(parents=True, exist_ok=True)
+        script.write_text("# live root script\n")
+        git(self.repo, "add", str(script.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "add root validation script")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        content = packet("root-validation", dispatch_value="auto") + (
+            "\n## Validation\n\nRun `python3 tools/validation/root_smoke.py`.\n"
+        )
+        self.add_packet("root-validation", dispatch_value="auto", text=content)
+        self.assertEqual(dispatch.validate_packet_validation_references(self.repo, dispatch._packets(self.repo)), {})
+
     def test_passed_receipt_does_not_require_correction_packet(self):
         self.add_packet("impl-f", dispatch_value="auto", review="auto", paired_review_workstream="review-impl-f")
         self.add_packet(
