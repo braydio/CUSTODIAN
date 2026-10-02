@@ -209,7 +209,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | MR5 | `review-procgen-chunk-payload-cache` | **complete — passed, optional-improvement-only** | M5 |
 | M6 | `procgen-distant-chunk-unload` | **complete — implementation landed** | MR5 |
 | MR6 | `review-procgen-distant-chunk-unload` | **complete — findings: R0-01 blocking + R0-02..R0-05 evidence gaps** | M6 |
-| M6C1 | `procgen-distant-chunk-unload-review-corrections-1` | **ready / manual correction gate** | MR6 |
+| M6C1 | `procgen-distant-chunk-unload-review-corrections-1` | **ready / auto correction gate** | MR6 |
 | MR6R1 | `review-procgen-distant-chunk-unload-review-corrections-1` | queued / auto | M6C1 |
 | P1 | `contract-world-placement-foundation` | **complete — accepted-world read context landed** | S1 |
 | PR1 | `review-contract-world-placement-foundation` | **ready / auto post-land review** | P1 |
