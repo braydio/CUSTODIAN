@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-chunk-payload-cache`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-chunk-payload-cache`
@@ -27,5 +27,7 @@
 
 ## Handoff
 
-- Next action: Claim after M5 completes and archives. On a clean/non-blocking-only pass, re-audit live main and refresh M6 `procgen-distant-chunk-unload` in place against the reviewed cache/lifecycle surface.
-- Blockers or open questions: None at authoring time.
+- Completion: Review passed (non-blocking-only) on live main at `e1050a54c`. 0 blocking defects, 0 material evidence gaps, 0 non-blocking issues, 1 optional-improvement finding (`R0-01`, routed to deferred, not a correction). Full receipt: the `## Independent Review` section appended to `custodian/docs/ai_context/task_packets/archived/PROCGEN_CHUNK_PAYLOAD_CACHE.md`. Detailed summary: `REVIEW_PROCGEN_CHUNK_PAYLOAD_CACHE_CLAUDE_SUMMARY.md`.
+- Validation: Fresh (not reused) re-run of `procgen_chunk_payload_cache_smoke.gd`, `procgen_chunk_lifecycle_smoke.gd`, `procgen_pause_aware_streaming_smoke.gd`, `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `runtime_wall_collision_compaction_smoke.gd`, `procgen_candidate_materializer_parity`, `procgen_macro_presentation_smoke.gd`, `procgen_road_semantics_v2_smoke.gd`, and `procgen_authored_scene_authority_smoke.gd` (direct invocation, still unregistered) all PASS. S1 quick re-run fresh: `determinism_ok=true`, 48x48 seed-420777 fingerprint `1773840677` matches the M1-M5 baseline. `git diff --check` clean.
+- Next action: M6 (`procgen-distant-chunk-unload`) is now refresh-eligible against the reviewed landed M5 cache; refreshing and re-dispatching its packet is separate follow-up work, not performed by this review workstream (out of this packet's bounded task-override scope).
+- Blockers or open questions: None. `R0-01` (stale-`_tile_records`-entry memory-shape observation; correctness unaffected, revision-stamped reads prevent any stale hit) is deferred, not a blocker. Separately, `python3 custodian/tools/agent/validate_review_pairing.py` and `task_packet_index.py` both still fail against unrelated, pre-existing packets/README drift unrelated to this workstream (the former was already flagged as follow-up in M5's own Execution Feedback); see this review's closing summary Process Feedback for detail. Neither failure involves `procgen-chunk-payload-cache` or `review-procgen-chunk-payload-cache`.
