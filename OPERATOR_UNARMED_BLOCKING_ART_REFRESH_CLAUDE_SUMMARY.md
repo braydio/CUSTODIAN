@@ -1,6 +1,6 @@
 # Operator Unarmed Blocking Art Refresh — Closing Summary
 
-Completed the approved preserve-and-add scope in worktree `agent/operator-unarmed-blocking-art-refresh`; re-derived and closed it against `origin/main@35b670d4c` after the registration-profile review landed.
+Completed the approved preserve-and-add scope in worktree `agent/operator-unarmed-blocking-art-refresh`; re-derived and closed it against `origin/main@94c533141` after the registration-profile review landed.
 
 - Preserved current-main `_01` enter/hold/hit art and `block_hold_01` FX byte-for-byte. Shared `block_hit_01` remains the sole hit sheet.
 - Added `block_enter_02` and `block_hold_02` as dormant secondary art. No live selector or gameplay clock changed.

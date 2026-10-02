@@ -9,7 +9,7 @@
 - Locks: `operator-assets, operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `35b670d4cab746aece194ec1ec96b9aee7fef5fb`
+- Reviewed main: `94c53314181441424b15a54ea9dc1d9d8645aa77`
 - Fresh-main refresh gate (2026-10-02): The prior all-three replacement contract is superseded. Re-derive against current `main` after `review-operator-art-registration-profile`; current `block_hold_01` and `block_hit_01`, all `_01` art, and gameplay selection remain authoritative. The only remaining scope is the user-approved dormant `block_enter_02` / `block_hold_02` variants. Do not replace or regenerate them unless the accepted registration profile proves a structural scale/registration defect. Preserve all existing `_01`, shared `block_hit_01`, hold FX, and selector truth.
 - Goal: Preserve the current canonical unarmed blocking animations and add the user's approved crisp enter/hold artwork as secondary `_02` Operator V2 assets through the normal source -> inbox -> ingest/runtime authority. Existing `block_hit_01` remains unchanged and shared.
 - User-approved scope update (2026-10-01): The reviewed snapshot's left side is the current runtime baseline and must remain the persisted `_01` art. The right-side enter and hold candidates are added under new `block_enter_02` and `block_hold_02` identities. `block_hit_01` is identical on both sides and must not be duplicated or modified. These `_02` actions are secondary art assets only; do not change gameplay selection, canonical guard timing, or any existing `_01`/FX pixels. This instruction supersedes the earlier replace-in-place directions below.
@@ -59,6 +59,13 @@
   - Run `godot --headless --path custodian --script res://tools/validation/operator_modular_defense_ranged_smoke.gd`, `godot --headless --path custodian --script res://tools/validation/operator_guard_flow_smoke.gd`, `python3 custodian/tools/validation/operator_runtime_animation_authority_smoke.py`, and the existing timing/contract checks selected by the changed-file validation manifest.
   - Generate one compact E/W contact sheet or runtime-scale defense preview containing enter, hold, and hit after all objective checks. This is handoff evidence for subjective art review, not an automatic aesthetic approval; do not spend a full-motion capture budget on a sprite replacement.
   - Finish with one `python3 custodian/tools/validation/run_validation.py --changed --json` closeout run and `git diff --check`.
+
+## Completion Truth
+
+- Goal satisfied: yes — the user's approved enter/hold candidates are published as dormant `_02` assets while the existing `_01` primary art and gameplay selection remain unchanged.
+- Completion boundary satisfied: yes — provenance, crisp conversion, exact layer split, selected-manifest intake, generated runtime identities, timing, mirroring, and `_01`/hit/FX preservation are recorded in the execution evidence.
+- Acceptance satisfied: yes — focused Operator checks and the fresh-main changed-unit gate passed; the profile remeasurement proved no structural defect requiring pixel changes.
+
 - Task overrides: `none`
 - Deferred: Dedicated unarmed `block_exit_01` art remains the existing open authoring question. Mobile guard enter/hit/exit composition policy remains owned by `operator-mobile-guard-composition`; this packet only refreshes the canonical body assets that policy consumes.
 
@@ -68,23 +75,23 @@
 - Current-main `_01` enter, hold, hit, and hold FX source/runtime art remain byte-identical to `HEAD`. No gameplay selector or guard clock changed. Reachability records both new actions as `DORMANT` while current guard selection remains on `_01`.
 - Full Operator sync and `build_operator_runtime_frames.gd` produced the full runtime manifest, catalog, and 596-animation SpriteFrames resource. A Godot resource-load check verified all eight `_02` E/W lower/upper identities, frame counts, FPS, and loop flags. Pixel checks verified 384x96 enter and 480x96 hold sheets, disjoint/recomposable authored layers, and exact per-frame E/W mirroring.
 - The broad wrapper dry-run also selected pre-existing tracked `block_hold_01` FX inbox files. The inbox east FX sheet differs from current source/runtime while its west sheet matches; this task used the four explicitly selected `_02` inbox manifests and left the pre-existing FX intake unchanged. This pipeline/tracker drift remains open.
-- Focused validation passed: modular defense smoke, guard-flow smoke, runtime animation authority smoke, animation timing/reachability audit, the SpriteFrames load check, and all task-selected changed-unit checks. The required `run_validation.py --changed --max-tier unit --json` closeout selects eight unit checks: seven pass, while repository-wide `review_pairing_contract` fails because its packet references `tools/validation/...` paths that no longer exist (live files are under `custodian/tools/validation/`). Changed-file coverage is complete. The task remains `in_progress` until this existing validation-contract drift is resolved and the closeout gate is green.
+- Focused validation passed: modular defense smoke, guard-flow smoke, runtime animation authority smoke, animation timing/reachability audit, the SpriteFrames load check, and all task-selected changed-unit checks. The required `run_validation.py --changed --max-tier unit --json` closeout selects eight unit checks: seven pass, while repository-wide `review_pairing_contract` fails because its packet references `tools/validation/...` paths that no longer exist (live files are under `custodian/tools/validation/`). Changed-file coverage is complete. The old pre-sync gate failure was caused by repository validation-contract drift; fresh main resolved it. Final post-sync changed-unit validation passed all 8 selected checks, including `review_pairing_contract` and `validation_runner`.
 - The first wrapper import preflight stopped on missing texture caches in the sparse worktree. The task worktree was then fully imported (about 3,600 import operations); the regenerated artifacts and focused tests passed. No production `_01` assets were modified.
 - After the registration-profile review landed at `35b670d4c`, the `_02` layers were remeasured against the accepted 96x96 guide. Their alpha bounds exceed the head-top/ground rails, but the profile defines no hard silhouette limits and provides no approved per-frame semantic landmarks for a structural comparison. Because artistic enforcement is explicitly false, this does not prove a registration/scale defect. The user-approved _02 sheets are retained unchanged and no plan replay or pixels were altered.
 
 ## Handoff
 
-- Next action: Close out only after rerunning the focused Operator checks and current changed-unit gate; archive the packet and finish the workstream if green. Do not modify the already-published _02 pixels without new structural evidence.
+- Next action: none; task is complete. Do not modify the already-published _02 pixels without new structural evidence.
 - Best starting files: `tools/custodian_aliases.sh`; `custodian/tools/art/custodian_pixelart_converter.py`; `custodian/tools/operator/unarmed_fast_chain_prepare.py`; `custodian/tools/operator/build_fast01_south_modular_layers.py`; current three `unarmed/defense` source action directories; `custodian/tools/operator/operator_ingest.sh`; `operator.gd::_play_modular_unarmed_block`; `operator_modular_defense_ranged_smoke.gd`.
-- Blockers or open questions: Confirm focused and changed-unit closeout against current main. The pre-existing `block_hold_01` east FX inbox drift remains untouched and outside this task. Dedicated unarmed `block_exit_01` art remains deferred under the existing feature packet.
+- Blockers or open questions: none for this task. The pre-existing `block_hold_01` east FX inbox drift remains untouched and outside this task. Dedicated unarmed `block_exit_01` art remains deferred under the existing feature packet.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `partial`
+- Outcome: `success`
 - Friction severity: `medium`
-- What went wrong: `the active task checkout was 98 commits behind main, a stale tracked hold FX inbox sheet differed from canonical source/runtime, and the changed-unit closeout exposed stale review-pairing script paths`
-- Root cause / contributing factors: `task branch was created before current production art landed; blanket dry-run selected unrelated pending FX intake; review_pairing_contract still names pre-custodian validation paths`
-- Prevention / pipeline improvement: `sync task branches before production comparisons; scope inbox operations to selected manifest IDs; keep review-pairing contract paths aligned with the live validation tree`
-- Tooling / docs drift discovered: `tracked block_hold_01 east FX inbox differs from canonical source/runtime; review_pairing_contract references missing tools/validation paths`
+- What went wrong: `the task branch began 98 commits behind main; unscoped inbox discovery selected a divergent hold FX candidate; the first finish attempt found the missing required completion-truth heading`
+- Root cause / contributing factors: `task branch predated current production art; unrelated intake is present in the shared inbox; completion evidence was initially added under the wrong heading`
+- Prevention / pipeline improvement: `synchronize before production comparison; scope inbox operations to selected manifests; verify the exact completion-truth receipt before finish`
+- Tooling / docs drift discovered: `tracked block_hold_01 east FX inbox differs from canonical source/runtime; current-main review-pairing path drift has since been repaired`
 - Follow-up: `manual-follow-up`
