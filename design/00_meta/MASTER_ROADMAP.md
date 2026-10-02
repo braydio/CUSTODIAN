@@ -284,7 +284,7 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven, but readiness is now evidence-gated rather than speculative: M4 and M5 are landed S7 implementation (MR5 review pending, M6 still refresh-gated behind it); P7 refreshes only after P2-P6 exist; D1-D3 refresh after M6; X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated: M4/MR4 and M5/MR5 are complete; M6 is now refreshed and ready, with paired MR6 required before S7 closes or D1-D3 refresh. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. D1-D3 now wait on G5 + MR6; X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
