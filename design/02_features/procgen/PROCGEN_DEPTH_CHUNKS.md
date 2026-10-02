@@ -10,9 +10,11 @@
 
 **Primary presentation authority:** `design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`
 
-**First campaign visual authority:** `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`
+**Region-frame authority:** `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`
 
-Depth assets selected for the first campaign world must read as subordinate cold conifer/rocky alpine depth. Existing biome-family assets remain valid runtime content, but none may pull the macro world toward lush fantasy woodland, warm desert, or saturated biome-showcase presentation.
+**Alpine starting-region authority:** `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`
+
+Depth chunks are **local scenic chasm/region presentation**, not the permanent exterior underlay itself. The active region frame decides which chunk profiles are visually compatible. In `ALPINE_PLATEAU`, select cold conifer/rocky depth chunks; future frames may select different compatible vocabularies without changing local biome semantics.
 
 ---
 
