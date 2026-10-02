@@ -496,13 +496,15 @@ Slice E is complete on live main. The remaining architecture work is intentional
 split so presentation improvements land with the domain that owns the underlying
 gameplay facts instead of becoming another cross-cutting actor subsystem:
 
-- `OPERATOR_MOBILE_GUARD_COMPOSITION.md` first proves the bounded
+- `OPERATOR_MOBILE_GUARD_COMPOSITION.md` proves the bounded
   movement-owned-lower + action-owned-upper composition seam on the existing
   semantic presentation controller.
-- `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes that seam for Vigil
-  guard and movement-permissive parry attempt/recovery.
-- `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` is F0 and retires the remaining 38
-  absolute scene lookups before domain controllers are extracted.
+- `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` is F0 and independently retires the
+  remaining 38 absolute scene lookups. F0 and mobile guard may land in either
+  order; F1/F2/F3/F5/F6 wait on both seams, while F4 only waits on F0 because
+  dodge intentionally remains committed full-body presentation.
+- `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes the mobile composition
+  seam for Vigil guard and movement-permissive parry attempt/recovery.
 - F1–F6 are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
   `OPERATOR_MELEE_DOMAIN_EXTRACTION.md`, `OPERATOR_RANGED_DOMAIN_EXTRACTION.md`,
   `OPERATOR_DODGE_DOMAIN_EXTRACTION.md`,
@@ -512,10 +514,13 @@ gameplay facts instead of becoming another cross-cutting actor subsystem:
   static Carbine/socket presentation after ranged extraction.
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` is Slice G and owns final shell/scene
   contraction and hard-zero audits.
-- `OPERATOR_GUARD_BREAK_PRESENTATION.md` and
-  `OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` are content/polish
-  follow-ups. They do not block architecture closure and may require reviewed
-  Asset V2 art rather than code-only work.
+- `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` is a manual,
+  non-blocking Asset V2 boundary for the ten new raw east-facing defense
+  source-work files. Raw generator output never becomes runtime authority.
+- `OPERATOR_GUARD_BREAK_PRESENTATION.md` depends on that source promotion for
+  the 3f break + 6f recovery body candidates and separately requires break FX.
+  `OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` remains a later
+  human-reviewed art-gap closeout. Neither blocks architecture closure.
 
 ### Migration floor
 
