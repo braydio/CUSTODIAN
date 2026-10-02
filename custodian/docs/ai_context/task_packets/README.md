@@ -281,6 +281,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — P1 first-pass Solarium I Route Vista sample ingest/presentation: three neutral V2 candidate contents from the new archway-view drop, exact 465×280 registration, playtest sampler, and human capture review.
+- `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — paired independent review of vista provenance, normalization, registration, presentation ownership, and recorded human approval.
 - `AGENT_VALIDATION_GATE_DRIFT_REPAIR_REVIEW_CORRECTIONS_1.md` — P0 correction for R0-01: include removed TEMP_LFS_DEGRADED_MODE markers in the post-expiry smoke invariant; dependency-gated on the parent review.
 - `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR_REVIEW_CORRECTIONS_1.md` — paired P0 workflow/code re-review of the TEMP_LFS_DEGRADED_MODE expiry-marker coverage correction.
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication hardening: classify/preflight the dedicated art checkout, safely prepare clean-behind/local-cache state, reject stale baselines before mutation, and restore only proven transaction-generated Godot metadata churn; depends on the sparse-checkout correction re-review.
