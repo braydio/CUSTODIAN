@@ -1149,7 +1149,9 @@ Last updated: 2026-09-29
 
 ## Elevated Procgen Presentation
 
-- `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` — locked visual authority for the current generated/first campaign world: cold alpine terrain, hardened infrastructure, Custodian structure/vehicle application, Black Reliquary field-HUD shell, and marker/beacon grammar; Archive Resolve remains separately governed.
+- `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` — locked architecture separating local biome, permanent region-border/underlay frame, and Archive Resolve; defines the first `ALPINE_PLATEAU` frame and future frame catalogue.
+- `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md` — locked resolved art direction for the first generated Alpine Plateau starting region, including terrain, hardstand, structures/vehicles, field UI and marker/beacon grammar.
+- `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` — compatibility/supersession note for the earlier over-broad visual lock.
 - `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md` — upper-plane, cliff, void, forest-depth, streaming, and determinism authority.
 - `custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd` — global non-repeating, camera-following forest depth stack used by both generated-world and explicit-chasm configuration paths.
 - `custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd` — presentation-only directional FLOOR-to-CHASM fascia using authored top/body/bottom sources 149–154, stable outward normals, sparse deep sections, tiny enclosed-pocket suppression, and wall-aware lip substitution; it never paints accepted generated-wall cells or contributes collision, navigation, or surface semantics.
