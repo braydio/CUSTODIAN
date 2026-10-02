@@ -598,9 +598,12 @@ class ArtAgentService:
         return value
 
     def registration_report(self, session_path: Path) -> dict[str, Any]:
-        _session, _manifest, root = self._checked_session(session_path)
+        _session, manifest, root = self._checked_session(session_path)
         metrics = self.get_metrics(session_path)
-        report = profile_report(landmarks=self.get_landmarks(session_path), frames=metrics.get("frames", []), profile=load_profile())
+        canvas = manifest["canvas"]
+        frame_size = [int(canvas["width"]), int(canvas["height"])]
+        report = profile_report(landmarks=self.get_landmarks(session_path), frames=metrics.get("frames", []),
+                                profile=load_profile(), registered_canvas=True, frame_size=frame_size)
         output = root / "previews/registration_report.json"
         write_json(output, report)
         report["report"] = str(output.resolve())

@@ -204,18 +204,34 @@ class SourceArtService:
             landmarks=self._load_source_landmarks(session, root),
         )
         write_json(root / "normalization_plan.json", plan.to_json())
+        self._approve_plan(session, root)
         session.state = "PLANNED"
         self.save(path, session)
         return plan.to_json()
 
-    def _load_plan(self, root: Path) -> NormalizationPlan:
+    def _load_plan(self, root: Path, *, session: SourceSession | None = None) -> NormalizationPlan:
         plan_path = root / "normalization_plan.json"
         if not plan_path.exists():
             raise model.WorkbenchError("normalization plan does not exist")
         value = json.loads(plan_path.read_text(encoding="utf-8"))
         if value.get("schema") not in {NORMALIZATION_PLAN_SCHEMA, "custodian.operator_art_normalization_plan.v1"}:
             raise model.WorkbenchError("normalization plan has unsupported schema")
+        if session is not None:
+            expected = session.approved_normalization_plan_sha256
+            if not expected:
+                raise model.WorkbenchError("normalization plan has no trusted approval digest; create a new plan")
+            if sha256(plan_path) != expected:
+                raise model.WorkbenchError("normalization plan changed after approval; create a new plan")
         return NormalizationPlan.from_json(value)
+
+    def _approve_plan(self, session: SourceSession, root: Path) -> None:
+        plan_path = root / "normalization_plan.json"
+        session.approved_normalization_plan_sha256 = sha256(plan_path)
+        session.selected_candidate = ""
+        session.reviewed_candidate_sha256 = ""
+        for stale in (root / "production/verification.json", root / "review/normalization_review.json",
+                      root / "review/frame_metrics.json", root / "review/registration_report.json"):
+            stale.unlink(missing_ok=True)
 
     def _load_source_landmarks(self, session: SourceSession, root: Path) -> list[dict[str, Any]]:
         path = root / "source_landmarks.json"
@@ -256,6 +272,15 @@ class SourceArtService:
                    "coordinate_space": "source_cell_pixels", "frame_count": session.geometry.frame_count,
                    "cell_size": [session.geometry.source_cell_width, session.geometry.source_cell_height], "landmarks": validated}
         write_json(root / "source_landmarks.json", payload)
+        if (root / "normalization_plan.json").exists():
+            session.approved_normalization_plan_sha256 = ""
+            session.selected_candidate = ""
+            session.reviewed_candidate_sha256 = ""
+            session.state = "ANALYZED"
+            for stale in (root / "production/verification.json", root / "review/normalization_review.json",
+                          root / "review/frame_metrics.json", root / "review/registration_report.json"):
+                stale.unlink(missing_ok=True)
+            self.save(_path, session)
         return payload
 
     def validate_source_landmarks(self, session_path: Path | str) -> dict[str, Any]:
@@ -288,7 +313,7 @@ class SourceArtService:
         if not analysis_path.exists():
             raise model.WorkbenchError("source must be analyzed before registration report")
         analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
-        plan = self._load_plan(root) if (root / "normalization_plan.json").exists() else None
+        plan = self._load_plan(root, session=session) if (root / "normalization_plan.json").exists() else None
         current_profile = load_profile()
         if plan and plan.mode == "operator_profile" and plan.profile_sha256 != current_profile["sha256"]:
             raise model.WorkbenchError("registration profile changed after planning; create a new plan")
@@ -304,19 +329,20 @@ class SourceArtService:
 
     def production_command(self, session_path: Path | str) -> dict[str, Any]:
         session, root, _path = self.load(session_path)
-        plan = self._load_plan(root)
+        plan = self._load_plan(root, session=session)
         if plan.mode != "operator_profile":
             raise model.WorkbenchError("production command requires operator_profile normalization")
         output = root / "production/crisp.png"
         command = ["pixelart", str(Path(session.source_original)), str(output), "--sheet", "--frames",
                    str(session.geometry.frame_count), "--source-cell", f"{session.geometry.source_cell_width}x{session.geometry.source_cell_height}",
                    "--size", "96", "--choose", "1", "--force", "--normalization-plan", str(root / "normalization_plan.json")]
+        command.extend(["--expected-normalization-plan-sha256", session.approved_normalization_plan_sha256])
         return {"command": command, "output": str(output.resolve()), "executes": False}
 
     def verify_production(self, session_path: Path | str) -> dict[str, Any]:
         session, root, session_path = self.load(session_path)
         plan_path = root / "normalization_plan.json"
-        plan = self._load_plan(root)
+        plan = self._load_plan(root, session=session)
         if plan.mode != "operator_profile" or plan.method != "crisp":
             raise model.WorkbenchError("production verification requires a crisp operator_profile plan")
         if plan.profile_sha256 != load_profile()["sha256"]:
@@ -346,7 +372,7 @@ class SourceArtService:
         self, session_path: Path | str, *, frame: int, dx: int, dy: int
     ) -> dict[str, Any]:
         session, root, path = self.load(session_path)
-        plan = self._load_plan(root)
+        plan = self._load_plan(root, session=session)
         if not 1 <= frame <= plan.frame_count:
             raise model.WorkbenchError("registration frame outside plan")
         if not isinstance(dx, int) or not isinstance(dy, int) or abs(dx) > 12 or abs(dy) > 12:
@@ -356,13 +382,14 @@ class SourceArtService:
                 registration.dx, registration.dy = dx, dy
                 break
         write_json(root / "normalization_plan.json", plan.to_json())
+        self._approve_plan(session, root)
         session.state = "PLANNED"
         self.save(path, session)
         return plan.to_json()
 
     def convert(self, session_path: Path | str) -> dict[str, Any]:
         session, root, path = self.load(session_path)
-        plan = self._load_plan(root)
+        plan = self._load_plan(root, session=session)
         if plan.source_sha256 != session.source_sha256:
             raise model.WorkbenchError("normalization plan belongs to a different source")
         transform = shared_transform_from_plan(plan)
@@ -437,7 +464,8 @@ class SourceArtService:
         session, root, path = self.load(session_path)
         if not session.selected_candidate:
             raise model.WorkbenchError("select or convert a candidate before review")
-        if self._load_plan(root).mode == "operator_profile" and session.selected_candidate == str((root / "production/crisp.png").resolve()):
+        plan = self._load_plan(root, session=session)
+        if plan.mode == "operator_profile" and session.selected_candidate == str((root / "production/crisp.png").resolve()):
             proof_path = root / "production/verification.json"
             if not proof_path.exists():
                 raise model.WorkbenchError("production output must be verified before review")
@@ -500,7 +528,7 @@ class SourceArtService:
             raise model.WorkbenchError("source must pass review before ingest handoff")
         if Path(destination_name).name != destination_name or not destination_name.lower().endswith(".png"):
             raise model.WorkbenchError("handoff destination must be a plain PNG filename")
-        if (root / "normalization_plan.json").exists() and self._load_plan(root).mode == "operator_profile":
+        if (root / "normalization_plan.json").exists() and self._load_plan(root, session=session).mode == "operator_profile":
             output = root / "production/crisp.png"
             proof_path = root / "production/verification.json"
             if not proof_path.exists():

@@ -1,4 +1,6 @@
 # FILE INDEX — CUSTODIAN
+- `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` — exact 32px-grid spatial authority/spec for the first persistent Hub set north of Awakening: South Reach, Forum, Sepulcher loop, Archive Rise/Crown Transfer, Muster Court, and ordinary Continuity Port.
+- `custodian/docs/ai_context/task_packets/HUB_FIRST_SET_BLOCKOUT_V1.md` / `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — queued H1 implementation/review for the runtime-ready first-set blockout, standalone playtest, navigation proof, and one human topology overview gate.
 
 ## Operator Workbench UX Hierarchy
 

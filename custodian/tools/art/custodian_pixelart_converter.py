@@ -1573,6 +1573,7 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--normalization-plan", type=Path, help="Replay a reviewed Source Session normalization plan exactly.")
+    parser.add_argument("--expected-normalization-plan-sha256", help="Trusted Source Session digest required to replay a normalization plan.")
     parser.add_argument(
         "--anchor",
         choices=[
@@ -1919,6 +1920,10 @@ def main() -> int:
         plan_registrations = None
         if args.normalization_plan:
             plan_path = args.normalization_plan.expanduser().resolve(strict=True)
+            if not args.expected_normalization_plan_sha256:
+                raise SystemExit("normalization plan replay requires an expected SHA-256")
+            if hashlib.sha256(plan_path.read_bytes()).hexdigest() != args.expected_normalization_plan_sha256:
+                raise SystemExit("normalization plan SHA-256 does not match approved digest")
             plan = json.loads(plan_path.read_text(encoding="utf-8"))
             if plan.get("schema") not in {"custodian.operator_art_normalization_plan.v1", "custodian.operator_art_normalization_plan.v2"}:
                 raise SystemExit("normalization plan has unsupported schema")

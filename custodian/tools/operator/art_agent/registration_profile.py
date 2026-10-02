@@ -109,7 +109,7 @@ def render_overlay(*, output: Path, frame_size: tuple[int, int] = (96, 96), prof
     return str(output.resolve())
 
 
-def profile_report(*, landmarks: list[dict[str, Any]], frames: list[dict[str, Any]], profile: dict[str, Any] | None = None, global_scale: float | None = None, clipping_safe_scale: float | None = None, plan: Any = None) -> dict[str, Any]:
+def profile_report(*, landmarks: list[dict[str, Any]], frames: list[dict[str, Any]], profile: dict[str, Any] | None = None, global_scale: float | None = None, clipping_safe_scale: float | None = None, plan: Any = None, registered_canvas: bool = False, frame_size: list[int] | None = None) -> dict[str, Any]:
     loaded = profile or load_profile()
     reg = loaded.get("registration")
     if reg is None:
@@ -132,17 +132,41 @@ def profile_report(*, landmarks: list[dict[str, Any]], frames: list[dict[str, An
                 target = reg["guide"]["points"].get(name)
                 if target is not None:
                     residuals[name] = [transformed[0] - target[0], transformed[1] - target[1]]
+        elif registered_canvas and frame_size == reg["frame_size"]:
+            for name, point in frame_landmarks.items():
+                transformed = [float(point["x"]), float(point["y"])]
+                projected[name] = transformed
+                target = reg["guide"]["points"].get(name)
+                if target is not None:
+                    residuals[name] = [transformed[0] - target[0], transformed[1] - target[1]]
         result_frames.append({
             "frame": index, "alpha_bbox": frame.get("alpha_bbox"),
             "baseline_y": frame.get("bottom_y", frame.get("baseline_y")),
             "landmarks": {name: {"x": point["x"], "y": point["y"], "confidence": point["confidence"]} for name, point in frame_landmarks.items()},
             "transformed_landmarks": projected, "advisory_residuals": residuals,
         })
+    scale_observations = getattr(plan, "scale_observations", [])
+    if registered_canvas and frame_size == reg["frame_size"]:
+        by_frame = {frame: names for frame, names in points.items()}
+        for frame_number, names in by_frame.items():
+            for segment in reg.get("normalization", {}).get("scale_segments", []):
+                a, b = names.get(segment["a"]), names.get(segment["b"])
+                if a and b:
+                    observed = math.hypot(a["x"] - b["x"], a["y"] - b["y"])
+                    scale_observations.append({"frame": frame_number, "segment": f'{segment["a"]}:{segment["b"]}',
+                                               "observed_length": observed, "target_length": segment["target_length"],
+                                               "ratio": observed / segment["target_length"], "status": "advisory",
+                                               "interpretation": "measurement only; no Source Session scale normalization applied"})
     return {
         "schema": "custodian.operator_art_registration_report.v1",
         "profile_sha256": loaded["sha256"],
         "target_anchor": reg["anchor"], "guide": reg["guide"],
+        "anchor_context": {"coordinate": reg["anchor"], "coordinate_space": "profile_coordinates"},
         "global_scale": global_scale, "clipping_safe_scale": clipping_safe_scale,
-        "scale_observations": getattr(plan, "scale_observations", []),
+        "scale_observations": scale_observations,
+        "frame_size": frame_size,
+        "coordinate_space": "registered_workbench_canvas" if registered_canvas else "source_cell_pixels",
+        "source_session_scale_normalization_applied": bool(plan is not None),
+        "residuals_are_advisory": True,
         "frames": result_frames,
     }

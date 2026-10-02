@@ -17,6 +17,7 @@ import animation_workbench_model as model
 from art_agent.registration_profile import load_profile, weighted_median
 from art_agent.source_models import NormalizationPlan
 from art_agent.source_service import SourceArtService
+from art_agent.service import ArtAgentService
 
 
 def main() -> int:
@@ -82,11 +83,14 @@ def main() -> int:
         outputs = service.convert(session_path)
         command = service.production_command(session_path)
         assert command["executes"] is False
+        assert "--expected-normalization-plan-sha256" in command["command"]
         output_path = Path(command["output"]); output_path.parent.mkdir(parents=True, exist_ok=True)
+        approved_digest = service.load(session_path)[0].approved_normalization_plan_sha256
         subprocess.run([sys.executable, str(ROOT / "custodian/tools/art/custodian_pixelart_converter.py"),
                         str(source), str(output_path), "--sheet", "--frames", "1", "--source-cell", "768x768",
                         "--size", "96", "--choose", "1", "--force", "--normalization-plan",
-                        str(session_path.parent / "normalization_plan.json")], check=True, capture_output=True, text=True)
+                        str(session_path.parent / "normalization_plan.json"), "--expected-normalization-plan-sha256",
+                        approved_digest], check=True, capture_output=True, text=True)
         with Image.open(outputs["candidates"]["crisp"]) as internal, Image.open(output_path) as external:
             assert internal.convert("RGBA").tobytes() == external.convert("RGBA").tobytes()
         proof = service.verify_production(session_path)
@@ -94,6 +98,72 @@ def main() -> int:
         report = service.source_registration_report(session_path)
         assert report["profile_sha256"] == profile["sha256"]
         assert report["frames"][0]["transformed_landmarks"]["hip_center"]
+
+        plan_path = session_path.parent / "normalization_plan.json"
+        approved_digest = service.load(session_path)[0].approved_normalization_plan_sha256
+        original_plan = json.loads(plan_path.read_text())
+        tampered = dict(original_plan, destination_x=original_plan["destination_x"] + 1)
+        plan_path.write_text(json.dumps(tampered))
+        try:
+            service.verify_production(session_path)
+        except model.WorkbenchError as error:
+            assert "changed after approval" in str(error)
+        else:
+            raise AssertionError("source verification accepted an in-bounds plan mutation")
+        for label, operation in (
+            ("source registration report", lambda: service.source_registration_report(session_path)),
+            ("review", lambda: service.review(session_path)),
+        ):
+            try:
+                operation()
+            except model.WorkbenchError as error:
+                assert "changed after approval" in str(error), (label, error)
+            else:
+                raise AssertionError(f"{label} accepted an in-bounds plan mutation")
+        tampered_session, _, session_json = service.load(session_path)
+        tampered_session.state = "REVIEWED"
+        service.save(session_json, tampered_session)
+        try:
+            service.handoff(session_path, destination_name="operator_idle_e.png", dry_run=True)
+        except model.WorkbenchError as error:
+            assert "changed after approval" in str(error)
+        else:
+            raise AssertionError("handoff accepted an in-bounds plan mutation")
+        try:
+            subprocess.run([sys.executable, str(ROOT / "custodian/tools/art/custodian_pixelart_converter.py"),
+                            str(source), str(output_path), "--sheet", "--frames", "1", "--source-cell", "768x768",
+                            "--size", "96", "--choose", "1", "--force", "--normalization-plan", str(plan_path),
+                            "--expected-normalization-plan-sha256", approved_digest],
+                           check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as error:
+            assert "does not match approved digest" in error.stderr
+        else:
+            raise AssertionError("converter accepted an in-bounds plan mutation")
+        service.plan_normalization(session_path, mode="operator_profile")
+        service.set_frame_registration(session_path, frame=1, dx=1, dy=0)
+        assert service.load(session_path)[0].approved_normalization_plan_sha256 != approved_digest
+        assert not (session_path.parent / "production/verification.json").exists()
+
+        # Workbench reports use current 96x96 coordinates as registered canvas evidence,
+        # with scale and pose residuals remaining advisory.
+        wb_root = temp / "workbench-report"; (wb_root / "previews").mkdir(parents=True)
+        wb_service = ArtAgentService(art_root=temp / "wb-art", workspace_root=temp / "wb-workspace")
+        manifest = {"canvas": {"width": 96, "height": 96}}
+        wb_service._checked_session = lambda _path: (None, manifest, wb_root)
+        wb_service.get_metrics = lambda _path: {"frames": [{"alpha_bbox": [20, 10, 70, 90], "bottom_y": 90}]}
+        wb_service.get_landmarks = lambda _path: [
+            {"frame": 1, "name": "head_center", "x": 48, "y": 20, "confidence": 1.0, "status": "CURRENT"},
+            {"frame": 1, "name": "hip_center", "x": 49, "y": 59, "confidence": 1.0, "status": "CURRENT"},
+        ]
+        wb_report = wb_service.registration_report(Path("fixture"))
+        assert wb_report["profile_sha256"] == profile["sha256"]
+        assert wb_report["frame_size"] == [96, 96]
+        assert wb_report["coordinate_space"] == "registered_workbench_canvas"
+        assert wb_report["anchor_context"]["coordinate"] == registration["anchor"]
+        assert wb_report["source_session_scale_normalization_applied"] is False
+        assert wb_report["frames"][0]["transformed_landmarks"]["head_center"] == [48.0, 20.0]
+        assert wb_report["frames"][0]["advisory_residuals"]["hip_center"]
+        assert wb_report["scale_observations"] and all(x["status"] == "advisory" for x in wb_report["scale_observations"])
 
         unsafe = source_root / "unsafe.png"
         with Image.open(source) as base:
@@ -116,7 +186,7 @@ def main() -> int:
         else:
             raise AssertionError("out-of-cell source landmark was accepted")
 
-    print("PASS operator_art_registration_profile_smoke: profile authority, v1 compatibility, source landmarks, shared scale, plan replay, crisp proof")
+    print("PASS operator_art_registration_profile_smoke: profile authority, v1 compatibility, trusted plan digest, crisp replay, advisory workbench report")
     return 0
 
 
