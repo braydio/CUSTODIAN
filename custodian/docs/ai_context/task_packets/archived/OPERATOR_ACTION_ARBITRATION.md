@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-action-arbitration`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-runtime-compatibility-residue`
@@ -59,8 +59,30 @@
 - Task overrides: `none`
 - Deferred: Slice F remains six domain-focused packets: melee timeline/drive, dodge, ranged/ammo/heat/reload, loadout + `OperatorWeaponRuntimeState`, interactions/build/repair, and recovery. Absolute scene dependencies leave `operator.gd` with those domain extractions, not here. Slice G performs final scene/shell collapse and hard zero-debt gate.
 
+## Completion Truth
+
+- Implementation complete: yes.
+- Acceptance criteria complete: yes.
+- Validation complete: yes for task-scoped tests; changed-file closeout has one unrelated pre-existing `review_pairing_contract` failure (malformed bounded override in `review-procgen-distant-chunk-unload`).
+- Debt audit: `animation_state_actor_glue` is zero; factual baseline is 38 absolute scene lookups + 3 mutable weapon-definition runtime fields (41 total).
+- Focused action smoke: `operator_action_arbitration_smoke.gd` passes.
+- Existing regression tests passed: `operator_attack_phase_cadence`, `operator_modular_fast_attack`, `operator_guard_flow`, `operator_parry_presentation`, `operator_melee_sheathe`, `operator_melee_switch_chain`, `operator_melee_posture`, `operator_modular_idle_hitreact`, `operator_knockdown_animation`, and `operator_fixed_tick_spine`.
+- No production Operator consumer of `AnimationStateMachine`, `AnimationState`, or concrete animation-state shells remains; old files are removed.
+- Operator death/respawn behavior is covered at the action-controller terminal/reset boundary; no dedicated death/respawn validation ID exists in the current manifest.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: partial
+- Friction severity: low
+- What went wrong: changed-file closeout selected an unrelated repository-wide review-packet contract check that fails on an existing malformed bounded override.
+- Root cause / contributing factors: the review packet predates this task and is outside the Operator workstream.
+- Prevention / pipeline improvement: repair or refresh the `review-procgen-distant-chunk-unload` packet's bounded override in its owning workstream.
+- Tooling / docs drift discovered: task packet was still queued behind already-landed prerequisites; current live baseline differed from its reviewed-main measurements.
+- Follow-up: manual-follow-up
+- What worked: focused action and combat regression selection gave fast, relevant coverage.
+
 ## Handoff
 
-- Next action: Wait for `operator-runtime-compatibility-residue` to complete/archive, then re-measure the live debt ledger and implement the explicit action/presentation authorities before deleting legacy states.
-- Best starting files: `operator.gd`; `animations/animation_state_machine.gd`; `animations/states/*.gd`; `presentation/operator_body_presenter.gd`; `presentation/operator_body_presentation_plan.gd`; `presentation/operator_animation_player.gd`; `combat/operator_guard_controller.gd`; action/weapon-switch/damage-reaction focused smokes.
-- Blockers or open questions: None. The two-link transitive prerequisite chain is intentional and bounded: C2b.2 -> C2b.3 -> Slice E.
+- Next action: None; implementation is complete and archived.
+- Blockers or open questions: None.

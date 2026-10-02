@@ -116,7 +116,7 @@ turned out to advance state gameplay reads, and D.1 moved them to the fixed tick
 | call | what it actually moves | who reads it |
 |---|---|---|
 | `_tick_primary_ranged_action_presentation` | `_primary_ranged_action_timer` / phase | `_is_ranged_aim_ready()` → `can_fire_ranged_now()` and the fire branch of `_handle_attack_input()` |
-| `_update_animation_state_machine` | `AnimationState.elapsed`, state transitions | `_is_movement_locked()`, weapon-selection gating, `update_block_state()` |
+| `_update_operator_actions` | `OperatorActionController` action duration and transitions | movement locks, weapon-selection gating, guard update |
 | `_update_melee_presentation_posture` | melee draw grace, READY/RELAXED | the Vigil ready-up bridge before attack startup |
 
 The lesson is in the rule now: an exemption is a claim about what a function
@@ -303,9 +303,9 @@ whoever takes the body next instead of blinking it between presentations.
 `OperatorAnimationPlayer` (Slice C1) owns HOW an already-resolved clip plays:
 start, restart, stop, speed, frame and progress. It is mechanical and holds no
 semantic vocabulary — no attack kind, no weapon identity, no direction policy,
-and no action-specific methods. `operator.gd` and the compatibility
-`AnimationStateMachine` both drive playback through it rather than touching
-`AnimatedSprite2D` directly.
+and no action-specific methods. `OperatorPresentationController` coordinates semantic requests through the selector,
+presenter and player. `OperatorActionController` owns arbitration only and has no
+presentation references.
 
 ### The active presentation chassis
 

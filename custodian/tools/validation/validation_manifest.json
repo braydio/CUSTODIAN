@@ -366,7 +366,14 @@
       "type": "godot_script",
       "script": "res://tools/validation/procgen_distant_chunk_unload_smoke.gd",
       "tier": "actor",
-      "tags": ["procgen", "streaming", "chunk-unload", "residency", "navigation", "telemetry"],
+      "tags": [
+        "procgen",
+        "streaming",
+        "chunk-unload",
+        "residency",
+        "navigation",
+        "telemetry"
+      ],
       "owners": [
         "custodian/game/world/procgen/streaming/procgen_chunk_residency_policy.gd",
         "custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd",
@@ -1933,7 +1940,9 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/vfx/combat/parry_success_burst_vfx.gd"
+        "custodian/game/vfx/combat/parry_success_burst_vfx.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2045,7 +2054,9 @@
       "owners": [
         "custodian/game/actors/operator/operator.gd",
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
-        "custodian/tools/validation/operator_attack_phase_cadence_smoke.gd"
+        "custodian/tools/validation/operator_attack_phase_cadence_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 90,
       "needs_import": true
@@ -2164,7 +2175,9 @@
         "custodian/game/actors/operator/operator.tscn",
         "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
         "custodian/game/actors/operator/presentation/operator_animation_player.gd",
-        "custodian/tools/validation/operator_modular_fast_attack_smoke.gd"
+        "custodian/tools/validation/operator_modular_fast_attack_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 60,
       "needs_import": false
@@ -2182,7 +2195,8 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/hit_recoil_state.gd"
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2201,9 +2215,10 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/hit_recoil_state.gd",
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
-        "custodian/tools/validation/operator_knockdown_animation_smoke.gd"
+        "custodian/tools/validation/operator_knockdown_animation_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2299,7 +2314,9 @@
       "owners": [
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/input/**",
-        "custodian/tools/validation/operator_fixed_tick_spine_smoke.gd"
+        "custodian/tools/validation/operator_fixed_tick_spine_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2469,11 +2486,12 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/sheathe_weapon_state.gd",
         "custodian/game/actors/operator/presentation/melee_posture_resolver.gd",
         "custodian/game/actors/operator/vigil_pattern_dagger_fx_frames.tres",
         "custodian/game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
-        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md"
+        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2491,9 +2509,8 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/sheathe_weapon_state.gd",
-        "custodian/game/actors/operator/animations/states/equip_weapon_state.gd",
-        "custodian/game/actors/operator/animations/animation_state_machine.gd"
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2669,11 +2686,12 @@
       "owners": [
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
-        "custodian/game/actors/operator/animations/states/block_state.gd",
         "custodian/game/actors/operator/combat/operator_guard_controller.gd",
         "custodian/game/actors/operator/combat/operator_guard_config.gd",
         "custodian/game/actors/operator/combat/configs/operator_guard_default.tres",
-        "custodian/tools/validation/operator_guard_flow_smoke.gd"
+        "custodian/tools/validation/operator_guard_flow_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 40,
       "needs_import": false
@@ -3840,6 +3858,28 @@
       "needs_import": false
     },
     {
+      "id": "operator_action_arbitration",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_action_arbitration_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "action_arbitration",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presentation_plan.gd",
+        "custodian/game/actors/operator/presentation/operator_animation_player.gd",
+        "custodian/game/actors/operator/animations/operator_animation_selector.gd",
+        "custodian/tools/validation/operator_action_arbitration_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_architecture_debt",
       "type": "python",
       "script": "custodian/tools/validation/operator_architecture_debt_audit.py",
@@ -3893,8 +3933,9 @@
       "owners": [
         "custodian/game/actors/operator/presentation/melee_posture_resolver.gd",
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/equip_weapon_state.gd",
-        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md"
+        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false

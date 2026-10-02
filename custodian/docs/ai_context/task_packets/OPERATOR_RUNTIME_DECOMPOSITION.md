@@ -252,7 +252,7 @@ hardened detector found one more site the old pattern could not see —
 number of direct playback sites was **95**: 88 in `operator.gd` plus 7 in the
 states. C1 eliminated all 95. The ledger and reality now agree.
 
-The states reach playback through narrow `AnimationStateMachine.play_animation()`
+Legacy animation states were removed in Slice E; `OperatorPresentationController` routes semantic presentation requests through the selector, presenter and player.
 / `can_play_animation()` delegates that share the same authority instance.
 `animated_sprite_play_outside_presentation` is retired from the baseline. The rule also gained an optional subscript, because
 `sprites[index].play()` was the same direct playback wearing an index and the old

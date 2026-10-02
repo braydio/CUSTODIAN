@@ -13,17 +13,8 @@ signal dodge_flow_changed(value: float, direction: Vector2)
 signal integrity_reclaim_changed(status: Dictionary)
 
 const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
-const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
-const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
-const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
-const BlockState = preload("res://game/actors/operator/animations/states/block_state.gd")
-const EquipWeaponState = preload("res://game/actors/operator/animations/states/equip_weapon_state.gd")
-const SheatheWeaponState = preload("res://game/actors/operator/animations/states/sheathe_weapon_state.gd")
-const HitRecoilState = preload("res://game/actors/operator/animations/states/hit_recoil_state.gd")
-const IdleState = preload("res://game/actors/operator/animations/states/idle_state.gd")
-const WalkState = preload("res://game/actors/operator/animations/states/walk_state.gd")
-const SprintState = preload("res://game/actors/operator/animations/states/sprint_state.gd")
-const DeathState = preload("res://game/actors/operator/animations/states/death_state.gd")
+const OperatorActionControllerScript = preload("res://game/actors/operator/combat/operator_action_controller.gd")
+const OperatorPresentationControllerScript = preload("res://game/actors/operator/presentation/operator_presentation_controller.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
 const OperatorAnimationSelectorScript = preload(
 	"res://game/actors/operator/animations/operator_animation_selector.gd"
@@ -697,7 +688,11 @@ var _vista_presentation_mode := false
 var _idle_loop_counter := 0
 var _last_idle_frame := -1
 var _last_idle_animation := ""
-var _animation_state_machine = null
+var _action_controller: OperatorActionController
+var _presentation_controller: OperatorPresentationController
+var _damage_reaction_duration := 0.22
+var _damage_reaction_animation: StringName = &""
+var _damage_reaction_modular_handled := false
 var _portal_transition_locked := false
 var _portal_arrival_animation_active := false
 var _arrn_stabilization_locked := false
@@ -950,7 +945,8 @@ const MODULAR_SIDEARM_MUZZLE_OFFSETS := {
 func _exit_tree() -> void:
 	_set_ranged_aim_camera_active(false)
 	_cleanup_paired_execution(false, &"operator_exit_tree")
-	_animation_state_machine = null
+	_action_controller = null
+	_presentation_controller = null
 
 
 func _ready():
@@ -1027,7 +1023,7 @@ func _ready():
 	_rebuild_armed_weapon_list()
 	_sync_weapon_selection_from_current_loadout()
 	_apply_active_weapon_frames()
-	_setup_animation_state_machine()
+	_setup_operator_action_controller()
 	if use_tiny_rpg_placeholder_soldier:
 		_apply_placeholder_runtime_layout()
 	else:
@@ -1166,7 +1162,7 @@ func _advance_simulation(delta: float) -> void:
 	# render-tick audit on the strength of their names, which was wrong.
 	_update_melee_presentation_posture(delta)
 	_tick_primary_ranged_action_presentation(delta)
-	_update_animation_state_machine(delta)
+	_update_operator_actions(delta)
 	_update_combat_target()
 	_update_interaction_target()
 	if _is_dead:
@@ -1573,7 +1569,7 @@ func _update_animation():
 		return
 	if _parry_neutral_lock_active:
 		return
-	if _animation_state_machine != null and _animation_state_machine.current_state == "hit_recoil":
+	if _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.DAMAGE_REACTION):
 		# Damage reaction playback owns the full body until its state duration
 		# completes; ordinary locomotion must not replace a knockdown mid-strip.
 		if not _modular_damage_reaction_active:
@@ -4284,18 +4280,18 @@ func _ranged_2h_authored_sector(action: StringName, direction: Vector2) -> Strin
 
 ## Whether a plan would be accepted. Changes nothing and reports nothing.
 func _can_present_body(plan: OperatorBodyPresentationPlan) -> bool:
-	return _body_presenter.can_present(plan)
+	return _get_operator_presentation_controller().can_present(plan)
 
 
 func _present_body(plan: OperatorBodyPresentationPlan, report_rejection := true) -> bool:
 	if plan == null:
-		return _body_presenter.present(plan, report_rejection)
+		return _get_operator_presentation_controller().present(plan, report_rejection)
 	# Cancelling the outgoing lifecycle must not happen for a plan that will be
 	# rejected, or a rejected presentation would still abandon the live one.
-	if not _body_presenter.can_present(plan):
-		return _body_presenter.present(plan, report_rejection)
+	if not _get_operator_presentation_controller().can_present(plan):
+		return _get_operator_presentation_controller().present(plan, report_rejection)
 	_invalidate_preempted_rig_lifecycles(plan.owner)
-	return _body_presenter.present(plan, report_rejection)
+	return _get_operator_presentation_controller().present(plan, report_rejection)
 
 
 func _release_modular_body_layers() -> void:
@@ -5921,18 +5917,19 @@ func _request_attack_state(kind: String) -> void:
 	if kind == "critical":
 		_start_attack_by_kind(kind)
 		return
-	var state_name := "attack_fast"
+	var action := OperatorActionControllerScript.FAST_ATTACK
 	if kind == "heavy":
-		state_name = "attack_heavy"
-	if _animation_state_machine != null and _animation_state_machine.request(state_name, 10):
+		action = OperatorActionControllerScript.HEAVY_ATTACK
+	if _action_controller == null:
+		_start_attack_by_kind(kind)
 		return
-	_start_attack_by_kind(kind)
+	_action_controller.request(action, 10)
 
 
 func _request_block_state() -> void:
 	_cancel_attack_drive(true)
-	if _animation_state_machine != null:
-		_animation_state_machine.request("block", 8)
+	if _action_controller != null:
+		_action_controller.request(OperatorActionControllerScript.BLOCK, 8)
 
 
 func _buffer_attack(kind: String) -> void:
@@ -7561,8 +7558,8 @@ func _begin_paired_execution(
 	_parry_phase = &""
 	_parry_active = false
 	_parry_timer = 0.0
-	if _animation_state_machine != null:
-		_animation_state_machine.request("idle", 100)
+	if _action_controller != null:
+		_action_controller.force_neutralize()
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
 	_modular_upper_fx_action_animation = &""
@@ -10615,9 +10612,9 @@ func try_apply_pending_weapon_selection() -> void:
 func can_apply_weapon_selection_now() -> bool:
 	if _is_dead or _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or _is_block_state_active() or _reload_active:
 		return false
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return true
-	return _animation_state_machine.current_state in ["idle", "walk", "sprint"]
+	return _action_controller.current_action.is_empty()
 
 
 func _resolve_weapon_definition_for_selection(selection: Dictionary) -> OperatorWeaponDefinition:
@@ -10685,23 +10682,23 @@ func commit_pending_weapon_selection_after_sheathe() -> bool:
 
 
 func _enter_equip_weapon_state_if_available() -> void:
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return
-	_animation_state_machine.request("equip_weapon", 5)
+	_action_controller.request(OperatorActionControllerScript.EQUIP, 5)
 
 
 func _enter_sheathe_weapon_state_if_available() -> void:
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return
-	_animation_state_machine.request("sheathe_weapon", 5)
+	_action_controller.request(OperatorActionControllerScript.SHEATHE, 5)
 
 
 func _is_equip_weapon_state_active() -> bool:
-	return _animation_state_machine != null and _animation_state_machine.current_state == "equip_weapon"
+	return _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.EQUIP)
 
 
 func _is_sheathe_weapon_state_active() -> bool:
-	return _animation_state_machine != null and _animation_state_machine.current_state == "sheathe_weapon"
+	return _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.SHEATHE)
 
 
 func _apply_unarmed_selection() -> void:
@@ -11611,7 +11608,7 @@ func guard_enter_post_parry_neutral() -> void:
 
 
 func _is_movement_locked() -> bool:
-	var damage_reaction_locked: bool = _animation_state_machine != null and _animation_state_machine.current_state == "hit_recoil"
+	var damage_reaction_locked: bool = _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.DAMAGE_REACTION)
 	return damage_reaction_locked or _paired_execution_active or _reload_active or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
 
 
@@ -12541,40 +12538,120 @@ func _refresh_primary_weapon_state() -> void:
 	_update_primary_weapon_visual(false)
 
 
-func _setup_animation_state_machine() -> void:
-	_animation_state_machine = AnimationStateMachine.new()
-	_animation_state_machine.sprite = animated_sprite
-	_animation_state_machine.playback = _animation_player
-	_animation_state_machine.actor = self
-	_animation_state_machine.register_state(IdleState.new())
-	_animation_state_machine.register_state(WalkState.new())
-	_animation_state_machine.register_state(SprintState.new())
-	_animation_state_machine.register_state(BlockState.new())
-	_animation_state_machine.register_state(EquipWeaponState.new())
-	_animation_state_machine.register_state(SheatheWeaponState.new())
-	var hit_recoil_state := HitRecoilState.new()
-	hit_recoil_state.recoil_duration = operator_light_reaction_stun_duration
-	_animation_state_machine.register_state(hit_recoil_state)
-	_animation_state_machine.register_state(AttackFastState.new())
-	_animation_state_machine.register_state(AttackHeavyState.new())
-	_animation_state_machine.register_state(DeathState.new())
-	_animation_state_machine.current_state = "idle"
+func _setup_operator_action_controller() -> void:
+	_action_controller = OperatorActionControllerScript.new()
+	_action_controller.action_entered.connect(_on_operator_action_entered)
+	_action_controller.action_exited.connect(_on_operator_action_exited)
+	_get_operator_presentation_controller()
 
 
-func _update_animation_state_machine(delta: float) -> void:
-	if _animation_state_machine == null:
+func _get_operator_presentation_controller() -> OperatorPresentationController:
+	if _presentation_controller == null:
+		_presentation_controller = OperatorPresentationControllerScript.new(
+			_body_presenter,
+			_animation_player,
+			_get_operator_animation_selector()
+		)
+	return _presentation_controller
+
+
+func _on_operator_action_entered(action: StringName, _sequence: int, _reentry: bool) -> void:
+	match action:
+		OperatorActionControllerScript.FAST_ATTACK:
+			start_attack("melee_fast")
+		OperatorActionControllerScript.HEAVY_ATTACK:
+			start_attack("melee_heavy")
+		OperatorActionControllerScript.BLOCK:
+			start_block()
+		OperatorActionControllerScript.EQUIP:
+			start_equip_weapon_presentation()
+		OperatorActionControllerScript.SHEATHE:
+			start_sheathe_weapon_presentation()
+		OperatorActionControllerScript.DAMAGE_REACTION:
+			_begin_operator_damage_reaction()
+		OperatorActionControllerScript.DEATH:
+			_present_operator_death_animation()
+
+
+func _on_operator_action_exited(action: StringName, _sequence: int) -> void:
+	if action == OperatorActionControllerScript.DAMAGE_REACTION:
+		finish_damage_reaction_presentation()
+
+
+func _begin_operator_damage_reaction() -> void:
+	_damage_reaction_duration = maxf(0.01, get_damage_reaction_duration("hit_recoil"))
+	_damage_reaction_animation = get_damage_reaction_animation("hit_recoil")
+	_damage_reaction_modular_handled = begin_modular_damage_reaction("hit_recoil")
+	if not _damage_reaction_modular_handled:
+		if animated_sprite == null or animated_sprite.sprite_frames == null:
+			return
+		if _damage_reaction_animation.is_empty():
+			return
+		if not animated_sprite.sprite_frames.has_animation(_damage_reaction_animation):
+			return
+		animated_sprite.speed_scale = 1.0
+		_get_operator_presentation_controller().play_animation(
+			animated_sprite, _damage_reaction_animation, true
+		)
+	play_damage_reaction_fx(_damage_reaction_animation, _damage_reaction_modular_handled)
+
+
+func _present_operator_death_animation() -> void:
+	if animated_sprite == null:
 		return
-	if _portal_transition_locked or _portal_arrival_animation_active:
+	var plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.LEGACY_FULL_BODY,
+		[animated_sprite]
+	)
+	_get_operator_presentation_controller().present_omni_animation(
+		plan,
+		animated_sprite,
+		&"unarmed",
+		&"reaction",
+		&"death_01",
+		&"full_body"
+	)
+
+
+func _update_operator_actions(delta: float) -> void:
+	if _action_controller == null or _portal_transition_locked or _portal_arrival_animation_active:
 		return
-	_animation_state_machine._process(delta)
-	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup:
+	var action := _action_controller.current_action
+	if action.is_empty():
+		if _is_block_state_active():
+			_action_controller.request(OperatorActionControllerScript.BLOCK, 8)
 		return
-	if _is_block_state_active():
-		_animation_state_machine.request("block", 8)
-		return
-	var desired_state := _get_desired_animation_state()
-	var state_priority := 1 if desired_state == "walk" or desired_state == "sprint" else 0
-	_animation_state_machine.request(desired_state, state_priority)
+	_action_controller.advance(delta)
+	match action:
+		OperatorActionControllerScript.FAST_ATTACK:
+			if is_attack_state_complete("fast"):
+				_action_controller.complete(action)
+		OperatorActionControllerScript.HEAVY_ATTACK:
+			if is_attack_state_complete("heavy"):
+				_action_controller.complete(action)
+		OperatorActionControllerScript.BLOCK:
+			if update_block_state() != "block":
+				_action_controller.complete(action)
+		OperatorActionControllerScript.EQUIP:
+			if is_equip_weapon_presentation_complete():
+				_action_controller.complete(action)
+		OperatorActionControllerScript.SHEATHE:
+			if is_sheathe_weapon_presentation_complete():
+				var needs_draw := commit_pending_weapon_selection_after_sheathe()
+				_action_controller.complete(action)
+				if needs_draw:
+					_action_controller.request(OperatorActionControllerScript.EQUIP, 5)
+		OperatorActionControllerScript.DAMAGE_REACTION:
+			if _action_controller.elapsed >= _damage_reaction_duration:
+				_action_controller.complete(action)
+			elif _damage_reaction_modular_handled and not is_modular_damage_reaction_playing():
+				_action_controller.complete(action)
+			elif not _damage_reaction_modular_handled \
+			and not _damage_reaction_animation.is_empty() \
+			and animated_sprite != null \
+			and animated_sprite.animation == _damage_reaction_animation \
+			and not animated_sprite.is_playing():
+				_action_controller.complete(action)
 
 
 func _get_desired_animation_state() -> String:
@@ -13803,9 +13880,9 @@ func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hit
 	_last_damage_reaction_direction = impact_direction
 	_interrupt_active_combat_for_damage_reaction()
 	velocity = impact_direction * (knockback_px / maxf(0.16, _enemy_impact_lock_timer))
-	if _animation_state_machine != null:
+	if _action_controller != null:
 		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
-		_animation_state_machine.request("hit_recoil", 24)
+		_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 24)
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("on_damage_taken"):
 		camera.call("on_damage_taken", impact_direction)
@@ -13823,19 +13900,19 @@ func apply_enemy_falcon_punch_impact(direction: Vector2, knockback_px: float, vi
 	_last_damage_reaction_direction = impact_direction
 	_interrupt_active_combat_for_damage_reaction()
 	velocity = impact_direction * (knockback_px / maxf(0.13, _enemy_impact_lock_timer))
-	if _animation_state_machine != null:
+	if _action_controller != null:
 		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
-		_animation_state_machine.request("hit_recoil", 24)
+		_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 24)
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("on_damage_taken"):
 		camera.call("on_damage_taken", impact_direction)
 
 func _request_damage_reaction(_amount: float, hit_strength: int = CombatConstants.HitStrength.LIGHT) -> void:
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return
 	_damage_reaction_strength = hit_strength
 	_interrupt_active_combat_for_damage_reaction()
-	_animation_state_machine.request("hit_recoil", 20)
+	_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 20)
 
 
 func begin_modular_damage_reaction(state_name: String) -> bool:
@@ -14094,9 +14171,8 @@ func finish_damage_reaction_presentation() -> void:
 			melee_fx_overlay_sprite.frame = 0
 	if modular_was_active:
 		_update_primary_weapon_visual(false)
-		# AnimationStateMachine invokes this hook before it assigns the next
-		# state. Defer the locomotion resync so hit_recoil no longer suppresses
-		# the restored modular layers.
+		# Defer the locomotion resync until the damage action has released its
+		# ownership, so the restored modular layers are no longer suppressed.
 		if is_inside_tree():
 			call_deferred("_update_animation")
 		else:
@@ -14191,14 +14267,8 @@ func _handle_death() -> void:
 	stamina = 0.0
 	velocity = Vector2.ZERO
 	disable_hitbox()
-	if _animation_state_machine != null:
-		_animation_state_machine.request("death", 20)
-	if animated_sprite and animated_sprite.sprite_frames:
-		var death_animation := "unarmed_death" if _is_current_profile_unarmed() else "death"
-		if not animated_sprite.sprite_frames.has_animation(death_animation):
-			death_animation = "death"
-		if animated_sprite.sprite_frames.has_animation(death_animation):
-			_animation_player.play(animated_sprite, death_animation)
+	if _action_controller != null:
+		_action_controller.request(OperatorActionControllerScript.DEATH, 20)
 	var gs = get_node_or_null("/root/GameState")
 	if gs and gs.has_method("lose_life"):
 		gs.lose_life("Custodian eliminated after a fatal strike")
@@ -14269,12 +14339,8 @@ func _finish_death() -> void:
 	_is_dead = false
 	_obs_gauge(&"player_alive", true)
 	_obs_gauge(&"player_dead", false)
-	if _animation_state_machine != null:
-		# DeathState is terminal and non-interruptible; respawn must force the
-		# state machine back to an input-eligible state before queued weapon
-		# selections can apply again.
-		_animation_state_machine.current_state = ""
-		_animation_state_machine.request("idle", 0)
+	if _action_controller != null:
+		_action_controller.reset_for_respawn()
 	try_apply_pending_weapon_selection()
 
 func update_visuals():

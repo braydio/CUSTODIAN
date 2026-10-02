@@ -146,7 +146,7 @@ func _check_reload_is_fixed_tick_owned(operator: Node) -> void:
 ## turned out to move state gameplay reads:
 ##
 ##   `_primary_ranged_action_timer` -> `_is_ranged_aim_ready()` -> whether you may fire
-##   `AnimationStateMachine` state  -> `_is_movement_locked()`, weapon selection
+##   Operator action elapsed  -> `_is_movement_locked()`, weapon selection
 ##   melee posture draw grace       -> READY, and the Vigil ready-up bridge
 ##
 ## This is the case that fails if any of them goes back.
@@ -173,33 +173,29 @@ func _check_gameplay_bearing_advancers(operator: Node) -> void:
 		"ranged aim readiness did not advance on the fixed tick"
 	)
 
-	# --- animation state machine: its state gates movement locks ---
-	var machine = operator.get("_animation_state_machine")
-	_check(machine != null, "the state-machine case needs the live machine")
-	if machine != null:
-		var state_name: String = String(machine.current_state)
-		if machine.states.has(state_name):
-			var state = machine.states[state_name]
-			state.elapsed = 0.0
-			for _i in 10:
-				operator.call("_process", 0.1)
-				await process_frame
-			var after_render: float = float(state.elapsed)
-			_check(
-				is_equal_approx(after_render, 0.0),
-				"the animation state machine advanced from the render tick: "
-					+ "elapsed is %.4f. Its state gates movement locks and weapon "
-						% after_render
-					+ "selection."
-			)
-			operator.call("_advance_simulation", 0.25)
-			await process_frame
-			var active_name: String = String(machine.current_state)
-			var active = machine.states.get(active_name)
-			_check(
-				active != null and float(active.elapsed) > 0.0,
-				"the animation state machine did not advance on the fixed tick"
-			)
+	# --- Operator action arbitration: its clock gates movement locks ---
+	var action_controller = operator.get("_action_controller")
+	_check(action_controller != null, "the action-controller case needs the live controller")
+	if action_controller != null:
+		_check(
+			action_controller.request(&"attack_fast", 10),
+			"the action controller should accept the focused fast-attack action"
+		)
+	for _i in 10:
+		operator.call("_process", 0.1)
+		await process_frame
+	if action_controller != null:
+		_check(
+			is_equal_approx(float(action_controller.elapsed), 0.0),
+			"Operator action elapsed advanced from the render tick: %.4f" % float(action_controller.elapsed)
+		)
+	operator.call("_advance_simulation", 0.25)
+	await process_frame
+	if action_controller != null:
+		_check(
+			float(action_controller.elapsed) > 0.0,
+			"Operator action did not advance on the fixed tick"
+		)
 
 	# --- melee posture: draw grace decides the Vigil ready-up route ---
 	var posture = operator.get("_melee_posture_state")
