@@ -202,8 +202,8 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | **complete** | M3 |
 | MR4 | `review-procgen-chunk-lifecycle-state-machine` | **complete — passed, non-blocking-only** | M4 |
-| M5 | `procgen-chunk-payload-cache` | **ready / eligible** | MR4 |
-| MR5 | `review-procgen-chunk-payload-cache` | queued | M5 |
+| M5 | `procgen-chunk-payload-cache` | **complete** (pending MR5 review) | MR4 |
+| MR5 | `review-procgen-chunk-payload-cache` | **ready / eligible** | M5 |
 | M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | MR5 |
 | P1 | `contract-world-placement-foundation` | **ready / eligible** | S1 |
 | PR1 | `review-contract-world-placement-foundation` | queued | P1 |
@@ -251,9 +251,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 and MR4 are complete. M5 `procgen-chunk-payload-cache` is `ready / auto` with MR5 behind it. In the independent placement lane, P1 `contract-world-placement-foundation` is `ready / auto` and now has a required paired review PR1 `review-contract-world-placement-foundation`; P2-P6 depend on PR1 rather than directly on P1.
-**State:** S1, G1-G5, M1-M4, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. The placement package is still README-only, so P1 is the live P-lane entry and P7 is refresh-gated after P2-P6. D1-D3 are refresh-gated after M6; X2/X3 are refresh-gated on their predecessor reviews; V2 is refresh-gated on V1 attribution.
-**Next gate:** M5 and P1 may execute in parallel because they hold different locks (`procgen-streaming` vs `contract-world-loader`). M5 -> MR5 gates M6 refresh. P1 -> PR1 gates P2-P6; PR1 must verify a minimal deterministic read-only placement context before any domain extraction begins. P2-P6 remain serialized by the shared loader lock, and P7 remains refresh-gated after they land.
+**Current packet:** M4, MR4, and M5 are complete; MR5 `review-procgen-chunk-payload-cache` is `ready / auto` against the landed M5 cache. In the independent placement lane, P1 `contract-world-placement-foundation` is `ready / auto` and now has a required paired review PR1 `review-contract-world-placement-foundation`; P2-P6 depend on PR1 rather than directly on P1.
+**State:** S1, G1-G5, M1-M5, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. The placement package is still README-only, so P1 is the live P-lane entry and P7 is refresh-gated after P2-P6. D1-D3 are refresh-gated after M6; X2/X3 are refresh-gated on their predecessor reviews; V2 is refresh-gated on V1 attribution.
+**Next gate:** MR5 and P1 may execute in parallel because they hold different locks (`procgen-streaming` vs `contract-world-loader`). MR5 gates M6 refresh (a clean/non-blocking-only pass makes M6 refresh-eligible; M6 must still be re-derived from the reviewed landed cache). P1 -> PR1 gates P2-P6; PR1 must verify a minimal deterministic read-only placement context before any domain extraction begins. P2-P6 remain serialized by the shared loader lock, and P7 remains refresh-gated after they land.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
@@ -697,7 +697,47 @@ owns the real reload policy.
 - **Landed main SHA:** `6588093c2` (`procgen chunk lifecycle state machine, M4 ProcGenChunkLifecycle authority`).
 - **Closing summary:** `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE_CLAUDE_SUMMARY.md`.
 - **Evidence:** New `procgen_chunk_lifecycle_smoke.gd` proves deterministic state progression for queued unpaused reveal, pause PREPARE -> resume commit, immediate reveal, a zero-content chunk, active-radius exit to DORMANT and re-entry to VISIBLE without duplicate work, and the debug-only UNLOADED seam, plus illegal-transition detection and idempotent re-requests. `procgen_pause_aware_streaming_smoke.gd`, `procgen_candidate_promotion_smoke.gd` (restored to required regression status -- its obsolete strict streamed-floor assertion is gone), `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_macro_presentation_smoke.gd`, and `procgen_road_semantics_v2_smoke.gd` all pass unchanged (the last required one small fix: it used to poke `_revealed_chunks` directly to fake residency before testing unload/re-reveal, now calls the real `_reveal_chunk_immediately` adapter instead). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint as M1-M3, confirming no deterministic-output regression. `procgen_performance_baseline_bench.gd`'s and `procgen_performance_snapshot.gd`'s external `_revealed_chunks`/`_queued_chunks` telemetry reads were migrated to the new `ProcGenTilemap.get_resident_chunk_count()`/`get_pending_chunk_count()` public API.
-- **Next:** MR4 passed. M5 `procgen-chunk-payload-cache` is ready/eligible; MR5 follows it, and M6 stays refresh-gated until MR5 passes.
+- **Next:** MR4 passed. M5 `procgen-chunk-payload-cache` is complete (see below); MR5 follows it, and M6 stays refresh-gated until MR5 passes.
+
+### M5 Chunk Payload Cache — Complete (pending MR5 review)
+
+`ProcGenChunkPayloadCache` (`custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd`)
+is a plain-data, generation-scoped, invalidatable `RefCounted` cache behind
+`ProcGenTilemap`'s existing chunk-membership enumeration and tile PREPARE-
+record construction. `ProcGenTilemap` still owns canonical floor/wall
+semantics, M3 (`ProcGenPauseAwareStreaming`) still owns the only tile queue/
+PREPARE-COMMIT lifecycle, and M4 (`ProcGenChunkLifecycle`) still owns the only
+chunk lifecycle; the cache only accelerates reusable derived reads. Chunk
+tile membership (`_get_chunk_tiles()`'s own deterministic order) and per-tile
+floor/wall PREPARE records are lazily cached and reused on repeated/re-reveal
+access; live `_streaming_reveal_priority()` is never cached, so queued order
+is still always recomputed from the current `center_tile`. Exact invalidation
+was derived from a full inventory of every live write/erase of
+`_generated_floor_cells`/`_generated_wall_cells`: a true generation/streaming-
+reset boundary does a full cache reset (`_prepare_streaming_reveal()`), and
+every post-cache semantic mutation -- wall destruction (`damage_wall_tile`),
+neighbor wall repaint (`_refresh_wall_neighbors`), authored-scene/world-
+overlook claims, and the handful of shared low-level floor/wall authority
+setters every write site (including late-generation finalization passes that
+run after streaming priming) funnels through -- precisely invalidates only
+its own tile's chunk. A PREPARE record is stamped with the generation/chunk-
+revision identity it was built under, so `_commit_tile_reveal_record()`
+revalidates it immediately before authoritative mutation and rebuilds it from
+canonical state if it went stale after PREPARE but before COMMIT, even if
+M3's `_prepared` queue is still holding the old Dictionary. COMMIT-time
+dynamic effects (road/surface decals, dressing/foliage, runtime wall
+collision, overlays/shadows/navigation/macro visibility) are never cached.
+Deterministic telemetry (cached chunk/record counts, hit/miss/invalidation/
+stale-refresh counts, reset/generation id) is exposed through
+`ProcGenTilemap.get_runtime_health_snapshot()` and a new
+`debug_get_chunk_payload_cache_snapshot()` seam. M5 implements no eviction/
+unload/hysteresis policy; `streaming_unload_distant_chunks` stays false and
+M6 is not unblocked by this packet alone.
+
+- **Landed main SHA:** see `PROCGEN_CHUNK_PAYLOAD_CACHE_CLAUDE_SUMMARY.md` for the exact implementation-commit hash.
+- **Closing summary:** `PROCGEN_CHUNK_PAYLOAD_CACHE_CLAUDE_SUMMARY.md`.
+- **Evidence:** New `procgen_chunk_payload_cache_smoke.gd` proves (against a live `ProcGenTilemap`): lazy population (an untouched chunk has no entry until first access); miss->hit reuse for both chunk membership and per-tile PREPARE records; dynamic reveal order recomputed from a live `center_tile` over reused cached membership; a debug unload/re-reveal round trip producing cache hits with zero rebuilds when no semantic mutation occurred; wall-destruction invalidation (`damage_wall_tile`) restoring the destroyed floor and never resurrecting the wall across unload/re-reveal; authored-scene floor-claim invalidation reloading the new region truth; a stale PREPARE record (captured before a wall was destroyed, exactly like one still sitting in M3's `_prepared` queue) being detected and refreshed immediately before COMMIT instead of resurrecting the destroyed wall; presentation/telemetry-only reads never spuriously invalidating; and generation-scoped reset separating cache state across a regeneration. `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_materializer_parity`, `procgen_macro_presentation`, `procgen_road_semantics_v2`, and `procgen_dressing_clusters` all pass unchanged via `run_validation.py --test`; `procgen_authored_scene_authority_smoke.gd` passes via direct invocation (still unregistered in the manifest). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint (`1773840677`) as M1-M4, confirming no deterministic-output regression. A full `run_validation.py --changed` sweep (25 selected tests) and `git diff --check` are both clean.
+- **Next:** MR5 `review-procgen-chunk-payload-cache` is now dependency-eligible. On a clean/non-blocking-only pass, M6 `procgen-distant-chunk-unload` must be refreshed in place against this reviewed cache before it becomes executable.
 
 ---
 
