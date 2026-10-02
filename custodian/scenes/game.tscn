@@ -16,16 +16,16 @@
 [ext_resource type="PackedScene" path="res://game/actors/enemies/fast_drone.tscn" id="16_fast_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/heavy_drone.tscn" id="17_heavy_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_grunt.tscn" id="18_grunt_enemy"]
-[ext_resource type="PackedScene" path="res://game/actors/enemies/pursuit_frame.tscn" id="18_pursuit_frame_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_marine.tscn" id="18_marine_enemy"]
+[ext_resource type="PackedScene" path="res://game/actors/enemies/pursuit_frame.tscn" id="18_pursuit_frame_enemy"]
 [ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_savage.tscn" id="18_savage_enemy"]
 [ext_resource type="PackedScene" uid="uid://chxttfh575v5i" path="res://game/actors/sector/turret_gunner.tscn" id="19_turret_gunner"]
-[ext_resource type="PackedScene" path="res://game/actors/sector/turret_blaster.tscn" id="20_turret_blaster"]
+[ext_resource type="PackedScene" uid="uid://c2d8j3nvkauu" path="res://game/actors/sector/turret_blaster.tscn" id="20_turret_blaster"]
 [ext_resource type="PackedScene" path="res://game/actors/sector/turret_repeater.tscn" id="21_turret_repeater"]
 [ext_resource type="PackedScene" path="res://game/actors/sector/turret_sniper.tscn" id="22_turret_sniper"]
 [ext_resource type="Script" uid="uid://bv666t3wt6ofa" path="res://game/actors/sector/power_node.gd" id="24_power_node"]
 [ext_resource type="Script" uid="uid://c1cs5ipx8lxnp" path="res://game/systems/core/systems/supply_drop_manager.gd" id="25_supply_drop"]
-[ext_resource type="Script" path="res://game/world/procgen/world_contract_proxy.gd" id="26_contract_proxy"]
+[ext_resource type="Script" uid="uid://cohfmclo3qn3u" path="res://game/world/procgen/world_contract_proxy.gd" id="26_contract_proxy"]
 [ext_resource type="PackedScene" uid="uid://dqle6bbgblr2o" path="res://game/actors/terminal/command_terminal.tscn" id="27_command_terminal"]
 [ext_resource type="Script" uid="uid://bvqagq17ro1u6" path="res://game/systems/core/systems/contract_world_loader.gd" id="28_contract_loader"]
 [ext_resource type="Script" uid="uid://xjdny30dgrp6" path="res://content/tiles/debug/debug_controller.gd" id="29_debug_controller"]
@@ -49,42 +49,41 @@
 [ext_resource type="Script" uid="uid://brs7i5frcn2w5" path="res://game/systems/core/systems/terminal_deployment.gd" id="101_terminal_deployment"]
 [ext_resource type="PackedScene" path="res://game/ui/hud/components/ranged_reticle.tscn" id="102_ranged_reticle"]
 [ext_resource type="PackedScene" path="res://game/ui/minimap/minimap_panel.tscn" id="200_minimap"]
-[ext_resource type="PackedScene" path="res://game/ui/loot/loot_toast_queue.tscn" id="202_loot_toast_queue"]
 [ext_resource type="PackedScene" path="res://game/ui/inventory/inventory_ui.tscn" id="201_inventory_ui"]
+[ext_resource type="PackedScene" path="res://game/ui/loot/loot_toast_queue.tscn" id="202_loot_toast_queue"]
 [ext_resource type="Script" uid="uid://brku67e23m54l" path="res://game/systems/drone/drone_manager.gd" id="206_drone_manager"]
-[ext_resource type="Script" path="res://game/systems/spawning/ambient_enemy_spawner.gd" id="207_ambient_spawner"]
-[ext_resource type="Script" path="res://game/systems/spawning/vaultwing_spawner.gd" id="224_vaultwing_spawner"]
+[ext_resource type="Script" uid="uid://c6bln22a4y7xf" path="res://game/systems/spawning/ambient_enemy_spawner.gd" id="207_ambient_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/debug/dev_observatory_overlay.tscn" id="208_observatory_overlay"]
-[ext_resource type="PackedScene" path="res://game/actors/allies/allied_infantry_droid.tscn" id="209_allied_droid"]
-[ext_resource type="Script" path="res://game/world/lighting/world_lighting_director.gd" id="210_lighting_director"]
-[ext_resource type="Script" path="res://game/world/environment/world_environment_director.gd" id="210_environment_director"]
+[ext_resource type="Script" uid="uid://6vpogvjvb17f" path="res://game/world/environment/world_environment_director.gd" id="210_environment_director"]
+[ext_resource type="Script" uid="uid://b4nd4yrjdaflb" path="res://game/world/lighting/world_lighting_director.gd" id="210_lighting_director"]
 [ext_resource type="Resource" path="res://content/lighting/profiles/sundered_keep_exterior.tres" id="211_lighting_profile"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/world_atmosphere_2d.tscn" id="212_world_atmosphere"]
 [ext_resource type="PackedScene" path="res://game/world/lighting/light_rig_2d.tscn" id="213_light_rig"]
 [ext_resource type="PackedScene" path="res://game/infrastructure/structures/field_fabricator_mk1.tscn" id="214_field_fabricator"]
-[ext_resource type="Script" path="res://game/world/levels/level_loader.gd" id="215_level_loader"]
-[ext_resource type="Script" path="res://game/world/routes/route_traversal_manager.gd" id="216_route_manager"]
-[ext_resource type="Script" path="res://game/systems/intel/sensor_intelligence_read_model.gd" id="217_sensor_intelligence"]
-[ext_resource type="Script" path="res://game/infrastructure/construction_placement_controller.gd" id="218_construction_placement"]
-[ext_resource type="Script" path="res://game/infrastructure/construction_zone_2d.gd" id="219_construction_zone"]
+[ext_resource type="Script" uid="uid://csetxbhm0dr0v" path="res://game/world/levels/level_loader.gd" id="215_level_loader"]
+[ext_resource type="Script" uid="uid://bh2kritn6c705" path="res://game/world/routes/route_traversal_manager.gd" id="216_route_manager"]
+[ext_resource type="Script" uid="uid://b224yvykxyd0w" path="res://game/systems/intel/sensor_intelligence_read_model.gd" id="217_sensor_intelligence"]
+[ext_resource type="Script" uid="uid://bunmo2uqw7j4h" path="res://game/infrastructure/construction_placement_controller.gd" id="218_construction_placement"]
+[ext_resource type="Script" uid="uid://cpq4of7wwe05n" path="res://game/infrastructure/construction_zone_2d.gd" id="219_construction_zone"]
 [ext_resource type="PackedScene" path="res://game/ui/construction/construction_placement_hud.tscn" id="220_construction_hud"]
-[ext_resource type="Script" path="res://game/tutorial/command_terminal_tutorial.gd" id="221_command_tutorial"]
+[ext_resource type="Script" uid="uid://brv2thxrfgrou" path="res://game/tutorial/command_terminal_tutorial.gd" id="221_command_tutorial"]
 [ext_resource type="PackedScene" path="res://game/ui/cognitive/cognitive_feedback_overlay.tscn" id="222_cognitive_overlay"]
-[ext_resource type="Script" path="res://game/scenarios/command_pressure_v1/command_pressure_scenario_bootstrap.gd" id="223_command_pressure_bootstrap"]
-[ext_resource type="Script" path="res://game/world/bindings/wave_manager_simulation_binding.gd" id="225_wave_simulation_binding"]
+[ext_resource type="Script" uid="uid://bredo8mojsydo" path="res://game/scenarios/command_pressure_v1/command_pressure_scenario_bootstrap.gd" id="223_command_pressure_bootstrap"]
+[ext_resource type="Script" uid="uid://b2xlogwjannf5" path="res://game/systems/spawning/vaultwing_spawner.gd" id="224_vaultwing_spawner"]
+[ext_resource type="Script" uid="uid://qs2dyx2msvbj" path="res://game/world/bindings/wave_manager_simulation_binding.gd" id="225_wave_simulation_binding"]
 
 [node name="GameRoot" type="Node2D" unique_id=593578645]
 metadata/_edit_vertical_guides_ = [-1047.0]
 
-[node name="CommandPressureScenarioBootstrap" type="Node" parent="."]
+[node name="CommandPressureScenarioBootstrap" type="Node" parent="." unique_id=471128560]
 script = ExtResource("223_command_pressure_bootstrap")
 
-[node name="CommandTerminalTutorial" type="Node" parent="."]
+[node name="CommandTerminalTutorial" type="Node" parent="." unique_id=142402125]
 script = ExtResource("221_command_tutorial")
 
-[node name="CognitiveFeedbackOverlay" parent="." instance=ExtResource("222_cognitive_overlay")]
+[node name="CognitiveFeedbackOverlay" parent="." unique_id=1376659430 instance=ExtResource("222_cognitive_overlay")]
 
-[node name="SensorIntelligenceReadModel" type="Node" parent="."]
+[node name="SensorIntelligenceReadModel" type="Node" parent="." unique_id=2115813296]
 script = ExtResource("217_sensor_intelligence")
 
 [node name="DebugController" type="Node" parent="." unique_id=744681739]
@@ -99,36 +98,34 @@ script = ExtResource("33_debug_collector")
 
 [node name="World" type="Node2D" parent="." unique_id=932635855]
 
-[node name="LevelLoader" type="Node" parent="World"]
+[node name="LevelLoader" type="Node" parent="World" unique_id=108371327]
 script = ExtResource("215_level_loader")
 
-[node name="RouteTraversalManager" type="Node" parent="World"]
+[node name="RouteTraversalManager" type="Node" parent="World" unique_id=1333128580]
 script = ExtResource("216_route_manager")
 
-[node name="CanvasModulate" type="CanvasModulate" parent="World"]
+[node name="CanvasModulate" type="CanvasModulate" parent="World" unique_id=2118602952]
 color = Color(0.23, 0.25, 0.29, 1)
 
-[node name="DirectionalLight2D" type="DirectionalLight2D" parent="World"]
-rotation_degrees = -32.0
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="World" unique_id=1419954809]
+rotation = -0.55850536
 color = Color(0.78, 0.84, 0.96, 1)
 energy = 0.55
 
-[node name="WorldLightingDirector" type="Node2D" parent="World"]
+[node name="WorldLightingDirector" type="Node2D" parent="World" unique_id=1586779621]
 script = ExtResource("210_lighting_director")
 canvas_modulate_path = NodePath("../CanvasModulate")
 directional_light_path = NodePath("../DirectionalLight2D")
 default_profile = ExtResource("211_lighting_profile")
 
-[node name="WorldEnvironmentDirector" type="Node" parent="World"]
+[node name="WorldEnvironmentDirector" type="Node" parent="World" unique_id=1355492589]
 script = ExtResource("210_environment_director")
-day_length_seconds = 1440.0
-clock_enabled = true
-indoor_transition_seconds = 1.25
 
 [node name="DebugDraw" type="Node2D" parent="World" unique_id=1320630577 groups=["world_origin_branch"]]
 script = ExtResource("31_debug_draw")
 
 [node name="InspectorProbe" type="Node2D" parent="World" unique_id=1619477561 groups=["world_origin_branch"]]
+position = Vector2(0, -2)
 script = ExtResource("32_inspector_probe")
 
 [node name="NavigationDebug" type="Node2D" parent="World" unique_id=1619477562 groups=["world_origin_branch"]]
@@ -153,13 +150,12 @@ sector_type = "POWER"
 size_tiles = Vector2i(28, 26)
 door_sides = PackedStringArray("W", "S")
 
-[node name="PowerNodeLightRig" parent="World/Sectors/POWER" instance=ExtResource("213_light_rig")]
+[node name="PowerNodeLightRig" parent="World/Sectors/POWER" unique_id=747747480 instance=ExtResource("213_light_rig")]
 position = Vector2(0, -18)
 light_color = Color(0.96, 0.7, 0.3, 1)
 energy = 1.15
 pulse_enabled = true
 pulse_speed = 2.1
-pulse_amount = 0.12
 glow_scale = 1.55
 
 [node name="DEFENSE" parent="World/Sectors" unique_id=1371060751 instance=ExtResource("4_sector")]
@@ -255,8 +251,8 @@ heavy_ammo = 2
 position = Vector2(40, -520)
 
 [node name="ContractMap" type="Node2D" parent="World" unique_id=1103719919 groups=["world_origin_branch"]]
-script = ExtResource("26_contract_proxy")
 visible = false
+script = ExtResource("26_contract_proxy")
 
 [node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]
 position = Vector2(717.45905, -485.33954)
@@ -278,8 +274,6 @@ move_deceleration = 1500.0
 movement_turn_response = 14.0
 heavy_attack_stamina_cost = 14.0
 heavy_attack_blocked_while_sprinting = true
-block_move_multiplier = 0.6
-block_stamina_cost_per_hit = 12.0
 combat_target_range = 360.0
 use_tiny_rpg_placeholder_soldier = true
 idle_main_sheet_path = "res://content/sprites/operator/runtime/idle/operator_idle_main.png"
@@ -315,7 +309,7 @@ position = Vector2(872, -486)
 [node name="TurretPlacement" type="Node" parent="World" unique_id=1022301412 groups=["world_origin_branch"]]
 script = ExtResource("100_turret_placement")
 
-[node name="ConstructionPlacement" type="Node" parent="World" groups=["world_origin_branch"]]
+[node name="ConstructionPlacement" type="Node" parent="World" unique_id=2059782354 groups=["world_origin_branch"]]
 script = ExtResource("218_construction_placement")
 
 [node name="TerminalDeployment" type="Node" parent="World" unique_id=1022301413 groups=["world_origin_branch"]]
@@ -323,15 +317,14 @@ script = ExtResource("101_terminal_deployment")
 
 [node name="DroneManager" type="Node" parent="World" unique_id=1022301414 groups=["world_origin_branch"]]
 script = ExtResource("206_drone_manager")
-drone_scene = ExtResource("209_allied_droid")
 
 [node name="CommandTerminal" parent="World" unique_id=2021499921 groups=["world_origin_branch"] instance=ExtResource("27_command_terminal")]
 position = Vector2(804, -492)
 
-[node name="FieldFabricatorMk1" parent="World" groups=["world_origin_branch"] instance=ExtResource("214_field_fabricator")]
+[node name="FieldFabricatorMk1" parent="World" unique_id=197474057 groups=["world_origin_branch"] instance=ExtResource("214_field_fabricator")]
 position = Vector2(1120, -480)
 
-[node name="FabricationConstructionZone" type="Node2D" parent="World" groups=["world_origin_branch"]]
+[node name="FabricationConstructionZone" type="Node2D" parent="World" unique_id=700944482 groups=["world_origin_branch"]]
 position = Vector2(1168, -480)
 script = ExtResource("219_construction_zone")
 zone_id = &"FABRICATION_YARD"
@@ -342,7 +335,7 @@ allowed_categories = Array[StringName]([&"power", &"fabrication"])
 position = Vector2(720, -480)
 script = ExtResource("3_camera")
 
-[node name="WorldAtmosphere2D" parent="." instance=ExtResource("212_world_atmosphere")]
+[node name="WorldAtmosphere2D" parent="." unique_id=578581104 instance=ExtResource("212_world_atmosphere")]
 
 [node name="Simulation" type="Node" parent="." unique_id=262550242]
 script = ExtResource("1_simulation")
@@ -364,9 +357,8 @@ grunt_scene = ExtResource("18_grunt_enemy")
 pursuit_frame_scene = ExtResource("18_pursuit_frame_enemy")
 marine_scene = ExtResource("18_marine_enemy")
 savage_scene = ExtResource("18_savage_enemy")
-debug_spawn_grunt_on_start = false
 
-[node name="WaveManagerSimulationBinding" type="Node" parent="."]
+[node name="WaveManagerSimulationBinding" type="Node" parent="." unique_id=555600756]
 script = ExtResource("225_wave_simulation_binding")
 wave_manager_path = NodePath("../WaveManager")
 simulation_runtime_path = NodePath("../Simulation")
@@ -388,25 +380,20 @@ initial_delay = 25.0
 [node name="ContractWorldLoader" type="Node" parent="." unique_id=1201129447]
 script = ExtResource("28_contract_loader")
 
-[node name="AmbientEnemySpawner" type="Node" parent="."]
+[node name="AmbientEnemySpawner" type="Node" parent="." unique_id=199815245]
 script = ExtResource("207_ambient_spawner")
 enemy_scene = ExtResource("18_grunt_enemy")
 enemy_scenes = Array[PackedScene]([ExtResource("18_grunt_enemy"), ExtResource("18_pursuit_frame_enemy")])
 max_generated_camps = 1
 max_active_ambient_enemies = 2
-enemies_per_camp_min = 2
-enemies_per_camp_max = 2
 
-[node name="VaultwingSpawner" type="Node" parent="."]
+[node name="VaultwingSpawner" type="Node" parent="." unique_id=1693544477]
 script = ExtResource("224_vaultwing_spawner")
-vaultwing_container_path = NodePath("/root/GameRoot/World/Ambient")
-max_active_vaultwings = 2
 
 [node name="AmbientCritterManager" type="Node" parent="." unique_id=292901155]
 script = ExtResource("34_ambient_critters")
 critter_scene = ExtResource("35_ambient_shrumb")
 supplemental_critter_scene = ExtResource("35_baby_opossum")
-supplemental_critter_spawn_weight = 0.15
 min_distance_from_spawn_tiles = 10
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2053415447]
@@ -414,9 +401,11 @@ layer = 20
 script = ExtResource("8_ui")
 terminal_contract_node_path = NodePath("../World/ContractMap")
 
-[node name="LootToastQueue" parent="UI" instance=ExtResource("202_loot_toast_queue")]
+[node name="LootToastQueue" parent="UI" unique_id=1087094911 instance=ExtResource("202_loot_toast_queue")]
+layout_mode = 3
+anchors_preset = 0
 
-[node name="ConstructionPlacementHUD" parent="UI" instance=ExtResource("220_construction_hud")]
+[node name="ConstructionPlacementHUD" parent="UI" unique_id=153334147 instance=ExtResource("220_construction_hud")]
 
 [node name="PowerDisplay" type="Panel" parent="UI" unique_id=449160537]
 offset_left = 360.0
@@ -455,7 +444,7 @@ offset_right = 260.0
 offset_bottom = 68.0
 text = "HEALTH: 100/100"
 
-[node name="FieldPatchPrompt" type="Label" parent="UI"]
+[node name="FieldPatchPrompt" type="Label" parent="UI" unique_id=1994652403]
 visible = false
 offset_left = 20.0
 offset_top = 68.0
@@ -562,7 +551,9 @@ offset_right = 704.0
 offset_bottom = 424.0
 texture = ExtResource("101_crosshair")
 
-[node name="RangedReticle" parent="UI" instance=ExtResource("102_ranged_reticle")]
+[node name="RangedReticle" parent="UI" unique_id=2139825090 instance=ExtResource("102_ranged_reticle")]
+layout_mode = 3
+anchors_preset = 0
 
 [node name="InteractionLabel" type="Label" parent="UI" unique_id=466777138]
 modulate = Color(0.72, 0.78, 0.76, 0.56)
@@ -593,7 +584,7 @@ offset_top = 8.0
 offset_right = 1214.0
 offset_bottom = 56.0
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Header"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Header" unique_id=765128141]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -605,7 +596,7 @@ offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HeaderRow" type="HBoxContainer" parent="UI/TerminalPanel/Header/Margin"]
+[node name="HeaderRow" type="HBoxContainer" parent="UI/TerminalPanel/Header/Margin" unique_id=1944970656]
 layout_mode = 2
 theme_override_constants/separation = 12
 
@@ -622,32 +613,32 @@ size_flags_horizontal = 3
 text = "OVERVIEW"
 vertical_alignment = 1
 
-[node name="StatusChips" type="HBoxContainer" parent="UI/TerminalPanel/Header/Margin/HeaderRow"]
+[node name="StatusChips" type="HBoxContainer" parent="UI/TerminalPanel/Header/Margin/HeaderRow" unique_id=100500412]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="TimeChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+[node name="TimeChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips" unique_id=1665025058]
 custom_minimum_size = Vector2(82, 0)
 layout_mode = 2
 text = "T:--:--"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ThreatChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+[node name="ThreatChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips" unique_id=293141980]
 custom_minimum_size = Vector2(112, 0)
 layout_mode = 2
 text = "THREAT:STABLE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PhaseChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+[node name="PhaseChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips" unique_id=2013401584]
 custom_minimum_size = Vector2(154, 0)
 layout_mode = 2
 text = "PHASE:FREE ROAM"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GridChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips"]
+[node name="GridChip" type="Label" parent="UI/TerminalPanel/Header/Margin/HeaderRow/StatusChips" unique_id=531194171]
 custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 text = "GRID:STABLE"
@@ -671,13 +662,12 @@ theme_override_constants/separation = 8
 layout_mode = 2
 text = "PAGES"
 
-[node name="PageButtonsScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/NavRail"]
+[node name="PageButtonsScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/NavRail" unique_id=1921876643]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 0
 horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
 
 [node name="PageButtons" type="VBoxContainer" parent="UI/TerminalPanel/Body/NavRail/PageButtonsScroll" unique_id=-2137803082]
 layout_mode = 2
@@ -732,10 +722,9 @@ text = "HISTORY"
 layout_mode = 2
 text = "SETTINGS"
 
-[node name="MoreButton" type="Button" parent="UI/TerminalPanel/Body/NavRail"]
+[node name="MoreButton" type="Button" parent="UI/TerminalPanel/Body/NavRail" unique_id=729940327]
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
-focus_mode = 2
 text = "MORE / SYSTEMS"
 
 [node name="ContextSpacer" type="Control" parent="UI/TerminalPanel/Body/NavRail" unique_id=-2137803069]
@@ -908,7 +897,7 @@ bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="OverviewMapSlot" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets"]
+[node name="OverviewMapSlot" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets" unique_id=561018385]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
@@ -944,26 +933,26 @@ bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="OverviewIncidentPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow"]
+[node name="OverviewIncidentPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow" unique_id=1175613630]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel" unique_id=1218648107]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin" unique_id=621595321]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin/Content" unique_id=673236186]
 layout_mode = 2
 text = "ACTIVE INCIDENTS"
 
-[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin/Content"]
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/OverviewWidgets/OverviewBottomRow/OverviewIncidentPanel/Margin/Content" unique_id=716870651]
 custom_minimum_size = Vector2(0, 58)
 layout_mode = 2
 bbcode_enabled = true
@@ -1326,8 +1315,6 @@ text = "CONTACTS / ACTIVITY // SELECTED CONTACT"
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 bbcode_enabled = true
-fit_content = false
-scroll_active = true
 
 [node name="IncidentsWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=-2137802968]
 visible = false
@@ -1729,239 +1716,238 @@ bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="FabricationWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack"]
+[node name="FabricationWidgets" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack" unique_id=2018130462]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="TopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+[node name="TopRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets" unique_id=13307073]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="FabStatusPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow"]
+[node name="FabStatusPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow" unique_id=1052339253]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel" unique_id=32574679]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin" unique_id=93313919]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin/Content" unique_id=228460863]
 layout_mode = 2
 text = "FAB STATUS"
 
-[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin/Content"]
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabStatusPanel/Margin/Content" unique_id=1528604409]
 custom_minimum_size = Vector2(0, 82)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="FabSelectedRecipePanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow"]
+[node name="FabSelectedRecipePanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow" unique_id=1407032]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel" unique_id=822538318]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin" unique_id=520731148]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin/Content" unique_id=1175063744]
 layout_mode = 2
 text = "SELECTED WORK ORDER"
 
-[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin/Content"]
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/TopRow/FabSelectedRecipePanel/Margin/Content" unique_id=466573323]
 custom_minimum_size = Vector2(0, 82)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="MainRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+[node name="MainRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets" unique_id=928711822]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="FabCategoryPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow"]
+[node name="FabCategoryPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow" unique_id=1493977510]
 custom_minimum_size = Vector2(132, 0)
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel" unique_id=518262525]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin" unique_id=113350811]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin/Content" unique_id=1889722774]
 layout_mode = 2
 text = "FILTER"
 
-[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin/Content"]
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCategoryPanel/Margin/Content" unique_id=899579111]
 custom_minimum_size = Vector2(0, 172)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="FabRecipeListPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow"]
+[node name="FabRecipeListPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow" unique_id=762713046]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel" unique_id=1925740944]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin" unique_id=1907246281]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content" unique_id=1815598507]
 layout_mode = 2
 text = "WORK ORDERS"
 
-[node name="RecipeScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content"]
+[node name="RecipeScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content" unique_id=1705254584]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="Rows" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content/RecipeScroll"]
+[node name="Rows" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabRecipeListPanel/Margin/Content/RecipeScroll" unique_id=2123697596]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="FabCostPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow"]
+[node name="FabCostPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow" unique_id=213349041]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel" unique_id=143853448]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin" unique_id=2017223127]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin/Content" unique_id=977672415]
 layout_mode = 2
 text = "COST / OUTPUT"
 
-[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin/Content"]
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/MainRow/FabCostPanel/Margin/Content" unique_id=1892615771]
 custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = true
-scroll_active = true
 
-[node name="BottomRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+[node name="BottomRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets" unique_id=1660952210]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="FabProgressPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow"]
+[node name="FabProgressPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow" unique_id=1206896549]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel" unique_id=1951267736]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin" unique_id=1283301197]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin/Content" unique_id=491414817]
 layout_mode = 2
 text = "IN PROGRESS"
 
-[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin/Content"]
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabProgressPanel/Margin/Content" unique_id=649743717]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="FabReadyBuildPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow"]
+[node name="FabReadyBuildPanel" type="PanelContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow" unique_id=830049097]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel"]
+[node name="Margin" type="MarginContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel" unique_id=1555509359]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin" unique_id=849188383]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin/Content"]
+[node name="Title" type="Label" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin/Content" unique_id=1227859927]
 layout_mode = 2
 text = "READY BUILDS"
 
-[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin/Content"]
+[node name="Body" type="RichTextLabel" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/BottomRow/FabReadyBuildPanel/Margin/Content" unique_id=1976678735]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
-[node name="ActionRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets"]
+[node name="ActionRow" type="HBoxContainer" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets" unique_id=1161700958]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="CraftOneButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+[node name="CraftOneButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow" unique_id=1243194526]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "CRAFT 1"
 
-[node name="CraftToMaxButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+[node name="CraftToMaxButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow" unique_id=550849697]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "CRAFT TO MAX"
 
-[node name="PlaceReadyBuildButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+[node name="PlaceReadyBuildButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow" unique_id=354194229]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "PLACE READY BUILD"
 
-[node name="CancelQueueButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow"]
+[node name="CancelQueueButton" type="Button" parent="UI/TerminalPanel/Body/MapColumn/WidgetStack/FabricationWidgets/ActionRow" unique_id=2105044982]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "CANCEL QUEUE"
@@ -2076,21 +2062,17 @@ layout_mode = 2
 text = "TRANSCRIPT"
 
 [node name="ActivityScroll" type="ScrollContainer" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1905084263]
-custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
 
 [node name="TerminalOutput" type="RichTextLabel" parent="UI/TerminalPanel/Body/CommandColumn/ActivityScroll" unique_id=668276365]
-custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 2
 bbcode_enabled = true
-fit_content = false
 scroll_active = false
 selection_enabled = true
 
@@ -2104,16 +2086,13 @@ theme_override_constants/separation = 6
 [node name="Prompt" type="Label" parent="UI/TerminalPanel/Body/CommandColumn/InputRow" unique_id=86849026]
 custom_minimum_size = Vector2(18, 42)
 layout_mode = 2
-size_flags_vertical = 4
 text = ">"
 
 [node name="TerminalInput" type="LineEdit" parent="UI/TerminalPanel/Body/CommandColumn/InputRow" unique_id=140366070]
-visible = true
 custom_minimum_size = Vector2(220, 44)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-focus_mode = 2
 placeholder_text = "ENTER COMMAND"
 
 [node name="Status" type="Label" parent="UI/TerminalPanel/Body/CommandColumn" unique_id=1839776512]
@@ -2132,7 +2111,6 @@ text = "Command line accepts typed orders. SECTORS: click sector links or minima
 [node name="TerminalBackground" type="TextureRect" parent="UI" unique_id=999999999]
 visible = false
 z_index = 5
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -2193,6 +2171,7 @@ offset_bottom = 330.0
 [node name="Minimap" parent="PauseUI/PausePanel" unique_id=999000001 instance=ExtResource("200_minimap")]
 custom_minimum_size = Vector2(500, 500)
 layout_mode = 0
+anchors_preset = 0
 anchor_left = 0.0
 anchor_right = 0.0
 offset_left = 400.0
