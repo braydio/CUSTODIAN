@@ -9,7 +9,7 @@
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `931b830d54f2a217d1b473109f708636ac89f21f`
+- Reviewed main: `7511489095a7fc35a3e5c907d0e1ba42e8787f8e`
 - Goal: Extract dodge/charge/Flow/chain lifecycle into a focused traversal authority while preserving the deliberate full-body presentation model for displacement-owning dodge actions.
 - Completion boundary: Done when dodge charge, tap/long-roll selection, iframes, chain/Flow, recovery/carry and cancellation state are owned behind an `OperatorDodgeController`-class authority; `operator.gd` keeps only facade/orchestration and the sole `move_and_slide()`; current full-body dodge/chain/dodge-fast presentations and independent FX remain unchanged; and no duplicate dodge state survives in the actor.
 - Current measured state: Dodge simulation and presentation functions remain in `operator.gd`. Canonical full-body dodge/chain-link and dodge-fast transition art is live, and charge/ready/release/chain-release feedback is a presentation-only effect path. These actions own displacement or a committed whole-body silhouette; lower-locomotion modular composition would fight the authored motion rather than improve it.
