@@ -58,6 +58,7 @@ infrastructure, and survival decisions must be visible and consequential.
 
 ## Spatial and visual doctrine
 
+- `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` is the locked visual authority for the current generated campaign world / first campaign world. It governs the cold alpine terrain identity, hardened Custodian infrastructure, vehicle/structure application, sparse field-HUD shell, and marker/beacon grammar. Archive Resolve remains separately governed by `STREAMING_REVEAL_PRESENTATION_V1.md`.
 - The game uses continuous local movement inside authored or generated spaces,
   with a fixed isometric presentation, readable collision, and stable camera
   ownership.
