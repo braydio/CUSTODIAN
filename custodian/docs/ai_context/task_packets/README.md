@@ -309,6 +309,16 @@ lost when the ephemeral worktree is removed.
 
 ### Blocked / Manual Refresh
 
+#### Operator Workbench UX Hierarchy V1
+
+- Series tracker: `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`.
+- All five packets are intentionally `blocked/manual` planning drafts with a mandatory **REFRESH REQUIRED BEFORE IMPLEMENTATION** banner. Do not claim them until the relevant predecessor/prerequisite has landed, a fresh OPUI review has reconciled the packet to current main, the banner is removed, and the packet is explicitly signed off.
+- `OPERATOR_WORKBENCH_UX_STATE_HIERARCHY.md` - UX1 artist-facing publication/live/main state hierarchy, global shell and compact Activity; gated behind the reviewed FX-adoption chain.
+- `OPERATOR_WORKBENCH_UX_WORKBENCH_HOME.md` - UX2 preview-first Page 2 WORKBENCH with compact inspector/layers and browser workflow badges; depends on UX1.
+- `OPERATOR_WORKBENCH_UX_PUBLISH_DECISION.md` - UX3 changes-first Publish modal with no-op clarity, simplified mirror consequence and readiness projection; depends on UX2.
+- `OPERATOR_WORKBENCH_UX_WORK_QUEUE.md` - UX4 actionable QUEUE over the human-authored animation implementation plan, including directional/layer coverage and unpublished-work filters; depends on UX3.
+- `OPERATOR_WORKBENCH_UX_CONSISTENCY_CLOSEOUT.md` - UX5 cross-mode terminology/focus/responsive/accessibility regression closeout and human visual sign-off; depends on UX4.
+
 - `OPERATOR_UNARMED_BLOCKING_ART_REFRESH.md` — P1 stale art-refresh scope held behind `review-operator-art-registration-profile`; current main already contains newer hold/hit publications, so the remaining guard-art delta must be freshly re-derived before this packet may return to ready/auto.
 
 ### In Progress
