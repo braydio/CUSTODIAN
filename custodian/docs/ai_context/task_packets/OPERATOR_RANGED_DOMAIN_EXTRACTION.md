@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-loadout-domain-extraction, operator-dependency-injection-spine`
+- Depends on: `operator-loadout-domain-extraction, operator-dependency-injection-spine, operator-mobile-guard-composition`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `931b830d54f2a217d1b473109f708636ac89f21f`
+- Reviewed main: `03b6221adb01402b1cf4393b9a1773cdd519f6ae`
 - Goal: Extract primary-ranged/sidearm combat state into one ranged authority and make all movement-permissive ranged presentation use the same lower-locomotion + upper/weapon action contract that already works during primary fire.
 - Completion boundary: Done when ammo/heat/reload/fire-ready/pending-shot/sidearm phase state is owned behind an `OperatorRangedController`-class authority using `OperatorWeaponRuntimeState`; Operator public ranged APIs remain delegates; primary raise/ready/fire/recover/lower and sidearm draw/held/fire/recover express legal movement without frozen/sliding lower-body poses; movement-locked reload remains committed; and current ballistic/socket authority is preserved for a later static-weapon closeout.
 - Current measured state: Primary ranged ready movement already composes movement-owned lower cadence with aim-owned upper+weapon stance, and primary fire already keeps lower locomotion while upper/weapon/FX fire. The 5-frame primary `aim_01` raise and reverse lower currently replace both lower and upper despite movement remaining legal, while its partial-progress reverse logic is already robust. Sidearm draw/fire uses four-diagonal 5-frame lower+upper+weapon+FX stacks; held state freezes every layer on the final draw frame, so moving with the sidearm held can display frozen legs. Sidearm fire similarly owns the lower body. Reload is explicitly movement-locked and uses a complete committed presentation. Frame-aware Carbine sockets are live for the phase-1 supported sectors.
