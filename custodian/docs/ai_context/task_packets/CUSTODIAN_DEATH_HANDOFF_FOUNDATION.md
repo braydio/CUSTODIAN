@@ -9,7 +9,7 @@
 - Locks: `custodian-death-flow, operator-runtime`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `0d5bbb964727f3683f430622681d128f2a8ea8cb`
+- Reviewed main: `7511489095a7fc35a3e5c907d0e1ba42e8787f8e`
 - Goal: Make Custodian lethal damage a campaign-level exactly-once event instead of an actor-owned life decrement, establishing the recovery-capable death handoff without leaving the player in an unhandled dead state.
 - Completion boundary: Done when `Operator` no longer calls `GameState.lose_life()`; one lethal Operator event emits one structured death handoff, the active `CampaignSession` resolves exactly once through `WorldSimulationRuntime`, and the existing global Game Over remains only as an explicit compatibility fallback after that outcome until R2 replaces it with Post recovery. Facility/siege terminal-failure paths remain unchanged.
 - Current measured state: `custodian/game/actors/operator/operator.gd::_handle_death()` sets `_is_dead`, records telemetry/history, requests death presentation, then directly calls `/root/GameState.lose_life("Custodian eliminated after a fatal strike")`. `GameState.total_lives = 1`, so `lose_life()` immediately calls `trigger_game_over(...)`; `_finish_death()` returns early while `GameState.game_over` is true. Separately, `WorldSimulationRuntime` already owns the live `CampaignSession` and `resolve_campaign(...)`, while `CampaignSession.resolve_once(...)` rejects duplicate resolution, but no Operator-death path calls that authority.
