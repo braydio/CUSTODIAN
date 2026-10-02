@@ -1,4 +1,5 @@
-> This design document has a supporting reference at design/02_features/procgen/STARTER_MAP_PROCGEN_REFERENCE.png
+> **Visual authority:** `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`.
+> `STARTER_MAP_PROCGEN_REFERENCE.png` is retained only as historical layout/semantic-generation reference and must not drive current terrain, structure, vehicle, UI, marker, palette, or world-atmosphere style.
 >
 To procgen levels like that image, do **not** try to generate the whole illustrated blueprint. Generate a **semantic tile grid** from a **room-flow graph**, then render it through your Godot TileMap + props + encounter scenes. The image is basically a “starter maintenance complex profile”: entry → terminal → repair workshop → powered door/security corridor → exit.
 
