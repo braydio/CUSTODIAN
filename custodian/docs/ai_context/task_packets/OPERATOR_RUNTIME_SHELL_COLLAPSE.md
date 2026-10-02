@@ -9,7 +9,7 @@
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `b252b5392aabaaa74f1203c3759a2584e6def726`
+- Reviewed main: `7511489095a7fc35a3e5c907d0e1ba42e8787f8e`
 - Goal: Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authorities, deleting temporary compatibility seams and making all Operator architecture audits hard-zero final gates.
 - Completion boundary: Done when the actor retains only CharacterBody2D movement application, lifecycle/orchestration, stable public facade delegation and minimal scene-owned presentation nodes; melee/dodge/ranged/loadout/interaction/recovery state has one external owner each; temporary presentation/runtime compatibility seams have zero consumers and are removed; scene children are organized by current ownership; Knight/debug production-only construction residue is moved out where appropriate; and runtime-animation/path/architecture audits all pass `--final`.
 - Current measured state: Slice E is complete, but `operator.gd` remains 14,587 lines / 711 functions on the reviewed pre-roadmap main and still contains the six future domain families plus 38 absolute scene lookups and three mutable weapon-definition runtime fields. F0 and F1-F6 packets now own those debts explicitly. `OperatorPresentationController`, `OperatorBodyPresenter`, `OperatorAnimationPlayer` and `OperatorAnimationSelector` already establish the presentation authority; Slice G must not recreate policy in the actor while cleaning the shell.
