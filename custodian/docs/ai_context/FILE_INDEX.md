@@ -1,6 +1,10 @@
 # FILE INDEX — CUSTODIAN
 - `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` — exact 32px-grid spatial authority/spec for the first persistent Hub set north of Awakening: South Reach, Forum, Sepulcher loop, Archive Rise/Crown Transfer, Muster Court, and ordinary Continuity Port.
-- `custodian/docs/ai_context/task_packets/HUB_FIRST_SET_BLOCKOUT_V1.md` / `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — queued H1 implementation/review for the runtime-ready first-set blockout, standalone playtest, navigation proof, and one human topology overview gate.
+- `custodian/game/world/hub/first_set/hub_first_set_layout.gd`, `hub_first_set_map.gd`, and `hub_first_set_map.tscn` — sole H1 geometry/marker authority, authored grid/navigation/boundary collision map, inert handoff markers, and Road plate reuse without prototype blockers.
+- `custodian/scenes/hub_first_set_blockout_playtest.tscn` — standalone real-Operator/camera wrapper entering at `Spawn_SouthReach`.
+- `custodian/scenes/road_of_witnesses_presentation.tscn` — reusable Road presentation shell over the existing five production plate pairs.
+- `custodian/tools/validation/hub_first_set_blockout_smoke.gd` — bounds, exact region/marker, Road registration/collision ownership, connectivity, and standalone spawn/camera proof.
+- `custodian/docs/ai_context/task_packets/HUB_FIRST_SET_BLOCKOUT_V1.md` — H1 implementation record and acceptance contract; see archived copy when complete.
 
 ## Operator Workbench UX Hierarchy
 

@@ -158,9 +158,10 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 
 **Prototype Runtime Note:**
 - `res://scenes/hub_road_of_witnesses_prototype.tscn` is the current fast-playable authored preview for this district.
-- It uses the authored map image as a background layer with hand-placed collision blockers and a small set of foreground occlusion masks.
-- It is a traversal/readability prototype, not yet a canonical reusable TileMap conversion.
-- `res://scenes/twin_solaria_backdrop_test.tscn` is a separate development-only fidelity preview using the largest current Twin Solaria composite as a gameplay backdrop. It intentionally provides perimeter collision only; internal traversal and collision are not authored.
+- Its presentation uses five registered modular plate pairs, built from `RoadOfWitnessesPrototype.MODULES`; H1 reuses those same production plates in the larger Hub first-set map.
+- Its hand-placed collision blockers remain local to the standalone Road prototype and Awakening integration. The H1 first-set grid owns collision and navigation around this art.
+- The reusable presentation scene is `res://scenes/road_of_witnesses_presentation.tscn`; the legacy standalone scene remains a traversal/readability prototype, not a TileMap conversion.
+- `res://scenes/twin_solaria_playtest.tscn` exercises the registered authored `hub_twin_solaria` level. `res://scenes/twin_solaria_backdrop_test.tscn` remains a separate development-only fidelity preview using the largest composite as a gameplay backdrop; it provides perimeter collision only.
 
 ---
 
@@ -360,9 +361,11 @@ terrace extension.
 
 ## 4. First Playable Slice
 
-For first playable hub, build this route:
+The first playable Hub set begins at South Reach because Gate of Dust and Custodian Approach belong to Awakening. H1 establishes this route:
 
-> **Gate of Dust → Custodian Approach → Ashen Forum → one side loop into Sepulcher Gardens → one north climb into lower Archive Heights → one east overlook at the Prism Margin**
+> **South Reach → Road of Witnesses → North Processional → Ashen Forum → Sepulcher Gardens loop / Lower Archive Rise → Crown Transfer Court or Muster Court → Continuity Port**
+
+See [`HUB_FIRST_SET_BLOCKOUT.md`](HUB_FIRST_SET_BLOCKOUT.md) for the exact H1 geometry. The Crown Transfer and Continuity Port markers remain inert until their later lifecycle slices.
 
 This gives:
 - Arrival mood

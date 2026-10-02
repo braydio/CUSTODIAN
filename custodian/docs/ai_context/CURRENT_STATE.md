@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Hub First-Set Spatial Blockout (2026-10-02)
+
+H1 adds a 32px authored Hub map spanning Road of Witnesses South Reach through
+Ashen Forum, Sepulcher Gardens, Lower Archive Rise/Crown Transfer Court, Muster
+Court, and the ordinary Continuity Port. `HubFirstSetLayout` is the single
+geometry/marker authority; the authored grid supplies walkability, navigation,
+and boundary collision. The five Road plate pairs remain the registered
+presentation and do not bring their legacy collision into this map. The
+standalone `hub_first_set_blockout_playtest.tscn` owns the real Operator and
+camera. Crown Transfer, Contract, and Continuity Port remain inert; H2-H6
+lifecycle wiring is still pending. Focused structural proof is
+`custodian/tools/validation/hub_first_set_blockout_smoke.gd`.
+
 ## Contract World Placement Foundation (2026-10-02)
 
 `WorldPlacementContext` is the accepted-world read seam for focused placement

@@ -3122,6 +3122,28 @@
       "needs_import": true
     },
     {
+      "id": "hub_first_set_blockout",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_first_set_blockout_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "authored",
+        "hub",
+        "navigation"
+      ],
+      "owners": [
+        "custodian/game/world/hub/first_set/**",
+        "custodian/game/world/hub/road_of_witnesses_prototype.gd",
+        "custodian/game/world/levels/authored_blockout_grid_2d.gd",
+        "custodian/game/world/levels/authored_navigation_provider_2d.gd",
+        "custodian/scenes/hub_first_set_blockout_playtest.tscn",
+        "custodian/scenes/road_of_witnesses_presentation.tscn",
+        "custodian/tools/validation/hub_first_set_blockout_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
       "id": "ash_bell_lower_quarter_layout",
       "type": "godot_script",
       "script": "res://tools/validation/ash_bell_lower_quarter_layout_smoke.gd",

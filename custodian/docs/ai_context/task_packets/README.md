@@ -282,7 +282,6 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `HUB_FIRST_SET_BLOCKOUT_V1.md` — P1 runtime-ready Hub first-set blockout from South Reach through Ashen Forum, Sepulcher loop, Archive/Crown Transfer branch, and Muster Court/Continuity Port deployment wing; spatial only, no world transitions.
 - `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — paired independent review of first-set geometry, navigation, Road presentation reuse, inert handoff markers, and human blockout overview approval.
 - `TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — P1 first-pass Solarium I Route Vista sample ingest/presentation: three neutral V2 candidate contents from the new archway-view drop, exact 465×280 registration, playtest sampler, and human capture review.
 - `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — paired independent review of vista provenance, normalization, registration, presentation ownership, and recorded human approval.
@@ -389,5 +388,6 @@ lost when the ephemeral worktree is removed.
 - `COGNITIVE_STATE_PHASE_B.md` — Wire cognitive state modifiers into game systems and fix debug panel bugs. Implementation done; awaiting Godot runtime validation of move speed, attack recovery, accuracy bonus, and crit bonus modifiers. Manual test: F12 toggles debug panel, cognitive items change player stats visually.
 - `UI_GD_FIXES.md` — Fix 11 hard compile blockers, runtime bugs, and performance issues in `ui.gd`. 10 of 11 fixes verified in code; Fix #11 (minimap rebuild performance) deferred. Boot sequence and stub cleanup still need Godot runtime confirmation.
 - `OBSERVATORY_WORLD_TELEMETRY_FOUNDATION.md` — Add the first shared observability and world-memory foundation: F9 observatory overlay, world state graph, world history, interest management, sector heatmap accumulation, and the first live player/sector telemetry hooks.
+- `HUB_FIRST_SET_BLOCKOUT_V1.md` — H1 first-set spatial blockout implemented and structurally validated; awaiting human topology/readability review of `reports/hub_first_set_blockout/overview.png` before completion.
 
 ### Recently Complete (awaiting archive)

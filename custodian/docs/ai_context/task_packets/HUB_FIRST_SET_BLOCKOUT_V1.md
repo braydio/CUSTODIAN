@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-first-set-blockout-v1`
-- Status: `ready`
+- Status: `in_progress`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -295,3 +295,15 @@ Before setting complete:
 - Next action: H2 wires reviewed Awakening completion into this reviewed map at `Spawn_SouthReach` through the world-lifecycle authority.
 - Best starting files: `HUB_FIRST_SET_BLOCKOUT.md`, Road prototype, generic authored blockout/navigation providers, current authored-level spawn APIs.
 - Blockers or open questions: none for H1. The exact visual identity of Muster Court/Continuity Port is intentionally deferred until the reviewed blockout proves the topology.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: The dispatcher successfully claimed the packet but printed no result; recovery required reading its durable last-claim receipt. The fresh worktree also needed the normal Godot import before its global classes/resources would load. An initial changed-file sweep passed its tests but found one new scene uncovered; after adding that scene to the focused smoke's owner list, the closeout sweep passed with complete coverage. The first overview render also showed colliding labels at two marker clusters, so the same overview path was overwritten after spacing those labels.
+- Root cause / contributing factors: Dispatcher stdout was lost after a successful claim; Godot caches are worktree-local; validation ownership must include each authored scene; marker labels need deterministic offsets where semantic points are close together.
+- Prevention / pipeline improvement: Treat the dispatcher receipt under the Git common directory as authoritative when stdout is absent; keep authored-scene dependencies in the owning validation row; place labels for closely spaced markers using layout-owned presentation offsets.
+- Tooling / docs drift discovered: `check_ai_context.py` reports 20 pre-existing packet/index findings outside this workstream, including missing historical feedback receipts, stale packet index entries, and an unrelated V2 Work surface omission.
+- Follow-up: none
+- What worked: Durable claim recovery, focused structural checks, and same-path overview replacement kept the assignment and evidence traceable.
