@@ -351,6 +351,7 @@ lost when the ephemeral worktree is removed.
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 immediate post-Slice-E proving slice: establishes the bounded semantic movement-owned-lower + action-owned-upper composition seam, then applies it to moving unarmed guard enter/hold/non-break recoil/exit with lower cadence continuity.
+- `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` — P2 blocked/manual Asset V2 source-work promotion for the new ten-file east-facing unarmed-defense generator set; raw 2172×724 outputs must pass Source Session registration/normalization and human art approval before any live canonical family is replaced.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — P1 follow-up after mobile guard: applies the proven seam to Vigil armed guard plus movement-permissive unarmed parry attempt/recovery without weakening real contact/guard-break commitment.
 - `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — P1 Slice F0: retires all 38 remaining absolute Operator scene-tree lookups before the domain controllers are extracted.
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — P1 Slice F1: loadout/selection authority + `OperatorWeaponRuntimeState`, eliminates the three mutable weapon-definition fields, and makes moving draw/sheathe preserve lower cadence.
@@ -364,7 +365,7 @@ lost when the ephemeral worktree is removed.
 
 ### Blocked / Manual Refresh
 
-- `OPERATOR_GUARD_BREAK_PRESENTATION.md` — P2 blocked/manual until reviewed Asset V2 `block_break_01` body+FX pixels exist; guard break intentionally stays movement-locked/full-body.
+- `OPERATOR_GUARD_BREAK_PRESENTATION.md` — P2 blocked/manual: raw 3f `block_break_01` + 6f `block_break_recovery_01` body source-work now exists but is not production-normalized; packet waits on `operator-unarmed-defense-source-promotion` plus a dedicated reviewed 3f break FX. Guard break intentionally stays movement-locked/full-body.
 - `OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` — P2 draft/manual after the runtime composition slices; human review chooses only visibly harmful directional/layer gaps for Asset V2 fulfillment rather than forcing eight-way completeness.
 
 #### Operator Workbench UX Hierarchy V1
