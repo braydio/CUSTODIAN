@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-distant-chunk-unload-review-corrections-1`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-distant-chunk-unload`
 - Locks: `procgen-streaming, navigation-runtime`
@@ -14,7 +14,7 @@
 - Paired review workstream: `review-procgen-distant-chunk-unload-review-corrections-1`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
-- Reviewed main: `01ca4065f`
+- Reviewed main: `6ee4a0089`
 - Parent implementation: `procgen-distant-chunk-unload`, archived at `custodian/docs/ai_context/task_packets/archived/PROCGEN_DISTANT_CHUNK_UNLOAD.md`
 - Parent review: `review-procgen-distant-chunk-unload`, archived at `custodian/docs/ai_context/task_packets/archived/REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD.md`
 - Findings addressed: `R0-01, R0-02, R0-03, R0-04, R0-05`
