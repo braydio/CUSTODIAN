@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-distant-chunk-unload`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-chunk-payload-cache`
@@ -73,26 +73,26 @@ This is M6 of `procgen-runtime-optimization-v1`. On successful implementation, a
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes` — bounded production residency unload is implemented, enabled by default, and measurably reduces distant painted presentation/cache residency while preserving canonical semantics, collision, navigation, and foliage identity.
+- Completion boundary satisfied: `yes` — `ProcGenChunkResidencyPolicy` owns deterministic DORMANT-chunk eviction selection/hysteresis/budgeting as a pure RefCounted queue+counters class; `ProcGenTilemap._unload_chunk()` is a concrete unload adapter only; `ProcGenChunkPayloadCache.evict_chunk()` drops one chunk's cached membership/PREPARE records without semantic invalidation; `_unload_chunk()` erases painted Floor/Walls and road decals while runtime wall collision (canonical-authority cleanup), navigation (`get_runtime_navigation_floor_cells()`/`is_runtime_navigation_walkable()`), generated floor/wall dictionaries, wall health, region/elevation/road semantics, runtime props/portals, and world mutations remain authoritative; foliage is hidden via `_hide_foliage_for_unload()`/re-shown via `_show_foliage_if_hidden()` preserving exact node identity/kind/cluster/trunk-collision/blocker metadata; reload reconstructs painted state from the M5 cache/canonical semantics; eviction is DORMANT-only, distance-hysteretic (`max(streaming_unload_chunk_distance, streaming_active_chunk_radius + 1)`), protected-anchor aware (spawn/portal/ingress/dressing-clearance chunks), bounded to `streaming_unload_chunks_per_frame` (default `1`), and revalidated immediately before unload; `streaming_unload_distant_chunks` now defaults `true` only after the focused M6 smoke and the full regression list passed.
+- Acceptance satisfied: `yes` — all 15 acceptance items verified via `procgen_distant_chunk_unload_smoke.gd` (pure policy fixture + live unload/reload round trip) and the regression sweep below; S1 quick remains `determinism_ok=true` at fingerprint `1773840677` with no baseline change.
 - Superseded/legacy production path disposition: `replaced-in-place`
-- Evidence: `<fill with residency policy API, cache eviction counters, nav/collision authority proof, foliage identity proof, unloaded mutation proof, bounded traversal counts, production-default state, regression results, S1 fingerprint, docs/manifest paths and landed SHA>`
+- Evidence: `procgen_chunk_residency_policy.gd` (new, pure policy), `procgen_chunk_payload_cache.gd` (`evict_chunk()` + per-chunk reverse tile-record index, closes MR5 `R0-01`), `procgen_chunk_lifecycle.gd` (`get_unloaded_chunks()`), `proc_gen_tilemap.gd` (`_unload_chunk()` rewritten as residency adapter, `_drain_residency_eviction()`/`_is_chunk_eviction_valid()`/`_protected_streaming_chunks()`/`_effective_unload_distance()`, `get_runtime_navigation_floor_cells()`/`is_runtime_navigation_walkable()`, `_hide_foliage_for_unload()`/`_show_foliage_if_hidden()`, streaming-paint guard via existing `_is_tile_currently_visible()` threaded through `damage_wall_tile`/`_set_destroyed_wall_floor_tile`/`_refresh_wall_neighbors`/`_force_authored_scene_floor_authority`/`_clear_procgen_wall_authority_at`/`_set_terrain_floor_visual`/`_set_terrain_wall_visual`/`_set_ascent_field_floor_authority`/`_set_ascent_field_wall_authority`/`_preserve_reserved_pre_terrain_floor_authority`, `_sync_runtime_wall_collision_with_visible_walls()` canonical-authority cleanup, new telemetry in `get_runtime_health_snapshot()`), `navigation_system.gd` (`_build_navigation_graph()`/`_is_walkable()` provider-aware with unchanged fallback); new `procgen_distant_chunk_unload_smoke.gd` registered in `validation_manifest.json`; `procgen_chunk_payload_cache_smoke.gd` subtest 4 updated for the new intentional evict-on-unload contract; full regression (`procgen_chunk_payload_cache`, `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_promotion_smoke`, `procgen_macro_presentation_smoke`, `procgen_road_semantics_v2_smoke`, `procgen_dressing_clusters_smoke`, `navigation_elevation_smoke`, `procgen_authored_scene_authority_smoke`) and S1 quick (`procgen_performance_baseline_bench.gd`, `determinism_ok=true`, fingerprint `1773840677`) all green with the new `streaming_unload_distant_chunks = true` default live; docs updated: `STREAMING_PROCGEN_REVEAL.md`, `FILE_INDEX.md`, `PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`, `MASTER_ROADMAP.md`; landed main SHA `<fill after workstream.py finish>`.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none` or concrete failures/near-misses
-- Root cause / contributing factors: `none` or concise cause
-- Prevention / pipeline improvement: `none` or smallest repeatable fix
-- Tooling / docs drift discovered: `none` or exact stale/missing authority
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
-- What worked: optional, one short line at most
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The pure-`ProcGenChunkResidencyPolicy`-level streaming-paint guard and the bounded drain both initially failed in the focused smoke for reasons specific to the test harness, not the implementation: (1) `_drain_residency_eviction()`'s revalidation reads `_streaming_current_chunk` directly, but that member is normally only ever assigned in lockstep with `_update_streaming_chunks()` from inside `_process()` -- a test driving `_update_streaming_chunks()` directly must assign it too or every candidate fails distance revalidation forever; (2) organic generation-time foliage placement is deliberately suppressed near spawn (route/spawn clearance), so a smoke searching for already-placed foliage near spawn found none and had to force-place one fixture node through the real spawner path instead.
+- Root cause / contributing factors: Both are test-harness-only gaps, not implementation defects -- `_streaming_current_chunk` has always been an implicit `_process()`-lockstep invariant with no prior test needing to drive chunk transitions directly from outside `_process()`, and no existing full-pipeline smoke asserted on organic foliage density near spawn before.
+- Prevention / pipeline improvement: Documented the `_streaming_current_chunk` lockstep requirement directly on the new `_simulate_player_chunk_transition()` test helper so a future test touching chunk transitions does not rediscover it the hard way.
+- Tooling / docs drift discovered: `custodian/docs/ai_context/task_packets/README.md`'s workflow section and this program's own M5 packet both said `streaming_unload_distant_chunks` "stays false" / "remains M6's" to unblock -- both were accurate at authoring time and are now updated in `STREAMING_PROCGEN_REVEAL.md` rather than left stale.
+- Follow-up: `fixed-in-scope`
+- What worked: The M5-era `_is_tile_currently_visible()` helper (checks `enable_streaming_reveal` first, then live paint state) turned out to already be the exact streaming-paint guard M6 needed almost everywhere it was threaded through, rather than requiring a new parallel concept.
 
 ## Handoff
 
-- Next action: Claim `procgen-distant-chunk-unload` from current `origin/main`; implement in the Recommended Implementation Order without broad re-archaeology.
-- Best starting files: the five files listed in Agent Search Budget plus `REVIEW_PROCGEN_CHUNK_PAYLOAD_CACHE_CLAUDE_SUMMARY.md`.
-- Blockers or open questions: None. The production-enable gate is test evidence, not a human design decision.
+- Next action: Run paired `review-procgen-distant-chunk-unload` (MR6) against this landed commit.
+- Best starting files: `procgen_chunk_residency_policy.gd`, the rewritten `_unload_chunk()`/`_drain_residency_eviction()` region of `proc_gen_tilemap.gd`, `procgen_chunk_payload_cache.gd`'s `evict_chunk()`, `navigation_system.gd`'s two provider call sites, and `procgen_distant_chunk_unload_smoke.gd`.
+- Blockers or open questions: None.

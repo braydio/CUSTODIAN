@@ -146,9 +146,13 @@ func _find_floor_tilemap() -> TileMapLayer:
 func _build_navigation_graph() -> void:
 	if floor_tilemap == null:
 		return
-	
-	var used_cells = floor_tilemap.get_used_cells()
-	
+
+	var used_cells: Array = floor_tilemap.get_used_cells()
+	if runtime_blocker_provider != null \
+			and is_instance_valid(runtime_blocker_provider) \
+			and runtime_blocker_provider.has_method("get_runtime_navigation_floor_cells"):
+		used_cells = runtime_blocker_provider.call("get_runtime_navigation_floor_cells")
+
 	for cell in used_cells:
 		if _is_walkable(cell):
 			_walkable_tiles[cell] = true
@@ -174,7 +178,12 @@ func _id_to_cell(id: int) -> Vector2i:
 func _is_walkable(cell: Vector2i) -> bool:
 	if floor_tilemap == null:
 		return false
-	
+
+	if runtime_blocker_provider != null \
+			and is_instance_valid(runtime_blocker_provider) \
+			and runtime_blocker_provider.has_method("is_runtime_navigation_walkable"):
+		return bool(runtime_blocker_provider.call("is_runtime_navigation_walkable", cell))
+
 	var source_id = floor_tilemap.get_cell_source_id(cell)
 	if source_id < 0:
 		return false

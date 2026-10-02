@@ -19,6 +19,7 @@ const DERIVED_REBUILD_SCHEDULER_SCRIPT := preload("res://game/world/procgen/deri
 const PAUSE_AWARE_STREAMING_SCRIPT := preload("res://game/world/procgen/streaming/procgen_pause_aware_streaming.gd")
 const CHUNK_LIFECYCLE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_lifecycle.gd")
 const CHUNK_PAYLOAD_CACHE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_payload_cache.gd")
+const CHUNK_RESIDENCY_POLICY_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_residency_policy.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
@@ -461,8 +462,9 @@ enum WorldShapeMode {
 @export_range(1, 4, 1) var streaming_active_chunk_radius: int = 2
 @export_range(1, 256, 1) var streaming_reveal_tiles_per_frame: int = 96
 @export_range(0.05, 0.5, 0.01) var streaming_visual_rebuild_interval_sec: float = 0.15
-@export var streaming_unload_distant_chunks: bool = false
+@export var streaming_unload_distant_chunks: bool = true
 @export_range(2, 8, 1) var streaming_unload_chunk_distance: int = 4
+@export_range(1, 8, 1) var streaming_unload_chunks_per_frame: int = 1
 
 var _last_compound_rect: Rect2i = Rect2i()
 var _last_compound_ingress: Array[Vector2i] = []
@@ -514,6 +516,7 @@ var _streaming_reveal_queue: Array[Vector2i] = []
 var _pause_aware_streaming: ProcGenPauseAwareStreaming = null
 var _chunk_lifecycle: ProcGenChunkLifecycle = null
 var _chunk_payload_cache: ProcGenChunkPayloadCache = null
+var _chunk_residency_policy: ProcGenChunkResidencyPolicy = null
 var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
 var _navigation_rebuild_pending: bool = false
@@ -831,6 +834,7 @@ func _ready() -> void:
 		return
 	_chunk_lifecycle = CHUNK_LIFECYCLE_SCRIPT.new()
 	_chunk_payload_cache = CHUNK_PAYLOAD_CACHE_SCRIPT.new()
+	_chunk_residency_policy = CHUNK_RESIDENCY_POLICY_SCRIPT.new()
 	_pause_aware_streaming = PAUSE_AWARE_STREAMING_SCRIPT.new()
 	add_child(_pause_aware_streaming)
 	_pause_aware_streaming.configure(
@@ -1011,6 +1015,8 @@ func _process(delta: float) -> void:
 
 	if enable_streaming_reveal:
 		_process_streaming_reveal_queue(delta)
+		if streaming_unload_distant_chunks:
+			_drain_residency_eviction()
 
 
 func _publish_presentation_node_gauges() -> void:
@@ -3712,10 +3718,14 @@ func _force_authored_scene_floor_authority(
 	}
 	if _chunk_payload_cache != null:
 		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
-	if render_base_floor_visual:
-		floor_tilemap.set_cell(tile, source_id, atlas, 0)
-	else:
-		floor_tilemap.erase_cell(tile)
+	# M6 streaming-paint guard: skip the visual write for a lifecycle-
+	# UNLOADED tile; reload COMMIT paints the canonical dictionary just
+	# written above.
+	if _is_tile_currently_visible(tile):
+		if render_base_floor_visual:
+			floor_tilemap.set_cell(tile, source_id, atlas, 0)
+		else:
+			floor_tilemap.erase_cell(tile)
 	_clear_procgen_wall_authority_at(tile, refresh_collision_debug)
 	_ensure_elevation_map()
 	elevation_map.call(
@@ -3729,7 +3739,10 @@ func _force_authored_scene_floor_authority(
 
 
 func _clear_procgen_wall_authority_at(tile: Vector2i, refresh_collision_debug: bool = true) -> void:
-	if walls_tilemap != null:
+	# M6 streaming-paint guard on the visual erase only; collision removal
+	# and foliage invalidation below are genuine semantic effects of clearing
+	# wall authority and apply regardless of streaming residency.
+	if walls_tilemap != null and _is_tile_currently_visible(tile):
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
 	_generated_wall_cells.erase(tile)
@@ -4728,9 +4741,10 @@ func _preserve_reserved_pre_terrain_floor_authority(tile: Vector2i) -> void:
 		"authority": "reserved_pre_terrain_traversal",
 	}
 	_generated_wall_cells.erase(tile)
-	if floor_tilemap != null:
+	var paint := _is_tile_currently_visible(tile)
+	if floor_tilemap != null and paint:
 		floor_tilemap.set_cell(tile, source_id, atlas, 0)
-	if walls_tilemap != null:
+	if walls_tilemap != null and paint:
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
 	if _chunk_payload_cache != null:
@@ -5442,9 +5456,10 @@ func _set_ascent_field_floor_authority(tile: Vector2i, region_type: String, zone
 		"authority": "ascent_field",
 	}
 	_generated_wall_cells.erase(tile)
-	if floor_tilemap != null:
+	var paint := _is_tile_currently_visible(tile)
+	if floor_tilemap != null and paint:
 		floor_tilemap.set_cell(tile, source_id, atlas, 0)
-	if walls_tilemap != null:
+	if walls_tilemap != null and paint:
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
 	if _chunk_payload_cache != null:
@@ -5462,9 +5477,10 @@ func _set_ascent_field_wall_authority(tile: Vector2i) -> void:
 		"authority": "ascent_field_blocker",
 	}
 	_generated_floor_cells.erase(tile)
-	if walls_tilemap != null:
+	var paint := _is_tile_currently_visible(tile)
+	if walls_tilemap != null and paint:
 		walls_tilemap.set_cell(tile, source, coord, 0)
-	if floor_tilemap != null:
+	if floor_tilemap != null and paint:
 		floor_tilemap.erase_cell(tile)
 	if not _wall_health.has(tile):
 		_wall_health[tile] = wall_tile_max_health
@@ -5830,6 +5846,54 @@ func debug_get_chunk_payload_cache_snapshot() -> Dictionary:
 	return _chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
 
 
+func debug_get_chunk_residency_policy_snapshot() -> Dictionary:
+	return _chunk_residency_policy.get_snapshot() if _chunk_residency_policy != null else {}
+
+
+func debug_get_unloaded_chunks() -> Array[Vector2i]:
+	return _chunk_lifecycle.get_unloaded_chunks() if _chunk_lifecycle != null else []
+
+
+func debug_get_protected_streaming_chunks() -> Dictionary:
+	return _protected_streaming_chunks()
+
+
+## Returns the foliage node's instance id at `tile` (0 if none), so a test
+## can confirm hide/show preserves the exact node identity rather than
+## destroying and recreating it.
+func debug_get_foliage_node_id(tile: Vector2i) -> int:
+	var node := _foliage_node_at(tile)
+	return node.get_instance_id() if node != null and is_instance_valid(node) else 0
+
+
+## Returns the foliage node's visibility at `tile`, or null when no foliage
+## node is registered there.
+func debug_get_foliage_node_visible(tile: Vector2i) -> Variant:
+	var node := _foliage_node_at(tile)
+	if node == null or not is_instance_valid(node):
+		return null
+	return node.visible
+
+
+func debug_has_road_piece_decal(tile: Vector2i) -> bool:
+	for surface in ["road", "ruined_road", "path"]:
+		var key := _surface_tile_key(surface, tile)
+		var node := _road_piece_nodes_by_key.get(key, null) as Node2D
+		if node != null and is_instance_valid(node):
+			return true
+	return false
+
+
+func debug_has_runtime_wall_collision_body(tile: Vector2i) -> bool:
+	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D if walls_tilemap != null else null
+	if collision_root == null:
+		return false
+	if compact_runtime_wall_bodies:
+		var chunk := collision_root.get_node_or_null(NodePath(_runtime_wall_chunk_name(tile)))
+		return chunk != null and bool(chunk.call("has_wall_tile", tile))
+	return collision_root.has_node(NodePath(_runtime_wall_body_name(tile)))
+
+
 func debug_get_generated_floor_cells() -> Dictionary:
 	return _generated_floor_cells.duplicate(true)
 
@@ -6046,6 +6110,42 @@ func is_runtime_walkable_after_props(tile: Vector2i) -> bool:
 
 func _is_runtime_walkable_after_props(tile: Vector2i) -> bool:
 	return is_runtime_walkable_after_props(tile)
+
+
+## Public semantic/blocker walkability query for `NavigationSystem`: pure
+## canonical-authority delegation, never painted-tile visibility. A chunk
+## that is lifecycle-UNLOADED (presentation-evicted by M6) answers exactly
+## the same as when it was resident, so navigation authority for a
+## previously revealed chunk survives unload.
+func is_runtime_navigation_walkable(tile: Vector2i) -> bool:
+	return is_runtime_walkable_after_props(tile)
+
+
+## Navigation-graph cell source for `NavigationSystem._build_navigation_graph()`:
+## the union of currently painted floor cells (the ordinary resident case)
+## plus canonical generated-floor cells belonging to lifecycle-UNLOADED
+## chunks, so a chunk that was revealed at least once keeps contributing
+## navigation nodes/edges after M6 unloads its presentation. This
+## deliberately never adds a chunk merely because canonical semantics exist
+## for it (UNSEEN chunks are not included) -- only chunks that were actually
+## resident and then unloaded.
+func get_runtime_navigation_floor_cells() -> Array[Vector2i]:
+	var cells: Dictionary = {}
+	if floor_tilemap != null:
+		for cell in floor_tilemap.get_used_cells():
+			cells[cell] = true
+	if _chunk_lifecycle != null:
+		var unloaded := _chunk_lifecycle.get_unloaded_chunks()
+		if not unloaded.is_empty():
+			var unloaded_set: Dictionary = {}
+			for chunk_pos in unloaded:
+				unloaded_set[chunk_pos] = true
+			for tile_variant in _generated_floor_cells.keys():
+				if tile_variant is Vector2i and unloaded_set.has(_tile_to_chunk(tile_variant as Vector2i)):
+					cells[tile_variant] = true
+	var result: Array[Vector2i] = []
+	result.assign(cells.keys())
+	return result
 
 
 func get_runtime_escape_neighbor_count(tile: Vector2i) -> int:
@@ -6996,14 +7096,23 @@ func _set_destroyed_wall_floor_tile(pos: Vector2i) -> void:
 		"atlas": atlas,
 		"alternative": 0,
 	}
-	floor_tilemap.set_cell(pos, source_id, atlas, 0)
-	walls_tilemap.erase_cell(pos)
+	# M6 streaming-paint guard: a lifecycle-UNLOADED tile stays unpainted here;
+	# reload COMMIT repaints it from the canonical dictionary just written
+	# above, so the semantic truth is never lost, only its presentation is
+	# deferred.
+	if _is_tile_currently_visible(pos):
+		floor_tilemap.set_cell(pos, source_id, atlas, 0)
+		walls_tilemap.erase_cell(pos)
 	_wall_health.erase(pos)
 	_set_region_tile(pos, "destroyed_wall_floor", "debris")
 
 
+## Recognizes canonical generated-wall authority even when the wall is
+## currently visually unloaded (M6): a destroyed wall must resolve correctly
+## regardless of streaming residency, not merely when it happens to be
+## painted.
 func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") -> Dictionary:
-	if walls_tilemap == null or walls_tilemap.get_cell_source_id(pos) < 0:
+	if walls_tilemap == null or not _generated_wall_cells.has(pos):
 		return {
 			"blocked": false,
 			"destroyed": false,
@@ -7048,23 +7157,30 @@ func damage_wall_at_global(global_position: Vector2, amount: float, attacker_tea
 	return damage_wall_tile(tile, amount, attacker_team)
 
 
+## Refreshes neighboring generated-wall records from canonical state
+## regardless of streaming residency, but only repaints (M6 streaming-paint
+## guard) a neighbor that is currently resident/visible -- an UNLOADED
+## neighbor's updated atlas/alternative is still recorded so reload COMMIT
+## paints the correct variant later.
 func _refresh_wall_neighbors(center_tile: Vector2i) -> void:
 	for x in range(center_tile.x - 1, center_tile.x + 2):
 		for y in range(center_tile.y - 1, center_tile.y + 2):
 			var pos := Vector2i(x, y)
-			if walls_tilemap.get_cell_source_id(pos) < 0:
+			if not _generated_wall_cells.has(pos):
 				continue
 			var source := high_walls_source_id if use_high_walls else walls_source_id
 			var coord := _select_wall_coord(pos)
-			walls_tilemap.set_cell(pos, source, coord)
-			if _generated_wall_cells.has(pos):
-				_generated_wall_cells[pos] = {
-					"source_id": source,
-					"atlas": coord,
-					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
-				}
-				if _chunk_payload_cache != null:
-					_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
+			var alternative := 0
+			if walls_tilemap.get_cell_source_id(pos) >= 0:
+				walls_tilemap.set_cell(pos, source, coord)
+				alternative = walls_tilemap.get_cell_alternative_tile(pos)
+			_generated_wall_cells[pos] = {
+				"source_id": source,
+				"atlas": coord,
+				"alternative": alternative,
+			}
+			if _chunk_payload_cache != null:
+				_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
 
 
 func _refresh_navigation_after_wall_change(force_immediate: bool = false, reason: String = "wall_change") -> void:
@@ -7623,13 +7739,19 @@ func _apply_terrain_tile_visual(cell: Vector2i, tile_id: String) -> bool:
 func _set_terrain_floor_visual(cell: Vector2i, source_id: int) -> void:
 	if floor_tilemap == null:
 		return
-	floor_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
+	# M6 streaming-paint guard: during initial generation (`enable_streaming_
+	# reveal == false`) this is always true, so behavior is unchanged there;
+	# after streaming starts, a lifecycle-UNLOADED cell stays unpainted and
+	# reload COMMIT paints the canonical dictionary written below.
+	var paint := _is_tile_currently_visible(cell)
+	if paint:
+		floor_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
 	_generated_floor_cells[cell] = {
 		"source_id": source_id,
 		"atlas": TERRAIN_TILE_ATLAS_COORD,
 		"alternative": 0,
 	}
-	if walls_tilemap != null:
+	if walls_tilemap != null and paint:
 		walls_tilemap.erase_cell(cell)
 	_generated_wall_cells.erase(cell)
 	_wall_health.erase(cell)
@@ -7640,13 +7762,15 @@ func _set_terrain_floor_visual(cell: Vector2i, source_id: int) -> void:
 func _set_terrain_wall_visual(cell: Vector2i, source_id: int) -> void:
 	if walls_tilemap == null:
 		return
-	walls_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
+	var paint := _is_tile_currently_visible(cell)
+	if paint:
+		walls_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
 	_generated_wall_cells[cell] = {
 		"source_id": source_id,
 		"atlas": TERRAIN_TILE_ATLAS_COORD,
 		"alternative": 0,
 	}
-	if floor_tilemap != null:
+	if floor_tilemap != null and paint:
 		floor_tilemap.erase_cell(cell)
 	_generated_floor_cells.erase(cell)
 	if not _wall_health.has(cell):
@@ -9018,11 +9142,15 @@ func _set_floor_tile_and_generated_state(
 	_clear_road_blocking_wall(pos)
 	if not region_type.is_empty():
 		_set_region_tile(pos, region_type, zone)
+	# Collision removal is a genuine semantic effect of this tile no longer
+	# being a wall (the dictionary erase above), so it applies regardless of
+	# streaming residency (M6) -- only the visual paint below is guarded by
+	# `_is_tile_currently_visible()`.
+	if build_runtime_wall_collision:
+		_remove_runtime_wall_body(pos)
 	if render_base_floor_visual and _is_tile_currently_visible(pos):
 		floor_tilemap.set_cell(pos, source_id, atlas, 0)
 		walls_tilemap.erase_cell(pos)
-		if build_runtime_wall_collision:
-			_remove_runtime_wall_body(pos)
 	elif not render_base_floor_visual:
 		floor_tilemap.erase_cell(pos)
 
@@ -9656,6 +9784,43 @@ func _remove_foliage(pos: Vector2i) -> void:
 	_foliage_locally_inspected_tiles.erase(pos)
 
 
+func _foliage_node_at(pos: Vector2i) -> Node2D:
+	var entry = _foliage_nodes.get(pos)
+	if entry is Dictionary:
+		return entry.get("node", null) as Node2D
+	if entry is Node2D:
+		return entry as Node2D
+	return null
+
+
+## M6 residency-only foliage disposal: makes the existing foliage node at
+## `pos` non-rendering without destroying it, rerolling its placement, or
+## touching its registered trunk collision/runtime-blocker/region metadata.
+## This is the only foliage path `_unload_chunk()` uses -- genuine semantic
+## invalidation (wall paint, authored-scene claims, etc.) still calls the
+## real `_remove_foliage()` above.
+func _hide_foliage_for_unload(pos: Vector2i) -> void:
+	var node := _foliage_node_at(pos)
+	if node != null and is_instance_valid(node):
+		node.visible = false
+
+
+## Re-shows a foliage node left hidden by `_hide_foliage_for_unload()` for
+## `pos`, if one exists, instead of letting floor COMMIT place/reroll new
+## foliage there. Returns true when an existing node was re-shown (COMMIT
+## should skip new placement); false otherwise (including a stale/freed
+## entry, which is dropped so COMMIT falls through to ordinary placement).
+func _show_foliage_if_hidden(pos: Vector2i) -> bool:
+	if not _foliage_nodes.has(pos):
+		return false
+	var node := _foliage_node_at(pos)
+	if node == null or not is_instance_valid(node):
+		_foliage_nodes.erase(pos)
+		return false
+	node.visible = true
+	return true
+
+
 func _should_place_foliage(pos: Vector2i) -> bool:
 	if not _generated_floor_cells.has(pos) \
 			or _ocean_cells.has(pos) or _chasm_cells.has(pos):
@@ -10152,6 +10317,8 @@ func _prepare_streaming_reveal() -> void:
 	_chunk_lifecycle.reset()
 	if _chunk_payload_cache != null:
 		_chunk_payload_cache.reset()
+	if _chunk_residency_policy != null:
+		_chunk_residency_policy.reset()
 	if _pause_aware_streaming != null:
 		_pause_aware_streaming.reset()
 	else:
@@ -10205,18 +10372,93 @@ func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> 
 	# gate ever changes.
 	if get_tree() != null and get_tree().paused:
 		return
-	var unloaded_any := false
 	for x in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 		for y in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 			_queue_chunk_for_reveal(center_chunk + Vector2i(x, y), center_tile)
 	_chunk_lifecycle.sync_active_window(center_chunk, streaming_active_chunk_radius)
-	if streaming_unload_distant_chunks:
+	# M6: refresh the bounded eviction candidate queue here (every player-
+	# chunk transition) rather than unloading directly -- actual unload is
+	# drained at most `streaming_unload_chunks_per_frame` per frame from
+	# `_process()`, with each candidate revalidated immediately before use.
+	if streaming_unload_distant_chunks and _chunk_residency_policy != null:
+		var dormant_chunks: Array[Vector2i] = []
 		for chunk_pos in _chunk_lifecycle.get_resident_chunks():
-			if maxi(abs(chunk_pos.x - center_chunk.x), abs(chunk_pos.y - center_chunk.y)) > streaming_unload_chunk_distance:
-				_unload_chunk(chunk_pos)
-				unloaded_any = true
-	if unloaded_any:
+			if _chunk_lifecycle.get_state(chunk_pos) == ProcGenChunkLifecycle.State.DORMANT:
+				dormant_chunks.append(chunk_pos)
+		_chunk_residency_policy.refresh_candidates(
+			center_chunk, dormant_chunks, _protected_streaming_chunks(), _effective_unload_distance()
+		)
+
+
+## The unload distance actually enforced at runtime: never smaller than
+## `streaming_active_chunk_radius + 1`, so eviction can never reach into the
+## active reveal window regardless of how `streaming_unload_chunk_distance`
+## is configured.
+func _effective_unload_distance() -> int:
+	return maxi(streaming_unload_chunk_distance, streaming_active_chunk_radius + 1)
+
+
+## Chunks automatic residency eviction must never unload, so asynchronous
+## reveal budgeting can never produce a blank landing: the player spawn
+## chunk, every valid portal-teleporter endpoint chunk, every current
+## compound-ingress chunk, and any chunk intersecting the current world-
+## ingress dressing clearance rects. `debug_force_unload_chunk()` and other
+## debug/test force-unload paths intentionally bypass this policy.
+func _protected_streaming_chunks() -> Dictionary:
+	var protected_chunks: Dictionary = {}
+	protected_chunks[_tile_to_chunk(get_player_spawn())] = true
+	for portal in _portal_teleporters:
+		if portal != null and is_instance_valid(portal) and portal is Node2D:
+			protected_chunks[_tile_to_chunk(_global_to_tile((portal as Node2D).global_position))] = true
+	for ingress in _last_compound_ingress:
+		if ingress is Vector2i:
+			protected_chunks[_tile_to_chunk(ingress as Vector2i)] = true
+	for rect in _world_ingress_dressing_clearance_rects:
+		var start_chunk := _tile_to_chunk(rect.position)
+		var end_chunk := _tile_to_chunk(rect.position + rect.size - Vector2i.ONE)
+		for cx in range(start_chunk.x, end_chunk.x + 1):
+			for cy in range(start_chunk.y, end_chunk.y + 1):
+				protected_chunks[Vector2i(cx, cy)] = true
+	return protected_chunks
+
+
+## Bounded M6 production residency drain: unloads at most
+## `streaming_unload_chunks_per_frame` chunk(s) per frame from the
+## residency-policy candidate queue `_update_streaming_chunks()` refreshes.
+## Every taken candidate is revalidated against live state/distance/
+## protection immediately before unload, because the queue can go stale
+## between refreshes -- the player may have moved back into the hysteresis
+## radius, the chunk may have left DORMANT (new work queued against it), or
+## it may have become protected.
+func _drain_residency_eviction() -> void:
+	if _chunk_residency_policy == null or _chunk_lifecycle == null:
+		return
+	if get_tree() != null and get_tree().paused:
+		return
+	var candidates := _chunk_residency_policy.take_candidates(streaming_unload_chunks_per_frame)
+	if candidates.is_empty():
+		return
+	var protected_chunks := _protected_streaming_chunks()
+	var unload_distance := _effective_unload_distance()
+	var evicted_any := false
+	for chunk_pos in candidates:
+		if not _is_chunk_eviction_valid(chunk_pos, protected_chunks, unload_distance):
+			_chunk_residency_policy.note_cancelled()
+			continue
+		_unload_chunk(chunk_pos)
+		_chunk_residency_policy.note_evicted()
+		evicted_any = true
+	if evicted_any:
 		_flush_streaming_visual_rebuilds()
+
+
+func _is_chunk_eviction_valid(chunk_pos: Vector2i, protected_chunks: Dictionary, unload_distance: int) -> bool:
+	if protected_chunks.has(chunk_pos):
+		return false
+	if _chunk_lifecycle.get_state(chunk_pos) != ProcGenChunkLifecycle.State.DORMANT:
+		return false
+	var distance := maxi(absi(chunk_pos.x - _streaming_current_chunk.x), absi(chunk_pos.y - _streaming_current_chunk.y))
+	return distance > unload_distance
 
 
 func _process_streaming_reveal_queue(delta: float = 0.0) -> void:
@@ -10345,9 +10587,19 @@ func _cached_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
 	return _chunk_payload_cache.get_chunk_tiles(chunk_pos, _get_chunk_tiles)
 
 
-## Disabled in production (`streaming_unload_distant_chunks` defaults false);
-## the only call site is dependency-gated behind that flag. Exercises the
-## lifecycle contract's UNLOADED state through its narrow debug/test seam.
+## M6 presentation/cache residency adapter -- called by the bounded
+## production residency drain in `_update_streaming_chunks()` once
+## `streaming_unload_distant_chunks` is enabled, and by the narrow
+## `debug_force_unload_chunk()` test seam. It is never a semantic destroyer:
+## it erases this chunk's painted Floor/Walls cells, streaming-hides its
+## existing foliage nodes (never destroys/rerolls them -- see
+## `_hide_foliage_for_unload()`), removes its deterministic road/path decal
+## nodes, and evicts the M5 cached payload for the chunk. Generated floor/
+## wall dictionaries, wall health, region/elevation/road semantics, runtime
+## prop blockers, wall collision, and world mutations all remain
+## authoritative and unaffected -- collision is cleaned up only by
+## `_sync_runtime_wall_collision_with_visible_walls()`'s canonical-authority
+## pass, and only when a wall is genuinely destroyed.
 func _unload_chunk(chunk_pos: Vector2i) -> void:
 	var state := _chunk_lifecycle.get_state(chunk_pos)
 	if state != ProcGenChunkLifecycle.State.VISIBLE and state != ProcGenChunkLifecycle.State.DORMANT:
@@ -10359,9 +10611,10 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			var tile := Vector2i(x, y)
 			floor_tilemap.erase_cell(tile)
 			walls_tilemap.erase_cell(tile)
-			_remove_foliage(tile)
+			_hide_foliage_for_unload(tile)
 			_remove_road_piece_decal(tile)
-			_remove_runtime_wall_body(tile, false, false)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.evict_chunk(chunk_pos)
 	_chunk_lifecycle.force_unload(chunk_pos)
 	_streaming_visual_rebuild_pending = true
 	_refresh_macro_streaming_visibility()
@@ -10426,7 +10679,9 @@ func _commit_tile_reveal_record(record: Dictionary) -> void:
 		var floor_data: Dictionary = record["floor_data"]
 		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord), int(floor_data.get("alternative", 0)))
 		_reveal_road_piece_decal(tile)
-		if _dressing_cluster_child_by_cell.has(tile):
+		if _show_foliage_if_hidden(tile):
+			pass
+		elif _dressing_cluster_child_by_cell.has(tile):
 			var child: Dictionary = _dressing_cluster_child_by_cell[tile]
 			_ensure_foliage_spawner()
 			_foliage_spawner.place_at_kind(_build_foliage_spawner_context(), tile, StringName(child.kind))
@@ -10601,16 +10856,19 @@ func _sync_runtime_wall_collision_with_visible_walls(reason: String = "visible_w
 		collision_root.name = "RuntimeWallCollision"
 		walls_tilemap.add_child(collision_root)
 
-	var visible_wall_tiles := {}
 	for tile in walls_tilemap.get_used_cells():
 		if walls_tilemap.get_cell_source_id(tile) >= 0:
-			visible_wall_tiles[tile] = true
 			_spawn_runtime_wall_body(tile, false, false)
 
+	# Cleanup removes a wall shape only when canonical `_generated_wall_cells`
+	# no longer contains that tile -- never merely because presentation
+	# unloaded it. A once-revealed wall's collision must survive M6 visual
+	# unload; only genuine semantic wall destruction (which already erases
+	# the tile from `_generated_wall_cells`) removes its collision here.
 	for child in collision_root.get_children():
 		if compact_runtime_wall_bodies and child.has_method("get_wall_tiles"):
 			for tile in child.call("get_wall_tiles"):
-				if not visible_wall_tiles.has(tile):
+				if not _generated_wall_cells.has(tile):
 					child.call("remove_wall_tile", tile)
 					_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
 					_runtime_wall_shapes_freed_total += 1
@@ -10620,7 +10878,7 @@ func _sync_runtime_wall_collision_with_visible_walls(reason: String = "visible_w
 				child.queue_free()
 			continue
 		var tile := _wall_tile_from_runtime_body_name(String(child.name))
-		if tile == Vector2i(999999, 999999) or not visible_wall_tiles.has(tile):
+		if tile == Vector2i(999999, 999999) or not _generated_wall_cells.has(tile):
 			collision_root.remove_child(child)
 			child.queue_free()
 			_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
@@ -11151,6 +11409,17 @@ func get_runtime_health_snapshot() -> Dictionary:
 		"chunk_payload_cache": (
 			_chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
 		),
+		"chunk_residency_policy": (
+			_chunk_residency_policy.get_snapshot() if _chunk_residency_policy != null else {}
+		),
+		"residency_unload_enabled": streaming_unload_distant_chunks,
+		"residency_effective_unload_distance": _effective_unload_distance(),
+		"residency_unload_budget_per_frame": streaming_unload_chunks_per_frame,
+		"unloaded_chunk_count": (
+			_chunk_lifecycle.get_unloaded_chunks().size() if _chunk_lifecycle != null else 0
+		),
+		"painted_floor_cell_count": floor_tilemap.get_used_cells().size() if floor_tilemap != null else 0,
+		"painted_wall_cell_count": walls_tilemap.get_used_cells().size() if walls_tilemap != null else 0,
 	}
 	var cliff_state := void_cliff_face.get_debug_state() if void_cliff_face != null else {}
 	snapshot["void_cliff_frontier_cells"] = int(cliff_state.get("frontier_cells", 0))

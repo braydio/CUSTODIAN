@@ -28,14 +28,23 @@ extends RefCounted
 ## chunk's revision and drops its cached membership (a precise post-cache
 ## runtime semantic mutation, e.g. wall destruction or an authored-scene
 ## claim). `invalidate_all()` clears every cached payload without bumping
-## `generation_id` (a bulk late-generation-finalization boundary, where
-## treating "clear everything built so far" as simpler and
-## behavior-preserving is explicitly allowed). A record carried externally
-## (e.g. sitting in M3's `_prepared` queue across resume frames) can be
-## checked against current identity via `is_record_stale()` /
+## `generation_id`; the current generation/runtime path uses precise
+## per-chunk invalidation instead, so this remains an unused explicit bulk
+## primitive, retained only for a future boundary that genuinely needs to
+## clear every derived payload at once. A record carried externally (e.g.
+## sitting in M3's `_prepared` queue across resume frames) can be checked
+## against current identity via `is_record_stale()` /
 ## `revalidate_record_before_commit()` immediately before authoritative
 ## COMMIT mutation, so a stale Dictionary already queued elsewhere can never
 ## silently repaint a destroyed/claimed/repainted semantic truth.
+##
+## M6 production distant-chunk unload adds `evict_chunk()`: a pure
+## memory-shape reduction that drops one chunk's cached membership and
+## internally stored tile records -- unlike `invalidate_chunk()`, it never
+## bumps that chunk's revision or semantic identity, because eviction is not
+## a semantic mutation. The chunk's canonical `_generated_floor_cells`/
+## `_generated_wall_cells` truth is untouched; the next access simply
+## rebuilds the same cached view from it.
 
 const GENERATION_KEY := "_cache_generation_id"
 const REVISION_KEY := "_cache_chunk_revision"
@@ -45,11 +54,14 @@ var miss_count: int = 0
 var invalidation_count: int = 0
 var stale_refresh_count: int = 0
 var reset_count: int = 0
+var eviction_count: int = 0
+var evicted_tile_record_count: int = 0
 
 var _generation_id: int = 0
-var _chunk_membership: Dictionary = {}  # Vector2i chunk -> Array[Vector2i] tiles
-var _chunk_revision: Dictionary = {}    # Vector2i chunk -> int revision
-var _tile_records: Dictionary = {}      # Vector2i tile -> Dictionary stamped record
+var _chunk_membership: Dictionary = {}       # Vector2i chunk -> Array[Vector2i] tiles
+var _chunk_revision: Dictionary = {}         # Vector2i chunk -> int revision
+var _tile_records: Dictionary = {}           # Vector2i tile -> Dictionary stamped record
+var _chunk_tile_record_keys: Dictionary = {} # Vector2i chunk -> Dictionary{Vector2i tile: true}
 
 
 ## True generation/streaming-reset boundary: drop every cached payload and
@@ -60,6 +72,7 @@ func reset() -> void:
 	_chunk_membership.clear()
 	_chunk_revision.clear()
 	_tile_records.clear()
+	_chunk_tile_record_keys.clear()
 	reset_count += 1
 
 
@@ -76,6 +89,7 @@ func invalidate_all() -> void:
 	invalidation_count += maxi(1, _chunk_membership.size())
 	_chunk_membership.clear()
 	_tile_records.clear()
+	_chunk_tile_record_keys.clear()
 
 
 ## Precise post-cache runtime invalidation for one chunk: wall destruction,
@@ -88,7 +102,35 @@ func invalidate_all() -> void:
 func invalidate_chunk(chunk_pos: Vector2i) -> void:
 	_chunk_revision[chunk_pos] = int(_chunk_revision.get(chunk_pos, 0)) + 1
 	_chunk_membership.erase(chunk_pos)
+	_drop_chunk_tile_records(chunk_pos)
 	invalidation_count += 1
+
+
+## M6 pure memory-shape eviction: drop this chunk's cached membership and
+## internally stored tile records without bumping its revision or the cache
+## generation. Unlike `invalidate_chunk()` this is not a semantic event --
+## any externally-held record for this chunk remains exactly as valid as it
+## was before the call, since canonical `_generated_floor_cells`/
+## `_generated_wall_cells` did not change. The next access simply rebuilds
+## the same payload from that unchanged canonical state.
+func evict_chunk(chunk_pos: Vector2i) -> void:
+	_chunk_membership.erase(chunk_pos)
+	var removed := _drop_chunk_tile_records(chunk_pos)
+	eviction_count += 1
+	evicted_tile_record_count += removed
+
+
+func _drop_chunk_tile_records(chunk_pos: Vector2i) -> int:
+	var keys: Dictionary = _chunk_tile_record_keys.get(chunk_pos, {})
+	if keys.is_empty():
+		_chunk_tile_record_keys.erase(chunk_pos)
+		return 0
+	var removed := 0
+	for tile in keys.keys():
+		if _tile_records.erase(tile):
+			removed += 1
+	_chunk_tile_record_keys.erase(chunk_pos)
+	return removed
 
 
 func get_generation_id() -> int:
@@ -126,7 +168,7 @@ func get_tile_record(tile: Vector2i, chunk_pos: Vector2i, builder: Callable) -> 
 			hit_count += 1
 			return cached
 	miss_count += 1
-	return _build_and_store(tile, current_revision, builder)
+	return _build_and_store(tile, chunk_pos, current_revision, builder)
 
 
 ## True when `record` was stamped under a generation/chunk-revision that is
@@ -154,14 +196,17 @@ func revalidate_record_before_commit(
 	if not is_record_stale(record, chunk_pos):
 		return record
 	stale_refresh_count += 1
-	return _build_and_store(tile, get_chunk_revision(chunk_pos), builder)
+	return _build_and_store(tile, chunk_pos, get_chunk_revision(chunk_pos), builder)
 
 
-func _build_and_store(tile: Vector2i, revision: int, builder: Callable) -> Dictionary:
+func _build_and_store(tile: Vector2i, chunk_pos: Vector2i, revision: int, builder: Callable) -> Dictionary:
 	var record: Dictionary = builder.call(tile)
 	record[GENERATION_KEY] = _generation_id
 	record[REVISION_KEY] = revision
 	_tile_records[tile] = record
+	var keys: Dictionary = _chunk_tile_record_keys.get(chunk_pos, {})
+	keys[tile] = true
+	_chunk_tile_record_keys[chunk_pos] = keys
 	return record
 
 
@@ -186,4 +231,6 @@ func get_telemetry_snapshot() -> Dictionary:
 		"miss_count": miss_count,
 		"invalidation_count": invalidation_count,
 		"stale_refresh_count": stale_refresh_count,
+		"eviction_count": eviction_count,
+		"evicted_tile_record_count": evicted_tile_record_count,
 	}
