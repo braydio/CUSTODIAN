@@ -206,7 +206,9 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M5 | `procgen-chunk-payload-cache` | **complete** | MR4 |
 | MR5 | `review-procgen-chunk-payload-cache` | **complete — passed, optional-improvement-only** | M5 |
 | M6 | `procgen-distant-chunk-unload` | **complete — implementation landed, MR6 pending** | MR5 |
-| MR6 | `review-procgen-distant-chunk-unload` | **ready / eligible** | M6 |
+| MR6 | `review-procgen-distant-chunk-unload` | **complete — findings, correction queued** | M6 |
+| MR6-corrections-1 | `procgen-distant-chunk-unload-review-corrections-1` | **ready / manual** | MR6 |
+| MR6-corrections-1 review | `review-procgen-distant-chunk-unload-review-corrections-1` | **ready / eligible (cycle 1)** | MR6-corrections-1 |
 | P1 | `contract-world-placement-foundation` | **ready / eligible** | S1 |
 | PR1 | `review-contract-world-placement-foundation` | queued | P1 |
 | P2 | `contract-world-resource-placement-extraction` | queued | PR1 |
@@ -263,9 +265,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4/MR4 and M5/MR5 are complete; M6 has landed with production distant unload enabled by default. Static post-land audit found no clear code-level blocker, but the M6 closeout overstates four pieces of acceptance proof: the focused smoke does not perform a real NavigationSystem rebuild after unload, proves only the spawn protected anchor rather than real portal/ingress anchors, does not assert foliage blocker/trunk-collision/cluster parity, and does not record one combined before/after painted/cache/road residency-reduction fixture. MR6 has been rewritten to treat those as explicit review obligations rather than inferred success. P1/PR1 remain independent.
-**State:** S1, G1-G5, M1-M6, MR4 and MR5 are landed; MR6 is ready/eligible with targeted proof obligations. D1-D3 still wait on reviewed MR6. The separate Procgen World Presentation lane is now packetized: RF1 + RFR1 for region-frame/exterior-underlay separation, a blocked six-state Alpine underlay Asset V2 packet, and existing AR1-AR3 Archive Resolve packets. These presentation packets do not change the V1 optimization DAG. Placement remains independently gated P1 -> PR1 -> P2-P6 -> refreshed P7; the full S3 Exit condition remains the post-D1/D2/D3 GenerationGrid initiative.
-**Next gate:** Run MR6 against landed M6. A clean/non-blocking-only receipt closes S7 and unlocks the required in-place refresh of D1-D3 plus the post-MR6 presentation packets. A material evidence gap or defect creates the bounded M6 review-correction/re-review cycle instead. Region Frame RF1 and Archive Resolve AR1 are pre-authored but remain blocked until that review gate.
+**Current packet:** M4/MR4 and M5/MR5 are complete; M6 has landed with production distant unload enabled by default. MR6 has now run: it independently confirmed all four pre-identified proof obligations (NavigationSystem rebuild retention, real portal/ingress protected anchors, foliage blocker/trunk-collision/cluster parity, combined before/after residency-reduction fixture) as genuine material evidence gaps, and additionally found one blocking defect by code review: `_drain_residency_eviction()` forces an unthrottled, full resident-window presentation resync (`_sync_runtime_wall_collision_with_visible_walls()` + `_rebuild_horizontal_wall_overlays()` + navigation/shadow requests) on every eviction-frame instead of batching on the same `streaming_visual_rebuild_interval_sec` cadence ordinary reveal already uses, so a multi-chunk eviction backlog pays that full cost on every one of several consecutive frames. `procgen-distant-chunk-unload-review-corrections-1` (ready/manual) plus its paired cycle-1 re-review (ready/auto) now carry the fix. P1/PR1 remain independent.
+**State:** S1, G1-G5, M1-M6, MR4 and MR5 are landed; MR6 is complete with findings, not a clean pass. D1-D3 still wait on a clean cycle-1 re-review. The separate Procgen World Presentation lane is now packetized: RF1 + RFR1 for region-frame/exterior-underlay separation, a blocked six-state Alpine underlay Asset V2 packet, and existing AR1-AR3 Archive Resolve packets. These presentation packets do not change the V1 optimization DAG. Placement remains independently gated P1 -> PR1 -> P2-P6 -> refreshed P7; the full S3 Exit condition remains the post-D1/D2/D3 GenerationGrid initiative.
+**Next gate:** Claim `procgen-distant-chunk-unload-review-corrections-1`, then its paired cycle-1 re-review. A clean/non-blocking-only cycle-1 receipt closes S7 and unlocks the required in-place refresh of D1-D3 plus the post-MR6 presentation packets. Region Frame RF1 and Archive Resolve AR1 are pre-authored but remain blocked until that review gate.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+MR6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
@@ -805,6 +807,39 @@ ingress dressing-clearance chunks) are excluded from eviction entirely.
 - **Closing summary:** `PROCGEN_DISTANT_CHUNK_UNLOAD_CLAUDE_SUMMARY.md`.
 - **Evidence:** New `procgen_distant_chunk_unload_smoke.gd` proves the pure policy's eligibility/ordering/protection/cancellation fixture, plus a live `ProcGenTilemap` round trip: bounded per-frame eviction, protected-chunk rejection, stale-candidate cancellation when the player returns, M5 cache-record eviction, wall-collision retention through unload, navigation floor-cell/walkability preservation for an unloaded previously-revealed chunk (and correct UNSEEN exclusion), foliage node identity/visibility parity across hide/show, road-decal unload/reload parity, safe wall destruction and authored-scene claim mutation while UNLOADED with no premature repaint, and correct reload materialization with nothing stale resurrected. `procgen_chunk_payload_cache`, `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_promotion_smoke` (`procgen_candidate_materializer_parity`), `procgen_macro_presentation`, `procgen_road_semantics_v2`, `procgen_dressing_clusters`, `navigation_elevation_smoke`, and `procgen_authored_scene_authority_smoke` all pass with the new `streaming_unload_distant_chunks = true` default exercised live (none of them override the flag). S1 quick reports `determinism_ok=true` at the same fixed-seed fingerprint (`1773840677`) as M1-M5, confirming no deterministic-output regression. The one required M5-test behavior change (a debug unload/re-reveal round trip now rebuilds instead of reusing its cache entry, since M6 intentionally evicts on unload) was updated in `procgen_chunk_payload_cache_smoke.gd` alongside the implementation.
 - **Next:** Run MR6 against this landed commit. Only a clean/non-blocking-only MR6 pass closes S7 and makes D1-D3 refresh-eligible.
+
+### MR6 Review — Findings, Correction Queued
+
+MR6 ran against `035aaafdd` and independently confirmed all four pre-identified
+proof obligations as genuine material evidence gaps rather than inferred
+success, and found one additional blocking defect by code review:
+
+- **R0-01 (blocking_defect):** `ProcGenTilemap._drain_residency_eviction()`
+  calls `_flush_streaming_visual_rebuilds()` unconditionally and
+  synchronously whenever it evicts a chunk, bypassing the
+  `streaming_visual_rebuild_interval_sec` coalescing accumulator ordinary
+  tile reveal already uses for the same flush. That flush does an
+  O(entire-resident-window) wall-collision rebuild
+  (`_sync_runtime_wall_collision_with_visible_walls()`) and horizontal-wall-
+  overlay rebuild (`_rebuild_horizontal_wall_overlays()`), plus navigation/
+  shadow requests whose scheduler batch id is keyed to
+  `Engine.get_process_frames()` and so only coalesces within one frame. A
+  multi-chunk eviction backlog (e.g. after a fast-travel) pays the full
+  resident-window cost on every one of several consecutive frames instead of
+  the ~150ms batched cadence reveal gets -- exactly the "frame spike"/
+  "visible traversal churn" the Completion boundary promised to avoid.
+- **R0-02 through R0-05 (evidence_gap):** confirmed absent from the landed
+  evidence: a real `NavigationSystem` rebuild after unload is never
+  exercised (only the `ProcGenTilemap` provider methods directly); protected-
+  anchor proof is spawn-chunk-only, never a real portal/ingress/clearance
+  source; foliage parity proof covers only node identity + `.visible`, never
+  `kind`/`cluster_id`/`has_collision`/runtime-blocker registration; and no
+  test records one combined before/after painted-cell/cache/road count
+  fixture (Acceptance item 15).
+
+- **Landed main SHA:** `<to be filled at landing>` (`procgen distant chunk unload, MR6 independent review finds frame-coalescing defect and evidence gaps`).
+- **Closing summary:** `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_CLAUDE_SUMMARY.md`.
+- **Next:** Claim `procgen-distant-chunk-unload-review-corrections-1` (ready/manual) to coalesce the eviction-triggered flush and extend the M6 smoke with the four missing proof sections, then its paired cycle-1 re-review (ready/auto). Only a clean/non-blocking-only cycle-1 pass closes S7 and makes D1-D3 refresh-eligible.
 
 ---
 
