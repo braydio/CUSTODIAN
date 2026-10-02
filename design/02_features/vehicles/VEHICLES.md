@@ -48,9 +48,9 @@ Behavior resolved from: `domain + mobility + chassis + role + loadout + traits`
 
 ---
 
-## 2.1 First Campaign World Visual Lock
+## 2.1 Alpine Plateau Starting-Region Application
 
-Vehicle mechanics remain classification-driven, but Custodian vehicles shown in the current generated campaign world must follow `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`.
+Vehicle mechanics remain classification-driven. Custodian vehicles shown in the first generated `ALPINE_PLATEAU` starting region follow `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`. Future region frames may alter weathering/environmental application without changing vehicle taxonomy or core Custodian construction grammar.
 
 Default Custodian read:
 
