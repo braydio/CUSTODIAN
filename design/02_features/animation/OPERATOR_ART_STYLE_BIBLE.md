@@ -23,3 +23,9 @@ numeric camera angle is authoritative until calibrated against gameplay.
 - Provisional metrics produce warnings, not fabricated artistic truth.
 
 Workbench V2 remains the only canonical publication gate.
+
+The accepted structural 96x96 registration ruler is stored in
+`custodian/content/data/operator/authoring/operator_art_profile.json`. Neutral
+head/hip/knee guide coordinates are review references, not pose acceptance
+criteria. `enforcement.artistic` remains false; action-specific recoil,
+crouch, anticipation, and weight transfer remain authored motion.

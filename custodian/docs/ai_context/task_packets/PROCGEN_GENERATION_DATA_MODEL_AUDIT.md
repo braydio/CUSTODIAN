@@ -29,6 +29,20 @@
 - Task overrides: `none`
 - Deferred: Implementing the GenerationGrid seam; migrating any helper cluster; pure-data backend; candidate cutover; legacy TileMap-backed evaluation demolition.
 
+
+## Archive Resolve Classification Guard
+
+Before executing this post-D1/D2/D3 audit, confirm the Archive Resolve packet set
+was refreshed against reviewed MR6 and inspect the live implementation if it has
+landed. Archive Resolve request/commit/unload/reacquisition state is runtime
+presentation state, not GenerationGrid working memory. The audit must classify
+that owner and its callbacks as presentation/runtime-only and explicitly exclude
+them from GenerationGrid semantic capabilities and migration clusters.
+
+If the AR packet set is still pre-refresh when this audit becomes eligible, stop
+and resolve the ordering rather than folding speculative reveal state into the
+generation-data model.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`

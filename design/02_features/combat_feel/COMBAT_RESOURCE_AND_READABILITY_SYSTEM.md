@@ -4,7 +4,7 @@
 **Status:** in_progress
 **Owner:** gameplay/combat + logistics + enemy behavior
 **Runtime target:** Godot 4.x (`custodian/`)
-**Last updated:** 2026-07-14
+**Last updated:** 2026-10-01
 
 ## Purpose
 
@@ -25,7 +25,8 @@ below; this document does not duplicate their runtime ownership.
 | Typed ammunition, magazines, reload, range/falloff | complete-v1 | Capped typed reserves and persistent per-weapon magazines; projectile range and falloff are live; normal-play HUD keeps magazine/reserve counts visible while a separate pressure row shows reload progress | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Weapon heat and overheat | complete-v1 | Per-weapon heat, delayed decay, spread/recoil scaling, overheat lockout, threshold-aware status, discrete feedback events, compact HUD pressure state, weapon-local audio, and procedural barrel vent VFX are live | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
 | Positional gunshot noise | complete-v1 | `NoiseEventBus` drives local enemy investigation, LOS-loss search, and leash return | `RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` |
-| Global attention/escalation | pending | No shared attention meter, alarm network, reinforcement pressure, or ritual acceleration from noise | This document |
+| Shared stealth perception / awareness | planned | Enemy vision/hearing and positional gunshot noise are live, but the receiver contract is still enemy-shaped and the NoiseEvent boundary is weakly typed; Enemy + Vaultwing now justify a shared compositional sensing seam | `../stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md` |
+| Local alarm networks / escalation | pending | No production alarm network, sensor-device graph, local reinforcement pressure, or authored alarm consequences are live | `../stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md` |
 | Sidearm loadout tradeoff | complete-v1 | Recovered P-9 must occupy the Equipment-page sidearm slot; equipped P-9 replaces guard/parry with sidearm-ready | `COMBAT_FEEL_SYSTEM.md`, `SIDEARM_UNLOCK.md` |
 | First strike and initiative | complete-v1 | First eligible Operator hit adds stagger/breach pressure without health damage; equipped Vanguard Seal converts a clean opening into a break-on-hit eight-second damage window | `FIRST_STRIKE_AND_INITIATIVE.md` |
 | Health | complete-v1 | Operator health, damage, death, hit recoil, and HUD/status display are live | `COMBAT_FEEL_SYSTEM.md` |
@@ -155,6 +156,30 @@ Runtime durability belongs to item/deployable state, never shared resource data.
 
 Acceptance: ranged constraints are readable without F12; the player cannot fire
 the rifle indefinitely; current ranged-balance smoke remains green.
+
+### Milestone A2 - Shared stealth awareness and local alarms
+
+- S0: repair and type the existing `NoiseEvent` contract and close the live
+  Vaultwing gunshot-consumer error.
+- S1: establish one receiver-side acoustic observation/sensitivity seam shared by
+  ordinary Enemy perception and Vaultwing without moving either actor's behavior
+  into stealth code.
+- S2: expand high-value acoustic emitters such as footsteps, forced entry,
+  impacts, explosions, vehicles, machinery, creature calls, and distractions.
+- S3: add local alarm-network identity plus one authored sensor/device and one
+  bounded consequence. Avoid a psychic global alert meter.
+- S4: add debug awareness visualization first, then the smallest non-omniscient
+  player-facing suspicion/alarm feedback justified by playtest.
+- S5+: add acoustic occlusion/environment masking and wider actor-family adoption
+  only after the foundation is measured and stable.
+
+Authority and sequencing:
+`design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`.
+
+Acceptance: hearing is a shared stealth-system capability rather than a
+Vaultwing or Enemy special case; emitters publish facts, receiver profiles
+determine detectability, behavior remains actor-local, and alarm propagation is
+explicit/local.
 
 ### Milestone B — Field Patch survival pressure
 

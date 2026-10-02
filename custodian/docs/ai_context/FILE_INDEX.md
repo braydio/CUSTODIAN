@@ -1,5 +1,10 @@
 # FILE INDEX — CUSTODIAN
 
+## Operator Workbench UX Hierarchy
+
+- `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md` - refresh-gated five-slice OPUI UX hierarchy plan covering artist-facing state, preview-first Workbench home, changes-first Publish, actionable Queue, and final cross-mode UX closeout. It consumes, rather than duplicates, the existing publish-readiness, browser-snapshot and FX-adoption authorities.
+- Planning packets live under `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_*.md`; all remain blocked/manual until their top refresh banner is removed after a fresh main review and sign-off.
+
 ## Asset Workbench
 
 - `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` — living slice roadmap for the general non-Operator Asset Workbench; V1 is FAMILY navigator, REVIEW studio, then safe PIPELINE actions, with later actor/sequence, design, creation/source-intake, and hardening slices.
@@ -847,7 +852,8 @@ Last updated: 2026-09-29
 - `design/02_features/animation/OPERATOR_ART_AGENT_SYSTEM.md`, `OPERATOR_ART_STYLE_BIBLE.md`, and `OPERATOR_ANIMATION_RECIPES.md` — active authority for `.ai`-only V2 semantic repair, provisional style constraints, and immutable animation grammar
 - `custodian/tools/operator/art_agent/`, `custodian/tools/aseprite/operator_art_agent*.lua`, and `custodian/content/data/operator/authoring/` — confined service/CLI/MCP, semantic landmarks and RLE masks, draft operations, metrics/QA/review, guarded Aseprite protocol, byte backups, SHA concurrency protection, journal, rollback, and exact undo
 - `custodian/tools/operator/ui/service.py`, `animation_preview.py`, and `ui/app.py` — Workbench browser, semantic preview composition, exact RGBA clipboard strips (`Y`, `Shift+Y`), live/saved source preference, and process-local superseded visibility (`Shift+U`); errors remain actionable at the UI boundary
-- `custodian/tools/operator/art_agent/source_{models,service,analysis,normalization,review}.py` and `custodian/tools/art/custodian_pixelart_converter.py` — pre-canonical high-resolution Source Sessions with allowlisted staging, immutable source identity, one whole-sheet crop/scale, integer-only registration, three candidate modes, visual review artifacts, and review-gated inbox handoff; no canvas-contract migration or canonical publication authority (that explicit migration belongs to Workbench)
+- `custodian/tools/operator/art_agent/{registration_profile,source_models,source_service,source_normalization}.py`, `operator_art_profile.json`, and `custodian/tools/art/custodian_pixelart_converter.py` — profile-backed 96x96 registration ruler, source-cell landmark observations, one shared scale/anchor with alpha clipping refusal, v1 plan compatibility, verified crisp `pixelart --normalization-plan` replay, and read-only report/overlay surfaces; canonical publication remains with Workbench/Operator ingest
+- `custodian/tools/aseprite/operator_anchor_guides.lua` — idempotent profile-rendered locked `__ART_GUIDE_OPERATOR_REGISTRATION` layer, excluded from clean Art Agent renders and absent from manifest-whitelisted publishing
 - `custodian/tools/validation/operator_art_agent_smoke.py` — real-headless six-frame Vigil coverage for every deterministic edit primitive, render/diff output, refusal boundaries, byte restoration, and production immutability
 - `custodian/tools/operator/art_agent/pilot.py` and `custodian/tools/validation/operator_art_agent_v2_pilot.py` — shared real eight-frame east Vigil semantic acceptance runner; produces report artifacts, separates engineering/art verdicts, restores the disposable Workbench byte-exactly, and verifies production immutability
 - `custodian/tools/operator/ui/`, `custodian/tools/operator/animation_preview.py`, `custodian/tools/operator/animation_transition.py`, `custodian/tools/operator/animation_motion_preview.py`, `custodian/tools/operator/motion_ground_presets.json`, and `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH_MOTION_LAB.md` — Textual V5 production cockpit with live Aseprite control, Preview/Transition Examiners, completed Timeline review/edit controls, Motion Lab, and Packet 9A/9B Art Agent coexistence; shared pure transition analysis; no gameplay timing or canonical authority lives here
@@ -1111,6 +1117,7 @@ Last updated: 2026-09-29
 - `custodian/docs/AGENT_MIGRATION_PLAYBOOK.md` — migration and docs-drift cleanup procedure
 - `design/` — active Godot feature/system implementation specs
 - `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md` — implemented V1 authority for typed/capped ammunition, projectile range/falloff, weapon heat and production feedback, positional noise, enemy perception/search/leash behavior, ambient hostile camps, and the deferred vehicle-weapon contract
+- `design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md` — design-draft authority and staged roadmap for shared acoustic/visual/proximity sensing, receiver sensitivity, typed perception observations, local alarm networks, authored sensors, player-facing awareness readability, and cross-family adoption; current weapon-noise tuning remains in the ranged V1 authority.
 - `custodian/game/systems/stealth/noise_event.gd` and `noise_event_bus.gd` — generic positional noise payload and autoload signal authority used by gunfire and future loud world actions
 - `custodian/game/systems/spawning/ambient_enemy_camp.gd` and `ambient_enemy_spawner.gd` — activation-limited authored hostile camps and marker-driven generated-placement bridge
 - `custodian/tools/validation/ranged_combat_balance_smoke.gd` — focused weapon data, heat/noise contract, projectile falloff, and noise-signal smoke coverage
@@ -1146,6 +1153,9 @@ Last updated: 2026-09-29
 
 ## Elevated Procgen Presentation
 
+- `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` — locked architecture separating local biome, permanent region-border/underlay frame, and Archive Resolve; defines the first `ALPINE_PLATEAU` frame and future frame catalogue.
+- `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md` — locked resolved art direction for the first generated Alpine Plateau starting region, including terrain, hardstand, structures/vehicles, field UI and marker/beacon grammar.
+- `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` — compatibility/supersession note for the earlier over-broad visual lock.
 - `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md` — upper-plane, cliff, void, forest-depth, streaming, and determinism authority.
 - `custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd` — global non-repeating, camera-following forest depth stack used by both generated-world and explicit-chasm configuration paths.
 - `custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd` — presentation-only directional FLOOR-to-CHASM fascia using authored top/body/bottom sources 149–154, stable outward normals, sparse deep sections, tiny enclosed-pocket suppression, and wall-aware lip substitution; it never paints accepted generated-wall cells or contributes collision, navigation, or surface semantics.
@@ -1283,6 +1293,7 @@ Last updated: 2026-09-29
 
 ## Twin Solaria Runtime V1
 
+- `docs/ai_context/task_packets/TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` / `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — queued first-pass V2 ingest and presentation of three Solarium I Route Vista candidate contents at the canonical 465×280 vista registration, with human capture approval.
 - `docs/ai_context/task_packets/TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` / `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — queued Slice D route-review state/evidence/reciprocity authority plus independent review.
 - `docs/ai_context/task_packets/TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` / `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — queued Slice E Asset V2 acquisition presentation with structured state/registration/alpha probes and compact ROI evidence plus independent review; Passage remains unqueued.
 - `docs/ai_context/task_packets/TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — queued dev-only 3500×3000-vs-4000×3000 provenance/expectation repair.

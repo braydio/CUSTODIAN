@@ -5,7 +5,21 @@ Last updated: 2026-07-13
 
 ## Summary
 
-Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It replaces debug-looking normal-play HUD text with dark charcoal panels, brass/gold borders, compact icons, styled interaction prompts, a compact live tactical minimap, and now a split inventory-status surface: the play HUD stays lean while the inventory menu carries the broader field/status/log presentation.
+Black Reliquary is the current CUSTODIAN gothic/brass runtime UI family. It replaces debug-looking normal-play HUD text with dark charcoal/graphite framing, warm ivory text, restrained brass/gold lines, compact icons and styled interaction prompts. The first generated Alpine Plateau field-HUD application is further locked by `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`: sparse survey/archival framing, thin technical rules, geometric glyphs and restrained marker/beacon tags over generous world-space negative space.
+
+## Alpine Plateau Starting-Region Field HUD
+
+For the current generated campaign world:
+
+- use the existing Black Reliquary palette/component family;
+- keep field presentation sparse and peripheral rather than panel-heavy;
+- favor warm ivory type, graphite transparency, brass/gold ticks/brackets and small geometric authority glyphs;
+- world tags/beacons should use narrow locator stems, registration rings, corner brackets and short uppercase labels;
+- do not use oversized colored RPG pins, bouncing exclamation marks, cartoon arrows or dense tactical reticles.
+
+**Minimap and compass are not part of the locked first-campaign-world field-HUD baseline at this time.** Existing minimap scenes, providers, tests and inventory/status integrations remain valid runtime capability and should not be deleted, but older wording that treats a tactical minimap as mandatory normal-play chrome does not override the new field-HUD visual lock. Compass presentation remains deferred.
+
+Archive Resolve is governed separately and is not restyled here.
 
 ## Runtime Ownership
 
@@ -24,10 +38,10 @@ Black Reliquary is the current CUSTODIAN gothic/brass runtime UI style. It repla
 - Runtime code should use `BlackReliquaryAssetCatalog` instead of scattering `res://content/ui/black_reliquary/` strings through gameplay scripts.
 - Sundered Keep prompts should use `CustodianHUD.show_interaction(...)` through the new HUD API.
 - Normal gameplay should not show giant world-space debug labels. Debug text may exist behind `set_debug_overlay_visible(...)` only for local authored HUDs or inside the dedicated debug screen.
-- Legacy command-terminal HUD diagnostics should live in the dedicated `res://game/ui/hud/debug_screen.tscn` surface opened by F12 or `debug_hud`; normal play should show only essentials such as health, stamina, prompts, status plaques, and tactical minimap.
+- Legacy command-terminal HUD diagnostics should live in the dedicated `res://game/ui/hud/debug_screen.tscn` surface opened by F12 or `debug_hud`; normal play should show only essentials such as health, stamina, prompts, status plaques, and context-required world tags. A tactical minimap remains available to surfaces that explicitly opt into it, but is not mandatory first-campaign-world field chrome.
 - Command-terminal typography uses the vendored IBM Plex two-font stack under `content/ui/fonts/`: condensed display text for titles/sections/navigation and mono text for logs, status, values, Fabrication rows, and input. Runtime loading must fall back safely if an asset is missing; bounded rows ellipsize and never introduce horizontal scrolling.
 - Fabrication uses flat, left-aligned work-order rows with distinct state/name/category/cost fields, a highlighted selection synchronized with selected detail, and an aligned cost/have/missing grid. Empty progress and ready-build regions collapse into one status strip; the page rail and work-order list own the only vertical scrolling, while page-level and horizontal scrolling remain disabled.
-- The minimap frame should embed the live shared minimap renderer with simplified tactical pips. Do not use raw level screenshots or static marker mockups for normal play.
+- When a surface explicitly uses the minimap, its frame should embed the live shared minimap renderer with simplified tactical pips. Do not use raw level screenshots or static marker mockups. This capability is separate from the current first-campaign-world field-HUD baseline.
 - Authored-map-specific quest, status, prompt, and minimap HUDs must be hidden outside their owning map. External suppression such as the terminal interface must preserve that map-context visibility instead of blindly restoring every gameplay overlay.
 
 ## Inventory Overlay

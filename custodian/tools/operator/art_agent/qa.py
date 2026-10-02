@@ -253,6 +253,7 @@ def run_qa(
     masks: list[dict[str, Any]] | None = None,
     drafts: list[dict[str, Any]] | None = None,
     profile: dict[str, Any] | None = None,
+    profile_sha256: str | None = None,
     expected_frame_count: int | None = None,
     palette_findings: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
@@ -278,4 +279,16 @@ def run_qa(
         else "YELLOW" if findings
         else "GREEN"
     )
-    return {"schema": "custodian.operator_art_qa.v2", "status": status, "publish_authorized": False, "findings": findings}
+    registration = profile.get("registration") if profile else None
+    return {
+        "schema": "custodian.operator_art_qa.v2", "status": status, "publish_authorized": False,
+        "findings": findings,
+        "registration_context": {
+            "accepted": bool(registration and registration.get("status") == "accepted"),
+            "profile_sha256": profile_sha256,
+            "enforcement_artistic": bool(profile and profile.get("enforcement", {}).get("artistic", False)),
+            "frame_size": registration.get("frame_size") if registration else None,
+            "anchor": registration.get("anchor") if registration else None,
+            "advisory_only_for_pose_landmarks": True,
+        },
+    }

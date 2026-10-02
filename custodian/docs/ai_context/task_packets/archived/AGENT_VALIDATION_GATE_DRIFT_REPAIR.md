@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-validation-gate-drift-repair`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -130,11 +130,40 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
-- What worked: `pending`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first candidate-tree manifest run still read the uncommitted packet from `origin/main`/`HEAD`, so it reproduced the known forward-reference failure until the task packet itself was committed.
+- Root cause / contributing factors: The gate intentionally validates committed tree contents; uncommitted metadata edits do not change the candidate tree used by the wrapper.
+- Prevention / pipeline improvement: Run candidate-tree gates after committing the packet lifecycle/archive update, then use the green reports for workstream finish.
+- Tooling / docs drift discovered: Validation reference syntax and tracked-tree roots had diverged from live packet conventions; the workflow smoke also retained a pre-expiry assertion.
+- Follow-up: `fixed-in-scope`
+- What worked: Focused parser and dispatch coverage exercised path resolution and fail-closed diagnostics.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-agent-validation-gate-drift-repair`
+- Reviewed on main: `36cb18230796ec844a7796f0a246085c96179e20`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Detailed review summary: `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `agent-validation-gate-drift-repair-review-corrections-1`
+
+### R0-01 (evidence_gap, pipeline)
+
+- Affected acceptance: The post-expiry workflow smoke should prove expired temporary LFS/procgen state remains absent from its former policy/tool targets.
+- Evidence: `custodian/tools/validation/agent_workflow_smoke.py:14-28` checks the procgen marker strings and natural-language policy only. It does not assert `TEMP_LFS_DEGRADED_MODE_START` is absent from `custodian/AGENTS.md`, `custodian/tools/agent/workstream.py`, `custodian/tools/agent/land_main.py`, or `tools/custodian_aliases.sh`, even though commit `761d901c9ffe6c919f52168acecef24a9c7e95c6` removed those marked blocks and the expiry packet's recommended invariant names them.
+- Disposition: `correction`
+- Rationale: The current files are clean and both gates pass, but the smoke would remain green if an expired LFS guard were reintroduced. That leaves part of the required post-expiry invariant without regression protection.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Acceptance evidence: Both manifest-backed gate IDs pass on the committed candidate; the packet validator accepts the eight known live paths, keeps missing paths blocking, and the post-expiry smoke passes.
+- Superseded/legacy production path disposition: `removed`
+- Evidence: `test_task_packet_contract.py` (20 passed); `test_dispatch.py` (69 passed); `test_review_contract.py` (5 passed); `agent_workflow_smoke.py` passed; `run_validation.py --test agent_workflow_contract --json` and `--test review_pairing_contract --json` passed; changed unit sweep passed; `git diff --check` passed.

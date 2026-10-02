@@ -21,6 +21,12 @@ The reveal should help the world feel operationally discovered, not magically co
 - Chunks are revealed back into the live tilemaps around the player.
 - As the player moves, nearby chunks are revealed and sufficiently far, dormant chunks have their presentation (not their semantics) unloaded, bounded to a small number per frame.
 
+The player-facing visual choreography is governed separately by
+`STREAMING_REVEAL_PRESENTATION_V1.md` (**Archive Resolve**). That presentation
+layer consumes tile request/commit/unload state but does not own chunk lifecycle,
+PREPARE/COMMIT, collision, navigation, residency, or world semantics. Its locked
+principle is: **chunks are logistics; they must never be choreography.**
+
 This preserves:
 
 - deterministic contract seeds

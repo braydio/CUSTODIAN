@@ -17,11 +17,19 @@ def main():
     server=OperatorArtMCP(); definitions=server.tool_definitions(); names={x["name"] for x in definitions}
     assert "operator_art_inspect" in names and "operator_art_bake_draft" in names
     assert {"operator_art_source_start","operator_art_source_analyze","operator_art_source_plan_normalization","operator_art_source_convert","operator_art_source_review","operator_art_source_handoff"} <= names
+    assert {"operator_art_registration_profile", "operator_art_registration_report", "operator_art_render_registration_overlay",
+            "operator_art_source_render", "operator_art_source_get_landmarks", "operator_art_source_set_landmarks",
+            "operator_art_source_validate_landmarks", "operator_art_source_registration_report",
+            "operator_art_source_production_command", "operator_art_source_verify_production"} <= names
     assert not any(any(word in name for word in ("publish","git","shell","read_file","write_file")) for name in names)
     for item in definitions:
         schema=item["inputSchema"]
         assert schema["type"]=="object" and schema["additionalProperties"] is False, item["name"]
         if item["name"] not in {"operator_art_start","operator_art_source_start"}: assert "session" in schema["properties"], item["name"]
+    source_lm_schema=next(x["inputSchema"] for x in definitions if x["name"]=="operator_art_source_set_landmarks")
+    assert source_lm_schema["properties"]["landmarks"]["items"]["additionalProperties"] is False
+    plan_schema=next(x["inputSchema"] for x in definitions if x["name"]=="operator_art_source_plan_normalization")
+    assert plan_schema["properties"]["mode"]["enum"]==["contain","operator_profile"]
     bake_schema=next(x["inputSchema"] for x in definitions if x["name"]=="operator_art_bake_draft")
     assert set(bake_schema["properties"])=={"session","draft_id","operation_key"}
     assert "mask_id" not in bake_schema["properties"] and "target_layer" not in bake_schema["properties"]

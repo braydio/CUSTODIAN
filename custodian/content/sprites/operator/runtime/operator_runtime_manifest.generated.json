@@ -6627,6 +6627,108 @@
         ]
       }
     },
+    "unarmed/defense/block_enter_02/e": {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_enter_02",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/operator__lower_body__unarmed__defense__block_enter_02__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/operator__upper_body__unarmed__defense__block_enter_02__e__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "unarmed/defense/block_enter_02/w": {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_enter_02",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/operator__lower_body__unarmed__defense__block_enter_02__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/operator__upper_body__unarmed__defense__block_enter_02__w__4f__96.png",
+          "frames": 4,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 10.0,
+          "loop": false,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 10.0,
+        "loop": false,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
     "unarmed/defense/block_hit_01/e": {
       "profile": "unarmed",
       "group": "defense",
@@ -6807,6 +6909,114 @@
           "frame_size": [
             96,
             96
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "unarmed/defense/block_hold_02/e": {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hold_02",
+      "direction": "e",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/operator__lower_body__unarmed__defense__block_hold_02__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/operator__upper_body__unarmed__defense__block_hold_02__e__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "lower_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "unarmed/defense/block_hold_02/w": {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hold_02",
+      "direction": "w",
+      "layers": {
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/operator__lower_body__unarmed__defense__block_hold_02__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/operator__upper_body__unarmed__defense__block_hold_02__w__5f__96.png",
+          "frames": 5,
+          "frame_size": [
+            96,
+            96
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
           ]
         }
       },

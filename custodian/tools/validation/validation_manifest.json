@@ -94,6 +94,7 @@
         "custodian/AGENTS.md",
         "custodian/tools/agent/**",
         "custodian/tools/validation/agent_workflow_smoke.py",
+        "tools/custodian_aliases.sh",
         "custodian/docs/ai_context/prompts/**",
         "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
         "custodian/docs/ai_context/CONTEXT.md",
@@ -101,7 +102,6 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
-        ".github/workflows/expire-lfs-degraded-mode.yml",
         ".claude/settings.json"
       ],
       "timeout_sec": 30,
@@ -807,7 +807,8 @@
         "custodian/tools/operator/art_agent/service.py",
         "custodian/tools/operator/art_agent/security.py",
         "custodian/tools/operator/art_agent/models.py",
-        "custodian/tools/operator/art_agent/aseprite_bridge.py"
+        "custodian/tools/operator/art_agent/aseprite_bridge.py",
+        "custodian/tools/validation/operator_art_agent_service_smoke.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -852,7 +853,9 @@
       ],
       "owners": [
         "custodian/tools/aseprite/operator_art_agent.lua",
-        "custodian/tools/aseprite/operator_art_agent_lib.lua"
+        "custodian/tools/aseprite/operator_art_agent_lib.lua",
+        "custodian/tools/aseprite/operator_anchor_guides.lua",
+        "custodian/tools/validation/operator_art_agent_aseprite_smoke.py"
       ],
       "timeout_sec": 90,
       "needs_import": false
@@ -983,6 +986,30 @@
         "custodian/tools/art/custodian_pixelart_converter.py",
         "custodian/tools/validation/operator_art_source_real_pilot.py",
         "design/02_features/animation/OPERATOR_ART_AGENT_SYSTEM.md"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_art_registration_profile",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_art_registration_profile_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "registration", "tooling"],
+      "owners": [
+        "custodian/content/data/operator/authoring/operator_art_profile.json",
+        "custodian/tools/operator/art_agent/registration_profile.py",
+        "custodian/tools/operator/art_agent/source_models.py",
+        "custodian/tools/operator/art_agent/source_normalization.py",
+        "custodian/tools/operator/art_agent/source_service.py",
+        "custodian/tools/operator/art_agent/service.py",
+        "custodian/tools/operator/art_agent/qa.py",
+        "custodian/tools/operator/art_agent/cli.py",
+        "custodian/tools/operator/art_agent/mcp_server.py",
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/aseprite/operator_anchor_guides.lua",
+        "custodian/tools/aseprite/operator_live_bridge/art_agent_ops.lua",
+        "custodian/tools/validation/operator_art_registration_profile_smoke.py"
       ],
       "timeout_sec": 60,
       "needs_import": false
@@ -1229,6 +1256,8 @@
       "owners": [
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
         "custodian/content/sprites/operator/runtime/animations/**/*.png.import",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/*.png",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/*.png",
         "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py"
       ],
       "timeout_sec": 15,
@@ -1494,6 +1523,10 @@
         "custodian/tools/validation/asset_contract_schema_smoke.py",
         "custodian/content/metadata/assets/**",
         "custodian/content/sprites/_pipeline/inbox/color_matched/**",
+        "custodian/content/sprites/_pipeline/inbox/operator__lower_body__unarmed__defense__block_enter_02__e__4f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__lower_body__unarmed__defense__block_hold_02__e__5f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__upper_body__unarmed__defense__block_enter_02__e__4f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__upper_body__unarmed__defense__block_hold_02__e__5f__96.*",
         "custodian/content/sprites/_pipeline/normalized/**",
         "custodian/asset_drop/**",
         "design/04_architecture/ASSET_PIPELINE_V2.md",

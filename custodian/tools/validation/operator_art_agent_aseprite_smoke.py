@@ -8,6 +8,12 @@ import animation_workbench_model as model
 from art_agent.aseprite_bridge import ArtAgentBridge
 from art_agent.service import ArtAgentService, write_json
 
+class _UnavailableRelay:
+    def execute(self, **_kwargs): return {"status": "unavailable"}
+
+def _offline_bridge(**kwargs):
+    bridge=ArtAgentBridge(**kwargs); bridge.relay_factory=_UnavailableRelay; return bridge
+
 def tree_hashes(root):
     return {str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(root.rglob("*")) if path.is_file()} if root.exists() else {}
 
@@ -18,10 +24,33 @@ def main():
     protected=[ROOT/"custodian/content/sprites/operator/source/animations",ROOT/"custodian/content/sprites/operator/runtime/animations",ROOT/"custodian/game/actors/operator"]
     before={str(path):tree_hashes(path) for path in protected}
     with tempfile.TemporaryDirectory() as td:
-        temp=Path(td); service=ArtAgentService(art_root=temp/"art",workspace_root=temp/"workbench",aseprite=workbench.resolve_aseprite())
+        temp=Path(td); service=ArtAgentService(art_root=temp/"art",workspace_root=temp/"workbench",aseprite=workbench.resolve_aseprite(),bridge_factory=_offline_bridge)
         session=service.start_session(profile="melee_1h",group="locomotion",action="walk_01",direction="e",weapon="vigil_pattern_dagger")
         inspection=service.inspect(session); assert inspection["frames"]==8 and inspection["canvas"]=={"width":96,"height":96}
-        loaded=service.load_session(session); root=session.parent; bridge=ArtAgentBridge(aseprite=workbench.resolve_aseprite())
+        loaded=service.load_session(session); root=session.parent; bridge=_offline_bridge(aseprite=workbench.resolve_aseprite())
+        workbench_path=Path(loaded.workbench_path); manifest_path=Path(loaded.workbench_manifest)
+        clean_before=[model.file_sha256(Path(path)) for path in service.render(session)["frames"]]
+        editor_before=[model.file_sha256(Path(path)) for path in service.render(session,mode="editor")["frames"]]
+        guided=root/"guided.aseprite"
+        subprocess.run([str(workbench.resolve_aseprite()),"-b",str(workbench_path),
+                        "--script-param",f"profile={ROOT/'custodian/content/data/operator/authoring/operator_art_profile.json'}",
+                        "--script-param",f"repo={ROOT}","--script",str(ROOT/"custodian/tools/aseprite/operator_anchor_guides.lua"),
+                        "--save-as",str(guided)],check=True,capture_output=True,text=True,timeout=60)
+        guided_twice=root/"guided_twice.aseprite"
+        subprocess.run([str(workbench.resolve_aseprite()),"-b",str(guided),
+                        "--script-param",f"profile={ROOT/'custodian/content/data/operator/authoring/operator_art_profile.json'}",
+                        "--script-param",f"repo={ROOT}","--script",str(ROOT/"custodian/tools/aseprite/operator_anchor_guides.lua"),
+                        "--save-as",str(guided_twice)],check=True,capture_output=True,text=True,timeout=60)
+        workbench_path.write_bytes(guided_twice.read_bytes())
+        loaded.expected_workbench_sha256=model.file_sha256(workbench_path)
+        service.save_session(session,loaded)
+        manifest=json.loads(manifest_path.read_text()); manifest["aseprite"]["last_synced_sha256"]=loaded.expected_workbench_sha256
+        write_json(manifest_path,manifest)
+        editor_after=[model.file_sha256(Path(path)) for path in service.render(session,mode="editor")["frames"]]
+        clean_after=[model.file_sha256(Path(path)) for path in service.render(session)["frames"]]
+        assert editor_before!=editor_after, "registration guide was not visible in the editor composite"
+        assert clean_before==clean_after, "visible registration guide changed the clean render"
+        assert not any(item.get("aseprite_layer_name","").startswith("__ART_GUIDE_OPERATOR_REGISTRATION") for item in manifest.get("layers",[]))
         def expect(fragment, request):
             path=root/"requests/security.json"; response=root/"responses/security.json"; write_json(path,request)
             try: bridge.execute(request_path=path,response_path=response,expected_request_id=request["request_id"],expected_operation_key=request["operation_key"])

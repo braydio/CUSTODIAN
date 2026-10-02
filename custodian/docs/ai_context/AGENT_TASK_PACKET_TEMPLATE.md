@@ -84,6 +84,12 @@ Required quality:
   implementation that merely compiles.
 - **Validation** gives focused falsification first and the required closeout
   gate. Avoid broad sweeps when focused tests prove the slice.
+- Validation script references may use repository paths (`custodian/tools/...`
+  or `tools/...`) or Godot resource paths (`res://tools/...`). A `tools/...`
+  reference resolves to the exact root entrypoint when present, then to its
+  `custodian/tools/...` counterpart. Keep future implementation-created smoke
+  scripts described generically until the file exists; add its exact live path
+  to the packet before closeout.
 - **Visual evidence economy** applies whenever acceptance touches presentation.
   Name the code/state/geometry/asset/pixel-metric checks that run before model
   vision, justify any full-frame or motion capture that remains necessary, and
