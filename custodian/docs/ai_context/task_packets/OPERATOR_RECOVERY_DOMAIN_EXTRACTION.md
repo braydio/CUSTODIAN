@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine, custodian-death-handoff-foundation`
+- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition, custodian-death-handoff-foundation`
 - Locks: `operator-runtime, custodian-death-flow`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `931b830d54f2a217d1b473109f708636ac89f21f`
+- Reviewed main: `03b6221adb01402b1cf4393b9a1773cdd519f6ae`
 - Goal: Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect its real 35% movement contract without weakening committed damage/death presentation.
 - Completion boundary: Done when incoming damage/death lifecycle and recovery/consumable behavior no longer live as one actor-local flag cluster; focused damage and recovery authorities own their respective state; existing `OperatorIntegrityReclaim` is consumed rather than duplicated; public health/Field Patch APIs delegate; moving Field Patch uses locomotion lower + upper patch action/FX while stationary use retains authored paired body; the heal commit has an explicit presentation event/beat without becoming timing authority; and damage reactions/death remain committed where gameplay locks movement.
 - Current measured state: Field Patch uses a 1.25s vulnerable window, commits 35% max-health healing, preserves the patch if interrupted before commit and slows movement to 35%; movement remains legal during use. Canonical E/W `field_patch_use_01` publishes 14-frame 96x96 lower+upper+FX at 11.2 FPS, while the current presentation plays the paired lower+upper action even when the actor moves. Light hit recoil is a committed 0.22s damage action; heavy knockdown/death are full-body committed reactions. `OperatorIntegrityReclaim` already owns deterministic reclaim-packet math. Death handoff is being changed by the separate persistent-recovery R1 packet and must land before this extraction.
