@@ -138,25 +138,37 @@ func _test_cache_behavior() -> void:
 	)
 	_check(near_order != far_order, "reveal order did not change for a different live center_tile despite reused cached membership")
 
-	# --- (4) Debug unload / re-reveal round trip serves a cache hit ---
-	# Warm the cache for spawn_chunk deliberately first so this round trip's
-	# hit/miss delta is unambiguous regardless of what generation-time
-	# finalization may or may not have already touched in this chunk.
+	# --- (4) M6: unloading a chunk evicts its cached payload; re-reveal rebuilds it ---
+	# M6 production distant-chunk unload intentionally evicts the M5 cached
+	# membership/tile-records for an unloaded chunk (closing MR5 R0-01's
+	# memory-shape debt) without bumping its revision or the cache
+	# generation -- see `ProcGenChunkPayloadCache.evict_chunk()`. A debug
+	# unload/re-reveal round trip with no semantic mutation therefore now
+	# rebuilds (miss), not reuses (hit), the chunk's cache entries.
 	var warm_tiles: Array[Vector2i] = map.call("_cached_chunk_tiles", spawn_chunk)
 	for warm_tile in warm_tiles:
 		map.call("_build_tile_reveal_prepare_record", warm_tile)
 
-	var before_reload := map.debug_get_chunk_payload_cache_snapshot()
+	var before_unload := map.debug_get_chunk_payload_cache_snapshot()
 	map.debug_force_unload_chunk(spawn_chunk)
+	var after_unload := map.debug_get_chunk_payload_cache_snapshot()
+	_check(
+		int(after_unload.get("eviction_count", 0)) == int(before_unload.get("eviction_count", 0)) + 1,
+		"unloading a chunk did not record exactly one cache eviction"
+	)
+	_check(
+		int(after_unload.get("evicted_tile_record_count", 0)) - int(before_unload.get("evicted_tile_record_count", 0)) == warm_tiles.size(),
+		"unloading a chunk did not evict exactly its cached tile records"
+	)
+	_check(
+		int(after_unload.get("invalidation_count", 0)) == int(before_unload.get("invalidation_count", 0)),
+		"a pure residency eviction spuriously recorded a semantic invalidation"
+	)
 	map.call("_reveal_chunk_immediately", spawn_chunk)
 	var after_reload := map.debug_get_chunk_payload_cache_snapshot()
 	_check(
-		int(after_reload.get("miss_count", 0)) == int(before_reload.get("miss_count", 0)),
-		"unload/re-reveal with no semantic mutation rebuilt cache entries instead of reusing them"
-	)
-	_check(
-		int(after_reload.get("hit_count", 0)) > int(before_reload.get("hit_count", 0)),
-		"unload/re-reveal with no semantic mutation produced no cache hits"
+		int(after_reload.get("miss_count", 0)) > int(after_unload.get("miss_count", 0)),
+		"re-reveal after an M6 eviction did not rebuild the chunk's cache entries"
 	)
 
 	# --- (5) Wall-destruction invalidation ---
