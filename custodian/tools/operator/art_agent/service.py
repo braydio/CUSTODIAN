@@ -33,6 +33,7 @@ from . import edit_scope as scope_store
 from . import palette as palette_core
 from . import recolor as recolor_store
 from . import reference_service
+from .registration_profile import load_profile, profile_report, render_overlay
 from .transition import compare as compare_transition_frames
 
 ART_ROOT = model.REPO_ROOT / ".ai/operator_art_agent"
@@ -587,6 +588,38 @@ class ArtAgentService:
     def get_metrics(self, session_path: Path) -> dict[str, Any]:
         _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); values=animation_metrics([Path(x) for x in artifacts["frames"]],self.get_landmarks(session_path),masks=self.get_masks(session_path)); write_json(root/"metrics.json",values); return values
 
+    def registration_profile(self, session_path: Path | None = None) -> dict[str, Any]:
+        value = load_profile()
+        if session_path is not None:
+            _session, manifest, _root = self._checked_session(session_path)
+            canvas = manifest["canvas"]
+            value["session_frame_size"] = [int(canvas["width"]), int(canvas["height"])]
+            value["matches_profile_frame_size"] = value.get("registration") is not None and value["registration"]["frame_size"] == value["session_frame_size"]
+        return value
+
+    def registration_report(self, session_path: Path) -> dict[str, Any]:
+        _session, _manifest, root = self._checked_session(session_path)
+        metrics = self.get_metrics(session_path)
+        report = profile_report(landmarks=self.get_landmarks(session_path), frames=metrics.get("frames", []), profile=load_profile())
+        output = root / "previews/registration_report.json"
+        write_json(output, report)
+        report["report"] = str(output.resolve())
+        return report
+
+    def registration_overlay(self, session_path: Path) -> dict[str, Any]:
+        _session, manifest, root = self._checked_session(session_path)
+        canvas = manifest["canvas"]
+        artifacts = self.render(session_path)
+        landmarks = self.get_landmarks(session_path)
+        paths = []
+        for index in range(len(artifacts["frames"])):
+            frame_landmarks = [item for item in landmarks if item["frame"] == index + 1]
+            output = root / f"previews/registration_overlay_{index + 1:02d}.png"
+            paths.append(render_overlay(output=output, frame_size=(int(canvas["width"]), int(canvas["height"])),
+                                        profile=load_profile(), landmarks=frame_landmarks))
+        loaded = load_profile()
+        return {"overlays": paths, "profile_sha256": loaded["sha256"], "read_only": True}
+
     def plan(self, session_path: Path, recipe: str) -> dict[str, Any]:
         session,manifest,root=self._checked_session(session_path); recipes=model.CUSTODIAN_ROOT/"tools/operator/art_recipes"; projection=json.loads((model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_direction_projection.json").read_text()); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT)
         value=build_animation_plan(session.identity,manifest,recipes/f"{recipe}.json",projection,refs,landmarks=self.get_landmarks(session_path),masks=self.get_masks(session_path)).to_json()
@@ -597,6 +630,7 @@ class ArtAgentService:
         metrics=self.get_metrics(session_path)
         profile_path=model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_art_profile.json"
         profile=json.loads(profile_path.read_text()) if profile_path.exists() else None
+        profile_state = load_profile(profile_path) if profile_path.exists() else None
         palette_findings=[]
         for plan_path in sorted((root/"recolor_plans").glob("*.json")) if (root/"recolor_plans").exists() else []:
             plan=recolor_store.load(plan_path)
@@ -613,9 +647,18 @@ class ArtAgentService:
             masks=self.get_masks(session_path),
             drafts=self.get_drafts(session_path),
             profile=profile,
+            profile_sha256=profile_state["sha256"] if profile_state else None,
             expected_frame_count=int(manifest["timeline"]["document_frames"]),
             palette_findings=palette_findings,
         )
+        registration = profile.get("registration") if profile else None
+        if registration and registration.get("status") == "accepted":
+            canvas_size = [int(manifest["canvas"]["width"]), int(manifest["canvas"]["height"])]
+            matches = canvas_size == registration["frame_size"]
+            value["registration_context"]["frame_size_matches"] = matches
+            if not matches:
+                value["findings"].append({"severity": "critical", "class": "structural", "issue": "canvas size does not match accepted registration profile", "expected": registration["frame_size"], "actual": canvas_size})
+                value["status"] = "RED"
         write_json(root/"qa.json",value); return value
 
     def record_critique(self, session_path: Path, critique: dict[str, Any]) -> dict[str, Any]:

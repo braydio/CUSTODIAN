@@ -14,6 +14,10 @@ from art_agent.service import ArtAgentService, write_json
 from art_agent.aseprite_bridge import ArtAgentBridge
 
 
+class _UnavailableRelay:
+    def execute(self, **_kwargs): return {"status": "unavailable"}
+
+
 class FakeBridge:
     def __init__(self,**_): pass
     def execute(self,*,request_path,response_path,expected_request_id=None,expected_operation_key=None):
@@ -70,6 +74,7 @@ def main():
         payload=json.loads(session.read_text()); external=root/"outside/workbench.aseprite"; external.write_bytes(b"x"); payload["workbench_path"]=str(external); session.write_text(json.dumps(payload)); expect("escapes authorized root",lambda:service.load_session(session))
         request=root/"request.json"; response=root/"response.json"; request.write_text("{}")
         bridge=ArtAgentBridge.__new__(ArtAgentBridge); bridge.aseprite=Path("/fake/aseprite")
+        bridge.relay_factory=_UnavailableRelay
         def bridge_payload(value, expected):
             def fake_run(*_args,**_kwargs):
                 response.write_text(json.dumps(value)); return type("Completed",(),{"returncode":0,"stderr":"","stdout":""})()

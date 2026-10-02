@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-01
+Last updated: 2026-10-02
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -323,7 +323,6 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
-- `OPERATOR_ART_REGISTRATION_PROFILE.md` — P1 Operator Art Agent/Source Session calibration slice: one accepted 96x96 registration profile drives Aseprite guides, landmark-aware shared-scale planning, registration reports/overlays, and exact `pixelart --choose 1` plan replay without per-frame scaling.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE.md` — paired P1 code/architecture/asset-pipeline/workflow review of registration-profile authority, clipping/pose-preservation guards, MCP confinement, and crisp production-plan replay.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — paired P0 code/runtime/workflow re-review of the correction round.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.

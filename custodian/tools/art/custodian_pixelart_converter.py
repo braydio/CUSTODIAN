@@ -64,6 +64,8 @@ horizontal sheet is assumed.
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import math
 import os
 import re
@@ -1570,6 +1572,7 @@ def build_parser() -> argparse.ArgumentParser:
             "known independently of frame count."
         ),
     )
+    parser.add_argument("--normalization-plan", type=Path, help="Replay a reviewed Source Session normalization plan exactly.")
     parser.add_argument(
         "--anchor",
         choices=[
@@ -1913,6 +1916,46 @@ def main() -> int:
             union_padding=args.union_padding,
             fit=fit_mode,
         )
+        plan_registrations = None
+        if args.normalization_plan:
+            plan_path = args.normalization_plan.expanduser().resolve(strict=True)
+            plan = json.loads(plan_path.read_text(encoding="utf-8"))
+            if plan.get("schema") not in {"custodian.operator_art_normalization_plan.v1", "custodian.operator_art_normalization_plan.v2"}:
+                raise SystemExit("normalization plan has unsupported schema")
+            if plan.get("mode", "contain") == "operator_profile":
+                profile_path = Path(__file__).resolve().parents[2] / "content/data/operator/authoring/operator_art_profile.json"
+                profile_sha = hashlib.sha256(profile_path.read_bytes()).hexdigest()
+                if plan.get("profile_sha256") != profile_sha:
+                    raise SystemExit("normalization plan registration profile hash is stale")
+            if hashlib.sha256(source_path.read_bytes()).hexdigest() != plan.get("source_sha256"):
+                raise SystemExit("normalization plan source SHA-256 does not match input")
+            expected_source_cell = [geometry.source_cell[0], geometry.source_cell[1]]
+            if plan.get("frame_count") != geometry.frame_count or [plan.get("source_cell_width"), plan.get("source_cell_height")] != expected_source_cell:
+                raise SystemExit("normalization plan frame geometry does not match input")
+            if [target_w, target_h] != [plan.get("target_width"), plan.get("target_height")]:
+                raise SystemExit("normalization plan target size does not match converter target")
+            registrations = plan.get("registrations", [])
+            if len(registrations) != geometry.frame_count:
+                raise SystemExit("normalization plan registration count does not match frame count")
+            try:
+                offsets = tuple((item["dx"], item["dy"]) for item in registrations)
+                if any(not isinstance(dx, int) or isinstance(dx, bool) or not isinstance(dy, int) or isinstance(dy, bool) or abs(dx) > 12 or abs(dy) > 12 for dx, dy in offsets):
+                    raise ValueError
+                if any(item.get("frame") != index + 1 for index, item in enumerate(registrations)):
+                    raise ValueError
+                union = tuple(plan["shared_union_bbox"])
+                prepared = (plan["prepared_width"], plan["prepared_height"])
+                scale = float(plan["global_scale"])
+                destination = (plan["destination_x"], plan["destination_y"])
+                scaled = (max(1, round((union[2] - union[0]) * scale)), max(1, round((union[3] - union[1]) * scale)))
+                if scale <= 0 or min(*prepared) <= 0 or min(*union) < 0 or destination[0] < 0 or destination[1] < 0 or destination[0] + scaled[0] > prepared[0] or destination[1] + scaled[1] > prepared[1]:
+                    raise ValueError
+                if len(union) != 4 or union[2] <= union[0] or union[3] <= union[1]:
+                    raise ValueError
+            except (KeyError, TypeError, ValueError, IndexError) as exc:
+                raise SystemExit("normalization plan transform or registrations are invalid") from exc
+            transform = SharedFrameTransform(union, prepared, 0, scale, scaled, destination, plan.get("anchor", "feet"), "contain")
+            plan_registrations = offsets
 
         prepared_frames = prepare_sheet_frames(
             source_frames,
@@ -1942,6 +1985,16 @@ def main() -> int:
             edge_luma_min=args.edge_luma_min,
             edge_max_solid_neighbors=args.edge_max_solid_neighbors,
         )
+        if plan_registrations is not None:
+            for key, frames in frame_candidates.items():
+                registered = []
+                for index, frame in enumerate(frames):
+                    dx, dy = plan_registrations[index]
+                    if translation_would_clip(frame, dx=dx, dy=dy):
+                        raise SystemExit(f"normalization plan registration clips frame {index + 1}")
+                    registered.append(translate_frame_integer(frame, dx=dx, dy=dy))
+                frame_candidates[key] = registered
+            candidates = {key: reassemble_sheet(frames, geometry, target_size) for key, frames in frame_candidates.items()}
 
         write_sheet_manifest(
             candidate_dir / "sheet_manifest.txt",
@@ -2139,4 +2192,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

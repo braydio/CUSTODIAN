@@ -5,7 +5,8 @@ from typing import Any, Literal
 
 SOURCE_SESSION_SCHEMA = "custodian.operator_art_source_session.v1"
 SOURCE_ANALYSIS_SCHEMA = "custodian.operator_art_source_analysis.v1"
-NORMALIZATION_PLAN_SCHEMA = "custodian.operator_art_normalization_plan.v1"
+NORMALIZATION_PLAN_SCHEMA = "custodian.operator_art_normalization_plan.v2"
+NORMALIZATION_PLAN_SCHEMA_V1 = "custodian.operator_art_normalization_plan.v1"
 
 
 @dataclass(frozen=True)
@@ -92,6 +93,11 @@ class NormalizationPlan:
     anchor: Literal["feet", "center", "top-center", "bottom-center"]
     method: Literal["crisp", "balanced", "clustered"]
     registrations: list[FrameRegistration] = field(default_factory=list)
+    mode: Literal["contain", "operator_profile"] = "contain"
+    profile_sha256: str = ""
+    clipping_safe_scale: float | None = None
+    scale_observations: list[dict[str, Any]] = field(default_factory=list)
+    registration_basis: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def create(cls, **kwargs: Any) -> "NormalizationPlan":
@@ -99,9 +105,17 @@ class NormalizationPlan:
 
     @classmethod
     def from_json(cls, value: dict[str, Any]) -> "NormalizationPlan":
-        if value.get("schema") != NORMALIZATION_PLAN_SCHEMA:
+        schema = value.get("schema")
+        if schema not in {NORMALIZATION_PLAN_SCHEMA, NORMALIZATION_PLAN_SCHEMA_V1}:
             raise ValueError(f"unsupported normalization-plan schema: {value.get('schema')}")
         payload = dict(value)
+        if schema == NORMALIZATION_PLAN_SCHEMA_V1:
+            payload["schema"] = NORMALIZATION_PLAN_SCHEMA
+            payload["mode"] = "contain"
+            payload["profile_sha256"] = ""
+            payload["clipping_safe_scale"] = None
+            payload["scale_observations"] = []
+            payload["registration_basis"] = {}
         payload["registrations"] = [FrameRegistration(**item) for item in payload.get("registrations", [])]
         return cls(**payload)
 
