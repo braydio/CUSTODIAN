@@ -380,6 +380,7 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_WORKBENCH_UX_PUBLISH_DECISION.md` - UX3 changes-first Publish modal with no-op clarity, simplified mirror consequence and readiness projection; depends on UX2.
 - `OPERATOR_WORKBENCH_UX_WORK_QUEUE.md` - UX4 actionable QUEUE over the human-authored animation implementation plan, including directional/layer coverage and unpublished-work filters; depends on UX3.
 - `OPERATOR_WORKBENCH_UX_CONSISTENCY_CLOSEOUT.md` - UX5 cross-mode terminology/focus/responsive/accessibility regression closeout and human visual sign-off; depends on UX4.
+- `OPERATOR_UNARMED_BLOCKING_ART_REFRESH.md` — P1 stale art-refresh scope held behind `review-operator-art-registration-profile`; current main already contains newer hold/hit publications, so the remaining guard-art delta must be freshly re-derived before this packet may return to ready/auto.
 
 
 ### In Progress
