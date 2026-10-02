@@ -1,0 +1,46 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261002T022039Z_902344b8",
+  "timestamp": "2026-10-02T02:20:39.062765+00:00",
+  "family": "awakening_late_service_relay_lamp",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_late_service_relay_lamp/idle.png",
+      "sha256": "75f00f92a4c67e980965d83b4f6c5e6b7113f6ce8b91a6de9368938a3d6de87c"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "idle",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_late_service_relay_lamp",
+        "world_prop",
+        "body",
+        "state",
+        "idle",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "75f00f92a4c67e980965d83b4f6c5e6b7113f6ce8b91a6de9368938a3d6de87c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

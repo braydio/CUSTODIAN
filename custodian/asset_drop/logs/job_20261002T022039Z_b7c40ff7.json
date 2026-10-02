@@ -1,0 +1,161 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261002T022039Z_b7c40ff7",
+  "timestamp": "2026-10-02T02:20:39.203250+00:00",
+  "family": "awakening_authority_inlay",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_authority_inlay/corner.png",
+      "sha256": "bf40159d2b1370f818a2d94fbd41872db149923727c24a1f46d8b41fb78e1338"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_authority_inlay/cross.png",
+      "sha256": "5e6438ab75360d53a1846613f4e2f92839755e6ca33412e2c3ab8eb15ba45869"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_authority_inlay/ring_node.png",
+      "sha256": "18905b5349e06e9d7fa929596c17d9d3825c22d3831e6c19deb906578b4d4a4c"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_authority_inlay/straight.png",
+      "sha256": "c85de641414c9cd59a4f348e0b483ac48cd9d7c08c4d0ab3e7f56125a48e65f0"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_authority_inlay/t_junction.png",
+      "sha256": "21ea8c143e19ebd7196959ffebe7d2b06a4bbc6b9772e21c4c1f618bcc985bab"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_authority_inlay/threshold.png",
+      "sha256": "ff34e6c889d6f6f32d6c1c636bbdf74ca387039b4e63da0c6743d53695206f9f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "corner",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_authority_inlay",
+        "tile",
+        "body",
+        "tile",
+        "corner",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_corner_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "bf40159d2b1370f818a2d94fbd41872db149923727c24a1f46d8b41fb78e1338",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "cross",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_authority_inlay",
+        "tile",
+        "body",
+        "tile",
+        "cross",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_cross_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "5e6438ab75360d53a1846613f4e2f92839755e6ca33412e2c3ab8eb15ba45869",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "ring_node",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_authority_inlay",
+        "tile",
+        "body",
+        "tile",
+        "ring_node",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_ring_node_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "18905b5349e06e9d7fa929596c17d9d3825c22d3831e6c19deb906578b4d4a4c",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "straight",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_authority_inlay",
+        "tile",
+        "body",
+        "tile",
+        "straight",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_straight_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c85de641414c9cd59a4f348e0b483ac48cd9d7c08c4d0ab3e7f56125a48e65f0",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "t_junction",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_authority_inlay",
+        "tile",
+        "body",
+        "tile",
+        "t_junction",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_t_junction_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "21ea8c143e19ebd7196959ffebe7d2b06a4bbc6b9772e21c4c1f618bcc985bab",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "threshold",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_authority_inlay",
+        "tile",
+        "body",
+        "tile",
+        "threshold",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_threshold_32.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "ff34e6c889d6f6f32d6c1c636bbdf74ca387039b4e63da0c6743d53695206f9f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

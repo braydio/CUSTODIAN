@@ -1,0 +1,69 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261002T022039Z_33b50385",
+  "timestamp": "2026-10-02T02:20:39.356342+00:00",
+  "family": "awakening_ruin_decal",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_ruin_decal/floor_crack_a.png",
+      "sha256": "074e5a900bb8a85024c74e93b6f125b78eb0f72e39853b6ae50854bcafa12b02"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_ruin_decal/rubble_small.png",
+      "sha256": "b66bac5b13381e38876c2bbe2722f215008b9789ae262e0c0225784c9800527e"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "floor_crack_a",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ruin_decal",
+        "tile",
+        "body",
+        "tile",
+        "floor_crack_a",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_a_64.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "074e5a900bb8a85024c74e93b6f125b78eb0f72e39853b6ae50854bcafa12b02",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "rubble_small",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ruin_decal",
+        "tile",
+        "body",
+        "tile",
+        "rubble_small",
+        "omni"
+      ],
+      "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_small_64.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b66bac5b13381e38876c2bbe2722f215008b9789ae262e0c0225784c9800527e",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": false,
+    "ok": null
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

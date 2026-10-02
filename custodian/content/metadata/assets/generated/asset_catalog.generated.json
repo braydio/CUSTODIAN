@@ -8429,6 +8429,27 @@
           "sha256": "7258a942cb7b0203eb3588297135057f467410c1158fe6d7928ad173c94819f7",
           "provenance": "authored",
           "source_asset": null
+        },
+        "service_basin_b::omni": {
+          "state_id": "service_basin_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "service_basin_b",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_b__omni__1f__128.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "b6d358dbd9d5b4045cfc3146c9238a436a97f383e7620c08bb916def59b6eec3",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -11070,6 +11091,210 @@
             1536
           ],
           "sha256": "a2ffef3f51e690ff6f65e0933843b8efb1b3bfcf1aea7290352b646fcb7bb6ec",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_late_service_relay_lamp": {
+      "kind": "world_prop",
+      "assets": {
+        "idle::omni": {
+          "state_id": "idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_late_service_relay_lamp",
+            "world_prop",
+            "body",
+            "state",
+            "idle",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png",
+          "frames": 1,
+          "frame_size": [
+            192,
+            224
+          ],
+          "sha256": "75f00f92a4c67e980965d83b4f6c5e6b7113f6ce8b91a6de9368938a3d6de87c",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_authority_inlay": {
+      "kind": "tile",
+      "assets": {
+        "corner::omni": {
+          "state_id": "corner",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "corner",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_corner_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "bf40159d2b1370f818a2d94fbd41872db149923727c24a1f46d8b41fb78e1338",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "cross::omni": {
+          "state_id": "cross",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "cross",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_cross_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "5e6438ab75360d53a1846613f4e2f92839755e6ca33412e2c3ab8eb15ba45869",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "ring_node::omni": {
+          "state_id": "ring_node",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "ring_node",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_ring_node_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "18905b5349e06e9d7fa929596c17d9d3825c22d3831e6c19deb906578b4d4a4c",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "straight::omni": {
+          "state_id": "straight",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "straight",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_straight_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "c85de641414c9cd59a4f348e0b483ac48cd9d7c08c4d0ab3e7f56125a48e65f0",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "t_junction::omni": {
+          "state_id": "t_junction",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "t_junction",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_t_junction_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "21ea8c143e19ebd7196959ffebe7d2b06a4bbc6b9772e21c4c1f618bcc985bab",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "threshold::omni": {
+          "state_id": "threshold",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "threshold",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_threshold_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "ff34e6c889d6f6f32d6c1c636bbdf74ca387039b4e63da0c6743d53695206f9f",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_ruin_decal": {
+      "kind": "tile",
+      "assets": {
+        "floor_crack_a::omni": {
+          "state_id": "floor_crack_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "floor_crack_a",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_a_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "074e5a900bb8a85024c74e93b6f125b78eb0f72e39853b6ae50854bcafa12b02",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rubble_small::omni": {
+          "state_id": "rubble_small",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "rubble_small",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_small_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "b66bac5b13381e38876c2bbe2722f215008b9789ae262e0c0225784c9800527e",
           "provenance": "authored",
           "source_asset": null
         }
