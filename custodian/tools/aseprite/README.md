@@ -31,6 +31,12 @@ the Lua bridge never infers clearing behavior on its own.
 The V2 pilot drives this same bridge through `ArtAgentService`; it does not use
 a pilot-only Aseprite path or gain publication authority.
 
+`operator_anchor_guides.lua` renders the approved registration profile into a
+visible, locked `__ART_GUIDE_OPERATOR_REGISTRATION` group. Supply
+`--script-param profile=<path>` and optionally `repo=<root>` for headless use.
+Clean Art Agent rendering excludes this guide group, which never creates a
+publishing binding.
+
 ## Humanoid rigid-cutout source
 
 Run `File > Scripts > new_humanoid_rig_source.lua` to create a 96×96,

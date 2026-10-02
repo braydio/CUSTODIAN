@@ -94,6 +94,7 @@
         "custodian/AGENTS.md",
         "custodian/tools/agent/**",
         "custodian/tools/validation/agent_workflow_smoke.py",
+        "tools/custodian_aliases.sh",
         "custodian/docs/ai_context/prompts/**",
         "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
         "custodian/docs/ai_context/CONTEXT.md",
@@ -101,7 +102,6 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
-        ".github/workflows/expire-lfs-degraded-mode.yml",
         ".claude/settings.json"
       ],
       "timeout_sec": 30,
@@ -321,6 +321,22 @@
         "custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd",
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/tools/validation/procgen_chunk_lifecycle_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_chunk_payload_cache",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_chunk_payload_cache_smoke.gd",
+      "tier": "actor",
+      "tags": ["procgen", "streaming", "chunk-payload-cache", "telemetry"],
+      "owners": [
+        "custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd",
+        "custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd",
+        "custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/procgen_chunk_payload_cache_smoke.gd"
       ],
       "timeout_sec": 90,
       "needs_import": true
@@ -774,7 +790,8 @@
         "custodian/tools/operator/art_agent/service.py",
         "custodian/tools/operator/art_agent/security.py",
         "custodian/tools/operator/art_agent/models.py",
-        "custodian/tools/operator/art_agent/aseprite_bridge.py"
+        "custodian/tools/operator/art_agent/aseprite_bridge.py",
+        "custodian/tools/validation/operator_art_agent_service_smoke.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -819,7 +836,9 @@
       ],
       "owners": [
         "custodian/tools/aseprite/operator_art_agent.lua",
-        "custodian/tools/aseprite/operator_art_agent_lib.lua"
+        "custodian/tools/aseprite/operator_art_agent_lib.lua",
+        "custodian/tools/aseprite/operator_anchor_guides.lua",
+        "custodian/tools/validation/operator_art_agent_aseprite_smoke.py"
       ],
       "timeout_sec": 90,
       "needs_import": false
@@ -950,6 +969,30 @@
         "custodian/tools/art/custodian_pixelart_converter.py",
         "custodian/tools/validation/operator_art_source_real_pilot.py",
         "design/02_features/animation/OPERATOR_ART_AGENT_SYSTEM.md"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_art_registration_profile",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_art_registration_profile_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "registration", "tooling"],
+      "owners": [
+        "custodian/content/data/operator/authoring/operator_art_profile.json",
+        "custodian/tools/operator/art_agent/registration_profile.py",
+        "custodian/tools/operator/art_agent/source_models.py",
+        "custodian/tools/operator/art_agent/source_normalization.py",
+        "custodian/tools/operator/art_agent/source_service.py",
+        "custodian/tools/operator/art_agent/service.py",
+        "custodian/tools/operator/art_agent/qa.py",
+        "custodian/tools/operator/art_agent/cli.py",
+        "custodian/tools/operator/art_agent/mcp_server.py",
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/aseprite/operator_anchor_guides.lua",
+        "custodian/tools/aseprite/operator_live_bridge/art_agent_ops.lua",
+        "custodian/tools/validation/operator_art_registration_profile_smoke.py"
       ],
       "timeout_sec": 60,
       "needs_import": false

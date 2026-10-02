@@ -5,13 +5,13 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `procgen-candidate-runtime-path-demolition, procgen-distant-chunk-unload`
+- Depends on: `procgen-candidate-runtime-path-demolition, review-procgen-distant-chunk-unload`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `30df23bb4bb2736aeebbf6032fc9560d0b494117`
 - Goal: Extract the road/parking topology, repair/pruning, and road-authority state still embedded in `ProcGenTilemap` into the existing `custodian/game/world/procgen/roads/` package **without** duplicating the already-extracted Road Semantics V2 resolver in `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`.
-- Completion boundary: REFRESH-GATED on M6. Before this packet returns to `ready`, re-audit the post-M6 `ProcGenTilemap` road inventory. The eventual slice closes when the state/algorithms named by `custodian/game/world/procgen/roads/README.md` (road/parking graph building, repair, pruning, road authority helpers, connected-road/path metrics) have one stateful owner under `procgen/roads/`; `ProcgenRoadSemanticsResolver` and `ProcgenSurfaceMaterialResolver` remain in `procgen/surfaces/`; presentation-only road decal realization is left with its actual presentation owner unless the post-M6 audit proves it inseparable.
+- Completion boundary: REFRESH-GATED on reviewed M6 / MR6. Before this packet returns to `ready`, re-audit the post-MR6 `ProcGenTilemap` road inventory. The eventual slice closes when the state/algorithms named by `custodian/game/world/procgen/roads/README.md` (road/parking graph building, repair, pruning, road authority helpers, connected-road/path metrics) have one stateful owner under `procgen/roads/`; `ProcgenRoadSemanticsResolver` and `ProcgenSurfaceMaterialResolver` remain in `procgen/surfaces/`; presentation-only road decal realization is left with its actual presentation owner unless the post-MR6 audit proves it inseparable.
 - Current measured state: `custodian/game/world/procgen/roads/README.md` is scaffold-only and names `ProcGenTilemap` as current road source of truth. `ProcGenTilemap` is currently 11,441 lines / 588 functions and still contains `_carve_main_roads`, connectivity repair/pruning/component analysis, parking anchor/stamping, `_clear_procgen_road_authority_at`, connected-road queries, and road walkability/authority helpers. Separately, active Road Semantics V2 is already extracted to `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`, with material classification in `surface_material_resolver.gd`; those existing owners must not be reabsorbed or cloned. Wide-road carving remains production-disabled.
 - Evidence: `custodian/game/world/procgen/roads/README.md`; current `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`; `custodian/game/world/procgen/surfaces/surface_material_resolver.gd`; `custodian/tools/validation/procgen_road_semantics_v2_smoke.gd`; `custodian/tools/validation/procgen_road_surface_roles_smoke.gd`; `custodian/tools/validation/procgen_placeholder_roads_smoke.gd`; `custodian/tools/validation/compound_road_wall_smoke.gd`; G5 and eventual M6 summaries.
 - Task-specific authority: `custodian/game/world/procgen/roads/README.md`; `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; live Road Semantics V2 owner at `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`; current surface-material contract.
@@ -19,10 +19,31 @@
 - Change: None while blocked. After M6, refresh this packet from the live function/state inventory. The implementation should move only coherent road/parking topology and authority state, preserving disabled archived wide-road generation and active route-backed ruined-road/service-apron semantics. Do not move presentation/surface classification merely to maximize line reduction.
 - Preserve: All road topology/fingerprints, walkability, parking/service apron behavior, decals/material roles, streaming visibility.
 - Non-goals: No road redesign, no enabling archived wide roads, no art changes, no claim/export extraction in this packet.
-- Acceptance: Not implementation-ready until the post-M6 inventory is refreshed. Final acceptance must prove one owner for the road/parking topology/repair/authority state selected by that audit; no duplicate migrated state in `ProcGenTilemap`; Road Semantics V2/material resolver ownership unchanged; fixed-seed road/parking fingerprints, walkability and relevant presentation outputs unchanged.
-- Validation: Refresh after M6. Expected focused suite: `res://tools/validation/procgen_road_semantics_v2_smoke.gd`, `res://tools/validation/procgen_road_surface_roles_smoke.gd`, `res://tools/validation/procgen_placeholder_roads_smoke.gd`, `res://tools/validation/compound_road_wall_smoke.gd`, S1 quick, and changed-file closeout.
+- Acceptance: Not implementation-ready until the post-MR6 inventory is refreshed. Final acceptance must prove one owner for the road/parking topology/repair/authority state selected by that audit; no duplicate migrated state in `ProcGenTilemap`; Road Semantics V2/material resolver ownership unchanged; fixed-seed road/parking fingerprints, walkability and relevant presentation outputs unchanged.
+- Validation: Refresh after MR6. Expected focused suite: `res://tools/validation/procgen_road_semantics_v2_smoke.gd`, `res://tools/validation/procgen_road_surface_roles_smoke.gd`, `res://tools/validation/procgen_placeholder_roads_smoke.gd`, `res://tools/validation/compound_road_wall_smoke.gd`, S1 quick, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Authored claims and generation-state extraction proceed as sibling dependents; façade contraction waits on all.
+
+
+## Temporary Archive Resolve Refresh Guard — REMOVE DURING THIS PACKET'S REQUIRED REFRESH
+
+Archive Resolve is now a locked presentation program under
+`design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`, with pre-authored
+AR1/AR2/AR3 packets under this task-packet directory.
+
+Before implementing this procgen rewrite slice, the agent must confirm that the
+Archive Resolve packet set has been refreshed against the reviewed post-MR6 live
+streaming surface. If Archive Resolve has already landed, re-audit and preserve
+its request/commit/unload/reacquisition observation seams as presentation-only
+consumers; do not absorb its state into road, claim, generation, or façade
+authority. If the AR packets are still pre-refresh or the ordering is unclear,
+stop and leave this packet blocked rather than moving the seam out from under
+them.
+
+When this packet is refreshed from live main and made implementation-ready,
+replace this temporary guidance with the exact live preservation/ownership
+contract and **delete this entire Temporary Archive Resolve Refresh Guard
+section**. Its continued presence means this packet is not ready to implement.
 
 ## Series Contract
 

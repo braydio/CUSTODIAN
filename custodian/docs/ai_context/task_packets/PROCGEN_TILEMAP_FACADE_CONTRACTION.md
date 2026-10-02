@@ -9,10 +9,10 @@
 - Locks: `procgen-runtime`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `d20010d86eee9540e3dd6e759bb5e359de9a46a8`
 - Goal: Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
 - Completion boundary: HARD BLOCKED. XR3 is only the gate that authors/reviews the measured migration DAG; D4 still must not return to `ready` until that generated DAG has executed through its **final reviewed convergence workstream**. X3/XR3 must rewrite this packet's `Depends on` to that concrete final review ID. Only then re-audit `ProcGenTilemap` and define the exact contraction residue.
-- Current measured state: `ProcGenTilemap` is currently 11,441 lines / 588 functions and still owns generation working state, road/parking topology, authored claims, accepted-state export, streaming adapters, terrain integration, props/foliage, presentation and runtime mutation glue. D1/D2/D3 are now explicitly refresh-gated on M6; X1 is an audit after them; X2 and X3 are refresh-gated on their paired reviews; the measured migration DAG does not exist yet. Therefore no truthful D4 deletion list or final dependency exists today.
+- Current measured state: `ProcGenTilemap` remains the large generation/runtime façade and still owns generation working state, road/parking topology, authored claims, accepted-state export, streaming adapters, terrain integration, props/foliage, presentation and runtime mutation glue. M4/MR4 and M5/MR5 are complete; M6 is now refreshed and ready with paired MR6 required before S7 closes. D1/D2/D3 are explicitly refresh-gated on **MR6**, not merely M6 landing; X1 follows those extractions, X2/X3 remain refresh-gated on their paired reviews, and the measured migration DAG still does not exist. Therefore no truthful D4 deletion list or final dependency exists today.
 - Evidence: current `custodian/game/world/procgen/proc_gen_tilemap.gd`; D1/D2/D3 packets; X1/XR1; blocked X2/XR2 and X3/XR3; `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; S1 baseline.
 - Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; ARCHITECTURE.md ownership model; extracted service APIs.
 - Work surface: Intentionally not frozen. After final migration convergence, re-inventory the surviving `custodian/game/world/procgen/proc_gen_tilemap.gd` façade, its actual extracted owners under `procgen/roads/`, `procgen/authored_claims/`, `procgen/generation/`, `procgen/streaming/`, plus existing terrain/foliage/diagnostics/presentation packages; then rewrite this packet to exact zero-consumer residue and focused ownership tests.
@@ -23,6 +23,27 @@
 - Validation: Not implementation-ready. Re-derive after final migration convergence from the actual extracted owners and surviving façade; expected closeout includes focused ownership tests, representative road/claim/generation/streaming/runtime-health suites, S1 quick, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Renderer/node attribution follows after placement loader contraction also completes.
+
+
+## Temporary Archive Resolve Refresh Guard — REMOVE DURING THIS PACKET'S REQUIRED REFRESH
+
+Archive Resolve is now a locked presentation program under
+`design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`, with pre-authored
+AR1/AR2/AR3 packets under this task-packet directory.
+
+Before implementing this procgen rewrite slice, the agent must confirm that the
+Archive Resolve packet set has been refreshed against the reviewed post-MR6 live
+streaming surface. If Archive Resolve has already landed, re-audit and preserve
+its request/commit/unload/reacquisition observation seams as presentation-only
+consumers; do not absorb its state into road, claim, generation, or façade
+authority. If the AR packets are still pre-refresh or the ordering is unclear,
+stop and leave this packet blocked rather than moving the seam out from under
+them.
+
+When this packet is refreshed from live main and made implementation-ready,
+replace this temporary guidance with the exact live preservation/ownership
+contract and **delete this entire Temporary Archive Resolve Refresh Guard
+section**. Its continued presence means this packet is not ready to implement.
 
 ## Series Contract
 

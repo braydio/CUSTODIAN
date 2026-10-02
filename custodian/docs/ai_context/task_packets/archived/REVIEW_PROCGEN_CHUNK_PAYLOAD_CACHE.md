@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-chunk-payload-cache`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-chunk-payload-cache`
@@ -11,13 +11,13 @@
 - Review: `none`
 - Review target workstream: `procgen-chunk-payload-cache`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_CHUNK_PAYLOAD_CACHE.md`
-- Reviewed main: `65ada3baa009d726cb2d79e7ecab1d5e047ce87d`
+- Reviewed main: `8eb4725aa66eeb2b2f20123518a2d7db7e0b88d2`
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently verify that M5 adds one truthful derived chunk-payload cache with exact invalidation/stale-record protection and real reuse, while preserving M3 queue/PREPARE-COMMIT ownership, M4 lifecycle ownership, dynamic reveal/COMMIT behavior, runtime mutation persistence, and the M6 policy boundary.
 - Reviewed implementation acceptance: Reuse the archived M5 packet's full Acceptance contract. Treat as blocking any second semantic/lifecycle/queue authority, cache entry that can outlive or bypass canonical generated floor/wall truth, frozen player-center reveal ordering, cached foliage/road/collision outcome, stale PREPARE Dictionary that can commit after chunk invalidation, wall/authored-claim mutation that reloads stale data, eager full-map payload construction, production unload policy introduced early, or determinism/regression evidence gap.
-- Review evidence: Archived M5 packet and closing summary; landed `procgen_chunk_payload_cache.gd`-equivalent owner; `ProcGenTilemap` cache adapters, generated-semantic mutation/invalidation inventory and runtime-health snapshot; M3/M4 owners; implementation-created focused cache smoke; M3 pause and M4 lifecycle smokes; road unload/re-reveal, authored-claim, runtime wall collision/destruction, candidate materialization, macro/dressing presentation and S1 evidence; manifest entries for walkable-boundary and wall-collision smokes; corrected UNLOADED reload prose.
+- Review evidence: Landed M5 implementation at the reviewed main, archived M5 packet and closing summary; landed `procgen_chunk_payload_cache.gd`-equivalent owner; `ProcGenTilemap` cache adapters, generated-semantic mutation/invalidation inventory and runtime-health snapshot; M3/M4 owners; implementation-created focused cache smoke; M3 pause and M4 lifecycle smokes; road unload/re-reveal, authored-claim, runtime wall collision/destruction, candidate materialization, macro/dressing presentation and S1 evidence; manifest entries for walkable-boundary and wall-collision smokes; corrected UNLOADED reload prose.
 - Correction threshold: Blocking for any stale semantic reload/commit path, unproven mutation classification, cache hit that changes reveal order or commit outcome, cache storage of Node/TileMap/Resource/gameplay-owner state, duplicate M3/M4 authority, missing cache reset across generation, M6 production eviction behavior, deterministic fingerprint change, or material proof gap. Non-blocking naming/telemetry polish may route next-slice.
 - Focused validation: Re-run the implementation-created M5 cache smoke first. Then re-run `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_materializer_parity`, `procgen_macro_presentation`, `procgen_road_semantics_v2`, and authored-scene authority coverage. Re-run S1 quick unless the implementation closeout evidence is demonstrably fresh and no reviewed diff could affect the fingerprint; prefer fresh execution when environment permits. Run packet/review-pairing/docs/manifest checks and `git diff --check` for review artifacts.
 - Review focus: Prove cache entries are derived and discardable; trace every cache build/hit/invalidate/stale-refresh call site; cross-check the implementation's `_generated_floor_cells` / `_generated_wall_cells` write inventory against live code rather than trusting the summary; verify late generation mutations after streaming priming cannot leave stale payloads; explicitly test wall-destruction neighbor refresh and authored multi-tile claims; verify M3's `_prepared` queue cannot commit a pre-invalidation record; verify queued order still uses live `_streaming_reveal_priority`; verify immediate reveal keeps canonical membership order; verify dynamic road/foliage/collision decisions remain outside the cache; verify untouched chunks are not prebuilt; verify automatic unload remains disabled.
@@ -27,5 +27,7 @@
 
 ## Handoff
 
-- Next action: Claim after M5 completes and archives. On a clean/non-blocking-only pass, re-audit live main and refresh M6 `procgen-distant-chunk-unload` in place against the reviewed cache/lifecycle surface.
-- Blockers or open questions: None at authoring time.
+- Completion: Review passed (non-blocking-only) on live main at `e1050a54c`. 0 blocking defects, 0 material evidence gaps, 0 non-blocking issues, 1 optional-improvement finding (`R0-01`, routed to deferred, not a correction). Full receipt: the `## Independent Review` section appended to `custodian/docs/ai_context/task_packets/archived/PROCGEN_CHUNK_PAYLOAD_CACHE.md`. Detailed summary: `REVIEW_PROCGEN_CHUNK_PAYLOAD_CACHE_CLAUDE_SUMMARY.md`.
+- Validation: Fresh (not reused) re-run of `procgen_chunk_payload_cache_smoke.gd`, `procgen_chunk_lifecycle_smoke.gd`, `procgen_pause_aware_streaming_smoke.gd`, `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `runtime_wall_collision_compaction_smoke.gd`, `procgen_candidate_materializer_parity`, `procgen_macro_presentation_smoke.gd`, `procgen_road_semantics_v2_smoke.gd`, and `procgen_authored_scene_authority_smoke.gd` (direct invocation, still unregistered) all PASS. S1 quick re-run fresh: `determinism_ok=true`, 48x48 seed-420777 fingerprint `1773840677` matches the M1-M5 baseline. `git diff --check` clean.
+- Next action: M6 (`procgen-distant-chunk-unload`) is now refresh-eligible against the reviewed landed M5 cache; refreshing and re-dispatching its packet is separate follow-up work, not performed by this review workstream (out of this packet's bounded task-override scope).
+- Blockers or open questions: None. `R0-01` (stale-`_tile_records`-entry memory-shape observation; correctness unaffected, revision-stamped reads prevent any stale hit) is deferred, not a blocker. Separately, `python3 custodian/tools/agent/validate_review_pairing.py` and `task_packet_index.py` both still fail against unrelated, pre-existing packets/README drift unrelated to this workstream (the former was already flagged as follow-up in M5's own Execution Feedback); see this review's closing summary Process Feedback for detail. Neither failure involves `procgen-chunk-payload-cache` or `review-procgen-chunk-payload-cache`.

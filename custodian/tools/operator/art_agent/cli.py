@@ -126,6 +126,7 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     source_plan.add_argument("--anchor", choices=("feet", "center", "top-center", "bottom-center"), default="feet")
     source_plan.add_argument("--method", choices=("crisp", "balanced", "clustered"), default="balanced")
     source_plan.add_argument("--global-scale", type=float)
+    source_plan.add_argument("--mode", choices=("contain", "operator_profile"), default="contain")
     source_plan.add_argument("--json", action="store_true")
     source_register = commands.add_parser("source-register")
     source_register.add_argument("session", type=Path)
@@ -143,6 +144,16 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     source_handoff.add_argument("--replace", action="store_true", help="explicitly replace an existing matching semantic asset")
     source_handoff.add_argument("--dry-run", action="store_true", help="report CREATE/REPLACE without staging")
     source_handoff.add_argument("--json", action="store_true")
+    for name in ("source-render", "source-get-landmarks", "source-validate-landmarks", "source-registration-report", "source-production-command", "source-verify-production", "registration-profile"):
+        command = commands.add_parser(name)
+        if name != "registration-profile": command.add_argument("session", type=Path)
+        command.add_argument("--json", action="store_true")
+    source_landmarks = commands.add_parser("source-set-landmarks")
+    source_landmarks.add_argument("session", type=Path); source_landmarks.add_argument("landmarks", type=Path); source_landmarks.add_argument("--json", action="store_true")
+    registration_report = commands.add_parser("registration-report")
+    registration_report.add_argument("session", type=Path); registration_report.add_argument("--json", action="store_true")
+    registration_overlay = commands.add_parser("registration-overlay")
+    registration_overlay.add_argument("session", type=Path); registration_overlay.add_argument("--json", action="store_true")
     source_recolor_plan=commands.add_parser("source-recolor-plan");source_recolor_plan.add_argument("session",type=Path);source_recolor_plan.add_argument("profile");source_recolor_plan.add_argument("action");source_recolor_plan.add_argument("direction");source_recolor_plan.add_argument("--group",required=True);source_recolor_plan.add_argument("--layer",required=True);source_recolor_plan.add_argument("--json",action="store_true")
     source_recolor_set=commands.add_parser("source-recolor-set");source_recolor_set.add_argument("session",type=Path);source_recolor_set.add_argument("plan_id");source_recolor_set.add_argument("mapping_id");source_recolor_set.add_argument("--action",choices=("map","preserve"),required=True);source_recolor_set.add_argument("--destination");source_recolor_set.add_argument("--json",action="store_true")
     for name in ("source-recolor-preview","source-recolor-apply","source-recolor-review"):
@@ -205,7 +216,7 @@ def _load_pixels(path: Path, *, require_rgba: bool) -> list[dict[str, Any]]:
 
 
 def _service(args: argparse.Namespace) -> ArtAgentService:
-    return ArtAgentService(aseprite=args.aseprite)
+    return ArtAgentService(aseprite=getattr(args, "aseprite", None))
 
 
 def dispatch_art_command(args: argparse.Namespace) -> int:
@@ -229,6 +240,7 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
                 anchor=args.anchor,
                 method=args.method,
                 global_scale=args.global_scale,
+                mode=args.mode,
             )
             elif command == "source-register": result = source.set_frame_registration(args.session, frame=args.frame, dx=args.dx, dy=args.dy)
             elif command == "source-convert": result = source.convert(args.session)
@@ -236,6 +248,13 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
             elif command == "source-palette": result = source.palette_inspect(args.session)
             elif command == "source-select": result = source.select_candidate(args.session, args.method)
             elif command == "source-handoff": result = source.handoff(args.session, destination_name=args.destination_name, replace=args.replace, dry_run=args.dry_run)
+            elif command == "source-render": result = source.render_source(args.session)
+            elif command == "source-get-landmarks": result = source.get_source_landmarks(args.session)
+            elif command == "source-set-landmarks": result = source.set_source_landmarks(args.session, json.loads(args.landmarks.read_text()).get("landmarks", []))
+            elif command == "source-validate-landmarks": result = source.validate_source_landmarks(args.session)
+            elif command == "source-registration-report": result = source.source_registration_report(args.session)
+            elif command == "source-production-command": result = source.production_command(args.session)
+            elif command == "source-verify-production": result = source.verify_production(args.session)
             elif command == "source-recolor-plan": result = source.recolor_plan(args.session,profile=args.profile,group=args.group,action=args.action,direction=args.direction,layer=args.layer)
             elif command == "source-recolor-set": result = source.recolor_set_mapping(args.session,plan_id=args.plan_id,mapping_id=args.mapping_id,action=args.action,destination_rgb=_rgb(args.destination))
             elif command == "source-recolor-preview": result = source.recolor_preview(args.session,plan_id=args.plan_id)
@@ -243,6 +262,16 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
             else: result = source.recolor_review(args.session,plan_id=args.plan_id)
             print(json.dumps(result, indent=2))
             return 0
+        if command == "registration-profile":
+            from .registration_profile import load_profile
+            result = load_profile()
+            print(json.dumps(result, indent=2)); return 0
+        if command == "registration-report":
+            result = _service(args).registration_report(args.session)
+            print(json.dumps(result, indent=2)); return 0
+        if command == "registration-overlay":
+            result = _service(args).registration_overlay(args.session)
+            print(json.dumps(result, indent=2)); return 0
         service = _service(args)
         if command == "start":
             session = service.start_session(

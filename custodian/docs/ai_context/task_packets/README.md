@@ -1,8 +1,31 @@
 # Agent Task Packets
 
-Last updated: 2026-10-01
+Last updated: 2026-10-02
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
+
+
+## Active Archive Resolve Presentation Series
+
+Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
+
+The three implementation packets are intentionally pre-authored and
+refresh-gated. They remain `blocked/manual` until their named predecessor has
+landed and the packet has been re-derived from live main; each packet contains a
+temporary refresh section that must be deleted during that refresh before it may
+become `ready`.
+
+- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, presentation-only
+  request/commit/unload spine and flat diagnostic veil; refresh after reviewed
+  M6/MR6.
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither +
+  restrained brass/amber Archive Resolve shader; refresh after AR1.
+- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo,
+  spawn resolve, and shortened reacquisition; refresh after AR2.
+
+The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
+so extraction/contraction work cannot move or absorb the reveal seams before the
+AR packet set is refreshed.
 
 ## Active Persistent Recovery Series
 
@@ -20,6 +43,14 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
   - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2, ready/auto, depends on NPA-1.
   - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3, ready/auto, depends on NPA-2.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
+
+## Cross-cutting Stealth Awareness Planning
+
+Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`.
+
+- `STEALTH_PERCEPTION_FOUNDATION.md` - P0 draft/manual S0/S1 packet for the typed NoiseEvent repair and shared Enemy + Vaultwing acoustic observation seam.
+- `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/manual dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership.
+- Both remain intentionally non-claimable drafts until the stealth design boundary is accepted for implementation.
 
 ## Selection
 
@@ -190,6 +221,11 @@ a `workstream.py finish` blocker.
   path blocks claim and reports the exact path plus the nearest replacement
   when one can be identified. This is structural path checking, not command or
   semantic validation.
+- Validation paths may be written as `custodian/tools/...`, `res://tools/...`,
+  or `tools/...`. The last form prefers a matching root `tools/` entrypoint and
+  falls back to `custodian/tools/`. Describe implementation-created future
+  smoke scripts generically until they exist, then add their exact live path
+  to the packet before closeout.
 
 - Blocking findings scaffold `<implementation-id>-review-corrections-<n>.md`
   (`Kind: correction`, `Review: auto`) plus its own paired
@@ -237,14 +273,17 @@ lost when the ephemeral worktree is removed.
 ### Procgen Runtime Optimization V1
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are stable, but execution readiness is evidence-gated. A packet is `ready/auto` only when its current measured state and implementation surface exist on live main; architecture-dependent downstream packets stay `blocked/manual` and are refreshed in place after the named predecessor/review lands.
-- **Runtime/streaming:** M4 `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` is landed and its archived paired review passed. M5 `PROCGEN_CHUNK_PAYLOAD_CACHE.md` is now fully re-derived and `ready/auto`; `REVIEW_PROCGEN_CHUNK_PAYLOAD_CACHE.md` (MR5) is pre-authored and dependency-gated behind M5. M5's contract is a lazy generation-scoped derived cache with mutation invalidation and stale-PREPARE protection, while M3 remains the tile queue/PREPARE-COMMIT owner and M4 remains the lifecycle owner. M6 `PROCGEN_DISTANT_CHUNK_UNLOAD.md` remains blocked/manual behind MR5 and must be refreshed from reviewed landed M5 before execution.
-- **Placement:** `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` is the live P-lane entry against the real scaffold `custodian/game/world/placement/README.md` and the current 2,001-line `custodian/game/systems/core/systems/contract_world_loader.gd`. P2-P6 remain dependency-ready extractions with exact current loader/domain paths. `CONTRACT_WORLD_LOADER_CONTRACTION.md` is blocked/manual until P2-P6 actually exist, then must be re-derived from the surviving loader.
-- **ProcGen decomplexification:** `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`, `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`, and `PROCGEN_GENERATION_STATE_EXTRACTION.md` are blocked/manual refresh gates after M6. D1 targets the existing `custodian/game/world/procgen/roads/` scaffold but explicitly preserves the already-extracted `custodian/game/world/procgen/surfaces/road_semantics_resolver.gd`; D2 targets `procgen/authored_claims/`; D3 reuses the existing `procgen/generation/` package.
+- **Runtime/streaming:** M4/MR4 and M5/MR5 are landed and independently reviewed. MR5 passed with no blockers/evidence gaps and one optional cache-memory-shape finding now explicitly owned by M6. `PROCGEN_DISTANT_CHUNK_UNLOAD.md` (M6) is fully refreshed and `ready/auto`; `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD.md` (MR6) is pre-authored behind it. M6's contract uses bounded DORMANT-only residency eviction, explicit M5 cache-record eviction, collision/navigation authority independent of painted residency, foliage hide/show identity, protected instant-travel anchors, and mutation-safe reload.
+- **Placement:** `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (P1) is the live P-lane entry against the real scaffold `custodian/game/world/placement/README.md` and current 2,001-line `custodian/game/systems/core/systems/contract_world_loader.gd`. P1 now requires paired post-land review `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (PR1), which verifies the context is minimal, deterministic, read-only, and free of P2-P6 domain policy. Resource, vehicle, relay, encounter, and ingress extraction packets all depend on PR1 and remain serialized by the `contract-world-loader` lock. `CONTRACT_WORLD_LOADER_CONTRACTION.md` (P7) remains blocked/manual until P2-P6 land, then must be re-derived from the surviving loader.
+- **ProcGen decomplexification:** `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`, `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`, and `PROCGEN_GENERATION_STATE_EXTRACTION.md` remain blocked/manual refresh gates behind G5 + **MR6**, not unreviewed M6 code. D1 preserves the already-extracted `surfaces/road_semantics_resolver.gd`; D2 targets `procgen/authored_claims/`; D3 reuses `procgen/generation/`.
 - **GenerationGrid:** `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` / XR1 remain the first executable post-D audit. `PROCGEN_GENERATION_GRID_FOUNDATION.md` is blocked/manual until XR1 defines the real minimum grid seam. `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` is blocked/manual until XR2. Their paired reviews remain dependency-gated. `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` stays hard-blocked until X3 authors and the generated migration DAG reaches a concrete final reviewed convergence workstream.
 - **Render/soak:** `PROCGEN_RENDER_ATTRIBUTION_V1.md` remains the post-D4/P7 measurement slice and must re-inventory live presentation owners at execution. `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` is blocked/manual until attribution identifies the actual safe target. `PROCGEN_PERFORMANCE_SOAK_V1.md`, `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md`, and `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` remain dependency-gated end-of-series work; A1 now carries the same refresh-gate discipline rather than requiring speculative future packets to be ready up front.
 
 ### Ready / Auto Dispatch
 
+- `TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — P1 first-pass Solarium I Route Vista sample ingest/presentation: three neutral V2 candidate contents from the new archway-view drop, exact 465×280 registration, playtest sampler, and human capture review.
+- `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — paired independent review of vista provenance, normalization, registration, presentation ownership, and recorded human approval.
+- `REVIEW_AGENT_VALIDATION_GATE_DRIFT_REPAIR_REVIEW_CORRECTIONS_1.md` — paired P0 workflow/code re-review of the TEMP_LFS_DEGRADED_MODE expiry-marker coverage correction.
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication hardening: classify/preflight the dedicated art checkout, safely prepare clean-behind/local-cache state, reject stale baselines before mutation, and restore only proven transaction-generated Godot metadata churn; depends on the sparse-checkout correction re-review.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — paired P0 code/architecture/asset-pipeline/workflow review of the publish-readiness and clean-or-RECOVERY_REQUIRED contract.
 - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — P0 browser/PREVIEW concurrency hardening: accepted browser snapshot, latest-request-wins refresh, page-3 atomic F5 replacement, stale async rejection, and deterministic race coverage; depends on the publish-readiness review.
@@ -256,19 +295,22 @@ lost when the ephemeral worktree is removed.
 #### Procgen Runtime Optimization V1 Full-Auto Series
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are pre-authored, but execution readiness is evidence-gated: packets whose exact contract depends on not-yet-landed architecture may remain `blocked` / `manual` until refreshed in place. Dependencies, paired reviews, refresh gates, and locks control eligibility.
-- `archived/REVIEW_PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — paired post-land code/architecture/runtime review of M4; complete, passed (non-blocking-only). M5 is now refresh-eligible.
-- `PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 invalidatable per-chunk reveal-payload cache; ready/auto after reviewed M4.
-- `REVIEW_PROCGEN_CHUNK_PAYLOAD_CACHE.md` — MR5 paired post-land code/architecture/runtime review; required before M6 refresh.
+- `archived/REVIEW_PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE.md` — paired post-land review of M4; complete/passed.
+- `archived/PROCGEN_CHUNK_PAYLOAD_CACHE.md` — M5 invalidatable per-chunk reveal-payload cache; complete, landed.
+- `archived/REVIEW_PROCGEN_CHUNK_PAYLOAD_CACHE.md` — paired post-land review of M5; complete/passed with one optional M6-owned cache-memory improvement.
+- `PROCGEN_DISTANT_CHUNK_UNLOAD.md` — M6 bounded production chunk-residency unload; ready/auto after MR5.
+- `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD.md` — MR6 paired post-land code/architecture/runtime review; required before D1-D3 refresh.
 - `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 shared world-placement context/service seam; depends on S1.
-- `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — P2 resource placement extraction; depends on P1.
-- `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — P3 vehicle placement extraction; depends on P1.
-- `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — P4 ARRN relay placement extraction; depends on P1.
-- `CONTRACT_WORLD_ENCOUNTER_PLACEMENT_EXTRACTION.md` — P5 encounter/ambient marker placement extraction; depends on P1.
-- `CONTRACT_WORLD_INGRESS_PLACEMENT_EXTRACTION.md` — P6 authored ingress placement extraction; depends on P1.
+- `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — PR1 paired foundation review; gates P2-P6.
+- `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — P2 resource placement extraction; depends on PR1.
+- `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — P3 vehicle placement extraction; depends on PR1.
+- `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — P4 ARRN relay placement extraction; depends on PR1.
+- `CONTRACT_WORLD_ENCOUNTER_PLACEMENT_EXTRACTION.md` — P5 encounter/ambient marker placement extraction; depends on PR1.
+- `CONTRACT_WORLD_INGRESS_PLACEMENT_EXTRACTION.md` — P6 authored ingress placement extraction; depends on PR1.
 - `CONTRACT_WORLD_LOADER_CONTRACTION.md` — P7 loader cleanup after all placement siblings complete.
-- `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — D1 road authority extraction; depends on G5 + M6.
-- `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — D2 authored claim registry extraction; depends on G5 + M6.
-- `PROCGEN_GENERATION_STATE_EXTRACTION.md` — D3 generation-state/level-data extraction; depends on G5 + M6.
+- `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — D1 road authority extraction; depends on G5 + MR6.
+- `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — D2 authored claim registry extraction; depends on G5 + MR6.
+- `PROCGEN_GENERATION_STATE_EXTRACTION.md` — D3 generation-state/level-data extraction; depends on G5 + MR6.
 - `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — X1 post-D1/D2/D3 audit: re-measure remaining generation helpers/TileMapLayer operations, classify semantic vs presentation state, and lock the minimum GenerationGrid contract.
 - `REVIEW_PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — XR1 independent architecture/code review of the complete post-D extraction inventory.
 - `PROCGEN_GENERATION_GRID_FOUNDATION.md` — X2 implement the reviewed semantic GenerationGrid contract plus behavior-preserving TileMap-backed compatibility backend; broad migration remains deferred.
@@ -281,8 +323,8 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md` — Q1 whole-series implementation + dependency-chain review; depends on F1.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — A1 auto-author the next full packet DAG from Q1 findings/evidence.
 
-- `OPERATOR_ART_REGISTRATION_PROFILE.md` — P1 Operator Art Agent/Source Session calibration slice: one accepted 96x96 registration profile drives Aseprite guides, landmark-aware shared-scale planning, registration reports/overlays, and exact `pixelart --choose 1` plan replay without per-frame scaling.
-- `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE.md` — paired P1 code/architecture/asset-pipeline/workflow review of registration-profile authority, clipping/pose-preservation guards, MCP confinement, and crisp production-plan replay.
+- `OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — P1 corrections for mutable approved-plan acceptance and missing Workbench transform/residual evidence; depends on the parent review.
+- `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — paired P1 code/architecture/asset-pipeline/workflow re-review of plan-digest binding and Workbench report semantics.
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — paired P0 code/runtime/workflow re-review of the correction round.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — P2 dependency-gated bidirectional regression harness for the Dust Lung ↔ Locker Reliquary connector; captures both travel directions and alpha telemetry after the visual closeout lands.
 - `ASSET_WORKBENCH_REVIEW_STUDIO.md` — P2 Slice 2: native static/animated Asset V2 review, all source layouts, runtime catalog trust, filmstrip/playback, staged/runtime compare, LFS diagnostics, and bounded generic Operator preview reuse; eligible after Slice 1 lands.
@@ -303,6 +345,16 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 post-Slice-E mobile guard composition: movement-owned lower locomotion through enter/hold/non-break recoil/exit with aim-owned upper defense, continuity guards, and runtime-scale strafe validation.
 
 ### Blocked / Manual Refresh
+
+#### Operator Workbench UX Hierarchy V1
+
+- Series tracker: `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`.
+- All five packets are intentionally `blocked/manual` planning drafts with a mandatory **REFRESH REQUIRED BEFORE IMPLEMENTATION** banner. Do not claim them until the relevant predecessor/prerequisite has landed, a fresh OPUI review has reconciled the packet to current main, the banner is removed, and the packet is explicitly signed off.
+- `OPERATOR_WORKBENCH_UX_STATE_HIERARCHY.md` - UX1 artist-facing publication/live/main state hierarchy, global shell and compact Activity; gated behind the reviewed FX-adoption chain.
+- `OPERATOR_WORKBENCH_UX_WORKBENCH_HOME.md` - UX2 preview-first Page 2 WORKBENCH with compact inspector/layers and browser workflow badges; depends on UX1.
+- `OPERATOR_WORKBENCH_UX_PUBLISH_DECISION.md` - UX3 changes-first Publish modal with no-op clarity, simplified mirror consequence and readiness projection; depends on UX2.
+- `OPERATOR_WORKBENCH_UX_WORK_QUEUE.md` - UX4 actionable QUEUE over the human-authored animation implementation plan, including directional/layer coverage and unpublished-work filters; depends on UX3.
+- `OPERATOR_WORKBENCH_UX_CONSISTENCY_CLOSEOUT.md` - UX5 cross-mode terminology/focus/responsive/accessibility regression closeout and human visual sign-off; depends on UX4.
 
 - `OPERATOR_UNARMED_BLOCKING_ART_REFRESH.md` — P1 stale art-refresh scope held behind `review-operator-art-registration-profile`; current main already contains newer hold/hit publications, so the remaining guard-art delta must be freshly re-derived before this packet may return to ready/auto.
 

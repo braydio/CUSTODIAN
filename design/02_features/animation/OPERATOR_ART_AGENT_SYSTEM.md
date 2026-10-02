@@ -116,11 +116,18 @@ silhouette sheet, and GIF. Handoff may copy only a passing reviewed candidate to
 the Operator asset-drop inbox; it does not write canonical source, generated
 runtime output, or invoke Workbench publication.
 
-Normalization geometry protects the shared animation envelope. When reviewed
-body landmarks are available, registration should prefer support-foot contact,
-hip center, then head center. Antennae, shields, muzzles, cloak tips, and other
-peripheral equipment protect against clipping but must never independently
-determine per-frame character scale.
+Normalization geometry protects the shared animation envelope. The accepted
+96x96 guide and structural coordinates live only in
+`operator_art_profile.json`; Aseprite, Source Sessions, Workbench QA, CLI, and
+MCP consume that profile. Existing `contain` plans retain their alpha-union
+behavior. Explicit `operator_profile` plans require source-cell landmarks,
+derive one weighted-median animation scale, and anchor the shared transform at
+the median hip/support-foot reference. Alpha bounds remain a clipping gate and
+cannot silently reduce the profile-derived body scale. Per-frame translations
+remain explicit integer controls; the planner never auto-corrects pose motion.
+Neutral rails are advisory for anatomy, and the split rail never classifies
+pixel ownership. Profile-mode production replay uses the mandatory crisp
+`pixelart --normalization-plan` path and must be hash-verified before handoff.
 
 ## Objective
 

@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `contract-world-placement-foundation`
+- Depends on: `review-contract-world-placement-foundation`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `f7e84ae48a90ff9da0f968ef0c72ac9ba0c2c5ee`
 - Goal: Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
 - Completion boundary: Done when vehicle tile selection, positioning, scale/orientation/application, and fixed-seed placement results are service-owned and loader delegates through placement context.
 - Current measured state: Generated-world vehicle placement is still owned by `custodian/game/systems/core/systems/contract_world_loader.gd` through `_position_vehicles`, `_position_vehicle_nodes_on_tiles`, `_get_parking_zone_tiles`, canonical tile/world transforms, and loader placement order. `custodian/game/world/placement/` remains scaffold-only; existing validation exercises world-loader flags/boot and vehicle runtime behavior but there is no dedicated extracted-service file yet.
@@ -23,6 +23,7 @@
 - Validation: `res://tools/validation/world_contract_prewarm_smoke.gd`, `res://tools/validation/vehicle_exit_clearance_smoke.gd`, `res://tools/validation/validate_vehicle_registry.gd`, plus an implementation-created fixed-seed vehicle-placement snapshot if required; then changed-file closeout. Do not name a nonexistent new script in packet metadata before claim.
 - Task overrides: `none`
 - Deferred: Remaining placement domains and final loader contraction.
+- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 

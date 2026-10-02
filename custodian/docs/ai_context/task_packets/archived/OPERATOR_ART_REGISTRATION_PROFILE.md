@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-art-registration-profile`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -37,7 +37,7 @@
   - **Clients:** `cli.py`, `mcp_server.py`.
   - **Production conversion bridge:** `custodian/tools/art/custodian_pixelart_converter.py`; `tools/custodian_aliases.sh` should not need behavioral changes because it already forwards converter arguments and supplies crisp method 1.
   - **Aseprite:** add `custodian/tools/aseprite/operator_anchor_guides.lua`; update `custodian/tools/aseprite/README.md`. Reuse the existing `__ART_GUIDE_` non-export convention.
-  - **Validation:** add `custodian/tools/validation/operator_art_registration_profile_smoke.py` and extend the existing source/MCP/Aseprite smokes only for directly affected integration seams; update `validation_manifest.json` ownership.
+  - **Validation:** add focused registration-profile coverage for profile schema/coordinates/hash, shared-scale planning, clipping guards, placement, and plan replay; extend existing source/MCP/Aseprite smokes only for directly affected integration seams. Once the registration-profile smoke exists, add its exact live path to this packet's Validation section before closeout, and update `validation_manifest.json` ownership.
   - **Docs made stale by implementation:** `OPERATOR_ART_AGENT_SYSTEM.md`, `OPERATOR_ART_STYLE_BIBLE.md`, `custodian/tools/operator/README.md`, `CURRENT_STATE.md`, and `FILE_INDEX.md`.
 - Change:
   1. **Make the profile the only numeric registration authority.** Upgrade `operator_art_profile.json` to a backward-readable v2 shape. Preserve `status: provisional`, `enforcement.artistic: false`, and the existing `measurements` field. Add an explicitly human-accepted structural `registration` block carrying the user's guide coordinates and provenance. Do not mark unrelated artistic measurements/tolerances accepted.
@@ -210,7 +210,7 @@
   - `qa.py` consumes accepted structural registration data while `enforcement.artistic` remains false; a deliberately recoiled pose can report advisory deviations without becoming a false structural failure.
   - Active Art Agent/current-state/tooling docs describe the now-live profile-aware registration path accurately, and the stale unarmed-blocking refresh packet is no longer auto-dispatchable until re-derived.
 - Validation:
-  - Add/run `python3 custodian/tools/validation/operator_art_registration_profile_smoke.py` first. Cover profile schema/coordinates/hash, deterministic weighted-median scale, alpha-union clipping guard, anchor placement, no-auto-frame-translation, intentional-motion preservation, v1-plan compatibility, converter `--normalization-plan` identity checks, and crisp byte equivalence.
+  - `python3 custodian/tools/validation/operator_art_registration_profile_smoke.py` covers accepted profile geometry, v1-plan compatibility, source landmark bounds/hash, shared profile scale/anchor, deterministic registrations, converter `--normalization-plan` replay, crisp byte equivalence, and proof hashes.
   - Run `python3 custodian/tools/validation/operator_art_source_smoke.py` for existing Source Session regression plus source-landmark/profile mode.
   - Run `python3 custodian/tools/validation/operator_art_agent_semantic_smoke.py` for profile-backed report/QA semantics.
   - Run `python3 custodian/tools/validation/operator_art_agent_mcp_smoke.py` for explicit new tool schemas and privileged-surface negative controls.
@@ -223,18 +223,62 @@
 
 ## Handoff
 
-- Next action: Claim this workstream, add the profile loader/fixture first, then prove profile-mode planning and converter-plan replay on synthetic source art before touching MCP/Aseprite clients.
-- Best starting files: `operator_art_profile.json`; `registration_profile.py` (new); `source_normalization.py`; `source_models.py`; `source_service.py`; `custodian_pixelart_converter.py`; `mcp_server.py`; `operator_anchor_guides.lua` (new); `operator_art_registration_profile_smoke.py` (new).
+- Next action: Paired independent review, then re-measure the remaining blocking-art delta.
+- Best starting files: `operator_art_profile.json`; `registration_profile.py` (new); `source_normalization.py`; `source_models.py`; `source_service.py`; `custodian_pixelart_converter.py`; `mcp_server.py`; `operator_anchor_guides.lua` (new); registration-profile smoke (new).
 - Blockers or open questions: None. The registration coordinates are user-approved; artistic tolerances remain explicitly out of scope.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: yes
+- Preserved constraints: yes
+- Deferred items: intentionally-preserved
+- Evidence: registration-profile, source, semantic, MCP, and Aseprite smokes passed; changed-file unit gate passed (17 selected, 17 passed, 0 failed); `git diff --check` passed.
+- Production art changed: no
+- Existing Source Session v1 plan compatibility: verified
+- Registration guide clean-render exclusion and idempotence: verified
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
-- What worked: `pending`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: An already-running local relay interfered with temporary-root smoke fixtures; the first changed-file gate failed two unrelated fixture requests.
+- Root cause / contributing factors: Existing relay tests did not isolate the external relay when using temporary repository roots.
+- Prevention / pipeline improvement: Fixed in-scope by injecting an unavailable relay in the affected fixture harnesses; focused smokes and the changed-file gate then passed.
+- Tooling / docs drift discovered: Current `main` advanced during the push and overlaps the current-state and file-index docs; the published workstream must merge current `main` normally before landing.
+- Follow-up: `review-operator-art-registration-profile`
+- What worked: Deterministic profile math, hash-bound crisp replay, exact pixel proof, and isolated Aseprite guide validation.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-art-registration-profile`
+- Reviewed on main: `907dc2bf0`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02`
+- Detailed review summary: `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-art-registration-profile-review-corrections-1`
+
+### R0-01 (correctness, asset-pipeline)
+
+- Affected acceptance: The `pixelart --normalization-plan` route rejects a modified registration plan, and Source Session production verification only accepts output generated from the approved plan.
+- Evidence: In a fresh temporary Source Session using the smoke's 768×768 synthetic fixture, changing the planned `destination_x` from 248 to 250 remained within bounds. The converter accepted the modified plan and `SourceArtService.verify_production()` returned `verified: true` for output produced from it.
+- Disposition: `correction`
+- Rationale: The plan digest is only calculated after reading the mutable plan and is then stored in the proof. No prior expected digest binds the approved plan contents, so a valid in-bounds edit is treated as authorized production input.
+
+### R0-02 (evidence_gap, tooling)
+
+- Affected acceptance: Workbench registration reports include profile hash, scale/anchor evidence, transformed landmarks, and residuals.
+- Evidence: `ArtAgentService.registration_report()` calls `profile_report()` without a normalization plan. `profile_report()` only populates `transformed_landmarks` and `advisory_residuals` when a plan is supplied; therefore the Workbench report emits empty transformed/residual data and no measured scale evidence.
+- Disposition: `correction`
+- Rationale: Source Session reports carry plan-derived metrics, but the Workbench report currently does not provide the corresponding structured comparison promised by the packet.
+
+- Focused review validation: registration-profile smoke PASS; Source Session smoke PASS; semantic smoke PASS; MCP smoke PASS; Aseprite smoke PASS (including real guide application, repeated application, clean-render equality, and no manifest binding).
+- Graph tooling: The fresh review checkout had no graph database; a minimal graph build remained unavailable, so the review used direct implementation inspection and independent fixture reproduction.

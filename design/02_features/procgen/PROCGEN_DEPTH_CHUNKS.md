@@ -10,6 +10,10 @@
 
 **Primary presentation authority:** `design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`
 
+**First campaign visual authority:** `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`
+
+Depth assets selected for the first campaign world must read as subordinate cold conifer/rocky alpine depth. Existing biome-family assets remain valid runtime content, but none may pull the macro world toward lush fantasy woodland, warm desert, or saturated biome-showcase presentation.
+
 ---
 
 ## Current Truth

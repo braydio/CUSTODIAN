@@ -187,6 +187,8 @@ protection, same-source conflict refusal, scoped staging, and resumable
 
 ## V5 production cockpit
 
+> UX hierarchy planning is tracked in `OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`. Its five packets are refresh-gated planning drafts and do not supersede the current cockpit behavior until each packet is refreshed, signed off, implemented, and landed.
+
 `operator ui` has five shared-selection modes: `1` PLAN, `2` WORKBENCH, `3`
 PREVIEW, `4` TIMELINE, and `5` MOTION. The implementation plan JSON beside this document is
 the only implementation-order authority. Rank, priority, and plan state are

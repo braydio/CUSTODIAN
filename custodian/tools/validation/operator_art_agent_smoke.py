@@ -19,6 +19,18 @@ sys.path.insert(0, str(OPERATOR_TOOLS))
 import animation_workbench as workbench  # noqa: E402
 import animation_workbench_model as model  # noqa: E402
 from art_agent.service import ArtAgentService  # noqa: E402
+from art_agent.aseprite_bridge import ArtAgentBridge  # noqa: E402
+
+
+class _UnavailableRelay:
+    def execute(self, **_kwargs):
+        return {"status": "unavailable"}
+
+
+def _offline_bridge(**kwargs):
+    bridge = ArtAgentBridge(**kwargs)
+    bridge.relay_factory = _UnavailableRelay
+    return bridge
 
 
 def tree_hashes(root: Path) -> dict[str, str]:
@@ -66,6 +78,7 @@ def aseprite_main() -> None:
             art_root=temp / "art",
             workspace_root=temp / "workbench",
             aseprite=aseprite,
+            bridge_factory=_offline_bridge,
         )
         session_path = service.start_session(
             profile="melee_1h",
