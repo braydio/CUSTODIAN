@@ -6,7 +6,7 @@ Last updated: 2026-09-08
 
 ## Purpose
 
-The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkable upper plateau bounded by hard cliff lips and vertical fascia. Chasm cells form an impassable, darker depth layer. Authored, world-positioned BACK-band depth chunks make that depth geographically tangible, while a low-contrast camera-following composition remains FAR atmosphere only.
+The deterministic `ASCENT_FIELD` campaign world is presented as a cold, exposed, walkable alpine/highland upper plane bounded by hard cliff lips and vertical fascia, following `FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`. Chasm cells form an impassable, darker depth layer. Authored, world-positioned BACK-band depth chunks make that depth geographically tangible, while a low-contrast camera-following composition remains FAR atmosphere only.
 
 ## Authority
 
@@ -17,6 +17,8 @@ The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkab
 - The general compatibility stack records generated-floor bounds for diagnostics, but its visual placement is native-scale and camera-following. It is not scaled to the full world rectangle.
 
 ## Visual Contract
+
+The first-campaign-world resolved-side palette and composition are governed by `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`. Elevation should reinforce rocky escarpments, conifer depth, patchy snow/frost, hardened terraces and dark lower bands rather than a bright generic plateau. Legacy profile names such as `ENDLESS_FOREST` are implementation identifiers and must not pull the presentation toward lush fantasy wilderness.
 
 Visual order is restrained FAR atmospheric backdrop, BACK authored macro depth chunks, near semantic cliff fascia, playable terrain, then roads, paths, props, actors, and effects. Walkable cells remain on the upper plane. Every exposed boundary uses the existing deterministic terrain semantics; this pass does not change topology.
 
@@ -81,13 +83,12 @@ layout, terrain, required-cell connectivity, roads, regions, and ingress can be
 validated against the same structural authority used at runtime. It is not yet
 a semantics-only evaluator.
 
-Once accepted, that exact candidate is promoted in place. Promotion preserves
-its structural TileMaps, generated floor/wall dictionaries, terrain result,
-roads, regions, and current streaming visibility. It executes only final work
-skipped by evaluation: registered floor-value decoration, final foliage setup
-when streaming is disabled, ruin/interior props, final playability audit,
-shadows, overlays, and navigation refresh. It must never call the complete
-generation or `_fill_tilemaps()` pipeline again.
+Accepted-candidate selection now preserves a deterministic semantic snapshot and
+materializes the winning seed into a fresh final runtime map through
+`generation/procgen_candidate_materializer.gd`; the former in-place promotion
+path was removed by G5. Presentation must therefore preserve the accepted
+semantic fingerprint across that fresh-final realization rather than assuming
+the evaluation TileMap node becomes the runtime world.
 
 Streaming reveal defers foliage/terrain painting across frames, but ruin and
 interior prop construction remains synchronous during promotion. Their costs

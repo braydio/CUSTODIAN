@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-twin-solaria-route-review-authority, visual-validation-economy-tooling-v1`
+- Depends on: `review-twin-solaria-route-review-authority, visual-validation-economy-tooling-v1, review-twin-solaria-route-vista-samples-v1`
 - Locks: `twin-solaria-runtime, asset-catalog`
 - Review: `auto`
 - Review stage: `post-land`
@@ -14,7 +14,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Implement Twin Solaria Slice E so authorized route-review state drives a readable Solarium I observational-acquisition sequence through the Outbound/Reciprocal Anchors, Echo Drums, Coherence Witnesses, and Acquisition Aperture, while Passage remains physically and mechanically impossible.
-- Current measured state: The preserved production composite already contains the golden Resolved Route Vista in the Solarium I crop and canon interprets it as route-candidate observational resolve. Slice D will own route truth and authorization. This slice owns presentation only and must mask/reveal/animate the preserved aperture state rather than inventing traversal.
+- Current measured state: The preserved production composite already contains the golden Resolved Route Vista in the Solarium I crop and canon interprets it as route-candidate observational resolve. The dedicated `twin-solaria-route-vista-samples-v1` slice now owns ingestion/registration of three neutral static destination samples and a reusable `TwinSolariaVistaPresentation`-style content layer. Slice D will own route truth and authorization. This slice owns aperture/instrument presentation and must consume the vista-sample family rather than baking destination imagery into FX.
 - Task-specific authority: `design/05_levels/TWIN_SOLARIA.md` sections 7–9, 29, 30–32; live Asset Pipeline V2 schemas/tooling; reviewed Slice D route-review API.
 - Change: Add state-driven Solarium I acquisition presentation; publish the three explicitly planned V2 FX families; stage anchors/witnesses/drums/aperture through candidate, resolve, stable, warning, and shutdown states; add deterministic visual/runtime evidence.
 - Preserve: route-review authority decides safety/authorization; existing 2048×1536 layout/plate registration; missing Second Crown; no Passage; no new global route state; no replacement of preserved base plate art; no reference-landmark raster double rendering.
@@ -24,6 +24,22 @@
 ## Asset Pipeline V2 Families
 
 Before creating files, re-read live V2 schema/tool help and use current contracts. The design values below are locked production targets unless the live schema requires a field-format translation.
+
+## Route Vista Content Dependency
+
+Destination imagery is owned separately by:
+
+`twin_solaria_route_vista_samples`
+
+from the reviewed workstream:
+
+`twin-solaria-route-vista-samples-v1`
+
+The aperture FX family must not contain the destination paintings themselves.
+
+The `route_candidate` aperture-FX state is therefore an aperture-field / edge / reveal treatment layered around or over the selected Route Vista sample, not the sample image.
+
+Consume the selected neutral candidate id from the route-review/presentation seam and feed it to the Route Vista presentation independently from the aperture machine state.
 
 ### 1. `twin_solaria_acquisition_aperture_fx`
 
@@ -141,12 +157,12 @@ Therefore baseline/dormant presentation needs a non-authoritative aperture cover
 State behavior:
 
 - DORMANT / HOME work: aperture masked/dim; no route signal.
-- ROUTE CANDIDATE: faint candidate sample may reveal enough of the preserved vista to read as incomplete correlation.
-- RECIPROCITY REVIEW: candidate remains weak; reciprocal anchor/witnesses communicate safety state.
+- ROUTE CANDIDATE: select a Route Vista sample and show it through the reviewed `candidate_weak` presentation; aperture FX adds field/edge treatment only.
+- RECIPROCITY REVIEW: selected vista content remains independent; weak/conflicting Route Vista presentation may persist while reciprocal anchor/witnesses communicate safety state.
 - HOLD: freeze at weak candidate, no full resolve.
 - ABORT: controlled shutdown to masked/dim.
 - AUTHORIZE ACQUISITION: play `acquisition_resolve`.
-- ACQUISITION STABLE: expose stable Resolved Route Vista plus restrained edge motion.
+- ACQUISITION STABLE: show the selected Route Vista sample in resolved presentation plus restrained aperture-edge motion.
 - reciprocal warning during stable state: warning presentation, then fail-closed shutdown if route-review authority requests it.
 
 The mask/cover is presentation only. It may not change collision, route state, or candidate truth.

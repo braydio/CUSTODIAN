@@ -1149,6 +1149,7 @@ Last updated: 2026-09-29
 
 ## Elevated Procgen Presentation
 
+- `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` — locked visual authority for the current generated/first campaign world: cold alpine terrain, hardened infrastructure, Custodian structure/vehicle application, Black Reliquary field-HUD shell, and marker/beacon grammar; Archive Resolve remains separately governed.
 - `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md` — upper-plane, cliff, void, forest-depth, streaming, and determinism authority.
 - `custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd` — global non-repeating, camera-following forest depth stack used by both generated-world and explicit-chasm configuration paths.
 - `custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd` — presentation-only directional FLOOR-to-CHASM fascia using authored top/body/bottom sources 149–154, stable outward normals, sparse deep sections, tiny enclosed-pocket suppression, and wall-aware lip substitution; it never paints accepted generated-wall cells or contributes collision, navigation, or surface semantics.
@@ -1286,6 +1287,7 @@ Last updated: 2026-09-29
 
 ## Twin Solaria Runtime V1
 
+- `docs/ai_context/task_packets/TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` / `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — queued first-pass V2 ingest and presentation of three Solarium I Route Vista candidate contents at the canonical 465×280 vista registration, with human capture approval.
 - `docs/ai_context/task_packets/TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` / `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — queued Slice D route-review state/evidence/reciprocity authority plus independent review.
 - `docs/ai_context/task_packets/TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` / `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — queued Slice E Asset V2 acquisition presentation with structured state/registration/alpha probes and compact ROI evidence plus independent review; Passage remains unqueued.
 - `docs/ai_context/task_packets/TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — queued dev-only 3500×3000-vs-4000×3000 provenance/expectation repair.
