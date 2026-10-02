@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `contract-world-placement-foundation`
+- Depends on: `review-contract-world-placement-foundation`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `f7e84ae48a90ff9da0f968ef0c72ac9ba0c2c5ee`
 - Goal: Move authored world-ingress/destination placement from ContractWorldLoader into the canonical world-placement layer while preserving transition ownership elsewhere.
 - Completion boundary: Done when registered ingresses, Sundered Keep connection/frontage placement, ingress-adjacent spawn/edge projection, and related dressing-clearance placement policy are service-owned; loader delegates and transition systems still own entry/return behavior.
 - Current measured state: Authored ingress/destination placement is still split between loader policy and focused ingress authorities. `custodian/game/systems/core/systems/contract_world_loader.gd` owns `_place_gothic_compound_connection`, `_place_sundered_keep_connection`, `_place_registered_world_ingresses`, Sundered Keep vista/debug gateway placement, gate-tile pickers, `_project_ingress_to_edge`, `_pick_ingress_adjacent_spawn_tile`, and compound-ingress direction/offset helpers. Canonical ingress spawning/validation already exists at `custodian/game/world/levels/world_ingress_spawner.gd`, with procgen ingress-site data under `custodian/game/world/procgen/ingress/world_ingress_site.gd`. `custodian/game/world/placement/` is still scaffold-only.
@@ -23,6 +23,7 @@
 - Validation: `res://tools/validation/sundered_keep_ingress_smoke.gd`, `res://tools/validation/world_ingress_spawner_smoke.gd`, `res://tools/validation/world_ingress_physics_reentry_smoke.gd`, `res://tools/validation/authored_level_ingress_return_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, then changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains and final loader contraction.
+- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 
