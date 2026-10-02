@@ -7,8 +7,7 @@ Last updated: 2026-09-08
 Surface Materials V1 is a separate implementation slice governed by
 `SURFACE_MATERIALS_V1.md`.
 
-Resolved first-campaign-world composition is governed by
-`FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md`. Macro stamps, hardstands, depth chunks and landmarks must fit that cold alpine / hardened-infrastructure identity rather than introducing a competing biome or palette. It classifies final floor presentation before
+Macro presentation consumes the active region-frame contract from `PROCGEN_REGION_FRAME_PROFILES.md`. The first starting region uses `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`, but future frames may select different compatible macro/depth vocabularies. Presentation must never infer the permanent region border from whichever local biome happens to dominate. It classifies final floor presentation before
 macro composition without changing the macro stamp subsystem or gameplay
 authority.
 
