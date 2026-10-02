@@ -282,6 +282,8 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
+- `HUB_FIRST_SET_BLOCKOUT_V1.md` — P1 runtime-ready Hub first-set blockout from South Reach through Ashen Forum, Sepulcher loop, Archive/Crown Transfer branch, and Muster Court/Continuity Port deployment wing; spatial only, no world transitions.
+- `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — paired independent review of first-set geometry, navigation, Road presentation reuse, inert handoff markers, and human blockout overview approval.
 - `TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — P1 first-pass Solarium I Route Vista sample ingest/presentation: three neutral V2 candidate contents from the new archway-view drop, exact 465×280 registration, playtest sampler, and human capture review.
 - `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — paired independent review of vista provenance, normalization, registration, presentation ownership, and recorded human approval.
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication hardening: classify/preflight the dedicated art checkout, safely prepare clean-behind/local-cache state, reject stale baselines before mutation, and restore only proven transaction-generated Godot metadata churn; depends on the sparse-checkout correction re-review.
