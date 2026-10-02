@@ -9,7 +9,7 @@
 > Part C has since resolved. Read it for the rationale, not for the numbers.
 >
 > Current authority:
-> - `custodian/docs/ai_context/task_packets/OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`
+> - `custodian/docs/ai_context/task_packets/archived/OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`
 >   — the Part C record, with measurements and per-slice evidence.
 > - `custodian/docs/ai_context/CURRENT_STATE.md` — live runtime description.
 >
