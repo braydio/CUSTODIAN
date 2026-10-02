@@ -44,6 +44,14 @@ AR packet set is refreshed.
   - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3, ready/auto, depends on NPA-2.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
+## Cross-cutting Stealth Awareness Planning
+
+Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`.
+
+- `STEALTH_PERCEPTION_FOUNDATION.md` - P0 draft/manual S0/S1 packet for the typed NoiseEvent repair and shared Enemy + Vaultwing acoustic observation seam.
+- `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/manual dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership.
+- Both remain intentionally non-claimable drafts until the stealth design boundary is accepted for implementation.
+
 ## Selection
 
 - Skip packets for narrow, low-risk, single-session work.
