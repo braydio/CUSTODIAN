@@ -61,7 +61,7 @@
 
 ## Completion Truth
 
-- Completion schema: `custodian.task_completion_truth.v1`
+- Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: yes
 - Completion boundary satisfied: yes
 - Acceptance satisfied: yes

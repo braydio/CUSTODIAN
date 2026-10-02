@@ -374,5 +374,3 @@ lost when the ephemeral worktree is removed.
 - `OBSERVATORY_WORLD_TELEMETRY_FOUNDATION.md` — Add the first shared observability and world-memory foundation: F9 observatory overlay, world state graph, world history, interest management, sector heatmap accumulation, and the first live player/sector telemetry hooks.
 
 ### Recently Complete (awaiting archive)
-
-- `archived/OPERATOR_ACTION_ARBITRATION.md` — P1 Slice E complete: explicit Operator action arbitration and semantic presentation coordination; removed legacy animation state shells and all 34 state→actor glue sites.

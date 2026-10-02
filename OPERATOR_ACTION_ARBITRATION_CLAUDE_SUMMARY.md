@@ -4,7 +4,7 @@ Introduced `OperatorActionController` for attack, guard, equip/sheathe, damage r
 
 The dedicated action-arbitration smoke passed. Existing cadence, modular fast attack, guard, parry, sheathe, switch-chain, posture, reaction, knockdown, and fixed-tick tests passed. Guard/parry emitted fallback warnings for missing authored parry clips; parry also emitted existing known teardown leak warnings. The one `--changed` closeout was not green: it failed the unrelated `review_pairing_contract` check because `review-procgen-distant-chunk-unload` has a malformed bounded task override; dependent higher tiers were skipped. No dedicated death/respawn test ID exists in the current manifest, so terminal/reset behavior is asserted directly at the action-controller boundary.
 
-The baseline packet measurements were stale because the prerequisite chain had already landed before this claim. Re-measurement established the current ledger before emitting the baseline. A slow Godot editor import was needed to register the new global classes; after import, the focused smoke parsed and passed.
+The first finish preflight caught two closeout metadata issues before landing: the archived packet was still listed under Recently Complete, and its completion receipt used the wrong schema label. Both were corrected in follow-up metadata commits. The baseline packet measurements were stale because the prerequisite chain had already landed before this claim. Re-measurement established the current ledger before emitting the baseline. A slow Godot editor import was needed to register the new global classes; after import, the focused smoke parsed and passed.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
