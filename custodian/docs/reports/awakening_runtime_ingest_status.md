@@ -13,8 +13,19 @@ canonical 704×768 pair under `content/levels/awakening/09_late_service/` with
 one shared resize transform and production foreground occlusion.
 
 The Crèche fixture family now has all seven required states published. The
-Recovery Ambulatory fixture family has five of six required states published;
-`service_basin_b` remains the only required gap.
+Recovery Ambulatory fixture family now has all six required states published
+in the Asset V2 catalog; `service_basin_b` was ingested by the
+`awakening-detail-assets-batch-01` handoff (2026-10-02) but is not yet bound
+to a scene consumer, since its two candidate layout obstacle slots already
+carry matching baked basin dressing in the live plate with no documented a/b
+disambiguation. The same batch ingested the Late Service relay-lamp `idle`
+state, all six required `awakening_authority_inlay` route-tile states, and
+`awakening_ruin_decal` states `floor_crack_a`/`rubble_small`; none of these
+are yet wired to a scene or tile consumer — no authority-inlay or ruin-decal
+placement system exists in the live runtime, and the Late Service altar slot
+already shows baked lamp art with the same binding ambiguity as the
+Ambulatory basins. `awakening_ruin_decal` still requires `floor_crack_b`,
+`floor_crack_c`, and `rubble_medium`.
 
 ## Partial / missing
 
@@ -22,9 +33,10 @@ Recovery Ambulatory fixture family has five of six required states published;
 `alcove_broken`, `alcove_fused`, `alcove_empty`, `wall_of_seals`, `relic_table`,
 and `authority_inscription` are present. Recommended dressing remains open.
 
-`awakening_ambulatory_fixtures` is partial: `service_basin_a`,
-`inspection_niche_medica`, `inspection_niche_vestment`, `broken_mirror_panel`,
-and `hidden_reliquary_panel` are present; `service_basin_b` remains required.
+`awakening_ambulatory_fixtures` required art is now fully published:
+`service_basin_a`, `inspection_niche_medica`, `inspection_niche_vestment`,
+`broken_mirror_panel`, and `hidden_reliquary_panel` are baked into the live
+plate; `service_basin_b` is Asset V2-ready but unbound (see above).
 
 ## Tooling and housekeeping
 

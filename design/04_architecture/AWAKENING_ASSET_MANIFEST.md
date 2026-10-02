@@ -189,16 +189,32 @@ Consumer: `res://scenes/awakening_first_return.tscn`.
 
 These are coherent room-specific set-piece families. Per-state frame size overrides are intentional. They are not runtime atlas sheets.
 
-Current consumption audit (2026-09-20): the published Crèche states
-(`alcove_closed`, `alcove_broken`, `alcove_fused`, `alcove_empty`,
-`wall_of_seals`, `relic_table`, `authority_inscription`) and Ambulatory states
-(`service_basin_a`, `inspection_niche_medica`, `inspection_niche_vestment`,
-`broken_mirror_panel`, `hidden_reliquary_panel`) are **BAKED_ONLY** in the live
-production plates. No separate sprite binding is appropriate. Ambulatory
-`service_basin_b` and all states in the Attestation, Reliquary, Dust Lung
-structures, Undergate machinery, and Late Service relay-lamp families are
-**NOT_READY** as standalone runtime assets. Their production scenes may depict
-equivalent architecture; this classification concerns separate asset binding.
+Current consumption audit (2026-10-02, updated by `awakening-detail-assets-batch-01`):
+the published Crèche states (`alcove_closed`, `alcove_broken`, `alcove_fused`,
+`alcove_empty`, `wall_of_seals`, `relic_table`, `authority_inscription`) and
+Ambulatory states (`service_basin_a`, `inspection_niche_medica`,
+`inspection_niche_vestment`, `broken_mirror_panel`, `hidden_reliquary_panel`)
+remain **BAKED_ONLY** in the live production plates. No separate sprite
+binding is appropriate for those.
+
+Ambulatory `service_basin_b`, the Late Service `awakening_late_service_relay_lamp`
+`idle` state, all six required `awakening_authority_inlay` route-tile states,
+and `awakening_ruin_decal` `floor_crack_a`/`rubble_small` are now **ASSET_V2_READY_UNBOUND**:
+ingested, plan/status/doctor-clean, and Godot-imported in the live catalog,
+but not yet wired to any scene or tile consumer. For `service_basin_b` and the
+relay lamp, the live production plates already show matching/equivalent baked
+dressing at their nearest layout obstacle anchors (`west_service_basin` /
+`east_service_basin` in Ambulatory; `relay_lamp_altar` in Late Service) with
+no documented disambiguation of which baked instance is the fulfilled "a"
+state versus where a standalone "b"/lamp sprite should sit without visually
+doubling existing art — binding remains an open art-direction decision, not a
+mechanical placement. No authority-inlay or ruin-decal tile/placement system
+exists yet in the live runtime; integrating those six + two states requires a
+design decision on the route-tile/decal presentation path rather than an
+invented bespoke sprite. All remaining states in the Attestation, Reliquary,
+Dust Lung structures, and Undergate machinery families are still **NOT_READY**
+as standalone runtime assets. Their production scenes may depict equivalent
+architecture; this classification concerns separate asset binding.
 
 ### `awakening_creche_fixtures` — P1
 
