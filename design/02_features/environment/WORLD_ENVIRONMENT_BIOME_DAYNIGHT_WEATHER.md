@@ -27,20 +27,22 @@ classification into `WorldEnvironmentDirector` or add weather authority here.
 - Weather holds 90–240 seconds and transitions over 8–15 seconds.
 - Weather affects only lighting, fog/grade, precipitation, and foliage wind. It has no gameplay modifiers.
 
-### First campaign world presentation lock
+### Region-frame relationship
 
-For the current generated campaign world, ecological biome IDs are **micro-region semantics inside one locked macro-world identity**, not permission for four unrelated art directions.
+Ecological biome IDs are **local field semantics**, not macro world-frame identity.
 
-Use `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` as presentation authority:
+`design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` owns the permanent region frame/border/underlay selection. The first starting region selects `ALPINE_PLATEAU`, whose art application is locked by `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`.
 
-- `rocky_upland` is the dominant highland expression;
-- `woodland` means cold conifer woodland with exposed stone and infrastructure remnants;
-- `scrubland` means sparse wind-exposed cold scrub/dead grass;
-- `wetland` means bounded cold bog/drainage pockets rather than lush swamp;
-- snow/frost may cross biome boundaries as weather/surface condition;
-- biome transitions must not become saturated color-box boundaries.
+Inside that starting frame the biome field remains deterministic/generative:
 
-This does not change biome classification, RNG, walkability, foliage ceilings, or weather state ownership.
+- `rocky_upland` should be common/dominant;
+- `woodland` is cold conifer woodland;
+- `scrubland` is sparse wind-exposed cold scrub;
+- `wetland` remains bounded cold drainage/bog.
+
+Future generated regions may use different region frames and climate biases while retaining the same local biome classifier contract.
+
+The region frame does not classify biome cells, and biome classification does not choose the permanent map border.
 
 ## Dataflow and Determinism
 
