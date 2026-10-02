@@ -61,14 +61,12 @@
 
 ## Completion Truth
 
-- Implementation complete: yes.
-- Acceptance criteria complete: yes.
-- Validation complete: yes for task-scoped tests; changed-file closeout has one unrelated pre-existing `review_pairing_contract` failure (malformed bounded override in `review-procgen-distant-chunk-unload`).
-- Debt audit: `animation_state_actor_glue` is zero; factual baseline is 38 absolute scene lookups + 3 mutable weapon-definition runtime fields (41 total).
-- Focused action smoke: `operator_action_arbitration_smoke.gd` passes.
-- Existing regression tests passed: `operator_attack_phase_cadence`, `operator_modular_fast_attack`, `operator_guard_flow`, `operator_parry_presentation`, `operator_melee_sheathe`, `operator_melee_switch_chain`, `operator_melee_posture`, `operator_modular_idle_hitreact`, `operator_knockdown_animation`, and `operator_fixed_tick_spine`.
-- No production Operator consumer of `AnimationStateMachine`, `AnimationState`, or concrete animation-state shells remains; old files are removed.
-- Operator death/respawn behavior is covered at the action-controller terminal/reset boundary; no dedicated death/respawn validation ID exists in the current manifest.
+- Completion schema: `custodian.task_completion_truth.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: removed
+- Evidence: Operator action arbitration smoke and ten focused combat/action regressions passed. Debt audit reports zero `animation_state_actor_glue` and 41 factual remaining violations (38 absolute scene lookups + 3 mutable weapon-definition fields). The changed-file closeout was attempted and exposed an unrelated failing `review_pairing_contract` check in `review-procgen-distant-chunk-unload`; focused relevant validation remains green.
 
 ## Execution Feedback
 
