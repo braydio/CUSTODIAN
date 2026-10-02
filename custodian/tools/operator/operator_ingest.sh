@@ -123,10 +123,6 @@ if [[ "$APPLY" -eq 0 ]]; then
   exit 0
 fi
 
-echo "== Operator compatibility resource path update =="
-python3 custodian/tools/pipelines/update_operator_compatibility_resources.py
-echo ""
-
 if [[ "$NO_IMPORT" -eq 0 ]]; then
   echo "== Godot import preflight =="
   python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian

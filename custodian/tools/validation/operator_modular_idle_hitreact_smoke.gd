@@ -26,7 +26,7 @@ func _run() -> void:
 
 	var lower := operator.get_node("ModularLowerBodySprite") as AnimatedSprite2D
 	var upper := operator.get_node("ModularUpperBodySprite") as AnimatedSprite2D
-	var head := operator.get_node("ModularHeadSprite") as AnimatedSprite2D
+	_assert(operator.get_node_or_null("ModularHeadSprite") == null, "retired modular head node must not be present")
 	var legacy := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	# C2a-R3: both body renderers are canonical, so each layer owns its own
 	# identity instead of sharing one compatibility clip name.
@@ -52,7 +52,6 @@ func _run() -> void:
 		&"n",
 		lower,
 		upper,
-		head,
 		legacy
 	)
 	operator.call("finish_damage_reaction_presentation")
@@ -62,7 +61,6 @@ func _run() -> void:
 		&"n",
 		lower,
 		upper,
-		head,
 		legacy
 	)
 	operator.call("finish_damage_reaction_presentation")
@@ -72,7 +70,6 @@ func _run() -> void:
 		&"n",
 		lower,
 		upper,
-		head,
 		legacy
 	)
 	operator.call("finish_damage_reaction_presentation")
@@ -82,7 +79,6 @@ func _run() -> void:
 		&"s",
 		lower,
 		upper,
-		head,
 		legacy
 	)
 	operator.call("finish_damage_reaction_presentation")
@@ -92,7 +88,6 @@ func _run() -> void:
 		&"s",
 		lower,
 		upper,
-		head,
 		legacy
 	)
 	operator.call("finish_damage_reaction_presentation")
@@ -102,7 +97,6 @@ func _run() -> void:
 		&"s",
 		lower,
 		upper,
-		head,
 		legacy
 	)
 	operator.call("finish_damage_reaction_presentation")
@@ -234,7 +228,6 @@ func _assert_reaction_direction(
 	expected_sector: StringName,
 	lower: AnimatedSprite2D,
 	upper: AnimatedSprite2D,
-	head: AnimatedSprite2D,
 	legacy: AnimatedSprite2D
 ) -> void:
 	operator.set("visual_idle_direction", direction)
@@ -249,15 +242,6 @@ func _assert_reaction_direction(
 	_assert(lower.frame == 0 and upper.frame == 0, "required layers should start on frame zero")
 	_assert(lower.visible and upper.visible, "required modular layers should be visible")
 	_assert(not legacy.visible, "legacy and modular bodies must not render together")
-	# C2a authoring decision 2026-09-12: the modular head is preserved but retired
-	# from the active composition (Operator.ACTIVE_MODULAR_HEAD is false). Its art
-	# is still published and it may still have a matching clip, so assert the
-	# retirement rather than the old "optional head joins" behaviour — otherwise
-	# this test would pass again the moment the head quietly came back.
-	_assert(
-		not head.visible,
-		"retired modular head must not draw in a reaction (ACTIVE_MODULAR_HEAD is false)"
-	)
 
 
 func _assert(value: bool, message: String) -> void:

@@ -10,23 +10,8 @@ import animation_frame_contract as fc
 
 DEFAULT_ROOT=m.REPO_ROOT/".ai/operator_animation_workbench"
 LUA=m.CUSTODIAN_ROOT/"tools/aseprite/operator_animation_workbench.lua"
-COMPATIBILITY_SCRIPT=m.PIPELINES/"update_operator_compatibility_resources.py"
 GENERATED_OPERATOR_RESOURCES=[
     m.CUSTODIAN_ROOT/"content/sprites/operator/runtime/operator_runtime_frames.tres",
-] + [
-    m.CUSTODIAN_ROOT/"game/actors/operator"/name for name in (
-        "operator_runtime_frames.tres",
-        "operator_weapon_frames.tres",
-        "operator_melee_overlay_frames.tres",
-        "operator_ranged_fx_frames.tres",
-        "operator_modular_lower_body_frames.tres",
-        "operator_modular_upper_body_frames.tres",
-        "operator_modular_sidearm_frames.tres",
-        "operator_modular_upper_fx_frames.tres",
-        "operator_modular_cape_frames.tres",
-        "operator_modular_head_frames.tres",
-        "operator_animation_catalog_frames.tres",
-    )
 ]
 HORIZONTAL_COUNTERPARTS={"e":"w","w":"e","ne":"nw","nw":"ne","se":"sw","sw":"se"}
 
@@ -204,7 +189,7 @@ def canvas_migrate(profile,action,direction,width,height,scope="animation",group
     return report
 
 def _validation_commands(data,full_validate=False):
-    cmds=[["python3",str(COMPATIBILITY_SCRIPT),"--check"],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_contract_report.py")],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_workbench_smoke.py")],["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"]]
+    cmds=[["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_contract_report.py")],["python3",str(m.CUSTODIAN_ROOT/"tools/validation/operator_animation_workbench_smoke.py")],["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"]]
     if data["identity"]["profile"]=="melee_1h" and data["identity"]["group"]=="posture": cmds.append(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_melee_posture_smoke.gd"])
     if data.get("context",{}).get("weapon_id")=="vigil_pattern_dagger": cmds.append(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_vigil_dagger_smoke.gd"])
     if full_validate: cmds.append(["python3",str(m.CUSTODIAN_ROOT/"tools/validation/run_validation.py"),"--changed","--json"])
@@ -215,12 +200,6 @@ def _journal_stage(path,journal,state,stage):
     if stage and stage not in journal["validation_stages_completed"]: journal["validation_stages_completed"].append(stage)
     save(path,journal)
 
-def _compatibility_update():
-    subprocess.run(["python3",str(COMPATIBILITY_SCRIPT)],check=True,cwd=m.REPO_ROOT)
-
-def _compatibility_check():
-    subprocess.run(["python3",str(COMPATIBILITY_SCRIPT),"--check"],check=True,cwd=m.REPO_ROOT)
-
 def _godot_import():
     preflight=m.CUSTODIAN_ROOT/"tools/pipelines/godot_import_preflight.py"
     subprocess.run(["python3",str(preflight),"--project-dir",str(m.CUSTODIAN_ROOT)],check=True)
@@ -230,7 +209,6 @@ def _catalog_build():
     subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/pipelines/build_operator_runtime_frames.gd"],check=True)
 
 def _operator_scene_consistency():
-    _compatibility_check()
     subprocess.run(["godot","--headless","--path",str(m.CUSTODIAN_ROOT),"--script","res://tools/validation/operator_modular_layers_smoke.gd"],check=True)
 
 ## Mirroring the horizontal counterpart is the default.
@@ -308,10 +286,6 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         _journal_stage(journal_path,journal,"SOURCE_SWAPPED","source_swap")
         subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
         _journal_stage(journal_path,journal,"RUNTIME_BUILT","runtime_build")
-        _compatibility_update()
-        for item in journal["resources"]: item["target_sha256"]=m.file_sha256(m.REPO_ROOT/item["path"])
-        _compatibility_check()
-        _journal_stage(journal_path,journal,"COMPATIBILITY_BUILT","compatibility_resource_generation")
         _godot_import(); _journal_stage(journal_path,journal,"GODOT_IMPORTED","godot_import")
         _catalog_build()
         for item in journal["resources"]: item["target_sha256"]=m.file_sha256(m.REPO_ROOT/item["path"])
@@ -337,7 +311,7 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
                 if timing.exists(): shutil.copy2(timing,old_timing)
             for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/m.rel(resource),resource)
             subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
-            _compatibility_update(); _compatibility_check(); _godot_import(); _catalog_build(); _operator_scene_consistency()
+            _godot_import(); _catalog_build(); _operator_scene_consistency()
             _journal_stage(journal_path,journal,"ROLLED_BACK","rollback_consistency")
         except Exception: journal["state"]="RECOVERY_REQUIRED"
         save(journal_path,journal); raise

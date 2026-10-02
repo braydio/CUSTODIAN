@@ -5,7 +5,7 @@ const SOCKET_LIBRARY := preload(
 	"res://game/actors/operator/animations/operator_weapon_socket_tracks.gd"
 )
 const CATALOG_FRAMES := preload(
-	"res://game/actors/operator/operator_animation_catalog_frames.tres"
+	"res://content/sprites/operator/runtime/operator_runtime_frames.tres"
 )
 
 var _failures: Array[String] = []

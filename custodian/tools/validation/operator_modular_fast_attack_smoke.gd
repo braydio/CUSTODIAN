@@ -13,12 +13,7 @@ extends SceneTree
 ## runtime contracts would be worse than one narrower suite.
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
-
-const LAYER_RESOURCE_PATHS := {
-	"lower_body": "res://game/actors/operator/operator_modular_lower_body_frames.tres",
-	"upper_body": "res://game/actors/operator/operator_modular_upper_body_frames.tres",
-	"upper_fx": "res://game/actors/operator/operator_modular_upper_fx_frames.tres",
-}
+const RUNTIME_FRAMES := preload("res://content/sprites/operator/runtime/operator_runtime_frames.tres")
 
 const FAST_ATTACK_SPECS := [
 	{"layer": "lower_body", "phase": "windup", "action": "fast_windup_01", "base": "unarmed_fast_windup_lower"},
@@ -76,42 +71,26 @@ func _validate_spriteframes_match_existing_runtime_pngs() -> void:
 	for spec in FAST_ATTACK_SPECS:
 		var layer := str(spec["layer"])
 		var action := str(spec["action"])
-		var base := str(spec["base"])
-		var frames := load(str(LAYER_RESOURCE_PATHS[layer])) as SpriteFrames
-		_assert_true(frames != null, "missing SpriteFrames for %s" % layer)
-		if frames == null:
-			continue
+		var identity_layer := "fx" if layer == "upper_fx" else layer
 		for dir in _directions.keys():
-			var source_path := _source_png_path(layer, action, dir)
-			var runtime_path := _runtime_png_path(layer, action, dir)
-			var source_exists := FileAccess.file_exists(source_path)
-			var runtime_exists := FileAccess.file_exists(runtime_path)
-			if source_exists:
-				_assert_true(runtime_exists, "source exists but runtime module missing: %s" % runtime_path)
-			if not runtime_exists:
+			var animation := StringName("unarmed/attack/%s/%s/%s" % [action, dir, identity_layer])
+			if not RUNTIME_FRAMES.has_animation(animation):
+				if not bool(spec.get("optional", false)):
+					_assert_true(false, "canonical runtime identity missing: %s" % animation)
 				continue
-			var suffix := str(_directions[dir]["suffix"])
-			var animation := StringName("%s_%s" % [base, suffix])
-			_assert_playable(frames, animation, "%s %s %s should be registered" % [layer, action, dir])
-			if bool(_directions[dir].get("alias_base", false)):
-				_assert_playable(frames, StringName(base), "%s %s base alias should be registered" % [layer, action])
+			_assert_playable(RUNTIME_FRAMES, animation, "%s %s %s should be registered" % [layer, action, dir])
 
 
 func _validate_roll_exit_ingest_registration() -> void:
-	var body_frames := load("res://game/actors/operator/operator_runtime_frames.tres") as SpriteFrames
-	var fx_frames := load("res://game/actors/operator/operator_melee_overlay_frames.tres") as SpriteFrames
-	var cape_frames := load("res://game/actors/operator/operator_modular_cape_frames.tres") as SpriteFrames
+	var body_frames := RUNTIME_FRAMES
+	var fx_frames := RUNTIME_FRAMES
 	for direction in ["e", "w"]:
-		var suffix := "right" if direction == "e" else "left"
 		var body_path := "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__%s__11f__96.png" % direction
 		var fx_path := "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__fx__unarmed__attack__dodge_fast_attack_01__%s__11f__96.png" % direction
 		if FileAccess.file_exists(body_path):
-			_assert_playable(body_frames, StringName("unarmed_dodge_fast_attack_%s" % suffix), "roll-exit body should be registered")
+			_assert_playable(body_frames, StringName("unarmed/attack/dodge_fast_attack_01/%s/full_body" % direction), "roll-exit body should be registered")
 		if FileAccess.file_exists(fx_path):
-			_assert_playable(fx_frames, StringName("unarmed_dodge_fast_attack_fx_%s" % suffix), "roll-exit FX should be registered")
-	var cape_path := "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__cape__unarmed__attack__dodge_fast_attack_01__w__11f__96.png"
-	if FileAccess.file_exists(cape_path):
-		_assert_playable(cape_frames, &"unarmed_dodge_fast_attack_cape_left", "west roll-exit cape should be registered")
+			_assert_playable(fx_frames, StringName("unarmed/attack/dodge_fast_attack_01/%s/fx" % direction), "roll-exit FX should be registered")
 
 
 func _validate_fast_attack_entry_points(operator: Node) -> void:
@@ -269,14 +248,6 @@ func _validate_unarmed_contact_vfx(operator: Node, scene_root: Node2D) -> void:
 			"authored contact VFX must remain a one-shot"
 		)
 	contact.queue_free()
-
-
-func _source_png_path(layer: String, action: String, dir: String) -> String:
-	return "res://content/sprites/operator/source/animations/fast_attack/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, dir]
-
-
-func _runtime_png_path(layer: String, action: String, dir: String) -> String:
-	return "res://content/sprites/operator/runtime/animations/%s/actions/unarmed/fast_attack/%s/operator__modular_%s__unarmed__%s__%s__3f__96.png" % [layer, action, layer, action, dir]
 
 
 ## modular_upper_fx_sprite is canonical as of C2a-R2: it resolves

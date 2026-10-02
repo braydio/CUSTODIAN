@@ -2,7 +2,6 @@
 """Focused regression for authored Operator animation-clock timing."""
 from __future__ import annotations
 
-import importlib.util
 import json
 import re
 import sys
@@ -22,18 +21,9 @@ EXPECTED_MS = [60.0, 70.0, 100.0] * 4
 PROFILES = ("unarmed", "melee_1h")
 
 
-def _load_compatibility_module():
-    path = PIPELINES / "update_operator_compatibility_resources.py"
-    spec = importlib.util.spec_from_file_location("operator_timing_compatibility", path)
-    if spec is None or spec.loader is None:
-        raise RuntimeError(f"cannot load {path}")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
 def _load_workbench_model():
+    import importlib.util
+
     path = PROJECT_ROOT / "tools/operator/animation_workbench_model.py"
     spec = importlib.util.spec_from_file_location("operator_timing_workbench", path)
     if spec is None or spec.loader is None:
@@ -42,11 +32,6 @@ def _load_workbench_model():
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
-
-
-def _animation_block(module, path: Path, name: str) -> str:
-    _start, _end, blocks = module._animation_blocks(path.read_text())
-    return next(block for block in blocks if f'"name": &"{name}"' in block)
 
 
 def main() -> int:
@@ -83,19 +68,7 @@ def main() -> int:
         assert timeline["durations"] == EXPECTED
         assert [round(value, 6) for value in timeline["frame_durations_ms"]] == EXPECTED_MS
 
-    module = _load_compatibility_module()
-    compatibility = PROJECT_ROOT / "game/actors/operator/operator_modular_lower_body_frames.tres"
-    block = _animation_block(module, compatibility, "unarmed_run_down")
-    assert '"speed": 10.0' in block
-    assert '"loop": true' in block
-    assert [float(value) for value in re.findall(r'"duration": ([0-9.]+)', block)] == EXPECTED
-
-    catalog_resource = PROJECT_ROOT / "game/actors/operator/operator_animation_catalog_frames.tres"
-    melee = _animation_block(module, catalog_resource, "melee_1h/locomotion/run_01/s/lower_body")
-    assert '"speed": 10.0' in melee
-    assert [float(value) for value in re.findall(r'"duration": ([0-9.]+)', melee)] == EXPECTED
-
-    print("operator_animation_timing_smoke: PASS 12f clocks, 60/70/100ms cadence, 920ms loops")
+    print("operator_animation_timing_smoke: PASS source/runtime timing metadata, 60/70/100ms cadence, 920ms loops")
     return 0
 
 

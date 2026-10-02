@@ -1557,7 +1557,7 @@ Slice D; the small net increase is the new shared FX-resolution helper.
 
 **C2b.2 completed (2026-09-29).** Operator damage reactions now select the canonical east/west `bodyslam_knockdown_01` body+FX pair and south `light_hitreact_01` fallback; the one-second heavy recovery, 0.22-second light window, unmirrored authored directions, and shared incoming-damage package are preserved. Dodge charge/link use exact canonical eight-sector selection. All Operator `AnimationResolver` and `DirectionalAnimationFallback` references are removed, `animation_resolver.gd` is deleted, and the architecture ledger is **75** (95 -> 75), with 38 absolute lookups, 34 animation-state actor-glue calls and 3 weapon-definition runtime-state fields unchanged. The knockdown smoke now covers both heavy directions, fallback light reaction and cleanup, and is registered in validation.
 
-**C2b selection cutover is complete; C2b.3 compatibility-resource residue remains queued.** It will retire unused compatibility resources/nodes/tooling and reconcile reachability/orphan output. Slice E (`OperatorActionController`) and Slice F (domain extraction) remain after C2b.3.
+**C2b.2 selection cutover and C2b.3 compatibility-resource residue are complete.** Slice E (`OperatorActionController`) and Slice F (domain extraction) remain queued.
 - Ranged-ready V1 keeps movement available and grants aim-direction facing to the active ranged presentation. The P-9 starts progression-locked and equipment-gated: the Sundered Keep locker adds `p9_sidearm` to carried inventory, but melee/unarmed offhand secondary continues to route to parry/guard until the player equips it in the Equipment page. Equip-time `Operator.grant_sidearm(...)` initializes pistol ammo and visuals; unequip-time `remove_sidearm()` disables the fallback. The inventory ledger resolves the production P-9 portrait/card art, and the HUD has a dedicated top-left loadout frame for the active primary plus a smaller P-9 badge. An actively selected ranged primary retains priority. Its four-diagonal modular draw/fire stack holds the final complete draw pose while ready. Right-stick aim preserves last aim direction at neutral. Selected two-handed ranged presentation uses `relaxed_01`, forward `aim_01`, held `stance_01`, repeated `fire_01`, return to stance, and faster reverse `aim_01` lowering. Primary fire no longer bypasses ranged-ready; held/pressed fire is accepted at the configured 70% raise threshold. Dodge interrupts and clears a raise/lower presentation instead of being visually blocked by it.
 - Successful parry drops guard quickly (`parry_success_recovery_sec` is `0.03s`) and preserves the release/repress guard rule. Ordinary parried `enemy_grunt` presentation is explicit `critical_open_enter_s -> critical_open_hold_s -> critical_open_recover_s`, with BREACH/countdown owned through enter/hold and cleared on reservation or expiry. A valid primary follow-up atomically reserves the enemy and runs the existing S/E/W 96×96 paired execution. A committed-leap Falcon Punch parry instead automatically reserves the matched E/W Falcon Reversal when available, skips critical-open presentation and second input, and synchronizes the eight-frame 156×156 Operator/victim/FX composition through source-frame-6/index-5 damage and a 130ms freeze. Unsupported reversal directions fall back to the ordinary open-critical flow; neither execution independently mirrors its paired layers. Enemy authority still owns exactly-once damage, lethal/nonlethal resolution, token release, and cancellation cleanup.
 - Combat feel direction is locked around `INPUT -> ATTACK STATE -> FRAME WINDOW -> ARC/RANGE HIT RESOLUTION -> RECOVERY -> CONTROL RETURN`; fast/heavy primary-secondary parity is the next tuning baseline after sprite pipeline loose ends are closed.
@@ -2009,3 +2009,21 @@ foundation telemetry, not yet a broad producer cutover or batched rebuild
 implementation; those remain M2. Focused scheduler, wall compaction/destruction,
 runtime-health, navigation-elevation, and S1 quick checks passed, with S1
 `determinism_ok=true`.
+
+## Operator Runtime Compatibility Residue (C2b.3, 2026-10-02)
+
+All eleven actor-local Operator compatibility SpriteFrames and the updater were
+removed. `PrimaryWeaponSprite` now binds the canonical database by default;
+melee-specific frames remain weapon-owned, while two-handed ranged and sidearm
+presentation uses the canonical modular/static paths. The retired head/cape
+nodes remain absent and their source/runtime art stays preserved. The 13
+confirmed orphan/superseded action families have 34 source sheets archived at
+`content/sprites/operator/source/legacy/c2b_runtime_retirement/` and no active
+runtime output. The runtime manifest now describes 562 outputs, down from 596. Reachability is
+checked against runtime consumers in
+`reports/operator/operator_runtime_consumer_disposition.json`, which records
+538 active canonical layer identities and 34 archived retired identities. The
+focused Python checks and Godot reachability, melee point-blank, and modular-layer
+smokes pass; the changed-unit gate passed 24/24 checks with complete coverage.
+The authority smoke's 188-file legacy-runtime TODO remains separate migration
+debt. No production art was edited.

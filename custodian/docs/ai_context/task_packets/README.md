@@ -339,7 +339,6 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — paired independent review of Slice E; no automatic Passage slice follows.
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — P2 audit/fix for the development-only 3500×3000 expectation versus 4000×3000 texture; production 2048×1536 runtime is explicitly out of scope.
 - `OPERATOR_FAST_CHAIN_INBOX_RECONCILIATION.md` — P2 reconcile the 12 already-named Fast 01–04 Operator inbox strips against canonical processed source/runtime and clear the persistent doctor warning without reprocessing valid art.
-- `OPERATOR_RUNTIME_COMPATIBILITY_RESIDUE.md` — P1 C2b.3 cleanup queued behind C2b.2: reconcile stale animation reachability, migrate direct Operator-PNG VFX consumers, disposition orphan/superseded canonical output, and retire compatibility SpriteFrames/resources only after zero-consumer proof.
 - `OPERATOR_ACTION_ARBITRATION.md` — P1 Slice E queued behind C2b.3: replace reflection-driven Operator animation states with explicit action arbitration + semantic presentation coordination and remove the 34 state→actor glue sites.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 post-Slice-E mobile guard composition: movement-owned lower locomotion through enter/hold/non-break recoil/exit with aim-owned upper defense, continuity guards, and runtime-scale strafe validation.
 

@@ -11,10 +11,10 @@ const DANGER := Color("#c94d42")
 @export_range(0.05, 0.5, 0.01) var release_frame_duration := 1.0 / 24.0
 @export_range(0.05, 0.5, 0.01) var trail_lifetime := 0.14
 
-@onready var meter_sprite: Sprite2D = $MeterSprite
-@onready var ready_sprite: Sprite2D = $ReadySprite
-@onready var release_sprite: Sprite2D = $ReleaseSprite
-@onready var chain_release_sprite: Sprite2D = $ChainReleaseSprite
+@onready var meter_sprite: AnimatedSprite2D = $MeterSprite
+@onready var ready_sprite: AnimatedSprite2D = $ReadySprite
+@onready var release_sprite: AnimatedSprite2D = $ReleaseSprite
+@onready var chain_release_sprite: AnimatedSprite2D = $ChainReleaseSprite
 @onready var trail_sprite: Sprite2D = $TrailSprite
 
 var _operator: Node2D = null

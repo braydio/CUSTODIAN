@@ -2,6 +2,7 @@ extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 const HUD_SCENE := preload("res://game/ui/hud/custodian_hud.tscn")
+const RUNTIME_FRAMES := preload("res://content/sprites/operator/runtime/operator_runtime_frames.tres")
 
 var _errors: Array[String] = []
 
@@ -43,21 +44,27 @@ func _run() -> void:
 
 
 func _validate_assets(feedback: Node) -> void:
-	var meter := feedback.get_node("MeterSprite") as Sprite2D
-	var ready := feedback.get_node("ReadySprite") as Sprite2D
-	var release := feedback.get_node("ReleaseSprite") as Sprite2D
-	var chain_release := feedback.get_node("ChainReleaseSprite") as Sprite2D
+	var meter := feedback.get_node("MeterSprite") as AnimatedSprite2D
+	var ready := feedback.get_node("ReadySprite") as AnimatedSprite2D
+	var release := feedback.get_node("ReleaseSprite") as AnimatedSprite2D
+	var chain_release := feedback.get_node("ChainReleaseSprite") as AnimatedSprite2D
 	var trail := feedback.get_node("TrailSprite") as Sprite2D
-	_assert(meter.texture != null and meter.texture.get_size() == Vector2(768, 96), "meter must use the 8x96 runtime strip")
-	_assert(meter.hframes == 8, "meter must expose eight ratio-selected frames")
-	_assert(ready.texture != null and ready.texture.get_size() == Vector2(480, 96) and ready.hframes == 5, "ready latch must use five 96px frames")
-	_assert(release.texture != null and release.texture.get_size() == Vector2(576, 96) and release.hframes == 6, "release burst must use six 96px frames")
-	_assert(chain_release.texture != null and chain_release.texture.get_size() == Vector2(576, 96) and chain_release.hframes == 6, "chain release must use the authored six-frame 96px strip")
+	_assert(_has_animation(meter, "unarmed/transition/dodge_charge_meter_01/omni/fx", 8), "meter must use the canonical eight-frame strip")
+	_assert(_has_animation(ready, "unarmed/posture/dodge_charge_ready_01/omni/fx", 5), "ready latch must use the canonical five-frame strip")
+	_assert(_has_animation(release, "unarmed/transition/dodge_charge_release_01/omni/fx", 6), "release burst must use the canonical six-frame strip")
+	_assert(_has_animation(chain_release, "unarmed/transition/dodge_chain_release_01/omni/fx", 6), "chain release must use the canonical six-frame strip")
 	_assert(trail.texture != null and trail.texture.get_size() == Vector2(32, 16), "trail must use the 32x16 motion texture")
 
 
+func _has_animation(sprite: AnimatedSprite2D, identity: String, frame_count: int) -> bool:
+	return sprite.sprite_frames == RUNTIME_FRAMES \
+		and sprite.animation == StringName(identity) \
+		and sprite.sprite_frames.has_animation(identity) \
+		and sprite.sprite_frames.get_frame_count(identity) == frame_count
+
+
 func _validate_chain_release_presentation(operator: Node, feedback: Node) -> void:
-	var chain_release := feedback.get_node("ChainReleaseSprite") as Sprite2D
+	var chain_release := feedback.get_node("ChainReleaseSprite") as AnimatedSprite2D
 	operator.emit_signal("dodge_chain_started", 1, 0.75, Vector2.RIGHT)
 	_assert(chain_release.visible and chain_release.frame == 0, "a subsequent dodge chain must start the authored release burst")
 	_assert(chain_release.scale.x < 0.70 and chain_release.scale.y < 0.70, "chain release must remain smaller than the full charge release")
@@ -77,7 +84,7 @@ func _validate_charge_presentation(operator: Node, feedback: Node) -> void:
 	Input.action_press("dodge")
 	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.05)
-	var meter := feedback.get_node("MeterSprite") as Sprite2D
+	var meter := feedback.get_node("MeterSprite") as AnimatedSprite2D
 	_assert(not meter.visible, "tap-length holds must remain visually clean")
 	operator.call("_handle_dodge_input", 0.05)
 	_assert(meter.visible, "ring must appear after the visual delay")
@@ -87,13 +94,13 @@ func _validate_charge_presentation(operator: Node, feedback: Node) -> void:
 	operator.call("_handle_dodge_input", 0.20)
 	status = operator.call("get_dodge_charge_status")
 	_assert(bool(status.get("ready", false)), "committed threshold must latch ready")
-	_assert((feedback.get_node("ReadySprite") as Sprite2D).visible, "ready transition must play the latch strip once")
+	_assert((feedback.get_node("ReadySprite") as AnimatedSprite2D).visible, "ready transition must play the latch strip once")
 
 	Input.action_release("dodge")
 	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
 	_assert(bool(operator.get("_dodge_active")), "release must preserve the ordinary dodge execution")
-	_assert((feedback.get_node("ReleaseSprite") as Sprite2D).visible, "release must start the origin burst")
+	_assert((feedback.get_node("ReleaseSprite") as AnimatedSprite2D).visible, "release must start the origin burst")
 	_assert((feedback.get_node("TrailSprite") as Sprite2D).visible, "release must start the charge-scaled trail")
 	_assert(is_zero_approx(float(operator.get("_dodge_charge_visual_compression"))), "release must snap body compression back to neutral")
 
@@ -105,7 +112,7 @@ func _validate_rejection(operator: Node, feedback: Node) -> void:
 		tracker.set("engagement_active", true)
 	operator.set("stamina", 0.0)
 	_assert(not bool(operator.call("_begin_dodge_charge")), "insufficient stamina must reject charge")
-	var meter := feedback.get_node("MeterSprite") as Sprite2D
+	var meter := feedback.get_node("MeterSprite") as AnimatedSprite2D
 	_assert(meter.visible, "stamina rejection must briefly expose broken ring feedback")
 	_assert(meter.modulate.is_equal_approx(Color("#c94d42")), "stamina rejection must use danger red rather than charge cyan")
 	if tracker != null:
@@ -118,7 +125,7 @@ func _validate_cancellation(operator: Node, feedback: Node) -> void:
 	_assert(bool(operator.call("_begin_dodge_charge")), "cancellation setup charge should begin")
 	operator.set("_dodge_charge_timer", 0.10)
 	operator.emit_signal("dodge_charge_changed", true, 0.10 / 0.30, false)
-	var meter := feedback.get_node("MeterSprite") as Sprite2D
+	var meter := feedback.get_node("MeterSprite") as AnimatedSprite2D
 	_assert(meter.visible, "cancellation setup must have a visible ring")
 	operator.call("_cancel_dodge_charge", &"incoming_hit")
 	_assert(meter.visible, "cancellation must contract instead of disappearing immediately")

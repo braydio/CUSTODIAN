@@ -1136,8 +1136,8 @@ def real_repo_read_only() -> None:
         records = service.browser_records()
         run = next(row for row in records if row.selection == AnimationSelection("unarmed", "locomotion", "run_01", "e"))
         assert run.frames == 6 and set(run.layers) >= {"lower_body", "upper_body"}
-        critical = next(row for row in records if row.selection == AnimationSelection("melee_1h", "attack", "critical_execution_01", "e"))
-        assert critical.frames == 8 and critical.layers == ("weapon",) and critical.completeness == "PARTIAL"
+        retired_critical = AnimationSelection("melee_1h", "attack", "critical_execution_01", "e")
+        assert all(row.selection != retired_critical for row in records)
         vigil = AnimationSelection("melee_1h", "posture", "idle_relaxed_01", "e", "vigil_pattern_dagger", "melee_1h_dagger")
         session = service.session(vigil)
         assert any(layer.layer == "weapon__vigil_pattern_dagger" for layer in session.layers)

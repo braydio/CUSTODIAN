@@ -29,25 +29,9 @@ RAW_GAMEPLAY_OPERATOR_ART = re.compile(
     r"|res://content/sprites/weapons/[^\"'\s)]*/source/operator/[^\"'\s)]+"
 )
 
-# Exact migration debt, keyed by consumer and referenced asset. New entries fail
-# ordinary validation; removed entries also fail until this ledger is shrunk.
-KNOWN_LEGACY_RAW_OPERATOR_PATHS = frozenset({
-    ("game/actors/operator/operator.gd", path)
-    for path in (
-        "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__e__8f__96.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__w__8f__96.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png",
-        "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png",
-        "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_aim_raise/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_aim_raise__omni__1f__288x96.png",
-        "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png",
-        "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png",
-    )
-})
+# No active game script names Operator PNG paths directly. New raw references
+# fail ordinary validation; this empty set keeps that boundary explicit.
+KNOWN_LEGACY_RAW_OPERATOR_PATHS: frozenset[tuple[str, str]] = frozenset()
 
 # Migration tooling is allowed to understand legacy names; that is its whole job.
 MIGRATION_ONLY = {

@@ -107,11 +107,10 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
         manifest_path, east, west = fixture(root, 20)
         originals = {path: path.read_bytes() for path in (*east.values(), *west.values())}
         canonical_frames = root / "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
-        compatibility_frames = root / "custodian/game/actors/operator/operator_runtime_frames.tres"
-        for resource, content in ((canonical_frames, b"canonical frames before"), (compatibility_frames, b"compatibility frames before")):
+        for resource, content in ((canonical_frames, b"canonical frames before"),):
             resource.parent.mkdir(parents=True, exist_ok=True)
             resource.write_bytes(content)
-        original_resources = {canonical_frames: canonical_frames.read_bytes(), compatibility_frames: compatibility_frames.read_bytes()}
+        original_resources = {canonical_frames: canonical_frames.read_bytes()}
         timing_paths = tuple(model.BUILDER.timing_sidecar_path(paths["lower_body"]) for paths in (east, west))
         original_timing = {path: path.read_bytes() for path in timing_paths}
         exported = {layer: root / f"edited_{layer}.png" for layer in LAYERS}
@@ -122,7 +121,6 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
             "rel": model.rel, "source_index": model.source_index,
             "resources": workbench.GENERATED_OPERATOR_RESOURCES, "aseprite": workbench.aseprite_run,
             "resolve": workbench.resolve_aseprite, "commands": workbench._validation_commands,
-            "compat_update": workbench._compatibility_update, "compat_check": workbench._compatibility_check,
             "import": workbench._godot_import, "catalog": workbench._catalog_build,
             "consistency": workbench._operator_scene_consistency, "subprocess": workbench.subprocess.run,
         }
@@ -140,16 +138,14 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
             calls += 1
             if calls == 1:
                 canonical_frames.write_bytes(b"canonical frames regenerated")
-                compatibility_frames.write_bytes(b"compatibility frames regenerated")
             if fail_downstream and calls == 1: raise subprocess.CalledProcessError(91, "injected-runtime-build")
             return subprocess.CompletedProcess([], 0)
         try:
             model.REPO_ROOT=root; model.CUSTODIAN_ROOT=root/"custodian"; model.PIPELINES=root/"custodian/tools/pipelines"
             model.rel=lambda path,repo_root=root:str(Path(path).relative_to(repo_root))
-            model.source_index=source_index; workbench.GENERATED_OPERATOR_RESOURCES=[canonical_frames, compatibility_frames]
+            model.source_index=source_index; workbench.GENERATED_OPERATOR_RESOURCES=[canonical_frames]
             workbench.aseprite_run=aseprite_run; workbench.resolve_aseprite=lambda *_args,**_kwargs:Path("/bin/true")
             workbench._validation_commands=lambda *_args,**_kwargs:[]
-            workbench._compatibility_update=lambda:None; workbench._compatibility_check=lambda:None
             workbench._godot_import=lambda:None; workbench._catalog_build=lambda:None; workbench._operator_scene_consistency=lambda:None
             workbench.subprocess.run=downstream
             if fail_downstream:
@@ -163,7 +159,6 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
                 assert journal["state"] == "ROLLED_BACK" and journal["mirror_promotion"]["enabled"] is mirror
                 resource_backups = {item["backup_path"] for item in journal["resources"]}
                 assert any(path.endswith("custodian/content/sprites/operator/runtime/operator_runtime_frames.tres") for path in resource_backups)
-                assert any(path.endswith("custodian/game/actors/operator/operator_runtime_frames.tres") for path in resource_backups)
                 assert len(resource_backups) == len(journal["resources"]), "resource backups must not collide by basename"
             else:
                 workbench.publish(manifest_path, mirror_counterpart=mirror)
@@ -179,7 +174,6 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
             model.rel=saved["rel"]; model.source_index=saved["source_index"]
             workbench.GENERATED_OPERATOR_RESOURCES=saved["resources"]; workbench.aseprite_run=saved["aseprite"]
             workbench.resolve_aseprite=saved["resolve"]; workbench._validation_commands=saved["commands"]
-            workbench._compatibility_update=saved["compat_update"]; workbench._compatibility_check=saved["compat_check"]
             workbench._godot_import=saved["import"]; workbench._catalog_build=saved["catalog"]
             workbench._operator_scene_consistency=saved["consistency"]; workbench.subprocess.run=saved["subprocess"]
 

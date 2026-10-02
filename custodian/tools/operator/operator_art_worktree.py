@@ -107,14 +107,6 @@ OPERATOR_LFS_GLOBS = (
 PENDING_RELATIVE = Path(".ai/operator_animation_workbench/publish_land_pending.json")
 CATALOG_RELATIVE = Path("custodian/content/data/operator/generated/operator_animation_catalog.generated.json")
 CANONICAL_RUNTIME_FRAMES = Path("custodian/content/sprites/operator/runtime/operator_runtime_frames.tres")
-RESOURCE_NAMES = (
-    "operator_runtime_frames.tres", "operator_weapon_frames.tres",
-    "operator_melee_overlay_frames.tres", "operator_ranged_fx_frames.tres",
-    "operator_modular_lower_body_frames.tres", "operator_modular_upper_body_frames.tres",
-    "operator_modular_sidearm_frames.tres", "operator_modular_upper_fx_frames.tres",
-    "operator_modular_cape_frames.tres", "operator_modular_head_frames.tres",
-    "operator_animation_catalog_frames.tres",
-)
 
 
 class ArtWorktreeError(RuntimeError):
@@ -527,7 +519,6 @@ def publication_allowlist(repo_root: Path, canonical_paths: Iterable[str]) -> se
     # Runtime sync regenerates this canonical SpriteFrames projection as part
     # of publishing selected Operator source art.
     allowed.add(CANONICAL_RUNTIME_FRAMES.as_posix())
-    allowed.update((Path("custodian/game/actors/operator") / name).as_posix() for name in RESOURCE_NAMES)
     return allowed
 
 

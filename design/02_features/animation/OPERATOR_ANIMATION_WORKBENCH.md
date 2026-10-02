@@ -142,29 +142,18 @@ document is refused until saved. Publish constructs the new canonical size-token
 paths through `operator_asset_schema.py`, then uses the existing transactional
 runtime, compatibility, resource, import, validation, and rollback pipeline.
 
-## Compatibility SpriteFrames boundary
+## Canonical SpriteFrames publication
 
-`operator.tscn` still consumes ten generated compatibility `SpriteFrames`
-resources directly. They preserve legacy animation aliases such as
-`unarmed_run_right`, but their texture paths are generated projections rather
-than source authority. After the strict runtime build, publish runs:
+Workbench publish refreshes the V2 runtime and builds the canonical
+`content/sprites/operator/runtime/operator_runtime_frames.tres` before focused
+actor checks. It does not generate or back up actor-local compatibility
+SpriteFrames. Source timing remains recorded in the frozen migration evidence;
+new timing authority comes from authored sidecars and the runtime catalog.
 
-```bash
-python3 custodian/tools/pipelines/update_operator_compatibility_resources.py
-```
-
-This path-first generator resolves current strips from the semantic V2 catalog,
-updates safe full-strip aliases and their exact `AtlasTexture` frame count, and
-does not rewrite manually sliced or weapon-owned mappings. It also refreshes
-the catalog `.tres` paths before Godot import, avoiding a stale-resource load
-cycle. `--check` fails with `STALE OPERATOR SPRITEFRAMES RESOURCE` before actor
-smokes when any Operator runtime PNG reference is missing.
-
-Publish transactions back up all ten compatibility resources plus the catalog
-resource and journal old/new SHA-256 values. Rollback removes target PNG import
-sidecars, restores the old source and resource contracts, rebuilds the old
-runtime/catalog, runs the stale-path check, and proves `operator.tscn` loads via
-the modular-layer smoke. Failure of that recovery becomes `RECOVERY_REQUIRED`.
+Publish transactions back up canonical runtime SpriteFrames and the generated
+catalog alongside selected source/runtime paths. Rollback restores those
+canonical artifacts and proves the authored files and timing contracts are
+unchanged.
 
 ## Acceptance
 

@@ -1,38 +1,6 @@
 {
   "schema": "custodian.operator_runtime_manifest.v1",
   "animations": {
-    "melee_1h/attack/critical_execution_01/e": {
-      "profile": "melee_1h",
-      "group": "attack",
-      "action": "critical_execution_01",
-      "direction": "e",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/critical_execution_01/operator__weapon__melee_1h__attack__critical_execution_01__e__8f__156x96.png",
-          "frames": 8,
-          "frame_size": [
-            156,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h/attack/critical_execution_01/w": {
-      "profile": "melee_1h",
-      "group": "attack",
-      "action": "critical_execution_01",
-      "direction": "w",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/critical_execution_01/operator__weapon__melee_1h__attack__critical_execution_01__w__8f__156x96.png",
-          "frames": 8,
-          "frame_size": [
-            156,
-            96
-          ]
-        }
-      }
-    },
     "melee_1h/attack/fast_01/e": {
       "profile": "melee_1h",
       "group": "attack",
@@ -562,118 +530,6 @@
         "upper_body": {
           "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__upper_body__melee_1h__attack__fast_03__w__10f__96.png",
           "frames": 10,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h/attack/fast_attack_chain_01/e": {
-      "profile": "melee_1h",
-      "group": "attack",
-      "action": "fast_attack_chain_01",
-      "direction": "e",
-      "layers": {
-        "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_attack_chain_01/operator__upper_body__melee_1h__attack__fast_attack_chain_01__e__8f__96.png",
-          "frames": 8,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h/cosmetic/melee_1h/e": {
-      "profile": "melee_1h",
-      "group": "cosmetic",
-      "action": "melee_1h",
-      "direction": "e",
-      "layers": {
-        "full_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/melee_1h/operator__full_body__melee_1h__cosmetic__melee_1h__e__8f__156x96.png",
-          "frames": 8,
-          "frame_size": [
-            156,
-            96
-          ]
-        },
-        "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/melee_1h/operator__fx__melee_1h__cosmetic__melee_1h__e__8f__156x96.png",
-          "frames": 8,
-          "frame_size": [
-            156,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h/cosmetic/melee_1h/w": {
-      "profile": "melee_1h",
-      "group": "cosmetic",
-      "action": "melee_1h",
-      "direction": "w",
-      "layers": {
-        "full_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/melee_1h/operator__full_body__melee_1h__cosmetic__melee_1h__w__8f__156x96.png",
-          "frames": 8,
-          "frame_size": [
-            156,
-            96
-          ]
-        },
-        "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/melee_1h/operator__fx__melee_1h__cosmetic__melee_1h__w__8f__156x96.png",
-          "frames": 8,
-          "frame_size": [
-            156,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h/cosmetic/relaxed_idle_01/e": {
-      "profile": "melee_1h",
-      "group": "cosmetic",
-      "action": "relaxed_idle_01",
-      "direction": "e",
-      "layers": {
-        "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__lower_body__melee_1h__cosmetic__relaxed_idle_01__e__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
-            96
-          ]
-        },
-        "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__upper_body__melee_1h__cosmetic__relaxed_idle_01__e__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h/cosmetic/relaxed_idle_01/w": {
-      "profile": "melee_1h",
-      "group": "cosmetic",
-      "action": "relaxed_idle_01",
-      "direction": "w",
-      "layers": {
-        "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__lower_body__melee_1h__cosmetic__relaxed_idle_01__w__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
-            96
-          ]
-        },
-        "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/operator__upper_body__melee_1h__cosmetic__relaxed_idle_01__w__5f__96.png",
-          "frames": 5,
           "frame_size": [
             96,
             96
@@ -1280,67 +1136,6 @@
         }
       }
     },
-    "melee_1h/posture/stance_01/e": {
-      "profile": "melee_1h",
-      "group": "posture",
-      "action": "stance_01",
-      "direction": "e",
-      "layers": {
-        "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/stance_01/operator__lower_body__melee_1h__posture__stance_01__e__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ],
-          "fps": 8.0,
-          "loop": false,
-          "durations": [
-            1.0
-          ]
-        },
-        "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/stance_01/operator__upper_body__melee_1h__posture__stance_01__e__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      },
-      "timing": {
-        "clock_layer": "lower_body",
-        "fps": 8.0,
-        "loop": false,
-        "durations": [
-          1.0
-        ]
-      }
-    },
-    "melee_1h/posture/stance_01/w": {
-      "profile": "melee_1h",
-      "group": "posture",
-      "action": "stance_01",
-      "direction": "w",
-      "layers": {
-        "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/stance_01/operator__lower_body__melee_1h__posture__stance_01__w__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ]
-        },
-        "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h/posture/stance_01/operator__upper_body__melee_1h__posture__stance_01__w__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
     "melee_1h/transition/idle_fast_transition_01/e": {
       "profile": "melee_1h",
       "group": "transition",
@@ -1512,38 +1307,6 @@
           "frames": 8,
           "frame_size": [
             156,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h_dagger/cosmetic/relaxed_idle_01/e": {
-      "profile": "melee_1h_dagger",
-      "group": "cosmetic",
-      "action": "relaxed_idle_01",
-      "direction": "e",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/cosmetic/relaxed_idle_01/operator__weapon__melee_1h_dagger__cosmetic__relaxed_idle_01__e__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "melee_1h_dagger/cosmetic/relaxed_idle_01/w": {
-      "profile": "melee_1h_dagger",
-      "group": "cosmetic",
-      "action": "relaxed_idle_01",
-      "direction": "w",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/melee_1h_dagger/cosmetic/relaxed_idle_01/operator__weapon__melee_1h_dagger__cosmetic__relaxed_idle_01__w__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
             96
           ]
         }
@@ -2549,102 +2312,6 @@
         ]
       }
     },
-    "ranged_2h/attack/fast_01/e": {
-      "profile": "ranged_2h",
-      "group": "attack",
-      "action": "fast_01",
-      "direction": "e",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/attack/fast_01/operator__weapon__ranged_2h__attack__fast_01__e__9f__96.png",
-          "frames": 9,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "ranged_2h/attack/fast_01/w": {
-      "profile": "ranged_2h",
-      "group": "attack",
-      "action": "fast_01",
-      "direction": "w",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/attack/fast_01/operator__weapon__ranged_2h__attack__fast_01__w__9f__96.png",
-          "frames": 9,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "ranged_2h/attack/fast_02/e": {
-      "profile": "ranged_2h",
-      "group": "attack",
-      "action": "fast_02",
-      "direction": "e",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/attack/fast_02/operator__weapon__ranged_2h__attack__fast_02__e__7f__96.png",
-          "frames": 7,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "ranged_2h/attack/fast_02/w": {
-      "profile": "ranged_2h",
-      "group": "attack",
-      "action": "fast_02",
-      "direction": "w",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/attack/fast_02/operator__weapon__ranged_2h__attack__fast_02__w__7f__96.png",
-          "frames": 7,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "ranged_2h/attack/fast_03/e": {
-      "profile": "ranged_2h",
-      "group": "attack",
-      "action": "fast_03",
-      "direction": "e",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/attack/fast_03/operator__weapon__ranged_2h__attack__fast_03__e__8f__96.png",
-          "frames": 8,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "ranged_2h/attack/fast_03/w": {
-      "profile": "ranged_2h",
-      "group": "attack",
-      "action": "fast_03",
-      "direction": "w",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/attack/fast_03/operator__weapon__ranged_2h__attack__fast_03__w__8f__96.png",
-          "frames": 8,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
     "ranged_2h/cosmetic/aim_01/e": {
       "profile": "ranged_2h",
       "group": "cosmetic",
@@ -3235,38 +2902,6 @@
           1.0,
           1.0
         ]
-      }
-    },
-    "ranged_2h/posture/relaxed_carbine_mk1_01/e": {
-      "profile": "ranged_2h",
-      "group": "posture",
-      "action": "relaxed_carbine_mk1_01",
-      "direction": "e",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_carbine_mk1_01/operator__weapon__ranged_2h__posture__relaxed_carbine_mk1_01__e__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "ranged_2h/posture/relaxed_carbine_mk1_01/w": {
-      "profile": "ranged_2h",
-      "group": "posture",
-      "action": "relaxed_carbine_mk1_01",
-      "direction": "w",
-      "layers": {
-        "weapon": {
-          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_carbine_mk1_01/operator__weapon__ranged_2h__posture__relaxed_carbine_mk1_01__w__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
       }
     },
     "ranged_2h/posture/stance_01/e": {
@@ -4390,38 +4025,6 @@
         "fx": {
           "path": "res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__fx__sidearm__cosmetic__fire_sidearm_01__w__8f__96.png",
           "frames": 8,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "sidearm/cosmetic/fx_01/ne": {
-      "profile": "sidearm",
-      "group": "cosmetic",
-      "action": "fx_01",
-      "direction": "ne",
-      "layers": {
-        "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fx_01/operator__fx__sidearm__cosmetic__fx_01__ne__5f__96.png",
-          "frames": 5,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "sidearm/cosmetic/fx_01/se": {
-      "profile": "sidearm",
-      "group": "cosmetic",
-      "action": "fx_01",
-      "direction": "se",
-      "layers": {
-        "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fx_01/operator__fx__sidearm__cosmetic__fx_01__se__5f__96.png",
-          "frames": 5,
           "frame_size": [
             96,
             96
@@ -6457,22 +6060,6 @@
             1.0,
             1.0,
             1.0
-          ]
-        }
-      }
-    },
-    "unarmed/cosmetic/criticial_execution_01/w": {
-      "profile": "unarmed",
-      "group": "cosmetic",
-      "action": "criticial_execution_01",
-      "direction": "w",
-      "layers": {
-        "full_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/criticial_execution_01/operator__full_body__unarmed__cosmetic__criticial_execution_01__w__12f__96.png",
-          "frames": 12,
-          "frame_size": [
-            96,
-            96
           ]
         }
       }
@@ -8812,96 +8399,6 @@
           1.0,
           1.0
         ]
-      }
-    },
-    "unarmed/posture/stance_01/e": {
-      "profile": "unarmed",
-      "group": "posture",
-      "action": "stance_01",
-      "direction": "e",
-      "layers": {
-        "full_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png",
-          "frames": 12,
-          "frame_size": [
-            96,
-            96
-          ],
-          "fps": 8.0,
-          "loop": true,
-          "durations": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ]
-        },
-        "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__lower_body__unarmed__posture__stance_01__e__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ]
-        },
-        "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__upper_body__unarmed__posture__stance_01__e__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
-      }
-    },
-    "unarmed/posture/stance_01/w": {
-      "profile": "unarmed",
-      "group": "posture",
-      "action": "stance_01",
-      "direction": "w",
-      "layers": {
-        "full_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__w__6f__96.png",
-          "frames": 6,
-          "frame_size": [
-            96,
-            96
-          ],
-          "fps": 8.0,
-          "loop": true,
-          "durations": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ]
-        },
-        "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__lower_body__unarmed__posture__stance_01__w__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ]
-        },
-        "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__upper_body__unarmed__posture__stance_01__w__1f__96.png",
-          "frames": 1,
-          "frame_size": [
-            96,
-            96
-          ]
-        }
       }
     },
     "unarmed/reaction/bodyslam_knockdown_01/e": {

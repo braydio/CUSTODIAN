@@ -297,7 +297,7 @@ def smoke() -> None:
         paths = {SOURCE}
         allowlist = art.publication_allowlist(art_root, paths)
         assert CANONICAL_RUNTIME_FRAMES in allowlist
-        assert "custodian/game/actors/operator/operator_runtime_frames.tres" in allowlist
+        assert "custodian/game/actors/operator/operator_runtime_frames.tres" not in allowlist
 
         def publish_once():
             (art_root / SOURCE).write_bytes(b"published art\n")

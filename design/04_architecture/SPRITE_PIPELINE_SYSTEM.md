@@ -216,13 +216,12 @@ per-frame durations would change.
 
 That gate reads the authored side from `reports/operator/operator_compatibility_timing.json`, a frozen
 baseline captured once from the compatibility `SpriteFrames` and then held immutable. It must not read those
-`.tres` files directly. They are generated compatibility machinery that
-`update_operator_compatibility_resources.py` legitimately refreshes from canonical assets, so using them as
+`.tres` files directly. They were generated compatibility machinery, so using them as
 the historical record is circular: an ingest can rewrite the "authored" values to agree with whatever
 canonical currently says, and the gate would then approve its own drift. An inbox ingest did exactly that to
 three cross-action clips, moving their recorded FPS onto the timing of the art they were mis-published
 against. `dump_operator_compatibility_timing.gd` refuses to overwrite the baseline without
-`--refresh-baseline`, and the whole arrangement retires when C2b deletes the compatibility surface. The clock projects only onto siblings whose frame count matches the clock
+`--refresh-baseline`; this is now historical migration evidence because C2b.3 deleted the compatibility surface. The clock projects only onto siblings whose frame count matches the clock
 layer's; a sibling with a different frame count keeps its own sidecar or the default.
 
 `content/data/operator/generated/operator_animation_catalog.generated.json` accumulates rather than being
@@ -304,7 +303,6 @@ Primary scripts:
 - `custodian/tools/pipelines/ingest.py`
 - `custodian/tools/pipelines/ingest_runtime.gd`
 - `custodian/tools/pipelines/build_operator_runtime.py`
-- `custodian/tools/pipelines/update_operator_compatibility_resources.py`
 - `custodian/tools/pipelines/operator_action_preview.py`
 - `custodian/tools/pipelines/scaffold_character_contract.py`
 - `custodian/tools/pipelines/reload_assets.py`
@@ -380,12 +378,10 @@ For already-authored Operator modular source sheets in `content/sprites/operator
 
 1. Run `python custodian/tools/pipelines/build_operator_runtime.py --dry-run --remove-superseded`
 2. Run `python custodian/tools/pipelines/build_operator_runtime.py --strict --remove-superseded`
-3. Run `python custodian/tools/pipelines/update_operator_compatibility_resources.py`
-4. Run Godot import, then `build_operator_runtime_frames.gd`
-5. Run `python custodian/tools/pipelines/update_operator_compatibility_resources.py --check`
-6. Run `python custodian/tools/validation/operator_animation_contract_report.py`
-7. Generate QA previews with `operator_action_preview.py` when visual inspection is needed
-8. Register any new gameplay playback deliberately in runtime/state-machine code and compatibility resources
+3. Run Godot import, then `build_operator_runtime_frames.gd`
+4. Run `python custodian/tools/validation/operator_animation_contract_report.py`
+5. Generate QA previews with `operator_action_preview.py` when visual inspection is needed
+6. Register any new gameplay playback deliberately in runtime/state-machine code and the canonical selector
 
 For direct expert use of the runtime-ready backend:
 

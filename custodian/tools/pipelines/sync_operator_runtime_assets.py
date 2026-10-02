@@ -344,10 +344,9 @@ def build_animation_catalog(manifest: dict, catalog_path: Path) -> dict:
             # The manifest is authoritative about WHICH sheet a layer is and how
             # long it is. This used to merge only the clock fields, so re-authoring
             # art to a different frame count left the catalog pointing at the
-            # superseded sheet -- and `update_operator_compatibility_resources.py`
-            # reads the catalog, so the compatibility resources kept an
-            # ext_resource reference to a file the sync had just deleted and failed
-            # to load entirely.
+            # superseded sheet. The generated canonical SpriteFrames database is
+            # rebuilt from this manifest after import, so it must follow the same
+            # current path and frame-count authority.
             for field in ("path", "frames", "frame_size", "fps", "loop", "durations"):
                 if field in runtime_layer:
                     catalog_layer[field] = runtime_layer[field]

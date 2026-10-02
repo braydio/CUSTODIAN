@@ -194,11 +194,9 @@ a different context, the UI keeps Workbench V2's strict fingerprint check and
 offers Cancel, read-only Open Existing Context, or backup-producing
 Recontextualize recovery. It never rewrites `workbench.json` directly.
 
-Publish refreshes the V2 runtime first, then runs
-`tools/pipelines/update_operator_compatibility_resources.py` before Godot
-import. This keeps legacy aliases consumed directly by `operator.tscn` pointed
-at the current semantic frame contract. Its `--check` mode reports retired
-runtime paths before actor smokes.
+Publish refreshes the V2 runtime and builds the canonical runtime SpriteFrames
+before Godot import. Actor-local compatibility aliases and their updater were
+retired in C2b.3.
 
 Use `modular_combo_check.py` for ordinary modular lower/upper visual review.
 Use the provenance-first repair conveyor when the review identifies artwork

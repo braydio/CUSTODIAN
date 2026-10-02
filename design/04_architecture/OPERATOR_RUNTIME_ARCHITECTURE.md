@@ -328,8 +328,8 @@ modular head and the modular cape. `Operator.ACTIVE_MODULAR_HEAD` and
 them return early. Their source and runtime art stays published and their
 canonical identities stay in the manifest, classified `DORMANT` per layer —
 this is a retirement, not a deletion, and they may return in a dedicated
-presentation/art pass. That is why these are gates rather than removed code.
-Their compatibility SpriteFrames become zero-consumer residue for C2b/G.
+presentation/art pass. Their compatibility SpriteFrames were zero-consumer
+residue and were removed by C2b.3; the preserved canonical art remains dormant.
 
 ### The presentation clock
 
@@ -481,7 +481,7 @@ counter is left without a home.
 | B-final | Owner-scoped overlays, transactional `present()`, caller-side lifecycle cancellation, alias-proof audit | `aliased_body_visibility_writes` 17 → 0 | **done** |
 | C1 | Presentation playback funnel; remove hidden legacy-body-as-animation-clock authority | `animated_sprite_play_outside_presentation` 94 → 0 | **done** |
 | C2b.2 | Canonical semantic selection in active Operator consumers | `animation_resolver` 16 → 0, Operator `directional_animation_fallback` 4 → 0 | **done** |
-| C2b.3 | Retire remaining compatibility resources, nodes and tooling; reconcile reachability/orphan output | Compatibility residue (not counted in the 75-item architecture ledger) | pending |
+| C2b.3 | Retire compatibility resources, nodes and updater; reconcile reachability/orphan output | Compatibility residue (not counted in the 75-item architecture ledger) | **done** |
 | D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | **done** |
 | E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | pending |
 | F | Extract melee, dodge, ranged, loadout, interaction, recovery behind injected dependencies; remove the temporary presenter compatibility seams | `absolute_scene_lookups` 38 → 0, `weapon_definition_runtime_state` 3 → 0 | pending |

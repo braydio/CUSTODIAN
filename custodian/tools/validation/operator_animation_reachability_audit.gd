@@ -66,7 +66,7 @@ func _run() -> void:
 	for semantic_key in animations.keys():
 		var record: Dictionary = animations[semantic_key]
 		var action := str(record.get("action", ""))
-		if action.begins_with("legacy_") or action.contains("_legacy_") or action == "melee_1h":
+		if action.begins_with("legacy_") or action.contains("_legacy_"):
 			continue
 		var profile := str(record.get("profile", ""))
 		var group := str(record.get("group", ""))

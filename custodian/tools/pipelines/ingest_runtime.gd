@@ -609,25 +609,9 @@ func _run_post_process(step: String, cleanup_superseded: bool) -> Dictionary:
 			)
 			if build_exit_code != 0:
 				return {"ok": false, "error": "operator modular runtime build failed:\n%s" % "\n".join(build_output)}
-			var compatibility_output: Array = []
-			var compatibility_exit_code := OS.execute(
-				"python3",
-				[
-					ProjectSettings.globalize_path(
-						"res://tools/pipelines/update_operator_compatibility_resources.py"
-					)
-				],
-				compatibility_output,
-				true
-			)
-			if compatibility_exit_code != 0:
-				return {
-					"ok": false,
-					"error": "operator compatibility SpriteFrames update failed:\n%s" % "\n".join(compatibility_output)
-				}
 			# sync_operator_runtime_assets.py may have created new PNGs after this
-			# ingest process started. Import them in a fresh editor process before
-			# the SpriteFrames builder attempts to load their resources.
+			# ingest process started. Import them before rebuilding the canonical
+			# runtime SpriteFrames database.
 			var preflight_result := _godot_import_preflight()
 			if not preflight_result.ok:
 				return preflight_result

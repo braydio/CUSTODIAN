@@ -860,10 +860,6 @@ def main(argv: list[str] | None = None) -> int:
         return 130
     subprocess.run([
         sys.executable,
-        str(REPO_ROOT / "custodian/tools/pipelines/update_operator_compatibility_resources.py"),
-    ], check=True)
-    subprocess.run([
-        sys.executable,
         str(REPO_ROOT / "custodian/tools/pipelines/godot_import_preflight.py"),
         "--project-dir",
         str(REPO_ROOT / "custodian"),

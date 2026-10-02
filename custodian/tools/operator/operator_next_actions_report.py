@@ -34,15 +34,8 @@ GROUP_WEIGHTS = {
 }
 
 RUNTIME_CONSUMERS = [
-    "custodian/game/actors/operator/operator_runtime_frames.tres",
-    "custodian/game/actors/operator/operator_weapon_frames.tres",
-    "custodian/game/actors/operator/operator_melee_overlay_frames.tres",
-    "custodian/game/actors/operator/operator_ranged_fx_frames.tres",
-    "custodian/game/actors/operator/operator_modular_lower_body_frames.tres",
-    "custodian/game/actors/operator/operator_modular_upper_body_frames.tres",
-    "custodian/game/actors/operator/operator_modular_sidearm_frames.tres",
-    "custodian/game/actors/operator/operator_modular_upper_fx_frames.tres",
-    "custodian/game/actors/operator/operator_modular_cape_frames.tres",
+    "custodian/game/actors/operator/operator.tscn",
+    "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
 ]
 
 LAYER_TOKENS = {
