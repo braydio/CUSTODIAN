@@ -5,6 +5,19 @@ Implemented on `agent/enemy-marine-dash-ability-extraction`, claimed from
 closeout is blocked by two pre-existing repository unit gates. The packet stays
 blocked/manual and active; it is not falsely marked complete or archived.
 
+## Landing Retry
+
+Resumed through `workstream.py` and merged latest `origin/main@e49c8452f`
+without conflicts (merge `ff94ff32e`). No Enemy/ability/Marine/ambush runtime
+files changed through this synchronization. Both blocker gates were rerun:
+`agent_workflow_contract` and `review_pairing_contract` still fail for the same
+removed expiry-workflow and eight unrelated packet validation-path findings.
+Reports are `/tmp/marine-retry-workflow.json` and
+`/tmp/marine-retry-pairing.json`. Landing remains blocked; the synchronized
+branch and this refreshed receipt are checkpointed for recovery. Runtime tests
+were not repeated because the runtime changed set is identical and the two
+required unit gates still prevent successful closeout.
+
 ## Change
 
 - `MarineDash` owns the complete windup/travel/impact/recovery machine, clocks,

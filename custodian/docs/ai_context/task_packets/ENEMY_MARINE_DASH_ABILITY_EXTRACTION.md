@@ -30,6 +30,14 @@
 - Best starting files: `enemy.gd`, `abilities/grunt_falcon_punch.gd`, Marine design doc, Marine smoke, spatial telemetry smoke, and Sundered Keep Marine ambush.
 - Blockers or open questions: required changed-file sweep fails pre-existing `agent_workflow_contract` and `review_pairing_contract` unit gates; all 8 selected actor and 3 integration checks pass separately. The unrelated unregistered large-layout smoke also reproduces five metadata failures on baseline runtime and has its own draft follow-up.
 
+## Landing Retry
+
+Resumed and synchronized with `origin/main@e49c8452f`; merge `ff94ff32e` is
+conflict-free and changes no Marine/Enemy/ambush runtime files. The two focused
+blocker gates were rerun and still fail with the same baseline causes. Retain
+blocked/manual status and the published checkpoint until baseline validation
+repair permits a green closeout. The closing summary contains the retry receipt.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
