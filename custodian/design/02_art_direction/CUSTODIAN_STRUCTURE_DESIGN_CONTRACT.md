@@ -36,9 +36,9 @@ They are not:
 
 ---
 
-## First Campaign World Application
+## Alpine Plateau Starting-Region Application
 
-`design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` is the world-scale application lock for Custodian structures in the current procgen campaign world.
+`design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md` is the world-scale application lock for Custodian structures in the first generated Alpine Plateau starting region. Other region frames may alter environmental integration/weathering while preserving this document's global structure grammar.
 
 In that world, emphasize:
 
