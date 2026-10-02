@@ -523,6 +523,10 @@ var _navigation_rebuild_pending: bool = false
 var _navigation_rebuild_deferred: bool = false
 var _streaming_visual_rebuild_pending: bool = false
 var _streaming_visual_rebuild_accum: float = 0.0
+## True once a reveal commit made a rebuild pending; an eviction-only pending
+## rebuild leaves this false so it batches on the interval cadence instead of
+## flushing on the next queue-drained frame.
+var _streaming_reveal_flush_owed: bool = false
 var shadow_system: Node = null
 
 
@@ -5875,6 +5879,19 @@ func debug_get_foliage_node_visible(tile: Vector2i) -> Variant:
 	return node.visible
 
 
+## Returns the registered foliage entry's non-node metadata (`kind`,
+## `cluster_id`, `has_collision`) at `tile`, or an empty Dictionary when none.
+func debug_get_foliage_entry_metadata(tile: Vector2i) -> Dictionary:
+	var entry = _foliage_nodes.get(tile)
+	if not (entry is Dictionary):
+		return {}
+	return {
+		"kind": String(entry.get("kind", "")),
+		"cluster_id": String(entry.get("cluster_id", "")),
+		"has_collision": bool(entry.get("has_collision", false)),
+	}
+
+
 func debug_has_road_piece_decal(tile: Vector2i) -> bool:
 	for surface in ["road", "ruined_road", "path"]:
 		var key := _surface_tile_key(surface, tile)
@@ -10328,6 +10345,7 @@ func _prepare_streaming_reveal() -> void:
 	_navigation_rebuild_pending = false
 	_navigation_rebuild_deferred = false
 	_streaming_visual_rebuild_pending = false
+	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
 	_clear_foliage()
 	_clear_ruin_props()
@@ -10361,6 +10379,7 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 	_refresh_navigation_after_wall_change()
 	_refresh_macro_streaming_visibility()
 	_streaming_visual_rebuild_pending = false
+	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
 
 
@@ -10440,16 +10459,16 @@ func _drain_residency_eviction() -> void:
 		return
 	var protected_chunks := _protected_streaming_chunks()
 	var unload_distance := _effective_unload_distance()
-	var evicted_any := false
 	for chunk_pos in candidates:
 		if not _is_chunk_eviction_valid(chunk_pos, protected_chunks, unload_distance):
 			_chunk_residency_policy.note_cancelled()
 			continue
 		_unload_chunk(chunk_pos)
 		_chunk_residency_policy.note_evicted()
-		evicted_any = true
-	if evicted_any:
-		_flush_streaming_visual_rebuilds()
+	# `_unload_chunk()` marks a visual rebuild pending; the resident-window
+	# collision/overlay/navigation/shadow resync is coalesced onto the same
+	# `streaming_visual_rebuild_interval_sec` cadence reveal uses, in
+	# `_process_streaming_reveal_queue()`.
 
 
 func _is_chunk_eviction_valid(chunk_pos: Vector2i, protected_chunks: Dictionary, unload_distance: int) -> bool:
@@ -10479,14 +10498,19 @@ func _process_streaming_reveal_queue(delta: float = 0.0) -> void:
 			remaining -= 1
 	if revealed_any:
 		_streaming_visual_rebuild_pending = true
+		_streaming_reveal_flush_owed = true
+		_streaming_visual_rebuild_accum += maxf(0.0, delta)
+	elif _streaming_visual_rebuild_pending:
 		_streaming_visual_rebuild_accum += maxf(0.0, delta)
 	var queue_drained := _streaming_reveal_queue.is_empty() and (
 		_pause_aware_streaming == null or not _pause_aware_streaming.has_prepared()
 	)
+	var flush_due := _streaming_visual_rebuild_accum >= streaming_visual_rebuild_interval_sec
 	if queue_drained:
-		validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
-		_flush_streaming_visual_rebuilds()
-	elif _streaming_visual_rebuild_accum >= streaming_visual_rebuild_interval_sec:
+		if _streaming_reveal_flush_owed or flush_due:
+			validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
+			_flush_streaming_visual_rebuilds()
+	elif flush_due:
 		_flush_streaming_visual_rebuilds()
 
 
@@ -10494,6 +10518,7 @@ func _flush_streaming_visual_rebuilds() -> void:
 	if not _streaming_visual_rebuild_pending:
 		return
 	_streaming_visual_rebuild_pending = false
+	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
 	_sync_runtime_wall_collision_with_visible_walls()
 	_rebuild_horizontal_wall_overlays()

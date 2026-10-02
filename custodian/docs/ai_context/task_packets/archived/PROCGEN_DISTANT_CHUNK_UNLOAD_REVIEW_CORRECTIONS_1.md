@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-distant-chunk-unload-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-distant-chunk-unload`
@@ -39,14 +39,23 @@
 - Task overrides: `none`
 - Deferred: None -- all five cited findings are addressed in this correction.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `proc_gen_tilemap.gd` (`_drain_residency_eviction()` no longer flushes directly; `_process_streaming_reveal_queue()` accumulates the existing `_streaming_visual_rebuild_accum` while a rebuild is pending and gates the queue-drained flush on new `_streaming_reveal_flush_owed` or the interval; new `debug_get_foliage_entry_metadata()`); `procgen_distant_chunk_unload_smoke.gd` (R0-01 pending/interval assertions, real `NavigationSystem` rebuild, real portal-protected DORMANT far chunk, foliage kind/cluster/collision/blocker parity across unload and reload, before/after painted/cache/generated/road counts). Mutation check: restoring the direct flush fails the R0-01 assertions. Green: `procgen_distant_chunk_unload` (via `run_validation.py`), `procgen_chunk_payload_cache`, `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_macro_presentation`, `procgen_road_semantics_v2`, `procgen_dressing_clusters`, `navigation_elevation_smoke`, `procgen_authored_scene_authority_smoke`; S1 quick `determinism_ok=true`.
+
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
-- What worked: `<fill at closeout>`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The R0-05 cache-count assertion first failed because the victim chunk was never resident in the M5 cache and the R0-01 process tick re-cached queued far chunks.
+- Root cause / contributing factors: Test-fixture ordering only: the cache had no victim membership/records, and snapshots were taken around unrelated reveal work.
+- Prevention / pipeline improvement: The smoke now primes the victim's membership/record through the production cache lookup and snapshots immediately around the drain.
+- Tooling / docs drift discovered: `NavigationSystem` has no global class_name, so smokes must type it as `Node`; a fresh worktree needs `godot --import` before scripts resolve `ProcGenTilemap`.
+- Follow-up: `none`
+- What worked: Reusing the existing accumulator needed only a small flush-owed flag; the mutation check proved the new assertions are falsifiable.

@@ -13,6 +13,7 @@ extends SceneTree
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const CHUNK_LIFECYCLE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_lifecycle.gd")
+const NAVIGATION_SYSTEM_SCRIPT := preload("res://game/systems/core/systems/navigation_system.gd")
 const RESIDENCY_POLICY_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_residency_policy.gd")
 
 const SENTINEL := Vector2i(999999, 999999)
@@ -165,6 +166,8 @@ func _test_runtime_unload_reload() -> void:
 	map.call("_place_foliage", victim_foliage_tile)
 	var foliage_id_before := map.debug_get_foliage_node_id(victim_foliage_tile)
 	_check(foliage_id_before != 0, "fixture foliage placement failed on the victim floor tile")
+	var foliage_meta_before := _foliage_parity(map, victim_foliage_tile)
+	_check(String(foliage_meta_before.get("kind", "")) != "", "fixture foliage entry has no kind metadata")
 	var had_road_decal := map.debug_has_road_piece_decal(victim_wall_tile) \
 			or map.debug_has_road_piece_decal(victim_floor_tile)
 
@@ -192,6 +195,14 @@ func _test_runtime_unload_reload() -> void:
 		int(map.debug_get_chunk_residency_policy_snapshot().get("protected_rejected_count", 0)) > 0,
 		"spawn chunk (always protected) was never rejected by a residency refresh"
 	)
+	# Snapshot after the far transition (which queues/caches the far chunks)
+	# and before any eviction, so the drain can only shrink these counts.
+	# The victim's payload may not be resident in the M5 cache yet; populate its
+	# membership and a tile record through the production lookup so the
+	# eviction has real cached state to drop.
+	map.call("_cached_chunk_tiles", victim_chunk)
+	map.call("_build_tile_reveal_prepare_record", victim_floor_tile)
+	var residency_before := _residency_counts(map, victim_wall_tile, victim_floor_tile)
 	var unloaded_before_drain := map.debug_get_unloaded_chunks().size()
 	map.call("_drain_residency_eviction")
 	var unloaded_after_one_drain := map.debug_get_unloaded_chunks().size() - unloaded_before_drain
@@ -204,7 +215,30 @@ func _test_runtime_unload_reload() -> void:
 		map.call("_drain_residency_eviction")
 		drain_guard += 1
 	_check(int(map.debug_get_chunk_lifecycle_state(victim_chunk)) == state.UNLOADED, "victim chunk was never drained to UNLOADED")
+	# Captured before the R0-01 process tick below, which legitimately reveals
+	# (and caches) the queued far chunks.
+	var residency_after := _residency_counts(map, victim_wall_tile, victim_floor_tile)
 	_check(map.debug_get_unloaded_chunks().find(spawn_chunk) == -1, "the protected spawn chunk was unloaded")
+
+	# R0-01: eviction no longer flushes the resident-window resync directly;
+	# it leaves the rebuild pending and batches on the reveal cadence.
+	_check(
+		bool(map.get("_streaming_visual_rebuild_pending")),
+		"eviction drain flushed visual rebuilds directly instead of leaving them pending for the batched cadence"
+	)
+	var interval := float(map.streaming_visual_rebuild_interval_sec)
+	var queue_idle: bool = (map.get("_streaming_reveal_queue") as Array).is_empty()
+	if queue_idle and not bool(map.get("_streaming_reveal_flush_owed")):
+		map.call("_process_streaming_reveal_queue", interval * 0.2)
+		_check(
+			bool(map.get("_streaming_visual_rebuild_pending")),
+			"an eviction-only rebuild flushed on the next frame instead of batching on the interval cadence"
+		)
+	map.call("_process_streaming_reveal_queue", interval)
+	_check(
+		not bool(map.get("_streaming_visual_rebuild_pending")),
+		"the pending eviction rebuild never flushed once the interval elapsed"
+	)
 
 	# --- (C) cache-record eviction, collision retention, nav retention,
 	# foliage identity/visibility, road-decal removal ---
@@ -224,6 +258,17 @@ func _test_runtime_unload_reload() -> void:
 	)
 	var nav_floor_cells: Array = map.call("get_runtime_navigation_floor_cells")
 	_check(nav_floor_cells.has(victim_floor_tile), "unloaded chunk's floor tile dropped out of navigation graph source cells")
+	_check(int(residency_after.floor_cells) < int(residency_before.floor_cells), "painted floor cell count did not drop after unload")
+	_check(int(residency_after.wall_cells) < int(residency_before.wall_cells), "painted wall cell count did not drop after unload")
+	_check(int(residency_after.cached_chunks) < int(residency_before.cached_chunks), "cached chunk membership count did not drop after unload")
+	_check(int(residency_after.cached_records) < int(residency_before.cached_records), "cached tile record count did not drop after unload")
+	_check(int(residency_after.generated_floor) == int(residency_before.generated_floor), "canonical generated floor count changed across unload")
+	_check(int(residency_after.generated_wall) == int(residency_before.generated_wall), "canonical generated wall count changed across unload")
+	if bool(residency_before.road_decal):
+		_check(not bool(residency_after.road_decal), "road decal presence did not drop after unload")
+	_check(_same_parity(_foliage_parity(map, victim_foliage_tile), foliage_meta_before), "foliage kind/cluster/collision/blocker metadata changed on unload")
+	_check_navigation_rebuild(map, runtime_container, victim_floor_tile, victim_wall_tile, spawn_chunk)
+	_check_protected_anchor(map, victim_chunk, spawn_chunk, far_chunk, far_tile)
 	var foliage_id_after_unload := map.debug_get_foliage_node_id(victim_foliage_tile)
 	_check(foliage_id_after_unload == foliage_id_before, "foliage node was destroyed/recreated instead of hidden on unload")
 	_check(map.debug_get_foliage_node_visible(victim_foliage_tile) == false, "foliage node was not hidden on unload")
@@ -264,6 +309,7 @@ func _test_runtime_unload_reload() -> void:
 	_check(map.floor_tilemap.get_cell_source_id(victim_floor_tile) != -1, "claimed floor tile did not repaint after reload")
 	_check(map.debug_get_foliage_node_id(victim_foliage_tile) == foliage_id_before, "foliage node identity changed across unload/reload")
 	_check(map.debug_get_foliage_node_visible(victim_foliage_tile) == true, "foliage node was not re-shown after reload")
+	_check(_same_parity(_foliage_parity(map, victim_foliage_tile), foliage_meta_before), "foliage kind/cluster/collision/blocker metadata changed across unload/reload")
 	if had_road_decal:
 		_check(
 			map.debug_has_road_piece_decal(victim_wall_tile) or map.debug_has_road_piece_decal(victim_floor_tile),
@@ -279,6 +325,93 @@ func _test_runtime_unload_reload() -> void:
 	map.queue_free()
 	runtime_container.queue_free()
 	await process_frame
+
+
+func _foliage_parity(map: ProcGenTilemap, tile: Vector2i) -> Dictionary:
+	var meta: Dictionary = map.debug_get_foliage_entry_metadata(tile)
+	meta["has_runtime_blocker"] = map.has_runtime_prop_blocker_at_tile(tile)
+	return meta
+
+
+func _same_parity(a: Dictionary, b: Dictionary) -> bool:
+	for key in ["kind", "cluster_id", "has_collision", "has_runtime_blocker"]:
+		if a.get(key) != b.get(key):
+			return false
+	return true
+
+
+func _residency_counts(map: ProcGenTilemap, wall_tile: Vector2i, floor_tile: Vector2i) -> Dictionary:
+	var cache := map.debug_get_chunk_payload_cache_snapshot()
+	return {
+		"floor_cells": map.floor_tilemap.get_used_cells().size(),
+		"wall_cells": map.walls_tilemap.get_used_cells().size(),
+		"cached_chunks": int(cache.get("cached_chunk_count", -1)),
+		"cached_records": int(cache.get("cached_tile_record_count", -1)),
+		"generated_floor": map.debug_get_generated_floor_cells().size(),
+		"generated_wall": map.debug_get_generated_wall_cells().size(),
+		"road_decal": map.debug_has_road_piece_decal(wall_tile) or map.debug_has_road_piece_decal(floor_tile),
+	}
+
+
+## R0-02: a real NavigationSystem rebuilt after the unload keeps the
+## previously-revealed floor tile and excludes a genuinely UNSEEN chunk.
+func _check_navigation_rebuild(
+	map: ProcGenTilemap, container: Node, floor_tile: Vector2i, wall_tile: Vector2i, spawn_chunk: Vector2i
+) -> void:
+	var navigation: Node = NAVIGATION_SYSTEM_SCRIPT.new()
+	container.add_child(navigation)
+	navigation.call("set_runtime_tilemaps", map.floor_tilemap, map.walls_tilemap, map)
+	navigation.call("rebuild")
+	var walkable: Dictionary = navigation.get("_walkable_tiles")
+	_check(walkable.has(floor_tile), "rebuilt NavigationSystem dropped the unloaded chunk's previously-revealed floor tile")
+	_check(not walkable.has(wall_tile), "rebuilt NavigationSystem treated an unloaded wall tile as walkable")
+	var unseen_chunk := spawn_chunk + Vector2i(0, 40)
+	var size := int(map.streaming_chunk_size_tiles)
+	for x in range(unseen_chunk.x * size, unseen_chunk.x * size + size):
+		for y in range(unseen_chunk.y * size, unseen_chunk.y * size + size):
+			if walkable.has(Vector2i(x, y)):
+				_check(false, "rebuilt NavigationSystem included a tile from an UNSEEN chunk")
+				navigation.queue_free()
+				return
+	navigation.queue_free()
+
+
+## R0-03: a real portal teleporter pins its (non-spawn) chunk against
+## eviction even when that chunk is DORMANT and far.
+func _check_protected_anchor(
+	map: ProcGenTilemap, victim_chunk: Vector2i, spawn_chunk: Vector2i, far_chunk: Vector2i, far_tile: Vector2i
+) -> void:
+	var state := CHUNK_LIFECYCLE_SCRIPT.State
+	var anchor_chunk := SENTINEL
+	for dx in range(-2, 3):
+		for dy in range(-2, 3):
+			var candidate := spawn_chunk + Vector2i(dx, dy)
+			if candidate == spawn_chunk or candidate == victim_chunk:
+				continue
+			if int(map.debug_get_chunk_lifecycle_state(candidate)) == state.DORMANT:
+				anchor_chunk = candidate
+				break
+		if anchor_chunk != SENTINEL:
+			break
+	if anchor_chunk == SENTINEL:
+		# Eviction may already have drained every other chunk; nothing to pin.
+		_check(false, "no DORMANT non-spawn chunk remained to exercise the protected-anchor check")
+		return
+	var size := int(map.streaming_chunk_size_tiles)
+	var anchor_tile := anchor_chunk * size + Vector2i(size / 2, size / 2)
+	var portal := Area2D.new()
+	map.add_child(portal)
+	portal.global_position = map.floor_tilemap.to_global(map.floor_tilemap.map_to_local(anchor_tile))
+	var portals: Array = map.get("_portal_teleporters")
+	portals.append(portal)
+	_simulate_player_chunk_transition(map, far_chunk, far_tile)
+	_check(map.debug_get_protected_streaming_chunks().has(anchor_chunk), "portal teleporter chunk is not reported as protected")
+	for i in 32:
+		map.call("_drain_residency_eviction")
+		_simulate_player_chunk_transition(map, far_chunk, far_tile)
+	_check(map.debug_get_unloaded_chunks().find(anchor_chunk) == -1, "a portal-protected DORMANT far chunk was evicted")
+	portals.erase(portal)
+	portal.queue_free()
 
 
 ## `_update_streaming_chunks()` is normally only ever called from
