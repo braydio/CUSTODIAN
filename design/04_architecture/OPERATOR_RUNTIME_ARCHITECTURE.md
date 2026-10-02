@@ -501,8 +501,9 @@ gameplay facts instead of becoming another cross-cutting actor subsystem:
   semantic presentation controller.
 - `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` is F0 and independently retires the
   remaining 38 absolute scene lookups. F0 and mobile guard may land in either
-  order; F1/F2/F3/F5/F6 wait on both seams, while F4 only waits on F0 because
-  dodge intentionally remains committed full-body presentation.
+  order; F1/F5/F6 wait on both seams, F2 and F3 additionally wait on F1's stable
+  loadout/runtime-state APIs, while F4 only waits on F0 because dodge
+  intentionally remains committed full-body presentation.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes the mobile composition
   seam for Vigil guard and movement-permissive parry attempt/recovery.
 - F1–F6 are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
