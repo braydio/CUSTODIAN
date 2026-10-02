@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-04-04  
 **Status:** active  
-**Last Updated:** 2026-10-01
+**Last Updated:** 2026-10-02
 
 ---
 
@@ -276,7 +276,7 @@ state.
 | S4 Accepted-candidate materializer | complete | P1 |
 | S5 Runtime mutation scheduler | complete | P0 |
 | S6 Pause-aware streaming | complete | P1 |
-| S7 Chunk lifecycle + cache | in_progress | P1 |
+| S7 Chunk lifecycle + cache | in_progress (M6 landed; MR6 review gate active) | P1 |
 | S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
 | S9 Contract-world placement extraction | planned | P2 |
 | S10 Renderer / node-load consolidation | planned | P1 |
@@ -287,6 +287,26 @@ The detailed roadmap owns execution status and evidence. Every completed slice m
 V1 remains dependency-driven and evidence-gated: M4/MR4 and M5/MR5 are complete; M6 has landed (`ProcGenChunkResidencyPolicy` bounded production distant-chunk unload, `streaming_unload_distant_chunks` now defaults true), with paired MR6 ready/eligible and required before S7 closes or D1-D3 refresh. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. D1-D3 now wait on G5 + MR6; X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
+
+### Cross-cutting Procgen World Presentation
+**Status:** planned  
+**Priority:** P1  
+**Docs:** `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`, `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`, `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`  
+**Depends on:** reviewed M6/MR6 streaming-residency seam for runtime presentation integration
+
+**Summary:** Keep three visual concepts independent: local ecological biome, permanent region-frame/border/underlay presentation, and Archive Resolve streaming/reacquisition. The first generated starting region uses `ALPINE_PLATEAU`; future generated regions may select other frame profiles.
+
+| Feature | Status | Priority |
+|---------|--------|----------|
+| RF1 Region Frame presentation foundation | planned (blocked on MR6) | P1 |
+| RFR1 Region Frame paired review | planned | P1 |
+| Alpine Plateau six-state Asset V2 underlay family | planned (blocked on RF1 review + source art) | P1 |
+| AR1 Archive Resolve presentation spine | planned (blocked on MR6) | P1 |
+| AR2 Archive Resolve shader | planned (blocked on AR1) | P1 |
+| AR3 Archive Resolve semantic echo / spawn / reacquisition | planned (blocked on AR2) | P2 |
+
+**Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
+
 
 ### Cross-cutting Combat Resource and Readability
 **Status:** in_progress
