@@ -35,7 +35,7 @@ Shared non-player actors may consume only the contracts they need:
 - health/damage/death contracts;
 - combat target qualification;
 - actor identity/diagnostic surfaces;
-- perception and blackboard services where applicable;
+- perception and blackboard services where applicable; shared sensory evaluation routes through `design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md` once landed, while actor/species behavior remains local;
 - locomotion/movement intent where applicable;
 - actor-local ability execution;
 - semantic presentation;
@@ -110,12 +110,12 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 | NPA-5 | TBD | Extract shared enemy reaction/posture/parry-critical authority where a coherent boundary exists | planned |
 | NPA-6 | TBD | Extract enemy death/corpse/loot lifecycle from combat coordinator | planned |
 | NPA-7 | TBD | Converge commanded allies/companions on shared relationship/targeting/identity contracts without inheriting `Enemy` | planned |
-| NPA-8 | TBD | Converge ambient/fauna and bonded-command seams without moving species behavior into enemy AI | planned |
+| NPA-8 | TBD | Converge ambient/fauna and bonded-command seams, consuming the shared stealth-perception observation contract if landed, without moving species behavior into enemy AI | planned |
 | NPA-9 | TBD | Define encounter/social NPC shared capability seams using Forlorn Ritualant as proof; preserve encounter-local phase authority | planned |
 | NPA-10 | TBD | Converge static autonomous agents (Defense Turret/sentries) on shared non-locomotion combat/relationship contracts | planned |
 | NPA-11 | TBD | Remove proven compatibility residue, audit legacy group fallbacks/private callers, close architecture docs/validation | planned |
 
-Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete. Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
+Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete.\n\nCross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. NPA-8 must reuse it if available rather than inventing Vaultwing-only hearing or importing Enemy behavior policy. Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
 
 ## Measured Baseline
 
