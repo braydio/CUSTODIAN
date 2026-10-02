@@ -27,6 +27,21 @@ classification into `WorldEnvironmentDirector` or add weather authority here.
 - Weather holds 90–240 seconds and transitions over 8–15 seconds.
 - Weather affects only lighting, fog/grade, precipitation, and foliage wind. It has no gameplay modifiers.
 
+### First campaign world presentation lock
+
+For the current generated campaign world, ecological biome IDs are **micro-region semantics inside one locked macro-world identity**, not permission for four unrelated art directions.
+
+Use `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` as presentation authority:
+
+- `rocky_upland` is the dominant highland expression;
+- `woodland` means cold conifer woodland with exposed stone and infrastructure remnants;
+- `scrubland` means sparse wind-exposed cold scrub/dead grass;
+- `wetland` means bounded cold bog/drainage pockets rather than lush swamp;
+- snow/frost may cross biome boundaries as weather/surface condition;
+- biome transitions must not become saturated color-box boundaries.
+
+This does not change biome classification, RNG, walkability, foliage ceilings, or weather state ownership.
+
 ## Dataflow and Determinism
 
 Biome classification consumes accepted procgen floor cells, terrain/elevation output, accepted map seed, and profile moisture/exposure biases. It never changes at runtime and cannot modify walkability.
