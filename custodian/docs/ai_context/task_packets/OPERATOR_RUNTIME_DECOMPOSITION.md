@@ -906,7 +906,7 @@ stationary transition.
 
 ## Slice F2 — melee
 
-Execute `OPERATOR_MELEE_DOMAIN_EXTRACTION.md`. It owns fast/heavy timeline,
+Execute `OPERATOR_MELEE_DOMAIN_EXTRACTION.md` after F1 loadout/runtime-state is complete. It owns fast/heavy timeline,
 buffer/commit state, attack drive, hit-window/contact bookkeeping and target
 solution. Presentation work belongs here when it depends on melee facts:
 already-ingested moving-fast body/weapon/FX receives a real consumer where its
