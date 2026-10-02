@@ -18,6 +18,7 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 const DERIVED_REBUILD_SCHEDULER_SCRIPT := preload("res://game/world/procgen/derived_rebuild_scheduler.gd")
 const PAUSE_AWARE_STREAMING_SCRIPT := preload("res://game/world/procgen/streaming/procgen_pause_aware_streaming.gd")
 const CHUNK_LIFECYCLE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_lifecycle.gd")
+const CHUNK_PAYLOAD_CACHE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_payload_cache.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
@@ -512,6 +513,7 @@ var _runtime_prop_blocker_sources: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
 var _pause_aware_streaming: ProcGenPauseAwareStreaming = null
 var _chunk_lifecycle: ProcGenChunkLifecycle = null
+var _chunk_payload_cache: ProcGenChunkPayloadCache = null
 var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
 var _navigation_rebuild_pending: bool = false
@@ -828,6 +830,7 @@ func _ready() -> void:
 	if not generation_output_enabled:
 		return
 	_chunk_lifecycle = CHUNK_LIFECYCLE_SCRIPT.new()
+	_chunk_payload_cache = CHUNK_PAYLOAD_CACHE_SCRIPT.new()
 	_pause_aware_streaming = PAUSE_AWARE_STREAMING_SCRIPT.new()
 	add_child(_pause_aware_streaming)
 	_pause_aware_streaming.configure(
@@ -1474,6 +1477,16 @@ func _fill_tilemaps() -> void:
 	# accepted-candidate floor fingerprint contract) and must run in the same
 	# pass that establishes floor authority, so it stays unconditional here.
 	_apply_sundered_keep_frontage_floor_visuals()
+	# _enforce_route_playability_walkability() and
+	# _apply_sundered_keep_frontage_floor_visuals() both run after
+	# _prepare_streaming_reveal() has already primed/cached chunks and can
+	# still mutate _generated_floor_cells/_generated_wall_cells (late
+	# generation finalization). Both route through the same small set of
+	# canonical floor/wall setters every other write site uses
+	# (_set_floor_tile_and_generated_state / _apply_terrain_tile_visual /
+	# _set_terrain_floor_visual / _set_terrain_wall_visual), each of which
+	# precisely invalidates its own tile's chunk, so no separate bulk reset
+	# is needed here.
 	# Shoreline decoration and the runtime walkable-boundary collision body
 	# are final-presentation/collision-only: they never write to level_data
 	# or any field CandidateEvaluator reads, so rejected eval-mode candidates
@@ -1657,6 +1670,8 @@ func _apply_floor_value_clusters(result: Dictionary, seed: int) -> void:
 			"atlas": atlas,
 			"alternative": 0,
 		}
+		if _chunk_payload_cache != null:
+			_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 		changed_cells.append(cell)
 
 	_last_floor_value_cluster_summary = {
@@ -3107,6 +3122,8 @@ func _claim_isolated_world_overlook_pocket(
 		if not _is_tile_inside_map(cell, map_size, 0):
 			continue
 		_generated_floor_cells.erase(cell)
+		if _chunk_payload_cache != null:
+			_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 		floor_tilemap.erase_cell(cell)
 		_remove_foliage(cell)
 		_clear_procgen_road_authority_at(cell)
@@ -3693,6 +3710,8 @@ func _force_authored_scene_floor_authority(
 		"atlas": atlas,
 		"alternative": 0,
 	}
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 	if render_base_floor_visual:
 		floor_tilemap.set_cell(tile, source_id, atlas, 0)
 	else:
@@ -3714,6 +3733,8 @@ func _clear_procgen_wall_authority_at(tile: Vector2i, refresh_collision_debug: b
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
 	_generated_wall_cells.erase(tile)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 	if build_runtime_wall_collision:
 		_remove_runtime_wall_body(tile, refresh_collision_debug)
 	_remove_foliage(tile)
@@ -4712,6 +4733,8 @@ func _preserve_reserved_pre_terrain_floor_authority(tile: Vector2i) -> void:
 	if walls_tilemap != null:
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 
 	var region_data := get_region_data_at_tile(tile)
 	var region_type := String(region_data.get("region_type", "exterior"))
@@ -5424,6 +5447,8 @@ func _set_ascent_field_floor_authority(tile: Vector2i, region_type: String, zone
 	if walls_tilemap != null:
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 	_set_region_tile(tile, region_type, zone)
 
 
@@ -5443,6 +5468,8 @@ func _set_ascent_field_wall_authority(tile: Vector2i) -> void:
 		floor_tilemap.erase_cell(tile)
 	if not _wall_health.has(tile):
 		_wall_health[tile] = wall_tile_max_health
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 	_set_region_tile(tile, "ascent_field_blocker", "cliff_ruin_boundary")
 
 
@@ -5797,6 +5824,10 @@ func debug_get_chunk_lifecycle_states() -> Array[Dictionary]:
 
 func debug_force_unload_chunk(chunk_pos: Vector2i) -> void:
 	_unload_chunk(chunk_pos)
+
+
+func debug_get_chunk_payload_cache_snapshot() -> Dictionary:
+	return _chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
 
 
 func debug_get_generated_floor_cells() -> Dictionary:
@@ -6993,6 +7024,8 @@ func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") 
 
 	_generated_wall_cells.erase(pos)
 	_set_destroyed_wall_floor_tile(pos)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
 	minimap_tile_changed.emit(pos, "destroyed_wall_floor")
 	_refresh_wall_neighbors(pos)
 	_rebuild_horizontal_wall_overlays()
@@ -7030,6 +7063,8 @@ func _refresh_wall_neighbors(center_tile: Vector2i) -> void:
 					"atlas": coord,
 					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
 				}
+				if _chunk_payload_cache != null:
+					_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
 
 
 func _refresh_navigation_after_wall_change(force_immediate: bool = false, reason: String = "wall_change") -> void:
@@ -7598,6 +7633,8 @@ func _set_terrain_floor_visual(cell: Vector2i, source_id: int) -> void:
 		walls_tilemap.erase_cell(cell)
 	_generated_wall_cells.erase(cell)
 	_wall_health.erase(cell)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 
 
 func _set_terrain_wall_visual(cell: Vector2i, source_id: int) -> void:
@@ -7614,6 +7651,8 @@ func _set_terrain_wall_visual(cell: Vector2i, source_id: int) -> void:
 	_generated_floor_cells.erase(cell)
 	if not _wall_health.has(cell):
 		_wall_health[cell] = wall_tile_max_health
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 
 
 func _update_terrain_debug_overlay() -> void:
@@ -8974,6 +9013,8 @@ func _set_floor_tile_and_generated_state(
 		"alternative": 0,
 	}
 	_generated_wall_cells.erase(pos)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
 	_clear_road_blocking_wall(pos)
 	if not region_type.is_empty():
 		_set_region_tile(pos, region_type, zone)
@@ -10109,6 +10150,8 @@ func _get_chasm_presentation_cells() -> Array:
 
 func _prepare_streaming_reveal() -> void:
 	_chunk_lifecycle.reset()
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.reset()
 	if _pause_aware_streaming != null:
 		_pause_aware_streaming.reset()
 	else:
@@ -10219,7 +10262,10 @@ func _flush_streaming_visual_rebuilds() -> void:
 func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void:
 	if _chunk_lifecycle.is_requested(chunk_pos):
 		return
-	var tiles := _get_chunk_tiles(chunk_pos)
+	var tiles := _cached_chunk_tiles(chunk_pos)
+	# Reveal order is never cached: priority depends on the live center_tile
+	# and current region/wall semantics, so it is always recomputed here from
+	# the (possibly cache-reused) membership set.
 	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return _streaming_reveal_priority(a, center_tile) < _streaming_reveal_priority(b, center_tile)
 	)
@@ -10261,7 +10307,11 @@ func _streaming_reveal_priority(tile: Vector2i, center_tile: Vector2i) -> float:
 func _reveal_chunk_immediately(chunk_pos: Vector2i) -> void:
 	if _chunk_lifecycle.is_requested(chunk_pos):
 		return
-	var tiles := _get_chunk_tiles(chunk_pos)
+	# Immediate-radius reveal must preserve _get_chunk_tiles()'s own
+	# deterministic iteration order exactly, so this intentionally does not
+	# re-sort the (possibly cache-reused) membership the way queued reveal
+	# does.
+	var tiles := _cached_chunk_tiles(chunk_pos)
 	_chunk_lifecycle.request(chunk_pos, tiles.size())
 	for tile in tiles:
 		_reveal_tile(tile)
@@ -10269,7 +10319,9 @@ func _reveal_chunk_immediately(chunk_pos: Vector2i) -> void:
 
 
 ## Pure chunk-tile enumeration: deterministic membership only, no lifecycle
-## or other state mutation. Legal to call repeatedly/speculatively.
+## or other state mutation. Legal to call repeatedly/speculatively. This is
+## the cache's sole canonical builder for chunk membership; callers that want
+## lazy reuse go through `_cached_chunk_tiles()` instead.
 func _get_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
 	var tiles: Array[Vector2i] = []
 	var start_x := chunk_pos.x * streaming_chunk_size_tiles
@@ -10280,6 +10332,17 @@ func _get_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
 			if _generated_floor_cells.has(tile) or _generated_wall_cells.has(tile):
 				tiles.append(tile)
 	return tiles
+
+
+## Cache-backed chunk membership lookup used by both queued and immediate
+## reveal. Delegates to the pure `_get_chunk_tiles()` builder on a miss;
+## always returns a fresh duplicate (see
+## `ProcGenChunkPayloadCache.get_chunk_tiles()`) so a caller's own
+## sort_custom() can never corrupt the cached canonical copy.
+func _cached_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
+	if _chunk_payload_cache == null:
+		return _get_chunk_tiles(chunk_pos)
+	return _chunk_payload_cache.get_chunk_tiles(chunk_pos, _get_chunk_tiles)
 
 
 ## Disabled in production (`streaming_unload_distant_chunks` defaults false);
@@ -10320,13 +10383,25 @@ func _on_streaming_tile_committed(tile: Vector2i) -> void:
 	_chunk_lifecycle.note_committed(_tile_to_chunk(tile))
 
 
-## PREPARE: pure, deterministic lookup into already-generated (seed-authored,
-## never mutated by reveal) floor/wall cell data. Safe to call while paused --
-## does not touch TileMap/Node/collision/foliage state. The foliage/decal/
-## collision siting decisions themselves stay in _commit_tile_reveal_record
-## because they depend on already-committed neighbor state and must keep
-## happening in committed reveal order to stay deterministic.
+## PREPARE: cache-backed lookup into already-generated (seed-authored) floor/
+## wall cell data. Safe to call while paused -- does not touch TileMap/Node/
+## collision/foliage state. The foliage/decal/collision siting decisions
+## themselves stay in _commit_tile_reveal_record because they depend on
+## already-committed neighbor state and must keep happening in committed
+## reveal order to stay deterministic. This is every PREPARE/direct-reveal
+## caller's entry point; `_build_tile_reveal_record_raw()` is the cache's own
+## uncached builder.
 func _build_tile_reveal_prepare_record(tile: Vector2i) -> Dictionary:
+	if _chunk_payload_cache == null:
+		return _build_tile_reveal_record_raw(tile)
+	return _chunk_payload_cache.get_tile_record(
+		tile, _tile_to_chunk(tile), _build_tile_reveal_record_raw
+	)
+
+
+## Pure, deterministic, uncached lookup into canonical generated floor/wall
+## cell data -- the cache's sole canonical builder for tile records.
+func _build_tile_reveal_record_raw(tile: Vector2i) -> Dictionary:
 	var record := {"tile": tile}
 	if _generated_floor_cells.has(tile):
 		record["floor_data"] = _generated_floor_cells[tile]
@@ -10336,9 +10411,17 @@ func _build_tile_reveal_prepare_record(tile: Vector2i) -> Dictionary:
 
 
 ## COMMIT: authoritative mutation of live TileMap/collision/foliage state from
-## a prepared record. Never runs while paused.
+## a prepared record. Never runs while paused. `record` may have been built
+## several frames ago (e.g. drained from M3's `_prepared` queue after a
+## resume), so it is revalidated against current cache identity immediately
+## before mutation: if its chunk was invalidated since PREPARE, it is rebuilt
+## from canonical state here rather than painting stale data.
 func _commit_tile_reveal_record(record: Dictionary) -> void:
 	var tile: Vector2i = record.get("tile")
+	if _chunk_payload_cache != null:
+		record = _chunk_payload_cache.revalidate_record_before_commit(
+			record, tile, _tile_to_chunk(tile), _build_tile_reveal_record_raw
+		)
 	if record.has("floor_data"):
 		var floor_data: Dictionary = record["floor_data"]
 		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord), int(floor_data.get("alternative", 0)))
@@ -11064,6 +11147,9 @@ func get_runtime_health_snapshot() -> Dictionary:
 		),
 		"chunk_lifecycle": (
 			_chunk_lifecycle.get_snapshot() if _chunk_lifecycle != null else {}
+		),
+		"chunk_payload_cache": (
+			_chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
 		),
 	}
 	var cliff_state := void_cliff_face.get_debug_state() if void_cliff_face != null else {}

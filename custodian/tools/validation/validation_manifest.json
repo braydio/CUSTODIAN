@@ -326,6 +326,22 @@
       "needs_import": true
     },
     {
+      "id": "procgen_chunk_payload_cache",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_chunk_payload_cache_smoke.gd",
+      "tier": "actor",
+      "tags": ["procgen", "streaming", "chunk-payload-cache", "telemetry"],
+      "owners": [
+        "custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd",
+        "custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd",
+        "custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/procgen_chunk_payload_cache_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "procgen_walkable_boundary",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_walkable_boundary_smoke.gd",
