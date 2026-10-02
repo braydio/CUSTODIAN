@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine`
+- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `931b830d54f2a217d1b473109f708636ac89f21f`
+- Reviewed main: `03b6221adb01402b1cf4393b9a1773cdd519f6ae`
 - Goal: Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator success beat instead of leaving the existing `interaction/success_01` body+FX family dormant.
 - Completion boundary: Done when target acquisition and interaction/build/repair/terminal-deploy coordination live behind an `OperatorInteractionController`-class authority with explicit world dependencies; current Operator public interaction behavior remains delegated; a typed opt-in success-result contract can request `unarmed/interaction/success_01` without making every interaction animate; moving success uses lower cadence + upper/FX when legal, stationary success can use the authored pair; and no duplicate interaction state remains in the actor.
 - Current measured state: Interaction target selection, build/repair and terminal deployment helpers remain in `operator.gd`. The canonical manifest already publishes `unarmed/interaction/success_01/{e,w}` as 5-frame 96x96 lower_body + upper_body + FX, but the reachability contract intentionally classifies it pending a generic interaction-success contract. Existing interactables signal success in domain-specific ways, so there is no safe global "every interact()" animation trigger.
