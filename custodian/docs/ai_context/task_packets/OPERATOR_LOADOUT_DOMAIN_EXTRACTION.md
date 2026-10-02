@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine`
+- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `931b830d54f2a217d1b473109f708636ac89f21f`
+- Reviewed main: `03b6221adb01402b1cf4393b9a1773cdd519f6ae`
 - Goal: Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modular presentation seam for movement-permissive draw/sheathe transitions without changing weapon-selection semantics.
 - Completion boundary: Done when weapon selection, pending switch, carried/equipped weapon coordination and per-weapon mutable runtime state live behind an `OperatorLoadoutController`-class authority (exact local shape may differ); `OperatorWeaponDefinition` is immutable definition data with no `current_magazine/is_reloading/reload_timer`; existing public Operator loadout APIs delegate; moving draw/sheathe keeps authoritative lower cadence while upper/weapon transition; stationary transitions keep authored paired poses; and the three `weapon_definition_runtime_state` architecture findings are zero.
 - Current measured state: `operator.gd` is 14,587 lines / 711 functions on reviewed main. `OperatorWeaponDefinition` still exports exactly three runtime fields: `current_magazine`, `is_reloading`, `reload_timer`. No `OperatorLoadoutController` or `OperatorWeaponRuntimeState` exists. Equip/sheathe arbitration is already owned by `OperatorActionController`, while presentation/start-complete logic and pending selection commit remain in the actor. `_is_movement_locked()` does not lock equip/sheathe, so current paired lower draw/sheathe can slide while the actor moves.
