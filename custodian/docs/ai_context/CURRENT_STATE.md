@@ -1,5 +1,21 @@
 # CURRENT STATE — CUSTODIAN
 
+## Procgen Region Frame Foundation (2026-10-03)
+
+RF1 separates the permanent map-edge presentation from local biome and Archive
+Resolve. `NonwalkableSurfaceClassifier` derives `exterior_chasm_cells` /
+`internal_chasm_cells` (CHASM-only boundary flood; structural surface kinds are
+unchanged). `ProcgenRegionFrameProfile` + `region_frames/alpine_plateau.tres`
+select the underlay; Alpine currently reports an explicit `visual_fallback`
+(Endless Forest stand-in) until its asset family lands. The frame id is explicit
+data: `CustodianContractMap.region_frame_profile_id` is set to `alpine_plateau`
+only in `custodian_contract_map.tscn` and is never inferred from `planet_key`.
+The global `ProcgenDepthBackdrop` follows the exterior mask only; internal-only
+chasms do not activate it. `procgen_region_frame_smoke.gd` owns the contract
+(registered `procgen_region_frame`); `procgen_distant_chunk_unload_smoke.gd` was
+hardened with the carried-forward M6 proofs (counted flush coalescing, real A*
+path, guaranteed road removal, hermetic portal protection, tree/cluster parity).
+
 ## Contract World Placement Foundation (2026-10-02)
 
 `WorldPlacementContext` is the accepted-world read seam for focused placement

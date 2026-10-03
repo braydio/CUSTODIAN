@@ -65,8 +65,8 @@ Presentation additionally needs to know whether a non-floor cell belongs to the
 
 Derive, after final floor and explicit surface claims are stable:
 
-- `exterior_void_cells`: non-floor cells connected to the rectangular map boundary through non-floor space;
-- internal non-floor cells: enclosed chasms/ravines/pits or bounded claims not connected to that exterior flood.
+- `exterior_chasm_cells` (RF1): CHASM cells connected to the rectangular map boundary through CHASM cells only; floor, OCEAN and any other surface block the flood, so OCEAN never enters the mask;
+- `internal_chasm_cells` (RF1): `chasm_cells - exterior_chasm_cells`, i.e. enclosed chasms/ravines/pits (including a chasm reachable only through ocean).
 
 This is deterministic presentation metadata only. It does not add a fourth surface kind and never owns collision, traversal or navigation.
 

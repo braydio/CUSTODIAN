@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-region-frame-presentation-foundation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-distant-chunk-unload-review-corrections-1`
@@ -51,22 +51,22 @@ Start only from: the carried-forward sections of `custodian/tools/validation/pro
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `<fill at closeout>`
+- Evidence: Part 0 -- `procgen_distant_chunk_unload_smoke.gd` closes N1-01..N1-05: counted flush (`debug_get_streaming_visual_flush_count()`, 3 eviction frames inside one interval -> 0 flushes, then exactly 1; direct-flush mutation fails), real A* id-path and `compute_path_immediate` for the unloaded cell plus exclusion of a genuinely UNSEEN chunk with canonical tiles, guaranteed road decal removed unconditionally, hermetic portal anchor (starts unprotected, injected portal alone protects, in-test removal makes it evictable), and a tree with trunk collision, runtime blocker cells and a non-empty cluster id preserved across unload/reload; no M6 production defect was exposed. Part 1 -- `procgen_region_frame_profile.gd`, `region_frames/alpine_plateau.tres` (explicit `visual_fallback`), `NonwalkableSurfaceClassifier` `exterior_chasm_cells`/`internal_chasm_cells`, `CustodianContractMap.region_frame_profile_id` (set to `alpine_plateau` only in `custodian_contract_map.tscn`, copied into `world_profile`, `PLANET_WORLD_PROFILES` untouched), `ProcGenTilemap` frame resolution/`get_region_frame_debug_snapshot()`/`region_frame` level-data key and exterior-mask-only `_refresh_depth_backdrop()`, `ProcgenDepthBackdrop.configure_hidden()`. New `procgen_region_frame_smoke.gd` (registered `procgen_region_frame`) passes; mutating the backdrop to use all chasm cells, or letting the flood cross ocean, fails it. Regression green: nonwalkable surface, void cliff face, void cliff wall integration, drowned basilica underlay, elevated world asset contract, runtime health, chunk payload cache, chunk lifecycle, pause-aware streaming, walkable boundary, wall collision compaction, candidate promotion, macro presentation (fingerprint `d2d2e420...` unchanged), road semantics v2, dressing clusters (fingerprint `3b3087a1...` unchanged), navigation elevation, authored scene authority; S1 quick `determinism_ok=true`, fingerprint `1773840677`. No capture was taken. `procgen_candidate_materializer_parity` is named in the packet but does not exist; `procgen_candidate_promotion_smoke` was run in its place.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none`
-- Root cause / contributing factors: `none`
-- Prevention / pipeline improvement: `none`
-- Tooling / docs drift discovered: `none`
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: New `class_name` resources were not in the Godot global class cache, so older smokes failed to parse and hung until their timeout; trunk collision is suppressed near walls/spawn so the tree fixture needed that single clearance gate lifted.
+- Root cause / contributing factors: A fresh class needs `godot --import`; the victim chunk must sit next to a wall by construction.
+- Prevention / pipeline improvement: Run `godot --headless --path . --import` after adding a `class_name` before any smoke; the tree fixture overrides only `is_inside_tree_trunk_clearance` in the spawner context.
+- Tooling / docs drift discovered: `procgen_candidate_materializer_parity` is cited in packets but absent; `check_ai_context` still reports pre-existing README duplicate-entry findings.
+- Follow-up: `none`
 
 ## Handoff
 

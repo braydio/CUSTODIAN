@@ -1,6 +1,6 @@
 # Procgen Region Frame Profiles
 
-**Status:** locked design; implementation pending  
+**Status:** locked design; RF1 foundation implemented (frame profile resource, exterior/internal CHASM masks, explicit starting-region selector, frame-driven depth backdrop); Alpine production underlay art pending\
 **Date:** 2026-10-02  
 **Scope:** generated-region macro frame, playable-border presentation, depth/underlay selection  
 **Archive Resolve:** separate authority at `STREAMING_REVEAL_PRESENTATION_V1.md`
@@ -324,3 +324,11 @@ Implementation should:
 6. preserve `RuntimeWalkableBoundary` as physical perimeter authority.
 
 Do not implement this by making biome classification own border geometry.
+
+## RF1 Implementation Notes
+
+- `ProcgenRegionFrameProfile` (`presentation/procgen_region_frame_profile.gd`) holds `profile_id`, the selected `ProcgenUnderlayProfile`, and an explicit `visual_fallback`/`fallback_reason`. `region_frames/alpine_plateau.tres` binds the Endless Forest underlay as a reported stand-in until the Alpine asset family exists.
+- `NonwalkableSurfaceClassifier.classify()` additionally returns `exterior_chasm_cells` (boundary flood over CHASM cells only; OCEAN, floor and other surfaces block it) and `internal_chasm_cells`. `kind_by_cell`, chasm/ocean sets and counts are unchanged.
+- Frame selection is explicit data: `CustodianContractMap.region_frame_profile_id` (empty = neutral) is copied into the generated `world_profile`; only the production `custodian_contract_map.tscn` sets `alpine_plateau`. `PLANET_WORLD_PROFILES` stay frame-agnostic and nothing infers a frame from `planet_key`.
+- `ProcGenTilemap._refresh_depth_backdrop()` configures the global backdrop from the exterior mask only. A map with chasm cells but no exterior chasm hides the backdrop (`no_exterior_chasm`); a map with no chasm keeps the legacy world-bounds fallback. The Drowned Basilica override still wins and never mutates surface semantics.
+- Telemetry: `get_region_frame_debug_snapshot()` and the `region_frame` level-data key report frame id, resolution, fallback state/reason, underlay source/profile id, exterior/internal counts and backdrop mode.

@@ -217,6 +217,11 @@ const ENDLESS_FOREST_UNDERLAY := preload(
 const DROWNED_BASILICA_UNDERLAY := preload(
 	"res://game/world/procgen/presentation/underlays/drowned_basilica_underlay.tres"
 )
+const REGION_FRAME_PROFILES := {
+	&"alpine_plateau": preload(
+		"res://game/world/procgen/presentation/region_frames/alpine_plateau.tres"
+	),
+}
 enum WorldShapeMode {
 	LEGACY_CAVE,
 	ASCENT_FIELD,
@@ -501,6 +506,10 @@ var _surface_kind_by_cell: Dictionary = {}
 var _surface_material_by_cell: Dictionary = {}
 var _surface_material_summary: Dictionary = {}
 var _chasm_cells: Dictionary = {}
+## Derived presentation masks (see NonwalkableSurfaceClassifier); never gameplay authority.
+var _exterior_chasm_cells: Dictionary = {}
+var _internal_chasm_cells: Dictionary = {}
+var _region_frame_profile_id: StringName = &""
 var _ocean_cells: Dictionary = {}
 var _sundered_keep_coastline_parent: Node2D = null
 var _sundered_keep_shore_overlay_parent: Node2D = null
@@ -527,6 +536,8 @@ var _streaming_visual_rebuild_accum: float = 0.0
 ## rebuild leaves this false so it batches on the interval cadence instead of
 ## flushing on the next queue-drained frame.
 var _streaming_reveal_flush_owed: bool = false
+## Count of completed full visual-rebuild flushes; test/telemetry only.
+var _streaming_visual_flush_count: int = 0
 var shadow_system: Node = null
 
 
@@ -1079,6 +1090,7 @@ func get_walls_tilemap() -> TileMapLayer:
 
 func apply_planet_world_profile(profile: Dictionary) -> void:
 	_planet_world_profile = profile.duplicate(true)
+	_region_frame_profile_id = StringName(String(_planet_world_profile.get("region_frame_profile_id", "")))
 	compound_area_ratio = clamp(float(_planet_world_profile.get("compound_area_ratio", compound_area_ratio)), 0.10, 0.20)
 	open_layout_chance = clamp(float(_planet_world_profile.get("open_layout_chance", open_layout_chance)), 0.0, 1.0)
 	open_layout_carve_ratio = clamp(float(_planet_world_profile.get("open_layout_carve_ratio", open_layout_carve_ratio)), 0.0, 0.6)
@@ -1091,6 +1103,8 @@ func apply_planet_world_profile(profile: Dictionary) -> void:
 	foliage_tree_wind_strength_px = clampf(float(_planet_world_profile.get("foliage_tree_wind_strength_px", foliage_tree_wind_strength_px)), 0.0, 3.0)
 	foliage_wind_gust_amount = clampf(float(_planet_world_profile.get("foliage_wind_gust_amount", foliage_wind_gust_amount)), 0.0, 1.0)
 	_apply_planet_visual_profile()
+	if is_node_ready() and depth_backdrop != null and depth_backdrop.is_node_ready():
+		_refresh_depth_backdrop()
 
 
 func get_planet_world_profile() -> Dictionary:
@@ -5180,6 +5194,8 @@ func _collect_nonwalkable_surface_claims() -> Array[Dictionary]:
 func _rebuild_nonwalkable_surface_regions(map_size: Vector2i) -> void:
 	_surface_kind_by_cell.clear()
 	_chasm_cells.clear()
+	_exterior_chasm_cells.clear()
+	_internal_chasm_cells.clear()
 	_ocean_cells.clear()
 	_surface_claim_cells.clear()
 	_nonwalkable_surface_summary.clear()
@@ -5195,6 +5211,12 @@ func _rebuild_nonwalkable_surface_regions(map_size: Vector2i) -> void:
 	).duplicate(true)
 	_chasm_cells = (
 		result.get("chasm_cells", {}) as Dictionary
+	).duplicate(true)
+	_exterior_chasm_cells = (
+		result.get("exterior_chasm_cells", {}) as Dictionary
+	).duplicate(true)
+	_internal_chasm_cells = (
+		result.get("internal_chasm_cells", {}) as Dictionary
 	).duplicate(true)
 	_ocean_cells = (
 		result.get("ocean_cells", {}) as Dictionary
@@ -5686,6 +5708,8 @@ func _clear_world_progression_runtime() -> void:
 	if surface_material_overlay != null:
 		surface_material_overlay.clear()
 	_chasm_cells.clear()
+	_exterior_chasm_cells.clear()
+	_internal_chasm_cells.clear()
 	_ocean_cells.clear()
 	_surface_claim_cells.clear()
 	_nonwalkable_surface_summary.clear()
@@ -5848,6 +5872,10 @@ func debug_force_unload_chunk(chunk_pos: Vector2i) -> void:
 
 func debug_get_chunk_payload_cache_snapshot() -> Dictionary:
 	return _chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
+
+
+func debug_get_streaming_visual_flush_count() -> int:
+	return _streaming_visual_flush_count
 
 
 func debug_get_chunk_residency_policy_snapshot() -> Dictionary:
@@ -10263,18 +10291,72 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 		material.set_shader_parameter("bubble_center_%d" % bubble_index, center)
 
 
+## Resolves the permanent-underlay selection. The Drowned Basilica override is
+## an explicit development/special case and wins; otherwise the selected region
+## frame supplies the underlay; with no frame the legacy Endless Forest default
+## applies. The default `underlay_profile_override` value ("ENDLESS_FOREST")
+## means "no override".
+func _resolve_region_frame_state() -> Dictionary:
+	var frame_id := _region_frame_profile_id
+	var frame: ProcgenRegionFrameProfile = REGION_FRAME_PROFILES.get(frame_id, null) as ProcgenRegionFrameProfile
+	var state := {
+		"frame_id": String(frame_id),
+		"frame_resolved": frame != null and frame.is_valid(),
+		"visual_fallback": false,
+		"fallback_reason": "",
+		"underlay_source": "default",
+		"underlay": ENDLESS_FOREST_UNDERLAY,
+	}
+	if frame != null and frame.is_valid():
+		state["underlay"] = frame.underlay_profile
+		state["underlay_source"] = "region_frame"
+		state["visual_fallback"] = frame.visual_fallback
+		state["fallback_reason"] = frame.fallback_reason
+	elif frame_id != &"":
+		state["visual_fallback"] = true
+		state["fallback_reason"] = "region frame '%s' has no profile resource; default underlay used" % String(frame_id)
+	if underlay_profile_override == "DROWNED_BASILICA":
+		state["underlay"] = DROWNED_BASILICA_UNDERLAY
+		state["underlay_source"] = "drowned_basilica_override"
+	return state
+
+
 func _refresh_depth_backdrop() -> void:
 	if depth_backdrop == null:
 		return
-	var profile := ENDLESS_FOREST_UNDERLAY
-	match underlay_profile_override:
-		"DROWNED_BASILICA":
-			profile = DROWNED_BASILICA_UNDERLAY
-	depth_backdrop.set_underlay_profile(profile, _get_generation_seed())
-	if not _chasm_cells.is_empty():
-		depth_backdrop.configure_from_chasm_cells(_chasm_cells.keys())
+	var state := _resolve_region_frame_state()
+	depth_backdrop.set_underlay_profile(state["underlay"] as ProcgenUnderlayProfile, _get_generation_seed())
+	if not _exterior_chasm_cells.is_empty():
+		depth_backdrop.configure_from_chasm_cells(_exterior_chasm_cells.keys())
+	elif not _chasm_cells.is_empty():
+		# Chasm cells exist but none touch the map exterior: internal ravines
+		# and pits must not activate or bound the global lower-world underlay.
+		depth_backdrop.configure_hidden("no_exterior_chasm")
 	elif not _generated_floor_cells.is_empty():
 		depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
+
+
+func get_region_frame_debug_snapshot() -> Dictionary:
+	var state := _resolve_region_frame_state()
+	return {
+		"frame_id": state["frame_id"],
+		"frame_resolved": state["frame_resolved"],
+		"visual_fallback": state["visual_fallback"],
+		"fallback_reason": state["fallback_reason"],
+		"underlay_source": state["underlay_source"],
+		"underlay_profile_id": String((state["underlay"] as ProcgenUnderlayProfile).profile_id),
+		"exterior_chasm_count": _exterior_chasm_cells.size(),
+		"internal_chasm_count": _internal_chasm_cells.size(),
+		"backdrop_mode": depth_backdrop.get_debug_mode() if depth_backdrop != null else "",
+	}
+
+
+func debug_get_exterior_chasm_cells() -> Dictionary:
+	return _exterior_chasm_cells.duplicate(true)
+
+
+func debug_get_internal_chasm_cells() -> Dictionary:
+	return _internal_chasm_cells.duplicate(true)
 
 
 func set_underlay_profile_override(profile_name: String) -> void:
@@ -10520,6 +10602,7 @@ func _flush_streaming_visual_rebuilds() -> void:
 	_streaming_visual_rebuild_pending = false
 	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
+	_streaming_visual_flush_count += 1
 	_sync_runtime_wall_collision_with_visible_walls()
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
@@ -11796,6 +11879,7 @@ func get_level_data() -> Dictionary:
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"ocean_cells": _dict_keys_as_vector2i_array(_ocean_cells),
 		"chasm_cells": _dict_keys_as_vector2i_array(_chasm_cells),
+		"region_frame": get_region_frame_debug_snapshot(),
 		"nonwalkable_surface_summary": (
 			_nonwalkable_surface_summary.duplicate(true)
 		),

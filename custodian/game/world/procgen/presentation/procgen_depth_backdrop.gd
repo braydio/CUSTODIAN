@@ -182,6 +182,14 @@ func configure_from_chasm_cells(chasm_cells: Array) -> void:
 	)
 
 
+## Hides the global backdrop without configuring any bounds, e.g. when a map
+## has chasm cells but none connect to the exterior boundary.
+func configure_hidden(reason: String) -> void:
+	_clear_regions()
+	_debug_mode = reason
+	_set_configured_visible(false)
+
+
 func get_debug_mode() -> String:
 	return _debug_mode
 

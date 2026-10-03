@@ -4,6 +4,7 @@
 
 [node name="CustodianContractMap" type="Node2D" unique_id=2134097645]
 script = ExtResource("1_script")
+region_frame_profile_id = &"alpine_plateau"
 
 [node name="PlanetRoot" type="Node2D" parent="." unique_id=1210776991]
 
