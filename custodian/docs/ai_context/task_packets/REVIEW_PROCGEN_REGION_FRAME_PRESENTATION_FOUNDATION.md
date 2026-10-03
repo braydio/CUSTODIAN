@@ -14,7 +14,7 @@
 - Reviewed main: `81494285dfdb41240045a55cb6117586b32f539f`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -35,10 +35,10 @@ Review only the archived foundation packet/summary; `CustodianContractMap._pick_
 ## Handoff
 
 - Next workstream: `procgen-alpine-plateau-underlay-assets`
-- Next packet state: `human-required`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
-- Refresh reason: `none; the packet is source-art gated rather than planning-refresh gated`
-- Next action: After a clean/non-blocking RFR1 result, supply/approve the six required Alpine Plateau Asset V2 source images before the underlay asset packet can execute.
-- Blockers or open questions: Subjective final Alpine art and the six approved 1536x1024 source images remain human-owned.
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh reason: The Alpine Asset V2 packet is technically scoped but remains source-art/human-approval gated; once the six sources exist, its reviewed-main/API binding should be reconciled here before ingest.
+- Next action: After RFR1 passes and the six Alpine source images are available/approved, bring the RFR1 summary plus source-art decisions to the recorded ChatGPT planning chat and refresh the asset packet before ingest.
+- Blockers or open questions: Six approved 1536x1024 source images and human art-direction approval remain required.
