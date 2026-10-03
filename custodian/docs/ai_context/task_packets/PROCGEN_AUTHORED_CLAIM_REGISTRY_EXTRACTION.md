@@ -10,6 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `cdf5a2d4a1259df11d27605208a01401a7d80627`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Extract authored floor/overlook/ingress-clearance/reservation ownership from ProcGenTilemap into one canonical claim registry.
 - Completion boundary: REFRESH-GATED on reviewed M6 / cycle-1 re-review. Re-audit post-cycle-1 M6 review claim/reservation state before execution. The eventual slice closes when authored-scene floor claims, overlook-pocket plans/commits, ingress dressing-clearance claims, worldgen/terrain reservations that are genuinely the same claim concept, and claim/conflict queries mutate/query one canonical registry under the existing `custodian/game/world/procgen/authored_claims/` package, while runtime prop blockers and unrelated playability state remain with their current owners.
 - Current measured state: `custodian/game/world/procgen/authored_claims/README.md` is scaffold-only and still points to `ProcGenTilemap`. Live claim APIs include `claim_procgen_floor_rect_for_authored_scene_world`, `claim_procgen_floor_rect_for_authored_scene_tiles`, `claim_world_overlook_pocket`, `plan_world_overlook_pocket`, `commit_world_overlook_pocket_plan`, `_claim_isolated_world_overlook_pocket`, `claim_world_ingress_dressing_clearance`, `is_inside_world_ingress_dressing_clearance`, and `clear_world_ingress_dressing_clearances`, alongside several reservation dictionaries/terrain-required-cell adapters. Runtime prop blockers are a separate mutation concern and must not be swept into the claim registry by name similarity.
@@ -48,6 +49,14 @@ section**. Its continued presence means this packet is not ready to implement.
 ## Series Contract
 
 This packet belongs to the pre-authored `procgen-runtime-optimization-v1` dependency DAG. Do not author its ordinary V1 successor during implementation: downstream packets already exist on `main` with `Dispatch: auto`. Update the detailed procgen roadmap and matching master-roadmap row at closeout, record landed evidence, then finish normally so declared dependents can become eligible. If live evidence invalidates a downstream contract, record the contradiction and leave that dependent blocked rather than silently broadening this workstream.
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
 
