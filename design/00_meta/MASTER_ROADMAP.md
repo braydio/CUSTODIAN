@@ -276,7 +276,7 @@ state.
 | S4 Accepted-candidate materializer | complete | P1 |
 | S5 Runtime mutation scheduler | complete | P0 |
 | S6 Pause-aware streaming | complete | P1 |
-| S7 Chunk lifecycle + cache | in_progress (M6 landed; MR6 review gate active) | P1 |
+| S7 Chunk lifecycle + cache | complete (M6/MR6 correction cycle closed; MR6R1 passed) | P1 |
 | S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
 | S9 Contract-world placement extraction | planned | P2 |
 | S10 Renderer / node-load consolidation | planned | P1 |
@@ -284,12 +284,12 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated: M4/MR4 and M5/MR5 are complete; M6 is landed with production distant unload enabled, but cycle-0 MR6 completed with one blocking defect plus four material proof gaps. S7 therefore remains open through `procgen-distant-chunk-unload-review-corrections-1` and its cycle-1 paired re-review. D1-D3 wait on G5 + that clean cycle-1 re-review and still require individual live refreshes before implementation. RF1 Region Frame presentation is fully refreshed and ready/auto behind the same re-review; Archive Resolve AR1 remains refresh-gated. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete, so S7 is closed. The cycle-1 review passed with 0 blocking defects and 0 material evidence gaps; five optional proof-hardening items N1-01..N1-05 are folded into RF1 rather than another correction cycle. D1-D3 now satisfy their G5+MR6R1 dependencies but still require individual live refreshes before implementation. RF1/RFR1 are ready/auto; Archive Resolve AR1/ARR1 are also ready/auto at lower priority under the same procgen locks. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
 ### Cross-cutting Procgen World Presentation
-**Status:** planned  
+**Status:** in_progress  
 **Priority:** P1  
 **Docs:** `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`, `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`, `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`  
 **Depends on:** reviewed M6/MR6 streaming-residency seam for runtime presentation integration
@@ -298,14 +298,15 @@ V1 remains dependency-driven and evidence-gated: M4/MR4 and M5/MR5 are complete;
 
 | Feature | Status | Priority |
 |---------|--------|----------|
-| RF1 Region Frame presentation foundation | planned (blocked on MR6) | P1 |
-| RFR1 Region Frame paired review | planned | P1 |
+| RF1 Region Frame presentation foundation | ready / auto | P1 |
+| RFR1 Region Frame paired review | ready / auto behind RF1 | P1 |
 | Alpine Plateau six-state Asset V2 underlay family | planned (blocked on RF1 review + source art) | P1 |
-| AR1 Archive Resolve presentation spine | planned (blocked on MR6) | P1 |
-| AR2 Archive Resolve shader | planned (blocked on AR1) | P1 |
+| AR1 Archive Resolve presentation spine | ready / auto | P2 |
+| ARR1 Archive Resolve paired technical review | ready / auto behind AR1 | P2 |
+| AR2 Archive Resolve shader | planned (blocked on reviewed AR1) | P1 |
 | AR3 Archive Resolve semantic echo / spawn / reacquisition | planned (blocked on AR2) | P2 |
 
-**Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
+**Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
 
 
 ### Cross-cutting Combat Resource and Readability
