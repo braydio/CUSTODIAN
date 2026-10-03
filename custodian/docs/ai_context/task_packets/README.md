@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-02
+Last updated: 2026-10-03
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -9,17 +9,11 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The three implementation packets are intentionally pre-authored and
-refresh-gated. They remain `blocked/manual` until their named predecessor has
-landed and the packet has been re-derived from live main; each packet contains a
-temporary refresh section that must be deleted during that refresh before it may
-become `ready`.
+The Archive Resolve implementation series is pre-authored but evidence-gated. AR1 has now been fully re-derived against landed M6C1 and has a paired technical review; it remains `blocked/manual` only until MR6R1 formally closes the streaming gate. AR2 and AR3 remain refresh-gated against the reviewed result of their immediate predecessor.
 
-- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, presentation-only
-  request/commit/unload spine and flat diagnostic veil; refresh after reviewed
-  M6/MR6.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither +
-  restrained brass/amber Archive Resolve shader; refresh after AR1.
+- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, fully re-derived presentation-only request/commit/unload spine and one batched flat diagnostic veil; activation remains blocked on clean/non-blocking MR6R1.
+- `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 code/architecture/runtime/diagnostic-visual review; gates AR2.
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither + restrained brass/amber Archive Resolve shader; refresh after reviewed AR1.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo,
   spawn resolve, and shortened reacquisition; refresh after AR2.
 
@@ -274,7 +268,7 @@ lost when the ephemeral worktree is removed.
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are stable, but execution readiness is evidence-gated. A packet is `ready/auto` only when its current measured state and implementation surface exist on live main; architecture-dependent downstream packets stay `blocked/manual` and are refreshed in place after the named predecessor/review lands.
 - **Runtime/streaming:** M4/MR4 and M5/MR5 are complete; M6 is landed. Cycle-0 MR6 produced `R0-01`..`R0-05`; M6C1 is now complete/archived on `main@81494285`, with the production coalescing fix and expanded smoke landed. `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` is the remaining cycle-1 gate (`ready/auto`). A manual second-pass found no new production defect but identified three proof-hardening items already folded into RF1: deterministic multi-frame coalescing observation, actual A* reachability, and non-optional road-removal proof. S7 stays open until MR6R1 records a clean/non-blocking-only result.
-- **Post-M6 world presentation:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` (RF1) is refreshed against landed M6C1 and `ready/auto`, dependency-gated on the cycle-1 M6 re-review; it now starts by closing the three carried-forward M6 proof-hardening items before Region Frame integration. Its paired `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` is pre-authored. `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` remains blocked behind RF1 review + six approved 1536×1024 source images. Archive Resolve AR1 remains blocked/manual behind the same cycle-1 re-review and still needs its final seam refresh before dispatch; AR2/AR3 remain refresh-gated behind AR1/AR2.
+- **Post-M6 world presentation:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` (RF1) is refreshed against landed M6C1 and `ready/auto`, dependency-gated on the cycle-1 M6 re-review; it starts by closing the three carried-forward M6 proof-hardening items before Region Frame integration. Its paired `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` is pre-authored. `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` remains blocked behind RF1 review + six approved 1536×1024 source images. Archive Resolve AR1 is now fully re-derived against the exact post-M6 request/commit/unload seams with a new paired technical review; it remains `blocked/manual` only on MR6R1 activation. AR2 now gates on reviewed AR1; AR3 remains refresh-gated behind AR2.
 - **Placement:** P1 `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` has landed `WorldPlacementContext` as the accepted-world read seam while leaving placement policies in `ContractWorldLoader`. `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (PR1) is now the next review gate and must pass before resource, vehicle, relay, encounter, or ingress extraction; those packets remain serialized by the `contract-world-loader` lock. `CONTRACT_WORLD_LOADER_CONTRACTION.md` (P7) remains blocked/manual until P2-P6 land, then must be re-derived from the surviving loader.
 - **ProcGen decomplexification:** D1 `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`, D2 `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`, and D3 `PROCGEN_GENERATION_STATE_EXTRACTION.md` now depend on G5 + `review-procgen-distant-chunk-unload-review-corrections-1`. They remain blocked/manual because each still requires its own post-review live inventory refresh before it may become executable.
 - **GenerationGrid:** `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` / XR1 remain the first executable post-D audit. `PROCGEN_GENERATION_GRID_FOUNDATION.md` is blocked/manual until XR1 defines the real minimum grid seam. `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` is blocked/manual until XR2. Their paired reviews remain dependency-gated. `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` stays hard-blocked until X3 authors and the generated migration DAG reaches a concrete final reviewed convergence workstream.
@@ -308,8 +302,9 @@ lost when the ephemeral worktree is removed.
 - `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — RF1 data-driven region-frame + true exterior-void presentation foundation plus bounded M6 proof hardening; ready/auto, dependency-gated on MR6R1.
 - `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — paired RF1 review.
 - `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` — six-state Asset V2 Alpine FAR/MIDDLE/NEAR underlay family; blocked on RF1 review + source art.
-- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 presentation-only streaming frontier spine; refreshed to landed M6, blocked until MR6.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 shader/material layer; blocked on AR1.
+- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 fully re-derived post-M6 presentation spine; blocked/manual only until MR6R1 clean/non-blocking activation.
+- `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; gates AR2.
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 shader/material layer; blocked on reviewed AR1.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 semantic echo + spawn/reacquisition polish; blocked on AR2.
 - `archived/CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 accepted-world context foundation; complete/landed, paired review PR1 remains the gate for P2-P6.
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — PR1 paired foundation review; gates P2-P6.
