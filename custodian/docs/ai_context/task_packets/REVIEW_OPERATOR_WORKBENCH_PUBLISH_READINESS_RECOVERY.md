@@ -11,12 +11,12 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-publish-readiness-recovery`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md`
-- Reviewed main: `4df3611c`
+- Reviewed main: `44bf03388c`
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently verify that the landed Workbench publication hardening converts the recent serial Git/LFS/manifest/import failure chain into one bounded readiness/preparation contract without weakening source authority, sparse-checkout safety, validation, or user-work preservation.
-- Reviewed implementation acceptance: Review the archived implementation packet's full acceptance contract, with special emphasis on clean-behind auto preparation, unknown-dirt preservation, `LAND PENDING` resume, local-cache-only LFS handling, sparse validation dependency proof, stale selected-manifest rejection before mutation, exact Godot metadata preimage restoration, clean-or-`RECOVERY_REQUIRED` failure postconditions, and unchanged scoped landing/allowlist authority.
+- Reviewed implementation acceptance: Review the archived implementation packet's full acceptance contract, with special emphasis on clean-behind auto preparation, unknown-dirt preservation, `LAND PENDING` resume, local-only LFS handling (shared cache first, exact verified hydrated-checkout donor second, no network), sparse validation dependency proof, stale selected-manifest rejection before mutation, exact Godot metadata preimage restoration, clean-or-`RECOVERY_REQUIRED` failure postconditions, and unchanged scoped landing/allowlist authority.
 - Review evidence: Reuse the implementation's fixture-isolated readiness classifications, publish transaction journals, exact before/after hashes, LFS network-negative controls, metadata-restoration receipts, UI readiness projections, successful publication fixture, changed-file validation report, and closing summary. Gather fresh evidence only where those artifacts do not prove an acceptance criterion.
 - Correction threshold: Create correction work only for a confirmed acceptance/correctness defect or an evidence gap that prevents confidence in required acceptance. In particular, any automatic reset/stash/rebase, network LFS fetch, ambiguous file restoration, silent Workbench baseline rewrite, or widening of publication allowlists/sparse scope is correction-worthy. Route optional ergonomics and non-blocking messaging improvements to next-slice/deferred.
 - Focused validation: Inspect the landed readiness/classification boundary and restoration predicates; rerun `python3 custodian/tools/validation/operator_art_worktree_smoke.py`, `python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py`, `python3 custodian/tools/validation/operator_workbench_ui_smoke.py`, and `python3 custodian/tools/validation/operator_animation_workbench_smoke.py`. Reuse the implementation's local-LFS and import-preflight evidence unless stale/insufficient. Run the smallest changed-file validation needed to confirm findings.
@@ -24,7 +24,7 @@
   - Safe preparation must be strictly narrower than destructive Git cleanup.
   - Dirt classification and recovery decisions must use structured state, not error-string parsing.
   - The exact selected source baseline must be checked before mutation without stealing FX-adoption's broader binding-set ownership.
-  - LFS must remain local-cache-only and sparse dependency additions must be measured rather than broad.
+  - LFS must remain local-only and sparse dependency additions measured rather than broad. Cache materialization is preferred; a hydrated coordination/developer checkout is an acceptable donor only when the same relative path's SHA-256 and byte size exactly match the target LFS pointer. Mismatch, donor pointer, missing donor, or dirty bytes that do not match must fail closed; no network fetch is permitted.
   - Metadata restoration must require clean pre-state + proven transaction provenance + exact preimage; wildcard cleanup is a blocking defect.
   - Failure after mutation must end clean or with a complete durable `RECOVERY_REQUIRED` journal.
   - Successful publication must retain current source-conflict, allowlist, commit, pending-land, and landing guarantees.
@@ -37,7 +37,7 @@
 1. Claim only after `operator-workbench-publish-readiness-recovery` is complete and archived on `origin/main`.
 2. Read root/local AGENTS, the archived implementation packet and closing summary, `OPERATOR_ANIMATION_WORKBENCH.md`, the current sparse-worktree publication code, and the implementation's durable transaction evidence.
 3. Review the implementation against the authored acceptance, not merely the fact that one publish succeeds.
-4. Start with the negative controls: unknown dirt, uncached LFS, stale manifest, ambiguous metadata churn, injected downstream failure, and pending-land resume.
+4. Start with the negative controls: unknown dirt, unavailable LFS after both cache and verified-donor lookup, donor hash/size mismatch, donor-still-pointer, stale manifest, ambiguous metadata churn, injected downstream failure, and pending-land resume. Also prove the positive exact-donor case leaves the target Git-clean.
 5. Verify exact byte preservation for user/unknown inputs and exact restoration for eligible machine-generated metadata.
 6. Verify the successful path still stages only the existing allowlist and lands only through the approved Operator publication handoff.
 7. Record findings/receipt and scaffold bounded correction + re-review only when the correction threshold is met.
