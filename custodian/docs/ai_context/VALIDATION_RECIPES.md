@@ -192,9 +192,12 @@ write invalid import sidecars for checked-out Git LFS pointer files:
 python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
 ```
 
-If it lists files, first materialize the required paths from the local Git LFS
-object cache with `git lfs checkout` and run the preflight again before
-importing. Do not run `git lfs pull` or `git lfs fetch` implicitly.
+If it lists files, first materialize **only the required checked-out paths** from
+the local Git LFS object cache with path-scoped `git lfs checkout <path>...`
+(or an equivalent exact-object materializer), then run the preflight again.
+Do not run an unscoped/general `git lfs checkout` in a sparse checkout: the
+2026-10-03 fast_03 recovery proved that it can expand sparse-omitted content.
+Do not run `git lfs pull` or `git lfs fetch` implicitly.
 
 If a required target path remains an LFS pointer because the local object cache
 is incomplete but another local checkout of this repository already has that
