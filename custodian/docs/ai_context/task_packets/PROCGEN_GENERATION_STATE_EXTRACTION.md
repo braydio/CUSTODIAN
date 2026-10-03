@@ -10,6 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `cdf5a2d4a1259df11d27605208a01401a7d80627`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Extract accepted-world generation snapshot/level-data export ownership from ProcGenTilemap into a focused generation-state authority.
 - Completion boundary: REFRESH-GATED on reviewed M6 / cycle-1 re-review. Before execution, re-audit the post-cycle-1 M6 review accepted-world/export surface and rewrite this packet in place. The eventual slice closes when immutable/base accepted-world generated-state capture, level-data assembly/serialization, deterministic fingerprints, and terrain/result export live behind one focused owner in the existing `custodian/game/world/procgen/generation/` package, with runtime mutation overlays represented separately and `ProcGenTilemap` delegating.
 - Current measured state: `custodian/game/world/procgen/generation/README.md` already contains `candidate_evaluator.gd`, `candidate_semantic_adapter.gd`, and `procgen_candidate_materializer.gd`; it explicitly still names `ProcGenTilemap` as runtime topology/final-realization authority. `ProcGenTilemap` currently owns `_capture_generated_tile_state`, `get_level_data`, `_get_terrain_builder_level_data`, generated floor/wall debug/fingerprint accessors, terrain/result export, and numerous exported semantic dictionaries. Rejected candidates still construct live TileMap-backed state, so this D3 extraction must preserve the exact G2/G4/G5 contracts that feed the later GenerationGrid audit.
@@ -48,6 +49,14 @@ section**. Its continued presence means this packet is not ready to implement.
 ## Series Contract
 
 This packet belongs to the pre-authored `procgen-runtime-optimization-v1` dependency DAG. Do not author its ordinary V1 successor during implementation: downstream packets already exist on `main` with `Dispatch: auto`. Update the detailed procgen roadmap and matching master-roadmap row at closeout, record landed evidence, then finish normally so declared dependents can become eligible. If live evidence invalidates a downstream contract, record the contradiction and leave that dependent blocked rather than silently broadening this workstream.
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
 
