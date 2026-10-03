@@ -5,7 +5,7 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `procgen-archive-resolve-presentation-spine`
+- Depends on: `review-procgen-archive-resolve-presentation-spine`
 - Locks: `procgen-presentation`
 - Kind: `implementation`
 - Review: `manual`
@@ -14,7 +14,7 @@
 - Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `36cb18230796ec844a7796f0a246085c96179e20`
+- Reviewed main: `bc3e354bb20641d4c6ce9317c38002b9e3449ca0`
 - Goal: Turn the proven AR1 flat veil into the locked Archive Resolve visual language: graphite/soot uncertainty, coherent world-space irregular resolution, ordered pixel dither, restrained brass/amber registration, and a brief phase-alignment effect that disappears completely after settlement.
 - Completion boundary: Done when the AR1 scheduler/ownership is unchanged, one shared pause-safe shader/material path renders the locked Archive Resolve phases without per-cell materials/tweens, the frontier reads as continuous world-space resolution rather than chunk loading or square pop-in, reduced-effects controls exist, and settled terrain returns to its ordinary authored appearance.
 - Current measured state: No Archive Resolve runtime owner or shader exists yet. The hardened design is locked in `STREAMING_REVEAL_PRESENTATION_V1.md`; AR1 is expected to provide batched frontier instances, deterministic per-cell phase/start identity, first-resolve/reacquisition state, and a presentation clock.
@@ -33,10 +33,10 @@
 
 This packet is intentionally pre-authored before AR1 exists.
 
-After `procgen-archive-resolve-presentation-spine` lands:
+After `review-procgen-archive-resolve-presentation-spine` lands clean/non-blocking:
 
-1. fetch current `origin/main`;
-2. inspect the actual AR1 owner, render primitive, custom-data schema, pause clock, performance evidence, and validation;
+1. fetch current `origin/main` and read the archived AR1 independent-review receipt;
+2. inspect the actual reviewed AR1 owner, render primitive, custom-data schema, pause clock, performance evidence, and validation;
 3. update `Reviewed main`, measured state, exact work surface, shader inputs, validation, and any performance constraints;
 4. remove this entire **Temporary Refresh Gate** section;
 5. only then set `Status: ready`.
@@ -65,6 +65,6 @@ Do not redesign AR1 scheduling merely because this pre-authored packet guessed a
 
 ## Handoff
 
-- Next action: Refresh only after AR1 lands and its flat-veil architecture is proven.
+- Next action: Refresh only after the paired AR1 review lands clean/non-blocking and its flat-veil architecture is proven.
 - Best starting files: landed AR1 presentation owner; `STREAMING_REVEAL_PRESENTATION_V1.md`; existing shared CanvasItem shader conventions.
 - Blockers or open questions: Final shader tuning is human-owned visual judgment, not an auto-approval criterion.
