@@ -277,14 +277,14 @@ state.
 | S5 Runtime mutation scheduler | complete | P0 |
 | S6 Pause-aware streaming | complete | P1 |
 | S7 Chunk lifecycle + cache | complete (M6/MR6 correction cycle closed; MR6R1 passed) | P1 |
-| S8 ProcGenTilemap decomplexification | planned (D1/D2/D3 extraction → GenerationGrid migration initiative → D4 façade contraction) | P1 |
+| S8 ProcGenTilemap decomplexification | in_progress (D1 road authority refreshed/ready; D2/D3 refresh next → GenerationGrid migration initiative → D4 façade contraction) | P1 |
 | S9 Contract-world placement extraction | planned | P2 |
 | S10 Renderer / node-load consolidation | planned | P1 |
 | S11 End-to-end performance soak + regression budget gate | planned | P1 |
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete, so S7 is closed. The cycle-1 review passed with 0 blocking defects and 0 material evidence gaps; five optional proof-hardening items N1-01..N1-05 are folded into RF1 rather than another correction cycle. D1-D3 now satisfy their G5+MR6R1 dependencies but still require individual live refreshes before implementation. RF1/RFR1 are ready/auto; Archive Resolve AR1/ARR1 are also ready/auto at lower priority under the same procgen locks. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete, so S7 is closed. The cycle-1 review passed with 0 blocking defects and 0 material evidence gaps; five optional proof-hardening items N1-01..N1-05 are folded into RF1 rather than another correction cycle. D1-D3 satisfy their G5+MR6R1 dependencies; D1 has now been live-refreshed and is ready/auto with paired review, while D2/D3 still require individual live refreshes before implementation. RF1/RFR1 are ready/auto; Archive Resolve AR1/ARR1 are also ready/auto at lower priority under the same procgen locks. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
