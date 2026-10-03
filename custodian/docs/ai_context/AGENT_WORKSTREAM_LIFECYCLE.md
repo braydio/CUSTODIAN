@@ -178,9 +178,7 @@ This pushes and verifies the branch while retaining it as active. Optional
 `--remove-worktree` removes only its clean checkout; the local and remote branch
 remain.
 
-Paired post-land review workstreams are review-only with respect to the target
-implementation, but their packet may authorize a bounded repository-artifact
-commit. When that exact override is present, the reviewer stages only the
+Paired post-land review workstreams are review-only with respect to the target implementation and must start from a **fresh reviewer context**. Do not continue the implementation session/conversation into its paired review. The same model/agent family is allowed only when a new reviewer context/workstream reconstructs the task from durable repository evidence; record provenance as `same-agent-fresh-context`. A different agent/context records `different-agent`. If a fresh context is unavailable, the result is ad hoc self-review and does not satisfy the paired-review contract. The review packet may authorize a bounded repository-artifact commit. When that exact override is present, the reviewer stages only the
 archived target's `Independent Review` receipt, the required review closing
 summary, the review packet's lifecycle/archive metadata, and bounded correction
 plus re-review packets. The reviewer never stages reviewed implementation files
