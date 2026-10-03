@@ -2,7 +2,7 @@
 
 **Status:** draft
 **Parent:** HUB_DOCTRINE.md
-**Last Updated:** 2026-09-25
+**Last Updated:** 2026-10-03
 
 ---
 
@@ -12,14 +12,16 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 
 **Core spatial idea:** A ruined legendary capital built on a long elevated spine, with one dominant ceremonial axis and several broken ring-districts. A dead, overgrown record of civilization's attempt to make itself legible to eternity.
 
-> **Implemented today (2026-09-06):** the southern approach to this spine exists as
-> a playable blockout. `design/04_architecture/AWAKENING_FIRST_RETURN.md` owns
-> sections 01-10 — the undercity Crèche through the Gate of Dust, the Custodian
-> Approach, and the **Road of Witnesses South Reach**, which is the first stretch of
-> the ceremonial axis described below. The Road is temporarily sealed north of the
-> South Reach by a visible collapsed barricade at world `y = -6530`; the districts
-> in this document lie beyond it and are not yet built. Awakening world coordinates
-> are authoritative in `custodian/game/world/awakening/awakening_layout.gd`.
+> **Implemented production boundary:** `design/04_architecture/AWAKENING_FIRST_RETURN.md`
+> owns sections 01-10 — the undercity Crèche through Gate of Dust, Custodian
+> Approach, and **Road of Witnesses South Reach**. The current Awakening runtime is
+> sealed north of South Reach at world `y = -6530`; its coordinates remain
+> authoritative in `custodian/game/world/awakening/awakening_layout.gd`.
+>
+> The post-Awakening first-set geometry is now locked in
+> `HUB_FIRST_SET_BLOCKOUT.md` and tracked by
+> `HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`. H1 is implementation-in-progress,
+> not yet production-landed.
 
 ---
 
@@ -158,9 +160,9 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 
 **Prototype Runtime Note:**
 - `res://scenes/hub_road_of_witnesses_prototype.tscn` is the current fast-playable authored preview for this district.
-- It uses the authored map image as a background layer with hand-placed collision blockers and a small set of foreground occlusion masks.
-- It is a traversal/readability prototype, not yet a canonical reusable TileMap conversion.
-- `res://scenes/twin_solaria_backdrop_test.tscn` is a separate development-only fidelity preview using the largest current Twin Solaria composite as a gameplay backdrop. It intentionally provides perimeter collision only; internal traversal and collision are not authored.
+- Road presentation uses five registered modular production plate pairs owned by `RoadOfWitnessesPrototype.MODULES`; it is not one monolithic authored background.
+- The prototype's hand-placed blockers remain local to the existing Road/Awakening use. The reviewed H1 first-set grid is intended to become the larger Hub blockout collision/navigation authority when H1 lands.
+- Production Twin Solaria is already an authored registered level (`hub_twin_solaria`) with internal traversal and `Spawn_CrownCauseway`. `res://scenes/twin_solaria_backdrop_test.tscn` remains only a development fidelity preview.
 
 ---
 
@@ -360,18 +362,18 @@ terrace extension.
 
 ## 4. First Playable Slice
 
-For first playable hub, build this route:
+The first playable **Hub** set begins at South Reach because Gate of Dust and
+Custodian Approach belong to Awakening. The locked first-set route is:
 
-> **Gate of Dust → Custodian Approach → Ashen Forum → one side loop into Sepulcher Gardens → one north climb into lower Archive Heights → one east overlook at the Prism Margin**
+> **South Reach → Road of Witnesses / Witness Plaza → North Processional → Ashen Forum → Sepulcher Gardens loop / Lower Archive Rise → Crown Transfer or Muster Court → ordinary Continuity Port**
 
-This gives:
-- Arrival mood
-- Core civic heart
-- Life-vs-ruin contrast
-- Archive identity
-- Impossible cosmic edge
+Twin Solaria is the optional detached Crown branch from Crown Transfer. The
+ordinary first Campaign departs through Muster Court and the Continuity Port.
+Prism Margin, the Long Edge, full Archive Heights, and the remaining city
+districts are deferred beyond this first set.
 
-Without overbuilding the entire city initially.
+See `HUB_FIRST_SET_BLOCKOUT.md` for exact geometry and
+`HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md` for H1-H7 implementation status.
 
 ---
 
