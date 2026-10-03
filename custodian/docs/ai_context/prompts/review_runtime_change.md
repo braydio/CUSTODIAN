@@ -24,7 +24,6 @@ effects. Distinguish confirmed failures from questions or assumptions.
 Recommend correction work only for confirmed acceptance/correctness defects or
 evidence gaps that prevent confidence in required acceptance. Route other
 issues to next-slice/deferred unless separately justified. Treat pipeline and
-process failures as task feedback, not product-code findings. Preserve
-independence: paired reviews never edit reviewed implementation files. Use the
+process failures as task feedback, not product-code findings. Preserve independence: paired reviews must run from a **fresh reviewer context** that is separate from the implementation session. The same model/agent family may review its own prior work only as `same-agent-fresh-context`, reconstructing the task from durable repository evidence and fresh traces/mutations; continuing the implementation conversation/session is not independent review. Record reviewer context/provenance in the durable receipt. Paired reviews never edit reviewed implementation files. Use the
 repository's V2 review packet and correction delta template, then summarize the
 change only after findings.
