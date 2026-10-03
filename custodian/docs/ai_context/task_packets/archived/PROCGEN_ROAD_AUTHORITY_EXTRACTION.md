@@ -52,21 +52,21 @@ Start with `proc_gen_tilemap.gd` road state declarations and the road blocks aro
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes — ProcgenRoadAuthority owns canonical generated road/path/parking semantics and graph decisions; ProcGenTilemap remains the physical realization and presentation facade.`
-- Completion boundary satisfied: `yes — canonical road state has one owner, and Road Semantics V2, surface material classification, physical realization, visual masks, and decals remain in their existing separate seams.`
-- Acceptance satisfied: `yes — fixed production semantics and archived wide-road output match baseline; facade consumers, authored clearing, route/foliage protection, M6 presentation lifecycle, and disabled production default are covered by focused and changed-file validation.`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `removed`
-- Evidence: `procgen_road_authority_smoke passed; changed-file validation passed 33/33; packet road semantics/surface-role/placeholder/compound-wall/authored-scene/M6/candidate-parity/S1 checks passed. Fixed seed 420777 matches origin/main road counts (1372 road cells, 63 parking cells, 1372 road decals); seed 824790 Road Semantics fingerprint remains c29c6e034199105ad3b1c6d3c54e319c5e2fd943ad1fdb8c2eb9e853b4de5026. S1 reports determinism_ok=true.`
+- Evidence: `ProcgenRoadAuthority owns canonical generated road/path/parking semantics and graph decisions; ProcGenTilemap remains the physical realization/presentation facade. Road Semantics V2 and surface material classification remain separate. Focused checks and post-sync changed-file validation passed 34/34. Fixed seed 420777 matches origin/main road counts (1372 road cells, 63 parking cells, 1372 road decals); seed 824790 Road Semantics fingerprint remains c29c6e034199105ad3b1c6d3c54e319c5e2fd943ad1fdb8c2eb9e853b4de5026. S1 reports determinism_ok=true.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: `persistent_compound_runtime_smoke` still called a removed ContractWorldLoader helper and timed out in the first changed-file sweep.
-- Root cause / contributing factors: `The smoke was not updated when compound-sector mapping moved to WorldPlacementContext.`
-- Prevention / pipeline improvement: `Updated the validation fixture to use the current read-only WorldPlacementContext API; isolated rerun passed in 10 seconds and the final changed-file sweep passed.`
-- Tooling / docs drift discovered: `The test manifest still selected the stale compound smoke through ProcGenTilemap ownership; coverage itself remains useful after its fixture was repaired.`
+- What went wrong: `persistent_compound_runtime_smoke` referenced a removed helper and the first finish attempt rejected completion evidence embedded in yes/no fields.
+- Root cause / contributing factors: `The smoke missed the move to WorldPlacementContext; the completion-truth parser requires exact yes/no values.`
+- Prevention / pipeline improvement: `Updated the fixture to the current read-only API; kept completion-truth scalars exact and moved evidence into its evidence field. The final post-sync changed-file sweep passed 34/34.`
+- Tooling / docs drift discovered: `The test manifest selected a stale compound smoke fixture; the completion-truth parser is stricter than its prose example suggests.`
 - Follow-up: `fixed-in-scope`
 
 ## Handoff
