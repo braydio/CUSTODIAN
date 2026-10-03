@@ -62,7 +62,7 @@
 
 ## Independent Review
 
-- Status: `clean_with_next_slice`
+- Status: `passed`
 - Review workstream: `review-procgen-distant-chunk-unload-review-corrections-1`
 - Reviewed on main: `b7d23c4c2` (correction landed at `81494285d`)
 - Review modes: `code, architecture, runtime`
