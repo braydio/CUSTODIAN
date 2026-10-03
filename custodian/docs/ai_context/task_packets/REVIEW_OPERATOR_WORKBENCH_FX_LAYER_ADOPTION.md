@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-fx-layer-adoption`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md`
-- Reviewed main: `87e3352a`
+- Reviewed main: `0c2a646ccd`
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
