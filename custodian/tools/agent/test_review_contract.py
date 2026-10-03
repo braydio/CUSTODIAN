@@ -21,7 +21,7 @@ class ReviewContractTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[3]
         review_template = (root / "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md").read_text()
         correction_template = (root / "custodian/docs/ai_context/AGENT_CORRECTION_PACKET_TEMPLATE.md").read_text()
-        self.assertIn(dispatch.BOUNDED_REVIEW_OVERRIDE, review_template)
+        self.assertIn("- Review: `auto`", task_template)\n        self.assertIn("Review rationale", task_template)\n        self.assertIn("low-risk exemption", task_template)\n        self.assertIn(dispatch.BOUNDED_REVIEW_OVERRIDE, review_template)\n        self.assertIn("- Reviewer context: `fresh`", review_template)\n        self.assertIn("same-agent-fresh-context", review_template)\n        self.assertIn("different-agent", review_template)
         for field in ("Reviewed main", "Reviewed implementation acceptance", "Review evidence", "Correction threshold", "Focused validation"):
             self.assertIn(f"- {field}:", review_template)
         for field in CORRECTION_FIELDS:
