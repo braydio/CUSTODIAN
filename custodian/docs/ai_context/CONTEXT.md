@@ -6,11 +6,8 @@ Repository defaults are inherited from root and `custodian/AGENTS.md`; prompts
 and packets describe task-specific deltas only. Use isolated worktrees for
 substantial parallel tasks. Validated implementation work commits and finishes automatically on `origin/main`
 through `custodian/tools/agent/workstream.py finish`; that lifecycle invokes
-`land_main.py` internally for the race-safe landing step. Review is by exception. The helper serializes local landings, rebases onto the
-latest main, retries bounded remote races, and aborts on conflicts without
-force-pushing. Ad hoc review-only work needs an explicit no-mutation override;
-paired post-land reviews may commit only the bounded artifacts authorized by
-their validated review-packet override, never the reviewed implementation.
+`land_main.py` internally for the race-safe landing step. The helper serializes local landings, rebases onto the
+latest main, retries bounded remote races, and aborts on conflicts without force-pushing. For newly authored or materially refreshed V2 engineering packets, paired post-land review is the risk-based default; `Review: none` is reserved for explicit low-risk exemptions. Paired review must begin from a fresh reviewer context. The same model/agent family may review its own prior work only from a newly started context/workstream that reconstructs the target from durable repository evidence. Ad hoc review-only work needs an explicit no-mutation override; paired reviews may commit only the bounded artifacts authorized by their validated review-packet override, never the reviewed implementation.
 
 ## Canon Migration (2026-09-03)
 
