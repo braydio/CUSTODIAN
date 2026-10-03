@@ -648,7 +648,10 @@ workspace paths display repo-relative when possible. Persistent shell widget
 access is anchored to the retained MainScreen rather than the topmost modal,
 so activity/error reporting remains safe beneath every dialog; failed session
 loads no longer emit false successful-selection events or mask their original
-Workbench error with a Textual `NoMatches` exception.
+Workbench error with a Textual `NoMatches` exception. Error dialogs now focus
+Close and accept Escape/Enter as well as clicking Close; preview/motion clocks
+pause beneath errors without accumulating catch-up time. Stale Edit remains
+a refusal that does not launch Aseprite or overwrite the saved document.
 Animation-tree leaves now own identity only while weapon/linked-profile context
 persists separately across navigation. An existing identity-only workspace with
 a different strict fingerprint opens a recovery dialog that can cancel, adopt

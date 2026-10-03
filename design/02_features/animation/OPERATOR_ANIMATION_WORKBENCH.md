@@ -89,7 +89,11 @@ Persistent shell widgets belong to the retained main screen, not whichever
 modal is currently topmost. Activity events always append to UI state and the
 underlying main-screen log while dialogs are open. A failed session projection
 must preserve its exact Workbench error, open at most one error dialog, and
-must not report the semantic selection as successfully loaded.
+must not report the semantic selection as successfully loaded. Error dialogs focus
+the Close button and dismiss with Escape, Enter, or Close. Preview and motion
+playback clocks pause while an error dialog is open, without accumulating
+catch-up time. A stale-edit refusal never launches Aseprite or replaces saved
+Workbench pixels.
 
 ```bash
 operator ui

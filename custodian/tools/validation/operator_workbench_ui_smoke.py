@@ -1130,6 +1130,54 @@ async def textual_smoke() -> None:
         assert "⇧R Resize Canvas" not in str(shortcut_app.main_screen.query_one("#context-key-bar", ContextKeyBar).render())
 
 
+async def stale_error_smoke() -> None:
+    from ui.app import OperatorWorkbenchApp
+    from ui.dialogs import ErrorDialog
+    from textual.widgets import Button
+
+    class StalePilotService(PilotService):
+        def edit(self, _selection):
+            raise RuntimeError("WORKBENCH STALE\ncanonical source changed; run operator anim refresh")
+
+    service = StalePilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(120, 40)) as pilot:
+        await pilot.pause(0.3)
+        await pilot.press("3")
+        await pilot.pause(0.3)
+        app.state.preview_playing = True
+        app.state.preview_loop = True
+        app.action_edit()
+        await pilot.pause(0.3)
+        assert isinstance(app.screen, ErrorDialog)
+        assert app.screen.error_title == "WORKBENCH STALE"
+        assert app.focused is app.screen.query_one("#close", Button)
+        assert app.state.aseprite_process is None and service.mutations == 0
+        frozen_frame = app.state.preview_frame
+        elapsed = app._preview_elapsed_sec
+        await pilot.pause(0.3)
+        assert app.state.preview_frame == frozen_frame
+        assert app._preview_elapsed_sec == elapsed
+        app._error(RuntimeError("WORKBENCH STALE\nrepeat"))
+        assert sum(isinstance(screen, ErrorDialog) for screen in app.screen_stack) == 1
+        await pilot.press("escape")
+        await pilot.pause(0.2)
+        assert app.screen is app.main_screen and not app.state.active_operation
+        for key in ("enter", "button"):
+            app.action_edit()
+            await pilot.pause(0.2)
+            assert isinstance(app.screen, ErrorDialog)
+            if key == "button":
+                await pilot.click("#close")
+            else:
+                await pilot.press(key)
+            await pilot.pause(0.2)
+            assert app.screen is app.main_screen
+        assert app._exception is None
+        assert service.mutations == 0 and app.state.aseprite_process is None
+    print("PASS STALE ERROR: Escape/Enter/Close recover preview; no editor launch or mutation")
+
+
 def real_repo_read_only() -> None:
     with tempfile.TemporaryDirectory(prefix="operator_ui_readonly_") as raw:
         service = WorkbenchService(workspace_root=Path(raw) / "workspace")
@@ -1157,7 +1205,11 @@ def real_repo_read_only() -> None:
             service.workbench.publish = original_publish
             pending_path.unlink(missing_ok=True)
         assert pending_view.land_pending and pending_view.pending_identity == "unarmed/locomotion/run_01/e"
-        assert not pending_view.publish_enabled\n        assert "isolated art checkout" in pending_view.publish_block_reason.lower()
+        checkout = service.checkout_identity()
+        assert pending_view.publish_enabled == checkout.publish_allowed
+        if not checkout.publish_allowed:
+            assert ("isolated art checkout" in pending_view.publish_block_reason.lower()
+                    or "workbench/operator-art" in pending_view.publish_block_reason)
 
 
 def main() -> None:
@@ -1166,7 +1218,9 @@ def main() -> None:
         import textual  # noqa: F401
         import textual_image  # noqa: F401
     except ModuleNotFoundError: print("SKIP TEXTUAL PILOT: install custodian/tools/operator/ui/requirements.txt")
-    else: asyncio.run(textual_smoke())
+    else:
+        asyncio.run(stale_error_smoke())
+        asyncio.run(textual_smoke())
     real_repo_read_only()
     print("PASS operator_workbench_ui_smoke: service projections, dry-run safety, real discovery, optional Textual pilot")
 

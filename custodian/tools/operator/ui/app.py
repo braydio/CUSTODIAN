@@ -1239,6 +1239,9 @@ class OperatorWorkbenchApp(App):
         self._preview_elapsed_sec = 0.0
 
     def _preview_tick(self) -> None:
+        if isinstance(self.screen, ErrorDialog):
+            self._preview_last_tick = self._motion_last_tick = time.monotonic()
+            return
         if self.state.mode == "motion":
             now = time.monotonic()
             delta = now - self._motion_last_tick
