@@ -15,6 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `179da01f79d5c0354e65170fbf8b4f5e61c592d6`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Publish the six production Asset Pipeline V2 images for the first `ALPINE_PLATEAU` permanent underlay, bind them to the reviewed Region Frame profile, remove the explicit Endless Forest compatibility fallback for that frame, and obtain human visual approval of the cliff-fog-distant-world composition.
 - Completion boundary: Done when the `procgen_underlay_alpine_plateau` Asset V2 family exists and passes the live asset doctor; all six required 1536x1024 static states are ingested/bound/verified; `alpine_plateau_underlay.tres` deterministically selects FAR/MIDDLE/NEAR A/B variants by accepted procgen seed through the existing `ProcgenUnderlayProfile` path; the reviewed `ALPINE_PLATEAU` Region Frame selects that resource with fallback telemetry cleared; the runtime keeps Archive Resolve separate; and the user/human review accepts the gameplay-scale permanent edge composition.
 - Current measured state: The design lock requires FAR distant lower world, MIDDLE valley fog/cloud shelf, and NEAR cliff-root mist/descending-conifer depth, each with two static variants. No Alpine runtime underlay PNG family or `alpine_plateau_underlay.tres` exists yet. Current runtime uses the Endless Forest underlay as a compatibility default; the Region Frame foundation packet is responsible for making that fallback explicit before this asset packet runs. The live Asset V2 backdrop precedent is `drowned_basilica_underlay.asset.json`: `custodian.asset_family.v2`, kind `backdrop`, 1536x1024 canvas, omni, no auto-mirror, copy layout.
@@ -82,6 +83,14 @@ This packet is fully authored but must remain blocked until six user-approved so
 - Prevention / pipeline improvement: `none`
 - Tooling / docs drift discovered: `none`
 - Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
 
