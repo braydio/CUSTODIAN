@@ -139,8 +139,7 @@ Legacy packets are not bulk-retrofitted. When new work materially depends on an 
 
 ## Paired Review And Correction
 
-Independent post-land review is opt-in per packet, decided when the
-implementation packet is created. It uses ordinary dispatcher primitives
+Post-land review intent is decided when the implementation packet is created. For newly authored or materially refreshed V2 engineering packets, `Review: auto` is the risk-based default described above; `Review: none` is the explicit low-risk exemption. It uses ordinary dispatcher primitives
 (`Dispatch`, `Depends on`, `Locks`) rather than a second scheduler, and
 happens after validated implementation already landed on `main` — it is never
 a `workstream.py finish` blocker.
@@ -174,6 +173,8 @@ a `workstream.py finish` blocker.
   - Status: `pending | passed | findings | human_required`
   - Review workstream: `review-...`
   - Reviewed on main: `<short SHA/current target>`
+  - Reviewer context: `fresh`
+  - Reviewer provenance: `different-agent | same-agent-fresh-context`
   - Review modes: `...`
   - Blocking defects: `N`
   - Material evidence gaps: `N`
@@ -278,11 +279,14 @@ lost when the ephemeral worktree is removed.
 - **Runtime/streaming:** M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete. Cycle-1 MR6R1 passed with 0 blocking defects and 0 material evidence gaps, closing S7. Its five optional next-slice proof-hardening items N1-01..N1-05 are now owned by RF1 rather than another correction cycle.
 - **Post-M6 world presentation:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` (RF1) is `ready/auto` and now owns all five MR6R1 next-slice proof-hardening items N1-01..N1-05 before Region Frame integration. Its paired `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` is pre-authored. `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` remains blocked behind RF1 review + six approved 1536×1024 source images. Archive Resolve AR1 is also now `ready/auto` against the reviewed M6 seam, with paired technical review ARR1; RF1 remains higher-priority P1 while AR1 is P2 under their shared procgen locks. AR2 gates on reviewed AR1; AR3 remains refresh-gated behind AR2.
 - **Placement:** P1 `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` has landed `WorldPlacementContext` as the accepted-world read seam while leaving placement policies in `ContractWorldLoader`. `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (PR1) is now the next review gate and must pass before resource, vehicle, relay, encounter, or ingress extraction; those packets remain serialized by the `contract-world-loader` lock. `CONTRACT_WORLD_LOADER_CONTRACTION.md` (P7) remains blocked/manual until P2-P6 land, then must be re-derived from the surviving loader.
-- **ProcGen decomplexification:** D1 `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`, D2 `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`, and D3 `PROCGEN_GENERATION_STATE_EXTRACTION.md` now depend on G5 + `review-procgen-distant-chunk-unload-review-corrections-1`. They remain blocked/manual because each still requires its own post-review live inventory refresh before it may become executable.
+- **ProcGen decomplexification:** D1 `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` has been re-derived against post-MR6R1 live main and is now `ready/auto` with paired `REVIEW_PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`. D2 `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` and D3 `PROCGEN_GENERATION_STATE_EXTRACTION.md` are dependency-satisfied but remain blocked/manual pending their own live inventory refreshes.
 - **GenerationGrid:** `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` / XR1 remain the first executable post-D audit. `PROCGEN_GENERATION_GRID_FOUNDATION.md` is blocked/manual until XR1 defines the real minimum grid seam. `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` is blocked/manual until XR2. Their paired reviews remain dependency-gated. `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` stays hard-blocked until X3 authors and the generated migration DAG reaches a concrete final reviewed convergence workstream.
 - **Render/soak:** `PROCGEN_RENDER_ATTRIBUTION_V1.md` remains the post-D4/P7 measurement slice and must re-inventory live presentation owners at execution. `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` is blocked/manual until attribution identifies the actual safe target. `PROCGEN_PERFORMANCE_SOAK_V1.md`, `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md`, and `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` remain dependency-gated end-of-series work; A1 now carries the same refresh-gate discipline rather than requiring speculative future packets to be ready up front.
 
 ### Ready / Auto Dispatch
+
+- `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — P1 D1 road/path/parking authority extraction from `ProcGenTilemap`; refreshed after MR6R1 and paired for fresh-context review.
+- `REVIEW_PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — paired D1 code/architecture/runtime review with reviewer-context provenance.
 
 - `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — P1 Region Frame foundation; includes MR6R1 next-slice proof hardening N1-01..N1-05 and explicit Alpine starting-frame seam.
 - `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — paired RF1 code/architecture/runtime/visual review.
