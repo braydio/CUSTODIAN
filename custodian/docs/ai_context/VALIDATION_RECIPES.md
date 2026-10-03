@@ -192,9 +192,38 @@ write invalid import sidecars for checked-out Git LFS pointer files:
 python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
 ```
 
-If it lists files, materialize cached payloads with `git lfs checkout` and run
-the preflight again before importing. Operator ingest, Workbench publication,
-and the shared import adapters run this guard automatically.
+If it lists files, first materialize the required paths from the local Git LFS
+object cache with `git lfs checkout` and run the preflight again before
+importing. Do not run `git lfs pull` or `git lfs fetch` implicitly.
+
+If a required target path remains an LFS pointer because the local object cache
+is incomplete but another local checkout of this repository already has that
+same path hydrated, that checkout is an approved **local donor** for validation.
+The normal developer/coordination checkout (commonly `~/Projects/CUSTODIAN`)
+is the preferred donor when it already has the needed bytes. This is not a
+license to copy arbitrary tracked files between branches. For every donated LFS
+file:
+
+1. Read the target checkout's LFS pointer **before** replacing it and record its
+   expected `oid sha256:<hash>` and `size`.
+2. Use the same repository-relative path in the donor checkout. The donor must
+   be a regular hydrated file, not another LFS pointer.
+3. SHA-256 and byte-size of the donor must exactly match the target pointer.
+   A dirty donor checkout is acceptable only when this exact per-file proof
+   succeeds; the donor's branch name or apparent recency is not authority.
+4. Copy only the verified bytes into the validation checkout. Do not copy
+   `.import`, generated resources, unrelated siblings, or other tracked state.
+5. Confirm the hydrated target path is Git-clean for the target commit, rerun
+   `godot_import_preflight.py`, then run the intended Godot validation.
+6. If the donor is absent, still a pointer, or hash/size mismatched, stop and
+   report the exact path/OID. Do not silently fall back to network LFS.
+
+For disposable sparse validation, prefer this verified local-donor fallback over
+waiting on a broad cache hydration or weakening the sparse profile. Production
+tooling should implement the same ordering when it needs local-only
+materialization: shared/local LFS cache first, verified hydrated local checkout
+second, explicit blocker third. Operator ingest, Workbench publication, and the
+shared import adapters run the pointer guard automatically.
 
 ## Resource Budget Before Broad Sweeps
 
