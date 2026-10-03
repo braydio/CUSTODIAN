@@ -78,3 +78,37 @@ Start only from: the carried-forward sections of `custodian/tools/validation/pro
 - Refresh reason: `none`
 - Next action: Complete RF1, then let the paired RFR1 review claim automatically from a fresh reviewer context.
 - Blockers or open questions: Alpine production underlay art is intentionally deferred and is not an RF1 blocker because fallback state is part of RF1 acceptance.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-procgen-region-frame-presentation-foundation`
+- Reviewed on main: `07d2277e8` (RF1 landed at `49cbd3982`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, visual` (visual satisfied by structured exterior/internal counts, bounds and backdrop mode; no capture was needed or taken)
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `2`
+- Optional improvements: `2`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01, R0-02, R0-04`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none` (R0-01, R0-02, R0-04 are not yet owned; R0-01 fits `procgen-alpine-plateau-underlay-assets`; R0-03 is pipeline-only)
+- Reviewer independence: the same agent family wrote RF1; verdicts rest on re-run suites, a live production-scene generation and five throwaway-copy mutations, not on RF1's own summary.
+
+### Findings
+
+- `R0-01` -- `non_blocking_issue` (evidence), domain `implementation`, acceptance (1)/(7). No registered test generates through the production `custodian_contract_map.tscn` and asserts `level_data.region_frame.frame_id == alpine_plateau`; `procgen_region_frame_smoke.gd` proves scene property -> `_build_planet_world_profile` and profile dict -> tilemap separately. Independently closed by a throwaway production-scene generation: seed 11 (`ice_world`) and seed 4242 (`islands`) both reported `frame_id=alpine_plateau`, `frame_resolved=true`, `visual_fallback=true`, `underlay_source=region_frame`, `backdrop_mode=chasm_camera_follow`, exterior/internal chasm counts 15904/195 and 30250/776. Disposition `next_slice`: fold one end-to-end assertion into the Alpine asset packet's validation.
+- `R0-02` -- `optional_improvement`, domain `implementation`, acceptance (2)/(3). The classifier comment says a CHASM pocket reachable only through OCEAN is internal, but the ocean fixture has no such pocket (its west CHASM column also touches the map edge through the top row). Ocean leakage into the mask is proven and mutation-sensitive; ocean-as-conduit is not. Disposition `next_slice`.
+- `R0-03` -- `non_blocking_issue`, domain `pipeline`. RF1's summary, the MR6R1 summary and this review packet's validation text say `procgen_candidate_materializer_parity` is absent. It is registered in `validation_manifest.json` since `b2e4d9409` (2026-09-29) and passes (19.8 s). RF1's substitute (`procgen_candidate_promotion_smoke.gd`) also passes. Disposition `deferred`; recorded in `Execution Feedback`.
+- `R0-04` -- `optional_improvement`, domain `implementation`, acceptance (12). The N1-03 road fixture is injected through the private `_spawn_road_piece_decal` with `res://icon.svg`; removal after unload is asserted unconditionally and is mutation-sensitive, but reload recreation is still asserted only when a natural road decal existed (`had_road_decal`). Disposition `next_slice`.
+
+### Verification
+
+- N1-01..N1-05 are non-vacuous. Throwaway-copy mutations of the reviewed source each failed `procgen_distant_chunk_unload`: direct `_flush_streaming_visual_rebuilds()` per eviction (3 flushes instead of 0, exactly-once interval flush lost); `_remove_road_piece_decal` dropped from `_unload_chunk` ("road decal presence did not drop"); `_foliage_nodes.erase` on hide (metadata/node identity/hidden checks fail); navigation unloaded-chunk union disabled (floor tile dropped from graph source, rebuilt nav and A* point lost). The portal anchor starts unprotected, becomes protected solely from the injected portal, and becomes evictable after in-test removal. A* is checked both adjacent and to the spawn tile through `compute_path_immediate`, with a genuinely UNSEEN chunk excluded.
+- RF1 did not change M6 production behavior: the only production deltas in the M6 seam are the `_streaming_visual_flush_count` increment and its debug accessor.
+- `procgen_region_frame` mutation: bounding the backdrop by all CHASM instead of the exterior mask fails ("backdrop was bounded by more than the exterior mask").
+- Single owner `ProcgenRegionFrameProfile` is presentation-only; classifier change is additive (`kind_by_cell`, CHASM/OCEAN counts and `exterior + internal == chasm` unchanged); `PLANET_WORLD_PROFILES` has no frame key; the reusable generator default is neutral; only `custodian_contract_map.tscn` sets `alpine_plateau`; no `planet_key`/biome inference exists anywhere in `game/`; an unresolved explicit frame ID passes through unchanged with `frame_resolved=false` and a fallback report; Drowned override wins without mutating semantics; the Alpine stand-in reports `visual_fallback=true` with a reason; Archive Resolve is untouched.
+- Passing on `07d2277e8`: `procgen_distant_chunk_unload`, `procgen_region_frame`, `procgen_nonwalkable_surface`, `procgen_void_cliff_face`, `procgen_void_cliff_wall_integration`, `drowned_basilica_underlay_smoke.gd`, `elevated_world_asset_contract`, `procgen_runtime_health`, `procgen_candidate_materializer_parity`, `procgen_candidate_promotion_smoke.gd`, `procgen_performance_baseline_quick` (S1 `determinism_ok=true`, generation fingerprint `1773840677`).
