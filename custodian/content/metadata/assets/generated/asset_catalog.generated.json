@@ -11074,6 +11074,241 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_ruin_decal": {
+      "kind": "tile",
+      "assets": {
+        "dust_scour::omni": {
+          "state_id": "dust_scour",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "dust_scour",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_dust_scour_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "c468397e1b4a4c636f1387de4ab661a38e90c7e64cd3c6a2e6e6ce4a93fc7887",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "floor_crack_b::omni": {
+          "state_id": "floor_crack_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "floor_crack_b",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_b_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "e0b1e63ded3c924c0f0e8847a1a2f0a12dbcd086fe679c2fa36da5d2744e6a4d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "floor_crack_c::omni": {
+          "state_id": "floor_crack_c",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "floor_crack_c",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_c_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "a0f61e9a92b4e108dd79f97a90cc8a0dfc885a6a64aae2333872fe9d37e3d032",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "root_intrusion::omni": {
+          "state_id": "root_intrusion",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "root_intrusion",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_root_intrusion_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "1f19e50e1c17fb1bf18c701176ba61de7112acef6210c0737dca2033694fa5d7",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rubble_medium::omni": {
+          "state_id": "rubble_medium",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "rubble_medium",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_medium_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "58de00e3400be80a207cda72cbb3948bb44658bacdc50bc3a24d0432c5168cf0",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "soot_bloom::omni": {
+          "state_id": "soot_bloom",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "soot_bloom",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_soot_bloom_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "3e1f298586d08d3e36547ee106a9d079169fa67f34b5fae49358fc6576b5e6d9",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_dust_motes": {
+      "kind": "effect",
+      "assets": {
+        "loop::omni": {
+          "state_id": "loop",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_motes",
+            "effect",
+            "fx",
+            "effect",
+            "loop",
+            "omni"
+          ],
+          "path": "content/sprites/effects/awakening/runtime/awakening_dust_motes/awakening_dust_motes__fx__effect__loop__omni__8f__64.png",
+          "frames": 8,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "dbb4328f633ddc92f645690892c57426665ce3dffd29a6e866a573bf3ca7202c",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_falling_ash": {
+      "kind": "effect",
+      "assets": {
+        "loop::omni": {
+          "state_id": "loop",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_falling_ash",
+            "effect",
+            "fx",
+            "effect",
+            "loop",
+            "omni"
+          ],
+          "path": "content/sprites/effects/awakening/runtime/awakening_falling_ash/awakening_falling_ash__fx__effect__loop__omni__8f__64.png",
+          "frames": 8,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "4e42be30534e694844952bcd9cb46fd324d2daf8be4246ec2f354c4d51904436",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_gate_wind_dust": {
+      "kind": "effect",
+      "assets": {
+        "loop::omni": {
+          "state_id": "loop",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_gate_wind_dust",
+            "effect",
+            "fx",
+            "effect",
+            "loop",
+            "omni"
+          ],
+          "path": "content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png",
+          "frames": 8,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "e3ec07b9e17736a73c4180b61d68d4a9f6745b8416ab67e40de5f7f127584e18",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_authority_inlay": {
+      "kind": "tile",
+      "assets": {
+        "route_circle::omni": {
+          "state_id": "route_circle",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "route_circle",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_route_circle_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "93da10ff446c0bc09d29153e701eca04a6446f4aa26fc1a5c862c82edffec3a2",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

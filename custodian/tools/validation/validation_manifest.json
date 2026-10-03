@@ -3561,8 +3561,18 @@
         "custodian/scenes/debug/awakening_first_return_debug.tscn",
         "custodian/scenes/debug/awakening_first_return_debug.gd",
         "custodian/scenes/debug/awakening_first_return_overlay.gd",
-        "custodian/content/audio/sfx/combat/hit_medium_body_01.wav",
-        "custodian/tools/validation/awakening_visual_walkthrough_capture.gd"
+    "custodian/content/audio/sfx/combat/hit_medium_body_01.wav",
+    "custodian/tools/validation/awakening_visual_walkthrough_capture.gd",
+    "custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_route_circle_32.png",
+    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_dust_scour_64.png",
+    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_b_64.png",
+    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_c_64.png",
+    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_root_intrusion_64.png",
+    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_medium_64.png",
+    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_soot_bloom_64.png",
+    "custodian/content/sprites/effects/awakening/runtime/awakening_dust_motes/awakening_dust_motes__fx__effect__loop__omni__8f__64.png",
+    "custodian/content/sprites/effects/awakening/runtime/awakening_falling_ash/awakening_falling_ash__fx__effect__loop__omni__8f__64.png",
+    "custodian/content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png"
       ],
       "timeout_sec": 45,
       "needs_import": false

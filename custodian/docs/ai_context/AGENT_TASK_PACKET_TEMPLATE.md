@@ -30,7 +30,8 @@ coherent effort.
 - Depends on: `none`
 - Locks: `none`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
+- Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
 - Reviewed main: `<short SHA>`
 - Goal:
 - Completion boundary:
@@ -121,7 +122,8 @@ Before setting `Status: ready`:
 [ ] Validation names focused checks before broad checks.
 [ ] Visual evidence is minimized and justified; non-visual alternatives are named first when presentation is in scope.
 [ ] Dependencies and Locks reflect actual ordering/contention.
-[ ] Review intent is explicit.
+[ ] Review intent is explicit; substantial/risky work defaults to paired `auto` review.
+[ ] `Review: none` carries a concrete `Review rationale: low-risk exemption: ...` rather than convenience/queue avoidance.
 [ ] Deferred work is intentional and visible.
 [ ] Repository-default workflow boilerplate is not duplicated.
 [ ] Acceptance actually proves the stated Goal and Completion boundary, not a
@@ -139,10 +141,73 @@ Before setting `Status: ready`:
 These four checks are objective closure facts, not subjective prose scoring:
 each either names a concrete authority/state or it does not.
 
+### Review Policy — Risk-Based Default
+
+For newly authored or materially re-derived V2 implementation packets, paired
+post-land review is the default when an independent second pass can materially
+increase confidence. Because narrow low-risk work should usually be patched
+without a packet at all, a packeted engineering slice should normally begin
+with `Review: auto`.
+
+Use `Review: auto` by default for any of the following:
+
+- runtime behavior, state machines, streaming, persistence, save/load, lifecycle,
+  concurrency, scheduling, or authority changes;
+- architecture extraction, migration, decomplexification, ownership transfer,
+  compatibility cutover, or removal of an old production path;
+- production asset-pipeline or authoring-tool changes that write, normalize,
+  ingest, publish, or mutate runtime assets;
+- tooling that writes production code/data, dispatch/workstream lifecycle,
+  validation infrastructure, or safety/rollback behavior;
+- performance work whose correctness depends on preserving semantics while
+  changing batching, residency, caching, rendering, or execution order;
+- substantial bug fixes where a green test could still be vacuous, fixture-bound,
+  or narrower than the claimed acceptance;
+- multi-system or hard-to-reverse changes where the implementing agent's own
+  evidence would benefit from an adversarial acceptance check;
+- objective technical presentation work such as registration, layering,
+  clipping, visibility, deterministic state correspondence, batching, or
+  disabled-mode parity. Subjective aesthetic approval remains human-owned.
+
+`Review: none` is an explicit low-risk exemption, not the normal packet
+default. It is appropriate when an independent review is unlikely to add useful
+signal, for example:
+
+- documentation-only truth repair with no behavioral contract change;
+- a tiny mechanical patch with an obvious local effect, narrow blast radius,
+  and direct focused regression;
+- temporary/non-production probes or disposable diagnostics;
+- simple data/text changes whose correctness is directly inspectable and that
+  do not move runtime or pipeline authority.
+
+When using `Review: none`, fill `Review rationale` with
+`low-risk exemption: ...` and name the concrete reason. Do not use
+`Review: none` merely to shorten the queue or avoid writing a paired packet.
+
+Use `Review: manual` only when a review is useful but cannot truthfully be
+auto-completed because it requires a specific external environment, hardware,
+credentialed system, or human-owned decision that the normal paired reviewer
+cannot resolve. Do not use manual review as a substitute for the ordinary
+`human_required` outcome inside an otherwise automatic technical review.
+
+Corrections created from independent-review findings remain `Review: auto`
+by default through `AGENT_CORRECTION_PACKET_TEMPLATE.md`.
+
+Legacy packets are not bulk-retrofitted. When new work materially relies on an
+older implementation that lacks V2 feedback or independent review, treat its
+packet as historical evidence rather than current proof: re-check the surviving
+live authority and focused behavior during authoring. If that legacy seam is
+high-risk, unclear, or central to the new acceptance contract, the new packet
+should use paired review.
+
+Regardless of review intent, every completed V2 implementation/correction still
+writes `custodian.task_feedback.v1` Execution Feedback and mirrors it in the
+closing summary. Paired review is an additional correctness/evidence layer, not
+a replacement for implementation feedback.
+
 ### Review Metadata
 
-For substantial implementation work, decide review intent when the packet is
-created:
+Record the chosen review intent when the packet is created:
 
 ```text
 - Kind: `implementation` | `review` | `correction`
@@ -155,8 +220,9 @@ created:
 - Max automatic review cycles: `2`
 ```
 
-Safe defaults keep historical packets valid without this section: missing
-`Kind` is `implementation`; missing `Review` is `none`; missing
+Parser defaults keep historical packets valid without this section: missing
+`Kind` is `implementation`; missing `Review` is `none`; this compatibility rule
+is not the authoring default for new/materially refreshed V2 packets. Missing
 `Review stage` defaults to `post-land` only when `Review` is `auto`;
 missing `Review cycle` is `0`; missing `Max automatic review cycles` is
 `2`.
