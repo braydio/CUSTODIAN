@@ -9,9 +9,9 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is pre-authored but evidence-gated. AR1 has now been fully re-derived against landed M6C1 and has a paired technical review; it remains `blocked/manual` only until MR6R1 formally closes the streaming gate. AR2 and AR3 remain refresh-gated against the reviewed result of their immediate predecessor.
+The Archive Resolve implementation series is pre-authored but evidence-gated. MR6R1 has passed, so AR1 is fully re-derived and `ready/auto` with a paired technical review. AR2 and AR3 remain refresh-gated against the reviewed result of their immediate predecessor.
 
-- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, fully re-derived presentation-only request/commit/unload spine and one batched flat diagnostic veil; activation remains blocked on clean/non-blocking MR6R1.
+- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, fully re-derived `ready/auto` presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 code/architecture/runtime/diagnostic-visual review; gates AR2.
 - `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither + restrained brass/amber Archive Resolve shader; refresh after reviewed AR1.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo,
@@ -128,6 +128,14 @@ on the task branch. A successful claim's `CLAIMED` banner and
 that output is lost, recover it read-only with `dispatch.py last-claim` (or
 `--json`) rather than inferring ownership from worktree/branch activity.
 Continuous workers and cross-machine leases are deferred.
+
+## Paired Review Default And Independence
+
+For newly authored or materially refreshed V2 implementation packets, use `Review: auto` by default when independent review can materially improve confidence. This includes runtime/state-machine/persistence/streaming changes, architecture extraction or migration, production asset-pipeline/tooling mutations, performance changes that must preserve semantics, validation/workflow infrastructure, substantial bug fixes, and objective technical presentation work. `Review: none` is a low-risk exemption for documentation-only truth repair, tiny mechanical patches with obvious local effects and direct regression coverage, disposable probes, or similarly inspectable changes; record a concrete `Review rationale: low-risk exemption: ...`. Do not disable review merely to reduce queue length.
+
+Paired review requires a **fresh reviewer context**. A different agent/context is preferred when available, but a different model family is not mandatory. The same model/agent family may review prior work only from a newly started context/workstream with no transient implementation reasoning carried forward, reconstructing the target from the archived packet, closing summary, live code, design authority, tests, and fresh traces/mutations. Record `Reviewer context: fresh` and `Reviewer provenance: different-agent | same-agent-fresh-context` in the durable review artifacts. Continuing the implementation conversation/session is self-review and does not satisfy the paired-review contract.
+
+Legacy packets are not bulk-retrofitted. When new work materially depends on an older unreviewed/legacy seam, re-check the surviving live authority and focused behavior during authoring; use paired review for the new slice when that seam is high-risk, unclear, or central to acceptance.
 
 ## Paired Review And Correction
 
