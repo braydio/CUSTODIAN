@@ -64,11 +64,20 @@ Those preceding packets own backend correctness:
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` owns saved Aseprite unbound
   `vfx`/`fx` discovery, explicit adoption, CREATE/REPLACE publication, and
   binding-set drift.
-- The sparse checkout correction owns the current invalid block-hold FX import
-  metadata defect.
+- The sparse-checkout correction/review chain owns historical closure of the
+  `block_hold_01` FX import defect. Current main already has valid east/west
+  remaps plus the 588-texture SpriteFrames import guard; UX work must treat that
+  defect as repaired rather than a current backend prerequisite.
 
 UX V1 consumes the structured state those packets land. It must not reproduce
 their backend logic in Textual.
+
+2026-10-03 prerequisite audit: publish-readiness/recovery remains the next
+substantial backend slice; its local-only LFS contract now explicitly permits a
+verified hydrated coordination-checkout donor when the shared LFS cache lacks
+the exact object. Browser/PREVIEW hardening and FX adoption remain unimplemented
+on current main and their packet scopes were revalidated. The UX1-UX5 refresh
+gate remains appropriate until those reviewed prerequisites land.
 
 ## Existing UI baseline
 
