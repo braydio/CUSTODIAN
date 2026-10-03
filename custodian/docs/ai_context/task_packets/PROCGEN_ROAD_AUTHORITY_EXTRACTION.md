@@ -16,6 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `substantial architecture extraction: road authority/state migration inside the ProcGenTilemap decomplexification lane`
 - Reviewed main: `baa4a7e98fdfc843afaa2985d6ef46ad3e1409f8`
+- Authoring chat: `not-recorded`
 - Goal: Extract generated road/parking/path authority state plus road graph/repair/pruning logic from `ProcGenTilemap` into one focused owner under `custodian/game/world/procgen/roads/`, while preserving Road Semantics V2, presentation, traversal, streaming, and deterministic world output.
 - Completion boundary: Done when one `ProcgenRoadAuthority`-equivalent stateful owner under `procgen/roads/` owns the generated road/path/parking authority currently stored directly on `ProcGenTilemap`; road connectivity/component/repair/pruning decisions operate through that owner; `ProcGenTilemap` remains the realization/facade adapter for floor/wall/region mutation and presentation; the already-extracted Road Semantics V2 resolver and surface-material resolver remain separate pure/semantic owners; presentation-only road/path decal state remains outside the road authority; and no duplicate canonical road state survives in `ProcGenTilemap`.
 - Current measured state: On `main@baa4a7e9`, `proc_gen_tilemap.gd` is 11,876 lines / 615 functions. It directly declares `_main_road_tiles`, `_road_centerline_tiles`, `_path_centerline_tiles`, `_compound_connector_centerline_tiles`, `_parking_zone_tiles`, `_ruined_road_cells`, `_service_hardstand_cells`, `_road_semantics_summary`, and `_parking_zone_center`. It also embeds archived-wide-road construction/repair/component/pruning methods such as `_carve_main_roads()`, `_repair_road_connectivity()`, `_repair_road_surface_components()`, `_collect_road_surface_components()`, `_collect_connected_road_tiles()`, `_prune_small_edge_road_components()`, `_prune_small_disconnected_road_components()`, parking-anchor/footprint selection, and `_clear_procgen_road_authority_at()`. Production wide-road carving remains disabled by default through `intent_main_roads_enabled=false`; its debug path is still covered by `procgen_road_surface_roles_smoke.gd`. Active Road Semantics V2 already lives in `surfaces/road_semantics_resolver.gd`, returns ruined-road/service-hardstand/parking masks, and is consumed by `ProcGenTilemap._resolve_road_semantics()`. Presentation-only `_road_visual_tiles`, `_path_visual_tiles`, `_compound_connector_visual_candidates`, decal definitions/nodes, and filled-surface role rendering still live in the façade/presentation surface. M6 unload/reveal removes/recreates road decals but does not own road semantics. MR6R1 is complete/passed, so this packet's old refresh gate is satisfied. AR1 is refreshed/ready and its request/commit/unload presentation seam must not be absorbed by this extraction.
@@ -70,6 +71,11 @@ Start with `proc_gen_tilemap.gd` road state declarations and the road blocks aro
 
 ## Handoff
 
-- Next action: Auto-claim now when the `procgen-runtime` lock is free. After D1's paired review passes, continue the sibling D2/D3 refresh/execution sequence; X1 waits for all three.
-- Best starting files: `proc_gen_tilemap.gd` road state/graph methods; `roads/README.md`; Road Semantics V2 resolver; road smokes.
+- Next workstream: `review-procgen-road-authority-extraction`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: Complete D1, then let its paired fresh-context review claim automatically.
 - Blockers or open questions: None. MR6R1 is complete/passed and Archive Resolve's post-M6 seam is already refreshed.
