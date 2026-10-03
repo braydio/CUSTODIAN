@@ -1,11 +1,13 @@
 # LORDS OF PAIN TEST GALLERY — IMPLEMENTATION GLOSSARY
 
 Status: supporting implementation sidecar; **not a dispatchable task packet**  
-Companion packet: `custodian/docs/ai_context/task_packets/LORDS_OF_PAIN_TEST_GALLERY.md`  
+Companion packet: `custodian/docs/ai_context/task_packets/archived/LORDS_OF_PAIN_TEST_GALLERY.md`
 Workstream: `lords-of-pain-test-gallery`  
 Reviewed main: `047e827f8846`
 
 Purpose: keep the execution agent out of broad archaeology. This sidecar names the exact generated paths, existing authorities, recommended local classes, and code seams for the gallery. The task packet remains the closure/acceptance authority. If live main has moved and an API differs, preserve the behavioral contract and use the current live seam rather than creating a parallel system.
+
+**Scope update (2026-10-03):** the user selected the available DEMO pack and approved excluding Cursor Gauntlet, Rocks, and Mushrooms because those entries have no source files. This scope supersedes the historical FULL-index examples and acceptance guidance below. Implement Warrior, Skeleton, Highlight, Loot Indicator, Gold Drop, Glint, Ground Stone, and the four DEMO actor animation entries; the manifest also maps the indexed Gold Drop animation.
 
 ## 1. Exact scaffold output
 
@@ -61,7 +63,7 @@ godot --headless --path custodian \
   --exit return_world:ReturnWorld \
   --ingress-prompt "ENTER LORDS OF PAIN GALLERY" \
   --world-context campaign_region \
-  --playtest-profile gameplay \
+  --playtest-profile full \
   --canvas-size 4096x2560 \
   --presentation-profile gameplay \
   --cache-policy snapshot_and_unload \
@@ -284,15 +286,11 @@ func get_debug_state() -> Dictionary:
     }
 ```
 
-The control surface should expose every animation named by the FULL animation index:
+The control surface should expose the DEMO actor animations:
 
 ```text
-Warrior:      default_idle, default_walk, armed_idle, armed_walk, armed_attack, special_select, special_death
-Knight:       default_idle, default_walk, armed_idle, armed_walk, armed_attack, special_select, special_death
-Fighter:      default_idle, default_walk, armed_idle, armed_walk, armed_attack, special_select, special_death
-Subservient:  special_working, special_worship
-Skeleton:     default_idle, default_walk, default_attack, special_death
-Demonlord:    default_idle, default_walk, default_attack1, default_attack2, special_intro, special_laugh, special_death
+Warrior:      armed_idle, armed_walk
+Skeleton:     default_walk, special_death
 ```
 
 Cycle only directions that exist in the hydrated source manifest. Do not assume 8/16-direction coverage from naming alone.
@@ -466,7 +464,7 @@ Keep primary aisles >= 128 px and all layout on the 32 px vocabulary.
 
 ## 13. Standalone playtest note
 
-The generated `gameplay` playtest profile already adds:
+The generated `full` playtest profile adds:
 
 - real `Operator`
 - `PlayerController`
@@ -477,7 +475,7 @@ The generated `gameplay` playtest profile already adds:
 
 The `full` profile additionally adds `WaveManager` and `CustodianHUD`.
 
-Stay on `gameplay` unless the implementation intentionally relies on the real HUD/toast surface. If using `WorldReadoutInteractable` or another node that requires `/root/GameRoot/CustodianHUD`, switch the standalone wrapper to `full` or provide a local gallery label instead. Do not add HUD ownership to the production level scene.
+Use `full` for this gallery. The live generator accepts `movement`, `combat`, or `full`; `gameplay` is rejected. The production level scene must not own the Operator, HUD, camera, or PlayerController.
 
 ## 14. Focused validation file
 
@@ -493,12 +491,12 @@ At minimum assert:
 2. level definition is registered and tagged `world_ingress`;
 3. ingress target is `Spawn_Main`;
 4. one `return_world` `LevelExit2D` exists;
-5. gallery manifest covers every FULL-index semantic item + multiplicity;
-6. actor manifest covers every FULL animation entry and actual source directions;
-7. all four section roots exist and are mutually reachable in authored bounds;
-8. break/light/pickup/VFX adapters reset deterministically;
-9. breakable -> Gold/Glint link and lightable -> Flame/Glow link fire;
-10. no runtime resource path points into `archive/dev/LordsOfPain`;
+5. gallery manifest covers all seven available DEMO semantics, five animation entries, all 16 available directions, and the three user-approved exclusions;
+6. Ground Stone and the real Meridian hardened-floor surface are present in separate connected lanes;
+7. Warrior/Skeleton displays change to the selected state and direction, and Gold Drop toggles available/collected/reset;
+8. Highlight and Loot Indicator are screen-space UI samples;
+9. no runtime resource path points into `archive/dev/LordsOfPain`;
+10. procgen entry/return presentation uses District Transfer Frame around the normal route authority;
 11. procgen enter -> gallery -> exact-origin return -> re-entry passes.
 
 Then run the packet's already-verified existing validation entrypoints:
@@ -518,6 +516,6 @@ custodian/tools/validation/level_camera_rebind_smoke.gd
 2. **Definition location drift:** definition is nested at `content/levels/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.json`.
 3. **Playtest location drift:** generated playtest lives beside the production authored level, not under `custodian/scenes/debug/`.
 4. **Return node omission:** the packet's original scaffold command does not request a `return_world` exit. Add `--exit return_world:ReturnWorld` or author the same node immediately after generation.
-5. **Archive availability distinction:** FULL indexes are semantic coverage authority, while GitHub-visible extracted files are only a partial subset; local LFS hydration remains required before asset mapping.
+5. **Superseded scope:** old FULL-index coverage guidance in the original packet/sidecar is historical only. The archived implementation packet's DEMO scope update and exclusion records are authoritative.
 
 These are planning-document corrections, not runtime defects. The execution agent should follow generator/runtime truth and update durable docs at closeout where implementation makes the final paths concrete.

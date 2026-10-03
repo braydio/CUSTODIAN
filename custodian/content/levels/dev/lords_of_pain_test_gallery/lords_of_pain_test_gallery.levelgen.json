@@ -1,0 +1,18 @@
+{
+  "created_utc": "2026-10-03T22:37:23",
+  "generator_version": 1,
+  "last_generated_utc": "2026-10-03T22:37:23",
+  "level_id": "lords_of_pain_test_gallery",
+  "managed_files": [
+    "custodian/content/levels/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.json",
+    "custodian/content/levels/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.levelgen.json",
+    "custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/README.md",
+    "custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.gd",
+    "custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.tscn",
+    "custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery_authoring.tscn",
+    "custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery_playtest.tscn",
+    "custodian/tools/validation/levels/lords_of_pain_test_gallery_smoke.gd",
+    "design/05_levels/LORDS_OF_PAIN_TEST_GALLERY.md"
+  ],
+  "schema": "custodian.level_scaffold_manifest.v1"
+}

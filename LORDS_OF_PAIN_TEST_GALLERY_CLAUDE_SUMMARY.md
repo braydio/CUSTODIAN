@@ -1,36 +1,48 @@
-# Lords of Pain Test Gallery — Execution Summary
+# Lords of Pain Test Gallery — Closing Summary
 
-## Result
+Implemented the user-approved DEMO scope of the Lords of Pain gallery. The hydrated pack contains sources for seven semantic entries: Warrior, Skeleton, Highlight, Loot Indicator, Gold Drop, Glint, and Ground Stone. Cursor Gauntlet, Rocks, and Mushrooms remain out of scope per the user's instruction and are recorded as exclusions in the gallery manifest.
 
-Implementation remains blocked at the required source-coverage preflight. I fast-forwarded the coordination checkout to `origin/main` and resumed the existing workstream. The updated implementation glossary and packet instructions correct generated paths, return-exit setup, and implementation seams, but do not supply the missing source art. The resumed branch sync surfaced a packet conflict; I kept the new glossary/updated packet and reapplied the measured archive blocker.
+The Asset V2 intake created seven `dev_lop_*` families and 84 runtime outputs. The registered `lords_of_pain_test_gallery` level presents tiled Ground Stone beside the existing Meridian hardened-floor art, directional Warrior/Skeleton displays, Gold Drop and Glint samples, screen-space Highlight/Loot Indicator samples, and a District Transfer Frame return. Arrow keys cycle both indexed states and all 16 authored directions; E toggles Gold Drop available/collected/reset. The procgen ingress uses a custom `WorldIngressSite` scene for District Transfer Frame presentation. The generated playtest wrapper owns the Operator/controller/camera; the production scene does not.
 
-The hydrated `archive/dev/LordsOfPain/LordsOfPain.zip` is a 7.2 MB archive containing `(DEMO) Lords Of Pain - Old School Isometric Assets/` and 539 PNGs. The FULL indexes list 32 semantic asset entries and 34 actor animation states; 25 asset entries have no source-file match, and 30 animation states have no frames.
+The packet and paired review criteria were reconciled from FULL to the user's selected DEMO scope. A scaffold-generated absolute design-doc path failed the first registry validation; changing it to a project-relative path made the registered definition valid.
 
-The durable inventory is `custodian/content/data/dev/lords_of_pain/gallery_source_coverage.json`; the human-readable missing-content summary is `custodian/content/data/dev/lords_of_pain/SOURCE_COVERAGE_BLOCKER.md`. These include the actual available file paths, dimensions, direction/frame evidence, and missing FULL-index entries. No gallery scene, Asset V2 family, runtime texture, or level registry entry was retained because that would falsely imply full coverage.
+## Validation
 
-The generated scaffold dry-run accepted its request after correcting the playtest profile to `full` (the updated glossary currently recommends `gameplay`, but the live generator rejected that value with `playtest_profile must be movement, combat, or full`). Godot startup emitted project-wide class-cache parse and missing-import errors during generator execution, so scaffold validation is not clean evidence of project health. No tests were added or run.
+- `level_scaffold_generator_smoke.gd` — pass
+- `level_registry_contract_smoke.gd` — pass
+- `world_ingress_spawner_smoke.gd` — pass
+- `authored_level_ingress_return_smoke.gd` — pass
+- `world_ingress_physics_reentry_smoke.gd` — pass
+- `level_camera_rebind_smoke.gd` — pass
+- `levels/lords_of_pain_test_gallery_smoke.gd` — pass
+- `asset.py doctor` — healthy
+- Repository changed-file validation — 13/13 passed with complete coverage across 375 changed files
+- Generated standalone playtest scene — headless launch passed
+- `git diff --check` — pass
 
-The task packet now records the blocker and remains incomplete. Resume after the complete licensed source pack is available; then regenerate coverage and continue the gallery implementation.
+The registry smoke still prints invalid UID fallback warnings from the unrelated `forlorn_ritualant_site.tscn` before passing. The interactive screenshot runner also reports four ObjectDB/resource shutdown warnings after saving its image; the captured image and all headless implementation smokes succeed. The first changed-file validation attempt found no owner mappings for the new gallery paths (all 11 selected tests passed); I registered the gallery smoke and scoped runtime ownership before rerunning it. No third-party source, license, or FULL/DEMO index file was modified.
+
+Three bounded visual artifacts are committed at `custodian/docs/ai_context/task_packets/evidence/lords_of_pain_test_gallery/`: one overview plus terrain and actor crops. These establish the functional blockout and asset bindings; they do not claim production art approval.
 
 ## Process Feedback
 
-- Feedback schema: custodian.task_feedback.v1
-- Outcome: blocked
-- Friction severity: high
-- What went wrong: hydrated archive is DEMO-only and lacks most FULL-index content
-- Root cause / contributing factors: checked-in LFS archive differs in scope from the task's FULL-index requirement
-- Prevention / pipeline improvement: stage the complete licensed archive and run the deterministic coverage inventory before scaffolding
-- Tooling / docs drift discovered: updated sidecar corrects scaffold paths and return setup; its suggested `gameplay` playtest profile conflicts with the live generator's accepted `movement`, `combat`, or `full` values
-- Follow-up: manual-follow-up
-- What worked: source inventory exposed the scope mismatch before runtime/registry work
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The first batch launch started parallel Asset V2 transactions and was interrupted, leaving temporary staging files. Sequential reruns replaced the partial runtime output and completed the normal archive transactions. Registry validation exposed the scaffold's absolute design-doc path. The first changed-file validation found no owner mappings for gallery runtime files; I added a focused gallery owner entry and source-master checks.
+- Root cause / contributing factors: A yielded shell session was treated as a completed sequential ingest; the generator serialized a local absolute path; the validation manifest had no entry for this new dev gallery.
+- Prevention / pipeline improvement: Poll each Asset V2 transaction to completion before starting another; retain project-relative design-doc paths in generated level definitions; add focused owner coverage when introducing a new authored level and runtime asset family.
+- Tooling / docs drift discovered: The support-sidecar example uses unsupported playtest profile `gameplay`; current allowed values are `movement`, `combat`, and `full`. Historical FULL-pack acceptance and paired-review criteria have been reconciled to the user-approved DEMO scope.
+- Follow-up: fixed-in-scope
+- What worked: Asset V2 re-ingest plus family doctor established complete source/runtime coverage.
 
 ## Next Handoff
 
-- Next workstream: none
-- Next packet state: human-required
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: no
-- Authoring chat: not-recorded
-- Refresh reason: complete licensed source archive is required to satisfy FULL-index coverage
-- Next action: provide the complete licensed pack, then resume this workstream and regenerate the coverage inventory
-- Blockers or open questions: current hydrated LordsOfPain.zip is DEMO-only
+- Next workstream: `review-lords-of-pain-test-gallery`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: `Start the paired fresh-context post-land review against the archived DEMO-scoped packet.`
+- Blockers or open questions: `none`

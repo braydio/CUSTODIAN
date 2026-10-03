@@ -1,13 +1,14 @@
 {
-  "schema": "custodian.level_registry.v1",
   "definitions": [
     "res://content/levels/ash_bell/forlorn_ritualant_underground.json",
     "res://content/levels/ash_bell/lower_quarter.json",
     "res://content/levels/ash_bell/station_ix.json",
     "res://content/levels/ash_bell/west_gate_works.json",
+    "res://content/levels/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.json",
     "res://content/levels/hub/twin_solaria_v1.json",
     "res://content/levels/sundered_keep/front_gate.json",
     "res://content/levels/sundered_keep/return_causeway.json",
     "res://content/levels/sundered_keep/vista_approach.json"
-  ]
+  ],
+  "schema": "custodian.level_registry.v1"
 }

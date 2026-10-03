@@ -1,0 +1,50 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "lords_of_pain_test_gallery",
+  "display_name": "Lords of Pain Test Gallery",
+  "route_scene_path": "",
+  "target_scene_path": "res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.tscn",
+  "authored_data_path": "",
+  "playtest_scene_path": "res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery_playtest.tscn",
+  "authoring_scene_path": "res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery_authoring.tscn",
+  "design_doc_path": "../design/05_levels/LORDS_OF_PAIN_TEST_GALLERY.md",
+  "world_context": "campaign_region",
+  "presentation_profile": "gameplay",
+  "spawns": ["Spawn_Main", "Return_Main"],
+  "lifecycle": {
+    "cache_policy": "snapshot_and_unload",
+    "state_policy": "reset_on_entry"
+  },
+  "tags": ["authored","playable_map","world_ingress","dev"],
+  "ingress": {
+  "site_scene_path": "res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_gallery_ingress_site.tscn",
+  "ingress_id": "lords_of_pain_test_gallery",
+  "interaction_distance": 92.0,
+  "placement": {
+    "minimum_spacing_tiles": 10,
+    "offset_candidates_tiles": [
+      [
+        8,
+        0
+      ],
+      [
+        -8,
+        0
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        0,
+        -8
+      ]
+    ],
+    "priority": 100,
+    "search_radius_tiles": 14,
+    "strategy": "near_compound_ingress"
+  },
+  "prompt_text": "ENTER LORDS OF PAIN GALLERY",
+  "target_spawn_id": "Spawn_Main"
+}
+}

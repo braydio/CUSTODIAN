@@ -1,5 +1,9 @@
 # CURRENT STATE — CUSTODIAN
 
+## Lords of Pain DEMO Test Gallery (2026-10-03)
+
+`lords_of_pain_test_gallery` is registered as a dev `world_ingress` destination. Its generated production scene uses the persistent Operator lifecycle and owns no Operator, camera, or controller. The walkable blockout presents Asset V2 Ground Stone, the real Meridian hardened-floor base, Gold Drop/Glint, Highlight/Loot Indicator UI samples, and Warrior/Skeleton animations with all 16 authored directions selectable. A DEMO-scoped manifest records seven available semantic entries, five animation entries, pack/license provenance, and user-approved exclusions for Cursor Gauntlet, Rocks, and Mushrooms. District Transfer Frame art presents both procgen ingress and the normal `return_world` exit. Asset V2 doctor is healthy; gallery, registry, ingress, return, re-entry, and camera smokes pass.
+
 ## Procgen Region Frame Foundation (2026-10-03)
 
 RF1 separates the permanent map-edge presentation from local biome and Archive

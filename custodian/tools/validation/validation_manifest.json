@@ -3256,6 +3256,28 @@
       "needs_import": false
     },
     {
+      "id": "lords_of_pain_test_gallery",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/lords_of_pain_test_gallery_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "assets",
+        "authored_level",
+        "world_ingress",
+        "dev_gallery"
+      ],
+      "owners": [
+        "custodian/content/data/dev/lords_of_pain/**",
+        "custodian/content/levels/dev/lords_of_pain_test_gallery/**",
+        "custodian/content/levels/levels.json",
+        "custodian/content/sprites/dev/lords_of_pain/**",
+        "custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/**",
+        "custodian/tools/validation/levels/lords_of_pain_test_gallery_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "world_ingress_spawner",
       "type": "godot_script",
       "script": "res://tools/validation/world_ingress_spawner_smoke.gd",

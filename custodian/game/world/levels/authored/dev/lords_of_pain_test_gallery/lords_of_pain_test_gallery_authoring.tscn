@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/debug/level_collision_poi_mapper.tscn" id="1_mapper"]
+
+[node name="LordsOfPainTestGalleryAuthoring" instance=ExtResource("1_mapper")]
+target_scene_path = "res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.tscn"
+target_script_path = "res://game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.gd"
+target_instance_name = "LordsOfPainTestGalleryUnderReview"
+mapper_title = "Lords of Pain Test Gallery Collision / POI Mapper"
