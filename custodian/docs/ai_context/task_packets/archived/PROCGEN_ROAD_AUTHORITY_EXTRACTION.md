@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-road-authority-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-candidate-runtime-path-demolition, review-procgen-distant-chunk-unload-review-corrections-1`
@@ -52,30 +52,30 @@ Start with `proc_gen_tilemap.gd` road state declarations and the road blocks aro
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes — ProcgenRoadAuthority owns canonical generated road/path/parking semantics and graph decisions; ProcGenTilemap remains the physical realization and presentation facade.`
+- Completion boundary satisfied: `yes — canonical road state has one owner, and Road Semantics V2, surface material classification, physical realization, visual masks, and decals remain in their existing separate seams.`
+- Acceptance satisfied: `yes — fixed production semantics and archived wide-road output match baseline; facade consumers, authored clearing, route/foliage protection, M6 presentation lifecycle, and disabled production default are covered by focused and changed-file validation.`
 - Superseded/legacy production path disposition: `removed`
-- Evidence: `<fill at closeout>`
+- Evidence: `procgen_road_authority_smoke passed; changed-file validation passed 33/33; packet road semantics/surface-role/placeholder/compound-wall/authored-scene/M6/candidate-parity/S1 checks passed. Fixed seed 420777 matches origin/main road counts (1372 road cells, 63 parking cells, 1372 road decals); seed 824790 Road Semantics fingerprint remains c29c6e034199105ad3b1c6d3c54e319c5e2fd943ad1fdb8c2eb9e853b4de5026. S1 reports determinism_ok=true.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none`
-- Root cause / contributing factors: `none`
-- Prevention / pipeline improvement: `none`
-- Tooling / docs drift discovered: `none`
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `persistent_compound_runtime_smoke` still called a removed ContractWorldLoader helper and timed out in the first changed-file sweep.
+- Root cause / contributing factors: `The smoke was not updated when compound-sector mapping moved to WorldPlacementContext.`
+- Prevention / pipeline improvement: `Updated the validation fixture to use the current read-only WorldPlacementContext API; isolated rerun passed in 10 seconds and the final changed-file sweep passed.`
+- Tooling / docs drift discovered: `The test manifest still selected the stale compound smoke through ProcGenTilemap ownership; coverage itself remains useful after its fixture was repaired.`
+- Follow-up: `fixed-in-scope`
 
 ## Handoff
 
 - Next workstream: `review-procgen-road-authority-extraction`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready/auto after D1 archives and lands`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `not-recorded`
 - Refresh reason: `none`
-- Next action: Complete D1, then let its paired fresh-context review claim automatically.
+- Next action: Let the paired fresh-context review claim automatically after D1 lands.
 - Blockers or open questions: None. MR6R1 is complete/passed and Archive Resolve's post-M6 seam is already refreshed.

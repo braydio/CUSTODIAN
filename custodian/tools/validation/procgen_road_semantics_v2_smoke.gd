@@ -158,10 +158,11 @@ func _test_macro_claims() -> void:
 	var parking := Vector2i(2, 1)
 	var ruined := Vector2i(3, 1)
 	var apron := Vector2i(4, 1)
-	host._main_road_tiles[main_road] = true
-	host._parking_zone_tiles[parking] = true
-	host._ruined_road_cells[ruined] = true
-	host._service_hardstand_cells[apron] = true
+	host._road_authority.add_road_tile(main_road)
+	host._road_authority.add_parking_tile(parking)
+	host._road_authority.publish_road_semantics(
+		{ruined: true}, {apron: true}, {}, false, {}
+	)
 	var claims: Dictionary = host.call("_macro_presentation_surface_claims")
 	_require(claims.size() == 4 and claims.has(main_road) and claims.has(parking) and claims.has(ruined) and claims.has(apron), "constructed road/apron cells are missing from macro claims")
 	_require(host.is_road_surface_tile(main_road) and host.is_road_surface_tile(ruined), "road query omits archived or V2 road cells")
@@ -181,7 +182,8 @@ func _test_filled_surface_roles() -> void:
 			cells[Vector2i(x, y)] = true
 	_require(host.call("_classify_filled_surface_role", Vector2i(1, 1), cells) == "inner_corner_nw", "filled-surface roles did not use the supplied cell dictionary")
 	_require(host.call("_classify_filled_surface_role", Vector2i(8, 8), cells) == "", "filled-surface role classified a tile outside its supplied mask")
-	host._main_road_tiles = cells.duplicate(true)
+	for cell: Vector2i in cells:
+		host._road_authority.add_road_tile(cell)
 	_require(host.call("_classify_road_surface_role", Vector2i(1, 1)) == host.call("_classify_filled_surface_role", Vector2i(1, 1), cells), "archived road role wrapper changed its classification")
 	host.free()
 
@@ -210,7 +212,7 @@ func _test_production_integration() -> void:
 			break
 		await process_frame
 	_require(not tilemap.intent_main_roads_enabled, "production wide-road flag is enabled")
-	_require(tilemap._main_road_tiles.is_empty(), "archived wide-road tiles were generated in production")
+	_require(tilemap._road_authority.main_road_tiles.is_empty(), "archived wide-road tiles were generated in production")
 	var floor_before := tilemap.debug_get_generated_floor_cells()
 	var walls_before := tilemap.debug_get_generated_wall_cells()
 	var route_before := tilemap.debug_get_route_playability()
@@ -242,7 +244,7 @@ func _test_production_integration() -> void:
 		_require(tilemap.debug_has_ruined_road_surface_decal_at(cell), "visible ruined-road cell lacks its production road-piece decal: %s" % str(cell))
 		var role := tilemap.debug_get_ruined_road_surface_role_at(cell)
 		_require(not role.is_empty(), "ruined-road decal omitted surface_role metadata: %s" % str(cell))
-		_require(role == tilemap.call("_classify_filled_surface_role", cell, tilemap._ruined_road_cells), "ruined-road decal role differs from semantic mask")
+		_require(role == tilemap.call("_classify_filled_surface_role", cell, tilemap._road_authority.ruined_road_cells), "ruined-road decal role differs from semantic mask")
 		ruined_roles[role] = int(ruined_roles.get(role, 0)) + 1
 	_require(tilemap.debug_get_surface_piece_decal_count("ruined_road") == ruined_tiles.size(), "ruined-road cells did not receive exactly one distinct-key decal")
 	var apron_set: Dictionary = {}
@@ -260,10 +262,10 @@ func _test_production_integration() -> void:
 	_require(not tilemap.debug_has_ruined_road_surface_decal_at(absent_road_cell), "non-road cell received a ruined-road decal")
 	if not ruined_tiles.is_empty():
 		var overlap := ruined_tiles[0]
-		tilemap._main_road_tiles[overlap] = true
+		tilemap._road_authority.add_road_tile(overlap)
 		tilemap.call("_reveal_road_surface_piece_decal", overlap)
 		_require(tilemap.debug_has_road_surface_decal_at(overlap) and tilemap.debug_has_ruined_road_surface_decal_at(overlap), "archived road and V2 ruined-road decal keys collided")
-		tilemap._main_road_tiles.erase(overlap)
+		tilemap._road_authority.clear_generated_road_tiles(overlap)
 		tilemap.call("_remove_road_piece_decal", overlap)
 		tilemap.call("_reveal_ruined_road_surface_piece_decal", overlap)
 	var path_tile := _first_soft_path_visual_tile(tilemap)
@@ -343,7 +345,7 @@ func _first_soft_path_visual_tile(tilemap: ProcGenTilemap) -> Vector2i:
 		if value is Vector2i:
 			var tile := value as Vector2i
 			if tilemap.get_region_type_at_tile(tile) == "soft_path" \
-					and tilemap._path_centerline_tiles.has(tile) \
-					and int(tilemap.call("_get_road_piece_mask", tile, tilemap._path_centerline_tiles)) > 0:
+					and tilemap._road_authority.path_centerline_tiles.has(tile) \
+					and int(tilemap.call("_get_road_piece_mask", tile, tilemap._road_authority.path_centerline_tiles)) > 0:
 				return tile
 	return Vector2i(-1, -1)
