@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-sparse-art-checkout-review-corrections-1`
-- Status: `blocked`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-workbench-sparse-art-checkout`
@@ -33,27 +33,27 @@
   1. Both tracked `.import` sidecars have valid remap metadata and no `valid=false` marker.
   2. On a fresh sparse profile with locally cached required LFS objects, Godot import succeeds and `operator_modular_layers_smoke.gd` exits successfully without missing-resource or Operator script-parse errors.
   3. `operator_art_worktree_smoke.py`, `operator_workbench_ui_smoke.py`, `operator_animation_workbench_smoke.py`, and `operator_workbench_mirror_publish_smoke.py` remain green; no unrelated tracked file is changed by the correction.
-- Validation: Run the two focused Operator FX import/actor checks first, then the four named Workbench smokes, compatibility-resource `--check`, animation-contract report, and `git diff --check`. Use only local LFS objects; do not broaden validation into an actor sweep.
+- Validation: Run the two focused Operator FX import/actor checks first, then the four named Workbench smokes, compatibility-resource `--check`, animation-contract report, and `git diff --check`. Use only local LFS objects; when a branch has LFS pointer files and the full project-root checkout has the matching payload, copy only files whose bytes match the pointer's SHA-256. Do not fetch LFS content from the network or broaden validation into an actor sweep.
 - Task overrides: `none`
-- Deferred: Re-run fresh sparse-profile acceptance with the required locally available LFS resources. Correct the stale UI smoke message assertion in its owning Workbench task. Any unrelated Godot import metadata drift remains out of scope.
+- Deferred: none.
 
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
-- Acceptance satisfied: `no`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: Both tracked FX `.import` files on current `main` contain valid remap paths and `dest_files`, with no `valid=false`; the source PNG bytes are unchanged; `operator_modular_layers_smoke.gd` passes from the full checkout. Acceptance remains open because the sparse-profile smoke could not complete with the locally available LFS set, and `operator_workbench_ui_smoke.py` has a stale publish-block-reason assertion.
+- Evidence: Both tracked FX `.import` sidecars on current `main` contain valid remap paths and `dest_files`, with no `valid=false`; their PNG bytes are unchanged. Godot import preflight passed in the sparse Operator art checkout, project import exited 0 without missing-resource or Operator script-parse errors, and `operator_modular_layers_smoke.gd` passed there. The sparse runtime surface matched `origin/main`. All four named Workbench smokes passed in the resumed task branch after copying 785 hash-matching LFS source payloads from the full project-root checkout; the compatibility-resource smoke and animation-contract report also passed, with zero missing required art. `git diff --check` and changed-file review-pairing validation passed; all copied LFS files and generated imports were restored so no unrelated tracked file remains changed.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `partial`
+- Outcome: `success`
 - Friction severity: `medium`
-- What went wrong: Godot 4.7 import in the persistent sparse art checkout rewrote 1,561 tracked `.import` sidecars; those edits were restored. Sparse smoke validation then stopped on missing LFS-backed world resources. The UI smoke exposed a stale expected message.
-- Root cause / contributing factors: The sparse checkout did not have every LFS object needed by the project's autoload dependency graph, and the UI smoke still asserts wording superseded by current checkout-block behavior.
-- Prevention / pipeline improvement: Run Godot import validation in a disposable, version-matched checkout with required local LFS objects materialized; update the UI smoke assertion in its owning Workbench scope.
-- Tooling / docs drift discovered: The existing sparse art checkout is behind `origin/main` and lacks required cached LFS content; the UI smoke's expected message differs from `WorkbenchService.publish_preview()`.
-- Follow-up: `manual-follow-up`
-- What worked: Full-checkout modular-layer and the non-UI Workbench regressions passed.
+- What went wrong: The first sparse import ran while the worktree still had missing LFS payloads and rewrote 1,561 tracked `.import` sidecars; those edits were restored. The UI smoke first ran from coordination `main`, where its expected branch-specific message does not apply; it passed when rerun from the task branch.
+- Root cause / contributing factors: I stopped at the shared LFS cache instead of copying matching assets from the full project-root checkout, and ran one checkout-specific UI assertion from the wrong branch context.
+- Prevention / pipeline improvement: Copy only pointer-matching LFS payloads from the full root checkout after verifying each pointer SHA-256; run the Workbench UI smoke from the claimed task branch. Preflight before Godot import.
+- Tooling / docs drift discovered: The packet's local-only LFS note did not identify the full project-root checkout as a source for matching payloads; this packet now records that exact-hash route.
+- Follow-up: `none`
+- What worked: Exact-hash copying resolved 785 source payloads without network access; sparse import, modular-layer smoke, and all scoped Workbench checks passed.
