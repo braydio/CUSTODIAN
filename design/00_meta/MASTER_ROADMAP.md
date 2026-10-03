@@ -284,7 +284,7 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete, so S7 is closed. The cycle-1 review passed with 0 blocking defects and 0 material evidence gaps; five optional proof-hardening items N1-01..N1-05 are folded into RF1 rather than another correction cycle. D1-D3 satisfy their G5+MR6R1 dependencies; D1 has now been live-refreshed and is ready/auto with paired review, while D2/D3 still require individual live refreshes before implementation. RF1/RFR1 are ready/auto; Archive Resolve AR1/ARR1 are also ready/auto at lower priority under the same procgen locks. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete, so S7 is closed. The cycle-1 review passed with 0 blocking defects and 0 material evidence gaps; five optional proof-hardening items N1-01..N1-05 are folded into RF1 rather than another correction cycle. D1-D3 satisfy their G5+MR6R1 dependencies; D1 has now been live-refreshed and is ready/auto with paired review, while D2/D3 still require individual live refreshes before implementation. RF1 implementation has landed and RFR1 is now ready/auto; Archive Resolve AR1/ARR1 are also ready/auto at lower priority under the same procgen locks. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
@@ -298,8 +298,8 @@ V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 an
 
 | Feature | Status | Priority |
 |---------|--------|----------|
-| RF1 Region Frame presentation foundation | ready / auto | P1 |
-| RFR1 Region Frame paired review | ready / auto behind RF1 | P1 |
+| RF1 Region Frame presentation foundation | complete / landed | P1 |
+| RFR1 Region Frame paired review | ready / auto | P1 |
 | Alpine Plateau six-state Asset V2 underlay family | planned (blocked on RF1 review + source art) | P1 |
 | AR1 Archive Resolve presentation spine | ready / auto | P2 |
 | ARR1 Archive Resolve paired technical review | ready / auto behind AR1 | P2 |
