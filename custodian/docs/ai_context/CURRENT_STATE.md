@@ -1236,7 +1236,7 @@ Documentation updates this session:
 - Terminal `REBOOT` now repopulates the typed `Array[String]` transcript in place, avoiding the Godot runtime error caused by assigning an untyped duplicated boot-line array.
 - Active UI shell: in-game command terminal embedded in the Godot HUD. Its SECTORS page now uses a tactical-management hierarchy: larger shared minimap with focused-sector labeling/highlight, one-line aligned sector table, authoritative `NAME // STATE` selected-sector detail card, aligned command-link actions, smaller secondary event log with compressed focus-shift spam, explicit grid-deficit top status formatting, and clean dark text panels while preserving the industrial terminal frame.
 - Current gameplay UI family remains Black Reliquary, with runtime assets under `res://content/ui/black_reliquary/` and reusable Godot components under `res://game/ui/`. The first campaign-world field-HUD visual lock now narrows that family to sparse graphite/ivory/brass survey framing, geometric marker/beacon tags, and minimal peripheral chrome; minimap and compass are not part of that locked field-HUD baseline yet. Existing minimap scenes/providers/tests remain valid runtime capability for explicit surfaces such as Sundered Keep, inventory/status, and terminal tactical views. Normal-play diagnostics remain on F12/`debug_hud`.
-- Current beginning slice: `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked as one continuous space — Crèche of Answerless Names, Recovery Ambulatory, Attestation Gallery, Locker Reliquary, Dust Lung Cistern, Undergate Mechanism Hall, Gate of Dust, Custodian Approach, the optional Chapel of Late Service, and the Road of Witnesses South Reach. The Custodian wakes beneath the repeating institutional command (RETURN TO POST); the Field Terminal that answers it belongs to a later section.
+- Current beginning slice: `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked as one continuous space — Crèche of Answerless Names, Recovery Ambulatory, Attestation Gallery, Locker Reliquary, Dust Lung Cistern, Undergate Mechanism Hall, Gate of Dust, Custodian Approach, the optional Chapel of Late Service, and the Road of Witnesses South Reach. The Custodian wakes beneath the repeating institutional command (RETURN TO POST); the post-Awakening response is designed around Forum adjudication → Muster Court → ordinary Continuity Port; a Field Terminal may remain a supporting witness/status surface rather than the destination.
 - Mandatory local agent/developer entrypoint: `custodian/AGENTS.md`.
 - Godot 4.7 startup maintenance now uses explicit GDScript types in strict-warning paths, complete SpriteFrames
   `loop` metadata, current resource UIDs, and canonical/noncanonical import regeneration guidance documented in
@@ -1822,9 +1822,10 @@ persistent RETURN TO POST objective), the existing locker (grants `p9_sidearm`),
 the Dust Lung bidirectional transit lift `(384, -3008)` ⇄ `(384, -3424)`, and the
 Undergate damaged port readout. No combat: the Attestation Sentinels, Approach
 Sentinel, scavenger nest, and route-leech are disabled `encounter` markers and
-`World/Enemies` is empty. No Field Terminal, Forum, Continuity Port, Contract, or
-campaign transition, and no first-campaign prewarming from the prologue — those
-belong to later sections, and `world_contract_prewarm_smoke.gd` now asserts their
+`World/Enemies` is empty. No Forum, Continuity Port, Contract, or campaign
+transition, and no first-campaign prewarming from the prologue — those belong to
+later sections; Field Terminal capability is no longer the post-Awakening
+destination contract, and `world_contract_prewarm_smoke.gd` now asserts their
 absence. The Road is sealed north of the South Reach by a visible collapsed
 barricade at `y = -6530`, not an invisible wall.
 
