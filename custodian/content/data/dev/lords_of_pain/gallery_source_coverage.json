@@ -1,0 +1,4709 @@
+{
+  "schema": "custodian.lords_of_pain_source_coverage.v1",
+  "source_archive": "archive/dev/LordsOfPain/LordsOfPain.zip",
+  "archive_is_hydrated": true,
+  "archive_scope": "(DEMO) Lords Of Pain - Old School Isometric Assets",
+  "available_png_count": 539,
+  "license_path": "archive/dev/LordsOfPain/Licence.txt",
+  "full_asset_index": "archive/dev/LordsOfPain/Asset Index (FULL).txt",
+  "full_animation_index": "archive/dev/LordsOfPain/Animation Index (FULL).txt",
+  "asset_entries": [
+    {
+      "section": "Playable Character",
+      "index_entry": "Warrior",
+      "match_count": 144,
+      "sources": [
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/E/warrior_armed_idle_E_0.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/N/warrior_armed_idle_N_90.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NE/warrior_armed_idle_NE_45.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NEE/warrior_armed_idle_NEE_22.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NNE/warrior_armed_idle_NNE_67.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NNW/warrior_armed_idle_NNW_112.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NW/warrior_armed_idle_NW_135.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NWW/warrior_armed_idle_NWW_157.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/S/warrior_armed_idle_S_270.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SE/warrior_armed_idle_SE_315.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SEE/warrior_armed_idle_SEE_337.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SSE/warrior_armed_idle_SSE_292.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SSW/warrior_armed_idle_SSW_247.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SW/warrior_armed_idle_SW_225.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SWW/warrior_armed_idle_SWW_202.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/W/warrior_armed_idle_W_180.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Playable Character",
+      "index_entry": "Knight",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Playable Character",
+      "index_entry": "Fighter",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Non-Playable Character",
+      "index_entry": "Subservient",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Boss",
+      "index_entry": "Demonlord",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Enemy",
+      "index_entry": "Skeleton",
+      "match_count": 256,
+      "sources": [
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "section": "User Interface",
+      "index_entry": "Cursor Gauntlet x5",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "User Interface",
+      "index_entry": "Filter Vignette",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "User Interface",
+      "index_entry": "Highlight x5",
+      "match_count": 1,
+      "sources": [
+        {
+          "path": "archive/dev/LordsOfPain/user interface/highlight/highlight_yellow.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "section": "User Interface",
+      "index_entry": "Loot Indicator x5",
+      "match_count": 1,
+      "sources": [
+        {
+          "path": "archive/dev/LordsOfPain/user interface/loot-indicator/loot_indicator_yellow.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Bones x3",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Rocks",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Mushrooms",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Barrel + Break",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Gold Drop",
+      "match_count": 128,
+      "sources": [
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/E/gold_drop_E_0.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/N/gold_drop_N_90.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NE/gold_drop_NE_45.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NEE/gold_drop_NEE_22.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNE/gold_drop_NNE_67.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NNW/gold_drop_NNW_112.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NW/gold_drop_NW_135.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/NWW/gold_drop_NWW_157.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/S/gold_drop_S_270.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SE/gold_drop_SE_315.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SEE/gold_drop_SEE_337.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSE/gold_drop_SSE_292.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SSW/gold_drop_SSW_247.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SW/gold_drop_SW_225.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/SWW/gold_drop_SWW_202.5_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/prop/gold_drop/W/gold_drop_W_180.0_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Wall x3",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Tiles",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Column x2",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Bricks",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Crate + Break",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Gemstones x4",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Brazier + Lit + Break",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Prop",
+      "index_entry": "Torch",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Visual Effect",
+      "index_entry": "Zone",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Visual Effect",
+      "index_entry": "Glint",
+      "match_count": 8,
+      "sources": [
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_0.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_2.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_3.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_4.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_5.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_6.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        },
+        {
+          "path": "archive/dev/LordsOfPain/vfx/glint/glint_7.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Visual Effect",
+      "index_entry": "Flame + Glow",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Visual Effect",
+      "index_entry": "Flames + Glow",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Visual Effect",
+      "index_entry": "Glow",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Visual Effect",
+      "index_entry": "Swoosh",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Environment",
+      "index_entry": "Ground Stone",
+      "match_count": 1,
+      "sources": [
+        {
+          "path": "archive/dev/LordsOfPain/environment/ground_stone1.png",
+          "dimensions": [
+            256,
+            256
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Environment",
+      "index_entry": "Ground Variation x2",
+      "match_count": 0,
+      "sources": []
+    },
+    {
+      "section": "Environment",
+      "index_entry": "Ground Darken",
+      "match_count": 0,
+      "sources": []
+    }
+  ],
+  "animation_entries": [
+    {
+      "animation": "warrior_default_idle",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "warrior_default_walk",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "warrior_armed_idle",
+      "frame_files": 16,
+      "directions": [
+        "E",
+        "N",
+        "NE",
+        "NEE",
+        "NNE",
+        "NNW",
+        "NW",
+        "NWW",
+        "S",
+        "SE",
+        "SEE",
+        "SSE",
+        "SSW",
+        "SW",
+        "SWW",
+        "W"
+      ],
+      "sample_dimensions": [
+        256,
+        256
+      ],
+      "sources": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/E/warrior_armed_idle_E_0.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/N/warrior_armed_idle_N_90.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NE/warrior_armed_idle_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NEE/warrior_armed_idle_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NNE/warrior_armed_idle_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NNW/warrior_armed_idle_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NW/warrior_armed_idle_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/NWW/warrior_armed_idle_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/S/warrior_armed_idle_S_270.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SE/warrior_armed_idle_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SEE/warrior_armed_idle_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SSE/warrior_armed_idle_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SSW/warrior_armed_idle_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SW/warrior_armed_idle_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/SWW/warrior_armed_idle_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_idle/W/warrior_armed_idle_W_180.0_0.png"
+      ]
+    },
+    {
+      "animation": "warrior_armed_walk",
+      "frame_files": 128,
+      "directions": [
+        "E",
+        "N",
+        "NE",
+        "NEE",
+        "NNE",
+        "NNW",
+        "NW",
+        "NWW",
+        "S",
+        "SE",
+        "SEE",
+        "SSE",
+        "SSW",
+        "SW",
+        "SWW",
+        "W"
+      ],
+      "sample_dimensions": [
+        256,
+        256
+      ],
+      "sources": [
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/E/warrior_armed_walk_E_0.0_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/N/warrior_armed_walk_N_90.0_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NE/warrior_armed_walk_NE_45.0_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NEE/warrior_armed_walk_NEE_22.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNE/warrior_armed_walk_NNE_67.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NNW/warrior_armed_walk_NNW_112.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NW/warrior_armed_walk_NW_135.0_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/NWW/warrior_armed_walk_NWW_157.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/S/warrior_armed_walk_S_270.0_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SE/warrior_armed_walk_SE_315.0_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SEE/warrior_armed_walk_SEE_337.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSE/warrior_armed_walk_SSE_292.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SSW/warrior_armed_walk_SSW_247.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SW/warrior_armed_walk_SW_225.0_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/SWW/warrior_armed_walk_SWW_202.5_7.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_0.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_1.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_2.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_3.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_4.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_5.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_6.png",
+        "archive/dev/LordsOfPain/playable character/warrior/warrior_armed_walk/W/warrior_armed_walk_W_180.0_7.png"
+      ]
+    },
+    {
+      "animation": "warrior_armed_attack",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "warrior_special_select",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "warrior_special_death",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "knight_default_idle",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "knight_default_walk",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "knight_armed_idle",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "knight_armed_walk",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "knight_armed_attack",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "knight_special_select",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "knight_special_death",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "fighter_default_idle",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "fighter_default_walk",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "fighter_armed_idle",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "fighter_armed_walk",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "fighter_armed_attack",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "fighter_special_select",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "fighter_special_death",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "subservient_special_working",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "subservient_special_worship",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "skeleton_default_idle",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "skeleton_default_walk",
+      "frame_files": 128,
+      "directions": [
+        "E",
+        "N",
+        "NE",
+        "NEE",
+        "NNE",
+        "NNW",
+        "NW",
+        "NWW",
+        "S",
+        "SE",
+        "SEE",
+        "SSE",
+        "SSW",
+        "SW",
+        "SWW",
+        "W"
+      ],
+      "sample_dimensions": [
+        256,
+        256
+      ],
+      "sources": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_E_0.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NEE_22.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NE_45.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNE_67.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NNW_112.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NWW_157.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_NW_135.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_N_90.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SEE_337.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SE_315.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSE_292.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SSW_247.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SWW_202.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_SW_225.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_S_270.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_default_walk_W_180.0_7.png"
+      ]
+    },
+    {
+      "animation": "skeleton_default_attack",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "skeleton_special_death",
+      "frame_files": 128,
+      "directions": [
+        "E",
+        "N",
+        "NE",
+        "NEE",
+        "NNE",
+        "NNW",
+        "NW",
+        "NWW",
+        "S",
+        "SE",
+        "SEE",
+        "SSE",
+        "SSW",
+        "SW",
+        "SWW",
+        "W"
+      ],
+      "sample_dimensions": [
+        256,
+        256
+      ],
+      "sources": [
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/E/skeleton_special_death_E_0.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/N/skeleton_special_death_N_90.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NE/skeleton_special_death_NE_45.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NEE/skeleton_special_death_NEE_22.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNE/skeleton_special_death_NNE_67.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NNW/skeleton_special_death_NNW_112.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NW/skeleton_special_death_NW_135.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/NWW/skeleton_special_death_NWW_157.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/S/skeleton_special_death_S_270.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SE/skeleton_special_death_SE_315.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SEE/skeleton_special_death_SEE_337.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSE/skeleton_special_death_SSE_292.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SSW/skeleton_special_death_SSW_247.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SW/skeleton_special_death_SW_225.0_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/SWW/skeleton_special_death_SWW_202.5_7.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_0.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_1.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_2.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_3.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_4.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_5.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_6.png",
+        "archive/dev/LordsOfPain/enemy/skeleton/skeleton_special_death/W/skeleton_special_death_W_180.0_7.png"
+      ]
+    },
+    {
+      "animation": "demonlord_default_idle",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "demonlord_default_walk",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "demonlord_default_attack1",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "demonlord_default_attack2",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "demonlord_special_intro",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "demonlord_special_laugh",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    },
+    {
+      "animation": "demonlord_special_death",
+      "frame_files": 0,
+      "directions": [],
+      "sample_dimensions": null,
+      "sources": []
+    }
+  ],
+  "complete_for_full_indexes": false
+}
