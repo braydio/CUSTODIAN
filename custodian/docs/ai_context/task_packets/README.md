@@ -22,6 +22,18 @@ Seven implementation slices are pre-authored with paired reviews. H1 is in progr
 
 Do not create v2 duplicates merely because a predecessor chose different private helpers; refresh the existing downstream packet and its review in the same docs change.
 
+## Active Kenney Presentation Feasibility Series
+
+Program tracker: `../../../design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md`.  
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+
+Three implementation slices test CUSTODIAN presentation without changing production art direction up front.
+
+- `KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — K3D-1, ready/manual: inventories the seven local Kenney archives, ingests a bounded Isometric Miniature subset through Asset V2, and builds a detached A/B 2D comparison.
+- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — paired K3D-1 technical review; subjective art-direction judgment remains human-owned.
+- K3D-2 orthographic real-3D presentation and K3D-3 Shape/Asset Forge 3D→2D production testing remain planned and must be refreshed from landed predecessor evidence rather than pre-authored speculatively.
+- Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
+
 ## Active Archive Resolve Presentation Series
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
