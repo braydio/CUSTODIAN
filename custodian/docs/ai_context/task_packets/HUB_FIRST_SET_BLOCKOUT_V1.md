@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-first-set-blockout-v1`
-- Status: `ready`
+- Status: `in_progress`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -14,18 +14,18 @@
 - Paired review workstream: `review-hub-first-set-blockout-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `04d36ff604da`
+- Reviewed main: `5bb137655670`
 - Goal: Build the complete runtime-ready blockout for the first persistent Hub set immediately north of Awakening, from Road of Witnesses South Reach through the Ashen Forum to the Archive/Crown Transfer branch and the Muster Court/Continuity Port deployment wing, so the second half of the first playable has one authoritative, navigable spatial target before world-transition and campaign-deployment behavior are wired.
-- Completion boundary: Implement one Hub-first-set spatial authority and one playable authored blockout scene using the exact coordinates locked in `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`; reuse the current five Road of Witnesses production module pairs as presentation without reauthoring their coordinates; make the new first-set layout the sole collision/navigation authority for this Hub scene; expose all named handoff/branch/deployment markers; provide a standalone Operator/camera playtest wrapper; prove complete walkable connectivity and minimum route width; generate a minimal human-review overview capture; repair the directly related Hub/Road documentation drift. Done means the player can freely walk the entire proposed first-set blockout from `Spawn_SouthReach` to Forum, Sepulcher loop, Archive Rise, Crown Transfer Court, Muster Court, and Continuity Port threshold, while no actual Awakening, Twin, Contract, or procgen transition fires.
-- Current measured state: Awakening ends inside the translated Road prototype at world completion center `(0,-6464)`. Because Awakening translates the Road by `(6,-6626)`, that handoff equals Road-local `(-6,162)`. The live Road presentation contains five modular production plate pairs at exact local centers `(0,34)`, `(0,-862)`, `(-832,-862)`, `(-832,-1820)`, and `(832,-862)` with native canvases 768x896 / 896x896 / 768x896 / 896x896 / 896x896. Its current `BLOCKER_RECTS` cover only a central `1254x1254` legacy collision footprint even though the visual modules extend much farther, so that collision cannot become Hub first-set authority. `AuthoredBlockoutGrid2D` and `AuthoredNavigationProvider2D` already provide a reusable 32px authored blockout/navigation foundation. No production WorldTransitionManager exists yet; it remains design-only. No Hub first-set runtime scene or blockout packet currently exists.
+- Completion boundary: Implement one Hub-first-set spatial authority and one playable authored blockout scene using the exact coordinates locked in `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`; reuse the five Road production module pairs without duplicating their registration; make the first-set grid the sole Hub collision/navigation authority; expose all named markers; provide a standalone real-Operator/camera playtest; prove raw-grid and real-Operator-clearance connectivity, minimum authored route width, and a literal two-connection Sepulcher circulation loop; generate one human-review overview; repair directly related docs. Done means the player can traverse South Reach → Forum → both sides of the Sepulcher loop → Archive/Crown → Muster/Port while H2+ lifecycle behavior remains inert.
+- Current measured state: Awakening ends at world `(0,-6464)` inside the Road translated by `(6,-6626)`, yielding Road-local `Spawn_SouthReach=(-6,162)`. The five Road production module pairs remain Road-owned presentation; legacy Road blocker rectangles cannot own the larger first-set traversal. An active implementation exists on `agent/hub-first-set-blockout-v1` and previously reported 13,110 walkable cells, 48 merged rails, 14 markers, focused H1/Road/Twin greens, and 14/14 changed-file validation; human overview approval is pending. That branch must sync current main and absorb the second Sepulcher connector, Operator-clearance proof, and Port-return semantic correction before landing. No production major-context WorldTransitionManager exists yet.
 - Evidence: `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`; `design/04_architecture/HUB_SPATIAL_LAYOUT.md`; `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`; `design/04_architecture/WORLD_TRANSITION_SYSTEM.md`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/game/world/hub/road_of_witnesses_prototype.gd`; `custodian/game/world/levels/authored_blockout_grid_2d.gd`; `custodian/game/world/levels/authored_navigation_provider_2d.gd`.
 - Task-specific authority: `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` is the exact spatial/blockout authority. `HUB_SPATIAL_LAYOUT.md` owns district meaning/topology. `AWAKENING_FIRST_RETURN.md` and `awakening_layout.gd` own only the southern seam. `TWIN_SOLARIA.md` owns the later Crown Transfer destination contract. `WORLD_TRANSITION_SYSTEM.md` owns later context switching and must not be partially implemented here.
 - Work surface: New primary runtime surface under `custodian/game/world/hub/first_set/` plus one standalone playtest scene under `custodian/scenes/`; reuse the Road module scene/controller as presentation input; focused validation under `custodian/tools/validation/`; minimal current-state/index/Hub spatial docs updates. Do not modify Awakening progression or Twin Solaria runtime.
 - Change: Create `HubFirstSetLayout` as the single first-set geometry/marker authority; configure the existing authored blockout grid/navigation provider from it; build blockout collision from the grid boundary; reuse the five Road plate pairs at their exact local positions but suppress/avoid the Road prototype's competing collision authority; add visual blockout regions for North Processional, Ashen Forum, Sepulcher Gardens, Archive Rise, Crown Transfer Court, Muster Court, and Continuity Port Chamber; expose named spawn/POI markers; build a standalone real-Operator/camera playtest wrapper at `Spawn_SouthReach`; add focused connectivity/geometry validation.
 - Preserve: Existing Awakening coordinates and South Reach geometry; existing five Road art family/runtime coordinates and pixels; Road behavior inside the Awakening scene; Twin Solaria `hub_twin_solaria` and `Spawn_CrownCauseway`; default boot flow; Contract sandbox/game.tscn behavior; Asset Pipeline V2 contents; 32px macro grid; no duplicate spatial authority.
 - Non-goals: No `awakening_completed` scene transition; no WorldTransitionManager implementation; no Contract proposal/selection logic; no `WorldContractBootstrap.ensure_started()` call; no Continuity Port deployment; no Twin route traversal; no CampaignRegion creation; no Campaign return; no new production raster art or Asset V2 families; no NPC/enemy population; no final lighting/audio; no full Archive Heights/Prism Margin/Sunken Civic build.
-- Acceptance: The blockout scene uses world bounds `Rect2(-2816,-5504,6016,6080)` and a 188x190 grid at 32px; `Spawn_SouthReach=(-6,162)`; all exact envelopes/connectors/markers from the design authority are represented without coordinate duplication outside the layout authority; the five existing Road module sprites retain exact local registration; Road legacy collision is absent/disabled in this Hub scene; first-set grid boundary collision is the sole Hub-blockout physical authority; a path exists from Spawn_SouthReach through Witness Plaza and North Processional to the Forum, from Forum through Sepulcher and back, from Forum to Archive Rise and Crown Transfer, and from Forum through Muster Court to CampaignExitThreshold; every mandatory route has >=128px/4 cells clear width and no isolated walkable islands; the playtest wrapper spawns a real Operator at Spawn_SouthReach with camera bounds derived from first-set bounds; Crown Transfer and Continuity Port are inert semantic markers only; no Contract bootstrap/generation occurs; no scene/world transition occurs; one human-approved full-map overview demonstrates readable district/branch topology.
-- Validation: Add a focused implementation-created blockout smoke and register it in the validation manifest before closeout. It must prove bounds/grid, exact envelopes/connectors/markers, Road presentation registration, absence of competing Road collision, navigation connectivity, minimum route width, named-spawn validity, and inert transition markers. Keep the existing Road production smoke and Twin runtime smoke green. Run the focused blockout/navigation checks first, then `python3 custodian/tools/validation/run_validation.py --changed --json` (or the current equivalent from `VALIDATION_RECIPES.md`) and `git diff --check`.
+- Acceptance: World bounds/grid and every design envelope/marker match the authority; both 4x8 Sepulcher connectors exist and form a true loop; Road presentation keeps exact registration while Road legacy collision is disabled in Hub; raw-grid and Operator-clearance routes connect Spawn_SouthReach, Forum, both Garden links, Crown Transfer, Muster, Port, and CampaignExitThreshold; no isolated islands; `Spawn_CampaignReturn=(2592,-3008)` is the Continuity Port west return bay; production map owns no Operator/camera; lifecycle markers remain inert; no Contract bootstrap or world transition occurs; one human-approved overview proves macro topology/readability.
+- Validation: The focused H1 smoke must prove exact bounds/envelopes/markers, both Sepulcher connectors and connector-disjoint loop traversal, Road registration/collision ownership, raw navigation connectivity, Operator-clearance connectivity derived from live collision/boundary geometry, minimum authored width, named spawn validity, Port-return marker semantics, and inert lifecycle markers. Keep Road production + Twin runtime smokes green; then run changed-file validation once and `git diff --check`.
 - Task overrides: `none`
 - Deferred: H2 Awakening->Hub world-context handoff; H3 Forum adjudication and single Contract prewarm; H4 Crown Transfer<->Twin Solaria; H5 Muster/Continuity Port deployment; H6 Campaign return; H7 end-to-end first-set closeout; all production Hub art.
 
@@ -84,8 +84,10 @@ Rect2(-2560,-3904,1152,1408)
 center (-1984,-3200)
 grid Rect2i(8,50,36,44)
 
-connector Rect2(-1408,-3328,128,256)
-connector grid Rect2i(44,68,4,8)
+north connector Rect2(-1408,-3328,128,256)
+north connector grid Rect2i(44,68,4,8)
+south connector Rect2(-1408,-2784,128,256)
+south connector grid Rect2i(44,85,4,8)
 ```
 
 ### Lower Archive Rise
@@ -119,7 +121,6 @@ connector grid Rect2i(128,70,4,10)
 
 MusterEntry          (1472,-3008)
 MusterCenter         (1952,-3008)
-Spawn_CampaignReturn (2592,-3008)
 ```
 
 ### Continuity Port Chamber
@@ -129,7 +130,8 @@ Rect2(2496,-3456,704,896)
 center (2848,-3008)
 grid Rect2i(166,64,22,28)
 
-ContinuityPort        (2944,-3008)
+Spawn_CampaignReturn  (2592,-3008)
+ContinuityPort         (2944,-3008)
 CampaignExitThreshold (3136,-3008)
 threshold volume Rect2(3104,-3072,96,128)
 ```
@@ -226,7 +228,10 @@ Spawn_SouthReach
 AdjudicationDais
  -> WestGardenThreshold
  -> Sepulcher interior sample
+ -> opposite Sepulcher/Forum connector
  -> AdjudicationDais
+
+The proof must enter through one connector and leave through the other; same-neck backtracking is not a loop proof.
 
 AdjudicationDais
  -> EastMusterThreshold
@@ -237,7 +242,9 @@ AdjudicationDais
 
 Also prove no walkable cell lies in a disconnected component.
 
-Minimum route width is 4 cells/128px. The main processional axis should remain substantially wider where the authored envelopes allow it.
+Minimum authored route width is 4 cells/128px. In addition, derive an Operator-clearance occupancy view from the real Operator collision shape plus active boundary-rail geometry, using the same erosion/clearance principle as the Awakening geometry smoke or a cleaner current equivalent. Every mandatory route, both Sepulcher connectors, and the full loop must remain connected after clearance. Do not hardcode Operator radius when the live collision shape can be read.
+
+The main processional axis should remain substantially wider where the authored envelopes allow it.
 
 ## Human Blockout Review
 
