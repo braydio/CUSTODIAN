@@ -31,6 +31,11 @@ coherent effort.
 - Locks: `none`
 - Kind: `implementation`
 - Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-WORKSTREAM_ID`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
 - Reviewed main: `<short SHA>`
 - Goal:
