@@ -1157,7 +1157,7 @@ def real_repo_read_only() -> None:
             service.workbench.publish = original_publish
             pending_path.unlink(missing_ok=True)
         assert pending_view.land_pending and pending_view.pending_identity == "unarmed/locomotion/run_01/e"
-        assert not pending_view.publish_enabled and "workbench/operator-art" in pending_view.publish_block_reason
+        assert not pending_view.publish_enabled\n        assert "isolated art checkout" in pending_view.publish_block_reason.lower()
 
 
 def main() -> None:
