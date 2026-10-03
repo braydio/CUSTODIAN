@@ -8,6 +8,7 @@
 **Reviewed main:** `72c4133e38a20454dc65b5ac4a24e71af1475ee7`  
 **Last Updated:** 2026-10-03  
 **Depends on:** none for measurement; slice dependencies below
+**Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
 
 ## Purpose
 
@@ -69,6 +70,8 @@ Every slice must preserve these unless a later design authority explicitly chang
 
 **Series ID:** `procgen-runtime-optimization-v1`  
 **Packet series:** stable V1 workstream identities plus three GenerationGrid prelude implementation packets and three paired reviews. Architecture-dependent downstream packets are now explicitly refresh-gated instead of asserting predecessor output before it exists; the measured migration packet count remains deferred to X3 after X1/X2 establish the reviewed post-D surface.  
+Architecture/design-sensitive refreshes in this V1 procgen program return to the recorded Planning refresh chat above with the landed predecessor summary/review evidence before the blocked packet is rewritten in place. Execution agents report live drift but do not silently reinterpret those packet boundaries.
+
 **Dispatch contract:** the V1 DAG identities are pre-authored, but packets whose exact implementation contract depends on not-yet-landed measured architecture may be held `blocked` / `manual` until their prerequisite implementation and review establish the real seam. `ready` / `auto` means executable from current live evidence; dependencies, reviews, refresh gates, and locks jointly control eligibility.
 
 This is a dependency DAG, not one giant workstream. Each packet lands independently. Multiple agents may execute independent eligible siblings in parallel; one agent may also run the serial order below.
