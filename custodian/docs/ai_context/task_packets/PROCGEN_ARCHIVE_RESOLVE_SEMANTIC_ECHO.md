@@ -15,6 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `36cb18230796ec844a7796f0a246085c96179e20`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Complete Archive Resolve V1 with restrained semantic pre-echo, the one-time ingress/spawn resolution sequence, and a visibly lighter reacquisition treatment for previously resolved unloaded terrain.
 - Completion boundary: Done when a small bounded presentation-class vocabulary can influence echo/timing without gaining gameplay authority; first contract entry presents a controlled local Archive Resolve expansion while preserving immediate player control inside the safety pocket; previously resolved unloaded terrain uses a shorter reacquisition treatment; and the final effect remains subtle enough that normal settled play contains no persistent reveal UI/VFX.
 - Current measured state: The design locks five broad presentation classes at most: natural, constructed, road, wall/cliff, and major/hero landmark. AR1/AR2 are expected to provide deterministic ready/resolve scheduling, first-vs-reacquire identity, safety halo, shader phases, pause-safe time, and reduced-effects controls.
@@ -62,6 +63,14 @@ Do not create a second semantic registry for this effect.
 - Prevention / pipeline improvement: `<fill at closeout>`
 - Tooling / docs drift discovered: `<fill at closeout>`
 - Follow-up: `<fill at closeout>`
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
 
