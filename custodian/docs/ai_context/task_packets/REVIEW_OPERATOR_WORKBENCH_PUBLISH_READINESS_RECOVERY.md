@@ -24,7 +24,7 @@
   - Safe preparation must be strictly narrower than destructive Git cleanup.
   - Dirt classification and recovery decisions must use structured state, not error-string parsing.
   - The exact selected source baseline must be checked before mutation without stealing FX-adoption's broader binding-set ownership.
-  - LFS must remain local-only and sparse dependency additions measured rather than broad. Cache materialization is preferred; a hydrated coordination/developer checkout is an acceptable donor only when the same relative path's SHA-256 and byte size exactly match the target LFS pointer. Mismatch, donor pointer, missing donor, or dirty bytes that do not match must fail closed; no network fetch is permitted.
+  - LFS must remain local-only and sparse dependency additions measured rather than broad. Cache materialization is preferred; a hydrated coordination/developer checkout is an acceptable donor only when the same relative path's SHA-256 and byte size exactly match the target LFS pointer. Hydration must be path-scoped to files already present/required by the sparse validation surface; an unscoped `git lfs checkout` that expands sparse-omitted content is a blocking defect. Mismatch, donor pointer, missing donor, or dirty bytes that do not match must fail closed; no network fetch is permitted.
   - Metadata restoration must require clean pre-state + proven transaction provenance + exact preimage; wildcard cleanup is a blocking defect.
   - Failure after mutation must end clean or with a complete durable `RECOVERY_REQUIRED` journal.
   - Successful publication must retain current source-conflict, allowlist, commit, pending-land, and landing guarantees.
