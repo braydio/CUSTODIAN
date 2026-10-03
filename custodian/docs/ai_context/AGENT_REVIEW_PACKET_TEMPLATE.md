@@ -30,6 +30,8 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
 - Review target workstream: `<implementation-id>`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/<IMPLEMENTATION_NAME>.md`
 - Reviewed main: `<full or short main SHA being reviewed>`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent` | `same-agent-fresh-context`
 - Review modes: `<comma-separated: code, architecture, runtime, visual, asset-pipeline, workflow>`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -53,50 +55,72 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
 ## Procedure
 
 1. Claim only after the dependency is complete and archived on `origin/main`.
-2. Read root/local `AGENTS.md`, this packet, the archived implementation
-   packet, its closing summary, active design authority,
-   `custodian/docs/ai_context/prompts/review_runtime_change.md`, and live
-   implementation files.
-3. Review the landed implementation against its original acceptance contract,
+2. Start from a **fresh reviewer context**. Do not continue the implementation conversation/session or rely on its transient reasoning. A reviewer may be the same model/agent family that implemented the target only when this is a newly started context/workstream that reconstructs the task solely from durable repository evidence. Record `Reviewer context: fresh` and `Reviewer provenance: different-agent | same-agent-fresh-context` in the review packet/receipt. If fresh context cannot be established, stop rather than claiming independent review.
+3. Read root/local `AGENTS.md`, this packet, the archived implementation packet, its closing summary, active design authority, `custodian/docs/ai_context/prompts/review_runtime_change.md`, and live implementation files.
+4. Review the landed implementation against its original acceptance contract,
    not just style.
-4. Report confirmed findings first with file/line references where practical.
-5. Assign each finding its cycle-scoped ID and one class (`blocking_defect`,
+5. Report confirmed findings first with file/line references where practical.
+6. Assign each finding its cycle-scoped ID and one class (`blocking_defect`,
    `evidence_gap`, `non_blocking_issue`, `optional_improvement`), domain
    (`implementation`, `pipeline`), affected acceptance, evidence, one
    disposition (`correction`, `next_slice`, `deferred`, `human_required`,
    `no_action`), and rationale. An evidence gap is blocking only when it
    prevents confidence in required acceptance.
-6. **Do not modify reviewed implementation or runtime code in this
+7. **Do not modify reviewed implementation or runtime code in this
    workstream.** Independent review requires a separate workstream, a fresh
    agent context, and no implementation fixes performed inside it.
-7. For visual review, consume the implementation's structured telemetry,
+8. For visual review, consume the implementation's structured telemetry,
    deterministic probes, image metrics, and targeted crops first. Do not
    regenerate equivalent full-frame evidence merely for reviewer independence.
    Recapture only when evidence is missing, stale, contradictory, or cannot
    establish an acceptance criterion.
-8. Keep objective technical visual review separate from subjective art direction.
+9. Keep objective technical visual review separate from subjective art direction.
    Registration, clipping, alpha, visibility, layering, duplicate/missing
    presentation, and deterministic state correspondence may be decided from
    machine evidence. Baseline aesthetics, composition preference, game feel,
    and art-direction acceptance remain human-owned.
-9. Separate implementation findings from pipeline/process findings. Record
+10. Separate implementation findings from pipeline/process findings. Record
    pipeline friction through `custodian.task_feedback.v1`; fix a small safe
    workflow issue in-scope or name a follow-up for repeatable medium/high
    severity.
-10. Append or refresh the archived implementation packet's `## Independent
+11. Append or refresh the archived implementation packet's `## Independent
    Review` receipt (see `task_packets/README.md` for the exact shape).
-11. If correction-worthy findings exist, create a delta packet from
+12. If correction-worthy findings exist, create a delta packet from
    `AGENT_CORRECTION_PACKET_TEMPLATE.md` that references exact finding IDs, plus
    its paired review packet. Do not restate the feature design.
-12. At `Max automatic review cycles`, set the receipt status to
+13. At `Max automatic review cycles`, set the receipt status to
    `human_required` instead of scaffolding another automatic correction.
-13. If clean or only non-blocking findings remain, record the dispositions and
+14. If clean or only non-blocking findings remain, record the dispositions and
    set the receipt to `passed` or `findings` as appropriate; create no
    correction packet.
-14. Complete/archive this review packet through the normal workstream
+15. Complete/archive this review packet through the normal workstream
     lifecycle. Do not mark the reviewed implementation's own packet complete
     again; implementation completion and independent review are separate
     truths.
+
+## Reviewer Independence Gate
+
+Paired review means independent **context**, not necessarily a different vendor
+or model family. The same agent/model family may review its own prior
+implementation only when all of the following are true:
+
+- the implementation session/context is ended and not continued;
+- the review starts as a fresh workstream/context with no transient
+  implementation reasoning carried forward;
+- the reviewer reconstructs intent from the archived packet, closing summary,
+  live code, tests, design authority, and fresh traces/mutations;
+- the durable receipt records `Reviewer context: fresh` and provenance as
+  `same-agent-fresh-context`;
+- the reviewer treats the implementation summary as a claim to verify, not as
+  evidence by itself.
+
+A different agent/context should use `Reviewer provenance: different-agent`.
+If the platform cannot provide a fresh context, the result is an ad hoc
+self-review, not the paired independent review required by this contract.
+
+Fresh context does not require a different model family. Different-family review
+can improve diversity, but the contract optimizes for reproducible evidence and
+context separation rather than vendor identity.
 
 ## Human Decision Gate
 
