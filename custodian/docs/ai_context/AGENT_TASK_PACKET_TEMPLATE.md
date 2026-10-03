@@ -288,6 +288,44 @@ name or create the follow-up workstream before completing the packet.
 For packeted work, the required closing summary uses the same feedback fields.
 Do not write two divergent narratives; mirror the concise receipt.
 
+## Handoff
+
+Complete this section before a V2 implementation/correction packet becomes
+`Status: complete`. Report the **immediate successor in this packet's own
+program/DAG**, not an arbitrary globally eligible dispatcher candidate.
+
+- Next workstream: `<workstream-id | none>`
+- Next packet state: `ready | dependency-gated | refresh-required | human-required | none`
+- Refresh owner: `none | chatgpt-user | execution-agent`
+- ChatGPT/user planning refresh required: `yes | no`
+- Authoring chat: `<ChatGPT conversation URL | not-recorded | n/a>`
+- Refresh reason: `none | <what must be re-derived/decided before the next packet runs>`
+- Next action: `<one concrete action>`
+- Blockers or open questions: `none | <exact blocker>`
+
+Use `Refresh owner: chatgpt-user` for architecture/design-sensitive packet
+refreshes where the next packet must be reconciled against the original design
+conversation, user intent, or cross-workstream plan before implementation.
+Execution agents should report live-code drift and recommended facts, but should
+not silently reinterpret those packet boundaries.
+
+When `Refresh owner: chatgpt-user` and an authoring-chat URL is recorded in the
+next packet or current packet history, surface that exact URL in the closing
+summary and user-facing reply. If the URL is not recorded, write
+`Authoring chat: not-recorded` and explicitly ask the user to provide the
+originating ChatGPT chat link to ChatGPT before refresh if available. Never
+invent a conversation URL.
+
+Use `Refresh owner: execution-agent` only for a genuinely mechanical refresh
+that changes no architecture/design choice, such as rebasing exact file names,
+SHAs, or already-decided API names onto live main. If there is any material
+judgment about scope, ownership, sequencing, visuals, lore, or acceptance,
+route the refresh to `chatgpt-user`.
+
+The required closing summary **and user-facing completion reply** must mirror
+these fields under `## Next Handoff`. If refresh is required, do not imply the
+next packet is safe to claim.
+
 ## Optional Full-Packet Expansion
 
 Add these only when they preserve task-specific information needed for
@@ -309,8 +347,7 @@ pseudo-diffs.
 2.
 3.
 
-### Handoff
+### Additional Handoff Notes
 
-- Next action:
 - Best starting files:
-- Blockers or open questions:
+- Optional operator note:
