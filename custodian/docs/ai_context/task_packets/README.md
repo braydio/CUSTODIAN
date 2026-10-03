@@ -129,6 +129,29 @@ that output is lost, recover it read-only with `dispatch.py last-claim` (or
 `--json`) rather than inferring ownership from worktree/branch activity.
 Continuous workers and cross-machine leases are deferred.
 
+## Packet Handoff And Authoring-Chat Provenance
+
+Newly authored or materially refreshed V2 packets record
+`Authoring chat: <ChatGPT conversation URL | not-recorded | n/a>`. When the
+user provides the originating conversation URL, preserve it exactly. Agents
+must never derive or invent ChatGPT conversation URLs.
+
+Every completed packet/review reports the immediate successor in its own
+program/DAG through the required `Next Handoff` fields: next workstream,
+packet state, refresh owner, whether ChatGPT/user planning refresh is required,
+authoring-chat URL, refresh reason, next action, and blockers.
+
+Architecture/design-sensitive refreshes default to `Refresh owner: chatgpt-user`.
+The execution/review agent supplies the live-state evidence and drift, but the
+user brings the recorded authoring chat back to ChatGPT so the packet can be
+re-derived against both original intent and current main. Mechanical refreshes
+that do not change scope, ownership, sequencing, acceptance, visual direction,
+or design interpretation may use `execution-agent`.
+
+Historical packets without an authoring URL remain valid; surface
+`Authoring chat: not-recorded` and ask the user to provide the originating
+chat URL if they have it.
+
 ## Paired Review Default And Independence
 
 For newly authored or materially refreshed V2 implementation packets, use `Review: auto` by default when independent review can materially improve confidence. This includes runtime/state-machine/persistence/streaming changes, architecture extraction or migration, production asset-pipeline/tooling mutations, performance changes that must preserve semantics, validation/workflow infrastructure, substantial bug fixes, and objective technical presentation work. `Review: none` is a low-risk exemption for documentation-only truth repair, tiny mechanical patches with obvious local effects and direct regression coverage, disposable probes, or similarly inspectable changes; record a concrete `Review rationale: low-risk exemption: ...`. Do not disable review merely to reduce queue length.
