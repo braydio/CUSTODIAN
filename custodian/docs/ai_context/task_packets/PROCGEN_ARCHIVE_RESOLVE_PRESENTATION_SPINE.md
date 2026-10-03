@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-presentation-spine`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `review-procgen-distant-chunk-unload-review-corrections-1`
 - Locks: `procgen-runtime, procgen-presentation`
@@ -14,10 +14,10 @@
 - Paired review workstream: `review-procgen-archive-resolve-presentation-spine`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `1c88f456629cb64fd316b1d7e7c94e5b18446631`
+- Reviewed main: `7d553787ae92bad652f92ee8214b8da990115bb2`
 - Goal: Add the presentation-only Archive Resolve spine that hides chunk cadence behind one continuous deterministic world-space reveal frontier without changing generation, PREPARE/COMMIT, collision, navigation, residency, Region Frame, or semantic authority.
 - Completion boundary: Done when one focused `ProcGenRevealPresentation` owner consumes the reviewed request/commit/unload seams, covers requested cells before authoritative pixels can visibly pop, settles only committed cells, maintains an always-resolved Operator safety halo, renders unresolved/resolving cells through one batched flat diagnostic veil, distinguishes first-resolution from reacquisition, freezes on pause through its own presentation clock, can be disabled without changing streaming behavior, and makes 16x16 chunk cadence visually unobservable while streaming/gameplay fingerprints remain unchanged.
-- Current measured state: On `main@1c88f456`, M3 still owns the shared tile request/PREPARE/COMMIT queue through `ProcGenPauseAwareStreaming`; M4 `ProcGenChunkLifecycle` still owns `UNSEEN -> QUEUED/PREPARED/REVEALING/VISIBLE/DORMANT/UNLOADED`; M5 owns cache residency; M6 owns DORMANT candidate selection/revalidation and `_unload_chunk()` presentation/cache disposal. The landed M6C1 path batches eviction-triggered wall/overlay/navigation/shadow resyncs through the existing reveal cadence. Queued request enters through `_queue_chunk_for_reveal()`; immediate-radius request/commit enters through `_reveal_chunk_immediately()`; queued authoritative COMMIT executes `_commit_tile_reveal_record()` before `ProcGenPauseAwareStreaming` invokes `_on_streaming_tile_committed(tile)`; immediate commit currently calls `_reveal_tile(tile)` then `_chunk_lifecycle.note_committed(chunk_pos)` directly; unload erases painted Floor/Walls, hides foliage, removes road decals, evicts the M5 payload, forces lifecycle `UNLOADED`, and leaves canonical semantics/collision/navigation authority intact. No reveal-presentation owner or veil exists. RF1 is a separate permanent exterior-frame consumer and must not be absorbed here. MR6R1 remains the formal activation gate.
+- Current measured state: On `main@1c88f456`, M3 still owns the shared tile request/PREPARE/COMMIT queue through `ProcGenPauseAwareStreaming`; M4 `ProcGenChunkLifecycle` still owns `UNSEEN -> QUEUED/PREPARED/REVEALING/VISIBLE/DORMANT/UNLOADED`; M5 owns cache residency; M6 owns DORMANT candidate selection/revalidation and `_unload_chunk()` presentation/cache disposal. The landed M6C1 path batches eviction-triggered wall/overlay/navigation/shadow resyncs through the existing reveal cadence. Queued request enters through `_queue_chunk_for_reveal()`; immediate-radius request/commit enters through `_reveal_chunk_immediately()`; queued authoritative COMMIT executes `_commit_tile_reveal_record()` before `ProcGenPauseAwareStreaming` invokes `_on_streaming_tile_committed(tile)`; immediate commit currently calls `_reveal_tile(tile)` then `_chunk_lifecycle.note_committed(chunk_pos)` directly; unload erases painted Floor/Walls, hides foliage, removes road decals, evicts the M5 payload, forces lifecycle `UNLOADED`, and leaves canonical semantics/collision/navigation authority intact. No reveal-presentation owner or veil exists. RF1 is a separate permanent exterior-frame consumer and must not be absorbed here. MR6R1 has passed with 0 blocking defects and 0 material evidence gaps; the reviewed M6 request/commit/unload seam is now the stable AR1 dependency.
 - Evidence: `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; `custodian/game/world/procgen/proc_gen_tilemap.gd` (`_ready`, `_process`, `_queue_chunk_for_reveal`, `_reveal_chunk_immediately`, `_on_streaming_tile_committed`, `_commit_tile_reveal_record`, `_unload_chunk`); `streaming/procgen_pause_aware_streaming.gd`; `streaming/procgen_chunk_lifecycle.gd`; `streaming/procgen_chunk_payload_cache.gd`; `streaming/procgen_chunk_residency_policy.gd`; `proc_gen_map.tscn`; `procgen_distant_chunk_unload_smoke.gd`; refreshed RF1 packet for the permanent-underlay separation.
 - Task-specific authority: `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; reviewed M3-M6 streaming contracts; `PROCGEN_REGION_FRAME_PROFILES.md` only for the rule that permanent exterior depth belongs to Region Frame rather than Archive Resolve.
 - Work surface: Add one focused owner at `custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd`; integrate one batched world-space veil under `proc_gen_map.tscn` at a presentation layer that covers generated terrain/dressing but remains below actors/markers; add only narrow observation/delegation in `proc_gen_tilemap.gd`; add focused validation/manifest ownership, aggregate observability, and only docs made stale by implementation. Do not move request/PREPARE/COMMIT, lifecycle, cache, residency, generation, collision, navigation, or Region Frame state into the new owner.
@@ -36,10 +36,6 @@
 - Validation: Create one focused AR1 smoke and register it once the path exists. It must falsify request-before-commit coverage on both queued and immediate paths, committed-only settlement, shared commit-adapter lifecycle parity, safety-halo committed-only forcing, unload/reacquisition identity, pause freeze with M3 PREPARE parity, deterministic ordering, disabled-effect fallback, batched-instance/no-per-cell-object behavior, and semantic/streaming fingerprint parity. Run that first. Then run existing `procgen_pause_aware_streaming`, `procgen_chunk_lifecycle`, `procgen_chunk_payload_cache`, `procgen_distant_chunk_unload`, `procgen_runtime_health`, candidate materializer parity, S1 quick, packet/review-pairing/docs/manifest checks, and `git diff --check`. Visual evidence economy: structured counters and a deterministic frontier trace come first; retain at most one short diagnostic traversal capture proving the absence of visible chunk rectangles and correct actor-over-veil layering. Aesthetic approval is deferred to AR2.
 - Task overrides: `none`
 - Deferred: AR2 owns graphite/soot world-space dissolve, dither, brass/amber registration edge and phase misregistration. AR3 owns bounded semantic pre-echo, stronger initial spawn/ingress resolve and final reacquisition timing polish.
-
-## Activation Gate
-
-The packet has been re-derived against the landed M6C1 runtime seam, but the formal `review-procgen-distant-chunk-unload-review-corrections-1` receipt has not landed on `main` yet. Keep this packet `blocked/manual` until that review is complete with `passed` or non-blocking/next-slice-only findings. If MR6R1 produces a correction-worthy runtime finding, keep AR1 blocked until that correction cycle closes, then refresh only the affected seam. If MR6R1 closes without runtime-seam changes, promotion to `ready/auto` is mechanical and requires no new design pass.
 
 ## Completion Truth
 
@@ -63,6 +59,6 @@ The packet has been re-derived against the landed M6C1 runtime seam, but the for
 
 ## Handoff
 
-- Next action: When MR6R1 lands clean/non-blocking, flip only `Status: ready` and `Dispatch: auto`; then let RF1/RFR1 retain priority P1 and claim AR1 afterward at P2 under the shared procgen locks.
+- Next action: Ready for auto-dispatch. RF1/RFR1 retain priority P1 under the shared procgen locks; AR1 is P2 and should naturally follow once that lock is free.
 - Best starting files: `proc_gen_tilemap.gd` request/commit/unload adapters; `proc_gen_map.tscn`; `streaming/procgen_pause_aware_streaming.gd`; `STREAMING_REVEAL_PRESENTATION_V1.md`.
-- Blockers or open questions: Formal MR6R1 receipt only. No unresolved AR1 architecture choice remains.
+- Blockers or open questions: None. No unresolved AR1 architecture choice remains.
