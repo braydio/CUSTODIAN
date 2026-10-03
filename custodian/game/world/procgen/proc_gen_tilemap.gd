@@ -26,6 +26,7 @@ const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field
 const SURFACE_MATERIAL_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/surface_material_resolver.gd")
 const SURFACE_MATERIAL_IDS := preload("res://game/world/procgen/surfaces/surface_material_ids.gd")
 const ROAD_SEMANTICS_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/road_semantics_resolver.gd")
+const ROAD_AUTHORITY_SCRIPT := preload("res://game/world/procgen/roads/procgen_road_authority.gd")
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
 )
@@ -486,18 +487,10 @@ var _last_compound_diagnostics: Dictionary = {}
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
-var _main_road_tiles: Dictionary = {}
-var _road_centerline_tiles: Dictionary = {}
-var _path_centerline_tiles: Dictionary = {}
 var _road_visual_tiles: Dictionary = {}
 var _path_visual_tiles: Dictionary = {}
-var _compound_connector_centerline_tiles: Array[Vector2i] = []
 var _compound_connector_visual_candidates: Dictionary = {}
-var _parking_zone_tiles: Dictionary = {}
-var _ruined_road_cells: Dictionary = {}
-var _service_hardstand_cells: Dictionary = {}
-var _road_semantics_summary: Dictionary = {}
-var _parking_zone_center: Vector2i = Vector2i.ZERO
+var _road_authority: ProcgenRoadAuthority = ROAD_AUTHORITY_SCRIPT.new()
 var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
@@ -1384,8 +1377,8 @@ func _fill_tilemaps() -> void:
 	if story_rooms_enabled:
 		_place_story_rooms(map_size)
 		_stamp_worldgen_story_room_geometry()
-	if intent_main_roads_enabled and _parking_zone_center != Vector2i.ZERO:
-		_stamp_parking_zone(_parking_zone_center, map_size)
+	if intent_main_roads_enabled and _road_authority.parking_zone_center != Vector2i.ZERO:
+		_stamp_parking_zone(_road_authority.parking_zone_center, map_size)
 	_enforce_route_playability_walkability(map_size)
 	_marks["progress_faction_story"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -1746,8 +1739,8 @@ func _is_floor_value_cluster_cell_safe(
 	if required_lookup.has(cell) \
 			or _last_interior_thresholds.has(cell) \
 			or _last_compound_ingress.has(cell) \
-			or _road_centerline_tiles.has(cell) \
-			or _path_centerline_tiles.has(cell):
+			or _road_authority.road_centerline_tiles.has(cell) \
+			or _road_authority.path_centerline_tiles.has(cell):
 		return false
 	if _is_combat_readability_floor_tile(cell):
 		return false
@@ -2381,13 +2374,9 @@ func _stamp_spawn_clearing(map_size: Vector2i) -> void:
 
 
 func _carve_main_roads(map_size: Vector2i) -> void:
-	_main_road_tiles.clear()
-	_road_centerline_tiles.clear()
+	_road_authority.reset_generated_roads()
 	_road_visual_tiles.clear()
-	_compound_connector_centerline_tiles.clear()
 	_compound_connector_visual_candidates.clear()
-	_parking_zone_tiles.clear()
-	_parking_zone_center = Vector2i.ZERO
 	if procgen_node == null:
 		return
 
@@ -2416,8 +2405,8 @@ func _carve_main_roads(map_size: Vector2i) -> void:
 
 	if intent_compound_connector_corridor_enabled:
 		_carve_compound_connector_corridor(spawn, trunk_anchor, map_size)
-	if not _compound_connector_centerline_tiles.is_empty():
-		required_road_anchors.append(_compound_connector_centerline_tiles.back())
+	if not _road_authority.compound_connector_centerline_tiles.is_empty():
+		required_road_anchors.append(_road_authority.compound_connector_centerline_tiles.back())
 	_repair_road_connectivity(required_road_anchors, trunk_anchor, road_width, map_size)
 	var parking_anchor := _pick_parking_anchor(spawn, trunk_anchor, map_size)
 	_carve_main_road_path(spawn, parking_anchor, maxi(1, road_width - 1), map_size)
@@ -2439,9 +2428,9 @@ func _stamp_ascent_route_presentation(map_size: Vector2i) -> void:
 			continue
 		var distance := int(centerline_distance.get(cell, 999999))
 		if distance <= 2:
-			_main_road_tiles[cell] = true
+			_road_authority.add_road_tile(cell)
 			if distance == 0:
-				_road_centerline_tiles[cell] = true
+				_road_authority.add_road_centerline_tile(cell)
 			if _should_preserve_route_role_visual(cell):
 				continue
 			if distance == 0:
@@ -2491,135 +2480,48 @@ func _pick_primary_road_compound_anchor(spawn: Vector2i) -> Vector2i:
 
 
 func _repair_road_connectivity(required_anchors: Array[Vector2i], root_anchor: Vector2i, width: int, map_size: Vector2i) -> void:
-	if required_anchors.is_empty() or _main_road_tiles.is_empty():
-		return
-	var root := root_anchor
-	if not _main_road_tiles.has(root):
-		root = required_anchors[0]
-	for anchor in required_anchors:
-		if _main_road_tiles.has(anchor):
-			root = anchor
-			break
-	var connected := _collect_connected_road_tiles(root)
-	for anchor in required_anchors:
-		if not _is_tile_inside_map(anchor, map_size, 1):
-			continue
-		if connected.has(anchor):
-			continue
-		_carve_main_road_path(root, anchor, maxi(1, width), map_size)
-		connected = _collect_connected_road_tiles(root)
+	for _attempt in range(required_anchors.size()):
+		var repair := _road_authority.next_required_road_anchor(required_anchors, root_anchor, map_size)
+		if repair.is_empty():
+			return
+		_carve_main_road_path(repair["from"], repair["to"], maxi(1, width), map_size)
 
 
 func _repair_road_surface_components(map_size: Vector2i, width: int) -> void:
-	var components := _collect_road_surface_components()
+	var components := _road_authority.road_surface_components_largest_first()
 	if components.size() <= 1:
 		return
-	components.sort_custom(func(a: Array[Vector2i], b: Array[Vector2i]) -> bool:
-		return a.size() > b.size()
-	)
 	var primary: Array[Vector2i] = components[0]
 	for index in range(1, components.size()):
 		var component: Array[Vector2i] = components[index]
-		var pair := _find_nearest_road_component_pair(primary, component)
+		var pair := _road_authority.next_component_repair_pair(primary, component)
 		if pair.size() != 2:
 			continue
 		_carve_main_road_path(pair[0], pair[1], maxi(1, width), map_size)
-		primary = _dict_keys_as_vector2i_array(_collect_connected_road_tiles(primary[0]))
-
-
-func _collect_road_surface_components() -> Array[Array]:
-	var components: Array[Array] = []
-	var remaining := {}
-	for tile_variant in _main_road_tiles.keys():
-		if tile_variant is Vector2i:
-			remaining[tile_variant] = true
-	while not remaining.is_empty():
-		var start := remaining.keys()[0] as Vector2i
-		var component: Array[Vector2i] = []
-		var frontier: Array[Vector2i] = [start]
-		remaining.erase(start)
-		while not frontier.is_empty():
-			var tile: Vector2i = frontier.pop_front()
-			component.append(tile)
-			for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
-				var next: Vector2i = tile + direction
-				if not remaining.has(next):
-					continue
-				remaining.erase(next)
-				frontier.append(next)
-		components.append(component)
-	return components
-
-
-func _find_nearest_road_component_pair(primary: Array[Vector2i], component: Array[Vector2i]) -> Array[Vector2i]:
-	if primary.is_empty() or component.is_empty():
-		return []
-	var best_from := primary[0]
-	var best_to := component[0]
-	var best_dist := best_from.distance_squared_to(best_to)
-	for from_tile in primary:
-		for to_tile in component:
-			var dist := from_tile.distance_squared_to(to_tile)
-			if dist < best_dist:
-				best_dist = dist
-				best_from = from_tile
-				best_to = to_tile
-	return [best_from, best_to]
+		primary = _dict_keys_as_vector2i_array(
+			_road_authority.connected_road_tiles(primary[0])
+		)
 
 
 func _prune_small_edge_road_components(map_size: Vector2i) -> void:
-	for component_variant in _collect_road_surface_components():
-		var component := component_variant as Array[Vector2i]
-		if component.size() >= 32 or not _road_component_touches_edge(component, map_size):
-			continue
-		for tile in component:
-			_main_road_tiles.erase(tile)
-			_road_centerline_tiles.erase(tile)
-			_road_visual_tiles.erase(tile)
-			_parking_zone_tiles.erase(tile)
-			var region := get_region_type_at_tile(tile)
-			if region == "main_road" or region == "compound_connector_road" or region == "parking_zone":
-				_region_tiles.erase(tile)
-			_remove_road_piece_decal(tile)
+	for tile in _road_authority.edge_prune_plan(map_size):
+		_road_authority.clear_generated_road_tiles(tile)
+		_road_visual_tiles.erase(tile)
+		var region := get_region_type_at_tile(tile)
+		if region == "main_road" or region == "compound_connector_road" or region == "parking_zone":
+			_region_tiles.erase(tile)
+		_remove_road_piece_decal(tile)
 
 
 func _prune_small_disconnected_road_components(
 	minimum_size: int
 ) -> void:
-	var spawn := get_player_spawn()
-	for component_variant in _collect_road_surface_components():
-		var component := component_variant as Array
-		if component.has(spawn) or component.size() >= minimum_size:
-			continue
-		for tile_variant in component:
-			if tile_variant is Vector2i:
-				_clear_procgen_road_authority_at(
-					tile_variant as Vector2i
-				)
-
-
-func _road_component_touches_edge(component: Array[Vector2i], map_size: Vector2i) -> bool:
-	for tile in component:
-		if tile.x <= 2 or tile.y <= 2 or tile.x >= map_size.x - 3 or tile.y >= map_size.y - 3:
-			return true
-	return false
+	for tile in _road_authority.disconnected_prune_plan(get_player_spawn(), minimum_size):
+		_clear_procgen_road_authority_at(tile)
 
 
 func _collect_connected_road_tiles(root: Vector2i) -> Dictionary:
-	var visited: Dictionary = {}
-	if not _main_road_tiles.has(root):
-		return visited
-	var frontier: Array[Vector2i] = [root]
-	visited[root] = true
-	while not frontier.is_empty():
-		var tile: Vector2i = frontier.pop_front()
-		for dir in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
-			var next: Vector2i = tile + dir
-			if visited.has(next) or not _main_road_tiles.has(next):
-				continue
-			visited[next] = true
-			frontier.append(next)
-	return visited
+	return _road_authority.connected_road_tiles(root)
 
 
 func _pick_closest_road_target(anchor: Vector2i, targets: Array[Vector2i]) -> Vector2i:
@@ -2712,7 +2614,7 @@ func _int_sign(value: int) -> int:
 
 func _carve_main_road_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
-	_road_centerline_tiles[current] = true
+	_road_authority.add_road_centerline_tile(current)
 	_road_visual_tiles[current] = true
 	_carve_road_brush(current, width, map_size)
 	var step_index := 0
@@ -2720,14 +2622,14 @@ func _carve_main_road_path(from_tile: Vector2i, to_tile: Vector2i, width: int, m
 	if horizontal_first:
 		while current.x != to_tile.x:
 			current.x += 1 if to_tile.x > current.x else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
 			_carve_road_brush(current, width, map_size)
 		while current.y != to_tile.y:
 			current.y += 1 if to_tile.y > current.y else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
@@ -2735,14 +2637,14 @@ func _carve_main_road_path(from_tile: Vector2i, to_tile: Vector2i, width: int, m
 	else:
 		while current.y != to_tile.y:
 			current.y += 1 if to_tile.y > current.y else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
 			_carve_road_brush(current, width, map_size)
 		while current.x != to_tile.x:
 			current.x += 1 if to_tile.x > current.x else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
@@ -2760,7 +2662,7 @@ func _carve_road_brush(center: Vector2i, width: int, map_size: Vector2i) -> void
 				continue
 			if _is_road_blocked_by_impassable_authority(tile):
 				continue
-			_main_road_tiles[tile] = true
+			_road_authority.add_road_tile(tile)
 			_set_road_path_tile(tile, "road")
 			_set_region_tile(tile, "main_road", "travel")
 
@@ -2778,7 +2680,7 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 	var length: int = length_min + (_tile_noise_hash(ingress + Vector2i(2039, 577)) % maxi(1, length_max - length_min + 1))
 	var width: int = maxi(1, intent_compound_connector_half_width)
 	var wall_offset: int = width + maxi(1, intent_compound_connector_wall_gap_tiles)
-	_compound_connector_centerline_tiles.clear()
+	_road_authority.clear_compound_connector_centerline()
 	_compound_connector_visual_candidates.clear()
 
 	var last_center := ingress
@@ -2787,8 +2689,8 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 		if not _is_tile_inside_map(center, map_size, wall_offset + 1):
 			break
 		last_center = center
-		_compound_connector_centerline_tiles.append(center)
-		_road_centerline_tiles[center] = true
+		_road_authority.append_compound_connector_centerline(center)
+		_road_authority.add_road_centerline_tile(center)
 		if step == 1 or step == length or step % maxi(1, road_piece_straight_stride_tiles) == 0:
 			_road_visual_tiles[center] = true
 		_carve_road_brush(center, width, map_size)
@@ -2798,17 +2700,17 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 		for side in [-1, 1]:
 			_stamp_compound_connector_wall(center + side_axis * int(side) * wall_offset, side_axis * int(side), map_size)
 
-	if not _compound_connector_centerline_tiles.is_empty():
+	if not _road_authority.compound_connector_centerline_tiles.is_empty():
 		_carve_main_road_path(spawn, last_center, maxi(1, width - 1), map_size)
 		if primary_anchor != Vector2i.ZERO and primary_anchor != ingress:
 			_carve_main_road_path(last_center, primary_anchor, maxi(1, width - 1), map_size)
 		# Joining the corridor to the broader road graph repaints region metadata as
 		# main_road. Restore the connector footprint label so the final visual pass
 		# can select Connector Pack art without changing floor authority.
-		for centerline_tile in _compound_connector_centerline_tiles:
+		for centerline_tile in _road_authority.compound_connector_centerline_tiles:
 			for lateral in range(-width, width + 1):
 				var connector_tile := centerline_tile + side_axis * lateral
-				if _main_road_tiles.has(connector_tile):
+				if _road_authority.main_road_tiles.has(connector_tile):
 					_set_region_tile(connector_tile, "compound_connector_road", "compound_ingress")
 
 
@@ -2818,7 +2720,7 @@ func _stamp_compound_connector_wall(center: Vector2i, outward_axis: Vector2i, ma
 		var tile := center + outward_axis * offset
 		if not _is_tile_inside_map(tile, map_size, 1):
 			continue
-		if _main_road_tiles.has(tile) or is_indoor_tile(tile):
+		if _road_authority.main_road_tiles.has(tile) or is_indoor_tile(tile):
 			continue
 		_set_wall_tile(tile)
 		_set_region_tile(tile, "compound_connector_wall", "compound_ingress")
@@ -2830,8 +2732,8 @@ func _protect_compound_ingress_tiles(map_size: Vector2i) -> void:
 			continue
 		if intent_main_roads_enabled:
 			_set_road_path_tile(ingress, "road")
-			_main_road_tiles[ingress] = true
-			_road_centerline_tiles[ingress] = true
+			_road_authority.add_road_tile(ingress)
+			_road_authority.add_road_centerline_tile(ingress)
 			_road_visual_tiles[ingress] = true
 		else:
 			# Compound access remains valid generated floor without promoting the
@@ -2841,7 +2743,7 @@ func _protect_compound_ingress_tiles(map_size: Vector2i) -> void:
 
 
 func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
-	_parking_zone_center = center
+	_road_authority.set_parking_zone_center(center)
 	var half := Vector2i(
 		maxi(1, intent_parking_zone_half_extents_tiles.x),
 		maxi(1, intent_parking_zone_half_extents_tiles.y)
@@ -2855,31 +2757,30 @@ func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
 				continue
 			if _is_road_blocked_by_impassable_authority(tile):
 				continue
-			_main_road_tiles[tile] = true
-			_parking_zone_tiles[tile] = true
+			_road_authority.add_parking_tile(tile)
 			_set_road_path_tile(tile, "road")
 			_set_region_tile(tile, "parking_zone", "vehicle_staging")
 			if x == 0 or y == 0 or (abs(x) % 3 == 0 and abs(y) % 2 == 0):
-				_road_centerline_tiles[tile] = true
+				_road_authority.add_parking_centerline_tile(tile)
 				_road_visual_tiles[tile] = true
 
 
 func _ensure_connected_parking_zone(map_size: Vector2i) -> void:
-	if _main_road_tiles.is_empty():
+	if _road_authority.main_road_tiles.is_empty():
 		return
 	var spawn := get_player_spawn()
 	var connected := _collect_connected_road_tiles(spawn)
-	for tile_variant in _parking_zone_tiles.keys():
+	for tile_variant in _road_authority.parking_zone_tiles.keys():
 		if connected.has(tile_variant):
 			return
 
-	if not _parking_zone_tiles.is_empty():
-		var old_root := _parking_zone_tiles.keys()[0] as Vector2i
+	if not _road_authority.parking_zone_tiles.is_empty():
+		var old_root := _road_authority.parking_zone_tiles.keys()[0] as Vector2i
 		var isolated := _collect_connected_road_tiles(old_root)
 		if not isolated.has(spawn):
 			for tile_variant in isolated.keys():
 				_clear_procgen_road_authority_at(tile_variant as Vector2i)
-	_parking_zone_tiles.clear()
+	_road_authority.clear_parking_tiles()
 
 	var candidates: Array[Vector2i] = []
 	for tile_variant in connected.keys():
@@ -3772,18 +3673,14 @@ func _clear_procgen_wall_authority_at(tile: Vector2i, refresh_collision_debug: b
 
 
 func _clear_procgen_road_authority_at(tile: Vector2i) -> void:
-	_main_road_tiles.erase(tile)
-	_road_centerline_tiles.erase(tile)
-	_path_centerline_tiles.erase(tile)
+	_road_authority.clear_generated_road_tiles(tile)
 	_road_visual_tiles.erase(tile)
 	_path_visual_tiles.erase(tile)
-	_compound_connector_centerline_tiles.erase(tile)
-	_parking_zone_tiles.erase(tile)
 	_remove_road_piece_decal(tile)
 
 
 func _enforce_road_walkability(map_size: Vector2i) -> void:
-	for tile_variant in _main_road_tiles.keys():
+	for tile_variant in _road_authority.main_road_tiles.keys():
 		if tile_variant is Vector2i:
 			var tile := tile_variant as Vector2i
 			if not _is_tile_inside_map(tile, map_size, 1) or is_indoor_tile(tile) or _is_road_blocked_by_impassable_authority(tile):
@@ -3807,7 +3704,7 @@ func _clear_road_blocking_wall(pos: Vector2i) -> void:
 
 func _refresh_road_path_visuals() -> void:
 	_clear_road_piece_decals()
-	for tile_variant in _main_road_tiles.keys():
+	for tile_variant in _road_authority.main_road_tiles.keys():
 		if tile_variant is Vector2i:
 			var road_tile := tile_variant as Vector2i
 			if _is_road_blocked_by_impassable_authority(road_tile):
@@ -3820,7 +3717,7 @@ func _refresh_road_path_visuals() -> void:
 		if not (tile_variant is Vector2i):
 			continue
 		var tile := tile_variant as Vector2i
-		if _main_road_tiles.has(tile):
+		if _road_authority.main_road_tiles.has(tile):
 			continue
 		if get_region_type_at_tile(tile) == "soft_path":
 			if _is_road_blocked_by_impassable_authority(tile):
@@ -3856,7 +3753,7 @@ func _should_preserve_road_floor_visual(tile: Vector2i) -> bool:
 
 func _apply_connector_region_visual(tile: Vector2i) -> void:
 	var region_type := get_region_type_at_tile(tile)
-	if _compound_connector_centerline_tiles.has(tile) or region_type == "compound_connector_road":
+	if _road_authority.compound_connector_centerline_tiles.has(tile) or region_type == "compound_connector_road":
 		_apply_terrain_tile_visual(tile, "terrain_connector_centerline_32")
 	elif region_type == "terrain_rescue_floor" \
 			or region_type == "pre_terrain_required_connector" \
@@ -3998,7 +3895,7 @@ func _spawn_road_piece_decals() -> void:
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
 	if not _road_piece_defs_by_surface_role.is_empty():
-		for tile_variant in _main_road_tiles.keys():
+		for tile_variant in _road_authority.main_road_tiles.keys():
 			if not (tile_variant is Vector2i):
 				continue
 			_reveal_road_surface_piece_decal(tile_variant as Vector2i)
@@ -4007,7 +3904,7 @@ func _spawn_road_piece_decals() -> void:
 			if not (tile_variant is Vector2i):
 				continue
 			_reveal_surface_piece_decal(tile_variant as Vector2i, "road")
-	for tile_variant in _ruined_road_cells.keys():
+	for tile_variant in _road_authority.ruined_road_cells.keys():
 		if tile_variant is Vector2i:
 			_reveal_ruined_road_surface_piece_decal(tile_variant as Vector2i)
 	for tile_variant in _path_visual_tiles.keys():
@@ -4026,13 +3923,13 @@ func _reveal_road_piece_decal(tile: Vector2i) -> void:
 
 
 func _reveal_ruined_road_surface_piece_decal(tile: Vector2i) -> void:
-	if not road_piece_decals_enabled or not _ruined_road_cells.has(tile):
+	if not road_piece_decals_enabled or not _road_authority.ruined_road_cells.has(tile):
 		return
 	if _road_piece_defs_by_surface_role.is_empty():
 		return
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
-	var role := _classify_filled_surface_role(tile, _ruined_road_cells)
+	var role := _classify_filled_surface_role(tile, _road_authority.ruined_road_cells)
 	var piece := _select_road_surface_piece_definition(tile, role)
 	if piece.is_empty():
 		return
@@ -4044,9 +3941,9 @@ func _reveal_road_surface_piece_decal(tile: Vector2i) -> void:
 		return
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
-	if not _main_road_tiles.has(tile):
+	if not _road_authority.main_road_tiles.has(tile):
 		return
-	var role := _classify_filled_surface_role(tile, _main_road_tiles)
+	var role := _classify_filled_surface_role(tile, _road_authority.main_road_tiles)
 	var piece := _select_road_surface_piece_definition(tile, role)
 	if piece.is_empty():
 		return
@@ -4054,7 +3951,7 @@ func _reveal_road_surface_piece_decal(tile: Vector2i) -> void:
 
 
 func _classify_road_surface_role(tile: Vector2i) -> String:
-	return _classify_filled_surface_role(tile, _main_road_tiles)
+	return _classify_filled_surface_role(tile, _road_authority.main_road_tiles)
 
 
 func _classify_filled_surface_role(tile: Vector2i, cells: Dictionary) -> String:
@@ -4111,16 +4008,16 @@ func _reveal_surface_piece_decal(tile: Vector2i, surface_kind: String) -> void:
 		return
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
-	var source_tiles := _road_centerline_tiles
+	var source_tiles := _road_authority.road_centerline_tiles
 	var visual_tiles := _road_visual_tiles
 	var defs_by_mask := _road_piece_defs_by_mask
 	if surface_kind == "path":
-		source_tiles = _path_centerline_tiles
+		source_tiles = _road_authority.path_centerline_tiles
 		visual_tiles = _path_visual_tiles
 		defs_by_mask = _path_piece_defs_by_mask
 	if defs_by_mask.is_empty() or not source_tiles.has(tile) or not visual_tiles.has(tile):
 		return
-	if surface_kind == "road" and not _main_road_tiles.has(tile):
+	if surface_kind == "road" and not _road_authority.main_road_tiles.has(tile):
 		return
 	if surface_kind == "path" and get_region_type_at_tile(tile) != "soft_path":
 		return
@@ -4200,7 +4097,7 @@ func _surface_tile_key(surface_kind: String, tile: Vector2i) -> String:
 func _carve_interest_paths(map_size: Vector2i) -> void:
 	if procgen_node == null:
 		return
-	_path_centerline_tiles.clear()
+	_road_authority.clear_path_centerline()
 	_path_visual_tiles.clear()
 	var spawn := get_player_spawn()
 	var path_width := maxi(0, intent_soft_path_width)
@@ -4212,19 +4109,19 @@ func _carve_interest_paths(map_size: Vector2i) -> void:
 
 func _carve_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
-	_path_centerline_tiles[current] = true
+	_road_authority.add_path_centerline_tile(current)
 	_path_visual_tiles[current] = true
 	var step_index := 0
 	while current.x != to_tile.x:
 		current.x += 1 if to_tile.x > current.x else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true
 		_carve_path_brush(current, width, map_size)
 	while current.y != to_tile.y:
 		current.y += 1 if to_tile.y > current.y else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true
@@ -4738,9 +4635,9 @@ func _is_reserved_pre_terrain_traversal_cell(tile: Vector2i, map_size: Vector2i)
 		return true
 	if _ascent_field_main_route_cells.has(tile) or _ascent_field_vista_cells.has(tile):
 		return true
-	if _main_road_tiles.has(tile) or _parking_zone_tiles.has(tile):
+	if _road_authority.main_road_tiles.has(tile) or _road_authority.parking_zone_tiles.has(tile):
 		return true
-	if _compound_connector_centerline_tiles.has(tile) or _last_compound_ingress.has(tile):
+	if _road_authority.compound_connector_centerline_tiles.has(tile) or _last_compound_ingress.has(tile):
 		return true
 	if _worldgen_intent_graph != null:
 		for required_cell in _worldgen_intent_graph.get_required_cells():
@@ -4778,14 +4675,13 @@ func _clear_region_metadata() -> void:
 	_last_interior_region_rect = Rect2i()
 	_last_interior_rooms.clear()
 	_last_interior_thresholds.clear()
-	_main_road_tiles.clear()
-	_road_centerline_tiles.clear()
-	_path_centerline_tiles.clear()
+	_road_authority.reset_generated_roads()
 	_road_visual_tiles.clear()
 	_path_visual_tiles.clear()
-	_compound_connector_centerline_tiles.clear()
 	_compound_connector_visual_candidates.clear()
-	_parking_zone_tiles.clear()
+	_road_visual_tiles.clear()
+	_path_visual_tiles.clear()
+	_compound_connector_visual_candidates.clear()
 	_region_tiles.clear()
 
 
@@ -5414,10 +5310,10 @@ func _enforce_route_playability_walkability(
 	for cell_variant in _ascent_field_main_route_cells:
 		if cell_variant is Vector2i:
 			hard_clearance[cell_variant] = true
-	for cell_variant in _main_road_tiles.keys():
+	for cell_variant in _road_authority.main_road_tiles.keys():
 		if cell_variant is Vector2i:
 			hard_clearance[cell_variant] = true
-	for cell_variant in _parking_zone_tiles.keys():
+	for cell_variant in _road_authority.parking_zone_tiles.keys():
 		if cell_variant is Vector2i:
 			hard_clearance[cell_variant] = true
 	var traversal_by_cell: Dictionary = _last_terrain_result.get(
@@ -5702,9 +5598,7 @@ func _clear_world_progression_runtime() -> void:
 	_surface_kind_by_cell.clear()
 	_surface_material_by_cell.clear()
 	_surface_material_summary.clear()
-	_ruined_road_cells.clear()
-	_service_hardstand_cells.clear()
-	_road_semantics_summary.clear()
+	_road_authority.clear_road_semantics()
 	if surface_material_overlay != null:
 		surface_material_overlay.clear()
 	_chasm_cells.clear()
@@ -5809,27 +5703,27 @@ func get_special_room_sites() -> Array[Dictionary]:
 
 
 func is_road_surface_tile(tile: Vector2i) -> bool:
-	return _main_road_tiles.has(tile) or _ruined_road_cells.has(tile) or get_region_type_at_tile(tile) == "soft_path"
+	return _road_authority.main_road_tiles.has(tile) or _road_authority.ruined_road_cells.has(tile) or get_region_type_at_tile(tile) == "soft_path"
 
 
 func is_parking_zone_tile(tile: Vector2i) -> bool:
-	return _parking_zone_tiles.has(tile)
+	return _road_authority.parking_zone_tiles.has(tile)
 
 
 func get_main_road_tiles() -> Array[Vector2i]:
-	return _dict_keys_as_vector2i_array(_main_road_tiles)
+	return _road_authority.get_main_road_tiles()
 
 
 func get_parking_zone_tiles() -> Array[Vector2i]:
-	return _dict_keys_as_vector2i_array(_parking_zone_tiles)
+	return _road_authority.get_parking_tiles()
 
 
 func get_ruined_road_tiles() -> Array[Vector2i]:
-	return _sorted_tile_keys(_ruined_road_cells)
+	return _road_authority.get_ruined_road_tiles()
 
 
 func get_service_hardstand_tiles() -> Array[Vector2i]:
-	return _sorted_tile_keys(_service_hardstand_cells)
+	return _road_authority.get_service_hardstand_tiles()
 
 
 func _sorted_tile_keys(source: Dictionary) -> Array[Vector2i]:
@@ -5841,7 +5735,7 @@ func _sorted_tile_keys(source: Dictionary) -> Array[Vector2i]:
 
 
 func debug_get_road_semantics_summary() -> Dictionary:
-	return _road_semantics_summary.duplicate(true)
+	return _road_authority.get_road_semantics_summary()
 
 
 func debug_get_chunk_lifecycle_state(chunk_pos: Vector2i) -> int:
@@ -5952,10 +5846,10 @@ func debug_get_runtime_authoring_fingerprint() -> Dictionary:
 		"floor": _generated_floor_cells.duplicate(true),
 		"walls": _generated_wall_cells.duplicate(true),
 		"regions": _region_tiles.duplicate(true),
-		"roads": _main_road_tiles.duplicate(true),
-		"road_centerline": _road_centerline_tiles.duplicate(true),
-		"ruined_road": _ruined_road_cells.duplicate(true),
-		"service_hardstand": _service_hardstand_cells.duplicate(true),
+		"roads": _road_authority.main_road_tiles.duplicate(true),
+		"road_centerline": _road_authority.road_centerline_tiles.duplicate(true),
+		"ruined_road": _road_authority.ruined_road_cells.duplicate(true),
+		"service_hardstand": _road_authority.service_hardstand_cells.duplicate(true),
 		"foliage": _foliage_nodes.duplicate(true),
 		"surface": _surface_kind_by_cell.duplicate(true),
 		"surface_material": _surface_material_by_cell.duplicate(true),
@@ -6800,7 +6694,7 @@ func get_movement_surface_multiplier_at_tile(tile: Vector2i, actor_kind: String 
 		SURFACE_MATERIAL_IDS.HARDENED_INDUSTRIAL,
 	]
 	var legacy_soft_path := get_region_type_at_tile(tile) == "soft_path"
-	if not constructed and not legacy_soft_path and not _main_road_tiles.has(tile):
+	if not constructed and not legacy_soft_path and not _road_authority.main_road_tiles.has(tile):
 		return 1.0
 	if actor_kind == "vehicle":
 		return maxf(1.0, road_vehicle_speed_multiplier)
@@ -7433,7 +7327,7 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 		"last_compound_ingress": _last_compound_ingress,
 		"connected_road_required_tiles": _get_connected_road_required_tiles(),
 		"connected_parking_required_tiles": _get_connected_parking_required_tiles(),
-		"compound_connector_centerline_tiles": _compound_connector_centerline_tiles,
+		"compound_connector_centerline_tiles": _road_authority.compound_connector_centerline_tiles,
 		"ascent_field_main_route_cells": _ascent_field_main_route_cells,
 		"ascent_field_vista_cells": _ascent_field_vista_cells,
 		"intent_graph_required_cells": intent_required_cells,
@@ -7464,7 +7358,7 @@ func _get_connected_road_required_tiles() -> Dictionary:
 	var connected := _get_connected_road_tiles_from_spawn()
 	var result := {}
 	for tile_variant in connected.keys():
-		if tile_variant is Vector2i and _main_road_tiles.has(tile_variant):
+		if tile_variant is Vector2i and _road_authority.main_road_tiles.has(tile_variant):
 			result[tile_variant] = true
 	return result
 
@@ -7472,7 +7366,7 @@ func _get_connected_road_required_tiles() -> Dictionary:
 func _get_connected_parking_required_tiles() -> Dictionary:
 	var connected := _get_connected_road_tiles_from_spawn()
 	var result := {}
-	for tile_variant in _parking_zone_tiles.keys():
+	for tile_variant in _road_authority.parking_zone_tiles.keys():
 		if tile_variant is Vector2i and connected.has(tile_variant):
 			result[tile_variant] = true
 	return result
@@ -7480,11 +7374,11 @@ func _get_connected_parking_required_tiles() -> Dictionary:
 
 func _get_connected_road_tiles_from_spawn() -> Dictionary:
 	var spawn := get_player_spawn()
-	if _main_road_tiles.has(spawn):
+	if _road_authority.main_road_tiles.has(spawn):
 		return _collect_connected_road_tiles(spawn)
 	var best_root := Vector2i.ZERO
 	var best_distance := INF
-	for tile_variant in _main_road_tiles.keys():
+	for tile_variant in _road_authority.main_road_tiles.keys():
 		if not (tile_variant is Vector2i):
 			continue
 		var tile := tile_variant as Vector2i
@@ -7504,8 +7398,8 @@ func _compute_pre_terrain_connectivity(map_size: Vector2i, required_cell_entries
 		"required_cell_entries": required_cell_entries,
 		"floor_cells": _generated_floor_cells,
 		"wall_cells": _generated_wall_cells,
-		"road_cells": _main_road_tiles,
-		"parking_cells": _parking_zone_tiles,
+		"road_cells": _road_authority.main_road_tiles,
+		"parking_cells": _road_authority.parking_zone_tiles,
 		"is_layout_walkable": Callable(self, "_is_layout_pre_terrain_walkable_cell"),
 		"is_baseline_walkable": Callable(self, "_is_pre_terrain_walkable_cell"),
 		"is_semantic_walkable": Callable(self, "_is_semantic_required_walkable_cell"),
@@ -7539,8 +7433,8 @@ func _is_semantic_required_walkable_cell(cell: Vector2i, map_size: Vector2i) -> 
 	if _generated_wall_cells.has(cell):
 		return false
 	var region_type := get_region_type_at_tile(cell)
-	return _main_road_tiles.has(cell) \
-			or _parking_zone_tiles.has(cell) \
+	return _road_authority.main_road_tiles.has(cell) \
+			or _road_authority.parking_zone_tiles.has(cell) \
 			or region_type == "compound_ingress" \
 			or region_type == "compound_connector_road" \
 			or region_type == "main_road" \
@@ -7571,8 +7465,8 @@ func _build_pre_terrain_missing_sample(cell: Vector2i, source: String, reason: S
 		"zone": String(region.get("zone", "natural")),
 		"is_floor": _generated_floor_cells.has(cell),
 		"is_wall": _generated_wall_cells.has(cell),
-		"is_road": _main_road_tiles.has(cell) or get_region_type_at_tile(cell) == "main_road",
-		"is_parking": _parking_zone_tiles.has(cell),
+		"is_road": _road_authority.main_road_tiles.has(cell) or get_region_type_at_tile(cell) == "main_road",
+		"is_parking": _road_authority.parking_zone_tiles.has(cell),
 		"is_indoor": is_indoor_tile(cell),
 		"nearest_reachable_distance": _nearest_reachable_manhattan_distance(cell, reachable),
 	}
@@ -7686,21 +7580,21 @@ func _ensure_walkable_terrain_floor_authority(cell: Vector2i, rendered_tile: boo
 func _apply_compound_connector_elevation(map_size: Vector2i) -> void:
 	if not intent_compound_connector_elevation_enabled:
 		return
-	if _compound_connector_centerline_tiles.is_empty():
+	if _road_authority.compound_connector_centerline_tiles.is_empty():
 		return
 	_ensure_elevation_map()
 	var width := maxi(1, intent_compound_connector_half_width)
-	var count := _compound_connector_centerline_tiles.size()
+	var count := _road_authority.compound_connector_centerline_tiles.size()
 	var ramp_index := clampi(int(round(float(count) * 0.55)), 1, maxi(1, count - 2))
 	var direction := _get_compound_connector_outward_direction()
 	var side_axis := Vector2i(-direction.y, direction.x)
 	var ramp_direction := _direction_name_from_delta(direction)
 	var ramp_tile_id := _ramp_tile_id_from_delta(direction)
 	for index in range(count):
-		var center := _compound_connector_centerline_tiles[index]
+		var center := _road_authority.compound_connector_centerline_tiles[index]
 		for lateral in range(-width, width + 1):
 			var tile := center + side_axis * lateral
-			if not _is_tile_inside_map(tile, map_size, 1) or not _main_road_tiles.has(tile):
+			if not _is_tile_inside_map(tile, map_size, 1) or not _road_authority.main_road_tiles.has(tile):
 				continue
 			if index < ramp_index:
 				elevation_map.set_cell(tile, 1, ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE, ELEVATION_MAP_SCRIPT.DIRECTION_NONE)
@@ -7721,7 +7615,7 @@ func _refresh_compound_connector_pack_visuals(map_size: Vector2i) -> void:
 			continue
 		var tile := tile_variant as Vector2i
 		if not _is_tile_inside_map(tile, map_size, 1) \
-				or not _main_road_tiles.has(tile) \
+				or not _road_authority.main_road_tiles.has(tile) \
 				or _is_road_blocked_by_impassable_authority(tile) \
 				or _should_preserve_road_floor_visual(tile):
 			continue
@@ -7914,15 +7808,16 @@ func _resolve_road_semantics(_map_size: Vector2i) -> void:
 		"region_kind_by_cell": region_kinds,
 		"reserved_cells": _macro_reserved_cells(),
 	})
-	_ruined_road_cells = (result.get("ruined_road_cells", {}) as Dictionary).duplicate(true)
-	_service_hardstand_cells = (result.get("service_hardstand_cells", {}) as Dictionary).duplicate(true)
-	if not intent_main_roads_enabled:
-		_parking_zone_tiles = (result.get("parking_cells", {}) as Dictionary).duplicate(true)
-	_road_semantics_summary = (result.get("summary", {}) as Dictionary).duplicate(true)
-	_road_semantics_summary["parking_cell_count"] = _parking_zone_tiles.size()
-	_obs_gauge(&"procgen_ruined_road_cells", int(_road_semantics_summary.get("ruined_road_cell_count", 0)))
-	_obs_gauge(&"procgen_service_hardstand_cells", int(_road_semantics_summary.get("service_hardstand_cell_count", 0)))
-	_obs_gauge(&"procgen_parking_staging_cells", int(_road_semantics_summary.get("parking_cell_count", 0)))
+	var summary := _road_authority.publish_road_semantics(
+		result.get("ruined_road_cells", {}) as Dictionary,
+		result.get("service_hardstand_cells", {}) as Dictionary,
+		result.get("parking_cells", {}) as Dictionary,
+		not intent_main_roads_enabled,
+		result.get("summary", {}) as Dictionary
+	)
+	_obs_gauge(&"procgen_ruined_road_cells", int(summary.get("ruined_road_cell_count", 0)))
+	_obs_gauge(&"procgen_service_hardstand_cells", int(summary.get("service_hardstand_cell_count", 0)))
+	_obs_gauge(&"procgen_parking_staging_cells", int(summary.get("parking_cell_count", 0)))
 
 
 func _resolve_surface_materials() -> void:
@@ -7941,9 +7836,9 @@ func _resolve_surface_materials() -> void:
 		if lowered.contains("authored") or lowered.contains("story_room") or lowered.begins_with("faction_"):
 			authored_cells[cell] = true
 	var resolver := SURFACE_MATERIAL_RESOLVER_SCRIPT.new()
-	var road_cells := _ruined_road_cells.duplicate(true)
+	var road_cells := _road_authority.ruined_road_cells.duplicate(true)
 	if intent_main_roads_enabled:
-		road_cells.merge(_main_road_tiles, true)
+		road_cells.merge(_road_authority.main_road_tiles, true)
 	var result: Dictionary = resolver.resolve({
 		"floor_cells": _generated_floor_cells,
 		"wall_cells": _generated_wall_cells,
@@ -7951,10 +7846,10 @@ func _resolve_surface_materials() -> void:
 		"biome_by_cell": _biome_id_by_cell,
 		"region_kind_by_cell": region_kinds,
 		"region_data_by_cell": region_data,
-		"parking_cells": _parking_zone_tiles,
-		"industrial_hardstand_cells": _service_hardstand_cells,
+		"parking_cells": _road_authority.parking_zone_tiles,
+		"industrial_hardstand_cells": _road_authority.service_hardstand_cells,
 		"road_cells": road_cells,
-		"path_cells": _path_centerline_tiles,
+		"path_cells": _road_authority.path_centerline_tiles,
 		"bridge_cells": _last_terrain_result.get("bridge_cells", {}) as Dictionary,
 		"reserved_cells": _macro_reserved_cells(),
 		"authored_cells": authored_cells,
@@ -8145,7 +8040,7 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 
 func _macro_presentation_surface_claims() -> Dictionary:
 	var result: Dictionary = {}
-	for source: Dictionary in [_main_road_tiles, _parking_zone_tiles, _ruined_road_cells, _service_hardstand_cells]:
+	for source: Dictionary in [_road_authority.main_road_tiles, _road_authority.parking_zone_tiles, _road_authority.ruined_road_cells, _road_authority.service_hardstand_cells]:
 		for cell: Variant in source.keys():
 			if cell is Vector2i:
 				result[cell] = true
@@ -8270,8 +8165,8 @@ func _build_dressing_cluster_plan(map_size: Vector2i) -> void:
 		"ingress_dressing_clearance_cells": ingress,
 		"is_encounter_reserved_cell": Callable(self, "is_encounter_reserved_cell"),
 		"authored_cells": _macro_presentation_protected_cells(), "reserved_cells": _surface_claim_cells,
-		"road_cells": _main_road_tiles.merged(_ruined_road_cells, true),
-		"parking_cells": _parking_zone_tiles, "service_hardstand_cells": _service_hardstand_cells,
+		"road_cells": _road_authority.main_road_tiles.merged(_road_authority.ruined_road_cells, true),
+		"parking_cells": _road_authority.parking_zone_tiles, "service_hardstand_cells": _road_authority.service_hardstand_cells,
 		"indoor_cells": indoor,
 	}
 	_ensure_foliage_spawner()
@@ -8918,11 +8813,11 @@ func _is_inside_required_route_clearance(pos: Vector2i, radius: int = 3) -> bool
 	for y in range(-clearance, clearance + 1):
 		for x in range(-clearance, clearance + 1):
 			var tile := pos + Vector2i(x, y)
-			if _main_road_tiles.has(tile) \
-					or _road_centerline_tiles.has(tile) \
-					or _path_centerline_tiles.has(tile) \
+			if _road_authority.main_road_tiles.has(tile) \
+					or _road_authority.road_centerline_tiles.has(tile) \
+					or _road_authority.path_centerline_tiles.has(tile) \
 					or _ascent_field_main_route_cells.has(tile) \
-					or _compound_connector_centerline_tiles.has(tile):
+					or _road_authority.compound_connector_centerline_tiles.has(tile):
 				return true
 	return false
 
@@ -9220,19 +9115,19 @@ func _stamp_portal_plaza(center: Vector2i, map_size: Vector2i) -> void:
 
 func _carve_generated_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
-	_path_centerline_tiles[current] = true
+	_road_authority.add_path_centerline_tile(current)
 	_path_visual_tiles[current] = true
 	var step_index := 0
 	while current.x != to_tile.x:
 		current.x += 1 if to_tile.x > current.x else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true
 		_carve_generated_path_brush(current, width, map_size)
 	while current.y != to_tile.y:
 		current.y += 1 if to_tile.y > current.y else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true

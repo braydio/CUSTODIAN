@@ -1571,6 +1571,7 @@ godot --headless --path . --script res://tools/validation/procgen_void_cliff_fac
 godot --headless --path . --script res://tools/validation/procgen_void_cliff_wall_integration_smoke.gd
 godot --headless --path . --script res://tools/validation/elevated_world_seed_review.gd
 godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_road_authority_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_road_surface_roles_smoke.gd
 ```
 

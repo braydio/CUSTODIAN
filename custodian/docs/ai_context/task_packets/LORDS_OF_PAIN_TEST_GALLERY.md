@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `lords-of-pain-test-gallery`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -15,14 +15,15 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default: new registered authored level, procgen ingress/return, third-party asset intake, and temporary interaction adapters`
-- Reviewed main: `977488efdecf`
+- Reviewed main: `76b91527c17d`
 - Authoring chat: `not-recorded`
+- Implementation sidecar: `custodian/docs/ai_context/task_packets/support/LORDS_OF_PAIN_TEST_GALLERY_IMPLEMENTATION_GLOSSARY.md`
 - Goal: Create a walkable in-game Lords of Pain asset test gallery that renders and exercises every semantic item in the archived pack, uses the persistent CUSTODIAN Operator and normal authored-level lifecycle, exposes at least two terrain treatments, provides gameplay-consistent interactions for activatable/breakable/loot/VFX content, and is reachable from and returnable to the procgen world through the normal registered world-ingress path with District Transfer Frame presentation.
 - Completion boundary: Inventory the locally available full Lords of Pain pack; normalize only the gallery-required source through Asset Pipeline V2; scaffold and register one production-style authored test destination plus its standalone playtest wrapper; build terrain/prop/actor/VFX/UI sections covering every entry in the pack indexes; use existing gameplay systems where a clean authority exists and scene-local temporary adapters otherwise; add a procgen world ingress and return path; prove enter, walk, interact, return, and re-enter. Done means every `Asset Index (FULL)` entry has a visible/testable representation and every `Animation Index (FULL)` actor state is reachable from the gallery without introducing a competing global gameplay system.
-- Current measured state: `archive/dev/LordsOfPain/` exists on main with license and FULL/DEMO asset + animation indexes, but no CUSTODIAN gallery level, registered level definition, Asset V2 gallery families, or world ingress exists. The hydrated 7.2 MB `LordsOfPain.zip` contains only `(DEMO) Lords Of Pain - Old School Isometric Assets/` and 539 PNGs. Source coverage preflight found 25 of 32 FULL semantic asset entries with no file match and 30 of 34 indexed animation states with no frames. See `custodian/content/data/dev/lords_of_pain/SOURCE_COVERAGE_BLOCKER.md` and `gallery_source_coverage.json`. The live authored-level pipeline is `AuthoredLevel2D -> LevelRegistry/RouteTraversalManager -> WorldIngressSpawner/WorldIngressSite -> LevelLoader`; the current District Transfer Frame presentation assets are consumed by `gothic_compound_travel_gate.gd`.
-- Evidence: `archive/dev/LordsOfPain/Asset Index (FULL).txt`; `archive/dev/LordsOfPain/Animation Index (FULL).txt`; `archive/dev/LordsOfPain/Licence.txt`; `archive/dev/LordsOfPain/LordsOfPain.zip`; `custodian/content/data/dev/lords_of_pain/SOURCE_COVERAGE_BLOCKER.md`; `custodian/content/data/dev/lords_of_pain/gallery_source_coverage.json`; `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`; `design/04_architecture/ASSET_PIPELINE_V2.md`; `custodian/game/world/levels/authored_level_2d.gd`; `custodian/game/world/levels/level_definition.gd`; `custodian/game/world/levels/world_ingress_definition.gd`; `custodian/game/world/levels/level_loader.gd`; `custodian/game/world/levels/interactable_level_exit_2d.gd`; `custodian/game/world/procgen/ingress/world_ingress_site.gd`; `custodian/game/world/procgen/world_ingress_spawner.gd`; `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd`; `custodian/content/metadata/assets/families/meridian_hardened_floor.asset.json`.
+- Current measured state: `archive/dev/LordsOfPain/` has the FULL/DEMO indexes, but the hydrated 7.2 MB `LordsOfPain.zip` contains only `(DEMO) Lords Of Pain - Old School Isometric Assets/` and 539 PNGs. Source coverage preflight found 25 of 32 FULL semantic asset entries with no file match and 30 of 34 indexed animation states with no frames. No CUSTODIAN gallery level, registered level definition, Asset V2 gallery families, or world ingress is present. The live authored-level pipeline is `AuthoredLevel2D -> LevelRegistry/RouteTraversalManager -> WorldIngressSpawner/WorldIngressSite -> LevelLoader`; the current District Transfer Frame presentation assets are consumed by `gothic_compound_travel_gate.gd`.
+- Evidence: `custodian/content/data/dev/lords_of_pain/SOURCE_COVERAGE_BLOCKER.md`; `custodian/content/data/dev/lords_of_pain/gallery_source_coverage.json`; `archive/dev/LordsOfPain/Asset Index (FULL).txt`; `archive/dev/LordsOfPain/Animation Index (FULL).txt`; `archive/dev/LordsOfPain/Licence.txt`; `archive/dev/LordsOfPain/LordsOfPain.zip`; `custodian/docs/ai_context/task_packets/support/LORDS_OF_PAIN_TEST_GALLERY_IMPLEMENTATION_GLOSSARY.md`; `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`; `design/04_architecture/ASSET_PIPELINE_V2.md`; `custodian/game/world/levels/authored_level_2d.gd`; `custodian/game/world/levels/level_definition.gd`; `custodian/game/world/levels/world_ingress_definition.gd`; `custodian/game/world/levels/level_loader.gd`; `custodian/game/world/levels/interactable_level_exit_2d.gd`; `custodian/game/world/procgen/ingress/world_ingress_site.gd`; `custodian/game/world/procgen/world_ingress_spawner.gd`; `custodian/game/world/gothic_compound/gothic_compound_travel_gate.gd`; `custodian/content/metadata/assets/families/meridian_hardened_floor.asset.json`.
 - Task-specific authority: `AUTHORED_LEVEL_AUTHORING_PIPELINE.md` owns level/scaffold/registry/Operator ownership; `ASSET_PIPELINE_V2.md` and live `custodian/tools/assets/` own non-Operator asset intake; the two Lords of Pain FULL indexes own pack coverage; the pack license owns allowed use/modification; existing level/ingress/runtime code owns transition behavior; District Transfer Frame runtime assets own the visual vocabulary only, not a second transition authority.
-- Work surface: Primary new runtime surface under `custodian/game/world/levels/authored/dev/lords_of_pain_gallery/`; level definition under `custodian/content/levels/dev/` and one entry in `custodian/content/levels/levels.json`; one standalone playtest under `custodian/scenes/debug/`; gallery metadata under `custodian/content/data/dev/lords_of_pain/`; gallery-specific source/inbox families under `custodian/asset_drop/source_work/dev/lords_of_pain/` and `custodian/asset_drop/inbox/dev_lop_*/`; runtime outputs only where Asset V2 routes them. Existing procgen/level authorities should receive configuration/integration only, not a parallel loader or portal manager.
+- Work surface: Use the scaffold-generator-owned paths exactly: `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/` for the production scene/script, generated standalone playtest, authoring scene, and gallery-local adapters; `custodian/content/levels/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery.json` plus its `.levelgen.json`; one entry in `custodian/content/levels/levels.json`; focused smoke at `custodian/tools/validation/levels/lords_of_pain_test_gallery_smoke.gd`; gallery metadata under `custodian/content/data/dev/lords_of_pain/`; gallery-specific source/inbox families under `custodian/asset_drop/source_work/dev/lords_of_pain/` and `custodian/asset_drop/inbox/dev_lop_*/`; runtime outputs only where Asset V2 routes them. Existing procgen/level authorities should receive configuration/integration only, not a parallel loader or portal manager. See the implementation sidecar for exact file/class recommendations and code seams.
 - Change: Implement the following coherent slice.
   1. **Hydrate and inventory source.** Inspect the local worktree's `archive/dev/LordsOfPain/`. If `LordsOfPain.zip` is still an LFS pointer, run `git lfs pull --include="archive/dev/LordsOfPain/LordsOfPain.zip"` and inspect/extract it to a temporary directory outside tracked runtime paths. Build a deterministic gallery manifest that maps every FULL-index semantic item and actor animation to actual source files, dimensions, frame count/directions, license provenance, and intended Asset V2 family/state. Fail closed with a concrete missing-item report if the hydrated archive still cannot satisfy the FULL indexes; do not silently drop index entries.
   2. **Asset Pipeline V2 intake.** Do not reference repo-root `archive/dev/` directly from Godot runtime. Copy immutable source masters into `custodian/asset_drop/source_work/dev/lords_of_pain/<family_id>/` using `<state_id>_source.png`; normalize gallery inputs into `custodian/asset_drop/inbox/<family_id>/<state_id>.png`; create/update current `custodian.asset_family.v2` contracts and run the live `asset plan/status/doctor/ingest` flow. Use semantic family IDs prefixed `dev_lop_` (examples: `dev_lop_barrel`, `dev_lop_brazier`, `dev_lop_skeleton`, `dev_lop_ground_stone`, `dev_lop_glint`). Prefer current supported kinds matching the asset (`world_prop`, `effect`, `tile`, etc.); if an actor/UI item lacks a specialized supported kind, use the current generic supported kind rather than adding a new Asset V2 kind just for this gallery. Keep one coherent canvas contract per family; split a family when variants cannot share the live schema cleanly. Route these assets to a clearly dev/gallery-owned runtime domain such as `sprites/dev/lords_of_pain` if accepted by the live schema. Do not add them to production `REQUIRED_ASSETS` demand unless the implementation discovers they are intentionally becoming production dependencies.
@@ -52,6 +53,7 @@ godot --headless --path custodian \
   --class-name LordsOfPainTestGallery \
   --spawn-id Spawn_Main \
   --return-spawn-id Return_Main \
+  --exit return_world:ReturnWorld \
   --ingress-prompt "ENTER LORDS OF PAIN GALLERY" \
   --world-context campaign_region \
   --playtest-profile gameplay \
@@ -62,7 +64,7 @@ godot --headless --path custodian \
   --dry-run
 ```
 
-After the scaffold is validated, rerun without `--dry-run`, then update the generated definition to the live `world_ingress` schema and add the District Transfer Frame presentation `site_scene_path` if required.
+After the scaffold is validated, rerun without `--dry-run`, then update the generated definition to the live `world_ingress` schema and add the District Transfer Frame presentation `site_scene_path` if required. The generated `ReturnWorld` starts as `LevelExit2D`; replace it with or restyle it as an `InteractableLevelExit2D` while preserving `exit_id = &"return_world"`.
 
 ## Asset family naming contract
 
@@ -107,7 +109,7 @@ The FULL indexes advertise substantially more content than the GitHub-visible ex
 - Completion boundary satisfied: `no`
 - Acceptance satisfied: `no`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: source preflight only; implementation was stopped before gallery/runtime creation because the hydrated archive is a DEMO subset. The scaffold dry-run accepted `full`; its first trial used the unsupported `gameplay` playtest profile and made no repository changes. Godot emitted project startup/class-cache parse and missing-import errors during scaffold validation. No gallery scene or registry entry was retained.
+- Evidence: source preflight only; implementation stopped before gallery/runtime creation because the hydrated archive is a DEMO subset. The scaffold dry-run accepted the corrected `full` playtest profile after an initial unsupported `gameplay` value; generator startup emitted project-wide class-cache and missing-import errors. No gallery scene or registry entry was retained.
 
 ## Execution Feedback
 
@@ -115,9 +117,9 @@ The FULL indexes advertise substantially more content than the GitHub-visible ex
 - Outcome: `blocked`
 - Friction severity: `high`
 - What went wrong: `the hydrated archive contains only the DEMO subset and lacks most FULL-index assets and animations`
-- Root cause / contributing factors: `the repository's LordsOfPain.zip does not contain the full pack assumed by this task packet`
-- Prevention / pipeline improvement: `stage the complete licensed source archive and run the recorded FULL-index coverage preflight before gallery scaffolding`
-- Tooling / docs drift discovered: `the packet described a possible archive/index mismatch but current measured state did not reflect that the LFS object itself is DEMO-only`
+- Root cause / contributing factors: `the repository's LordsOfPain.zip does not contain the full pack required by the packet`
+- Prevention / pipeline improvement: `stage the complete licensed source archive and rerun the recorded FULL-index coverage preflight before scaffolding`
+- Tooling / docs drift discovered: `the implementation sidecar corrects scaffold output paths, playtest profile/location, and return-exit setup; the LFS object itself remains DEMO-only`
 - Follow-up: `manual-follow-up`
 
 ## Handoff
@@ -128,5 +130,5 @@ The FULL indexes advertise substantially more content than the GitHub-visible ex
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `not-recorded`
 - Refresh reason: `none`
-- Next action: `Provide the complete licensed Lords of Pain source archive, then resume this workstream and regenerate the coverage inventory against both FULL indexes.`
+- Next action: `Provide the complete licensed source pack, then resume this workstream and regenerate the coverage inventory before scaffolding.`
 - Blockers or open questions: `current hydrated LordsOfPain.zip is DEMO-only and cannot satisfy FULL-index coverage`

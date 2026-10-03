@@ -30,11 +30,12 @@ It does not own Hub/Twin Solaria access, campaign-world transitions, authored-le
 
 ## Current Measured State
 
-Reviewed on `main@565168b4`:
+D1 measured from `origin/main@047e827f8` (baseline authority snapshot):
 
 | Authority | Current size | Current role |
 | --- | ---: | --- |
-| `custodian/game/world/procgen/proc_gen_tilemap.gd` | 11,441 lines / 588 funcs / 453,102 chars | Procgen façade and live TileMap-backed generation working-state host; roads/claims/export/streaming/presentation extraction remains in flight |
+| `custodian/game/world/procgen/proc_gen_tilemap.gd` | 11,854 lines / 617 funcs / 475,877 chars after D1 | Procgen façade and TileMap-backed generation host; physical road realization and presentation remain here |
+| `custodian/game/world/procgen/roads/procgen_road_authority.gd` | 260 lines / 33 funcs / 7,677 chars | Canonical generated road/path/parking/Road Semantics state and graph/component/repair/pruning decisions |
 | `custodian/game/world/procgen/custodian_contract_map.gd` | 1,068 lines / 29 funcs / 41,241 chars | Contract seed/profile creation, candidate orchestration, semantic snapshot evaluation, fallback selection, final materialization handoff |
 | `custodian/game/systems/core/systems/contract_world_loader.gd` | 2,001 lines / 98 funcs / 79,340 chars | Runtime world attach/rebind plus resource, vehicle, relay, encounter/Vaultwing, ingress, camera/navigation/UI placement orchestration pending P-lane extraction |
 
@@ -222,7 +223,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | P5 | `contract-world-encounter-placement-extraction` | queued | PR1 |
 | P6 | `contract-world-ingress-placement-extraction` | queued | PR1 |
 | P7 | `contract-world-loader-contraction` | **blocked / manual refresh gate** | P2+P3+P4+P5+P6 |
-| D1 | `procgen-road-authority-extraction` | **ready / auto — refreshed post-MR6R1; paired review authored** | G5+MR6R1 |
+| D1 | `procgen-road-authority-extraction` | **implementation complete; paired post-land review next** | G5+MR6R1 |
 | D2 | `procgen-authored-claim-registry-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
 | D3 | `procgen-generation-state-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
 | X1 | `procgen-generation-data-model-audit` | queued | D1+D2+D3 |
@@ -270,10 +271,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** RF1 implementation is complete/landed at `49cbd398`; RFR1 `review-procgen-region-frame-presentation-foundation` is the next Region Frame gate and is ready/auto. The review packet has been re-derived against the landed foundation and all five N1 proof-hardening changes. Alpine assets remain source-art/human gated after RFR1. AR1 is ready/auto at P2. Placement P1 has landed its read-only accepted-world context; PR1 remains its separate review gate.
-**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1 and MR6R1 are complete; S7 is closed. RF1 implementation is complete and RFR1 is ready/auto. Alpine Asset V2 is blocked behind RFR1 + source art. AR1/ARR1 are ready; AR2 waits on ARR1 and AR3 waits on AR2. D1 is refreshed/ready with paired review; D2/D3 remain blocked/manual pending their live refreshes. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
-**Next gate:** Run RFR1 in a fresh reviewer context. On a clean/non-blocking result, Region Frame becomes reviewed-stable; Alpine asset integration remains blocked on six approved source images, while AR1 becomes the next runnable procgen presentation implementation under the shared locks. D1 remains a separate ready S8 decomplexification slice; D2/D3 still need their live refreshes.
-**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are satisfied for D1-D3; D1 has completed its live refresh and is ready, while D2/D3 still require theirs. Once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
+**Current packet:** RF1 implementation is complete/landed at `49cbd398`; RFR1 `review-procgen-region-frame-presentation-foundation` is the next Region Frame gate and is ready/auto. The review packet has been re-derived against the landed foundation and all five N1 proof-hardening changes. Alpine assets remain source-art/human gated after RFR1. AR1 is ready/auto at P2. Placement P1 has landed its read-only accepted-world context; PR1 remains its separate review gate. D1 has extracted the generated road authority; its paired post-land review is the immediate decomplexification successor.
+**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1 and MR6R1 are complete; S7 is closed. RF1 implementation is complete and RFR1 is ready/auto. Alpine Asset V2 is blocked behind RFR1 + source art. AR1/ARR1 are ready; AR2 waits on ARR1 and AR3 waits on AR2. D1 implementation is complete; D2/D3 remain blocked/manual pending their live refreshes. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
+**Next gate:** complete the fresh-context paired review of D1 after it lands. Run RFR1 in a fresh reviewer context; D2/D3 still need their live refreshes, and AR1 remains the next runnable procgen presentation implementation under the shared locks.
+**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are satisfied for D1-D3; D1 implementation is complete and its paired review follows landing, while D2/D3 still require refreshes. Once all three are reviewed/landed, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
 

@@ -558,6 +558,25 @@
       "needs_import": true
     },
     {
+      "id": "procgen_road_authority",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_road_authority_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "road",
+        "authority",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/roads/procgen_road_authority.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/procgen_road_authority_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
       "id": "procgen_road_semantics_v2",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_road_semantics_v2_smoke.gd",
