@@ -14,7 +14,7 @@
 - Reviewed main: `9ac2e5ec48ecbd1be626a4c90098f4c98adf967b`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -46,7 +46,7 @@ Start from: archived AR1 packet/summary; `streaming/procgen_reveal_presentation.
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `not-recorded`
-- Refresh reason: AR2 must be re-derived against the reviewed AR1 owner/render primitive/custom-data schema/pause clock, and its final visual treatment remains design-sensitive.
-- Next action: After ARR1 passes, report the reviewed AR1 presentation contract and tell the user to provide the originating AR2 authoring-chat link to ChatGPT if available; ChatGPT + user then refresh AR2 in place before execution.
-- Blockers or open questions: Subjective final Archive Resolve aesthetics remain human-owned.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh reason: AR2 must be re-derived against the reviewed AR1 owner, render primitive, custom-data schema, pause clock, and actual diagnostic-frontier behavior; shader art direction remains design-sensitive.
+- Next action: After ARR1 passes, bring the reviewed AR1 summary/evidence to the recorded ChatGPT planning chat and refresh AR2 in place with the user.
+- Blockers or open questions: AR2 remains blocked/manual until that refresh is complete; subjective final Archive Resolve aesthetics remain human-owned.
