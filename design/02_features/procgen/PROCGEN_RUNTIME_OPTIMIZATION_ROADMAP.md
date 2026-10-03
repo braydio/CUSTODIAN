@@ -5,8 +5,8 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `81494285dfdb41240045a55cb6117586b32f539f`  
-**Last Updated:** 2026-10-02  
+**Reviewed main:** `70655b247194310588e462f3d97e5251863d2a30`  
+**Last Updated:** 2026-10-03  
 **Depends on:** none for measurement; slice dependencies below
 
 ## Purpose
@@ -243,9 +243,9 @@ The following packets consume the reviewed M6 seam but are **not** part of S7/S8
 
 - `procgen-region-frame-presentation-foundation` -> paired review: data-driven Region Frame + true exterior CHASM underlay seam.
 - `procgen-alpine-plateau-underlay-assets`: six required 1536x1024 Asset V2 states after RF1 review + human-provided source art.
-- `procgen-archive-resolve-presentation-spine` (AR1) -> AR2 shader -> AR3 semantic echo/spawn/reacquisition.
+- `procgen-archive-resolve-presentation-spine` (AR1) -> paired AR1 review -> AR2 shader -> AR3 semantic echo/spawn/reacquisition.
 
-RF1 is now fully refreshed and `ready/auto`, but dependency-gated on the clean cycle-1 M6 re-review `MR6R1`; no extra planning pass is required after that review lands. AR1 remains `blocked/manual` until the same re-review, then requires its own final refresh. RF1 and AR1 are sibling presentation consumers and share procgen-runtime/presentation locks, so they serialize. Neither is a prerequisite for D1-D3 unless a live seam conflict is discovered during those packets' required refresh.
+RF1 is fully refreshed and `ready/auto`, dependency-gated on the cycle-1 M6 re-review `MR6R1`. AR1 is also fully re-derived against the landed M6C1 request/commit/unload seam, now has a paired technical review, and remains `blocked/manual` only until MR6R1 formally closes clean/non-blocking; no new AR1 design pass is required at activation. RF1 remains P1 while AR1 is P2, so a single-agent queue naturally runs RF1/RFR1 first under the shared procgen-runtime/presentation locks, then AR1/ARR1. AR2 is now gated on reviewed AR1. Neither presentation lane is a prerequisite for D1-D3 unless a live seam conflict is discovered during those packets' required refresh.
 
 ## Roadmap Maintenance Contract
 
@@ -267,9 +267,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M6C1 is landed and archived on `main@81494285`, closing the production R0-01 coalescing defect and expanding proof for R0-02..R0-05. MR6R1 is now the sole active S7 gate. A manual second-pass found the production coalescing control flow structurally sound and R0-03/R0-04 materially proven, with three proof-shape hardening items carried into refreshed RF1: deterministic multi-frame coalescing observation, actual A* reachability, and guaranteed road-removal proof. RF1 remains ready/auto behind MR6R1. Placement P1 has landed its read-only accepted-world context; PR1 is the next placement gate.
-**State:** S1, G1-G5, M1-M6, MR4, MR5, cycle-0 MR6 and M6C1 are landed. S7 remains open only through MR6R1. D1-D3 wait on G5 + MR6R1 and still require their own live refresh before execution. The separate Procgen World Presentation lane has RF1 refreshed against M6C1 and ready behind MR6R1, its paired RFR1 pre-authored, Alpine Asset V2 blocked behind RFR1 + source art, and AR1 still refresh-gated behind MR6R1. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
-**Next gate:** Run `review-procgen-distant-chunk-unload-review-corrections-1`. A clean/non-blocking-only cycle-1 receipt closes S7; proof-only hardening already identified by the manual second-pass is owned by RF1 and must not spawn duplicate correction work unless MR6R1 exposes an actual runtime failure. RF1 then becomes claimable from its refreshed packet; D1-D3 become refresh-eligible but remain blocked until each live inventory is rewritten in place. AR1 then receives its final seam refresh.
+**Current packet:** M6C1 is landed and archived on `main@81494285`; MR6R1 remains the sole active S7 gate. A manual second-pass found the production coalescing control flow structurally sound and R0-03/R0-04 materially proven, with three proof-shape hardening items carried into RF1. RF1 is ready/auto behind MR6R1. AR1 is now fully authored against the exact post-M6 request/commit/unload adapters, with a paired technical review and no unresolved architecture choice, but remains blocked/manual until MR6R1 formally closes. Placement P1 has landed its read-only accepted-world context; PR1 is the next placement gate.
+**State:** S1, G1-G5, M1-M6, MR4, MR5, cycle-0 MR6 and M6C1 are landed. S7 remains open only through MR6R1. D1-D3 wait on G5 + MR6R1 and still require their own live refresh before execution. The separate Procgen World Presentation lane has RF1/RFR1 ready behind MR6R1, Alpine Asset V2 blocked behind RFR1 + source art, and AR1/ARR1 fully authored but activation-blocked on MR6R1; AR2 waits on ARR1 and AR3 waits on AR2. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
+**Next gate:** Run `review-procgen-distant-chunk-unload-review-corrections-1`. A clean/non-blocking-only cycle-1 receipt closes S7; proof-only hardening already identified by the manual second-pass is owned by RF1 and must not spawn duplicate correction work unless MR6R1 exposes an actual runtime failure. RF1 then becomes claimable immediately. AR1 requires only the mechanical blocked/manual -> ready/auto activation after the same clean review, because its post-M6 seam refresh is already complete. D1-D3 become refresh-eligible but remain blocked until each live inventory is rewritten in place.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+MR6R1; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
