@@ -178,15 +178,20 @@ The central dais is presentation/interaction space, not a mandatory giant collis
 envelope: Rect2(-2560,-3904,1152,1408)
 center:   (-1984,-3200)
 grid:     Rect2i(8,50,36,44)
-connector: Rect2(-1408,-3328,128,256)
-connector grid: Rect2i(44,68,4,8)
+
+north connector: Rect2(-1408,-3328,128,256)
+north connector grid: Rect2i(44,68,4,8)
+
+south connector: Rect2(-1408,-2784,128,256)
+south connector grid: Rect2i(44,85,4,8)
 ```
 
 Purpose:
 
 - first life-vs-ruin side loop;
 - proves the Hub is not one hallway;
-- returns to the Forum without becoming a dead end.
+- forms a literal circulation loop with two separated Forum connections;
+- lets the player enter through either connector and leave through the other without retracing the same neck.
 
 No finished wildlife/population work in this blockout slice.
 
@@ -244,7 +249,6 @@ Markers:
 ```text
 MusterEntry             (1472,-3008)
 MusterCenter            (1952,-3008)
-Spawn_CampaignReturn    (2592,-3008)
 ```
 
 Purpose:
@@ -265,6 +269,7 @@ grid:     Rect2i(166,64,22,28)
 Markers:
 
 ```text
+Spawn_CampaignReturn    (2592,-3008)
 ContinuityPort          (2944,-3008)
 CampaignExitThreshold   (3136,-3008)
 ```
@@ -282,6 +287,8 @@ Purpose:
 - later transition enters the existing `game.tscn` Contract runtime shell.
 
 The port does not generate the world itself.
+
+`Spawn_CampaignReturn` is the west return bay inside the Continuity Port chamber, not a Muster Court marker. A completed campaign therefore returns through the same physical transit infrastructure used for departure.
 
 ---
 
@@ -382,7 +389,7 @@ Minimum walkable regions should include:
 - the current side courts sufficiently to enter/exit them;
 - North Processional;
 - Forum;
-- Sepulcher loop + connector;
+- Sepulcher loop + both Forum connectors;
 - Archive Rise;
 - Crown Transfer Court;
 - Muster Court + connector;
@@ -494,6 +501,8 @@ Implementation should reconcile these current mismatches:
 ---
 
 ## 13. Implementation Slices
+
+The durable implementation tracker is `HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`. It owns H1-H7 packet status, dependencies, refresh gates, and program progress; this document remains the behavioral/spatial authority.
 
 ### H1 — First Set Blockout
 

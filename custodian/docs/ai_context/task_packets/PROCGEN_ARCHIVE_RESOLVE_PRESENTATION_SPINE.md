@@ -15,6 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `7d553787ae92bad652f92ee8214b8da990115bb2`
+- Authoring chat: `not-recorded`
 - Goal: Add the presentation-only Archive Resolve spine that hides chunk cadence behind one continuous deterministic world-space reveal frontier without changing generation, PREPARE/COMMIT, collision, navigation, residency, Region Frame, or semantic authority.
 - Completion boundary: Done when one focused `ProcGenRevealPresentation` owner consumes the reviewed request/commit/unload seams, covers requested cells before authoritative pixels can visibly pop, settles only committed cells, maintains an always-resolved Operator safety halo, renders unresolved/resolving cells through one batched flat diagnostic veil, distinguishes first-resolution from reacquisition, freezes on pause through its own presentation clock, can be disabled without changing streaming behavior, and makes 16x16 chunk cadence visually unobservable while streaming/gameplay fingerprints remain unchanged.
 - Current measured state: On `main@1c88f456`, M3 still owns the shared tile request/PREPARE/COMMIT queue through `ProcGenPauseAwareStreaming`; M4 `ProcGenChunkLifecycle` still owns `UNSEEN -> QUEUED/PREPARED/REVEALING/VISIBLE/DORMANT/UNLOADED`; M5 owns cache residency; M6 owns DORMANT candidate selection/revalidation and `_unload_chunk()` presentation/cache disposal. The landed M6C1 path batches eviction-triggered wall/overlay/navigation/shadow resyncs through the existing reveal cadence. Queued request enters through `_queue_chunk_for_reveal()`; immediate-radius request/commit enters through `_reveal_chunk_immediately()`; queued authoritative COMMIT executes `_commit_tile_reveal_record()` before `ProcGenPauseAwareStreaming` invokes `_on_streaming_tile_committed(tile)`; immediate commit currently calls `_reveal_tile(tile)` then `_chunk_lifecycle.note_committed(chunk_pos)` directly; unload erases painted Floor/Walls, hides foliage, removes road decals, evicts the M5 payload, forces lifecycle `UNLOADED`, and leaves canonical semantics/collision/navigation authority intact. No reveal-presentation owner or veil exists. RF1 is a separate permanent exterior-frame consumer and must not be absorbed here. MR6R1 has passed with 0 blocking defects and 0 material evidence gaps; the reviewed M6 request/commit/unload seam is now the stable AR1 dependency.
@@ -59,6 +60,11 @@
 
 ## Handoff
 
-- Next action: Ready for auto-dispatch. RF1/RFR1 retain priority P1 under the shared procgen locks; AR1 is P2 and should naturally follow once that lock is free.
-- Best starting files: `proc_gen_tilemap.gd` request/commit/unload adapters; `proc_gen_map.tscn`; `streaming/procgen_pause_aware_streaming.gd`; `STREAMING_REVEAL_PRESENTATION_V1.md`.
+- Next workstream: `review-procgen-archive-resolve-presentation-spine`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: Complete AR1, then let ARR1 claim automatically from a fresh reviewer context.
 - Blockers or open questions: None. No unresolved AR1 architecture choice remains.

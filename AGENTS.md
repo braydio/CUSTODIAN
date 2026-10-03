@@ -192,6 +192,28 @@ receipt:
 - What worked: optional
 ```
 
+Every packeted closing summary and final user-facing reply also ends with:
+
+```text
+## Next Handoff
+- Next workstream: <workstream-id | none>
+- Next packet state: ready | dependency-gated | refresh-required | human-required | none
+- Refresh owner: none | chatgpt-user | execution-agent
+- ChatGPT/user planning refresh required: yes | no
+- Authoring chat: <ChatGPT conversation URL | not-recorded | n/a>
+- Refresh reason: none | ...
+- Next action: ...
+- Blockers or open questions: none | ...
+```
+
+This is the immediate successor in the current packet's own program/DAG, not a
+random globally eligible task. Architecture/design-sensitive refreshes belong to
+`chatgpt-user`: the execution/review agent reports exact live drift and evidence,
+then tells the user to bring the originating ChatGPT conversation back to ChatGPT
+when its URL is available. Conversation URLs must be copied only from durable
+packet/history metadata or user-provided input; never infer or invent one.
+A purely mechanical live-main refresh may be assigned to `execution-agent`.
+
 The purpose is to improve the agent pipeline, not praise the run. Keep
 `What worked` terse. For packeted V2 work, mirror the same receipt into the
 packet's `## Execution Feedback` section before archive. If a repeatable

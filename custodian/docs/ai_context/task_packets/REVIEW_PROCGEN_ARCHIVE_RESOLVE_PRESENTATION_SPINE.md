@@ -12,6 +12,9 @@
 - Review target workstream: `procgen-archive-resolve-presentation-spine`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`
 - Reviewed main: `9ac2e5ec48ecbd1be626a4c90098f4c98adf967b`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent | same-agent-fresh-context`
+- Authoring chat: `not-recorded`
 - Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -39,5 +42,11 @@ Start from: archived AR1 packet/summary; `streaming/procgen_reveal_presentation.
 
 ## Handoff
 
-- Next action: After a clean/non-blocking AR1 review, refresh `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` against the landed owner/render/custom-data/clock contract.
-- Blockers or open questions: None at authoring time; subjective final Archive Resolve aesthetics remain AR2/human-owned.
+- Next workstream: `procgen-archive-resolve-shader`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `not-recorded`
+- Refresh reason: AR2 must be re-derived against the reviewed AR1 owner/render primitive/custom-data schema/pause clock, and its final visual treatment remains design-sensitive.
+- Next action: After ARR1 passes, report the reviewed AR1 presentation contract and tell the user to provide the originating AR2 authoring-chat link to ChatGPT if available; ChatGPT + user then refresh AR2 in place before execution.
+- Blockers or open questions: Subjective final Archive Resolve aesthetics remain human-owned.

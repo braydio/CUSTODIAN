@@ -12,6 +12,9 @@
 - Review target workstream: `procgen-region-frame-presentation-foundation`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`
 - Reviewed main: `81494285dfdb41240045a55cb6117586b32f539f`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent | same-agent-fresh-context`
+- Authoring chat: `not-recorded`
 - Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -31,5 +34,11 @@ Review only the archived foundation packet/summary; `CustodianContractMap._pick_
 
 ## Handoff
 
-- Next action: Claim only after `procgen-region-frame-presentation-foundation` lands.
-- Blockers or open questions: Subjective final Alpine art remains human-owned and is outside this review.
+- Next workstream: `procgen-alpine-plateau-underlay-assets`
+- Next packet state: `human-required`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none; the packet is source-art gated rather than planning-refresh gated`
+- Next action: After a clean/non-blocking RFR1 result, supply/approve the six required Alpine Plateau Asset V2 source images before the underlay asset packet can execute.
+- Blockers or open questions: Subjective final Alpine art and the six approved 1536x1024 source images remain human-owned.

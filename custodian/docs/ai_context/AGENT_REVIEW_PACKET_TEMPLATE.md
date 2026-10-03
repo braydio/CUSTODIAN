@@ -133,5 +133,25 @@ become corrections automatically.
 
 ## Handoff
 
-- Next action: Claim after the implementation dependency completes.
-- Blockers or open questions: `<none, or name them>`
+Complete this section in the durable review receipt/summary after the review
+verdict is known. Report the immediate successor in the reviewed program/DAG,
+not an arbitrary globally eligible packet.
+
+- Next workstream: `<workstream-id | none>`
+- Next packet state: `ready | dependency-gated | refresh-required | human-required | none`
+- Refresh owner: `none | chatgpt-user | execution-agent`
+- ChatGPT/user planning refresh required: `yes | no`
+- Authoring chat: `<ChatGPT conversation URL | not-recorded | n/a>`
+- Refresh reason: `none | <what live review result means the next packet must reconsider>`
+- Next action: `<one concrete action>`
+- Blockers or open questions: `none | <exact blocker>`
+
+For architecture/design-sensitive refreshes, use `Refresh owner: chatgpt-user`.
+The reviewer supplies the live evidence and exact drift but does not rewrite the
+next packet's architecture unless its own review override explicitly authorizes
+that packet mutation. If an authoring-chat URL is recorded, surface it exactly
+so the user can provide that conversation to ChatGPT for refresh. If absent,
+say `not-recorded`; never invent one.
+
+The closing summary and user-facing reply must include the same fields under
+`## Next Handoff`.
