@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-distant-chunk-unload-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-distant-chunk-unload-review-corrections-1`
@@ -31,5 +31,5 @@ Start from exactly: the correction packet's Required correction list; its closin
 
 ## Handoff
 
-- Next action: Auto-claim now that `procgen-distant-chunk-unload-review-corrections-1` is complete/archived. If production behavior passes and only the three known proof-shape items remain, record them as next-slice findings owned by refreshed RF1 instead of generating duplicate correction-2 work. Review the actual landed dependency tip and record that SHA in the review receipt/closing summary; the `Reviewed main` above records the packet-authoring baseline.
+- Next action: Complete; receipt recorded on the archived correction packet. Original: auto-claim now that `procgen-distant-chunk-unload-review-corrections-1` is complete/archived. If production behavior passes and only the three known proof-shape items remain, record them as next-slice findings owned by refreshed RF1 instead of generating duplicate correction-2 work. Review the actual landed dependency tip and record that SHA in the review receipt/closing summary; the `Reviewed main` above records the packet-authoring baseline.
 - Blockers or open questions: None at authoring time.

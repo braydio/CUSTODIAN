@@ -276,7 +276,6 @@ lost when the ephemeral worktree is removed.
 
 ### Ready / Auto Dispatch
 
-- `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — paired cycle-1 code/architecture/runtime re-review; auto-claims after the correction lands.
 - `HUB_FIRST_SET_BLOCKOUT_V1.md` — P1 runtime-ready Hub first-set blockout from South Reach through Ashen Forum, Sepulcher loop, Archive/Crown Transfer branch, and Muster Court/Continuity Port deployment wing; spatial only, no world transitions.
 - `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — paired independent review of first-set geometry, navigation, Road presentation reuse, inert handoff markers, and human blockout overview approval.
 - `TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — P1 first-pass Solarium I Route Vista sample ingest/presentation: three neutral V2 candidate contents from the new archway-view drop, exact 465×280 registration, playtest sampler, and human capture review.
@@ -298,7 +297,7 @@ lost when the ephemeral worktree is removed.
 - `archived/PROCGEN_DISTANT_CHUNK_UNLOAD.md` — M6 bounded production chunk-residency unload; complete/landed.
 - `archived/REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD.md` — cycle-0 MR6 independent review; complete with findings `R0-01`..`R0-05`, not a pass.
 - `archived/PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — bounded M6 correction cycle 1 closing R0-01..R0-05; complete.
-- `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — cycle-1 paired re-review; ready/auto behind the correction.
+- `archived/REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1.md` — cycle-1 MR6 re-review; complete, clean with next-slice items N1-01..N1-05.
 - `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — RF1 data-driven region-frame + true exterior-void presentation foundation plus bounded M6 proof hardening; ready/auto, dependency-gated on MR6R1.
 - `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — paired RF1 review.
 - `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` — six-state Asset V2 Alpine FAR/MIDDLE/NEAR underlay family; blocked on RF1 review + source art.

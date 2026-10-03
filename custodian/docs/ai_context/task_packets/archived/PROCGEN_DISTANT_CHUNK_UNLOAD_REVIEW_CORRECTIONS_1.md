@@ -59,3 +59,40 @@
 - Tooling / docs drift discovered: `NavigationSystem` has no global class_name, so smokes must type it as `Node`; a fresh worktree needs `godot --import` before scripts resolve `ProcGenTilemap`.
 - Follow-up: `none`
 - What worked: Reusing the existing accumulator needed only a small flush-owed flag; the mutation check proved the new assertions are falsifiable.
+
+## Independent Review
+
+- Status: `clean_with_next_slice`
+- Review workstream: `review-procgen-distant-chunk-unload-review-corrections-1`
+- Reviewed on main: `b7d23c4c2` (correction landed at `81494285d`)
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `5`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `N1-01, N1-02, N1-03, N1-04, N1-05`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none` (N1-01..N1-03 owned by `procgen-region-frame-presentation-foundation`; N1-04/N1-05 not yet owned)
+- Reviewer independence: the reviewing session is the same agent family that authored the correction; verdicts rest on re-run traces/mutations below, not on the correction's own summary.
+
+### Original finding disposition
+
+- `R0-01` -- `fixed`. Call graph: `_unload_chunk()` sets pending only; `_process_streaming_reveal_queue()` accumulates delta while pending and gates the `queue_drained` flush on `_streaming_reveal_flush_owed or flush_due`. Independent multi-frame trace (throwaway fixture, not committed): empty reveal queue, 19 consecutive one-chunk eviction frames at 0.016 s -> 2 flushes in 40 frames (first at frame 9, ~0.15 s), versus one per eviction frame before.
+- `R0-02` -- `fixed`. A real `NavigationSystem` is rebuilt after unload and `_walkable_tiles` contains the victim floor tile and excludes the wall tile. Membership only, no A* path (N1-02).
+- `R0-03` -- `fixed` (production behavior verified; fixture non-hermetic, N1-04). Removing the injected `portals.append(portal)` leaves the smoke green because the generated map already registers 2 real portals and the chosen DORMANT chunk `(4, 10)` is already in `debug_get_protected_streaming_chunks()`. The far/DORMANT/protected-not-evicted behavior is therefore proven against real map protection data, but the injected portal is redundant.
+- `R0-04` -- `fixed` (production behavior verified by code: `_hide_foliage_for_unload()` only toggles `visible`; fixture weak, N1-05). The fixture foliage is a `shrub` with empty `cluster_id`, `has_collision=false`, no runtime blocker, so cluster/collision/blocker parity is asserted over falsy values only.
+- `R0-05` -- `fixed` for painted-cell, cache, and generated-count deltas. `road_decal` is `false` in the fixture, so road removal is never exercised (N1-03).
+
+### Findings
+
+- **N1-01** -- class: `optional_improvement`; disposition: `next_slice` (RF1 packet item (a)). The committed smoke asserts pending/interval behavior but does not count flushes across a forced multi-candidate empty-queue backlog.
+- **N1-02** -- class: `optional_improvement`; disposition: `next_slice` (RF1 item (b)). No A* path/connectivity assertion after rebuild.
+- **N1-03** -- class: `optional_improvement`; disposition: `next_slice` (RF1 item (c)). Road-decal removal proof is vacuous in the fixture.
+- **N1-04** -- class: `optional_improvement`; disposition: `next_slice`, NOT in RF1. Choose the protected-anchor chunk so no pre-existing protection source covers it (exclude `debug_get_protected_streaming_chunks()` members), so the injected portal is the sole source; verify by mutation.
+- **N1-05** -- class: `optional_improvement`; disposition: `next_slice`, NOT in RF1. Use a tree with trunk collision and/or a cluster id as the foliage fixture so kind/cluster/collision/blocker parity is non-trivial.
+
+### Validation
+
+`procgen_distant_chunk_unload` plus the full regression list (`procgen_chunk_payload_cache`, `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_macro_presentation`, `procgen_road_semantics_v2`, `procgen_dressing_clusters`, `navigation_elevation_smoke`, `procgen_authored_scene_authority_smoke`) exit 0 with zero assertion errors; S1 quick `determinism_ok=true` with 48x48 fingerprint `1773840677` present in the baseline JSON; review-pairing validator pass; `git diff --check` clean. `procgen_candidate_materializer_parity` named in the parent packet does not exist under `tools/validation` and was not run.
