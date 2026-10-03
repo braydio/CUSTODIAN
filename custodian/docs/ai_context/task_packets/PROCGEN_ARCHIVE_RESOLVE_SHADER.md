@@ -15,6 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `bc3e354bb20641d4c6ce9317c38002b9e3449ca0`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Turn the proven AR1 flat veil into the locked Archive Resolve visual language: graphite/soot uncertainty, coherent world-space irregular resolution, ordered pixel dither, restrained brass/amber registration, and a brief phase-alignment effect that disappears completely after settlement.
 - Completion boundary: Done when the AR1 scheduler/ownership is unchanged, one shared pause-safe shader/material path renders the locked Archive Resolve phases without per-cell materials/tweens, the frontier reads as continuous world-space resolution rather than chunk loading or square pop-in, reduced-effects controls exist, and settled terrain returns to its ordinary authored appearance.
 - Current measured state: No Archive Resolve runtime owner or shader exists yet. The hardened design is locked in `STREAMING_REVEAL_PRESENTATION_V1.md`; AR1 is expected to provide batched frontier instances, deterministic per-cell phase/start identity, first-resolve/reacquisition state, and a presentation clock.
@@ -62,6 +63,14 @@ Do not redesign AR1 scheduling merely because this pre-authored packet guessed a
 - Prevention / pipeline improvement: `<fill at closeout>`
 - Tooling / docs drift discovered: `<fill at closeout>`
 - Follow-up: `<fill at closeout>`
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
 
