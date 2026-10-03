@@ -68,6 +68,7 @@ repository state without reconstructing intent from chat history.
 Required quality:
 
 - **Reviewed main** identifies the repository state actually investigated.
+- **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one.
 - **Goal** states the user-visible or architecture outcome, not the implementation
   method.
 - **Completion boundary** says exactly what belongs in this workstream and what
