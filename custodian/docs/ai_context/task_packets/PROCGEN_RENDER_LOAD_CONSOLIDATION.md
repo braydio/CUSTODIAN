@@ -10,6 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Reduce procgen presentation node/render overhead by consolidating the highest-cost presentation-only owners identified by the attribution packet, without moving gameplay authority into visibility/render systems.
 - Completion boundary: REFRESH-GATED on landed `procgen-render-attribution-v1`. Do not choose a batching/lazy-realization target before attribution measures the post-D4/P7 runtime. After V1 attribution, rewrite this same packet in place to the exact top safe owner(s), exact files/material constraints, baseline counts, visual/objective parity checks, and target reduction.
 - Current measured state: Attribution V1 has not run, so there is no evidence-backed highest-cost compatible presentation owner to consolidate. Current pre-contraction runtime contains structural TileMaps plus separate macro/depth, foliage/dressing, road/surface decals, props, nonwalkable/coastline and shadow/overlay presentation, but D4/P7 may change ownership boundaries before attribution. The old packet incorrectly spoke as if the ranked attribution report already existed.
@@ -27,6 +28,14 @@
 ## Series Contract
 
 This packet belongs to the pre-authored `procgen-runtime-optimization-v1` dependency DAG. Downstream packets already exist on `main` with `Dispatch: auto`. Update the detailed procgen roadmap and matching master-roadmap row at closeout, record landed evidence, and finish normally so dependents can become eligible. If live evidence invalidates a downstream contract, record the contradiction and leave that dependent blocked rather than silently broadening this workstream.
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
 
