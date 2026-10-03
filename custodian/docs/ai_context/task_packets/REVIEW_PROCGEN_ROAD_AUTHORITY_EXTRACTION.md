@@ -12,6 +12,7 @@
 - Review target workstream: `procgen-road-authority-extraction`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`
 - Reviewed main: `ab7394ba27353d0a5ebcc4185fad656f65a7623c`
+- Authoring chat: `not-recorded`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
 - Review modes: `code, architecture, runtime`
@@ -38,5 +39,11 @@
 
 ## Handoff
 
-- Next action: Claim automatically after D1 archives.
-- Blockers or open questions: None at authoring time.
+- Next workstream: `procgen-authored-claim-registry-extraction`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `not-recorded`
+- Refresh reason: D2 must be re-inventoried against post-D1 live main so claim/region ownership boundaries and surviving ProcGenTilemap seams are not inferred from the older packet.
+- Next action: After D1 review passes, report the live D1 seam and tell the user to provide the originating D2 authoring-chat link to ChatGPT if available; ChatGPT + user then refresh D2 in place before execution.
+- Blockers or open questions: D2 must not be claimed until that refresh is complete.
