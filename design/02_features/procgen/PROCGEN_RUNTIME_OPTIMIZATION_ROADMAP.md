@@ -5,7 +5,7 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `7d553787ae92bad652f92ee8214b8da990115bb2`  
+**Reviewed main:** `72c4133e38a20454dc65b5ac4a24e71af1475ee7`  
 **Last Updated:** 2026-10-03  
 **Depends on:** none for measurement; slice dependencies below
 
@@ -219,7 +219,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | P5 | `contract-world-encounter-placement-extraction` | queued | PR1 |
 | P6 | `contract-world-ingress-placement-extraction` | queued | PR1 |
 | P7 | `contract-world-loader-contraction` | **blocked / manual refresh gate** | P2+P3+P4+P5+P6 |
-| D1 | `procgen-road-authority-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
+| D1 | `procgen-road-authority-extraction` | **ready / auto — refreshed post-MR6R1; paired review authored** | G5+MR6R1 |
 | D2 | `procgen-authored-claim-registry-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
 | D3 | `procgen-generation-state-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
 | X1 | `procgen-generation-data-model-audit` | queued | D1+D2+D3 |
@@ -268,9 +268,9 @@ If an independent review creates a correction packet, keep the original slice `c
 ## Current Program Position
 
 **Current packet:** MR6R1 is complete/passed on `main@7d553787`, closing S7 with R0-01..R0-05 fixed, 0 blocking defects and 0 material evidence gaps. RF1 is now the highest-priority ready procgen presentation packet and owns optional next-slice items N1-01..N1-05. AR1 is also ready/auto at P2 against the reviewed M6 seam. Placement P1 has landed its read-only accepted-world context; PR1 remains the next placement gate.
-**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1 and MR6R1 are complete; S7 is closed. D1-D3 are dependency-satisfied and refresh-eligible but remain blocked/manual until each live inventory is rewritten in place. The Procgen World Presentation lane has RF1/RFR1 ready, Alpine Asset V2 blocked behind RFR1 + source art, and AR1/ARR1 ready; AR2 waits on ARR1 and AR3 waits on AR2. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
-**Next gate:** Execute `procgen-region-frame-presentation-foundation` (RF1) and its paired review RFR1. RF1 begins by closing N1-01..N1-05 as proof hardening, then lands the data-driven Region Frame/exterior-CHASM presentation seam. AR1 is already ready/auto at lower P2 and may follow after RF1/RFR1 releases the shared procgen locks. Separately, D1-D3 may now be refreshed from live main for the decomplexification lane.
-**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are now satisfied for D1-D3; each still requires its explicit post-review refresh before execution. Once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
+**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1 and MR6R1 are complete; S7 is closed. D1 is now refreshed `ready/auto` with paired review; D2/D3 are dependency-satisfied and refresh-eligible but remain blocked/manual until each live inventory is rewritten in place. The Procgen World Presentation lane has RF1/RFR1 ready, Alpine Asset V2 blocked behind RFR1 + source art, and AR1/ARR1 ready; AR2 waits on ARR1 and AR3 waits on AR2. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
+**Next gate:** RF1 remains the highest-priority procgen presentation slice. In the decomplexification lane, D1 is now executable immediately when the shared `procgen-runtime` lock is free, followed by its fresh-context paired review; D2/D3 still need their live refreshes. AR1 remains ready/auto at P2.
+**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are satisfied for D1-D3; D1 has completed its live refresh and is ready, while D2/D3 still require theirs. Once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
 
