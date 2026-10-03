@@ -14,7 +14,7 @@
 - Paired review workstream: `review-operator-workbench-publish-readiness-recovery`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `4df3611c`
+- Reviewed main: `44bf03388c`
 - Goal: Make Operator Workbench publication behave as one self-preparing, fail-closed transaction from the artist's perspective: before canonical mutation begins, OPUI must know whether the exact selected animation can publish from the dedicated art checkout, perform only objectively safe preparation, surface actionable blockers once rather than serially, and leave Git in a clean or explicitly recoverable state after success or failure.
 - Completion boundary: Add one authoritative publish-readiness/preparation contract spanning the persistent `workbench/operator-art` checkout, selected Workbench manifest, local-only LFS/materialization requirements, mandatory sparse validation dependencies, and import-sensitive Git metadata. Wire that contract into the existing Publish review/action so known-safe preparation happens before source mutation, stale/unsafe state fails before mutation, and publication-generated metadata churn is either transactionally restored or promoted to explicit `RECOVERY_REQUIRED`. Preserve the current scoped source→runtime transaction and `land_main.py` landing authority rather than introducing a second publisher.
 - Current measured state:
@@ -23,6 +23,8 @@
   - `_status_paths()` currently reports a flat path set. Publish therefore knows only “dirty” versus “clean”; it does not distinguish unknown user edits, `LAND PENDING`, an interrupted Workbench transaction, selected publication outputs, or machine-generated Godot import metadata.
   - `hydrate_operator_art_from_cache()` scans only `OPERATOR_LFS_GLOBS`. The sparse profile includes the game/tool/resource surface needed by mandatory validation, but there is no single pre-publish proof that every load-bearing tracked/LFS dependency for the current validation path is physically usable before canonical mutation starts.
   - `godot_import_preflight.py` correctly rejects checked-out Git LFS pointer text, but intentionally ignores sparse-omitted paths; it does not prove the Workbench sparse profile contains every resource that the mandatory Operator validation scenes will load.
+  - Current main now also carries `operator_runtime_spriteframes_import_smoke.py`, which validates all 588 canonical Operator texture imports. The historical east/west `block_hold_01` invalid-sidecar defect was repaired by `e3d4e7f98` and the full-checkout modular-layer smoke passes; do not reimplement that repair in this packet.
+  - The resumed sparse-correction workstream exposed a separate local-materialization gap: a sparse validation checkout can need LFS-backed dependencies that are not present in the shared LFS object cache even though the developer/coordination checkout already has the exact canonical bytes hydrated. Current docs previously said “local cache only” and did not define a safe donor-checkout fallback.
   - `animation_workbench.py::state()` detects existing manifest bindings whose recorded source hash changed or disappeared, and `ensure()` refuses `STALE`; however publication readiness is not projected as one structured result before the Publish transaction, and the existing Workbench/FX-adoption roadmap separately owns broader canonical binding-set evolution.
   - `animation_workbench.py::publish()` already journals and rolls back selected canonical source assets plus generated Operator resources. It does not own a Git-level preimage/postimage contract for unrelated tracked `.import`/`.uid` metadata that a project-wide Godot import can rewrite.
   - Production incident on 2026-10-01: publishing `unarmed/defense/block_hold_01` required serial manual recovery because the persistent art branch was behind `main` and dirty; old block-hold LFS images were not materialized; the saved Workbench baseline no longer represented the intended current canonical baseline; import/validation then exposed two missing audio resources; and the successful Godot import created unrelated tracked metadata churn that had to be cleaned before the publication could land. The animation ultimately landed at `affc8adb`, proving the art transaction can succeed but also showing that readiness failures are discovered too late and one-at-a-time.
@@ -59,7 +61,7 @@
      - fetch `origin/main`;
      - fast-forward `workbench/operator-art` only when it is clean, has no `LAND PENDING`, and is not ahead/diverged;
      - reapply the known sparse profile only when doing so is proven non-destructive by the existing profile rules;
-     - materialize required LFS objects from the existing local Git LFS cache only, with no implicit network fetch;
+     - materialize required LFS objects through the local-only resolver: use the existing Git LFS object cache first; when the cache lacks an object but the coordination/developer checkout has the same repository-relative path hydrated, reuse that donor only after its SHA-256 and byte size exactly match the target pointer's OID/size; never implicitly fetch from the network;
      - restore exact transaction-generated import metadata preimages after a Workbench-owned import only under the bounded rule below.
      It must never reset, rebase, stash, discard, force-checkout, or overwrite unknown user work.
   5. Replace flat “dirty checkout” reporting in the Publish path with deterministic categories. At minimum distinguish:
@@ -70,7 +72,11 @@
      - known import metadata churn generated by this publication's own Godot import: eligible for exact preimage restoration only when all restoration predicates pass.
      The implementation may choose private type/helper names, but callers and tests must consume structured categories rather than matching prose.
   6. Add a pre-mutation sparse/materialization dependency proof for the current mandatory Workbench validation path. Derive it from live validation/resource authority rather than a second hand-maintained list where practical. It must catch both checked-out LFS pointer stubs and tracked resources that the sparse Workbench promises to make available but that are physically missing/unusable before `publish()` replaces canonical source. If a legitimate mandatory dependency is missing from the sparse profile, fix the narrow profile dependency and test it; do not broaden to whole content trees as a shortcut.
-  7. Local LFS behavior stays bandwidth-safe: inspect the local LFS object cache first and use local checkout/materialization only. If a required object is not cached, report the exact path/OID class and block before canonical mutation. Do not call `git lfs pull` or `git lfs fetch`.
+  7. Local LFS behavior stays bandwidth-safe and deterministic. Resolve required LFS content in this order:
+     - existing local/shared Git LFS object cache;
+     - a trusted hydrated local checkout, normally the coordination checkout already supplied to the Operator worktree helper, but only for the same repository-relative path and only after SHA-256 + byte-size equality with the target LFS pointer;
+     - explicit blocked state naming the missing path/OID.
+     Donor-copy hydration must copy only verified LFS payload bytes, never adjacent tracked files, `.import` sidecars, generated resources, or donor checkout edits whose bytes do not match the target pointer. The target path must remain Git-clean after hydration. Do not call `git lfs pull` or `git lfs fetch`.
   8. Add an explicit selected-manifest freshness check before publication. For every existing publishing binding, compare the manifest's recorded source identity/path/hash/frame/canvas/timing contract required by the transaction with current canonical authority. A mismatch must produce `WORKBENCH REBASE/REFRESH REQUIRED` before export/source mutation unless the existing reviewed stale-source escape hatch is explicitly used. Do not silently rewrite an edited Workbench baseline. Do not implement the FX-adoption packet's general missing/new binding-set semantics here.
   9. Immediately before the Workbench-owned Godot import, record a bounded Git/preimage receipt sufficient to distinguish pre-existing state from metadata written by that import. After import/validation:
      - a tracked `.import` or `.uid` path outside the legitimate publication allowlist may be auto-restored only if it was clean before this transaction, was changed/created by this transaction's import window, is classified as Godot-generated metadata, and the exact pre-transaction bytes/existence state are known;
@@ -106,7 +112,7 @@
   - Dirty-state fixtures prove unknown tracked and untracked paths are reported individually, preserved byte-for-byte, and block before source export/mutation. No reset/stash/rebase/clean command is issued.
   - `LAND PENDING` is recognized as resumable state and uses the existing retry path without re-exporting Workbench pixels.
   - An interrupted/rolled-back Workbench transaction is classified separately from arbitrary dirt and reports its durable transaction journal/recovery status.
-  - Fixture LFS cases prove: locally cached required objects can be materialized without network access; uncached required objects block with actionable exact paths; publication preparation never invokes an LFS network fetch.
+  - Fixture LFS cases prove: locally cached required objects can be materialized without network access; when cache content is absent, an exact hydrated coordination-checkout donor succeeds only when its SHA-256 and byte size match the target pointer; donor pointer/mismatch/missing cases fail closed; the target stays Git-clean; truly unavailable required objects block with actionable exact path/OID; publication preparation never invokes an LFS network fetch.
   - A fixture mandatory-validation dependency outside the original Operator PNG globs, including an audio/resource analogue, is detected as missing/unusable before canonical mutation. The final sparse dependency contract contains only the measured required addition, not a blanket content tree.
   - A stale existing Workbench source-contract baseline is rejected before export/canonical replacement and names the selected identity/path that drifted. A clean current baseline remains publishable. Edited Workbench pixels are not silently discarded by freshness repair.
   - A fixture Godot-import subprocess that modifies unrelated clean tracked `.import`/`.uid` metadata is followed by exact preimage restoration; those paths are recorded as restored and the checkout is clean after a successful publication.
@@ -118,11 +124,11 @@
   - No Operator source/runtime pixels or gameplay behavior change as part of this tooling packet.
   - Documentation describes the same readiness/recovery contract that tests and runtime tooling enforce, including the prohibition on destructive automatic Git cleanup.
 - Validation:
-  - Extend and run `python3 custodian/tools/validation/operator_art_worktree_smoke.py` first with fixture-isolated cases for clean-behind preparation, dirty classification/preservation, local-cache LFS success/failure, pending-land routing, and clean-or-recovery failure postconditions.
+  - Extend and run `python3 custodian/tools/validation/operator_art_worktree_smoke.py` first with fixture-isolated cases for clean-behind preparation, dirty classification/preservation, local-cache LFS success, verified hydrated-donor fallback, donor hash/size mismatch refusal, truly unavailable LFS failure, pending-land routing, and clean-or-recovery failure postconditions.
   - Extend and run `python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py` with import-metadata preimage restoration, ambiguous-output negative controls, source/runtime rollback, and same-named generated-resource backup safety.
   - Extend and run `python3 custodian/tools/validation/operator_workbench_ui_smoke.py` for structured readiness projection and blocked/safe-preparation/ready Publish review states without canonical source mutation.
   - Run `python3 custodian/tools/validation/operator_animation_workbench_smoke.py` for existing source-contract/stale-workbench behavior and transaction invariants.
-  - Run `python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian` only after fixture/local-cache setup has proven required checked-out LFS assets are materialized; do not trigger network LFS fetches.
+  - Run `python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian` only after fixture/local-only materialization setup has proven required checked-out LFS assets are hydrated. Cache and verified donor-checkout hydration are allowed; network LFS fetches are not.
   - Run the current narrow Operator compatibility/modular-layer validation selected by the Workbench publication recipe, then one `python3 custodian/tools/validation/run_validation.py --changed --json` closeout sweep and `git diff --check`.
   - No renderer captures or model-vision review are required; all acceptance is Git, filesystem, contract, transaction, and validation-state behavior.
 - Task overrides: `none`
@@ -145,7 +151,7 @@
 
 - Next action: Auto-claim `operator-workbench-publish-readiness-recovery` after the sparse-checkout correction review dependency completes.
 - Best starting files: `custodian/tools/operator/operator_art_worktree.py`, `custodian/tools/operator/animation_workbench.py`, `custodian/tools/operator/ui/service.py`, `custodian/tools/validation/operator_art_worktree_smoke.py`.
-- Blockers or open questions: None requiring user design judgment. Safe automatic actions are deliberately limited to clean FF sync, existing sparse-profile application, local-cache materialization, and exact transaction-generated metadata restoration with proven preimages.
+- Blockers or open questions: None requiring user design judgment. Safe automatic actions are deliberately limited to clean FF sync, existing sparse-profile application, local-only LFS materialization (cache first, exact verified hydrated donor second), and exact transaction-generated metadata restoration with proven preimages.
 
 ## Completion Truth
 
