@@ -435,17 +435,17 @@ This pass is complete when:
 6. The required-assets registry routes mapped Awakening needs to V2 family/state IDs; root `REQUIRED_ASSETS.md` remains a generated view and does not own technical naming/routing.
 7. Asset Pipeline V2 focused validation passes.
 
-## Live production status and Batch 02 queue — 2026-10-01
+## Live production status and Batch 02 ingest — 2026-10-03
 
-This status is a snapshot of live `main@440dccbb274707869eb0a9eebf109e6588a4f26c`,
-the Asset V2 family contracts, the production-demand registry, and the current
-Awakening handoff audit.
+This status is a snapshot of live `main@cba5a892d`, the Asset V2 family
+contracts, the production-demand registry, and the current Awakening handoff
+audit.
 
 For current P0/P1 sections 01–10, including the required 04↔05 connector
-underlay, the production contract contains **91 required states**:
+underlay, the production contract contains 91 required states. The Batch 02
+handoff added six required states and four recommended states; all three
+ambient-effect required states are now published and scene-bound.
 
-- **45/91** are published/runtime-verified.
-- **46/91** remain open.
 - All nine zone environment underlay/foreground pairs are published and bound.
 - Core hero/interactable art is complete except
   `awakening_late_service_relay_lamp/idle`.
@@ -454,47 +454,42 @@ underlay, the production contract contains **91 required states**:
   production plates rather than separate scene-bound props.
 - Later Attestation/Reliquary/Dust Lung/Undergate/Approach/Late Service fixture
   families remain registered but **NOT_READY** as standalone runtime consumers.
-- The authority-inlay, ruin-decal, and three required ambient-FX families are
-  registered and wholly unpublished.
+- `awakening_ruin_decal` now has all six supplied states: required
+  `floor_crack_b`, `floor_crack_c`, and `rubble_medium`, plus recommended
+  `root_intrusion`, `soot_bloom`, and `dust_scour`. The live family still
+  needs `floor_crack_a` and `rubble_small`.
+- All three required ambient loops are published and bound in the Awakening
+  runtime: room dust motes and sparse falling ash in Dust Lung, and localized
+  wind dust at the Gate aperture.
+- `awakening_authority_inlay/route_circle` is published and bound as a
+  presentation sprite. Required `straight`, `corner`, `t_junction`,
+  `cross`, `ring_node`, and `threshold` remain open. `civic_spear` and
+  `attestation_mark` remain deferred.
 
-### Next ten runtime assets — Batch 02
+### Supplied Batch 02 states
 
-The prepared Batch 02 reference bundle targets the reusable detail/ambient layer
-rather than continuing to generate standalone fixtures that have no independent
-runtime binding yet.
+All ten supplied states passed their existing Asset V2 family plans and were
+ingested without modifying the supplied normalized art. Static details and the
+route circle are available through each zone's `SetPieces` presentation node;
+the effects use the same node path with their contract frame sizes and rates.
 
 | # | Family / state | Runtime contract |
 |---:|---|---|
-| 1 | `awakening_authority_inlay/straight` | 32×32, 1 frame, RGBA |
-| 2 | `awakening_authority_inlay/corner` | 32×32, 1 frame, RGBA |
-| 3 | `awakening_authority_inlay/t_junction` | 32×32, 1 frame, RGBA |
-| 4 | `awakening_authority_inlay/cross` | 32×32, 1 frame, RGBA |
-| 5 | `awakening_authority_inlay/ring_node` | 32×32, 1 frame, RGBA |
-| 6 | `awakening_authority_inlay/threshold` | 32×32, 1 frame, RGBA |
+| 1 | `awakening_ruin_decal/floor_crack_b` | 64×64, 1 frame, RGBA |
+| 2 | `awakening_ruin_decal/floor_crack_c` | 64×64, 1 frame, RGBA |
+| 3 | `awakening_ruin_decal/rubble_medium` | 64×64, 1 frame, RGBA |
+| 4 | `awakening_ruin_decal/root_intrusion` | 64×64, 1 frame, RGBA |
+| 5 | `awakening_ruin_decal/soot_bloom` | 64×64, 1 frame, RGBA |
+| 6 | `awakening_ruin_decal/dust_scour` | 64×64, 1 frame, RGBA |
 | 7 | `awakening_dust_motes/loop` | 8×1 strip, 64×64 frames, 512×64 total, 6 FPS, loop |
 | 8 | `awakening_falling_ash/loop` | 8×1 strip, 64×64 frames, 512×64 total, 6 FPS, loop |
 | 9 | `awakening_gate_wind_dust/loop` | 8×1 strip, 128×128 frames, 1024×128 total, 8 FPS, loop |
-| 10 | `awakening_ruin_decal/floor_crack_a` | 64×64, 1 frame, RGBA |
+| 10 | `awakening_authority_inlay/route_circle` | 32×32, 1 frame, RGBA |
 
-This ordering closes the entire six-state `awakening_authority_inlay` family
-and all three required ambient-FX families in one ten-asset ingest, then starts
-the ruin-decal family. If all ten pass Asset Pipeline V2 and are published,
-the required-state snapshot becomes **55/91 complete, 36 open**.
-
-The machine-readable batch contract and full complete/needed snapshot live at:
-
-`custodian/asset_drop/source_work/awakening/next10_20261001/ASSET_BUNDLE_MANIFEST.json`
-
-Raw/generated art for this batch must be saved first as:
-
-`custodian/asset_drop/source_work/awakening/<family>/<state>_source.png`
-
-Normalized Asset V2 intake remains:
-
-`custodian/asset_drop/inbox/<family>/<state>.png`
-
-Do not hand-author canonical runtime filenames; Asset Pipeline V2 owns runtime
-routing and naming.
+Source masters remain under `custodian/asset_drop/source_work/awakening/`.
+Asset Pipeline V2 moved the successfully ingested normalized inbox files into
+their per-job folders under `custodian/asset_drop/archive/`; the pipeline owns
+canonical runtime filenames and routing.
 
 ### Current drift note
 
