@@ -104,11 +104,7 @@ Normal implementation work follows `implement → validate → commit → land o
 origin/main`. Completed validated work lands automatically without per-task
 approval and without a PR or routine human-review gate. Ad hoc review-only work
 must carry the explicit task override `TASK OVERRIDE: review only; do not stage,
-commit, or push.` Paired post-land review packets may authorize commits only for
-their durable review receipt, required closing summary, review-packet lifecycle
-metadata, and bounded correction/re-review packets. They must never edit the
-reviewed implementation or unrelated work; the packet must state this bounded
-override explicitly.
+commit, or push.` Paired post-land review packets may authorize commits only for their durable review receipt, required closing summary, review-packet lifecycle metadata, and bounded correction/re-review packets. They must never edit the reviewed implementation or unrelated work; the packet must state this bounded override explicitly. A paired review must also start from a fresh reviewer context rather than continuing the implementation session. The same model/agent family may review its own prior work only from a newly started context/workstream that reconstructs the target from durable repository evidence and records `same-agent-fresh-context`; otherwise use `different-agent`.
 
 - Every normal implementation run uses `python3 custodian/tools/agent/workstream.py`
   in an isolated ephemeral worktree. Exceptions are explicitly read-only/review-only
