@@ -5,7 +5,7 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `72c4133e38a20454dc65b5ac4a24e71af1475ee7`  
+**Reviewed main:** `8f1a68023e5d518d1a193f16c10533a1dd6d9ea5`  
 **Last Updated:** 2026-10-03  
 **Depends on:** none for measurement; slice dependencies below
 **Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
@@ -248,7 +248,7 @@ The following packets consume the reviewed M6 seam but are **not** part of S7/S8
 - `procgen-alpine-plateau-underlay-assets`: six required 1536x1024 Asset V2 states after RF1 review + human-provided source art.
 - `procgen-archive-resolve-presentation-spine` (AR1) -> paired AR1 review -> AR2 shader -> AR3 semantic echo/spawn/reacquisition.
 
-MR6R1 is complete/passed, so both presentation consumers are now execution-ready. RF1 is `ready/auto` at P1 and owns all five MR6R1 optional next-slice proof-hardening items N1-01..N1-05 before Region Frame integration. AR1 is `ready/auto` at P2 with paired ARR1. With one agent and shared procgen-runtime/presentation locks, RF1/RFR1 naturally runs before AR1/ARR1. AR2 is gated on reviewed AR1. Neither presentation lane is a prerequisite for D1-D3; those three decomplexification packets are now dependency-satisfied but still require their named live refresh before promotion from blocked/manual.
+RF1 has landed/archived at `49cbd398` with N1-01..N1-05 closed in committed smoke coverage and the Region Frame foundation implemented. RFR1 is now the active P1 presentation correctness gate and remains `ready/auto`. Alpine Asset V2 stays blocked behind clean/non-blocking RFR1 plus six approved source images. AR1 is independently `ready/auto` at P2 with paired ARR1 and should follow after RFR1 under the shared procgen-runtime/procgen-presentation locks. AR2 remains gated on reviewed AR1.
 
 ## Roadmap Maintenance Contract
 
@@ -270,9 +270,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** MR6R1 is complete/passed on `main@7d553787`, closing S7 with R0-01..R0-05 fixed, 0 blocking defects and 0 material evidence gaps. RF1 is now the highest-priority ready procgen presentation packet and owns optional next-slice items N1-01..N1-05. AR1 is also ready/auto at P2 against the reviewed M6 seam. Placement P1 has landed its read-only accepted-world context; PR1 remains the next placement gate.
-**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1 and MR6R1 are complete; S7 is closed. D1 is now refreshed `ready/auto` with paired review; D2/D3 are dependency-satisfied and refresh-eligible but remain blocked/manual until each live inventory is rewritten in place. The Procgen World Presentation lane has RF1/RFR1 ready, Alpine Asset V2 blocked behind RFR1 + source art, and AR1/ARR1 ready; AR2 waits on ARR1 and AR3 waits on AR2. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
-**Next gate:** RF1 remains the highest-priority procgen presentation slice. In the decomplexification lane, D1 is now executable immediately when the shared `procgen-runtime` lock is free, followed by its fresh-context paired review; D2/D3 still need their live refreshes. AR1 remains ready/auto at P2.
+**Current packet:** RF1 implementation is complete/landed at `49cbd398`; RFR1 `review-procgen-region-frame-presentation-foundation` is the next Region Frame gate and is ready/auto. The review packet has been re-derived against the landed foundation and all five N1 proof-hardening changes. Alpine assets remain source-art/human gated after RFR1. AR1 is ready/auto at P2. Placement P1 has landed its read-only accepted-world context; PR1 remains its separate review gate.
+**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1 and MR6R1 are complete; S7 is closed. RF1 implementation is complete and RFR1 is ready/auto. Alpine Asset V2 is blocked behind RFR1 + source art. AR1/ARR1 are ready; AR2 waits on ARR1 and AR3 waits on AR2. D1 is refreshed/ready with paired review; D2/D3 remain blocked/manual pending their live refreshes. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
+**Next gate:** Run RFR1 in a fresh reviewer context. On a clean/non-blocking result, Region Frame becomes reviewed-stable; Alpine asset integration remains blocked on six approved source images, while AR1 becomes the next runnable procgen presentation implementation under the shared locks. D1 remains a separate ready S8 decomplexification slice; D2/D3 still need their live refreshes.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are satisfied for D1-D3; D1 has completed its live refresh and is ready, while D2/D3 still require theirs. Once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
