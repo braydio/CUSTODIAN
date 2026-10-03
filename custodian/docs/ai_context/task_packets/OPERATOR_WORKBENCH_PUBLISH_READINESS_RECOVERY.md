@@ -94,7 +94,7 @@
   - Coordination `main` as non-publishing authoring coordination checkout.
   - Canonical Operator source PNGs as authoring authority; generated runtime/catalog/resources remain projections.
   - Existing Workbench saved-document requirement, frame/canvas migration audits, transaction journal, source/runtime rollback, scoped publication allowlist, upstream selected-source conflict refusal, deterministic commit, `land_main.py` handoff, and pending-land retry.
-  - User changes, unknown untracked files, dirty/ahead/diverged branches, and uncached LFS gaps are preserved/fail-closed rather than reset or fetched around.
+  - User changes, unknown untracked files, and dirty/ahead/diverged branches are preserved/fail-closed rather than reset or fetched around. LFS gaps may be satisfied only by the bounded local-only resolver; content unavailable from both cache and an exact verified donor remains a blocker.
   - Current gameplay/runtime animation behavior and pixels.
   - The future FX layer adoption packet's ownership of absent/new canonical binding creation and explicit layer-adoption semantics.
 - Non-goals:
