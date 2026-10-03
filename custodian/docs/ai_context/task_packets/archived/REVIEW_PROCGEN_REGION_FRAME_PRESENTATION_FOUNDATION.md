@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-region-frame-presentation-foundation`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-region-frame-presentation-foundation`
@@ -32,6 +32,26 @@
 
 Review only the archived foundation packet/summary; `CustodianContractMap._pick_planet_key`, `_build_planet_world_profile`, `_apply_map_generation_profile` plus `custodian_contract_map.tscn`; frame profile resource/script; nonwalkable classifier; DepthBackdrop/VoidCliffFace integration; narrow ProcGenTilemap frame hooks; and named focused tests. No general procgen archaeology.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Independent Review receipt appended to the archived RF1 packet: status `passed`, 0 blocking defects, 0 material evidence gaps, 2 non-blocking issues, 2 optional improvements (`R0-01`..`R0-04`). N1-01..N1-05 verified non-vacuous by five throwaway-copy mutations of the reviewed source; Region Frame seam verified through a live production-scene generation (`alpine_plateau` on `ice_world` and `islands`) plus a backdrop-bounds mutation; all packet-named suites and S1 quick (`determinism_ok=true`, `1773840677`) pass on `07d2277e8`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first claim failed at the final branch push (Git LFS lock-verify timeout), leaving a remote claim ref and a local worktree without a pushed agent branch; the retry was refused with "recovery required", then again until `workstream.py resume` was used. Separately, RF1 and MR6R1 summaries and this packet's validation text said `procgen_candidate_materializer_parity` does not exist; it is registered and passes.
+- Root cause / contributing factors: A transient network timeout during `dispatch.py claim`; the recovery path needs a manual remote-ref delete (`R0-03` covers the stale parity claim, which came from copying an unverified assertion between packets).
+- Prevention / pipeline improvement: `dispatch.py claim` could resume its own just-created claim when the claim ref's run id matches the leftover worktree instead of requiring a manual ref delete plus `workstream.py resume`; packets should cite `run_validation.py --list` output rather than assert a test is absent.
+- Tooling / docs drift discovered: `procgen_candidate_materializer_parity` is stated absent in RF1/MR6R1 summaries and the RFR1 validation text but exists in the manifest.
+- Follow-up: `none`
+
 ## Handoff
 
 - Next workstream: `procgen-alpine-plateau-underlay-assets`
@@ -40,5 +60,5 @@ Review only the archived foundation packet/summary; `CustodianContractMap._pick_
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Refresh reason: The Alpine Asset V2 packet is technically scoped but remains source-art/human-approval gated; once the six sources exist, its reviewed-main/API binding should be reconciled here before ingest.
-- Next action: After RFR1 passes and the six Alpine source images are available/approved, bring the RFR1 summary plus source-art decisions to the recorded ChatGPT planning chat and refresh the asset packet before ingest.
+- Next action: RFR1 passed (receipt on the archived RF1 packet). When the six Alpine source images are available/approved, bring `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION_CLAUDE_SUMMARY.md` plus source-art decisions to the recorded ChatGPT planning chat and refresh the asset packet before ingest. Region Frame is recorded as stable presentation authority; `R0-01` (end-to-end production-scene frame assertion) is a good fit for that packet's validation.
 - Blockers or open questions: Six approved 1536x1024 source images and human art-direction approval remain required.
