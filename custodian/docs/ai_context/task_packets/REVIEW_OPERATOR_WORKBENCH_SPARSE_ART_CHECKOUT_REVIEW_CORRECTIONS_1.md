@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-sparse-art-checkout-review-corrections-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md`
-- Reviewed main: `48cbed0b8d`
+- Reviewed main: `ab4b07666a`
 - Review modes: `code, workflow`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
@@ -24,6 +24,7 @@
   - The resumed correction was checkpointed at `21f914e05` with no new runtime repair required. Its remaining blockers were sparse-checkout LFS availability and one stale real-repo UI-smoke wording assertion, not a recurrence of R0-01.
   - Current main now fixes that brittle UI assertion by checking the semantic `isolated art checkout` blocker instead of the obsolete literal branch-name wording.
   - `VALIDATION_RECIPES.md` now makes the local-only hydration order explicit: local/shared LFS object cache first; if the exact object is absent there but a local hydrated checkout has the same repository-relative file, that checkout may donate bytes only after SHA-256 and byte size exactly match the target pointer; otherwise block. No implicit `git lfs pull` or `git lfs fetch`.
+  - The completed fast_03 recovery adds a second concrete warning: unscoped `git lfs checkout` can expand sparse-omitted content. Sparse proof must hydrate only required paths already present in the measured profile, whether the bytes come from cache or a verified local donor.
 - Review evidence:
   - parent review finding `R0-01` in archived `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT.md`;
   - archived correction packet and its closing summary after the dependency lands;
@@ -38,7 +39,7 @@
   1. Inspect the archived correction packet/summary and the exact diff that landed. Establish whether it changed production files or merely closed evidence/lifecycle around the already-landed `e3d4e7f98` repair.
   2. Inspect both current FX sidecars and run `python3 custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py`.
   3. Reuse the correction workstream's sparse proof when it is fresh, commit-identified, and records the LFS source/provenance. Do not perform a second broad project import merely to duplicate equivalent evidence.
-  4. If sparse proof must be reproduced, use a disposable/version-matched sparse checkout. Run `godot_import_preflight.py` first. Hydrate required LFS paths from the local object cache; for any object absent from cache, use the verified local-donor procedure in `VALIDATION_RECIPES.md` (same path, target pointer OID/size, donor SHA-256/size exact match, target remains Git-clean). Never fetch LFS from the network.
+  4. If sparse proof must be reproduced, use a disposable/version-matched sparse checkout. Run `godot_import_preflight.py` first. Hydrate only required paths already present in the sparse checkout from the local object cache; for any object absent from cache, use the verified local-donor procedure in `VALIDATION_RECIPES.md` (same path, target pointer OID/size, donor SHA-256/size exact match, target remains Git-clean). Never run an unscoped `git lfs checkout` that expands omitted content, and never fetch LFS from the network.
   5. After preflight passes, run `godot --headless --path custodian --script res://tools/validation/operator_modular_layers_smoke.gd`. A project-wide import is justified only if the disposable sparse proof actually lacks the generated cache needed for this smoke and all LFS preconditions are already green.
   6. Run `python3 custodian/tools/validation/operator_art_worktree_smoke.py` if the landed correction changed sparse/worktree behavior; otherwise reuse its current-main fixture evidence.
   7. Run the smallest changed-file validation needed for the review artifacts and `git diff --check`.
