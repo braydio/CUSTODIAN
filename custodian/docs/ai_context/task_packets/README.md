@@ -41,10 +41,10 @@ Three implementation slices test CUSTODIAN presentation without changing product
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is evidence-gated. AR1 is complete/landed on `83d89fd85`; ARR1 is now the active ready/auto gate and has been re-derived against the landed batched veil, disabled oracle, overflow behavior, z-layering, and reacquisition seams. AR2 has now been refreshed in the recorded planning chat against landed AR1 and remains blocked/manual only on clean/non-blocking ARR1; if ARR1 changes the AR1 render/state contract, AR2 returns here again. AR3 remains blocked/manual until the paired AR2 review passes and this planning chat refreshes it. AR2 and AR3 both declare paired automatic technical reviews, while subjective visual/game-feel approval stays in the Dropbox human-review lane.
+The Archive Resolve implementation series is evidence-gated. AR1 is complete/landed on `83d89fd85`; ARR1 is complete and passed against the landed batched veil, disabled oracle, overflow behavior, z-layering, and reacquisition seams. AR2 has now been refreshed in the recorded planning chat against landed AR1 and remains blocked/manual only on clean/non-blocking ARR1; if ARR1 changes the AR1 render/state contract, AR2 returns here again. AR3 remains blocked/manual until the paired AR2 review passes and this planning chat refreshes it. AR2 and AR3 both declare paired automatic technical reviews, while subjective visual/game-feel approval stays in the Dropbox human-review lane.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
-- `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — active ready/auto ARR1 gate, refreshed against landed AR1 and carrying RFR1 R0-04 road reacquisition proof.
+- `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — ARR1, complete: passed with 0 blocking defects; RFR1 R0-04 closed; next-slice items R0-01..R0-04 recorded on the archived AR1 packet.
 - `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, refreshed against landed AR1; blocked/manual on ARR1 only, with automatic paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md`. Clean ARR1 promotion is mechanical unless ARR1 changes the AR1 contract.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; blocked/manual until reviewed AR2 + ChatGPT/user refresh; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is pre-authored.
 
@@ -415,14 +415,13 @@ lost when the ephemeral worktree is removed.
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — Preserve the user's four downloaded Kenney Pattern Pack Lines variants as a durable, searchable, provenance-complete CUSTODIAN source-material library so fut...
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — Independently verify that P1 created one minimal read-only world-placement context seam, preserved ContractWorldLoader lifecycle/orchestration authority and...
 - `REVIEW_LORDS_OF_PAIN_TEST_GALLERY.md` — Independently verify the landed DEMO-scoped Lords of Pain test gallery against its archived implementation packet, with special attention to the seven availa...
-- `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — Independently verify that AR1 hides streaming cadence through a bounded presentation-only frontier while preserving M3-M6, Region Frame, and gameplay authori...
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — Independently verify Archive Resolve V1's semantic echo, ingress/spawn resolve, and shortened reacquisition remain bounded presentation consumers with no cop...
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — Resolve the long-standing development-only Twin Solaria preview mismatch where the preview controller/smoke expects 3500×3000 while the loaded development te...
 <!-- task_packet_index:managed:end -->
 - `REVIEW_PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — paired D1 code/architecture/runtime review with reviewer-context provenance.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — P2 coding-first Archive Resolve presentation spine; auto-eligible after RF1 releases shared procgen locks.
-- `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; gates AR2.
+- `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; complete, passed; AR2 dependency satisfied.
 
 - `HUB_FIRST_SET_BLOCKOUT_V1.md` — P1 runtime-ready Hub first-set blockout from South Reach through Ashen Forum, Sepulcher loop, Archive/Crown Transfer branch, and Muster Court/Continuity Port deployment wing; spatial only, no world transitions.
 - `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — paired independent review of first-set geometry, navigation, Road presentation reuse, inert handoff markers, and human blockout overview approval.
@@ -432,6 +431,7 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — paired P0 code/architecture/asset-pipeline/workflow review of the publish-readiness and clean-or-RECOVERY_REQUIRED contract.
 - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — P0 browser/PREVIEW concurrency hardening: accepted browser snapshot, latest-request-wins refresh, page-3 atomic F5 replacement, stale async rejection, and deterministic race coverage; depends on the publish-readiness review.
 - `REVIEW_OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — paired P0 code/architecture/runtime/workflow review of browser/PREVIEW refresh hardening and the page-3 crash-class regressions.
+- `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md` — paired P1 findings-first review that classifies parent R0-01 as fixed/unresolved/regressed from current main plus sparse-proof evidence; it must reuse exact local-LFS donor evidence instead of rerunning broad imports unnecessarily.
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — P1 post-hardening Operator Workbench slice: explicitly adopt a saved `vfx`/`fx` Aseprite layer as canonical `fx`, transactionally CREATE/REPLACE source+runtime, preserve preview/rollback/concurrency safety, and make counterpart mirroring explicit/default-off; dependency-gated behind the browser/PREVIEW hardening review.
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — paired P1 independent code/architecture/asset-pipeline review of FX layer adoption and new-source publication safety.
 - `OPERATOR_WORKBENCH_ANIMATION_CREATION.md` — P1 post-FX Workbench V3 creation slice: author a genuinely new semantic Operator animation from OPUI, preview it before publication, then CREATE canonical source and run the specialized Operator runtime/import/validation/landing transaction; dependency-gated behind the FX-adoption review.
@@ -450,7 +450,7 @@ lost when the ephemeral worktree is removed.
 - `archived/REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — paired RF1 review; complete, passed with next-slice items R0-01, R0-02, R0-04.
 - `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` — six-state Asset V2 Alpine FAR/MIDDLE/NEAR underlay family; blocked on RF1 review + source art.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 fully re-derived post-M6 presentation spine; complete/landed; paired ARR1 review is ready.
-- `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; gates AR2.
+- `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; complete, passed; AR2 dependency satisfied.
 - `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 shader/material layer; planning-refreshed against landed AR1, blocked only on clean/non-blocking ARR1.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 semantic echo + spawn/reacquisition polish; blocked on AR2.
 - `archived/CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 accepted-world context foundation; complete/landed, paired review PR1 remains the gate for P2-P6.
