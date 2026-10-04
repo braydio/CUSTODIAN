@@ -5,7 +5,7 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `8f1a68023e5d518d1a193f16c10533a1dd6d9ea5`  
+**Reviewed main:** `248ecb8a9e394f55e227a2718d9bcdd0519c3d56`  
 **Last Updated:** 2026-10-03  
 **Depends on:** none for measurement; slice dependencies below
 **Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
@@ -249,7 +249,7 @@ The following packets consume the reviewed M6 seam but are **not** part of S7/S8
 - `procgen-alpine-plateau-underlay-assets`: six required 1536x1024 Asset V2 states after RF1 review + human-provided source art.
 - `procgen-archive-resolve-presentation-spine` (AR1) -> paired AR1 review -> AR2 shader -> AR3 semantic echo/spawn/reacquisition.
 
-RF1 has landed/archived at `49cbd398` with N1-01..N1-05 closed in committed smoke coverage and the Region Frame foundation implemented. RFR1 is now the active P1 presentation correctness gate and remains `ready/auto`. Alpine Asset V2 stays blocked behind clean/non-blocking RFR1 plus six approved source images. AR1 is independently `ready/auto` at P2 with paired ARR1 and should follow after RFR1 under the shared procgen-runtime/procgen-presentation locks. AR2 remains gated on reviewed AR1.
+RF1 has landed/archived at `49cbd398` and RFR1 passed on `07d2277e8` with 0 blocking defects / 0 material evidence gaps, so Region Frame is reviewed-stable. RFR1 R0-01/R0-02 are carried by the Alpine asset packet; R0-04 is carried into ARR1's road reacquisition proof. Alpine Asset V2 is now `ready/manual` from the exact local `~/Downloads/alpine_plateau_underlay_assets.zip` six-image bundle and remains human visual-approval gated at completion. AR1 is actively claimed/in progress with paired ARR1. AR2 is blocked/manual until ARR1 passes and the recorded planning chat refreshes it; AR3 is blocked/manual until reviewed AR2 and the same planning-chat refresh. AR2/AR3 both now have paired technical review packets.
 
 ## Roadmap Maintenance Contract
 
@@ -271,9 +271,9 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** RF1 implementation is complete/landed at `49cbd398`; RFR1 `review-procgen-region-frame-presentation-foundation` is the next Region Frame gate and is ready/auto. The review packet has been re-derived against the landed foundation and all five N1 proof-hardening changes. Alpine assets remain source-art/human gated after RFR1. AR1 is ready/auto at P2. Placement P1 has landed its read-only accepted-world context; PR1 remains its separate review gate. D1 has extracted the generated road authority; its paired post-land review is the immediate decomplexification successor.
-**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1 and MR6R1 are complete; S7 is closed. RF1 implementation is complete and RFR1 is ready/auto. Alpine Asset V2 is blocked behind RFR1 + source art. AR1/ARR1 are ready; AR2 waits on ARR1 and AR3 waits on AR2. D1 implementation is complete; D2/D3 remain blocked/manual pending their live refreshes. Placement proceeds P1 -> paired PR1 review -> refreshed P2-P6 -> refreshed P7.
-**Next gate:** complete the fresh-context paired review of D1 after it lands. Run RFR1 in a fresh reviewer context; D2/D3 still need their live refreshes, and AR1 remains the next runnable procgen presentation implementation under the shared locks.
+**Current packet:** RF1/RFR1 are complete/passed. Alpine Asset V2 is ready/manual from the local six-image ZIP and awaits deterministic ingest + human visual approval. AR1 is the active Archive Resolve implementation with ARR1 pre-authored. Downstream AR2/AR3 are deliberately refresh-gated to this planning chat after their predecessor reviews. Placement and decomplexification remain independent lanes.
+**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1, MR6R1, RF1 and RFR1 are complete. Alpine Asset V2 is ready/manual with local input supplied. AR1 is in progress; ARR1 is ready behind it. AR2 waits on ARR1 + planning-chat refresh; AR3 waits on reviewed AR2 + planning-chat refresh. D1 implementation is complete; D2/D3 remain blocked/manual pending their live refreshes. Placement proceeds independently.
+**Next gate:** Let active AR1 complete, then run ARR1 from a fresh context. In parallel when a local asset-capable agent is available, `procgen-alpine-plateau-underlay-assets` may be manually claimed using `~/Downloads/alpine_plateau_underlay_assets.zip`; its final subjective composition decision is routed through the Dropbox visual-review handoff. After ARR1 passes, return to the recorded planning chat to refresh AR2 before implementation.
 **After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are satisfied for D1-D3; D1 implementation is complete and its paired review follows landing, while D2/D3 still require refreshes. Once all three are reviewed/landed, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---

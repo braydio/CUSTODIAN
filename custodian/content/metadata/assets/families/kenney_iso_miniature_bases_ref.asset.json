@@ -1,0 +1,78 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "kenney_iso_miniature_bases_ref",
+  "kind": "tile",
+  "runtime": {
+    "domain": "tiles/experiments/kenney_feasibility",
+    "owner": "kenney_iso_miniature_bases_ref"
+  },
+  "canvas": {
+    "width": 256,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "base_grass_flat_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "base_grass_flat_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "base_stone_flat_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "base_stone_flat_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "base_stone_high_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "base_stone_high_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "square_stone_flat_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "square_stone_flat_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "base_dirt_detail_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "base_dirt_detail_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "square_dirt_high_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "square_dirt_high_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/debug/kenney_isometric_blockout_feasibility.tscn"
+    }
+  ]
+}

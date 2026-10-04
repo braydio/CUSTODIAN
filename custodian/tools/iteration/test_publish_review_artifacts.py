@@ -4,10 +4,12 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPT = Path(__file__).with_name("publish_review_artifacts.py")
 SPEC = importlib.util.spec_from_file_location("custodian_publish_review_artifacts_tests", SCRIPT)
@@ -64,6 +66,27 @@ class PublishReviewArtifactsTest(unittest.TestCase):
             resolve_remote(None, env={"CUSTODIAN_REVIEW_REMOTE": "mydropbox"}),
             "mydropbox:",
         )
+
+    def test_auto_detects_one_dropbox_named_remote(self) -> None:
+        fake = subprocess.CompletedProcess(
+            ["rclone", "listremotes"],
+            0,
+            stdout="mcgdrive:\\nbraydenpc:\\ngit-dropbox-sync:\\ngit-gdrive-sync:\\n",
+            stderr="",
+        )
+        with patch.object(publisher, "_run", return_value=fake):
+            self.assertEqual(resolve_remote(None, env={}), "git-dropbox-sync:")
+
+    def test_multiple_dropbox_named_remotes_require_explicit_choice(self) -> None:
+        fake = subprocess.CompletedProcess(
+            ["rclone", "listremotes"],
+            0,
+            stdout="dropbox-home:\\ndropbox-work:\\n",
+            stderr="",
+        )
+        with patch.object(publisher, "_run", return_value=fake):
+            with self.assertRaises(RuntimeError):
+                resolve_remote(None, env={})
 
     def test_opt_in_skip_does_not_require_rclone_or_existing_source(self) -> None:
         self.assertEqual(

@@ -4618,6 +4618,28 @@
       ],
       "timeout_sec": 90,
       "needs_import": true
+    },
+    {
+      "id": "kenney_isometric_blockout_feasibility",
+      "type": "godot_script",
+      "script": "res://tools/validation/kenney_isometric_blockout_feasibility_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "kenney",
+        "presentation",
+        "assets",
+        "experiment"
+      ],
+      "owners": [
+        "custodian/scenes/debug/kenney_isometric_blockout_feasibility.gd",
+        "custodian/scenes/debug/kenney_isometric_blockout_feasibility.tscn",
+        "custodian/content/metadata/assets/families/kenney_iso_miniature_prototype_ref.asset.json",
+        "custodian/content/metadata/assets/families/kenney_iso_miniature_bases_ref.asset.json",
+        "custodian/content/tiles/experiments/kenney_feasibility/**",
+        "custodian/tools/validation/kenney_isometric_blockout_feasibility_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
     }
   ]
 }

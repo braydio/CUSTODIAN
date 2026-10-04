@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `kenney-isometric-blockout-feasibility`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `none`
@@ -229,7 +229,7 @@ python custodian/tools/assets/asset.py ingest kenney_iso_miniature_prototype_ref
 python custodian/tools/assets/asset.py ingest kenney_iso_miniature_bases_ref --yes --godot-import
 python custodian/tools/assets/asset.py status kenney_iso_miniature_prototype_ref --verbose
 python custodian/tools/assets/asset.py status kenney_iso_miniature_bases_ref --verbose
-python custodian/tools/assets/asset.py doctor --verbose
+python custodian/tools/assets/asset.py doctor
 python custodian/tools/validation/run_validation.py --test kenney_isometric_blockout_feasibility
 python custodian/tools/validation/run_validation.py --changed --base cf3ba2eb219e
 git diff --check
@@ -241,10 +241,40 @@ Docs drift at reviewed main: H1 is not landed; 2.5D/fixed-isometric design langu
 
 Before `complete`, add required completion/feedback receipts and update the roadmap.
 
-- Next workstream: `kenney-orthographic-3d-feasibility`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next workstream: `review-kenney-isometric-blockout-feasibility`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
-- Next action: bring `k3d1_ab_compare.png` + report back here before K3D-2 authoring.
-- Blockers or open questions: `none for K3D-1`
+- Refresh reason: `none before paired technical review; K3D-2 requires the user's A/B judgment and planning refresh after review.`
+- Next action: `finish and land K3D-1, then run the paired technical review; return the report and comparison to the authoring chat before K3D-2.`
+- Blockers or open questions: `review is gated only on K3D-1 landing.`
+
+## Completion Record
+
+- Implemented against `main@9093c9ff1613` after a fast-forward sync.
+- Seven expected Kenney pack identities inventoried; 16 selected original PNGs ingested through two Asset V2 families. All runtime images passed source/runtime RGBA pixel comparison.
+- Detached A/B scene and integration smoke added. Production Hub, Road, camera, collision/navigation, procgen, campaign, and transition authority were not modified.
+- Both captures are 1280×720; the composite is 2560×720. See `custodian/docs/ai_context/reports/kenney_presentation/K3D1_ISOMETRIC_BLOCKOUT_REPORT.md` and adjacent evidence files.
+- Changed validation passed: 13 selected, 13 passed. Asset V2 plan/status/doctor checks passed. The unsupported `asset.py doctor --verbose` packet command was corrected to `asset.py doctor`.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `k3d1_source_inventory.json` accounts for all seven expected packs and records 16 source hashes; all 16 Asset V2 input receipts and runtime files match the source SHA-256, dimensions, and RGBA pixels. Both family plan/status checks and `asset.py doctor` passed. The focused Kenney smoke passed, including fixed anchors/camera, A/B visibility, visual-only ownership, main-scene isolation, and texture presence. The changed-file validation command passed 13/13 tests. `k3d1_native.png` and `k3d1_kenney.png` are 1280×720 and their exact pixel composite is 2560×720. `git diff --check` passed; production Hub/gameplay authority remained outside the change.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Initial worktree creation was still processing Git LFS when the user paused the task; resuming after checkout completed recovered cleanly. The host window rendered at 931×523, not the fixed contract size, and the first image composition used incompatible formats. An initial verification looked for normalized inbox files after ingestion, when Asset V2 had already moved them into its archive; the archived receipts resolved the check.
+- Root cause / contributing factors: Fresh worktree LFS hydration, host display scaling, `Image.blit_rect` format requirements, and assuming the inbox remains populated after successful ingest.
+- Prevention / pipeline improvement: Resume an interrupted workstream after checkout completes; use a fixed-size `SubViewport`, normalize image formats before composition, and verify intake hashes using Asset V2 receipts plus runtime hashes. The unsupported doctor flag was removed from this packet.
+- Tooling / docs drift discovered: The live `asset.py doctor` CLI has no `--verbose` option.
+- Follow-up: `fixed-in-scope`
+- What worked: Asset V2 receipts plus deterministic pixel checks; focused and changed validation.

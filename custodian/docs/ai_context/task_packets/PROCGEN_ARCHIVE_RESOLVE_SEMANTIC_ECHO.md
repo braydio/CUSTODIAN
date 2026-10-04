@@ -5,16 +5,17 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `procgen-archive-resolve-shader`
+- Depends on: `review-procgen-archive-resolve-shader`
 - Locks: `procgen-presentation`
 - Kind: `implementation`
-- Review: `manual`
+- Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, runtime, visual`
-- Paired review workstream: `none`
+- Paired review workstream: `review-procgen-archive-resolve-semantic-echo`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `36cb18230796ec844a7796f0a246085c96179e20`
+- Review rationale: `substantial semantic-presentation/spawn choreography change; objective technical review plus separate human gameplay-scale visual approval`
+- Reviewed main: `9093c9ff1613de39d37a876246f6ab61f24f5938`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Complete Archive Resolve V1 with restrained semantic pre-echo, the one-time ingress/spawn resolution sequence, and a visibly lighter reacquisition treatment for previously resolved unloaded terrain.
 - Completion boundary: Done when a small bounded presentation-class vocabulary can influence echo/timing without gaining gameplay authority; first contract entry presents a controlled local Archive Resolve expansion while preserving immediate player control inside the safety pocket; previously resolved unloaded terrain uses a shorter reacquisition treatment; and the final effect remains subtle enough that normal settled play contains no persistent reveal UI/VFX.
@@ -26,11 +27,15 @@
 - Preserve: Every semantic owner remains read-only; hidden presentation conveys no quest/discovery knowledge; no uncommitted cell is exposed; player safety/readability; AR1/AR2 performance and pause contracts; no permanent overlay after settlement.
 - Non-goals: No new landmark semantics; no map discovery mechanic; no audio production requirement; no gameplay gating on reveal completion; no lore text/UI; no generation changes; no broad per-biome special cases.
 - Acceptance: Presentation classes are bounded and queried without copying semantic authority; semantic echo changes only presentation timing/style; initial spawn never delays control once safety pocket is valid; reacquisition is measurably shorter/weaker than first resolve; same seed/path yields the same echo/order identity; reduced-effects/disabled modes remain valid; full V1 gameplay-scale review reads as an Archive process rather than loading, fog fade, square pop, or neon hologram.
-- Validation: Refresh against landed AR2 and current semantic owners. Add focused class-mapping/read-only tests, spawn-control/safety-halo timing checks, first-resolve vs reacquire duration/intensity checks, deterministic identity, pause, and disabled/reduced-effects fallbacks. Re-run AR1/AR2 focused smokes and affected streaming/runtime-health tests, then changed-file closeout. Final aesthetic approval remains human-owned.
+- Validation: **Refresh in the recorded planning chat after the paired AR2 review passes before implementation.** Re-audit current semantic owners, then add focused class-mapping/read-only tests, spawn-control/safety-halo timing checks, first-resolve vs reacquire duration/intensity checks, deterministic identity, pause, and disabled/reduced-effects fallbacks. Re-run reviewed AR1/AR2 focused smokes and affected streaming/runtime-health tests before changed-file closeout. Only after objective checks pass, publish the smallest gameplay-scale evidence through `python3 custodian/tools/iteration/publish_review_artifacts.py --important ...` under workstream `procgen-archive-resolve-semantic-echo`, following `VISUAL_REVIEW_HANDOFF.md`. Ask whether initial ingress resolves without delaying control or obscuring threats, reacquisition is visibly lighter/shorter than first resolve, and semantic echo adds useful structure without leaking gameplay/discovery knowledge or becoming visual clutter. Record the Dropbox manifest path in the completion summary; the execution agent does not self-approve game feel/art direction.
 - Task overrides: `none`
 - Deferred: Optional aggregate mechanical/relay audio, later accessibility presets beyond V1 controls, and any future biome-specific presentation nuance justified by actual visual review.
 
 ## Temporary Refresh Gate — REMOVE WHEN THIS PACKET IS REFRESHED
+
+**DO NOT IMPLEMENT THIS PACKET UNTIL IT HAS BEEN REFRESHED WITH THE USER IN THIS CHAT:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
+
+Bring the landed predecessor implementation summary, Independent Review receipt, and any human visual-review manifest/decision back to that conversation. The execution agent must not perform this architecture/design refresh on its own.
 
 This packet is intentionally pre-authored before AR2 and before the live Landmark/semantic owner surface is final.
 
@@ -74,6 +79,11 @@ Do not create a second semantic registry for this effect.
 
 ## Handoff
 
-- Next action: Refresh after AR2 and the current landmark/semantic owner surface are live, then complete Archive Resolve V1.
-- Best starting files: landed AR presentation owner/shader; current surface material, road semantics, terrain/macro/landmark query owners; spawn/streaming setup seam.
-- Blockers or open questions: Semantic styling remains intentionally bounded; do not broaden class count without visual evidence.
+- Next workstream: `review-procgen-archive-resolve-semantic-echo`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh reason: `none after this packet's required pre-implementation refresh is completed`
+- Next action: After reviewed AR2 lands, return to the recorded planning chat and refresh this packet in place; once implemented, objectively validated, and human visual/game-feel approval is recorded through Dropbox, complete/archive AR3 so its paired fresh-context technical review can claim automatically.
+- Blockers or open questions: This packet must not be implemented before reviewed AR2 and the required planning refresh. Keep semantic classes bounded; do not broaden class count without reviewed visual evidence.

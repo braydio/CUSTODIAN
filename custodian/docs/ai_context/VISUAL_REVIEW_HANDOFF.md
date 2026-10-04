@@ -47,6 +47,11 @@ Remote resolution order:
 1. `--remote <name>`
 2. `CUSTODIAN_REVIEW_REMOTE`
 3. an rclone remote named `dropbox:`
+4. one unambiguous configured remote whose name contains `dropbox`
+   (for example `git-dropbox-sync:`)
+
+If multiple Dropbox-like remotes exist, choose explicitly with `--remote` or
+`CUSTODIAN_REVIEW_REMOTE`; the publisher will not guess.
 
 Canonical remote root:
 

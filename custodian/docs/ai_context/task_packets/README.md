@@ -29,8 +29,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Three implementation slices test CUSTODIAN presentation without changing production art direction up front.
 
-- `KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — K3D-1, ready/manual: inventories the seven local Kenney archives, ingests a bounded Isometric Miniature subset through Asset V2, and builds a detached A/B 2D comparison.
-- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — paired K3D-1 technical review; subjective art-direction judgment remains human-owned.
+- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — paired K3D-1 technical review, dispatchable after the implementation packet lands; subjective art-direction judgment remains human-owned.
 - K3D-2 orthographic real-3D presentation and K3D-3 Shape/Asset Forge 3D→2D production testing remain planned and must be refreshed from landed predecessor evidence rather than pre-authored speculatively.
 - Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
 
@@ -38,13 +37,12 @@ Three implementation slices test CUSTODIAN presentation without changing product
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is pre-authored but evidence-gated. MR6R1 has passed, so AR1 is fully re-derived and `ready/auto` with a paired technical review. AR2 and AR3 remain refresh-gated against the reviewed result of their immediate predecessor.
+The Archive Resolve implementation series is evidence-gated. AR1 is currently claimed/in progress from its reviewed M3-M6 + Region Frame seams and has paired ARR1. AR2 remains blocked/manual until ARR1 passes and this planning chat refreshes it in place; AR3 remains blocked/manual until the paired AR2 review passes and this planning chat refreshes it. AR2 and AR3 now both declare paired automatic technical reviews, while subjective visual/game-feel approval stays in the Dropbox human-review lane.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 code/architecture/runtime/diagnostic-visual review; gates AR2.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither + restrained brass/amber Archive Resolve shader; refresh after reviewed AR1.
-- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo,
-  spawn resolve, and shortened reacquisition; refresh after AR2.
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither + restrained brass/amber Archive Resolve shader; blocked/manual until reviewed AR1 + ChatGPT/user refresh in the recorded planning chat; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` is pre-authored.
+- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; blocked/manual until reviewed AR2 + ChatGPT/user refresh; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is pre-authored.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
 so extraction/contraction work cannot move or absorb the reveal seams before the
@@ -339,7 +337,7 @@ lost when the ephemeral worktree is removed.
 
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are stable, but execution readiness is evidence-gated. A packet is `ready/auto` only when its current measured state and implementation surface exist on live main; architecture-dependent downstream packets stay `blocked/manual` and are refreshed in place after the named predecessor/review lands.
 - **Runtime/streaming:** M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete. Cycle-1 MR6R1 passed with 0 blocking defects and 0 material evidence gaps, closing S7. Its five optional next-slice proof-hardening items N1-01..N1-05 are now owned by RF1 rather than another correction cycle.
-- **Post-M6 world presentation:** RF1 is complete/landed at `49cbd398` with N1-01..N1-05 hardened and Region Frame implemented. `archived/REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` (RFR1) is complete/passed on `07d2277e8` with 0 blocking defects and 0 material evidence gaps (next-slice items R0-01, R0-02, R0-04); Region Frame is the stable presentation authority and its receipt is on the archived RF1 packet. `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` is now dependency-unlocked but remains refresh-required behind six approved 1536×1024 source images and human art approval. Archive Resolve AR1/ARR1 are ready; AR1 is the next runnable procgen presentation implementation now that RFR1 has released the shared locks. AR2 gates on reviewed AR1; AR3 remains refresh-gated behind AR2.
+- **Post-M6 world presentation:** RF1/RFR1 are complete/passed; Region Frame is stable presentation authority. RFR1 next-slice findings R0-01/R0-02 are folded into `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, while R0-04 is carried into ARR1's reacquisition review. The Alpine packet is now `ready/manual` for a local agent with `~/Downloads/alpine_plateau_underlay_assets.zip`; objective Asset V2 checks precede Dropbox human visual approval. AR1 is actively claimed/in progress with paired ARR1. AR2 remains refresh-gated on ARR1 and AR3 on reviewed AR2; both now have paired technical review packets and route required planning refreshes back to the recorded procgen chat.
 - **Placement:** P1 `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` has landed `WorldPlacementContext` as the accepted-world read seam while leaving placement policies in `ContractWorldLoader`. `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (PR1) is now the next review gate and must pass before resource, vehicle, relay, encounter, or ingress extraction; those packets remain serialized by the `contract-world-loader` lock. `CONTRACT_WORLD_LOADER_CONTRACTION.md` (P7) remains blocked/manual until P2-P6 land, then must be re-derived from the surviving loader.
 - **ProcGen decomplexification:** D1 `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` is implemented and validated; its paired `REVIEW_PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` is the post-land review gate. D2 `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` and D3 `PROCGEN_GENERATION_STATE_EXTRACTION.md` remain blocked/manual pending their own live inventory refreshes.
 - **GenerationGrid:** `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` / XR1 remain the first executable post-D audit. `PROCGEN_GENERATION_GRID_FOUNDATION.md` is blocked/manual until XR1 defines the real minimum grid seam. `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` is blocked/manual until XR2. Their paired reviews remain dependency-gated. `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` stays hard-blocked until X3 authors and the generated migration DAG reaches a concrete final reviewed convergence workstream.
