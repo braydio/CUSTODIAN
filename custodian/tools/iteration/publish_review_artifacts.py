@@ -171,7 +171,14 @@ def discover_artifacts(
 
 
 def resolve_remote(explicit: str | None, env: dict[str, str] | None = None) -> str:
-    """Resolve the rclone remote without reading or storing credentials."""
+    """Resolve the rclone remote without reading or storing credentials.
+
+    Resolution intentionally favors explicit configuration, then a conventional
+    exact `dropbox:` remote, then one unambiguous configured remote whose name
+    contains `dropbox`. That last rule keeps existing user remotes such as
+    `git-dropbox-sync:` zero-config without guessing when multiple Dropbox-like
+    remotes exist.
+    """
     environ = os.environ if env is None else env
     remote = (explicit or environ.get("CUSTODIAN_REVIEW_REMOTE", "")).strip()
     if remote:
@@ -184,10 +191,25 @@ def resolve_remote(explicit: str | None, env: dict[str, str] | None = None) -> s
     remotes = {line.strip() for line in result.stdout.splitlines() if line.strip()}
     if "dropbox:" in remotes:
         return "dropbox:"
+
+    dropbox_named = sorted(
+        remote_name for remote_name in remotes
+        if "dropbox" in remote_name.lower()
+    )
+    if len(dropbox_named) == 1:
+        return dropbox_named[0]
+    if len(dropbox_named) > 1:
+        raise RuntimeError(
+            "multiple Dropbox-like rclone remotes are configured; "
+            "pass --remote or set CUSTODIAN_REVIEW_REMOTE explicitly. "
+            f"Candidates: {', '.join(dropbox_named)}"
+        )
+
     listed = ", ".join(sorted(remotes)) or "(none)"
     raise RuntimeError(
         "no review remote configured; pass --remote, set CUSTODIAN_REVIEW_REMOTE, "
-        f"or configure a remote named dropbox:. Configured remotes: {listed}"
+        "configure a remote named dropbox:, or keep exactly one configured remote "
+        f"whose name contains 'dropbox'. Configured remotes: {listed}"
     )
 
 
