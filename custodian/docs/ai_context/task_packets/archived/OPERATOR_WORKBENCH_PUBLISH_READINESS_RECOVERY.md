@@ -183,16 +183,16 @@ Required before completion.
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `operator_art_worktree.py` and `ui/service.py` implement read-only readiness, classified blockers, safe clean-FF/sparse/local-LFS preparation, and immediate pre-mutation revalidation; `animation_workbench.py` and `operator_animation_workbench.lua` implement source freshness, import metadata receipts/restoration, saved-document frame/timing inspection, primary/recovery failure receipts, and byte-proved rollback; UI state/dialog/app project readiness. `operator_art_worktree_smoke.py`, `operator_workbench_mirror_publish_smoke.py`, `operator_workbench_ui_smoke.py`, and `operator_animation_workbench_smoke.py` pass. `godot_import_preflight.py --project-dir custodian` passes with no checked-out LFS pointers. `run_validation.py --changed --json` passed 19/19 selected tests with complete coverage and no uncovered changed files. `git diff --check` passes.
+- Evidence: `operator_art_worktree.py` and `ui/service.py` implement read-only readiness, classified blockers, safe clean-FF/sparse/local-LFS preparation, and immediate pre-mutation revalidation; `animation_workbench.py` and `operator_animation_workbench.lua` implement source freshness, import metadata receipts/restoration, saved-document frame/timing inspection, primary/recovery failure receipts, and byte-proved rollback; UI state/dialog/app project readiness. `operator_art_worktree_smoke.py`, `operator_workbench_mirror_publish_smoke.py`, `operator_workbench_ui_smoke.py`, and `operator_animation_workbench_smoke.py` pass. `godot_import_preflight.py --project-dir custodian` passes with no checked-out LFS pointers. Before sync, `run_validation.py --changed --json` passed 19/19 selected tests with complete coverage and no uncovered changed files. After sync, the packet's `operator_art_worktree` validation owner passed and all four focused Operator smokes plus import preflight passed. The wider incoming-main diff sweep was not green (46/54; five failures, two timeouts, one tier skip) in unrelated procgen camp placement, Vaultwing/game-scene expectations, and terminal tutorial tests; see closing summary. `git diff --check` passes.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
-- Friction severity: `low`
-- What went wrong: Initial negative LFS fixture reused an object that an earlier case had legitimately cached; the import-metadata fixture stub initially intercepted Git status calls and hid state the test needed to observe. Both were corrected before closeout.
-- Root cause / contributing factors: The negative LFS control shared an OID with the success case; the smoke stub replaced the shared `subprocess.run` entrypoint instead of routing only the runtime-sync command.
-- Prevention / pipeline improvement: Keep negative LFS fixtures on unique OIDs and route fixture subprocess stubs by exact command while leaving real Git status/index operations active.
+- Friction severity: `medium`
+- What went wrong: Initial negative LFS fixture reused an object that an earlier case had legitimately cached; the import-metadata fixture stub initially intercepted Git status calls. After sync, the broad incoming-main diff sweep reported five unrelated failures and two timeouts.
+- Root cause / contributing factors: The negative LFS control shared an OID with the success case; the smoke stub replaced the shared `subprocess.run` entrypoint; the merged upstream diff selected unrelated procgen, Vaultwing/game-scene, and terminal tests in a sparse checkout.
+- Prevention / pipeline improvement: Keep negative LFS fixtures on unique OIDs and route fixture subprocess stubs by exact command while leaving real Git queries active. Pair after-sync broad changed reports with the packet's exact validation owner so unrelated main failures are visible without confusing task acceptance.
 - Tooling / docs drift discovered: Existing Workbench docs described startup synchronization and cache-only Operator hydration; updated to explicit read-only startup and cache-then-verified-donor preparation.
-- Follow-up: `fixed-in-scope`
+- Follow-up: `manual-follow-up`
 - What worked: Fixture remotes, actual local Git LFS, Aseprite contract inspection, and the changed-file suite exercised the recovery boundaries without touching production art.
