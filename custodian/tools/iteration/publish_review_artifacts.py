@@ -315,22 +315,30 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    try:
-        remote = resolve_remote(args.remote)
-    except RuntimeError as exc:
-        print(f"FAIL: {exc}")
-        return 2
-
-    if args.doctor:
-        return doctor(remote, args.remote_root, ensure_root=args.ensure_root)
-
-    if not args.important:
+    # The opt-in gate is intentionally evaluated before any rclone discovery so
+    # routine agent runs do not touch provider configuration or fail merely
+    # because external review is unnecessary.
+    if not args.doctor and not args.important:
         print(
             "SKIP: review artifact publication is opt-in. "
             "Re-run with --important --reason only when objective validation cannot "
             "settle a meaningful subjective visual question."
         )
         return 0
+
+    try:
+        remote = resolve_remote(args.remote)
+    except RuntimeError as exc:
+        print(f"FAIL: {exc}")
+        return 2
+
+    if shutil.which("rclone") is None:
+        print("FAIL: rclone is not installed or not on PATH.")
+        return 2
+
+    if args.doctor:
+        return doctor(remote, args.remote_root, ensure_root=args.ensure_root)
+
     if not args.reason or not args.reason.strip():
         print("FAIL: --important requires --reason.")
         return 2
