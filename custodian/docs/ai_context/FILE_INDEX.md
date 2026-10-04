@@ -8,7 +8,8 @@
 
 ## Operator Workbench UX Hierarchy
 
-- `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md` - refresh-gated five-slice OPUI UX hierarchy plan covering artist-facing state, preview-first Workbench home, changes-first Publish, actionable Queue, and final cross-mode UX closeout. It consumes, rather than duplicates, the existing publish-readiness, browser-snapshot and FX-adoption authorities.
+- `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md` - refresh-gated five-slice OPUI UX hierarchy plan covering artist-facing state, preview-first Workbench home, changes-first Publish, actionable Queue, and final cross-mode UX closeout. It consumes, rather than duplicates, the publish-readiness, browser-snapshot, FX-adoption, and new-animation-creation backend authorities.
+- `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_ANIMATION_CREATION.md` - dependency-gated Workbench V3 backend slice for authoring a genuinely new semantic Operator animation in OPUI and publishing it through schema-derived canonical source -> runtime/import/catalog/validation/landing without an unnecessary inbox round-trip; external/generated art still uses the Operator intake boundary.
 - Planning packets live under `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_*.md`; all remain blocked/manual until their top refresh banner is removed after a fresh main review and sign-off.
 
 ## Asset Workbench
