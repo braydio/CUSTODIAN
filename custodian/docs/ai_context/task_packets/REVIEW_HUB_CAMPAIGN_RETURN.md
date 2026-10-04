@@ -35,3 +35,16 @@ Refresh concrete paths/focus with the implementation packet after predecessor re
 
 - Next action: Follow the roadmap after a clean/non-blocking review.
 - Blockers or open questions: implementation dependency only.
+
+
+## Cross-Program Recovery Check
+
+R2 `custodian-post-recovery-reintegration` is intentionally separate from H6.
+This review must verify H6 leaves one exact-outcome return accepted/completed
+seam that R2 can consume, while H6 itself does not implement Post recovery,
+reset the R1 death latch, or classify every FAILURE as death.
+
+If the review changes the expected R2 integration seam, its closing summary must
+surface the recovery planning chat exactly:
+
+https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search
