@@ -8,13 +8,14 @@
 - Depends on: `review-procgen-archive-resolve-presentation-spine`
 - Locks: `procgen-presentation`
 - Kind: `implementation`
-- Review: `manual`
+- Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, runtime, visual`
-- Paired review workstream: `none`
+- Paired review workstream: `review-procgen-archive-resolve-shader`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `bc3e354bb20641d4c6ce9317c38002b9e3449ca0`
+- Review rationale: `substantial shared-shader/presentation change; objective technical review plus separate human visual approval`
+- Reviewed main: `9093c9ff1613de39d37a876246f6ab61f24f5938`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Turn the proven AR1 flat veil into the locked Archive Resolve visual language: graphite/soot uncertainty, coherent world-space irregular resolution, ordered pixel dither, restrained brass/amber registration, and a brief phase-alignment effect that disappears completely after settlement.
 - Completion boundary: Done when the AR1 scheduler/ownership is unchanged, one shared pause-safe shader/material path renders the locked Archive Resolve phases without per-cell materials/tweens, the frontier reads as continuous world-space resolution rather than chunk loading or square pop-in, reduced-effects controls exist, and settled terrain returns to its ordinary authored appearance.
@@ -26,7 +27,7 @@
 - Preserve: AR1 committed-only/safety-halo rules; all streaming/gameplay authority; pixel-art crispness; Operator/UI readability; world lighting/atmosphere; performance budget; current terrain/art bytes.
 - Non-goals: No semantic echo; no ingress-specific spawn choreography; no audio; no particles; no floating gears; no permanent cyber-grid; no terrain scaling; no gameplay-state dependence on shader state; no full-screen screen-texture pipeline unless a measured prototype proves the batched veil cannot meet the locked design.
 - Acceptance: Same AR1 phase/order identity with shader enabled/disabled; no chunk rectangles or visible checkerboard; no final-world tint once settled; pause freezes effect time; reduced-effects mode can suppress phase misregistration/registration intensity without touching streaming; active frontier stays batched/shared-material; gameplay-scale motion evidence reads as resolving/stabilizing rather than loading/catching-up.
-- Validation: Refresh against landed AR1. Add focused shader/material contract checks for shared material, deterministic custom data, pause clock, disabled/reduced-effects fallbacks, settled transparency, and no per-cell material/tween creation. Re-run AR1 smoke and changed-file closeout. Human visual review uses the smallest representative gameplay-scale motion capture needed to judge frontier continuity and distraction.
+- Validation: **Refresh in the recorded planning chat after ARR1 passes before implementation.** Then add focused shader/material contract checks for shared material, deterministic custom data, pause clock, disabled/reduced-effects fallbacks, settled transparency, and no per-cell material/tween creation. Re-run the reviewed AR1 smoke and affected streaming/runtime-health tests before broader changed-file closeout. Only after objective checks pass, publish the smallest representative gameplay-scale motion evidence through `python3 custodian/tools/iteration/publish_review_artifacts.py --important ...` under workstream `procgen-archive-resolve-shader`, following `VISUAL_REVIEW_HANDOFF.md`. The reviewer question should ask whether the frontier reads as continuous Archive resolution rather than chunk catch-up/square pop, whether brass/amber registration is restrained, and whether settled terrain returns completely to ordinary world art. Record the Dropbox manifest path in the completion summary; the execution agent must not self-approve aesthetics.
 - Task overrides: `none`
 - Deferred: Semantic pre-echo, spawn resolve, and shortened reacquisition polish are AR3. Audio remains optional future polish.
 
@@ -74,6 +75,11 @@ Do not redesign AR1 scheduling merely because this pre-authored packet guessed a
 
 ## Handoff
 
-- Next action: Refresh only after the paired AR1 review lands clean/non-blocking and its flat-veil architecture is proven.
-- Best starting files: landed AR1 presentation owner; `STREAMING_REVEAL_PRESENTATION_V1.md`; existing shared CanvasItem shader conventions.
-- Blockers or open questions: Final shader tuning is human-owned visual judgment, not an auto-approval criterion.
+- Next workstream: `review-procgen-archive-resolve-shader`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh reason: `none after this packet's required pre-implementation refresh is completed`
+- Next action: After this packet is refreshed here, implemented, objectively validated, and human visual approval is recorded through the Dropbox handoff, complete/archive AR2 so its paired fresh-context technical review can claim automatically.
+- Blockers or open questions: Before implementation, ARR1 must pass and this packet must be refreshed in the recorded planning chat. Final visual approval remains human-owned.
