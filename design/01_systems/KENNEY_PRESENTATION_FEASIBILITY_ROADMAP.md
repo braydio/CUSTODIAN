@@ -1,7 +1,7 @@
 # KENNEY PRESENTATION FEASIBILITY ROADMAP
 
 **Program ID:** `kenney-presentation-feasibility`  
-**Status:** active / K3D-1P playable validation ready; K3D-2 human-gated
+**Status:** active / K3D-1P implementation landed; K3D-2 human-gated
 **Priority:** P2  
 **Reviewed main:** `144ad871cb17`  
 **Last Updated:** 2026-10-04  
@@ -33,7 +33,7 @@ Paired review and correction packets are not counted in the three. K3D-1P is a v
 | Slice | Workstream | Artifact | State |
 | --- | --- | --- | --- |
 | K3D-1 | `kenney-isometric-blockout-feasibility` | A + B: current 2D baseline versus Isometric Miniature 2D blockout | **complete / paired review passed** |
-| K3D-1P* | `kenney-isometric-blockout-playtest` | Playable human-validation wrapper for A/B with real Operator/controller/camera | **ready / support extension** |
+| K3D-1P* | `kenney-isometric-blockout-playtest` | Playable human-validation wrapper for A/B with real Operator/controller/camera | **implemented / landed; user walkaround pending** |
 | K3D-2 | `kenney-orthographic-3d-feasibility` | C: orthographic 3D presentation over preserved 2D spatial truth | **refresh-required / blocked on K3D-1P walkaround judgment** |
 | K3D-3 | `kenney-3d-to-2d-production-feasibility` | D: Shape / Asset Forge production test plus final decision matrix | **planned / blocked on reviewed K3D-2** |
 
@@ -278,10 +278,10 @@ Treat those as current truth during the experiment. Do not "repair" them into a 
 
 ## Current Program Position
 
-**Current slice:** K3D-1P `kenney-isometric-blockout-playtest`  
-**State:** K3D-1 is complete/reviewed and remains frozen evidence. The user then opened the actual debug scene and found the static SubViewport A/B artifact cannot support the intended experiential decision because it has no real Operator/controller/gameplay camera. K3D-1P is therefore the active support extension: it must preserve the reviewed A/B construction while adding a Lords-of-Pain-style standalone walkaround with real Operator, real gameplay Camera2D, neutral shared collision, and live 1/2/Tab presentation switching. The 16 selected Kenney Asset V2 runtime images are already imported; no new local asset intake is required. H1 remains separate/in-progress and is not a dependency for this frozen K3D-1 sample.
+**Current slice:** K3D-1P `kenney-isometric-blockout-playtest` (implementation landed; human walkaround pending)
+
+**State:** K3D-1 is complete/reviewed and remains frozen evidence. Its A/B visual construction is now shared by the unchanged deterministic SubViewport capture rig and a Lords-of-Pain-style standalone walkaround with the real Operator, gameplay Camera2D, neutral shared collision, and live 1/2/Tab switching. The 16 selected Kenney Asset V2 runtime images remain unchanged; no new local asset intake was needed. H1 remains separate/in-progress and is not a dependency for this frozen K3D-1 sample.
 **K3D-2 dependency state:** predecessor implementation satisfied; predecessor paired review satisfied; **K3D-1P implementation + user walkaround judgment + ChatGPT/user planning refresh required**. No K3D-2 implementation packet is runnable yet.
 **Required refresh inputs after K3D-1P:** the reviewed K3D-1 report/comparison, the landed K3D-1P playtest wrapper, and the user's observations on scale, moving readability, depth/occlusion, normal gameplay-camera compatibility, and CUSTODIAN fit.
-**Next gate:** execute `kenney-isometric-blockout-playtest`, have the user walk/toggle A/B, then return to the recorded authoring chat and author `kenney-orthographic-3d-feasibility` against current main.
+**Next gate:** the user opens `res://game/world/levels/authored/dev/kenney_isometric_blockout_playtest/kenney_isometric_blockout_playtest.tscn`, walks/toggles A/B, and records scale, moving readability, depth/occlusion, camera compatibility, and CUSTODIAN-fit observations; then return to the recorded authoring chat and author `kenney-orthographic-3d-feasibility` against current main.
 **Expected remaining major implementation packets:** 2.
-

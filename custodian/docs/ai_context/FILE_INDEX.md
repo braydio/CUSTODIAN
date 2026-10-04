@@ -1,6 +1,10 @@
 # FILE INDEX — CUSTODIAN
+- `design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md` — K3D-1/K3D-1P evidence and the human walkaround gate before K3D-2 planning.
 - `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/` — registered DEMO-pack asset gallery with directional actor/animation cycling, Stone/Meridian floor samples, Gold/Glint/UI samples, District Transfer Frame ingress/return presentation, and generated standalone playtest; manifest at `custodian/content/data/dev/lords_of_pain/gallery_manifest.json`.
 - `custodian/tools/validation/levels/lords_of_pain_test_gallery_smoke.gd` — manifest/runtime-output coverage, explicit DEMO exclusions, production-scene ownership, ingress/return presentation, and Gold Drop toggle/reset smoke.
+- `custodian/game/world/levels/authored/dev/kenney_isometric_blockout_playtest/` — standalone K3D-1P real-Operator walkaround with shared native/Kenney presentation, neutral boundary collision, and 1/2/Tab A/B controls.
+- `custodian/scenes/debug/kenney_isometric_blockout_presentation.gd` — shared presentation-only construction used by both K3D-1's deterministic capture rig and K3D-1P's playable level.
+- `custodian/tools/validation/levels/kenney_isometric_blockout_playtest_smoke.gd` — focused wrapper, spawn, presentation switching, collision-ownership, asset, bounds, and production-main-scene checks.
 - `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` — exact 32px-grid spatial authority/spec for the first persistent Hub set north of Awakening: South Reach, Forum, literal two-connector Sepulcher loop, Archive Rise/Crown Transfer, Muster Court, and ordinary Continuity Port.
 - `design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md` — seven-slice H1-H7 tracker for blockout → Awakening handoff → Forum Contract/prewarm → optional Twin → Port deployment → Campaign return → end-to-end closeout, including dependency/refresh gates.
 - `custodian/docs/ai_context/task_packets/HUB_FIRST_SET_BLOCKOUT_V1.md` / `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — active H1 implementation/review for the runtime-ready blockout, real Operator-clearance navigation proof, and human topology gate.

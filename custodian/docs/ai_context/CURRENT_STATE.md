@@ -1,5 +1,20 @@
 # CURRENT STATE — CUSTODIAN
 
+## K3D-1P Playable A/B Validation (2026-10-04)
+
+The reviewed K3D-1 visual construction is shared through
+`scenes/debug/kenney_isometric_blockout_presentation.gd` by the preserved
+deterministic capture rig and the standalone playable scene
+`game/world/levels/authored/dev/kenney_isometric_blockout_playtest/kenney_isometric_blockout_playtest.tscn`.
+The playtest uses the real Operator, PlayerController, gameplay Camera2D, and
+normal support systems; the authored level owns only the neutral evaluation
+envelope collision and presentation switching (`1` native, `2` Kenney, `Tab`
+toggle). The 16 existing Kenney Asset V2 textures and family contracts are
+unchanged. Focused playtest and K3D-1 capture-rig smokes pass. Human A/B
+judgment remains open; the user should walk the scene and record scale,
+readability, depth/occlusion, camera compatibility, and CUSTODIAN-fit
+observations before K3D-2 refresh.
+
 ## Lords of Pain DEMO Test Gallery (2026-10-03)
 
 `lords_of_pain_test_gallery` is registered as a dev `world_ingress` destination. Its generated production scene uses the persistent Operator lifecycle and owns no Operator, camera, or controller. The walkable blockout presents Asset V2 Ground Stone, the real Meridian hardened-floor base, Gold Drop/Glint, Highlight/Loot Indicator UI samples, and Warrior/Skeleton animations with all 16 authored directions selectable. A DEMO-scoped manifest records seven available semantic entries, five animation entries, pack/license provenance, and user-approved exclusions for Cursor Gauntlet, Rocks, and Mushrooms. District Transfer Frame art presents both procgen ingress and the normal `return_world` exit. Asset V2 doctor is healthy; gallery, registry, ingress, return, re-entry, and camera smokes pass.
