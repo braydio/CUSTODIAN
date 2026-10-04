@@ -79,7 +79,14 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
    presentation, and deterministic state correspondence may be decided from
    machine evidence. Baseline aesthetics, composition preference, game feel,
    and art-direction acceptance remain human-owned.
-10. Separate implementation findings from pipeline/process findings. Record
+10. If that human-owned decision is material and the implementation did not
+   already publish adequate compact evidence, use
+   `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`
+   after the objective review is complete. Publish only the minimum ROI/contact
+   sheet/keyframes needed, include exact reviewer questions, record the Dropbox
+   manifest path, and set the unresolved subjective decision to `human_required`.
+   Do not perform the aesthetic decision inside the coding/review agent.
+11. Separate implementation findings from pipeline/process findings. Record
    pipeline friction through `custodian.task_feedback.v1`; fix a small safe
    workflow issue in-scope or name a follow-up for repeatable medium/high
    severity.
