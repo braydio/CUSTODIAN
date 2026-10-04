@@ -1,8 +1,8 @@
 # HUB FIRST SET BLOCKOUT V1
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `hub-first-set-blockout-v1`
-- Status: `in_progress`
+- Workstream: `hub-first-set-blockout-v1-recovery-1`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -14,10 +14,11 @@
 - Paired review workstream: `review-hub-first-set-blockout-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `5bb137655670`
+- Reviewed main: `5a82486a46f30ad8753625133e1c6cee7eddd958`
+- Authoring chat: `not-recorded`
 - Goal: Build the complete runtime-ready blockout for the first persistent Hub set immediately north of Awakening, from Road of Witnesses South Reach through the Ashen Forum to the Archive/Crown Transfer branch and the Muster Court/Continuity Port deployment wing, so the second half of the first playable has one authoritative, navigable spatial target before world-transition and campaign-deployment behavior are wired.
 - Completion boundary: Implement one Hub-first-set spatial authority and one playable authored blockout scene using the exact coordinates locked in `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`; reuse the five Road production module pairs without duplicating their registration; make the first-set grid the sole Hub collision/navigation authority; expose all named markers; provide a standalone real-Operator/camera playtest; prove raw-grid and real-Operator-clearance connectivity, minimum authored route width, and a literal two-connection Sepulcher circulation loop; generate one human-review overview; repair directly related docs. Done means the player can traverse South Reach → Forum → both sides of the Sepulcher loop → Archive/Crown → Muster/Port while H2+ lifecycle behavior remains inert.
-- Current measured state: Awakening ends at world `(0,-6464)` inside the Road translated by `(6,-6626)`, yielding Road-local `Spawn_SouthReach=(-6,162)`. The five Road production module pairs remain Road-owned presentation; legacy Road blocker rectangles cannot own the larger first-set traversal. An active implementation exists on `agent/hub-first-set-blockout-v1` and previously reported 13,110 walkable cells, 48 merged rails, 14 markers, focused H1/Road/Twin greens, and 14/14 changed-file validation; human overview approval is pending. That branch must sync current main and absorb the second Sepulcher connector, Operator-clearance proof, and Port-return semantic correction before landing. No production major-context WorldTransitionManager exists yet.
+- Current measured state: Awakening ends at world `(0,-6464)` inside the Road translated by `(6,-6626)`, yielding Road-local `Spawn_SouthReach=(-6,162)`. The five Road production module pairs remain Road-owned presentation; legacy Road blocker rectangles cannot own the larger first-set traversal. A stranded implementation checkpoint exists on `origin/agent/hub-first-set-blockout-v1`: it is 1 unique commit ahead and hundreds of commits behind current main. Its durable summary/packet records 13,110 walkable cells, 48 merged rails, 14 markers, focused H1/Road/Twin greens, and 14/14 changed-file validation, but the old workstream never completed its final topology/clearance/Port-return closeout. This refreshed recovery workstream must start from current main, inspect that branch as donor evidence, selectively reapply only still-valid H1 implementation, and complete the second Sepulcher connector, Operator-clearance proof, Port-return semantic correction, and human topology gate without wholesale merging stale history. No production major-context WorldTransitionManager exists yet.
 - Evidence: `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`; `design/04_architecture/HUB_SPATIAL_LAYOUT.md`; `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`; `design/04_architecture/WORLD_TRANSITION_SYSTEM.md`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/game/world/hub/road_of_witnesses_prototype.gd`; `custodian/game/world/levels/authored_blockout_grid_2d.gd`; `custodian/game/world/levels/authored_navigation_provider_2d.gd`.
 - Task-specific authority: `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` is the exact spatial/blockout authority. `HUB_SPATIAL_LAYOUT.md` owns district meaning/topology. `AWAKENING_FIRST_RETURN.md` and `awakening_layout.gd` own only the southern seam. `TWIN_SOLARIA.md` owns the later Crown Transfer destination contract. `WORLD_TRANSITION_SYSTEM.md` owns later context switching and must not be partially implemented here.
 - Work surface: New primary runtime surface under `custodian/game/world/hub/first_set/` plus one standalone playtest scene under `custodian/scenes/`; reuse the Road module scene/controller as presentation input; focused validation under `custodian/tools/validation/`; minimal current-state/index/Hub spatial docs updates. Do not modify Awakening progression or Twin Solaria runtime.
