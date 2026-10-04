@@ -33,6 +33,10 @@
 
 ## Temporary Refresh Gate — REMOVE WHEN THIS PACKET IS REFRESHED
 
+**DO NOT IMPLEMENT THIS PACKET UNTIL IT HAS BEEN REFRESHED WITH THE USER IN THIS CHAT:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
+
+Bring the landed predecessor implementation summary, Independent Review receipt, and any human visual-review manifest/decision back to that conversation. The execution agent must not perform this architecture/design refresh on its own.
+
 This packet is intentionally pre-authored before AR2 and before the live Landmark/semantic owner surface is final.
 
 After `procgen-archive-resolve-shader` lands:
