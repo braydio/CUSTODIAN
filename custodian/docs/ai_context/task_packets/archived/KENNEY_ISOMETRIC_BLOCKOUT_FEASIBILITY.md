@@ -258,6 +258,15 @@ Before `complete`, add required completion/feedback receipts and update the road
 - Both captures are 1280×720; the composite is 2560×720. See `custodian/docs/ai_context/reports/kenney_presentation/K3D1_ISOMETRIC_BLOCKOUT_REPORT.md` and adjacent evidence files.
 - Changed validation passed: 13 selected, 13 passed. Asset V2 plan/status/doctor checks passed. The unsupported `asset.py doctor --verbose` packet command was corrected to `asset.py doctor`.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `k3d1_source_inventory.json` accounts for all seven expected packs and records 16 source hashes; all 16 Asset V2 input receipts and runtime files match the source SHA-256, dimensions, and RGBA pixels. Both family plan/status checks and `asset.py doctor` passed. The focused Kenney smoke passed, including fixed anchors/camera, A/B visibility, visual-only ownership, main-scene isolation, and texture presence. The changed-file validation command passed 13/13 tests. `k3d1_native.png` and `k3d1_kenney.png` are 1280×720 and their exact pixel composite is 2560×720. `git diff --check` passed; production Hub/gameplay authority remained outside the change.
+
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
