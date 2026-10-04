@@ -22,18 +22,20 @@ Seven implementation slices are pre-authored with paired reviews. H1 is in progr
 
 Do not create v2 duplicates merely because a predecessor chose different private helpers; refresh the existing downstream packet and its review in the same docs change.
 
-## Active Kenney Presentation Feasibility Series
+## Active Isometric 2.5D Presentation Realization Series
 
-Program tracker: `../../../design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md`.  
+Design authority: `../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`.  
+Program tracker: `../../../design/01_systems/ISOMETRIC_2_5D_REALIZATION_ROADMAP.md`.  
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 
-Three major implementation slices test CUSTODIAN presentation without changing production art direction up front.
+The project has pivoted away from planned live-3D presentation experiments. The fixed-isometric 2.5D doctrine will be realized inside the existing 2D runtime.
 
-- K3D-1 implementation is complete/archived and its paired technical review passed on `dc1110b8` with 0 blocking defects and 0 material evidence gaps.
-- K3D-1P `kenney-isometric-blockout-playtest` is **ready/auto** as a support extension outside the three major slices. It preserves the reviewed A/B artifact but adds the missing real-Operator/controller/gameplay-camera walkaround and live 1/2/Tab A/B switch. No new Kenney source intake is required.
-- K3D-2 `kenney-orthographic-3d-feasibility` remains **refresh-required / human planning gated** until K3D-1P lands and the user records a walkaround judgment in the authoring chat.
-- K3D-3 Shape/Asset Forge 3D→2D production testing remains planned and blocked on reviewed K3D-2 evidence.
-- Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
+- K3D-1 remains complete/reviewed precursor evidence.
+- K3D-1P `kenney-isometric-blockout-playtest` remains **ready/auto** as the final walkable Kenney reference.
+- `isometric-2-5d-presentation-foundation` is **ready/auto**, dependency-gated on K3D-1P.
+- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the foundation.
+- The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
+- Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
 
 ## Active Reusable Source-Material Intake
 
@@ -353,6 +355,8 @@ lost when the ephemeral worktree is removed.
 
 
 <!-- task_packet_index:managed:start -->
+- `ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md` — Converge ground anchors, visual elevation, semantic depth and existing occlusion/shadow precedents into one reusable 2D presentation foundation.
+- `ISOMETRIC_2_5D_FORUM_VERTICAL_SLICE.md` — Prove realized fixed-isometric 2.5D in a real-Operator Forum playtest with 16-direction skeleton, raised/overhead architecture, sorting and occlusion.
 - `KENNEY_ISOMETRIC_BLOCKOUT_PLAYTEST.md` — Add the missing playable human-validation layer for reviewed K3D-1: real Operator/controller/gameplay camera, shared A/B presentation, neutral collision, and instant 1/2/Tab switching.
 - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — Make Operator Workbench browser refresh and page-3 PREVIEW reload transactional from the user's perspective: repeated F5, source scans, live Workbench update...
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — Make Operator Workbench publication behave as one self-preparing, fail-closed transaction from the artist's perspective: before canonical mutation begins, OP...
