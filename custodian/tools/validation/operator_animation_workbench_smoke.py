@@ -123,6 +123,29 @@ def main():
    refreshed,_=w.refresh("melee_1h","idle_relaxed_01","e",weapon="weapon_b",root=recontext,discard=True)
    assert refreshed["context"]["fingerprint"]=="weapon-b" and list((ws/"backups").glob("*/workbench.aseprite"))
   finally:m.build_plan,w.aseprite_run,w.resolve_aseprite=old_build,old_run,old_resolve
+  # Obsolete pending frame metadata can be reconciled only when the saved
+  # physical document still matches the canonical source/workspace contract.
+  reconcile_ws=root/"reconcile"; reconcile_ws.mkdir(); reconcile_manifest=reconcile_ws/"workbench.json"; document=reconcile_ws/"workbench.aseprite"; document_bytes=b"saved edited document bytes\x00";document.write_bytes(document_bytes)
+  reconcile_data={"identity":{"profile":"unarmed","group":"locomotion","action":"walk_01","direction":"n"},"canvas":{"width":96,"height":96},"timeline":{"source_clock_frames":8,"workspace_clock_frames":9,"document_frames":9,"frames":9,"preview_fps":12},"layers":[{"binding_id":"lower_body","workspace_contract":{"frames":8}}],"pending_migration":{"kind":"frame_count","new_clock_frames":9},"aseprite":{"last_synced_sha256":m.file_sha256(document)}}
+  w.save(reconcile_manifest,reconcile_data); old_run,old_resolve=w.aseprite_run,w.resolve_aseprite
+  try:
+   w.resolve_aseprite=lambda *_args,**_kwargs:Path("/bin/true")
+   def inspect_run(_binary,path,mode):
+    assert mode=="inspect_contract"
+    (path.parent/".document_contract.json").write_text(json.dumps({"frames":8,"width":96,"height":96,"durations":[1/12]*8}))
+   w.aseprite_run=inspect_run
+   reconciled=w.reconcile_saved_document_contract(reconcile_data,reconcile_manifest)
+   assert reconciled["pending_migration"] is None and reconciled["timeline"]["workspace_clock_frames"]==8
+   assert document.read_bytes()==document_bytes
+   receipts=list((reconcile_ws/"recovery").glob("contract_reconcile_*.json"));assert len(receipts)==1
+   assert Path(json.loads(receipts[0].read_text())["backup_document"]).read_bytes()==document_bytes
+   try:
+    bad={**reconcile_data,"timeline":{**reconcile_data["timeline"],"source_clock_frames":7,"workspace_clock_frames":9},"pending_migration":{"kind":"frame_count","new_clock_frames":9}}
+    w.reconcile_saved_document_contract(bad,reconcile_manifest)
+    raise AssertionError("unmatched saved document frame contract was accepted")
+   except m.WorkbenchError as error: assert "SAVED ASEPRITE FRAME CONTRACT MISMATCH" in str(error)
+   assert document.read_bytes()==document_bytes
+  finally:w.aseprite_run,w.resolve_aseprite=old_run,old_resolve
  real=m.build_plan("melee_1h","idle_relaxed_01","e",weapon_id="vigil_pattern_dagger");r=fc.migration_report(real,"add",2,"duplicate-prev","auto",m.REPO_ROOT)
  old_clock=real["timeline"]["workspace_clock_frames"]
  assert [x["binding_id"] for x in real["layers"]]==["lower_body","upper_body","weapon__vigil_pattern_dagger"] and r["new_clock_frames"]==old_clock+1 and r["dependency_audit"]["level"]=="GREEN"

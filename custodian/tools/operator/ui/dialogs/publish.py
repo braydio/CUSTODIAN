@@ -66,7 +66,10 @@ class PublishDialog(ModalScreen[tuple[bool, bool] | None]):
                 lines.extend((f"{row.layer} old: {row.old_path or 'none'}", f"{row.layer} target: {row.target_path}"))
         if p.retired_paths:
             lines.extend(("", "RETIRED CONTRACTS", *p.retired_paths))
-        lines.extend(("", "PREFLIGHT DETAIL", f"Dependency audit: {p.audit}", f"Compatibility preflight: {'PASS' if p.compatibility_preflight else 'FAIL'}"))
+        lines.extend(("", "PREFLIGHT DETAIL", f"Readiness: {p.readiness_status.upper()}", f"Dependency audit: {p.audit}", f"Compatibility preflight: {'PASS' if p.compatibility_preflight else 'FAIL'}"))
+        lines.extend(p.readiness_blockers)
+        if p.readiness_preparations:
+            lines.extend(("Safe preparation:", *p.readiness_preparations))
         return "\n".join(lines)
 
     def compose(self) -> ComposeResult:
@@ -95,6 +98,12 @@ class PublishDialog(ModalScreen[tuple[bool, bool] | None]):
             yield Static(f"[b]{selection.profile} / {selection.group} / {selection.action}[/b]\n[b]{direction}[/b]\n{timing}    {layers}\n{contract}", id="publish-summary", classes="publish-primary")
             if p.publish_block_reason and not p.land_pending:
                 yield Static(f"[yellow]{p.publish_block_reason}[/yellow]", id="publish-checkout", classes="publish-primary")
+            if not p.land_pending:
+                readiness_style = "green" if p.readiness_status == "ready" else "yellow" if p.readiness_status == "preparable" else "red"
+                readiness = p.readiness_summary or f"Publication readiness: {p.readiness_status.upper()}"
+                if p.readiness_preparations:
+                    readiness += " · " + "; ".join(p.readiness_preparations)
+                yield Static(f"[{readiness_style}]{readiness}[/{readiness_style}]", id="publish-readiness", classes="publish-primary")
             yield Static("[b]DIRECT[/b]", classes="publish-section-title publish-primary")
             yield Static(_rows(p.direct_rows), classes="publish-table publish-primary", id="publish-direct")
             if p.land_pending:
@@ -115,7 +124,7 @@ class PublishDialog(ModalScreen[tuple[bool, bool] | None]):
                 yield Static("", id="publish-button-spacer")
                 yield Button("CANCEL", id="cancel")
                 label = "RETRY LANDING" if p.land_pending else "PUBLISH TO MAIN"
-                yield Button(label, id="confirm", variant="success", disabled=p.audit != "GREEN" or not p.compatibility_preflight or not p.publish_enabled)
+                yield Button(label, id="confirm", variant="success", disabled=p.audit != "GREEN" or not p.compatibility_preflight or not p.publish_enabled or p.readiness_status != "ready")
 
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
         if event.checkbox.id == "mirror-counterpart":

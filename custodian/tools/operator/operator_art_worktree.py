@@ -5,12 +5,13 @@ from __future__ import annotations
 import argparse
 import filecmp
 import fcntl
+import hashlib
 import json
 import os
 import shutil
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
 
@@ -113,6 +114,34 @@ CANONICAL_RUNTIME_FRAMES = Path("custodian/content/sprites/operator/runtime/oper
 
 class ArtWorktreeError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class PublishReadiness:
+    status: str
+    checkout: dict[str, str | bool]
+    pending_land: bool
+    dirty: dict[str, tuple[str, ...]]
+    sparse_healthy: bool
+    dependencies: dict[str, tuple[str, ...]]
+    transaction: dict[str, str] | None
+    source_freshness: dict[str, str]
+    preparations: tuple[str, ...]
+    blockers: tuple[str, ...]
+
+    def as_dict(self) -> dict:
+        return {
+            "status": self.status,
+            "checkout": dict(self.checkout),
+            "pending_land": self.pending_land,
+            "dirty": {key: list(value) for key, value in self.dirty.items()},
+            "sparse_healthy": self.sparse_healthy,
+            "dependencies": {key: list(value) for key, value in self.dependencies.items()},
+            "transaction": self.transaction,
+            "source_freshness": dict(self.source_freshness),
+            "preparations": list(self.preparations),
+            "blockers": list(self.blockers),
+        }
 
 
 def _git(root: Path, *args: str, check: bool = True) -> str:
@@ -263,39 +292,96 @@ def _worktrees(root: Path) -> list[tuple[Path, str]]:
     return rows
 
 
-def _operator_art_lfs_pointers(root: Path) -> list[Path]:
-    weapons_root = root / "custodian/content/sprites/weapons"
-    prefixes = [
-        root / "custodian/content/sprites/operator/source/animations",
-        root / "custodian/content/sprites/operator/runtime/animations",
-    ]
-    if weapons_root.exists():
-        prefixes.extend(sorted(path for path in weapons_root.glob("*/source/operator") if path.is_dir()))
-        prefixes.extend(sorted(path for path in weapons_root.glob("*/runtime/operator") if path.is_dir()))
-    pointers = []
-    for prefix in prefixes:
-        if not prefix.exists():
+def _parse_lfs_pointer(data: bytes) -> tuple[str, int] | None:
+    if not data.startswith(b"version https://git-lfs.github.com/spec/v1\n"):
+        return None
+    try:
+        fields = dict(line.decode("ascii").split(" ", 1) for line in data.splitlines()[1:])
+        oid = fields["oid"]
+        if not oid.startswith("sha256:"):
+            return None
+        return oid[7:], int(fields["size"])
+    except (KeyError, UnicodeDecodeError, ValueError):
+        return None
+
+
+def _tracked_checkout_paths(root: Path) -> tuple[list[str], list[str]]:
+    """Return sparse-present tracked files and selected paths missing from disk."""
+    result = subprocess.run(["git", "ls-files", "-t", "-z"], cwd=root, capture_output=True, check=True)
+    present: list[str] = []
+    missing: list[str] = []
+    for entry in result.stdout.split(b"\0"):
+        if not entry:
             continue
-        for path in prefix.rglob("*.png"):
-            try:
-                with path.open("rb") as stream:
-                    if stream.read(64).startswith(b"version https://git-lfs.github.com/spec/v1"):
-                        pointers.append(path)
-            except OSError as error:
-                raise ArtWorktreeError(f"cannot inspect Operator LFS content: {path}: {error}") from error
+        flag, _, raw_path = entry.partition(b" ")
+        if flag == b"S":  # sparse-checkout intentionally omits this path
+            continue
+        relative = raw_path.decode("utf-8", "surrogateescape")
+        if (root / relative).is_file():
+            present.append(relative)
+        else:
+            missing.append(relative)
+    return present, missing
+
+
+def checked_out_lfs_pointers(root: Path) -> list[tuple[str, str, int]]:
+    """Discover LFS pointer stubs only among tracked files materialized by sparse checkout."""
+    present, _missing = _tracked_checkout_paths(root)
+    pointers = []
+    for relative in present:
+        path = root / relative
+        try:
+            with path.open("rb") as stream:
+                pointer = _parse_lfs_pointer(stream.read(1024))
+        except OSError as error:
+            raise ArtWorktreeError(f"cannot inspect checked-out dependency {relative}: {error}") from error
+        if pointer:
+            pointers.append((relative, *pointer))
     return pointers
 
 
-def hydrate_operator_art_from_cache(root: Path) -> None:
-    """Fill Operator LFS pointer files from the local cache without downloading."""
-    pointers = _operator_art_lfs_pointers(root)
+def _operator_art_lfs_pointers(root: Path) -> list[Path]:
+    """Compatibility discovery helper limited to Operator source/runtime art."""
+    root=Path(root); prefixes=[root/"custodian/content/sprites/operator/source/animations",root/"custodian/content/sprites/operator/runtime/animations"]
+    weapons=root/"custodian/content/sprites/weapons"
+    if weapons.is_dir():
+        prefixes.extend(weapons.glob("*/source/operator")); prefixes.extend(weapons.glob("*/runtime/operator"))
+    result=[]
+    for prefix in prefixes:
+        if prefix.is_dir():
+            for path in prefix.rglob("*.png"):
+                try:
+                    if _parse_lfs_pointer(path.read_bytes()[:1024]): result.append(path)
+                except OSError as error:
+                    raise ArtWorktreeError(f"cannot inspect Operator LFS content: {path}: {error}") from error
+    return result
+
+
+def hydrate_lfs_paths(root: Path, paths: Iterable[str], donor_root: Path | None = None) -> list[str]:
+    """Hydrate exact checked-out LFS paths from cache, then verified local donor bytes."""
+    root = _top(Path(root).resolve())
+    exact = sorted(set(Path(path).as_posix() for path in paths))
+    if any(Path(path).is_absolute() or ".." in Path(path).parts for path in exact):
+        raise ArtWorktreeError("LFS hydration accepts only repository-relative paths")
+    pointers = []
+    for relative in exact:
+        target = root / relative
+        if target.is_file():
+            pointer = _parse_lfs_pointer(target.read_bytes())
+        else:
+            blob = subprocess.run(["git", "show", f"HEAD:{relative}"], cwd=root, capture_output=True, check=False)
+            pointer = _parse_lfs_pointer(blob.stdout) if blob.returncode == 0 else None
+        if pointer is None:
+            continue
+        pointers.append((relative, *pointer))
     if not pointers:
-        return
+        return []
     hook = root / ".githooks/post-commit"
     had_hook = hook.exists()
     hook_bytes = hook.read_bytes() if had_hook else b""
     hook_mode = hook.stat().st_mode & 0o777 if had_hook else 0o755
-    result = subprocess.run(["git", "lfs", "checkout", *OPERATOR_LFS_GLOBS], cwd=root, text=True, capture_output=True, check=False)
+    # Exact path arguments prevent Git LFS from hydrating sparse-omitted siblings.
+    result = subprocess.run(["git", "lfs", "checkout", *(relative for relative, _oid, _size in pointers)], cwd=root, text=True, capture_output=True, check=False)
     # Some Git LFS installations rewrite core.hooksPath's post-commit hook.
     # Treat that tracked repository file as user state and retain its exact bytes.
     if had_hook:
@@ -304,15 +390,209 @@ def hydrate_operator_art_from_cache(root: Path) -> None:
             hook.chmod(hook_mode)
     else:
         hook.unlink(missing_ok=True)
-    if result.returncode:
-        raise ArtWorktreeError(f"local Git LFS checkout failed: {(result.stderr or result.stdout).strip()}")
-    missing = _operator_art_lfs_pointers(root)
-    if missing:
-        sample = "\n".join(str(path.relative_to(root)) for path in missing[:5])
-        raise ArtWorktreeError(
-            "Operator source art is still stored as LFS pointers; local cache is incomplete. "
-            "Preserve the checkout and hydrate those assets through the approved LFS workflow:\n" + sample
-        )
+    # Git LFS may return success while objects are absent; verify by hash and size.
+    donor = _top(Path(donor_root).resolve()) if donor_root else None
+    unresolved = []
+    hydrated = []
+    for relative, oid, size in pointers:
+        target = root / relative
+        if target.is_file():
+            content = target.read_bytes()
+            if len(content) == size and hashlib.sha256(content).hexdigest() == oid:
+                hydrated.append(relative)
+                continue
+        source = (donor / relative) if donor else None
+        if source and source.is_file():
+            content = source.read_bytes()
+            if len(content) == size and hashlib.sha256(content).hexdigest() == oid:
+                cached=subprocess.run(["git","lfs","clean",relative],cwd=root,input=content,capture_output=True,check=False)
+                cached_pointer=_parse_lfs_pointer(cached.stdout or b"")
+                if cached.returncode!=0 or cached_pointer!=(oid,size):
+                    unresolved.append(f"{relative} (verified donor bytes could not be cached locally)")
+                    continue
+                temporary = target.with_name(target.name + ".hydrate-tmp")
+                temporary.write_bytes(content)
+                os.replace(temporary, target)
+                hydrated.append(relative)
+                continue
+        unresolved.append(f"{relative} (sha256:{oid}, size:{size})")
+    if hydrated:
+        # Refresh only the exact verified files' stat cache; this does not stage
+        # content and lets Git/LFS recognize the smudged bytes as their pointer.
+        subprocess.run(["git","update-index","--refresh","--",*hydrated],cwd=root,capture_output=True,check=False)
+    dirty = _status_paths(root)
+    if dirty:
+        raise ArtWorktreeError("LFS hydration changed Git-visible paths unexpectedly; preserve for inspection: " + ", ".join(sorted(dirty)))
+    if unresolved:
+        raise ArtWorktreeError("REQUIRED LFS CONTENT UNAVAILABLE LOCALLY; network fetch is disabled:\n" + "\n".join(unresolved))
+    return hydrated
+
+
+def hydrate_operator_art_from_cache(root: Path) -> None:
+    """Compatibility wrapper for the explicit Operator art path resolver."""
+    pointers = [path for path, _oid, _size in checked_out_lfs_pointers(root)
+                if path.startswith(("custodian/content/sprites/operator/", "custodian/content/sprites/weapons/"))]
+    hydrate_lfs_paths(root, pointers)
+
+
+def _transaction_status(workspace_root: Path) -> dict[str, str] | None:
+    transactions = Path(workspace_root) / "transactions"
+    if not transactions.is_dir():
+        return None
+    for journal_path in sorted(transactions.glob("*/transaction.json"), reverse=True):
+        try:
+            payload = json.loads(journal_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {"state": "UNREADABLE", "journal": str(journal_path)}
+        state = str(payload.get("state", "UNKNOWN"))
+        if state not in {"COMMITTED", "ROLLED_BACK"}:
+            return {"state": state, "journal": str(journal_path)}
+    return None
+
+
+def _dirty_categories(root: Path, selected_paths: Iterable[str] = ()) -> dict[str, tuple[str, ...]]:
+    selected = set(Path(path).as_posix() for path in selected_paths)
+    categories: dict[str, list[str]] = {"user": [], "import_metadata": [], "selected_outputs": []}
+    for relative in sorted(_status_paths(root)):
+        if relative in selected:
+            category = "selected_outputs"
+        elif relative.endswith((".import", ".uid")):
+            category = "import_metadata"
+        else:
+            category = "user"
+        categories[category].append(relative)
+    return {key: tuple(paths) for key, paths in categories.items() if paths}
+
+
+def inspect_publish_readiness(
+    repo_root: Path,
+    coordination_root: Path | None,
+    workspace_root: Path,
+    *,
+    selected_paths: Iterable[str] = (),
+    source_freshness: dict[str, str] | None = None,
+) -> PublishReadiness:
+    """Read-only snapshot used by startup status and the Publish review boundary."""
+    root = _top(Path(repo_root).resolve())
+    identity = checkout_identity(root, coordination_root)
+    pending_path = _pending_path(root, workspace_root)
+    pending = pending_path.exists()
+    dirty = _dirty_categories(root, selected_paths)
+    sparse = _sparse_profile_healthy(root)
+    if identity.publish_allowed:
+        present, missing = _tracked_checkout_paths(root)
+        pointers = [f"{path} (sha256:{oid}, size:{size})" for path, oid, size in checked_out_lfs_pointers(root)]
+    else:
+        present, missing, pointers = [], [], []
+    ordinary_missing = []
+    for relative in missing:
+        blob = subprocess.run(["git", "show", f"HEAD:{relative}"], cwd=root, capture_output=True, check=False)
+        pointer = _parse_lfs_pointer(blob.stdout) if blob.returncode == 0 else None
+        if pointer:
+            pointers.append(f"{relative} (sha256:{pointer[0]}, size:{pointer[1]})")
+        else:
+            ordinary_missing.append(relative)
+    transaction = _transaction_status(workspace_root)
+    freshness = source_freshness or {}
+    dependencies = {key: tuple(value) for key, value in {
+        "missing": ordinary_missing,
+        "lfs_pointers": pointers,
+    }.items() if value}
+    blockers = []
+    preparations = []
+    if not identity.publish_allowed:
+        blockers.append(f"tracked publication requires {ART_BRANCH}; checkout is {identity.kind} ({identity.branch})")
+    if pending:
+        blockers.append("LAND PENDING must use the existing retry path")
+    if transaction:
+        blockers.append(f"Workbench transaction {transaction['state']} requires recovery: {transaction['journal']}")
+    if dirty:
+        for category, paths in dirty.items():
+            blockers.append(f"{category} changes must be preserved and reviewed: " + ", ".join(paths))
+    if freshness:
+        blockers.extend(f"WORKBENCH REBASE/REFRESH REQUIRED: {identity}: {reason}" for identity, reason in freshness.items())
+    if not sparse:
+        preparations.append(f"reapply sparse profile {SPARSE_PROFILE} if the clean checkout permits")
+    relation = identity.main_relation
+    if relation.startswith("ahead"):
+        blockers.append(f"art checkout has local commits ahead of origin/main: {relation}")
+    elif relation.startswith("unknown"):
+        blockers.append("origin/main relation cannot be verified")
+    elif relation != "current":
+        preparations.append("fetch origin/main and fast-forward the clean, non-ahead art branch")
+    if pointers:
+        preparations.append("hydrate checked-out LFS dependencies from local cache or exact verified donor")
+    if ordinary_missing:
+        blockers.extend(f"required sparse dependency is missing: {path}" for path in ordinary_missing)
+    if blockers:
+        status = "blocked"
+    elif preparations:
+        status = "preparable"
+    else:
+        status = "ready"
+    checkout = {
+        "kind": identity.kind, "branch": identity.branch,
+        "main_relation": identity.main_relation, "worktree": identity.worktree,
+        "sparse_profile": identity.sparse_profile, "worktree_state": identity.worktree_state,
+        "publish_allowed": identity.publish_allowed,
+    }
+    return PublishReadiness(status, checkout, pending, dirty, sparse, dependencies,
+                            transaction, freshness, tuple(preparations), tuple(blockers))
+
+
+def prepare_publish_checkout(
+    repo_root: Path,
+    coordination_root: Path | None,
+    workspace_root: Path,
+    *,
+    selected_paths: Iterable[str] = (),
+    source_freshness: dict[str, str] | None = None,
+) -> PublishReadiness:
+    """Run only clean fast-forward, sparse-profile, and local-only dependency preparation."""
+    root = _top(Path(repo_root).resolve())
+    before = inspect_publish_readiness(root, coordination_root, workspace_root,
+                                       selected_paths=selected_paths,
+                                       source_freshness=source_freshness)
+    if before.pending_land or before.transaction or before.dirty or not before.checkout["publish_allowed"]:
+        return before
+    if before.source_freshness:
+        return before
+    _git(root, "fetch", "origin", "main")
+    ahead, behind = _main_counts(root)
+    if ahead:
+        return inspect_publish_readiness(root, coordination_root, workspace_root,
+                                         selected_paths=selected_paths,
+                                         source_freshness={"checkout": f"local branch is {ahead} commit(s) ahead of origin/main"})
+    performed=[]
+    if behind:
+        _git_without_hooks(root, "merge", "--ff-only", "origin/main")
+        performed.append("fast-forwarded clean Operator art checkout to origin/main")
+    if _status_paths(root):
+        raise ArtWorktreeError("safe preparation produced Git-visible changes; checkout preserved for inspection")
+    if not _sparse_profile_healthy(root):
+        _apply_sparse_profile(root)
+        performed.append(f"applied sparse profile {SPARSE_PROFILE}")
+    present, missing = _tracked_checkout_paths(root)
+    expected_pointers = []
+    ordinary_missing = []
+    for relative in missing:
+        blob = subprocess.run(["git", "show", f"HEAD:{relative}"], cwd=root, capture_output=True, check=False)
+        if blob.returncode == 0 and _parse_lfs_pointer(blob.stdout):
+            expected_pointers.append(relative)
+        else:
+            ordinary_missing.append(relative)
+    if ordinary_missing:
+        raise ArtWorktreeError("required sparse dependency is missing and is not a hydratable LFS pointer:\n" + "\n".join(ordinary_missing))
+    pointers = [relative for relative, _oid, _size in checked_out_lfs_pointers(root)] + expected_pointers
+    if pointers:
+        hydrated=hydrate_lfs_paths(root, pointers, coordination_root)
+        if hydrated: performed.append(f"hydrated {len(hydrated)} checked-out LFS dependencies locally")
+    after = inspect_publish_readiness(root, coordination_root, workspace_root,
+                                      selected_paths=selected_paths,
+                                      source_freshness=source_freshness)
+    if after.status != "ready":
+        return after
+    return replace(after, preparations=tuple(performed))
 
 
 def _running_aseprite_processes() -> list[str]:
@@ -393,19 +673,25 @@ def ensure_art_worktree(coordination_root: Path, *, art_path: Path | None = None
     lock.parent.mkdir(parents=True, exist_ok=True)
     with lock.open("a+") as handle:
         fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
-        _git(root, "fetch", "origin", "main")
         attached = _worktrees(root)
         by_branch = [path for path, branch in attached if branch == ART_BRANCH]
         by_path = next((branch for path, branch in attached if path == target), None)
         if by_path is not None:
             if by_path != ART_BRANCH:
                 raise ArtWorktreeError(f"art checkout path is attached to unexpected branch {by_path}: {target}")
-            _ensure_sparse_and_current(target)
-            migrate_legacy_workbench(root, target)
-            hydrate_operator_art_from_cache(target)
+            # Startup is an inspection boundary. Safe fast-forward, sparse repair,
+            # and LFS hydration are reserved for the explicit Publish preparation.
+            try:
+                migrate_legacy_workbench(root, target)
+            except ArtWorktreeError:
+                # Preserve the checkout and let the mounted UI project the blocker.
+                pass
             return target
         if by_branch:
             raise ArtWorktreeError(f"{ART_BRANCH} is already attached at {by_branch[0]}")
+        # Only an initial checkout creation fetches. Reopening OPUI with an
+        # existing art worktree is read-only; Publish owns synchronization.
+        _git(root, "fetch", "origin", "main")
         if target.exists():
             if any(target.iterdir()):
                 raise ArtWorktreeError(f"art checkout path exists but is not an attached worktree: {target}")
@@ -422,7 +708,6 @@ def ensure_art_worktree(coordination_root: Path, *, art_path: Path | None = None
         _git_without_hooks(target, "checkout", ART_BRANCH)
         _ensure_sparse_and_current(target)
         migrate_legacy_workbench(root, target)
-        hydrate_operator_art_from_cache(target)
         return target
 
 
@@ -542,6 +827,18 @@ def _atomic_json(path: Path, payload: dict) -> None:
     os.replace(temporary, path)
 
 
+def _publication_identity(root: Path, commit: str) -> dict:
+    """Stable content identity for one scoped publication commit."""
+    paths = _git(root, "diff-tree", "--no-commit-id", "--name-only", "-r", "--no-renames", commit).splitlines()
+    entries = []
+    for path in sorted(paths):
+        before = _git(root, "rev-parse", f"{commit}^:{path}", check=False) or None
+        after = _git(root, "rev-parse", f"{commit}:{path}", check=False) or None
+        entries.append({"path": path, "before": before, "after": after})
+    patch_id = hashlib.sha256(json.dumps(entries, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return {"paths": entries, "patch_id": patch_id}
+
+
 def _land_and_verify(root: Path, pending: Path, payload: dict) -> dict:
     script = root / "custodian/tools/agent/land_main.py"
     try:
@@ -575,18 +872,30 @@ def retry_pending_land(root: Path, pending: Path) -> dict | None:
     if _status_paths(root):
         raise ArtWorktreeError("LAND PENDING retry requires a clean art checkout")
     _git(root, "fetch", "origin", "main")
-    if subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"], cwd=root, check=False).returncode == 0:
+    already_landed=subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/main"], cwd=root, check=False).returncode == 0
+    if already_landed and head==payload.get("commit"):
         pending.unlink(missing_ok=True)
         return {**payload, "status": "landed", "commit": head}
     if head != payload.get("commit"):
-        raise ArtWorktreeError("LAND PENDING checkout identity changed; preserve the branch and inspect the pending receipt")
+        recorded = payload.get("publication_identity")
+        current = _publication_identity(root, head)
+        if not recorded or current != recorded:
+            raise ArtWorktreeError(
+                "LAND PENDING checkout identity changed and stable publication identity does not match; "
+                "preserve the branch and inspect the pending receipt"
+            )
+        payload = {**payload, "commit": head, "identity_relinked": True}
+        _atomic_json(pending, payload)
+        if already_landed:
+            pending.unlink(missing_ok=True)
+            return {**payload, "status":"landed"}
     return _land_and_verify(root, pending, payload)
 
 
 def publish_to_main(
     *, repo_root: Path, coordination_root: Path | None, workspace_root: Path,
     canonical_paths: Iterable[str], allowlist: set[str], publish_once,
-    identity: dict[str, str], mirror: bool = False,
+    identity: dict[str, str], mirror: bool = False, pre_publish_check=None,
 ) -> dict:
     """Publish once, stage only scoped outputs, commit, and use land_main.py."""
     root = _top(Path(repo_root).resolve())
@@ -606,6 +915,8 @@ def publish_to_main(
     if conflicts:
         names = "\n".join(sorted(conflicts))
         raise ArtWorktreeError(f"SOURCE CONFLICT\norigin/main changed selected canonical paths since this art checkout diverged:\n{names}\nRefresh/review the selected Workbench before publishing.")
+    if pre_publish_check is not None:
+        pre_publish_check()
     changed_sources = publish_once()
     changed = _status_paths(root)
     unexpected = changed - allowlist
@@ -627,6 +938,7 @@ def publish_to_main(
         "commit": _git(root, "rev-parse", "HEAD"), "branch": ART_BRANCH,
         "identity": identity, "summary": summary,
     }
+    payload["publication_identity"] = _publication_identity(root, payload["commit"])
     _atomic_json(pending, payload)
     landed = _land_and_verify(root, pending, payload)
     landed["changed_sources"] = list(changed_sources)

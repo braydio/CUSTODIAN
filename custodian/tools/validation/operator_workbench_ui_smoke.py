@@ -1181,6 +1181,10 @@ async def stale_error_smoke() -> None:
 def real_repo_read_only() -> None:
     with tempfile.TemporaryDirectory(prefix="operator_ui_readonly_") as raw:
         service = WorkbenchService(workspace_root=Path(raw) / "workspace")
+        startup_status=service.checkout_status_label(AnimationSelection("unarmed","locomotion","run_01","e"))
+        assert "readiness " in startup_status.lower(), startup_status
+        startup_readiness=service.readiness(AnimationSelection("unarmed","locomotion","run_01","e"))
+        assert startup_readiness.status in {"ready","preparable","blocked"}
         records = service.browser_records()
         run = next(row for row in records if row.selection == AnimationSelection("unarmed", "locomotion", "run_01", "e"))
         assert run.frames == 6 and set(run.layers) >= {"lower_body", "upper_body"}

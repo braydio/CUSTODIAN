@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import json
 import os
+import hashlib
 import shutil
 import subprocess
 import sys
@@ -49,6 +50,7 @@ def fixture(base: Path) -> tuple[Path, Path, Path]:
         "custodian/tools/pipelines/operator_runtime_build.py",
         "custodian/tools/validation/operator_animation_workbench_smoke.py",
         "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/operator.gd.uid",
         "custodian/content/data/operator/profile.json",
         "custodian/content/metadata/assets/families/operator.asset.json",
         "custodian/content/sprites/operator/runtime/idle.png",
@@ -143,7 +145,8 @@ def sparse_sync_smoke(base: Path) -> None:
         b"unrelated v2\n",
         "unrelated asset update",
     )
-    art.ensure_art_worktree(coordination)
+    prepared=art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench")
+    assert prepared.status=="ready",prepared.as_dict()
     assert not (art_root / ".githooks/post-commit").exists(), "merge hooks ran during safe synchronization"
     assert git(art_root, "rev-parse", "HEAD") != initial
     assert (art_root / SOURCE).read_bytes() == b"selected source v2\n"
@@ -155,12 +158,13 @@ def sparse_sync_smoke(base: Path) -> None:
     head_before = git(art_root, "rev-parse", "HEAD")
     (art_root / SOURCE).write_bytes(b"uncommitted authored pixels\n")
     commit_remote(coordination, SOURCE, b"selected source v3\n", "selected source v3")
-    art.ensure_art_worktree(coordination)
+    blocked=art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench")
+    assert blocked.status=="blocked" and blocked.dirty.get("user")
     assert git(art_root, "rev-parse", "HEAD") == head_before
     assert (art_root / SOURCE).read_bytes() == b"uncommitted authored pixels\n"
     assert art.checkout_identity(art_root, coordination).main_relation == "ahead 0 / behind 1"
     art._git_without_hooks(art_root, "restore", "--", SOURCE)
-    art.ensure_art_worktree(coordination)
+    art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench")
     v3 = (art_root / SOURCE).read_bytes()
     assert v3 == b"selected source v3\n", f"dirty restore did not resume FF: source={v3!r}, state={art.checkout_identity(art_root, coordination)}, dirty={art._status_paths(art_root)}"
 
@@ -170,7 +174,7 @@ def sparse_sync_smoke(base: Path) -> None:
     git(art_root, "commit", "-m", "local authoring checkpoint")
     local_head = git(art_root, "rev-parse", "HEAD")
     commit_remote(coordination, "README.md", b"main changed again\n", "main changed again")
-    art.ensure_art_worktree(coordination)
+    art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench")
     assert git(art_root, "rev-parse", "HEAD") == local_head
     assert art.checkout_identity(art_root, coordination).main_relation == "ahead 1 / behind 1"
 
@@ -181,7 +185,7 @@ def sparse_sync_smoke(base: Path) -> None:
     pending.write_text('{"status":"land_pending"}\n')
     pending_head = git(art_root, "rev-parse", "HEAD")
     commit_remote(coordination, "README.md", b"main changed pending\n", "main changed pending")
-    art.ensure_art_worktree(coordination)
+    art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench")
     assert git(art_root, "rev-parse", "HEAD") == pending_head
     assert pending.exists() and ignored.read_bytes() == b"user workbench bytes\x00"
 
@@ -191,13 +195,40 @@ def sparse_sync_smoke(base: Path) -> None:
     art._git(art_root, "sparse-checkout", "disable")
     sentinel = art_root / "custodian/content/sprites/enemies/unrelated/large.png"
     sentinel.write_bytes(b"preserve dirty full-tree file")
-    try:
-        art.ensure_art_worktree(coordination)
-    except art.ArtWorktreeError as error:
-        assert "existing checkout was preserved" in str(error)
-    else:
-        raise AssertionError("dirty full-tree migration did not fail closed")
+    startup=art.ensure_art_worktree(coordination)
+    assert startup==art_root and not art._sparse_profile_healthy(art_root)
+    blocked=art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench")
+    assert blocked.status=="blocked" and blocked.dirty.get("user")
     assert sentinel.read_bytes() == b"preserve dirty full-tree file"
+
+
+def readiness_classification_smoke(base: Path) -> None:
+    _bare,coordination,_source=fixture(base)
+    art_root=art.ensure_art_worktree(coordination)
+    source=art_root/SOURCE; metadata=art_root/"custodian/game/actors/operator/operator.gd.uid"
+    source_bytes=source.read_bytes();metadata_bytes=metadata.read_bytes()
+    source.write_bytes(b"selected output-like dirty bytes")
+    metadata.write_bytes(b"pre-existing import metadata bytes")
+    unknown=art_root/"untracked-user-work.txt";unknown.write_text("preserve me")
+    readiness=art.inspect_publish_readiness(art_root,coordination,art_root/".ai/operator_animation_workbench",selected_paths={SOURCE})
+    assert readiness.status=="blocked"
+    assert readiness.dirty["selected_outputs"]==(SOURCE,)
+    assert "custodian/game/actors/operator/operator.gd.uid" in readiness.dirty["import_metadata"]
+    assert readiness.dirty["user"]==("untracked-user-work.txt",)
+    assert source.read_bytes()==b"selected output-like dirty bytes" and metadata.read_bytes()==b"pre-existing import metadata bytes"
+    assert unknown.read_text()=="preserve me"
+
+
+def startup_read_only_smoke(base: Path) -> None:
+    _bare,coordination,_source=fixture(base)
+    art_root=art.ensure_art_worktree(coordination)
+    initial=git(art_root,"rev-parse","HEAD")
+    commit_remote(coordination,"README.md",b"newer main\n","advance main")
+    assert art.ensure_art_worktree(coordination)==art_root
+    assert git(art_root,"rev-parse","HEAD")==initial,"reopening OPUI must not synchronize Git"
+    prepared=art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench")
+    assert prepared.status=="ready" and any("fast-forwarded" in item for item in prepared.preparations)
+    assert git(art_root,"rev-parse","HEAD")==git(art_root,"rev-parse","origin/main")
 
 
 def launcher_smoke(base: Path) -> None:
@@ -229,10 +260,11 @@ def launcher_smoke(base: Path) -> None:
 
 
 def lfs_scope_smoke(base: Path) -> None:
+    payload=b"hydrated PNG bytes"
     pointer = (
         b"version https://git-lfs.github.com/spec/v1\n"
-        b"oid sha256:" + b"0" * 64 + b"\n"
-        b"size 123\n"
+        b"oid sha256:" + hashlib.sha256(payload).hexdigest().encode() + b"\n"
+        b"size " + str(len(payload)).encode() + b"\n"
     )
     operator_png = base / "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_01/operator.png"
     weapon_source_png = base / "custodian/content/sprites/weapons/sword_cleaver/source/operator/heavy.png"
@@ -255,15 +287,23 @@ def lfs_scope_smoke(base: Path) -> None:
     pointer_path = hook_root / "custodian/content/sprites/operator/source/animations/idle.png"
     hook.parent.mkdir(parents=True)
     pointer_path.parent.mkdir(parents=True)
+    hook_root.mkdir(parents=True,exist_ok=True)
+    git(hook_root,"init","-b","main")
+    git(hook_root,"config","user.name","LFS Fixture")
+    git(hook_root,"config","user.email","lfs-fixture@example.invalid")
+    subprocess.run(["git","lfs","install","--local"],cwd=hook_root,check=True,capture_output=True)
+    (hook_root/".gitattributes").write_text("/custodian/content/sprites/operator/source/animations/idle.png filter=lfs diff=lfs merge=lfs -text\n")
     hook.write_bytes(b"user post-commit hook bytes\n")
+    pointer_path.write_bytes(payload)
+    git(hook_root,"add",".gitattributes",".githooks/post-commit","custodian/content/sprites/operator/source/animations/idle.png")
+    git(hook_root,"commit","-m","fixture LFS pointer")
     pointer_path.write_bytes(pointer)
     original_run = art.subprocess.run
 
     def lfs_stub(args, *, cwd=None, **kwargs):
         if args[:3] == ["git", "lfs", "checkout"]:
             hook.write_bytes(b"rewritten LFS post-commit hook\n")
-            pointer_path.write_bytes(b"hydrated PNG bytes")
-            return subprocess.CompletedProcess(args, 0, "", "")
+            return original_run(args, cwd=cwd, **kwargs)
         return original_run(args, cwd=cwd, **kwargs)
 
     art.subprocess.run = lfs_stub
@@ -272,12 +312,75 @@ def lfs_scope_smoke(base: Path) -> None:
     finally:
         art.subprocess.run = original_run
     assert hook.read_bytes() == b"user post-commit hook bytes\n"
-    assert pointer_path.read_bytes() == b"hydrated PNG bytes"
+    assert pointer_path.read_bytes() == payload
+
+
+def lfs_resolution_smoke(base: Path) -> None:
+    relative="custodian/content/audio/sfx/combat/fixture.wav"
+    sibling="custodian/content/audio/sfx/combat/sparse-omitted.wav"
+    payload=b"exact verified local resource payload"
+    sibling_payload=b"different LFS object absent from cache"
+    pointer=(b"version https://git-lfs.github.com/spec/v1\n"+
+             b"oid sha256:"+hashlib.sha256(payload).hexdigest().encode()+b"\n"+
+             b"size "+str(len(payload)).encode()+b"\n")
+    sibling_pointer=(b"version https://git-lfs.github.com/spec/v1\n"+
+             b"oid sha256:"+hashlib.sha256(sibling_payload).hexdigest().encode()+b"\n"+
+             b"size "+str(len(sibling_payload)).encode()+b"\n")
+
+    def make_repo(root: Path, *, cache: bool) -> None:
+        root.mkdir(parents=True,exist_ok=True); git(root,"init","-b","main")
+        git(root,"config","user.name","LFS Fixture");git(root,"config","user.email","lfs-fixture@example.invalid")
+        subprocess.run(["git","lfs","install","--local"],cwd=root,check=True,capture_output=True)
+        (root/".gitattributes").write_text(f"/{relative} filter=lfs diff=lfs merge=lfs -text\n/{sibling} filter=lfs diff=lfs merge=lfs -text\n")
+        (root/relative).parent.mkdir(parents=True,exist_ok=True)
+        (root/sibling).parent.mkdir(parents=True,exist_ok=True)
+        (root/relative).write_bytes(payload if cache else pointer)
+        (root/sibling).write_bytes(sibling_pointer)
+        git(root,"add",".gitattributes",relative,sibling);git(root,"commit","-m","LFS fixture")
+        if cache: (root/relative).write_bytes(pointer)
+
+    cached=base/"cached"
+    make_repo(cached,cache=True)
+    hydrated=art.hydrate_lfs_paths(cached,[relative])
+    assert hydrated==[relative] and (cached/relative).read_bytes()==payload
+    assert (cached/sibling).read_bytes()==sibling_pointer,"exact hydration must not expand sparse-omitted siblings"
+    assert not art._status_paths(cached)
+
+    target=base/"donor-target";make_repo(target,cache=False)
+    donor=base/"donor";donor.mkdir();git(donor,"init","-b","main")
+    git(donor,"config","user.name","Donor");git(donor,"config","user.email","donor@example.invalid")
+    (donor/relative).parent.mkdir(parents=True,exist_ok=True);(donor/relative).write_bytes(payload)
+    (donor/"unrelated.txt").write_text("donor-only bytes")
+    git(donor,"add",".");git(donor,"commit","-m","verified donor")
+    calls=[];original=art.subprocess.run
+    def record(args,**kwargs):
+        calls.append(list(args))
+        assert "pull" not in args and "fetch" not in args,"LFS readiness must never fetch from a network"
+        return original(args,**kwargs)
+    art.subprocess.run=record
+    try: hydrated=art.hydrate_lfs_paths(target,[relative],donor)
+    finally: art.subprocess.run=original
+    assert hydrated==[relative] and (target/relative).read_bytes()==payload
+    assert (target/sibling).read_bytes()==sibling_pointer and not art._status_paths(target)
+    assert (donor/"unrelated.txt").read_text()=="donor-only bytes"
+
+    bad=base/"bad-donor";bad.mkdir();git(bad,"init","-b","main")
+    git(bad,"config","user.name","Bad Donor");git(bad,"config","user.email","bad@example.invalid")
+    (bad/sibling).parent.mkdir(parents=True,exist_ok=True);(bad/sibling).write_bytes(b"wrong donor bytes")
+    git(bad,"add",".");git(bad,"commit","-m","bad donor")
+    try: art.hydrate_lfs_paths(target,[sibling],bad)
+    except art.ArtWorktreeError as error:
+        assert "REQUIRED LFS CONTENT UNAVAILABLE LOCALLY" in str(error) and "sha256:" in str(error)
+    else: raise AssertionError("mismatched or missing donor content was accepted")
+    assert (target/sibling).read_bytes()==sibling_pointer and not art._status_paths(target)
 
 
 def smoke() -> None:
     with tempfile.TemporaryDirectory(prefix="operator-art-lfs-scope-") as temporary:
         lfs_scope_smoke(Path(temporary))
+
+    with tempfile.TemporaryDirectory(prefix="operator-art-lfs-resolution-") as temporary:
+        lfs_resolution_smoke(Path(temporary))
 
     with tempfile.TemporaryDirectory(prefix="operator-art-launcher-") as temporary:
         launcher_smoke(Path(temporary))
@@ -318,6 +421,8 @@ def smoke() -> None:
         art._git(art_root, "sparse-checkout", "disable")
         ignored.write_bytes(b"modified user workbench bytes\x00")
         assert art.ensure_art_worktree(coordination) == art_root
+        assert not art._sparse_profile_healthy(art_root), "startup must not mutate sparse profile"
+        assert art.prepare_publish_checkout(art_root,coordination,art_root/".ai/operator_animation_workbench").status=="ready"
         assert ignored.read_bytes() == b"modified user workbench bytes\x00"
         assert art._sparse_profile_healthy(art_root)
         assert not (art_root / "custodian/content/sprites/enemies/unrelated/large.png").exists()
@@ -432,9 +537,22 @@ def smoke() -> None:
             raise AssertionError("rejected landing did not become resumable")
         pending = workspace / art.PENDING_RELATIVE.name
         assert pending.exists() and not art._status_paths(art_root)
+        receipt=json.loads(pending.read_text())
+        assert receipt.get("publication_identity",{}).get("patch_id")
+        original_commit=receipt["commit"]
+        git(art_root,"commit","--amend","-m","rewritten pending candidate")
+        assert git(art_root,"rev-parse","HEAD")!=original_commit
+        equivalent_head=git(art_root,"rev-parse","HEAD")
+        extra=art_root/"custodian/content/sprites/operator/runtime/extra-publication-output.txt"
+        extra.write_text("must not relink\n")
+        git(art_root,"add","--sparse",str(extra.relative_to(art_root)));git(art_root,"commit","-m","unexpected extra output")
+        try: art.retry_pending_land(art_root,pending)
+        except art.ArtWorktreeError as error: assert "stable publication identity does not match" in str(error)
+        else: raise AssertionError("receipt relink accepted a candidate with an extra changed path")
+        git(art_root,"reset","--hard",equivalent_head)
         hook.unlink()
         resumed = art.retry_pending_land(art_root, pending)
-        assert resumed and resumed["status"] == "landed" and not pending.exists()
+        assert resumed and resumed["status"] == "landed" and resumed.get("identity_relinked") and not pending.exists()
 
     with tempfile.TemporaryDirectory(prefix="operator-art-migration-") as temporary:
         _bare, coordination, _source = fixture(Path(temporary))
@@ -461,6 +579,12 @@ def smoke() -> None:
 
     with tempfile.TemporaryDirectory(prefix="operator-art-sparse-sync-") as temporary:
         sparse_sync_smoke(Path(temporary))
+
+    with tempfile.TemporaryDirectory(prefix="operator-art-readiness-") as temporary:
+        readiness_classification_smoke(Path(temporary))
+
+    with tempfile.TemporaryDirectory(prefix="operator-art-startup-readonly-") as temporary:
+        startup_read_only_smoke(Path(temporary))
 
     with tempfile.TemporaryDirectory(prefix="operator-art-migration-guard-") as temporary:
         _bare, coordination, _source = fixture(Path(temporary))

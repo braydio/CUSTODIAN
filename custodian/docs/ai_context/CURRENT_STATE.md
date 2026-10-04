@@ -114,7 +114,7 @@ coverage lives in `custodian/tools/validation/asset_workbench_ui_smoke.py` and
 is selected by the `asset_workbench_ui` validation owner. Sequencing remains in
 `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md`.
 
-## Operator Workbench Isolated Art Checkout (2026-09-28)
+## Operator Workbench Isolated Art Checkout (2026-10-04)
 
 The sparse authoring checkout includes `.githooks` and the required root
 `tools/validate_filenames.py` helper. Fixture commits run the real pre-commit
@@ -140,9 +140,16 @@ with an ignored `LAND PENDING` receipt; retrying the same animation resumes
 landing without exporting pixels again. A successful land refreshes OPUI and
 best-effort fast-forwards a clean coordination checkout. Coordination edits
 remain preserved and are reported as a pending sync.
-On reuse, OPUI fetches `origin/main` and fast-forwards only a clean idle branch
-with zero local commits ahead and no `LAND PENDING` receipt. Dirty, ahead,
-diverged, or pending state is shown and preserved. Clean legacy full-tree art
+On reuse, OPUI startup is read-only and still mounts when publication is
+blocked. The Publish review projects checkout identity/relation, dirty path
+categories, sparse health, required LFS/missing dependencies, transaction
+receipts, and selected source freshness. Explicit Publish preparation fetches
+`origin/main` and fast-forwards only a clean idle branch with zero local
+commits ahead and no `LAND PENDING` receipt; it also reapplies the sparse
+profile and hydrates exact checked-out LFS files from the local cache or an
+exact hash/size-verified same-path coordination donor. No network LFS fetch,
+stash, rebase, reset, or clean is performed. Dirty, ahead, diverged, or pending
+state is shown and preserved. Clean legacy full-tree art
 checkouts migrate in place; ignored `.ai/operator_animation_workbench` bytes
 survive migration and synchronization. Dirty legacy checkouts fail closed.
 
@@ -150,11 +157,23 @@ First-run migration copies legacy ignored `.ai/operator_animation_workbench`
 state into an empty art checkout, rewrites absolute checkout paths in JSON, and
 preserves the coordination copy. It refuses to migrate while Aseprite is
 running. Tracked coordination-side Operator edits are reported, never migrated.
-Operator LFS art, including weapon-owned `source/operator` and `runtime/operator`
-overlays consumed by the Workbench, is filled from the local cache only; no network
-download is triggered by `opui` setup. See
+Required checked-out LFS dependencies are materialized only during explicit
+Publish preparation: shared cache first, then an exact hash/size-verified
+same-path local checkout donor. Missing content remains an actionable blocker;
+OPUI setup never downloads LFS objects. See
 `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md` and
 `custodian/tools/validation/operator_art_worktree_smoke.py`.
+
+`LAND PENDING` receipts include a stable publication identity over changed
+paths and before/after blob hashes, so retry can prove and relink an equivalent
+commit after harmless commit-ID rewriting. The saved Aseprite document's
+physical frame count, canvas, and preview timing are checked before Edit and
+Publish. A pending frame migration is reconciled only when physical document
+bytes still match the canonical source/workspace contract; manifest and
+document backups plus a local recovery receipt preserve that proof. Publish
+journals retain primary and recovery failures separately and clear
+`RECOVERY_REQUIRED` only after source/runtime/resource/import metadata,
+document bytes, and Git cleanliness preimages verify.
 
 ## Asset Requirements Pipeline (2026-09-28)
 

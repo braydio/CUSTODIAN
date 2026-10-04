@@ -365,7 +365,6 @@ lost when the ephemeral worktree is removed.
 
 <!-- task_packet_index:managed:start -->
 - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — Make Operator Workbench browser refresh and page-3 PREVIEW reload transactional from the user's perspective: repeated F5, source scans, live Workbench update...
-- `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — Make Operator Workbench publication behave as one self-preparing, fail-closed transaction from the artist's perspective: before canonical mutation begins, OP...
 - `REVIEW_OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — Independently verify that the landed browser/PREVIEW hardening makes F5 and asynchronous refresh latest-request-wins without creating a second state authorit...
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — Independently verify that the landed Workbench publication hardening converts the recent serial Git/LFS/manifest/import failure chain into one bounded readin...
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — Independently verify corrections for findings R0-01 through R0-05 without reopening parent implementation scope.
@@ -448,7 +447,6 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — paired independent review of first-set geometry, navigation, Road presentation reuse, inert handoff markers, and human blockout overview approval.
 - `TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — P1 first-pass Solarium I Route Vista sample ingest/presentation: three neutral V2 candidate contents from the new archway-view drop, exact 465×280 registration, playtest sampler, and human capture review.
 - `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — paired independent review of vista provenance, normalization, registration, presentation ownership, and recorded human approval.
-- `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — P0 publication/recovery hardening: keep OPUI usable when publish is blocked; classify/preflight checkout+sparse+LFS state; reconcile stable pending-receipt identity after harmless commit rewrites; reconcile saved-document/frame-contract drift without losing edits; preserve primary+rollback errors; and clear recovery markers only after verified file/state restoration. Local-only LFS remains shared-cache first, exact verified hydrated donor second.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — paired P0 code/architecture/asset-pipeline/workflow review of the publish-readiness and clean-or-RECOVERY_REQUIRED contract.
 - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — P0 browser/PREVIEW concurrency hardening: accepted browser snapshot, latest-request-wins refresh, page-3 atomic F5 replacement, stale async rejection, and deterministic race coverage; depends on the publish-readiness review.
 - `REVIEW_OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — paired P0 code/architecture/runtime/workflow review of browser/PREVIEW refresh hardening and the page-3 crash-class regressions.

@@ -56,6 +56,128 @@ def state(manifest, wb):
     stale=any(not (m.REPO_ROOT/x["source_contract"]["path"]).exists() or m.file_sha256(m.REPO_ROOT/x["source_contract"]["path"])!=x["source_contract"]["file_sha256"] for x in manifest["layers"])
     return "EDITED+STALE" if edited and stale else "EDITED" if edited else "STALE" if stale else "CLEAN"
 
+def source_contract_freshness(manifest, repo_root=None):
+    """Return per-binding drift from the exact canonical source contract."""
+    root=Path(repo_root or m.REPO_ROOT); problems={}; timeline=manifest.get("timeline",{})
+    for binding in manifest.get("layers",[]):
+        contract=binding.get("source_contract",{}); relative=str(contract.get("path",binding.get("source_path","")))
+        label="/".join(str(manifest.get("identity",{}).get(key,"")) for key in ("profile","group","action","direction"))
+        label=f"{label}/{binding.get('layer',binding.get('binding_id','layer'))} ({relative or 'missing path'})"
+        path=root/relative
+        if not relative or not path.is_file():
+            problems[label]="canonical source is missing"
+            continue
+        try:
+            actual_hash=m.file_sha256(path)
+            if actual_hash!=contract.get("file_sha256",binding.get("source_file_sha256")):
+                problems[label]="canonical source bytes changed since this Workbench baseline"
+                continue
+            fw,fh=map(int,contract.get("frame_size",binding.get("frame_size",(0,0))))
+            with Image.open(path) as source: size=source.size
+            frames=int(contract.get("frames",binding.get("frames",0)))
+            if fw<=0 or fh<=0 or size!=(fw*frames,fh):
+                problems[label]=f"canonical strip is {size}, expected {frames} frames of {fw}x{fh}"
+                continue
+            expected_pixel=contract.get("pixel_sha256",binding.get("source_pixel_sha256"))
+            if expected_pixel and m.pixel_sha256(path)!=expected_pixel:
+                problems[label]="canonical pixel identity changed since this Workbench baseline"
+                continue
+            if binding.get("layer")==timeline.get("clock_owner") and timeline.get("timing_authority"):
+                timing_path=m.BUILDER.timing_sidecar_path(path)
+                try: timing=json.loads(timing_path.read_text(encoding="utf-8"))
+                except (OSError,json.JSONDecodeError): timing=None
+                expected=m.timing_payload_from_timeline({**timeline,"workspace_clock_frames":timeline.get("source_clock_frames",frames)})
+                if timing is None or expected is None or any(timing.get(key)!=expected.get(key) for key in ("frames","loop","durations")) or abs(float(timing.get("fps",0))-float(expected["fps"]))>1e-9:
+                    problems[label]="canonical timing sidecar changed since this Workbench baseline"
+        except (OSError,ValueError) as error:
+            problems[label]=f"canonical source contract could not be read: {error}"
+    return problems
+
+def _git_metadata_preimages(repo_root, backup_root):
+    """Capture clean, tracked import metadata bytes before canonical mutation."""
+    if not (Path(repo_root)/".git").exists(): return []
+    result=subprocess.run(["git","ls-files","-t","-z","--","*.import","*.uid"],cwd=repo_root,capture_output=True,check=False)
+    if result.returncode: return []
+    records=[]
+    for raw in (result.stdout or b"").split(b"\0"):
+        if not raw: continue
+        flag,_,path_bytes=raw.partition(b" ")
+        if flag==b"S": continue
+        relative=path_bytes.decode("utf-8","surrogateescape")
+        status=subprocess.run(["git","status","--porcelain=v1","--",relative],cwd=repo_root,capture_output=True,check=False)
+        if status.stdout.strip():
+            raise m.WorkbenchError(f"PRE-EXISTING IMPORT METADATA CHANGE BLOCKS PUBLISH\n{relative}")
+        path=Path(repo_root)/relative
+        if not path.is_file():
+            raise m.WorkbenchError(f"TRACKED IMPORT METADATA IS MISSING\n{relative}")
+        saved=Path(backup_root)/relative; saved.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(path,saved)
+        records.append({"path":relative,"backup_path":str(saved),"existed":True,"sha256":m.file_sha256(path),"restored":False})
+    return records
+
+def _restore_import_metadata(journal, repo_root, protected_paths=()):
+    """Restore only clean tracked metadata changed during this transaction."""
+    errors=[]; protected=set(protected_paths)
+    for item in journal.get("import_metadata_preimages",[]):
+        if item["path"] in protected: continue
+        path=Path(repo_root)/item["path"]
+        current=path.read_bytes() if path.is_file() else None
+        backup=Path(item["backup_path"])
+        original=backup.read_bytes() if backup.is_file() else None
+        if original is None:
+            errors.append(item["path"]+": preimage backup missing"); continue
+        if current!=original:
+            try:
+                temporary=path.with_name(path.name+".workbench-restore-tmp"); temporary.write_bytes(original); os.replace(temporary,path)
+            except OSError as error:
+                errors.append(item["path"]+f": {error}"); continue
+        item["restored"]=True
+        item["post_sha256"]=m.file_sha256(path)
+    return errors
+
+def _git_changed_paths(repo_root):
+    if not (Path(repo_root)/".git").exists(): return None
+    result=subprocess.run(["git","status","--porcelain=v1","-z","--untracked-files=all"],cwd=repo_root,capture_output=True,check=False)
+    if result.returncode: return None
+    fields=(result.stdout or b"").split(b"\0"); paths=set(); index=0
+    while index<len(fields):
+        entry=fields[index]; index+=1
+        if not entry: continue
+        if len(entry)>=4 and entry[:2]!=b"  ":
+            paths.add(entry[3:].decode("utf-8","surrogateescape"))
+            if b"R" in entry[:2] or b"C" in entry[:2]:
+                if index<len(fields) and fields[index]:
+                    paths.add(fields[index].decode("utf-8","surrogateescape"))
+                index+=1
+    return paths
+
+def _failure_record(error, stage):
+    record={"stage":stage,"operation":type(error).__name__,"message":str(error)}
+    if isinstance(error,subprocess.CalledProcessError):
+        record.update({"return_code":error.returncode,"command":error.cmd,"stderr":str(error.stderr or "")[-4000:],"stdout":str(error.stdout or "")[-2000:]})
+    return record
+
+def _verify_rollback_preimages(journal, repo_root, document_path, document_sha256):
+    """Return exact unresolved paths unless every transaction-owned preimage is proved."""
+    root=Path(repo_root); unresolved=[]
+    def matches(relative, expected):
+        path=root/relative
+        actual=m.file_sha256(path) if path.is_file() else None
+        return actual==expected
+    for item in journal.get("sources",[]):
+        old=item["old_path"]
+        if not matches(old,item.get("old_sha256")): unresolved.append(old)
+        target=item["target_path"]
+        if target!=old and (root/target).exists(): unresolved.append(target)
+    for item in journal.get("resources",[]):
+        if not matches(item["path"],item.get("old_sha256")): unresolved.append(item["path"])
+    for item in journal.get("import_metadata_preimages",[]):
+        if not matches(item["path"],item.get("sha256")): unresolved.append(item["path"])
+    if document_sha256 and (not Path(document_path).is_file() or m.file_sha256(document_path)!=document_sha256):
+        unresolved.append(str(document_path))
+    changed=_git_changed_paths(root)
+    if changed: unresolved.extend(sorted(changed))
+    return sorted(set(unresolved))
+
 def _baseline(plan, ws):
     base=ws/"baseline"; base.mkdir(parents=True,exist_ok=True); cw,ch=plan["canvas"].values(); frames=plan["timeline"]["document_frames"]
     composite=Image.new("RGBA",(cw*frames,ch))
@@ -77,6 +199,56 @@ def aseprite_run(binary, manifest, mode):
         message = detail[-4000:] or f"Aseprite exited with status {exc.returncode}"
         raise m.WorkbenchError("ASEPRITE WORKBENCH EXPORT FAILED\n" + message) from exc
 
+def reconcile_saved_document_contract(data, manifest_path, aseprite=None):
+    """Inspect saved document timing and repair only a provably obsolete frame migration."""
+    manifest_path=Path(manifest_path); ws=manifest_path.parent; wb=ws/"workbench.aseprite"
+    if not wb.is_file(): return data
+    report_path=ws/".document_contract.json"
+    try:
+        aseprite_run(resolve_aseprite(aseprite,True),manifest_path,"inspect_contract")
+        report=json.loads(report_path.read_text(encoding="utf-8"))
+    finally:
+        report_path.unlink(missing_ok=True)
+    timeline=data.get("timeline",{}); migration=data.get("pending_migration")
+    physical=int(report.get("frames",0)); dimensions=(int(report.get("width",0)),int(report.get("height",0)))
+    canvas=(int(data.get("canvas",{}).get("width",0)),int(data.get("canvas",{}).get("height",0)))
+    contracts=[int(binding.get("workspace_contract",{}).get("frames",0)) for binding in data.get("layers",[])]
+    if dimensions!=canvas:
+        raise m.WorkbenchError(f"SAVED ASEPRITE CONTRACT MISMATCH\nphysical canvas {dimensions}, manifest canvas {canvas}; saved document preserved. Use the explicit canvas migration flow.")
+    durations=[float(value) for value in report.get("durations",[])]
+    expected_duration=1.0/float(timeline.get("preview_fps",timeline.get("fps",0)) or 1)
+    timing_ok=len(durations)==physical and all(abs(value-expected_duration)<=0.001 for value in durations)
+    actual_contract=(physical==int(timeline.get("source_clock_frames",-1)) and bool(contracts) and physical==max(contracts))
+    proposed_contract=(bool(migration) and migration.get("kind","frame_count")=="frame_count" and
+                       physical==int(timeline.get("workspace_clock_frames",-1)) and bool(contracts) and
+                       physical==max(contracts) and int(migration.get("new_clock_frames",-1))==physical)
+    if migration and migration.get("kind","frame_count")=="frame_count" and actual_contract and timing_ok:
+        # Only the manifest is rewritten. Back up both user document and manifest
+        # first, and retain a local receipt proving the edited document hash.
+        stamp=datetime.now().strftime("%Y%m%dT%H%M%S%f")
+        backup=ws/"backups"/f"contract_reconcile_{stamp}"; backup.mkdir(parents=True,exist_ok=False)
+        shutil.copy2(wb,backup/"workbench.aseprite"); shutil.copy2(manifest_path,backup/"workbench.json")
+        receipt={"schema":"custodian.operator_workbench_contract_reconcile.v1","document_sha256":m.file_sha256(wb),"document_frames":physical,"document_durations":durations,"old_timeline":timeline,"obsolete_pending_migration":migration,"backup_manifest":str(backup/"workbench.json"),"backup_document":str(backup/"workbench.aseprite")}
+        recovery=ws/"recovery"; recovery.mkdir(parents=True,exist_ok=True)
+        (recovery/f"contract_reconcile_{stamp}.json").write_text(json.dumps(receipt,indent=2)+"\n",encoding="utf-8")
+        data["timeline"]["workspace_clock_frames"]=physical
+        data["timeline"]["document_frames"]=physical
+        data["timeline"]["frames"]=physical
+        data["pending_migration"]=None
+        save(manifest_path,data)
+        return data
+    expected_frames=int(timeline.get("document_frames",0))
+    if physical!=expected_frames or not timing_ok or (migration and not actual_contract and not proposed_contract):
+        pending=f"; pending migration proposes {migration.get('new_clock_frames')} frames" if migration else ""
+        raise m.WorkbenchError(
+            "SAVED ASEPRITE FRAME CONTRACT MISMATCH\n"
+            f"physical document: {physical} frames; manifest document: {expected_frames}; "
+            f"source clock: {timeline.get('source_clock_frames')}; workspace clock: {timeline.get('workspace_clock_frames')}; "
+            f"binding contracts: {contracts}; uniform manifest timing: {'yes' if timing_ok else 'no'}{pending}. "
+            "Saved document bytes were preserved; use the explicit frame migration flow."
+        )
+    return data
+
 def export_preview(manifest, aseprite=None):
     """Export saved workbench pixels into ignored review cache only."""
     manifest=Path(manifest); data=load(manifest); ws=manifest.parent
@@ -94,7 +266,7 @@ def export_preview(manifest, aseprite=None):
 def ensure(profile,action,direction,group="",weapon="",linked_profile="",root=DEFAULT_ROOT,aseprite=None):
     plan=m.build_plan(profile,action,direction,group,weapon,linked_profile); ws=workspace(root,plan["identity"]); mf=ws/"workbench.json"; wb=ws/"workbench.aseprite"
     if mf.exists() and wb.exists():
-        old=load(mf); m.assert_context(old,plan); st=state(old,wb)
+        old=load(mf); m.assert_context(old,plan); old=reconcile_saved_document_contract(old,mf,aseprite); st=state(old,wb)
         if "STALE" in st: raise m.WorkbenchError("WORKBENCH STALE\ncanonical source changed; run operator anim refresh")
         return old,ws
     ws.mkdir(parents=True,exist_ok=True); plan["aseprite"]["path"]=str(wb.resolve()); _baseline(plan,ws); save(mf,plan)
@@ -220,9 +392,19 @@ def _operator_scene_consistency():
 ## from one direction, a pose that is not symmetric -- because a mirror would
 ## silently discard that.
 def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None,mirror_counterpart=True):
-    ws=manifest.parent; data=load(manifest); st=state(data,ws/"workbench.aseprite")
+    ws=manifest.parent; data=load(manifest); data=reconcile_saved_document_contract(data,manifest,aseprite); st=state(data,ws/"workbench.aseprite")
     if requested: m.assert_context(data,requested)
-    if "STALE" in st and not force_stale: raise m.WorkbenchError(f"publish refused: {st}; use scary --force-stale-source only after review")
+    pending=[path for path in sorted((ws/"transactions").glob("*/transaction.json")) if path.is_file()]
+    for journal_path in reversed(pending):
+        try: previous=json.loads(journal_path.read_text(encoding="utf-8"))
+        except (OSError,json.JSONDecodeError): raise m.WorkbenchError(f"WORKBENCH RECOVERY REQUIRED\nunreadable transaction journal: {journal_path}")
+        if previous.get("state")=="RECOVERY_REQUIRED":
+            raise m.WorkbenchError(f"WORKBENCH RECOVERY REQUIRED\nresolve transaction journal before publishing: {journal_path}")
+    freshness=source_contract_freshness(data)
+    if freshness and not force_stale:
+        details="\n".join(f"- {identity}: {reason}" for identity,reason in freshness.items())
+        raise m.WorkbenchError("WORKBENCH REBASE/REFRESH REQUIRED\n"+details+"\nRefresh the selected Workbench before export or canonical source mutation.")
+    if "STALE" in st and not force_stale: raise m.WorkbenchError(f"WORKBENCH REBASE/REFRESH REQUIRED\n{st}; refresh the selected Workbench before export or canonical source mutation")
     stamp=datetime.now().strftime("%Y%m%dT%H%M%S"); data["export_stamp"]=stamp; save(manifest,data); aseprite_run(resolve_aseprite(aseprite,True),manifest,"export")
     counterpart=horizontal_counterpart(data["identity"]["direction"])
     if mirror_counterpart and counterpart is None:
@@ -252,7 +434,7 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         if dst!=old and dst.exists(): raise m.WorkbenchError(f"target frame contract already exists: {dst}")
     tx=ws/"transactions"/stamp; backup=tx/"backups"; source_backup=backup/"sources"; resource_backup=backup/"resources"; source_backup.mkdir(parents=True,exist_ok=True); resource_backup.mkdir(parents=True,exist_ok=True)
     journal_path=tx/"transaction.json"
-    journal={"transaction_id":stamp,"state":"PREPARED","sources":[],"resources":[],"pending_migration":migration,"validation_stages_completed":[],"mirror_promotion":{"enabled":bool(mirror_counterpart),"source_direction":data["identity"]["direction"],"target_direction":counterpart if mirror_counterpart else None,"bindings":[b["binding_id"] for b in data["layers"]] if mirror_counterpart else []}}
+    journal={"transaction_id":stamp,"state":"PREPARED","sources":[],"resources":[],"pending_migration":migration,"validation_stages_completed":[],"import_metadata_preimages":[],"restored_import_metadata":[],"unresolved_paths":[],"primary_failure":None,"recovery_failure":None,"mirror_promotion":{"enabled":bool(mirror_counterpart),"source_direction":data["identity"]["direction"],"target_direction":counterpart if mirror_counterpart else None,"bindings":[b["binding_id"] for b in data["layers"]] if mirror_counterpart else []}}
     for item in candidates:
         b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
         prefix="mirror__" if item["mirror"] else ""
@@ -267,7 +449,16 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
     for resource in GENERATED_OPERATOR_RESOURCES:
         saved=resource_backup/m.rel(resource); saved.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(resource,saved)
         journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":m.rel(saved)})
+    saved_document=ws/"workbench.aseprite"
+    document_preimage=m.file_sha256(saved_document) if saved_document.is_file() else None
+    journal["saved_document_path"]=str(saved_document)
+    journal["saved_document_sha256"]=document_preimage
+    journal["import_metadata_preimages"]=_git_metadata_preimages(m.REPO_ROOT,backup/"import-metadata")
+    journal["initial_git_paths"]=sorted(_git_changed_paths(m.REPO_ROOT) or [])
+    if journal["initial_git_paths"]:
+        raise m.WorkbenchError("PUBLISH BLOCKED BEFORE SOURCE MUTATION\npre-existing Git changes: "+", ".join(journal["initial_git_paths"]))
     save(journal_path,journal)
+    current_stage="source_swap"
     try:
         for item in candidates:
             b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
@@ -284,17 +475,47 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
                     timing_path=m.BUILDER.timing_sidecar_path(item["target"])
                     timing_path.write_text(json.dumps(timing_payload,indent=2)+"\n",encoding="utf-8")
         _journal_stage(journal_path,journal,"SOURCE_SWAPPED","source_swap")
+        current_stage="runtime_build"
         subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
         _journal_stage(journal_path,journal,"RUNTIME_BUILT","runtime_build")
+        current_stage="godot_import"
+        journal["import_window_before_paths"]=sorted(_git_changed_paths(m.REPO_ROOT) or [])
+        save(journal_path,journal)
         _godot_import(); _journal_stage(journal_path,journal,"GODOT_IMPORTED","godot_import")
+        journal["import_window_after_paths"]=sorted(_git_changed_paths(m.REPO_ROOT) or [])
+        changed_in_import=set(journal["import_window_after_paths"])-set(journal["import_window_before_paths"])
+        metadata_paths={item["path"] for item in journal["import_metadata_preimages"]}
+        protected=set()
+        for item in journal["sources"]:
+            for key in ("target_path","old_path"):
+                relative=Path(item[key]).as_posix()
+                protected.update({relative,relative+".import",str(Path(relative).with_suffix(".animation.json"))})
+                if "/source/animations/" in relative:
+                    runtime=relative.replace("/source/animations/","/runtime/animations/",1)
+                    protected.update({runtime,runtime+".import",str(Path(runtime).with_suffix(".animation.json"))})
+        protected|={item["path"] for item in journal["resources"]}
+        unexpected_import=sorted(path for path in changed_in_import if path not in metadata_paths and path not in protected)
+        if unexpected_import:
+            journal["unresolved_paths"].extend(unexpected_import)
+            raise m.WorkbenchError("IMPORT RECOVERY REQUIRED\nGodot import changed unexpected non-metadata paths: "+", ".join(unexpected_import))
+        current_stage="catalog_resource_generation"
         _catalog_build()
         for item in journal["resources"]: item["target_sha256"]=m.file_sha256(m.REPO_ROOT/item["path"])
         _journal_stage(journal_path,journal,"RESOURCES_BUILT","catalog_resource_generation")
+        current_stage="mandatory_validation"
         for cmd in _validation_commands(data,full_validate):
             subprocess.run(cmd,check=True,cwd=m.REPO_ROOT)
             _journal_stage(journal_path,journal,journal["state"],"validation:"+Path(cmd[-1]).name)
+        current_stage="import_metadata_restore"
+        metadata_errors=_restore_import_metadata(journal,m.REPO_ROOT,protected)
+        journal["restored_import_metadata"]=[item["path"] for item in journal["import_metadata_preimages"] if item.get("restored")]
+        if metadata_errors:
+            journal["unresolved_paths"].extend(metadata_errors)
+            raise m.WorkbenchError("IMPORT METADATA RECOVERY REQUIRED\n"+"\n".join(metadata_errors))
         _journal_stage(journal_path,journal,"VALIDATED","mandatory_validation")
-    except Exception:
+    except Exception as primary_error:
+        journal["primary_failure"]=_failure_record(primary_error,current_stage)
+        save(journal_path,journal)
         try:
             for item in candidates:
                 b,dst,old=item["binding"],item["target"],item["old"]
@@ -312,9 +533,30 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/m.rel(resource),resource)
             subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
             _godot_import(); _catalog_build(); _operator_scene_consistency()
-            _journal_stage(journal_path,journal,"ROLLED_BACK","rollback_consistency")
-        except Exception: journal["state"]="RECOVERY_REQUIRED"
-        save(journal_path,journal); raise
+            recovery_errors=_restore_import_metadata(journal,m.REPO_ROOT)
+            if recovery_errors:
+                journal["recovery_failure"]={"stage":"rollback_consistency","message":"; ".join(recovery_errors)}
+                journal["unresolved_paths"].extend(recovery_errors)
+                journal["state"]="RECOVERY_REQUIRED"
+            else:
+                unresolved=_verify_rollback_preimages(journal,m.REPO_ROOT,saved_document,document_preimage)
+                if unresolved:
+                    journal["state"]="RECOVERY_REQUIRED"
+                    journal["unresolved_paths"]=sorted(set(journal.get("unresolved_paths",[]))|set(unresolved))
+                    journal["recovery_failure"]={"stage":"rollback_preimage_verification","message":"rollback did not prove all transaction preimages"}
+                else:
+                    _journal_stage(journal_path,journal,"ROLLED_BACK","rollback_consistency")
+        except Exception as recovery_error:
+            journal["state"]="RECOVERY_REQUIRED"
+            journal["recovery_failure"]=_failure_record(recovery_error,"rollback_consistency")
+            changed=_git_changed_paths(m.REPO_ROOT) or set()
+            journal["unresolved_paths"]=sorted(set(journal.get("unresolved_paths",[]))|changed)
+        save(journal_path,journal)
+        message=f"WORKBENCH PUBLISH FAILED at {current_stage}\n{primary_error}"
+        if journal.get("recovery_failure"):
+            message+="\nRECOVERY FAILED: "+str(journal["recovery_failure"].get("message","unknown recovery error"))
+            message+="\nUnresolved paths: "+", ".join(journal.get("unresolved_paths",[]))
+        raise m.WorkbenchError(message) from primary_error
     for item in candidates:
         if item["mirror"]: continue
         b,dst=item["binding"],item["target"]

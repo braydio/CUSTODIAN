@@ -57,8 +57,18 @@ Workbench state, OPUI copies that state once, preserves the original copy, and
 rewrites checkout-root paths in JSON manifests. Migration pauses while an
 Aseprite process is open. Tracked coordination changes are never copied into
 the art checkout; the launcher reports them for explicit recovery. LFS-backed
-Operator source/runtime art is hydrated from the local cache only, without an
-implicit network fetch.
+Operator source/runtime art is hydrated only during explicit Publish
+preparation, without an implicit network fetch. Opening OPUI over an existing
+art checkout is read-only and mounts even when publication is blocked. The
+Publish review first projects structured checkout identity, branch relation,
+pending land/transaction state, dirty path classes, sparse health, checked-out
+dependency materialization, and selected source-contract freshness. It may
+prepare only a clean fast-forward, reapply the authored sparse profile, and
+hydrate exact checked-out LFS paths from the local object cache or a same-path
+coordination checkout file whose SHA-256 and byte size match the target LFS
+pointer. It never fetches LFS, stashes, rebases, resets, cleans, or erases user
+changes. Final confirmation rechecks readiness immediately before canonical
+mutation.
 
 The persistent art worktree uses the worktree-local `operator-authoring-v1`
 sparse profile. It includes repository Git hooks and their required
@@ -67,13 +77,28 @@ execute the cross-platform filename gate inside the art checkout. It keeps Opera
 validation dependencies, canonical Operator art/data, Operator-owned weapon
 art, and the Workbench plan while leaving reports, asset-drop material, and
 unrelated large art trees out of the checkout. Ordinary coordination worktrees
-remain full-tree. On reuse, OPUI fetches `origin/main`; it fast-forwards only a
-clean art branch with no pending landing and no local commits ahead. Dirty,
+remain full-tree. On reuse, OPUI does not synchronize the art branch; explicit
+Publish preparation fetches `origin/main` and fast-forwards only a clean art
+branch with no pending landing and no local commits ahead. Dirty,
 ahead, diverged, and `LAND PENDING` states are preserved and shown in the
 status line. Safe synchronization reapplies the profile and retains ignored
 `.ai/operator_animation_workbench` files byte-for-byte. A dirty full-tree
 checkout fails closed before sparse migration so tracked or untracked work is
 not removed.
+
+`LAND PENDING` receipts record a stable changed-path and before/after blob
+identity. If a harmless history rewrite changes the candidate commit ID, retry
+relinks only when that identity matches exactly; added, missing, or changed
+publication paths remain blocked. Saved Aseprite frame count, canvas, and
+uniform preview timing are checked before Edit/Publish. A stale pending frame
+migration can be reconciled in manifest metadata only when the saved document
+still matches the source/workspace contract; both document and manifest are
+backed up and a local receipt records the proof. Other mismatches preserve the
+document and require the explicit migration flow. A failed publish records
+primary and recovery failures separately. `ROLLED_BACK` is written only after
+source, generated resource, tracked import metadata, saved document, and Git
+cleanliness preimages are verified; otherwise `RECOVERY_REQUIRED` retains the
+unresolved paths.
 
 The browser has exactly one node per semantic profile/group/action and one leaf
 per direction. Only selected ancestry expands automatically; manual expansion

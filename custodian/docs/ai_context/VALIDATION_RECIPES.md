@@ -87,7 +87,10 @@ python3 custodian/tools/validation/operator_art_worktree_smoke.py
 
 This proves the dedicated checkout lifecycle, ignored-workspace migration guard,
 selected-source conflict refusal, exact publication staging, safe landing, and
-retry without Workbench re-export.
+retry without Workbench re-export. It also proves clean-behind Publish
+preparation, read-only startup on profile drift, path-scoped local-cache and
+verified donor LFS hydration, refusal of mismatched/missing donor bytes, and
+stable `LAND PENDING` identity relinking after a commit-ID rewrite.
 It also tests the `operator-authoring-v1` sparse profile, clean full-tree
 migration, FF-only idle synchronization, unrelated-path omission, selected
 Operator updates, and dirty/ahead/`LAND PENDING` preservation. Use a temporary
@@ -1635,8 +1638,18 @@ From the repository root:
 python3 custodian/tools/validation/operator_art_agent_smoke.py
 python3 custodian/tools/validation/operator_animation_workbench_smoke.py
 python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py
+python3 custodian/tools/validation/operator_workbench_ui_smoke.py
+python3 custodian/tools/validation/operator_art_worktree_smoke.py
 python3 custodian/tools/validation/run_validation.py --changed --json
 ```
+
+The Workbench publisher smoke also checks saved-document contract inspection,
+byte-preserving obsolete frame-migration reconciliation, tracked import metadata
+restoration, and rollback receipts that preserve the primary failure while
+verifying exact preimages before marking a transaction `ROLLED_BACK`. The UI
+smoke covers structured readiness projection; the art-worktree smoke covers
+read-only startup, safe preparation, local-only dependency resolution, and
+stable pending-land recovery.
 
 The aggregate Art Agent smoke runs service, semantic, and MCP coverage even
 without Aseprite, then runs the real headless bridge when available. Run the
