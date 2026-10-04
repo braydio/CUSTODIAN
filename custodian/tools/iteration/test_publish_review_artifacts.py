@@ -3,16 +3,22 @@
 
 from __future__ import annotations
 
+import importlib.util
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-from custodian.tools.iteration.publish_review_artifacts import (
-    _sample_evenly,
-    _slug,
-    discover_artifacts,
-    resolve_remote,
-)
+SCRIPT = Path(__file__).with_name("publish_review_artifacts.py")
+SPEC = importlib.util.spec_from_file_location("custodian_publish_review_artifacts_tests", SCRIPT)
+publisher = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = publisher
+SPEC.loader.exec_module(publisher)
+
+_sample_evenly = publisher._sample_evenly
+_slug = publisher._slug
+discover_artifacts = publisher.discover_artifacts
+resolve_remote = publisher.resolve_remote
 
 
 class PublishReviewArtifactsTest(unittest.TestCase):
