@@ -1,7 +1,7 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; AR1 spine implemented; AR2 refreshed and ARR1-gated; AR3 refresh-gated  
+**Status:** Design locked; AR1/ARR1 complete; AR2 ready; AR3 refresh-gated  
 **Last updated:** 2026-10-03  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
