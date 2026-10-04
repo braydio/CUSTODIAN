@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-workbench-sparse-art-checkout-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-workbench-sparse-art-checkout-review-corrections-1`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-sparse-art-checkout-review-corrections-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1.md`
-- Reviewed main: `ab4b07666a`
+- Reviewed main: `278a542dda54bd571fb0c6f4e8ed68e9d3e0609d`
 - Review modes: `code, workflow`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
@@ -19,8 +19,8 @@
 - Reviewed implementation acceptance: The east and west `block_hold_01` FX imports resolve correctly; canonical Operator SpriteFrames import coverage remains valid; a disposable/fresh `operator-authoring-v1` sparse validation checkout can satisfy its required local LFS dependencies without network access and run the mandatory modular-layer smoke; the correction does not widen sparse scope, weaken validation, modify Operator pixels/runtime behavior, or introduce unrelated tracked changes.
 - Current measured state:
   - Current main already contains the actual import repair from `e3d4e7f98` (`operator block hold fx reimport`). Both tracked east/west `block_hold_01` FX sidecars contain valid remap paths and `dest_files`, with no `valid=false`; the PNG bytes were not changed by that repair.
-  - `custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py` now guards all 588 canonical Operator texture imports and is registered in the validation manifest.
-  - Durable repair evidence records a clean project import, 588/588 import-smoke pass, and `operator_modular_layers_smoke.gd` exit 0 after local-only LFS hydration.
+  - `custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py` dynamically checks every canonical Operator SpriteFrames texture import. The live resource references 562 textures after the deliberate C2b.3 compatibility cutover reduced runtime outputs from 596 to 562; the current check passes 562/562.
+  - Durable repair evidence records a clean sparse project import and `operator_modular_layers_smoke.gd` exit 0 after local-only LFS hydration. The correction closeout records that 785 LFS payloads came from the full project checkout only after exact SHA-256 pointer verification, with no network fetch.
   - The resumed correction was checkpointed at `21f914e05` with no new runtime repair required. Its remaining blockers were sparse-checkout LFS availability and one stale real-repo UI-smoke wording assertion, not a recurrence of R0-01.
   - Current main now fixes that brittle UI assertion by checking the semantic `isolated art checkout` blocker instead of the obsolete literal branch-name wording.
   - `VALIDATION_RECIPES.md` now makes the local-only hydration order explicit: local/shared LFS object cache first; if the exact object is absent there but a local hydrated checkout has the same repository-relative file, that checkout may donate bytes only after SHA-256 and byte size exactly match the target pointer; otherwise block. No implicit `git lfs pull` or `git lfs fetch`.
@@ -37,8 +37,8 @@
 - Correction threshold: Create another correction cycle only if `R0-01` is unresolved/regressed, the sparse profile cannot satisfy the mandatory validation path despite canonical local LFS payloads being available, or the correction weakened sparse/publish safety. Do not open another correction merely because a stale/unrelated test assertion or environment issue exists; route that to its actual owner unless the reviewed correction caused it.
 - Focused validation:
   1. Inspect the archived correction packet/summary and the exact diff that landed. Establish whether it changed production files or merely closed evidence/lifecycle around the already-landed `e3d4e7f98` repair.
-  2. Inspect both current FX sidecars and run `python3 custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py`.
-  3. Reuse the correction workstream's sparse proof when it is fresh, commit-identified, and records the LFS source/provenance. Do not perform a second broad project import merely to duplicate equivalent evidence.
+  2. Inspect both current FX sidecars and run `python3 custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py`; compare its dynamic count with the live canonical SpriteFrames resource rather than assuming the historical 588 count.
+  3. Reuse the correction workstream's sparse proof when it is fresh, commit-identified, and records the LFS source/provenance. The proof is recorded with correction closeout `6f85b09a2`; verify all relevant runtime/import files remain identical on current main. Do not perform a second broad project import merely to duplicate equivalent evidence.
   4. If sparse proof must be reproduced, use a disposable/version-matched sparse checkout. Run `godot_import_preflight.py` first. Hydrate only required paths already present in the sparse checkout from the local object cache; for any object absent from cache, use the verified local-donor procedure in `VALIDATION_RECIPES.md` (same path, target pointer OID/size, donor SHA-256/size exact match, target remains Git-clean). Never run an unscoped `git lfs checkout` that expands omitted content, and never fetch LFS from the network.
   5. After preflight passes, run `godot --headless --path custodian --script res://tools/validation/operator_modular_layers_smoke.gd`. A project-wide import is justified only if the disposable sparse proof actually lacks the generated cache needed for this smoke and all LFS preconditions are already green.
   6. Run `python3 custodian/tools/validation/operator_art_worktree_smoke.py` if the landed correction changed sparse/worktree behavior; otherwise reuse its current-main fixture evidence.
@@ -46,7 +46,7 @@
 - Review focus:
   - `R0-01` is judged from current production truth, not from which workstream happened to commit the repair.
   - Exact FX remap integrity and unchanged source/runtime pixels.
-  - 588-texture canonical import regression protection remains live.
+  - The dynamic canonical import regression guard covers every current SpriteFrames texture reference (562 on reviewed main); the earlier 588 count predates the intentional C2b.3 output retirement.
   - Sparse proof uses measured profile boundaries and local-only LFS materialization; no broad sparse widening or network fetch.
   - Local donor bytes are accepted only when they cryptographically match the target LFS pointer and leave the target checkout Git-clean.
   - Do not treat generated `.import` churn from an unsafe persistent-checkout import as review evidence; preserve/revert it and use disposable validation.
@@ -65,5 +65,17 @@
 
 ## Handoff
 
-- Next action: Auto-dispatch after the correction lands; expected fast path is current-sidecar/import-smoke inspection plus reuse of the correction's fresh disposable sparse proof.
-- Blockers or open questions: none in the review contract. Missing local LFS content is an environment blocker only after both local-cache and exact verified local-donor paths are exhausted.
+- Next action: Auto-dispatch `operator-workbench-publish-readiness-recovery` after this review lands; `R0-01` is fixed and no further correction cycle is required.
+- Blockers or open questions: none.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The packet's historical 588-texture count was stale after the intentional C2b.3 runtime cutover; the first graph lookup also required a worktree-local index build.
+- Root cause / contributing factors: Review assumptions were copied forward across a canonical runtime inventory reduction; this worktree had no initialized code-review graph.
+- Prevention / pipeline improvement: Derive the canonical texture count from the live SpriteFrames resource and current smoke output; initialize the graph once when a fresh worktree has none.
+- Tooling / docs drift discovered: The packet's current measured import count was 588, while current main has 562 canonical textures; the packet now records the intentional 596-to-562 cutover and dynamic coverage.
+- Follow-up: `fixed-in-scope`
+- What worked: Reused pointer-verified sparse LFS evidence and ran the current-main worktree fixture without repeating a broad import.

@@ -57,3 +57,32 @@
 - Tooling / docs drift discovered: The packet's local-only LFS note did not identify the full project-root checkout as a source for matching payloads; this packet now records that exact-hash route.
 - Follow-up: `none`
 - What worked: Exact-hash copying resolved 785 source payloads without network access; sparse import, modular-layer smoke, and all scoped Workbench checks passed.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-operator-workbench-sparse-art-checkout-review-corrections-1`
+- Reviewed on main: `278a542dda54bd571fb0c6f4e8ed68e9d3e0609d`
+- Review modes: `code, workflow`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_SPARSE_ART_CHECKOUT_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Findings
+
+- **R0-01** (`fixed`, blocking validation): Current east/west `block_hold_01` FX sidecars both contain remap `path` and `dest_files`, with no `valid=false`. The current canonical SpriteFrames import smoke passes every one of the 562 live texture references. The earlier 588 count predates the intentional C2b.3 compatibility cutover (596 runtime outputs to 562); the guard remains dynamic and covers the current resource. The two PNG blobs are unchanged by the import-repair commit and match current `origin/main`. No correction-caused finding or new correction cycle is warranted.
+
+### Verification Performed
+
+- **Current import truth** (reviewed `origin/main` `278a542dda54bd571fb0c6f4e8ed68e9d3e0609d`): inspected both sidecars and verified their `res://.godot/imported/*.ctex` remap/destination and source paths; `python3 custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py` PASS, `562 texture imports`. Both runtime PNG Git blob IDs match `origin/main`. Commit `e3d4e7f98` changed only the two `.import` sidecars in this asset directory, not the PNGs.
+- **Sparse acceptance**: reused the correction workstream's recorded Godot 4.7.2 sparse import and `operator_modular_layers_smoke.gd` PASS at correction closeout `6f85b09a2`. Its evidence records 785 local LFS payloads copied only after SHA-256 verification against pointer OIDs, followed by restoration; no network LFS fetch was used. The tested SpriteFrames resource, FX PNGs/sidecars, import guard, and modular-layer smoke are unchanged between that closeout and current main. A later sparse-profile commit adds only `.githooks` and `tools/validate_filenames.py`; the current `operator_art_worktree_smoke.py` PASS exercises those hook dependencies, rejects invalid filenames, and continues to omit unrelated reports.
+- **Regression boundaries**: no new broad import was run because the current production files match the sparse proof and the current focused guard passes. The prior review's sparse-isolation/publication findings remain covered by unchanged implementation and the passing current fixture.
+- **Repository hygiene**: `git diff --check` PASS. No reviewed implementation file was changed.
