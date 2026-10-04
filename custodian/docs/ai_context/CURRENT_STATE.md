@@ -1775,8 +1775,19 @@ under their zones' existing `SetPieces` nodes, with no collision or Layout
 authority. Source masters remain in `asset_drop/source_work/awakening/`; the
 Asset V2 pipeline retains normalized inbox files in its per-job archives.
 `floor_crack_a`, `rubble_small`, the six required authority-inlay states,
-`civic_spear`, and `attestation_mark` remain unfulfilled; the last two remain
-deferred.
+`civic_spear`, and `attestation_mark` were still open at the Batch 02 cutoff;
+the last two were deferred then.
+
+Remaining Detail Assets Handoff V1 (2026-10-03) ingested the two ruin-decal
+gaps and all six required authority-inlay states through their existing Asset
+V2 families. The two supplied recommended inlays (`civic_spear` and
+`attestation_mark`) are also cataloged; runtime placement remains deferred.
+Ruin decals now report 5/5 required and 3/3 recommended, and authority inlays
+report 6/6 required and 3/3 recommended. No Awakening Layout, collision, or
+progression authority changed. The previous 1254×1254 source masters remain
+under each family's `pre_handoff_1254x1254/` folder; the handoff sources remain
+at the package-declared source paths, and Asset V2 retains normalized inputs
+in the ingest archives.
 
 Plate binding is distinct from finished visual QA. The live Awakening now hides
 production traversal blockout visuals, uses a dark void plane and local camera

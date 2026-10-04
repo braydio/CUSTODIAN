@@ -435,16 +435,17 @@ This pass is complete when:
 6. The required-assets registry routes mapped Awakening needs to V2 family/state IDs; root `REQUIRED_ASSETS.md` remains a generated view and does not own technical naming/routing.
 7. Asset Pipeline V2 focused validation passes.
 
-## Live production status and Batch 02 ingest — 2026-10-03
+## Live production status and supplied detail ingests — 2026-10-03
 
-This status is a snapshot of live `main@cba5a892d`, the Asset V2 family
-contracts, the production-demand registry, and the current Awakening handoff
-audit.
+Baseline inspected before the remaining-detail handoff: live
+`main@cf3ba2eb2`; status below reflects the Asset V2 family contracts, the
+production-demand registry, and the two supplied detail ingests.
 
 For current P0/P1 sections 01–10, including the required 04↔05 connector
-underlay, the production contract contains 91 required states. The Batch 02
-handoff added six required states and four recommended states; all three
-ambient-effect required states are now published and scene-bound.
+underlay, the production contract contains 99 required states. Batch 02 added
+six required states and four recommended states; the remaining-detail handoff
+added eight required states and two recommended states. All three ambient-
+effect required states are published and scene-bound.
 
 - All nine zone environment underlay/foreground pairs are published and bound.
 - Core hero/interactable art is complete except
@@ -454,17 +455,17 @@ ambient-effect required states are now published and scene-bound.
   production plates rather than separate scene-bound props.
 - Later Attestation/Reliquary/Dust Lung/Undergate/Approach/Late Service fixture
   families remain registered but **NOT_READY** as standalone runtime consumers.
-- `awakening_ruin_decal` now has all six supplied states: required
-  `floor_crack_b`, `floor_crack_c`, and `rubble_medium`, plus recommended
-  `root_intrusion`, `soot_bloom`, and `dust_scour`. The live family still
-  needs `floor_crack_a` and `rubble_small`.
+- `awakening_ruin_decal` is complete at 5/5 required and 3/3 recommended:
+  required `floor_crack_a`, `floor_crack_b`, `floor_crack_c`, `rubble_small`,
+  and `rubble_medium`; recommended `root_intrusion`, `soot_bloom`, and
+  `dust_scour`.
 - All three required ambient loops are published and bound in the Awakening
   runtime: room dust motes and sparse falling ash in Dust Lung, and localized
   wind dust at the Gate aperture.
-- `awakening_authority_inlay/route_circle` is published and bound as a
-  presentation sprite. Required `straight`, `corner`, `t_junction`,
-  `cross`, `ring_node`, and `threshold` remain open. `civic_spear` and
-  `attestation_mark` remain deferred.
+- `awakening_authority_inlay` is complete at 6/6 required and 3/3 recommended.
+  `route_circle` remains the only scene-bound inlay; the six topology states
+  are cataloged for presentation, and the recommended `civic_spear` and
+  `attestation_mark` are cataloged with runtime placement still deferred.
 
 ### Supplied Batch 02 states
 
@@ -490,6 +491,21 @@ Source masters remain under `custodian/asset_drop/source_work/awakening/`.
 Asset Pipeline V2 moved the successfully ingested normalized inbox files into
 their per-job folders under `custodian/asset_drop/archive/`; the pipeline owns
 canonical runtime filenames and routing.
+
+### Remaining detail assets handoff v1
+
+The supplied `floor_crack_a` and `rubble_small` states complete the ruin-decal
+family. The six required authority-inlay topology states are now cataloged;
+the supplied `civic_spear` and `attestation_mark` complete that family's
+recommended tier alongside the existing `route_circle`. All eight required
+inputs and both recommended inputs passed their existing family plans and
+were ingested unchanged. The prior 1254×1254 source masters were retained in
+each family's `pre_handoff_1254x1254/` folder; the package source files occupy
+the family source paths and the normalized inputs remain in the Asset V2 job
+archives. A pixel-edge check confirmed the supplied topology states retain
+their intended edge contacts. No Awakening Layout, collision, or progression
+authority changed; scene placement for the six topology inlays and the two
+recommended motifs remains deferred.
 
 ### Current drift note
 

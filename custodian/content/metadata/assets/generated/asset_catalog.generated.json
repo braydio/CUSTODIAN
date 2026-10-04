@@ -11203,6 +11203,48 @@
           "sha256": "3e1f298586d08d3e36547ee106a9d079169fa67f34b5fae49358fc6576b5e6d9",
           "provenance": "authored",
           "source_asset": null
+        },
+        "floor_crack_a::omni": {
+          "state_id": "floor_crack_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "floor_crack_a",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_a_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "6122c647cd23717c188385c6bcfc90e7e3096756c51fda8a09ec514b0c23689f",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "rubble_small::omni": {
+          "state_id": "rubble_small",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ruin_decal",
+            "tile",
+            "body",
+            "tile",
+            "rubble_small",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_small_64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "43c61b1c1c503e3170524c49c0f6022b31ca6e2db39322eaebcad8af41070df7",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -11305,6 +11347,174 @@
             32
           ],
           "sha256": "93da10ff446c0bc09d29153e701eca04a6446f4aa26fc1a5c862c82edffec3a2",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "attestation_mark::omni": {
+          "state_id": "attestation_mark",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "attestation_mark",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_attestation_mark_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "6705b10ce10dd2563fc90a17db3d89333707beb6ee75bd332406e9d0a109eabd",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "civic_spear::omni": {
+          "state_id": "civic_spear",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "civic_spear",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_civic_spear_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "6f6d730cd1cc0a32b25a23a12fe657e1f1da4f83c46952b2b22aa8ab636403d8",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "corner::omni": {
+          "state_id": "corner",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "corner",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_corner_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "6fd1d3164e4b7a824823211a9635c9f5607f0e5e7ac88eaff21f43ecb7352630",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "cross::omni": {
+          "state_id": "cross",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "cross",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_cross_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "141cf483e9504f6eaf5341f269f0b02da8beca42edbebebdb68285cec2a4a1c5",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "ring_node::omni": {
+          "state_id": "ring_node",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "ring_node",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_ring_node_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "f19f1aaf3ab582a4211768a465e03603198eb3d6c85351aa8a8e090a45048286",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "straight::omni": {
+          "state_id": "straight",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "straight",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_straight_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "15a5ef0af20b3a3423ae6f5ea07af1e7ab53eb87e4e3189771c014badb3e6222",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "t_junction::omni": {
+          "state_id": "t_junction",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "t_junction",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_t_junction_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "d15fd779180ce28eedf1a760e1d2b2810dc0b4cf873e0bd56e0fb22475339f8c",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "threshold::omni": {
+          "state_id": "threshold",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_authority_inlay",
+            "tile",
+            "body",
+            "tile",
+            "threshold",
+            "omni"
+          ],
+          "path": "content/tiles/awakening/authority_inlay/awakening_authority_inlay_threshold_32.png",
+          "frames": 1,
+          "frame_size": [
+            32,
+            32
+          ],
+          "sha256": "68148569aceabc43d72127296e8ad8c615b6b300ea4c8f5b415f8c4c6de0cf7f",
           "provenance": "authored",
           "source_asset": null
         }
