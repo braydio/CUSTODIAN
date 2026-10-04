@@ -51,10 +51,10 @@ No actor is required to implement every capability.
 
 `custodian/game/actors/enemies/enemy.gd` remains the standard mobile combat-agent coordinator and compatibility surface. It is **not** the universal NPC base.
 
-At the reviewed baseline it is approximately **4,958 lines** and still owns or hosts:
+At the reviewed baseline it was approximately **4,958 lines**. After NPA-1 it is approximately **4,615 lines** and owns or hosts:
 
 - shared combat/locomotion integration;
-- Marine Dash phase/timer/target/reset state;
+- shared Marine Dash service integration; the complete Marine phase/timer/target/reset authority is actor-local under `abilities/marine_dash.gd` with typed config;
 - Savage pounce state;
 - Savage two-hit chain state;
 - generic melee execution;
@@ -103,7 +103,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 | Slice | Workstream | Scope | Status |
 | --- | --- | --- | --- |
-| NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **recovery packet authored / ready** |
+| NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **implementation complete in recovery worktree; validation-blocked** |
 | NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the landed ability seam | **packet authored / dependency-gated** |
 | NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **packet authored / dependency-gated** |
 | NPA-4 | TBD after NPA-3 | Extract ordinary standard-enemy melee execution/cadence authority | planned |
@@ -125,12 +125,12 @@ Author NPA-4+ against landed live main so the program learns from the actual ext
 
 Reviewed `main@02ca0025b8`:
 
-- `enemy.gd`: ~4,958 lines.
+- `enemy.gd`: 4,615 lines after NPA-1 (343-line net reduction from the 4,958-line baseline).
 - `combat_drone.gd`: ~656 lines and independent `CharacterBody2D` ally runtime.
 - `vaultwing.gd`: ~252 lines with species-local behavior controller, presentation, allegiance, and bond state.
 - `forlorn_ritualant_npc.gd`: ~385 lines with encounter-local phases and combat.
 - `turret.gd`: ~441 lines, extends `Damageable`, uses `ActorRelationshipResolver`, and has no locomotion requirement.
-- Marine/Savage phase machines still live in `enemy.gd`.
+- Marine Dash's complete phase/timer/target/reset authority now lives in `abilities/marine_dash.gd`; Savage pounce and chain remain in `enemy.gd` for NPA-2/NPA-3.
 - Falcon Punch is already extracted and is the reference actor-local ability seam.
 - The active relationship architecture explicitly says it is **not** a universal NPC base class.
 

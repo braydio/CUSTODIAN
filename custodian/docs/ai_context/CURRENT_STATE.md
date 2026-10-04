@@ -1098,6 +1098,12 @@ Documentation updates this session:
   Falcon Punch and direct Savage contacts use the same normalized schema without
   changing their gates. Heatmaps use contact/target position, and the analyzer
   reports correlated lethal and suspicious hits while retaining legacy support.
+- Marine Dash's complete windup, travel, impact, recovery, cadence, charge,
+  prediction, contact, and lateral-reset authority now lives in the actor-local
+  `MarineDash` module with typed default and scene-specific configuration.
+  `Enemy` remains its shared movement/combat/presentation host; the Sundered Keep
+  authored ambush requests the dash through an explicit ability seam. Quick and
+  charged behavior, hit telemetry, and the scene's tuned values are preserved.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring

@@ -8,6 +8,10 @@ class DummyTarget:
 	extends CharacterBody2D
 
 	var contexts: Array[Dictionary] = []
+	var impact_count := 0
+
+	func apply_enemy_dash_impact(_direction: Vector2, _knockback: float, _hitstop: float) -> void:
+		impact_count += 1
 	var result_mode: StringName = &"damaged"
 
 	func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", _team: String = "enemy", _attacker: Node2D = null, _direction: Vector2 = Vector2.ZERO, _guard_cost: float = -1.0, attack_context: Dictionary = {}) -> Dictionary:
@@ -16,8 +20,9 @@ class DummyTarget:
 			"result": result_mode,
 			"hit_kind": hit_kind,
 			"dodged": result_mode == &"dodged",
-			"blocked": false,
-			"parried": false,
+			"blocked": result_mode == &"blocked",
+			"parried": result_mode == &"parried",
+			"block_hitreact": result_mode == &"block_hitreact",
 			"applied_damage": amount if result_mode == &"damaged" else 0.0,
 		}
 
@@ -103,14 +108,15 @@ func _test_marine_hit_and_whiff() -> void:
 	scene_root.add_child(target)
 	await process_frame
 	marine.set_physics_process(false)
+	var dash: MarineDash = (marine as Enemy).get_marine_dash_ability()
 	marine.global_position = Vector2.ZERO
 	target.global_position = Vector2(20.0, 4.0)
 	marine.set("target", target)
-	marine.call("_start_marine_dash_windup", Vector2.RIGHT, 20.0)
-	var attack_id := String(marine.get("_marine_dash_attack_id"))
-	marine.call("_start_marine_dash_travel")
-	marine.set("_marine_dash_timer", float(marine.get("marine_dash_time")) * 0.5)
-	marine.call("_try_apply_marine_dash_hit")
+	dash.request_start(Vector2.RIGHT, 20.0)
+	var attack_id := String(dash.attack_id)
+	dash.start_travel()
+	dash.timer = float(dash.config.travel_time) * 0.5
+	dash.try_apply_hit()
 	_assert_true(target.contexts.size() == 1, "Marine dash should pass one hit context")
 	if not target.contexts.is_empty():
 		var context := target.contexts[0]
@@ -122,18 +128,36 @@ func _test_marine_hit_and_whiff() -> void:
 	_assert_true(hit_events.size() == 1, "Marine hit should emit exactly one hit terminal")
 	if not hit_events.is_empty():
 		_assert_true(String((hit_events[0] as Dictionary).get("data", {}).get("attack_id", "")) == attack_id, "Marine lifecycle and hit terminal IDs should match")
-	marine.call("_finish_marine_dash_attack")
+	dash.try_apply_hit()
+	_assert_true(target.contexts.size() == 1 and target.impact_count == 1, "a dash may resolve contact and impact only once")
+	_assert_true(dash.last_attack_hit and dash.phase == &"impact_lock", "damaged hit must bias quick follow-up and enter impact lock")
+	dash.finish()
+
+	for outcome in [&"dodged", &"parried", &"block_hitreact", &"blocked"]:
+		target.contexts.clear()
+		target.impact_count = 0
+		target.result_mode = outcome
+		dash.request_start(Vector2.RIGHT, 20.0)
+		dash.start_travel()
+		dash.timer = dash.config.travel_time * 0.5
+		dash.try_apply_hit()
+		dash.try_apply_hit()
+		_assert_true(target.contexts.size() == 1, "defense outcome must consume the one-hit contact: %s" % outcome)
+		var impact_expected: bool = outcome == &"blocked"
+		_assert_true(dash.last_attack_hit == impact_expected and target.impact_count == int(impact_expected), "defense must retain original impact and follow-up policy: %s" % outcome)
+		dash.finish()
 
 	if observatory != null and observatory.has_method("clear"):
 		observatory.call("clear")
 	target.contexts.clear()
+	target.result_mode = &"damaged"
 	target.global_position = Vector2(200.0, 100.0)
-	marine.call("_start_marine_dash_windup", Vector2.RIGHT, 200.0)
-	var miss_id := String(marine.get("_marine_dash_attack_id"))
-	marine.call("_start_marine_dash_travel")
-	marine.set("_marine_dash_timer", float(marine.get("marine_dash_time")) * 0.5)
-	marine.call("_try_apply_marine_dash_hit")
-	marine.call("_finish_marine_dash_attack")
+	dash.request_start(Vector2.RIGHT, 200.0)
+	var miss_id := String(dash.attack_id)
+	dash.start_travel()
+	dash.timer = float(dash.config.travel_time) * 0.5
+	dash.try_apply_hit()
+	dash.finish()
 	var whiffs: Array = observatory.call("get_recent_events", 50, &"marine_dash_whiff") if observatory != null else []
 	var hits: Array = observatory.call("get_recent_events", 50, &"marine_dash_hit_resolved") if observatory != null else []
 	_assert_true(whiffs.size() == 1 and hits.is_empty(), "Marine miss should emit one whiff and zero hit terminals")

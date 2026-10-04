@@ -1,7 +1,7 @@
 # Enemy Marine Dash Attack
 
 Status: implemented-v2
-Last updated: 2026-08-10
+Last updated: 2026-10-04
 
 ## Summary
 
@@ -52,12 +52,21 @@ The third phase is intentionally simple: predictive target lock is the extra mec
 ## Runtime Ownership
 
 - Shared actor behavior: `custodian/game/actors/enemies/enemy.gd`
-- Marine scene/tuning: `custodian/game/actors/enemies/enemy_marine.tscn`
+- Complete tactical execution/cadence/contact/prediction/reset authority: `custodian/game/actors/enemies/abilities/marine_dash.gd`
+- Typed defaults and scene tuning: `custodian/game/actors/enemies/abilities/marine_dash_config.gd` and `custodian/game/actors/enemies/abilities/configs/marine_dash_default.tres` (the scene retains 32 damage / 105 knockback / 1.1s cooldown)
+- Marine scene/config binding: `custodian/game/actors/enemies/enemy_marine.tscn`
 - Animation loading: `custodian/game/enemies/procgen/grunt_animation_library.gd`
 - Player impact receiver: `custodian/game/actors/operator/operator.gd`
 - Sundered Keep authored ambush: `custodian/game/world/sundered_keep/sundered_keep_marine_ambush.gd`
 - Runtime body strip currently wired: `custodian/content/sprites/enemies/enemy_marine/runtime/body/enemy_marine__body__unarmed__dash_attack_01__e__8f__156.png`
 - Runtime FX strip currently wired: `custodian/content/sprites/enemies/enemy_marine/runtime/fx/enemy_marine__fx__unarmed__dash_attack_01__e__8f__156.png`
+
+The actor ticks `MarineDash` before strategic BSM behavior. Authored callers use
+`Enemy.request_marine_dash(direction, distance)`; diagnostics use
+`get_marine_dash_debug_state()` or the typed `get_marine_dash_ability()` seam.
+The extracted ability retains host-target queries, single predictive direction
+lock, original phase clocks, cadence accrual only during launch evaluation, and
+all pre-existing interruption/reset behavior. No tuning or strategic policy changes.
 
 ## Required Phases
 
@@ -210,3 +219,11 @@ cd custodian
 godot --headless --script res://tools/validation/authored_vault_grunt_loot_marine_smoke.gd
 godot --headless --script res://tools/validation/sundered_keep_large_layout_smoke.gd
 ```
+
+## Next Agent Slice
+
+NPA-2 `enemy-savage-pounce-ability-extraction` follows after this implementation
+and its paired review are complete. Reuse the landed Marine/Falcon host-service
+pattern, preserve Savage behavior and scene tuning, and keep validation focused
+on the extracted ability. Marine art/audio coverage remains separate production
+work.

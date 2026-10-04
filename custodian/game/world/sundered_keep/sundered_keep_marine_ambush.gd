@@ -135,9 +135,9 @@ func force_wake() -> void:
 
 func force_dash_for_validation() -> void:
 	force_wake()
-	if marine != null and is_instance_valid(marine) and marine.has_method("_start_marine_dash_windup"):
+	if marine != null and is_instance_valid(marine) and marine.has_method("request_marine_dash"):
 		var distance := marine.global_position.distance_to(target.global_position) if target != null and is_instance_valid(target) else attack_range
-		marine.call("_start_marine_dash_windup", _direction_to_target(), distance)
+		marine.call("request_marine_dash", _direction_to_target(), distance)
 
 
 func _physics_process(_delta: float) -> void:
