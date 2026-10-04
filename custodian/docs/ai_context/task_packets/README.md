@@ -40,7 +40,7 @@ Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTA
 
 The Archive Resolve implementation series is pre-authored but evidence-gated. MR6R1 has passed, so AR1 is fully re-derived and `ready/auto` with a paired technical review. AR2 and AR3 remain refresh-gated against the reviewed result of their immediate predecessor.
 
-- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, fully re-derived `ready/auto` presentation-only request/commit/unload spine and one batched flat diagnostic veil.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 code/architecture/runtime/diagnostic-visual review; gates AR2.
 - `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither + restrained brass/amber Archive Resolve shader; refresh after reviewed AR1.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo,
@@ -408,15 +408,15 @@ lost when the ephemeral worktree is removed.
 - `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — Move ARRN relay tile selection and placement from ContractWorldLoader into the world-placement layer.
 - `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
-- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — Add the presentation-only Archive Resolve spine that hides chunk cadence behind one continuous deterministic world-space reveal frontier without changing gen...
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — Independently verify that P1 created one minimal read-only world-placement context seam, preserved ContractWorldLoader lifecycle/orchestration authority and...
-- `REVIEW_LORDS_OF_PAIN_TEST_GALLERY.md` — Fresh-context post-land review of the DEMO-scoped gallery, Asset V2 provenance, registered ingress/return lifecycle, and persistent-Operator behavior.
+- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — Independently verify that K3D-1 produced a truthful, reproducible A/B presentation experiment with bounded Kenney source intake and no production-authority l...
+- `REVIEW_LORDS_OF_PAIN_TEST_GALLERY.md` — Independently verify the landed DEMO-scoped Lords of Pain test gallery against its archived implementation packet, with special attention to the seven availa...
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — Independently verify that AR1 hides streaming cadence through a bounded presentation-only frontier while preserving M3-M6, Region Frame, and gameplay authori...
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — Resolve the long-standing development-only Twin Solaria preview mismatch where the preview controller/smoke expects 3500×3000 while the loaded development te...
 <!-- task_packet_index:managed:end -->
 - `REVIEW_PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` — paired D1 code/architecture/runtime review with reviewer-context provenance.
 
-- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — P2 coding-first Archive Resolve presentation spine; auto-eligible after RF1 releases shared procgen locks.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — P2 coding-first Archive Resolve presentation spine; auto-eligible after RF1 releases shared procgen locks.
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; gates AR2.
 
 - `HUB_FIRST_SET_BLOCKOUT_V1.md` — P1 runtime-ready Hub first-set blockout from South Reach through Ashen Forum, Sepulcher loop, Archive/Crown Transfer branch, and Muster Court/Continuity Port deployment wing; spatial only, no world transitions.
@@ -443,7 +443,7 @@ lost when the ephemeral worktree is removed.
 - `archived/PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — RF1 region-frame foundation plus M6 proof hardening N1-01..N1-05; complete/landed; paired RFR1 review is ready.
 - `archived/REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — paired RF1 review; complete, passed with next-slice items R0-01, R0-02, R0-04.
 - `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` — six-state Asset V2 Alpine FAR/MIDDLE/NEAR underlay family; blocked on RF1 review + source art.
-- `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 fully re-derived post-M6 presentation spine; ready/auto.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 fully re-derived post-M6 presentation spine; complete/landed; paired ARR1 review is ready.
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; gates AR2.
 - `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 shader/material layer; blocked on reviewed AR1.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 semantic echo + spawn/reacquisition polish; blocked on AR2.

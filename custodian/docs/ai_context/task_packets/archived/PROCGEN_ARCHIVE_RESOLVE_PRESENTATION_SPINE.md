@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-presentation-spine`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `review-procgen-distant-chunk-unload-review-corrections-1`
@@ -61,7 +61,7 @@
 ## Handoff
 
 - Next workstream: `review-procgen-archive-resolve-presentation-spine`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `not-recorded`
