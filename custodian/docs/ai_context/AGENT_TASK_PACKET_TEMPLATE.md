@@ -103,6 +103,13 @@ Required quality:
   minimize renderer evidence to the smallest ROI/keyframe set that can falsify
   the defect. Reuse durable implementation evidence in paired review instead of
   recapturing equivalent frames. Subjective visual acceptance stays human-owned.
+  When a material subjective decision remains after objective checks, instruct
+  the execution agent to publish one compact Dropbox handoff with
+  `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`,
+  include exact reviewer questions, return the emitted manifest path, and stop
+  rather than self-critiquing the art. Reference
+  `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` instead of restating its
+  remote/setup rules.
 - **Deferred** records intentional omissions so they are not rediscovered as
   accidental incompleteness.
 
