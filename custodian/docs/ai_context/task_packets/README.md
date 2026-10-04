@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-03
+Last updated: 2026-10-04
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -40,6 +40,15 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 ## Active Reusable Source-Material Intake
 
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
+
+## Active Awakening 04→05 Production Art Refresh
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
+
+- `AWAKENING_ROOM_CONNECTORS_POLISH.md` — P1 ready/manual implementation packet. It consumes the user's local `~/Downloads/dust.png`, `connector.png`, and `locker.png` into the existing Dust Lung, 04→05 connector, and Locker Reliquary Asset V2 families; replaces the visible room-crossfade/room-strip seam machinery with direct registered art; reconciles the new Locker archive obstacles/P-9 bay; and keeps any still-missing Locker foreground honest rather than fabricating art.
+- `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH.md` — paired P1 post-land code/runtime/visual/asset-pipeline review.
+- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is now blocked/manual on the room-connectors polish and must be refreshed in place from the landed implementation + paired-review evidence before its old Zone04/05 feather/fade preservation clauses are executable again.
+- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is also blocked/manual on the polish; after landing, first check whether the new packet's committed bidirectional regression fully supersedes it rather than duplicating the harness.
 
 ## Active Archive Resolve Presentation Series
 
