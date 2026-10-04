@@ -948,7 +948,7 @@ completion never gates simulation.
 ## Slice F6 — recovery / survivability
 
 Execute `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` after the campaign-level
-`custodian-death-handoff-foundation` lands. It separates damage/death
+`custodian-death-handoff-foundation-recovery-1` lands. It separates damage/death
 coordination from Field Patch/recovery state, reuses `OperatorIntegrityReclaim`
 instead of duplicating it, and makes moving Field Patch presentation reflect the
 existing 35% movement contract with locomotion lower + upper/FX while stationary
