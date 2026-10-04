@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-07-28  
 **Status:** active — V1 core implemented; scenario calibration remains  
-**Last Updated:** 2026-08-10
+**Last Updated:** 2026-10-03
 **Owner:** gameplay/tools  
 **Runtime Target:** Godot 4.7 project in `custodian/`  
 **Active Spec Path:** `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`  
