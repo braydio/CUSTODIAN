@@ -1,512 +1,581 @@
-[gd_scene load_steps=46 format=3]
+[gd_scene format=3 uid="uid://b3aartmsubr00"]
 
-[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1"]
-[ext_resource type="PackedScene" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2"]
-[ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="3"]
+[ext_resource type="Script" uid="uid://dqwucc0oyya1r" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://d16xvgyky6xs7" path="res://game/world/events/ash_bell/forlorn_ritualant_site.tscn" id="2"]
+[ext_resource type="Script" uid="uid://drgoxjbioyerc" path="res://game/world/levels/interactable_level_exit_2d.gd" id="3"]
 [ext_resource type="PackedScene" path="res://game/world/approaches/ash_bell/ash_bell_lift_platform_assembly.tscn" id="4"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__far_void_01__2048x2048.png" id="5"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_south_01__2048x1536.png" id="6"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_middle_01__2048x1792.png" id="7"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_north_01__2048x1792.png" id="8"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__ground__cavern_repeat_01__512x512.png" id="9"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_shelf_apron_01__768x512.png" id="10"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_south_01__1024x1024.png" id="11"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_middle_01__1024x1024.png" id="12"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_north_01__1024x1024.png" id="13"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mineral_haze_01__1536x1536.png" id="14"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__chapel_haze_01__1024x768.png" id="15"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_connector_apron_02__768x384.png" id="16"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__wet_ground_detail_01__384x256.png" id="18"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__fracture_detail_01__256x256.png" id="19"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_back_01__768x1536.png" id="20"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_fore_01__768x1536.png" id="21"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__landing_mouth_01__768x512.png" id="22"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__vista__distant_chapel_01__320x160.png" id="23"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__south_right_01__768x512.png" id="24"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__middle_left_01__768x512.png" id="25"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__middle_right_pillar_01__512x768.png" id="26"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__deep_left_01__768x512.png" id="27"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__chapel_threshold_forelip_01__1024x512.png" id="28"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__rock_small_01__128x96.png" id="29"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__rock_medium_01__192x128.png" id="30"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__stalagmite_tall_01__160x256.png" id="31"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__stalagmite_wide_01__256x160.png" id="32"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__service_rail_broken_01__256x128.png" id="33"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__chain_anchor_01__160x192.png" id="34"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__mineral_seep_01__256x192.png" id="35"]
-[ext_resource type="Script" path="res://game/world/levels/presentation/authored_camera_zone_director_2d.gd" id="36"]
-[ext_resource type="Script" path="res://game/world/levels/presentation/authored_camera_zone_2d.gd" id="37"]
-[ext_resource type="Texture2D" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="38"]
-[ext_resource type="Script" path="res://game/world/levels/presentation/authored_threshold_blend_2d.gd" id="39"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png" id="40"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png" id="41"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__arena__expanded_floor_base_01__2594x1737.png" id="42_arena"]
-[ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__lower_quarter_seal_01__1024x512.png" id="43_seal"]
-[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_dressing_layer_2d.gd" id="44_dressing"]
-[sub_resource type="RectangleShape2D" id="return"]
-size=Vector2(192,64)
-[sub_resource type="RectangleShape2D" id="lower_lift_boarding_back"]
-size=Vector2(223,16)
-[sub_resource type="RectangleShape2D" id="lower_lift_boarding_front_wing"]
-size=Vector2(48,18)
+[ext_resource type="Texture2D" uid="uid://cxclh10velunc" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__far_void_01__2048x2048.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://b7vpc4gf1xv0u" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_south_01__2048x1536.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://c2s2dxwy21v0a" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_middle_01__2048x1792.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://ge577awvkr3s" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mid_depth_north_01__2048x1792.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://bed1654nyw6ie" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__ground__cavern_repeat_01__512x512.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://d0ic636htapk6" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_shelf_apron_01__768x512.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://dqthmmvtllsg7" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_south_01__1024x1024.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://ctrtk8jku5yse" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_middle_01__1024x1024.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://cklfej5fimsh5" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__cavern_rim_north_01__1024x1024.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://d2g844cxj8i1o" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__mineral_haze_01__1536x1536.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://dmab3untgapma" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__underlay__chapel_haze_01__1024x768.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://1jy877s2f3ck" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__chapel_connector_apron_02__768x384.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://ogno4m17xnxm" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__wet_ground_detail_01__384x256.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://cdyv8l1s8knre" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__fracture_detail_01__256x256.png" id="19"]
+[ext_resource type="Texture2D" uid="uid://d3hcsd45a48wm" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_back_01__768x1536.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://c1dcua6iv01k1" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__arrival_fore_01__768x1536.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://btdkj8u7wxpiy" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__landing_mouth_01__768x512.png" id="22"]
+[ext_resource type="Texture2D" uid="uid://c8kweqqa02che" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__vista__distant_chapel_01__320x160.png" id="23"]
+[ext_resource type="Texture2D" uid="uid://fw6e2ot0jq7j" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__south_right_01__768x512.png" id="24"]
+[ext_resource type="Texture2D" uid="uid://cu1btnlypi4wb" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__middle_left_01__768x512.png" id="25"]
+[ext_resource type="Texture2D" uid="uid://c334rmhnjdg3c" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__middle_right_pillar_01__512x768.png" id="26"]
+[ext_resource type="Texture2D" uid="uid://isnlmnbfta6x" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__deep_left_01__768x512.png" id="27"]
+[ext_resource type="Texture2D" uid="uid://b251stv4swl8" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__chapel_threshold_forelip_01__1024x512.png" id="28"]
+[ext_resource type="Texture2D" uid="uid://81e8x6uukl84" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__rock_small_01__128x96.png" id="29"]
+[ext_resource type="Texture2D" uid="uid://ke6kj6rdo3sy" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__rock_medium_01__192x128.png" id="30"]
+[ext_resource type="Texture2D" uid="uid://dqjn5f2efdsps" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__stalagmite_tall_01__160x256.png" id="31"]
+[ext_resource type="Texture2D" uid="uid://xxjy24y48cpp" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__stalagmite_wide_01__256x160.png" id="32"]
+[ext_resource type="Texture2D" uid="uid://ckrq5c4pxkkni" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__service_rail_broken_01__256x128.png" id="33"]
+[ext_resource type="Texture2D" uid="uid://blxfpfhrork2k" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__chain_anchor_01__160x192.png" id="34"]
+[ext_resource type="Texture2D" uid="uid://i7vnti83qnqu" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__mineral_seep_01__256x192.png" id="35"]
+[ext_resource type="Script" uid="uid://d1eku7gy7kkhf" path="res://game/world/levels/presentation/authored_camera_zone_director_2d.gd" id="36"]
+[ext_resource type="Script" uid="uid://c50io6l71qrc8" path="res://game/world/levels/presentation/authored_camera_zone_2d.gd" id="37"]
+[ext_resource type="Texture2D" uid="uid://om83n78xjlhq" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="38"]
+[ext_resource type="Script" uid="uid://06rjkucsag52" path="res://game/world/levels/presentation/authored_threshold_blend_2d.gd" id="39"]
+[ext_resource type="Texture2D" uid="uid://b0fg7nd5j481c" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png" id="40"]
+[ext_resource type="Texture2D" uid="uid://b4mig5cxmgpg1" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__lift__shaft_scroll_01__256x1536.png" id="41"]
+[ext_resource type="Texture2D" uid="uid://t2f6o5s2wwrc" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__arena__expanded_floor_base_01__2594x1737.png" id="42_arena"]
+[ext_resource type="Texture2D" uid="uid://bvm1agpkp4xcl" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__occluder__lower_quarter_seal_01__1024x512.png" id="43_seal"]
+[ext_resource type="Script" uid="uid://rdtlqmjnbyjx" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_dressing_layer_2d.gd" id="44_dressing"]
+
 [sub_resource type="Shader" id="vertical_feather"]
-code="shader_type canvas_item; uniform float top_feather=0.1; uniform float bottom_feather=0.1; void fragment(){vec4 c=texture(TEXTURE,UV); float a=1.0; if(top_feather>0.0)a*=smoothstep(0.0,top_feather,UV.y); if(bottom_feather>0.0)a*=smoothstep(0.0,bottom_feather,1.0-UV.y); COLOR=vec4(c.rgb,c.a*a);}"
+code = "shader_type canvas_item; uniform float top_feather=0.1; uniform float bottom_feather=0.1; void fragment(){vec4 c=texture(TEXTURE,UV); float a=1.0; if(top_feather>0.0)a*=smoothstep(0.0,top_feather,UV.y); if(bottom_feather>0.0)a*=smoothstep(0.0,bottom_feather,1.0-UV.y); COLOR=vec4(c.rgb,c.a*a);}"
+
 [sub_resource type="ShaderMaterial" id="south_feather"]
-shader=SubResource("vertical_feather")
-shader_parameter/top_feather=0.1
-shader_parameter/bottom_feather=0.0
+shader = SubResource("vertical_feather")
+shader_parameter/top_feather = 0.1
+shader_parameter/bottom_feather = 0.0
+
 [sub_resource type="ShaderMaterial" id="middle_feather"]
-shader=SubResource("vertical_feather")
-shader_parameter/top_feather=0.1
-shader_parameter/bottom_feather=0.1
+shader = SubResource("vertical_feather")
+shader_parameter/top_feather = 0.1
+shader_parameter/bottom_feather = 0.1
+
 [sub_resource type="ShaderMaterial" id="north_feather"]
-shader=SubResource("vertical_feather")
-shader_parameter/top_feather=0.0
-shader_parameter/bottom_feather=0.1
-[node name="ForlornRitualantUnderground" type="Node2D"]
-script=ExtResource("1")
-draw_placeholder_grid=false
-placeholder_canvas_size=Vector2(3584,4096)
-camera_bounds=Rect2(-1792,-2048,3584,4096)
-[node name="UnderlayRoot" type="Node2D" parent="."]
-[node name="FarVoidParallax" type="Parallax2D" parent="UnderlayRoot"]
-position=Vector2(0,0)
-scroll_scale=Vector2(0.1,0.1)
-repeat_size=Vector2(2048,2048)
-repeat_times=3
-[node name="FarVoid" type="Sprite2D" parent="UnderlayRoot/FarVoidParallax"]
-texture=ExtResource("5")
-z_as_relative=false
-z_index=-120
-texture_repeat=2
-[node name="MidDepthSouthParallax" type="Parallax2D" parent="UnderlayRoot"]
-position=Vector2(0,1280)
-scroll_scale=Vector2(0.28,0.28)
-[node name="MidDepthSouth" type="Sprite2D" parent="UnderlayRoot/MidDepthSouthParallax"]
-material=SubResource("south_feather")
-texture=ExtResource("6")
-z_as_relative=false
-z_index=-110
-[node name="MidDepthMiddleParallax" type="Parallax2D" parent="UnderlayRoot"]
-position=Vector2(0,352)
-scroll_scale=Vector2(0.28,0.28)
-[node name="MidDepthMiddle" type="Sprite2D" parent="UnderlayRoot/MidDepthMiddleParallax"]
-material=SubResource("middle_feather")
-texture=ExtResource("7")
-z_as_relative=false
-z_index=-109
-[node name="MidDepthNorthParallax" type="Parallax2D" parent="UnderlayRoot"]
-position=Vector2(0,-1024)
-scroll_scale=Vector2(0.28,0.28)
-[node name="MidDepthNorth" type="Sprite2D" parent="UnderlayRoot/MidDepthNorthParallax"]
-material=SubResource("north_feather")
-texture=ExtResource("8")
-z_as_relative=false
-z_index=-108
-[node name="MineralHazeParallax" type="Parallax2D" parent="UnderlayRoot"]
-position=Vector2(0,768)
-scroll_scale=Vector2(0.45,0.45)
-[node name="MineralHaze" type="Sprite2D" parent="UnderlayRoot/MineralHazeParallax"]
-texture=ExtResource("14")
-z_as_relative=false
-z_index=-95
-modulate=Color(1,1,1,0.1)
-[node name="ChapelHazeParallax" type="Parallax2D" parent="UnderlayRoot"]
-position=Vector2(0,-896)
-scroll_scale=Vector2(0.45,0.45)
-[node name="ChapelHaze" type="Sprite2D" parent="UnderlayRoot/ChapelHazeParallax"]
-texture=ExtResource("15")
-z_as_relative=false
-z_index=-94
-modulate=Color(1,1,1,0.12)
-[node name="DistantChapelProxy" type="Sprite2D" parent="UnderlayRoot"]
-position=Vector2(320,1088)
-scale=Vector2(1.25,1.25)
-modulate=Color(1,1,1,0)
-texture=ExtResource("23")
-z_as_relative=false
-z_index=-39
-[node name="BackgroundRoot" type="Node2D" parent="."]
-[node name="RitualantArenaExpandedBase" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,-1120)
-scale=Vector2(1,1)
-texture=ExtResource("42_arena")
-z_as_relative=false
-z_index=-30
-[node name="PlayableGround" type="Polygon2D" parent="BackgroundRoot"]
-texture_repeat=2
-texture=ExtResource("9")
-z_as_relative=false
-z_index=-50
-[node name="CavernRimSouth" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,1024)
-texture=ExtResource("11")
-z_as_relative=false
-z_index=-40
-[node name="CavernRimMiddle" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,256)
-texture=ExtResource("12")
-z_as_relative=false
-z_index=-40
-[node name="CavernRimNorth" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,-448)
-texture=ExtResource("13")
-z_as_relative=false
-z_index=-40
-[node name="LandingShelfApron" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,1568)
-texture=ExtResource("10")
-z_as_relative=false
-z_index=-39
-[node name="LandingConnectorBridge" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,1376)
-texture=ExtResource("40")
-z_as_relative=false
-z_index=-38
-[node name="ChapelConnectorApron" type="Sprite2D" parent="BackgroundRoot"]
-position=Vector2(0,-640)
-texture=ExtResource("16")
-z_as_relative=false
-z_index=-27
-[node name="GroundDetails" type="Node2D" parent="BackgroundRoot"]
-[node name="WetDetail01" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(-128,1216)
-texture=ExtResource("18")
-flip_h=false
-z_as_relative=false
-z_index=-25
-[node name="WetDetail02" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(160,672)
-texture=ExtResource("18")
-flip_h=true
-z_as_relative=false
-z_index=-25
-[node name="WetDetail03" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(-96,96)
-texture=ExtResource("18")
-flip_h=false
-z_as_relative=false
-z_index=-25
-[node name="WetDetail04" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(96,-448)
-texture=ExtResource("18")
-flip_h=true
-z_as_relative=false
-z_index=-25
-[node name="Fracture01" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(96,1056)
-texture=ExtResource("19")
-flip_h=false
-z_as_relative=false
-z_index=-24
-[node name="Fracture02" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(-128,416)
-texture=ExtResource("19")
-flip_h=true
-z_as_relative=false
-z_index=-24
-[node name="Fracture03" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(128,-192)
-texture=ExtResource("19")
-flip_h=false
-z_as_relative=false
-z_index=-24
-[node name="Fracture04" type="Sprite2D" parent="BackgroundRoot/GroundDetails"]
-position=Vector2(-64,-576)
-texture=ExtResource("19")
-flip_h=true
-z_as_relative=false
-z_index=-24
-[node name="PlayableRoot" type="Node2D" parent="."]
-[node name="ForlornRitualantSite" parent="PlayableRoot" instance=ExtResource("2")]
-position=Vector2(0,-1120)
-[node name="PropsRoot" type="Node2D" parent="."]
-[node name="AuthoredDressing" type="Node2D" parent="PropsRoot"]
-script=ExtResource("44_dressing")
-[node name="LowerLiftAssembly" parent="PropsRoot" instance=ExtResource("4")]
-position=Vector2(0,1696)
-[node name="LowerLiftBoardingBounds" type="StaticBody2D" parent="PropsRoot"]
-position=Vector2(0,1696)
-[node name="BackStop" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds"]
-position=Vector2(0.5,-36)
-shape=SubResource("lower_lift_boarding_back")
-[node name="LeftFrontWing" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds"]
-position=Vector2(-56,38)
-shape=SubResource("lower_lift_boarding_front_wing")
-[node name="RightFrontWing" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds"]
-position=Vector2(56,38)
-shape=SubResource("lower_lift_boarding_front_wing")
-[node name="CavernPropsRoot" type="Node2D" parent="PropsRoot"]
-y_sort_enabled=true
-[node name="RockSmall01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-288,1504)
-texture=ExtResource("29")
-flip_h=false
-[node name="RockSmall02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(288,1472)
-texture=ExtResource("29")
-flip_h=true
-[node name="RockSmall03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-352,864)
-texture=ExtResource("29")
-flip_h=false
-[node name="RockSmall04" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(288,128)
-texture=ExtResource("29")
-flip_h=true
-[node name="RockSmall05" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-224,-512)
-texture=ExtResource("29")
-flip_h=false
-[node name="RockMedium01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-352,1152)
-texture=ExtResource("30")
-flip_h=false
-[node name="RockMedium02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(320,640)
-texture=ExtResource("30")
-flip_h=true
-[node name="RockMedium03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(288,-384)
-texture=ExtResource("30")
-flip_h=false
-[node name="StalagmiteTall01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-416,960)
-texture=ExtResource("31")
-flip_h=false
-[node name="StalagmiteTall02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(352,352)
-texture=ExtResource("31")
-flip_h=true
-[node name="StalagmiteTall03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-320,-480)
-texture=ExtResource("31")
-flip_h=false
-[node name="StalagmiteWide01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(320,800)
-texture=ExtResource("32")
-flip_h=true
-[node name="StalagmiteWide02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-320,224)
-texture=ExtResource("32")
-flip_h=false
-[node name="StalagmiteWide03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(288,-544)
-texture=ExtResource("32")
-flip_h=true
-[node name="ServiceRail01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-160,1376)
-texture=ExtResource("33")
-flip_h=false
-[node name="ServiceRail02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(192,1248)
-texture=ExtResource("33")
-flip_h=true
-[node name="ChainAnchor01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-256,1632)
-texture=ExtResource("34")
-flip_h=false
-[node name="ChainAnchor02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(256,1600)
-texture=ExtResource("34")
-flip_h=true
-[node name="MineralSeep01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-384,544)
-texture=ExtResource("35")
-flip_h=false
-[node name="MineralSeep02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(320,-192)
-texture=ExtResource("35")
-flip_h=true
-[node name="MineralSeep03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot"]
-position=Vector2(-224,-608)
-texture=ExtResource("35")
-flip_h=false
-[node name="ArrivalDescentRoot" type="Node2D" parent="."]
-[node name="ShaftScroll" type="Sprite2D" parent="ArrivalDescentRoot"]
-visible=false
-position=Vector2(0,1440)
-texture=ExtResource("41")
-texture_filter=1
-texture_repeat=1
-z_as_relative=false
-z_index=-10
-region_enabled=true
-region_rect=Rect2(0,448,256,768)
-[node name="ShaftArrivalBack" type="Sprite2D" parent="ArrivalDescentRoot"]
-visible=false
-position=Vector2(0,1440)
-texture=ExtResource("20")
-z_as_relative=false
-z_index=-10
-region_enabled=true
-region_rect=Rect2(0,0,768,768)
-[node name="LandingMouth" type="Sprite2D" parent="ArrivalDescentRoot"]
-visible=true
-position=Vector2(0,1536)
-texture=ExtResource("22")
-z_as_relative=false
-z_index=-5
-[node name="ShaftArrivalFore" type="Sprite2D" parent="ArrivalDescentRoot"]
-visible=false
-position=Vector2(0,1440)
-texture=ExtResource("21")
-z_as_relative=false
-z_index=20
-region_enabled=true
-region_rect=Rect2(0,0,768,768)
-[node name="LandingDust" type="Sprite2D" parent="ArrivalDescentRoot"]
-visible=false
-position=Vector2(0,1728)
-scale=Vector2(0.5,0.302)
-modulate=Color(1,1,1,0.24)
-texture=ExtResource("38")
-region_enabled=true
-region_rect=Rect2(0,0,192,192)
-[node name="OcclusionRoot" type="Node2D" parent="."]
-[node name="SouthRight" type="Sprite2D" parent="OcclusionRoot"]
-position=Vector2(320,1024)
-texture=ExtResource("24")
-z_as_relative=false
-z_index=60
-[node name="MiddleLeft" type="Sprite2D" parent="OcclusionRoot"]
-position=Vector2(-320,512)
-texture=ExtResource("25")
-z_as_relative=false
-z_index=60
-[node name="MiddleRightPillar" type="Sprite2D" parent="OcclusionRoot"]
-position=Vector2(384,96)
-texture=ExtResource("26")
-z_as_relative=false
-z_index=60
-[node name="DeepLeft" type="Sprite2D" parent="OcclusionRoot"]
-position=Vector2(-320,-352)
-texture=ExtResource("27")
-z_as_relative=false
-z_index=60
-[node name="ChapelThreshold" type="Sprite2D" parent="OcclusionRoot"]
-position=Vector2(0,-704)
-texture=ExtResource("28")
-z_as_relative=false
-z_index=60
-[node name="LowerQuarterSeal" type="Sprite2D" parent="OcclusionRoot"]
-position=Vector2(0,-1600)
-scale=Vector2(1,1)
-texture=ExtResource("43_seal")
-z_as_relative=false
-z_index=61
-[node name="CameraPresentation" type="Node2D" parent="."]
-[node name="ChapelCosmicBlend" type="Node" parent="CameraPresentation"]
-script=ExtResource("39")
-reference_path=NodePath("../..")
-target_path=NodePath("../../PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/VoidUnderlay")
-south_y=-608.0
-north_y=-736.0
-south_alpha=0.0
-north_alpha=1.0
-smoothstep=true
-[node name="ChapelTemporalHazeBlend" type="Node" parent="CameraPresentation"]
-script=ExtResource("39")
-reference_path=NodePath("../..")
-target_path=NodePath("../../PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/TemporalFX")
-south_y=-640.0
-north_y=-800.0
-south_alpha=0.0
-north_alpha=0.65
-smoothstep=true
-[node name="AuthoredCameraZoneDirector2D" type="Node" parent="CameraPresentation"]
-script=ExtResource("36")
-[node name="LandingVista" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D"]
-script=ExtResource("37")
-profile_id=&"LANDING_VISTA"
-region=Rect2(-512,1216,1024,768)
-framing_zoom=Vector2(0.62,0.62)
-framing_offset=Vector2(0,-224)
-transition_sec=0.65
-priority=10
-release_to_gameplay=false
-[node name="UpperDescent" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D"]
-script=ExtResource("37")
-profile_id=&"UPPER_DESCENT"
-region=Rect2(-576,480,1152,896)
-framing_zoom=Vector2(0.68,0.68)
-framing_offset=Vector2(0,-192)
-transition_sec=0.55
-priority=20
-release_to_gameplay=false
-[node name="DeepCavern" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D"]
-script=ExtResource("37")
-profile_id=&"DEEP_CAVERN"
-region=Rect2(-576,-320,1152,832)
-framing_zoom=Vector2(0.76,0.76)
-framing_offset=Vector2(0,-144)
-transition_sec=0.5
-priority=30
-release_to_gameplay=false
-[node name="ChapelApproach" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D"]
-script=ExtResource("37")
-profile_id=&"CHAPEL_APPROACH"
-region=Rect2(-416,-800,832,480)
-framing_zoom=Vector2(0.82,0.82)
-framing_offset=Vector2(0,-96)
-transition_sec=0.4
-priority=40
-release_to_gameplay=false
-[node name="ChapelGameplayRelease" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D"]
-script=ExtResource("37")
-profile_id=&"CHAPEL_GAMEPLAY_RELEASE"
-region=Rect2(-576,-1584,1152,864)
-framing_zoom=Vector2(1,1)
-framing_offset=Vector2(0,0)
-transition_sec=0.35
-priority=100
-release_to_gameplay=true
-[node name="DistantProxyFadeZone" type="Node2D" parent="CameraPresentation"]
-[node name="Collision" type="Node2D" parent="."]
-[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision"]
-collision_layer=1
-collision_mask=1
-[node name="Markers" type="Node2D" parent="."]
-[node name="Spawn_DescentLanding" type="Marker2D" parent="Markers"]
-position=Vector2(0,1696)
-[node name="POIRoot" type="Node2D" parent="."]
-[node name="EventMarkers" type="Node2D" parent="."]
-[node name="EventRuntime" type="Node2D" parent="."]
-[node name="Exits" type="Node2D" parent="."]
-[node name="Exit_ReturnWorld" type="Area2D" parent="Exits"]
-position=Vector2(0,1696)
-script=ExtResource("3")
-exit_id=&"return_world"
-prompt_text="ASCEND TO SURFACE"
-interaction_distance=64.0
-arrival_guard_radius=56.0
-boarding_authority_path=NodePath("../../PropsRoot/LowerLiftAssembly")
-departure_controller_path=NodePath("../..")
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_ReturnWorld"]
-shape=SubResource("return")
-[node name="NavigationRoot" type="Node2D" parent="."]
-[node name="DepartureOverlay" type="CanvasLayer" parent="."]
-layer=90
-[node name="Black" type="ColorRect" parent="DepartureOverlay"]
-modulate=Color(1,1,1,0)
-anchors_preset=15
-anchor_right=1.0
-anchor_bottom=1.0
-grow_horizontal=2
-grow_vertical=2
-mouse_filter=2
-color=Color(0,0,0,1)
-[node name="Epilogue" type="Label" parent="DepartureOverlay"]
-visible=false
-anchors_preset=8
-anchor_left=0.5
-anchor_top=0.5
-anchor_right=0.5
-anchor_bottom=0.5
-offset_left=-360.0
-offset_top=180.0
-offset_right=360.0
-offset_bottom=250.0
-grow_horizontal=2
-grow_vertical=2
-horizontal_alignment=1
+shader = SubResource("vertical_feather")
+shader_parameter/top_feather = 0.0
+shader_parameter/bottom_feather = 0.1
+
+[sub_resource type="RectangleShape2D" id="lower_lift_boarding_back"]
+size = Vector2(223, 22)
+
+[sub_resource type="RectangleShape2D" id="lower_lift_boarding_front_wing"]
+size = Vector2(20, 80)
+
+[sub_resource type="RectangleShape2D" id="return"]
+size = Vector2(192, 64)
+
+[node name="ForlornRitualantUnderground" type="Node2D" unique_id=1328249288]
+script = ExtResource("1")
+camera_bounds = Rect2(-1792, -2048, 3584, 4096)
+draw_placeholder_grid = false
+placeholder_canvas_size = Vector2(3584, 4096)
+
+[node name="UnderlayRoot" type="Node2D" parent="." unique_id=1620990322]
+
+[node name="FarVoidParallax" type="Parallax2D" parent="UnderlayRoot" unique_id=2077706477]
+scroll_scale = Vector2(0.1, 0.1)
+repeat_size = Vector2(2048, 2048)
+repeat_times = 3
+
+[node name="FarVoid" type="Sprite2D" parent="UnderlayRoot/FarVoidParallax" unique_id=1983493890]
+z_index = -120
+z_as_relative = false
+texture_repeat = 2
+texture = ExtResource("5")
+
+[node name="MidDepthSouthParallax" type="Parallax2D" parent="UnderlayRoot" unique_id=1008739617]
+scroll_scale = Vector2(0.28, 0.28)
+
+[node name="MidDepthSouth" type="Sprite2D" parent="UnderlayRoot/MidDepthSouthParallax" unique_id=1782530461]
+z_index = -110
+z_as_relative = false
+material = SubResource("south_feather")
+texture = ExtResource("6")
+
+[node name="MidDepthMiddleParallax" type="Parallax2D" parent="UnderlayRoot" unique_id=620854307]
+scroll_scale = Vector2(0.28, 0.28)
+
+[node name="MidDepthMiddle" type="Sprite2D" parent="UnderlayRoot/MidDepthMiddleParallax" unique_id=2073809434]
+z_index = -109
+z_as_relative = false
+material = SubResource("middle_feather")
+texture = ExtResource("7")
+
+[node name="MidDepthNorthParallax" type="Parallax2D" parent="UnderlayRoot" unique_id=1940178195]
+scroll_scale = Vector2(0.28, 0.28)
+
+[node name="MidDepthNorth" type="Sprite2D" parent="UnderlayRoot/MidDepthNorthParallax" unique_id=2127970052]
+z_index = -108
+z_as_relative = false
+material = SubResource("north_feather")
+texture = ExtResource("8")
+
+[node name="MineralHazeParallax" type="Parallax2D" parent="UnderlayRoot" unique_id=273015346]
+scroll_scale = Vector2(0.45, 0.45)
+
+[node name="MineralHaze" type="Sprite2D" parent="UnderlayRoot/MineralHazeParallax" unique_id=1338022997]
+modulate = Color(1, 1, 1, 0.1)
+z_index = -95
+z_as_relative = false
+texture = ExtResource("14")
+
+[node name="ChapelHazeParallax" type="Parallax2D" parent="UnderlayRoot" unique_id=1176000005]
+scroll_scale = Vector2(0.45, 0.45)
+
+[node name="ChapelHaze" type="Sprite2D" parent="UnderlayRoot/ChapelHazeParallax" unique_id=1736772327]
+modulate = Color(1, 1, 1, 0.12)
+z_index = -94
+z_as_relative = false
+texture = ExtResource("15")
+
+[node name="DistantChapelProxy" type="Sprite2D" parent="UnderlayRoot" unique_id=391778214]
+modulate = Color(1, 1, 1, 0)
+z_index = -39
+z_as_relative = false
+position = Vector2(320, 1088)
+scale = Vector2(1.25, 1.25)
+texture = ExtResource("23")
+
+[node name="BackgroundRoot" type="Node2D" parent="." unique_id=76025962]
+
+[node name="RitualantArenaExpandedBase" type="Sprite2D" parent="BackgroundRoot" unique_id=1941751350]
+z_index = -30
+z_as_relative = false
+position = Vector2(0, -1120)
+texture = ExtResource("42_arena")
+
+[node name="PlayableGround" type="Polygon2D" parent="BackgroundRoot" unique_id=1388790219]
+z_index = -50
+z_as_relative = false
+texture_repeat = 2
+texture = ExtResource("9")
+
+[node name="CavernRimSouth" type="Sprite2D" parent="BackgroundRoot" unique_id=385138080]
+z_index = -40
+z_as_relative = false
+position = Vector2(0, 1024)
+texture = ExtResource("11")
+
+[node name="CavernRimMiddle" type="Sprite2D" parent="BackgroundRoot" unique_id=970113095]
+z_index = -40
+z_as_relative = false
+position = Vector2(0, 256)
+texture = ExtResource("12")
+
+[node name="CavernRimNorth" type="Sprite2D" parent="BackgroundRoot" unique_id=871173417]
+z_index = -40
+z_as_relative = false
+position = Vector2(0, -448)
+texture = ExtResource("13")
+
+[node name="LandingShelfApron" type="Sprite2D" parent="BackgroundRoot" unique_id=1265527579]
+z_index = -39
+z_as_relative = false
+position = Vector2(0, 1568)
+texture = ExtResource("10")
+
+[node name="LandingConnectorBridge" type="Sprite2D" parent="BackgroundRoot" unique_id=663120839]
+z_index = -38
+z_as_relative = false
+position = Vector2(0, 1376)
+texture = ExtResource("40")
+
+[node name="ChapelConnectorApron" type="Sprite2D" parent="BackgroundRoot" unique_id=1080022627]
+z_index = -27
+z_as_relative = false
+position = Vector2(0, -640)
+texture = ExtResource("16")
+
+[node name="GroundDetails" type="Node2D" parent="BackgroundRoot" unique_id=531561706]
+
+[node name="WetDetail01" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=790092212]
+z_index = -25
+z_as_relative = false
+position = Vector2(-128, 1216)
+texture = ExtResource("18")
+
+[node name="WetDetail02" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=1175238284]
+z_index = -25
+z_as_relative = false
+position = Vector2(160, 672)
+texture = ExtResource("18")
+flip_h = true
+
+[node name="WetDetail03" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=1906719561]
+z_index = -25
+z_as_relative = false
+position = Vector2(-96, 96)
+texture = ExtResource("18")
+
+[node name="WetDetail04" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=1644269272]
+z_index = -25
+z_as_relative = false
+position = Vector2(96, -448)
+texture = ExtResource("18")
+flip_h = true
+
+[node name="Fracture01" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=1403936191]
+z_index = -24
+z_as_relative = false
+position = Vector2(96, 1056)
+texture = ExtResource("19")
+
+[node name="Fracture02" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=792804775]
+z_index = -24
+z_as_relative = false
+position = Vector2(-128, 416)
+texture = ExtResource("19")
+flip_h = true
+
+[node name="Fracture03" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=1308223316]
+z_index = -24
+z_as_relative = false
+position = Vector2(128, -192)
+texture = ExtResource("19")
+
+[node name="Fracture04" type="Sprite2D" parent="BackgroundRoot/GroundDetails" unique_id=614649940]
+z_index = -24
+z_as_relative = false
+position = Vector2(-64, -576)
+texture = ExtResource("19")
+flip_h = true
+
+[node name="PlayableRoot" type="Node2D" parent="." unique_id=130038799]
+
+[node name="ForlornRitualantSite" parent="PlayableRoot" unique_id=2006947758 instance=ExtResource("2")]
+position = Vector2(0, -1120)
+
+[node name="PropsRoot" type="Node2D" parent="." unique_id=1074664014]
+
+[node name="AuthoredDressing" type="Node2D" parent="PropsRoot" unique_id=2042273893]
+script = ExtResource("44_dressing")
+
+[node name="LowerLiftAssembly" parent="PropsRoot" unique_id=2006872075 instance=ExtResource("4")]
+position = Vector2(0, 1696)
+
+[node name="LowerLiftBoardingBounds" type="StaticBody2D" parent="PropsRoot" unique_id=531273008]
+position = Vector2(0, 1696)
+
+[node name="BackStop" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds" unique_id=1096545221]
+position = Vector2(0.5, 30)
+shape = SubResource("lower_lift_boarding_back")
+
+[node name="LeftFrontWing" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds" unique_id=320091014]
+position = Vector2(-89, -21)
+shape = SubResource("lower_lift_boarding_front_wing")
+
+[node name="RightFrontWing" type="CollisionShape2D" parent="PropsRoot/LowerLiftBoardingBounds" unique_id=215187954]
+position = Vector2(79, -13)
+shape = SubResource("lower_lift_boarding_front_wing")
+
+[node name="CavernPropsRoot" type="Node2D" parent="PropsRoot" unique_id=2047956190]
+y_sort_enabled = true
+
+[node name="RockSmall01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=781869294]
+position = Vector2(-288, 1504)
+texture = ExtResource("29")
+
+[node name="RockSmall02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1044567820]
+position = Vector2(288, 1472)
+texture = ExtResource("29")
+flip_h = true
+
+[node name="RockSmall03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1991455327]
+position = Vector2(-352, 864)
+texture = ExtResource("29")
+
+[node name="RockSmall04" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1746067377]
+position = Vector2(288, 128)
+texture = ExtResource("29")
+flip_h = true
+
+[node name="RockSmall05" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=243979202]
+position = Vector2(-224, -512)
+texture = ExtResource("29")
+
+[node name="RockMedium01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=776971381]
+position = Vector2(-352, 1152)
+texture = ExtResource("30")
+
+[node name="RockMedium02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=206772168]
+position = Vector2(320, 640)
+texture = ExtResource("30")
+flip_h = true
+
+[node name="RockMedium03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1422431332]
+position = Vector2(288, -384)
+texture = ExtResource("30")
+
+[node name="StalagmiteTall01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=666955007]
+position = Vector2(-416, 960)
+texture = ExtResource("31")
+
+[node name="StalagmiteTall02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1658355843]
+position = Vector2(352, 352)
+texture = ExtResource("31")
+flip_h = true
+
+[node name="StalagmiteTall03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1958373767]
+position = Vector2(-320, -480)
+texture = ExtResource("31")
+
+[node name="StalagmiteWide01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1781745959]
+position = Vector2(320, 800)
+texture = ExtResource("32")
+flip_h = true
+
+[node name="StalagmiteWide02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=302100358]
+position = Vector2(-320, 224)
+texture = ExtResource("32")
+
+[node name="StalagmiteWide03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1879718345]
+position = Vector2(288, -544)
+texture = ExtResource("32")
+flip_h = true
+
+[node name="ServiceRail01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1130969297]
+position = Vector2(-160, 1376)
+texture = ExtResource("33")
+
+[node name="ServiceRail02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1044557678]
+position = Vector2(192, 1248)
+texture = ExtResource("33")
+flip_h = true
+
+[node name="ChainAnchor01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=267376505]
+position = Vector2(-256, 1632)
+texture = ExtResource("34")
+
+[node name="ChainAnchor02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=1262309196]
+position = Vector2(256, 1600)
+texture = ExtResource("34")
+flip_h = true
+
+[node name="MineralSeep01" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=848527677]
+position = Vector2(-384, 544)
+texture = ExtResource("35")
+
+[node name="MineralSeep02" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=256868820]
+position = Vector2(320, -192)
+texture = ExtResource("35")
+flip_h = true
+
+[node name="MineralSeep03" type="Sprite2D" parent="PropsRoot/CavernPropsRoot" unique_id=816290565]
+position = Vector2(-224, -608)
+texture = ExtResource("35")
+
+[node name="ArrivalDescentRoot" type="Node2D" parent="." unique_id=1257497016]
+
+[node name="ShaftScroll" type="Sprite2D" parent="ArrivalDescentRoot" unique_id=2016245300]
+visible = false
+z_index = -10
+z_as_relative = false
+texture_filter = 1
+texture_repeat = 1
+position = Vector2(0, 1440)
+texture = ExtResource("41")
+region_enabled = true
+region_rect = Rect2(0, 448, 256, 768)
+
+[node name="ShaftArrivalBack" type="Sprite2D" parent="ArrivalDescentRoot" unique_id=1083912953]
+visible = false
+z_index = -10
+z_as_relative = false
+position = Vector2(0, 1440)
+texture = ExtResource("20")
+region_enabled = true
+region_rect = Rect2(0, 0, 768, 768)
+
+[node name="LandingMouth" type="Sprite2D" parent="ArrivalDescentRoot" unique_id=343046035]
+z_index = -5
+z_as_relative = false
+position = Vector2(0, 1536)
+texture = ExtResource("22")
+
+[node name="ShaftArrivalFore" type="Sprite2D" parent="ArrivalDescentRoot" unique_id=1051140829]
+visible = false
+z_index = 20
+z_as_relative = false
+position = Vector2(0, 1440)
+texture = ExtResource("21")
+region_enabled = true
+region_rect = Rect2(0, 0, 768, 768)
+
+[node name="LandingDust" type="Sprite2D" parent="ArrivalDescentRoot" unique_id=1634970360]
+visible = false
+modulate = Color(1, 1, 1, 0.24)
+position = Vector2(0, 1728)
+scale = Vector2(0.5, 0.302)
+texture = ExtResource("38")
+region_enabled = true
+region_rect = Rect2(0, 0, 192, 192)
+
+[node name="OcclusionRoot" type="Node2D" parent="." unique_id=5033926]
+
+[node name="SouthRight" type="Sprite2D" parent="OcclusionRoot" unique_id=1652094857]
+z_index = 60
+z_as_relative = false
+position = Vector2(320, 1024)
+texture = ExtResource("24")
+
+[node name="MiddleLeft" type="Sprite2D" parent="OcclusionRoot" unique_id=587058029]
+z_index = 60
+z_as_relative = false
+position = Vector2(-320, 512)
+texture = ExtResource("25")
+
+[node name="MiddleRightPillar" type="Sprite2D" parent="OcclusionRoot" unique_id=1164789321]
+z_index = 60
+z_as_relative = false
+position = Vector2(384, 96)
+texture = ExtResource("26")
+
+[node name="DeepLeft" type="Sprite2D" parent="OcclusionRoot" unique_id=1345015196]
+z_index = 60
+z_as_relative = false
+position = Vector2(-320, -352)
+texture = ExtResource("27")
+
+[node name="ChapelThreshold" type="Sprite2D" parent="OcclusionRoot" unique_id=1895046182]
+z_index = 60
+z_as_relative = false
+position = Vector2(0, -704)
+texture = ExtResource("28")
+
+[node name="LowerQuarterSeal" type="Sprite2D" parent="OcclusionRoot" unique_id=1901629841]
+z_index = 61
+z_as_relative = false
+position = Vector2(0, -1600)
+texture = ExtResource("43_seal")
+
+[node name="CameraPresentation" type="Node2D" parent="." unique_id=444143058]
+
+[node name="ChapelCosmicBlend" type="Node" parent="CameraPresentation" unique_id=441283702]
+script = ExtResource("39")
+reference_path = NodePath("../..")
+target_path = NodePath("../../PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/VoidUnderlay")
+south_y = -608.0
+north_y = -736.0
+
+[node name="ChapelTemporalHazeBlend" type="Node" parent="CameraPresentation" unique_id=1305031847]
+script = ExtResource("39")
+reference_path = NodePath("../..")
+target_path = NodePath("../../PlayableRoot/ForlornRitualantSite/ForlornRitualantShaderFX/TemporalFX")
+south_y = -640.0
+north_y = -800.0
+north_alpha = 0.65
+
+[node name="AuthoredCameraZoneDirector2D" type="Node" parent="CameraPresentation" unique_id=521977350]
+script = ExtResource("36")
+
+[node name="LandingVista" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D" unique_id=1614010711]
+script = ExtResource("37")
+profile_id = &"LANDING_VISTA"
+region = Rect2(-512, 1216, 1024, 768)
+framing_zoom = Vector2(0.62, 0.62)
+framing_offset = Vector2(0, -224)
+transition_sec = 0.65
+priority = 10
+
+[node name="UpperDescent" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D" unique_id=490552016]
+script = ExtResource("37")
+profile_id = &"UPPER_DESCENT"
+region = Rect2(-576, 480, 1152, 896)
+framing_zoom = Vector2(0.68, 0.68)
+framing_offset = Vector2(0, -192)
+transition_sec = 0.55
+priority = 20
+
+[node name="DeepCavern" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D" unique_id=141747335]
+script = ExtResource("37")
+profile_id = &"DEEP_CAVERN"
+region = Rect2(-576, -320, 1152, 832)
+framing_zoom = Vector2(0.76, 0.76)
+framing_offset = Vector2(0, -144)
+priority = 30
+
+[node name="ChapelApproach" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D" unique_id=2022475473]
+script = ExtResource("37")
+profile_id = &"CHAPEL_APPROACH"
+region = Rect2(-416, -800, 832, 480)
+framing_zoom = Vector2(0.82, 0.82)
+framing_offset = Vector2(0, -96)
+transition_sec = 0.4
+priority = 40
+
+[node name="ChapelGameplayRelease" type="Node2D" parent="CameraPresentation/AuthoredCameraZoneDirector2D" unique_id=741110521]
+script = ExtResource("37")
+profile_id = &"CHAPEL_GAMEPLAY_RELEASE"
+region = Rect2(-576, -1584, 1152, 864)
+transition_sec = 0.35
+priority = 100
+release_to_gameplay = true
+
+[node name="DistantProxyFadeZone" type="Node2D" parent="CameraPresentation" unique_id=1281531595]
+
+[node name="Collision" type="Node2D" parent="." unique_id=2088914716]
+
+[node name="PathBoundaryCollision" type="StaticBody2D" parent="Collision" unique_id=426713573]
+
+[node name="Markers" type="Node2D" parent="." unique_id=502420705]
+
+[node name="Spawn_DescentLanding" type="Marker2D" parent="Markers" unique_id=1423230289]
+position = Vector2(0, 1696)
+
+[node name="POIRoot" type="Node2D" parent="." unique_id=1449833295]
+
+[node name="EventMarkers" type="Node2D" parent="." unique_id=970297813]
+
+[node name="EventRuntime" type="Node2D" parent="." unique_id=639737994]
+
+[node name="Exits" type="Node2D" parent="." unique_id=1212211479]
+
+[node name="Exit_ReturnWorld" type="Area2D" parent="Exits" unique_id=2072879941]
+position = Vector2(0, 1696)
+script = ExtResource("3")
+interaction_distance = 64.0
+boarding_authority_path = NodePath("../../PropsRoot/LowerLiftAssembly")
+departure_controller_path = NodePath("../..")
+exit_id = &"return_world"
+prompt_text = "ASCEND TO SURFACE"
+arrival_guard_radius = 56.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_ReturnWorld" unique_id=2143397801]
+shape = SubResource("return")
+
+[node name="NavigationRoot" type="Node2D" parent="." unique_id=996463585]
+
+[node name="DepartureOverlay" type="CanvasLayer" parent="." unique_id=449612178]
+layer = 90
+
+[node name="Black" type="ColorRect" parent="DepartureOverlay" unique_id=1275630600]
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Epilogue" type="Label" parent="DepartureOverlay" unique_id=1294223296]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = 180.0
+offset_right = 360.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
