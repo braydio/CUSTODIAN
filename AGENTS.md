@@ -73,6 +73,16 @@ or layering when those are established by deterministic evidence. Subjective art
 direction, composition preference, aesthetic cohesion, and baseline approval stay
 human-owned.
 
+When objective checks are green but an important subjective presentation question
+remains, do not spend the coding-agent review loop judging its own screenshots.
+Publish one compact external review handoff with
+`custodian/tools/iteration/publish_review_artifacts.py` and return the emitted
+Dropbox manifest path plus the exact reviewer questions. The publisher is opt-in:
+use `--important --reason ...` only when the human/ChatGPT visual decision is
+material. Prefer ROI/contact sheets and sparse authored keyframes; do not commit
+bulk review media to Git. See
+`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
+
 Task packets that require substantial visual evidence must state why non-visual
 checks are insufficient and minimize the capture budget. More than two full-frame
 stills, any repeated full-frame pass, or full-motion capture needs explicit
