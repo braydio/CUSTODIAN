@@ -110,6 +110,10 @@ class PublishView:
     publish_block_reason: str = ""
     land_pending: bool = False
     pending_identity: str = ""
+    readiness_status: str = "ready"
+    readiness_summary: str = ""
+    readiness_blockers: tuple[str, ...] = ()
+    readiness_preparations: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

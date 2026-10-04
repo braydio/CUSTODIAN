@@ -82,6 +82,10 @@ def fixture(root: Path, seed: int) -> tuple[Path, dict[str, Path], dict[str, Pat
             "publish_contract": {"path": str(east[layer].relative_to(root)), "frames": FRAMES,
                                  "frame_size": list(FRAME_SIZE)},
         })
+    metadata = root / "custodian/content/fixtures/unrelated.png.import"
+    metadata.parent.mkdir(parents=True, exist_ok=True); metadata.write_bytes(b"original tracked import metadata\n")
+    generated = root / "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
+    generated.parent.mkdir(parents=True, exist_ok=True); generated.write_bytes(b"canonical frames before")
     timing_path = model.BUILDER.timing_sidecar_path(east["lower_body"])
     timing_path.write_text(json.dumps(TIMING, indent=2) + "\n")
     west_timing = model.BUILDER.timing_sidecar_path(west["lower_body"])
@@ -91,17 +95,23 @@ def fixture(root: Path, seed: int) -> tuple[Path, dict[str, Path], dict[str, Pat
         "identity": {"profile": "unarmed", "group": "defense", "action": "block_hold_01", "direction": "e"},
         "context": {}, "canvas": {"width": 4, "height": 2}, "layers": layers, "references": [],
         "timeline": {"frames": FRAMES, "source_clock_frames": FRAMES, "workspace_clock_frames": FRAMES,
-                     "document_frames": FRAMES, "fps": 8.0, "loop": True,
+                     "document_frames": FRAMES, "fps": 8.0, "preview_fps": 8.0, "loop": True,
                      "durations": [1.0, 1.5, 0.5], "timing_authority": True, "clock_owner": "lower_body"},
         "aseprite": {"path": str(document), "last_synced_sha256": model.file_sha256(document)},
         "pending_migration": None,
     }
     manifest_path = workspace / "workbench.json"
     workbench.save(manifest_path, manifest)
+    (root / ".gitignore").write_text(".ai/\n")
+    subprocess.run(["git", "init", "-q", "-b", "main"], cwd=root, check=True)
+    subprocess.run(["git", "config", "user.name", "Workbench Fixture"], cwd=root, check=True)
+    subprocess.run(["git", "config", "user.email", "workbench-fixture@example.invalid"], cwd=root, check=True)
+    subprocess.run(["git", "add", "--all"], cwd=root, check=True)
+    subprocess.run(["git", "commit", "-qm", "clean transaction fixture"], cwd=root, check=True)
     return manifest_path, east, west
 
 
-def run_case(*, mirror: bool, fail_downstream: bool) -> None:
+def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = False, dirty_metadata: bool = False) -> None:
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
         manifest_path, east, west = fixture(root, 20)
@@ -113,7 +123,9 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
         original_resources = {canonical_frames: canonical_frames.read_bytes()}
         timing_paths = tuple(model.BUILDER.timing_sidecar_path(paths["lower_body"]) for paths in (east, west))
         original_timing = {path: path.read_bytes() for path in timing_paths}
-        exported = {layer: root / f"edited_{layer}.png" for layer in LAYERS}
+        metadata_path=root/"custodian/content/fixtures/unrelated.png.import"
+        metadata_preimage=metadata_path.read_bytes(); import_calls=0
+        exported = {layer: manifest_path.parent / f"edited_{layer}.png" for layer in LAYERS}
         for offset, layer in enumerate(LAYERS): make_strip(exported[layer], 50 + offset * 20)
 
         saved = {
@@ -129,8 +141,15 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
             result = {}
             for layer, path in west.items(): result[("operator", layer, "unarmed", "defense", "block_hold_01", "w")] = (path, None)
             return result
-        def aseprite_run(_binary, path, _mode):
-            data = json.loads(path.read_text()); raw = path.parent / "exports" / data["export_stamp"] / "raw"
+        def aseprite_run(_binary, path, mode):
+            data = json.loads(path.read_text())
+            if mode == "inspect_contract":
+                (path.parent / ".document_contract.json").write_text(json.dumps({
+                    "frames": FRAMES, "width": data["canvas"]["width"], "height": data["canvas"]["height"],
+                    "durations": [1.0 / data["timeline"]["preview_fps"]] * FRAMES,
+                }))
+                return
+            raw = path.parent / "exports" / data["export_stamp"] / "raw"
             raw.mkdir(parents=True, exist_ok=True)
             for layer in LAYERS: shutil.copy2(exported[layer], raw / f"{layer}.png")
         def downstream(*_args, **_kwargs):
@@ -146,22 +165,57 @@ def run_case(*, mirror: bool, fail_downstream: bool) -> None:
             model.source_index=source_index; workbench.GENERATED_OPERATOR_RESOURCES=[canonical_frames]
             workbench.aseprite_run=aseprite_run; workbench.resolve_aseprite=lambda *_args,**_kwargs:Path("/bin/true")
             workbench._validation_commands=lambda *_args,**_kwargs:[]
-            workbench._godot_import=lambda:None; workbench._catalog_build=lambda:None; workbench._operator_scene_consistency=lambda:None
-            workbench.subprocess.run=downstream
+            def godot_import():
+                nonlocal import_calls
+                if import_calls==0:
+                    metadata_path.write_bytes(b"import-generated metadata\n")
+                    if ambiguous_import: (root/"unexpected-import-output.txt").write_text("ambiguous generated output\n")
+                import_calls+=1
+            workbench._godot_import=godot_import; workbench._catalog_build=lambda:None; workbench._operator_scene_consistency=lambda:None
+            real_run=saved["subprocess"]
+            def routed_run(command,*args,**kwargs):
+                if any("sync_operator_runtime_assets.py" in str(part) for part in command):
+                    return downstream(command,*args,**kwargs)
+                return real_run(command,*args,**kwargs)
+            workbench.subprocess.run=routed_run
+            if dirty_metadata:
+                metadata_path.write_bytes(b"pre-existing user metadata edit\n")
+                before={path:path.read_bytes() for path in east.values()}
+                try: workbench.publish(manifest_path, mirror_counterpart=mirror)
+                except model.WorkbenchError as error: assert "PRE-EXISTING IMPORT METADATA" in str(error)
+                else: raise AssertionError("pre-existing import metadata was auto-restored")
+                assert {path:path.read_bytes() for path in east.values()}==before
+                return
+            if ambiguous_import:
+                try: workbench.publish(manifest_path, mirror_counterpart=mirror)
+                except model.WorkbenchError as error: assert "unexpected non-metadata" in str(error)
+                else: raise AssertionError("ambiguous import output was accepted")
+                journal=json.loads(sorted((manifest_path.parent/"transactions").glob("*/transaction.json"))[-1].read_text())
+                assert journal["state"]=="RECOVERY_REQUIRED" and "unexpected-import-output.txt" in journal["unresolved_paths"]
+                assert journal["primary_failure"] and journal["recovery_failure"]
+                assert metadata_path.read_bytes()==metadata_preimage, (metadata_path.read_bytes(), metadata_preimage, journal)
+                return
             if fail_downstream:
                 try: workbench.publish(manifest_path, mirror_counterpart=mirror)
-                except subprocess.CalledProcessError: pass
+                except model.WorkbenchError as error:
+                    assert "injected-runtime-build" in str(error)
                 else: raise AssertionError("injected downstream failure did not escape publish")
                 assert all(path.read_bytes() == content for path, content in originals.items())
                 assert all(path.read_bytes() == content for path, content in original_timing.items())
                 assert all(path.read_bytes() == content for path, content in original_resources.items())
                 journal = json.loads(sorted((manifest_path.parent / "transactions").glob("*/transaction.json"))[-1].read_text())
                 assert journal["state"] == "ROLLED_BACK" and journal["mirror_promotion"]["enabled"] is mirror
+                assert journal["primary_failure"]["stage"] == "runtime_build"
+                assert journal["primary_failure"]["return_code"] == 91
+                assert journal["recovery_failure"] is None
                 resource_backups = {item["backup_path"] for item in journal["resources"]}
                 assert any(path.endswith("custodian/content/sprites/operator/runtime/operator_runtime_frames.tres") for path in resource_backups)
                 assert len(resource_backups) == len(journal["resources"]), "resource backups must not collide by basename"
             else:
                 workbench.publish(manifest_path, mirror_counterpart=mirror)
+                journal=json.loads(sorted((manifest_path.parent/"transactions").glob("*/transaction.json"))[-1].read_text())
+                assert metadata_path.read_bytes()==metadata_preimage, (metadata_path.read_bytes(), metadata_preimage, journal)
+                assert "custodian/content/fixtures/unrelated.png.import" in journal["restored_import_metadata"]
                 for layer in LAYERS: assert east[layer].read_bytes() == exported[layer].read_bytes()
                 if mirror:
                     for layer in LAYERS: assert frame_bytes(west[layer]) == framewise_mirror_bytes(east[layer])
@@ -186,7 +240,9 @@ def main() -> None:
     run_case(mirror=False, fail_downstream=False)
     run_case(mirror=True, fail_downstream=False)
     run_case(mirror=True, fail_downstream=True)
-    print("PASS operator_workbench_mirror_publish_smoke: opt-out, framewise apply/timing, atomic byte rollback")
+    run_case(mirror=False, fail_downstream=False, ambiguous_import=True)
+    run_case(mirror=False, fail_downstream=False, dirty_metadata=True)
+    print("PASS operator_workbench_mirror_publish_smoke: scoped publish, import metadata restore, ambiguous-output recovery, atomic rollback")
 
 
 if __name__ == "__main__": main()

@@ -50,4 +50,11 @@ elseif mode=="export" then
     strip:saveAs(app.fs.joinPath(raw,b.binding_id..".png"))
   end
   s:close()
+elseif mode=="inspect_contract" then
+  local s=app.open(wb)
+  local durations={}
+  for _,frame in ipairs(s.frames) do durations[#durations+1]=frame.duration end
+  local report={frames=#s.frames,width=s.width,height=s.height,durations=durations}
+  local f=assert(io.open(app.fs.joinPath(root,".document_contract.json"),"wb"))
+  f:write(json.encode(report)); f:close(); s:close()
 else error("unknown mode: "..mode) end

@@ -389,7 +389,7 @@ class OperatorWorkbenchApp(App):
                 await self._load_session(self.state.selection)
             self._status_branch, self._status_dirty = await self._thread(self._repo_status)
             try:
-                self._status_checkout = await self._thread(self.service.checkout_status_label)
+                self._status_checkout = await self._thread(self.service.checkout_status_label, self.state.selection)
             except (AttributeError, OSError, RuntimeError):
                 self._status_checkout = "unknown checkout"
             self._status_aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")

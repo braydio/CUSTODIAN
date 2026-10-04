@@ -72,15 +72,33 @@ class WorkbenchService:
     def checkout_identity(self):
         return operator_art_worktree.checkout_identity(self.repo_root, self.coordination_root)
 
-    def checkout_status_label(self) -> str:
+    def readiness(self, selection: AnimationSelection | None = None):
+        manifest_path = self.workspace(selection) / "workbench.json" if selection else None
+        freshness = {}
+        selected_paths = set()
+        if manifest_path and manifest_path.is_file():
+            try:
+                data = self.workbench.load(manifest_path)
+                freshness = self.workbench.source_contract_freshness(data, self.repo_root)
+                for binding in data.get("layers", ()):
+                    for contract in (binding.get("source_contract", {}), binding.get("publish_contract", {})):
+                        if contract.get("path"): selected_paths.add(str(contract["path"]))
+            except Exception as error:
+                freshness = {"selected Workbench": str(error)}
+        return operator_art_worktree.inspect_publish_readiness(
+            self.repo_root, self.coordination_root, self.workspace_root,
+            selected_paths=selected_paths, source_freshness=freshness,
+        )
+
+    def checkout_status_label(self, selection: AnimationSelection | None = None) -> str:
         identity = self.checkout_identity()
-        pending = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
+        readiness = self.readiness(selection)
         suffix = f" · {identity.worktree_state}" if identity.worktree_state != "clean" else ""
-        if pending.exists() and "LAND PENDING" not in suffix:
+        if readiness.pending_land and "LAND PENDING" not in suffix:
             suffix += " · LAND PENDING"
         if identity.kind == "COORDINATION MAIN" and operator_art_worktree.coordination_operator_changes(self.coordination_root):
             suffix += " · coordination Operator edits preserved"
-        return f"{identity.kind} · {identity.sparse_profile} · {identity.branch} · origin/main {identity.main_relation}{suffix}"
+        return f"{identity.kind} · {identity.sparse_profile} · {identity.branch} · origin/main {identity.main_relation} · readiness {readiness.status.upper()}{suffix}"
 
     def require_saved_live_document_for_migration(self, active_path: str | None, expected_path: Path, modified: bool | None) -> None:
         if not active_path or modified is not True:
@@ -517,6 +535,38 @@ class WorkbenchService:
             )
         plan = self._plan(selection)
         manifest_path = self.workspace(selection) / "workbench.json"
+        readiness = None
+        if self.model is model and self.workbench is workbench:
+            selected_paths=set(); freshness={}
+            if manifest_path.is_file():
+                selected_data=self.workbench.load(manifest_path)
+                freshness=self.workbench.source_contract_freshness(selected_data,self.repo_root)
+                for binding in selected_data.get("layers",()):
+                    for contract in (binding.get("source_contract",{}),binding.get("publish_contract",{})):
+                        if contract.get("path"): selected_paths.add(str(contract["path"]))
+            readiness=operator_art_worktree.prepare_publish_checkout(
+                self.repo_root,self.coordination_root,self.workspace_root,
+                selected_paths=selected_paths,source_freshness=freshness,
+            )
+            if readiness.status=="ready" and manifest_path.is_file():
+                selected_data=self.workbench.load(manifest_path)
+                freshness=self.workbench.source_contract_freshness(selected_data,self.repo_root)
+                if freshness:
+                    readiness=operator_art_worktree.inspect_publish_readiness(
+                        self.repo_root,self.coordination_root,self.workspace_root,
+                        selected_paths=selected_paths,source_freshness=freshness,
+                    )
+            if readiness.status!="ready":
+                reasons=tuple(readiness.blockers) or tuple(readiness.preparations)
+                return PublishView(
+                    selection,0,0,(),(),None,"GREEN",
+                    publish_enabled=False,
+                    publish_block_reason="\n".join(reasons),
+                    readiness_status=readiness.status,
+                    readiness_summary=f"Publication readiness: {readiness.status.upper()}",
+                    readiness_blockers=readiness.blockers,
+                    readiness_preparations=readiness.preparations,
+                )
         counterpart = self.workbench.horizontal_counterpart(selection.direction)
         changed = self.workbench.publish(manifest_path, self.aseprite, False, True, full_validate, plan, bool(counterpart))
         data = self.workbench.load(manifest_path)
@@ -581,6 +631,10 @@ class WorkbenchService:
             variable_durations,durations,tuple(row.layer for row in direct_rows),direct_rows,
             tuple(mirror_rows),old_frames!=new_frames or bool(retired),True,
             publish_enabled, block_reason,
+            readiness_status=readiness.status if readiness else ("ready" if publish_enabled else "blocked"),
+            readiness_summary=(f"Publication readiness: {readiness.status.upper()}" if readiness else ""),
+            readiness_blockers=readiness.blockers if readiness else (),
+            readiness_preparations=readiness.preparations if readiness else (),
         )
 
     def publish(self, selection: AnimationSelection, full_validate: bool = False, mirror_counterpart: bool = False):
@@ -624,6 +678,18 @@ class WorkbenchService:
                 if existing:
                     canonical_paths.add(self.model.rel(Path(existing[0])))
         allowlist = operator_art_worktree.publication_allowlist(self.repo_root, canonical_paths)
+        def revalidate_before_mutation():
+            current=self.workbench.load(manifest)
+            stale=self.workbench.source_contract_freshness(current,self.repo_root)
+            check=operator_art_worktree.inspect_publish_readiness(
+                self.repo_root,self.coordination_root,self.workspace_root,
+                selected_paths=canonical_paths,source_freshness=stale,
+            )
+            if check.status!="ready":
+                raise operator_art_worktree.ArtWorktreeError(
+                    "PUBLISH READINESS CHANGED BEFORE SOURCE MUTATION\n"+
+                    "\n".join(check.blockers or check.preparations)
+                )
         result = operator_art_worktree.publish_to_main(
             repo_root=self.repo_root, coordination_root=self.coordination_root,
             workspace_root=self.workspace_root, canonical_paths=canonical_paths,
@@ -635,6 +701,7 @@ class WorkbenchService:
                 "profile": selection.profile, "group": selection.group,
                 "action": selection.action, "direction": selection.direction,
             }, mirror=mirror_counterpart,
+            pre_publish_check=revalidate_before_mutation,
         )
         if result.get("status") == "landed":
             result["coordination_sync"] = operator_art_worktree.best_effort_coordination_sync(

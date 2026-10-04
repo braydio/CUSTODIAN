@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-publish-readiness-recovery`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-operator-workbench-sparse-art-checkout-review-corrections-1`
@@ -170,7 +170,7 @@
 
 ## Handoff
 
-- Next action: Auto-claim `operator-workbench-publish-readiness-recovery` after the sparse-checkout correction review dependency completes.
+- Next action: Paired post-land review `review-operator-workbench-publish-readiness-recovery`; the later browser/PREVIEW hardening packet remains gated behind that review.
 - Best starting files: `custodian/tools/operator/operator_art_worktree.py`, `custodian/tools/operator/animation_workbench.py`, `custodian/tools/operator/ui/service.py`, `custodian/tools/validation/operator_art_worktree_smoke.py`.
 - Blockers or open questions: None requiring user design judgment. Safe automatic actions are deliberately limited to clean FF sync, existing sparse-profile application, local-only LFS materialization (cache first, exact verified hydrated donor second), and exact transaction-generated metadata restoration with proven preimages.
 
@@ -179,20 +179,20 @@
 Required before completion.
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes | no`
-- Completion boundary satisfied: `yes | no`
-- Acceptance satisfied: `yes | no`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: fill with exact implemented files and focused validation results
+- Evidence: `operator_art_worktree.py` and `ui/service.py` implement read-only readiness, classified blockers, safe clean-FF/sparse/local-LFS preparation, and immediate pre-mutation revalidation; `animation_workbench.py` and `operator_animation_workbench.lua` implement source freshness, import metadata receipts/restoration, saved-document frame/timing inspection, primary/recovery failure receipts, and byte-proved rollback; UI state/dialog/app project readiness. `operator_art_worktree_smoke.py`, `operator_workbench_mirror_publish_smoke.py`, `operator_workbench_ui_smoke.py`, and `operator_animation_workbench_smoke.py` pass. `godot_import_preflight.py --project-dir custodian` passes with no checked-out LFS pointers. Before sync, `run_validation.py --changed --json` passed 19/19 selected tests with complete coverage and no uncovered changed files. After sync, the packet's `operator_art_worktree` validation owner passed and all four focused Operator smokes plus import preflight passed. The wider incoming-main diff sweep was not green (46/54; five failures, two timeouts, one tier skip) in unrelated procgen camp placement, Vaultwing/game-scene expectations, and terminal tutorial tests; see closing summary. `git diff --check` passes.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none` or concrete failures/near-misses
-- Root cause / contributing factors: `none` or concise cause
-- Prevention / pipeline improvement: `none` or smallest repeatable fix
-- Tooling / docs drift discovered: `none` or exact stale/missing authority
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
-- What worked: optional, one short line at most
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: Initial negative LFS fixture reused an object that an earlier case had legitimately cached; the import-metadata fixture stub initially intercepted Git status calls. After sync, the broad incoming-main diff sweep reported five unrelated failures and two timeouts.
+- Root cause / contributing factors: The negative LFS control shared an OID with the success case; the smoke stub replaced the shared `subprocess.run` entrypoint; the merged upstream diff selected unrelated procgen, Vaultwing/game-scene, and terminal tests in a sparse checkout.
+- Prevention / pipeline improvement: Keep negative LFS fixtures on unique OIDs and route fixture subprocess stubs by exact command while leaving real Git queries active. Pair after-sync broad changed reports with the packet's exact validation owner so unrelated main failures are visible without confusing task acceptance.
+- Tooling / docs drift discovered: Existing Workbench docs described startup synchronization and cache-only Operator hydration; updated to explicit read-only startup and cache-then-verified-donor preparation.
+- Follow-up: `manual-follow-up`
+- What worked: Fixture remotes, actual local Git LFS, Aseprite contract inspection, and the changed-file suite exercised the recovery boundaries without touching production art.
