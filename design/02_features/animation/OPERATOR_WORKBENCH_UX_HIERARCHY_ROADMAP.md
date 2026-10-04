@@ -50,6 +50,8 @@ browser/PREVIEW snapshot hardening + review
         ↓
 FX layer adoption + review
         ↓
+new animation creation + review
+        ↓
 UX HIERARCHY V1
 ```
 
@@ -64,6 +66,10 @@ Those preceding packets own backend correctness:
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` owns saved Aseprite unbound
   `vfx`/`fx` discovery, explicit adoption, CREATE/REPLACE publication, and
   binding-set drift.
+- `OPERATOR_WORKBENCH_ANIMATION_CREATION.md` owns the first human-authored
+  entirely-new semantic animation flow: identity/template plan, blank/reference-backed
+  Workbench, direct CREATE publication through the specialized Operator backend,
+  rollback, runtime/catalog/import/validation, and truthful dormant/unwired state.
 - The sparse-checkout correction/review chain owns historical closure of the
   `block_hold_01` FX import defect. Current main already has valid east/west
   remaps plus the 588-texture SpriteFrames import guard; UX work must treat that
@@ -75,9 +81,10 @@ their backend logic in Textual.
 2026-10-03 prerequisite audit: publish-readiness/recovery remains the next
 substantial backend slice; its local-only LFS contract now explicitly permits a
 verified hydrated coordination-checkout donor when the shared LFS cache lacks
-the exact object. Browser/PREVIEW hardening and FX adoption remain unimplemented
-on current main and their packet scopes were revalidated. The UX1-UX5 refresh
-gate remains appropriate until those reviewed prerequisites land.
+the exact object. Browser/PREVIEW hardening, FX adoption, and the newly authored
+New Animation creation packet remain prerequisites. UX1-UX5 should refresh only
+after those reviewed backend capabilities land so the UX can expose them rather
+than recreate their logic.
 
 ## Existing UI baseline
 
