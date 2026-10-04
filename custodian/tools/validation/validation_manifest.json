@@ -1997,6 +1997,25 @@
       "needs_import": false
     },
     {
+      "id": "operator_death_campaign_handoff",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_death_campaign_handoff_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "operator",
+        "campaign",
+        "death"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/game/world/bindings/operator_death_campaign_binding.gd",
+        "custodian/tools/validation/operator_death_campaign_handoff_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "operator_dodge_flow",
       "type": "godot_script",
       "script": "res://tools/validation/operator_dodge_flow_smoke.gd",

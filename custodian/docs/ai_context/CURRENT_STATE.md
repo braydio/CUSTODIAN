@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Custodian Death Handoff R1 (2026-10-04)
+
+Operator lethal damage emits one structured `operator_down` snapshot after
+recording the existing telemetry and requesting the existing death action. The
+attached `OperatorDeathCampaignBinding` latches duplicate/reentrant callbacks,
+resolves one active unresolved campaign as `FAILURE` through
+`WorldSimulationRuntime`, then presents the transitional Game Over fallback.
+Authored worlds without an active campaign keep the fallback without creating a
+synthetic campaign. `Operator` no longer calls `GameState.lose_life`; R2 owns Post
+recovery and return/reintegration. Focused evidence is in
+`operator_death_campaign_handoff_smoke.gd` plus the Game Over and campaign
+outcome exactly-once regressions.
+
 ## Lords of Pain DEMO Test Gallery (2026-10-03)
 
 `lords_of_pain_test_gallery` is registered as a dev `world_ingress` destination. Its generated production scene uses the persistent Operator lifecycle and owns no Operator, camera, or controller. The walkable blockout presents Asset V2 Ground Stone, the real Meridian hardened-floor base, Gold Drop/Glint, Highlight/Loot Indicator UI samples, and Warrior/Skeleton animations with all 16 authored directions selectable. A DEMO-scoped manifest records seven available semantic entries, five animation entries, pack/license provenance, and user-approved exclusions for Cursor Gauntlet, Rocks, and Mushrooms. District Transfer Frame art presents both procgen ingress and the normal `return_world` exit. Asset V2 doctor is healthy; gallery, registry, ingress, return, re-entry, and camera smokes pass.

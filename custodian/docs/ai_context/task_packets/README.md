@@ -54,12 +54,12 @@ The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
 so extraction/contraction work cannot move or absorb the reveal seams before the
 AR packet set is refreshed.
 
-## Active Persistent Recovery Series
+## Persistent Recovery Series
 
-- `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 of the expected 8-packet persistent recovery/armament-registration implementation series. It removes ordinary Operator death consequence ownership from the actor, resolves the live CampaignSession exactly once, and intentionally retains current Game Over only as the R1 compatibility fallback.
+- `archived/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 is complete: Operator death now resolves an active CampaignSession once before the temporary Game Over fallback; no-session worlds keep the safe fallback without inventing a campaign.
 - Program tracker: `../../../design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`.
 - Design authority: `../../../design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`.
-- Only R1 is authored at program start. Per the roadmap, author each later packet against the landed live surface of its predecessor rather than freezing speculative runtime contracts up front.
+- R2 is the next slice and must be refreshed against the landed R1 binding and the current Campaign / Hub / world-return surface before dispatch.
 
 ## Active Non-Player Actor Runtime Refactor Series
 
@@ -360,7 +360,6 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — Independently verify that the landed Workbench publication hardening converts the recent serial Git/LFS/manifest/import failure chain into one bounded readin...
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — Independently verify corrections for findings R0-01 through R0-05 without reopening parent implementation scope.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
-- `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — Make Custodian lethal damage a campaign-level exactly-once event instead of an actor-owned life decrement, establishing the recovery-capable death handoff wi...
 - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — Move Marine Dash from `enemy.gd` into one complete actor-local ability authority while preserving the current tactical-dash behavior, tuning, combat results,...
 - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — Move the Savage two-hit chain lifecycle out of `enemy.gd` into one actor-local ability authority while preserving the existing rushdown cadence and guard-pre...
 - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — Move the Savage pounce phase machine out of `enemy.gd` into one actor-local ability authority, reusing the landed Marine/Falcon host-service pattern without...

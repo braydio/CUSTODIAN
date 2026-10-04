@@ -1,5 +1,7 @@
 extends ControllableActor
 
+signal operator_down(context: Dictionary)
+
 signal health_changed(current: float, maximum: float)
 signal field_patch_changed(count: int, maximum: int)
 signal field_patch_state_changed(active: bool, committed: bool)
@@ -14211,10 +14213,10 @@ func _interrupt_active_combat_for_damage_reaction() -> void:
 func _handle_death() -> void:
 	if _is_dead:
 		return
-	_cancel_attack_drive(true)
-	_reset_fast_chain()
 	var last_live_weapon_status := get_weapon_status()
 	_is_dead = true
+	_cancel_attack_drive(true)
+	_reset_fast_chain()
 	if not _pending_ranged_shot.is_empty():
 		_pending_ranged_shot.clear()
 		_log_ranged_request_cancelled(&"death")
@@ -14222,7 +14224,7 @@ func _handle_death() -> void:
 	cancel_field_patch(&"dead")
 	var enemy_snapshot := _get_enemy_death_snapshot()
 	_obs_increment(&"player_deaths", 1)
-	_obs_log(&"player_death", {
+	var death_context := {
 		"position": global_position,
 		"health": current_health,
 		"stamina": stamina,
@@ -14234,7 +14236,8 @@ func _handle_death() -> void:
 		"nearest_enemy_count": int(enemy_snapshot.get("nearest_enemy_count", 0)),
 		"active_enemy_count": int(enemy_snapshot.get("active_enemy_count", 0)),
 		"lethal_attack_context": _last_incoming_attack_context.duplicate(true),
-	})
+	}
+	_obs_log(&"player_death", death_context.duplicate(true))
 	if field_patch_count > 0:
 		_obs_increment(&"player_died_with_field_patch_available")
 	if _field_patch_prompt_active and field_patch_count > 0:
@@ -14269,9 +14272,7 @@ func _handle_death() -> void:
 	disable_hitbox()
 	if _action_controller != null:
 		_action_controller.request(OperatorActionControllerScript.DEATH, 20)
-	var gs = get_node_or_null("/root/GameState")
-	if gs and gs.has_method("lose_life"):
-		gs.lose_life("Custodian eliminated after a fatal strike")
+	operator_down.emit(death_context.duplicate(true))
 	await get_tree().create_timer(1.6).timeout
 	_finish_death()
 
