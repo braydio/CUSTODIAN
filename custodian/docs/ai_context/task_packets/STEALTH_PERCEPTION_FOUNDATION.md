@@ -10,6 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `ba04d9e8ee`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
 - Goal: Close the live typed-noise defect and establish one shared acoustic perception seam for ordinary enemies and Vaultwings so hearing is a stealth-system capability rather than species-local behavior.
 - Completion boundary: This workstream owns S0 and the narrowest S1 acoustic seam from `STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`: typed `NoiseEvent` propagation, receiver-side acoustic evaluation/observation, Enemy adoption, Vaultwing adoption, and focused deterministic validation. It does not own expanded emitters, visual-cone extraction beyond what is required for a coherent shared profile, alarm networks, player awareness UI, material footsteps, acoustic occlusion, or species behavior redesign.
 - Current measured state: On reviewed main, `NoiseEvent` is a real RefCounted class but its factory returns `RefCounted`; `NoiseEventBus` signals and returns `Variant`; `EnemyPerceptionComponent` consumes the object through string-key `get()`; and `VaultwingBehaviorController._on_noise_emitted()` uses Dictionary-only two-argument `get(key, default)` semantics, producing the reported runtime error when a real Operator gunshot reaches a HIGH Vaultwing. Enemy receiver tuning already includes vision/hearing range and detection thresholds, while Vaultwing has a separate awareness radius with direct bus handling.
@@ -23,6 +24,13 @@
 - Validation: Extend existing focused noise smoke with the typed contract; run the existing Enemy perception/behavior smoke selected by changed ownership; run `vaultwing_runtime`; run `actor_relationship_contract` if relationship qualification changes; close once with `python3 custodian/tools/validation/run_validation.py --changed --json`.
 - Task overrides: `none`
 - Deferred: S2 expanded acoustic emitters/material response; S3 alarm network and sensors; S4 player awareness/readability; S5 occlusion/environment masking; S6 wider actor adoption; Vaultwing non-hearing runtime hardening remains a separate dependent packet.
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Refresh instruction: Bring the landed predecessor/review evidence and any material live-main drift back to this conversation. Re-derive the packet here with the user before promoting it to implementation-ready; do not let the execution agent silently reinterpret architecture, scope, sequencing, or acceptance.
 
 ## Handoff
 
