@@ -18,6 +18,8 @@ from typing import Iterable
 ART_BRANCH = "workbench/operator-art"
 SPARSE_PROFILE = "operator-authoring-v1"
 SPARSE_PROFILE_PATHS = (
+    ".githooks",
+    "tools/validate_filenames.py",
     "tools/custodian_aliases.sh",
     "custodian/project.godot",
     "custodian/AGENTS.md",

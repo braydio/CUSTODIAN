@@ -61,7 +61,9 @@ Operator source/runtime art is hydrated from the local cache only, without an
 implicit network fetch.
 
 The persistent art worktree uses the worktree-local `operator-authoring-v1`
-sparse profile. It keeps Operator authoring tools, the tested Godot/game and
+sparse profile. It includes repository Git hooks and their required
+`tools/validate_filenames.py` pre-commit dependency so Operator art commits
+execute the cross-platform filename gate inside the art checkout. It keeps Operator authoring tools, the tested Godot/game and
 validation dependencies, canonical Operator art/data, Operator-owned weapon
 art, and the Workbench plan while leaving reports, asset-drop material, and
 unrelated large art trees out of the checkout. Ordinary coordination worktrees
