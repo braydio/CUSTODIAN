@@ -14,7 +14,7 @@
 - Paired review workstream: `review-operator-workbench-browser-preview-refresh-hardening`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `0c2a646ccd`
+- Reviewed main: `0a4bd5ec35`
 - Goal: Make Operator Workbench browser refresh and page-3 PREVIEW reload transactional from the user's perspective: repeated F5, source scans, live Workbench updates, mode changes, and asynchronous preview/comparison/transition loads must never expose a transient half-state, silently change the selected animation, apply an older result over a newer request, or crash the UI.
 - Completion boundary: Replace mutable worker-thread browser discovery with one accepted canonical browser snapshot and latest-request-wins application; add generation/identity guards around asynchronous PREVIEW state; make F5 on page 3 retain the last usable preview until one coherent replacement is ready; preserve search/selection semantics across refresh; and add deterministic Textual/service regressions for the observed race classes. This packet owns UI/browser/preview orchestration only. It does not change Operator animation art, runtime combat behavior, canonical publication semantics, or the dedicated art-worktree Git transaction.
 - Current measured state:
@@ -30,6 +30,7 @@
   - User-observed production symptom on 2026-10-01: OPUI intermittently crashes/reloads poorly when F5/reload is used while on page 3 PREVIEW. The exact exception is not yet durably captured, so this packet must fix the confirmed stale-async/browser ownership defects and add deterministic race coverage without claiming a single unverified crash root cause.
   - A legacy packet at this same path already specified accepted-browser-snapshot, destructive-candidate stabilization, pure search, selection restoration, latest-request-wins browser refresh, and source-discovery consistency. It was not V2/indexed. This packet intentionally migrates and expands that same semantic task instead of creating a duplicate browser-hardening authority.
   - 2026-10-03 refresh: current main still has `AnimationFeature.refresh()` mutating feature-owned `_records`; no accepted browser generation or common preview generation exists, and the page-3/F5 ownership defect remains in scope. The recent block-hold import/LFS repairs do not supersede this packet. The unrelated stale real-repo UI-smoke wording assertion was corrected on main; this packet should not recreate that string-coupled assertion.
+  - A separate stale-warning interaction defect is already fixed on main: ErrorDialog focuses Close, accepts Escape/Enter/click, pauses preview/motion clocks while modal, and preserves literal backend error text. Browser/PREVIEW hardening must preserve this behavior and must never reintroduce a modal state that makes the app appear frozen or masks the underlying Workbench error.
 - Evidence:
   - `custodian/tools/operator/ui/app.py::{_reload_browser,_load_session,action_full_refresh,_set_mode,_load_preview,_load_preview_comparison,_load_transition_examiner,_apply_live_preview,_preview_tick,_watch_selected}`
   - `custodian/tools/operator/ui/features/animations.py::{refresh,build_navigation}`

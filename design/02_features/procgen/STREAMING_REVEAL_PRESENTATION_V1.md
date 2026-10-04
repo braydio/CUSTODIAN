@@ -1,7 +1,7 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; AR1 spine implemented (flat diagnostic veil); AR2/AR3 refresh-gated  
+**Status:** Design locked; AR1 spine implemented; AR2 refreshed and ARR1-gated; AR3 refresh-gated  
 **Last updated:** 2026-10-03  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
@@ -410,7 +410,7 @@ Do not:
 
 ## Implementation Dependency
 
-The streaming-residency prerequisite is now satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1 is the active implementation slice. AR2 must not start until ARR1 passes and the recorded procgen planning chat refreshes its shader packet against the reviewed AR1 render/custom-data contract. AR3 must not start until reviewed AR2 and the same planning-chat refresh. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
+The streaming-residency prerequisite is satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1 is implemented on main. AR2 has already been refreshed in the recorded procgen planning chat against the landed AR1 render/state contract and must not start until ARR1 passes clean/non-blocking; if ARR1 changes that contract, AR2 returns to the planning chat before implementation. AR3 must not start until reviewed AR2 and its own planning-chat refresh. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
 
 ## Recommended Implementation Slices
 

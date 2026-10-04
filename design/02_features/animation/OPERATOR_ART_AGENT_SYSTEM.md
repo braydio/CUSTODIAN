@@ -815,6 +815,11 @@ ownership.
 Add nonexistent-source Workbench creation contracts, transactional new-source
 publication, rebuild/import/test, and exact rollback deletion/restoration.
 
+The human-authored Workbench half of this prerequisite is now tracked concretely
+by `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`.
+Art Agent creation must consume that landed backend later; it must not invent a
+parallel publisher or route native Workbench pixels through the external inbox.
+
 ### Phase 9 — Bounded art autopilot
 
 Consume `operator_animation_contract_report.py` as a read-only queue source.

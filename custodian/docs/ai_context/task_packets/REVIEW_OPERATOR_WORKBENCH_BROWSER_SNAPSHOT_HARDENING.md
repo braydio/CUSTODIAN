@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-browser-preview-refresh-hardening`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md`
-- Reviewed main: `0c2a646ccd`
+- Reviewed main: `0a4bd5ec35`
 - Review modes: `code, architecture, runtime, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -21,6 +21,7 @@
 - Correction threshold: Create correction work for any confirmed stale-result application, silent selection change on transient/filter state, preview-generation mix, escaped page-3 refresh exception, duplicate session load violating acceptance, browser authority duplication, or evidence gap that prevents confidence in those guarantees. Optional messaging/layout polish is non-blocking.
 - Focused validation: Inspect ownership in `app.py`, `state.py`, `features/animations.py`, and `service.py`; rerun `python3 custodian/tools/validation/operator_workbench_ui_smoke.py` with its deterministic race fixtures and available Textual Pilot coverage. Run `python3 custodian/tools/validation/operator_animation_workbench_smoke.py` only if the landed implementation touched source-discovery semantics below the UI boundary. Finish with the smallest changed-file validation needed to verify findings.
 - Review focus:
+  - Preserve the already-landed dismissible stale/error modal contract: one dialog, exact backend text, Escape/Enter/click dismissal, paused preview/motion clocks, and no implicit saved-document mutation.
   - No mutable browser cache may be owned by worker/provider code after the accepted snapshot becomes UI authority.
   - `exclusive=True` must not be mistaken for thread cancellation; every stale completion needs an explicit generation/identity rejection path.
   - Search must not mutate canonical selection, and F5 must not use a filtered view to infer deletion.
