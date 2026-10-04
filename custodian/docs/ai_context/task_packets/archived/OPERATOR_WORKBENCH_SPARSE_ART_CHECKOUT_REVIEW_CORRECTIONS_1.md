@@ -62,7 +62,7 @@
 
 - Status: `passed`
 - Review workstream: `review-operator-workbench-sparse-art-checkout-review-corrections-1`
-- Reviewed on main: `278a542dda54bd571fb0c6f4e8ed68e9d3e0609d`
+- Reviewed on main: `00f2dbf10d2fd0f21d2164ba4f7328537500bf31`
 - Review modes: `code, workflow`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -82,7 +82,7 @@
 
 ### Verification Performed
 
-- **Current import truth** (reviewed `origin/main` `278a542dda54bd571fb0c6f4e8ed68e9d3e0609d`): inspected both sidecars and verified their `res://.godot/imported/*.ctex` remap/destination and source paths; `python3 custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py` PASS, `562 texture imports`. Both runtime PNG Git blob IDs match `origin/main`. Commit `e3d4e7f98` changed only the two `.import` sidecars in this asset directory, not the PNGs.
-- **Sparse acceptance**: reused the correction workstream's recorded Godot 4.7.2 sparse import and `operator_modular_layers_smoke.gd` PASS at correction closeout `6f85b09a2`. Its evidence records 785 local LFS payloads copied only after SHA-256 verification against pointer OIDs, followed by restoration; no network LFS fetch was used. The tested SpriteFrames resource, FX PNGs/sidecars, import guard, and modular-layer smoke are unchanged between that closeout and current main. A later sparse-profile commit adds only `.githooks` and `tools/validate_filenames.py`; the current `operator_art_worktree_smoke.py` PASS exercises those hook dependencies, rejects invalid filenames, and continues to omit unrelated reports.
+- **Current import truth** (reviewed `origin/main` `00f2dbf10d2fd0f21d2164ba4f7328537500bf31`): inspected both sidecars and verified their `res://.godot/imported/*.ctex` remap/destination and source paths; `python3 custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py` PASS, `562 texture imports`. Both runtime PNG Git blob IDs match `origin/main`. Commit `e3d4e7f98` changed only the two `.import` sidecars in this asset directory, not the PNGs.
+- **Sparse acceptance**: reused the correction workstream's recorded Godot 4.7.2 sparse import and `operator_modular_layers_smoke.gd` PASS at correction closeout `6f85b09a2`. Its evidence records 785 local LFS payloads copied only after SHA-256 verification against pointer OIDs, followed by restoration; no network LFS fetch was used. Reproduced the sparse proof in a disposable checkout at `92ec91bebf47a777265122a9cd40fe5fbb1f8f62`: 3,263 required LFS payloads (298,008,774 bytes) came only from the shared local cache after SHA-256 and size verification, no network fetch; preflight passed, Godot 4.7.2 project import exited 0 without `ERROR`/`SCRIPT ERROR`, and `operator_modular_layers_smoke.gd` passed. The disposable checkout was removed. Current main `00f2dbf10d2fd0f21d2164ba4f7328537500bf31` differs from that tested head only in packet/index documentation; all sparse-profile, runtime/import, and smoke files remain unchanged. A later sparse-profile commit adds only `.githooks` and `tools/validate_filenames.py`; the current `operator_art_worktree_smoke.py` PASS exercises those hook dependencies, rejects invalid filenames, and continues to omit unrelated reports.
 - **Regression boundaries**: no new broad import was run because the current production files match the sparse proof and the current focused guard passes. The prior review's sparse-isolation/publication findings remain covered by unchanged implementation and the passing current fixture.
 - **Repository hygiene**: `git diff --check` PASS. No reviewed implementation file was changed.
