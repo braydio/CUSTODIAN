@@ -14,7 +14,7 @@
 - Paired review workstream: `review-operator-workbench-animation-creation`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `278a542dda`
+- Reviewed main: `0a4bd5ec35`
 - Goal: Let an artist create an entirely new semantic Operator animation from OPUI, open a blank/reference-backed Aseprite Workbench, author and preview it, then publish the new canonical source through the existing guarded Operator production pipeline without hand-building filenames, manifests, inbox entries, runtime resources, or Git transactions.
 - Completion boundary: Add one human-authored **New Animation** flow for a semantic Operator action/direction that does not yet exist in canonical source. The flow owns identity/template selection, creation-session manifest construction, blank/reference-backed Aseprite assembly, preview, transactional CREATE publication, runtime/catalog/import/validation, and normal guarded landing. It consumes the FX-adoption packet's absent-source CREATE/rollback contract. It does not wire arbitrary new gameplay behavior, invent runtime selectors, auto-generate finished art, or replace Asset Pipeline V2's external-asset intake path.
 - Current measured state:
@@ -94,6 +94,7 @@
       `custodian/asset_drop/inbox/operator/operator__<layer>__<profile>__<group>__<action>__<direction>__<N>f__<size>.png`
       and the specialized Operator schema/registration path. Do not silently copy arbitrary external files into canonical source from this creation command.
 - Preserve:
+  - The landed publish-readiness/recovery semantics are inherited in full: startup remains usable while publish is blocked, pending receipts use stable publication identity rather than exact-HEAD-only recovery, frame-contract reconciliation preserves edited Aseprite bytes, transaction journals retain primary and rollback failures separately, and recovery markers clear only after file/state verification.
   - isolated `workbench/operator-art` publication authority;
   - publish-readiness/recovery contract;
   - accepted browser/preview generation contract;
@@ -119,6 +120,7 @@
   - A modular fixture creates synchronized lower+upper layers with one shared frame/timing contract and previews them composed before publish.
   - Existing-target collision before session creation and a race where a target appears after preview both fail closed without overwriting.
   - Injected failure after canonical CREATE removes every newly created source/runtime/import/timing artifact and restores generated resources/metadata exactly.
+  - If startup, publish, import, or rollback is blocked, the creation session remains editable/recoverable and its saved Aseprite document is preserved byte-for-byte; resolving the blocker must not discard authored frames.
   - Successful publish converts the Workbench from creation state to ordinary existing-source state without losing the open document or requiring manual manifest surgery.
   - The new identity appears in the refreshed browser immediately after publication; if no gameplay consumer exists it is labeled DORMANT/unwired, not LIVE.
   - Explicit mirror promotion creates the horizontal counterpart correctly; default creation does not.
