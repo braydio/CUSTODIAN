@@ -366,7 +366,7 @@ Without `--keep-raw`, the report builder may remove full PNG sequences after:
 
 The raw WAV is retained by default because it is comparatively small and useful for review.
 
-### 5.7 Accept a Baseline
+### 5.8 Accept a Baseline
 
 Baseline mutation must be explicit:
 
