@@ -145,6 +145,14 @@ commit, or push.` Paired post-land review packets may authorize commits only for
   Rebase conflicts and failed required validation are blockers; never force-push.
 - Do not amend or force-push unless explicitly asked.
 
+## Name the Brief
+
+When the user names a CUSTODIAN task, slice, workstream, packet, or recognizable brief, resolve that name to the active task packet before implementing. Claim the packeted workstream through the dispatcher/lifecycle rather than treating the user's short name as a free-form prompt.
+
+The user's explicit current-turn instructions may narrow, pause, or override execution details, but they do not silently discard the packet's authority, acceptance, review, completion, or handoff requirements unless the user explicitly changes those requirements.
+
+If a recognizable name is ambiguous, prefer the packet/workstream whose durable metadata and current DAG position match the conversation. Do not invent a new packet merely because the user used a nickname or shorthand. Close out through the packet and ordinary workstream lifecycle.
+
 ## CUSTODIAN Task Dispatch
 
 For “Take the next CUSTODIAN task,” run
@@ -157,6 +165,40 @@ then a neutral `unspecified` — never a silently assumed brand.
 Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
 returned packet, then execute only that workstream through the lifecycle in
 `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
+### Naming Work: The Task Packet Is the Brief
+
+When the user names CUSTODIAN work in any form — "claim X", "start X", "take X",
+"do X", a short code (`AR2`, `ARR1`, `C2A-R4`), a workstream id, a task, feature,
+requirement, or ask — treat the **task packet as the complete brief**. Do not
+ask the user to re-explain it, and do not work from the chat message alone.
+
+1. **Resolve the name to a packet.** Search
+   `custodian/docs/ai_context/task_packets/` (and `archived/`) for the name:
+   `rtk grep -i "<name>" custodian/docs/ai_context/task_packets`. Short codes
+   appear in packet text, roadmaps (e.g.
+   `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`), and
+   `*_CLAUDE_SUMMARY.md` files; the packet's `Workstream:` line is the canonical
+   id. `python3 custodian/tools/agent/dispatch.py status` lists claimable work.
+   Paired review packets are `REVIEW_<NAME>.md` (workstream `review-<id>`).
+2. **If the user says a packet is "ready" but your tree shows `blocked`,** the
+   claim reads fetched `origin/main`; run `dispatch.py claim` and let it verify
+   rather than editing status by hand. Re-read the packet in the claimed worktree.
+3. **Claim, then read the packet in the worktree.** Its fields are the
+   instructions: `Goal`, `Completion boundary`, `Work surface`, `Change`,
+   `Preserve`, `Non-goals`, `Acceptance`, `Validation`, `Visual review`,
+   `Task overrides`, `Deferred`, plus `Depends on` / `Locks` / dependency gates and
+   `Recommended Implementation Order`. Also read the packet's `Task-specific
+   authority` and `Evidence` files (design docs, prior summaries) before editing.
+4. **Explicit user instructions win** over the packet only where the user states
+   them; otherwise do not invent scope, and do not expand past `Non-goals`.
+   Stop and report if a packet gate says to return to planning.
+5. **Close out in the packet's own terms:** fill `Completion Truth` and
+   `Execution Feedback`, follow `Validation` and `Visual review` (the agent never
+   self-approves aesthetics), and write the closing summary file below.
+
+If a packet is missing information an agent needed, that is packet drift: note
+it in `Execution Feedback` → `Tooling / docs drift discovered`.
 
 ## Closing Summary Files
 

@@ -73,6 +73,10 @@
     {
       "type": "scene",
       "path": "res://scenes/debug/kenney_isometric_blockout_feasibility.tscn"
+    },
+    {
+      "type": "scene",
+      "path": "res://game/world/levels/authored/dev/kenney_isometric_blockout_playtest/kenney_isometric_blockout_playtest_level.tscn"
     }
   ]
 }

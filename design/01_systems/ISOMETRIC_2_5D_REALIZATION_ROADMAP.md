@@ -1,12 +1,12 @@
 
 # CUSTODIAN ISOMETRIC 2.5D REALIZATION ROADMAP
 
-**Program ID:** `isometric-2-5d-realization`  
-**Status:** active / pivot locked / successor packets authored  
-**Priority:** P2  
-**Reviewed main:** `09ebb90e78e4568f81f4a7fc270da0a3d158d445`  
-**Last Updated:** 2026-10-04  
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff  
+**Program ID:** `isometric-2-5d-realization`
+**Status:** active / pivot locked / successor packets authored
+**Priority:** P2
+**Reviewed main:** `09ebb90e78e4568f81f4a7fc270da0a3d158d445`
+**Last Updated:** 2026-10-04
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 **Design authority:** `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`
 
 ## Pivot
@@ -37,8 +37,8 @@ The two future implementation slots are now:
 
 | Slice | Workstream | Goal | State |
 | --- | --- | --- | --- |
-| precursor | `kenney-isometric-blockout-playtest` | finish walkable Kenney/native comparison harness | **ready / unchanged** |
-| 2.5D-1 | `isometric-2-5d-presentation-foundation` | converge ground anchors, visual elevation, depth bands and existing occlusion/shadow precedents | **ready / depends on K3D-1P** |
+| precursor | `kenney-isometric-blockout-playtest` | finish walkable Kenney/native comparison harness | **complete / landed** |
+| 2.5D-1 | `isometric-2-5d-presentation-foundation` | converge ground anchors, visual elevation, depth bands and existing occlusion/shadow precedents | **ready / K3D-1P dependency satisfied** |
 | 2.5D-2 | `isometric-2-5d-forum-vertical-slice` | prove the language in one real playable Forum approach | **ready / depends on 2.5D-1** |
 
 Expected new implementation packets: **2**.
@@ -105,6 +105,6 @@ If yes, the next work is production rollout and asset standards, not a return to
 
 ## Current position
 
-K3D-1P remains the immediate executable precursor. After it lands, 2.5D-1 becomes eligible. 2.5D-2 follows the foundation.
+K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is now eligible from current main. 2.5D-2 follows the foundation; retain the user's A/B walkaround notes as tuning input for that Forum slice.
 
 H1 remains separate. At 2.5D-2 claim time, use landed H1 layout constants if available; otherwise use locked Forum coordinates read-only.

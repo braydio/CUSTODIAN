@@ -93,7 +93,7 @@ That is the finish line.
 
 | Code | Workstream | Slice | Status | Depends on |
 | --- | --- | --- | --- | --- |
-| R1 | `custodian-death-handoff-foundation-recovery-1` | Operator death -> campaign outcome handoff, with current Game Over retained only as a compatibility fallback | **ready** | none |
+| R1 | `custodian-death-handoff-foundation-recovery-1` | Operator death -> campaign outcome handoff, with current Game Over retained only as a compatibility fallback | **complete** | none |
 | R2 | `custodian-post-recovery-reintegration` | Replace the R1 compatibility fallback with Post recovery and return/reintegration after campaign-ending death | planned | R1 |
 | R3 | `armament-persistence-registration-core` | Field-acquired / recovered / registered armament data, Recovered Armory ownership, registration records, and three-capacity contract | planned | R2 |
 | R4 | `armament-death-site-recovery-semantics` | Registered re-provisioning, persisted inoperable prior instances, and unregistered death-site retrieval semantics | planned | R3 |
@@ -147,6 +147,14 @@ unrecoverable runtime state.
 emits one death handoff, resolves the active campaign once, then reaches the
 temporary compatibility fallback. Facility/siege terminal-failure behavior is
 unchanged.
+
+**R1 completion evidence (2026-10-04):** `operator_death_campaign_handoff_smoke.gd`
+passes structured context, one outcome, reentrant suppression, outcome-before-fallback
+ordering, unchanged legacy-life count, no-session and resolved/unstarted-session
+fallbacks, and no-revive behavior. `game_over_flow_smoke.gd` and
+`campaign_outcome_exactly_once_smoke.gd` both pass. The changed-file closeout
+summary records final selected/passed/skipped counts. The recovery workstream
+lands this evidence through `workstream.py finish` to `origin/main`.
 
 Packet:
 `custodian/docs/ai_context/task_packets/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md`
@@ -275,8 +283,7 @@ At closeout:
 
 ## Current Program Position
 
-**Current slice:** R1 `custodian-death-handoff-foundation-recovery-1` (recovered queue identity)  
-**State:** design authority landed; original R1 checkpoint became stranded behind obsolete closeout gates; recovery packet is refreshed against current main and the old branch is donor evidence only.  
-**Next gate:** execute R1, land exactly-once Operator death -> campaign outcome
-handoff, then author R2 against the resulting live transition surface.  
+**Current slice:** R2 Post Recovery / Reintegration
+**State:** R1 is implemented and its focused acceptance checks pass. Operator death now resolves the live CampaignSession exactly once before the transitional Game Over fallback; local and Post recovery remain unimplemented.
+**Next gate:** architecture-sensitive refresh of R2 against the landed R1 binding, current Campaign/Hub outcome application, and current return lifecycle; do not promote a packet to ready until that live surface is re-derived.
 **Expected remaining implementation packets after R1:** 7.

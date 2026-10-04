@@ -1,9 +1,9 @@
 
 # CUSTODIAN ISOMETRIC 2.5D PRESENTATION CONTRACT
 
-**Status:** active design authority  
-**Decision date:** 2026-10-04  
-**Reviewed main:** `09ebb90e78e4568f81f4a7fc270da0a3d158d445`  
+**Status:** active design authority
+**Decision date:** 2026-10-04
+**Reviewed main:** `09ebb90e78e4568f81f4a7fc270da0a3d158d445`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 
 ## Decision

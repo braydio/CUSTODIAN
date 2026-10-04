@@ -1,0 +1,50 @@
+# CUSTODIAN POST RECOVERY REINTEGRATION
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `custodian-post-recovery-reintegration`
+- Status: `blocked`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `review-custodian-death-handoff-foundation-recovery-1, review-hub-campaign-return`
+- Locks: `custodian-death-flow, hub-runtime, world-lifecycle, operator-runtime`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-custodian-post-recovery-reintegration`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial engineering default`
+- Reviewed main: `d5ae87bff7a7`
+- Authoring chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
+- Goal: Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the reviewed generic Campaign-to-Hub return authority and restoring the persistent Operator to a valid next-life state.
+- Completion boundary: R2 begins only after the R1 paired review and reviewed H6 generic Campaign return exist. It owns the death-specific layer on top of that return: correlate the exact CampaignOutcome created by the R1 death handoff, suppress the compatibility Game Over only when the reviewed return authority has accepted that exact outcome, carry the structured death context through return, perform the minimum restrained Post-recovery/reintegration presentation/state, restore the persistent Operator for control, and re-arm the R1 death binding only after successful reintegration. Generic outcome application, Campaign teardown, Hub restoration, camera/navigation rebinding, and ordinary non-death Campaign return remain H6 authority.
+- Current measured state: R1 is landed. `Operator.operator_down(context)` emits one structured lethal snapshot and `OperatorDeathCampaignBinding` latches it, resolves one started unresolved CampaignSession through `WorldSimulationRuntime.resolve_campaign(&"FAILURE", ...)`, then unconditionally calls `GameState.trigger_game_over()` as the temporary fallback. The binding's `_handled` latch is intentionally one-shot for R1 and never resets, which is correct while no recovery exists but would suppress every later death if the same persistent Operator is reintegrated. `Operator._finish_death()` already contains a broad runtime reset path but currently returns while `GameState.game_over` is true and is not an explicit recovery contract. The Hub H6 packet already owns generic CampaignOutcome -> HubState exactly-once application, Campaign teardown, Hub restoration, and return to `Spawn_CampaignReturn`; H6 is still dependency-gated and no live persistent HubState/major-context return owner exists yet.
+- Evidence: `custodian/game/world/bindings/operator_death_campaign_binding.gd`; `custodian/game/actors/operator/operator.gd::_handle_death()` and `_finish_death()`; `custodian/tools/validation/operator_death_campaign_handoff_smoke.gd`; archived `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` and its closing summary; `custodian/docs/ai_context/task_packets/HUB_CAMPAIGN_RETURN.md`; `design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`; `design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`.
+- Task-specific authority: `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`; reviewed H6 Campaign-return contract when landed; `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`; `design/04_architecture/WORLD_TRANSITION_SYSTEM.md`.
+- Work surface: R1 `OperatorDeathCampaignBinding`; the reviewed H6 Campaign-return coordinator/completion seam; persistent Operator reintegration/reset surface; the smallest Hub-side recovery presentation/state adapter needed to distinguish a death return from an ordinary Campaign return; focused recovery validation. Do not create a second HubState owner, CampaignOutcome applier, Campaign teardown path, or world-transition manager.
+- Change: After reviewed H6 lands, re-derive its exact return-accepted and return-complete APIs. Capture the exact non-null CampaignOutcome returned by the R1 death-triggered `resolve_campaign()` call and correlate death recovery by that outcome identity, preferably `outcome_id`, plus the held R1 death context. Do not classify every `FAILURE` outcome as a death. Hand the outcome to the existing H6 return authority or allow H6's authoritative resolution subscriber to consume it, using whichever single-owner seam actually landed. If and only if that authority accepts the exact death outcome for return, do not call the R1 Game Over fallback. If return cannot be accepted, is absent, or fails before a safe playable state is restored, preserve the compatibility Game Over fail-safe. On successful return completion, perform death-specific reintegration, restore the Operator through an explicit recovery method/refactor of the existing reset behavior rather than an arbitrary scene reload, then re-arm the death binding for the next life. Re-arm must happen after confirmed playable reintegration, never merely after outcome creation.
+- Preserve: H6 exactly-once Hub mutation/return ordering; R1 structured death context and duplicate suppression during one death; true facility/archive/terminal Game Over callers; non-death Campaign results and H6 return behavior; one persistent Operator; existing inventory/loadout contents unchanged in R2; current recovery ambiguity and restrained UI language.
+- Non-goals: No second CampaignOutcome schema; no second HubState owner; no new WorldTransitionManager beside the reviewed H2/H6 lifecycle; no local Campaign Crèche recovery; no field/fabricated recovery infrastructure; no field-acquired/recovered/registered armament model; no death-site weapon/corpse persistence; no registration capacity; no explanation of the physical recovery mechanism; no new explorable Hub Crèche room unless a reviewed predecessor has already established one. R2 may use a minimal reintegration state/presentation around the reviewed Hub return instead of inventing spatial canon.
+- Acceptance: (1) an unresolved active Campaign death still creates exactly one failure outcome through R1; (2) that exact death outcome is applied/returned through the reviewed H6 authority exactly once, with no second Hub mutation or transition owner; (3) a death return that is accepted by H6 never presents the global Game Over modal; (4) a missing/rejected/failed return still reaches the compatibility Game Over fail-safe; (5) ordinary non-death FAILURE/SUCCESS/PARTIAL/ABANDON outcomes do not accidentally invoke death recovery; (6) after successful death reintegration the same persistent Operator is alive, controllable, correctly rebound, and the R1 death binding is re-armed exactly once; (7) a second later lethal event can create one new handoff/outcome for a new Campaign session, proving the latch is life-scoped rather than process-scoped; (8) reentrant callbacks during one death/return cannot double-resolve, double-return, double-recover, or prematurely re-arm; (9) existing direct terminal/facility Game Over regressions remain green; (10) R3 inventory/registration semantics remain untouched.
+- Validation: First add focused death-return/reintegration coverage using the exact reviewed H6 public seam, including accepted-return suppression of Game Over, rejected-return fallback, exact outcome-id correlation, non-death failure negative control, reintegration-before-rearm ordering, and a two-sequential-campaign/two-death test proving one handoff per life. Re-run `custodian/tools/validation/operator_death_campaign_handoff_smoke.gd`, `custodian/tools/validation/campaign_outcome_exactly_once_smoke.gd`, the reviewed H6 return regression identified by its archived evidence, and focused Operator reset/control binding coverage selected by the landed diff; then one changed-file closeout and `git diff --check`. Moment Forge is unnecessary unless R2 materially changes visible recovery timing/presentation.
+- Task overrides: `none`
+- Deferred: R3 owns field-acquired/recovered/registered armament persistence and capacities. R5 owns campaign-preserving local Crèche recovery. R6 owns fabricated Field Recovery Crèche and Designation Mooring. Any physical explanation for recovery remains intentionally unresolved.
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
+- Refresh instruction: After both prerequisite reviews land, bring the archived R1 review receipt and reviewed H6 implementation/review evidence back to this planning chat. Re-derive the exact H6 return-accepted/return-complete API, persistent Operator ownership, return spawn/reintegration point, and fallback suppression seam. Update Reviewed main, Current measured state, Work surface, Change, Acceptance, and Validation, then remove this refresh gate and set R2 `ready/auto`. Do not silently reinterpret Post recovery as a second Campaign-return system.
+
+## Handoff
+
+- Next workstream: `armament-persistence-registration-core`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
+- Refresh reason: R3 must be re-derived against the landed persistent Operator/reintegration lifetime and whatever inventory ownership is live after R2.
+- Next action: after R2 lands and its paired review passes, return the R2 implementation/review summaries to the recorded planning chat and refresh R3.
+- Blockers or open questions: R2 itself is dependency-gated on the formal R1 review and reviewed H6 generic Campaign return; its exact integration API must be refreshed after those land.

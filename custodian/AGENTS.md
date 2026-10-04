@@ -58,6 +58,16 @@ Use this map to land on the right material fast:
 | Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
 | Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
+## Name the Brief
+
+For active work under `custodian/`, a user-supplied task name, slice name, packet nickname, or recognizable brief resolves to the matching active task packet/workstream before implementation.
+
+- Claim the resolved workstream through the dispatcher/workstream lifecycle.
+- Preserve the packet's authority, acceptance, review, completion, and handoff contract unless the user explicitly changes one of those requirements.
+- User instructions in the current turn may narrow or pause execution and win where they explicitly conflict, but shorthand naming alone does not convert packeted work into an unstructured task.
+- Prefer an existing packet that matches the durable DAG/current-state evidence; do not create a duplicate packet because the user used an alias.
+- Finish through the ordinary packet/workstream closeout.
+
 ## Tooling And Scripts
 
 Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE_INDEX.md` is the high-signal map for tool ownership, and `docs/ai_context/VALIDATION_RECIPES.md` is the command-selection authority.

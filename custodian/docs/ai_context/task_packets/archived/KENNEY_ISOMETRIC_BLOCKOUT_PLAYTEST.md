@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `kenney-isometric-blockout-playtest`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `review-kenney-isometric-blockout-feasibility`
@@ -21,7 +21,7 @@
 - Preserve: all K3D-1 anchors, sample extents, selected runtime assets, asset pixels, scales/positions/z-order, fixed capture camera, metrics/capture contract, original debug scene path, original focused smoke API, production main scene, and all production gameplay/spatial authorities.
 - Non-goals: no new art; no new Asset V2 family/state; no ZIP/source-work/inbox work; no re-ingest; no K3D-2/3D work; no H1 geometry refresh; no Kenney layout redesign; no production Hub integration; no Kenney-derived collision/navigation; no combat encounter population; no generic playtest framework; no broad regression campaign.
 - Acceptance: the standalone playtest boots with the real Operator and gameplay camera at Forum South; normal Operator movement works; 1 selects native, 2 selects Kenney, Tab toggles; switching does not move/reset the Operator or change neutral collision/camera authority; both modes use the same shared presentation builder and 16 existing Kenney assets; the old K3D-1 capture rig still passes its focused smoke with the same external contract; only the authored dev level owns neutral envelope collision; production boot remains untouched.
-- Validation: keep this lean. Run the new focused playtest smoke, rerun the existing K3D-1 focused smoke, boot the standalone scene once for a short manual movement/toggle sanity check, then `git diff --check`. Do not run broad `--changed` or full Godot suites unless a focused failure or live repository policy requires it.
+- Validation: keep this lean. Run the new focused playtest smoke, rerun the existing K3D-1 focused smoke, boot the standalone scene for manual movement/toggle and route sanity, then `git diff --check`. Do not run broad `--changed` or full Godot suites unless a focused failure or live repository policy requires it.
 - Task overrides: `none`
 - Deferred: realized 2.5D foundation/vertical-slice work follows this precursor. The prior live-3D K3D-2/K3D-3 direction is canceled.
 
@@ -553,13 +553,34 @@ Manual sanity:
 
 Do not run `--changed`, broad Godot validation, full Asset V2 ingest, or unrelated suites unless a focused failure or repository policy makes them necessary.
 
-## Completion / handoff
+## Completion Truth
 
-Before `complete`, write the normal compact completion/feedback receipt and update the active 2.5D roadmap/index.
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `kenney_isometric_blockout_presentation.gd` now supplies the exact shared K3D-1 A/B construction to the unchanged capture scene and the new authored walkaround. The new standalone wrapper contains the real Operator/controller/gameplay-camera stack; its focused smoke verifies Forum South spawn, 1/2/Tab switching, unchanged Operator/camera/boundary state, empty navigation authority, all 16 assets, bounds, and production boot isolation. Both focused K3D-1 and K3D-1P smokes pass. A GUI run confirmed W/S movement and camera follow across the sample, with 1/2/Tab presentation changes; the only runtime warning is the expected NavigationSystem notice that this presentation-only experiment has no floor TileMap.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first clean-worktree smoke could not resolve the `AuthoredLevel2D` global class because the worktree had not generated Godot's global class cache; the initial UI label also overlapped the standalone HUD. Both were fixed before completion. The normal NavigationSystem emits a no-floor-TileMap warning because this experiment intentionally provides no gameplay floor or AI navigation.
+- Root cause / contributing factors: The new test initially skipped the editor import/class-scan phase, and the label started in the HUD's top-left screen area; the playtest's required empty `NavigationRoot` is deliberate.
+- Prevention / pipeline improvement: Mark the new validation entry `needs_import: true` so fresh worktrees build the class cache before the focused smoke; position the readout beyond the HUD footprint. No additional pipeline change is required.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: The existing focused K3D-1 smoke protected the frozen capture contract; the new focused smoke and brief GUI movement/toggle check covered the playable wrapper without broad validation.
+
+## Next Handoff
 
 - Next workstream: `isometric-2-5d-presentation-foundation`
 - Next packet state: `ready / dependency satisfied after this packet completes`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
-- Refresh reason: `The strategic direction is now fixed-isometric 2.5D realization in the existing 2D runtime. K3D-1P is the final Kenney reference artifact, not a gate to live-3D experimentation.`
+- Refresh reason: `none; the active fixed-isometric 2.5D direction and successor packets are authored on current main.`
 - Next action: `After K3D-1P lands, execute isometric-2-5d-presentation-foundation. Preserve user walkaround notes as tuning input for the later Forum vertical slice.`
-- Blockers or open questions: `none; kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility are canceled and must not be authored.`
+- Blockers or open questions: `none; the canceled live-3D K3D-2/K3D-3 workstreams must not be authored.`
