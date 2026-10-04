@@ -1,6 +1,6 @@
 # Agent Tooling By Ask
 
-Last updated: 2026-07-28
+Last updated: 2026-10-03
 
 Purpose: give agents a fast routing table for which repo tools to use for a specific ask. This complements `VALIDATION_RECIPES.md`: use this file to pick the tool, then use validation recipes to decide how much proof is needed.
 
