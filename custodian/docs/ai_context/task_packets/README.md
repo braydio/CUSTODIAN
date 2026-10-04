@@ -41,11 +41,11 @@ Three implementation slices test CUSTODIAN presentation without changing product
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is evidence-gated. AR1 is complete/landed on `83d89fd85`; ARR1 is now the active ready/auto gate and has been re-derived against the landed batched veil, disabled oracle, overflow behavior, z-layering, and reacquisition seams. AR2 remains blocked/manual until ARR1 passes and this planning chat refreshes it in place; AR3 remains blocked/manual until the paired AR2 review passes and this planning chat refreshes it. AR2 and AR3 both declare paired automatic technical reviews, while subjective visual/game-feel approval stays in the Dropbox human-review lane.
+The Archive Resolve implementation series is evidence-gated. AR1 is complete/landed on `83d89fd85`; ARR1 is now the active ready/auto gate and has been re-derived against the landed batched veil, disabled oracle, overflow behavior, z-layering, and reacquisition seams. AR2 has now been refreshed in the recorded planning chat against landed AR1 and remains blocked/manual only on clean/non-blocking ARR1; if ARR1 changes the AR1 render/state contract, AR2 returns here again. AR3 remains blocked/manual until the paired AR2 review passes and this planning chat refreshes it. AR2 and AR3 both declare paired automatic technical reviews, while subjective visual/game-feel approval stays in the Dropbox human-review lane.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — active ready/auto ARR1 gate, refreshed against landed AR1 and carrying RFR1 R0-04 road reacquisition proof.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, locked graphite/dither + restrained brass/amber Archive Resolve shader; blocked/manual until reviewed AR1 + ChatGPT/user refresh in the recorded planning chat; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` is pre-authored.
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, refreshed against landed AR1; blocked/manual on ARR1 only, with automatic paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md`. Clean ARR1 promotion is mechanical unless ARR1 changes the AR1 contract.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; blocked/manual until reviewed AR2 + ChatGPT/user refresh; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is pre-authored.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
