@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-archive-resolve-presentation-spine`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `procgen-archive-resolve-presentation-spine`
@@ -40,13 +40,33 @@
 
 Start from: archived AR1 packet/summary; `streaming/procgen_reveal_presentation.gd`; AR1 integration points in `proc_gen_tilemap.gd`; `proc_gen_map.tscn`; implementation-created AR1 smoke; M3/M4/M5/M6 snapshot APIs. Expand only from a failing acceptance proof.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Independent Review receipt appended to the archived AR1 packet: status `passed`, 0 blocking defects, 0 material evidence gaps, 2 non-blocking issues, 2 optional improvements (`R0-01`..`R0-04`). The suspected live-disable stranding through `set_effect_enabled(false)` was not reproducible (only a raw `effect_enabled` property write strands); fail-open overflow was proven fingerprint-inert on the production map; RFR1 `R0-04` road unload/reload parity closed with an unconditional real-piece fixture on both queued and immediate paths; the immediate-path request seam mutation fails the AR1 smoke; S1 quick generation fingerprint `1773840677`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The request named the target "ARR1", which matches no workstream ID or packet filename; it only resolved because the packet's own Handoff text ("After ARR1 passes") defines it as this review. The packet's Handoff also still said the AR2 planning refresh was required, after AR2 had already been refreshed.
+- Root cause / contributing factors: ARR1 is an informal nickname used only in prose, not an indexed alias; the review packet's Handoff was not updated when AR2's refresh landed.
+- Prevention / pipeline improvement: Packets could carry an `Alias` field that `dispatch.py claim` accepts, or the dispatcher could report close matches when an ID is unknown. Refreshing a downstream packet should also refresh the upstream review's Handoff in the same change.
+- Tooling / docs drift discovered: The review's stale Handoff (corrected below); `PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md` still names RFR1 as the next gate and was outside this review's override.
+- Follow-up: `none`
+
 ## Handoff
 
 - Next workstream: `procgen-archive-resolve-shader`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next packet state: `human-required`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
-- Refresh reason: AR2 must be re-derived against the reviewed AR1 owner, render primitive, custom-data schema, pause clock, and actual diagnostic-frontier behavior; shader art direction remains design-sensitive.
-- Next action: After ARR1 passes, bring the reviewed AR1 summary/evidence to the recorded ChatGPT planning chat and refresh AR2 in place with the user.
-- Blockers or open questions: AR2 remains blocked/manual until that refresh is complete; subjective final Archive Resolve aesthetics remain human-owned.
+- Refresh reason: AR2 was already refreshed against the landed AR1 owner; ARR1 passed with no correction that changes the owner/render/state contract, so promotion is mechanical.
+- Next action: Promote AR2 (`blocked/manual` -> its dispatch state) and bind its `Reviewed main`. Before implementing, decide `R0-01` (make `effect_enabled` a setter delegating to `set_effect_enabled`; add a live map toggle; reconcile with AR2's "no AR1 live-disable correction" non-goal) and `R0-02` (veil shares `z_index=2` with Walls/Operator/enemies and relies on scene-tree order; enemies precede `ContractMap` and render under it). `R0-03` and `R0-04` are test hardening.
+- Blockers or open questions: Subjective Archive Resolve aesthetics remain human-owned; AR2 still needs human visual approval.
