@@ -1,18 +1,24 @@
 # CUSTODIAN DEATH HANDOFF FOUNDATION
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `custodian-death-handoff-foundation`
+- Workstream: `custodian-death-handoff-foundation-recovery-1`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `custodian-death-flow, operator-runtime`
 - Kind: `implementation`
-- Review: `none`
-- Reviewed main: `7511489095a7fc35a3e5c907d0e1ba42e8787f8e`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-custodian-death-handoff-foundation-recovery-1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Reviewed main: `5a82486a46f30ad8753625133e1c6cee7eddd958`
+- Authoring chat: `not-recorded`
 - Goal: Make Custodian lethal damage a campaign-level exactly-once event instead of an actor-owned life decrement, establishing the recovery-capable death handoff without leaving the player in an unhandled dead state.
 - Completion boundary: Done when `Operator` no longer calls `GameState.lose_life()`; one lethal Operator event emits one structured death handoff, the active `CampaignSession` resolves exactly once through `WorldSimulationRuntime`, and the existing global Game Over remains only as an explicit compatibility fallback after that outcome until R2 replaces it with Post recovery. Facility/siege terminal-failure paths remain unchanged.
-- Current measured state: `custodian/game/actors/operator/operator.gd::_handle_death()` sets `_is_dead`, records telemetry/history, requests death presentation, then directly calls `/root/GameState.lose_life("Custodian eliminated after a fatal strike")`. `GameState.total_lives = 1`, so `lose_life()` immediately calls `trigger_game_over(...)`; `_finish_death()` returns early while `GameState.game_over` is true. Separately, `WorldSimulationRuntime` already owns the live `CampaignSession` and `resolve_campaign(...)`, while `CampaignSession.resolve_once(...)` rejects duplicate resolution, but no Operator-death path calls that authority.
+- Current measured state: Live `main` still has the pre-R1 death authority described below, but a **stranded published checkpoint** exists at `origin/agent/custodian-death-handoff-foundation`: it is 1 unique commit ahead and hundreds of commits behind current main. That checkpoint already implemented the exactly-once handoff/binding and passed focused death regressions, then stopped only because the old repository-wide closeout gates were broken. Those gate defects have since been repaired on main. This recovery slice must start fresh from current main, inspect the checkpoint as donor evidence, and selectively reapply/reconcile only still-valid R1 implementation rather than resuming the stale branch wholesale. Current main's actor path still directly owns the legacy `GameState.lose_life()` consequence until this recovery lands.
 - Evidence: `custodian/game/actors/operator/operator.gd` lethal path and `_finish_death()`; `custodian/game/systems/core/state/game_state.gd` `total_lives`, `lose_life()`, and `trigger_game_over()`; `custodian/game/systems/simulation/world_simulation_runtime.gd` `session` and `resolve_campaign()`; `custodian/game/state/run/campaign_session.gd` `resolve_once()`; `custodian/game/state/run/campaign_outcome.gd`; `custodian/tools/validation/game_over_flow_smoke.gd`; `custodian/tools/validation/campaign_outcome_exactly_once_smoke.gd`.
 - Task-specific authority: `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`; `design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`; `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`; `custodian/docs/ARCHITECTURE.md`.
 - Work surface: Primary owner is the Operator death handoff in `custodian/game/actors/operator/operator.gd`; campaign consequence belongs to the live run/simulation boundary in `custodian/game/systems/simulation/world_simulation_runtime.gd` / `custodian/game/state/run/campaign_session.gd`, with a narrow scene/binding adapter under the existing `custodian/game/world/bindings/` pattern if needed. `GameState` may retain the compatibility fallback but must not remain the ordinary Operator death owner. Focused validation and the recovery roadmap are downstream consumers.
@@ -26,6 +32,6 @@
 
 ## Handoff
 
-- Next action: Execute this packet, land the exactly-once death handoff, update the recovery roadmap with landed evidence, then author R2 from the resulting live transition surface.
+- Next action: Claim this refreshed recovery workstream from current main. Compare the stranded `origin/agent/custodian-death-handoff-foundation` checkpoint against live code, reuse only valid implementation/evidence, rerun the focused death handoff tests plus repaired changed-file closeout, then land normally. Do not resume or merge the hundreds-of-commits-behind branch wholesale.
 - Best starting files: `custodian/game/actors/operator/operator.gd`; `custodian/game/systems/simulation/world_simulation_runtime.gd`; `custodian/game/state/run/campaign_session.gd`; `custodian/game/systems/core/state/game_state.gd`; existing files under `custodian/game/world/bindings/`.
-- Blockers or open questions: None requiring user judgment. R1 intentionally preserves current Game Over after campaign failure as a compatibility fallback; removing it belongs to R2.
+- Blockers or open questions: None requiring user judgment. The old branch is recovery evidence only and no longer owns a queue lock because this packet has a new workstream identity. R1 intentionally preserves current Game Over after campaign failure as a compatibility fallback; removing it belongs to R2.
