@@ -1,7 +1,7 @@
 # REVIEW: VISUAL VALIDATION ECONOMY TOOLING V1 REVIEW CORRECTIONS 1
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `review-visual-validation-economy-tooling-v1-review-corrections-1`
+- Workstream: `review-visual-validation-economy-tooling-v1-review-corrections-1-r1`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `visual-validation-economy-tooling-v1-review-corrections-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md`
-- Reviewed main: `dfaf9e269d4c12d98bc03f5800cc34ce3530a50a`
+- Reviewed main: `5a82486a46f30ad8753625133e1c6cee7eddd958`
 - Review modes: `code, runtime, workflow`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
@@ -27,6 +27,9 @@
 ## Human Decision Gate
 
 No human visual gate is needed for objective correction behavior. Any question about whether a target scene or asset looks good remains with its feature's human art review.
+
+
+Queue recovery note: the original remote review branch is fully contained by current main with zero unique commits but still exists. This `-r1` identity restores normal queue claimability without treating stale branch presence as a live reviewer.
 
 ## Handoff
 
