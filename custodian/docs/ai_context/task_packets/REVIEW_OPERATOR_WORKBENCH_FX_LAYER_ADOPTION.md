@@ -12,6 +12,7 @@
 - Review target workstream: `operator-workbench-fx-layer-adoption`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md`
 - Reviewed main: `0c2a646ccd`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
