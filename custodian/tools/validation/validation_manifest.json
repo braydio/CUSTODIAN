@@ -3382,6 +3382,27 @@
       "needs_import": false
     },
     {
+      "id": "contract_world_ingress_spawn_clearance",
+      "type": "godot_script",
+      "script": "res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "contract_world",
+        "world_ingress",
+        "spawn_clearance",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd",
+        "custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/contract_world_ingress_spawn_clearance_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "enemy_patrol_navigation",
       "type": "godot_script",
       "script": "res://tools/validation/enemy_patrol_navigation_smoke.gd",

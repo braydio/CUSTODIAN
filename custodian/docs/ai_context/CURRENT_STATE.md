@@ -89,6 +89,17 @@ and ingress policies remain there until their post-PR1 extraction packets.
 `world_placement_context_smoke.gd` owns the focused contract and is registered
 as a unit validation.
 
+## Contract World Ingress Spawn Clearance (2026-10-04)
+
+`ContractWorldLoader` now places registered structural world ingresses and
+commits their authored dressing-clearance claims before relocating the Operator
+or other placement consumers. Compound spawn selection filters candidates
+through `ProcGenTilemap.is_inside_world_ingress_dressing_clearance()`; the
+`player_spawn` fallback must also be walkable and outside that clearance. If no
+safe Operator tile remains, contract activation fails before later actors are
+relocated. `contract_world_ingress_spawn_clearance_smoke.gd` owns the
+deterministic Ash Bell collision/clearance regression.
+
 ## Operator Art Registration Profile (2026-10-02)
 
 The accepted structural Operator 96x96 ruler is defined once in
