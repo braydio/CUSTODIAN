@@ -13318,6 +13318,352 @@
           "source_asset": null
         }
       }
+    },
+    "kenney_iso_miniature_prototype_ref": {
+      "kind": "tile",
+      "assets": {
+        "block_s::omni": {
+          "state_id": "block_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "block_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_block_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "59e6440b9f8e1435d6cd6a3ef1f5a630b2659ab942229472d4cadaebf3b26dad",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "column_s::omni": {
+          "state_id": "column_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "column_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_column_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "5e23b8928993310c538f01474f3bba7a1cb3bfc150995c352b4f0ff9686eba9e",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "doorway_s::omni": {
+          "state_id": "doorway_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "doorway_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_doorway_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "cd93f20a657670b03da47e262c496341d4dbc8a08741a6f66a69a9c21692e6d9",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "floor_s::omni": {
+          "state_id": "floor_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "floor_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_floor_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "fd6d5b63876030b2173e43ef9d262901a08fd0e36961b1d5bb9e37b9288e66bf",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "pole_s::omni": {
+          "state_id": "pole_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "pole_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_pole_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "1737b40d8d943ec64beb9cd51b8186a20b3dd199dd5bbf76d51f5d7ed9335309",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "slab_s::omni": {
+          "state_id": "slab_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "slab_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_slab_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "e33ffdaf415a93127dc81f4c0e27d0b992abede0f870d53b173c610354966671",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "slope_s::omni": {
+          "state_id": "slope_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "slope_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_slope_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "0e13927ee5e3c002ac4af56dc565dbef05ab3aa15e84752edc58fc2df54c27e5",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stairs_s::omni": {
+          "state_id": "stairs_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "stairs_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_stairs_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "cf83846da031af97a6d4386b17f4909d590e5bc471c66cc3cc9f00a8ba0935fe",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wall_corner_s::omni": {
+          "state_id": "wall_corner_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "wall_corner_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_wall_corner_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "2053b38ab90e8430c26dcb314ecf37cd515b9246976bc9893b4f1de909024dc8",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "wall_s::omni": {
+          "state_id": "wall_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_prototype_ref",
+            "tile",
+            "body",
+            "tile",
+            "wall_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_prototype_ref_wall_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "bc1b9058145b00dd87ea26d947e62cf1255924997bd65c0bcdf0c6865c38ade6",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "kenney_iso_miniature_bases_ref": {
+      "kind": "tile",
+      "assets": {
+        "base_dirt_detail_s::omni": {
+          "state_id": "base_dirt_detail_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_bases_ref",
+            "tile",
+            "body",
+            "tile",
+            "base_dirt_detail_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_dirt_detail_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "16bd3f35a86a5af32b1fea482bef5413588f58600e3a02cd6df0caae9425027f",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "base_grass_flat_s::omni": {
+          "state_id": "base_grass_flat_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_bases_ref",
+            "tile",
+            "body",
+            "tile",
+            "base_grass_flat_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_grass_flat_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "6318ca96caa65d16a3036cf3d92e8cfeaeeaead6d22a7f71bca4db854fdc271e",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "base_stone_flat_s::omni": {
+          "state_id": "base_stone_flat_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_bases_ref",
+            "tile",
+            "body",
+            "tile",
+            "base_stone_flat_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_stone_flat_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "551b8f101277f3e36ecbec2cee95280d692423b866f2f7e7818188ba1a3cca9f",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "base_stone_high_s::omni": {
+          "state_id": "base_stone_high_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_bases_ref",
+            "tile",
+            "body",
+            "tile",
+            "base_stone_high_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_base_stone_high_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "a36623aa6e61ece8a345a225c8e142a839f3093a444e506a04ed475fd89a69f7",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "square_dirt_high_s::omni": {
+          "state_id": "square_dirt_high_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_bases_ref",
+            "tile",
+            "body",
+            "tile",
+            "square_dirt_high_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_square_dirt_high_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "e92becb67c8e6fbf4b6439e651621ba1282bfbe2ba706175a8360d3385c7e1e9",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "square_stone_flat_s::omni": {
+          "state_id": "square_stone_flat_s",
+          "direction": "omni",
+          "semantic_identity": [
+            "kenney_iso_miniature_bases_ref",
+            "tile",
+            "body",
+            "tile",
+            "square_stone_flat_s",
+            "omni"
+          ],
+          "path": "content/tiles/experiments/kenney_feasibility/kenney_iso_miniature_bases_ref_square_stone_flat_s_256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            512
+          ],
+          "sha256": "eeb35992f3cae8b021a031d4bf927c040a957c28069939643fac5f44008bacc8",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

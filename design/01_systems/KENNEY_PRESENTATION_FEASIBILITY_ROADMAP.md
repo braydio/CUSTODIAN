@@ -1,7 +1,7 @@
 # KENNEY PRESENTATION FEASIBILITY ROADMAP
 
 **Program ID:** `kenney-presentation-feasibility`  
-**Status:** active / K3D-1 ready  
+**Status:** active / K3D-1 implementation complete, technical review pending
 **Priority:** P2  
 **Reviewed main:** `cf3ba2eb219e`  
 **Last Updated:** 2026-10-03  
@@ -32,7 +32,7 @@ Paired review and correction packets are not counted in the three.
 
 | Slice | Workstream | Artifact | State |
 | --- | --- | --- | --- |
-| K3D-1 | `kenney-isometric-blockout-feasibility` | A + B: current 2D baseline versus Isometric Miniature 2D blockout | **ready / manual** |
+| K3D-1 | `kenney-isometric-blockout-feasibility` | A + B: current 2D baseline versus Isometric Miniature 2D blockout | **implemented / paired review pending** |
 | K3D-2 | `kenney-orthographic-3d-feasibility` | C: orthographic 3D presentation over preserved 2D spatial truth | planned |
 | K3D-3 | `kenney-3d-to-2d-production-feasibility` | D: Shape / Asset Forge production test plus final decision matrix | planned |
 
@@ -55,6 +55,8 @@ Expected pack identities:
 Archive filenames are not authoritative. Match pack identity from filename and extracted metadata/readme/license where available. Do not fail merely because Kenney used a different ZIP filename than expected.
 
 Do not commit the full downloaded archives or wholesale extracted packs.
+
+K3D-1 matched all seven expected pack identities from their local ZIP metadata and bundled licenses. The source inventory, including archive hashes and the selected-source manifest, is `custodian/docs/ai_context/reports/kenney_presentation/k3d1_source_inventory.json`. A duplicate Space Station Kit download was byte-identical and counted once; the additional Kenney Shape archive is recorded for K3D-3 and excluded from the seven-pack K3D-1 set.
 
 ## Shared Spatial Sample
 
@@ -266,6 +268,6 @@ Treat those as current truth during the experiment. Do not "repair" them into a 
 ## Current Program Position
 
 **Current slice:** K3D-1 `kenney-isometric-blockout-feasibility`  
-**State:** K3D-1 packet tightened/refreshed against `main@cf3ba2eb219e`; H1 remains in progress, so the experiment reads locked Forum geometry from design and Road visuals from `RoadOfWitnessesPrototype.MODULES`; seven local Kenney archive identities are expected in `~/Downloads`.  
-**Next gate:** execute K3D-1, land technical review, then return to the authoring chat with the A/B comparison and measurements before K3D-2 is authored.  
+**State:** Implemented against `main@9093c9ff1613`; H1 remains in progress, so the experiment reads locked Forum geometry from design and Road visuals from `RoadOfWitnessesPrototype.MODULES`. Seven expected pack identities were matched, 16 selected images passed Asset V2 ingestion and source/runtime pixel checks, and fixed-camera A/B evidence is recorded in `custodian/docs/ai_context/reports/kenney_presentation/`.
+**Next gate:** complete the paired technical review, then return to the authoring chat with the A/B comparison and measurements before K3D-2 is authored.
 **Expected remaining implementation packets after K3D-1:** 2.

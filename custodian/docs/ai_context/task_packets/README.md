@@ -29,8 +29,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Three implementation slices test CUSTODIAN presentation without changing production art direction up front.
 
-- `KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — K3D-1, ready/manual: inventories the seven local Kenney archives, ingests a bounded Isometric Miniature subset through Asset V2, and builds a detached A/B 2D comparison.
-- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — paired K3D-1 technical review; subjective art-direction judgment remains human-owned.
+- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — paired K3D-1 technical review, dispatchable after the implementation packet lands; subjective art-direction judgment remains human-owned.
 - K3D-2 orthographic real-3D presentation and K3D-3 Shape/Asset Forge 3D→2D production testing remain planned and must be refreshed from landed predecessor evidence rather than pre-authored speculatively.
 - Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
 
