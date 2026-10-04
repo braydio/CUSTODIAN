@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-contract-world-ingress-spawn-clearance-fix`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `contract-world-ingress-spawn-clearance-fix`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `contract-world-ingress-spawn-clearance-fix`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CONTRACT_WORLD_INGRESS_SPAWN_CLEARANCE_FIX.md`
-- Reviewed main: `5c06a1c2fb950b944185385e0b04793a88c62544`
+- Reviewed main: `5337c58f191a3b36f11b2a78049416b462cdb22a`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
@@ -36,5 +36,30 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Refresh reason: `none`
-- Next action: Hotfix is closed after a clean/non-blocking review.
+- Next action: `No correction packet required; implementation review passed.`
 - Blockers or open questions: none
+
+## Review Result
+
+- Outcome: `passed`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed on main: `5337c58f191a3b36f11b2a78049416b462cdb22a`
+- Review modes: `code, runtime`
+- Findings: `none`
+- Focused evidence: `contract_world_ingress_spawn_clearance, world_ingress_spawner, ash_bell_lift_ingress_presentation, contract_world_population_placement_smoke.gd, camera_presentation_subject_constraint` all passed independently in this review worktree.
+- Ancillary evidence: `required_ritualant_ingress_contract_sweep.gd --seed-count=1` placed the required Ritualant ingress and passed its required-ingress dry-run/presence path, then reproduced the previously recorded seed-0 Threadway approach-reachability and zero-cell failures. `procgen_stuck_pocket_smoke.gd` reproduced its pre-existing line-70 assertion and required a 45-second timeout because the failed SceneTree did not exit. Neither failing test path is changed by the reviewed commits.
+- Review conclusion: `Registered ingress placement/clearance precedes sector and Operator placement; the loader reuses the canonical live clearance query for compound and fallback tiles; deterministic safe selection and the 96px-class collision probe pass. The implementation stays within the active Ash Bell ingress ownership contract. No correction-worthy defect or material proof gap remains.`
+- Follow-up workstream: `none`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `A concurrent broad validation run initially occupied the machine-wide Godot slot; after it finished, review regressions ran serially. The required-ingress sweep and stuck-pocket smoke reproduced known failures outside the changed code.`
+- Root cause / contributing factors: `The required-ingress sweep also asserts seed-specific Threadway isolation and costs roughly two full procgen generations per seed; the unregistered stuck-pocket smoke leaves its SceneTree alive after its existing assertion fails.`
+- Prevention / pipeline improvement: `Retain the bounded one-seed ingress-placement check and keep the known Threadway/stuck-pocket failures separate from spawn-clearance acceptance.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `manual-follow-up` (existing Threadway and stuck-pocket failures remain outside this review scope)
+- What worked: `The focused overlap fixture plus canonical spawner/Ash Bell checks provided direct, reproducible evidence for clearance ownership and deterministic collision-free selection.`
