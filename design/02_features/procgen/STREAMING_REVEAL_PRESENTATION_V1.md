@@ -1,7 +1,7 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; AR1/ARR1 complete; AR2 ready; AR3 refresh-gated  
+**Status:** Design locked; AR1/ARR1 complete; AR2 implementation landed with renderer-recovery pending; AR3 refresh-gated  
 **Last updated:** 2026-10-03  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
@@ -410,7 +410,7 @@ Do not:
 
 ## Implementation Dependency
 
-The streaming-residency prerequisite is satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1 is implemented on main. AR2 has already been refreshed in the recorded procgen planning chat against the landed AR1 render/state contract and must not start until ARR1 passes clean/non-blocking; if ARR1 changes that contract, AR2 returns to the planning chat before implementation. AR3 must not start until reviewed AR2 and its own planning-chat refresh. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
+The streaming-residency prerequisite is satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1/ARR1 are complete. AR2 implementation is landed on main, but its original closeout lacked the mandatory graphical-renderer and explicit human visual evidence; `procgen-archive-resolve-shader-recovery-1` now closes that gate after the ingress-spawn hotfix review, and the AR2 paired review depends on the recovery. AR3 must not start until that review passes and AR3 is refreshed in `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
 
 ## Recommended Implementation Slices
 
