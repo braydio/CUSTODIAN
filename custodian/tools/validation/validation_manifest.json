@@ -1670,7 +1670,8 @@
         "custodian/docs/ASSET_LAYOUT_CONVENTION.md",
         "custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md",
         "custodian/content/README.md",
-        "tools/custodian_aliases.sh"
+        "tools/custodian_aliases.sh",
+        "custodian/content/tiles/awakening/**"
       ],
       "timeout_sec": 30,
       "needs_import": false
