@@ -1,9 +1,9 @@
 # KENNEY PRESENTATION FEASIBILITY ROADMAP
 
 **Program ID:** `kenney-presentation-feasibility`  
-**Status:** active / K3D-1 complete + reviewed; K3D-2 planning refresh required
+**Status:** active / K3D-1P playable validation ready; K3D-2 human-gated
 **Priority:** P2  
-**Reviewed main:** `efce0c069a5b`  
+**Reviewed main:** `144ad871cb17`  
 **Last Updated:** 2026-10-04  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff  
 **Program authority:** this roadmap  
@@ -28,12 +28,13 @@ Retro Fantasy and Retro Urban are deliberately excluded from this roadmap until 
 
 **Expected implementation task packets: 3.**
 
-Paired review and correction packets are not counted in the three.
+Paired review and correction packets are not counted in the three. K3D-1P is a validation-support extension and also does not increase the three major feasibility slices.
 
 | Slice | Workstream | Artifact | State |
 | --- | --- | --- | --- |
 | K3D-1 | `kenney-isometric-blockout-feasibility` | A + B: current 2D baseline versus Isometric Miniature 2D blockout | **complete / paired review passed** |
-| K3D-2 | `kenney-orthographic-3d-feasibility` | C: orthographic 3D presentation over preserved 2D spatial truth | **refresh-required / user planning gate** |
+| K3D-1P* | `kenney-isometric-blockout-playtest` | Playable human-validation wrapper for A/B with real Operator/controller/camera | **ready / support extension** |
+| K3D-2 | `kenney-orthographic-3d-feasibility` | C: orthographic 3D presentation over preserved 2D spatial truth | **refresh-required / blocked on K3D-1P walkaround judgment** |
 | K3D-3 | `kenney-3d-to-2d-production-feasibility` | D: Shape / Asset Forge production test plus final decision matrix | **planned / blocked on reviewed K3D-2** |
 
 Do not pre-author K3D-2 or K3D-3 against speculative APIs. Re-derive each against landed predecessor evidence and this authoring chat.
@@ -277,9 +278,10 @@ Treat those as current truth during the experiment. Do not "repair" them into a 
 
 ## Current Program Position
 
-**Current slice:** K3D-2 planning refresh gate  
-**State:** K3D-1 is complete and archived. Its paired review passed on `main@dc1110b819c5` with 0 blocking defects and 0 material evidence gaps. The review independently revalidated the seven-pack inventory, 16 selected 256×512 Asset V2 inputs/runtime hashes, fixed 1280×720 A/B viewport/capture contract, shared spatial/camera parity, and production isolation. Review finding `R0-01` was documentation-only: this roadmap still showed the review as pending. This update closes that finding. H1 remains in progress on current main, so K3D-2 must re-check whether H1 lands before its packet is authored.
-**K3D-2 dependency state:** predecessor implementation satisfied; predecessor paired review satisfied; **user A/B judgment + ChatGPT/user planning refresh still required**. No K3D-2 implementation packet is intentionally runnable yet.
-**Required refresh inputs:** `K3D1_ISOMETRIC_BLOCKOUT_REPORT.md`, `k3d1_ab_compare.png`, the archived K3D-1 implementation/review receipts, the user's A/B judgment, and then-current main/H1 state.
-**Next gate:** use the recorded authoring chat to decide what K3D-2 must preserve/test, then author `kenney-orthographic-3d-feasibility` against current main.
-**Expected remaining implementation packets:** 2.
+**Current slice:** K3D-1P `kenney-isometric-blockout-playtest`  
+**State:** K3D-1 is complete/reviewed and remains frozen evidence. The user then opened the actual debug scene and found the static SubViewport A/B artifact cannot support the intended experiential decision because it has no real Operator/controller/gameplay camera. K3D-1P is therefore the active support extension: it must preserve the reviewed A/B construction while adding a Lords-of-Pain-style standalone walkaround with real Operator, real gameplay Camera2D, neutral shared collision, and live 1/2/Tab presentation switching. The 16 selected Kenney Asset V2 runtime images are already imported; no new local asset intake is required. H1 remains separate/in-progress and is not a dependency for this frozen K3D-1 sample.
+**K3D-2 dependency state:** predecessor implementation satisfied; predecessor paired review satisfied; **K3D-1P implementation + user walkaround judgment + ChatGPT/user planning refresh required**. No K3D-2 implementation packet is runnable yet.
+**Required refresh inputs after K3D-1P:** the reviewed K3D-1 report/comparison, the landed K3D-1P playtest wrapper, and the user's observations on scale, moving readability, depth/occlusion, normal gameplay-camera compatibility, and CUSTODIAN fit.
+**Next gate:** execute `kenney-isometric-blockout-playtest`, have the user walk/toggle A/B, then return to the recorded authoring chat and author `kenney-orthographic-3d-feasibility` against current main.
+**Expected remaining major implementation packets:** 2.
+
