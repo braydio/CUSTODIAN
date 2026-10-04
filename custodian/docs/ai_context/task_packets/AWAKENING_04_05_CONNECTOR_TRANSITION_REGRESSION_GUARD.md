@@ -2,17 +2,18 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-04-05-connector-transition-regression`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `awakening-reliquary-dust-lung-connector`
+- Depends on: `awakening-room-connectors-polish`
 - Locks: `awakening-04-05-connector-presentation`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `f733635`
+- Review rationale: `low-risk exemption: this downstream packet is currently blocked for refresh and owns only a regression harness, not production behavior`
+- Reviewed main: `43cb6ae3f6dc6da4924e0f8c031e68e2f2be1e78`
 - Goal: Make the repaired Dust Lung ↔ Locker Reliquary handoff durable by adding one repeatable bidirectional runtime/presentation regression path that can expose seam pops without requiring the user to manually rediscover the connector camera positions.
 - Completion boundary: After the existing connector visual-closeout workstream is complete/archived, add or reuse the narrowest stable runtime/Moment Forge coverage for traversal from Dust Lung through connector C→B→A into Locker Reliquary and back A→B→C, with synchronized alpha/evidence capture around both room handoffs. Do not reopen art direction or connector geometry unless the new regression proves a concrete technical defect.
-- Current measured state: The active legacy packet `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` correctly targets the current room-canvas seam and requires C/B/A/overview stills after a fade-first fix. It does not define a durable named bidirectional traversal scenario, and its acceptance can therefore prove static joins while still missing a direction-dependent alpha pop during forward/backtracking. The current repository already provides Moment Forge and focused Awakening smoke infrastructure, so this regression surface can be bounded without creating a new presentation system.
+- Current measured state: **This packet is now downstream of `awakening-room-connectors-polish`, which changes the connector art source and alpha contract and is expected to add the same durable bidirectional traversal proof. Do not execute this packet's old fade-specific assertions unchanged. After the dependency lands, first check whether its committed scenario/telemetry fully satisfies this packet; if so, close this packet as superseded rather than duplicating the harness. If a residual regression gap remains, refresh only that gap.** The active legacy packet `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` correctly targets the current room-canvas seam and requires C/B/A/overview stills after a fade-first fix. It does not define a durable named bidirectional traversal scenario, and its acceptance can therefore prove static joins while still missing a direction-dependent alpha pop during forward/backtracking. The current repository already provides Moment Forge and focused Awakening smoke infrastructure, so this regression surface can be bounded without creating a new presentation system.
 - Evidence: User runtime captures on 2026-09-29 show the remaining failure specifically at room/connector boundaries; the closeout packet requires direct C/B/A/overview evidence; `custodian/game/world/awakening/awakening_first_return.gd` owns zone/connector alpha; `custodian/tools/validation/awakening_first_return_smoke.gd` owns static scene/fade assertions; `custodian/tools/iteration/run_moment.py` and `custodian/tools/iteration/scenarios/` are the live repeatable experiential-regression path.
 - Task-specific authority: `design/04_architecture/AWAKENING_FIRST_RETURN.md`; archived/completed `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` when this dependency clears; `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`; live Awakening controller and focused smoke.
 - Work surface: Awakening connector presentation regression coverage only: the existing Awakening smoke and/or one narrowly scoped Moment Forge traversal scenario plus its capture/telemetry fixture. Touch runtime presentation code only if the new regression proves a concrete residual bug after the dependency lands.
@@ -29,3 +30,12 @@
 - Next action: Auto-claim only after `awakening-reliquary-dust-lung-connector` is complete and archived.
 - Best starting files: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/tools/validation/awakening_first_return_smoke.gd`; `custodian/tools/iteration/run_moment.py`; `custodian/tools/iteration/scenarios/`.
 - Blockers or open questions: Dependency only. Do not begin while the visual-closeout workstream still owns connector presentation.
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Refresh instruction: After `awakening-room-connectors-polish` is complete, inspect its landed bidirectional scenario, telemetry, and changed validation ownership. If they already prove both joins in both directions under the new opaque-overlap contract, disposition this packet as superseded/no additional implementation. Otherwise rewrite the acceptance to cover only the remaining regression gap before making it ready again.
+

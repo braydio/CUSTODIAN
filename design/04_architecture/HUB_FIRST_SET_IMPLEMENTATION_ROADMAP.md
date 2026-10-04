@@ -29,10 +29,10 @@ Awakening
 ## Dependency Graph
 
 ```text
-H1 hub-first-set-blockout-v1
+H1 hub-first-set-blockout-v1-recovery-1
   └─ HR1 review-hub-first-set-blockout-v1
 
-awakening-handoff-readiness-art-convergence-v1
+awakening-handoff-readiness-art-convergence-v1-r1
   └─ review-awakening-handoff-readiness-art-convergence-v1
 
 HR1 + Awakening handoff review
@@ -58,7 +58,7 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 
 | Slice | Workstream | Current state | Depends on | Refresh required before ready |
 |---|---|---|---|---|
-| H1 | `hub-first-set-blockout-v1` | in progress | none | sync current main + absorb H1 corrections |
+| H1 | `hub-first-set-blockout-v1-recovery-1` | in progress | none | sync current main + absorb H1 corrections |
 | H2 | `hub-awakening-context-handoff` | blocked/manual | HR1 + Awakening handoff review | yes |
 | H3 | `hub-forum-adjudication-contract-prewarm` | blocked/manual | HR2 | yes |
 | H4 | `hub-crown-transfer-twin-solaria` | blocked/manual | HR2 | yes |

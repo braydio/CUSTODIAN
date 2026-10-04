@@ -2017,6 +2017,25 @@
       "needs_import": false
     },
     {
+      "id": "operator_death_campaign_handoff",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_death_campaign_handoff_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "operator",
+        "campaign",
+        "death"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/game/world/bindings/operator_death_campaign_binding.gd",
+        "custodian/tools/validation/operator_death_campaign_handoff_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "operator_dodge_flow",
       "type": "godot_script",
       "script": "res://tools/validation/operator_dodge_flow_smoke.gd",
@@ -4656,7 +4675,28 @@
         "custodian/content/metadata/assets/families/kenney_iso_miniature_prototype_ref.asset.json",
         "custodian/content/metadata/assets/families/kenney_iso_miniature_bases_ref.asset.json",
         "custodian/content/tiles/experiments/kenney_feasibility/**",
-        "custodian/tools/validation/kenney_isometric_blockout_feasibility_smoke.gd"
+        "custodian/tools/validation/kenney_isometric_blockout_feasibility_smoke.gd",
+        "custodian/scenes/debug/kenney_isometric_blockout_presentation.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
+      "id": "kenney_isometric_blockout_playtest",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/kenney_isometric_blockout_playtest_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "kenney",
+        "presentation",
+        "assets",
+        "experiment",
+        "playtest"
+      ],
+      "owners": [
+        "custodian/scenes/debug/kenney_isometric_blockout_presentation.gd",
+        "custodian/game/world/levels/authored/dev/kenney_isometric_blockout_playtest/**",
+        "custodian/tools/validation/levels/kenney_isometric_blockout_playtest_smoke.gd"
       ],
       "timeout_sec": 45,
       "needs_import": true

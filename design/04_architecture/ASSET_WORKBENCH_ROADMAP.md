@@ -111,7 +111,7 @@ As of the baseline above:
 | Slice | Workstream | Status | Completion focus | Evidence |
 |---|---|---|---|---|
 | **1. Family Navigator Foundation** | `asset-workbench-family-foundation` | complete | Read-only Asset V2 family/state cockpit and stable UI/read-model boundary | `asset_workbench_ui_smoke.py` passes with Textual Pilot; Asset V2 CLI/requirements regressions pass |
-| **2. Review Studio** | `asset-workbench-review-studio` | ready | Raster preview, playback, filmstrip, source/runtime comparison and diagnostics | `ASSET_WORKBENCH_REVIEW_STUDIO.md` queued; Slice 1 dependency is complete |
+| **2. Review Studio** | `asset-workbench-review-studio-r1` | ready (queue-recovered from stale contained branch) | Raster preview, playback, filmstrip, source/runtime comparison and diagnostics | `ASSET_WORKBENCH_REVIEW_STUDIO.md` queued; Slice 1 dependency is complete |
 | **3. Safe Pipeline Actions** | `asset-workbench-pipeline-actions` | planned | Plan/ingest UI, isolated mutation checkout, validation, commit/land, refresh | pending |
 | **4. Actor Lens + Sequence Review** | `asset-workbench-actor-sequences` | planned | NPC/enemy/fauna ergonomics and disposable behavioral review sequences | pending |
 | **5. Design Mode** | `asset-workbench-design-mode` | planned | Schema-aware family/state contract editing and reviewed contract publication | pending |

@@ -71,7 +71,7 @@ class PublishReviewArtifactsTest(unittest.TestCase):
         fake = subprocess.CompletedProcess(
             ["rclone", "listremotes"],
             0,
-            stdout="mcgdrive:\\nbraydenpc:\\ngit-dropbox-sync:\\ngit-gdrive-sync:\\n",
+            stdout="mcgdrive:\nbraydenpc:\ngit-dropbox-sync:\ngit-gdrive-sync:\n",
             stderr="",
         )
         with patch.object(publisher, "_run", return_value=fake):
@@ -81,7 +81,7 @@ class PublishReviewArtifactsTest(unittest.TestCase):
         fake = subprocess.CompletedProcess(
             ["rclone", "listremotes"],
             0,
-            stdout="dropbox-home:\\ndropbox-work:\\n",
+            stdout="dropbox-home:\ndropbox-work:\n",
             stderr="",
         )
         with patch.object(publisher, "_run", return_value=fake):

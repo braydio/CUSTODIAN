@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation`
+- Depends on: `review-contract-world-placement-foundation-r1`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
@@ -23,7 +23,7 @@
 - Validation: `res://tools/validation/contract_resource_node_smoke.gd` first, then `res://tools/validation/contract_world_population_placement_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, any implementation-created resource service snapshot/unit smoke after it exists, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains remain independent packets.
-- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
+- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 

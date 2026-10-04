@@ -103,7 +103,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 | Slice | Workstream | Scope | Status |
 | --- | --- | --- | --- |
-| NPA-1 | `enemy-marine-dash-ability-extraction` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **packet authored / ready** |
+| NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **recovery packet authored / ready** |
 | NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the landed ability seam | **packet authored / dependency-gated** |
 | NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **packet authored / dependency-gated** |
 | NPA-4 | TBD after NPA-3 | Extract ordinary standard-enemy melee execution/cadence authority | planned |

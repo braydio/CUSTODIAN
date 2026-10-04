@@ -1,7 +1,7 @@
 # REVIEW: OPERATOR ART REGISTRATION PROFILE REVIEW CORRECTIONS 1
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `review-operator-art-registration-profile-review-corrections-1`
+- Workstream: `review-operator-art-registration-profile-review-corrections-1-r1`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-art-registration-profile-review-corrections-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md`
-- Reviewed main: `907dc2bf0`
+- Reviewed main: `5a82486a46f30ad8753625133e1c6cee7eddd958`
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
@@ -30,6 +30,9 @@
 - Acceptance: Produce a findings-first review of correction 1 on live `main`, recording R0-01 and R0-02 dispositions and any new findings with stable `R1-NN` IDs. Do not patch reviewed implementation code.
 - Non-goals: Revisit profile coordinates, normalize production art, alter gameplay, or broaden review beyond these findings and direct regressions.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+
+Queue recovery note: the original remote review branch is fully contained by current main with zero unique commits but still exists. Use this `-r1` identity for the required fresh-context correction review.
 
 ## Procedure
 

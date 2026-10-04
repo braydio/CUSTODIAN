@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d3xbaxlif3364"]
 
 [ext_resource type="Script" path="res://game/actors/operator/operator.gd" id="1_operator"]
+[ext_resource type="Script" path="res://game/world/bindings/operator_death_campaign_binding.gd" id="40_death_campaign_binding"]
 [ext_resource type="Resource" path="res://game/actors/operator/carbine_rifle_mk1_definition.tres" id="2_carbine_weapon"]
 [ext_resource type="Resource" path="res://game/actors/operator/vigil_pattern_dagger_definition.tres" id="3_melee_weapon"]
 [ext_resource type="Script" path="res://game/actors/effects/blob_shadow.gd" id="29_blob_shadow"]
@@ -186,3 +187,6 @@ monitoring = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxRoot/WeaponHitbox" unique_id=388297284]
 position = Vector2(-1, 0)
 shape = SubResource("CircleShape2D_melee_hitbox")
+
+[node name="OperatorDeathCampaignBinding" type="Node" parent="."]
+script = ExtResource("40_death_campaign_binding")

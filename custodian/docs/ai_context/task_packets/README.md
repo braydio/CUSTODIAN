@@ -1,13 +1,13 @@
 # Agent Task Packets
 
-Last updated: 2026-10-03
+Last updated: 2026-10-04
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
 
 ## Active Hub First-Set / First Campaign Loop Series
 
-Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.  
+Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
 Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`.
 
 Seven implementation slices are pre-authored with paired reviews. H1 is in progress. H2-H7 are deliberately `blocked/manual` and must be refreshed **in place** from landed predecessor review evidence before becoming `ready/auto`.
@@ -22,21 +22,33 @@ Seven implementation slices are pre-authored with paired reviews. H1 is in progr
 
 Do not create v2 duplicates merely because a predecessor chose different private helpers; refresh the existing downstream packet and its review in the same docs change.
 
-## Active Kenney Presentation Feasibility Series
+## Active Isometric 2.5D Presentation Realization Series
 
-Program tracker: `../../../design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md`.  
+Design authority: `../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`.
+Program tracker: `../../../design/01_systems/ISOMETRIC_2_5D_REALIZATION_ROADMAP.md`.
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 
-Three implementation slices test CUSTODIAN presentation without changing production art direction up front.
+The project has pivoted away from planned live-3D presentation experiments. The fixed-isometric 2.5D doctrine will be realized inside the existing 2D runtime.
 
-- K3D-1 implementation is complete/archived and its paired technical review passed on `dc1110b8` with 0 blocking defects and 0 material evidence gaps.
-- K3D-2 `kenney-orthographic-3d-feasibility` is now the next dependent workstream, but remains **refresh-required / human planning gated**. Its implementation dependency and paired-review dependency are satisfied; the remaining gate is the user's A/B judgment plus ChatGPT/user re-authoring in the recorded authoring chat against current main.
-- K3D-3 Shape/Asset Forge 3D→2D production testing remains planned and blocked on reviewed K3D-2 evidence.
-- Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
+- K3D-1 remains complete/reviewed precursor evidence.
+- K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
+- `isometric-2-5d-presentation-foundation` is **ready/auto**; its K3D-1P dependency is satisfied by this landed precursor.
+- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the foundation.
+- The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
+- Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
 
 ## Active Reusable Source-Material Intake
 
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
+
+## Active Awakening 04→05 Production Art Refresh
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
+
+- `AWAKENING_ROOM_CONNECTORS_POLISH.md` — P1 ready/manual implementation packet. It consumes the user's local `~/Downloads/dust.png`, `connector.png`, and `locker.png` into the existing Dust Lung, 04→05 connector, and Locker Reliquary Asset V2 families; replaces the visible room-crossfade/room-strip seam machinery with direct registered art; reconciles the new Locker archive obstacles/P-9 bay; and keeps any still-missing Locker foreground honest rather than fabricating art.
+- `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH.md` — paired P1 post-land code/runtime/visual/asset-pipeline review.
+- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is now blocked/manual on the room-connectors polish and must be refreshed in place from the landed implementation + paired-review evidence before its old Zone04/05 feather/fade preservation clauses are executable again.
+- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is also blocked/manual on the polish; after landing, first check whether the new packet's committed bidirectional regression fully supersedes it rather than duplicating the harness.
 
 ## Active Archive Resolve Presentation Series
 
@@ -53,12 +65,12 @@ The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
 so extraction/contraction work cannot move or absorb the reveal seams before the
 AR packet set is refreshed.
 
-## Active Persistent Recovery Series
+## Persistent Recovery Series
 
-- `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 of the expected 8-packet persistent recovery/armament-registration implementation series. It removes ordinary Operator death consequence ownership from the actor, resolves the live CampaignSession exactly once, and intentionally retains current Game Over only as the R1 compatibility fallback.
+- `archived/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 is complete: Operator death now resolves an active CampaignSession once before the temporary Game Over fallback; no-session worlds keep the safe fallback without inventing a campaign.
 - Program tracker: `../../../design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`.
 - Design authority: `../../../design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`.
-- Only R1 is authored at program start. Per the roadmap, author each later packet against the landed live surface of its predecessor rather than freezing speculative runtime contracts up front.
+- R2 is the next slice and must be refreshed against the landed R1 binding and the current Campaign / Hub / world-return surface before dispatch.
 
 ## Active Non-Player Actor Runtime Refactor Series
 
@@ -343,7 +355,7 @@ lost when the ephemeral worktree is removed.
 - Canonical dependency tracker: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`. Workstream identities are stable, but execution readiness is evidence-gated. A packet is `ready/auto` only when its current measured state and implementation surface exist on live main; architecture-dependent downstream packets stay `blocked/manual` and are refreshed in place after the named predecessor/review lands.
 - **Runtime/streaming:** M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete. Cycle-1 MR6R1 passed with 0 blocking defects and 0 material evidence gaps, closing S7. Its five optional next-slice proof-hardening items N1-01..N1-05 are now owned by RF1 rather than another correction cycle.
 - **Post-M6 world presentation:** RF1/RFR1 are complete/passed; Region Frame is stable presentation authority. RFR1 next-slice findings R0-01/R0-02 are folded into `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, while R0-04 is carried into ARR1's reacquisition review. The Alpine packet is `ready/manual` for a local agent with `~/Downloads/alpine_plateau_underlay_assets.zip`; objective Asset V2 checks precede Dropbox human visual approval. AR1/ARR1 are complete/passed. AR2 is now ready/auto with the four ARR1 follow-ups folded into implementation/validation; AR3 remains reviewed-AR2 + planning-chat refresh gated.
-- **Placement:** P1 `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` has landed `WorldPlacementContext` as the accepted-world read seam while leaving placement policies in `ContractWorldLoader`. `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (PR1) is now the next review gate and must pass before resource, vehicle, relay, encounter, or ingress extraction; those packets remain serialized by the `contract-world-loader` lock. `CONTRACT_WORLD_LOADER_CONTRACTION.md` (P7) remains blocked/manual until P2-P6 land, then must be re-derived from the surviving loader.
+- **Placement:** P1 `CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` has landed `WorldPlacementContext` as the accepted-world read seam while leaving placement policies in `ContractWorldLoader`. A separate P0 hotfix, `CONTRACT_WORLD_INGRESS_SPAWN_CLEARANCE_FIX.md`, is now `ready/auto` after the Operator was reproduced twice spawning inside Ash Bell / Forlorn surface-ingress collision; it owns only install ordering + spawn-clearance safety and is independent of the P2-P7 extraction DAG. `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` (PR1) remains the extraction gate for resource, vehicle, relay, encounter, or ingress services; those packets remain serialized by the `contract-world-loader` lock. `CONTRACT_WORLD_LOADER_CONTRACTION.md` (P7) remains blocked/manual until P2-P6 land, then must be re-derived from the surviving loader.
 - **ProcGen decomplexification:** D1 `PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` is implemented and validated; its paired `REVIEW_PROCGEN_ROAD_AUTHORITY_EXTRACTION.md` is the post-land review gate. D2 `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` and D3 `PROCGEN_GENERATION_STATE_EXTRACTION.md` remain blocked/manual pending their own live inventory refreshes.
 - **GenerationGrid:** `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` / XR1 remain the first executable post-D audit. `PROCGEN_GENERATION_GRID_FOUNDATION.md` is blocked/manual until XR1 defines the real minimum grid seam. `PROCGEN_GENERATION_GRID_MIGRATION_SERIES_AUTHORING.md` is blocked/manual until XR2. Their paired reviews remain dependency-gated. `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` stays hard-blocked until X3 authors and the generated migration DAG reaches a concrete final reviewed convergence workstream.
 - **Render/soak:** `PROCGEN_RENDER_ATTRIBUTION_V1.md` remains the post-D4/P7 measurement slice and must re-inventory live presentation owners at execution. `PROCGEN_RENDER_LOAD_CONSOLIDATION.md` is blocked/manual until attribution identifies the actual safe target. `PROCGEN_PERFORMANCE_SOAK_V1.md`, `REVIEW_PROCGEN_RUNTIME_OPTIMIZATION_SERIES_V1.md`, and `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` remain dependency-gated end-of-series work; A1 now carries the same refresh-gate discipline rather than requiring speculative future packets to be ready up front.
@@ -358,10 +370,10 @@ lost when the ephemeral worktree is removed.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — Independently verify that the landed Workbench publication hardening converts the recent serial Git/LFS/manifest/import failure chain into one bounded readin...
 - `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1.md` — Independently verify corrections for findings R0-01 through R0-05 without reopening parent implementation scope.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
-- `CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — Make Custodian lethal damage a campaign-level exactly-once event instead of an actor-owned life decrement, establishing the recovery-capable death handoff wi...
 - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — Move Marine Dash from `enemy.gd` into one complete actor-local ability authority while preserving the current tactical-dash behavior, tuning, combat results,...
 - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — Move the Savage two-hit chain lifecycle out of `enemy.gd` into one actor-local ability authority while preserving the existing rushdown cadence and guard-pre...
 - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — Move the Savage pounce phase machine out of `enemy.gd` into one actor-local ability authority, reusing the landed Marine/Falcon host-service pattern without...
+- `HUB_FIRST_SET_BLOCKOUT_V1.md` — Build the complete runtime-ready blockout for the first persistent Hub set immediately north of Awakening, from Road of Witnesses South Reach through the Ash...
 - `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — Retire the remaining absolute scene-tree lookup debt before domain extraction so every later Operator controller receives explicit dependencies instead of re...
 - `OPERATOR_DODGE_DOMAIN_EXTRACTION.md` — Extract dodge/charge/Flow/chain lifecycle into a focused traversal authority while preserving the deliberate full-body presentation model for displacement-ow...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
@@ -375,11 +387,14 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authoritie...
 - `OPERATOR_WORKBENCH_ANIMATION_CREATION.md` — Let an artist create an entirely new semantic Operator animation from OPUI, open a blank/reference-backed Aseprite Workbench, author and preview it, then pub...
 - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — Let an artist add or replace an FX layer directly inside an existing Operator Aseprite Workbench, explicitly adopt that saved layer as the animation's canoni...
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — Turn the landed AR1 flat diagnostic veil into the locked Archive Resolve visual language: graphite/soot uncertainty, coherent world-space irregular resolutio...
 - `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Re-derive the post-D1/D2/D3 generation core from live code and produce the authoritative migration contract for replacing TileMapLayer-as-working-memory with...
 - `PROCGEN_PERFORMANCE_SOAK_V1.md` — Run the complete optimized procgen stack through a deterministic production-size soak, compare it to the S1 baseline, and establish stable regression budgets...
 - `PROCGEN_RENDER_ATTRIBUTION_V1.md` — Attribute procgen presentation node, rendered-object, and draw-call cost to concrete presentation owners before changing renderer structure.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — Convert the completed V1 whole-series review and final soak evidence into the next evidence-backed procgen optimization/correction DAG, preserving stable wor...
 - `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Independently verify the landed Awakening convergence slice against its registration, seam, progression, asset-consumption, and South Reach handoff-readiness...
+- `REVIEW_CUSTODIAN_DEATH_HANDOFF_FOUNDATION_RECOVERY_1.md` — Independently verify that the recovered R1 death handoff lands the intended campaign-level exactly-once death consequence on current main without importing s...
+- `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — Independently verify that the recovered Marine Dash extraction preserves exact tactical behavior/tuning and current non-player architecture while avoiding st...
 - `REVIEW_HUB_AWAKENING_CONTEXT_HANDOFF.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_CROWN_TRANSFER_TWIN_SOLARIA.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
@@ -409,11 +424,16 @@ lost when the ephemeral worktree is removed.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` — Make the repaired Dust Lung ↔ Locker Reliquary handoff durable by adding one repeatable bidirectional runtime/presentation regression path that can expose se...
 - `BABY_OPOSSUM_RUNTIME_HARDENING.md` — Correct the Baby Opossum runtime state-transition and approach/retrieval semantics, tighten determinism and contract validation, and reconcile the active imp...
 - `CONTRACT_WORLD_ENCOUNTER_PLACEMENT_EXTRACTION.md` — Move ambient enemy/encounter marker placement policy from ContractWorldLoader into one focused placement service without moving enemy spawning or AI authority.
+- `CONTRACT_WORLD_INGRESS_SPAWN_CLEARANCE_FIX.md` — P0 runtime hotfix: establish registered ingress structural claims before final Operator placement and reject ingress dressing/collision clearance from spawn candidates; paired review authored.
+- `REVIEW_CONTRACT_WORLD_INGRESS_SPAWN_CLEARANCE_FIX.md` — paired fresh-context review of the spawn-clearance hotfix.
 - `CONTRACT_WORLD_INGRESS_PLACEMENT_EXTRACTION.md` — Move authored world-ingress/destination placement from ContractWorldLoader into the canonical world-placement layer while preserving transition ownership els...
 - `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — Move ARRN relay tile selection and placement from ContractWorldLoader into the world-placement layer.
 - `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
+- `ISOMETRIC_2_5D_FORUM_VERTICAL_SLICE.md` — Prove CUSTODIAN's realized 2.5D language in one normal playable Forum approach with the real Operator/controller/Camera2D, ground-rooted depth, raised/overhe...
+- `ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md` — Make CUSTODIAN's 2.5D doctrine an explicit reusable 2D runtime presentation contract by separating ground XY from visual elevation and converging existing de...
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — Preserve the user's four downloaded Kenney Pattern Pack Lines variants as a durable, searchable, provenance-complete CUSTODIAN source-material library so fut...
+- `REVIEW_ASSET_WORKBENCH_REVIEW_STUDIO_R1.md` — Independently verify Slice 2 Review Studio is a read-only extension of the landed Asset Workbench family navigator and Asset V2 truth, with exact pixel/frame...
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — Independently verify that P1 created one minimal read-only world-placement context seam, preserved ContractWorldLoader lifecycle/orchestration authority and...
 - `REVIEW_LORDS_OF_PAIN_TEST_GALLERY.md` — Independently verify the landed DEMO-scoped Lords of Pain test gallery against its archived implementation packet, with special attention to the seven availa...
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — Independently verify Archive Resolve V1's semantic echo, ingress/spawn resolve, and shortened reacquisition remain bounded presentation consumers with no cop...
@@ -510,6 +530,8 @@ lost when the ephemeral worktree is removed.
 - `OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` — P2 draft/manual after the runtime composition slices; human review chooses only visibly harmful directional/layer gaps for Asset V2 fulfillment rather than forcing eight-way completeness.
 
 #### Operator Workbench UX Hierarchy V1
+
+Operator Workbench planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b
 
 - Series tracker: `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`.
 - All five packets are intentionally `blocked/manual` planning drafts with a mandatory **REFRESH REQUIRED BEFORE IMPLEMENTATION** banner. Do not claim them until the relevant predecessor/prerequisite has landed, a fresh OPUI review has reconciled the packet to current main, the banner is removed, and the packet is explicitly signed off.

@@ -6,10 +6,10 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `hub-first-set-blockout-v1`
+- Depends on: `hub-first-set-blockout-v1-recovery-1`
 - Locks: `hub-runtime, hub-layout`
 - Review: `none`
-- Review target workstream: `hub-first-set-blockout-v1`
+- Review target workstream: `hub-first-set-blockout-v1-recovery-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/HUB_FIRST_SET_BLOCKOUT_V1.md`
 - Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`

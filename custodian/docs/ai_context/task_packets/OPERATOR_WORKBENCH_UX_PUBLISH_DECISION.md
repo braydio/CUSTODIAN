@@ -18,6 +18,7 @@
 - Kind: `implementation`
 - Review: `manual`
 - Reviewed main: `330422023f9a92362915af46b9658585e7c1d450`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
 - Roadmap: `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`
 - Goal: Make Publish a fast, comprehensible decision surface that leads with what will change and whether publication is safe, while moving unchanged rows, exact paths and backend audit detail behind progressive disclosure.
 - Completion boundary: Redesign the Publish preview/modal only. Consume the already-landed publication-readiness/recovery authority and UX1 artist-facing status vocabulary. Do not change the source/runtime transaction, landing semantics, mirror implementation, validation requirements, or Git authority.
@@ -147,6 +148,13 @@ Complete only after the refresh banner has been removed and implementation is ac
 - Tooling / docs drift discovered: `pending`
 - Follow-up: `pending`
 - What worked: `pending`
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Refresh instruction: Bring the landed predecessor/review evidence and any material live-main drift back to this conversation. Re-derive the packet here with the user before promoting it to implementation-ready; do not let the execution agent silently reinterpret architecture, scope, sequencing, or acceptance.
 
 ## Handoff
 

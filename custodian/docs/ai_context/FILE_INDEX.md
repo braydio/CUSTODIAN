@@ -1,6 +1,10 @@
 # FILE INDEX — CUSTODIAN
+- `design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md` — K3D-1/K3D-1P evidence and the human walkaround gate before K3D-2 planning.
 - `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/` — registered DEMO-pack asset gallery with directional actor/animation cycling, Stone/Meridian floor samples, Gold/Glint/UI samples, District Transfer Frame ingress/return presentation, and generated standalone playtest; manifest at `custodian/content/data/dev/lords_of_pain/gallery_manifest.json`.
 - `custodian/tools/validation/levels/lords_of_pain_test_gallery_smoke.gd` — manifest/runtime-output coverage, explicit DEMO exclusions, production-scene ownership, ingress/return presentation, and Gold Drop toggle/reset smoke.
+- `custodian/game/world/levels/authored/dev/kenney_isometric_blockout_playtest/` — standalone K3D-1P real-Operator walkaround with shared native/Kenney presentation, neutral boundary collision, and 1/2/Tab A/B controls.
+- `custodian/scenes/debug/kenney_isometric_blockout_presentation.gd` — shared presentation-only construction used by both K3D-1's deterministic capture rig and K3D-1P's playable level.
+- `custodian/tools/validation/levels/kenney_isometric_blockout_playtest_smoke.gd` — focused wrapper, spawn, presentation switching, collision-ownership, asset, bounds, and production-main-scene checks.
 - `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` — exact 32px-grid spatial authority/spec for the first persistent Hub set north of Awakening: South Reach, Forum, literal two-connector Sepulcher loop, Archive Rise/Crown Transfer, Muster Court, and ordinary Continuity Port.
 - `design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md` — seven-slice H1-H7 tracker for blockout → Awakening handoff → Forum Contract/prewarm → optional Twin → Port deployment → Campaign return → end-to-end closeout, including dependency/refresh gates.
 - `custodian/docs/ai_context/task_packets/HUB_FIRST_SET_BLOCKOUT_V1.md` / `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — active H1 implementation/review for the runtime-ready blockout, real Operator-clearance navigation proof, and human topology gate.
@@ -55,7 +59,9 @@ Last updated: 2026-10-02
 
 - `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md` — persistent design authority for recoverable Custodian death, local/existing/fabricated Crèche infrastructure, field-acquired → recovered → registered equipment, capped Recovered Armory and designation assignments, initial deployment loadout, unregistered death-site retrieval, and registered-weapon field-instance invalidation. It explicitly keeps the recovery mechanism underexplained, treats current one-life game over as transitional, and defers imperfect historical designation-resolution evidence.
 - `design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md` — implementation tracker with a locked expected count of 8 implementation packets, explicit live-program beginning/end conditions, dependency graph, per-slice boundaries, and closeout rules.
-- `custodian/docs/ai_context/task_packets/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — active R1 V2 packet: Operator death becomes an exactly-once campaign failure handoff; current global Game Over is intentionally retained only as a compatibility fallback until R2 Post recovery/reintegration.
+- `custodian/docs/ai_context/task_packets/archived/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — completed R1 record: exactly-once Operator death to campaign failure, followed by the temporary Game Over compatibility fallback.
+- `custodian/game/world/bindings/operator_death_campaign_binding.gd` — latches the Operator-down event and routes active campaign failure before the compatibility fallback.
+- `custodian/tools/validation/operator_death_campaign_handoff_smoke.gd` — proves outcome ordering, structured context, duplicate suppression, no-session fallback, and no-revive behavior.
 - Future death, campaign-failure, inventory, weapon-loot, registration, provisioning, local recovery, and recovery-fabrication work must converge on this authority/roadmap rather than creating a parallel lives/checkpoint/insurance model.
 
 ## Map + AI Coherence

@@ -18,6 +18,7 @@
 - Kind: `implementation`
 - Review: `manual`
 - Reviewed main: `330422023f9a92362915af46b9658585e7c1d450`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
 - Roadmap: `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`
 - Goal: Turn Page 2 WORKBENCH into the default visual animation-authoring home: navigation on the left, the selected animation as the dominant center object, and a compact actionable inspector/layer surface on the right.
 - Completion boundary: Replace the current metadata-heavy 25/35/40 WORKBENCH layout with a preview-first cockpit, compact inspector/layer presentation, and workflow badges in the animation browser. Reuse existing preview composition/rendering authority. Deep source comparison, diff, transition analysis and examiner controls remain Page 3 REVIEW.
@@ -152,6 +153,13 @@ Complete only after the refresh banner has been removed and implementation is ac
 - Tooling / docs drift discovered: `pending`
 - Follow-up: `pending`
 - What worked: `pending`
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Refresh instruction: Bring the landed predecessor/review evidence and any material live-main drift back to this conversation. Re-derive the packet here with the user before promoting it to implementation-ready; do not let the execution agent silently reinterpret architecture, scope, sequencing, or acceptance.
 
 ## Handoff
 

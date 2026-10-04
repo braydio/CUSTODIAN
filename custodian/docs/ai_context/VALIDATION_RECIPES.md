@@ -144,6 +144,15 @@ Run `bash custodian/tools/validation/run_world_simulation_migration_suite.sh` fr
 
 Use the narrowest recipe that proves the change, then broaden only when the change affects shared runtime behavior, scenes, imports, or workflow routing.
 
+For the Operator death handoff (R1), run the focused adapter smoke and preserve
+the existing facility/game-over and campaign-outcome regressions:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test operator_death_campaign_handoff --json
+godot --headless --path custodian --script res://tools/validation/game_over_flow_smoke.gd
+godot --headless --path custodian --script res://tools/validation/campaign_outcome_exactly_once_smoke.gd
+```
+
 For production requirement registry, CLI, or generated-view changes, run
 `python3 custodian/tools/validation/asset_requirements_smoke.py`,
 `python3 custodian/tools/assets/asset.py needs --check`, and
