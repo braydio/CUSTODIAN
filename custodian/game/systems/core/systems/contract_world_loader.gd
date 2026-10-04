@@ -163,9 +163,10 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		return
 
 	var map_instance: Node = map_instance_variant as Node
+	var placement_context := _build_placement_context(map_instance, level_data)
 	_attach_procgen_map(map_instance)
 	_apply_contract_environment(contract, map_instance)
-	var sectors_positioned := _position_static_sectors_from_contract(level_data, map_instance)
+	var sectors_positioned := _position_static_sectors_from_contract(level_data, map_instance, placement_context)
 
 	if hide_static_sectors and not sectors_positioned:
 		var sectors_node := get_node_or_null(sectors_container_path)
@@ -523,14 +524,21 @@ func _disable_runtime_node(node: Node) -> void:
 			_disable_runtime_node(child)
 
 
-func _position_static_sectors_from_contract(level_data: Dictionary, map_instance: Node) -> bool:
+func _position_static_sectors_from_contract(
+	level_data: Dictionary,
+	map_instance: Node,
+	placement_context: WorldPlacementContext = null
+) -> bool:
 	var sectors_root := get_node_or_null(sectors_container_path)
 	if sectors_root == null:
 		return false
-	var semantic_rooms := _compound_rooms_by_sector_id(level_data)
+	var context := placement_context
+	if context == null:
+		context = _build_placement_context(map_instance, level_data)
+	var semantic_rooms := context.get_compound_rooms_by_sector_id()
 	if not semantic_rooms.is_empty():
 		var semantic_positioned := false
-		var ingress_tiles := _vector2i_items(level_data.get("compound_ingress", []))
+		var ingress_tiles := context.get_compound_ingress_tiles()
 		for sector_id in semantic_rooms.keys():
 			var sector_node := sectors_root.get_node_or_null(String(sector_id)) as Node2D
 			if sector_node == null:
@@ -574,26 +582,11 @@ func _position_static_sectors_from_contract(level_data: Dictionary, map_instance
 	return positioned_any
 
 
-func _compound_rooms_by_sector_id(level_data: Dictionary) -> Dictionary:
-	var result := {}
-	for room_variant in level_data.get("compound_rooms", []):
-		if not (room_variant is Dictionary):
-			continue
-		var room := room_variant as Dictionary
-		var sector_id := String(room.get("sector_id", "")).strip_edges().to_upper()
-		if sector_id.is_empty() or result.has(sector_id):
-			continue
-		result[sector_id] = room.duplicate(true)
-	return result
-
-
-func _vector2i_items(value: Variant) -> Array[Vector2i]:
-	var result: Array[Vector2i] = []
-	if value is Array:
-		for item in value:
-			if item is Vector2i:
-				result.append(item)
-	return result
+func _build_placement_context(map_instance: Node, level_data: Dictionary) -> WorldPlacementContext:
+	var generation_id: Variant = level_data.get("generation_id", level_data.get("seed", "unknown"))
+	var observer := func(event_name: StringName, payload: Dictionary) -> void:
+		_observe_population_placement(event_name, {"generation_id": generation_id}, payload)
+	return WorldPlacementContext.new(map_instance, level_data, observer)
 
 
 func _position_sector_node(sector_node: Node2D, sector_rect: Rect2i, ingress_tiles: Array[Vector2i], map_instance: Node) -> void:
@@ -1160,19 +1153,16 @@ func _is_far_enough_from_resource_tiles(tile: Vector2i, placed_tiles: Array[Vect
 
 
 func _stable_resource_tile_score(tile: Vector2i, anchor_tile: Vector2i) -> int:
-	var value := 2166136261
-	for number in [tile.x, tile.y, anchor_tile.x, anchor_tile.y, tutorial_resource_node_count]:
-		value = value ^ int(number)
-		value = (value * 16777619) & 0x7fffffff
-	return value
+	return WorldPlacementContext.stable_seed([
+		tile.x, tile.y, anchor_tile.x, anchor_tile.y, tutorial_resource_node_count,
+	])
 
 
 func _stable_expedition_resource_tile_score(tile: Vector2i, anchor_tile: Vector2i) -> int:
-	var value := 2166136261
-	for number in [tile.x, tile.y, anchor_tile.x, anchor_tile.y, expedition_resource_node_count, expedition_resource_min_distance_tiles]:
-		value = value ^ int(number)
-		value = (value * 16777619) & 0x7fffffff
-	return value
+	return WorldPlacementContext.stable_seed([
+		tile.x, tile.y, anchor_tile.x, anchor_tile.y,
+		expedition_resource_node_count, expedition_resource_min_distance_tiles,
+	])
 
 
 func _get_tutorial_resource_presets() -> Array[Dictionary]:

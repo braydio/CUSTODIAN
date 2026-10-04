@@ -1,124 +1,25 @@
-# Operator Animation System
+# Operator Animation Identity
 
-Structured animation system for the Custodian player character.
+Operator gameplay actions and animation presentation are separate authorities.
+`combat/operator_action_controller.gd` arbitrates attack, guard, equip/sheathe,
+damage reaction and death. Locomotion remains derived from fixed-tick movement
+facts and is never an action.
 
-## Node Structure
+Presentation uses three focused authorities:
 
-```
-Custodian (CharacterBody2D)
-├─ AnimationPlayer        # Controls animation timing and events
-├─ AnimatedSprite2D       # Visual sprite playback
-├─ HitboxRoot            # Damage hitbox for attacks
-│   └─ [Hitbox shapes]
-├─ Hurtbox               # Receives damage
-│   └─ [Hurtbox shapes]
-└─ CameraShake           # Screen shake on impacts
-```
+- `operator_animation_selector.gd` resolves canonical semantic identities.
+- `presentation/operator_animation_player.gd` plays an already-resolved
+  identity without choosing gameplay or animation semantics.
+- `presentation/operator_presentation_controller.gd` translates semantic
+  animation requests into body-owner plans and routes them through the selector,
+  player and `OperatorBodyPresenter`.
 
-## Animation Groups
+`OperatorBodyPresentationPlan` remains mechanical: owner, body layers and
+owner-scoped overlays. It carries no action, input, timing or animation fields.
+The Operator owns combat timing and decides when action presentation begins and
+ends; rendered frames never become combat authority.
 
-### Movement
-| Animation | Description | Loop |
-|-----------|-------------|------|
-| `idle` | Standing still | Yes |
-| `walk` | Normal walking | Yes |
-| `sprint` | Running | Yes |
-
-### Combat
-| Animation | Description | Loop | Key Events |
-|-----------|-------------|------|------------|
-| `attack_fast` | Quick melee | No | start → windup → active → recovery |
-| `attack_heavy` | Heavy melee | No | start → windup → active → recovery |
-| `attack_dash` | Dash + attack | No | start → windup → active → recovery |
-| `equip_weapon` | Draw/holster weapon | No | start → active → recovery |
-
-### Reaction
-| Animation | Description | Loop | Key Events |
-|-----------|-------------|------|------------|
-| `hit_recoil` | Knockback response | No | start → end |
-| `stagger` | Stunned state | No | start → end |
-| `death` | Death animation | No | start (terminal) |
-
-## Animation Phases
-
-Each combat animation has phases:
-
-```
-┌──────┐ ┌───────┐ ┌───────┐ ┌──────────┐
-│START │ │WINDUP │ │ACTIVE │ │RECOVERY │
-└──────┘ └───────┘ └───────┘ └──────────┘
-   │        │        │          │
-   └────────┴────────┴──────────┘
-              Timeline
-```
-
-| Phase | Interruptible | Game Effect |
-|-------|---------------|-------------|
-| START | Yes | Animation begins |
-| WINDUP | Yes* | Weapon charging |
-| ACTIVE | No | Damage applied! |
-| RECOVERY | No | Return to neutral |
-
-*Can cancel into other attacks during windup
-
-## File Structure
-
-```
-animations/
-├── animation_state_machine.gd   # Main state machine
-├── states/
-│   ├── animation_state.gd       # Base state class
-│   ├── idle_state.gd
-│   ├── walk_state.gd
-│   ├── sprint_state.gd
-│   ├── attack_fast_state.gd
-│   ├── attack_heavy_state.gd
-│   ├── attack_dash_state.gd
-│   ├── equip_weapon_state.gd
-│   ├── hit_recoil_state.gd
-│   ├── stagger_state.gd
-│   └── death_state.gd
-├── events/
-│   └── README.md               # Event definitions
-└── transitions/
-    └── README.md               # Transition rules
-```
-
-## Usage
-
-```gdscript
-# Initialize state machine
-var asm = AnimationStateMachine.new()
-asm.animation_player = $AnimationPlayer
-asm.sprite = $AnimatedSprite2D
-
-# Register states
-asm.register_state(IdleState.new())
-asm.register_state(WalkState.new())
-asm.register_state(AttackFastState.new())
-
-# Process each frame
-func _process(delta):
-    asm.update(delta)
-
-# Handle animation events
-func _on_animation_event(event_name, event_type):
-    asm.current_state.on_animation_event(event_name, event_type)
-```
-
-## State Manager Contract
-
-- The state machine owns deterministic transition sequencing, per-state elapsed time, priorities, and enter/exit calls.
-- States may opt into same-state re-entry with `can_reenter = true`; fast attack uses this so valid repeated primary attacks restart cleanly instead of silently no-oping.
-- Combat state remains authoritative. Attack states call into `operator.gd` to start attacks and query `is_attack_state_complete(kind)` to finish.
-- `AnimatedSprite2D.is_playing()` is not combat authority. Sprite playback can support presentation, but lockout, recovery, hit windows, and completion must come from gameplay state.
-- Animation events should notify gameplay systems; they should not replace deterministic gameplay timers or profile data.
-
-## Integration with Operator
-
-The animation system integrates with the existing operator.gd:
-- Request state transitions through `AnimationStateMachine.request(state_name, priority)`.
-- Use state entry to call gameplay methods such as `start_attack("melee_fast")`.
-- Use operator gameplay state to determine when attack/block states complete.
-- Connect combat system to frame windows and damage frames.
-- Connect hurtbox to hit_recoil state.
+Use the focused Operator validation recipes in
+`custodian/docs/ai_context/VALIDATION_RECIPES.md` when changing action or
+presentation behavior. The former reflection-driven state machine and its
+per-action state scripts have been removed.

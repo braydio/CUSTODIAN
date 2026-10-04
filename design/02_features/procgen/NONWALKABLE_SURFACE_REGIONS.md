@@ -56,6 +56,22 @@ The frontage builder owns only this geographic claim. `ProcGenTilemap`
 classifies it after final floor mutations and stores the resolved local ocean
 cells back into frontage level data.
 
+## Derived Exterior Presentation Mask
+
+Structural surface kinds stay exactly `GROUND | CHASM | OCEAN`.
+
+Presentation additionally needs to know whether a non-floor cell belongs to the
+**permanent outside-of-region** or to an **internal nonwalkable feature**.
+
+Derive, after final floor and explicit surface claims are stable:
+
+- `exterior_chasm_cells` (RF1): CHASM cells connected to the rectangular map boundary through CHASM cells only; floor, OCEAN and any other surface block the flood, so OCEAN never enters the mask;
+- `internal_chasm_cells` (RF1): `chasm_cells - exterior_chasm_cells`, i.e. enclosed chasms/ravines/pits (including a chasm reachable only through ocean).
+
+This is deterministic presentation metadata only. It does not add a fourth surface kind and never owns collision, traversal or navigation.
+
+`PROCGEN_REGION_FRAME_PROFILES.md` consumes the exterior mask to choose the permanent border/depth treatment. For `ALPINE_PLATEAU`, floor adjacent to exterior CHASM gets the world-edge cliff/fog/lower-world treatment; an enclosed internal CHASM reads as a ravine/pit instead of automatically opening onto the global underlay.
+
 ## Ownership
 
 ### Collision
@@ -85,16 +101,12 @@ large Sundered Keep vista ocean/storm plate. The vista may use resolved ocean
 bounds for geographic clip coverage but remains collision/navigation-free and
 strictly disjoint from playable floor.
 
-Explicit complete chasm semantics feed the seam-safe, camera-following
-`ProcgenDepthBackdrop.configure_from_chasm_cells()` presentation and the
-presentation-only `VoidCliffFace`. The face paints only authoritative chasm
+Current V1 still feeds complete chasm semantics into the seam-safe camera-following `ProcgenDepthBackdrop.configure_from_chasm_cells()` and the presentation-only `VoidCliffFace`. That is current implementation, not the final region-frame split. The target region-frame pass uses the derived exterior mask for permanent world-edge underlay/cliff treatment while internal chasms retain local ravine/pit presentation. The face paints only authoritative chasm
 cells: one top at each eligible floor frontier followed by a deterministic
 straight extrusion along a stable local outward normal. Typical faces use two
 to four body cells and sparse deep faces use five or six; ocean and floor stop
 each ray. Tiny enclosed chasm pockets retain their semantic classification but
-do not receive full fascia. The authored top, three weighted body variants, and
-two weighted bottom variants use stable seed-and-cell clustering and dissolve
-into the endless forest backdrop. `RuntimeWalkableBoundary` remains the sole
+do not receive full fascia. The authored top, three weighted body variants, and two weighted bottom variants use stable seed-and-cell clustering. Under the future region-frame seam, exterior faces dissolve into the active frame's depth treatment rather than a globally assumed Endless Forest backdrop. `RuntimeWalkableBoundary` remains the sole
 physical authority, and neither visual layer participates in collision or
 navigation.
 
@@ -109,9 +121,7 @@ unchanged.
 
 ## Candidate And Streaming Contract
 
-Surface sets are structural candidate state. They are classified from the
-accepted candidate's final floor and survive candidate promotion byte-for-byte;
-promotion does not reroll or rebuild geography. Ocean TileMap presentation may
+Surface sets are structural candidate state. They are classified from the accepted candidate's final floor and the fresh final materializer must reproduce their deterministic fingerprints exactly; final realization does not get permission to reroll geography. Ocean TileMap presentation may
 be rebuilt from preserved semantic cells. Surface semantics remain complete
 regardless of streaming visibility; the visual surface layers remain global in
 V1, matching the global depth backdrop and collision frontier.
@@ -121,7 +131,7 @@ V1, matching the global depth backdrop and collision frontier.
 - Classifier smoke: exclusivity, completeness, bounds, edge seed, deterministic
   fingerprint, wall independence, and claim-cell identity.
 - Walkable-boundary smoke: real `CharacterBody2D` cannot leave floor.
-- Candidate-promotion smoke: floor, wall, ocean, and chasm fingerprints survive.
+- Candidate materializer/parity smoke: floor, wall, ocean, and chasm fingerprints reproduce exactly in the fresh final runtime map.
 - Frontage seeds: one valid deterministic claim, resolved ocean/chasm, protected
   floor disjointness, spawn/foliage safety, and existing no-bypass topology.
 - Vista layering: ocean bounds drive exterior geography without overlapping

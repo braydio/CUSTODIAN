@@ -73,6 +73,16 @@ or layering when those are established by deterministic evidence. Subjective art
 direction, composition preference, aesthetic cohesion, and baseline approval stay
 human-owned.
 
+When objective checks are green but an important subjective presentation question
+remains, do not spend the coding-agent review loop judging its own screenshots.
+Publish one compact external review handoff with
+`custodian/tools/iteration/publish_review_artifacts.py` and return the emitted
+Dropbox manifest path plus the exact reviewer questions. The publisher is opt-in:
+use `--important --reason ...` only when the human/ChatGPT visual decision is
+material. Prefer ROI/contact sheets and sparse authored keyframes; do not commit
+bulk review media to Git. See
+`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
+
 Task packets that require substantial visual evidence must state why non-visual
 checks are insufficient and minimize the capture budget. More than two full-frame
 stills, any repeated full-frame pass, or full-motion capture needs explicit
@@ -104,11 +114,7 @@ Normal implementation work follows `implement → validate → commit → land o
 origin/main`. Completed validated work lands automatically without per-task
 approval and without a PR or routine human-review gate. Ad hoc review-only work
 must carry the explicit task override `TASK OVERRIDE: review only; do not stage,
-commit, or push.` Paired post-land review packets may authorize commits only for
-their durable review receipt, required closing summary, review-packet lifecycle
-metadata, and bounded correction/re-review packets. They must never edit the
-reviewed implementation or unrelated work; the packet must state this bounded
-override explicitly.
+commit, or push.` Paired post-land review packets may authorize commits only for their durable review receipt, required closing summary, review-packet lifecycle metadata, and bounded correction/re-review packets. They must never edit the reviewed implementation or unrelated work; the packet must state this bounded override explicitly. A paired review must also start from a fresh reviewer context rather than continuing the implementation session. The same model/agent family may review its own prior work only from a newly started context/workstream that reconstructs the target from durable repository evidence and records `same-agent-fresh-context`; otherwise use `different-agent`.
 
 - Every normal implementation run uses `python3 custodian/tools/agent/workstream.py`
   in an isolated ephemeral worktree. Exceptions are explicitly read-only/review-only
@@ -195,6 +201,28 @@ receipt:
 - Follow-up: none | fixed-in-scope | <workstream-id> | manual-follow-up
 - What worked: optional
 ```
+
+Every packeted closing summary and final user-facing reply also ends with:
+
+```text
+## Next Handoff
+- Next workstream: <workstream-id | none>
+- Next packet state: ready | dependency-gated | refresh-required | human-required | none
+- Refresh owner: none | chatgpt-user | execution-agent
+- ChatGPT/user planning refresh required: yes | no
+- Authoring chat: <ChatGPT conversation URL | not-recorded | n/a>
+- Refresh reason: none | ...
+- Next action: ...
+- Blockers or open questions: none | ...
+```
+
+This is the immediate successor in the current packet's own program/DAG, not a
+random globally eligible task. Architecture/design-sensitive refreshes belong to
+`chatgpt-user`: the execution/review agent reports exact live drift and evidence,
+then tells the user to bring the originating ChatGPT conversation back to ChatGPT
+when its URL is available. Conversation URLs must be copied only from durable
+packet/history metadata or user-provided input; never infer or invent one.
+A purely mechanical live-main refresh may be assigned to `execution-agent`.
 
 The purpose is to improve the agent pipeline, not praise the run. Keep
 `What worked` terse. For packeted V2 work, mirror the same receipt into the

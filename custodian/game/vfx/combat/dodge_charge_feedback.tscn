@@ -1,43 +1,40 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/vfx/combat/dodge_charge_feedback.gd" id="1_feedback"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/transition/dodge_charge_meter_01/operator__fx__unarmed__transition__dodge_charge_meter_01__omni__8f__96.png" id="2_meter"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/posture/dodge_charge_ready_01/operator__fx__unarmed__posture__dodge_charge_ready_01__omni__5f__96.png" id="3_ready"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/transition/dodge_charge_release_01/operator__fx__unarmed__transition__dodge_charge_release_01__omni__6f__96.png" id="4_release"]
+[ext_resource type="SpriteFrames" path="res://content/sprites/operator/runtime/operator_runtime_frames.tres" id="2_operator_runtime_frames"]
 [ext_resource type="Texture2D" path="res://content/sprites/effects/runtime/motion/dodge_charge_trail_core_01.png" id="5_trail"]
-[ext_resource type="Texture2D" path="res://content/sprites/operator/runtime/animations/unarmed/transition/dodge_chain_release_01/operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png" id="6_chain_release"]
 
 [node name="DodgeChargeFeedback" type="Node2D"]
 z_index = -1
 script = ExtResource("1_feedback")
 
-[node name="MeterSprite" type="Sprite2D" parent="."]
+[node name="MeterSprite" type="AnimatedSprite2D" parent="."]
 visible = false
 position = Vector2(0, 22)
 texture_filter = 1
-texture = ExtResource("2_meter")
-hframes = 8
+sprite_frames = ExtResource("2_operator_runtime_frames")
+animation = &"unarmed/transition/dodge_charge_meter_01/omni/fx"
 
-[node name="ReadySprite" type="Sprite2D" parent="."]
+[node name="ReadySprite" type="AnimatedSprite2D" parent="."]
 visible = false
 position = Vector2(0, 22)
 texture_filter = 1
-texture = ExtResource("3_ready")
-hframes = 5
+sprite_frames = ExtResource("2_operator_runtime_frames")
+animation = &"unarmed/posture/dodge_charge_ready_01/omni/fx"
 
-[node name="ReleaseSprite" type="Sprite2D" parent="."]
+[node name="ReleaseSprite" type="AnimatedSprite2D" parent="."]
 visible = false
 top_level = true
 texture_filter = 1
-texture = ExtResource("4_release")
-hframes = 6
+sprite_frames = ExtResource("2_operator_runtime_frames")
+animation = &"unarmed/transition/dodge_charge_release_01/omni/fx"
 
-[node name="ChainReleaseSprite" type="Sprite2D" parent="."]
+[node name="ChainReleaseSprite" type="AnimatedSprite2D" parent="."]
 visible = false
 top_level = true
 texture_filter = 1
-texture = ExtResource("6_chain_release")
-hframes = 6
+sprite_frames = ExtResource("2_operator_runtime_frames")
+animation = &"unarmed/transition/dodge_chain_release_01/omni/fx"
 
 [node name="TrailSprite" type="Sprite2D" parent="."]
 visible = false

@@ -94,6 +94,7 @@
         "custodian/AGENTS.md",
         "custodian/tools/agent/**",
         "custodian/tools/validation/agent_workflow_smoke.py",
+        "tools/custodian_aliases.sh",
         "custodian/docs/ai_context/prompts/**",
         "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
         "custodian/docs/ai_context/CONTEXT.md",
@@ -101,7 +102,6 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
-        ".github/workflows/expire-lfs-degraded-mode.yml",
         ".claude/settings.json"
       ],
       "timeout_sec": 30,
@@ -126,6 +126,32 @@
         "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
         "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
         "custodian/docs/ai_context/prompts/review_runtime_change.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
+      "id": "visual_review_handoff",
+      "type": "python",
+      "script": "custodian/tools/iteration/test_publish_review_artifacts.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "visual_economy",
+        "review",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/iteration/publish_review_artifacts.py",
+        "custodian/tools/iteration/test_publish_review_artifacts.py",
+        "custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md",
+        "custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md",
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/VALIDATION_RECIPES.md",
+        "custodian/docs/ai_context/prompts/review_runtime_change.md",
+        "AGENTS.md",
+        "custodian/AGENTS.md"
       ],
       "timeout_sec": 20,
       "needs_import": false
@@ -287,7 +313,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/procgen_derived_rebuild_scheduler_smoke.gd",
       "tier": "actor",
-      "tags": ["procgen", "scheduler", "telemetry"],
+      "tags": [
+        "procgen",
+        "scheduler",
+        "telemetry"
+      ],
       "owners": [
         "custodian/game/world/procgen/derived_rebuild_scheduler.gd",
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
@@ -301,7 +331,13 @@
       "type": "godot_script",
       "script": "res://tools/validation/procgen_pause_aware_streaming_smoke.gd",
       "tier": "actor",
-      "tags": ["procgen", "streaming", "pause", "scheduler", "telemetry"],
+      "tags": [
+        "procgen",
+        "streaming",
+        "pause",
+        "scheduler",
+        "telemetry"
+      ],
       "owners": [
         "custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd",
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
@@ -315,7 +351,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/procgen_chunk_lifecycle_smoke.gd",
       "tier": "actor",
-      "tags": ["procgen", "streaming", "chunk-lifecycle", "telemetry"],
+      "tags": [
+        "procgen",
+        "streaming",
+        "chunk-lifecycle",
+        "telemetry"
+      ],
       "owners": [
         "custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd",
         "custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd",
@@ -326,11 +367,106 @@
       "needs_import": true
     },
     {
+      "id": "procgen_chunk_payload_cache",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_chunk_payload_cache_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "streaming",
+        "chunk-payload-cache",
+        "telemetry"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd",
+        "custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd",
+        "custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/procgen_chunk_payload_cache_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_distant_chunk_unload",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_distant_chunk_unload_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "streaming",
+        "chunk-unload",
+        "residency",
+        "navigation",
+        "telemetry"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/streaming/procgen_chunk_residency_policy.gd",
+        "custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd",
+        "custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/systems/core/systems/navigation_system.gd",
+        "custodian/tools/validation/procgen_distant_chunk_unload_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_reveal_presentation",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_reveal_presentation_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "streaming",
+        "archive-resolve",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/proc_gen_map.tscn",
+        "custodian/tools/validation/procgen_reveal_presentation_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_region_frame",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_region_frame_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "region-frame",
+        "presentation",
+        "nonwalkable",
+        "depth-backdrop"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/presentation/procgen_region_frame_profile.gd",
+        "custodian/game/world/procgen/presentation/region_frames/alpine_plateau.tres",
+        "custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd",
+        "custodian/game/world/procgen/terrain/nonwalkable_surface_classifier.gd",
+        "custodian/game/world/procgen/custodian_contract_map.gd",
+        "custodian/game/world/procgen/custodian_contract_map.tscn",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/procgen_region_frame_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "procgen_walkable_boundary",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_walkable_boundary_smoke.gd",
       "tier": "actor",
-      "tags": ["procgen", "streaming", "walkable-boundary", "collision"],
+      "tags": [
+        "procgen",
+        "streaming",
+        "walkable-boundary",
+        "collision"
+      ],
       "owners": [
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/game/world/procgen/runtime_walkable_boundary_chunk.gd",
@@ -344,7 +480,13 @@
       "type": "godot_script",
       "script": "res://tools/validation/runtime_wall_collision_compaction_smoke.gd",
       "tier": "actor",
-      "tags": ["procgen", "runtime-wall", "collision", "destruction", "streaming"],
+      "tags": [
+        "procgen",
+        "runtime-wall",
+        "collision",
+        "destruction",
+        "streaming"
+      ],
       "owners": [
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/game/world/procgen/runtime_wall_chunk.gd",
@@ -359,7 +501,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/procgen_runtime_health_smoke.gd",
       "tier": "actor",
-      "tags": ["procgen", "runtime-health", "scheduler", "telemetry"],
+      "tags": [
+        "procgen",
+        "runtime-health",
+        "scheduler",
+        "telemetry"
+      ],
       "owners": [
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/tools/validation/procgen_runtime_health_smoke.gd"
@@ -452,6 +599,25 @@
         "custodian/game/world/procgen/proc_gen_map.tscn",
         "custodian/tools/validation/procgen_surface_material_smoke.gd",
         "custodian/content/metadata/assets/families/meridian_hardened_floor.asset.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_road_authority",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_road_authority_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "road",
+        "authority",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/roads/procgen_road_authority.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/procgen_road_authority_smoke.gd"
       ],
       "timeout_sec": 30,
       "needs_import": true
@@ -710,7 +876,8 @@
         "custodian/tools/operator/animation_workbench*.py",
         "custodian/tools/operator/animation_frame_contract.py",
         "custodian/tools/operator/operator_cli.py",
-        "custodian/tools/aseprite/operator_animation_workbench.lua"
+        "custodian/tools/aseprite/operator_animation_workbench.lua",
+        "custodian/tools/operator/operator_next_actions_report.py"
       ],
       "timeout_sec": 20,
       "needs_import": false
@@ -774,7 +941,8 @@
         "custodian/tools/operator/art_agent/service.py",
         "custodian/tools/operator/art_agent/security.py",
         "custodian/tools/operator/art_agent/models.py",
-        "custodian/tools/operator/art_agent/aseprite_bridge.py"
+        "custodian/tools/operator/art_agent/aseprite_bridge.py",
+        "custodian/tools/validation/operator_art_agent_service_smoke.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -819,7 +987,9 @@
       ],
       "owners": [
         "custodian/tools/aseprite/operator_art_agent.lua",
-        "custodian/tools/aseprite/operator_art_agent_lib.lua"
+        "custodian/tools/aseprite/operator_art_agent_lib.lua",
+        "custodian/tools/aseprite/operator_anchor_guides.lua",
+        "custodian/tools/validation/operator_art_agent_aseprite_smoke.py"
       ],
       "timeout_sec": 90,
       "needs_import": false
@@ -950,6 +1120,35 @@
         "custodian/tools/art/custodian_pixelart_converter.py",
         "custodian/tools/validation/operator_art_source_real_pilot.py",
         "design/02_features/animation/OPERATOR_ART_AGENT_SYSTEM.md"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_art_registration_profile",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_art_registration_profile_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation",
+        "registration",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/content/data/operator/authoring/operator_art_profile.json",
+        "custodian/tools/operator/art_agent/registration_profile.py",
+        "custodian/tools/operator/art_agent/source_models.py",
+        "custodian/tools/operator/art_agent/source_normalization.py",
+        "custodian/tools/operator/art_agent/source_service.py",
+        "custodian/tools/operator/art_agent/service.py",
+        "custodian/tools/operator/art_agent/qa.py",
+        "custodian/tools/operator/art_agent/cli.py",
+        "custodian/tools/operator/art_agent/mcp_server.py",
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/aseprite/operator_anchor_guides.lua",
+        "custodian/tools/aseprite/operator_live_bridge/art_agent_ops.lua",
+        "custodian/tools/validation/operator_art_registration_profile_smoke.py"
       ],
       "timeout_sec": 60,
       "needs_import": false
@@ -1155,13 +1354,46 @@
         "migration"
       ],
       "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/game/actors/operator/sidearm_pistol_definition.tres",
+        "custodian/game/actors/operator/operator_runtime_frames.tres",
+        "custodian/game/actors/operator/operator_weapon_frames.tres",
+        "custodian/game/actors/operator/operator_melee_overlay_frames.tres",
+        "custodian/game/actors/operator/operator_ranged_fx_frames.tres",
+        "custodian/game/actors/operator/operator_modular_lower_body_frames.tres",
+        "custodian/game/actors/operator/operator_modular_upper_body_frames.tres",
+        "custodian/game/actors/operator/operator_modular_sidearm_frames.tres",
+        "custodian/game/actors/operator/operator_modular_upper_fx_frames.tres",
+        "custodian/game/actors/operator/operator_modular_cape_frames.tres",
+        "custodian/game/actors/operator/operator_modular_head_frames.tres",
+        "custodian/game/actors/operator/operator_animation_catalog_frames.tres",
         "custodian/tools/pipelines/update_operator_compatibility_resources.py",
         "custodian/tools/pipelines/reload_assets.py",
         "custodian/tools/pipelines/ingest_runtime.gd",
         "custodian/tools/operator/operator_ingest.sh",
-        "custodian/game/actors/operator/operator_*_frames.tres",
-        "custodian/game/actors/operator/operator.tscn",
-        "custodian/tools/operator/animation_workbench.py"
+        "custodian/tools/operator/animation_workbench.py",
+        "custodian/tools/operator/operator_runtime_consumer_report.py",
+        "custodian/content/sprites/operator/source/legacy/c2b_runtime_retirement/**",
+        "custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json",
+        "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
+        "custodian/content/data/operator/operator_animation_reachability.json",
+        "reports/operator/operator_runtime_consumer_disposition.json",
+        "custodian/content/sprites/operator/runtime/animations/melee_1h/attack/critical_execution_01/**",
+        "custodian/content/sprites/operator/runtime/animations/melee_1h/attack/fast_attack_chain_01/**",
+        "custodian/content/sprites/operator/runtime/animations/melee_1h/cosmetic/melee_1h/**",
+        "custodian/content/sprites/operator/runtime/animations/melee_1h/cosmetic/relaxed_idle_01/**",
+        "custodian/content/sprites/operator/runtime/animations/melee_1h/posture/stance_01/**",
+        "custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/cosmetic/relaxed_idle_01/**",
+        "custodian/content/sprites/operator/runtime/animations/ranged_2h/attack/fast_01/**",
+        "custodian/content/sprites/operator/runtime/animations/ranged_2h/attack/fast_02/**",
+        "custodian/content/sprites/operator/runtime/animations/ranged_2h/attack/fast_03/**",
+        "custodian/content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_carbine_mk1_01/**",
+        "custodian/content/sprites/operator/runtime/animations/sidearm/cosmetic/fx_01/**",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/cosmetic/criticial_execution_01/**",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/posture/stance_01/**",
+        "custodian/game/world/tilemaps/test_map.tscn",
+        "custodian/tools/validation/operator_runtime_animation_authority_smoke.py"
       ],
       "timeout_sec": 20,
       "needs_import": false
@@ -1171,7 +1403,12 @@
       "type": "python",
       "script": "custodian/tools/validation/godot_import_preflight_smoke.py",
       "tier": "unit",
-      "tags": ["assets", "import", "lfs", "operator"],
+      "tags": [
+        "assets",
+        "import",
+        "lfs",
+        "operator"
+      ],
       "owners": [
         "custodian/tools/pipelines/godot_import_preflight.py",
         "custodian/tools/assets/adapters/godot_import.py",
@@ -1192,10 +1429,17 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "assets", "import_compatibility"],
+      "tags": [
+        "operator",
+        "animation",
+        "assets",
+        "import_compatibility"
+      ],
       "owners": [
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
         "custodian/content/sprites/operator/runtime/animations/**/*.png.import",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/*.png",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/*.png",
         "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py"
       ],
       "timeout_sec": 15,
@@ -1461,6 +1705,10 @@
         "custodian/tools/validation/asset_contract_schema_smoke.py",
         "custodian/content/metadata/assets/**",
         "custodian/content/sprites/_pipeline/inbox/color_matched/**",
+        "custodian/content/sprites/_pipeline/inbox/operator__lower_body__unarmed__defense__block_enter_02__e__4f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__lower_body__unarmed__defense__block_hold_02__e__5f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__upper_body__unarmed__defense__block_enter_02__e__4f__96.*",
+        "custodian/content/sprites/_pipeline/inbox/operator__upper_body__unarmed__defense__block_hold_02__e__5f__96.*",
         "custodian/content/sprites/_pipeline/normalized/**",
         "custodian/asset_drop/**",
         "design/04_architecture/ASSET_PIPELINE_V2.md",
@@ -1468,7 +1716,8 @@
         "custodian/docs/ASSET_LAYOUT_CONVENTION.md",
         "custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md",
         "custodian/content/README.md",
-        "tools/custodian_aliases.sh"
+        "tools/custodian_aliases.sh",
+        "custodian/content/tiles/awakening/**"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -1739,7 +1988,10 @@
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/content/sprites/operator/runtime/animations/shared/transition/dodge_01/**",
-        "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
+        "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
+        "custodian/game/vfx/combat/dodge_charge_feedback.gd",
+        "custodian/game/vfx/combat/dodge_charge_feedback.tscn",
+        "custodian/tools/validation/operator_dodge_charge_feedback_smoke.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -1779,7 +2031,9 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/vfx/combat/parry_success_burst_vfx.gd"
+        "custodian/game/vfx/combat/parry_success_burst_vfx.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -1891,7 +2145,9 @@
       "owners": [
         "custodian/game/actors/operator/operator.gd",
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
-        "custodian/tools/validation/operator_attack_phase_cadence_smoke.gd"
+        "custodian/tools/validation/operator_attack_phase_cadence_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 90,
       "needs_import": true
@@ -1911,7 +2167,6 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.tscn",
-        "custodian/game/actors/operator/operator_runtime_frames.tres",
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
         "custodian/tools/pipelines/migrations/operator_animated_sprite_cutover_evidence.py",
         "custodian/tools/validation/operator_animated_sprite_canonical_smoke.gd",
@@ -2011,7 +2266,9 @@
         "custodian/game/actors/operator/operator.tscn",
         "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
         "custodian/game/actors/operator/presentation/operator_animation_player.gd",
-        "custodian/tools/validation/operator_modular_fast_attack_smoke.gd"
+        "custodian/tools/validation/operator_modular_fast_attack_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 60,
       "needs_import": false
@@ -2029,7 +2286,8 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/hit_recoil_state.gd"
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2048,9 +2306,10 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/hit_recoil_state.gd",
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
-        "custodian/tools/validation/operator_knockdown_animation_smoke.gd"
+        "custodian/tools/validation/operator_knockdown_animation_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2146,7 +2405,9 @@
       "owners": [
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/input/**",
-        "custodian/tools/validation/operator_fixed_tick_spine_smoke.gd"
+        "custodian/tools/validation/operator_fixed_tick_spine_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2297,7 +2558,6 @@
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/animations/operator_weapon_socket_library.gd",
         "custodian/content/data/operator/generated/operator_weapon_sockets.generated.json",
-        "custodian/game/actors/operator/operator_animation_catalog_frames.tres",
         "custodian/content/sprites/operator/runtime/animations/melee_1h_dagger/locomotion/run_01/**",
         "custodian/tools/aseprite/normalize_vigil_run_pivot.lua"
       ],
@@ -2317,11 +2577,12 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/sheathe_weapon_state.gd",
         "custodian/game/actors/operator/presentation/melee_posture_resolver.gd",
         "custodian/game/actors/operator/vigil_pattern_dagger_fx_frames.tres",
         "custodian/game/actors/operator/vigil_pattern_dagger_melee_overlay_frames.tres",
-        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md"
+        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2339,9 +2600,8 @@
       ],
       "owners": [
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/sheathe_weapon_state.gd",
-        "custodian/game/actors/operator/animations/states/equip_weapon_state.gd",
-        "custodian/game/actors/operator/animations/animation_state_machine.gd"
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -2497,7 +2757,8 @@
         "custodian/game/actors/enemies/enemy.gd",
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/enemies/procgen/grunt_animation_library.gd",
-        "custodian/content/sprites/**/falcon_reversal_*.png"
+        "custodian/content/sprites/**/falcon_reversal_*.png",
+        "custodian/tools/validation/grunt_parry_crit_reaction_smoke.gd"
       ],
       "timeout_sec": 40,
       "needs_import": false
@@ -2516,11 +2777,12 @@
       "owners": [
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
-        "custodian/game/actors/operator/animations/states/block_state.gd",
         "custodian/game/actors/operator/combat/operator_guard_controller.gd",
         "custodian/game/actors/operator/combat/operator_guard_config.gd",
         "custodian/game/actors/operator/combat/configs/operator_guard_default.tres",
-        "custodian/tools/validation/operator_guard_flow_smoke.gd"
+        "custodian/tools/validation/operator_guard_flow_smoke.gd",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 40,
       "needs_import": false
@@ -3019,6 +3281,50 @@
       "needs_import": true
     },
     {
+      "id": "world_placement_context",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_placement_context_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "placement",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/game/world/placement/world_placement_context.gd",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/placement/README.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/docs/ai_context/VALIDATION_RECIPES.md",
+        "custodian/tools/validation/world_placement_context_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "lords_of_pain_test_gallery",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/lords_of_pain_test_gallery_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "assets",
+        "authored_level",
+        "world_ingress",
+        "dev_gallery"
+      ],
+      "owners": [
+        "custodian/content/data/dev/lords_of_pain/**",
+        "custodian/content/levels/dev/lords_of_pain_test_gallery/**",
+        "custodian/content/levels/levels.json",
+        "custodian/content/sprites/dev/lords_of_pain/**",
+        "custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/**",
+        "custodian/tools/validation/levels/lords_of_pain_test_gallery_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "world_ingress_spawner",
       "type": "godot_script",
       "script": "res://tools/validation/world_ingress_spawner_smoke.gd",
@@ -3369,7 +3675,17 @@
         "custodian/scenes/debug/awakening_first_return_debug.gd",
         "custodian/scenes/debug/awakening_first_return_overlay.gd",
         "custodian/content/audio/sfx/combat/hit_medium_body_01.wav",
-        "custodian/tools/validation/awakening_visual_walkthrough_capture.gd"
+        "custodian/tools/validation/awakening_visual_walkthrough_capture.gd",
+        "custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_route_circle_32.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_dust_scour_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_b_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_c_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_root_intrusion_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_medium_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_soot_bloom_64.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_dust_motes/awakening_dust_motes__fx__effect__loop__omni__8f__64.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_falling_ash/awakening_falling_ash__fx__effect__loop__omni__8f__64.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png"
       ],
       "timeout_sec": 45,
       "needs_import": false
@@ -3687,6 +4003,28 @@
       "needs_import": false
     },
     {
+      "id": "operator_action_arbitration",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_action_arbitration_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "action_arbitration",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presentation_plan.gd",
+        "custodian/game/actors/operator/presentation/operator_animation_player.gd",
+        "custodian/game/actors/operator/animations/operator_animation_selector.gd",
+        "custodian/tools/validation/operator_action_arbitration_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_architecture_debt",
       "type": "python",
       "script": "custodian/tools/validation/operator_architecture_debt_audit.py",
@@ -3721,7 +4059,8 @@
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/game/actors/operator/presentation/**",
-        "custodian/tools/validation/operator_visual_ownership_smoke.gd"
+        "custodian/tools/validation/operator_visual_ownership_smoke.gd",
+        "custodian/tools/validation/operator_visual_anchor_smoke.gd"
       ],
       "timeout_sec": 90,
       "needs_import": false
@@ -3739,8 +4078,9 @@
       "owners": [
         "custodian/game/actors/operator/presentation/melee_posture_resolver.gd",
         "custodian/game/actors/operator/operator.gd",
-        "custodian/game/actors/operator/animations/states/equip_weapon_state.gd",
-        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md"
+        "design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md",
+        "custodian/game/actors/operator/combat/operator_action_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -4165,7 +4505,11 @@
       "type": "python",
       "script": "custodian/tools/iteration/test_visual_validation_adopter_specs.py",
       "tier": "unit",
-      "tags": ["validation", "moment", "visual_economy"],
+      "tags": [
+        "validation",
+        "moment",
+        "visual_economy"
+      ],
       "owners": [
         "custodian/tools/iteration/adopter_specs/*.json",
         "custodian/tools/iteration/adopter_specs/README.md",
@@ -4179,7 +4523,12 @@
       "type": "python",
       "script": "custodian/tools/validation/test_awakening_late_seams_evidence.py",
       "tier": "unit",
-      "tags": ["validation", "moment", "visual_economy", "awakening"],
+      "tags": [
+        "validation",
+        "moment",
+        "visual_economy",
+        "awakening"
+      ],
       "owners": [
         "custodian/tools/validation/awakening_late_seams_evidence.py",
         "custodian/tools/validation/test_awakening_late_seams_evidence.py"
@@ -4268,6 +4617,28 @@
         "custodian/tools/validation/procgen_candidate_promotion_smoke.gd"
       ],
       "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "kenney_isometric_blockout_feasibility",
+      "type": "godot_script",
+      "script": "res://tools/validation/kenney_isometric_blockout_feasibility_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "kenney",
+        "presentation",
+        "assets",
+        "experiment"
+      ],
+      "owners": [
+        "custodian/scenes/debug/kenney_isometric_blockout_feasibility.gd",
+        "custodian/scenes/debug/kenney_isometric_blockout_feasibility.tscn",
+        "custodian/content/metadata/assets/families/kenney_iso_miniature_prototype_ref.asset.json",
+        "custodian/content/metadata/assets/families/kenney_iso_miniature_bases_ref.asset.json",
+        "custodian/content/tiles/experiments/kenney_feasibility/**",
+        "custodian/tools/validation/kenney_isometric_blockout_feasibility_smoke.gd"
+      ],
+      "timeout_sec": 45,
       "needs_import": true
     },
     {

@@ -46,9 +46,8 @@ var _layers_by_owner: Dictionary = {}
 var _owner_of_layer: Dictionary = {}
 ## owner -> Array of overlay renderers scoped to that owner's lifetime.
 var _overlays_by_owner: Dictionary = {}
-## overlay renderer -> Array of owners. An overlay may be worn by several
-## owners (the cape rides both the legacy strips and the modular rig), which is
-## why overlays are not restricted to a single owner the way bodies are.
+## overlay renderer -> Array of owners. A future composition may intentionally
+## share an overlay between owners, so overlay ownership remains plural.
 var _owners_of_overlay: Dictionary = {}
 
 

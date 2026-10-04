@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN  
 **Created:** 2026-07-28  
 **Status:** active — V1 core implemented; scenario calibration remains  
-**Last Updated:** 2026-08-10
+**Last Updated:** 2026-10-03
 **Owner:** gameplay/tools  
 **Runtime Target:** Godot 4.7 project in `custodian/`  
 **Active Spec Path:** `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`  
@@ -327,9 +327,29 @@ Capture modes:
 | `evidence` | no | no | yes | yes | yes | default headless/structural review |
 | `full` | yes | yes | yes | yes | yes | audiovisual review and baseline comparison |
 
-Default mode for direct human use is `full`. Default mode for the focused runtime smoke is `none`.
+The original V1 CLI was designed around `full` for direct human use, but
+current agent policy is stricter: `custodian/AGENTS.md` and
+`custodian/docs/ai_context/VALIDATION_RECIPES.md` require `none` during
+iteration, `evidence` for sparse renderer proof, and a task-specific reason for
+`full`. The focused runtime smoke remains `none`.
 
-### 5.6 Preserve Raw Capture
+### 5.6 External Human/ChatGPT Visual Review Transport
+
+Moment Forge itself remains local and dependency-free. When objective validation
+is complete but a material subjective presentation question remains, the
+separate post-run tool
+`custodian/tools/iteration/publish_review_artifacts.py` may publish a compact
+subset of the already-produced evidence through the user's configured rclone
+Dropbox remote. This is advisory transport only: it does not change scenario
+results, baseline authority, runtime behavior, or Moment Forge's dependency
+boundary. Credentials/config remain outside the repository.
+
+The publisher is explicitly opt-in (`--important --reason ...`) and should carry
+specific reviewer questions. Agents return the Dropbox manifest path and stop;
+human/ChatGPT review owns aesthetics, composition, game feel, and baseline
+approval. See `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
+
+### 5.7 Preserve Raw Capture
 
 ```bash
 python3 custodian/tools/iteration/run_moment.py \
@@ -346,7 +366,7 @@ Without `--keep-raw`, the report builder may remove full PNG sequences after:
 
 The raw WAV is retained by default because it is comparatively small and useful for review.
 
-### 5.7 Accept a Baseline
+### 5.8 Accept a Baseline
 
 Baseline mutation must be explicit:
 

@@ -160,6 +160,15 @@ with old/new hashes and frame contracts. It does not publish canonical source
 or runtime assets; specialized ingest runs the existing runtime and
 compatibility-resource refresh.
 
+The accepted 96x96 registration guide is authoritative in
+`content/data/operator/authoring/operator_art_profile.json`. Existing plans use
+`contain`; `source-plan --mode operator_profile` requires source landmarks and
+derives one shared scale and anchor from reviewed semantic evidence. Read-only
+source render, landmark, registration-report, and production-command actions
+keep observation inside the Source Session boundary. Only a source- and
+plan-hash-verified crisp output from `pixelart --choose 1
+--normalization-plan ...` can satisfy profile-mode handoff.
+
 Sessions live under
 `.ai/operator_art_agent/<profile>/<group>/<action>/<direction>/<session-id>/`.
 Every mutation takes a complete pre-operation `.aseprite` backup, uses a
@@ -185,11 +194,9 @@ a different context, the UI keeps Workbench V2's strict fingerprint check and
 offers Cancel, read-only Open Existing Context, or backup-producing
 Recontextualize recovery. It never rewrites `workbench.json` directly.
 
-Publish refreshes the V2 runtime first, then runs
-`tools/pipelines/update_operator_compatibility_resources.py` before Godot
-import. This keeps legacy aliases consumed directly by `operator.tscn` pointed
-at the current semantic frame contract. Its `--check` mode reports retired
-runtime paths before actor smokes.
+Publish refreshes the V2 runtime and builds the canonical runtime SpriteFrames
+before Godot import. Actor-local compatibility aliases and their updater were
+retired in C2b.3.
 
 Use `modular_combo_check.py` for ordinary modular lower/upper visual review.
 Use the provenance-first repair conveyor when the review identifies artwork

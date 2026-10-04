@@ -55,18 +55,62 @@ func classify(
 			ocean_cells[cell] = true
 			chasm_cells.erase(cell)
 
+	var exterior_chasm_cells := _flood_exterior_chasm(map_size, chasm_cells)
+	var internal_chasm_cells: Dictionary = {}
+	for cell_variant in chasm_cells.keys():
+		if not exterior_chasm_cells.has(cell_variant):
+			internal_chasm_cells[cell_variant] = true
+
 	return {
 		"kind_by_cell": kind_by_cell,
 		"chasm_cells": chasm_cells,
 		"ocean_cells": ocean_cells,
+		"exterior_chasm_cells": exterior_chasm_cells,
+		"internal_chasm_cells": internal_chasm_cells,
 		"claim_cells_by_id": claim_cells_by_id,
 		"summary": {
 			"chasm_cells": chasm_cells.size(),
+			"exterior_chasm_cells": exterior_chasm_cells.size(),
+			"internal_chasm_cells": internal_chasm_cells.size(),
 			"ocean_cells": ocean_cells.size(),
 			"surface_cells": kind_by_cell.size(),
 			"claim_count": claim_cells_by_id.size(),
 		},
 	}
+
+
+## Presentation-only derived mask: CHASM cells connected through CHASM cells
+## alone to the rectangular map boundary. OCEAN, floor and every other surface
+## block the flood, so ocean cells never enter the mask and a chasm reachable
+## only through ocean is classified internal. Never alters kind_by_cell.
+func _flood_exterior_chasm(map_size: Vector2i, chasm_cells: Dictionary) -> Dictionary:
+	var exterior: Dictionary = {}
+	var pending: Array[Vector2i] = []
+	for x in range(map_size.x):
+		_seed_exterior(Vector2i(x, 0), chasm_cells, exterior, pending)
+		_seed_exterior(Vector2i(x, map_size.y - 1), chasm_cells, exterior, pending)
+	for y in range(map_size.y):
+		_seed_exterior(Vector2i(0, y), chasm_cells, exterior, pending)
+		_seed_exterior(Vector2i(map_size.x - 1, y), chasm_cells, exterior, pending)
+	var head := 0
+	while head < pending.size():
+		var cell := pending[head]
+		head += 1
+		for direction in CARDINALS:
+			_seed_exterior(cell + direction, chasm_cells, exterior, pending)
+	return exterior
+
+
+func _seed_exterior(
+	cell: Vector2i,
+	chasm_cells: Dictionary,
+	exterior: Dictionary,
+	pending: Array[Vector2i]
+) -> void:
+	if exterior.has(cell) or not chasm_cells.has(cell):
+		return
+	exterior[cell] = true
+	pending.append(cell)
 
 
 func _flood_claim(

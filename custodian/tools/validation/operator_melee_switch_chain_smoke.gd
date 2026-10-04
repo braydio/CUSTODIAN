@@ -5,7 +5,7 @@ const CARBINE_DEFINITION := preload("res://game/actors/operator/carbine_rifle_mk
 const SIDEARM_DEFINITION := preload("res://game/actors/operator/sidearm_pistol_definition.tres")
 
 var _failures: Array[String] = []
-var _entered_states: Array[String] = []
+var _entered_actions: Array[StringName] = []
 
 
 func _init() -> void:
@@ -22,14 +22,14 @@ func _run() -> void:
 	var vigil_definition = operator.get("melee_weapon_definition")
 	_expect(vigil_definition != null, "operator is missing a melee_weapon_definition")
 
-	var state_machine = operator.get("_animation_state_machine")
-	state_machine.state_entered.connect(_on_state_entered)
+	var action_controller = operator.get("_action_controller")
+	action_controller.action_entered.connect(_on_action_entered)
 
 	await _run_case(operator, "MELEE -> UNARMED", vigil_definition, null, {"type": "unarmed"}, false)
 	await _run_case(operator, "MELEE -> RANGED_2H", vigil_definition, CARBINE_DEFINITION, {"type": "armed"}, false)
 	await _run_case(operator, "MELEE -> SIDEARM (ranged-kind target)", vigil_definition, SIDEARM_DEFINITION, {"type": "armed"}, false)
 
-	state_machine.state_entered.disconnect(_on_state_entered)
+	action_controller.action_entered.disconnect(_on_action_entered)
 	operator.free()
 	if _failures.is_empty():
 		print("operator_melee_switch_chain_smoke: PASS")
@@ -68,10 +68,10 @@ func _run_case(
 		_expect(target_index >= 0, "%s: target weapon missing from armed weapons" % case_name)
 		selection["index"] = target_index
 
-	_entered_states.clear()
+	_entered_actions.clear()
 	operator.call("queue_weapon_selection", selection)
 	_expect(
-		operator.get("_animation_state_machine").current_state == "sheathe_weapon",
+		operator.get("_action_controller").current_action == &"sheathe_weapon",
 		"%s: selection did not enter sheathe_weapon" % case_name
 	)
 	_expect(
@@ -80,23 +80,23 @@ func _run_case(
 	)
 
 	await create_timer(0.4).timeout
-	operator.call("_update_animation_state_machine", 0.016)
+	operator.call("_update_operator_actions", 0.016)
 
 	if expect_draw:
 		_expect(
-			operator.get("_animation_state_machine").current_state == "equip_weapon",
+			operator.get("_action_controller").current_action == &"equip_weapon",
 			"%s: expected draw did not start after sheathe committed" % case_name
 		)
 		await create_timer(0.4).timeout
-		operator.call("_update_animation_state_machine", 0.016)
+		operator.call("_update_operator_actions", 0.016)
 
 	_expect(
-		operator.get("_animation_state_machine").current_state == "idle",
-		"%s: state machine did not settle back to idle" % case_name
+		operator.get("_action_controller").current_action.is_empty(),
+		"%s: action controller did not settle with no active action" % case_name
 	)
 
-	var sheathe_visits := _entered_states.count("sheathe_weapon")
-	var draw_visits := _entered_states.count("equip_weapon")
+	var sheathe_visits := _entered_actions.count(&"sheathe_weapon")
+	var draw_visits := _entered_actions.count(&"equip_weapon")
 	_expect(sheathe_visits == 1, "%s: expected exactly one sheathe transition, saw %d" % [case_name, sheathe_visits])
 	_expect(
 		draw_visits == (1 if expect_draw else 0),
@@ -104,8 +104,8 @@ func _run_case(
 	)
 
 
-func _on_state_entered(state_name: String) -> void:
-	_entered_states.append(state_name)
+func _on_action_entered(action: StringName, _sequence: int, _reentry: bool) -> void:
+	_entered_actions.append(action)
 
 
 func _expect(condition: bool, message: String) -> void:

@@ -36,6 +36,26 @@ They are not:
 
 ---
 
+## Alpine Plateau Starting-Region Application
+
+`design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md` is the world-scale application lock for Custodian structures in the first generated Alpine Plateau starting region. Other region frames may alter environmental integration/weathering while preserving this document's global structure grammar.
+
+In that world, emphasize:
+
+- dark steel, blackened iron, cold stone/composite and weathered concrete;
+- fortified bases integrated into hardstand, terraces, retaining edges and cliff geometry;
+- strategic vertical elements such as pylons, mast clusters, guarded towers and signal spines on major installations;
+- logistics/service modules, cargo stacks, service lamps and field repairs;
+- frost, grime, snow dusting and age without losing organized-authority construction grammar;
+- warm amber/brass exterior work or navigation lights where mechanically plausible;
+- restrained teal/cyan only for established machine-state/operational signaling.
+
+The existing rule against tower-dominant silhouettes still applies to **common utility nodes**. Strategic/authority structures may be taller and more monolithic when function remains readable.
+
+The reference lock does not authorize generic military realism, neon skyline treatment, or decorative fortress excess.
+
+---
+
 ## 2. Structure Design Pillars
 
 Every Custodian structure should satisfy these 5 pillars.

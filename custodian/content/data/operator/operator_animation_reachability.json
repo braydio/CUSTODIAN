@@ -5,8 +5,8 @@
       "profile": "melee_1h",
       "group": "attack",
       "action": "critical_execution_01",
-      "status": "DORMANT",
-      "reason": "No confirmed melee_1h critical-execution consumer; unarmed/cosmetic/critical_execution_01 is the live critical-execution path."
+      "status": "SUPERSEDED",
+      "reason": "No runtime consumer; the live critical-execution path is unarmed/cosmetic/critical_execution_01."
     },
     {
       "profile": "melee_1h",
@@ -99,8 +99,8 @@
       "profile": "melee_1h",
       "group": "attack",
       "action": "fast_attack_chain_01",
-      "status": "DORMANT",
-      "reason": "No consumer references this action; the live fast-chain is driven by fast_01/02/03 individually."
+      "status": "SUPERSEDED",
+      "reason": "No runtime consumer; shipped melee chains use fast_01/02/03."
     },
     {
       "profile": "melee_1h",
@@ -141,8 +141,8 @@
       "profile": "melee_1h",
       "group": "locomotion",
       "action": "walk_01",
-      "status": "DORMANT",
-      "reason": "_install_melee_posture_catalog_frames only copies locomotion run_01 into the modular sprites; melee walk still plays the legacy full-body walk animation."
+      "status": "LIVE",
+      "reason": "_sync_modular_melee_locomotion plays the canonical full-body walk and weapon walk identities."
     },
     {
       "profile": "melee_1h",
@@ -283,40 +283,22 @@
       "profile": "melee_1h_heavy",
       "group": "attack",
       "action": "fast_01",
-      "status": "DORMANT",
-      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover.",
-      "legacy_clips": [
-        "sword_cleaver_fast_01"
-      ],
-      "legacy_clip_proof": {
-        "sword_cleaver_fast_01": "BD"
-      }
+      "status": "LIVE",
+      "reason": "MeleeAttackProfile.presentation_action resolves this canonical attack through _resolve_armed_melee_identities."
     },
     {
       "profile": "melee_1h_heavy",
       "group": "attack",
       "action": "fast_02",
-      "status": "DORMANT",
-      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover.",
-      "legacy_clips": [
-        "sword_cleaver_fast_02"
-      ],
-      "legacy_clip_proof": {
-        "sword_cleaver_fast_02": "BD"
-      }
+      "status": "LIVE",
+      "reason": "MeleeAttackProfile.presentation_action resolves this canonical attack through _resolve_armed_melee_identities."
     },
     {
       "profile": "melee_1h_heavy",
       "group": "attack",
       "action": "fast_03",
-      "status": "DORMANT",
-      "reason": "Materialized preservation art. The pixels still play through the compatibility SpriteFrames bridge; the canonical runtime identity has no consumer until the operator.gd selector cutover.",
-      "legacy_clips": [
-        "sword_cleaver_fast_03"
-      ],
-      "legacy_clip_proof": {
-        "sword_cleaver_fast_03": "BD"
-      }
+      "status": "LIVE",
+      "reason": "MeleeAttackProfile.presentation_action resolves this canonical attack through _resolve_armed_melee_identities."
     },
     {
       "profile": "melee_1h_heavy",
@@ -365,42 +347,36 @@
       "profile": "ranged_2h",
       "group": "attack",
       "action": "fast_01",
-      "status": "DORMANT",
-      "reason": "Ranged weapons fire via per-weapon body-fire animation names; no consumer references this generic attack chain action."
+      "status": "SUPERSEDED",
+      "reason": "No runtime consumer; ranged firing uses the modular cosmetic/fire presentation."
     },
     {
       "profile": "ranged_2h",
       "group": "attack",
       "action": "fast_02",
-      "status": "DORMANT",
-      "reason": "Ranged weapons fire via per-weapon body-fire animation names; no consumer references this generic attack chain action."
+      "status": "SUPERSEDED",
+      "reason": "No runtime consumer; ranged firing uses the modular cosmetic/fire presentation."
     },
     {
       "profile": "ranged_2h",
       "group": "attack",
       "action": "fast_03",
-      "status": "DORMANT",
-      "reason": "Ranged weapons fire via per-weapon body-fire animation names; no consumer references this generic attack chain action."
+      "status": "SUPERSEDED",
+      "reason": "No runtime consumer; ranged firing uses the modular cosmetic/fire presentation."
     },
     {
       "profile": "ranged_2h",
       "group": "cosmetic",
       "action": "aim_01",
-      "status": "DORMANT",
-      "reason": "Ranged aim is currently driven by legacy_operator_body_ranged_2h_aim_raise / ranged_2h_aim_modular, not this canonical sheet.",
-      "legacy_clips": [
-        "ranged_2h_aim_modular"
-      ],
-      "legacy_clip_proof": {
-        "ranged_2h_aim_modular": "A"
-      }
+      "status": "LIVE",
+      "reason": "Canonical modular ranged aim layers are consumed by the current ranged presentation path."
     },
     {
       "profile": "ranged_2h",
       "group": "cosmetic",
       "action": "fire_01",
-      "status": "DORMANT",
-      "reason": "Ranged fire is currently driven by per-weapon legacy body-fire animation names, not this canonical sheet."
+      "status": "LIVE",
+      "reason": "Canonical modular ranged fire layers are consumed by the current ranged presentation path."
     },
     {
       "profile": "ranged_2h",
@@ -548,8 +524,9 @@
       "profile": "shared",
       "group": "posture",
       "action": "stance_01",
-      "status": "SUPERSEDED",
-      "replacement": "shared/locomotion/idle_01"
+      "status": "DORMANT",
+      "replacement": "shared/locomotion/idle_01",
+      "reason": "Head-layer stance art is retained as provenance after modular head retirement; no head renderer consumes it."
     },
     {
       "profile": "shared",
@@ -557,7 +534,7 @@
       "action": "stance_01",
       "layer": "head",
       "status": "DORMANT",
-      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+      "reason": "Head-layer stance art is retained as provenance after modular head retirement; no head renderer consumes it."
     },
     {
       "profile": "shared",
@@ -585,21 +562,15 @@
       "profile": "sidearm",
       "group": "cosmetic",
       "action": "fire_sidearm_01",
-      "status": "DORMANT",
-      "reason": "Sidearm fire presentation is driven by _resolve_sidearm_directional_animation's sidearm_fire_<up/down>_<left/right> names, not this canonical sheet.",
-      "legacy_clips": [
-        "sidearm_fire"
-      ],
-      "legacy_clip_proof": {
-        "sidearm_fire": "A"
-      }
+      "status": "LIVE",
+      "reason": "The sidearm presentation resolves the canonical sidearm fire identity."
     },
     {
       "profile": "sidearm",
       "group": "cosmetic",
       "action": "fx_01",
-      "status": "DORMANT",
-      "reason": "Paired with sidearm/cosmetic/fire_sidearm_01, which is not consumed; no separate consumer references this fx sheet."
+      "status": "SUPERSEDED",
+      "reason": "No runtime consumer; sidearm fire uses sidearm/cosmetic/fire_sidearm_01 FX."
     },
     {
       "profile": "sidearm",
@@ -662,7 +633,7 @@
       "profile": "unarmed",
       "group": "attack",
       "action": "fast_recovery_01",
-      "status": "SUPERSEDED",
+      "status": "LIVE",
       "legacy_clips": [
         "unarmed_attack_fast_recovery",
         "unarmed_attack_fast_recovery_fx",
@@ -678,21 +649,22 @@
         "unarmed_fast_recovery_upper": "C"
       },
       "replacement": "unarmed/attack/fast_01",
-      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged."
+      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged.",
+      "reason": "Selected by the active unarmed fast-attack phase resolver in operator.gd; strike, windup and recovery presentation remain gameplay-visible."
     },
     {
       "profile": "unarmed",
       "group": "attack",
       "action": "fast_recovery_01",
       "layer": "cape",
-      "status": "DORMANT",
-      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+      "status": "LIVE",
+      "reason": "Selected by the active unarmed fast-attack phase resolver in operator.gd; strike, windup and recovery presentation remain gameplay-visible."
     },
     {
       "profile": "unarmed",
       "group": "attack",
       "action": "fast_strike_01",
-      "status": "SUPERSEDED",
+      "status": "LIVE",
       "legacy_clips": [
         "unarmed_attack_fast_strike",
         "unarmed_fast_strike",
@@ -708,15 +680,16 @@
         "unarmed_fast_strike_upper": "C"
       },
       "replacement": "unarmed/attack/fast_01",
-      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged."
+      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged.",
+      "reason": "Selected by the active unarmed fast-attack phase resolver in operator.gd; strike, windup and recovery presentation remain gameplay-visible."
     },
     {
       "profile": "unarmed",
       "group": "attack",
       "action": "fast_strike_01",
       "layer": "cape",
-      "status": "DORMANT",
-      "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass."
+      "status": "LIVE",
+      "reason": "Selected by the active unarmed fast-attack phase resolver in operator.gd; strike, windup and recovery presentation remain gameplay-visible."
     },
     {
       "profile": "unarmed",
@@ -737,7 +710,7 @@
       "profile": "unarmed",
       "group": "attack",
       "action": "fast_windup_01",
-      "status": "SUPERSEDED",
+      "status": "LIVE",
       "legacy_clips": [
         "unarmed_attack_fast_windup",
         "unarmed_fast_windup",
@@ -751,7 +724,8 @@
         "unarmed_fast_windup_upper": "C"
       },
       "replacement": "unarmed/attack/fast_01",
-      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged."
+      "migration_note": "Superseded by the authored Fists fast chain. `fast_01`..`fast_04` each contain their own windup, contact, follow-through and recovery, so ordinary unarmed attacks no longer sequence separate phase clips: `_try_start_fast_attack_windup()` is skipped for any weapon with an authored chain. The separate-phase path survives as a generic capability for profiles that declare no chain, and the art is preserved rather than purged.",
+      "reason": "Selected by the active unarmed fast-attack phase resolver in operator.gd; strike, windup and recovery presentation remain gameplay-visible."
     },
     {
       "profile": "unarmed",
@@ -785,8 +759,8 @@
       "profile": "unarmed",
       "group": "cosmetic",
       "action": "critical_hitspark_01",
-      "status": "DORMANT",
-      "reason": "Materialized from the actor's legacy critical hitspark sheets. The actor still installs those sheets directly; canonical identity awaits the operator.gd cutover."
+      "status": "LIVE",
+      "reason": "The actor installs and presents the canonical critical hitspark identity."
     },
     {
       "profile": "unarmed",
@@ -888,24 +862,14 @@
         "unarmed_parry_success_01": "A",
         "unarmed_parry_success_01_fx": "D"
       },
-      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2). The legacy clip unarmed_parry_success_01_fx was mis-published \u2014 its west sourced parry_recovery_01 art and its east sourced interaction/success_01 \u2014 and is NOT preservation authority. Successful parry presents this action. interaction/success_01 is DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for parry-success presentation. Authored e/w; the caller preserves the historical left/right selection (x < 0 -> w, otherwise e) as presentation policy, not as selector behaviour."
+      "open_authoring_question": "RESOLVED 2026-09-13 (C2a-R2). The legacy clip unarmed_parry_success_01_fx was mis-published — its west sourced parry_recovery_01 art and its east sourced interaction/success_01 — and is NOT preservation authority. Successful parry presents this action. interaction/success_01 is DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for parry-success presentation. Authored e/w; the caller preserves the historical left/right selection (x < 0 -> w, otherwise e) as presentation policy, not as selector behaviour."
     },
     {
       "profile": "unarmed",
       "group": "interaction",
       "action": "field_patch_use_01",
-      "status": "DORMANT",
-      "reason": "start_field_patch() drives gameplay state and timers but never plays this presentation animation.",
-      "legacy_clips": [
-        "field_patch_use_fx",
-        "field_patch_use_lower",
-        "field_patch_use_upper"
-      ],
-      "legacy_clip_proof": {
-        "field_patch_use_fx": "C",
-        "field_patch_use_lower": "C",
-        "field_patch_use_upper": "C"
-      }
+      "status": "LIVE",
+      "reason": "The field patch window plays canonical lower-body, upper-body, and upper-FX identities."
     },
     {
       "profile": "unarmed",
@@ -973,8 +937,8 @@
       "profile": "unarmed",
       "group": "posture",
       "action": "dodge_charge_ready_01",
-      "status": "DORMANT",
-      "reason": "Dodge-charge gameplay signals exist (dodge_charge_changed, etc.) but no code plays this presentation animation yet."
+      "status": "LIVE",
+      "reason": "DodgeChargeFeedback selects frames from canonical runtime SpriteFrames."
     },
     {
       "profile": "unarmed",
@@ -1042,22 +1006,22 @@
       "profile": "unarmed",
       "group": "transition",
       "action": "dodge_chain_release_01",
-      "status": "DORMANT",
-      "reason": "Authored dodge chain-release FX with no gameplay consumer."
+      "status": "LIVE",
+      "reason": "DodgeChargeFeedback selects frames from canonical runtime SpriteFrames."
     },
     {
       "profile": "unarmed",
       "group": "transition",
       "action": "dodge_charge_meter_01",
-      "status": "DORMANT",
-      "reason": "Dodge-charge gameplay signals exist but no code plays this presentation animation yet."
+      "status": "LIVE",
+      "reason": "DodgeChargeFeedback selects frames from canonical runtime SpriteFrames."
     },
     {
       "profile": "unarmed",
       "group": "transition",
       "action": "dodge_charge_release_01",
-      "status": "DORMANT",
-      "reason": "Dodge-charge gameplay signals exist but no code plays this presentation animation yet."
+      "status": "LIVE",
+      "reason": "DodgeChargeFeedback selects frames from canonical runtime SpriteFrames."
     },
     {
       "profile": "unarmed",
@@ -1074,6 +1038,27 @@
       "status": "LIVE",
       "consumer": "operator._update_unarmed_presentation_posture -> _sync_unarmed_posture",
       "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector()."
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_enter_02",
+      "status": "DORMANT",
+      "reason": "Secondary guard-entry art variant added 2026-10-01. Not selected by gameplay; live guard entry remains on block_enter_01."
+    },
+    {
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hold_02",
+      "status": "DORMANT",
+      "reason": "Secondary held-guard art variant added 2026-10-01. Not selected by gameplay; live guard hold remains on block_hold_01."
+    },
+    {
+      "profile": "melee_1h",
+      "group": "cosmetic",
+      "action": "melee_1h",
+      "status": "SUPERSEDED",
+      "reason": "Malformed untracked E/W full_body and fx output has no runtime consumer and is removed by C2b.3."
     }
   ]
 }

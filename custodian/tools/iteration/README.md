@@ -24,6 +24,15 @@ metrics-only mode is headless.
 Review media is advisory. Only stable assertions declared by the scenario can
 fail a run.
 
+When objective checks are complete but an important subjective presentation
+question remains, publish the smallest useful review surface with
+`publish_review_artifacts.py --important --reason ...`. It sends compact
+ROI/contact sheets, sparse keyframes, and selected metadata to the configured
+rclone Dropbox review root and emits a manifest path for human/ChatGPT review.
+Do not use this as a substitute for probes/metrics, and do not ask the coding
+agent to approve its own aesthetics. See
+`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
+
 Requirements:
 
 - Godot available as `godot` or through `GODOT_BIN`

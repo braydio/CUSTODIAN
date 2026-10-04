@@ -6,9 +6,9 @@ Two tiers:
 * Invariants always fail the run. They protect the properties the migration has
   already established: gameplay only ever loads runtime art, and no legacy
   identity reaches runtime.
-* Completion gates are the objective definition of "migration finished". They
-  are reported every run and only fail under ``--final``, so the remaining debt
-  stays visible and countable instead of silently accumulating.
+* The remaining completion gate is pre-C2b legacy runtime art. It is reported
+  every run and only fails under ``--final``; compatibility SpriteFrames and
+  direct-PNG gameplay paths are retired.
 
 Authority: design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md
 """
@@ -36,20 +36,6 @@ GAME_ROOT = CUSTODIAN_ROOT / "game"
 OPERATOR_GD = GAME_ROOT / "actors/operator/operator.gd"
 
 MANIFEST_SCHEMA = "custodian.operator_runtime_manifest.v1"
-
-COMPATIBILITY_RESOURCES = [
-    "operator_runtime_frames.tres",
-    "operator_weapon_frames.tres",
-    "operator_melee_overlay_frames.tres",
-    "operator_ranged_fx_frames.tres",
-    "operator_modular_lower_body_frames.tres",
-    "operator_modular_upper_body_frames.tres",
-    "operator_modular_sidearm_frames.tres",
-    "operator_modular_upper_fx_frames.tres",
-    "operator_modular_cape_frames.tres",
-    "operator_modular_head_frames.tres",
-    "operator_animation_catalog_frames.tres",
-]
 
 RETIRED_SELECTION_SYMBOLS = (
     "AnimationResolver",
@@ -147,12 +133,19 @@ def check_c2b_invariants() -> list[str]:
             f"operator.gd constructs {constructions} actor-local SpriteFrames; expected 0"
         )
 
-    # The dodge FX renderer is canonical and must stay bound in the scene rather
-    # than being built from sheets at _ready.
-    scene = (GAME_ROOT / "actors/operator/operator.tscn").read_text(encoding="utf-8", errors="ignore")
-    dodge = scene.split('[node name="DodgeFXBackSprite"')[-1].split("[node ")[0]
-    if "sprite_frames = ExtResource" not in dodge:
-        failures.append("DodgeFXBackSprite no longer binds a SpriteFrames resource in the scene")
+    # Gameplay scenes and scripts consume semantic runtime frames, never raw
+    # Operator PNGs. The four dodge-charge effects share the canonical database.
+    for path in sorted(GAME_ROOT.rglob("*")):
+        if not path.is_file() or path.suffix not in {".gd", ".tscn"}:
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        if "content/sprites/operator/runtime/animations/" in text:
+            failures.append(f"gameplay names a raw Operator runtime PNG path: {path.relative_to(PROJECT_ROOT)}")
+    feedback_scene = (GAME_ROOT / "vfx/combat/dodge_charge_feedback.tscn").read_text(encoding="utf-8", errors="ignore")
+    if "content/sprites/operator/runtime/operator_runtime_frames.tres" not in feedback_scene:
+        failures.append("DodgeChargeFeedback no longer binds the canonical runtime SpriteFrames")
+    if "content/sprites/operator/runtime/animations/" in feedback_scene:
+        failures.append("DodgeChargeFeedback directly references Operator runtime PNGs")
 
     return failures
 
@@ -172,11 +165,6 @@ def check_completion_gates() -> list[str]:
                 continue
     if residue:
         gates.append(f"legacy runtime residue: {len(residue)} files still under runtime/")
-
-    present = [name for name in COMPATIBILITY_RESOURCES
-               if (GAME_ROOT / "actors/operator" / name).exists()]
-    if present:
-        gates.append(f"compatibility SpriteFrames still present: {len(present)} ({', '.join(sorted(present)[:3])}...)")
 
     if OPERATOR_GD.exists():
         actor = OPERATOR_GD.read_text(encoding="utf-8", errors="ignore")

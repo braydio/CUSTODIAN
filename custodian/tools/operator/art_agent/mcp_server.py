@@ -22,6 +22,20 @@ _RECT = {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems
 _RGBA = {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 255}, "minItems": 4, "maxItems": 4}
 _PIXELS = {"type": "array", "items": _OBJECT}
 _LANDMARKS = {"type": "array", "items": _OBJECT}
+_SOURCE_LANDMARKS = {"type": "array", "items": {
+    "type": "object",
+    "properties": {
+        "frame": {"type": "integer", "minimum": 1},
+        "name": {"type": "string", "enum": ["head_center", "hood_top", "shoulder_near", "shoulder_far", "elbow_near", "elbow_far", "hand_near", "hand_far", "hip_center", "hip_near", "hip_far", "knee_near", "knee_far", "ankle_near", "ankle_far", "toe_near", "toe_far", "cloak_tip_near", "cloak_tip_far", "weapon_grip", "weapon_tip"]},
+        "x": {"type": "integer", "minimum": 0}, "y": {"type": "integer", "minimum": 0},
+        "semantic_side": {"type": "string", "enum": ["near", "far", "center", "none"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "provenance": {"type": "string", "enum": ["agent", "human", "heuristic", "imported", "pilot_fixture"]},
+        "approved": {"type": "boolean"},
+    },
+    "required": ["frame", "name", "x", "y", "semantic_side", "confidence", "provenance"],
+    "additionalProperties": False,
+}}
 _REQUIRED_LANDMARKS = {"anyOf": [{"type": "array", "items": {"type": "string"}}, _OBJECT]}
 _POINTS = {"type": "array", "items": _POINT}
 _FRAMES = {"type":"array","items":{"type":"integer","minimum":1},"uniqueItems":True}
@@ -122,12 +136,23 @@ _TOOL_SPECS: dict[str, dict[str, tuple[dict[str, Any], bool]]] = {
         "target_size": ({"type": "integer", "minimum": 16, "maximum": 256, "default": 96}, False),
     },
     "operator_art_source_status": {"session": (_STRING, True)},
+    "operator_art_registration_profile": {"session": (_STRING, True)},
+    "operator_art_registration_report": {"session": (_STRING, True)},
+    "operator_art_render_registration_overlay": {"session": (_STRING, True)},
+    "operator_art_source_render": {"session": (_STRING, True)},
+    "operator_art_source_get_landmarks": {"session": (_STRING, True)},
+    "operator_art_source_set_landmarks": {"session": (_STRING, True), "landmarks": (_SOURCE_LANDMARKS, True)},
+    "operator_art_source_validate_landmarks": {"session": (_STRING, True)},
+    "operator_art_source_registration_report": {"session": (_STRING, True)},
+    "operator_art_source_production_command": {"session": (_STRING, True)},
+    "operator_art_source_verify_production": {"session": (_STRING, True)},
     "operator_art_source_analyze": {"session": (_STRING, True)},
     "operator_art_source_plan_normalization": {
         "session": (_STRING, True),
         "anchor": ({"type": "string", "enum": ["feet", "center", "top-center", "bottom-center"], "default": "feet"}, False),
         "method": ({"type": "string", "enum": ["crisp", "balanced", "clustered"], "default": "balanced"}, False),
         "global_scale": ({"type": "number", "exclusiveMinimum": 0}, False),
+        "mode": ({"type": "string", "enum": ["contain", "operator_profile"], "default": "contain"}, False),
     },
     "operator_art_source_set_registration": {
         "session": (_STRING, True),
@@ -309,6 +334,16 @@ class OperatorArtMCP:
             "operator_art_recolor_review":lambda session,**x:s.recolor_review(Path(session),**x),
             "operator_art_source_start": lambda **x:{"session":str(source.start(**x))},
             "operator_art_source_status": lambda session,**_:source.status(Path(session)),
+            "operator_art_registration_profile": lambda session,**_:s.registration_profile(Path(session)),
+            "operator_art_registration_report": lambda session,**_:s.registration_report(Path(session)),
+            "operator_art_render_registration_overlay": lambda session,**_:s.registration_overlay(Path(session)),
+            "operator_art_source_render": lambda session,**_:source.render_source(Path(session)),
+            "operator_art_source_get_landmarks": lambda session,**_:source.get_source_landmarks(Path(session)),
+            "operator_art_source_set_landmarks": lambda session,landmarks,**_:source.set_source_landmarks(Path(session),landmarks),
+            "operator_art_source_validate_landmarks": lambda session,**_:source.validate_source_landmarks(Path(session)),
+            "operator_art_source_registration_report": lambda session,**_:source.source_registration_report(Path(session)),
+            "operator_art_source_production_command": lambda session,**_:source.production_command(Path(session)),
+            "operator_art_source_verify_production": lambda session,**_:source.verify_production(Path(session)),
             "operator_art_source_analyze": lambda session,**_:source.analyze(Path(session)),
             "operator_art_source_plan_normalization": lambda session,**x:source.plan_normalization(Path(session),**x),
             "operator_art_source_set_registration": lambda session,**x:source.set_frame_registration(Path(session),**x),

@@ -21,13 +21,14 @@ func _init() -> void:
 
 	var lower := operator.get_node_or_null("ModularLowerBodySprite") as AnimatedSprite2D
 	var upper := operator.get_node_or_null("ModularUpperBodySprite") as AnimatedSprite2D
-	var head := operator.get_node_or_null("ModularHeadSprite") as AnimatedSprite2D
+	var head := operator.get_node_or_null("ModularHeadSprite")
 	var weapon := operator.get_node_or_null("ModularSidearmSprite") as AnimatedSprite2D
 	var body := operator.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	var primary_weapon := operator.get_node_or_null("PrimaryWeaponSocket/PrimaryWeaponSprite") as AnimatedSprite2D
 	var weapon_sprite := operator.get_node_or_null("PrimaryWeaponSocket/WeaponSprite") as Sprite2D
-	var ranged_fx := operator.get_node_or_null("PrimaryWeaponSocket/RangedFxOverlaySprite") as AnimatedSprite2D
 	var failures: Array[String] = []
+	if operator.get_node_or_null("PrimaryWeaponSocket/RangedFxOverlaySprite") != null:
+		failures.append("retired compatibility ranged FX node should not exist")
 
 	_check_frame_count(
 		lower,
@@ -74,10 +75,8 @@ func _init() -> void:
 	# body whenever posture cannot present; see operator_unarmed_posture_smoke.
 	_check_layer(lower, "unarmed idle lower", &"unarmed/posture/idle_relaxed_01/e/lower_body", failures)
 	_check_layer(upper, "unarmed idle upper", &"unarmed/posture/idle_relaxed_01/e/upper_body", failures)
-	# C1 retired the modular head from active composition (ACTIVE_MODULAR_HEAD),
-	# preserving the art without drawing it. It must stay hidden in every state,
-	# so this asserts retirement rather than the old head/upper frame sync.
-	_check_hidden(head, "retired modular head should not draw during modular unarmed idle", failures)
+	if head != null:
+		failures.append("retired modular head node must not be present in the Operator scene")
 	_check_hidden(body, "legacy body should be hidden during modular unarmed idle", failures)
 
 	operator.set("velocity", Vector2.RIGHT * 32.0)
@@ -88,7 +87,6 @@ func _init() -> void:
 
 	_check_layer(lower, "unarmed move lower", &"unarmed/locomotion/walk_01/e/lower_body", failures)
 	_check_layer(upper, "unarmed move upper", &"unarmed/locomotion/walk_01/e/upper_body", failures)
-	_check_hidden(head, "modular head should hide when the selected profile lacks walk-right art", failures)
 	_check_hidden(body, "legacy body should be hidden during modular unarmed locomotion", failures)
 
 	operator.call("_exit_ranged_ready")
@@ -109,10 +107,8 @@ func _init() -> void:
 
 	_check_layer(lower, "ranged-ready idle lower", &"unarmed/locomotion/idle_01/e/lower_body", failures)
 	_check_layer(upper, "ranged-ready idle upper", &"ranged_2h/posture/stance_01/e/upper_body", failures)
-	_check_hidden(head, "south-idle head should not remain frozen over ranged-ready stance", failures)
 	_check_hidden(body, "legacy body should be hidden during modular ranged-ready idle", failures)
 	_check_hidden(primary_weapon, "legacy primary weapon should hide during modular ranged-ready idle", failures)
-	_check_hidden(ranged_fx, "legacy ranged fx should hide during modular ranged-ready idle", failures)
 	if weapon_sprite == null:
 		failures.append("static ranged WeaponSprite is missing")
 	elif weapon_sprite.texture == null or not weapon_sprite.visible:

@@ -6,10 +6,8 @@ const ANCHOR_EPSILON_PX := 0.5
 const VISUAL_NODE_NAMES := [
 	"DodgeFXBackSprite",
 	"AnimatedSprite2D",
-	"ModularCapeSprite",
 	"ModularLowerBodySprite",
 	"ModularUpperBodySprite",
-	"ModularHeadSprite",
 	"ModularSidearmSprite",
 	"ModularUpperFxSprite",
 	"MeleeWeaponOverlaySprite",

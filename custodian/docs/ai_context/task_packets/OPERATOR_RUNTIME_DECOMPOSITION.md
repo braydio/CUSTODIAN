@@ -58,9 +58,13 @@ D.1 set out to fix could still reappear. The router no longer sees a mouse posit
 at all.
 Gates `operator_input_frame` and `operator_fixed_tick_spine` own
 `operator/input/**`, and `operator_input_aim_source` carries the D.2 negative
-controls against the real actor. C2b.2 completed the remaining canonical
-selection cutover. Still open and deliberately untouched: C2b.3 compatibility
-resource residue, Slice E (`OperatorActionController`) and Slice F (domain extraction).
+controls against the real actor. C2b.2 and C2b.3 are complete, and Slice E is
+also complete: `OperatorActionController` now owns action arbitration and
+`OperatorPresentationController` is the live semantic presentation coordinator.
+The architecture debt ledger is now **41**: 38 absolute scene lookups in
+`operator.gd` plus 3 mutable runtime fields in `OperatorWeaponDefinition`.
+Remaining work is F0 dependency binding, F1-F6 domain extraction/presentation
+ownership, then Slice G shell collapse.
 
 The C2a renderer cutover record, kept for its evidence (2026-09-15):
 
@@ -252,7 +256,7 @@ hardened detector found one more site the old pattern could not see —
 number of direct playback sites was **95**: 88 in `operator.gd` plus 7 in the
 states. C1 eliminated all 95. The ledger and reality now agree.
 
-The states reach playback through narrow `AnimationStateMachine.play_animation()`
+Legacy animation states were removed in Slice E; `OperatorPresentationController` routes semantic presentation requests through the selector, presenter and player.
 / `can_play_animation()` delegates that share the same authority instance.
 `animated_sprite_play_outside_presentation` is retired from the baseline. The rule also gained an optional subscript, because
 `sprites[index].play()` was the same direct playback wearing an index and the old
@@ -868,44 +872,134 @@ implementation. The adapter is not done when an injected frame arrives: it must
 carry edges *and* aim, on its own explicit facts rather than by impersonating a
 keyboard or a gamepad.
 
-## Slice E — action arbitration
+## Slice E — action arbitration — DONE
 
-Introduce `OperatorActionController` and `OperatorPresentationController`. The
-latter is what translates a semantic presentation request ("modular body playing
-`fast_01` on lower, upper and weapon") into the mechanical
-`OperatorBodyPresentationPlan`. Semantic action fields must **not** be added to
-that plan: the plan stays `owner` + `body_layers` + `overlays`, or the renderer
-reacquires the animation-selection authority C2 takes away from it.
+`OperatorActionController` is live under `combat/` and
+`OperatorPresentationController` is live under `presentation/`. The legacy
+animation-state shells/reflection path is removed and
+`animation_state_actor_glue` is **0**. Locomotion remains an orthogonal axis.
+The body plan remains mechanical (`owner` + `body_layers` + `overlays`);
+semantic action selection stays above it.
 
-Delete the empty `idle_state.gd`,
-`walk_state.gd` and `sprint_state.gd` shells — locomotion is a separate axis and
-must not compete with attack state. Action arbitration owns interruption and
-priority only; melee, guard, dodge, ranged, equip/sheathe, damage and death own
-their own behaviour. Eliminate the 34 `actor.has_method()`/`call()` glue sites.
-The action controller must not hold a sprite reference at all.
+The archived execution record is
+`task_packets/archived/OPERATOR_ACTION_ARBITRATION.md`.
 
-## Slice F — extract domains
+## Slice F0 — dependency injection spine
 
-One domain at a time: melee timeline/drive, dodge, ranged/ammo/heat/reload,
-loadout, interactions/build/repair, recovery. Keep `operator.gd` facade methods
-so existing callers and tests keep working. Split
-`OperatorWeaponDefinition` into immutable definition data plus
-`OperatorWeaponRuntimeState` (the 3 mutable `@export` fields are old-architecture
-residue with no meaningful current consumers).
+Execute `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` before broad domain
+extraction. It owns the **38** remaining absolute `/root/...` scene lookups and
+must reduce `absolute_scene_lookups: 38 -> 0` by supplying explicit dependencies
+from the composition root rather than hiding scene discovery behind a service
+locator. It deliberately does not move domain state.
 
-Retire the **38** absolute `/root/...` scene-tree lookups
-(`absolute_scene_lookups`) by injecting those dependencies, and remove the
-temporary presenter compatibility seams once the domains declare presentations up
-front.
+## Slice F1 — loadout + runtime weapon state
+
+Execute `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`. It owns weapon selection,
+pending-switch/equip-sheathe coordination and
+`OperatorWeaponRuntimeState`. The three mutable fields
+`current_magazine/is_reloading/reload_timer` leave
+`OperatorWeaponDefinition`, reducing `weapon_definition_runtime_state: 3 -> 0`.
+Because draw/sheathe currently allow movement, this slice also consumes the
+bounded presentation seam to keep locomotion lower-body cadence under the
+upper/weapon transition when moving while preserving the authored paired
+stationary transition.
+
+## Slice F2 — melee
+
+Execute `OPERATOR_MELEE_DOMAIN_EXTRACTION.md` after F1 loadout/runtime-state is complete. It owns fast/heavy timeline,
+buffer/commit state, attack drive, hit-window/contact bookkeeping and target
+solution. Presentation work belongs here when it depends on melee facts:
+already-ingested moving-fast body/weapon/FX receives a real consumer where its
+movement contract matches; armed lower movement may decouple from combat-facing
+upper/weapon using deterministic normalized cadence; READY/RELAXED may persist
+over locomotion where registration remains clean. Authored whole-body footwork,
+heavy commitments, dodge-fast transitions, executions and reversals remain
+full-body where that is the stronger presentation.
+
+## Slice F3 — ranged
+
+Execute `OPERATOR_RANGED_DOMAIN_EXTRACTION.md` after F1. It owns
+ready/aim/fire, pending shot, ammo/heat/reload and sidearm phase state. It also
+owns the movement-permissive ranged presentation gaps: primary raise/lower keeps
+locomotion lower while upper/weapon transitions preserve partial progress;
+sidearm held/fire/recover keeps lower cadence rather than frozen draw/fire legs;
+movement-locked reload stays committed. Then
+`OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` finishes the already-live
+static Carbine/socket renderer and retires remaining primary animated-weapon
+strip dependency.
+
+## Slice F4 — dodge
+
+Execute `OPERATOR_DODGE_DOMAIN_EXTRACTION.md`. Dodge/charge/Flow/chain state
+moves to a traversal authority while `operator.gd` remains the only
+`move_and_slide()` owner. Full-body dodge, chain and dodge-fast presentation
+are intentionally preserved because they own displacement/whole-body silhouette;
+modular lower locomotion is not an improvement there.
+
+## Slice F5 — interaction
+
+Execute `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md`. It owns Operator-side
+target and build/repair/terminal field-work coordination while world systems keep
+their own mutation authority. The existing 5-frame
+`unarmed/interaction/success_01` lower/upper/FX family gains an opt-in semantic
+consumer only for interactions that request an acknowledgement beat; cosmetic
+completion never gates simulation.
+
+## Slice F6 — recovery / survivability
+
+Execute `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` after the campaign-level
+`custodian-death-handoff-foundation` lands. It separates damage/death
+coordination from Field Patch/recovery state, reuses `OperatorIntegrityReclaim`
+instead of duplicating it, and makes moving Field Patch presentation reflect the
+existing 35% movement contract with locomotion lower + upper/FX while stationary
+use keeps the authored pair. The heal commit remains gameplay-timed and only
+publishes a presentation beat.
+
+## Slice F execution ordering
+
+F0 dependency binding and the mobile-guard presentation-seam proof are intentionally
+independent and may land in either order. The domain slices that actually consume
+movement-permissive layered composition are dependency-gated on **both**:
+loadout F1, melee F2, ranged F3, interaction F5, and recovery F6. Dodge F4 only
+depends on F0 because it deliberately keeps committed full-body presentation and
+does not consume the mobile composition seam. This prevents the architecture
+cleanup from being blocked by guard art while also preventing later domains from
+inventing their own second compositor.
+
+The raw ten-file east-facing defense generator set is not part of Slice F.
+`OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` is a separate manual Asset V2
+boundary. Runtime/domain packets use current canonical art unless an approved
+promotion has already landed; they never read `asset_drop/source_work/**`
+directly.
+
+## Defensive presentation program
+
+Before/alongside F0, `OPERATOR_MOBILE_GUARD_COMPOSITION.md` is the proving
+slice for the bounded movement-owned-lower + action-owned-upper semantic
+composition seam now that Slice E is live. Then
+`OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` applies it to Vigil guard and
+movement-permissive parry attempt/recovery without weakening contact weight.
+`OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` owns review/normalization of
+the new raw 2172×724 east-facing defense source-work set. It is deliberately
+manual and non-blocking for the runtime migration. `OPERATOR_GUARD_BREAK_PRESENTATION.md`
+then depends on that promotion for its 3-frame break + 6-frame recovery body
+candidates and still requires dedicated break FX; guard break remains intentionally
+committed and never reuses locomotion lower-body composition.
+
+`OPERATOR_MODULAR_DIRECTIONAL_COVERAGE_CLOSEOUT.md` is deliberately manual and
+post-runtime: it fulfills only direction/layer gaps that remain visibly harmful
+after the new compositions land, rather than manufacturing eight-way art for
+table completeness.
 
 ## Slice G — collapse the shell
 
-Reorganise `operator.tscn` into `Controllers`, `Presentation`, `Sockets`,
-`Hitboxes` and `Feedback` groups. Remove compatibility nodes and resources.
-Move Knight Test Skin and debug frame construction out of production Operator
-code. Update `FILE_INDEX.md`, `CURRENT_STATE.md` and
-`ARCHITECTURE_OWNERSHIP_MAP.md`. Turn the debt audit into a hard `--final` gate
-in the default validation set.
+Execute `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` after F0/F1-F6 plus guard/parry
+and static-ranged socket closure. Reorganise `operator.tscn` into clear
+controller/presentation/socket/hitbox/feedback ownership, remove no-consumer
+compatibility seams, move development-only Knight/debug construction out of
+production authority, refresh active docs/ownership maps, and make architecture,
+runtime-path and runtime-animation `--final` audits hard-zero gates. Optional
+guard-break/directional-art content does not block architecture closure.
 
 ## Tooling backlog
 
@@ -954,11 +1048,16 @@ tested without weakening the registry.
 
 ## Non-goals
 
-- No ECS rewrite, no constellation of tiny manager classes.
+- No ECS rewrite and no constellation of tiny manager classes.
 - No arbitrary LOC limits during extraction.
-- No new art assets.
-- No behavioural change to combat, locomotion, dodge, ranged or interaction.
-- No conversion of `operator_presentation_rig_2d.gd`.
+- No combat/balance retuning merely because ownership moves.
+- Architecture/domain packets require no invented art. Scoped presentation
+  improvements may consume existing canonical layers or record explicit Asset V2
+  follow-ups when pixels are genuinely missing.
+- No shortcut that replaces authored whole-body footwork/commitment with generic
+  locomotion solely to reduce asset count.
+- No conversion of `operator_presentation_rig_2d.gd`, which remains a separate
+  cinematic puppet.
 
 ## Documentation drift corrected in Slice A
 

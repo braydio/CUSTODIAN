@@ -23,6 +23,10 @@ var _candidate_materializer: Variant = CANDIDATE_MATERIALIZER_SCRIPT.new()
 @export var planet_offset: Vector2 = Vector2(-420, -320)
 @export var map_offset: Vector2 = Vector2.ZERO
 @export var map_generation_attempts: int = 12
+## Explicit Region Frame selector. Empty is neutral: reusable generator code
+## never infers a frame from planet_key, biome, weather or elevation. The
+## current production starting-region scene sets this explicitly.
+@export var region_frame_profile_id: StringName = &""
 @export var generated_map_size_min: Vector2i = Vector2i(160, 160)
 @export var generated_map_size_max: Vector2i = Vector2i(224, 224)
 @export_range(1, 128, 1) var generated_room_count_min: int = 12
@@ -968,6 +972,8 @@ func _build_planet_world_profile(planet_key: String, planet_seed: int) -> Dictio
 	profile_rng.seed = int(planet_seed)
 	profile["planet_key"] = planet_key
 	profile["profile_seed"] = planet_seed
+	if region_frame_profile_id != &"":
+		profile["region_frame_profile_id"] = String(region_frame_profile_id)
 	var min_map_size: Vector2i = profile.get("map_size_min", generated_map_size_min) as Vector2i
 	var max_map_size: Vector2i = profile.get("map_size_max", generated_map_size_max) as Vector2i
 	min_map_size = min_map_size.maxi(64)

@@ -5,9 +5,10 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `565168b442708575de2670b07a34f1282d50c218`  
-**Last Updated:** 2026-10-01  
+**Reviewed main:** `efce0c069a5b0fd2ce07013b9a248cde08d26e56`  
+**Last Updated:** 2026-10-03  
 **Depends on:** none for measurement; slice dependencies below
+**Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
 
 ## Purpose
 
@@ -29,11 +30,12 @@ It does not own Hub/Twin Solaria access, campaign-world transitions, authored-le
 
 ## Current Measured State
 
-Reviewed on `main@565168b4`:
+D1 measured from `origin/main@047e827f8` (baseline authority snapshot):
 
 | Authority | Current size | Current role |
 | --- | ---: | --- |
-| `custodian/game/world/procgen/proc_gen_tilemap.gd` | 11,441 lines / 588 funcs / 453,102 chars | Procgen façade and live TileMap-backed generation working-state host; roads/claims/export/streaming/presentation extraction remains in flight |
+| `custodian/game/world/procgen/proc_gen_tilemap.gd` | 11,854 lines / 617 funcs / 475,877 chars after D1 | Procgen façade and TileMap-backed generation host; physical road realization and presentation remain here |
+| `custodian/game/world/procgen/roads/procgen_road_authority.gd` | 260 lines / 33 funcs / 7,677 chars | Canonical generated road/path/parking/Road Semantics state and graph/component/repair/pruning decisions |
 | `custodian/game/world/procgen/custodian_contract_map.gd` | 1,068 lines / 29 funcs / 41,241 chars | Contract seed/profile creation, candidate orchestration, semantic snapshot evaluation, fallback selection, final materialization handoff |
 | `custodian/game/systems/core/systems/contract_world_loader.gd` | 2,001 lines / 98 funcs / 79,340 chars | Runtime world attach/rebind plus resource, vehicle, relay, encounter/Vaultwing, ingress, camera/navigation/UI placement orchestration pending P-lane extraction |
 
@@ -44,7 +46,7 @@ Current generation/runtime contracts include:
 - normal contract generation allows up to `12` candidate attempts;
 - generated maps are typically `160x160` through `224x224`;
 - streaming reveal defaults to `16x16` chunks, immediate radius `1`, active radius `2`, `96` tiles/frame, and `0.15 s` derived-visual rebuild cadence;
-- distant chunk unload remains disabled by default;
+- distant chunk unload (M6) is now enabled by default: DORMANT-only, distance-hysteretic, protected-anchor-aware, bounded to `1` chunk unloaded per frame, unloading painted presentation/M5 cache residency only while canonical semantics/collision/navigation/foliage identity remain authoritative;
 - pause still freezes gameplay/world commits, but M3 `custodian/game/world/procgen/streaming/procgen_pause_aware_streaming.gd` now runs `PROCESS_MODE_ALWAYS` and may PREPARE already-requested reveal records while paused; authoritative TileMap/collision/foliage/navigation COMMIT remains frozen until resume;
 - runtime performance work now includes M2 `derived_rebuild_scheduler.gd` request/commit coalescing, M3 pause-aware PREPARE/COMMIT, deferred reveal rebuilds, compact wall bodies, bounded foliage work, shared foliage materials, and mutation gauges;
 - existing Observatory captures show approximately `10.8k` total nodes, `1,276` procgen nodes, `2.8k` rendered objects, and about `696-699` draw calls in one production-size capture;
@@ -69,6 +71,8 @@ Every slice must preserve these unless a later design authority explicitly chang
 
 **Series ID:** `procgen-runtime-optimization-v1`  
 **Packet series:** stable V1 workstream identities plus three GenerationGrid prelude implementation packets and three paired reviews. Architecture-dependent downstream packets are now explicitly refresh-gated instead of asserting predecessor output before it exists; the measured migration packet count remains deferred to X3 after X1/X2 establish the reviewed post-D surface.  
+Architecture/design-sensitive refreshes in this V1 procgen program return to the recorded Planning refresh chat above with the landed predecessor summary/review evidence before the blocked packet is rewritten in place. Execution agents report live drift but do not silently reinterpret those packet boundaries.
+
 **Dispatch contract:** the V1 DAG identities are pre-authored, but packets whose exact implementation contract depends on not-yet-landed measured architecture may be held `blocked` / `manual` until their prerequisite implementation and review establish the real seam. `ready` / `auto` means executable from current live evidence; dependencies, reviews, refresh gates, and locks jointly control eligibility.
 
 This is a dependency DAG, not one giant workstream. Each packet lands independently. Multiple agents may execute independent eligible siblings in parallel; one agent may also run the serial order below.
@@ -93,7 +97,10 @@ S1  procgen-performance-baseline-v1
 │               └─ MR4 review-procgen-chunk-lifecycle-state-machine
 │                   └─ M5 procgen-chunk-payload-cache
 │                       └─ MR5 review-procgen-chunk-payload-cache
-│                           └─ M6 procgen-distant-chunk-unload [refresh-gated]
+│                           └─ M6 procgen-distant-chunk-unload
+│                               └─ MR6 review-procgen-distant-chunk-unload [findings]
+│                                   └─ M6C1 procgen-distant-chunk-unload-review-corrections-1
+│                                       └─ MR6R1 review-procgen-distant-chunk-unload-review-corrections-1
 │
 └─ PLACEMENT LANE
    P1 contract-world-placement-foundation
@@ -106,7 +113,7 @@ S1  procgen-performance-baseline-v1
                                                       \
 P2 + P3 + P4 + P5 + P6 ──────────────────────────────> P7 contract-world-loader-contraction
 
-G5 + M6
+G5 + MR6R1
 ├─ D1 procgen-road-authority-extraction
 ├─ D2 procgen-authored-claim-registry-extraction
 └─ D3 procgen-generation-state-extraction
@@ -150,9 +157,9 @@ When the user has authorized one agent/session to run this full series unattende
 ```text
 S1
 G1 -> G2 -> G3 -> G4 -> G5
-M1 -> M2 -> M3 -> M4 -> MR4 -> M5 -> MR5 -> [refresh M6] -> M6
-P1 -> P2 -> P3 -> P4 -> P5 -> P6 -> [refresh P7] -> P7
-[refresh D1/D2/D3 after M6] -> D1 -> D2 -> D3
+M1 -> M2 -> M3 -> M4 -> MR4 -> M5 -> MR5 -> M6 -> MR6
+P1 -> PR1 -> P2 -> P3 -> P4 -> P5 -> P6 -> [refresh P7] -> P7
+[refresh D1/D2/D3 after MR6] -> D1 -> D2 -> D3
 X1 -> XR1 -> [refresh X2] -> X2 -> XR2 -> [refresh X3] -> X3 -> XR3
 [generated measured migration series] -> [refresh D4 to final reviewed convergence] -> D4
 V1 -> [refresh V2 from attribution] -> V2 -> F1 -> Q1 -> A1
@@ -178,7 +185,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | S4 Accepted materialization | G4 + G5 |
 | S5 Runtime mutation scheduler | M1 + M2 |
 | S6 Pause-aware streaming | M3 |
-| S7 Chunk lifecycle/cache | M4 + MR4 + M5 + MR5 + refreshed M6 |
+| S7 Chunk lifecycle/cache | M4 + MR4 + M5 + MR5 + M6 + MR6 + M6C1 + MR6R1 |
 | S8 ProcGenTilemap decomplexification | D1 + D2 + D3 + X1/XR1 + X2/XR2 + X3/XR3 + measured generated migration DAG + D4 |
 | S9 Contract-world placement extraction | P1 + P2 + P3 + P4 + P5 + P6 + P7 |
 | S10 Renderer/node-load work | V1 + V2 |
@@ -202,19 +209,23 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | M3 | `procgen-pause-aware-streaming` | **complete** | M2 |
 | M4 | `procgen-chunk-lifecycle-state-machine` | **complete** | M3 |
 | MR4 | `review-procgen-chunk-lifecycle-state-machine` | **complete — passed, non-blocking-only** | M4 |
-| M5 | `procgen-chunk-payload-cache` | **ready / eligible** | MR4 |
-| MR5 | `review-procgen-chunk-payload-cache` | queued | M5 |
-| M6 | `procgen-distant-chunk-unload` | **blocked / manual refresh gate** | MR5 |
-| P1 | `contract-world-placement-foundation` | **ready / eligible** | S1 |
-| P2 | `contract-world-resource-placement-extraction` | queued | P1 |
-| P3 | `contract-world-vehicle-placement-extraction` | queued | P1 |
-| P4 | `contract-world-relay-placement-extraction` | queued | P1 |
-| P5 | `contract-world-encounter-placement-extraction` | queued | P1 |
-| P6 | `contract-world-ingress-placement-extraction` | queued | P1 |
+| M5 | `procgen-chunk-payload-cache` | **complete** | MR4 |
+| MR5 | `review-procgen-chunk-payload-cache` | **complete — passed, optional-improvement-only** | M5 |
+| M6 | `procgen-distant-chunk-unload` | **complete — implementation landed** | MR5 |
+| MR6 | `review-procgen-distant-chunk-unload` | **complete — findings: R0-01 blocking + R0-02..R0-05 evidence gaps** | M6 |
+| M6C1 | `procgen-distant-chunk-unload-review-corrections-1` | **complete — coalescing correction + proof expansion landed** | MR6 |
+| MR6R1 | `review-procgen-distant-chunk-unload-review-corrections-1` | **complete — passed; 0 blocking / 0 material gaps; S7 closed** | M6C1 |
+| P1 | `contract-world-placement-foundation` | **complete — accepted-world read context landed** | S1 |
+| PR1 | `review-contract-world-placement-foundation` | **ready / auto post-land review** | P1 |
+| P2 | `contract-world-resource-placement-extraction` | queued | PR1 |
+| P3 | `contract-world-vehicle-placement-extraction` | queued | PR1 |
+| P4 | `contract-world-relay-placement-extraction` | queued | PR1 |
+| P5 | `contract-world-encounter-placement-extraction` | queued | PR1 |
+| P6 | `contract-world-ingress-placement-extraction` | queued | PR1 |
 | P7 | `contract-world-loader-contraction` | **blocked / manual refresh gate** | P2+P3+P4+P5+P6 |
-| D1 | `procgen-road-authority-extraction` | **blocked / manual refresh gate** | G5+M6 |
-| D2 | `procgen-authored-claim-registry-extraction` | **blocked / manual refresh gate** | G5+M6 |
-| D3 | `procgen-generation-state-extraction` | **blocked / manual refresh gate** | G5+M6 |
+| D1 | `procgen-road-authority-extraction` | **implementation complete; paired post-land review next** | G5+MR6R1 |
+| D2 | `procgen-authored-claim-registry-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
+| D3 | `procgen-generation-state-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
 | X1 | `procgen-generation-data-model-audit` | queued | D1+D2+D3 |
 | XR1 | `review-procgen-generation-data-model-audit` | queued | X1 |
 | X2 | `procgen-generation-grid-foundation` | **blocked / manual refresh gate** | XR1 |
@@ -229,6 +240,16 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | A1 | `procgen-runtime-optimization-v2-series-authoring` | queued | Q1 |
 
 Per-packet completion evidence is written into the roadmap during execution. A packet is not considered closed merely because code landed.
+
+## Post-MR6 Presentation Work (separate from the optimization DAG)
+
+The following packets consume the reviewed M6 seam but are **not** part of S7/S8 completion accounting:
+
+- `procgen-region-frame-presentation-foundation` -> paired review: data-driven Region Frame + true exterior CHASM underlay seam.
+- `procgen-alpine-plateau-underlay-assets`: six required 1536x1024 Asset V2 states after RF1 review + human-provided source art.
+- `procgen-archive-resolve-presentation-spine` (AR1) -> paired AR1 review -> AR2 shader -> AR3 semantic echo/spawn/reacquisition.
+
+RF1 has landed/archived at `49cbd398` and RFR1 passed on `07d2277e8` with 0 blocking defects / 0 material evidence gaps, so Region Frame is reviewed-stable. RFR1 R0-01/R0-02 are carried by the Alpine asset packet; R0-04 is carried into ARR1's road reacquisition proof. Alpine Asset V2 is now `ready/manual` from the exact local `~/Downloads/alpine_plateau_underlay_assets.zip` six-image bundle and remains human visual-approval gated at completion. AR1 is complete/landed on `83d89fd85`; ARR1 is complete/passed with 0 blocking defects / 0 material evidence gaps. AR2 is refreshed and now `ready/auto`, owning ARR1 R0-01..R0-04; AR3 remains blocked/manual until reviewed AR2 and the same planning-chat refresh. AR2/AR3 both now have paired technical review packets.
 
 ## Roadmap Maintenance Contract
 
@@ -250,10 +271,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** M4 and MR4 are complete. M5 `procgen-chunk-payload-cache` has now been fully re-derived against the reviewed lifecycle/runtime architecture and is `ready / auto`; its paired review MR5 is pre-authored and dependency-gated behind M5. P1 `contract-world-placement-foundation` remains independently ready/eligible in parallel.
-**State:** S1, G1-G5, M1-M4, and the G3-fix re-derivation are landed. G3's closure claim was narrower than originally stated. The full S3 Exit condition now belongs to the packetized post-D1/D2/D3 Semantics-First Generation Data Model Migration: X1 audit → XR1 → X2 grid foundation → XR2 → X3 migration-series authoring → XR3 → the measured migration DAG authored there. The placement package is still README-only, so P1 is the live P-lane entry and P7 is refresh-gated after P2-P6. D1-D3 are refresh-gated after M6; X2/X3 are refresh-gated on their predecessor reviews; V2 is refresh-gated on V1 attribution.
-**Next gate:** Claim M5 `procgen-chunk-payload-cache`. It must land one invalidatable generation-scoped derived cache with exact mutation/stale-record protection while preserving M3/M4 ownership. Then run MR5. Only a passed reviewed cache makes M6 refresh-eligible. M6 remains blocked/manual until that review closes. P1 may proceed independently in parallel.
-**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. D1-D3 remain blocked on G5+M6; once all three land, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
+**Current packet:** RF1/RFR1 and AR1/ARR1 are complete/passed. Alpine Asset V2 is ready/manual from the local six-image ZIP and awaits deterministic ingest + human visual approval. AR2 is now the active ready/auto Archive Resolve implementation, with ARR1 R0-01..R0-04 folded into scope/validation. AR3 remains deliberately refresh-gated to this planning chat after reviewed AR2. Placement and decomplexification remain independent lanes.
+**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1, MR6R1, RF1 and RFR1 are complete. Alpine Asset V2 is ready/manual with local input supplied. AR1/ARR1 are complete/passed. AR2 is planning-refreshed and ready/auto with ARR1 follow-ups folded in; AR3 waits on reviewed AR2 + planning-chat refresh. D1 implementation is complete; D2/D3 remain blocked/manual pending their live refreshes. Placement proceeds independently.
+**Next gate:** Execute AR2 (`procgen-archive-resolve-shader`) and its paired fresh-context review. AR2 includes ARR1's safe live-toggle, actor/veil ordering, production integration-proof, and unconditional road-reload hardening. In parallel when a local asset-capable agent is available, `procgen-alpine-plateau-underlay-assets` may be manually claimed using `~/Downloads/alpine_plateau_underlay_assets.zip`; its final subjective composition decision is routed through the Dropbox visual-review handoff.
+**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are satisfied for D1-D3; D1 implementation is complete and its paired review follows landing, while D2/D3 still require refreshes. Once all three are reviewed/landed, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
 
 ---
 
@@ -539,7 +560,7 @@ Candidate selection no longer depends on a live near-final `ProcGenTilemap` inst
 - Migrated the deleted function's last two callers to the canonical pipeline: `tools/validation/procgen_dressing_cluster_review.gd` now builds a semantic snapshot from its eval-mode candidate and materializes onto a fresh second `ProcGenTilemap` instance (matching `CustodianContractMap`'s own flow) instead of promoting the candidate in place; `tools/validation/procgen_macro_presentation_smoke.gd`'s `_validate_pipeline_order()` now proves the macro -> dressing-clusters -> foliage phase ordering once, inside `_fill_tilemaps()`'s own final-mode branches, instead of re-checking it inside the now-deleted promotion function's separate source block.
 - Left the small `get_last_promotion_timing_snapshot()` alias in place (delegates to G4's `get_last_materialization_timing_snapshot()`) rather than deleting it: it is load-bearing for the `custodian.procgen_performance_baseline.v1` benchmark schema's `"promotion"` field, and this packet's own Preserve clause covers benchmark schema.
 - **Validation:** `procgen_candidate_promotion_smoke.gd`, `procgen_candidate_semantic_model_smoke.gd`, `procgen_candidate_evaluator_smoke.gd`, `procgen_macro_presentation_smoke.gd` (edited), `procgen_contract_rescue_diagnostic_smoke.gd` (36/36 seeds), and `procgen_terrain_required_cells_smoke.gd` all PASS. S1 quick and full benchmarks PASS, `determinism_ok: true`; all 3 full-profile contract cases reproduced G4's exact documented fingerprints byte-for-byte (`2884730602`, `392435093`, `1672459047`), proving the deletion changed no accepted-world output. Changed-file closeout PASS (17/17 selected tests); `git diff --check` clean. `procgen_dressing_cluster_review.gd`'s baseline capture pass fails under plain `--headless` (no rendering device for `viewport.get_texture()`); this is a pre-existing limitation of that non-gating review tool unrelated to this change — it fails before reaching the migrated code, and the tool is not a `validation_manifest.json` entry.
-- **Next:** Generation lane (G1-G5) is fully closed. M1-M6 (runtime/streaming lane) and P1-P7 (placement lane) proceed independently; D1-D4 (`ProcGenTilemap` decomplexification) wait on G5+M6 per the dependency graph.
+- **Next:** Generation lane (G1-G5) is fully closed. The runtime/streaming lane is currently at ready M6 followed by MR6, while placement proceeds independently from P1/PR1. D1-D3 wait on G5+MR6; D4 remains downstream of the reviewed GenerationGrid convergence.
 
 ---
 
@@ -671,7 +692,7 @@ Cache reusable chunk payloads such as structural tile data, prop/foliage plans, 
 
 Reveal/unload/re-reveal is deterministic, avoids recomputing immutable chunk semantics, and distant unload can be enabled only after lifecycle correctness is proven.
 
-### M4 Chunk Lifecycle State Machine — Complete (pending MR4 review)
+### M4 Chunk Lifecycle State Machine — Complete + MR4 Passed
 
 `ProcGenChunkLifecycle` (`custodian/game/world/procgen/streaming/procgen_chunk_lifecycle.gd`)
 is the single owner of per-chunk lifecycle state: `UNSEEN -> QUEUED ->
@@ -696,7 +717,102 @@ owns the real reload policy.
 - **Landed main SHA:** `6588093c2` (`procgen chunk lifecycle state machine, M4 ProcGenChunkLifecycle authority`).
 - **Closing summary:** `PROCGEN_CHUNK_LIFECYCLE_STATE_MACHINE_CLAUDE_SUMMARY.md`.
 - **Evidence:** New `procgen_chunk_lifecycle_smoke.gd` proves deterministic state progression for queued unpaused reveal, pause PREPARE -> resume commit, immediate reveal, a zero-content chunk, active-radius exit to DORMANT and re-entry to VISIBLE without duplicate work, and the debug-only UNLOADED seam, plus illegal-transition detection and idempotent re-requests. `procgen_pause_aware_streaming_smoke.gd`, `procgen_candidate_promotion_smoke.gd` (restored to required regression status -- its obsolete strict streamed-floor assertion is gone), `procgen_runtime_health_smoke.gd`, `procgen_walkable_boundary_smoke.gd`, `procgen_macro_presentation_smoke.gd`, and `procgen_road_semantics_v2_smoke.gd` all pass unchanged (the last required one small fix: it used to poke `_revealed_chunks` directly to fake residency before testing unload/re-reveal, now calls the real `_reveal_chunk_immediately` adapter instead). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint as M1-M3, confirming no deterministic-output regression. `procgen_performance_baseline_bench.gd`'s and `procgen_performance_snapshot.gd`'s external `_revealed_chunks`/`_queued_chunks` telemetry reads were migrated to the new `ProcGenTilemap.get_resident_chunk_count()`/`get_pending_chunk_count()` public API.
-- **Next:** MR4 passed. M5 `procgen-chunk-payload-cache` is ready/eligible; MR5 follows it, and M6 stays refresh-gated until MR5 passes.
+- **Next:** MR4 passed; M5 and MR5 are now complete. M6 is refreshed and ready, with MR6 required after M6 lands.
+
+### M5 Chunk Payload Cache — Complete + MR5 Passed
+
+`ProcGenChunkPayloadCache` (`custodian/game/world/procgen/streaming/procgen_chunk_payload_cache.gd`)
+is a plain-data, generation-scoped, invalidatable `RefCounted` cache behind
+`ProcGenTilemap`'s existing chunk-membership enumeration and tile PREPARE-
+record construction. `ProcGenTilemap` still owns canonical floor/wall
+semantics, M3 (`ProcGenPauseAwareStreaming`) still owns the only tile queue/
+PREPARE-COMMIT lifecycle, and M4 (`ProcGenChunkLifecycle`) still owns the only
+chunk lifecycle; the cache only accelerates reusable derived reads. Chunk
+tile membership (`_get_chunk_tiles()`'s own deterministic order) and per-tile
+floor/wall PREPARE records are lazily cached and reused on repeated/re-reveal
+access; live `_streaming_reveal_priority()` is never cached, so queued order
+is still always recomputed from the current `center_tile`. Exact invalidation
+was derived from a full inventory of every live write/erase of
+`_generated_floor_cells`/`_generated_wall_cells`: a true generation/streaming-
+reset boundary does a full cache reset (`_prepare_streaming_reveal()`), and
+every post-cache semantic mutation -- wall destruction (`damage_wall_tile`),
+neighbor wall repaint (`_refresh_wall_neighbors`), authored-scene/world-
+overlook claims, and the handful of shared low-level floor/wall authority
+setters every write site (including late-generation finalization passes that
+run after streaming priming) funnels through -- precisely invalidates only
+its own tile's chunk. A PREPARE record is stamped with the generation/chunk-
+revision identity it was built under, so `_commit_tile_reveal_record()`
+revalidates it immediately before authoritative mutation and rebuilds it from
+canonical state if it went stale after PREPARE but before COMMIT, even if
+M3's `_prepared` queue is still holding the old Dictionary. COMMIT-time
+dynamic effects (road/surface decals, dressing/foliage, runtime wall
+collision, overlays/shadows/navigation/macro visibility) are never cached.
+Deterministic telemetry (cached chunk/record counts, hit/miss/invalidation/
+stale-refresh counts, reset/generation id) is exposed through
+`ProcGenTilemap.get_runtime_health_snapshot()` and a new
+`debug_get_chunk_payload_cache_snapshot()` seam. M5 implements no eviction/
+unload/hysteresis policy; `streaming_unload_distant_chunks` stays false and
+M6 is not unblocked by this packet alone.
+
+- **Landed main SHA:** `91ea694f4` (`procgen chunk payload cache, M5 ProcGenChunkPayloadCache authority`).
+- **Closing summary:** `PROCGEN_CHUNK_PAYLOAD_CACHE_CLAUDE_SUMMARY.md`.
+- **Evidence:** New `procgen_chunk_payload_cache_smoke.gd` proves (against a live `ProcGenTilemap`): lazy population (an untouched chunk has no entry until first access); miss->hit reuse for both chunk membership and per-tile PREPARE records; dynamic reveal order recomputed from a live `center_tile` over reused cached membership; a debug unload/re-reveal round trip producing cache hits with zero rebuilds when no semantic mutation occurred; wall-destruction invalidation (`damage_wall_tile`) restoring the destroyed floor and never resurrecting the wall across unload/re-reveal; authored-scene floor-claim invalidation reloading the new region truth; a stale PREPARE record (captured before a wall was destroyed, exactly like one still sitting in M3's `_prepared` queue) being detected and refreshed immediately before COMMIT instead of resurrecting the destroyed wall; presentation/telemetry-only reads never spuriously invalidating; and generation-scoped reset separating cache state across a regeneration. `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_materializer_parity`, `procgen_macro_presentation`, `procgen_road_semantics_v2`, and `procgen_dressing_clusters` all pass unchanged via `run_validation.py --test`; `procgen_authored_scene_authority_smoke.gd` passes via direct invocation (still unregistered in the manifest). S1 quick reports `determinism_ok=true` with the same fixed-seed fingerprint (`1773840677`) as M1-M4, confirming no deterministic-output regression. A full `run_validation.py --changed` sweep (25 selected tests) and `git diff --check` are both clean.
+- **Next:** MR5 passed with 0 blocking defects / 0 material evidence gaps and one optional cache-memory-shape finding (`R0-01`) folded into M6. M6 `procgen-distant-chunk-unload` is now refreshed/ready; paired MR6 is the next runtime correctness gate after implementation.
+
+### M6 Distant Chunk Unload — Complete, MR6 Pending
+
+`ProcGenChunkResidencyPolicy` (`custodian/game/world/procgen/streaming/procgen_chunk_residency_policy.gd`)
+is a new plain-data `RefCounted` that owns only an eviction-candidate
+coordinate queue and telemetry counters. It never touches TileMap/Node/
+collision/foliage state and never calls into M4's lifecycle or M5's cache
+directly: `ProcGenTilemap` supplies an already-DORMANT-filtered chunk list
+and a protected-chunk set on every player-chunk transition
+(`refresh_candidates()`), drains at most `streaming_unload_chunks_per_frame`
+(default `1`) farthest-first/coordinate-stable candidates per frame
+(`take_candidates()`), and revalidates each one's live state/distance/
+protection immediately before actually unloading it -- a candidate that
+fails revalidation (player returned, chunk left DORMANT, or it became
+protected) is reported cancelled rather than evicted. `_unload_chunk()` is
+now a pure presentation/cache residency adapter: it erases painted Floor/
+Walls cells, streaming-hides (never destroys/rerolls) existing foliage nodes
+via two tiny new helpers (`_hide_foliage_for_unload()`/
+`_show_foliage_if_hidden()`) that preserve exact node identity, trunk
+collision, and runtime-blocker registration, removes deterministic road/path
+decal nodes, and evicts the M5 cache's new `evict_chunk()` (closing MR5's
+`R0-01` memory-shape finding via a per-chunk reverse tile-record index,
+without bumping cache generation/revision since eviction is not a semantic
+event). Canonical `_generated_floor_cells`/`_generated_wall_cells`, wall
+health, region/elevation/road semantics, runtime prop blockers, and world
+mutations all remain untouched by unload.
+
+Wall collision is no longer tied to presentation:
+`_sync_runtime_wall_collision_with_visible_walls()`'s cleanup pass now
+removes a shape only when canonical `_generated_wall_cells` no longer
+contains that tile, never merely because the wall is unpainted, so collision
+survives visual unload and only genuine semantic wall destruction removes
+it. Navigation authority for a previously-revealed chunk now also survives
+unload: `ProcGenChunkLifecycle.get_unloaded_chunks()` plus two new
+`ProcGenTilemap` provider methods (`get_runtime_navigation_floor_cells()`,
+`is_runtime_navigation_walkable()`, both delegating to existing canonical/
+runtime-blocker authority, never painted visibility) let
+`NavigationSystem._build_navigation_graph()`/`_is_walkable()` use the
+provider when available and fall back to the old TileMap-used-cells path
+otherwise. A narrow streaming-paint guard (the pre-existing
+`_is_tile_currently_visible()` helper, already correctly inert during
+initial generation via its `enable_streaming_reveal` check) was threaded
+through every M5-inventoried shared floor/wall mutation setter so semantic
+writes (including `damage_wall_tile()` now recognizing canonical wall
+authority instead of requiring the tile to be painted) still occur on an
+UNLOADED tile but its visual repaint is deferred to reload COMMIT, which
+already revalidates/repaints from canonical state. Protected chunks (player
+spawn, portal-teleporter endpoints, compound-ingress chunks, and world-
+ingress dressing-clearance chunks) are excluded from eviction entirely.
+`streaming_unload_distant_chunks` now defaults `true`.
+
+- **Landed main SHA:** `9fe8cd4d6` (`procgen distant chunk unload, M6 ProcGenChunkResidencyPolicy authority`).
+- **Closing summary:** `PROCGEN_DISTANT_CHUNK_UNLOAD_CLAUDE_SUMMARY.md`.
+- **Evidence:** New `procgen_distant_chunk_unload_smoke.gd` proves the pure policy's eligibility/ordering/protection/cancellation fixture, plus a live `ProcGenTilemap` round trip: bounded per-frame eviction, protected-chunk rejection, stale-candidate cancellation when the player returns, M5 cache-record eviction, wall-collision retention through unload, navigation floor-cell/walkability preservation for an unloaded previously-revealed chunk (and correct UNSEEN exclusion), foliage node identity/visibility parity across hide/show, road-decal unload/reload parity, safe wall destruction and authored-scene claim mutation while UNLOADED with no premature repaint, and correct reload materialization with nothing stale resurrected. `procgen_chunk_payload_cache`, `procgen_chunk_lifecycle`, `procgen_pause_aware_streaming`, `procgen_walkable_boundary`, `runtime_wall_collision_compaction`, `procgen_candidate_promotion_smoke` (`procgen_candidate_materializer_parity`), `procgen_macro_presentation`, `procgen_road_semantics_v2`, `procgen_dressing_clusters`, `navigation_elevation_smoke`, and `procgen_authored_scene_authority_smoke` all pass with the new `streaming_unload_distant_chunks = true` default exercised live (none of them override the flag). S1 quick reports `determinism_ok=true` at the same fixed-seed fingerprint (`1773840677`) as M1-M5, confirming no deterministic-output regression. The one required M5-test behavior change (a debug unload/re-reveal round trip now rebuilds instead of reusing its cache entry, since M6 intentionally evicts on unload) was updated in `procgen_chunk_payload_cache_smoke.gd` alongside the implementation.
+- **Next:** Run MR6 against this landed commit. Only a clean/non-blocking-only MR6 pass closes S7 and makes D1-D3 refresh-eligible.
 
 ---
 
@@ -712,7 +828,7 @@ Priority coherent authorities:
 2. authored claims / clearances / reservations;
 3. generation level-data/export state.
 
-V1 is already split into D1 road authority, D2 authored-claim registry, D3 generation-state extraction, and D4 façade contraction. D1-D3 are dependency siblings gated by G5+M6 and serialized by the shared procgen-runtime lock; D4 waits for all three.
+V1 is already split into D1 road authority, D2 authored-claim registry, D3 generation-state extraction, and D4 façade contraction. D1-D3 are dependency siblings gated by G5+MR6 and serialized by the shared procgen-runtime lock; after those extractions, the reviewed GenerationGrid migration initiative must converge before D4 becomes executable.
 
 ### Exit
 

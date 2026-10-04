@@ -1,0 +1,66 @@
+# OPERATOR ART REGISTRATION PROFILE REVIEW CORRECTIONS 1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `operator-art-registration-profile-review-corrections-1`
+- Status: `complete`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `review-operator-art-registration-profile`
+- Locks: `operator-art-agent, operator-source-normalization`
+- Kind: `correction`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Paired review workstream: `review-operator-art-registration-profile-review-corrections-1`
+- Review cycle: `1`
+- Max automatic review cycles: `2`
+- Reviewed main: `907dc2bf0`
+- Parent implementation: `operator-art-registration-profile` (`custodian/docs/ai_context/task_packets/archived/OPERATOR_ART_REGISTRATION_PROFILE.md`)
+- Parent review: `review-operator-art-registration-profile` (`custodian/docs/ai_context/task_packets/archived/REVIEW_OPERATOR_ART_REGISTRATION_PROFILE.md`)
+- Findings addressed: `R0-01, R0-02`
+- Affected acceptance: The production converter rejects modified normalization plans, and Workbench registration reports provide the profile-backed transformed-landmark/residual evidence promised by the parent packet.
+- Current defect/evidence: R0-01: changing the valid in-bounds `destination_x` in a generated plan from 248 to 250 was accepted by `pixelart --normalization-plan` and then accepted by `SourceArtService.verify_production()`. R0-02: `ArtAgentService.registration_report()` calls `profile_report()` without a plan, leaving transformed landmark and residual fields empty.
+- Goal: Bind production output to the plan that Source Session approved, and make Workbench registration reports truthful and useful without implying that Workbench performs Source Session normalization.
+- Completion boundary: The production command and verifier fail closed when the plan changes after approval; an explicit fresh/revised plan can be generated and reviewed through the existing Source Session flow. Workbench report JSON includes profile hash, frame/anchor context, available measured scale evidence, transformed landmark coordinates in its already-registered 96×96 canvas, and advisory residuals to corresponding profile points.
+- Current measured state: Profile-mode production plans carry source/profile hashes but no independent expected plan digest. Their digest is first recorded after the mutable plan has been read. Workbench report serialization only computes projections when a plan argument is supplied, and the Workbench has no Source Session normalization plan.
+- Evidence: Parent review receipt R0-01 and R0-02 in archived `OPERATOR_ART_REGISTRATION_PROFILE.md`; independent mutation reproduction; `custodian/tools/operator/art_agent/service.py`; `custodian/tools/operator/art_agent/registration_profile.py`.
+- Task-specific authority: Archived parent implementation packet and its Independent Review receipt; current Source Session, converter, profile, and Workbench report contracts.
+- Work surface: Source Session plan lifecycle/model/service; pixelart normalization-plan argument and production command; Workbench registration report; focused registration-profile smoke and validation ownership if needed.
+- Required correction:
+  - Persist an expected digest for the approved normalization plan independently of the mutable plan file. Verify it before converter replay, production verification, review, and handoff. Legitimate changes must flow through an explicit new/revised plan operation that updates the expected digest and invalidates old proof/review state.
+  - Add a negative control that changes a valid in-bounds plan field (for example `destination_x`) after plan approval and proves converter replay and Source Session verification reject it. Keep positive byte-identical crisp replay passing.
+  - Make Workbench registration reports compare their raw session landmarks, already in the accepted 96×96 canvas, against the profile guide and serialize transformed/current landmark coordinates plus advisory residuals and profile/anchor evidence. State clearly in the report that no Source Session scale normalization was applied. Do not turn pose residuals into artistic QA failures.
+  - Add fixtures for both findings and keep the parent acceptance intact.
+- Preserve: v1 Source Session plan readability; existing generic pixelart behavior without a normalization plan; Source Session confinement; crisp `--choose 1` production route; bounded manual integer registration; no automatic pose correction; artistic tolerances remain advisory; Workbench remains publication authority; gameplay/runtime and production art unchanged.
+- Non-goals: Recalibrate accepted profile coordinates; modify production animations; introduce a second publication or normalization pipeline; add artistic pass/fail rules; broaden the profile beyond Operator.
+- Acceptance:
+  - A plan mutation after approval is rejected before production output can be verified or handed off; stale proof/review cannot survive an explicit replan.
+  - The approved crisp replay remains pixel-identical to the Source Session crisp candidate.
+  - Workbench report JSON includes its profile SHA-256, frame size, anchor, current landmark coordinates, available measured scale ratios, and point residuals in profile coordinates; report labels clarify that Workbench landmarks were not Source Session-normalized.
+  - Deliberate recoil/pose deviations remain advisory and do not create an artistic QA failure.
+  - v1/contain compatibility and existing handoff safety remain green.
+  - `operator_art_registration_profile_smoke.py`, Source Session smoke, semantic smoke, and `git diff --check` pass; the changed unit gate passes.
+- Validation: Run the focused profile/source/semantic/MCP/Aseprite tests appropriate to changed paths, then `python3 custodian/tools/validation/run_validation.py --changed --max-tier unit --json` and `git diff --check`.
+- Task overrides: `none`
+- Deferred: Any further profile calibration, multi-character generalization, automatic anatomical correction, and art-direction approval.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `custodian/tools/operator/art_agent/source_service.py` stores the approved plan SHA-256 in `session.json`, checks it before replay/verification/report/review/handoff, and invalidates proof/review on explicit plan revision; `custodian/tools/art/custodian_pixelart_converter.py` requires and verifies the expected digest for plan replay. The registration smoke proves an in-bounds `destination_x` edit is rejected by CLI, verifier, source report, review, and handoff; an explicit bounded frame-registration revision changes the approved digest and removes old proof. Positive CLI crisp output remains byte-identical to the internal crisp candidate. Workbench report fixture proves profile/frame/anchor context, current coordinates, measured ratios, advisory residuals, and explicit no-Source-Session-normalization labeling. Focused profile/source/semantic smokes pass; changed unit gate passes 6/6 with complete coverage; `git diff --check` passes.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: A patch attempt used stale smoke context and did not apply; initial changed-unit runs exposed fixture sequencing/expectation errors around content-addressed plan revision and the report's advisory status field.
+- Root cause / contributing factors: The fixture expected unchanged deterministic plan bytes to change digest, tried a registration edit before re-approving a deliberately tampered plan, and asserted prose instead of the report's structured advisory status.
+- Prevention / pipeline improvement: Re-read narrow patch targets; reset tampered plan through explicit planning before revising it, and assert the report's structured status. Corrected in-scope.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: Focused negative controls covered each protected plan consumer.

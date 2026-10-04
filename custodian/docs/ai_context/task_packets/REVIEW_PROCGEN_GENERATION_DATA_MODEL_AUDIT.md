@@ -12,6 +12,7 @@
 - Review target workstream: `procgen-generation-data-model-audit`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_GENERATION_DATA_MODEL_AUDIT.md`
 - Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Review modes: `architecture, code, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -27,5 +28,11 @@
 
 ## Handoff
 
-- Next action: On pass, `procgen-generation-grid-foundation` becomes eligible.
-- Blockers or open questions: None known at authoring time.
+- Next workstream: `procgen-generation-grid-foundation`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh reason: X2 intentionally depends on the reviewed X1 audit's measured minimum GenerationGrid capabilities and exact surviving post-D generation operations.
+- Next action: After XR1 passes, bring the audit artifact/review summary to the recorded ChatGPT planning chat and refresh X2 in place before implementation.
+- Blockers or open questions: X2 must not be claimed from its pre-audit assumptions.

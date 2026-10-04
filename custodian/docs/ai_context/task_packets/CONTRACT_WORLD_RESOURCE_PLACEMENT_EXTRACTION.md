@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `contract-world-placement-foundation`
+- Depends on: `review-contract-world-placement-foundation`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `f7e84ae48a90ff9da0f968ef0c72ac9ba0c2c5ee`
 - Goal: Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - Completion boundary: Done when resource candidate building, scoring, spacing, presets, instantiation/positioning, and placement telemetry are service-owned; loader only invokes the service through the placement context.
 - Current measured state: Resource placement is still entirely live in `custodian/game/systems/core/systems/contract_world_loader.gd`: `_position_tutorial_resource_nodes`, `_position_expedition_resource_nodes`, `_instantiate_generated_resource_node`, tutorial/expedition candidate builders, fallback eligibility, stable score/pickers, spacing, preset tables, preset application, and excluded-region checks. `custodian/game/world/placement/` contains no service implementation yet.
@@ -23,6 +23,7 @@
 - Validation: `res://tools/validation/contract_resource_node_smoke.gd` first, then `res://tools/validation/contract_world_population_placement_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, any implementation-created resource service snapshot/unit smoke after it exists, and changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains remain independent packets.
+- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 

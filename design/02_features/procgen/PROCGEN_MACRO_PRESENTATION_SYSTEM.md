@@ -5,7 +5,9 @@ Status: implementation
 Last updated: 2026-09-08
 
 Surface Materials V1 is a separate implementation slice governed by
-`SURFACE_MATERIALS_V1.md`. It classifies final floor presentation before
+`SURFACE_MATERIALS_V1.md`.
+
+Macro presentation consumes the active region-frame contract from `PROCGEN_REGION_FRAME_PROFILES.md`. The first starting region uses `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`, but future frames may select different compatible macro/depth vocabularies. Presentation must never infer the permanent region border from whichever local biome happens to dominate. It classifies final floor presentation before
 macro composition without changing the macro stamp subsystem or gameplay
 authority.
 

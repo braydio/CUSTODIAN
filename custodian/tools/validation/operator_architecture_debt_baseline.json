@@ -2,14 +2,6 @@
   "absolute_scene_lookups": {
     "operator.gd": 38
   },
-  "animation_state_actor_glue": {
-    "animations/states/attack_fast_state.gd": 4,
-    "animations/states/attack_heavy_state.gd": 4,
-    "animations/states/block_state.gd": 4,
-    "animations/states/equip_weapon_state.gd": 4,
-    "animations/states/hit_recoil_state.gd": 12,
-    "animations/states/sheathe_weapon_state.gd": 6
-  },
   "weapon_definition_runtime_state": {
     "operator_weapon_definition.gd": 3
   }

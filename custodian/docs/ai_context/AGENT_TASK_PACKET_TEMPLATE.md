@@ -30,7 +30,13 @@ coherent effort.
 - Depends on: `none`
 - Locks: `none`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-WORKSTREAM_ID`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
 - Reviewed main: `<short SHA>`
 - Goal:
 - Completion boundary:
@@ -45,6 +51,19 @@ coherent effort.
 - Validation:
 - Task overrides: `none` or list each as `TASK OVERRIDE: ...`
 - Deferred:
+
+## Refresh Planning Authority
+
+Include this block when a packet is dependency/refresh-gated or when landed
+evidence may require architecture/scope re-derivation before execution:
+
+- Refresh owner: `none | chatgpt-user | execution-agent`
+- ChatGPT/user planning refresh required: `yes | no`
+- Refresh planning chat: `<Authoring chat URL | not-recorded | n/a>`
+- Refresh instruction: `<exact evidence to bring back and what must be re-derived>`
+
+When the user supplied an authoring-chat URL, reuse that same URL for
+`Refresh planning chat`; never substitute a different conversation silently.
 
 Status values: `draft`, `ready`, `in_progress`, `blocked`, `complete`.
 
@@ -62,6 +81,7 @@ repository state without reconstructing intent from chat history.
 Required quality:
 
 - **Reviewed main** identifies the repository state actually investigated.
+- **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one.
 - **Goal** states the user-visible or architecture outcome, not the implementation
   method.
 - **Completion boundary** says exactly what belongs in this workstream and what
@@ -84,12 +104,25 @@ Required quality:
   implementation that merely compiles.
 - **Validation** gives focused falsification first and the required closeout
   gate. Avoid broad sweeps when focused tests prove the slice.
+- Validation script references may use repository paths (`custodian/tools/...`
+  or `tools/...`) or Godot resource paths (`res://tools/...`). A `tools/...`
+  reference resolves to the exact root entrypoint when present, then to its
+  `custodian/tools/...` counterpart. Keep future implementation-created smoke
+  scripts described generically until the file exists; add its exact live path
+  to the packet before closeout.
 - **Visual evidence economy** applies whenever acceptance touches presentation.
   Name the code/state/geometry/asset/pixel-metric checks that run before model
   vision, justify any full-frame or motion capture that remains necessary, and
   minimize renderer evidence to the smallest ROI/keyframe set that can falsify
   the defect. Reuse durable implementation evidence in paired review instead of
   recapturing equivalent frames. Subjective visual acceptance stays human-owned.
+  When a material subjective decision remains after objective checks, instruct
+  the execution agent to publish one compact Dropbox handoff with
+  `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`,
+  include exact reviewer questions, return the emitted manifest path, and stop
+  rather than self-critiquing the art. Reference
+  `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` instead of restating its
+  remote/setup rules.
 - **Deferred** records intentional omissions so they are not rediscovered as
   accidental incompleteness.
 
@@ -106,6 +139,7 @@ Before setting `Status: ready`:
 
 ```text
 [ ] Latest main was reviewed and Reviewed main is populated.
+[ ] Authoring chat is recorded when the user supplied a durable conversation URL.
 [ ] This is one coherent completion boundary.
 [ ] Existing Workstream identity was reused when appropriate.
 [ ] Current measured state and Evidence are factual, not speculative.
@@ -114,8 +148,10 @@ Before setting `Status: ready`:
 [ ] Acceptance is measurable.
 [ ] Validation names focused checks before broad checks.
 [ ] Visual evidence is minimized and justified; non-visual alternatives are named first when presentation is in scope.
+[ ] If subjective visual judgment remains material, the packet routes one compact handoff through publish_review_artifacts.py and gives the external reviewer specific questions instead of asking the coding agent for aesthetic critique.
 [ ] Dependencies and Locks reflect actual ordering/contention.
-[ ] Review intent is explicit.
+[ ] Review intent is explicit; substantial/risky work defaults to paired `auto` review.
+[ ] `Review: none` carries a concrete `Review rationale: low-risk exemption: ...` rather than convenience/queue avoidance.
 [ ] Deferred work is intentional and visible.
 [ ] Repository-default workflow boilerplate is not duplicated.
 [ ] Acceptance actually proves the stated Goal and Completion boundary, not a
@@ -133,10 +169,73 @@ Before setting `Status: ready`:
 These four checks are objective closure facts, not subjective prose scoring:
 each either names a concrete authority/state or it does not.
 
+### Review Policy — Risk-Based Default
+
+For newly authored or materially re-derived V2 implementation packets, paired
+post-land review is the default when an independent second pass can materially
+increase confidence. Because narrow low-risk work should usually be patched
+without a packet at all, a packeted engineering slice should normally begin
+with `Review: auto`.
+
+Use `Review: auto` by default for any of the following:
+
+- runtime behavior, state machines, streaming, persistence, save/load, lifecycle,
+  concurrency, scheduling, or authority changes;
+- architecture extraction, migration, decomplexification, ownership transfer,
+  compatibility cutover, or removal of an old production path;
+- production asset-pipeline or authoring-tool changes that write, normalize,
+  ingest, publish, or mutate runtime assets;
+- tooling that writes production code/data, dispatch/workstream lifecycle,
+  validation infrastructure, or safety/rollback behavior;
+- performance work whose correctness depends on preserving semantics while
+  changing batching, residency, caching, rendering, or execution order;
+- substantial bug fixes where a green test could still be vacuous, fixture-bound,
+  or narrower than the claimed acceptance;
+- multi-system or hard-to-reverse changes where the implementing agent's own
+  evidence would benefit from an adversarial acceptance check;
+- objective technical presentation work such as registration, layering,
+  clipping, visibility, deterministic state correspondence, batching, or
+  disabled-mode parity. Subjective aesthetic approval remains human-owned.
+
+`Review: none` is an explicit low-risk exemption, not the normal packet
+default. It is appropriate when an independent review is unlikely to add useful
+signal, for example:
+
+- documentation-only truth repair with no behavioral contract change;
+- a tiny mechanical patch with an obvious local effect, narrow blast radius,
+  and direct focused regression;
+- temporary/non-production probes or disposable diagnostics;
+- simple data/text changes whose correctness is directly inspectable and that
+  do not move runtime or pipeline authority.
+
+When using `Review: none`, fill `Review rationale` with
+`low-risk exemption: ...` and name the concrete reason. Do not use
+`Review: none` merely to shorten the queue or avoid writing a paired packet.
+
+Use `Review: manual` only when a review is useful but cannot truthfully be
+auto-completed because it requires a specific external environment, hardware,
+credentialed system, or human-owned decision that the normal paired reviewer
+cannot resolve. Do not use manual review as a substitute for the ordinary
+`human_required` outcome inside an otherwise automatic technical review.
+
+Corrections created from independent-review findings remain `Review: auto`
+by default through `AGENT_CORRECTION_PACKET_TEMPLATE.md`.
+
+Legacy packets are not bulk-retrofitted. When new work materially relies on an
+older implementation that lacks V2 feedback or independent review, treat its
+packet as historical evidence rather than current proof: re-check the surviving
+live authority and focused behavior during authoring. If that legacy seam is
+high-risk, unclear, or central to the new acceptance contract, the new packet
+should use paired review.
+
+Regardless of review intent, every completed V2 implementation/correction still
+writes `custodian.task_feedback.v1` Execution Feedback and mirrors it in the
+closing summary. Paired review is an additional correctness/evidence layer, not
+a replacement for implementation feedback.
+
 ### Review Metadata
 
-For substantial implementation work, decide review intent when the packet is
-created:
+Record the chosen review intent when the packet is created:
 
 ```text
 - Kind: `implementation` | `review` | `correction`
@@ -149,8 +248,9 @@ created:
 - Max automatic review cycles: `2`
 ```
 
-Safe defaults keep historical packets valid without this section: missing
-`Kind` is `implementation`; missing `Review` is `none`; missing
+Parser defaults keep historical packets valid without this section: missing
+`Kind` is `implementation`; missing `Review` is `none`; this compatibility rule
+is not the authoring default for new/materially refreshed V2 packets. Missing
 `Review stage` defaults to `post-land` only when `Review` is `auto`;
 missing `Review cycle` is `0`; missing `Max automatic review cycles` is
 `2`.
@@ -211,6 +311,44 @@ name or create the follow-up workstream before completing the packet.
 For packeted work, the required closing summary uses the same feedback fields.
 Do not write two divergent narratives; mirror the concise receipt.
 
+## Handoff
+
+Complete this section before a V2 implementation/correction packet becomes
+`Status: complete`. Report the **immediate successor in this packet's own
+program/DAG**, not an arbitrary globally eligible dispatcher candidate.
+
+- Next workstream: `<workstream-id | none>`
+- Next packet state: `ready | dependency-gated | refresh-required | human-required | none`
+- Refresh owner: `none | chatgpt-user | execution-agent`
+- ChatGPT/user planning refresh required: `yes | no`
+- Authoring chat: `<ChatGPT conversation URL | not-recorded | n/a>`
+- Refresh reason: `none | <what must be re-derived/decided before the next packet runs>`
+- Next action: `<one concrete action>`
+- Blockers or open questions: `none | <exact blocker>`
+
+Use `Refresh owner: chatgpt-user` for architecture/design-sensitive packet
+refreshes where the next packet must be reconciled against the original design
+conversation, user intent, or cross-workstream plan before implementation.
+Execution agents should report live-code drift and recommended facts, but should
+not silently reinterpret those packet boundaries.
+
+When `Refresh owner: chatgpt-user` and an authoring-chat URL is recorded in the
+next packet or current packet history, surface that exact URL in the closing
+summary and user-facing reply. If the URL is not recorded, write
+`Authoring chat: not-recorded` and explicitly ask the user to provide the
+originating ChatGPT chat link to ChatGPT before refresh if available. Never
+invent a conversation URL.
+
+Use `Refresh owner: execution-agent` only for a genuinely mechanical refresh
+that changes no architecture/design choice, such as rebasing exact file names,
+SHAs, or already-decided API names onto live main. If there is any material
+judgment about scope, ownership, sequencing, visuals, lore, or acceptance,
+route the refresh to `chatgpt-user`.
+
+The required closing summary **and user-facing completion reply** must mirror
+these fields under `## Next Handoff`. If refresh is required, do not imply the
+next packet is safe to claim.
+
 ## Optional Full-Packet Expansion
 
 Add these only when they preserve task-specific information needed for
@@ -232,8 +370,7 @@ pseudo-diffs.
 2.
 3.
 
-### Handoff
+### Additional Handoff Notes
 
-- Next action:
 - Best starting files:
-- Blockers or open questions:
+- Optional operator note:

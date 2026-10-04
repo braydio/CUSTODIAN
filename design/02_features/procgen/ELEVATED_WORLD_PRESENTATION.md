@@ -6,7 +6,7 @@ Last updated: 2026-09-08
 
 ## Purpose
 
-The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkable upper plateau bounded by hard cliff lips and vertical fascia. Chasm cells form an impassable, darker depth layer. Authored, world-positioned BACK-band depth chunks make that depth geographically tangible, while a low-contrast camera-following composition remains FAR atmosphere only.
+`ASCENT_FIELD` is a structural world-shape mode, not an alpine biome lock. The first generated starting region selects the `ALPINE_PLATEAU` region frame from `PROCGEN_REGION_FRAME_PROFILES.md`, so its walkable upper plane is presented as a cold exposed highland shelf with an exterior cliff/fog/lower-world depth stack. Future region frames may reuse ASCENT_FIELD geometry with different permanent borders/underlays. Chasm cells remain impassable non-floor semantics; only a derived exterior subset represents the permanent outside-of-region edge.
 
 ## Authority
 
@@ -17,6 +17,8 @@ The deterministic `ASCENT_FIELD` campaign world is presented as a bright, walkab
 - The general compatibility stack records generated-floor bounds for diagnostics, but its visual placement is native-scale and camera-following. It is not scaled to the full world rectangle.
 
 ## Visual Contract
+
+Region-frame selection is governed by `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`. For the first `ALPINE_PLATEAU` starting region, resolved-side palette/composition follow `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`: rocky escarpments, conifer depth, patchy snow/frost, hardened terraces and dark lower bands.
 
 Visual order is restrained FAR atmospheric backdrop, BACK authored macro depth chunks, near semantic cliff fascia, playable terrain, then roads, paths, props, actors, and effects. Walkable cells remain on the upper plane. Every exposed boundary uses the existing deterministic terrain semantics; this pass does not change topology.
 
@@ -68,7 +70,7 @@ semantics are structural state and remain independent of wall dressing.
 
 Both configuration paths retain received cell bounds as metadata and create one native-scale FAR/MIDDLE/NEAR compatibility stack that follows the active camera with a small overscan. In the normal Endless Forest profile its middle and near layers are deliberately subdued beneath authored BACK chunks; special profile-specific presentation such as Drowned Basilica retains its authored values. The backdrop does not participate in simulation or per-tile reveal and therefore does not alter deterministic fingerprints. Runtime images use linear filtering without mipmaps, disabled repeat, and lossless compression.
 
-The runtime override authority is `ProcGenTilemap.set_underlay_profile_override("DROWNED_BASILICA")` (or the exported `underlay_profile_override` inspector field). Its explicit values are `ENDLESS_FOREST` and `DROWNED_BASILICA`, with `ENDLESS_FOREST` initialized as the production default. It resolves the selected profile and passes the accepted `ProcGen.seed` to `ProcgenDepthBackdrop`; the backdrop then updates an already-instantiated FAR/MIDDLE/NEAR stack in place.
+Current runtime underlay selection is still a compatibility seam: `ProcGenTilemap.underlay_profile_override` exposes only `ENDLESS_FOREST` and `DROWNED_BASILICA`, with `ENDLESS_FOREST` initialized as the live default. That default is **current implementation truth, not the Alpine target**. The region-frame design replaces this hard-coded choice with a data-driven frame-selected underlay; `ALPINE_PLATEAU` will use its own FAR distant-world / MIDDLE depth-fog / NEAR cliff-mist profile. `DROWNED_BASILICA` remains an explicit special/development profile.
 
 Finite connected-region forest stacks are not production authority: one
 1536×1024 stack centered on a large region cannot safely cover a map-wide
@@ -81,13 +83,12 @@ layout, terrain, required-cell connectivity, roads, regions, and ingress can be
 validated against the same structural authority used at runtime. It is not yet
 a semantics-only evaluator.
 
-Once accepted, that exact candidate is promoted in place. Promotion preserves
-its structural TileMaps, generated floor/wall dictionaries, terrain result,
-roads, regions, and current streaming visibility. It executes only final work
-skipped by evaluation: registered floor-value decoration, final foliage setup
-when streaming is disabled, ruin/interior props, final playability audit,
-shadows, overlays, and navigation refresh. It must never call the complete
-generation or `_fill_tilemaps()` pipeline again.
+Accepted-candidate selection now preserves a deterministic semantic snapshot and
+materializes the winning seed into a fresh final runtime map through
+`generation/procgen_candidate_materializer.gd`; the former in-place promotion
+path was removed by G5. Presentation must therefore preserve the accepted
+semantic fingerprint across that fresh-final realization rather than assuming
+the evaluation TileMap node becomes the runtime world.
 
 Streaming reveal defers foliage/terrain painting across frames, but ruin and
 interior prop construction remains synchronous during promotion. Their costs
@@ -106,13 +107,9 @@ registration; that state is an explicit no-op and is logged.
 
 ## Validation
 
-Run `elevated_world_asset_contract_smoke.gd` for asset, TileSet, scene, and backdrop contracts. Run `procgen_candidate_promotion_smoke.gd` to prove that accepted structural state is promoted without a second generation or streaming reveal expansion. Run `elevated_world_seed_review.gd` for fixed-seed geometry summaries, followed by the established terrain, road, and route-clearance smokes.
+Run `elevated_world_asset_contract_smoke.gd` for asset, TileSet, scene, and backdrop contracts. Run the candidate materializer/parity coverage to prove the fresh final map reproduces the accepted semantic fingerprint without streaming reveal expansion. Run `elevated_world_seed_review.gd` for fixed-seed geometry summaries, followed by the established terrain, road, and route-clearance smokes.
 - Developer Observatory reports `procgen_void_cliff_frontier_cells`,
   `procgen_void_cliff_painted_cells`, and
   `procgen_void_cliff_cells_per_frontier` through the existing procgen runtime
   health snapshot.
-- Underlay profiles are presentation-only FAR/MIDDLE/NEAR resources. Endless
-  Forest remains the default `ProcgenUnderlayProfile`; Drowned Basilica is an
-  explicit alternate profile with deterministic A/B selection by seed,
-  profile, and layer. Profiles never own chasm cells, cliffs, collision,
-  navigation, occupancy, minimap, or generation.
+- Underlay profiles are presentation-only FAR/MIDDLE/NEAR resources. `ENDLESS_FOREST` remains the **current runtime default/compatibility profile** until region-frame selection lands; it is not the Alpine target. Drowned Basilica is an explicit alternate profile with deterministic A/B selection by seed, profile, and layer. Profiles never own chasm cells, cliffs, collision, navigation, occupancy, minimap, or generation.

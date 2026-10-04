@@ -15,17 +15,8 @@ signal dodge_flow_changed(value: float, direction: Vector2)
 signal integrity_reclaim_changed(status: Dictionary)
 
 const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
-const AnimationStateMachine = preload("res://game/actors/operator/animations/animation_state_machine.gd")
-const AttackFastState = preload("res://game/actors/operator/animations/states/attack_fast_state.gd")
-const AttackHeavyState = preload("res://game/actors/operator/animations/states/attack_heavy_state.gd")
-const BlockState = preload("res://game/actors/operator/animations/states/block_state.gd")
-const EquipWeaponState = preload("res://game/actors/operator/animations/states/equip_weapon_state.gd")
-const SheatheWeaponState = preload("res://game/actors/operator/animations/states/sheathe_weapon_state.gd")
-const HitRecoilState = preload("res://game/actors/operator/animations/states/hit_recoil_state.gd")
-const IdleState = preload("res://game/actors/operator/animations/states/idle_state.gd")
-const WalkState = preload("res://game/actors/operator/animations/states/walk_state.gd")
-const SprintState = preload("res://game/actors/operator/animations/states/sprint_state.gd")
-const DeathState = preload("res://game/actors/operator/animations/states/death_state.gd")
+const OperatorActionControllerScript = preload("res://game/actors/operator/combat/operator_action_controller.gd")
+const OperatorPresentationControllerScript = preload("res://game/actors/operator/presentation/operator_presentation_controller.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
 const OperatorAnimationSelectorScript = preload(
 	"res://game/actors/operator/animations/operator_animation_selector.gd"
@@ -85,23 +76,11 @@ const DAMAGE_POPUP_SCENE := preload("res://game/actors/ui/damage_popup.tscn")
 const PARRY_CONTACT_SPARK_VFX_SCENE := preload("res://game/vfx/combat/parry_contact_spark_vfx.tscn")
 const PARRY_SUCCESS_BURST_VFX_SCENE := preload("res://game/vfx/combat/parry_success_burst_vfx.tscn")
 const PARRY_SUCCESS_SOUND: AudioStream = preload("res://content/audio/sfx/combat/parry_success_01.wav")
-const CRITICAL_ATTACK_RIGHT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__e__8f__96.png"
-const CRITICAL_ATTACK_LEFT_SHEET := "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__w__8f__96.png"
-const CRITICAL_ATTACK_FRAME_COUNT := 8
-const CRITICAL_ATTACK_FRAME_SIZE := Vector2i(96, 96)
-const CRITICAL_ATTACK_FPS := 15.0
-const PAIRED_EXECUTION_BODY_SHEETS := {
-	&"s": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
-	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
-	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__full_body__unarmed__cosmetic__critical_execution_01__w__12f__96.png",
-}
 const PAIRED_EXECUTION_BODY_ANIMATIONS := {
-	&"s": &"operator_critical_execution_s",
-	&"e": &"operator_critical_execution_e",
-	&"w": &"operator_critical_execution_w",
+	&"s": &"unarmed/cosmetic/critical_execution_01/s/full_body",
+	&"e": &"unarmed/cosmetic/critical_execution_01/e/full_body",
+	&"w": &"unarmed/cosmetic/critical_execution_01/w/full_body",
 }
-const PAIRED_EXECUTION_FRAME_SIZE := Vector2i(96, 96)
-const PAIRED_EXECUTION_SOURCE_FPS := 12.0
 const PAIRED_EXECUTION_FRAME_COUNTS := {&"s": 8, &"e": 12, &"w": 12}
 const PAIRED_EXECUTION_FRAME_DURATIONS := {
 	&"s": [0.09, 0.13, 0.16, 0.22, 0.05, 0.15, 0.15, 0.25],
@@ -110,12 +89,11 @@ const PAIRED_EXECUTION_FRAME_DURATIONS := {
 }
 const PAIRED_EXECUTION_DAMAGE_FRAMES := {&"s": 4, &"e": 4, &"w": 4}
 const PAIRED_EXECUTION_HIT_STOP_DURATION := 0.11
-const FALCON_REVERSAL_FRAME_SIZE := Vector2i(156, 156)
 const FALCON_REVERSAL_FRAME_DURATIONS := [0.10, 0.10, 0.12, 0.16, 0.10, 0.05, 0.16, 0.22]
 const FALCON_REVERSAL_HIT_STOP_DURATION := 0.13
-const FALCON_REVERSAL_BODY_SHEETS := {
-	&"e": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
-	&"w": "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
+const FALCON_REVERSAL_BODY_ANIMATIONS := {
+	&"e": &"unarmed/cosmetic/falcon_reversal_01/e/full_body",
+	&"w": &"unarmed/cosmetic/falcon_reversal_01/w/full_body",
 }
 const PAIRED_EXECUTION_IMPACT_SOUND := preload("res://addons/Sound FX Starter Pack Vol. 1/Motions and Impacts/Impact Vox Hammer.wav")
 const HIT_LIGHT_BODY_SOUND: AudioStream = preload("res://content/audio/sfx/combat/hit_light_body_01.wav")
@@ -353,13 +331,11 @@ var last_fire_cooldown := 0.0
 @export_group("", "")
 @export var use_tiny_rpg_placeholder_soldier: bool = true
 @export var modular_locomotion_layers_enabled: bool = true
-@export var modular_head_profile: StringName = &"hooded"
 @export_group("Modular Primary Ranged Fire")
 @export var modular_primary_ranged_fire_enabled: bool = true
 @export var modular_primary_ranged_fire_fps: float = 14.0
 @export var modular_primary_ranged_fire_recover_hold_sec: float = 0.04
 @export var modular_primary_ranged_aim_fps: float = 8.0
-@export var modular_primary_ranged_aim_cape_enabled: bool = true
 @export var ranged_raise_duration: float = 0.22
 @export var ranged_lower_duration: float = 0.12
 @export_range(0.0, 1.0) var ranged_aim_ready_ratio: float = 0.70
@@ -367,9 +343,6 @@ var last_fire_cooldown := 0.0
 @export_range(1.0, 40.0, 0.5) var ranged_weapon_aim_response: float = 20.0
 @export var ranged_controller_aim_distance: float = 110.0
 @export_group("", "")
-@export_file("*.png") var idle_main_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/legacy_front_idle_loop/operator__full_body__unarmed__cosmetic__legacy_front_idle_loop__omni__1f__480x96.png"
-@export_file("*.png") var ranged_2h_stance_sheet_path := "res://content/sprites/operator/runtime/animations/unarmed/posture/stance_01/operator__full_body__unarmed__posture__stance_01__e__12f__96.png"
-@export_file("*.png") var ranged_2h_aim_sheet_path := "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/legacy_operator_body_ranged_2h_aim_raise/operator__full_body__ranged_2h__cosmetic__legacy_operator_body_ranged_2h_aim_raise__omni__1f__288x96.png"
 @export_group("", "")
 @export var primary_weapon_definition = null
 @export var melee_weapon_definition = null
@@ -377,7 +350,6 @@ var last_fire_cooldown := 0.0
 @export var sidearm_weapon_definition: OperatorWeaponDefinition = preload("res://game/actors/operator/sidearm_pistol_definition.tres")
 @export var sidearm_slot_equipped: bool = false
 @export var idle_long_loop_threshold: int = 20
-@export var primary_weapon_frames_resource: SpriteFrames
 @export var placeholder_sprite_position: Vector2 = Vector2(0, -18)
 @export var placeholder_sprite_offset: Vector2 = Vector2.ZERO
 @export var right_hand_socket_position: Vector2 = Vector2(10, -16)
@@ -718,7 +690,11 @@ var _vista_presentation_mode := false
 var _idle_loop_counter := 0
 var _last_idle_frame := -1
 var _last_idle_animation := ""
-var _animation_state_machine = null
+var _action_controller: OperatorActionController
+var _presentation_controller: OperatorPresentationController
+var _damage_reaction_duration := 0.22
+var _damage_reaction_animation: StringName = &""
+var _damage_reaction_modular_handled := false
 var _portal_transition_locked := false
 var _portal_arrival_animation_active := false
 var _arrn_stabilization_locked := false
@@ -749,10 +725,8 @@ var _last_incoming_attack_context: Dictionary = {}
 var _body_recoil_offset := Vector2.ZERO
 var _animated_sprite_base_position := Vector2.ZERO
 var _dodge_fx_back_base_position := Vector2.ZERO
-var _modular_cape_base_position := Vector2.ZERO
 var _modular_lower_body_base_position := Vector2.ZERO
 var _modular_upper_body_base_position := Vector2.ZERO
-var _modular_head_base_position := Vector2.ZERO
 var _modular_sidearm_base_position := Vector2.ZERO
 var _modular_upper_fx_base_position := Vector2.ZERO
 var _melee_weapon_overlay_base_position := Vector2.ZERO
@@ -761,7 +735,6 @@ var _last_damage_reaction_direction := Vector2.DOWN
 var _modular_damage_reaction_active := false
 var _modular_damage_reaction_animation: StringName = &""
 var _modular_damage_reaction_upper_animation: StringName = &""
-var _modular_damage_reaction_head_animation: StringName = &""
 var _modular_damage_reaction_sector: StringName = &"s"
 var _modular_lower_action_animation: StringName = &""
 var _modular_upper_action_animation: StringName = &""
@@ -830,6 +803,40 @@ const WEAPON_PROFILES = [
 ]
 
 
+const SIDEARM_AUTHORED_SECTORS := {
+	&"n": &"ne", &"ne": &"ne",
+	&"e": &"se", &"se": &"se", &"s": &"se",
+	&"sw": &"sw", &"w": &"sw",
+	&"nw": &"nw",
+}
+const RANGED_2H_AUTHORED_SECTORS := {
+	&"aim_01": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"w",
+	},
+	&"stance_01": {
+		&"n": &"n", &"ne": &"ne", &"e": &"e", &"se": &"se",
+		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"nw",
+	},
+	&"fire_01": {
+		&"n": &"n", &"ne": &"ne", &"e": &"e", &"se": &"se",
+		&"s": &"s", &"sw": &"sw", &"w": &"w", &"nw": &"nw",
+	},
+	&"relaxed_01": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+}
+const SIDEARM_LEGACY_SECTOR_SUFFIXES := {
+	&"ne": "up_right", &"nw": "up_left", &"se": "down_right", &"sw": "down_left",
+}
+const ACTIVE_MODULAR_HEAD := false
+const ACTIVE_MODULAR_CAPE := false
+
+var _body_presenter := OperatorBodyPresenter.new()
+var _animation_player := OperatorAnimationPlayer.new()
+
+
 func _get_current_ranged_profile() -> Dictionary:
 	var resolved_profile: Dictionary = WEAPON_PROFILES[0].duplicate()
 	var weapon_definition := _get_active_ranged_weapon_definition()
@@ -874,8 +881,6 @@ const DODGE_BACKSTEP_RECOVERY_ANIMATION := &"operator_dodge_backstep_recovery"
 ## frames and 25 FPS the actor used to inject from the sheet paths below.
 const DODGE_FULL_NORTH_ANIMATION := &"shared/transition/dodge_01/n/full_body"
 const DODGE_FULL_SOUTH_ANIMATION := &"shared/transition/dodge_01/s/full_body"
-const DODGE_FULL_NORTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__n__9f__96.png"
-const DODGE_FULL_SOUTH_SHEET_PATH := "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png"
 const DODGE_CHARGE_WINDUP_BASE := &"operator_dodge_charge_windup"
 const DODGE_CHAIN_LINK_BASE := &"operator_dodge_chain_link"
 const DODGE_CHAIN_LINK_FPS := 20.0
@@ -917,10 +922,8 @@ const MODULAR_SIDEARM_MUZZLE_OFFSETS := {
 @onready var visual = $Visual
 @onready var animated_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
 @onready var dodge_fx_back_sprite: AnimatedSprite2D = $DodgeFXBackSprite if has_node("DodgeFXBackSprite") else null
-@onready var modular_cape_sprite: AnimatedSprite2D = $ModularCapeSprite if has_node("ModularCapeSprite") else null
 @onready var modular_lower_body_sprite = $ModularLowerBodySprite if has_node("ModularLowerBodySprite") else null
 @onready var modular_upper_body_sprite = $ModularUpperBodySprite if has_node("ModularUpperBodySprite") else null
-@onready var modular_head_sprite: AnimatedSprite2D = $ModularHeadSprite if has_node("ModularHeadSprite") else null
 @onready var modular_sidearm_sprite = $ModularSidearmSprite if has_node("ModularSidearmSprite") else null
 @onready var modular_upper_fx_sprite = $ModularUpperFxSprite if has_node("ModularUpperFxSprite") else null
 @onready var right_hand_socket = $RightHandSocket if has_node("RightHandSocket") else null
@@ -944,14 +947,12 @@ const MODULAR_SIDEARM_MUZZLE_OFFSETS := {
 func _exit_tree() -> void:
 	_set_ranged_aim_camera_active(false)
 	_cleanup_paired_execution(false, &"operator_exit_tree")
-	_animation_state_machine = null
+	_action_controller = null
+	_presentation_controller = null
 
 
 func _ready():
 	add_to_group("player")
-	var death_binding := preload("res://game/world/bindings/operator_death_campaign_binding.gd").new()
-	death_binding.name = "OperatorDeathCampaignBinding"
-	add_child(death_binding)
 	guard_config = guard_config.duplicate(true) as OperatorGuardConfig
 	_guard_controller.setup(self, guard_config)
 	_engagement_tracker = EngagementTrackerScript.new()
@@ -1007,18 +1008,12 @@ func _ready():
 		dodge_fx_back_sprite.z_index = -1
 		dodge_fx_back_sprite.modulate = Color(1.0, 1.0, 1.0, DODGE_FX_BACK_ALPHA)
 	_register_body_presentation_layers()
-	if modular_cape_sprite:
-		_hide_body_layer(modular_cape_sprite, false)
-		modular_cape_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
 	if modular_lower_body_sprite:
 		_hide_body_layer(modular_lower_body_sprite, false)
 		modular_lower_body_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
 	if modular_upper_body_sprite:
 		_hide_body_layer(modular_upper_body_sprite, false)
 		modular_upper_body_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
-	if modular_head_sprite:
-		_hide_body_layer(modular_head_sprite, false)
-		modular_head_sprite.modulate = Color(1.3, 1.3, 1.3, 1)
 	_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_ready")
 	_configure_weapon_definition_defaults(
 		melee_weapon_definition,
@@ -1030,7 +1025,7 @@ func _ready():
 	_rebuild_armed_weapon_list()
 	_sync_weapon_selection_from_current_loadout()
 	_apply_active_weapon_frames()
-	_setup_animation_state_machine()
+	_setup_operator_action_controller()
 	if use_tiny_rpg_placeholder_soldier:
 		_apply_placeholder_runtime_layout()
 	else:
@@ -1169,7 +1164,7 @@ func _advance_simulation(delta: float) -> void:
 	# render-tick audit on the strength of their names, which was wrong.
 	_update_melee_presentation_posture(delta)
 	_tick_primary_ranged_action_presentation(delta)
-	_update_animation_state_machine(delta)
+	_update_operator_actions(delta)
 	_update_combat_target()
 	_update_interaction_target()
 	if _is_dead:
@@ -1576,7 +1571,7 @@ func _update_animation():
 		return
 	if _parry_neutral_lock_active:
 		return
-	if _animation_state_machine != null and _animation_state_machine.current_state == "hit_recoil":
+	if _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.DAMAGE_REACTION):
 		# Damage reaction playback owns the full body until its state duration
 		# completes; ordinary locomotion must not replace a knockdown mid-strip.
 		if not _modular_damage_reaction_active:
@@ -1811,23 +1806,15 @@ func _sync_modular_locomotion_layers(base_animation: String, lower_direction: Ve
 		if not _sync_modular_unarmed_upper_body_locomotion(base_animation, resolved_upper_direction, speed_scale):
 			_hide_modular_locomotion_layers()
 			return false
-		_sync_modular_head_locomotion(base_animation, resolved_upper_direction, speed_scale)
-		if base_animation == "unarmed_run":
-			_play_optional_modular_cape_animation("unarmed_run_cape", resolved_upper_direction, 12.0)
-		else:
-			_hide_modular_cape_layer()
 	elif _is_ranged_ready_active() and _is_using_ranged_2h_primary():
-		_hide_modular_head_layer()
 		if not _sync_modular_ranged_ready_upper_layers(resolved_upper_direction):
 			_hide_modular_locomotion_layers()
 			return false
 	elif _is_using_ranged_2h_primary():
-		_hide_modular_head_layer()
 		if not _sync_modular_ranged_relaxed_upper_layers(resolved_upper_direction):
 			_hide_modular_locomotion_layers()
 			return false
 	else:
-		_hide_modular_head_layer()
 		_hide_modular_locomotion_layers()
 		return false
 
@@ -1953,8 +1940,6 @@ func _sync_modular_melee_locomotion(
 			)
 	if primary_weapon_sprite != null:
 		primary_weapon_sprite.visible = false
-	_hide_modular_head_layer()
-	_hide_modular_cape_layer()
 	_claim_modular_body_owner()
 	_melee_overlay_clock_owner = MeleeOverlayClockOwner.MODULAR_LOWER_BODY
 	return true
@@ -2170,8 +2155,6 @@ func _sync_unarmed_posture(direction: Vector2) -> bool:
 	if modular_upper_body_sprite.animation != upper_animation \
 	or not modular_upper_body_sprite.is_playing():
 		_animation_player.play(modular_upper_body_sprite, upper_animation)
-	_hide_modular_head_layer()
-	_hide_modular_cape_layer()
 	_claim_modular_body_owner()
 	return true
 
@@ -2203,8 +2186,6 @@ func _sync_modular_melee_posture(direction: Vector2) -> bool:
 	if modular_upper_body_sprite.animation != upper_animation or not modular_upper_body_sprite.is_playing():
 		_animation_player.play(modular_upper_body_sprite, upper_animation)
 	_sync_melee_posture_weapon_overlay(action, suffix, lower_animation)
-	_hide_modular_head_layer()
-	_hide_modular_cape_layer()
 	_claim_modular_body_owner()
 	_melee_overlay_clock_owner = MeleeOverlayClockOwner.MODULAR_LOWER_BODY
 	return true
@@ -2425,7 +2406,6 @@ func _sync_modular_action_domains() -> bool:
 		return animated_sprite != null and animated_sprite.visible
 	if not _is_attack_profile_unarmed(_active_attack_profile):
 		return false
-	_hide_modular_head_layer()
 	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
@@ -2497,8 +2477,6 @@ func _sync_unarmed_fast_chain_action() -> bool:
 		_play_optional_fx(&"unarmed", &"attack", action, sector, speed)
 	elif modular_upper_fx_sprite != null:
 		_hide_presentation_layer(modular_upper_fx_sprite, true)
-	_hide_modular_head_layer()
-	_hide_modular_cape_layer()
 	_claim_modular_body_owner()
 	return true
 
@@ -2706,7 +2684,6 @@ func _sync_modular_ranged_ready_upper_layers(direction: Vector2) -> bool:
 		primary_weapon_sprite.visible = false
 	if ranged_fx_overlay_sprite != null:
 		ranged_fx_overlay_sprite.visible = false
-	_hide_modular_cape_layer()
 	return true
 
 
@@ -2729,7 +2706,6 @@ func _sync_modular_ranged_relaxed_upper_layers(direction: Vector2) -> bool:
 		primary_weapon_sprite.visible = false
 	if ranged_fx_overlay_sprite != null:
 		ranged_fx_overlay_sprite.visible = false
-	_hide_modular_cape_layer()
 	return true
 
 
@@ -2906,7 +2882,6 @@ func _sync_modular_ranged_ready_movement_presentation(
 		ranged_fx_overlay_sprite.visible = false
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
-	_hide_modular_cape_layer()
 	return true
 
 
@@ -3406,7 +3381,6 @@ func _begin_modular_primary_ranged_fire_presentation(
 	_primary_ranged_action_timer = max(0.04, longest_duration)
 	_primary_ranged_action_total = _primary_ranged_action_timer
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
-	_hide_modular_cape_layer()
 	return true
 
 
@@ -3460,8 +3434,6 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 		modular_sidearm_sprite, "", action_direction, raise_fps, weapon_animation
 	)
 	longest_duration = max(longest_duration, float(weapon_result.get("duration", 0.0)))
-	var cape_result := _play_optional_modular_cape_animation("ranged_2h_aim_cape", action_direction, raise_fps)
-	longest_duration = max(longest_duration, float(cape_result.get("duration", 0.0)))
 
 	_primary_ranged_action_phase = &"aiming"
 	_primary_ranged_action_timer = max(0.04, longest_duration)
@@ -3521,12 +3493,6 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 			result_duration *= prior_ratio
 		longest_duration = max(longest_duration, result_duration)
 
-	var cape_result := _play_optional_modular_cape_animation_backwards(
-		"ranged_2h_aim_cape",
-		action_direction,
-		lower_fps
-	)
-	longest_duration = max(longest_duration, float(cape_result.get("duration", 0.0)))
 	_primary_ranged_action_phase = &"lowering"
 	_primary_ranged_action_timer = max(0.04, longest_duration)
 	_primary_ranged_action_total = _primary_ranged_action_timer
@@ -3652,39 +3618,6 @@ func _play_modular_action_animation_backwards(
 	return result
 
 
-func _play_optional_modular_cape_animation(base_animation: String, direction: Vector2, target_fps: float) -> Dictionary:
-	if not modular_primary_ranged_aim_cape_enabled:
-		_hide_modular_cape_layer()
-		return {"played": false, "duration": 0.0}
-	# Cape art only exists for upward-facing directions (up, up_left, up_right).
-	# Hide the cape when running in directions without authored art to avoid
-	# showing the wrong directional sprite from the fallback animation.
-	var sector := OperatorAnimationSelectorScript.vector_to_sector(direction)
-	if sector != &"n" and sector != &"nw" and sector != &"ne":
-		_hide_modular_cape_layer()
-		return {"played": false, "duration": 0.0}
-	if not ACTIVE_MODULAR_CAPE:
-		_hide_modular_cape_layer()
-		return {"played": false, "duration": 0.0}
-	var result := _play_modular_action_animation(modular_cape_sprite, base_animation, direction, target_fps)
-	if not bool(result.get("played", false)):
-		_hide_modular_cape_layer()
-	return result
-
-
-func _play_optional_modular_cape_animation_backwards(base_animation: String, direction: Vector2, target_fps: float) -> Dictionary:
-	if not modular_primary_ranged_aim_cape_enabled:
-		_hide_modular_cape_layer()
-		return {"played": false, "duration": 0.0}
-	if not ACTIVE_MODULAR_CAPE:
-		_hide_modular_cape_layer()
-		return {"played": false, "duration": 0.0}
-	var result := _play_modular_action_animation_backwards(modular_cape_sprite, base_animation, direction, target_fps)
-	if not bool(result.get("played", false)):
-		_hide_modular_cape_layer()
-	return result
-
-
 func _play_field_patch_use_presentation() -> bool:
 	var direction := aim_direction if aim_direction.length_squared() > 0.0001 else visual_idle_direction
 	if direction.length_squared() <= 0.0001:
@@ -3701,7 +3634,6 @@ func _play_field_patch_use_presentation() -> bool:
 		_claim_modular_body_owner()
 		if modular_sidearm_sprite:
 			modular_sidearm_sprite.visible = false
-		_hide_modular_cape_layer()
 		return true
 
 	_hide_modular_locomotion_layers()
@@ -3736,12 +3668,6 @@ func _sync_field_patch_action_layer(sprite: AnimatedSprite2D, base_animation: St
 	if sprite.animation != animation_name or not sprite.is_playing():
 		_animation_player.play(sprite, animation_name)
 	return true
-
-
-func _hide_modular_cape_layer() -> void:
-	if modular_cape_sprite:
-		modular_cape_sprite.visible = false
-		modular_cape_sprite.stop()
 
 
 func _primary_ranged_fire_suffix_for_direction(direction: Vector2) -> StringName:
@@ -4141,145 +4067,13 @@ func _sync_modular_upper_body_layer(base_animation: String, direction: Vector2, 
 	return true
 
 
-func _sync_modular_head_locomotion(base_animation: String, direction: Vector2, speed_scale: float) -> bool:
-	if not ACTIVE_MODULAR_HEAD:
-		_hide_modular_head_layer()
-		return false
-	if modular_head_sprite == null or modular_head_sprite.sprite_frames == null or modular_head_profile.is_empty():
-		_hide_modular_head_layer()
-		return false
-	var action := base_animation.trim_prefix("unarmed_")
-	var head_base := "%s_%s" % [String(modular_head_profile), action]
-	# Head coverage is cosmetic and sparse. Require the exact authored direction
-	# instead of allowing the retired compatibility lookup to reuse south/base for a
-	# missing direction, which would leave a south-facing head on an east walk.
-	var head_animation := StringName("%s_%s" % [head_base, _get_direction_suffix(direction)])
-	if not _has_playable_sprite_animation(modular_head_sprite.sprite_frames, head_animation):
-		_hide_modular_head_layer()
-		return false
-	_show_body_layer(modular_head_sprite)
-	modular_head_sprite.flip_h = false
-	modular_head_sprite.speed_scale = speed_scale
-	if modular_head_sprite.animation != head_animation or not modular_head_sprite.is_playing():
-		_animation_player.play(modular_head_sprite, head_animation)
-	if modular_upper_body_sprite != null \
-		and modular_upper_body_sprite.visible \
-		and modular_upper_body_sprite.sprite_frames != null:
-		var head_frame_count := modular_head_sprite.sprite_frames.get_frame_count(head_animation)
-		if head_frame_count > 0:
-			modular_head_sprite.set_frame_and_progress(
-				mini(modular_upper_body_sprite.frame, head_frame_count - 1),
-				modular_upper_body_sprite.frame_progress
-			)
-	return true
-
-
-## --- Body presentation ownership ---------------------------------------------
-##
-## `OperatorBodyPresenter` is the sole owner of body-layer visibility; see
-## `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`. The Operator
-## creates the renderers, registers them, and then only ever *requests*
-## presentation. Nothing below may contain visibility policy of its own.
-## Presentation layers preserved but retired from the ACTIVE Operator
-## composition (C2a authoring decision, 2026-09-12).
-##
-## The modular head and cape were early presentation experiments. Their source
-## and runtime art stays published and their canonical identities stay in the
-## manifest — the Operator simply stops drawing them, so the active chassis is
-## lower-body cadence + upper action layer + weapon + FX, with authored
-## full-body actions where appropriate. Modularity is not the goal; the minimum
-## number of independently animated layers that supports real gameplay variation
-## is. Both may return in a dedicated presentation/art pass, which is why these
-## are gates rather than deletions.
-## Authored-facing projection for actions published in fewer facings than the
-## eight runtime sectors (C2a-R1, modular_sidearm_sprite cutover).
-##
-## PRESENTATION ONLY. None of this touches raw aim direction, projectile
-## direction, the weapon socket, movement, target selection, gameplay state or
-## combat timing.
-##
-## These are literal authoring tables, not a fallback algorithm. The projection is
-## resolved ONCE per action and the same authored sector drives every layer of
-## that action's stack, so the stack can never disagree with itself.
-## `OperatorAnimationSelector` is never taught the projection: it receives an
-## already-decided sector and performs its normal exact lookup.
-##
-## The P-9 Sidearm is authored for four diagonals. This table is the 2026-09-12
-## authoring decision, and it is exactly what the retired
-## `_resolve_sidearm_directional_animation()` produced.
-const SIDEARM_AUTHORED_SECTORS := {
-	&"n": &"ne", &"ne": &"ne",
-	&"e": &"se", &"se": &"se", &"s": &"se",
-	&"sw": &"sw", &"w": &"sw",
-	&"nw": &"nw",
-}
-
-## The ranged_2h actions on this renderer are published in partial sets. These
-## tables were characterized from the compatibility resource rather than invented:
-## that resource already sources canonical PNGs, its unsuffixed clips are the `e`
-## art, and the retired compatibility lookup chose west when x < 0 and east
-## otherwise. Each row therefore reproduces what the player sees today.
-const RANGED_2H_AUTHORED_SECTORS := {
-	# authored: e se sw w
-	&"aim_01": {
-		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"se",
-		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"w",
-	},
-	# authored: e n ne nw se sw w  (only s is unpublished)
-	&"stance_01": {
-		&"n": &"n", &"ne": &"ne", &"e": &"e", &"se": &"se",
-		&"s": &"e", &"sw": &"sw", &"w": &"w", &"nw": &"nw",
-	},
-	# authored: e n se sw w  (ne/nw/s unpublished; they played nothing before and
-	# still do, so they map to themselves and the existence query declines them)
-	&"fire_01": {
-		&"n": &"n", &"ne": &"ne", &"e": &"e", &"se": &"se",
-		&"s": &"s", &"sw": &"sw", &"w": &"w", &"nw": &"nw",
-	},
-	# authored: e w
-	&"relaxed_01": {
-		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
-		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
-	},
-}
-
-## The legacy `<up|down>_<left|right>` suffix for an authored sector. Needed only
-## while lower/upper/FX remain compatibility renderers: they must be driven by the
-## same sector the pistol uses, and their clip names still spell it this way.
-const SIDEARM_LEGACY_SECTOR_SUFFIXES := {
-	&"ne": "up_right", &"nw": "up_left", &"se": "down_right", &"sw": "down_left",
-}
-
-const ACTIVE_MODULAR_HEAD := false
-const ACTIVE_MODULAR_CAPE := false
-
-var _body_presenter := OperatorBodyPresenter.new()
-
-## Sole authority for HOW an already-resolved clip plays. The Operator decides
-## WHICH clip (for now) and WHO may draw (via `_body_presenter`); it does not
-## drive `AnimatedSprite2D` playback itself.
-var _animation_player := OperatorAnimationPlayer.new()
-
-
-## Register the statically authored body renderers exactly once. Lazily built
-## authored rigs register themselves when they are created.
 func _register_body_presentation_layers() -> void:
 	_body_presenter.register_body_layers(
 		OperatorBodyPresenter.Owner.LEGACY_FULL_BODY, [animated_sprite]
 	)
 	_body_presenter.register_body_layers(
 		OperatorBodyPresenter.Owner.MODULAR_BODY,
-		[modular_lower_body_sprite, modular_upper_body_sprite, modular_head_sprite]
-	)
-	# The cape is worn by both the legacy dodge strips and the modular rig, so it
-	# registers to both owners and must never count as a second body. Being worn
-	# by two owners is also why releasing modular leaves it alone: the next owner
-	# re-shows it rather than it blinking between presentations.
-	_body_presenter.register_overlay_layers(
-		OperatorBodyPresenter.Owner.LEGACY_FULL_BODY, [modular_cape_sprite]
-	)
-	_body_presenter.register_overlay_layers(
-		OperatorBodyPresenter.Owner.MODULAR_BODY, [modular_cape_sprite]
+		[modular_lower_body_sprite, modular_upper_body_sprite]
 	)
 
 
@@ -4488,18 +4282,18 @@ func _ranged_2h_authored_sector(action: StringName, direction: Vector2) -> Strin
 
 ## Whether a plan would be accepted. Changes nothing and reports nothing.
 func _can_present_body(plan: OperatorBodyPresentationPlan) -> bool:
-	return _body_presenter.can_present(plan)
+	return _get_operator_presentation_controller().can_present(plan)
 
 
 func _present_body(plan: OperatorBodyPresentationPlan, report_rejection := true) -> bool:
 	if plan == null:
-		return _body_presenter.present(plan, report_rejection)
+		return _get_operator_presentation_controller().present(plan, report_rejection)
 	# Cancelling the outgoing lifecycle must not happen for a plan that will be
 	# rejected, or a rejected presentation would still abandon the live one.
-	if not _body_presenter.can_present(plan):
-		return _body_presenter.present(plan, report_rejection)
+	if not _get_operator_presentation_controller().can_present(plan):
+		return _get_operator_presentation_controller().present(plan, report_rejection)
 	_invalidate_preempted_rig_lifecycles(plan.owner)
-	return _body_presenter.present(plan, report_rejection)
+	return _get_operator_presentation_controller().present(plan, report_rejection)
 
 
 func _release_modular_body_layers() -> void:
@@ -4655,16 +4449,6 @@ func _hide_presentation_layer(layer, stop_playback := true) -> void:
 		layer.stop()
 
 
-func _hide_modular_head_layer() -> void:
-	if modular_head_sprite:
-		_hide_body_layer(modular_head_sprite, false)
-		modular_head_sprite.stop()
-
-
-## Retire the modular layers and hand the body back to the legacy full-body
-## sprite. When a transition/startup rig owns the body this only clears the
-## modular layers: showing legacy here is what used to render a second body
-## behind the authored transition.
 func _hide_modular_locomotion_layers() -> void:
 	_reset_melee_locomotion_socket_presentation()
 	_modular_lower_action_animation = &""
@@ -4708,9 +4492,6 @@ func _clear_modular_fast_attack_layers() -> void:
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
 		modular_upper_fx_sprite.stop()
-	_hide_modular_cape_layer()
-
-
 func _get_direction_suffix(dir: Vector2) -> String:
 	return WeaponSocketTracks.resolve_animation_suffix(dir)
 
@@ -6024,8 +5805,7 @@ func _exit_ranged_ready() -> void:
 		modular_upper_fx_sprite.visible = false
 		modular_upper_fx_sprite.stop()
 	if not lowered_primary:
-		_hide_modular_cape_layer()
-	_reset_primary_ranged_visual_transform()
+		_reset_primary_ranged_visual_transform()
 	_apply_active_weapon_frames()
 	_apply_dynamic_weapon_socket_layout()
 	_update_primary_weapon_visual(false)
@@ -6139,18 +5919,19 @@ func _request_attack_state(kind: String) -> void:
 	if kind == "critical":
 		_start_attack_by_kind(kind)
 		return
-	var state_name := "attack_fast"
+	var action := OperatorActionControllerScript.FAST_ATTACK
 	if kind == "heavy":
-		state_name = "attack_heavy"
-	if _animation_state_machine != null and _animation_state_machine.request(state_name, 10):
+		action = OperatorActionControllerScript.HEAVY_ATTACK
+	if _action_controller == null:
+		_start_attack_by_kind(kind)
 		return
-	_start_attack_by_kind(kind)
+	_action_controller.request(action, 10)
 
 
 func _request_block_state() -> void:
 	_cancel_attack_drive(true)
-	if _animation_state_machine != null:
-		_animation_state_machine.request("block", 8)
+	if _action_controller != null:
+		_action_controller.request(OperatorActionControllerScript.BLOCK, 8)
 
 
 func _buffer_attack(kind: String) -> void:
@@ -6654,17 +6435,6 @@ func _play_dodge_fast_attack_presentation() -> bool:
 	if (fx_animation.is_empty() or not _play_named_melee_fx_overlay(fx_animation)) \
 	and melee_fx_overlay_sprite != null:
 		melee_fx_overlay_sprite.visible = false
-	var cape_animation := StringName("unarmed_dodge_fast_attack_cape_%s" % suffix)
-	if ACTIVE_MODULAR_CAPE \
-		and modular_cape_sprite != null \
-		and modular_cape_sprite.sprite_frames != null \
-		and _has_playable_sprite_animation(modular_cape_sprite.sprite_frames, cape_animation):
-		modular_cape_sprite.visible = true
-		modular_cape_sprite.flip_h = false
-		modular_cape_sprite.speed_scale = 1.0
-		_animation_player.play(modular_cape_sprite, cape_animation)
-	else:
-		_hide_modular_cape_layer()
 	return true
 
 
@@ -7762,20 +7532,17 @@ func _begin_paired_execution(
 		return false
 	execution_direction = StringName(profile["direction"])
 	var body_animation: StringName = profile["body_animation"]
-	var body_sheet: String = profile["body_sheet"]
 	var fx_animation: StringName = &""
-	var frame_size: Vector2i = profile["frame_size"]
 	_paired_execution_frame_count = int(profile["frame_count"])
 	_paired_execution_frame_durations = Array(profile["frame_durations"]).duplicate()
 	_paired_execution_damage_frame = int(profile["damage_frame"])
 	_paired_execution_hit_stop_duration = float(profile["hit_stop"])
 	_paired_execution_kind = execution_kind
-	if not _ensure_paired_execution_animation(animated_sprite, body_animation, body_sheet, _paired_execution_frame_count, frame_size):
+	if not _has_paired_execution_animation(animated_sprite, body_animation, _paired_execution_frame_count):
 		target.call("cancel_parry_critical_execution", self, &"operator_body_asset_missing")
 		return false
-	# The FX layer is canonical as of C2a-R2: it must not build frames into the
-	# shared SpriteFrames. The body layer still uses the sheet builder because
-	# animated_sprite is not rebound in this slice.
+	# Both body and FX consume the generated runtime database. The existing
+	# per-frame execution clock below remains responsible for exact gameplay timing.
 	fx_animation = _resolve_fx_animation(
 		&"unarmed", &"cosmetic", profile["fx_action"], execution_direction
 	)
@@ -7793,8 +7560,8 @@ func _begin_paired_execution(
 	_parry_phase = &""
 	_parry_active = false
 	_parry_timer = 0.0
-	if _animation_state_machine != null:
-		_animation_state_machine.request("idle", 100)
+	if _action_controller != null:
+		_action_controller.force_neutralize()
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
 	_modular_upper_fx_action_animation = &""
@@ -7885,28 +7652,24 @@ func _get_paired_execution_profile(
 	direction: StringName
 ) -> Dictionary:
 	if execution_kind == &"falcon_reversal":
-		if not FALCON_REVERSAL_BODY_SHEETS.has(direction) \
+		if not FALCON_REVERSAL_BODY_ANIMATIONS.has(direction) \
 				or not _has_fx_animation(&"unarmed", &"cosmetic", &"falcon_reversal_01", direction):
 			return {}
 		return {
 			"direction": direction,
-			"body_animation": StringName("operator_falcon_reversal_%s" % String(direction)),
+			"body_animation": FALCON_REVERSAL_BODY_ANIMATIONS[direction],
 			"fx_action": &"falcon_reversal_01",
-			"body_sheet": FALCON_REVERSAL_BODY_SHEETS[direction],
-			"frame_size": FALCON_REVERSAL_FRAME_SIZE,
 			"frame_count": 8,
 			"frame_durations": FALCON_REVERSAL_FRAME_DURATIONS,
 			"damage_frame": 5,
 			"hit_stop": FALCON_REVERSAL_HIT_STOP_DURATION,
 		}
-	if not PAIRED_EXECUTION_BODY_SHEETS.has(direction):
+	if not PAIRED_EXECUTION_BODY_ANIMATIONS.has(direction):
 		direction = &"s"
 	return {
 		"direction": direction,
 		"body_animation": PAIRED_EXECUTION_BODY_ANIMATIONS[direction],
 		"fx_action": &"critical_execution_01",
-		"body_sheet": PAIRED_EXECUTION_BODY_SHEETS[direction],
-		"frame_size": PAIRED_EXECUTION_FRAME_SIZE,
 		"frame_count": int(PAIRED_EXECUTION_FRAME_COUNTS.get(direction, 8)),
 		"frame_durations": Array(PAIRED_EXECUTION_FRAME_DURATIONS.get(direction, PAIRED_EXECUTION_FRAME_DURATIONS[&"s"])),
 		"damage_frame": int(PAIRED_EXECUTION_DAMAGE_FRAMES.get(direction, 4)),
@@ -7914,32 +7677,13 @@ func _get_paired_execution_profile(
 	}
 
 
-func _ensure_paired_execution_animation(sprite: AnimatedSprite2D, animation_name: StringName, sheet_path: String, frame_count: int, frame_size: Vector2i) -> bool:
-	if sprite == null or sprite.sprite_frames == null:
-		push_error("[PairedExecution] Required animation owner missing for %s" % sheet_path)
-		return false
-	if sprite.sprite_frames.has_animation(animation_name) and sprite.sprite_frames.get_frame_count(animation_name) == frame_count:
-		return true
-	if not ResourceLoader.exists(sheet_path):
-		push_error("[PairedExecution] Required asset missing: %s" % sheet_path)
-		return false
-	var texture := load(sheet_path) as Texture2D
-	if texture == null or texture.get_width() != frame_count * frame_size.x or texture.get_height() != frame_size.y:
-		push_error("[PairedExecution] Required asset has invalid dimensions: %s" % sheet_path)
-		return false
-	if sprite.sprite_frames.has_animation(animation_name):
-		sprite.sprite_frames.remove_animation(animation_name)
-	sprite.sprite_frames.add_animation(animation_name)
-	sprite.sprite_frames.set_animation_loop(animation_name, false)
-	# This speed is source-preview metadata only. Runtime playback is driven by the
-	# authored duration table in _update_paired_execution().
-	sprite.sprite_frames.set_animation_speed(animation_name, PAIRED_EXECUTION_SOURCE_FPS)
-	for frame_index in range(frame_count):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(frame_index * frame_size.x, 0, frame_size.x, frame_size.y)
-		sprite.sprite_frames.add_frame(animation_name, atlas)
-	return true
+func _has_paired_execution_animation(
+	sprite: AnimatedSprite2D, animation_name: StringName, frame_count: int
+) -> bool:
+	return sprite != null \
+		and sprite.sprite_frames == OPERATOR_RUNTIME_FRAMES \
+		and sprite.sprite_frames.has_animation(animation_name) \
+		and sprite.sprite_frames.get_frame_count(animation_name) == frame_count
 
 
 func _get_paired_execution_duration() -> float:
@@ -8162,24 +7906,11 @@ func _ensure_operator_critical_attack_animation(direction: Vector2) -> StringNam
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
 		return &""
 	var facing_left := _is_facing_left(direction)
-	var animation_name := &"operator_critical_1h_left" if facing_left else &"operator_critical_1h_right"
-	if _has_playable_sprite_animation(animated_sprite.sprite_frames, animation_name):
-		return animation_name
-	var sheet_path := CRITICAL_ATTACK_LEFT_SHEET if facing_left else CRITICAL_ATTACK_RIGHT_SHEET
-	if not ResourceLoader.exists(sheet_path):
-		return &""
-	var texture := load(sheet_path) as Texture2D
-	if texture == null:
-		return &""
-	animated_sprite.sprite_frames.add_animation(animation_name)
-	animated_sprite.sprite_frames.set_animation_loop(animation_name, false)
-	animated_sprite.sprite_frames.set_animation_speed(animation_name, CRITICAL_ATTACK_FPS)
-	for frame_index in range(CRITICAL_ATTACK_FRAME_COUNT):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(frame_index * CRITICAL_ATTACK_FRAME_SIZE.x, 0, CRITICAL_ATTACK_FRAME_SIZE.x, CRITICAL_ATTACK_FRAME_SIZE.y)
-		animated_sprite.sprite_frames.add_frame(animation_name, atlas)
-	return animation_name
+	var sector: StringName = &"w" if facing_left else &"e"
+	var animation_name := StringName(
+		"unarmed/defense/parry_miss_01/%s/full_body" % String(sector)
+	)
+	return animation_name if _has_playable_sprite_animation(animated_sprite.sprite_frames, animation_name) else &""
 
 
 func _play_operator_critical_hitspark(direction: Vector2) -> bool:
@@ -8396,7 +8127,6 @@ func _sync_modular_block_hold_movement_presentation() -> bool:
 	if modular_upper_body_sprite.animation != upper_anim or not modular_upper_body_sprite.is_playing():
 		_animation_player.play(modular_upper_body_sprite, upper_anim)
 	_sync_modular_block_hold_fx(upper_direction)
-	_hide_modular_cape_layer()
 	_claim_modular_body_owner()
 	return true
 
@@ -10884,9 +10614,9 @@ func try_apply_pending_weapon_selection() -> void:
 func can_apply_weapon_selection_now() -> bool:
 	if _is_dead or _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or _is_block_state_active() or _reload_active:
 		return false
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return true
-	return _animation_state_machine.current_state in ["idle", "walk", "sprint"]
+	return _action_controller.current_action.is_empty()
 
 
 func _resolve_weapon_definition_for_selection(selection: Dictionary) -> OperatorWeaponDefinition:
@@ -10954,23 +10684,23 @@ func commit_pending_weapon_selection_after_sheathe() -> bool:
 
 
 func _enter_equip_weapon_state_if_available() -> void:
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return
-	_animation_state_machine.request("equip_weapon", 5)
+	_action_controller.request(OperatorActionControllerScript.EQUIP, 5)
 
 
 func _enter_sheathe_weapon_state_if_available() -> void:
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return
-	_animation_state_machine.request("sheathe_weapon", 5)
+	_action_controller.request(OperatorActionControllerScript.SHEATHE, 5)
 
 
 func _is_equip_weapon_state_active() -> bool:
-	return _animation_state_machine != null and _animation_state_machine.current_state == "equip_weapon"
+	return _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.EQUIP)
 
 
 func _is_sheathe_weapon_state_active() -> bool:
-	return _animation_state_machine != null and _animation_state_machine.current_state == "sheathe_weapon"
+	return _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.SHEATHE)
 
 
 func _apply_unarmed_selection() -> void:
@@ -11880,7 +11610,7 @@ func guard_enter_post_parry_neutral() -> void:
 
 
 func _is_movement_locked() -> bool:
-	var damage_reaction_locked: bool = _animation_state_machine != null and _animation_state_machine.current_state == "hit_recoil"
+	var damage_reaction_locked: bool = _action_controller != null and _action_controller.is_active(OperatorActionControllerScript.DAMAGE_REACTION)
 	return damage_reaction_locked or _paired_execution_active or _reload_active or _portal_transition_locked or _portal_arrival_animation_active or _arrn_stabilization_locked
 
 
@@ -12368,14 +12098,10 @@ func _apply_body_recoil_offset() -> void:
 	if dodge_fx_back_sprite:
 		var dodge_offset := _get_dodge_fx_back_offset(_dodge_direction) if _dodge_active else Vector2.ZERO
 		dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_offset
-	if modular_cape_sprite:
-		modular_cape_sprite.position = _modular_cape_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.position = _modular_lower_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.position = _modular_upper_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
-	if modular_head_sprite:
-		modular_head_sprite.position = _modular_head_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if modular_sidearm_sprite:
 		modular_sidearm_sprite.position = _modular_sidearm_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if modular_upper_fx_sprite:
@@ -12467,18 +12193,12 @@ func _apply_placeholder_runtime_layout() -> void:
 	if dodge_fx_back_sprite:
 		dodge_fx_back_sprite.position = placeholder_sprite_position
 		dodge_fx_back_sprite.offset = placeholder_sprite_offset
-	if modular_cape_sprite:
-		modular_cape_sprite.position = placeholder_sprite_position
-		modular_cape_sprite.offset = placeholder_sprite_offset
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.position = placeholder_sprite_position
 		modular_lower_body_sprite.offset = placeholder_sprite_offset
 	if modular_upper_body_sprite:
 		modular_upper_body_sprite.position = placeholder_sprite_position
 		modular_upper_body_sprite.offset = placeholder_sprite_offset
-	if modular_head_sprite:
-		modular_head_sprite.position = placeholder_sprite_position
-		modular_head_sprite.offset = placeholder_sprite_offset
 	if modular_sidearm_sprite:
 		modular_sidearm_sprite.position = placeholder_sprite_position
 		modular_sidearm_sprite.offset = placeholder_sprite_offset
@@ -12520,14 +12240,10 @@ func _capture_runtime_visual_base_positions() -> void:
 		_animated_sprite_base_position = animated_sprite.position
 	if dodge_fx_back_sprite:
 		_dodge_fx_back_base_position = dodge_fx_back_sprite.position
-	if modular_cape_sprite:
-		_modular_cape_base_position = modular_cape_sprite.position
 	if modular_lower_body_sprite:
 		_modular_lower_body_base_position = modular_lower_body_sprite.position
 	if modular_upper_body_sprite:
 		_modular_upper_body_base_position = modular_upper_body_sprite.position
-	if modular_head_sprite:
-		_modular_head_base_position = modular_head_sprite.position
 	if modular_sidearm_sprite:
 		_modular_sidearm_base_position = modular_sidearm_sprite.position
 	if modular_upper_fx_sprite:
@@ -12677,6 +12393,17 @@ func _update_primary_weapon_visual(is_firing: bool) -> void:
 			ranged_fx_overlay_sprite.visible = false
 			ranged_fx_overlay_sprite.stop()
 		return
+	# Two-handed ranged stance, aim, fire and reload are owned by the canonical
+	# modular/static presentation. The old generic weapon strips are compatibility
+	# aliases and must not become a fallback renderer when a modular layer is absent.
+	if _is_using_ranged_2h_primary():
+		if primary_weapon_socket:
+			primary_weapon_socket.rotation = 0.0
+		if primary_weapon_sprite:
+			primary_weapon_sprite.visible = false
+		if ranged_fx_overlay_sprite:
+			ranged_fx_overlay_sprite.visible = false
+		return
 	var is_melee_mode = _is_using_melee_weapon_sprite() and not _is_ranged_ready_active()
 	var show_attack_weapon_overlay := is_melee_mode and (_melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active)
 	var show_block_weapon_overlay := is_melee_mode and _is_block_state_active()
@@ -12790,8 +12517,8 @@ func _apply_active_weapon_frames() -> void:
 	var weapon_definition = _get_active_ranged_weapon_definition() if _is_ranged_ready_active() else _get_equipped_primary_weapon_definition()
 	if weapon_definition != null and weapon_definition.frames_resource:
 		primary_weapon_sprite.sprite_frames = weapon_definition.frames_resource
-	elif primary_weapon_frames_resource:
-		primary_weapon_sprite.sprite_frames = primary_weapon_frames_resource
+	else:
+		primary_weapon_sprite.sprite_frames = OPERATOR_RUNTIME_FRAMES
 func _refresh_primary_weapon_state() -> void:
 	_apply_active_weapon_frames()
 	if use_tiny_rpg_placeholder_soldier:
@@ -12813,40 +12540,120 @@ func _refresh_primary_weapon_state() -> void:
 	_update_primary_weapon_visual(false)
 
 
-func _setup_animation_state_machine() -> void:
-	_animation_state_machine = AnimationStateMachine.new()
-	_animation_state_machine.sprite = animated_sprite
-	_animation_state_machine.playback = _animation_player
-	_animation_state_machine.actor = self
-	_animation_state_machine.register_state(IdleState.new())
-	_animation_state_machine.register_state(WalkState.new())
-	_animation_state_machine.register_state(SprintState.new())
-	_animation_state_machine.register_state(BlockState.new())
-	_animation_state_machine.register_state(EquipWeaponState.new())
-	_animation_state_machine.register_state(SheatheWeaponState.new())
-	var hit_recoil_state := HitRecoilState.new()
-	hit_recoil_state.recoil_duration = operator_light_reaction_stun_duration
-	_animation_state_machine.register_state(hit_recoil_state)
-	_animation_state_machine.register_state(AttackFastState.new())
-	_animation_state_machine.register_state(AttackHeavyState.new())
-	_animation_state_machine.register_state(DeathState.new())
-	_animation_state_machine.current_state = "idle"
+func _setup_operator_action_controller() -> void:
+	_action_controller = OperatorActionControllerScript.new()
+	_action_controller.action_entered.connect(_on_operator_action_entered)
+	_action_controller.action_exited.connect(_on_operator_action_exited)
+	_get_operator_presentation_controller()
 
 
-func _update_animation_state_machine(delta: float) -> void:
-	if _animation_state_machine == null:
+func _get_operator_presentation_controller() -> OperatorPresentationController:
+	if _presentation_controller == null:
+		_presentation_controller = OperatorPresentationControllerScript.new(
+			_body_presenter,
+			_animation_player,
+			_get_operator_animation_selector()
+		)
+	return _presentation_controller
+
+
+func _on_operator_action_entered(action: StringName, _sequence: int, _reentry: bool) -> void:
+	match action:
+		OperatorActionControllerScript.FAST_ATTACK:
+			start_attack("melee_fast")
+		OperatorActionControllerScript.HEAVY_ATTACK:
+			start_attack("melee_heavy")
+		OperatorActionControllerScript.BLOCK:
+			start_block()
+		OperatorActionControllerScript.EQUIP:
+			start_equip_weapon_presentation()
+		OperatorActionControllerScript.SHEATHE:
+			start_sheathe_weapon_presentation()
+		OperatorActionControllerScript.DAMAGE_REACTION:
+			_begin_operator_damage_reaction()
+		OperatorActionControllerScript.DEATH:
+			_present_operator_death_animation()
+
+
+func _on_operator_action_exited(action: StringName, _sequence: int) -> void:
+	if action == OperatorActionControllerScript.DAMAGE_REACTION:
+		finish_damage_reaction_presentation()
+
+
+func _begin_operator_damage_reaction() -> void:
+	_damage_reaction_duration = maxf(0.01, get_damage_reaction_duration("hit_recoil"))
+	_damage_reaction_animation = get_damage_reaction_animation("hit_recoil")
+	_damage_reaction_modular_handled = begin_modular_damage_reaction("hit_recoil")
+	if not _damage_reaction_modular_handled:
+		if animated_sprite == null or animated_sprite.sprite_frames == null:
+			return
+		if _damage_reaction_animation.is_empty():
+			return
+		if not animated_sprite.sprite_frames.has_animation(_damage_reaction_animation):
+			return
+		animated_sprite.speed_scale = 1.0
+		_get_operator_presentation_controller().play_animation(
+			animated_sprite, _damage_reaction_animation, true
+		)
+	play_damage_reaction_fx(_damage_reaction_animation, _damage_reaction_modular_handled)
+
+
+func _present_operator_death_animation() -> void:
+	if animated_sprite == null:
 		return
-	if _portal_transition_locked or _portal_arrival_animation_active:
+	var plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.LEGACY_FULL_BODY,
+		[animated_sprite]
+	)
+	_get_operator_presentation_controller().present_omni_animation(
+		plan,
+		animated_sprite,
+		&"unarmed",
+		&"reaction",
+		&"death_01",
+		&"full_body"
+	)
+
+
+func _update_operator_actions(delta: float) -> void:
+	if _action_controller == null or _portal_transition_locked or _portal_arrival_animation_active:
 		return
-	_animation_state_machine._process(delta)
-	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup:
+	var action := _action_controller.current_action
+	if action.is_empty():
+		if _is_block_state_active():
+			_action_controller.request(OperatorActionControllerScript.BLOCK, 8)
 		return
-	if _is_block_state_active():
-		_animation_state_machine.request("block", 8)
-		return
-	var desired_state := _get_desired_animation_state()
-	var state_priority := 1 if desired_state == "walk" or desired_state == "sprint" else 0
-	_animation_state_machine.request(desired_state, state_priority)
+	_action_controller.advance(delta)
+	match action:
+		OperatorActionControllerScript.FAST_ATTACK:
+			if is_attack_state_complete("fast"):
+				_action_controller.complete(action)
+		OperatorActionControllerScript.HEAVY_ATTACK:
+			if is_attack_state_complete("heavy"):
+				_action_controller.complete(action)
+		OperatorActionControllerScript.BLOCK:
+			if update_block_state() != "block":
+				_action_controller.complete(action)
+		OperatorActionControllerScript.EQUIP:
+			if is_equip_weapon_presentation_complete():
+				_action_controller.complete(action)
+		OperatorActionControllerScript.SHEATHE:
+			if is_sheathe_weapon_presentation_complete():
+				var needs_draw := commit_pending_weapon_selection_after_sheathe()
+				_action_controller.complete(action)
+				if needs_draw:
+					_action_controller.request(OperatorActionControllerScript.EQUIP, 5)
+		OperatorActionControllerScript.DAMAGE_REACTION:
+			if _action_controller.elapsed >= _damage_reaction_duration:
+				_action_controller.complete(action)
+			elif _damage_reaction_modular_handled and not is_modular_damage_reaction_playing():
+				_action_controller.complete(action)
+			elif not _damage_reaction_modular_handled \
+			and not _damage_reaction_animation.is_empty() \
+			and animated_sprite != null \
+			and animated_sprite.animation == _damage_reaction_animation \
+			and not animated_sprite.is_playing():
+				_action_controller.complete(action)
 
 
 func _get_desired_animation_state() -> String:
@@ -14075,9 +13882,9 @@ func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hit
 	_last_damage_reaction_direction = impact_direction
 	_interrupt_active_combat_for_damage_reaction()
 	velocity = impact_direction * (knockback_px / maxf(0.16, _enemy_impact_lock_timer))
-	if _animation_state_machine != null:
+	if _action_controller != null:
 		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
-		_animation_state_machine.request("hit_recoil", 24)
+		_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 24)
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("on_damage_taken"):
 		camera.call("on_damage_taken", impact_direction)
@@ -14095,19 +13902,19 @@ func apply_enemy_falcon_punch_impact(direction: Vector2, knockback_px: float, vi
 	_last_damage_reaction_direction = impact_direction
 	_interrupt_active_combat_for_damage_reaction()
 	velocity = impact_direction * (knockback_px / maxf(0.13, _enemy_impact_lock_timer))
-	if _animation_state_machine != null:
+	if _action_controller != null:
 		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
-		_animation_state_machine.request("hit_recoil", 24)
+		_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 24)
 	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
 	if camera != null and camera.has_method("on_damage_taken"):
 		camera.call("on_damage_taken", impact_direction)
 
 func _request_damage_reaction(_amount: float, hit_strength: int = CombatConstants.HitStrength.LIGHT) -> void:
-	if _animation_state_machine == null:
+	if _action_controller == null:
 		return
 	_damage_reaction_strength = hit_strength
 	_interrupt_active_combat_for_damage_reaction()
-	_animation_state_machine.request("hit_recoil", 20)
+	_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 20)
 
 
 func begin_modular_damage_reaction(state_name: String) -> bool:
@@ -14164,7 +13971,6 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 	_modular_damage_reaction_active = true
 	_modular_damage_reaction_animation = lower_animation
 	_modular_damage_reaction_upper_animation = upper_animation
-	_modular_damage_reaction_head_animation = &""
 	_modular_damage_reaction_sector = resolved_sector
 	# Declare before configuring. This used to claim the body AFTER playing every
 	# layer, which is the incremental ordering the strict presenter rejects.
@@ -14179,28 +13985,11 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 		upper_animation,
 		target_fps
 	)
-	if ACTIVE_MODULAR_HEAD \
-	and modular_head_sprite != null \
-	and modular_head_sprite.sprite_frames != null \
-	and _has_playable_sprite_animation(
-		modular_head_sprite.sprite_frames,
-		lower_animation
-	):
-		_modular_damage_reaction_head_animation = lower_animation
-		_play_synchronized_modular_reaction_layer(
-			modular_head_sprite,
-			lower_animation,
-			target_fps
-		)
-	else:
-		_hide_modular_head_layer()
-
 	# The legacy body is retired and stopped by the modular handoff above; it no
 	# longer needs stopping by hand, and no longer keeps playing while hidden.
 	for sprite in [
 		modular_sidearm_sprite,
 		modular_upper_fx_sprite,
-		modular_cape_sprite,
 		melee_weapon_overlay_sprite,
 		melee_fx_overlay_sprite,
 		primary_weapon_sprite,
@@ -14214,7 +14003,6 @@ func begin_modular_damage_reaction(state_name: String) -> bool:
 		"animation": lower_animation,
 		"upper_animation": upper_animation,
 		"projected": OperatorAnimationSelector.vector_to_sector(facing) != resolved_sector,
-		"head": not _modular_damage_reaction_head_animation.is_empty(),
 	})
 	return true
 
@@ -14366,13 +14154,11 @@ func finish_damage_reaction_presentation() -> void:
 	_modular_damage_reaction_active = false
 	_modular_damage_reaction_animation = &""
 	_modular_damage_reaction_upper_animation = &""
-	_modular_damage_reaction_head_animation = &""
 	if modular_was_active:
 		for sprite in [
 			modular_lower_body_sprite,
 			modular_upper_body_sprite,
-			modular_head_sprite,
-		]:
+			]:
 			if sprite != null:
 				_hide_presentation_layer(sprite, true)
 				sprite.frame = 0
@@ -14387,9 +14173,8 @@ func finish_damage_reaction_presentation() -> void:
 			melee_fx_overlay_sprite.frame = 0
 	if modular_was_active:
 		_update_primary_weapon_visual(false)
-		# AnimationStateMachine invokes this hook before it assigns the next
-		# state. Defer the locomotion resync so hit_recoil no longer suppresses
-		# the restored modular layers.
+		# Defer the locomotion resync until the damage action has released its
+		# ownership, so the restored modular layers are no longer suppressed.
 		if is_inside_tree():
 			call_deferred("_update_animation")
 		else:
@@ -14485,14 +14270,8 @@ func _handle_death() -> void:
 	stamina = 0.0
 	velocity = Vector2.ZERO
 	disable_hitbox()
-	if _animation_state_machine != null:
-		_animation_state_machine.request("death", 20)
-	if animated_sprite and animated_sprite.sprite_frames:
-		var death_animation := "unarmed_death" if _is_current_profile_unarmed() else "death"
-		if not animated_sprite.sprite_frames.has_animation(death_animation):
-			death_animation = "death"
-		if animated_sprite.sprite_frames.has_animation(death_animation):
-			_animation_player.play(animated_sprite, death_animation)
+	if _action_controller != null:
+		_action_controller.request(OperatorActionControllerScript.DEATH, 20)
 	operator_down.emit(death_context.duplicate(true))
 	await get_tree().create_timer(1.6).timeout
 	_finish_death()
@@ -14561,12 +14340,8 @@ func _finish_death() -> void:
 	_is_dead = false
 	_obs_gauge(&"player_alive", true)
 	_obs_gauge(&"player_dead", false)
-	if _animation_state_machine != null:
-		# DeathState is terminal and non-interruptible; respawn must force the
-		# state machine back to an input-eligible state before queued weapon
-		# selections can apply again.
-		_animation_state_machine.current_state = ""
-		_animation_state_machine.request("idle", 0)
+	if _action_controller != null:
+		_action_controller.reset_for_respawn()
 	try_apply_pending_weapon_selection()
 
 func update_visuals():

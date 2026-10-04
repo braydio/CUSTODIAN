@@ -15,6 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Convert the reviewed post-D audit and reviewed GenerationGrid seam into the complete, dependency-correct implementation packet series needed to migrate the remaining generation pipeline to storage-agnostic semantics, add a pure-data backend, cut rejected candidate evaluation over to it, and retire the live-TileMap rejected-candidate path before D4.
 - Completion boundary: REFRESH-GATED on the passed `review-procgen-generation-grid-foundation`. The exact migration cluster graph and even the canonical GenerationGrid API do not exist yet, so this packet must not author implementation work from stale pre-foundation assumptions. After XR2, rewrite this same packet in place from the reviewed X1 inventory + reviewed X2 seam, then publish only the migration DAG that live evidence supports.
 - Current measured state: X1/X2 have not landed, so there is currently no reviewed post-D helper inventory, no canonical GenerationGrid seam, no pure-data backend, and no evidence-backed migration cluster dependency graph. `ProcGenTilemap` remains the live TileMap-backed generation working-state host. The previous packet text described reviewed predecessors as if they already existed.
@@ -48,6 +49,14 @@
 - Prevention / pipeline improvement: `<fill at closeout>`
 - Tooling / docs drift discovered: `<fill at closeout>`
 - Follow-up: `<fill at closeout>`
+
+
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
 

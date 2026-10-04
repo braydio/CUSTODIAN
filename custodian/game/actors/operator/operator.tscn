@@ -1,16 +1,12 @@
 [gd_scene format=3 uid="uid://d3xbaxlif3364"]
 
 [ext_resource type="Script" path="res://game/actors/operator/operator.gd" id="1_operator"]
+[ext_resource type="Script" path="res://game/world/bindings/operator_death_campaign_binding.gd" id="40_death_campaign_binding"]
 [ext_resource type="Resource" path="res://game/actors/operator/carbine_rifle_mk1_definition.tres" id="2_carbine_weapon"]
 [ext_resource type="Resource" path="res://game/actors/operator/vigil_pattern_dagger_definition.tres" id="3_melee_weapon"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_weapon_frames.tres" id="26_weapon_frames"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_melee_overlay_frames.tres" id="27_melee_overlay_frames"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_ranged_fx_frames.tres" id="28_ranged_fx_frames"]
 [ext_resource type="Script" path="res://game/actors/effects/blob_shadow.gd" id="29_blob_shadow"]
 [ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_character_64x32.png" id="29_contact_shadow"]
 [ext_resource type="SpriteFrames" path="res://content/sprites/operator/runtime/operator_runtime_frames.tres" id="39_canonical_runtime_frames"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_cape_frames.tres" id="34_modular_cape_frames"]
-[ext_resource type="SpriteFrames" path="res://game/actors/operator/operator_modular_head_frames.tres" id="37_modular_head_frames"]
 [ext_resource type="Script" path="res://game/actors/operator/components/weapon_feedback_presenter.gd" id="35_weapon_feedback"]
 [ext_resource type="PackedScene" path="res://game/vfx/combat/dodge_charge_feedback.tscn" id="36_dodge_charge_feedback"]
 [ext_resource type="PackedScene" path="res://game/actors/operator/components/operator_flashlight.tscn" id="38_flashlight"]
@@ -44,13 +40,9 @@ heavy_attack_stamina_cost = null
 heavy_attack_blocked_while_sprinting = null
 combat_target_range = null
 use_tiny_rpg_placeholder_soldier = false
-idle_main_sheet_path = null
-ranged_2h_stance_sheet_path = null
-ranged_2h_aim_sheet_path = null
 primary_weapon_definition = ExtResource("2_carbine_weapon")
 melee_weapon_definition = ExtResource("3_melee_weapon")
 idle_long_loop_threshold = null
-primary_weapon_frames_resource = ExtResource("26_weapon_frames")
 placeholder_sprite_position = null
 placeholder_sprite_offset = null
 right_hand_socket_position = null
@@ -104,12 +96,6 @@ position = Vector2(0, -18)
 sprite_frames = ExtResource("39_canonical_runtime_frames")
 offset = Vector2(0, 0)
 
-[node name="ModularCapeSprite" type="AnimatedSprite2D" parent="."]
-visible = false
-position = Vector2(0, -18)
-sprite_frames = ExtResource("34_modular_cape_frames")
-animation = &"unarmed_run_cape_up"
-
 [node name="ModularLowerBodySprite" type="AnimatedSprite2D" parent="."]
 visible = false
 position = Vector2(0, -18)
@@ -119,12 +105,6 @@ sprite_frames = ExtResource("39_canonical_runtime_frames")
 visible = false
 position = Vector2(0, -18)
 sprite_frames = ExtResource("39_canonical_runtime_frames")
-
-[node name="ModularHeadSprite" type="AnimatedSprite2D" parent="."]
-visible = false
-position = Vector2(0, -18)
-sprite_frames = ExtResource("37_modular_head_frames")
-animation = &"hooded_idle_down"
 
 [node name="ModularSidearmSprite" type="AnimatedSprite2D" parent="."]
 visible = false
@@ -158,16 +138,10 @@ position = Vector2(2, -12)
 position = Vector2(12, -13)
 
 [node name="PrimaryWeaponSprite" type="AnimatedSprite2D" parent="PrimaryWeaponSocket" unique_id=931819467]
-sprite_frames = ExtResource("26_weapon_frames")
-animation = &"ranged_2h_stance"
+sprite_frames = ExtResource("39_canonical_runtime_frames")
 
 [node name="WeaponSprite" type="Sprite2D" parent="PrimaryWeaponSocket"]
 visible = false
-
-[node name="RangedFxOverlaySprite" type="AnimatedSprite2D" parent="PrimaryWeaponSocket"]
-visible = false
-sprite_frames = ExtResource("28_ranged_fx_frames")
-animation = &"hidden"
 
 [node name="Barrel" type="Node2D" parent="PrimaryWeaponSocket" unique_id=594123787]
 position = Vector2(20, 2)
@@ -213,3 +187,6 @@ monitoring = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxRoot/WeaponHitbox" unique_id=388297284]
 position = Vector2(-1, 0)
 shape = SubResource("CircleShape2D_melee_hitbox")
+
+[node name="OperatorDeathCampaignBinding" type="Node" parent="."]
+script = ExtResource("40_death_campaign_binding")

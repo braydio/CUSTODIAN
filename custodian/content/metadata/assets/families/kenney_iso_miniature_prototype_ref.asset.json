@@ -1,0 +1,114 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "kenney_iso_miniature_prototype_ref",
+  "kind": "tile",
+  "runtime": {
+    "domain": "tiles/experiments/kenney_feasibility",
+    "owner": "kenney_iso_miniature_prototype_ref"
+  },
+  "canvas": {
+    "width": 256,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "floor_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "floor_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "slab_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slab_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "block_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "block_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "wall_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "wall_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "wall_corner_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "wall_corner_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "stairs_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "stairs_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "slope_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "slope_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "doorway_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "doorway_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "column_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "column_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    },
+    "pole_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "tile",
+      "variant": "pole_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 512
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "scene",
+      "path": "res://scenes/debug/kenney_isometric_blockout_feasibility.tscn"
+    }
+  ]
+}

@@ -113,6 +113,15 @@ Objective presentation defects may be validated automatically. Subjective visual
 baselines, art direction, aesthetic cohesion, composition preference, and game-feel
 judgment remain human-owned.
 
+If those subjective questions are important enough to require review after the
+objective checks are green, publish a compact external evidence bundle with
+`python3 custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`.
+The agent supplies focused reviewer questions and the Dropbox manifest path, then
+stops rather than performing its own aesthetic critique. Use
+`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` for the gate, evidence
+budget, rclone/Dropbox path contract, and handoff format. Do not commit the cloud
+review binaries to Git as routine evidence.
+
 For task authoring, any request for more than two full-frame stills, repeated
 full-frame capture after each edit, or full-motion capture must explain why the
 non-visual alternatives above cannot falsify the defect. Otherwise rewrite the

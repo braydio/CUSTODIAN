@@ -1,0 +1,637 @@
+{
+  "schema": "custodian.awakening_asset_batch_plan.v1",
+  "asset_set": "awakening_runtime_assets_batch02",
+  "status": "planned",
+  "date": "2026-10-01",
+  "workstream_id": "awakening-runtime-assets-batch02",
+  "inspected_main_commit": "440dccbb274707869eb0a9eebf109e6588a4f26c",
+  "reference_bundle": {
+    "filename": "custodian_awakening_batch02_reference_440dccbb2.zip",
+    "source_commit": "440dccbb274707869eb0a9eebf109e6588a4f26c",
+    "purpose": "Visual authority for authority inlays, ruin decals, dust motes, falling ash, and Gate wind dust. Reference copies are not intake assets."
+  },
+  "authorities": {
+    "asset_manifest": "design/04_architecture/AWAKENING_ASSET_MANIFEST.md",
+    "production_demand_registry": "custodian/content/metadata/assets/required_assets.registry.json",
+    "generated_human_queue": "REQUIRED_ASSETS.md",
+    "pipeline": "design/04_architecture/ASSET_PIPELINE_V2.md"
+  },
+  "status_snapshot": {
+    "scope": "P0/P1 required states for Awakening sections 01-10 plus the required 04↔05 connector underlay",
+    "required_states_total": 91,
+    "runtime_verified_or_published": 45,
+    "open_required_states": 46,
+    "after_this_batch_if_ingested": {
+      "runtime_verified_or_published": 55,
+      "open_required_states": 36
+    },
+    "notes": [
+      "All nine zone environment underlay/foreground pairs are published and bound.",
+      "Core hero/interactable art is complete except awakening_late_service_relay_lamp/idle.",
+      "Crèche fixtures are 7/7 published and Ambulatory fixtures are 5/6; those published fixture states are baked-only in current production plates.",
+      "Later standalone fixture families are registered but not ready as independent scene-bound runtime props.",
+      "Authority inlays, ruin decals, and the three required ambient FX families are registered and wholly unpublished on inspected main."
+    ]
+  },
+  "selection_rationale": "Complete the six required authority-route tiles and all three required ambient FX families in one ten-asset slice, then start the ruin-decal family with floor_crack_a. This closes four entire P1 families after ingest instead of leaving several families half-complete.",
+  "next_10": [
+    {
+      "order": 1,
+      "family": "awakening_authority_inlay",
+      "state": "straight",
+      "kind": "tile",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_authority_inlay.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_authority_inlay/straight_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_authority_inlay/straight.png",
+      "normalized_sheet_dimensions": [
+        32,
+        32
+      ],
+      "frame_dimensions": [
+        32,
+        32
+      ],
+      "frames": 1,
+      "fps": null,
+      "layout": "copy",
+      "loop": false,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 2,
+      "family": "awakening_authority_inlay",
+      "state": "corner",
+      "kind": "tile",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_authority_inlay.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_authority_inlay/corner_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_authority_inlay/corner.png",
+      "normalized_sheet_dimensions": [
+        32,
+        32
+      ],
+      "frame_dimensions": [
+        32,
+        32
+      ],
+      "frames": 1,
+      "fps": null,
+      "layout": "copy",
+      "loop": false,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 3,
+      "family": "awakening_authority_inlay",
+      "state": "t_junction",
+      "kind": "tile",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_authority_inlay.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_authority_inlay/t_junction_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_authority_inlay/t_junction.png",
+      "normalized_sheet_dimensions": [
+        32,
+        32
+      ],
+      "frame_dimensions": [
+        32,
+        32
+      ],
+      "frames": 1,
+      "fps": null,
+      "layout": "copy",
+      "loop": false,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 4,
+      "family": "awakening_authority_inlay",
+      "state": "cross",
+      "kind": "tile",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_authority_inlay.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_authority_inlay/cross_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_authority_inlay/cross.png",
+      "normalized_sheet_dimensions": [
+        32,
+        32
+      ],
+      "frame_dimensions": [
+        32,
+        32
+      ],
+      "frames": 1,
+      "fps": null,
+      "layout": "copy",
+      "loop": false,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 5,
+      "family": "awakening_authority_inlay",
+      "state": "ring_node",
+      "kind": "tile",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_authority_inlay.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_authority_inlay/ring_node_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_authority_inlay/ring_node.png",
+      "normalized_sheet_dimensions": [
+        32,
+        32
+      ],
+      "frame_dimensions": [
+        32,
+        32
+      ],
+      "frames": 1,
+      "fps": null,
+      "layout": "copy",
+      "loop": false,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 6,
+      "family": "awakening_authority_inlay",
+      "state": "threshold",
+      "kind": "tile",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_authority_inlay.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_authority_inlay/threshold_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_authority_inlay/threshold.png",
+      "normalized_sheet_dimensions": [
+        32,
+        32
+      ],
+      "frame_dimensions": [
+        32,
+        32
+      ],
+      "frames": 1,
+      "fps": null,
+      "layout": "copy",
+      "loop": false,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 7,
+      "family": "awakening_dust_motes",
+      "state": "loop",
+      "kind": "effect",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_dust_motes.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_dust_motes/loop_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_dust_motes/loop.png",
+      "normalized_sheet_dimensions": [
+        512,
+        64
+      ],
+      "frame_dimensions": [
+        64,
+        64
+      ],
+      "frames": 8,
+      "fps": 6,
+      "layout": "horizontal_strip",
+      "loop": true,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 8,
+      "family": "awakening_falling_ash",
+      "state": "loop",
+      "kind": "effect",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_falling_ash.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_falling_ash/loop_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_falling_ash/loop.png",
+      "normalized_sheet_dimensions": [
+        512,
+        64
+      ],
+      "frame_dimensions": [
+        64,
+        64
+      ],
+      "frames": 8,
+      "fps": 6,
+      "layout": "horizontal_strip",
+      "loop": true,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 9,
+      "family": "awakening_gate_wind_dust",
+      "state": "loop",
+      "kind": "effect",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_gate_wind_dust.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_gate_wind_dust/loop_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_gate_wind_dust/loop.png",
+      "normalized_sheet_dimensions": [
+        1024,
+        128
+      ],
+      "frame_dimensions": [
+        128,
+        128
+      ],
+      "frames": 8,
+      "fps": 8,
+      "layout": "horizontal_strip",
+      "loop": true,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    },
+    {
+      "order": 10,
+      "family": "awakening_ruin_decal",
+      "state": "floor_crack_a",
+      "kind": "tile",
+      "priority": "P1",
+      "required": true,
+      "family_schema": "custodian/content/metadata/assets/families/awakening_ruin_decal.asset.json",
+      "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_ruin_decal/floor_crack_a_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/awakening_ruin_decal/floor_crack_a.png",
+      "normalized_sheet_dimensions": [
+        64,
+        64
+      ],
+      "frame_dimensions": [
+        64,
+        64
+      ],
+      "frames": 1,
+      "fps": null,
+      "layout": "copy",
+      "loop": false,
+      "alpha": "true RGBA transparency",
+      "status": "planned_missing"
+    }
+  ],
+  "complete_needed_manifest": [
+    {
+      "family": "awakening_creche_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_ambulatory_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_attestation_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_locker_reliquary_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_dust_lung_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_undergate_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_gate_plaza_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_custodian_approach_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_late_service_environment",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_reliquary_dust_lung_connector",
+      "required": 1,
+      "verified": 1,
+      "status": "runtime_verified",
+      "note": "optional full_plate_foreground remains intentionally unbound/deferred"
+    },
+    {
+      "family": "awakening_creche_recovery_alcove",
+      "required": 2,
+      "verified": 2,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_creche_console",
+      "required": 1,
+      "verified": 1,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_dust_lung_lift",
+      "required": 1,
+      "verified": 1,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_designation_locker",
+      "required": 4,
+      "verified": 4,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "gate_of_dust",
+      "required": 5,
+      "verified": 5,
+      "status": "runtime_verified",
+      "note": "five continuity-port future states remain optional/deferred"
+    },
+    {
+      "family": "awakening_late_service_relay_lamp",
+      "required": 1,
+      "verified": 0,
+      "status": "missing",
+      "missing": [
+        "idle"
+      ]
+    },
+    {
+      "family": "awakening_creche_fixtures",
+      "required": 7,
+      "verified": 7,
+      "status": "baked_only",
+      "note": "published states exist; live zone plate is the presentation consumer"
+    },
+    {
+      "family": "awakening_ambulatory_fixtures",
+      "required": 6,
+      "verified": 5,
+      "status": "partial_baked_only",
+      "missing": [
+        "service_basin_b"
+      ]
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "required": 7,
+      "verified": 0,
+      "status": "not_ready_standalone",
+      "missing": [
+        "stele_intact",
+        "stele_scorched",
+        "stele_empty",
+        "stele_shattered",
+        "attestation_dais",
+        "torn_civic_banner",
+        "designation_sigil_fragment"
+      ]
+    },
+    {
+      "family": "awakening_reliquary_fixtures",
+      "required": 3,
+      "verified": 0,
+      "status": "not_ready_standalone",
+      "missing": [
+        "central_dry_basin",
+        "welded_locker",
+        "recalled_not_verified_locker"
+      ]
+    },
+    {
+      "family": "awakening_dust_lung_structures",
+      "required": 4,
+      "verified": 0,
+      "status": "not_ready_standalone",
+      "missing": [
+        "broken_bridge_a",
+        "broken_bridge_b",
+        "giant_duct",
+        "lift_lever"
+      ]
+    },
+    {
+      "family": "awakening_undergate_machinery",
+      "required": 6,
+      "verified": 0,
+      "status": "not_ready_standalone",
+      "missing": [
+        "transit_drum",
+        "route_coil",
+        "mechanism_plinth",
+        "blind_route_housing",
+        "register_shelving",
+        "register_route_map"
+      ]
+    },
+    {
+      "family": "awakening_approach_fixtures",
+      "required": 5,
+      "verified": 0,
+      "status": "not_ready_standalone",
+      "missing": [
+        "side_chapel_a",
+        "dead_brazier",
+        "burial_terrace",
+        "prayer_ring",
+        "root_broken_court"
+      ]
+    },
+    {
+      "family": "awakening_late_service_fixtures",
+      "required": 5,
+      "verified": 0,
+      "status": "not_ready_standalone",
+      "missing": [
+        "broken_pew_a",
+        "broken_pew_b",
+        "thread_anchor",
+        "white_thread_floor_bundle",
+        "mosaic_floor"
+      ]
+    },
+    {
+      "family": "awakening_authority_inlay",
+      "required": 6,
+      "verified": 0,
+      "status": "missing",
+      "missing": [
+        "straight",
+        "corner",
+        "t_junction",
+        "cross",
+        "ring_node",
+        "threshold"
+      ]
+    },
+    {
+      "family": "awakening_ruin_decal",
+      "required": 5,
+      "verified": 0,
+      "status": "missing",
+      "missing": [
+        "floor_crack_a",
+        "floor_crack_b",
+        "floor_crack_c",
+        "rubble_small",
+        "rubble_medium"
+      ]
+    },
+    {
+      "family": "awakening_creche_console_activation_fx",
+      "required": 1,
+      "verified": 1,
+      "status": "runtime_verified"
+    },
+    {
+      "family": "awakening_dust_motes",
+      "required": 1,
+      "verified": 0,
+      "status": "missing",
+      "missing": [
+        "loop"
+      ]
+    },
+    {
+      "family": "awakening_falling_ash",
+      "required": 1,
+      "verified": 0,
+      "status": "missing",
+      "missing": [
+        "loop"
+      ]
+    },
+    {
+      "family": "awakening_gate_wind_dust",
+      "required": 1,
+      "verified": 0,
+      "status": "missing",
+      "missing": [
+        "loop"
+      ]
+    }
+  ],
+  "optional_and_deferred": {
+    "connector": [
+      "awakening_reliquary_dust_lung_connector/full_plate_foreground"
+    ],
+    "gate_of_dust": [
+      "authority_wake",
+      "route_acquire",
+      "aperture_resolve",
+      "continuity_stable",
+      "shutdown"
+    ],
+    "awakening_creche_fixtures": [
+      "collapsed_service_harness",
+      "cracked_sidearm_holster",
+      "petrified_bandage_spool",
+      "maintenance_slate"
+    ],
+    "awakening_ambulatory_fixtures": [
+      "hanging_cloth_a",
+      "hanging_cloth_b",
+      "hanging_cloth_c",
+      "ritual_washing_bowl"
+    ],
+    "awakening_attestation_fixtures": [
+      "stamped_plate_pile_a",
+      "stamped_plate_pile_b"
+    ],
+    "awakening_reliquary_fixtures": [
+      "dust_filled_locker",
+      "maintenance_sleeve",
+      "field_white_cord_bundle"
+    ],
+    "awakening_dust_lung_structures": [
+      "counterweight",
+      "scavenger_nest",
+      "broken_railing"
+    ],
+    "awakening_undergate_machinery": [
+      "dead_relay_cabinet",
+      "brass_needle",
+      "track_coupler"
+    ],
+    "awakening_approach_fixtures": [
+      "side_chapel_b",
+      "side_chapel_c",
+      "processional_banner_a",
+      "processional_banner_b",
+      "roadside_monument"
+    ],
+    "awakening_late_service_fixtures": [
+      "broken_pew_c",
+      "altar_cloth",
+      "reward_cache",
+      "devotional_objects"
+    ],
+    "awakening_authority_inlay": [
+      "route_circle",
+      "civic_spear",
+      "attestation_mark"
+    ],
+    "awakening_ruin_decal": [
+      "root_intrusion",
+      "soot_bloom",
+      "dust_scour"
+    ],
+    "awakening_institutional_decal": [
+      "designation_seal",
+      "warning_plate",
+      "service_marker",
+      "route_marker",
+      "attestation_marker"
+    ],
+    "p2_effects": [
+      "awakening_relay_static/pulse",
+      "awakening_water_shimmer/loop"
+    ]
+  },
+  "explicitly_not_registered_current_pass": [
+    "Attestation Sentinel",
+    "Broken Approach Sentinel",
+    "Witness Sentinel",
+    "Dust-fed scavenger creature",
+    "Route-leech creature",
+    "Pale city bird",
+    "Audio",
+    "Custodian Field Terminal / Ashen Forum / Continuity Port later-section assets"
+  ],
+  "drift_notes": [
+    "custodian/asset_drop/inbox/awakening_ingest_manifest.json still reports awakening_undergate_environment as 896x1216 while the live family/runtime contract is 1536x1216. Treat that ingest manifest as stale until regenerated or explicitly archived.",
+    "custodian/asset_drop/source_work/awakening/next10_20260920/ASSET_BUNDLE_MANIFEST.json is a historical Batch 01 snapshot and must not be used as current status authority."
+  ]
+}

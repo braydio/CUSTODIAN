@@ -19,9 +19,25 @@ except ImportError:
 class ReviewContractTests(unittest.TestCase):
     def test_authoring_templates_match_structural_contract(self):
         root = Path(__file__).resolve().parents[3]
+        task_template = (root / "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md").read_text()
         review_template = (root / "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md").read_text()
         correction_template = (root / "custodian/docs/ai_context/AGENT_CORRECTION_PACKET_TEMPLATE.md").read_text()
+        self.assertIn("- Review: `auto`", task_template)
+        self.assertIn("- Review stage: `post-land`", task_template)
+        self.assertIn("- Review modes:", task_template)
+        self.assertIn("- Paired review workstream:", task_template)
+        self.assertIn("- Review cycle: `0`", task_template)
+        self.assertIn("- Max automatic review cycles: `2`", task_template)
+        self.assertIn("- Authoring chat:", task_template)
+        self.assertIn("Refresh owner:", task_template)
+        self.assertIn("ChatGPT/user planning refresh required:", task_template)
+        self.assertIn("Authoring chat:", review_template)
+        self.assertIn("Review rationale", task_template)
+        self.assertIn("low-risk exemption", task_template)
         self.assertIn(dispatch.BOUNDED_REVIEW_OVERRIDE, review_template)
+        self.assertIn("- Reviewer context: `fresh`", review_template)
+        self.assertIn("same-agent-fresh-context", review_template)
+        self.assertIn("different-agent", review_template)
         for field in ("Reviewed main", "Reviewed implementation acceptance", "Review evidence", "Correction threshold", "Focused validation"):
             self.assertIn(f"- {field}:", review_template)
         for field in CORRECTION_FIELDS:

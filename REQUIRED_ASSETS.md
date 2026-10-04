@@ -97,9 +97,6 @@ The opening dungeon ships as a greybox blockout and is fully playable without an
 |---|---|---|---|---|
 | needed | P1 `awakening_late_service_relay_lamp` | `custodian/content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png` | Relay-lamp altar hero prop. | Required state: `idle`. |
 | partial | P1 zone fixture families | `custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png` | Room-specific required set pieces and recommended dressing. | `awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts. |
-| needed | P1 `awakening_authority_inlay` | `custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_*_32.png` | Authority-route equal-cell floor inlays. | Required: `straight`, `corner`, `t_junction`, `cross`, `ring_node`, `threshold`. |
-| needed | P1 `awakening_ruin_decal` | `custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_*_64.png` | Ruin damage and rubble decal set. | Required: `floor_crack_a`, `floor_crack_b`, `floor_crack_c`, `rubble_small`, `rubble_medium`. |
-| needed | P1 ambient Awakening FX families | `custodian/content/sprites/effects/awakening/runtime/<family>/<family>__fx__effect__*__omni__8f__<size>.png` | Required environmental motion layers. | `awakening_dust_motes/loop` 64px at 6 FPS; `awakening_falling_ash/loop` 64px at 6 FPS; `awakening_gate_wind_dust/loop` 128px at 8 FPS. |
 
 ## Common Vaultwing Bonding Presentation
 

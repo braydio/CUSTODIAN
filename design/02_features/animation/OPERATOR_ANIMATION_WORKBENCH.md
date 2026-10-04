@@ -61,7 +61,9 @@ Operator source/runtime art is hydrated from the local cache only, without an
 implicit network fetch.
 
 The persistent art worktree uses the worktree-local `operator-authoring-v1`
-sparse profile. It keeps Operator authoring tools, the tested Godot/game and
+sparse profile. It includes repository Git hooks and their required
+`tools/validate_filenames.py` pre-commit dependency so Operator art commits
+execute the cross-platform filename gate inside the art checkout. It keeps Operator authoring tools, the tested Godot/game and
 validation dependencies, canonical Operator art/data, Operator-owned weapon
 art, and the Workbench plan while leaving reports, asset-drop material, and
 unrelated large art trees out of the checkout. Ordinary coordination worktrees
@@ -89,7 +91,11 @@ Persistent shell widgets belong to the retained main screen, not whichever
 modal is currently topmost. Activity events always append to UI state and the
 underlying main-screen log while dialogs are open. A failed session projection
 must preserve its exact Workbench error, open at most one error dialog, and
-must not report the semantic selection as successfully loaded.
+must not report the semantic selection as successfully loaded. Error dialogs focus
+the Close button and dismiss with Escape, Enter, or Close. Preview and motion
+playback clocks pause while an error dialog is open, without accumulating
+catch-up time. A stale-edit refusal never launches Aseprite or replaces saved
+Workbench pixels.
 
 ```bash
 operator ui
@@ -106,6 +112,36 @@ operator anim canvas resize unarmed fast_02 e --group attack --width 128 --heigh
 The manifest records exact repo-relative source/runtime provenance, file and pixel hashes, original frame contracts, centered integer placement, presentation-clock mapping, and the ordered editable-layer whitelist. Lua only assembles and exports workspace data. Python rejects unexpected pixels outside a binding rectangle, validates every candidate before replacement, backs up sources, performs atomic replacement, and invokes production rebuilding.
 
 Publishing edits the requested authored direction and, only when explicitly enabled in the publish review, may promote it to its horizontal counterpart (`e↔w`, `ne↔nw`, `se↔sw`). The option defaults OFF and is unavailable for `n`, `s`, and `omni`. Preview lists direct and mirror targets with CREATE/REPLACE status; replacing authored counterpart art is permitted only by this explicit promotion. Every publishing layer participates while reference/nonpublishing layers remain excluded. Mirroring flips each frame cell independently and reassembles the cells in their original temporal order, never flips the whole strip. Counterpart PNGs and timing sidecars share the direct publish transaction, journal, downstream build, validation, and rollback. The backend constructs counterpart paths through `operator_asset_schema.py`; this flow never uses `asset_drop/inbox`. CLI automation uses `--mirror-counterpart`. A source changed after assembly makes the session stale; publishing refuses unless the explicit `--force-stale-source` escape hatch is supplied.
+
+## Planned V3: new semantic animation creation
+
+Tracked by `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`.
+
+The planned **New Animation** flow extends the same Workbench/publisher rather
+than creating a second asset authority. A native Workbench creation starts from
+a validated semantic identity and proposed publish contract, creates only an
+ignored/disposable Aseprite session, and writes no canonical PNG until explicit
+Publish. Publication then derives source/runtime paths from
+`operator_asset_schema.py`, performs transactional CREATE, runs the existing
+Operator runtime sync, Godot import preflight/import, SpriteFrames/catalog
+rebuild, focused validation, and guarded landing. Failure deletes the newly
+created outputs and restores generated state exactly.
+
+This native-authoring path deliberately does **not** round-trip its own saved
+Workbench pixels through `asset_drop/inbox`. Asset Pipeline V2 already delegates
+Operator art to this specialized backend. The inbox remains the correct boundary
+for externally generated/imported/untrusted art that still needs intake,
+normalization, registration, and provenance review. An external runtime-ready
+Operator strip continues to use:
+
+```text
+custodian/asset_drop/inbox/operator/
+operator__<layer>__<profile>__<group>__<action>__<direction>__<N>f__<size>.png
+```
+
+Newly published art does not imply gameplay use. Until a presentation/runtime
+consumer selects the action, the UI must present it as source/catalog-present
+but DORMANT/unwired rather than LIVE.
 
 ## Contract migration: frame count and canvas
 
@@ -142,29 +178,18 @@ document is refused until saved. Publish constructs the new canonical size-token
 paths through `operator_asset_schema.py`, then uses the existing transactional
 runtime, compatibility, resource, import, validation, and rollback pipeline.
 
-## Compatibility SpriteFrames boundary
+## Canonical SpriteFrames publication
 
-`operator.tscn` still consumes ten generated compatibility `SpriteFrames`
-resources directly. They preserve legacy animation aliases such as
-`unarmed_run_right`, but their texture paths are generated projections rather
-than source authority. After the strict runtime build, publish runs:
+Workbench publish refreshes the V2 runtime and builds the canonical
+`content/sprites/operator/runtime/operator_runtime_frames.tres` before focused
+actor checks. It does not generate or back up actor-local compatibility
+SpriteFrames. Source timing remains recorded in the frozen migration evidence;
+new timing authority comes from authored sidecars and the runtime catalog.
 
-```bash
-python3 custodian/tools/pipelines/update_operator_compatibility_resources.py
-```
-
-This path-first generator resolves current strips from the semantic V2 catalog,
-updates safe full-strip aliases and their exact `AtlasTexture` frame count, and
-does not rewrite manually sliced or weapon-owned mappings. It also refreshes
-the catalog `.tres` paths before Godot import, avoiding a stale-resource load
-cycle. `--check` fails with `STALE OPERATOR SPRITEFRAMES RESOURCE` before actor
-smokes when any Operator runtime PNG reference is missing.
-
-Publish transactions back up all ten compatibility resources plus the catalog
-resource and journal old/new SHA-256 values. Rollback removes target PNG import
-sidecars, restores the old source and resource contracts, rebuilds the old
-runtime/catalog, runs the stale-path check, and proves `operator.tscn` loads via
-the modular-layer smoke. Failure of that recovery becomes `RECOVERY_REQUIRED`.
+Publish transactions back up canonical runtime SpriteFrames and the generated
+catalog alongside selected source/runtime paths. Rollback restores those
+canonical artifacts and proves the authored files and timing contracts are
+unchanged.
 
 ## Acceptance
 
@@ -186,6 +211,8 @@ protection, same-source conflict refusal, scoped staging, and resumable
 `LAND PENDING` behavior.
 
 ## V5 production cockpit
+
+> UX hierarchy planning is tracked in `OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`. Its five packets are refresh-gated planning drafts and do not supersede the current cockpit behavior until each packet is refreshed, signed off, implemented, and landed.
 
 `operator ui` has five shared-selection modes: `1` PLAN, `2` WORKBENCH, `3`
 PREVIEW, `4` TIMELINE, and `5` MOTION. The implementation plan JSON beside this document is

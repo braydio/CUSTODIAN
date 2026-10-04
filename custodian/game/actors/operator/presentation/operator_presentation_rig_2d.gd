@@ -5,16 +5,13 @@ const OPERATOR_VISUAL_NAMES := {
 	"Visual": true,
 	"DodgeFXBackSprite": true,
 	"AnimatedSprite2D": true,
-	"ModularCapeSprite": true,
 	"ModularLowerBodySprite": true,
 	"ModularUpperBodySprite": true,
-	"ModularHeadSprite": true,
 	"ModularSidearmSprite": true,
 	"ModularUpperFxSprite": true,
 	"MeleeWeaponOverlaySprite": true,
 	"MeleeFxOverlaySprite": true,
 	"PrimaryWeaponSprite": true,
-	"RangedFxOverlaySprite": true,
 	"OffhandPropSprite": true,
 }
 

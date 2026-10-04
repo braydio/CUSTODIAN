@@ -58,6 +58,7 @@ infrastructure, and survival decisions must be visible and consequential.
 
 ## Spatial and visual doctrine
 
+- `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` separates local biome, permanent region-frame/border/underlay presentation, and Archive Resolve. The first generated starting region selects the locked `ALPINE_PLATEAU` frame from `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`; future generated regions may select different frames without changing the local-biome or Archive Resolve authorities.
 - The game uses continuous local movement inside authored or generated spaces,
   with a fixed isometric presentation, readable collision, and stable camera
   ownership.

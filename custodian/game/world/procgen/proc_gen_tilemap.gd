@@ -17,13 +17,17 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 )
 const DERIVED_REBUILD_SCHEDULER_SCRIPT := preload("res://game/world/procgen/derived_rebuild_scheduler.gd")
 const PAUSE_AWARE_STREAMING_SCRIPT := preload("res://game/world/procgen/streaming/procgen_pause_aware_streaming.gd")
+const REVEAL_PRESENTATION_SCRIPT := preload("res://game/world/procgen/streaming/procgen_reveal_presentation.gd")
 const CHUNK_LIFECYCLE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_lifecycle.gd")
+const CHUNK_PAYLOAD_CACHE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_payload_cache.gd")
+const CHUNK_RESIDENCY_POLICY_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_residency_policy.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
 const SURFACE_MATERIAL_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/surface_material_resolver.gd")
 const SURFACE_MATERIAL_IDS := preload("res://game/world/procgen/surfaces/surface_material_ids.gd")
 const ROAD_SEMANTICS_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/road_semantics_resolver.gd")
+const ROAD_AUTHORITY_SCRIPT := preload("res://game/world/procgen/roads/procgen_road_authority.gd")
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
 )
@@ -215,6 +219,11 @@ const ENDLESS_FOREST_UNDERLAY := preload(
 const DROWNED_BASILICA_UNDERLAY := preload(
 	"res://game/world/procgen/presentation/underlays/drowned_basilica_underlay.tres"
 )
+const REGION_FRAME_PROFILES := {
+	&"alpine_plateau": preload(
+		"res://game/world/procgen/presentation/region_frames/alpine_plateau.tres"
+	),
+}
 enum WorldShapeMode {
 	LEGACY_CAVE,
 	ASCENT_FIELD,
@@ -460,8 +469,12 @@ enum WorldShapeMode {
 @export_range(1, 4, 1) var streaming_active_chunk_radius: int = 2
 @export_range(1, 256, 1) var streaming_reveal_tiles_per_frame: int = 96
 @export_range(0.05, 0.5, 0.01) var streaming_visual_rebuild_interval_sec: float = 0.15
-@export var streaming_unload_distant_chunks: bool = false
+@export var streaming_unload_distant_chunks: bool = true
+## Archive Resolve (AR1) presentation-only veil; disabling it never changes
+## streaming behavior. Tuning knobs live on the ProcGenRevealPresentation node.
+@export var archive_resolve_enabled: bool = true
 @export_range(2, 8, 1) var streaming_unload_chunk_distance: int = 4
+@export_range(1, 8, 1) var streaming_unload_chunks_per_frame: int = 1
 
 var _last_compound_rect: Rect2i = Rect2i()
 var _last_compound_ingress: Array[Vector2i] = []
@@ -478,18 +491,10 @@ var _last_compound_diagnostics: Dictionary = {}
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
-var _main_road_tiles: Dictionary = {}
-var _road_centerline_tiles: Dictionary = {}
-var _path_centerline_tiles: Dictionary = {}
 var _road_visual_tiles: Dictionary = {}
 var _path_visual_tiles: Dictionary = {}
-var _compound_connector_centerline_tiles: Array[Vector2i] = []
 var _compound_connector_visual_candidates: Dictionary = {}
-var _parking_zone_tiles: Dictionary = {}
-var _ruined_road_cells: Dictionary = {}
-var _service_hardstand_cells: Dictionary = {}
-var _road_semantics_summary: Dictionary = {}
-var _parking_zone_center: Vector2i = Vector2i.ZERO
+var _road_authority: ProcgenRoadAuthority = ROAD_AUTHORITY_SCRIPT.new()
 var _region_tiles: Dictionary = {}
 var _wall_health: Dictionary = {}
 var _generated_floor_cells: Dictionary = {}
@@ -498,6 +503,10 @@ var _surface_kind_by_cell: Dictionary = {}
 var _surface_material_by_cell: Dictionary = {}
 var _surface_material_summary: Dictionary = {}
 var _chasm_cells: Dictionary = {}
+## Derived presentation masks (see NonwalkableSurfaceClassifier); never gameplay authority.
+var _exterior_chasm_cells: Dictionary = {}
+var _internal_chasm_cells: Dictionary = {}
+var _region_frame_profile_id: StringName = &""
 var _ocean_cells: Dictionary = {}
 var _sundered_keep_coastline_parent: Node2D = null
 var _sundered_keep_shore_overlay_parent: Node2D = null
@@ -511,13 +520,22 @@ var _runtime_prop_blocker_cells: Dictionary = {}
 var _runtime_prop_blocker_sources: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
 var _pause_aware_streaming: ProcGenPauseAwareStreaming = null
+var _reveal_presentation: ProcGenRevealPresentation = null
 var _chunk_lifecycle: ProcGenChunkLifecycle = null
+var _chunk_payload_cache: ProcGenChunkPayloadCache = null
+var _chunk_residency_policy: ProcGenChunkResidencyPolicy = null
 var _streaming_player: Node2D = null
 var _streaming_current_chunk: Vector2i = Vector2i(999999, 999999)
 var _navigation_rebuild_pending: bool = false
 var _navigation_rebuild_deferred: bool = false
 var _streaming_visual_rebuild_pending: bool = false
 var _streaming_visual_rebuild_accum: float = 0.0
+## True once a reveal commit made a rebuild pending; an eviction-only pending
+## rebuild leaves this false so it batches on the interval cadence instead of
+## flushing on the next queue-drained frame.
+var _streaming_reveal_flush_owed: bool = false
+## Count of completed full visual-rebuild flushes; test/telemetry only.
+var _streaming_visual_flush_count: int = 0
 var shadow_system: Node = null
 
 
@@ -828,6 +846,8 @@ func _ready() -> void:
 	if not generation_output_enabled:
 		return
 	_chunk_lifecycle = CHUNK_LIFECYCLE_SCRIPT.new()
+	_chunk_payload_cache = CHUNK_PAYLOAD_CACHE_SCRIPT.new()
+	_chunk_residency_policy = CHUNK_RESIDENCY_POLICY_SCRIPT.new()
 	_pause_aware_streaming = PAUSE_AWARE_STREAMING_SCRIPT.new()
 	add_child(_pause_aware_streaming)
 	_pause_aware_streaming.configure(
@@ -838,6 +858,14 @@ func _ready() -> void:
 		_on_streaming_tile_prepared,
 		_on_streaming_tile_committed
 	)
+	_reveal_presentation = get_node_or_null("ArchiveResolveVeil") as ProcGenRevealPresentation
+	if _reveal_presentation == null:
+		_reveal_presentation = REVEAL_PRESENTATION_SCRIPT.new()
+		_reveal_presentation.name = "ArchiveResolveVeil"
+		_reveal_presentation.z_index = 2
+		add_child(_reveal_presentation)
+	_reveal_presentation.configure(tile_to_global_position, get_runtime_tile_size())
+	_reveal_presentation.effect_enabled = archive_resolve_enabled
 	add_to_group("procgen_render_isolation")
 	_cache_procgen_major_visual_items()
 	var dev_mode := get_node_or_null("/root/DevMode")
@@ -1008,6 +1036,9 @@ func _process(delta: float) -> void:
 
 	if enable_streaming_reveal:
 		_process_streaming_reveal_queue(delta)
+		_advance_reveal_presentation(delta)
+		if streaming_unload_distant_chunks:
+			_drain_residency_eviction()
 
 
 func _publish_presentation_node_gauges() -> void:
@@ -1066,6 +1097,7 @@ func get_walls_tilemap() -> TileMapLayer:
 
 func apply_planet_world_profile(profile: Dictionary) -> void:
 	_planet_world_profile = profile.duplicate(true)
+	_region_frame_profile_id = StringName(String(_planet_world_profile.get("region_frame_profile_id", "")))
 	compound_area_ratio = clamp(float(_planet_world_profile.get("compound_area_ratio", compound_area_ratio)), 0.10, 0.20)
 	open_layout_chance = clamp(float(_planet_world_profile.get("open_layout_chance", open_layout_chance)), 0.0, 1.0)
 	open_layout_carve_ratio = clamp(float(_planet_world_profile.get("open_layout_carve_ratio", open_layout_carve_ratio)), 0.0, 0.6)
@@ -1078,6 +1110,8 @@ func apply_planet_world_profile(profile: Dictionary) -> void:
 	foliage_tree_wind_strength_px = clampf(float(_planet_world_profile.get("foliage_tree_wind_strength_px", foliage_tree_wind_strength_px)), 0.0, 3.0)
 	foliage_wind_gust_amount = clampf(float(_planet_world_profile.get("foliage_wind_gust_amount", foliage_wind_gust_amount)), 0.0, 1.0)
 	_apply_planet_visual_profile()
+	if is_node_ready() and depth_backdrop != null and depth_backdrop.is_node_ready():
+		_refresh_depth_backdrop()
 
 
 func get_planet_world_profile() -> Dictionary:
@@ -1357,8 +1391,8 @@ func _fill_tilemaps() -> void:
 	if story_rooms_enabled:
 		_place_story_rooms(map_size)
 		_stamp_worldgen_story_room_geometry()
-	if intent_main_roads_enabled and _parking_zone_center != Vector2i.ZERO:
-		_stamp_parking_zone(_parking_zone_center, map_size)
+	if intent_main_roads_enabled and _road_authority.parking_zone_center != Vector2i.ZERO:
+		_stamp_parking_zone(_road_authority.parking_zone_center, map_size)
 	_enforce_route_playability_walkability(map_size)
 	_marks["progress_faction_story"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
@@ -1474,6 +1508,16 @@ func _fill_tilemaps() -> void:
 	# accepted-candidate floor fingerprint contract) and must run in the same
 	# pass that establishes floor authority, so it stays unconditional here.
 	_apply_sundered_keep_frontage_floor_visuals()
+	# _enforce_route_playability_walkability() and
+	# _apply_sundered_keep_frontage_floor_visuals() both run after
+	# _prepare_streaming_reveal() has already primed/cached chunks and can
+	# still mutate _generated_floor_cells/_generated_wall_cells (late
+	# generation finalization). Both route through the same small set of
+	# canonical floor/wall setters every other write site uses
+	# (_set_floor_tile_and_generated_state / _apply_terrain_tile_visual /
+	# _set_terrain_floor_visual / _set_terrain_wall_visual), each of which
+	# precisely invalidates its own tile's chunk, so no separate bulk reset
+	# is needed here.
 	# Shoreline decoration and the runtime walkable-boundary collision body
 	# are final-presentation/collision-only: they never write to level_data
 	# or any field CandidateEvaluator reads, so rejected eval-mode candidates
@@ -1657,6 +1701,8 @@ func _apply_floor_value_clusters(result: Dictionary, seed: int) -> void:
 			"atlas": atlas,
 			"alternative": 0,
 		}
+		if _chunk_payload_cache != null:
+			_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 		changed_cells.append(cell)
 
 	_last_floor_value_cluster_summary = {
@@ -1707,8 +1753,8 @@ func _is_floor_value_cluster_cell_safe(
 	if required_lookup.has(cell) \
 			or _last_interior_thresholds.has(cell) \
 			or _last_compound_ingress.has(cell) \
-			or _road_centerline_tiles.has(cell) \
-			or _path_centerline_tiles.has(cell):
+			or _road_authority.road_centerline_tiles.has(cell) \
+			or _road_authority.path_centerline_tiles.has(cell):
 		return false
 	if _is_combat_readability_floor_tile(cell):
 		return false
@@ -2342,13 +2388,9 @@ func _stamp_spawn_clearing(map_size: Vector2i) -> void:
 
 
 func _carve_main_roads(map_size: Vector2i) -> void:
-	_main_road_tiles.clear()
-	_road_centerline_tiles.clear()
+	_road_authority.reset_generated_roads()
 	_road_visual_tiles.clear()
-	_compound_connector_centerline_tiles.clear()
 	_compound_connector_visual_candidates.clear()
-	_parking_zone_tiles.clear()
-	_parking_zone_center = Vector2i.ZERO
 	if procgen_node == null:
 		return
 
@@ -2377,8 +2419,8 @@ func _carve_main_roads(map_size: Vector2i) -> void:
 
 	if intent_compound_connector_corridor_enabled:
 		_carve_compound_connector_corridor(spawn, trunk_anchor, map_size)
-	if not _compound_connector_centerline_tiles.is_empty():
-		required_road_anchors.append(_compound_connector_centerline_tiles.back())
+	if not _road_authority.compound_connector_centerline_tiles.is_empty():
+		required_road_anchors.append(_road_authority.compound_connector_centerline_tiles.back())
 	_repair_road_connectivity(required_road_anchors, trunk_anchor, road_width, map_size)
 	var parking_anchor := _pick_parking_anchor(spawn, trunk_anchor, map_size)
 	_carve_main_road_path(spawn, parking_anchor, maxi(1, road_width - 1), map_size)
@@ -2400,9 +2442,9 @@ func _stamp_ascent_route_presentation(map_size: Vector2i) -> void:
 			continue
 		var distance := int(centerline_distance.get(cell, 999999))
 		if distance <= 2:
-			_main_road_tiles[cell] = true
+			_road_authority.add_road_tile(cell)
 			if distance == 0:
-				_road_centerline_tiles[cell] = true
+				_road_authority.add_road_centerline_tile(cell)
 			if _should_preserve_route_role_visual(cell):
 				continue
 			if distance == 0:
@@ -2452,135 +2494,48 @@ func _pick_primary_road_compound_anchor(spawn: Vector2i) -> Vector2i:
 
 
 func _repair_road_connectivity(required_anchors: Array[Vector2i], root_anchor: Vector2i, width: int, map_size: Vector2i) -> void:
-	if required_anchors.is_empty() or _main_road_tiles.is_empty():
-		return
-	var root := root_anchor
-	if not _main_road_tiles.has(root):
-		root = required_anchors[0]
-	for anchor in required_anchors:
-		if _main_road_tiles.has(anchor):
-			root = anchor
-			break
-	var connected := _collect_connected_road_tiles(root)
-	for anchor in required_anchors:
-		if not _is_tile_inside_map(anchor, map_size, 1):
-			continue
-		if connected.has(anchor):
-			continue
-		_carve_main_road_path(root, anchor, maxi(1, width), map_size)
-		connected = _collect_connected_road_tiles(root)
+	for _attempt in range(required_anchors.size()):
+		var repair := _road_authority.next_required_road_anchor(required_anchors, root_anchor, map_size)
+		if repair.is_empty():
+			return
+		_carve_main_road_path(repair["from"], repair["to"], maxi(1, width), map_size)
 
 
 func _repair_road_surface_components(map_size: Vector2i, width: int) -> void:
-	var components := _collect_road_surface_components()
+	var components := _road_authority.road_surface_components_largest_first()
 	if components.size() <= 1:
 		return
-	components.sort_custom(func(a: Array[Vector2i], b: Array[Vector2i]) -> bool:
-		return a.size() > b.size()
-	)
 	var primary: Array[Vector2i] = components[0]
 	for index in range(1, components.size()):
 		var component: Array[Vector2i] = components[index]
-		var pair := _find_nearest_road_component_pair(primary, component)
+		var pair := _road_authority.next_component_repair_pair(primary, component)
 		if pair.size() != 2:
 			continue
 		_carve_main_road_path(pair[0], pair[1], maxi(1, width), map_size)
-		primary = _dict_keys_as_vector2i_array(_collect_connected_road_tiles(primary[0]))
-
-
-func _collect_road_surface_components() -> Array[Array]:
-	var components: Array[Array] = []
-	var remaining := {}
-	for tile_variant in _main_road_tiles.keys():
-		if tile_variant is Vector2i:
-			remaining[tile_variant] = true
-	while not remaining.is_empty():
-		var start := remaining.keys()[0] as Vector2i
-		var component: Array[Vector2i] = []
-		var frontier: Array[Vector2i] = [start]
-		remaining.erase(start)
-		while not frontier.is_empty():
-			var tile: Vector2i = frontier.pop_front()
-			component.append(tile)
-			for direction in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
-				var next: Vector2i = tile + direction
-				if not remaining.has(next):
-					continue
-				remaining.erase(next)
-				frontier.append(next)
-		components.append(component)
-	return components
-
-
-func _find_nearest_road_component_pair(primary: Array[Vector2i], component: Array[Vector2i]) -> Array[Vector2i]:
-	if primary.is_empty() or component.is_empty():
-		return []
-	var best_from := primary[0]
-	var best_to := component[0]
-	var best_dist := best_from.distance_squared_to(best_to)
-	for from_tile in primary:
-		for to_tile in component:
-			var dist := from_tile.distance_squared_to(to_tile)
-			if dist < best_dist:
-				best_dist = dist
-				best_from = from_tile
-				best_to = to_tile
-	return [best_from, best_to]
+		primary = _dict_keys_as_vector2i_array(
+			_road_authority.connected_road_tiles(primary[0])
+		)
 
 
 func _prune_small_edge_road_components(map_size: Vector2i) -> void:
-	for component_variant in _collect_road_surface_components():
-		var component := component_variant as Array[Vector2i]
-		if component.size() >= 32 or not _road_component_touches_edge(component, map_size):
-			continue
-		for tile in component:
-			_main_road_tiles.erase(tile)
-			_road_centerline_tiles.erase(tile)
-			_road_visual_tiles.erase(tile)
-			_parking_zone_tiles.erase(tile)
-			var region := get_region_type_at_tile(tile)
-			if region == "main_road" or region == "compound_connector_road" or region == "parking_zone":
-				_region_tiles.erase(tile)
-			_remove_road_piece_decal(tile)
+	for tile in _road_authority.edge_prune_plan(map_size):
+		_road_authority.clear_generated_road_tiles(tile)
+		_road_visual_tiles.erase(tile)
+		var region := get_region_type_at_tile(tile)
+		if region == "main_road" or region == "compound_connector_road" or region == "parking_zone":
+			_region_tiles.erase(tile)
+		_remove_road_piece_decal(tile)
 
 
 func _prune_small_disconnected_road_components(
 	minimum_size: int
 ) -> void:
-	var spawn := get_player_spawn()
-	for component_variant in _collect_road_surface_components():
-		var component := component_variant as Array
-		if component.has(spawn) or component.size() >= minimum_size:
-			continue
-		for tile_variant in component:
-			if tile_variant is Vector2i:
-				_clear_procgen_road_authority_at(
-					tile_variant as Vector2i
-				)
-
-
-func _road_component_touches_edge(component: Array[Vector2i], map_size: Vector2i) -> bool:
-	for tile in component:
-		if tile.x <= 2 or tile.y <= 2 or tile.x >= map_size.x - 3 or tile.y >= map_size.y - 3:
-			return true
-	return false
+	for tile in _road_authority.disconnected_prune_plan(get_player_spawn(), minimum_size):
+		_clear_procgen_road_authority_at(tile)
 
 
 func _collect_connected_road_tiles(root: Vector2i) -> Dictionary:
-	var visited: Dictionary = {}
-	if not _main_road_tiles.has(root):
-		return visited
-	var frontier: Array[Vector2i] = [root]
-	visited[root] = true
-	while not frontier.is_empty():
-		var tile: Vector2i = frontier.pop_front()
-		for dir in [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]:
-			var next: Vector2i = tile + dir
-			if visited.has(next) or not _main_road_tiles.has(next):
-				continue
-			visited[next] = true
-			frontier.append(next)
-	return visited
+	return _road_authority.connected_road_tiles(root)
 
 
 func _pick_closest_road_target(anchor: Vector2i, targets: Array[Vector2i]) -> Vector2i:
@@ -2673,7 +2628,7 @@ func _int_sign(value: int) -> int:
 
 func _carve_main_road_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
-	_road_centerline_tiles[current] = true
+	_road_authority.add_road_centerline_tile(current)
 	_road_visual_tiles[current] = true
 	_carve_road_brush(current, width, map_size)
 	var step_index := 0
@@ -2681,14 +2636,14 @@ func _carve_main_road_path(from_tile: Vector2i, to_tile: Vector2i, width: int, m
 	if horizontal_first:
 		while current.x != to_tile.x:
 			current.x += 1 if to_tile.x > current.x else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
 			_carve_road_brush(current, width, map_size)
 		while current.y != to_tile.y:
 			current.y += 1 if to_tile.y > current.y else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
@@ -2696,14 +2651,14 @@ func _carve_main_road_path(from_tile: Vector2i, to_tile: Vector2i, width: int, m
 	else:
 		while current.y != to_tile.y:
 			current.y += 1 if to_tile.y > current.y else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
 			_carve_road_brush(current, width, map_size)
 		while current.x != to_tile.x:
 			current.x += 1 if to_tile.x > current.x else -1
-			_road_centerline_tiles[current] = true
+			_road_authority.add_road_centerline_tile(current)
 			step_index += 1
 			if step_index % maxi(1, road_piece_straight_stride_tiles) == 0:
 				_road_visual_tiles[current] = true
@@ -2721,7 +2676,7 @@ func _carve_road_brush(center: Vector2i, width: int, map_size: Vector2i) -> void
 				continue
 			if _is_road_blocked_by_impassable_authority(tile):
 				continue
-			_main_road_tiles[tile] = true
+			_road_authority.add_road_tile(tile)
 			_set_road_path_tile(tile, "road")
 			_set_region_tile(tile, "main_road", "travel")
 
@@ -2739,7 +2694,7 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 	var length: int = length_min + (_tile_noise_hash(ingress + Vector2i(2039, 577)) % maxi(1, length_max - length_min + 1))
 	var width: int = maxi(1, intent_compound_connector_half_width)
 	var wall_offset: int = width + maxi(1, intent_compound_connector_wall_gap_tiles)
-	_compound_connector_centerline_tiles.clear()
+	_road_authority.clear_compound_connector_centerline()
 	_compound_connector_visual_candidates.clear()
 
 	var last_center := ingress
@@ -2748,8 +2703,8 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 		if not _is_tile_inside_map(center, map_size, wall_offset + 1):
 			break
 		last_center = center
-		_compound_connector_centerline_tiles.append(center)
-		_road_centerline_tiles[center] = true
+		_road_authority.append_compound_connector_centerline(center)
+		_road_authority.add_road_centerline_tile(center)
 		if step == 1 or step == length or step % maxi(1, road_piece_straight_stride_tiles) == 0:
 			_road_visual_tiles[center] = true
 		_carve_road_brush(center, width, map_size)
@@ -2759,17 +2714,17 @@ func _carve_compound_connector_corridor(spawn: Vector2i, primary_anchor: Vector2
 		for side in [-1, 1]:
 			_stamp_compound_connector_wall(center + side_axis * int(side) * wall_offset, side_axis * int(side), map_size)
 
-	if not _compound_connector_centerline_tiles.is_empty():
+	if not _road_authority.compound_connector_centerline_tiles.is_empty():
 		_carve_main_road_path(spawn, last_center, maxi(1, width - 1), map_size)
 		if primary_anchor != Vector2i.ZERO and primary_anchor != ingress:
 			_carve_main_road_path(last_center, primary_anchor, maxi(1, width - 1), map_size)
 		# Joining the corridor to the broader road graph repaints region metadata as
 		# main_road. Restore the connector footprint label so the final visual pass
 		# can select Connector Pack art without changing floor authority.
-		for centerline_tile in _compound_connector_centerline_tiles:
+		for centerline_tile in _road_authority.compound_connector_centerline_tiles:
 			for lateral in range(-width, width + 1):
 				var connector_tile := centerline_tile + side_axis * lateral
-				if _main_road_tiles.has(connector_tile):
+				if _road_authority.main_road_tiles.has(connector_tile):
 					_set_region_tile(connector_tile, "compound_connector_road", "compound_ingress")
 
 
@@ -2779,7 +2734,7 @@ func _stamp_compound_connector_wall(center: Vector2i, outward_axis: Vector2i, ma
 		var tile := center + outward_axis * offset
 		if not _is_tile_inside_map(tile, map_size, 1):
 			continue
-		if _main_road_tiles.has(tile) or is_indoor_tile(tile):
+		if _road_authority.main_road_tiles.has(tile) or is_indoor_tile(tile):
 			continue
 		_set_wall_tile(tile)
 		_set_region_tile(tile, "compound_connector_wall", "compound_ingress")
@@ -2791,8 +2746,8 @@ func _protect_compound_ingress_tiles(map_size: Vector2i) -> void:
 			continue
 		if intent_main_roads_enabled:
 			_set_road_path_tile(ingress, "road")
-			_main_road_tiles[ingress] = true
-			_road_centerline_tiles[ingress] = true
+			_road_authority.add_road_tile(ingress)
+			_road_authority.add_road_centerline_tile(ingress)
 			_road_visual_tiles[ingress] = true
 		else:
 			# Compound access remains valid generated floor without promoting the
@@ -2802,7 +2757,7 @@ func _protect_compound_ingress_tiles(map_size: Vector2i) -> void:
 
 
 func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
-	_parking_zone_center = center
+	_road_authority.set_parking_zone_center(center)
 	var half := Vector2i(
 		maxi(1, intent_parking_zone_half_extents_tiles.x),
 		maxi(1, intent_parking_zone_half_extents_tiles.y)
@@ -2816,31 +2771,30 @@ func _stamp_parking_zone(center: Vector2i, map_size: Vector2i) -> void:
 				continue
 			if _is_road_blocked_by_impassable_authority(tile):
 				continue
-			_main_road_tiles[tile] = true
-			_parking_zone_tiles[tile] = true
+			_road_authority.add_parking_tile(tile)
 			_set_road_path_tile(tile, "road")
 			_set_region_tile(tile, "parking_zone", "vehicle_staging")
 			if x == 0 or y == 0 or (abs(x) % 3 == 0 and abs(y) % 2 == 0):
-				_road_centerline_tiles[tile] = true
+				_road_authority.add_parking_centerline_tile(tile)
 				_road_visual_tiles[tile] = true
 
 
 func _ensure_connected_parking_zone(map_size: Vector2i) -> void:
-	if _main_road_tiles.is_empty():
+	if _road_authority.main_road_tiles.is_empty():
 		return
 	var spawn := get_player_spawn()
 	var connected := _collect_connected_road_tiles(spawn)
-	for tile_variant in _parking_zone_tiles.keys():
+	for tile_variant in _road_authority.parking_zone_tiles.keys():
 		if connected.has(tile_variant):
 			return
 
-	if not _parking_zone_tiles.is_empty():
-		var old_root := _parking_zone_tiles.keys()[0] as Vector2i
+	if not _road_authority.parking_zone_tiles.is_empty():
+		var old_root := _road_authority.parking_zone_tiles.keys()[0] as Vector2i
 		var isolated := _collect_connected_road_tiles(old_root)
 		if not isolated.has(spawn):
 			for tile_variant in isolated.keys():
 				_clear_procgen_road_authority_at(tile_variant as Vector2i)
-	_parking_zone_tiles.clear()
+	_road_authority.clear_parking_tiles()
 
 	var candidates: Array[Vector2i] = []
 	for tile_variant in connected.keys():
@@ -3107,6 +3061,8 @@ func _claim_isolated_world_overlook_pocket(
 		if not _is_tile_inside_map(cell, map_size, 0):
 			continue
 		_generated_floor_cells.erase(cell)
+		if _chunk_payload_cache != null:
+			_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 		floor_tilemap.erase_cell(cell)
 		_remove_foliage(cell)
 		_clear_procgen_road_authority_at(cell)
@@ -3693,10 +3649,16 @@ func _force_authored_scene_floor_authority(
 		"atlas": atlas,
 		"alternative": 0,
 	}
-	if render_base_floor_visual:
-		floor_tilemap.set_cell(tile, source_id, atlas, 0)
-	else:
-		floor_tilemap.erase_cell(tile)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
+	# M6 streaming-paint guard: skip the visual write for a lifecycle-
+	# UNLOADED tile; reload COMMIT paints the canonical dictionary just
+	# written above.
+	if _is_tile_currently_visible(tile):
+		if render_base_floor_visual:
+			floor_tilemap.set_cell(tile, source_id, atlas, 0)
+		else:
+			floor_tilemap.erase_cell(tile)
 	_clear_procgen_wall_authority_at(tile, refresh_collision_debug)
 	_ensure_elevation_map()
 	elevation_map.call(
@@ -3710,28 +3672,29 @@ func _force_authored_scene_floor_authority(
 
 
 func _clear_procgen_wall_authority_at(tile: Vector2i, refresh_collision_debug: bool = true) -> void:
-	if walls_tilemap != null:
+	# M6 streaming-paint guard on the visual erase only; collision removal
+	# and foliage invalidation below are genuine semantic effects of clearing
+	# wall authority and apply regardless of streaming residency.
+	if walls_tilemap != null and _is_tile_currently_visible(tile):
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
 	_generated_wall_cells.erase(tile)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 	if build_runtime_wall_collision:
 		_remove_runtime_wall_body(tile, refresh_collision_debug)
 	_remove_foliage(tile)
 
 
 func _clear_procgen_road_authority_at(tile: Vector2i) -> void:
-	_main_road_tiles.erase(tile)
-	_road_centerline_tiles.erase(tile)
-	_path_centerline_tiles.erase(tile)
+	_road_authority.clear_generated_road_tiles(tile)
 	_road_visual_tiles.erase(tile)
 	_path_visual_tiles.erase(tile)
-	_compound_connector_centerline_tiles.erase(tile)
-	_parking_zone_tiles.erase(tile)
 	_remove_road_piece_decal(tile)
 
 
 func _enforce_road_walkability(map_size: Vector2i) -> void:
-	for tile_variant in _main_road_tiles.keys():
+	for tile_variant in _road_authority.main_road_tiles.keys():
 		if tile_variant is Vector2i:
 			var tile := tile_variant as Vector2i
 			if not _is_tile_inside_map(tile, map_size, 1) or is_indoor_tile(tile) or _is_road_blocked_by_impassable_authority(tile):
@@ -3755,7 +3718,7 @@ func _clear_road_blocking_wall(pos: Vector2i) -> void:
 
 func _refresh_road_path_visuals() -> void:
 	_clear_road_piece_decals()
-	for tile_variant in _main_road_tiles.keys():
+	for tile_variant in _road_authority.main_road_tiles.keys():
 		if tile_variant is Vector2i:
 			var road_tile := tile_variant as Vector2i
 			if _is_road_blocked_by_impassable_authority(road_tile):
@@ -3768,7 +3731,7 @@ func _refresh_road_path_visuals() -> void:
 		if not (tile_variant is Vector2i):
 			continue
 		var tile := tile_variant as Vector2i
-		if _main_road_tiles.has(tile):
+		if _road_authority.main_road_tiles.has(tile):
 			continue
 		if get_region_type_at_tile(tile) == "soft_path":
 			if _is_road_blocked_by_impassable_authority(tile):
@@ -3804,7 +3767,7 @@ func _should_preserve_road_floor_visual(tile: Vector2i) -> bool:
 
 func _apply_connector_region_visual(tile: Vector2i) -> void:
 	var region_type := get_region_type_at_tile(tile)
-	if _compound_connector_centerline_tiles.has(tile) or region_type == "compound_connector_road":
+	if _road_authority.compound_connector_centerline_tiles.has(tile) or region_type == "compound_connector_road":
 		_apply_terrain_tile_visual(tile, "terrain_connector_centerline_32")
 	elif region_type == "terrain_rescue_floor" \
 			or region_type == "pre_terrain_required_connector" \
@@ -3946,7 +3909,7 @@ func _spawn_road_piece_decals() -> void:
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
 	if not _road_piece_defs_by_surface_role.is_empty():
-		for tile_variant in _main_road_tiles.keys():
+		for tile_variant in _road_authority.main_road_tiles.keys():
 			if not (tile_variant is Vector2i):
 				continue
 			_reveal_road_surface_piece_decal(tile_variant as Vector2i)
@@ -3955,7 +3918,7 @@ func _spawn_road_piece_decals() -> void:
 			if not (tile_variant is Vector2i):
 				continue
 			_reveal_surface_piece_decal(tile_variant as Vector2i, "road")
-	for tile_variant in _ruined_road_cells.keys():
+	for tile_variant in _road_authority.ruined_road_cells.keys():
 		if tile_variant is Vector2i:
 			_reveal_ruined_road_surface_piece_decal(tile_variant as Vector2i)
 	for tile_variant in _path_visual_tiles.keys():
@@ -3974,13 +3937,13 @@ func _reveal_road_piece_decal(tile: Vector2i) -> void:
 
 
 func _reveal_ruined_road_surface_piece_decal(tile: Vector2i) -> void:
-	if not road_piece_decals_enabled or not _ruined_road_cells.has(tile):
+	if not road_piece_decals_enabled or not _road_authority.ruined_road_cells.has(tile):
 		return
 	if _road_piece_defs_by_surface_role.is_empty():
 		return
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
-	var role := _classify_filled_surface_role(tile, _ruined_road_cells)
+	var role := _classify_filled_surface_role(tile, _road_authority.ruined_road_cells)
 	var piece := _select_road_surface_piece_definition(tile, role)
 	if piece.is_empty():
 		return
@@ -3992,9 +3955,9 @@ func _reveal_road_surface_piece_decal(tile: Vector2i) -> void:
 		return
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
-	if not _main_road_tiles.has(tile):
+	if not _road_authority.main_road_tiles.has(tile):
 		return
-	var role := _classify_filled_surface_role(tile, _main_road_tiles)
+	var role := _classify_filled_surface_role(tile, _road_authority.main_road_tiles)
 	var piece := _select_road_surface_piece_definition(tile, role)
 	if piece.is_empty():
 		return
@@ -4002,7 +3965,7 @@ func _reveal_road_surface_piece_decal(tile: Vector2i) -> void:
 
 
 func _classify_road_surface_role(tile: Vector2i) -> String:
-	return _classify_filled_surface_role(tile, _main_road_tiles)
+	return _classify_filled_surface_role(tile, _road_authority.main_road_tiles)
 
 
 func _classify_filled_surface_role(tile: Vector2i, cells: Dictionary) -> String:
@@ -4059,16 +4022,16 @@ func _reveal_surface_piece_decal(tile: Vector2i, surface_kind: String) -> void:
 		return
 	if _road_piece_parent == null or not is_instance_valid(_road_piece_parent):
 		_road_piece_parent = _find_or_create_road_piece_parent()
-	var source_tiles := _road_centerline_tiles
+	var source_tiles := _road_authority.road_centerline_tiles
 	var visual_tiles := _road_visual_tiles
 	var defs_by_mask := _road_piece_defs_by_mask
 	if surface_kind == "path":
-		source_tiles = _path_centerline_tiles
+		source_tiles = _road_authority.path_centerline_tiles
 		visual_tiles = _path_visual_tiles
 		defs_by_mask = _path_piece_defs_by_mask
 	if defs_by_mask.is_empty() or not source_tiles.has(tile) or not visual_tiles.has(tile):
 		return
-	if surface_kind == "road" and not _main_road_tiles.has(tile):
+	if surface_kind == "road" and not _road_authority.main_road_tiles.has(tile):
 		return
 	if surface_kind == "path" and get_region_type_at_tile(tile) != "soft_path":
 		return
@@ -4148,7 +4111,7 @@ func _surface_tile_key(surface_kind: String, tile: Vector2i) -> String:
 func _carve_interest_paths(map_size: Vector2i) -> void:
 	if procgen_node == null:
 		return
-	_path_centerline_tiles.clear()
+	_road_authority.clear_path_centerline()
 	_path_visual_tiles.clear()
 	var spawn := get_player_spawn()
 	var path_width := maxi(0, intent_soft_path_width)
@@ -4160,19 +4123,19 @@ func _carve_interest_paths(map_size: Vector2i) -> void:
 
 func _carve_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
-	_path_centerline_tiles[current] = true
+	_road_authority.add_path_centerline_tile(current)
 	_path_visual_tiles[current] = true
 	var step_index := 0
 	while current.x != to_tile.x:
 		current.x += 1 if to_tile.x > current.x else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true
 		_carve_path_brush(current, width, map_size)
 	while current.y != to_tile.y:
 		current.y += 1 if to_tile.y > current.y else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true
@@ -4686,9 +4649,9 @@ func _is_reserved_pre_terrain_traversal_cell(tile: Vector2i, map_size: Vector2i)
 		return true
 	if _ascent_field_main_route_cells.has(tile) or _ascent_field_vista_cells.has(tile):
 		return true
-	if _main_road_tiles.has(tile) or _parking_zone_tiles.has(tile):
+	if _road_authority.main_road_tiles.has(tile) or _road_authority.parking_zone_tiles.has(tile):
 		return true
-	if _compound_connector_centerline_tiles.has(tile) or _last_compound_ingress.has(tile):
+	if _road_authority.compound_connector_centerline_tiles.has(tile) or _last_compound_ingress.has(tile):
 		return true
 	if _worldgen_intent_graph != null:
 		for required_cell in _worldgen_intent_graph.get_required_cells():
@@ -4707,11 +4670,14 @@ func _preserve_reserved_pre_terrain_floor_authority(tile: Vector2i) -> void:
 		"authority": "reserved_pre_terrain_traversal",
 	}
 	_generated_wall_cells.erase(tile)
-	if floor_tilemap != null:
+	var paint := _is_tile_currently_visible(tile)
+	if floor_tilemap != null and paint:
 		floor_tilemap.set_cell(tile, source_id, atlas, 0)
-	if walls_tilemap != null:
+	if walls_tilemap != null and paint:
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 
 	var region_data := get_region_data_at_tile(tile)
 	var region_type := String(region_data.get("region_type", "exterior"))
@@ -4723,14 +4689,13 @@ func _clear_region_metadata() -> void:
 	_last_interior_region_rect = Rect2i()
 	_last_interior_rooms.clear()
 	_last_interior_thresholds.clear()
-	_main_road_tiles.clear()
-	_road_centerline_tiles.clear()
-	_path_centerline_tiles.clear()
+	_road_authority.reset_generated_roads()
 	_road_visual_tiles.clear()
 	_path_visual_tiles.clear()
-	_compound_connector_centerline_tiles.clear()
 	_compound_connector_visual_candidates.clear()
-	_parking_zone_tiles.clear()
+	_road_visual_tiles.clear()
+	_path_visual_tiles.clear()
+	_compound_connector_visual_candidates.clear()
 	_region_tiles.clear()
 
 
@@ -5139,6 +5104,8 @@ func _collect_nonwalkable_surface_claims() -> Array[Dictionary]:
 func _rebuild_nonwalkable_surface_regions(map_size: Vector2i) -> void:
 	_surface_kind_by_cell.clear()
 	_chasm_cells.clear()
+	_exterior_chasm_cells.clear()
+	_internal_chasm_cells.clear()
 	_ocean_cells.clear()
 	_surface_claim_cells.clear()
 	_nonwalkable_surface_summary.clear()
@@ -5154,6 +5121,12 @@ func _rebuild_nonwalkable_surface_regions(map_size: Vector2i) -> void:
 	).duplicate(true)
 	_chasm_cells = (
 		result.get("chasm_cells", {}) as Dictionary
+	).duplicate(true)
+	_exterior_chasm_cells = (
+		result.get("exterior_chasm_cells", {}) as Dictionary
+	).duplicate(true)
+	_internal_chasm_cells = (
+		result.get("internal_chasm_cells", {}) as Dictionary
 	).duplicate(true)
 	_ocean_cells = (
 		result.get("ocean_cells", {}) as Dictionary
@@ -5351,10 +5324,10 @@ func _enforce_route_playability_walkability(
 	for cell_variant in _ascent_field_main_route_cells:
 		if cell_variant is Vector2i:
 			hard_clearance[cell_variant] = true
-	for cell_variant in _main_road_tiles.keys():
+	for cell_variant in _road_authority.main_road_tiles.keys():
 		if cell_variant is Vector2i:
 			hard_clearance[cell_variant] = true
-	for cell_variant in _parking_zone_tiles.keys():
+	for cell_variant in _road_authority.parking_zone_tiles.keys():
 		if cell_variant is Vector2i:
 			hard_clearance[cell_variant] = true
 	var traversal_by_cell: Dictionary = _last_terrain_result.get(
@@ -5419,11 +5392,14 @@ func _set_ascent_field_floor_authority(tile: Vector2i, region_type: String, zone
 		"authority": "ascent_field",
 	}
 	_generated_wall_cells.erase(tile)
-	if floor_tilemap != null:
+	var paint := _is_tile_currently_visible(tile)
+	if floor_tilemap != null and paint:
 		floor_tilemap.set_cell(tile, source_id, atlas, 0)
-	if walls_tilemap != null:
+	if walls_tilemap != null and paint:
 		walls_tilemap.erase_cell(tile)
 	_wall_health.erase(tile)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 	_set_region_tile(tile, region_type, zone)
 
 
@@ -5437,12 +5413,15 @@ func _set_ascent_field_wall_authority(tile: Vector2i) -> void:
 		"authority": "ascent_field_blocker",
 	}
 	_generated_floor_cells.erase(tile)
-	if walls_tilemap != null:
+	var paint := _is_tile_currently_visible(tile)
+	if walls_tilemap != null and paint:
 		walls_tilemap.set_cell(tile, source, coord, 0)
-	if floor_tilemap != null:
+	if floor_tilemap != null and paint:
 		floor_tilemap.erase_cell(tile)
 	if not _wall_health.has(tile):
 		_wall_health[tile] = wall_tile_max_health
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(tile))
 	_set_region_tile(tile, "ascent_field_blocker", "cliff_ruin_boundary")
 
 
@@ -5633,12 +5612,12 @@ func _clear_world_progression_runtime() -> void:
 	_surface_kind_by_cell.clear()
 	_surface_material_by_cell.clear()
 	_surface_material_summary.clear()
-	_ruined_road_cells.clear()
-	_service_hardstand_cells.clear()
-	_road_semantics_summary.clear()
+	_road_authority.clear_road_semantics()
 	if surface_material_overlay != null:
 		surface_material_overlay.clear()
 	_chasm_cells.clear()
+	_exterior_chasm_cells.clear()
+	_internal_chasm_cells.clear()
 	_ocean_cells.clear()
 	_surface_claim_cells.clear()
 	_nonwalkable_surface_summary.clear()
@@ -5738,27 +5717,27 @@ func get_special_room_sites() -> Array[Dictionary]:
 
 
 func is_road_surface_tile(tile: Vector2i) -> bool:
-	return _main_road_tiles.has(tile) or _ruined_road_cells.has(tile) or get_region_type_at_tile(tile) == "soft_path"
+	return _road_authority.main_road_tiles.has(tile) or _road_authority.ruined_road_cells.has(tile) or get_region_type_at_tile(tile) == "soft_path"
 
 
 func is_parking_zone_tile(tile: Vector2i) -> bool:
-	return _parking_zone_tiles.has(tile)
+	return _road_authority.parking_zone_tiles.has(tile)
 
 
 func get_main_road_tiles() -> Array[Vector2i]:
-	return _dict_keys_as_vector2i_array(_main_road_tiles)
+	return _road_authority.get_main_road_tiles()
 
 
 func get_parking_zone_tiles() -> Array[Vector2i]:
-	return _dict_keys_as_vector2i_array(_parking_zone_tiles)
+	return _road_authority.get_parking_tiles()
 
 
 func get_ruined_road_tiles() -> Array[Vector2i]:
-	return _sorted_tile_keys(_ruined_road_cells)
+	return _road_authority.get_ruined_road_tiles()
 
 
 func get_service_hardstand_tiles() -> Array[Vector2i]:
-	return _sorted_tile_keys(_service_hardstand_cells)
+	return _road_authority.get_service_hardstand_tiles()
 
 
 func _sorted_tile_keys(source: Dictionary) -> Array[Vector2i]:
@@ -5770,7 +5749,7 @@ func _sorted_tile_keys(source: Dictionary) -> Array[Vector2i]:
 
 
 func debug_get_road_semantics_summary() -> Dictionary:
-	return _road_semantics_summary.duplicate(true)
+	return _road_authority.get_road_semantics_summary()
 
 
 func debug_get_chunk_lifecycle_state(chunk_pos: Vector2i) -> int:
@@ -5799,6 +5778,75 @@ func debug_force_unload_chunk(chunk_pos: Vector2i) -> void:
 	_unload_chunk(chunk_pos)
 
 
+func debug_get_chunk_payload_cache_snapshot() -> Dictionary:
+	return _chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
+
+
+func debug_get_streaming_visual_flush_count() -> int:
+	return _streaming_visual_flush_count
+
+
+func debug_get_chunk_residency_policy_snapshot() -> Dictionary:
+	return _chunk_residency_policy.get_snapshot() if _chunk_residency_policy != null else {}
+
+
+func debug_get_unloaded_chunks() -> Array[Vector2i]:
+	return _chunk_lifecycle.get_unloaded_chunks() if _chunk_lifecycle != null else []
+
+
+func debug_get_protected_streaming_chunks() -> Dictionary:
+	return _protected_streaming_chunks()
+
+
+## Returns the foliage node's instance id at `tile` (0 if none), so a test
+## can confirm hide/show preserves the exact node identity rather than
+## destroying and recreating it.
+func debug_get_foliage_node_id(tile: Vector2i) -> int:
+	var node := _foliage_node_at(tile)
+	return node.get_instance_id() if node != null and is_instance_valid(node) else 0
+
+
+## Returns the foliage node's visibility at `tile`, or null when no foliage
+## node is registered there.
+func debug_get_foliage_node_visible(tile: Vector2i) -> Variant:
+	var node := _foliage_node_at(tile)
+	if node == null or not is_instance_valid(node):
+		return null
+	return node.visible
+
+
+## Returns the registered foliage entry's non-node metadata (`kind`,
+## `cluster_id`, `has_collision`) at `tile`, or an empty Dictionary when none.
+func debug_get_foliage_entry_metadata(tile: Vector2i) -> Dictionary:
+	var entry = _foliage_nodes.get(tile)
+	if not (entry is Dictionary):
+		return {}
+	return {
+		"kind": String(entry.get("kind", "")),
+		"cluster_id": String(entry.get("cluster_id", "")),
+		"has_collision": bool(entry.get("has_collision", false)),
+	}
+
+
+func debug_has_road_piece_decal(tile: Vector2i) -> bool:
+	for surface in ["road", "ruined_road", "path"]:
+		var key := _surface_tile_key(surface, tile)
+		var node := _road_piece_nodes_by_key.get(key, null) as Node2D
+		if node != null and is_instance_valid(node):
+			return true
+	return false
+
+
+func debug_has_runtime_wall_collision_body(tile: Vector2i) -> bool:
+	var collision_root := walls_tilemap.get_node_or_null("RuntimeWallCollision") as Node2D if walls_tilemap != null else null
+	if collision_root == null:
+		return false
+	if compact_runtime_wall_bodies:
+		var chunk := collision_root.get_node_or_null(NodePath(_runtime_wall_chunk_name(tile)))
+		return chunk != null and bool(chunk.call("has_wall_tile", tile))
+	return collision_root.has_node(NodePath(_runtime_wall_body_name(tile)))
+
+
 func debug_get_generated_floor_cells() -> Dictionary:
 	return _generated_floor_cells.duplicate(true)
 
@@ -5812,10 +5860,10 @@ func debug_get_runtime_authoring_fingerprint() -> Dictionary:
 		"floor": _generated_floor_cells.duplicate(true),
 		"walls": _generated_wall_cells.duplicate(true),
 		"regions": _region_tiles.duplicate(true),
-		"roads": _main_road_tiles.duplicate(true),
-		"road_centerline": _road_centerline_tiles.duplicate(true),
-		"ruined_road": _ruined_road_cells.duplicate(true),
-		"service_hardstand": _service_hardstand_cells.duplicate(true),
+		"roads": _road_authority.main_road_tiles.duplicate(true),
+		"road_centerline": _road_authority.road_centerline_tiles.duplicate(true),
+		"ruined_road": _road_authority.ruined_road_cells.duplicate(true),
+		"service_hardstand": _road_authority.service_hardstand_cells.duplicate(true),
 		"foliage": _foliage_nodes.duplicate(true),
 		"surface": _surface_kind_by_cell.duplicate(true),
 		"surface_material": _surface_material_by_cell.duplicate(true),
@@ -6015,6 +6063,42 @@ func is_runtime_walkable_after_props(tile: Vector2i) -> bool:
 
 func _is_runtime_walkable_after_props(tile: Vector2i) -> bool:
 	return is_runtime_walkable_after_props(tile)
+
+
+## Public semantic/blocker walkability query for `NavigationSystem`: pure
+## canonical-authority delegation, never painted-tile visibility. A chunk
+## that is lifecycle-UNLOADED (presentation-evicted by M6) answers exactly
+## the same as when it was resident, so navigation authority for a
+## previously revealed chunk survives unload.
+func is_runtime_navigation_walkable(tile: Vector2i) -> bool:
+	return is_runtime_walkable_after_props(tile)
+
+
+## Navigation-graph cell source for `NavigationSystem._build_navigation_graph()`:
+## the union of currently painted floor cells (the ordinary resident case)
+## plus canonical generated-floor cells belonging to lifecycle-UNLOADED
+## chunks, so a chunk that was revealed at least once keeps contributing
+## navigation nodes/edges after M6 unloads its presentation. This
+## deliberately never adds a chunk merely because canonical semantics exist
+## for it (UNSEEN chunks are not included) -- only chunks that were actually
+## resident and then unloaded.
+func get_runtime_navigation_floor_cells() -> Array[Vector2i]:
+	var cells: Dictionary = {}
+	if floor_tilemap != null:
+		for cell in floor_tilemap.get_used_cells():
+			cells[cell] = true
+	if _chunk_lifecycle != null:
+		var unloaded := _chunk_lifecycle.get_unloaded_chunks()
+		if not unloaded.is_empty():
+			var unloaded_set: Dictionary = {}
+			for chunk_pos in unloaded:
+				unloaded_set[chunk_pos] = true
+			for tile_variant in _generated_floor_cells.keys():
+				if tile_variant is Vector2i and unloaded_set.has(_tile_to_chunk(tile_variant as Vector2i)):
+					cells[tile_variant] = true
+	var result: Array[Vector2i] = []
+	result.assign(cells.keys())
+	return result
 
 
 func get_runtime_escape_neighbor_count(tile: Vector2i) -> int:
@@ -6624,7 +6708,7 @@ func get_movement_surface_multiplier_at_tile(tile: Vector2i, actor_kind: String 
 		SURFACE_MATERIAL_IDS.HARDENED_INDUSTRIAL,
 	]
 	var legacy_soft_path := get_region_type_at_tile(tile) == "soft_path"
-	if not constructed and not legacy_soft_path and not _main_road_tiles.has(tile):
+	if not constructed and not legacy_soft_path and not _road_authority.main_road_tiles.has(tile):
 		return 1.0
 	if actor_kind == "vehicle":
 		return maxf(1.0, road_vehicle_speed_multiplier)
@@ -6965,14 +7049,23 @@ func _set_destroyed_wall_floor_tile(pos: Vector2i) -> void:
 		"atlas": atlas,
 		"alternative": 0,
 	}
-	floor_tilemap.set_cell(pos, source_id, atlas, 0)
-	walls_tilemap.erase_cell(pos)
+	# M6 streaming-paint guard: a lifecycle-UNLOADED tile stays unpainted here;
+	# reload COMMIT repaints it from the canonical dictionary just written
+	# above, so the semantic truth is never lost, only its presentation is
+	# deferred.
+	if _is_tile_currently_visible(pos):
+		floor_tilemap.set_cell(pos, source_id, atlas, 0)
+		walls_tilemap.erase_cell(pos)
 	_wall_health.erase(pos)
 	_set_region_tile(pos, "destroyed_wall_floor", "debris")
 
 
+## Recognizes canonical generated-wall authority even when the wall is
+## currently visually unloaded (M6): a destroyed wall must resolve correctly
+## regardless of streaming residency, not merely when it happens to be
+## painted.
 func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") -> Dictionary:
-	if walls_tilemap == null or walls_tilemap.get_cell_source_id(pos) < 0:
+	if walls_tilemap == null or not _generated_wall_cells.has(pos):
 		return {
 			"blocked": false,
 			"destroyed": false,
@@ -6993,6 +7086,8 @@ func damage_wall_tile(pos: Vector2i, amount: float, attacker_team: String = "") 
 
 	_generated_wall_cells.erase(pos)
 	_set_destroyed_wall_floor_tile(pos)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
 	minimap_tile_changed.emit(pos, "destroyed_wall_floor")
 	_refresh_wall_neighbors(pos)
 	_rebuild_horizontal_wall_overlays()
@@ -7015,21 +7110,30 @@ func damage_wall_at_global(global_position: Vector2, amount: float, attacker_tea
 	return damage_wall_tile(tile, amount, attacker_team)
 
 
+## Refreshes neighboring generated-wall records from canonical state
+## regardless of streaming residency, but only repaints (M6 streaming-paint
+## guard) a neighbor that is currently resident/visible -- an UNLOADED
+## neighbor's updated atlas/alternative is still recorded so reload COMMIT
+## paints the correct variant later.
 func _refresh_wall_neighbors(center_tile: Vector2i) -> void:
 	for x in range(center_tile.x - 1, center_tile.x + 2):
 		for y in range(center_tile.y - 1, center_tile.y + 2):
 			var pos := Vector2i(x, y)
-			if walls_tilemap.get_cell_source_id(pos) < 0:
+			if not _generated_wall_cells.has(pos):
 				continue
 			var source := high_walls_source_id if use_high_walls else walls_source_id
 			var coord := _select_wall_coord(pos)
-			walls_tilemap.set_cell(pos, source, coord)
-			if _generated_wall_cells.has(pos):
-				_generated_wall_cells[pos] = {
-					"source_id": source,
-					"atlas": coord,
-					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
-				}
+			var alternative := 0
+			if walls_tilemap.get_cell_source_id(pos) >= 0:
+				walls_tilemap.set_cell(pos, source, coord)
+				alternative = walls_tilemap.get_cell_alternative_tile(pos)
+			_generated_wall_cells[pos] = {
+				"source_id": source,
+				"atlas": coord,
+				"alternative": alternative,
+			}
+			if _chunk_payload_cache != null:
+				_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
 
 
 func _refresh_navigation_after_wall_change(force_immediate: bool = false, reason: String = "wall_change") -> void:
@@ -7237,7 +7341,7 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 		"last_compound_ingress": _last_compound_ingress,
 		"connected_road_required_tiles": _get_connected_road_required_tiles(),
 		"connected_parking_required_tiles": _get_connected_parking_required_tiles(),
-		"compound_connector_centerline_tiles": _compound_connector_centerline_tiles,
+		"compound_connector_centerline_tiles": _road_authority.compound_connector_centerline_tiles,
 		"ascent_field_main_route_cells": _ascent_field_main_route_cells,
 		"ascent_field_vista_cells": _ascent_field_vista_cells,
 		"intent_graph_required_cells": intent_required_cells,
@@ -7268,7 +7372,7 @@ func _get_connected_road_required_tiles() -> Dictionary:
 	var connected := _get_connected_road_tiles_from_spawn()
 	var result := {}
 	for tile_variant in connected.keys():
-		if tile_variant is Vector2i and _main_road_tiles.has(tile_variant):
+		if tile_variant is Vector2i and _road_authority.main_road_tiles.has(tile_variant):
 			result[tile_variant] = true
 	return result
 
@@ -7276,7 +7380,7 @@ func _get_connected_road_required_tiles() -> Dictionary:
 func _get_connected_parking_required_tiles() -> Dictionary:
 	var connected := _get_connected_road_tiles_from_spawn()
 	var result := {}
-	for tile_variant in _parking_zone_tiles.keys():
+	for tile_variant in _road_authority.parking_zone_tiles.keys():
 		if tile_variant is Vector2i and connected.has(tile_variant):
 			result[tile_variant] = true
 	return result
@@ -7284,11 +7388,11 @@ func _get_connected_parking_required_tiles() -> Dictionary:
 
 func _get_connected_road_tiles_from_spawn() -> Dictionary:
 	var spawn := get_player_spawn()
-	if _main_road_tiles.has(spawn):
+	if _road_authority.main_road_tiles.has(spawn):
 		return _collect_connected_road_tiles(spawn)
 	var best_root := Vector2i.ZERO
 	var best_distance := INF
-	for tile_variant in _main_road_tiles.keys():
+	for tile_variant in _road_authority.main_road_tiles.keys():
 		if not (tile_variant is Vector2i):
 			continue
 		var tile := tile_variant as Vector2i
@@ -7308,8 +7412,8 @@ func _compute_pre_terrain_connectivity(map_size: Vector2i, required_cell_entries
 		"required_cell_entries": required_cell_entries,
 		"floor_cells": _generated_floor_cells,
 		"wall_cells": _generated_wall_cells,
-		"road_cells": _main_road_tiles,
-		"parking_cells": _parking_zone_tiles,
+		"road_cells": _road_authority.main_road_tiles,
+		"parking_cells": _road_authority.parking_zone_tiles,
 		"is_layout_walkable": Callable(self, "_is_layout_pre_terrain_walkable_cell"),
 		"is_baseline_walkable": Callable(self, "_is_pre_terrain_walkable_cell"),
 		"is_semantic_walkable": Callable(self, "_is_semantic_required_walkable_cell"),
@@ -7343,8 +7447,8 @@ func _is_semantic_required_walkable_cell(cell: Vector2i, map_size: Vector2i) -> 
 	if _generated_wall_cells.has(cell):
 		return false
 	var region_type := get_region_type_at_tile(cell)
-	return _main_road_tiles.has(cell) \
-			or _parking_zone_tiles.has(cell) \
+	return _road_authority.main_road_tiles.has(cell) \
+			or _road_authority.parking_zone_tiles.has(cell) \
 			or region_type == "compound_ingress" \
 			or region_type == "compound_connector_road" \
 			or region_type == "main_road" \
@@ -7375,8 +7479,8 @@ func _build_pre_terrain_missing_sample(cell: Vector2i, source: String, reason: S
 		"zone": String(region.get("zone", "natural")),
 		"is_floor": _generated_floor_cells.has(cell),
 		"is_wall": _generated_wall_cells.has(cell),
-		"is_road": _main_road_tiles.has(cell) or get_region_type_at_tile(cell) == "main_road",
-		"is_parking": _parking_zone_tiles.has(cell),
+		"is_road": _road_authority.main_road_tiles.has(cell) or get_region_type_at_tile(cell) == "main_road",
+		"is_parking": _road_authority.parking_zone_tiles.has(cell),
 		"is_indoor": is_indoor_tile(cell),
 		"nearest_reachable_distance": _nearest_reachable_manhattan_distance(cell, reachable),
 	}
@@ -7490,21 +7594,21 @@ func _ensure_walkable_terrain_floor_authority(cell: Vector2i, rendered_tile: boo
 func _apply_compound_connector_elevation(map_size: Vector2i) -> void:
 	if not intent_compound_connector_elevation_enabled:
 		return
-	if _compound_connector_centerline_tiles.is_empty():
+	if _road_authority.compound_connector_centerline_tiles.is_empty():
 		return
 	_ensure_elevation_map()
 	var width := maxi(1, intent_compound_connector_half_width)
-	var count := _compound_connector_centerline_tiles.size()
+	var count := _road_authority.compound_connector_centerline_tiles.size()
 	var ramp_index := clampi(int(round(float(count) * 0.55)), 1, maxi(1, count - 2))
 	var direction := _get_compound_connector_outward_direction()
 	var side_axis := Vector2i(-direction.y, direction.x)
 	var ramp_direction := _direction_name_from_delta(direction)
 	var ramp_tile_id := _ramp_tile_id_from_delta(direction)
 	for index in range(count):
-		var center := _compound_connector_centerline_tiles[index]
+		var center := _road_authority.compound_connector_centerline_tiles[index]
 		for lateral in range(-width, width + 1):
 			var tile := center + side_axis * lateral
-			if not _is_tile_inside_map(tile, map_size, 1) or not _main_road_tiles.has(tile):
+			if not _is_tile_inside_map(tile, map_size, 1) or not _road_authority.main_road_tiles.has(tile):
 				continue
 			if index < ramp_index:
 				elevation_map.set_cell(tile, 1, ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE, ELEVATION_MAP_SCRIPT.DIRECTION_NONE)
@@ -7525,7 +7629,7 @@ func _refresh_compound_connector_pack_visuals(map_size: Vector2i) -> void:
 			continue
 		var tile := tile_variant as Vector2i
 		if not _is_tile_inside_map(tile, map_size, 1) \
-				or not _main_road_tiles.has(tile) \
+				or not _road_authority.main_road_tiles.has(tile) \
 				or _is_road_blocked_by_impassable_authority(tile) \
 				or _should_preserve_road_floor_visual(tile):
 			continue
@@ -7588,32 +7692,44 @@ func _apply_terrain_tile_visual(cell: Vector2i, tile_id: String) -> bool:
 func _set_terrain_floor_visual(cell: Vector2i, source_id: int) -> void:
 	if floor_tilemap == null:
 		return
-	floor_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
+	# M6 streaming-paint guard: during initial generation (`enable_streaming_
+	# reveal == false`) this is always true, so behavior is unchanged there;
+	# after streaming starts, a lifecycle-UNLOADED cell stays unpainted and
+	# reload COMMIT paints the canonical dictionary written below.
+	var paint := _is_tile_currently_visible(cell)
+	if paint:
+		floor_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
 	_generated_floor_cells[cell] = {
 		"source_id": source_id,
 		"atlas": TERRAIN_TILE_ATLAS_COORD,
 		"alternative": 0,
 	}
-	if walls_tilemap != null:
+	if walls_tilemap != null and paint:
 		walls_tilemap.erase_cell(cell)
 	_generated_wall_cells.erase(cell)
 	_wall_health.erase(cell)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 
 
 func _set_terrain_wall_visual(cell: Vector2i, source_id: int) -> void:
 	if walls_tilemap == null:
 		return
-	walls_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
+	var paint := _is_tile_currently_visible(cell)
+	if paint:
+		walls_tilemap.set_cell(cell, source_id, TERRAIN_TILE_ATLAS_COORD)
 	_generated_wall_cells[cell] = {
 		"source_id": source_id,
 		"atlas": TERRAIN_TILE_ATLAS_COORD,
 		"alternative": 0,
 	}
-	if floor_tilemap != null:
+	if floor_tilemap != null and paint:
 		floor_tilemap.erase_cell(cell)
 	_generated_floor_cells.erase(cell)
 	if not _wall_health.has(cell):
 		_wall_health[cell] = wall_tile_max_health
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(cell))
 
 
 func _update_terrain_debug_overlay() -> void:
@@ -7706,15 +7822,16 @@ func _resolve_road_semantics(_map_size: Vector2i) -> void:
 		"region_kind_by_cell": region_kinds,
 		"reserved_cells": _macro_reserved_cells(),
 	})
-	_ruined_road_cells = (result.get("ruined_road_cells", {}) as Dictionary).duplicate(true)
-	_service_hardstand_cells = (result.get("service_hardstand_cells", {}) as Dictionary).duplicate(true)
-	if not intent_main_roads_enabled:
-		_parking_zone_tiles = (result.get("parking_cells", {}) as Dictionary).duplicate(true)
-	_road_semantics_summary = (result.get("summary", {}) as Dictionary).duplicate(true)
-	_road_semantics_summary["parking_cell_count"] = _parking_zone_tiles.size()
-	_obs_gauge(&"procgen_ruined_road_cells", int(_road_semantics_summary.get("ruined_road_cell_count", 0)))
-	_obs_gauge(&"procgen_service_hardstand_cells", int(_road_semantics_summary.get("service_hardstand_cell_count", 0)))
-	_obs_gauge(&"procgen_parking_staging_cells", int(_road_semantics_summary.get("parking_cell_count", 0)))
+	var summary := _road_authority.publish_road_semantics(
+		result.get("ruined_road_cells", {}) as Dictionary,
+		result.get("service_hardstand_cells", {}) as Dictionary,
+		result.get("parking_cells", {}) as Dictionary,
+		not intent_main_roads_enabled,
+		result.get("summary", {}) as Dictionary
+	)
+	_obs_gauge(&"procgen_ruined_road_cells", int(summary.get("ruined_road_cell_count", 0)))
+	_obs_gauge(&"procgen_service_hardstand_cells", int(summary.get("service_hardstand_cell_count", 0)))
+	_obs_gauge(&"procgen_parking_staging_cells", int(summary.get("parking_cell_count", 0)))
 
 
 func _resolve_surface_materials() -> void:
@@ -7733,9 +7850,9 @@ func _resolve_surface_materials() -> void:
 		if lowered.contains("authored") or lowered.contains("story_room") or lowered.begins_with("faction_"):
 			authored_cells[cell] = true
 	var resolver := SURFACE_MATERIAL_RESOLVER_SCRIPT.new()
-	var road_cells := _ruined_road_cells.duplicate(true)
+	var road_cells := _road_authority.ruined_road_cells.duplicate(true)
 	if intent_main_roads_enabled:
-		road_cells.merge(_main_road_tiles, true)
+		road_cells.merge(_road_authority.main_road_tiles, true)
 	var result: Dictionary = resolver.resolve({
 		"floor_cells": _generated_floor_cells,
 		"wall_cells": _generated_wall_cells,
@@ -7743,10 +7860,10 @@ func _resolve_surface_materials() -> void:
 		"biome_by_cell": _biome_id_by_cell,
 		"region_kind_by_cell": region_kinds,
 		"region_data_by_cell": region_data,
-		"parking_cells": _parking_zone_tiles,
-		"industrial_hardstand_cells": _service_hardstand_cells,
+		"parking_cells": _road_authority.parking_zone_tiles,
+		"industrial_hardstand_cells": _road_authority.service_hardstand_cells,
 		"road_cells": road_cells,
-		"path_cells": _path_centerline_tiles,
+		"path_cells": _road_authority.path_centerline_tiles,
 		"bridge_cells": _last_terrain_result.get("bridge_cells", {}) as Dictionary,
 		"reserved_cells": _macro_reserved_cells(),
 		"authored_cells": authored_cells,
@@ -7937,7 +8054,7 @@ func _build_macro_presentation_plan(map_size: Vector2i) -> void:
 
 func _macro_presentation_surface_claims() -> Dictionary:
 	var result: Dictionary = {}
-	for source: Dictionary in [_main_road_tiles, _parking_zone_tiles, _ruined_road_cells, _service_hardstand_cells]:
+	for source: Dictionary in [_road_authority.main_road_tiles, _road_authority.parking_zone_tiles, _road_authority.ruined_road_cells, _road_authority.service_hardstand_cells]:
 		for cell: Variant in source.keys():
 			if cell is Vector2i:
 				result[cell] = true
@@ -8062,8 +8179,8 @@ func _build_dressing_cluster_plan(map_size: Vector2i) -> void:
 		"ingress_dressing_clearance_cells": ingress,
 		"is_encounter_reserved_cell": Callable(self, "is_encounter_reserved_cell"),
 		"authored_cells": _macro_presentation_protected_cells(), "reserved_cells": _surface_claim_cells,
-		"road_cells": _main_road_tiles.merged(_ruined_road_cells, true),
-		"parking_cells": _parking_zone_tiles, "service_hardstand_cells": _service_hardstand_cells,
+		"road_cells": _road_authority.main_road_tiles.merged(_road_authority.ruined_road_cells, true),
+		"parking_cells": _road_authority.parking_zone_tiles, "service_hardstand_cells": _road_authority.service_hardstand_cells,
 		"indoor_cells": indoor,
 	}
 	_ensure_foliage_spawner()
@@ -8710,11 +8827,11 @@ func _is_inside_required_route_clearance(pos: Vector2i, radius: int = 3) -> bool
 	for y in range(-clearance, clearance + 1):
 		for x in range(-clearance, clearance + 1):
 			var tile := pos + Vector2i(x, y)
-			if _main_road_tiles.has(tile) \
-					or _road_centerline_tiles.has(tile) \
-					or _path_centerline_tiles.has(tile) \
+			if _road_authority.main_road_tiles.has(tile) \
+					or _road_authority.road_centerline_tiles.has(tile) \
+					or _road_authority.path_centerline_tiles.has(tile) \
 					or _ascent_field_main_route_cells.has(tile) \
-					or _compound_connector_centerline_tiles.has(tile):
+					or _road_authority.compound_connector_centerline_tiles.has(tile):
 				return true
 	return false
 
@@ -8974,14 +9091,20 @@ func _set_floor_tile_and_generated_state(
 		"alternative": 0,
 	}
 	_generated_wall_cells.erase(pos)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.invalidate_chunk(_tile_to_chunk(pos))
 	_clear_road_blocking_wall(pos)
 	if not region_type.is_empty():
 		_set_region_tile(pos, region_type, zone)
+	# Collision removal is a genuine semantic effect of this tile no longer
+	# being a wall (the dictionary erase above), so it applies regardless of
+	# streaming residency (M6) -- only the visual paint below is guarded by
+	# `_is_tile_currently_visible()`.
+	if build_runtime_wall_collision:
+		_remove_runtime_wall_body(pos)
 	if render_base_floor_visual and _is_tile_currently_visible(pos):
 		floor_tilemap.set_cell(pos, source_id, atlas, 0)
 		walls_tilemap.erase_cell(pos)
-		if build_runtime_wall_collision:
-			_remove_runtime_wall_body(pos)
 	elif not render_base_floor_visual:
 		floor_tilemap.erase_cell(pos)
 
@@ -9006,19 +9129,19 @@ func _stamp_portal_plaza(center: Vector2i, map_size: Vector2i) -> void:
 
 func _carve_generated_soft_path(from_tile: Vector2i, to_tile: Vector2i, width: int, map_size: Vector2i) -> void:
 	var current := from_tile
-	_path_centerline_tiles[current] = true
+	_road_authority.add_path_centerline_tile(current)
 	_path_visual_tiles[current] = true
 	var step_index := 0
 	while current.x != to_tile.x:
 		current.x += 1 if to_tile.x > current.x else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true
 		_carve_generated_path_brush(current, width, map_size)
 	while current.y != to_tile.y:
 		current.y += 1 if to_tile.y > current.y else -1
-		_path_centerline_tiles[current] = true
+		_road_authority.add_path_centerline_tile(current)
 		step_index += 1
 		if step_index % maxi(1, path_piece_straight_stride_tiles) == 0:
 			_path_visual_tiles[current] = true
@@ -9615,6 +9738,43 @@ func _remove_foliage(pos: Vector2i) -> void:
 	_foliage_locally_inspected_tiles.erase(pos)
 
 
+func _foliage_node_at(pos: Vector2i) -> Node2D:
+	var entry = _foliage_nodes.get(pos)
+	if entry is Dictionary:
+		return entry.get("node", null) as Node2D
+	if entry is Node2D:
+		return entry as Node2D
+	return null
+
+
+## M6 residency-only foliage disposal: makes the existing foliage node at
+## `pos` non-rendering without destroying it, rerolling its placement, or
+## touching its registered trunk collision/runtime-blocker/region metadata.
+## This is the only foliage path `_unload_chunk()` uses -- genuine semantic
+## invalidation (wall paint, authored-scene claims, etc.) still calls the
+## real `_remove_foliage()` above.
+func _hide_foliage_for_unload(pos: Vector2i) -> void:
+	var node := _foliage_node_at(pos)
+	if node != null and is_instance_valid(node):
+		node.visible = false
+
+
+## Re-shows a foliage node left hidden by `_hide_foliage_for_unload()` for
+## `pos`, if one exists, instead of letting floor COMMIT place/reroll new
+## foliage there. Returns true when an existing node was re-shown (COMMIT
+## should skip new placement); false otherwise (including a stale/freed
+## entry, which is dropped so COMMIT falls through to ordinary placement).
+func _show_foliage_if_hidden(pos: Vector2i) -> bool:
+	if not _foliage_nodes.has(pos):
+		return false
+	var node := _foliage_node_at(pos)
+	if node == null or not is_instance_valid(node):
+		_foliage_nodes.erase(pos)
+		return false
+	node.visible = true
+	return true
+
+
 func _should_place_foliage(pos: Vector2i) -> bool:
 	if not _generated_floor_cells.has(pos) \
 			or _ocean_cells.has(pos) or _chasm_cells.has(pos):
@@ -10040,18 +10200,72 @@ func _apply_foliage_occlusion_material(material: ShaderMaterial, active_centers:
 		material.set_shader_parameter("bubble_center_%d" % bubble_index, center)
 
 
+## Resolves the permanent-underlay selection. The Drowned Basilica override is
+## an explicit development/special case and wins; otherwise the selected region
+## frame supplies the underlay; with no frame the legacy Endless Forest default
+## applies. The default `underlay_profile_override` value ("ENDLESS_FOREST")
+## means "no override".
+func _resolve_region_frame_state() -> Dictionary:
+	var frame_id := _region_frame_profile_id
+	var frame: ProcgenRegionFrameProfile = REGION_FRAME_PROFILES.get(frame_id, null) as ProcgenRegionFrameProfile
+	var state := {
+		"frame_id": String(frame_id),
+		"frame_resolved": frame != null and frame.is_valid(),
+		"visual_fallback": false,
+		"fallback_reason": "",
+		"underlay_source": "default",
+		"underlay": ENDLESS_FOREST_UNDERLAY,
+	}
+	if frame != null and frame.is_valid():
+		state["underlay"] = frame.underlay_profile
+		state["underlay_source"] = "region_frame"
+		state["visual_fallback"] = frame.visual_fallback
+		state["fallback_reason"] = frame.fallback_reason
+	elif frame_id != &"":
+		state["visual_fallback"] = true
+		state["fallback_reason"] = "region frame '%s' has no profile resource; default underlay used" % String(frame_id)
+	if underlay_profile_override == "DROWNED_BASILICA":
+		state["underlay"] = DROWNED_BASILICA_UNDERLAY
+		state["underlay_source"] = "drowned_basilica_override"
+	return state
+
+
 func _refresh_depth_backdrop() -> void:
 	if depth_backdrop == null:
 		return
-	var profile := ENDLESS_FOREST_UNDERLAY
-	match underlay_profile_override:
-		"DROWNED_BASILICA":
-			profile = DROWNED_BASILICA_UNDERLAY
-	depth_backdrop.set_underlay_profile(profile, _get_generation_seed())
-	if not _chasm_cells.is_empty():
-		depth_backdrop.configure_from_chasm_cells(_chasm_cells.keys())
+	var state := _resolve_region_frame_state()
+	depth_backdrop.set_underlay_profile(state["underlay"] as ProcgenUnderlayProfile, _get_generation_seed())
+	if not _exterior_chasm_cells.is_empty():
+		depth_backdrop.configure_from_chasm_cells(_exterior_chasm_cells.keys())
+	elif not _chasm_cells.is_empty():
+		# Chasm cells exist but none touch the map exterior: internal ravines
+		# and pits must not activate or bound the global lower-world underlay.
+		depth_backdrop.configure_hidden("no_exterior_chasm")
 	elif not _generated_floor_cells.is_empty():
 		depth_backdrop.configure_from_cells(_generated_floor_cells.keys())
+
+
+func get_region_frame_debug_snapshot() -> Dictionary:
+	var state := _resolve_region_frame_state()
+	return {
+		"frame_id": state["frame_id"],
+		"frame_resolved": state["frame_resolved"],
+		"visual_fallback": state["visual_fallback"],
+		"fallback_reason": state["fallback_reason"],
+		"underlay_source": state["underlay_source"],
+		"underlay_profile_id": String((state["underlay"] as ProcgenUnderlayProfile).profile_id),
+		"exterior_chasm_count": _exterior_chasm_cells.size(),
+		"internal_chasm_count": _internal_chasm_cells.size(),
+		"backdrop_mode": depth_backdrop.get_debug_mode() if depth_backdrop != null else "",
+	}
+
+
+func debug_get_exterior_chasm_cells() -> Dictionary:
+	return _exterior_chasm_cells.duplicate(true)
+
+
+func debug_get_internal_chasm_cells() -> Dictionary:
+	return _internal_chasm_cells.duplicate(true)
 
 
 func set_underlay_profile_override(profile_name: String) -> void:
@@ -10109,15 +10323,23 @@ func _get_chasm_presentation_cells() -> Array:
 
 func _prepare_streaming_reveal() -> void:
 	_chunk_lifecycle.reset()
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.reset()
+	if _chunk_residency_policy != null:
+		_chunk_residency_policy.reset()
 	if _pause_aware_streaming != null:
 		_pause_aware_streaming.reset()
 	else:
 		_streaming_reveal_queue.clear()
+	if _reveal_presentation != null:
+		_reveal_presentation.set_effect_enabled(archive_resolve_enabled)
+		_reveal_presentation.reset()
 	_streaming_player = null
 	_streaming_current_chunk = Vector2i(999999, 999999)
 	_navigation_rebuild_pending = false
 	_navigation_rebuild_deferred = false
 	_streaming_visual_rebuild_pending = false
+	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
 	_clear_foliage()
 	_clear_ruin_props()
@@ -10151,6 +10373,7 @@ func _prime_streaming_chunks(center_tile: Vector2i) -> void:
 	_refresh_navigation_after_wall_change()
 	_refresh_macro_streaming_visibility()
 	_streaming_visual_rebuild_pending = false
+	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
 
 
@@ -10162,18 +10385,93 @@ func _update_streaming_chunks(center_chunk: Vector2i, center_tile: Vector2i) -> 
 	# gate ever changes.
 	if get_tree() != null and get_tree().paused:
 		return
-	var unloaded_any := false
 	for x in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 		for y in range(-streaming_active_chunk_radius, streaming_active_chunk_radius + 1):
 			_queue_chunk_for_reveal(center_chunk + Vector2i(x, y), center_tile)
 	_chunk_lifecycle.sync_active_window(center_chunk, streaming_active_chunk_radius)
-	if streaming_unload_distant_chunks:
+	# M6: refresh the bounded eviction candidate queue here (every player-
+	# chunk transition) rather than unloading directly -- actual unload is
+	# drained at most `streaming_unload_chunks_per_frame` per frame from
+	# `_process()`, with each candidate revalidated immediately before use.
+	if streaming_unload_distant_chunks and _chunk_residency_policy != null:
+		var dormant_chunks: Array[Vector2i] = []
 		for chunk_pos in _chunk_lifecycle.get_resident_chunks():
-			if maxi(abs(chunk_pos.x - center_chunk.x), abs(chunk_pos.y - center_chunk.y)) > streaming_unload_chunk_distance:
-				_unload_chunk(chunk_pos)
-				unloaded_any = true
-	if unloaded_any:
-		_flush_streaming_visual_rebuilds()
+			if _chunk_lifecycle.get_state(chunk_pos) == ProcGenChunkLifecycle.State.DORMANT:
+				dormant_chunks.append(chunk_pos)
+		_chunk_residency_policy.refresh_candidates(
+			center_chunk, dormant_chunks, _protected_streaming_chunks(), _effective_unload_distance()
+		)
+
+
+## The unload distance actually enforced at runtime: never smaller than
+## `streaming_active_chunk_radius + 1`, so eviction can never reach into the
+## active reveal window regardless of how `streaming_unload_chunk_distance`
+## is configured.
+func _effective_unload_distance() -> int:
+	return maxi(streaming_unload_chunk_distance, streaming_active_chunk_radius + 1)
+
+
+## Chunks automatic residency eviction must never unload, so asynchronous
+## reveal budgeting can never produce a blank landing: the player spawn
+## chunk, every valid portal-teleporter endpoint chunk, every current
+## compound-ingress chunk, and any chunk intersecting the current world-
+## ingress dressing clearance rects. `debug_force_unload_chunk()` and other
+## debug/test force-unload paths intentionally bypass this policy.
+func _protected_streaming_chunks() -> Dictionary:
+	var protected_chunks: Dictionary = {}
+	protected_chunks[_tile_to_chunk(get_player_spawn())] = true
+	for portal in _portal_teleporters:
+		if portal != null and is_instance_valid(portal) and portal is Node2D:
+			protected_chunks[_tile_to_chunk(_global_to_tile((portal as Node2D).global_position))] = true
+	for ingress in _last_compound_ingress:
+		if ingress is Vector2i:
+			protected_chunks[_tile_to_chunk(ingress as Vector2i)] = true
+	for rect in _world_ingress_dressing_clearance_rects:
+		var start_chunk := _tile_to_chunk(rect.position)
+		var end_chunk := _tile_to_chunk(rect.position + rect.size - Vector2i.ONE)
+		for cx in range(start_chunk.x, end_chunk.x + 1):
+			for cy in range(start_chunk.y, end_chunk.y + 1):
+				protected_chunks[Vector2i(cx, cy)] = true
+	return protected_chunks
+
+
+## Bounded M6 production residency drain: unloads at most
+## `streaming_unload_chunks_per_frame` chunk(s) per frame from the
+## residency-policy candidate queue `_update_streaming_chunks()` refreshes.
+## Every taken candidate is revalidated against live state/distance/
+## protection immediately before unload, because the queue can go stale
+## between refreshes -- the player may have moved back into the hysteresis
+## radius, the chunk may have left DORMANT (new work queued against it), or
+## it may have become protected.
+func _drain_residency_eviction() -> void:
+	if _chunk_residency_policy == null or _chunk_lifecycle == null:
+		return
+	if get_tree() != null and get_tree().paused:
+		return
+	var candidates := _chunk_residency_policy.take_candidates(streaming_unload_chunks_per_frame)
+	if candidates.is_empty():
+		return
+	var protected_chunks := _protected_streaming_chunks()
+	var unload_distance := _effective_unload_distance()
+	for chunk_pos in candidates:
+		if not _is_chunk_eviction_valid(chunk_pos, protected_chunks, unload_distance):
+			_chunk_residency_policy.note_cancelled()
+			continue
+		_unload_chunk(chunk_pos)
+		_chunk_residency_policy.note_evicted()
+	# `_unload_chunk()` marks a visual rebuild pending; the resident-window
+	# collision/overlay/navigation/shadow resync is coalesced onto the same
+	# `streaming_visual_rebuild_interval_sec` cadence reveal uses, in
+	# `_process_streaming_reveal_queue()`.
+
+
+func _is_chunk_eviction_valid(chunk_pos: Vector2i, protected_chunks: Dictionary, unload_distance: int) -> bool:
+	if protected_chunks.has(chunk_pos):
+		return false
+	if _chunk_lifecycle.get_state(chunk_pos) != ProcGenChunkLifecycle.State.DORMANT:
+		return false
+	var distance := maxi(absi(chunk_pos.x - _streaming_current_chunk.x), absi(chunk_pos.y - _streaming_current_chunk.y))
+	return distance > unload_distance
 
 
 func _process_streaming_reveal_queue(delta: float = 0.0) -> void:
@@ -10194,14 +10492,19 @@ func _process_streaming_reveal_queue(delta: float = 0.0) -> void:
 			remaining -= 1
 	if revealed_any:
 		_streaming_visual_rebuild_pending = true
+		_streaming_reveal_flush_owed = true
+		_streaming_visual_rebuild_accum += maxf(0.0, delta)
+	elif _streaming_visual_rebuild_pending:
 		_streaming_visual_rebuild_accum += maxf(0.0, delta)
 	var queue_drained := _streaming_reveal_queue.is_empty() and (
 		_pause_aware_streaming == null or not _pause_aware_streaming.has_prepared()
 	)
+	var flush_due := _streaming_visual_rebuild_accum >= streaming_visual_rebuild_interval_sec
 	if queue_drained:
-		validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
-		_flush_streaming_visual_rebuilds()
-	elif _streaming_visual_rebuild_accum >= streaming_visual_rebuild_interval_sec:
+		if _streaming_reveal_flush_owed or flush_due:
+			validate_no_stuck_pockets(runtime_blocker_remediate_stuck_pockets)
+			_flush_streaming_visual_rebuilds()
+	elif flush_due:
 		_flush_streaming_visual_rebuilds()
 
 
@@ -10209,7 +10512,9 @@ func _flush_streaming_visual_rebuilds() -> void:
 	if not _streaming_visual_rebuild_pending:
 		return
 	_streaming_visual_rebuild_pending = false
+	_streaming_reveal_flush_owed = false
 	_streaming_visual_rebuild_accum = 0.0
+	_streaming_visual_flush_count += 1
 	_sync_runtime_wall_collision_with_visible_walls()
 	_rebuild_horizontal_wall_overlays()
 	_refresh_shadows()
@@ -10219,10 +10524,14 @@ func _flush_streaming_visual_rebuilds() -> void:
 func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void:
 	if _chunk_lifecycle.is_requested(chunk_pos):
 		return
-	var tiles := _get_chunk_tiles(chunk_pos)
+	var tiles := _cached_chunk_tiles(chunk_pos)
+	# Reveal order is never cached: priority depends on the live center_tile
+	# and current region/wall semantics, so it is always recomputed here from
+	# the (possibly cache-reused) membership set.
 	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return _streaming_reveal_priority(a, center_tile) < _streaming_reveal_priority(b, center_tile)
 	)
+	_note_presentation_request(chunk_pos, tiles)
 	_chunk_lifecycle.request(chunk_pos, tiles.size())
 	if _pause_aware_streaming != null:
 		_pause_aware_streaming.enqueue_many(tiles)
@@ -10261,15 +10570,22 @@ func _streaming_reveal_priority(tile: Vector2i, center_tile: Vector2i) -> float:
 func _reveal_chunk_immediately(chunk_pos: Vector2i) -> void:
 	if _chunk_lifecycle.is_requested(chunk_pos):
 		return
-	var tiles := _get_chunk_tiles(chunk_pos)
+	# Immediate-radius reveal must preserve _get_chunk_tiles()'s own
+	# deterministic iteration order exactly, so this intentionally does not
+	# re-sort the (possibly cache-reused) membership the way queued reveal
+	# does.
+	var tiles := _cached_chunk_tiles(chunk_pos)
+	_note_presentation_request(chunk_pos, tiles)
 	_chunk_lifecycle.request(chunk_pos, tiles.size())
 	for tile in tiles:
 		_reveal_tile(tile)
-		_chunk_lifecycle.note_committed(chunk_pos)
+		_on_streaming_tile_committed(tile)
 
 
 ## Pure chunk-tile enumeration: deterministic membership only, no lifecycle
-## or other state mutation. Legal to call repeatedly/speculatively.
+## or other state mutation. Legal to call repeatedly/speculatively. This is
+## the cache's sole canonical builder for chunk membership; callers that want
+## lazy reuse go through `_cached_chunk_tiles()` instead.
 func _get_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
 	var tiles: Array[Vector2i] = []
 	var start_x := chunk_pos.x * streaming_chunk_size_tiles
@@ -10282,9 +10598,30 @@ func _get_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
 	return tiles
 
 
-## Disabled in production (`streaming_unload_distant_chunks` defaults false);
-## the only call site is dependency-gated behind that flag. Exercises the
-## lifecycle contract's UNLOADED state through its narrow debug/test seam.
+## Cache-backed chunk membership lookup used by both queued and immediate
+## reveal. Delegates to the pure `_get_chunk_tiles()` builder on a miss;
+## always returns a fresh duplicate (see
+## `ProcGenChunkPayloadCache.get_chunk_tiles()`) so a caller's own
+## sort_custom() can never corrupt the cached canonical copy.
+func _cached_chunk_tiles(chunk_pos: Vector2i) -> Array[Vector2i]:
+	if _chunk_payload_cache == null:
+		return _get_chunk_tiles(chunk_pos)
+	return _chunk_payload_cache.get_chunk_tiles(chunk_pos, _get_chunk_tiles)
+
+
+## M6 presentation/cache residency adapter -- called by the bounded
+## production residency drain in `_update_streaming_chunks()` once
+## `streaming_unload_distant_chunks` is enabled, and by the narrow
+## `debug_force_unload_chunk()` test seam. It is never a semantic destroyer:
+## it erases this chunk's painted Floor/Walls cells, streaming-hides its
+## existing foliage nodes (never destroys/rerolls them -- see
+## `_hide_foliage_for_unload()`), removes its deterministic road/path decal
+## nodes, and evicts the M5 cached payload for the chunk. Generated floor/
+## wall dictionaries, wall health, region/elevation/road semantics, runtime
+## prop blockers, wall collision, and world mutations all remain
+## authoritative and unaffected -- collision is cleaned up only by
+## `_sync_runtime_wall_collision_with_visible_walls()`'s canonical-authority
+## pass, and only when a wall is genuinely destroyed.
 func _unload_chunk(chunk_pos: Vector2i) -> void:
 	var state := _chunk_lifecycle.get_state(chunk_pos)
 	if state != ProcGenChunkLifecycle.State.VISIBLE and state != ProcGenChunkLifecycle.State.DORMANT:
@@ -10296,10 +10633,13 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 			var tile := Vector2i(x, y)
 			floor_tilemap.erase_cell(tile)
 			walls_tilemap.erase_cell(tile)
-			_remove_foliage(tile)
+			_hide_foliage_for_unload(tile)
 			_remove_road_piece_decal(tile)
-			_remove_runtime_wall_body(tile, false, false)
+	if _chunk_payload_cache != null:
+		_chunk_payload_cache.evict_chunk(chunk_pos)
 	_chunk_lifecycle.force_unload(chunk_pos)
+	if _reveal_presentation != null:
+		_reveal_presentation.note_chunk_unloaded(chunk_pos, streaming_chunk_size_tiles)
 	_streaming_visual_rebuild_pending = true
 	_refresh_macro_streaming_visibility()
 
@@ -10318,15 +10658,53 @@ func _on_streaming_tile_prepared(tile: Vector2i) -> void:
 
 func _on_streaming_tile_committed(tile: Vector2i) -> void:
 	_chunk_lifecycle.note_committed(_tile_to_chunk(tile))
+	if _reveal_presentation != null:
+		_reveal_presentation.note_tile_committed(tile)
 
 
-## PREPARE: pure, deterministic lookup into already-generated (seed-authored,
-## never mutated by reveal) floor/wall cell data. Safe to call while paused --
-## does not touch TileMap/Node/collision/foliage state. The foliage/decal/
-## collision siting decisions themselves stay in _commit_tile_reveal_record
-## because they depend on already-committed neighbor state and must keep
-## happening in committed reveal order to stay deterministic.
+## Archive Resolve request observation. Must run after the early
+## `is_requested` return and before the lifecycle request / any commit, so a
+## veil record exists before authoritative pixels can appear. UNLOADED
+## pre-request lifecycle state marks reacquisition.
+func _note_presentation_request(chunk_pos: Vector2i, tiles: Array[Vector2i]) -> void:
+	if _reveal_presentation == null:
+		return
+	var reacquisition := _chunk_lifecycle.get_state(chunk_pos) == ProcGenChunkLifecycle.State.UNLOADED
+	_reveal_presentation.note_tiles_requested(chunk_pos, tiles, reacquisition)
+
+
+func _advance_reveal_presentation(delta: float) -> void:
+	if _reveal_presentation == null:
+		return
+	var operator_tile := ProcGenRevealPresentation.NO_OPERATOR_TILE
+	if _streaming_player != null and is_instance_valid(_streaming_player):
+		operator_tile = _global_to_tile(_streaming_player.global_position)
+	_reveal_presentation.advance(delta, operator_tile, streaming_chunk_size_tiles)
+
+
+func debug_get_reveal_presentation() -> ProcGenRevealPresentation:
+	return _reveal_presentation
+
+
+## PREPARE: cache-backed lookup into already-generated (seed-authored) floor/
+## wall cell data. Safe to call while paused -- does not touch TileMap/Node/
+## collision/foliage state. The foliage/decal/collision siting decisions
+## themselves stay in _commit_tile_reveal_record because they depend on
+## already-committed neighbor state and must keep happening in committed
+## reveal order to stay deterministic. This is every PREPARE/direct-reveal
+## caller's entry point; `_build_tile_reveal_record_raw()` is the cache's own
+## uncached builder.
 func _build_tile_reveal_prepare_record(tile: Vector2i) -> Dictionary:
+	if _chunk_payload_cache == null:
+		return _build_tile_reveal_record_raw(tile)
+	return _chunk_payload_cache.get_tile_record(
+		tile, _tile_to_chunk(tile), _build_tile_reveal_record_raw
+	)
+
+
+## Pure, deterministic, uncached lookup into canonical generated floor/wall
+## cell data -- the cache's sole canonical builder for tile records.
+func _build_tile_reveal_record_raw(tile: Vector2i) -> Dictionary:
 	var record := {"tile": tile}
 	if _generated_floor_cells.has(tile):
 		record["floor_data"] = _generated_floor_cells[tile]
@@ -10336,14 +10714,24 @@ func _build_tile_reveal_prepare_record(tile: Vector2i) -> Dictionary:
 
 
 ## COMMIT: authoritative mutation of live TileMap/collision/foliage state from
-## a prepared record. Never runs while paused.
+## a prepared record. Never runs while paused. `record` may have been built
+## several frames ago (e.g. drained from M3's `_prepared` queue after a
+## resume), so it is revalidated against current cache identity immediately
+## before mutation: if its chunk was invalidated since PREPARE, it is rebuilt
+## from canonical state here rather than painting stale data.
 func _commit_tile_reveal_record(record: Dictionary) -> void:
 	var tile: Vector2i = record.get("tile")
+	if _chunk_payload_cache != null:
+		record = _chunk_payload_cache.revalidate_record_before_commit(
+			record, tile, _tile_to_chunk(tile), _build_tile_reveal_record_raw
+		)
 	if record.has("floor_data"):
 		var floor_data: Dictionary = record["floor_data"]
 		floor_tilemap.set_cell(tile, int(floor_data.get("source_id", floor_source_id)), floor_data.get("atlas", floor_atlas_coord), int(floor_data.get("alternative", 0)))
 		_reveal_road_piece_decal(tile)
-		if _dressing_cluster_child_by_cell.has(tile):
+		if _show_foliage_if_hidden(tile):
+			pass
+		elif _dressing_cluster_child_by_cell.has(tile):
 			var child: Dictionary = _dressing_cluster_child_by_cell[tile]
 			_ensure_foliage_spawner()
 			_foliage_spawner.place_at_kind(_build_foliage_spawner_context(), tile, StringName(child.kind))
@@ -10518,16 +10906,19 @@ func _sync_runtime_wall_collision_with_visible_walls(reason: String = "visible_w
 		collision_root.name = "RuntimeWallCollision"
 		walls_tilemap.add_child(collision_root)
 
-	var visible_wall_tiles := {}
 	for tile in walls_tilemap.get_used_cells():
 		if walls_tilemap.get_cell_source_id(tile) >= 0:
-			visible_wall_tiles[tile] = true
 			_spawn_runtime_wall_body(tile, false, false)
 
+	# Cleanup removes a wall shape only when canonical `_generated_wall_cells`
+	# no longer contains that tile -- never merely because presentation
+	# unloaded it. A once-revealed wall's collision must survive M6 visual
+	# unload; only genuine semantic wall destruction (which already erases
+	# the tile from `_generated_wall_cells`) removes its collision here.
 	for child in collision_root.get_children():
 		if compact_runtime_wall_bodies and child.has_method("get_wall_tiles"):
 			for tile in child.call("get_wall_tiles"):
-				if not visible_wall_tiles.has(tile):
+				if not _generated_wall_cells.has(tile):
 					child.call("remove_wall_tile", tile)
 					_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
 					_runtime_wall_shapes_freed_total += 1
@@ -10537,7 +10928,7 @@ func _sync_runtime_wall_collision_with_visible_walls(reason: String = "visible_w
 				child.queue_free()
 			continue
 		var tile := _wall_tile_from_runtime_body_name(String(child.name))
-		if tile == Vector2i(999999, 999999) or not visible_wall_tiles.has(tile):
+		if tile == Vector2i(999999, 999999) or not _generated_wall_cells.has(tile):
 			collision_root.remove_child(child)
 			child.queue_free()
 			_runtime_wall_shape_count = maxi(0, _runtime_wall_shape_count - 1)
@@ -11065,6 +11456,23 @@ func get_runtime_health_snapshot() -> Dictionary:
 		"chunk_lifecycle": (
 			_chunk_lifecycle.get_snapshot() if _chunk_lifecycle != null else {}
 		),
+		"archive_resolve": (
+			_reveal_presentation.get_snapshot() if _reveal_presentation != null else {}
+		),
+		"chunk_payload_cache": (
+			_chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
+		),
+		"chunk_residency_policy": (
+			_chunk_residency_policy.get_snapshot() if _chunk_residency_policy != null else {}
+		),
+		"residency_unload_enabled": streaming_unload_distant_chunks,
+		"residency_effective_unload_distance": _effective_unload_distance(),
+		"residency_unload_budget_per_frame": streaming_unload_chunks_per_frame,
+		"unloaded_chunk_count": (
+			_chunk_lifecycle.get_unloaded_chunks().size() if _chunk_lifecycle != null else 0
+		),
+		"painted_floor_cell_count": floor_tilemap.get_used_cells().size() if floor_tilemap != null else 0,
+		"painted_wall_cell_count": walls_tilemap.get_used_cells().size() if walls_tilemap != null else 0,
 	}
 	var cliff_state := void_cliff_face.get_debug_state() if void_cliff_face != null else {}
 	snapshot["void_cliff_frontier_cells"] = int(cliff_state.get("frontier_cells", 0))
@@ -11416,6 +11824,7 @@ func get_level_data() -> Dictionary:
 		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
 		"ocean_cells": _dict_keys_as_vector2i_array(_ocean_cells),
 		"chasm_cells": _dict_keys_as_vector2i_array(_chasm_cells),
+		"region_frame": get_region_frame_debug_snapshot(),
 		"nonwalkable_surface_summary": (
 			_nonwalkable_surface_summary.duplicate(true)
 		),

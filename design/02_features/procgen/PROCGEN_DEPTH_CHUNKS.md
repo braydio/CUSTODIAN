@@ -10,6 +10,12 @@
 
 **Primary presentation authority:** `design/02_features/procgen/PROCGEN_MACRO_PRESENTATION_SYSTEM.md`
 
+**Region-frame authority:** `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`
+
+**Alpine starting-region authority:** `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`
+
+Depth chunks are **local scenic chasm/region presentation**, not the permanent exterior underlay itself. The active region frame decides which chunk profiles are visually compatible. In `ALPINE_PLATEAU`, select cold conifer/rocky depth chunks; future frames may select different compatible vocabularies without changing local biome semantics.
+
 ---
 
 ## Current Truth

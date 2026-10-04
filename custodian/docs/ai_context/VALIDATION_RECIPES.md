@@ -192,9 +192,41 @@ write invalid import sidecars for checked-out Git LFS pointer files:
 python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
 ```
 
-If it lists files, materialize cached payloads with `git lfs checkout` and run
-the preflight again before importing. Operator ingest, Workbench publication,
-and the shared import adapters run this guard automatically.
+If it lists files, first materialize **only the required checked-out paths** from
+the local Git LFS object cache with path-scoped `git lfs checkout <path>...`
+(or an equivalent exact-object materializer), then run the preflight again.
+Do not run an unscoped/general `git lfs checkout` in a sparse checkout: the
+2026-10-03 fast_03 recovery proved that it can expand sparse-omitted content.
+Do not run `git lfs pull` or `git lfs fetch` implicitly.
+
+If a required target path remains an LFS pointer because the local object cache
+is incomplete but another local checkout of this repository already has that
+same path hydrated, that checkout is an approved **local donor** for validation.
+The normal developer/coordination checkout (commonly `~/Projects/CUSTODIAN`)
+is the preferred donor when it already has the needed bytes. This is not a
+license to copy arbitrary tracked files between branches. For every donated LFS
+file:
+
+1. Read the target checkout's LFS pointer **before** replacing it and record its
+   expected `oid sha256:<hash>` and `size`.
+2. Use the same repository-relative path in the donor checkout. The donor must
+   be a regular hydrated file, not another LFS pointer.
+3. SHA-256 and byte-size of the donor must exactly match the target pointer.
+   A dirty donor checkout is acceptable only when this exact per-file proof
+   succeeds; the donor's branch name or apparent recency is not authority.
+4. Copy only the verified bytes into the validation checkout. Do not copy
+   `.import`, generated resources, unrelated siblings, or other tracked state.
+5. Confirm the hydrated target path is Git-clean for the target commit, rerun
+   `godot_import_preflight.py`, then run the intended Godot validation.
+6. If the donor is absent, still a pointer, or hash/size mismatched, stop and
+   report the exact path/OID. Do not silently fall back to network LFS.
+
+For disposable sparse validation, prefer this verified local-donor fallback over
+waiting on a broad cache hydration or weakening the sparse profile. Production
+tooling should implement the same ordering when it needs local-only
+materialization: shared/local LFS cache first, verified hydrated local checkout
+second, explicit blocker third. Operator ingest, Workbench publication, and the
+shared import adapters run the pointer guard automatically.
 
 ## Resource Budget Before Broad Sweeps
 
@@ -296,6 +328,16 @@ full-screen pass after each edit, or any `--capture-mode full` run must have a
 task-specific reason recorded in the packet/summary. Subjective visual baselines
 remain human-owned even when objective technical image checks are automated.
 
+When objective proof is complete but a material subjective visual decision still
+remains, publish the smallest useful evidence set through
+`custodian/tools/iteration/publish_review_artifacts.py` instead of extending the
+coding-agent screenshot review loop. The upload is opt-in and requires
+`--important --reason ...`; include concrete `--question` prompts for the
+human/ChatGPT reviewer. The agent reports the Dropbox manifest path and stops.
+See `VISUAL_REVIEW_HANDOFF.md`. Do not publish routine screenshots that repeat
+facts already settled by probes or metrics, and do not commit the cloud review
+media to Git.
+
 #### Tooling
 
 - Structure/state layer: `moment_probe_collector.gd` fields include
@@ -330,6 +372,12 @@ remain human-owned even when objective technical image checks are automated.
   mobile guard, and Vaultwing closure are in
   `custodian/tools/iteration/adopter_specs/`; their contract/DSL smoke is
   `custodian/tools/iteration/test_visual_validation_adopter_specs.py`.
+- External visual-review transport is
+  `custodian/tools/iteration/publish_review_artifacts.py`; its focused
+  no-network unit coverage is
+  `python3 custodian/tools/iteration/test_publish_review_artifacts.py`.
+  Use `--doctor` to check the configured rclone remote and
+  `--doctor --ensure-root` only for one-time review-root setup.
 
 Do not run the focused test and `--changed` concurrently against the same
 project. If another agent/session already owns a broad sweep, wait for it or use
@@ -1355,6 +1403,19 @@ Check:
 - `reports/fabrication_balance/proposed_changes.json` is proposal-only JSON and does not imply runtime data was applied.
 - Lore violations are understood before using `--strict-lore` in automated checks.
 
+## Contract World Placement Context
+
+Run after changes to the shared accepted-world placement input/query seam:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/world_placement_context_smoke.gd
+```
+
+The context smoke covers detached level-data results, accepted-map query
+delegation, deterministic seed parity, explicit observability, construction
+without placement side effects, and safe behavior after the accepted map exits.
+
 ## Compound Infrastructure Powered Fabricator Validation
 
 Use after changes to infrastructure definitions/components, power registration, fabrication service scaling, construction placement, or registry persistence.
@@ -1526,6 +1587,7 @@ godot --headless --path . --script res://tools/validation/procgen_void_cliff_fac
 godot --headless --path . --script res://tools/validation/procgen_void_cliff_wall_integration_smoke.gd
 godot --headless --path . --script res://tools/validation/elevated_world_seed_review.gd
 godot --headless --path . --script res://tools/validation/procgen_terrain_required_cells_smoke.gd
+godot --headless --path . --script res://tools/validation/procgen_road_authority_smoke.gd
 godot --headless --path . --script res://tools/validation/procgen_road_surface_roles_smoke.gd
 ```
 

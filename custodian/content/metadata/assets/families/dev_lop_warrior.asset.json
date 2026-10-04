@@ -1,0 +1,361 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "dev_lop_warrior",
+  "kind": "enemy",
+  "priority": "P2",
+  "runtime": {
+    "domain": "sprites/dev/lords_of_pain",
+    "owner": "dev_lop_warrior"
+  },
+  "canvas": {
+    "width": 256,
+    "height": 256
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "armed_idle_n": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_n",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_nne": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_nne",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_ne": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_ne",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_nee": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_nee",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_e": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_e",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_see": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_see",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_se": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_se",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_sse": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_sse",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_s",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_ssw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_ssw",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_sw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_sw",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_sww": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_sww",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_w": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_w",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_nww": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_nww",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_nw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_nw",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_idle_nnw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_idle_nnw",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    },
+    "armed_walk_n": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_n",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_nne": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_nne",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_ne": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_ne",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_nee": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_nee",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_e": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_e",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_see": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_see",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_se": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_se",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_sse": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_sse",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_s": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_s",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_ssw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_ssw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_sw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_sw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_sww": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_sww",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_w": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_w",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_nww": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_nww",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_nw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_nw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    },
+    "armed_walk_nnw": {
+      "required": true,
+      "layer": "body",
+      "action_group": "actor",
+      "variant": "armed_walk_nnw",
+      "layout": "horizontal_strip",
+      "frame_width": 256,
+      "frame_height": 256,
+      "animation": true,
+      "frames": 8,
+      "fps": 8
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "manifest",
+      "path": "res://content/data/dev/lords_of_pain/gallery_manifest.json"
+    }
+  ]
+}

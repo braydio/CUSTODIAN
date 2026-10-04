@@ -76,6 +76,7 @@ func _init() -> void:
 		root.add_child(instance)
 		await physics_frame
 		_check_scene_skeleton(instance)
+		_check_detail_presentation(instance)
 		_check_zone_art_fade(instance)
 		_check_road_instance(instance)
 		_check_retired_home_logic()
@@ -254,6 +255,61 @@ func _check_scene_skeleton(instance: Node) -> void:
 		for method_name in ["set_location", "set_phase", "set_objective", "show_interaction"]:
 			if not hud.has_method(method_name):
 				_fail("HUD missing presentation method: %s" % method_name)
+
+
+func _check_detail_presentation(instance: Node) -> void:
+	var static_details := [
+		["Zone02_Ambulatory/RuinFloorCrackB", Vector2(64, 64)],
+		["Zone03_Attestation/RuinFloorCrackC", Vector2(64, 64)],
+		["Zone05_DustLung/RuinRootIntrusion", Vector2(64, 64)],
+		["Zone06_Undergate/RuinSootBloom", Vector2(64, 64)],
+		["Zone07_GateOfDust/RuinRubbleMedium", Vector2(64, 64)],
+		["Zone07_GateOfDust/RuinDustScour", Vector2(64, 64)],
+		["Zone06_Undergate/AuthorityRouteCircle", Vector2(32, 32)],
+	]
+	for detail in static_details:
+		var node_path := "World/AwakeningZones/%s/SetPieces/%s" % [detail[0].get_base_dir(), detail[0].get_file()]
+		var sprite := instance.get_node_or_null(NodePath(node_path)) as Sprite2D
+		if sprite == null or sprite.texture == null:
+			_fail("published Awakening detail sprite missing: %s" % node_path)
+			continue
+		if sprite.texture.get_size() != detail[1]:
+			_fail("%s has unexpected canvas size %s" % [node_path, str(sprite.texture.get_size())])
+		if sprite.get_parent().name != "SetPieces" or sprite.get_child_count() != 0:
+			_fail("%s must remain a presentation-only SetPieces sprite" % node_path)
+
+	var animated_details := [
+		["Zone05_DustLung/DustMotesWest", 64, 6.0],
+		["Zone05_DustLung/DustMotesCenter", 64, 6.0],
+		["Zone05_DustLung/FallingAshWest", 64, 6.0],
+		["Zone05_DustLung/FallingAshEast", 64, 6.0],
+		["Zone07_GateOfDust/GateWindDustWest", 128, 8.0],
+		["Zone07_GateOfDust/GateWindDustEast", 128, 8.0],
+	]
+	for detail in animated_details:
+		var node_path := "World/AwakeningZones/%s/SetPieces/%s" % [detail[0].get_base_dir(), detail[0].get_file()]
+		var sprite := instance.get_node_or_null(NodePath(node_path)) as AnimatedSprite2D
+		if sprite == null or sprite.sprite_frames == null:
+			_fail("published Awakening ambient animation missing: %s" % node_path)
+			continue
+		var frames := sprite.sprite_frames
+		if frames.get_frame_count(&"loop") != 8 or not frames.get_animation_loop(&"loop"):
+			_fail("%s must play an eight-frame loop" % node_path)
+		if not is_equal_approx(frames.get_animation_speed(&"loop"), float(detail[2])):
+			_fail("%s has incorrect animation speed" % node_path)
+		for frame_index in 8:
+			var frame := frames.get_frame_texture(&"loop", frame_index)
+			if frame == null or frame.get_size() != Vector2(detail[1], detail[1]):
+				_fail("%s frame %d has incorrect slicing" % [node_path, frame_index])
+				break
+		if not sprite.is_playing() or sprite.modulate.a <= 0.0 or sprite.modulate.a > 0.4:
+			_fail("%s must be playing with restrained visible opacity" % node_path)
+		if sprite.get_parent().name != "SetPieces" or sprite.get_child_count() != 0:
+			_fail("%s must remain a presentation-only SetPieces sprite" % node_path)
+		if node_path.contains("GateWindDust") and absf(sprite.position.x) > 128.0:
+			_fail("Gate wind dust escaped the localized Gate aperture area")
+		if node_path.contains("GateWindDust") and sprite.z_index != Layout.Z_OPERATOR:
+			_fail("Gate wind dust must draw over the Gate art at the Operator layer")
 
 
 func _check_zone_art_fade(instance: Node) -> void:

@@ -4,7 +4,9 @@ Status: implementation
 
 Surface materials classify final generated floor presentation without owning
 floor membership, traversal, collision, navigation, elevation, biome, roads,
-or topology. `ProcGenTilemap` resolves the read-only map after final terrain
+or topology.
+
+Surface material presentation must follow the active region frame in `PROCGEN_REGION_FRAME_PROFILES.md`. For the first `ALPINE_PLATEAU` starting region, authored replacement art follows `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`: cold stone/earth, patchy snow/frost, restrained vegetation, weathered hardened civic/military surfaces, and faded ochre/amber route markings. `ProcGenTilemap` resolves the read-only map after final terrain
 and biome authority, before visual floor clustering.
 
 ## Precedence

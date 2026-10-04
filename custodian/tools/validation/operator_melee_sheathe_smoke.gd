@@ -72,7 +72,7 @@ func _run_sheathe_case(
 	operator.call("queue_weapon_selection", {"type": "unarmed"})
 
 	_expect(
-		operator.get("_animation_state_machine").current_state == "sheathe_weapon",
+		operator.get("_action_controller").current_action == &"sheathe_weapon",
 		"%s: weapon selection did not enter sheathe_weapon state" % suffix
 	)
 	_expect(
@@ -104,10 +104,10 @@ func _run_sheathe_case(
 	)
 	_expect(
 		not bool(operator.get("using_unarmed")),
-		"%s: target selection committed before the state machine processed sheathe completion" % suffix
+		"%s: target selection committed before the action controller processed sheathe completion" % suffix
 	)
 
-	operator.call("_update_animation_state_machine", 0.016)
+	operator.call("_update_operator_actions", 0.016)
 
 	_expect(bool(operator.get("using_unarmed")), "%s: target selection did not commit after the final sheathe frame" % suffix)
 	_expect(not weapon.visible, "%s: weapon overlay must disappear once unarmed commits" % suffix)
@@ -117,8 +117,8 @@ func _run_sheathe_case(
 		"%s: melee posture state must report SHEATHED after sheathe commits" % suffix
 	)
 	_expect(
-		operator.get("_animation_state_machine").current_state == "idle",
-		"%s: state machine must return to idle after an unarmed commit" % suffix
+		operator.get("_action_controller").current_action.is_empty(),
+		"%s: action controller must return to no active action after an unarmed commit" % suffix
 	)
 
 

@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `contract-world-placement-foundation`
+- Depends on: `review-contract-world-placement-foundation`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `f7e84ae48a90ff9da0f968ef0c72ac9ba0c2c5ee`
 - Goal: Move ARRN relay tile selection and placement from ContractWorldLoader into the world-placement layer.
 - Completion boundary: Done when relay candidate picking, spacing/sector semantics, and node placement are service-owned while ARRN state/simulation remains ARRN-owned.
 - Current measured state: ARRN relay positioning is still loader-owned in `custodian/game/systems/core/systems/contract_world_loader.gd` through `_position_arrn_relays` and `_pick_arrn_relay_tile`; ARRN simulation/state remains under `custodian/game/systems/core/systems/arrn/`. `custodian/game/world/placement/` has no relay service yet.
@@ -23,6 +23,7 @@
 - Validation: `res://tools/validation/world_contract_prewarm_smoke.gd` plus the current ARRN-focused validation selected by `custodian/tools/validation/validation_manifest.json`; add a deterministic relay-placement snapshot inside this workstream if exact position parity is otherwise unproved; then changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains and loader contraction.
+- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 

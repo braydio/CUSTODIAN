@@ -13,7 +13,7 @@ extends SceneTree
 ##
 ## Owner ids mirror Operator.BodyOwner.
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
-const CATALOG_FRAMES := preload("res://game/actors/operator/operator_animation_catalog_frames.tres")
+const CATALOG_FRAMES := preload("res://content/sprites/operator/runtime/operator_runtime_frames.tres")
 const BODY_PLAN := preload(
 	"res://game/actors/operator/presentation/operator_body_presentation_plan.gd"
 )
@@ -36,7 +36,6 @@ const OWNER_NAMES := {
 
 ## Overlays that may legitimately be visible alongside any body owner.
 const OVERLAY_NODE_NAMES := [
-	"ModularCapeSprite",
 	"ModularSidearmSprite",
 	"ModularUpperFxSprite",
 	"MeleeWeaponOverlaySprite",
@@ -378,23 +377,8 @@ func _check_owner_scoped_overlays() -> void:
 ## cosmetic the incoming owner also wears. The cape rides both the legacy strips
 ## and the modular rig, so claiming modular must leave it alone.
 func _check_shared_overlay_survives_handoff() -> void:
-	var cape := _operator.get_node_or_null("ModularCapeSprite") as AnimatedSprite2D
-	if cape == null:
-		return
-	_operator.call("_set_body_presentation_owner", OWNER_LEGACY_FULL_BODY)
-	if not _operator.call("_show_presentation_layer", cape):
-		_fail("shared overlay: the legacy owner could not show the cape it wears")
-		return
-	if not cape.visible:
-		_fail("shared overlay: cape did not become visible for the legacy owner")
-		return
-	_operator.call("_claim_modular_body_owner")
-	if not cape.visible:
-		_fail("shared overlay: claiming modular retired a cape the modular rig also wears")
-	# `claim_modular()` deliberately leaves the modular body layers for the caller
-	# to fill, so assert the owner rather than a visible body here.
-	if int(_operator.call("get_body_presentation_owner")) != OWNER_MODULAR_BODY:
-		_fail("shared overlay: modular did not become the body owner")
+	if _operator.get_node_or_null("ModularCapeSprite") != null:
+		_fail("retired modular cape node must not be present in the Operator scene")
 
 
 # --- preemption retires the whole owner, and cancels its lifecycle -----------

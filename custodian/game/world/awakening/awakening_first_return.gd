@@ -21,6 +21,16 @@ const GATE_WEST_PYLON := preload("res://content/sprites/environment/props/awaken
 const GATE_EAST_PYLON := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png")
 const GATE_SEALED_APERTURE := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__sealed_aperture__omni__1f__512.png")
 const GATE_REST_THRESHOLD := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__rest_threshold__omni__1f__128x160.png")
+const RUIN_FLOOR_CRACK_B := preload("res://content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_b_64.png")
+const RUIN_FLOOR_CRACK_C := preload("res://content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_c_64.png")
+const RUIN_RUBBLE_MEDIUM := preload("res://content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_medium_64.png")
+const RUIN_ROOT_INTRUSION := preload("res://content/tiles/awakening/ruin_decals/awakening_ruin_decal_root_intrusion_64.png")
+const RUIN_SOOT_BLOOM := preload("res://content/tiles/awakening/ruin_decals/awakening_ruin_decal_soot_bloom_64.png")
+const RUIN_DUST_SCOUR := preload("res://content/tiles/awakening/ruin_decals/awakening_ruin_decal_dust_scour_64.png")
+const AUTHORITY_ROUTE_CIRCLE := preload("res://content/tiles/awakening/authority_inlay/awakening_authority_inlay_route_circle_32.png")
+const AWAKENING_DUST_MOTES := preload("res://content/sprites/effects/awakening/runtime/awakening_dust_motes/awakening_dust_motes__fx__effect__loop__omni__8f__64.png")
+const AWAKENING_FALLING_ASH := preload("res://content/sprites/effects/awakening/runtime/awakening_falling_ash/awakening_falling_ash__fx__effect__loop__omni__8f__64.png")
+const AWAKENING_GATE_WIND_DUST := preload("res://content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png")
 
 const OBJECTIVE_RECOVERY := "Wake and read the crèche console"
 const OBJECTIVE_P9_RECOVERY := "Recover the assigned P-9"
@@ -71,6 +81,7 @@ func _ready() -> void:
 	_build_world_geometry()
 	_cache_zone_art_visibility_targets()
 	_build_hero_presentation()
+	_build_detail_presentation()
 	_build_interactables()
 	_build_triggers()
 	_place_operator()
@@ -458,6 +469,66 @@ func _build_south_reach_barrier() -> void:
 func _build_hero_presentation() -> void:
 	_build_recovery_alcove_presentation()
 	_build_gate_of_dust_presentation()
+
+
+func _build_detail_presentation() -> void:
+	# Detail art stays in each zone's presentation-owned SetPieces container;
+	# none of these sprites participates in Layout collision or progression.
+	_add_detail_sprite(&"zone02_ambulatory", "RuinFloorCrackB", RUIN_FLOOR_CRACK_B, Vector2(-160, -864))
+	_add_detail_sprite(&"zone03_attestation", "RuinFloorCrackC", RUIN_FLOOR_CRACK_C, Vector2(0, -1872))
+	_add_detail_sprite(&"zone05_dust_lung", "RuinRootIntrusion", RUIN_ROOT_INTRUSION, Vector2(-448, -3520))
+	_add_detail_sprite(&"zone06_undergate", "RuinSootBloom", RUIN_SOOT_BLOOM, Vector2(560, -4720))
+	_add_detail_sprite(&"zone07_gate_of_dust", "RuinRubbleMedium", RUIN_RUBBLE_MEDIUM, Vector2(-448, -5200))
+	_add_detail_sprite(&"zone07_gate_of_dust", "RuinDustScour", RUIN_DUST_SCOUR, Vector2(448, -5200))
+	_add_detail_sprite(&"zone06_undergate", "AuthorityRouteCircle", AUTHORITY_ROUTE_CIRCLE, Vector2(-560, -4288))
+
+	var dust_zone := _zone_child(&"zone05_dust_lung", "SetPieces") as Node2D
+	if dust_zone != null:
+		_add_ambient_loop(dust_zone, "DustMotesWest", AWAKENING_DUST_MOTES, 64, 6.0, Vector2(-208, -3072), 0.22, 0.75)
+		_add_ambient_loop(dust_zone, "DustMotesCenter", AWAKENING_DUST_MOTES, 64, 6.0, Vector2(112, -3296), 0.18, 0.65)
+		_add_ambient_loop(dust_zone, "FallingAshWest", AWAKENING_FALLING_ASH, 64, 6.0, Vector2(-320, -3408), 0.24, 0.8)
+		_add_ambient_loop(dust_zone, "FallingAshEast", AWAKENING_FALLING_ASH, 64, 6.0, Vector2(288, -2896), 0.2, 0.72)
+
+	var gate_zone := _zone_child(&"zone07_gate_of_dust", "SetPieces") as Node2D
+	if gate_zone != null:
+		_add_ambient_loop(gate_zone, "GateWindDustWest", AWAKENING_GATE_WIND_DUST, 128, 8.0, Vector2(-112, -4848), 0.34, 0.78, Layout.Z_OPERATOR)
+		_add_ambient_loop(gate_zone, "GateWindDustEast", AWAKENING_GATE_WIND_DUST, 128, 8.0, Vector2(112, -4848), 0.3, 0.72, Layout.Z_OPERATOR)
+
+
+func _add_detail_sprite(zone_id: StringName, node_name: String, texture: Texture2D, position: Vector2) -> void:
+	var set_pieces := _zone_child(zone_id, "SetPieces") as Node2D
+	if set_pieces == null or set_pieces.get_node_or_null(NodePath(node_name)) != null:
+		return
+	var sprite := Sprite2D.new()
+	sprite.name = node_name
+	sprite.texture = texture
+	sprite.position = position
+	sprite.z_index = Layout.Z_FLOOR
+	set_pieces.add_child(sprite)
+
+
+func _add_ambient_loop(parent: Node2D, node_name: String, texture: Texture2D, frame_size: int, fps: float, position: Vector2, alpha: float, scale: float, effect_z: int = Layout.Z_FLOOR) -> void:
+	if parent.get_node_or_null(NodePath(node_name)) != null:
+		return
+	var sprite := AnimatedSprite2D.new()
+	sprite.name = node_name
+	sprite.position = position
+	sprite.scale = Vector2.ONE * scale
+	sprite.modulate = Color(1.0, 1.0, 1.0, alpha)
+	sprite.z_index = effect_z
+	var frames := SpriteFrames.new()
+	frames.remove_animation(&"default")
+	frames.add_animation(&"loop")
+	frames.set_animation_loop(&"loop", true)
+	frames.set_animation_speed(&"loop", fps)
+	for frame_index in 8:
+		var frame := AtlasTexture.new()
+		frame.atlas = texture
+		frame.region = Rect2(frame_index * frame_size, 0, frame_size, frame_size)
+		frames.add_frame(&"loop", frame)
+	sprite.sprite_frames = frames
+	parent.add_child(sprite)
+	sprite.play(&"loop")
 
 
 func _build_recovery_alcove_presentation() -> void:

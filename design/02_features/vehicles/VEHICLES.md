@@ -48,6 +48,26 @@ Behavior resolved from: `domain + mobility + chassis + role + loadout + traits`
 
 ---
 
+## 2.1 Alpine Plateau Starting-Region Application
+
+Vehicle mechanics remain classification-driven. Custodian vehicles shown in the first generated `ALPINE_PLATEAU` starting region follow `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`. Future region frames may alter weathering/environmental application without changing vehicle taxonomy or core Custodian construction grammar.
+
+Default Custodian read:
+
+- rugged expeditionary/logistics equipment;
+- boxy, reinforced, field-serviceable silhouette;
+- visible role hardware: cargo, maintenance, scanner, relay, transport or recovery fittings;
+- charcoal/gunmetal/weathered olive bodywork with dirty canvas or tarp where useful;
+- restrained brass/ochre markings and practical service lighting;
+- snow, mud, grime and repair wear consistent with the alpine frontier;
+- clear tire/track/hover hardware appropriate to the registry mobility tags.
+
+Avoid sleek civilian sports-car forms, glossy white sci-fi shells, neon hover-racer language, improvised scrap-heap styling, or oversized weapons as the default visual identity.
+
+The first campaign world should make vehicles feel like equipment brought to survive and service hostile terrain, not collectibles dropped onto it.
+
+---
+
 ## 3. Taxonomy
 
 ### Domains

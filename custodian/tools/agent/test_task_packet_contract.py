@@ -176,6 +176,25 @@ class V2RequiredFieldTests(unittest.TestCase):
         self.assertEqual(tpc._header_field_with_continuations(text, "Goal"), "First line continues here")
 
 
+class ValidationReferenceTests(unittest.TestCase):
+    def test_validation_references_preserve_supported_spellings(self):
+        text = (
+            "# Packet\n\n- Workstream: `paths`\n- Status: `ready`\n"
+            "## Validation\n\n"
+            "Run `custodian/tools/a.py`, `res://tools/b.gd`, and `tools/c.sh`.\n"
+        )
+        self.assertEqual(
+            tpc._validation_script_references(text),
+            ("custodian/tools/a.py", "res://tools/b.gd", "tools/c.sh"),
+        )
+
+    def test_validation_reference_candidates_are_confined_to_supported_roots(self):
+        self.assertEqual(tpc._validation_reference_candidates("custodian/tools/a.py"), ("custodian/tools/a.py",))
+        self.assertEqual(tpc._validation_reference_candidates("res://tools/a.py"), ("custodian/tools/a.py",))
+        self.assertEqual(tpc._validation_reference_candidates("tools/a.py"), ("tools/a.py", "custodian/tools/a.py"))
+        self.assertEqual(tpc._validation_reference_candidates("res://addons/a.py"), ())
+
+
 class CompletionTruthTests(unittest.TestCase):
     def test_missing_section_returns_none(self):
         self.assertIsNone(tpc.parse_completion_truth(v2_packet("no-truth")))

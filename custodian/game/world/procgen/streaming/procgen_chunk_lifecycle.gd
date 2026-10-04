@@ -155,11 +155,29 @@ func get_pending_chunks() -> Array[Vector2i]:
 	return pending
 
 
-## Narrow debug/test seam for the UNLOADED state the lifecycle contract
-## declares but M4 never reaches in production (`streaming_unload_distant_chunks`
-## defaults false and this is the only call site). Re-requesting an UNLOADED
-## chunk intentionally restarts its lifecycle; M6 owns the production policy
-## for when/why to unload and reload, not the underlying reload mechanism.
+## Chunks whose presentation has been evicted (M6 production distant-chunk
+## unload or the debug/test seam below). Stable coordinate order so callers
+## that fold this into a navigation/debug snapshot stay deterministic.
+func get_unloaded_chunks() -> Array[Vector2i]:
+	var unloaded: Array[Vector2i] = []
+	for chunk_pos in _records.keys():
+		var record: ChunkRecord = _records[chunk_pos]
+		if record.state == State.UNLOADED:
+			unloaded.append(chunk_pos)
+	unloaded.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		if a.x != b.x:
+			return a.x < b.x
+		return a.y < b.y
+	)
+	return unloaded
+
+
+## Called by `ProcGenTilemap._unload_chunk()` -- the M6 bounded production
+## residency drain's only unload call site, and the narrow
+## `debug_force_unload_chunk()` test seam. Re-requesting an UNLOADED chunk
+## intentionally restarts its lifecycle; M6's `ProcGenChunkResidencyPolicy`
+## owns the production policy for when/why to unload and reload, not this
+## underlying reload mechanism.
 func force_unload(chunk_pos: Vector2i) -> void:
 	var record: ChunkRecord = _records.get(chunk_pos)
 	if record == null or (record.state != State.VISIBLE and record.state != State.DORMANT):

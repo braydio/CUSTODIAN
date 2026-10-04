@@ -27,6 +27,23 @@ classification into `WorldEnvironmentDirector` or add weather authority here.
 - Weather holds 90–240 seconds and transitions over 8–15 seconds.
 - Weather affects only lighting, fog/grade, precipitation, and foliage wind. It has no gameplay modifiers.
 
+### Region-frame relationship
+
+Ecological biome IDs are **local field semantics**, not macro world-frame identity.
+
+`design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` owns the permanent region frame/border/underlay selection. The first starting region selects `ALPINE_PLATEAU`, whose art application is locked by `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`.
+
+Inside that starting frame the biome field remains deterministic/generative:
+
+- `rocky_upland` should be common/dominant;
+- `woodland` is cold conifer woodland;
+- `scrubland` is sparse wind-exposed cold scrub;
+- `wetland` remains bounded cold drainage/bog.
+
+Future generated regions may use different region frames and climate biases while retaining the same local biome classifier contract.
+
+The region frame does not classify biome cells, and biome classification does not choose the permanent map border.
+
 ## Dataflow and Determinism
 
 Biome classification consumes accepted procgen floor cells, terrain/elevation output, accepted map seed, and profile moisture/exposure biases. It never changes at runtime and cannot modify walkability.

@@ -84,7 +84,10 @@ func _run_reversal_case(
 	var operator_body := operator.get_node("AnimatedSprite2D") as AnimatedSprite2D
 	var operator_fx := operator.get_node("ModularUpperFxSprite") as AnimatedSprite2D
 	var victim_body := grunt.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	_assert_animation_geometry(operator_body, StringName("operator_falcon_reversal_%s" % expected_direction))
+	_assert_animation_geometry(
+		operator_body,
+		StringName("unarmed/cosmetic/falcon_reversal_01/%s/full_body" % expected_direction)
+	)
 	# C2a-R2: the Operator FX renderer is canonical and no longer has frames built
 	# into it at runtime, so it carries the published identity. The body and victim
 	# renderers are still compatibility renderers in this slice.

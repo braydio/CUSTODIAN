@@ -1,7 +1,6 @@
 extends SceneTree
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
-const WORLD_LOADER_SCRIPT := preload("res://game/systems/core/systems/contract_world_loader.gd")
 
 var _failed := false
 
@@ -54,8 +53,8 @@ func _run() -> void:
 		if bounds.has_point(corridor):
 			_expect(floors.has(corridor), "corridor cell remains floor")
 
-	var loader := WORLD_LOADER_SCRIPT.new()
-	var semantic_by_sector: Dictionary = loader.call("_compound_rooms_by_sector_id", data)
+	var placement_context := WorldPlacementContext.new(map, data)
+	var semantic_by_sector: Dictionary = placement_context.get_compound_rooms_by_sector_id()
 	for sector_id in ["POWER", "ARCHIVE", "DEFENSE", "STORAGE", "NORTH_TRANSIT", "SOUTH_TRANSIT"]:
 		_expect(semantic_by_sector.has(sector_id), "semantic sector mapping includes %s" % sector_id)
 	_expect(str(data).find("PROCGEN_SECTOR_LAYOUT") < 0, "level data contains no index semantics")
