@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-publish-readiness-recovery`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md`
-- Reviewed main: `44bf03388c`
+- Reviewed main: `ca51381bf8`
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -27,6 +27,12 @@
   - LFS must remain local-only and sparse dependency additions measured rather than broad. Cache materialization is preferred; a hydrated coordination/developer checkout is an acceptable donor only when the same relative path's SHA-256 and byte size exactly match the target LFS pointer. Hydration must be path-scoped to files already present/required by the sparse validation surface; an unscoped `git lfs checkout` that expands sparse-omitted content is a blocking defect. Mismatch, donor pointer, missing donor, or dirty bytes that do not match must fail closed; no network fetch is permitted.
   - Metadata restoration must require clean pre-state + proven transaction provenance + exact preimage; wildcard cleanup is a blocking defect.
   - Failure after mutation must end clean or with a complete durable `RECOVERY_REQUIRED` journal.
+  - Blocked publication state must not make OPUI itself inaccessible: verify startup remains read-only/recovery-capable across pending receipt + divergence + sparse drift.
+  - Pending publication recovery must not rely solely on exact HEAD. Rewritten history may reconcile only from stable path/blob/patch evidence, and any non-equivalent history must fail closed.
+  - Saved-document/frame-contract reconciliation must preserve edited Aseprite bytes and never insert/drop frames implicitly; an obsolete pending migration may be cleared only with backup + equivalence proof.
+  - Transaction errors must retain the first failing stage/error even when rollback fails later.
+  - `RECOVERY_REQUIRED` may clear only after journal-owned files and checkout state are verified; marker deletion without proof is blocking.
+  - The already-landed stale-warning Escape/Enter/click recovery must remain green and must continue rendering the exact backend error instead of masking it.
   - Successful publication must retain current source-conflict, allowlist, commit, pending-land, and landing guarantees.
 - Acceptance: Produce a findings-first independent review of live `main`. Record a `passed` receipt or concrete findings. Give each finding a stable cycle-scoped ID (`R<cycle>-<NN>`) and the required class, domain, affected acceptance, evidence, disposition, and rationale. Blocking defects and material acceptance-proof gaps create `operator-workbench-publish-readiness-recovery-review-corrections-<n>` plus its paired review packet. Do not patch reviewed implementation code.
 - Non-goals: Do not redesign the Operator Workbench publisher, add FX-layer adoption, broaden sparse checkout beyond required dependencies, change Operator art/runtime/gameplay, or implement page-3 PREVIEW refresh hardening in the review workstream.
@@ -37,7 +43,7 @@
 1. Claim only after `operator-workbench-publish-readiness-recovery` is complete and archived on `origin/main`.
 2. Read root/local AGENTS, the archived implementation packet and closing summary, `OPERATOR_ANIMATION_WORKBENCH.md`, the current sparse-worktree publication code, and the implementation's durable transaction evidence.
 3. Review the implementation against the authored acceptance, not merely the fact that one publish succeeds.
-4. Start with the negative controls: unknown dirt, unavailable LFS after both cache and verified-donor lookup, donor hash/size mismatch, donor-still-pointer, stale manifest, ambiguous metadata churn, injected downstream failure, and pending-land resume. Also prove the positive exact-donor case leaves the target Git-clean.
+4. Start with the negative controls: startup with pending+diverged+sparse-drift state, rewritten pending-receipt commit with non-equivalent bytes, obsolete pending frame migration over a saved document, primary failure plus rollback failure, premature recovery-marker clearing, unknown dirt, unavailable LFS after both cache and verified-donor lookup, donor hash/size mismatch, donor-still-pointer, stale manifest, ambiguous metadata churn, injected downstream failure, and pending-land resume. Also prove the positive exact-donor case leaves the target Git-clean.
 5. Verify exact byte preservation for user/unknown inputs and exact restoration for eligible machine-generated metadata.
 6. Verify the successful path still stages only the existing allowlist and lands only through the approved Operator publication handoff.
 7. Record findings/receipt and scaffold bounded correction + re-review only when the correction threshold is met.
