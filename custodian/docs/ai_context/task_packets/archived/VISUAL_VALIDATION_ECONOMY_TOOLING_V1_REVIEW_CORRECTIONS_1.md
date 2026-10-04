@@ -52,6 +52,36 @@
 - Follow-up: `fixed-in-scope`
 - What worked: Cached LFS checkout plus a single headless editor import restored the isolated worktree, after which the live runs and changed validation passed.
 
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-visual-validation-economy-tooling-v1-review-corrections-1-r1`
+- Reviewed on main: `d2c530c2386117cbfb04f55076cce9a5553043d2`
+- Review modes: `code, runtime, workflow`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_VISUAL_VALIDATION_ECONOMY_TOOLING_V1_REVIEW_CORRECTIONS_1_R1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Original finding disposition
+
+- `R0-01` — `fixed`. Independently reproduced a padded out-of-bounds ROI and confirmed `MetricsError`; negative/overflow/nonpositive geometry is rejected by the metric path.
+- `R0-02` — `fixed`. A one-pixel vertical boundary discontinuity measured delta `63.75`; the clean seam control measured zero.
+- `R0-03` — `fixed`. With bounds `[0.5, 0.75]`, coverage `0` and `1` fail while `0.5` passes.
+- `R0-04` — `fixed`. Focused adapter test proves failed required metrics return exit code 1 and identify failed indices; passing metrics still emit sheet and manifest.
+- `R0-05` — `fixed`. Four adopter specs are exercised by focused schema/fixture validation. The Operator animation values remain symbolic by design: the README instructs downstream consumers to bind roles and instantiate assertion templates when the feature runtime lands.
+- `R0-06` — `fixed` (supplemental to this review packet's stated R0-01..R0-05 scope). The durable receipt's canonical scenario hash matches `run_moment.scenario_sha256`; both none/evidence runs report the same fingerprint, 26 probes, zero warnings, and 5/5 ROI checks. Retained metrics match the receipt and the contact sheet is 1200×444.
+
+### Validation
+
+Focused unittest suite: 27 tests passed. Moment Forge schema, report, and changed-router smokes passed; `run_moment.py --list --json` reported all 26 scenarios schema-valid. Review-pairing validation passed. The broader `task_packet_index.py` check reports pre-existing managed-block drift; it is refreshed in this review branch and rechecked before commit.
+
 ## Completion Notes
 
 - Implemented all six review corrections with focused negative/positive controls and four reusable downstream adopter specs.
