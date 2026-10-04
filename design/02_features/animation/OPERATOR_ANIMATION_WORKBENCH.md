@@ -111,6 +111,36 @@ The manifest records exact repo-relative source/runtime provenance, file and pix
 
 Publishing edits the requested authored direction and, only when explicitly enabled in the publish review, may promote it to its horizontal counterpart (`e↔w`, `ne↔nw`, `se↔sw`). The option defaults OFF and is unavailable for `n`, `s`, and `omni`. Preview lists direct and mirror targets with CREATE/REPLACE status; replacing authored counterpart art is permitted only by this explicit promotion. Every publishing layer participates while reference/nonpublishing layers remain excluded. Mirroring flips each frame cell independently and reassembles the cells in their original temporal order, never flips the whole strip. Counterpart PNGs and timing sidecars share the direct publish transaction, journal, downstream build, validation, and rollback. The backend constructs counterpart paths through `operator_asset_schema.py`; this flow never uses `asset_drop/inbox`. CLI automation uses `--mirror-counterpart`. A source changed after assembly makes the session stale; publishing refuses unless the explicit `--force-stale-source` escape hatch is supplied.
 
+## Planned V3: new semantic animation creation
+
+Tracked by `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`.
+
+The planned **New Animation** flow extends the same Workbench/publisher rather
+than creating a second asset authority. A native Workbench creation starts from
+a validated semantic identity and proposed publish contract, creates only an
+ignored/disposable Aseprite session, and writes no canonical PNG until explicit
+Publish. Publication then derives source/runtime paths from
+`operator_asset_schema.py`, performs transactional CREATE, runs the existing
+Operator runtime sync, Godot import preflight/import, SpriteFrames/catalog
+rebuild, focused validation, and guarded landing. Failure deletes the newly
+created outputs and restores generated state exactly.
+
+This native-authoring path deliberately does **not** round-trip its own saved
+Workbench pixels through `asset_drop/inbox`. Asset Pipeline V2 already delegates
+Operator art to this specialized backend. The inbox remains the correct boundary
+for externally generated/imported/untrusted art that still needs intake,
+normalization, registration, and provenance review. An external runtime-ready
+Operator strip continues to use:
+
+```text
+custodian/asset_drop/inbox/operator/
+operator__<layer>__<profile>__<group>__<action>__<direction>__<N>f__<size>.png
+```
+
+Newly published art does not imply gameplay use. Until a presentation/runtime
+consumer selects the action, the UI must present it as source/catalog-present
+but DORMANT/unwired rather than LIVE.
+
 ## Contract migration: frame count and canvas
 
 The V2 manifest separately records canonical `source_contract`, current
