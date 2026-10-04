@@ -69,20 +69,20 @@ No AR1 correction packet is required.
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
-- Acceptance satisfied: `no`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `custodian/game/world/procgen/streaming/archive_resolve.gdshader`; `procgen_reveal_presentation.gd`; `procgen_archive_resolve_shader_smoke.gd` (registered); `game.tscn` ContractMap order; AR1/pause/lifecycle/cache/unload/runtime-health/materializer/region-frame suites and S1 quick (`determinism_ok=true`, fp `1773840677`) green. NOT verified: shader compile and all aesthetics (headless dummy renderer; no capture taken). ARR1 R0-03 (production-map live-toggle/undersized-pool integration) and R0-04 (unconditional road-decal unload proof) were NOT built. The user directed landing and marked the slice complete, deferring human visual review to their own playtest before the next slice.
+- Evidence: `custodian/game/world/procgen/streaming/archive_resolve.gdshader`; `procgen_reveal_presentation.gd`; `procgen_archive_resolve_shader_smoke.gd` (registered); `game.tscn` ContractMap order; AR1/pause/lifecycle/cache/unload/runtime-health/materializer/region-frame suites and S1 quick (`determinism_ok=true`, fp `1773840677`) green. NOT verified: shader compile and all aesthetics (headless dummy renderer; no capture taken). ARR1 R0-03 (live toggle + undersized pool on the production map, in the AR2 smoke) and R0-04 (unconditional authority-backed road decal unload/reacquisition, in `procgen_distant_chunk_unload_smoke.gd`) were built and pass. The user directed landing and marked the slice complete, deferring human visual review to their own playtest before the next slice.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `partial`
+- Outcome: `success-with-waived-review`
 - Friction severity: `low`
-- What went wrong: `Implementation started from a stale local packet copy that omitted the R0-01..R0-04 scope and the dependency refresh; R0-01/R0-02 were added late and R0-03/R0-04 plus Moment Forge/Dropbox review were skipped on user instruction.`
+- What went wrong: `Implementation started from a stale local packet copy that omitted the R0-01..R0-04 scope and the dependency refresh; R0-01..R0-04 were added late; Moment Forge/Dropbox visual review was waived by the user in favor of their own playtest, so acceptance (13) rests on that user decision, not agent evidence.`
 - Root cause / contributing factors: `Local main lagged fetched origin/main where the packet was refreshed; the packet was not re-read in the claimed worktree before coding.`
 - Prevention / pipeline improvement: `Always re-read the packet inside the claimed worktree before implementing (now in AGENTS.md Naming Work).`
 - Tooling / docs drift discovered: `Headless Godot cannot read MultiMesh buffers or compile canvas shaders; validation uses an identity-write counter instead.`
-- Follow-up: `review-procgen-archive-resolve-shader; human playtest/visual approval; ARR1 R0-03 and R0-04 hardening`
+- Follow-up: `review-procgen-archive-resolve-shader; human playtest/visual approval`
 
 ## Refresh Planning Authority
 

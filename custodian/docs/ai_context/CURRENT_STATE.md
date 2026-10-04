@@ -46,7 +46,8 @@ route through the settle path and `ProcGenTilemap.set_archive_resolve_enabled()`
 is the live toggle. `World/ContractMap` precedes the z2 actor containers in
 `game.tscn`. `procgen_archive_resolve_shader_smoke.gd` owns the contract. Shader
 compile and aesthetics are not verified headless; human playtest review is
-pending, and ARR1 R0-03/R0-04 test hardening is still open.
+pending (waived for landing). ARR1 R0-03/R0-04 are covered by the AR2 and
+distant-unload smokes.
 
 ## Contract World Placement Foundation (2026-10-02)
 

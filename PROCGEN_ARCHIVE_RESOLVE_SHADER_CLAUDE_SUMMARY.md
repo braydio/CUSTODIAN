@@ -1,4 +1,4 @@
-# PROCGEN_ARCHIVE_RESOLVE_SHADER (AR2) — landed, partial acceptance
+# PROCGEN_ARCHIVE_RESOLVE_SHADER (AR2) — landed
 
 ## Delivered
 - `archive_resolve.gdshader`: graphite/soot cover, world-space ordered dither resolve in coherent fronts, thin brass trace, <=1 px misregistration lattice offset; opaque when fully veiled; no global `TIME`.
@@ -11,9 +11,10 @@ Green: new AR2 smoke, `procgen_reveal_presentation`, pause_aware_streaming, chun
 
 ## Not done / risks
 - Shader compile and look are unverified (headless dummy renderer); user playtest pending before next slice.
-- ARR1 R0-03 and R0-04 test hardening not built; no Moment Forge/Dropbox review. Packet Acceptance = `partial`.
+- No Moment Forge/Dropbox review: waived by the user for their own playtest (acceptance 13 rests on that decision).
+- ARR1 R0-03 (live toggle + undersized pool, production map) and R0-04 (road decal unload/reacquisition) are built and pass.
 
 ## Process Feedback
-- Outcome: partial. Friction: low. Went wrong: coded from a stale local packet that omitted R0-01..R0-04; added R0-01/R0-02 late. Prevention: re-read the packet in the claimed worktree before coding (now in AGENTS.md). Drift: headless Godot cannot compile shaders or read MultiMesh buffers. Follow-up: paired review, human playtest, R0-03/R0-04.
+- Outcome: success (visual review waived). Friction: low. Went wrong: coded from a stale local packet that omitted R0-01..R0-04; added R0-01/R0-02 late. Prevention: re-read the packet in the claimed worktree before coding (now in AGENTS.md). Drift: headless Godot cannot compile shaders or read MultiMesh buffers. Follow-up: paired review, human playtest.
 
 Reminder: other worktrees hold unrelated in-progress work (e.g. `claude/operator-c2b-final` in CUSTODIAN-operator); switch back to them.

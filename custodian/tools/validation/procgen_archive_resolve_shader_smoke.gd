@@ -8,6 +8,7 @@ extends SceneTree
 const PRESENTATION_SCRIPT := preload("res://game/world/procgen/streaming/procgen_reveal_presentation.gd")
 const NO_OPERATOR := Vector2i(999999, 999999)
 const CHUNK := 6
+const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 
 var _errors: Array[String] = []
 
@@ -21,6 +22,7 @@ func _run() -> void:
 	_test_clock_and_controls()
 	_test_scheduling_parity()
 	_test_live_disable_and_scene_order()
+	await _test_map_integration()
 	if _errors.is_empty():
 		print("[ProcgenArchiveResolveShaderSmoke] PASS")
 		quit(0)
@@ -152,6 +154,116 @@ func _test_live_disable_and_scene_order() -> void:
 		var idx := text.find('[node name="%s" type="Node2D" parent="World"' % sibling)
 		_check(idx > cm, "ContractMap does not precede World/%s" % sibling)
 	_check(text.find('[node name="Operator" parent="World"') > cm, "ContractMap does not precede World/Operator")
+
+
+func _make_map(slot_capacity: int) -> ProcGenTilemap:
+	var runtime_container := Node2D.new()
+	runtime_container.name = "ProcGenRuntime"
+	root.add_child(runtime_container)
+	var map := PROCGEN_MAP_SCENE.instantiate() as ProcGenTilemap
+	runtime_container.add_child(map)
+	await process_frame
+	var legacy := map.get_node_or_null("ProcGen")
+	if legacy != null:
+		legacy.queue_free()
+		await process_frame
+	var procgen := map.get_node_or_null("ProcGen2") as ProcGen
+	procgen.generate_seed = false
+	procgen.seed = 20261001
+	procgen.map_size = Vector2i(48, 48)
+	map.procgen_node = procgen
+	map.generation_evaluation_mode = false
+	map.generation_output_enabled = true
+	map.enable_streaming_reveal = true
+	map.streaming_chunk_size_tiles = CHUNK
+	map.streaming_immediate_chunk_radius = 1
+	map.streaming_active_chunk_radius = 2
+	map.streaming_reveal_tiles_per_frame = 16
+	map.build_runtime_wall_collision = true
+	(map.get_node("ArchiveResolveVeil") as ProcGenRevealPresentation).slot_capacity = slot_capacity
+	map.generate()
+	return map
+
+
+func _drain(map: ProcGenTilemap) -> void:
+	var presentation := map.debug_get_reveal_presentation()
+	var guard := 0
+	while guard < 600 and (
+		not (map.get("_streaming_reveal_queue") as Array).is_empty()
+		or int(presentation.get_snapshot()["active_instance_count"]) > 0
+	):
+		await process_frame
+		guard += 1
+	await process_frame
+	await process_frame
+
+
+func _fingerprint(map: ProcGenTilemap) -> Array:
+	var states: Array = []
+	for entry in map.debug_get_chunk_lifecycle_states():
+		states.append([entry.get("chunk"), entry.get("state"), entry.get("committed")])
+	var health := map.get_runtime_health_snapshot()
+	return [states, health.get("painted_floor_cell_count", -1), health.get("painted_wall_cell_count", -1)]
+
+
+func _test_map_integration() -> void:
+	# Baseline: default capacity, drained.
+	var base_map := await _make_map(8192)
+	await _drain(base_map)
+	var baseline := _fingerprint(base_map)
+	base_map.get_parent().queue_free()
+	await process_frame
+
+	# Live toggle (ARR1 R0-03): REQUESTED work exists, disable via the map API.
+	var map := await _make_map(8192)
+	var presentation := map.debug_get_reveal_presentation()
+	_check(int(presentation.get_snapshot()["active_instance_count"]) > 0, "fixture produced no veiled work to toggle")
+	map.set_archive_resolve_enabled(false)
+	_check(int(presentation.get_snapshot()["active_instance_count"]) == 0, "live disable left active veil slots")
+	await _drain(map)
+	var off_snap := presentation.get_snapshot()
+	_check(int(off_snap["active_instance_count"]) == 0 and not bool(off_snap["effect_enabled"]), "disabled map regained veils")
+	_check(_fingerprint(map) == baseline, "live disable changed lifecycle/streaming fingerprint")
+	map.set_archive_resolve_enabled(true)
+	var victim := Vector2i(999999, 999999)
+	var spawn_chunk := map.call("_tile_to_chunk", map.get_player_spawn()) as Vector2i
+	for dx in range(-2, 3):
+		for dy in range(-2, 3):
+			var candidate := spawn_chunk + Vector2i(dx, dy)
+			if candidate != spawn_chunk and victim == Vector2i(999999, 999999) \
+					and int(map.debug_get_chunk_lifecycle_state(candidate)) == ProcGenChunkLifecycle.State.VISIBLE:
+				victim = candidate
+	_check(victim != Vector2i(999999, 999999), "no VISIBLE victim chunk for re-enable proof")
+	if victim != Vector2i(999999, 999999):
+		map.debug_force_unload_chunk(victim)
+		map.call("_queue_chunk_for_reveal", victim, map.get_player_spawn())
+		_check(int(presentation.get_snapshot()["active_instance_count"]) > 0, "re-enable did not veil a subsequent reveal")
+		await _drain(map)
+		_check(int(presentation.get_snapshot()["active_instance_count"]) == 0, "re-enabled reveal did not settle")
+	map.get_parent().queue_free()
+	await process_frame
+
+	# Undersized pool inside the production map: bounded, fail-open, exact accounting.
+	var small_map := await _make_map(64)
+	var small := small_map.debug_get_reveal_presentation()
+	var peak := 0
+	var guard := 0
+	while guard < 600 and (
+		not (small_map.get("_streaming_reveal_queue") as Array).is_empty()
+		or int(small.get_snapshot()["active_instance_count"]) > 0
+	):
+		peak = maxi(peak, int(small.get_snapshot()["active_instance_count"]))
+		await process_frame
+		guard += 1
+	await process_frame
+	var s := small.get_snapshot()
+	_check(peak <= 64, "undersized pool was not bounded (peak=%d)" % peak)
+	_check(int(s["overflow_count"]) > 0, "undersized pool recorded no overflow")
+	_check(int(s["settled_count"]) == int(s["requested_total_count"]), "overflow cells did not fail open into settled accounting")
+	_check(int(s["active_instance_count"]) == 0, "undersized pool left active veils")
+	_check(_fingerprint(small_map) == baseline, "undersized pool changed lifecycle/streaming fingerprint")
+	small_map.get_parent().queue_free()
+	await process_frame
 
 
 func _check(condition: bool, message: String) -> void:

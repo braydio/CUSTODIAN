@@ -46,7 +46,7 @@ The Archive Resolve implementation series is evidence-gated. AR1 is complete/lan
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — ARR1, complete: passed with 0 blocking defects; RFR1 R0-04 closed; next-slice items R0-01..R0-04 recorded on the archived AR1 packet.
-- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, complete/landed shader layer; partial acceptance (R0-03/R0-04 hardening and human visual review outstanding); paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` follows.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, complete/landed shader layer; human visual review waived for user playtest; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` follows.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; blocked/manual until reviewed AR2 + ChatGPT/user refresh; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is pre-authored.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards

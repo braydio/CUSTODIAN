@@ -330,6 +330,24 @@ func _test_runtime_unload_reload() -> void:
 			"road decal did not recreate after reload"
 		)
 
+	# --- (F2) unconditional authority-backed road decal unload/reacquisition (ARR1 R0-04) ---
+	var road_tile := victim_floor_tile
+	(map.get("_road_authority").main_road_tiles as Dictionary)[road_tile] = true
+	map.call("_reveal_road_piece_decal", road_tile)
+	_check(map.debug_has_road_piece_decal(road_tile), "authority-backed road decal was not created through the production reveal path")
+	map.debug_force_unload_chunk(victim_chunk)
+	_check(not map.debug_has_road_piece_decal(road_tile), "authority-backed road decal survived unload")
+	map.call("_queue_chunk_for_reveal", victim_chunk, spawn_tile)
+	var road_guard := 0
+	while road_guard < 600 and int(map.debug_get_chunk_lifecycle_state(victim_chunk)) != state.VISIBLE:
+		await process_frame
+		road_guard += 1
+	_check(map.debug_has_road_piece_decal(road_tile), "road decal was not restored after queued reacquisition")
+	map.debug_force_unload_chunk(victim_chunk)
+	_check(not map.debug_has_road_piece_decal(road_tile), "road decal survived second unload")
+	map.call("_reveal_chunk_immediately", victim_chunk)
+	_check(map.debug_has_road_piece_decal(road_tile), "road decal was not restored after immediate reacquisition")
+
 	# --- (G) telemetry surface sanity ---
 	var health := map.get_runtime_health_snapshot()
 	_check(health.has("chunk_residency_policy"), "runtime health snapshot is missing chunk_residency_policy telemetry")
