@@ -328,6 +328,16 @@ full-screen pass after each edit, or any `--capture-mode full` run must have a
 task-specific reason recorded in the packet/summary. Subjective visual baselines
 remain human-owned even when objective technical image checks are automated.
 
+When objective proof is complete but a material subjective visual decision still
+remains, publish the smallest useful evidence set through
+`custodian/tools/iteration/publish_review_artifacts.py` instead of extending the
+coding-agent screenshot review loop. The upload is opt-in and requires
+`--important --reason ...`; include concrete `--question` prompts for the
+human/ChatGPT reviewer. The agent reports the Dropbox manifest path and stops.
+See `VISUAL_REVIEW_HANDOFF.md`. Do not publish routine screenshots that repeat
+facts already settled by probes or metrics, and do not commit the cloud review
+media to Git.
+
 #### Tooling
 
 - Structure/state layer: `moment_probe_collector.gd` fields include
