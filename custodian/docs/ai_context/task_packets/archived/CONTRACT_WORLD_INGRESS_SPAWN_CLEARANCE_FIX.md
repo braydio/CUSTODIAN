@@ -38,8 +38,8 @@
 
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
-- Completion boundary satisfied: `yes; registered structural ingress and clearance claims precede the final Operator position, and the spawn resolver rejects unsafe ingress-clearance tiles`
-- Acceptance satisfied: `yes for scoped ingress placement, safe deterministic compound/fallback selection, failure-before-later-relocation, collision clearance, existing spawner/presentation contracts, camera/navigation ordering, and unchanged generation/Archive Resolve code`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
 - Evidence: `contract_world_ingress_spawn_clearance_smoke passed with the real Ash Bell presentation collision/clearance at the old preferred tile, deterministic safe replacement, unsafe fallback rejection, and loader-order assertion; world_ingress_spawner, ash_bell_lift_ingress_presentation, and contract_world_population_placement smokes passed. The one-seed required-ingress sweep passed its required placement dry-run and presence assertions, then failed its separate seed-0 Threadway isolation/zero-cell assertions; the same failure reproduced on the project-root main checkout. procgen_stuck_pocket_smoke failed its existing line-70 remediation assertion in untouched ProcGen code. The prescribed 100-seed sweep was stopped after several minutes of measured contract-generation cost.`
 
