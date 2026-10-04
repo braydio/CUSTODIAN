@@ -61,6 +61,8 @@ Last updated: 2026-10-02
 - `design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md` — implementation tracker with a locked expected count of 8 implementation packets, explicit live-program beginning/end conditions, dependency graph, per-slice boundaries, and closeout rules.
 - `custodian/docs/ai_context/task_packets/archived/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — completed R1 record: exactly-once Operator death to campaign failure, followed by the temporary Game Over compatibility fallback.
 - `custodian/game/world/bindings/operator_death_campaign_binding.gd` — latches the Operator-down event and routes active campaign failure before the compatibility fallback.
+- `custodian/docs/ai_context/task_packets/CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — refreshed R2 recovery slice, blocked on the formal R1 review plus reviewed H6 generic Campaign return; owns exact death-outcome correlation, fallback suppression after accepted return, persistent-Operator reintegration, and death-latch re-arm.
+- Recovery planning/refresh chat: https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search
 - `custodian/tools/validation/operator_death_campaign_handoff_smoke.gd` — proves outcome ordering, structured context, duplicate suppression, no-session fallback, and no-revive behavior.
 - Future death, campaign-failure, inventory, weapon-loot, registration, provisioning, local recovery, and recovery-fabrication work must converge on this authority/roadmap rather than creating a parallel lives/checkpoint/insurance model.
 
