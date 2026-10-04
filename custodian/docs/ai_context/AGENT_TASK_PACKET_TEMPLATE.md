@@ -134,6 +134,7 @@ Before setting `Status: ready`:
 [ ] Acceptance is measurable.
 [ ] Validation names focused checks before broad checks.
 [ ] Visual evidence is minimized and justified; non-visual alternatives are named first when presentation is in scope.
+[ ] If subjective visual judgment remains material, the packet routes one compact handoff through publish_review_artifacts.py and gives the external reviewer specific questions instead of asking the coding agent for aesthetic critique.
 [ ] Dependencies and Locks reflect actual ordering/contention.
 [ ] Review intent is explicit; substantial/risky work defaults to paired `auto` review.
 [ ] `Review: none` carries a concrete `Review rationale: low-risk exemption: ...` rather than convenience/queue avoidance.
