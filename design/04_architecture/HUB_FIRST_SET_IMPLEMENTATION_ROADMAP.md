@@ -32,7 +32,7 @@ Awakening
 H1 hub-first-set-blockout-v1-recovery-1
   └─ HR1 review-hub-first-set-blockout-v1
 
-awakening-handoff-readiness-art-convergence-v1
+awakening-handoff-readiness-art-convergence-v1-r1
   └─ review-awakening-handoff-readiness-art-convergence-v1
 
 HR1 + Awakening handoff review
