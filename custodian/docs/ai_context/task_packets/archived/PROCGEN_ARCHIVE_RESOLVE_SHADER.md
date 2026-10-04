@@ -117,3 +117,15 @@ If the graphical renderer reports a shader parse/link/runtime error, fix it in t
 - Refresh reason: `none after clean/non-blocking ARR1; return here only if ARR1 correction changes AR1 assumptions`
 - Next action: Claim AR2 now, implement the shader plus the four bounded ARR1 follow-ups, complete objective validation and Dropbox human visual review, then let the paired fresh-context AR2 review claim automatically.
 - Blockers or open questions: Real-renderer shader compile/runtime proof and explicit human visual approval are mandatory pre-land gates. Headless validation alone does not satisfy AR2.
+
+
+## Post-Landing Recovery Note
+
+The implementation landed as commit `085a38a5`, but this archived receipt also states that graphical shader compilation and human visual acceptance were not verified. That conflicts with the packet's own mandatory Real Renderer Gate and means the historical `Completion Truth` is not sufficient evidence of full AR2 acceptance.
+
+Active recovery authority: `custodian/docs/ai_context/task_packets/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md`.
+
+Do not treat AR2 as review-complete or use it to unlock AR3 until:
+1. `procgen-archive-resolve-shader-recovery-1` completes with real-renderer + explicit user/ChatGPT visual evidence;
+2. `review-procgen-archive-resolve-shader` passes from a fresh context;
+3. AR3 is refreshed with the user in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7.
