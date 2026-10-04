@@ -87,6 +87,10 @@ is selected by the `asset_workbench_ui` validation owner. Sequencing remains in
 
 ## Operator Workbench Isolated Art Checkout (2026-09-28)
 
+The sparse authoring checkout includes `.githooks` and the required root
+`tools/validate_filenames.py` helper. Fixture commits run the real pre-commit
+hook and prove valid art can commit while Windows-reserved filenames fail.
+
 Normal `opui` launch ensures the persistent sibling `CUSTODIAN-operator-art`
 worktree on local branch `workbench/operator-art`, runs Workbench code from that
 checkout, and reuses the coordination checkout's ignored UI virtual environment.

@@ -90,6 +90,36 @@ def commit_remote(coordination: Path, relative: str, payload: bytes, message: st
     git(coordination, "push", "origin", "main")
 
 
+def commit_hook_dependency_smoke(base: Path) -> None:
+    _bare, coordination, _source = fixture(base)
+    for relative in (".githooks/pre-commit", "tools/validate_filenames.py"):
+        path = coordination / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(REPO_ROOT / relative, path)
+        git(coordination, "add", relative)
+    git(coordination, "commit", "-m", "fixture real commit hook")
+    git(coordination, "push", "origin", "main")
+    git(coordination, "config", "core.hooksPath", ".githooks")
+    art_root = art.ensure_art_worktree(coordination)
+    assert (art_root / ".githooks/pre-commit").is_file()
+    assert (art_root / "tools/validate_filenames.py").is_file()
+    assert not (art_root / "reports/unrelated/report.json").exists()
+    (art_root / SOURCE).write_bytes(b"edited operator art\n")
+    git(art_root, "add", SOURCE)
+    committed = subprocess.run(["git", "commit", "-m", "operator art hook fixture"], cwd=art_root, text=True, capture_output=True)
+    assert committed.returncode == 0, committed.stdout + committed.stderr
+    assert "Windows-compatible" in committed.stdout + committed.stderr
+    before = git(art_root, "rev-parse", "HEAD")
+    invalid = art_root / "custodian/content/sprites/operator/source/animations/CON.png"
+    invalid.write_bytes(b"invalid filename fixture\n")
+    git(art_root, "add", str(invalid.relative_to(art_root)))
+    result = subprocess.run(["git", "commit", "-m", "must reject invalid filename"], cwd=art_root, text=True, capture_output=True)
+    assert result.returncode != 0
+    assert "CON.png" in result.stdout + result.stderr
+    assert git(art_root, "rev-parse", "HEAD") == before
+    print("PASS: sparse art commits execute real hook and reject invalid filenames")
+
+
 def sparse_sync_smoke(base: Path) -> None:
     _bare, coordination, _source = fixture(base)
     hooks = base / "test-hooks"
@@ -425,6 +455,9 @@ def smoke() -> None:
         json_path = json.loads((migrated / "workbench.json").read_text())
         assert json_path["aseprite"]["path"].startswith(str(art_root))
         assert document.exists(), "one-time migration preserves the coordination copy"
+
+    with tempfile.TemporaryDirectory(prefix="operator-art-commit-hook-") as temporary:
+        commit_hook_dependency_smoke(Path(temporary))
 
     with tempfile.TemporaryDirectory(prefix="operator-art-sparse-sync-") as temporary:
         sparse_sync_smoke(Path(temporary))
