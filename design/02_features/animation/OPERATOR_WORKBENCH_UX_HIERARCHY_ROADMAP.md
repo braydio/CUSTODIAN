@@ -78,6 +78,15 @@ Those preceding packets own backend correctness:
 UX V1 consumes the structured state those packets land. It must not reproduce
 their backend logic in Textual.
 
+Recovery-integrity addendum (2026-10-03): the publish-readiness prerequisite also
+owns the failure classes observed during current Workbench use: startup blocked
+by pending/diverged/sparse state, pending receipt commit-ID drift, saved-document
+versus pending frame-migration mismatch, LFS/import rollback residue, preservation
+of the primary transaction error, and proof-gated recovery-marker clearing.
+The already-landed dismissible stale-error modal remains a regression contract.
+UX1 should project these states clearly after the backend lands; it must not
+reimplement their recovery logic.
+
 2026-10-03 prerequisite audit: publish-readiness/recovery remains the next
 substantial backend slice; its local-only LFS contract now explicitly permits a
 verified hydrated coordination-checkout donor when the shared LFS cache lacks
