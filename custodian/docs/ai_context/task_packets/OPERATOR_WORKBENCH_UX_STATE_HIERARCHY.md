@@ -23,6 +23,7 @@
 - Goal: Replace OPUI's debug-first global chrome with one artist-facing workflow hierarchy that makes the selected animation's publication state, live-save state, and main readiness immediately understandable while keeping full diagnostics available on demand.
 - Completion boundary: Deliver the UX1 shell only: workflow-state projection, artist-facing status bar, user-facing mode labels, compact Activity behavior, and Tier-3 diagnostic disclosure. Do not redesign WORKBENCH layout, PLAN/QUEUE content, Publish modal, or deep PREVIEW behavior in this slice.
 - Current measured state:
+  - Recent Workbench incidents also proved the UI needs first-class projection for `LAND PENDING`/receipt reconciliation, sparse/LFS readiness, frame-contract mismatch/reconciliation, and `RECOVERY_REQUIRED`. These are backend-owned states from the prerequisite hardening packet; UX1 must display them without parsing logs or blocking read-only startup.
   - `ui/widgets/status_bar.py::WorkbenchStatusBar.set_status()` currently emphasizes branch, generic dirty/clean state, Aseprite availability, Live Bridge state, V2 marker, and a raw checkout label across three lines.
   - `ui/screens/main.py` permanently reserves a 10-row Activity pane under every mode.
   - `ui/widgets/animation_detail.py` exposes raw `Workbench: EDITED`, source/workspace/document frame counts, migration, dependency status, workspace path, and Aseprite path as primary information.
@@ -60,6 +61,7 @@
   - `custodian/tools/validation/operator_workbench_ui_smoke.py`
   - active Workbench design/current-state docs only where behavior changes
 - Change:
+  - Include compact artist-facing mappings for at least `PUBLISH BLOCKED`, `LAND PENDING`, `RECEIPT RECONCILIATION REQUIRED`, `FRAME CONTRACT MISMATCH`, `RECOVERY REQUIRED`, and `READY`. A blocked publish state must not visually imply the whole app is unusable; show the single next recovery action while browser/review remains accessible.
   1. Add one immutable artist-facing workflow projection. Exact private class/enum names may follow refreshed main, but the projection must distinguish:
      - `PUBLISHED / NO LOCAL CHANGES`;
      - `MODIFIED · READY TO PUBLISH`;
@@ -92,6 +94,7 @@
   10. Remove raw `Workbench: EDITED` style wording from always-visible primary chrome once the artist-facing projection exists. Keep raw backend state in diagnostics.
   11. Update the UX roadmap during implementation if prerequisite packets land a materially different readiness/session seam.
 - Preserve:
+  - Preserve the landed dismissible error-dialog contract and exact backend-error visibility; the hierarchy redesign must not replace recoverable errors with undismissable modal traps.
   - All Workbench V2 source/publish semantics.
   - Existing Live Bridge ownership and behavior.
   - Existing browser accepted-snapshot behavior from the prerequisite.
