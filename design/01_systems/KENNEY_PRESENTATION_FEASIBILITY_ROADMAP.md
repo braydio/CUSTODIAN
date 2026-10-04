@@ -1,10 +1,10 @@
 # KENNEY PRESENTATION FEASIBILITY ROADMAP
 
 **Program ID:** `kenney-presentation-feasibility`  
-**Status:** active / K3D-1 paired review ready
+**Status:** active / K3D-1 complete + reviewed; K3D-2 planning refresh required
 **Priority:** P2  
-**Reviewed main:** `83d89fd85c5e`  
-**Last Updated:** 2026-10-03  
+**Reviewed main:** `efce0c069a5b`  
+**Last Updated:** 2026-10-04  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff  
 **Program authority:** this roadmap  
 **Related design authority:** `design/00_meta/MASTER_DESIGN_DOCTRINE.md`, `design/01_systems/CAMERA_SYSTEM.md`, `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`
@@ -32,9 +32,9 @@ Paired review and correction packets are not counted in the three.
 
 | Slice | Workstream | Artifact | State |
 | --- | --- | --- | --- |
-| K3D-1 | `kenney-isometric-blockout-feasibility` | A + B: current 2D baseline versus Isometric Miniature 2D blockout | **implemented / paired review pending** |
-| K3D-2 | `kenney-orthographic-3d-feasibility` | C: orthographic 3D presentation over preserved 2D spatial truth | planned |
-| K3D-3 | `kenney-3d-to-2d-production-feasibility` | D: Shape / Asset Forge production test plus final decision matrix | planned |
+| K3D-1 | `kenney-isometric-blockout-feasibility` | A + B: current 2D baseline versus Isometric Miniature 2D blockout | **complete / paired review passed** |
+| K3D-2 | `kenney-orthographic-3d-feasibility` | C: orthographic 3D presentation over preserved 2D spatial truth | **refresh-required / user planning gate** |
+| K3D-3 | `kenney-3d-to-2d-production-feasibility` | D: Shape / Asset Forge production test plus final decision matrix | **planned / blocked on reviewed K3D-2** |
 
 Do not pre-author K3D-2 or K3D-3 against speculative APIs. Re-derive each against landed predecessor evidence and this authoring chat.
 
@@ -182,6 +182,16 @@ K3D-1 exits with:
 - objective measurement report;
 - no production Hub or gameplay behavior changed.
 
+### K3D-1 reviewed exit state
+
+- Implementation: complete / archived; landing merge recorded as `be3285c16ada`.
+- Paired technical review: passed on `dc1110b819c5`; 0 blocking defects, 0 material evidence gaps.
+- Selected source set: 16 PNGs total, 10 Prototype + 6 Bases, all source/runtime pixel-equal after Asset V2 ingest.
+- Evidence contract: native and Kenney captures 1280×720 each; deterministic composite 2560×720.
+- Performance observation: Kenney presentation was much denser in nodes/instances/rendered objects but did not show a meaningful frame-time penalty in this single GTX 1650 SUPER sample. Treat this as bounded evidence, not a production-performance guarantee.
+- Human-owned questions remain unresolved. K3D-2 must not be authored until the user records an A/B judgment in the authoring chat.
+- Review finding `R0-01`: closed by this roadmap refresh.
+
 ## K3D-2 — Orthographic 3D Presentation Spike
 
 Re-derive after K3D-1 technical review and user/ChatGPT planning refresh.
@@ -267,7 +277,9 @@ Treat those as current truth during the experiment. Do not "repair" them into a 
 
 ## Current Program Position
 
-**Current slice:** K3D-1 `kenney-isometric-blockout-feasibility`  
-**State:** K3D-1 is landed/archived complete on main (landing merge `be3285c16ada`; implementation based on `9093c9ff1613`). H1 remains in progress, so the experiment correctly used locked Forum geometry from design and Road visuals from `RoadOfWitnessesPrototype.MODULES`. Seven expected pack identities were matched; 16 selected 256×512 images passed Asset V2 ingestion and source/runtime pixel checks. The host-window size differed from the evaluation contract, so the implementation correctly used a fixed 1280×720 SubViewport. Asset V2 consumed normalized inbox files into archive receipts after ingest, which is now the expected review evidence path.
-**Next gate:** run `review-kenney-isometric-blockout-feasibility` now; after it passes/non-blocking, return to the recorded authoring chat with the A/B comparison and measurements before K3D-2 is authored.
-**Expected remaining implementation packets after K3D-1:** 2.
+**Current slice:** K3D-2 planning refresh gate  
+**State:** K3D-1 is complete and archived. Its paired review passed on `main@dc1110b819c5` with 0 blocking defects and 0 material evidence gaps. The review independently revalidated the seven-pack inventory, 16 selected 256×512 Asset V2 inputs/runtime hashes, fixed 1280×720 A/B viewport/capture contract, shared spatial/camera parity, and production isolation. Review finding `R0-01` was documentation-only: this roadmap still showed the review as pending. This update closes that finding. H1 remains in progress on current main, so K3D-2 must re-check whether H1 lands before its packet is authored.
+**K3D-2 dependency state:** predecessor implementation satisfied; predecessor paired review satisfied; **user A/B judgment + ChatGPT/user planning refresh still required**. No K3D-2 implementation packet is intentionally runnable yet.
+**Required refresh inputs:** `K3D1_ISOMETRIC_BLOCKOUT_REPORT.md`, `k3d1_ab_compare.png`, the archived K3D-1 implementation/review receipts, the user's A/B judgment, and then-current main/H1 state.
+**Next gate:** use the recorded authoring chat to decide what K3D-2 must preserve/test, then author `kenney-orthographic-3d-feasibility` against current main.
+**Expected remaining implementation packets:** 2.

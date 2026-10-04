@@ -29,8 +29,9 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Three implementation slices test CUSTODIAN presentation without changing production art direction up front.
 
-- K3D-1 technical review passed on `dc1110b8`; return the report/comparison to the recorded authoring chat for the user's A/B judgment before refreshing K3D-2.
-- K3D-2 orthographic real-3D presentation and K3D-3 Shape/Asset Forge 3D→2D production testing remain planned and must be refreshed from landed predecessor evidence rather than pre-authored speculatively.
+- K3D-1 implementation is complete/archived and its paired technical review passed on `dc1110b8` with 0 blocking defects and 0 material evidence gaps.
+- K3D-2 `kenney-orthographic-3d-feasibility` is now the next dependent workstream, but remains **refresh-required / human planning gated**. Its implementation dependency and paired-review dependency are satisfied; the remaining gate is the user's A/B judgment plus ChatGPT/user re-authoring in the recorded authoring chat against current main.
+- K3D-3 Shape/Asset Forge 3D→2D production testing remains planned and blocked on reviewed K3D-2 evidence.
 - Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
 
 ## Active Reusable Source-Material Intake
