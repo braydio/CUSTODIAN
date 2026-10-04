@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-kenney-isometric-blockout-feasibility`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `kenney-isometric-blockout-feasibility`
@@ -14,8 +14,10 @@
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `83d89fd85c5e`
+- Reviewed main: `dc1110b819c590394a1e8cd90739294185e9028f`
 - Landed implementation: `main@be3285c16ada` (K3D-1 archived complete; implemented from `main@9093c9ff1613`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 - Goal: Independently verify that K3D-1 produced a truthful, reproducible A/B presentation experiment with bounded Kenney source intake and no production-authority leakage.
 - Review focus: seven-pack source inventory truth; bounded Isometric Miniature selection; Asset V2 source_work/archive-receipt/runtime/family/catalog health; exact shared-anchor/camera/route parity; debug-only ownership; production isolation; equivalent metrics; deterministic 1280x720 + 1280x720 → 2560x720 evidence; truthful roadmap/report handoff.
@@ -77,4 +79,39 @@ Those remain user/ChatGPT design decisions in the next planning refresh.
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 - Refresh reason: `K3D-2 architecture and acceptance must reflect landed K3D-1 evidence plus the user's A/B judgment.`
 - Next action: `Return the reviewed K3D-1 report/comparison to the authoring chat and re-author K3D-2 against current main.`
-- Blockers or open questions: `none; K3D-1 is landed and archived complete. Review may run now.`
+- Blockers or open questions: `user A/B judgment and planning refresh are required before K3D-2.`
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-kenney-isometric-blockout-feasibility`
+- Reviewed on main: `dc1110b819c590394a1e8cd90739294185e9028f`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, visual, asset-pipeline`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Finding R0-01 — Refresh the K3D-1 roadmap status during K3D-2 planning
+
+- Class: `non_blocking_issue`
+- Domain: `implementation`
+- Affected acceptance: truthful roadmap handoff
+- Evidence: `design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md` still describes K3D-1 as awaiting paired review, while this receipt records the technical review as passed.
+- Disposition: `next_slice`
+- Rationale: no effect on experiment behavior, asset integrity, or technical acceptance. Update the roadmap when K3D-2 is re-authored so it records K3D-1 review completion and carries forward the user's A/B decision. The reviewer did not choose an art direction.
+
+## Completion
+
+- Review completed on `main@dc1110b819c590394a1e8cd90739294185e9028f`.
+- Focused Kenney smoke passed. Seven archive identities and all 16 selected assets were independently checked through source-member, source-work, ingest receipt/archive, and runtime hashes; dimensions and alpha matched. Asset V2 plan/status checks for both families and `asset.py doctor` passed. Capture dimensions and exact A/B composition passed; the debug scene remains outside production boot/world-entry references.
+- Technical review passed with no blocking defects or material evidence gaps. Human-owned A/B questions remain unanswered and must drive the recorded K3D-2 planning refresh.
+- One non-blocking roadmap-status refresh is carried into K3D-2 as finding `R0-01`.
+- Next action: return the report and comparison to the authoring chat for the user's A/B judgment, then re-author K3D-2 from current main.

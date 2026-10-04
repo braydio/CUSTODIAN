@@ -241,14 +241,14 @@ Docs drift at reviewed main: H1 is not landed; 2.5D/fixed-isometric design langu
 
 Before `complete`, add required completion/feedback receipts and update the roadmap.
 
-- Next workstream: `review-kenney-isometric-blockout-feasibility`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next workstream: `kenney-orthographic-3d-feasibility`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
-- Refresh reason: `none before paired technical review; K3D-2 requires the user's A/B judgment and planning refresh after review.`
-- Next action: `finish and land K3D-1, then run the paired technical review; return the report and comparison to the authoring chat before K3D-2.`
-- Blockers or open questions: `review is gated only on K3D-1 landing.`
+- Refresh reason: `K3D-2 architecture and acceptance must reflect landed K3D-1 evidence plus the user's A/B judgment.`
+- Next action: `Return the report and comparison to the authoring chat for the user's A/B judgment, then re-author K3D-2 against current main.`
+- Blockers or open questions: `user A/B judgment and planning refresh are required before K3D-2.`
 
 ## Completion Record
 
@@ -278,3 +278,30 @@ Before `complete`, add required completion/feedback receipts and update the road
 - Tooling / docs drift discovered: The live `asset.py doctor` CLI has no `--verbose` option.
 - Follow-up: `fixed-in-scope`
 - What worked: Asset V2 receipts plus deterministic pixel checks; focused and changed validation.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-kenney-isometric-blockout-feasibility`
+- Reviewed on main: `dc1110b819c590394a1e8cd90739294185e9028f`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, visual, asset-pipeline`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Finding R0-01 — Refresh the K3D-1 roadmap status during K3D-2 planning
+
+- Class: `non_blocking_issue`
+- Domain: `implementation`
+- Affected acceptance: truthful roadmap handoff
+- Evidence: `design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md` still describes K3D-1 as awaiting paired review, while this receipt records the technical review as passed.
+- Disposition: `next_slice`
+- Rationale: no effect on experiment behavior, asset integrity, or technical acceptance. Update the roadmap when K3D-2 is re-authored so it records K3D-1 review completion and carries forward the user's A/B decision. The reviewer did not choose an art direction.

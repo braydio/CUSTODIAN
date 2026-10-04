@@ -29,7 +29,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Three implementation slices test CUSTODIAN presentation without changing production art direction up front.
 
-- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — paired K3D-1 technical review, dispatchable after the implementation packet lands; subjective art-direction judgment remains human-owned.
+- K3D-1 technical review passed on `dc1110b8`; return the report/comparison to the recorded authoring chat for the user's A/B judgment before refreshing K3D-2.
 - K3D-2 orthographic real-3D presentation and K3D-3 Shape/Asset Forge 3D→2D production testing remain planned and must be refreshed from landed predecessor evidence rather than pre-authored speculatively.
 - Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
 
@@ -411,7 +411,6 @@ lost when the ephemeral worktree is removed.
 - `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — Independently verify that P1 created one minimal read-only world-placement context seam, preserved ContractWorldLoader lifecycle/orchestration authority and...
-- `REVIEW_KENNEY_ISOMETRIC_BLOCKOUT_FEASIBILITY.md` — Independently verify that K3D-1 produced a truthful, reproducible A/B presentation experiment with bounded Kenney source intake and no production-authority l...
 - `REVIEW_LORDS_OF_PAIN_TEST_GALLERY.md` — Independently verify the landed DEMO-scoped Lords of Pain test gallery against its archived implementation packet, with special attention to the seven availa...
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — Independently verify that AR1 hides streaming cadence through a bounded presentation-only frontier while preserving M3-M6, Region Frame, and gameplay authori...
 - `TWIN_SOLARIA_DEVELOPMENT_PREVIEW_CONSISTENCY.md` — Resolve the long-standing development-only Twin Solaria preview mismatch where the preview controller/smoke expects 3500×3000 while the loaded development te...
