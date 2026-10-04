@@ -31,7 +31,7 @@
    → Asset V2-managed runtime output.
 4. Verify both family contracts use the live `custodian.asset_family.v2` and `tile` kind contract, truthful per-state sizes, one static omni frame, and no hand-authored canonical runtime names.
 5. Re-run current Asset V2 plan/status/doctor checks for both experimental families and inspect ingest/catalog receipts.
-6. Re-run the landed focused structural parity smoke.
+6. Re-run `python custodian/tools/validation/run_validation.py --test kenney_isometric_blockout_feasibility` and inspect `custodian/tools/validation/kenney_isometric_blockout_feasibility_smoke.gd`.
 7. Independently verify the required anchors:
    - `Spawn_SouthReach=(-6,162)`
    - Forum South `(0,-2464)`
@@ -40,8 +40,8 @@
    - 1280x720 evaluation viewport
 8. Verify A and B share one spatial truth and equivalent camera transform; ensure B did not add a shortcut, different collision/navigation, or presentation-owned gameplay state.
 9. Verify the debug experiment is absent from production boot/world-entry dependencies and disabling B leaves production/runtime state unchanged.
-10. Verify the K3D-1 report measures A and B over an equivalent observation interval and clearly distinguishes unavailable metrics from zero values.
-11. Verify the durable comparison artifact is exactly 2560x720 and is composed from two 1280x720 captures with equivalent framing.
+10. Verify `k3d1_metrics.json` uses exactly 30 settle + 120 sample frames for both modes, follows the existing `Performance.get_monitor()` patterns, and records unavailable metrics as null rather than zero.
+11. Verify `k3d1_native.png` and `k3d1_kenney.png` are each 1280x720, use camera `(0,-2000)` / zoom `(0.30,0.30)`, and compose to `k3d1_ab_compare.png` at exactly 2560x720.
 12. Verify the report and roadmap do not claim Kenney aesthetics are approved, do not declare CUSTODIAN 3D, and route K3D-2 back through the recorded authoring chat.
 
 ## Visual Review Boundary
