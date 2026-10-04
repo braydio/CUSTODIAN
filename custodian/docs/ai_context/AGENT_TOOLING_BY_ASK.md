@@ -74,6 +74,40 @@ python3 custodian/tools/iteration/run_moment.py <scenario-id> --capture-mode evi
 - Subjective art-direction/baseline calls stay human-owned; these tools settle
   the objective technical questions only.
 
+## External Visual Review Handoff
+
+Use this only after the objective checks above are green and an important
+subjective presentation question still remains. Do not ask the coding agent to
+spend another reasoning pass judging its own screenshots.
+
+```bash
+# One-time/local setup check:
+python3 custodian/tools/iteration/publish_review_artifacts.py --doctor
+
+# Create the canonical Dropbox review root if needed:
+python3 custodian/tools/iteration/publish_review_artifacts.py --doctor --ensure-root
+
+# Publish one compact review handoff:
+python3 custodian/tools/iteration/publish_review_artifacts.py \
+  --important \
+  --reason "subjective presentation review remains after objective checks passed" \
+  --workstream <workstream-id> \
+  --source <moment-forge-or-review-directory> \
+  --question "<specific reviewer question>"
+```
+
+The publisher prefers compact ROI/contact sheets, sparse authored keyframes, and
+structured metrics; it caps routine handoffs and requires explicit
+`--include-video` for one motion artifact. It uploads to
+`/CUSTODIAN/visual_review/<workstream>/<run-id>/` through the configured rclone
+Dropbox remote and maintains `LATEST.json` per workstream.
+
+Execution agents report the emitted
+`CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` payload and stop. Human/ChatGPT review
+owns composition, atmosphere, aesthetic cohesion, gameplay-scale readability,
+game feel, and baseline approval. See `VISUAL_REVIEW_HANDOFF.md` for the full
+gate, evidence budget, remote contract, and credential rules.
+
 ## Modular Operator Asset Audit
 
 Use this section when the ask is about new Operator modular animation drops, missing modular parts, upper/lower visual fit, or source/runtime review for `custodian/content/sprites/operator/source/animations/` (V2 editable source tree).
