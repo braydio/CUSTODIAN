@@ -10,6 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `ba04d9e8ee`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
 - Goal: Harden the remaining Vaultwing runtime ownership seams exposed by the inclusive audit without recreating species-local hearing or changing wild combat/bond balance.
 - Completion boundary: This workstream begins after the shared stealth-perception foundation lands. It owns fixed-step bond advancement, bond-transition versus restore reconciliation, allegiance-sensitive damage compatibility output, `hostile_fauna` compatibility cleanup, narrowly proven dead Vaultwing fields, and focused regression coverage. Generic hearing/perception architecture belongs to `stealth-perception-foundation`.
 - Current measured state: `VaultwingBondState` advances feed cooldowns/acceptance/trial clocks from `_process(delta)`; BONDED restore currently calls the same `on_bond_completed()` hook as a live first-time transition; `Vaultwing._damage_result()` hard-codes `eligible_hostile=true`; the actor adds `hostile_fauna` at initialization with no corresponding bonded cleanup; fresh search found no live consumer of actor export `attack_damage` and no read of `strike_contact_tested`.
@@ -23,3 +24,9 @@
 - Validation: `vaultwing_runtime`; `vaultwing_bond`; `actor_relationship_contract`; `vaultwing_world_spawn` if changed-file ownership reaches spawn compatibility; close once with `python3 custodian/tools/validation/run_validation.py --changed --json`.
 - Task overrides: `none`
 - Deferred: NPA-8 perception/behavior/combat/presentation decomposition; white-box test seam cleanup; durable rejection of `vaultwing_unassigned` before global save registration; profile-data single-source cleanup; death/corpse policy; production SFX/inventory/global save/Slice C.
+## Refresh Planning Authority
+
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Refresh instruction: Bring the landed predecessor/review evidence and any material live-main drift back to this conversation. Re-derive the packet here with the user before promoting it to implementation-ready; do not let the execution agent silently reinterpret architecture, scope, sequencing, or acceptance.
