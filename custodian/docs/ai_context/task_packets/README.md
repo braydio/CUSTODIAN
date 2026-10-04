@@ -46,7 +46,7 @@ The Archive Resolve implementation series is evidence-gated. AR1 is complete/lan
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — ARR1, complete: passed with 0 blocking defects; RFR1 R0-04 closed; next-slice items R0-01..R0-04 recorded on the archived AR1 packet.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, `ready/auto` after passed ARR1; owns R0-01..R0-04 and has automatic paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md`.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2, complete/landed shader layer; partial acceptance (R0-03/R0-04 hardening and human visual review outstanding); paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` follows.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; blocked/manual until reviewed AR2 + ChatGPT/user refresh; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is pre-authored.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
@@ -452,7 +452,6 @@ lost when the ephemeral worktree is removed.
 - `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` — six-state Asset V2 Alpine FAR/MIDDLE/NEAR underlay family; blocked on RF1 review + source art.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 complete/landed; paired ARR1 review complete/passed.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; complete, passed; AR2 dependency satisfied.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 shader/material layer; `ready/auto` after passed ARR1, with R0-01..R0-04 folded in.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 semantic echo + spawn/reacquisition polish; blocked on AR2.
 - `archived/CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 accepted-world context foundation; complete/landed, paired review PR1 remains the gate for P2-P6.
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — PR1 paired foundation review; gates P2-P6.

@@ -10682,6 +10682,14 @@ func _advance_reveal_presentation(delta: float) -> void:
 	_reveal_presentation.advance(delta, operator_tile, streaming_chunk_size_tiles)
 
 
+## Live Archive Resolve toggle: updates the configured flag and the already
+## initialized veil. Off releases all veil slots; streaming is never affected.
+func set_archive_resolve_enabled(enabled: bool) -> void:
+	archive_resolve_enabled = enabled
+	if _reveal_presentation != null:
+		_reveal_presentation.set_effect_enabled(enabled)
+
+
 func debug_get_reveal_presentation() -> ProcGenRevealPresentation:
 	return _reveal_presentation
 

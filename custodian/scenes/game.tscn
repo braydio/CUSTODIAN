@@ -201,6 +201,10 @@ sector_type = "TRANSIT"
 size_tiles = Vector2i(24, 16)
 door_sides = PackedStringArray("N", "W")
 
+[node name="ContractMap" type="Node2D" parent="World" unique_id=1103719919 groups=["world_origin_branch"]]
+visible = false
+script = ExtResource("26_contract_proxy")
+
 [node name="Enemies" type="Node2D" parent="World" unique_id=1365669343 groups=["world_origin_branch"]]
 
 [node name="Ambient" type="Node2D" parent="World" unique_id=1365669344 groups=["world_origin_branch"]]
@@ -249,10 +253,6 @@ heavy_ammo = 2
 
 [node name="AmmoCacheD" parent="World/Items" unique_id=655756500 instance=ExtResource("10_cache")]
 position = Vector2(40, -520)
-
-[node name="ContractMap" type="Node2D" parent="World" unique_id=1103719919 groups=["world_origin_branch"]]
-visible = false
-script = ExtResource("26_contract_proxy")
 
 [node name="Operator" parent="World" unique_id=2047803984 instance=ExtResource("2_operator")]
 position = Vector2(717.45905, -485.33954)

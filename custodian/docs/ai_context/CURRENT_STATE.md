@@ -31,7 +31,22 @@ ownership is unchanged. The veil is one batched MultiMesh with a bounded slot
 pool, flat diagnostic color, a pause-safe clock, and a committed-only Operator
 halo. `archive_resolve_enabled=false` is the regression oracle. Counters are in
 runtime health under `archive_resolve`. `procgen_reveal_presentation_smoke.gd`
-owns the contract. AR2 owns the material; AR3 owns pre-echo/ingress polish.
+owns the contract. AR3 owns pre-echo/ingress polish.
+
+## Archive Resolve Shader (AR2, 2026-10-04)
+
+The veil now carries one shared `ShaderMaterial` (`streaming/archive_resolve.gdshader`):
+graphite/soot cover, world-space ordered dither resolve in coherent fronts, thin
+brass registration trace, optional <=1 px phase misregistration, driven only by
+the pause-safe `presentation_time` uniform. MultiMesh custom data (cell hash,
+reacquisition flag) is written once per slot assignment. Controls:
+`registration_intensity`, `unresolved_haze_intensity`,
+`phase_misregistration_intensity`, `reduced_effects`. `effect_enabled` writes now
+route through the settle path and `ProcGenTilemap.set_archive_resolve_enabled()`
+is the live toggle. `World/ContractMap` precedes the z2 actor containers in
+`game.tscn`. `procgen_archive_resolve_shader_smoke.gd` owns the contract. Shader
+compile and aesthetics are not verified headless; human playtest review is
+pending, and ARR1 R0-03/R0-04 test hardening is still open.
 
 ## Contract World Placement Foundation (2026-10-02)
 

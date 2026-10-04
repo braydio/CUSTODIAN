@@ -16,16 +16,34 @@ extends MultiMeshInstance2D
 ## advances only through `advance()`, which ProcGenTilemap calls from its own
 ## unpaused `_process`, so pause freezes it with no time jump on resume.
 ##
-## Flat diagnostic look only; graphite/dither/brass treatment belongs to AR2.
+## AR2 adds only the render encoding: one shared `ShaderMaterial` on this node
+## (graphite/soot veil, ordered world-space dither resolve, restrained brass
+## registration trace, optional <=1 px phase misregistration) and a one-shot
+## per-slot identity write into MultiMesh custom data. `COLOR.a` stays the
+## authoritative progress/opacity channel; the shader owns no lifecycle state and
+## the scheduling above is unchanged. AR3 owns pre-echo and presentation classes.
 
 enum TileState { REQUESTED = 1, READY = 2, RESOLVING = 3 }
+
+const ARCHIVE_RESOLVE_SHADER := preload("res://game/world/procgen/streaming/archive_resolve.gdshader")
 
 const NO_OPERATOR_TILE := Vector2i(999999, 999999)
 
 ## Veil quad overhang beyond the 32 px semantic cell, per side, in px.
 const VEIL_OVERLAP_PX := 1.0
 
-@export var effect_enabled: bool = true
+## Reduced-effects registration multiplier (misregistration is fully removed).
+const REDUCED_REGISTRATION_SCALE := 0.25
+
+## Master switch. Direct writes route through the same disable/settle path as
+## `set_effect_enabled()`: disabling releases every veil slot immediately.
+@export var effect_enabled: bool = true:
+	set(value):
+		if effect_enabled == value:
+			return
+		effect_enabled = value
+		if not value:
+			_settle_all_immediately()
 @export_range(64, 65536, 1) var slot_capacity: int = 8192
 ## Ordinary settlement work bound: READY tiles that may begin resolving/frame.
 @export_range(1, 4096, 1) var resolve_starts_per_frame: int = 48
@@ -34,6 +52,28 @@ const VEIL_OVERLAP_PX := 1.0
 ## cells are force-settled. Never reveals an uncommitted cell.
 @export_range(0, 16, 1) var safety_halo_tiles: int = 3
 @export var veil_color: Color = Color(0.07, 0.075, 0.085, 1.0)
+@export_group("Archive Resolve Shader", "")
+## Brass/amber registration trace strength at the dissolve boundary.
+@export_range(0.0, 1.0, 0.01) var registration_intensity: float = 0.6:
+	set(value):
+		registration_intensity = value
+		_sync_material_controls()
+## Low-frequency soot/graphite variation across unresolved cover.
+@export_range(0.0, 1.0, 0.01) var unresolved_haze_intensity: float = 0.5:
+	set(value):
+		unresolved_haze_intensity = value
+		_sync_material_controls()
+## <=1 px registration offset early in RESOLVING. Suppressed by reduced effects.
+@export_range(0.0, 1.0, 0.01) var phase_misregistration_intensity: float = 0.5:
+	set(value):
+		phase_misregistration_intensity = value
+		_sync_material_controls()
+## Calmer profile: no phase misregistration, much weaker registration trace.
+## Never changes request/commit/order/timing or the unresolved safety cover.
+@export var reduced_effects: bool = false:
+	set(value):
+		reduced_effects = value
+		_sync_material_controls()
 
 var requested_count: int = 0
 var forced_safety_settle_count: int = 0
@@ -43,6 +83,7 @@ var settled_count: int = 0
 var overflow_count: int = 0
 var unveiled_commit_count: int = 0
 var identity_mismatch_count: int = 0
+var identity_write_count: int = 0
 
 var _presentation_time: float = 0.0
 var _tile_to_global: Callable = Callable()
@@ -56,6 +97,7 @@ var _resolving_queue: Array[Vector2i] = []
 var _ever_resolved_chunks: Dictionary = {}
 var _multimesh_ready: bool = false
 var _hidden_xform: Transform2D = Transform2D(0.0, Vector2.ZERO).scaled(Vector2.ZERO)
+var _veil_material: ShaderMaterial = null
 
 
 ## `tile_to_global` maps a tile to its world-space cell centre. `tile_size` is
@@ -74,6 +116,7 @@ func reset() -> void:
 	_resolving_queue.clear()
 	_ever_resolved_chunks.clear()
 	_presentation_time = 0.0
+	_sync_material_time()
 	requested_count = 0
 	forced_safety_settle_count = 0
 	first_resolve_count = 0
@@ -82,15 +125,12 @@ func reset() -> void:
 	overflow_count = 0
 	unveiled_commit_count = 0
 	identity_mismatch_count = 0
+	identity_write_count = 0
 	_reset_slot_pool()
 
 
 func set_effect_enabled(enabled: bool) -> void:
-	if effect_enabled == enabled:
-		return
 	effect_enabled = enabled
-	if not enabled:
-		_settle_all_immediately()
 
 
 ## REQUEST observation: called before any authoritative commit of these tiles.
@@ -115,6 +155,7 @@ func note_tiles_requested(chunk_pos: Vector2i, tiles: Array[Vector2i], reacquisi
 		_slot_of[tile] = slot
 		_states[tile] = TileState.REQUESTED
 		_write_slot(slot, tile, 1.0)
+		_write_slot_identity(slot, tile, reacquisition)
 
 
 ## COMMIT observation: only a committed tile may become eligible to resolve.
@@ -155,6 +196,7 @@ func advance(delta: float, operator_tile: Vector2i, chunk_size_tiles: int) -> vo
 	if not effect_enabled:
 		return
 	_presentation_time += maxf(0.0, delta)
+	_sync_material_time()
 	_apply_safety_halo(operator_tile, chunk_size_tiles)
 	var starts := mini(resolve_starts_per_frame, _ready_queue.size())
 	for i in range(starts):
@@ -205,7 +247,27 @@ func get_snapshot() -> Dictionary:
 		"overflow_count": overflow_count,
 		"unveiled_commit_count": unveiled_commit_count,
 		"identity_mismatch_count": identity_mismatch_count,
+		"identity_write_count": identity_write_count,
+		"shared_material_count": 1 if _veil_material != null else 0,
+		"shader_enabled": _veil_material != null and _veil_material.shader == ARCHIVE_RESOLVE_SHADER,
+		"reduced_effects": reduced_effects,
+		"custom_data_enabled": _multimesh_ready and multimesh.use_custom_data,
 	}
+
+
+## The one shared veil material (null before `configure`). Exposed so validation
+## can assert material identity and uniform sync without scene sampling.
+func get_veil_material() -> ShaderMaterial:
+	return _veil_material
+
+
+## Deterministic render identity for a world cell in [0, 1]; the value the
+## shader receives as `INSTANCE_CUSTOM.r`. Pure function of the tile.
+static func cell_identity_hash(tile: Vector2i) -> float:
+	var h: int = (tile.x * 73856093) ^ (tile.y * 19349663)
+	h = (h ^ (h >> 13)) * 1274126177
+	h = h ^ (h >> 16)
+	return float(h & 0xFFFF) / 65535.0
 
 
 func get_tile_state(tile: Vector2i) -> int:
@@ -280,9 +342,11 @@ func _build_multimesh() -> void:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_2D
 	mm.use_colors = true
+	mm.use_custom_data = true
 	mm.mesh = quad
 	mm.instance_count = slot_capacity
 	multimesh = mm
+	_ensure_veil_material()
 	_multimesh_ready = true
 	_reset_slot_pool()
 
@@ -303,6 +367,7 @@ func _hide_slot(slot: int) -> void:
 		return
 	multimesh.set_instance_transform_2d(slot, _hidden_xform)
 	multimesh.set_instance_color(slot, Color(0, 0, 0, 0))
+	multimesh.set_instance_custom_data(slot, Color(0, 0, 0, 0))
 
 
 func _write_slot(slot: int, tile: Vector2i, alpha: float) -> void:
@@ -313,3 +378,39 @@ func _write_slot(slot: int, tile: Vector2i, alpha: float) -> void:
 	var color := veil_color
 	color.a = clampf(alpha, 0.0, 1.0)
 	multimesh.set_instance_color(slot, color)
+
+
+## One-shot per-slot render identity, written only on slot assignment (never
+## rescanned per frame). r = deterministic cell hash, g = reacquisition flag
+## (carried for AR3; the AR2 shader does not style it), b/a reserved neutral.
+func _write_slot_identity(slot: int, tile: Vector2i, reacquisition: bool) -> void:
+	if not _multimesh_ready:
+		return
+	identity_write_count += 1
+	multimesh.set_instance_custom_data(slot, Color(cell_identity_hash(tile), 1.0 if reacquisition else 0.0, 0.0, 0.0))
+
+
+func _ensure_veil_material() -> void:
+	if _veil_material == null:
+		_veil_material = ShaderMaterial.new()
+		_veil_material.shader = ARCHIVE_RESOLVE_SHADER
+	material = _veil_material
+	_sync_material_controls()
+	_sync_material_time()
+
+
+func _sync_material_controls() -> void:
+	if _veil_material == null:
+		return
+	var registration := registration_intensity * (REDUCED_REGISTRATION_SCALE if reduced_effects else 1.0)
+	var misregistration := 0.0 if reduced_effects else phase_misregistration_intensity
+	_veil_material.set_shader_parameter("registration_intensity", registration)
+	_veil_material.set_shader_parameter("unresolved_haze_intensity", unresolved_haze_intensity)
+	_veil_material.set_shader_parameter("phase_misregistration_intensity", misregistration)
+
+
+## Pause-safe: called only from reset() and the unpaused advance() clock. The
+## shader must never read global TIME for pause-sensitive motion.
+func _sync_material_time() -> void:
+	if _veil_material != null:
+		_veil_material.set_shader_parameter("presentation_time", _presentation_time)
