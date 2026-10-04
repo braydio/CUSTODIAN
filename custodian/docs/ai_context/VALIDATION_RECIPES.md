@@ -372,6 +372,12 @@ media to Git.
   mobile guard, and Vaultwing closure are in
   `custodian/tools/iteration/adopter_specs/`; their contract/DSL smoke is
   `custodian/tools/iteration/test_visual_validation_adopter_specs.py`.
+- External visual-review transport is
+  `custodian/tools/iteration/publish_review_artifacts.py`; its focused
+  no-network unit coverage is
+  `python3 custodian/tools/iteration/test_publish_review_artifacts.py`.
+  Use `--doctor` to check the configured rclone remote and
+  `--doctor --ensure-root` only for one-time review-root setup.
 
 Do not run the focused test and `--changed` concurrently against the same
 project. If another agent/session already owns a broad sweep, wait for it or use
