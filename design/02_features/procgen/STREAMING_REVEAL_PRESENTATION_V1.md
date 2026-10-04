@@ -1,7 +1,7 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; implementation pending reviewed streaming-residency convergence  
+**Status:** Design locked; AR1 spine implemented (flat diagnostic veil); AR2 material and AR3 choreography pending  
 **Last updated:** 2026-10-01  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`

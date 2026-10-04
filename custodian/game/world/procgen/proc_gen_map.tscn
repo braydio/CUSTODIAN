@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://d07cq17l8tuey" path="res://game/world/procgen/presentation/procgen_void_cliff_face.gd" id="void_cliff_face_script"]
 [ext_resource type="Resource" path="res://content/procgen/presentation/terrain_stamp_catalog_v1.tres" id="macro_stamp_catalog"]
 [ext_resource type="Script" path="res://game/world/procgen/surfaces/surface_material_overlay.gd" id="5_surface_material_overlay"]
+[ext_resource type="Script" path="res://game/world/procgen/streaming/procgen_reveal_presentation.gd" id="6_reveal_presentation"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1"]
 
@@ -165,3 +166,7 @@ automaton_noise_rate = 0.56
 automaton_smoothing_step_cell_min_neighbors = 3
 auto_generate_on_ready = false
 metadata/_custom_type_script = "uid://dhph4w3w8vsll"
+
+[node name="ArchiveResolveVeil" type="MultiMeshInstance2D" parent="."]
+z_index = 2
+script = ExtResource("6_reveal_presentation")

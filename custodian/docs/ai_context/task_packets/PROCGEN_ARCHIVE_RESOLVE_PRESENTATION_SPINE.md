@@ -41,22 +41,22 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `<fill at closeout>`
+- Evidence: `custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd`; `custodian/tools/validation/procgen_reveal_presentation_smoke.gd` (mutation-checked: dropping immediate-path request observation fails it); packet regression suites and S1 quick (`determinism_ok=true`) green. No renderer capture was taken; visual approval is deferred to AR2.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
+- Outcome: `success`
+- Friction severity: `none`
 - What went wrong: `none`
 - Root cause / contributing factors: `none`
 - Prevention / pipeline improvement: `none`
 - Tooling / docs drift discovered: `none`
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
+- Follow-up: `review-procgen-archive-resolve-presentation-spine`
 
 ## Handoff
 

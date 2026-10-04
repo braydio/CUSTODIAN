@@ -20,6 +20,19 @@ chasms do not activate it. `procgen_region_frame_smoke.gd` owns the contract
 hardened with the carried-forward M6 proofs (counted flush coalescing, real A*
 path, guaranteed road removal, hermetic portal protection, tree/cluster parity).
 
+## Archive Resolve Presentation Spine (AR1, 2026-10-03)
+
+`ProcGenRevealPresentation` (`streaming/procgen_reveal_presentation.gd`, scene
+node `ArchiveResolveVeil`) is the presentation-only owner of the reveal
+frontier. `ProcGenTilemap` observes request (before any commit, queued and
+immediate), commit (immediate reveal now reports through the same
+`_on_streaming_tile_committed` adapter as queued commits) and unload; M3-M6
+ownership is unchanged. The veil is one batched MultiMesh with a bounded slot
+pool, flat diagnostic color, a pause-safe clock, and a committed-only Operator
+halo. `archive_resolve_enabled=false` is the regression oracle. Counters are in
+runtime health under `archive_resolve`. `procgen_reveal_presentation_smoke.gd`
+owns the contract. AR2 owns the material; AR3 owns pre-echo/ingress polish.
+
 ## Contract World Placement Foundation (2026-10-02)
 
 `WorldPlacementContext` is the accepted-world read seam for focused placement

@@ -17,6 +17,7 @@ const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
 )
 const DERIVED_REBUILD_SCHEDULER_SCRIPT := preload("res://game/world/procgen/derived_rebuild_scheduler.gd")
 const PAUSE_AWARE_STREAMING_SCRIPT := preload("res://game/world/procgen/streaming/procgen_pause_aware_streaming.gd")
+const REVEAL_PRESENTATION_SCRIPT := preload("res://game/world/procgen/streaming/procgen_reveal_presentation.gd")
 const CHUNK_LIFECYCLE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_lifecycle.gd")
 const CHUNK_PAYLOAD_CACHE_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_payload_cache.gd")
 const CHUNK_RESIDENCY_POLICY_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_residency_policy.gd")
@@ -469,6 +470,9 @@ enum WorldShapeMode {
 @export_range(1, 256, 1) var streaming_reveal_tiles_per_frame: int = 96
 @export_range(0.05, 0.5, 0.01) var streaming_visual_rebuild_interval_sec: float = 0.15
 @export var streaming_unload_distant_chunks: bool = true
+## Archive Resolve (AR1) presentation-only veil; disabling it never changes
+## streaming behavior. Tuning knobs live on the ProcGenRevealPresentation node.
+@export var archive_resolve_enabled: bool = true
 @export_range(2, 8, 1) var streaming_unload_chunk_distance: int = 4
 @export_range(1, 8, 1) var streaming_unload_chunks_per_frame: int = 1
 
@@ -516,6 +520,7 @@ var _runtime_prop_blocker_cells: Dictionary = {}
 var _runtime_prop_blocker_sources: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
 var _pause_aware_streaming: ProcGenPauseAwareStreaming = null
+var _reveal_presentation: ProcGenRevealPresentation = null
 var _chunk_lifecycle: ProcGenChunkLifecycle = null
 var _chunk_payload_cache: ProcGenChunkPayloadCache = null
 var _chunk_residency_policy: ProcGenChunkResidencyPolicy = null
@@ -853,6 +858,14 @@ func _ready() -> void:
 		_on_streaming_tile_prepared,
 		_on_streaming_tile_committed
 	)
+	_reveal_presentation = get_node_or_null("ArchiveResolveVeil") as ProcGenRevealPresentation
+	if _reveal_presentation == null:
+		_reveal_presentation = REVEAL_PRESENTATION_SCRIPT.new()
+		_reveal_presentation.name = "ArchiveResolveVeil"
+		_reveal_presentation.z_index = 2
+		add_child(_reveal_presentation)
+	_reveal_presentation.configure(tile_to_global_position, get_runtime_tile_size())
+	_reveal_presentation.effect_enabled = archive_resolve_enabled
 	add_to_group("procgen_render_isolation")
 	_cache_procgen_major_visual_items()
 	var dev_mode := get_node_or_null("/root/DevMode")
@@ -1023,6 +1036,7 @@ func _process(delta: float) -> void:
 
 	if enable_streaming_reveal:
 		_process_streaming_reveal_queue(delta)
+		_advance_reveal_presentation(delta)
 		if streaming_unload_distant_chunks:
 			_drain_residency_eviction()
 
@@ -10317,6 +10331,9 @@ func _prepare_streaming_reveal() -> void:
 		_pause_aware_streaming.reset()
 	else:
 		_streaming_reveal_queue.clear()
+	if _reveal_presentation != null:
+		_reveal_presentation.set_effect_enabled(archive_resolve_enabled)
+		_reveal_presentation.reset()
 	_streaming_player = null
 	_streaming_current_chunk = Vector2i(999999, 999999)
 	_navigation_rebuild_pending = false
@@ -10514,6 +10531,7 @@ func _queue_chunk_for_reveal(chunk_pos: Vector2i, center_tile: Vector2i) -> void
 	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		return _streaming_reveal_priority(a, center_tile) < _streaming_reveal_priority(b, center_tile)
 	)
+	_note_presentation_request(chunk_pos, tiles)
 	_chunk_lifecycle.request(chunk_pos, tiles.size())
 	if _pause_aware_streaming != null:
 		_pause_aware_streaming.enqueue_many(tiles)
@@ -10557,10 +10575,11 @@ func _reveal_chunk_immediately(chunk_pos: Vector2i) -> void:
 	# re-sort the (possibly cache-reused) membership the way queued reveal
 	# does.
 	var tiles := _cached_chunk_tiles(chunk_pos)
+	_note_presentation_request(chunk_pos, tiles)
 	_chunk_lifecycle.request(chunk_pos, tiles.size())
 	for tile in tiles:
 		_reveal_tile(tile)
-		_chunk_lifecycle.note_committed(chunk_pos)
+		_on_streaming_tile_committed(tile)
 
 
 ## Pure chunk-tile enumeration: deterministic membership only, no lifecycle
@@ -10619,6 +10638,8 @@ func _unload_chunk(chunk_pos: Vector2i) -> void:
 	if _chunk_payload_cache != null:
 		_chunk_payload_cache.evict_chunk(chunk_pos)
 	_chunk_lifecycle.force_unload(chunk_pos)
+	if _reveal_presentation != null:
+		_reveal_presentation.note_chunk_unloaded(chunk_pos, streaming_chunk_size_tiles)
 	_streaming_visual_rebuild_pending = true
 	_refresh_macro_streaming_visibility()
 
@@ -10637,6 +10658,32 @@ func _on_streaming_tile_prepared(tile: Vector2i) -> void:
 
 func _on_streaming_tile_committed(tile: Vector2i) -> void:
 	_chunk_lifecycle.note_committed(_tile_to_chunk(tile))
+	if _reveal_presentation != null:
+		_reveal_presentation.note_tile_committed(tile)
+
+
+## Archive Resolve request observation. Must run after the early
+## `is_requested` return and before the lifecycle request / any commit, so a
+## veil record exists before authoritative pixels can appear. UNLOADED
+## pre-request lifecycle state marks reacquisition.
+func _note_presentation_request(chunk_pos: Vector2i, tiles: Array[Vector2i]) -> void:
+	if _reveal_presentation == null:
+		return
+	var reacquisition := _chunk_lifecycle.get_state(chunk_pos) == ProcGenChunkLifecycle.State.UNLOADED
+	_reveal_presentation.note_tiles_requested(chunk_pos, tiles, reacquisition)
+
+
+func _advance_reveal_presentation(delta: float) -> void:
+	if _reveal_presentation == null:
+		return
+	var operator_tile := ProcGenRevealPresentation.NO_OPERATOR_TILE
+	if _streaming_player != null and is_instance_valid(_streaming_player):
+		operator_tile = _global_to_tile(_streaming_player.global_position)
+	_reveal_presentation.advance(delta, operator_tile, streaming_chunk_size_tiles)
+
+
+func debug_get_reveal_presentation() -> ProcGenRevealPresentation:
+	return _reveal_presentation
 
 
 ## PREPARE: cache-backed lookup into already-generated (seed-authored) floor/
@@ -11408,6 +11455,9 @@ func get_runtime_health_snapshot() -> Dictionary:
 		),
 		"chunk_lifecycle": (
 			_chunk_lifecycle.get_snapshot() if _chunk_lifecycle != null else {}
+		),
+		"archive_resolve": (
+			_reveal_presentation.get_snapshot() if _reveal_presentation != null else {}
 		),
 		"chunk_payload_cache": (
 			_chunk_payload_cache.get_telemetry_snapshot() if _chunk_payload_cache != null else {}
