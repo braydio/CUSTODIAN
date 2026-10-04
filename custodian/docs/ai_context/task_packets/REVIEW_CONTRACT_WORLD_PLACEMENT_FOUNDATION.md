@@ -1,7 +1,7 @@
 # REVIEW: CONTRACT WORLD PLACEMENT FOUNDATION
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `review-contract-world-placement-foundation`
+- Workstream: `review-contract-world-placement-foundation-r1`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `contract-world-placement-foundation`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CONTRACT_WORLD_PLACEMENT_FOUNDATION.md`
-- Reviewed main: `099b42e2588d73c6a2f2ba2500c4c4ab517e77ed`
+- Reviewed main: `5a82486a46f30ad8753625133e1c6cee7eddd958`
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -24,6 +24,9 @@
 - Acceptance: Produce a findings-first independent review on live main. Record a pass or stable cycle-scoped findings with class/domain/affected P1 acceptance/evidence/disposition/rationale. Blocking defects or material proof gaps create `contract-world-placement-foundation-review-corrections-1` plus its paired review. A clean/non-blocking-only pass unlocks P2-P6 dependency eligibility, but each remains serialized by the `contract-world-loader` lock and must be refreshed in place first if PR1 finds its assumptions no longer match the landed context.
 - Non-goals: Do not implement P2-P6 domain extractions, contract-world loader contraction, ProcGen streaming/cache work, or unrelated agent tooling. Do not edit reviewed implementation code directly.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+
+Queue recovery note: the original remote review branch is fully contained by current main with zero unique commits but still exists, so the old workstream ID is permanently seen as claimed. This `-r1` identity is the canonical fresh-context review.
 
 ## Handoff
 

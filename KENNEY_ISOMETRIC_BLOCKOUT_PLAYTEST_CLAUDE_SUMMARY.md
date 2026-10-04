@@ -19,7 +19,7 @@ K3D-1P adds a real-Operator walkaround for the reviewed native/Kenney sample whi
 
 ## Deferred
 
-Human-owned A/B judgment remains open. The user should assess Operator scale, route readability while moving, depth/occlusion, gameplay-camera compatibility, and CUSTODIAN fit before K3D-2 is refreshed. K3D-2 remains human/planning gated; this work makes no art-direction decision.
+Human-owned A/B judgment remains open as tuning input for the later Forum vertical slice. Current main has canceled the planned live-3D K3D-2/K3D-3 direction and established the fixed-isometric 2.5D realization path; this work makes no production-art approval decision.
 
 ## Process Feedback
 
@@ -35,11 +35,11 @@ Human-owned A/B judgment remains open. The user should assess Operator scale, ro
 
 ## Next Handoff
 
-- Next workstream: `kenney-orthographic-3d-feasibility`
-- Next packet state: refresh-required
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: yes
+- Next workstream: `isometric-2-5d-presentation-foundation`
+- Next packet state: ready / dependency satisfied after this packet completes
+- Refresh owner: execution-agent
+- ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
-- Refresh reason: K3D-2 must use the user's walkaround judgment of native versus Kenney presentation with the real Operator and gameplay camera.
-- Next action: Have the user run the standalone playtest, record scale/readability/depth/camera/CUSTODIAN-fit observations in the authoring chat, then refresh K3D-2 from current main.
-- Blockers or open questions: none for implementation; K3D-2 remains gated on the human judgment and planning refresh.
+- Refresh reason: none; current main has the fixed-isometric 2.5D direction and successor packets.
+- Next action: After K3D-1P lands, execute isometric-2-5d-presentation-foundation. Preserve user walkaround notes as tuning input for the later Forum vertical slice.
+- Blockers or open questions: none; the live-3D K3D-2/K3D-3 workstreams are canceled.

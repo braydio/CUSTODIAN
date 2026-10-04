@@ -1,13 +1,13 @@
 # Agent Task Packets
 
-Last updated: 2026-10-04
+Last updated: 2026-10-03
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
 
 ## Active Hub First-Set / First Campaign Loop Series
 
-Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.  
+Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
 Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`.
 
 Seven implementation slices are pre-authored with paired reviews. H1 is in progress. H2-H7 are deliberately `blocked/manual` and must be refreshed **in place** from landed predecessor review evidence before becoming `ready/auto`.
@@ -22,18 +22,20 @@ Seven implementation slices are pre-authored with paired reviews. H1 is in progr
 
 Do not create v2 duplicates merely because a predecessor chose different private helpers; refresh the existing downstream packet and its review in the same docs change.
 
-## Active Kenney Presentation Feasibility Series
+## Active Isometric 2.5D Presentation Realization Series
 
-Program tracker: `../../../design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md`.  
+Design authority: `../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`.
+Program tracker: `../../../design/01_systems/ISOMETRIC_2_5D_REALIZATION_ROADMAP.md`.
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 
-Three major implementation slices test CUSTODIAN presentation without changing production art direction up front.
+The project has pivoted away from planned live-3D presentation experiments. The fixed-isometric 2.5D doctrine will be realized inside the existing 2D runtime.
 
-- K3D-1 implementation is complete/archived and its paired technical review passed on `dc1110b8` with 0 blocking defects and 0 material evidence gaps.
-- K3D-1P `kenney-isometric-blockout-playtest` is implemented and landed as a support extension outside the three major slices. The user can run the real-Operator/controller/gameplay-camera walkaround and switch the shared A/B presentation with 1/2/Tab; no new Kenney source intake was required.
-- K3D-2 `kenney-orthographic-3d-feasibility` remains **refresh-required / human planning gated** until the user records a walkaround judgment in the authoring chat.
-- K3D-3 Shape/Asset Forge 3D→2D production testing remains planned and blocked on reviewed K3D-2 evidence.
-- Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
+- K3D-1 remains complete/reviewed precursor evidence.
+- K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
+- `isometric-2-5d-presentation-foundation` is **ready/auto**; its K3D-1P dependency is satisfied by this landed precursor.
+- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the foundation.
+- The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
+- Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
 
 ## Active Reusable Source-Material Intake
 
@@ -363,6 +365,7 @@ lost when the ephemeral worktree is removed.
 - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — Move Marine Dash from `enemy.gd` into one complete actor-local ability authority while preserving the current tactical-dash behavior, tuning, combat results,...
 - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — Move the Savage two-hit chain lifecycle out of `enemy.gd` into one actor-local ability authority while preserving the existing rushdown cadence and guard-pre...
 - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — Move the Savage pounce phase machine out of `enemy.gd` into one actor-local ability authority, reusing the landed Marine/Falcon host-service pattern without...
+- `HUB_FIRST_SET_BLOCKOUT_V1.md` — Build the complete runtime-ready blockout for the first persistent Hub set immediately north of Awakening, from Road of Witnesses South Reach through the Ash...
 - `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — Retire the remaining absolute scene-tree lookup debt before domain extraction so every later Operator controller receives explicit dependencies instead of re...
 - `OPERATOR_DODGE_DOMAIN_EXTRACTION.md` — Extract dodge/charge/Flow/chain lifecycle into a focused traversal authority while preserving the deliberate full-body presentation model for displacement-ow...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
@@ -417,7 +420,10 @@ lost when the ephemeral worktree is removed.
 - `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — Move ARRN relay tile selection and placement from ContractWorldLoader into the world-placement layer.
 - `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
+- `ISOMETRIC_2_5D_FORUM_VERTICAL_SLICE.md` — Prove CUSTODIAN's realized 2.5D language in one normal playable Forum approach with the real Operator/controller/Camera2D, ground-rooted depth, raised/overhe...
+- `ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md` — Make CUSTODIAN's 2.5D doctrine an explicit reusable 2D runtime presentation contract by separating ground XY from visual elevation and converging existing de...
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — Preserve the user's four downloaded Kenney Pattern Pack Lines variants as a durable, searchable, provenance-complete CUSTODIAN source-material library so fut...
+- `REVIEW_ASSET_WORKBENCH_REVIEW_STUDIO_R1.md` — Independently verify Slice 2 Review Studio is a read-only extension of the landed Asset Workbench family navigator and Asset V2 truth, with exact pixel/frame...
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — Independently verify that P1 created one minimal read-only world-placement context seam, preserved ContractWorldLoader lifecycle/orchestration authority and...
 - `REVIEW_LORDS_OF_PAIN_TEST_GALLERY.md` — Independently verify the landed DEMO-scoped Lords of Pain test gallery against its archived implementation packet, with special attention to the seven availa...
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — Independently verify Archive Resolve V1's semantic echo, ingress/spawn resolve, and shortened reacquisition remain bounded presentation consumers with no cop...

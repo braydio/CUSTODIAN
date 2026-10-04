@@ -5,10 +5,10 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `awakening-handoff-readiness-art-convergence-v1`
+- Depends on: `awakening-handoff-readiness-art-convergence-v1-r1`
 - Locks: `awakening-runtime, awakening-art-registration`
 - Review: `none`
-- Review target workstream: `awakening-handoff-readiness-art-convergence-v1`
+- Review target workstream: `awakening-handoff-readiness-art-convergence-v1-r1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md`
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
 - Review cycle: `0`
@@ -45,4 +45,4 @@ Aesthetic preferences beyond objective seam/registration correctness are not aut
 ## Handoff
 
 - Next action: on pass, the next integration packet may implement Awakening→Hub world-context transition and the persistent Hub runtime host.
-- Blockers or open questions: blocked only by `awakening-handoff-readiness-art-convergence-v1`.
+- Blockers or open questions: blocked only by `awakening-handoff-readiness-art-convergence-v1-r1`.

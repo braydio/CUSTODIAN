@@ -11,9 +11,10 @@ normal support systems; the authored level owns only the neutral evaluation
 envelope collision and presentation switching (`1` native, `2` Kenney, `Tab`
 toggle). The 16 existing Kenney Asset V2 textures and family contracts are
 unchanged. Focused playtest and K3D-1 capture-rig smokes pass. Human A/B
-judgment remains open; the user should walk the scene and record scale,
-readability, depth/occlusion, camera compatibility, and CUSTODIAN-fit
-observations before K3D-2 refresh.
+observations remain user-owned tuning input for the later Forum vertical slice;
+this precursor does not imply production approval. The active authority is
+`design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md` and its realization
+roadmap. The planned live-3D K3D-2/K3D-3 workstreams are canceled.
 
 ## Lords of Pain DEMO Test Gallery (2026-10-03)
 

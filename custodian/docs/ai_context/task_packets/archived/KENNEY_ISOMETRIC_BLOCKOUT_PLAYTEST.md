@@ -12,7 +12,7 @@
 - Reviewed main: `144ad871cb17a9abdd566abd4ee49f59509d481a`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 - Goal: Add the missing playable human-validation layer for reviewed K3D-1 so the user can walk the same A/B spatial sample with the real Operator, real gameplay controller stack, and real gameplay Camera2D while switching instantly between native and Kenney presentation.
-- Completion boundary: Preserve the reviewed deterministic K3D-1 capture/metrics rig, extract only its reusable presentation construction, add one Lords-of-Pain-style authored dev level plus standalone playtest wrapper, add a live 1/2/Tab A/B switch that never changes Operator position/camera/collision, keep Kenney geometry presentation-only, and leave the scene ready for the user's walkaround judgment before K3D-2 planning.
+- Completion boundary: Preserve the reviewed deterministic K3D-1 capture/metrics rig, extract only its reusable presentation construction, add one Lords-of-Pain-style authored dev level plus standalone playtest wrapper, add a live 1/2/Tab A/B switch that never changes Operator position/camera/collision, keep Kenney geometry presentation-only, and leave the scene ready as the final Kenney walkaround precursor before the active 2.5D realization work.
 - Current measured state: K3D-1 is complete and independently reviewed with 0 blocking defects. `kenney_isometric_blockout_feasibility.tscn` renders the sample inside a fixed 1280x720 SubViewport and intentionally owns no Operator/controller/collision. That makes it a valid deterministic comparison rig but a poor human-feel artifact. `lords_of_pain_test_gallery_playtest.tscn` already establishes the desired standalone wrapper pattern with `GameRoot/World/Operator`, `PlayerController`, gameplay `Camera2D`, `LevelPlaytestBootstrap`, and the normal lightweight gameplay support systems. The 16 selected Kenney runtime PNGs are already imported through Asset Pipeline V2. No local ZIP/source filenames are needed.
 - Evidence: `custodian/scenes/debug/kenney_isometric_blockout_feasibility.{gd,tscn}`; archived K3D-1 implementation/review receipts; `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/lords_of_pain_test_gallery_playtest.tscn`; `custodian/game/world/levels/level_playtest_bootstrap.gd`; `custodian/game/world/levels/authored_level_2d.gd`; `custodian/game/world/camera.gd`; both live Kenney Asset V2 family contracts.
 - Task-specific authority: the reviewed K3D-1 scene/script own the frozen A/B visual arrangement; Lords of Pain owns the standalone authored-level playtest precedent; `AuthoredLevel2D`, `LevelPlaytestBootstrap`, Operator, PlayerController, and Camera2D retain their existing runtime authority.
@@ -23,7 +23,7 @@
 - Acceptance: the standalone playtest boots with the real Operator and gameplay camera at Forum South; normal Operator movement works; 1 selects native, 2 selects Kenney, Tab toggles; switching does not move/reset the Operator or change neutral collision/camera authority; both modes use the same shared presentation builder and 16 existing Kenney assets; the old K3D-1 capture rig still passes its focused smoke with the same external contract; only the authored dev level owns neutral envelope collision; production boot remains untouched.
 - Validation: keep this lean. Run the new focused playtest smoke, rerun the existing K3D-1 focused smoke, boot the standalone scene for manual movement/toggle and route sanity, then `git diff --check`. Do not run broad `--changed` or full Godot suites unless a focused failure or live repository policy requires it.
 - Task overrides: `none`
-- Deferred: subjective A/B verdict and K3D-2 authoring remain human/ChatGPT work after this playtest lands.
+- Deferred: realized 2.5D foundation/vertical-slice work follows this precursor. The prior live-3D K3D-2/K3D-3 direction is canceled.
 
 ## Workstream identity
 
@@ -576,13 +576,11 @@ Do not run `--changed`, broad Godot validation, full Asset V2 ingest, or unrelat
 
 ## Next Handoff
 
-Before `complete`, write the normal compact completion/feedback receipt and update the roadmap/index state.
-
-- Next workstream: `kenney-orthographic-3d-feasibility`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next workstream: `isometric-2-5d-presentation-foundation`
+- Next packet state: `ready / dependency satisfied after this packet completes`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
-- Refresh reason: `K3D-2 must reflect the user's walkaround judgment of native versus Kenney presentation using the real Operator/gameplay camera, not the static K3D-1 comparison alone.`
-- Next action: `Have the user run the standalone playtest and report scale/readability/depth/camera/CUSTODIAN-fit observations in this authoring chat; then refresh and author K3D-2 from current main.`
-- Blockers or open questions: `none for implementation; K3D-2 remains human-gated after this packet.`
+- Refresh reason: `none; the active fixed-isometric 2.5D direction and successor packets are authored on current main.`
+- Next action: `After K3D-1P lands, execute isometric-2-5d-presentation-foundation. Preserve user walkaround notes as tuning input for the later Forum vertical slice.`
+- Blockers or open questions: `none; the canceled live-3D K3D-2/K3D-3 workstreams must not be authored.`

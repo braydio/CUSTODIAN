@@ -1,6 +1,6 @@
 # REVIEW: STARTUP WORLD ENTRY SPINE V1
 
-- Workstream: `review-startup-world-entry-spine-v1`
+- Workstream: `review-startup-world-entry-spine-v1-r1`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
@@ -30,6 +30,9 @@
 7. Confirm `ARCHITECTURE.md` no longer describes obsolete immediate-`game.tscn` default boot.
 8. Exercise invalid mode/seed fail-safe behavior.
 9. Confirm no new startup code contains world construction, route adjudication, or persistent unlock mutation.
+
+
+Queue recovery note: the original remote review branch is fully contained by current main with zero unique commits but still exists. This `-r1` workstream is the executable fresh-context review identity.
 
 ## Handoff
 
