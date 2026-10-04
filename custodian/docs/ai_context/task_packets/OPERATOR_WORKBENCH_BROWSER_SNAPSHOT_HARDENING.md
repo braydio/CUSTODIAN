@@ -15,6 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `0a4bd5ec35`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
 - Goal: Make Operator Workbench browser refresh and page-3 PREVIEW reload transactional from the user's perspective: repeated F5, source scans, live Workbench updates, mode changes, and asynchronous preview/comparison/transition loads must never expose a transient half-state, silently change the selected animation, apply an older result over a newer request, or crash the UI.
 - Completion boundary: Replace mutable worker-thread browser discovery with one accepted canonical browser snapshot and latest-request-wins application; add generation/identity guards around asynchronous PREVIEW state; make F5 on page 3 retain the last usable preview until one coherent replacement is ready; preserve search/selection semantics across refresh; and add deterministic Textual/service regressions for the observed race classes. This packet owns UI/browser/preview orchestration only. It does not change Operator animation art, runtime combat behavior, canonical publication semantics, or the dedicated art-worktree Git transaction.
 - Current measured state:
