@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-animation-creation`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`
-- Reviewed main: `278a542dda`
+- Reviewed main: `0a4bd5ec35`
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -21,6 +21,7 @@
 - Correction threshold: Any canonical-path derivation outside the Operator schema, silent overwrite, incomplete rollback, inbox bypass for external untrusted input, forced inbox round-trip for native Workbench pixels, false LIVE/runtime-use claim, or duplicated publisher is blocking.
 - Focused validation: Inspect one successful full-body CREATE, one modular CREATE, one target-race refusal, and one injected rollback journal; rerun focused Workbench UI/model/mirror/art-worktree fixtures plus import/SpriteFrames/runtime checks as needed. Confirm the resulting published animation is catalog-present and truthfully DORMANT when no consumer exists.
 - Review focus:
+  - Verify the creation flow consumes the inherited startup/receipt/frame-contract/recovery semantics instead of adding a second recovery path; saved creation documents must survive all blocked/error states.
   - one creation/publication authority;
   - no canonical file written before explicit Publish;
   - schema-derived paths only;
