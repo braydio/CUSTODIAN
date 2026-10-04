@@ -65,6 +65,17 @@ class PublishReviewArtifactsTest(unittest.TestCase):
             "mydropbox:",
         )
 
+    def test_opt_in_skip_does_not_require_rclone_or_existing_source(self) -> None:
+        self.assertEqual(
+            publisher.main([
+                "--workstream",
+                "visual-review-test",
+                "--source",
+                "definitely-does-not-exist",
+            ]),
+            0,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
