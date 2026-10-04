@@ -1,8 +1,8 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; implementation pending reviewed streaming-residency convergence  
-**Last updated:** 2026-10-01  
+**Status:** Design locked; AR1 implementation active; AR2/AR3 refresh-gated  
+**Last updated:** 2026-10-03  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
 
@@ -410,26 +410,7 @@ Do not:
 
 ## Implementation Dependency
 
-As reviewed on `main` 2026-10-01, streaming optimization is still actively
-changing unload/reload and residency ownership.
-
-Do not implement Archive Resolve inside M6.
-
-Implementation should start only after:
-
-```text
-procgen-distant-chunk-unload
-        ↓
-review-procgen-distant-chunk-unload
-        ↓
-Archive Resolve implementation
-```
-
-MR6 must first prove the final production unload/reacquisition seam.
-
-The later procgen decomplexification series must preserve this system as a
-presentation consumer rather than absorbing it into generation/state
-authorities.
+The streaming-residency prerequisite is now satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1 is the active implementation slice. AR2 must not start until ARR1 passes and the recorded procgen planning chat refreshes its shader packet against the reviewed AR1 render/custom-data contract. AR3 must not start until reviewed AR2 and the same planning-chat refresh. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
 
 ## Recommended Implementation Slices
 
