@@ -76,7 +76,7 @@ scoped docs were restored, leaving its unrelated Ash Bell scene edit intact.
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: not-recorded
-- Refresh reason: R2 must be re-derived from the landed R1 binding and the current Campaign, Hub outcome, and return lifecycle.
-- Next action: author R2 against the live landed surface, then implement Post recovery/reintegration while retaining R1's safe fallback until the return path is proven.
-- Blockers or open questions: none for R1; R2 requires the architecture-sensitive planning refresh.
+- Authoring chat: https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search
+- Refresh reason: R2 must be re-derived from the landed R1 binding plus the reviewed H6 generic Campaign-return authority; the planning review also requires life-scoped death-latch re-arm and exact death-outcome correlation.
+- Next action: use the recorded planning chat to refresh R2 after the formal R1 review and reviewed H6 land; retain R1's safe fallback until the reviewed return path accepts the exact death outcome.
+- Blockers or open questions: none for R1; R2 is dependency-gated on the formal R1 review and reviewed H6 return.

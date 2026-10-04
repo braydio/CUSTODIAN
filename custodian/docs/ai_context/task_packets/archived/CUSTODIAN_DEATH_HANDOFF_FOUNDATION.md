@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `09ebb90e78e4568f81f4a7fc270da0a3d158d445`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
 - Goal: Make Custodian lethal damage a campaign-level exactly-once event instead of an actor-owned life decrement, establishing the recovery-capable death handoff without leaving the player in an unhandled dead state.
 - Completion boundary: Done when `Operator` no longer calls `GameState.lose_life()`; one lethal Operator event emits one structured death handoff, the active `CampaignSession` resolves exactly once through `WorldSimulationRuntime`, and the existing global Game Over remains only as an explicit compatibility fallback after that outcome until R2 replaces it with Post recovery. Facility/siege terminal-failure paths remain unchanged.
 - Current measured state: R1 is implemented on fresh current main. Operator emits one structured `operator_down` snapshot; the attached `OperatorDeathCampaignBinding` latches reentry, resolves an active unresolved `CampaignSession` through `WorldSimulationRuntime`, and then invokes the transitional Game Over fallback. Without a live campaign runtime, it preserves Game Over without fabricating a campaign. The actor no longer calls `GameState.lose_life()`.
@@ -53,6 +53,12 @@
 
 ## Handoff
 
-- Next action: Author and execute R2 against the landed R1 binding and current Campaign / Hub / world-return surfaces; do not replace the explicit compatibility fallback until the R2 return/reintegration path is proven.
-- Best starting files: `custodian/game/world/bindings/operator_death_campaign_binding.gd`; `custodian/game/systems/simulation/world_simulation_runtime.gd`; `custodian/game/state/run/campaign_session.gd`; persistent Hub ownership and the current world-return lifecycle.
-- Blockers or open questions: No implementation blocker for R1. Architecture-sensitive R2 packet refresh requires the user/ChatGPT planning owner because the authoring chat URL is not recorded.
+- Next workstream: `custodian-post-recovery-reintegration`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
+- Refresh reason: R2 must be reconciled with the formal R1 review and the reviewed H6 generic Campaign-return authority; it must not duplicate HubState mutation or major-context return.
+- Next action: bring the formal R1 review and reviewed H6 implementation/review summaries back to the recorded planning chat, then refresh R2's exact integration seam before setting it ready/auto.
+- Blockers or open questions: R2 is dependency-gated on `review-custodian-death-handoff-foundation-recovery-1` and `review-hub-campaign-return`.
+- Best starting files: `custodian/game/world/bindings/operator_death_campaign_binding.gd`; reviewed H6 Campaign-return owner; persistent Operator reintegration/reset surface.

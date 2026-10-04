@@ -166,6 +166,12 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	var placement_context := _build_placement_context(map_instance, level_data)
 	_attach_procgen_map(map_instance)
 	_apply_contract_environment(contract, map_instance)
+	if place_registered_level_connections:
+		if not _place_registered_world_ingresses(level_data, map_instance):
+			return
+	elif place_sundered_keep_connection:
+		_place_sundered_keep_connection(level_data, map_instance)
+
 	var sectors_positioned := _position_static_sectors_from_contract(level_data, map_instance, placement_context)
 
 	if hide_static_sectors and not sectors_positioned:
@@ -173,7 +179,12 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_deactivate_static_sectors(sectors_node)
 
 	if reposition_operator_from_contract:
-		_position_operator(level_data, map_instance)
+		if not _position_operator(level_data, map_instance):
+			_on_contract_generation_failed({
+				"generation_failed": true,
+				"failure_reason": "no_safe_operator_spawn_after_world_ingress_placement",
+			})
+			return
 	if reposition_spawn_nodes_from_contract:
 		_position_spawn_nodes(level_data, map_instance)
 	if reposition_terminal_from_contract:
@@ -196,11 +207,6 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_place_vaultwing_markers(level_data, map_instance)
 	if place_gothic_compound_connection:
 		_place_gothic_compound_connection(level_data, map_instance)
-	if place_registered_level_connections:
-		if not _place_registered_world_ingresses(level_data, map_instance):
-			return
-	elif place_sundered_keep_connection:
-		_place_sundered_keep_connection(level_data, map_instance)
 	if reposition_camera_from_contract:
 		_refresh_camera(map_instance)
 	_rebuild_navigation(map_instance)
@@ -669,18 +675,32 @@ func _attach_procgen_map(map_instance: Node) -> void:
 	_active_procgen_map = map_instance
 
 
-func _position_operator(level_data: Dictionary, map_instance: Node) -> void:
+func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 	var operator := get_node_or_null(operator_path) as Node2D
 	if operator == null:
-		return
+		return true
 	var compound_spawn := _pick_compound_spawn_tile(level_data, map_instance)
-	if compound_spawn != Vector2i.ZERO:
-		operator.global_position = _tile_to_world(map_instance, compound_spawn)
-		return
-	var player_spawn: Variant = level_data.get("player_spawn")
-	if not (player_spawn is Vector2i):
-		return
-	operator.global_position = _tile_to_world(map_instance, player_spawn as Vector2i)
+	if compound_spawn == Vector2i.ZERO:
+		var player_spawn: Variant = level_data.get("player_spawn")
+		if (
+			player_spawn is Vector2i
+			and _is_safe_operator_spawn_tile(
+				map_instance,
+				player_spawn as Vector2i
+			)
+		):
+			compound_spawn = player_spawn as Vector2i
+	if compound_spawn == Vector2i.ZERO:
+		return false
+	operator.global_position = _tile_to_world(map_instance, compound_spawn)
+	return true
+
+
+func _is_safe_operator_spawn_tile(map_instance: Node, tile: Vector2i) -> bool:
+	return (
+		_is_walkable_floor_tile(map_instance, tile)
+		and not _is_inside_ingress_clearance(map_instance, tile)
+	)
 
 
 func _position_spawn_nodes(level_data: Dictionary, map_instance: Node) -> void:
@@ -1801,8 +1821,19 @@ func _pick_closest_tile(tiles: Array[Vector2i], target_tile: Vector2i) -> Vector
 	return best_tile
 
 
+func _is_inside_ingress_clearance(map_instance: Node, tile: Vector2i) -> bool:
+	return (
+		map_instance != null
+		and map_instance.has_method("is_inside_world_ingress_dressing_clearance")
+		and bool(map_instance.call("is_inside_world_ingress_dressing_clearance", tile))
+	)
+
+
 func _pick_compound_spawn_tile(level_data: Dictionary, map_instance: Node) -> Vector2i:
-	var walkable_tiles := _get_compound_walkable_tiles(level_data, map_instance)
+	var walkable_tiles: Array[Vector2i] = []
+	for tile in _get_compound_walkable_tiles(level_data, map_instance):
+		if not _is_inside_ingress_clearance(map_instance, tile):
+			walkable_tiles.append(tile)
 	if walkable_tiles.is_empty():
 		return Vector2i.ZERO
 	var open_tiles := _filter_open_compound_tiles(walkable_tiles, map_instance)

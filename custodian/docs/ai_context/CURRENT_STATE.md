@@ -60,7 +60,23 @@ ownership is unchanged. The veil is one batched MultiMesh with a bounded slot
 pool, flat diagnostic color, a pause-safe clock, and a committed-only Operator
 halo. `archive_resolve_enabled=false` is the regression oracle. Counters are in
 runtime health under `archive_resolve`. `procgen_reveal_presentation_smoke.gd`
-owns the contract. AR2 owns the material; AR3 owns pre-echo/ingress polish.
+owns the contract. AR3 owns pre-echo/ingress polish.
+
+## Archive Resolve Shader (AR2, 2026-10-04)
+
+The veil now carries one shared `ShaderMaterial` (`streaming/archive_resolve.gdshader`):
+graphite/soot cover, world-space ordered dither resolve in coherent fronts, thin
+brass registration trace, optional <=1 px phase misregistration, driven only by
+the pause-safe `presentation_time` uniform. MultiMesh custom data (cell hash,
+reacquisition flag) is written once per slot assignment. Controls:
+`registration_intensity`, `unresolved_haze_intensity`,
+`phase_misregistration_intensity`, `reduced_effects`. `effect_enabled` writes now
+route through the settle path and `ProcGenTilemap.set_archive_resolve_enabled()`
+is the live toggle. `World/ContractMap` precedes the z2 actor containers in
+`game.tscn`. `procgen_archive_resolve_shader_smoke.gd` owns the contract. Shader
+compile and aesthetics are not verified headless; human playtest review is
+pending (waived for landing). ARR1 R0-03/R0-04 are covered by the AR2 and
+distant-unload smokes.
 
 ## Contract World Placement Foundation (2026-10-02)
 
@@ -72,6 +88,17 @@ lifecycle and placement-order authority; resource, vehicle, relay, encounter,
 and ingress policies remain there until their post-PR1 extraction packets.
 `world_placement_context_smoke.gd` owns the focused contract and is registered
 as a unit validation.
+
+## Contract World Ingress Spawn Clearance (2026-10-04)
+
+`ContractWorldLoader` now places registered structural world ingresses and
+commits their authored dressing-clearance claims before relocating the Operator
+or other placement consumers. Compound spawn selection filters candidates
+through `ProcGenTilemap.is_inside_world_ingress_dressing_clearance()`; the
+`player_spawn` fallback must also be walkable and outside that clearance. If no
+safe Operator tile remains, contract activation fails before later actors are
+relocated. `contract_world_ingress_spawn_clearance_smoke.gd` owns the
+deterministic Ash Bell collision/clearance regression.
 
 ## Operator Art Registration Profile (2026-10-02)
 

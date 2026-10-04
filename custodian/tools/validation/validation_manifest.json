@@ -412,6 +412,26 @@
       "needs_import": true
     },
     {
+      "id": "procgen_archive_resolve_shader",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_archive_resolve_shader_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "procgen",
+        "streaming",
+        "archive-resolve",
+        "presentation",
+        "shader"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/streaming/archive_resolve.gdshader",
+        "custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd",
+        "custodian/tools/validation/procgen_archive_resolve_shader_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "procgen_reveal_presentation",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_reveal_presentation_smoke.gd",
@@ -3360,6 +3380,27 @@
       ],
       "timeout_sec": 60,
       "needs_import": false
+    },
+    {
+      "id": "contract_world_ingress_spawn_clearance",
+      "type": "godot_script",
+      "script": "res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "contract_world",
+        "world_ingress",
+        "spawn_clearance",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.gd",
+        "custodian/game/world/approaches/ash_bell/ash_bell_lift_ingress_presentation.tscn",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/contract_world_ingress_spawn_clearance_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
     },
     {
       "id": "enemy_patrol_navigation",

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-shader`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-archive-resolve-presentation-spine`
@@ -83,22 +83,22 @@ If the graphical renderer reports a shader parse/link/runtime error, fix it in t
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `custodian/game/world/procgen/streaming/archive_resolve.gdshader`; `procgen_reveal_presentation.gd`; `procgen_archive_resolve_shader_smoke.gd` (registered); `game.tscn` ContractMap order; AR1/pause/lifecycle/cache/unload/runtime-health/materializer/region-frame suites and S1 quick (`determinism_ok=true`, fp `1773840677`) green. NOT verified: shader compile and all aesthetics (headless dummy renderer; no capture taken). ARR1 R0-03 (live toggle + undersized pool on the production map, in the AR2 smoke) and R0-04 (unconditional authority-backed road decal unload/reacquisition, in `procgen_distant_chunk_unload_smoke.gd`) were built and pass. The user directed landing and marked the slice complete, deferring human visual review to their own playtest before the next slice.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: `success-with-waived-review`
+- Friction severity: `low`
+- What went wrong: `Implementation started from a stale local packet copy that omitted the R0-01..R0-04 scope and the dependency refresh; R0-01..R0-04 were added late; Moment Forge/Dropbox visual review was waived by the user in favor of their own playtest, so acceptance (13) rests on that user decision, not agent evidence.`
+- Root cause / contributing factors: `Local main lagged fetched origin/main where the packet was refreshed; the packet was not re-read in the claimed worktree before coding.`
+- Prevention / pipeline improvement: `Always re-read the packet inside the claimed worktree before implementing (now in AGENTS.md Naming Work).`
+- Tooling / docs drift discovered: `Headless Godot cannot read MultiMesh buffers or compile canvas shaders; validation uses an identity-write counter instead.`
+- Follow-up: `review-procgen-archive-resolve-shader; human playtest/visual approval`
 
 ## Refresh Planning Authority
 
@@ -117,3 +117,15 @@ If the graphical renderer reports a shader parse/link/runtime error, fix it in t
 - Refresh reason: `none after clean/non-blocking ARR1; return here only if ARR1 correction changes AR1 assumptions`
 - Next action: Claim AR2 now, implement the shader plus the four bounded ARR1 follow-ups, complete objective validation and Dropbox human visual review, then let the paired fresh-context AR2 review claim automatically.
 - Blockers or open questions: Real-renderer shader compile/runtime proof and explicit human visual approval are mandatory pre-land gates. Headless validation alone does not satisfy AR2.
+
+
+## Post-Landing Recovery Note
+
+The implementation landed as commit `085a38a5`, but this archived receipt also states that graphical shader compilation and human visual acceptance were not verified. That conflicts with the packet's own mandatory Real Renderer Gate and means the historical `Completion Truth` is not sufficient evidence of full AR2 acceptance.
+
+Active recovery authority: `custodian/docs/ai_context/task_packets/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md`.
+
+Do not treat AR2 as review-complete or use it to unlock AR3 until:
+1. `procgen-archive-resolve-shader-recovery-1` completes with real-renderer + explicit user/ChatGPT visual evidence;
+2. `review-procgen-archive-resolve-shader` passes from a fresh context;
+3. AR3 is refreshed with the user in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7.

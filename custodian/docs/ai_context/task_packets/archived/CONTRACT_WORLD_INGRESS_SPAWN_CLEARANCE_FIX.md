@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `contract-world-ingress-spawn-clearance-fix`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -37,30 +37,30 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Evidence: `contract_world_ingress_spawn_clearance_smoke passed with the real Ash Bell presentation collision/clearance at the old preferred tile, deterministic safe replacement, unsafe fallback rejection, and loader-order assertion; world_ingress_spawner, ash_bell_lift_ingress_presentation, and contract_world_population_placement smokes passed. The one-seed required-ingress sweep passed its required placement dry-run and presence assertions, then failed its separate seed-0 Threadway isolation/zero-cell assertions; the same failure reproduced on the project-root main checkout. procgen_stuck_pocket_smoke failed its existing line-70 remediation assertion in untouched ProcGen code. The prescribed 100-seed sweep was stopped after several minutes of measured contract-generation cost.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `A concurrent validation session edited the same task worktree while implementation was underway, requiring reconciliation. The broad required-ingress sweep exceeded a reasonable closeout budget and its seed-0 Threadway subcheck failed; the separate procgen stuck-pocket smoke also failed in untouched code.`
+- Root cause / contributing factors: `The required-ingress sweep couples ingress dry-run assertions to Threadway isolation checks and expensive multi-profile contract generation; a second session ran duplicate validation against the shared worktree.`
+- Prevention / pipeline improvement: `Keep required-ingress placement evidence separable from Threadway traversal evidence, document bounded seed-count options for closeout, and avoid duplicate worktree validation while a task owner is active.`
+- Tooling / docs drift discovered: `procgen_stuck_pocket_smoke.gd exists but is not registered in validation_manifest.json; the default required-ingress sweep has a 100-seed runtime contract with no quick closeout profile.`
+- Follow-up: `manual-follow-up`
 
 ## Handoff
 
 - Next workstream: `review-contract-world-ingress-spawn-clearance-fix`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Refresh reason: `none`
-- Next action: Implement and land the narrow spawn-clearance fix, then run the paired fresh-context review.
+- Next action: Run the paired fresh-context review against the landed implementation and durable evidence.
 - Blockers or open questions: none
