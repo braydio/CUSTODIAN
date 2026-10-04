@@ -15,11 +15,11 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial semantic-presentation/spawn choreography change; objective technical review plus separate human gameplay-scale visual approval`
-- Reviewed main: `9093c9ff1613de39d37a876246f6ab61f24f5938`
+- Reviewed main: `73a3239fbb81df50a8b7bdc108291961b165896b`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Goal: Complete Archive Resolve V1 with restrained semantic pre-echo, the one-time ingress/spawn resolution sequence, and a visibly lighter reacquisition treatment for previously resolved unloaded terrain.
 - Completion boundary: Done when a small bounded presentation-class vocabulary can influence echo/timing without gaining gameplay authority; first contract entry presents a controlled local Archive Resolve expansion while preserving immediate player control inside the safety pocket; previously resolved unloaded terrain uses a shorter reacquisition treatment; and the final effect remains subtle enough that normal settled play contains no persistent reveal UI/VFX.
-- Current measured state: The design locks five broad presentation classes at most: natural, constructed, road, wall/cliff, and major/hero landmark. AR1/AR2 are expected to provide deterministic ready/resolve scheduling, first-vs-reacquire identity, safety halo, shader phases, pause-safe time, and reduced-effects controls.
+- Current measured state: AR1/ARR1 are reviewed complete. AR2 implementation is landed on main (parent implementation commit `085a38a5`) but its original closeout lacked the mandatory graphical-renderer/human visual evidence, so `procgen-archive-resolve-shader-recovery-1` now owns that missing gate and `review-procgen-archive-resolve-shader` depends on the recovery. The design still locks five broad presentation classes at most: natural, constructed, road, wall/cliff, and major/hero landmark. Do not finalize their live query mapping until the recovered AR2 review passes.
 - Evidence: `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; AR1/AR2 packets; current procgen semantic surface/road/macro/landmark query authorities after refresh.
 - Task-specific authority: `STREAMING_REVEAL_PRESENTATION_V1.md`; landed AR1/AR2 implementation; live semantic owners queried read-only.
 - Work surface: AR presentation owner, one small presentation-class adapter/query, ingress/spawn initialization seam, optional aggregate audio callback stub only if trivial and unused by default, focused V1 smoke, and gameplay-scale comparison evidence.
@@ -37,15 +37,16 @@
 
 Bring the landed predecessor implementation summary, Independent Review receipt, and any human visual-review manifest/decision back to that conversation. The execution agent must not perform this architecture/design refresh on its own.
 
-This packet is intentionally pre-authored before AR2 and before the live Landmark/semantic owner surface is final.
+This packet is intentionally pre-authored before the final reviewed AR2 renderer contract and before the live Landmark/semantic owner surface is final.
 
-After `procgen-archive-resolve-shader` lands:
+After `review-procgen-archive-resolve-shader` passes following `procgen-archive-resolve-shader-recovery-1`:
 
-1. fetch current `origin/main`;
-2. re-audit the exact read-only semantic query owners for surface/road/wall-cliff/landmark classification;
-3. update `Reviewed main`, measured state, work surface, class mapping, spawn seam, validation, and visual evidence plan;
-4. remove this entire **Temporary Refresh Gate** section;
-5. only then set `Status: ready`.
+1. bring the recovered AR2 summary, paired-review receipt, Dropbox manifest, and explicit user/ChatGPT visual decision to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7;
+2. fetch current `origin/main`;
+3. re-audit the exact read-only semantic query owners for surface/road/wall-cliff/landmark classification;
+4. update `Reviewed main`, measured state, work surface, class mapping, spawn seam, validation, and visual evidence plan;
+5. remove this entire **Temporary Refresh Gate** section;
+6. only then set `Status: ready` / `Dispatch: auto`.
 
 Do not create a second semantic registry for this effect.
 
