@@ -33,6 +33,10 @@ Three implementation slices test CUSTODIAN presentation without changing product
 - K3D-2 orthographic real-3D presentation and K3D-3 Shape/Asset Forge 3D→2D production testing remain planned and must be refreshed from landed predecessor evidence rather than pre-authored speculatively.
 - Retro Fantasy and Retro Urban are intentionally outside this series until a separate art-direction discussion assigns them a role.
 
+## Active Reusable Source-Material Intake
+
+- `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
+
 ## Active Archive Resolve Presentation Series
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
