@@ -110,6 +110,14 @@ A packet should reference technical truth already owned by code/data/schema
 rather than copying it. Packet text owns the task closure contract, not duplicate
 runtime configuration.
 
+For presentation-heavy packets, author objective visual validation first. If
+material subjective judgment will still remain after those checks, route one
+compact external handoff through
+`custodian/tools/iteration/publish_review_artifacts.py` and
+`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`. The execution agent should
+return the Dropbox manifest path and reviewer questions, not perform a redundant
+aesthetic critique of its own captures.
+
 ## Execution Feedback
 
 Every V2 packet gets a compact process receipt before completion:

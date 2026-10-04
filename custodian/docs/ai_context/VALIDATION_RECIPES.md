@@ -328,6 +328,16 @@ full-screen pass after each edit, or any `--capture-mode full` run must have a
 task-specific reason recorded in the packet/summary. Subjective visual baselines
 remain human-owned even when objective technical image checks are automated.
 
+When objective proof is complete but a material subjective visual decision still
+remains, publish the smallest useful evidence set through
+`custodian/tools/iteration/publish_review_artifacts.py` instead of extending the
+coding-agent screenshot review loop. The upload is opt-in and requires
+`--important --reason ...`; include concrete `--question` prompts for the
+human/ChatGPT reviewer. The agent reports the Dropbox manifest path and stops.
+See `VISUAL_REVIEW_HANDOFF.md`. Do not publish routine screenshots that repeat
+facts already settled by probes or metrics, and do not commit the cloud review
+media to Git.
+
 #### Tooling
 
 - Structure/state layer: `moment_probe_collector.gd` fields include
@@ -362,6 +372,12 @@ remain human-owned even when objective technical image checks are automated.
   mobile guard, and Vaultwing closure are in
   `custodian/tools/iteration/adopter_specs/`; their contract/DSL smoke is
   `custodian/tools/iteration/test_visual_validation_adopter_specs.py`.
+- External visual-review transport is
+  `custodian/tools/iteration/publish_review_artifacts.py`; its focused
+  no-network unit coverage is
+  `python3 custodian/tools/iteration/test_publish_review_artifacts.py`.
+  Use `--doctor` to check the configured rclone remote and
+  `--doctor --ensure-root` only for one-time review-root setup.
 
 Do not run the focused test and `--changed` concurrently against the same
 project. If another agent/session already owns a broad sweep, wait for it or use

@@ -131,6 +131,32 @@
       "needs_import": false
     },
     {
+      "id": "visual_review_handoff",
+      "type": "python",
+      "script": "custodian/tools/iteration/test_publish_review_artifacts.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "visual_economy",
+        "review",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/iteration/publish_review_artifacts.py",
+        "custodian/tools/iteration/test_publish_review_artifacts.py",
+        "custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md",
+        "custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md",
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/VALIDATION_RECIPES.md",
+        "custodian/docs/ai_context/prompts/review_runtime_change.md",
+        "AGENTS.md",
+        "custodian/AGENTS.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "faction_canon_docs",
       "type": "python",
       "script": "custodian/tools/validation/faction_canon_docs_smoke.py",
@@ -3628,18 +3654,18 @@
         "custodian/scenes/debug/awakening_first_return_debug.tscn",
         "custodian/scenes/debug/awakening_first_return_debug.gd",
         "custodian/scenes/debug/awakening_first_return_overlay.gd",
-    "custodian/content/audio/sfx/combat/hit_medium_body_01.wav",
-    "custodian/tools/validation/awakening_visual_walkthrough_capture.gd",
-    "custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_route_circle_32.png",
-    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_dust_scour_64.png",
-    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_b_64.png",
-    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_c_64.png",
-    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_root_intrusion_64.png",
-    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_medium_64.png",
-    "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_soot_bloom_64.png",
-    "custodian/content/sprites/effects/awakening/runtime/awakening_dust_motes/awakening_dust_motes__fx__effect__loop__omni__8f__64.png",
-    "custodian/content/sprites/effects/awakening/runtime/awakening_falling_ash/awakening_falling_ash__fx__effect__loop__omni__8f__64.png",
-    "custodian/content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png"
+        "custodian/content/audio/sfx/combat/hit_medium_body_01.wav",
+        "custodian/tools/validation/awakening_visual_walkthrough_capture.gd",
+        "custodian/content/tiles/awakening/authority_inlay/awakening_authority_inlay_route_circle_32.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_dust_scour_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_b_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_floor_crack_c_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_root_intrusion_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_rubble_medium_64.png",
+        "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_soot_bloom_64.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_dust_motes/awakening_dust_motes__fx__effect__loop__omni__8f__64.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_falling_ash/awakening_falling_ash__fx__effect__loop__omni__8f__64.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png"
       ],
       "timeout_sec": 45,
       "needs_import": false

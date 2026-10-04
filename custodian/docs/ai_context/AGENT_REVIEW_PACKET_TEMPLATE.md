@@ -79,21 +79,28 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
    presentation, and deterministic state correspondence may be decided from
    machine evidence. Baseline aesthetics, composition preference, game feel,
    and art-direction acceptance remain human-owned.
-10. Separate implementation findings from pipeline/process findings. Record
+10. If that human-owned decision is material and the implementation did not
+   already publish adequate compact evidence, use
+   `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`
+   after the objective review is complete. Publish only the minimum ROI/contact
+   sheet/keyframes needed, include exact reviewer questions, record the Dropbox
+   manifest path, and set the unresolved subjective decision to `human_required`.
+   Do not perform the aesthetic decision inside the coding/review agent.
+11. Separate implementation findings from pipeline/process findings. Record
    pipeline friction through `custodian.task_feedback.v1`; fix a small safe
    workflow issue in-scope or name a follow-up for repeatable medium/high
    severity.
-11. Append or refresh the archived implementation packet's `## Independent
+12. Append or refresh the archived implementation packet's `## Independent
    Review` receipt (see `task_packets/README.md` for the exact shape).
-12. If correction-worthy findings exist, create a delta packet from
+13. If correction-worthy findings exist, create a delta packet from
    `AGENT_CORRECTION_PACKET_TEMPLATE.md` that references exact finding IDs, plus
    its paired review packet. Do not restate the feature design.
-13. At `Max automatic review cycles`, set the receipt status to
+14. At `Max automatic review cycles`, set the receipt status to
    `human_required` instead of scaffolding another automatic correction.
-14. If clean or only non-blocking findings remain, record the dispositions and
+15. If clean or only non-blocking findings remain, record the dispositions and
    set the receipt to `passed` or `findings` as appropriate; create no
    correction packet.
-15. Complete/archive this review packet through the normal workstream
+16. Complete/archive this review packet through the normal workstream
     lifecycle. Do not mark the reviewed implementation's own packet complete
     again; implementation completion and independent review are separate
     truths.
