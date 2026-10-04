@@ -52,6 +52,19 @@ coherent effort.
 - Task overrides: `none` or list each as `TASK OVERRIDE: ...`
 - Deferred:
 
+## Refresh Planning Authority
+
+Include this block when a packet is dependency/refresh-gated or when landed
+evidence may require architecture/scope re-derivation before execution:
+
+- Refresh owner: `none | chatgpt-user | execution-agent`
+- ChatGPT/user planning refresh required: `yes | no`
+- Refresh planning chat: `<Authoring chat URL | not-recorded | n/a>`
+- Refresh instruction: `<exact evidence to bring back and what must be re-derived>`
+
+When the user supplied an authoring-chat URL, reuse that same URL for
+`Refresh planning chat`; never substitute a different conversation silently.
+
 Status values: `draft`, `ready`, `in_progress`, `blocked`, `complete`.
 
 Dispatch defaults safely to `manual`; only explicitly marked `auto` packets
@@ -126,6 +139,7 @@ Before setting `Status: ready`:
 
 ```text
 [ ] Latest main was reviewed and Reviewed main is populated.
+[ ] Authoring chat is recorded when the user supplied a durable conversation URL.
 [ ] This is one coherent completion boundary.
 [ ] Existing Workstream identity was reused when appropriate.
 [ ] Current measured state and Evidence are factual, not speculative.
