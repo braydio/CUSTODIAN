@@ -450,9 +450,9 @@ lost when the ephemeral worktree is removed.
 - `archived/PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — RF1 region-frame foundation plus M6 proof hardening N1-01..N1-05; complete/landed; paired RFR1 review is ready.
 - `archived/REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md` — paired RF1 review; complete, passed with next-slice items R0-01, R0-02, R0-04.
 - `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md` — six-state Asset V2 Alpine FAR/MIDDLE/NEAR underlay family; blocked on RF1 review + source art.
-- `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 fully re-derived post-M6 presentation spine; complete/landed; paired ARR1 review is ready.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1 complete/landed; paired ARR1 review complete/passed.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — paired AR1 technical review; complete, passed; AR2 dependency satisfied.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 shader/material layer; planning-refreshed against landed AR1, blocked only on clean/non-blocking ARR1.
+- `PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 shader/material layer; `ready/auto` after passed ARR1, with R0-01..R0-04 folded in.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 semantic echo + spawn/reacquisition polish; blocked on AR2.
 - `archived/CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — P1 accepted-world context foundation; complete/landed, paired review PR1 remains the gate for P2-P6.
 - `REVIEW_CONTRACT_WORLD_PLACEMENT_FOUNDATION.md` — PR1 paired foundation review; gates P2-P6.
