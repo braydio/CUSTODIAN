@@ -235,7 +235,7 @@ def _stage_bundle(files: list[Path], staging: Path) -> list[dict[str, object]]:
 def doctor(remote: str, remote_root: str, *, ensure_root: bool) -> int:
     """Check the rclone remote and optionally create the review root."""
     try:
-        _run(["rclone", "about", remote])
+        _run(["rclone", "lsd", remote])
     except FileNotFoundError:
         print("FAIL: rclone is not installed.")
         return 2
