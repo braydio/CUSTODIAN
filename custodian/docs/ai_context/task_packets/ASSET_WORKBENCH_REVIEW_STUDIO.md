@@ -1,19 +1,25 @@
 # ASSET WORKBENCH — SLICE 2 REVIEW STUDIO
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `asset-workbench-review-studio`
+- Workstream: `asset-workbench-review-studio-r1`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `asset-workbench-family-foundation`
 - Locks: `asset-workbench-ui, asset-workbench-review`
 - Kind: `implementation`
-- Review: `manual`
-- Reviewed main: `e9a239c`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Paired review workstream: `review-asset-workbench-review-studio-r1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Reviewed main: `5a82486a46f30ad8753625133e1c6cee7eddd958`
+- Authoring chat: `not-recorded`
 - Goal: Add a non-mutating REVIEW studio to Asset Workbench so selected Asset V2 states can be inspected at native pixel fidelity across staged source and runtime representations, including static and animated art, without leaving the UI.
 - Completion boundary: Deliver Slice 2 of `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` on top of a correctly implemented Slice 1 FAMILY navigator: source/runtime representation resolution, frame extraction for every Asset V2 source layout, native RGBA preview, filmstrip/scrub/playback, side-by-side/overlay/diff review where contracts permit, diagnostics for malformed/missing/LFS content, focused validation, Operator preview regression protection for any shared-widget extraction, and roadmap reconciliation. No asset mutation or pipeline ingest belongs in this workstream.
 - Current measured state:
-  - Slice 1 is currently queued, not yet landed on the reviewed main. This packet is intentionally dependency-gated and assumes Slice 1 delivers the roadmap contract: accepted immutable family/state projections, stable semantic selection, pure in-memory search, transactional refresh, and an optional Textual launch surface.
+  - Slice 1 `asset-workbench-family-foundation` is complete/archived on current main and its family/state projection + Textual navigation seam is now live. The old `origin/agent/asset-workbench-review-studio` branch is fully contained by main with zero unique commits but still exists remotely, so the dispatcher reports the original workstream as already claimed. This refreshed `-r1` identity is the canonical executable Slice 2 and must build on the landed Slice 1 APIs rather than the pre-Slice-1 assumptions below.
   - Asset V2 source layouts are `copy`, `horizontal_strip`, `vertical_strip`, and `grid`; `asset_inspector.py` is the physical source-layout authority.
   - `asset_plan.py::generate_plan()` is pure/read-only and already exposes staged inbox source paths, resolved state/direction, physical inspection, backend, and semantic resolution. Slice 2 may use this authority for review-source resolution but must not expose or apply ingest operations.
   - Asset V2 runtime preview truth is available through `asset_catalog.generated.json`: family/state/direction, runtime path, frame count, frame size, hash, provenance, and mirrored source identity.
