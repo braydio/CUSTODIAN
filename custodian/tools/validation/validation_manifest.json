@@ -131,6 +131,32 @@
       "needs_import": false
     },
     {
+      "id": "visual_review_handoff",
+      "type": "python",
+      "script": "custodian/tools/iteration/test_publish_review_artifacts.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "visual_economy",
+        "review",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/iteration/publish_review_artifacts.py",
+        "custodian/tools/iteration/test_publish_review_artifacts.py",
+        "custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md",
+        "custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md",
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/VALIDATION_RECIPES.md",
+        "custodian/docs/ai_context/prompts/review_runtime_change.md",
+        "AGENTS.md",
+        "custodian/AGENTS.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "faction_canon_docs",
       "type": "python",
       "script": "custodian/tools/validation/faction_canon_docs_smoke.py",
