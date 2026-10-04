@@ -1106,7 +1106,11 @@ Documentation updates this session:
   suggestions, authored runs, compatible baseline comparison/acceptance,
   repeatability fingerprints, and none/evidence/full capture; it invokes a fixed-tick
   Godot runner only through `--moment-forge` and adds no autoload or production
-  simulation authority. Sparse evidence capture no longer awaits an unbounded
+  simulation authority. Important subjective last-mile review now uses
+  `custodian/tools/iteration/publish_review_artifacts.py`: after objective proof,
+  agents may publish one compact rclone/Dropbox evidence bundle with explicit
+  reviewer questions and hand the manifest to human/ChatGPT review instead of
+  spending coding-agent turns on aesthetic self-review. Sparse evidence capture no longer awaits an unbounded
   `frame_post_draw` signal: evidence runs disable VSync and explicitly render
   selected authored physics ticks, while full Movie Writer runs
   retain post-draw synchronization. A 20-tick, six-keyframe regression scenario
