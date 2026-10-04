@@ -1,9 +1,9 @@
 # KENNEY PRESENTATION FEASIBILITY ROADMAP
 
 **Program ID:** `kenney-presentation-feasibility`  
-**Status:** active / K3D-1 implementation complete, technical review pending
+**Status:** active / K3D-1 paired review ready
 **Priority:** P2  
-**Reviewed main:** `cf3ba2eb219e`  
+**Reviewed main:** `83d89fd85c5e`  
 **Last Updated:** 2026-10-03  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff  
 **Program authority:** this roadmap  
@@ -268,6 +268,6 @@ Treat those as current truth during the experiment. Do not "repair" them into a 
 ## Current Program Position
 
 **Current slice:** K3D-1 `kenney-isometric-blockout-feasibility`  
-**State:** Implemented against `main@9093c9ff1613`; H1 remains in progress, so the experiment reads locked Forum geometry from design and Road visuals from `RoadOfWitnessesPrototype.MODULES`. Seven expected pack identities were matched, 16 selected images passed Asset V2 ingestion and source/runtime pixel checks, and fixed-camera A/B evidence is recorded in `custodian/docs/ai_context/reports/kenney_presentation/`.
-**Next gate:** complete the paired technical review, then return to the authoring chat with the A/B comparison and measurements before K3D-2 is authored.
+**State:** K3D-1 is landed/archived complete on main (landing merge `be3285c16ada`; implementation based on `9093c9ff1613`). H1 remains in progress, so the experiment correctly used locked Forum geometry from design and Road visuals from `RoadOfWitnessesPrototype.MODULES`. Seven expected pack identities were matched; 16 selected 256×512 images passed Asset V2 ingestion and source/runtime pixel checks. The host-window size differed from the evaluation contract, so the implementation correctly used a fixed 1280×720 SubViewport. Asset V2 consumed normalized inbox files into archive receipts after ingest, which is now the expected review evidence path.
+**Next gate:** run `review-kenney-isometric-blockout-feasibility` now; after it passes/non-blocking, return to the recorded authoring chat with the A/B comparison and measurements before K3D-2 is authored.
 **Expected remaining implementation packets after K3D-1:** 2.
