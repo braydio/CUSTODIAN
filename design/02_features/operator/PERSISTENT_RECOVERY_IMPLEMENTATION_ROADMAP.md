@@ -93,7 +93,7 @@ That is the finish line.
 
 | Code | Workstream | Slice | Status | Depends on |
 | --- | --- | --- | --- | --- |
-| R1 | `custodian-death-handoff-foundation` | Operator death -> campaign outcome handoff, with current Game Over retained only as a compatibility fallback | **ready** | none |
+| R1 | `custodian-death-handoff-foundation-recovery-1` | Operator death -> campaign outcome handoff, with current Game Over retained only as a compatibility fallback | **ready** | none |
 | R2 | `custodian-post-recovery-reintegration` | Replace the R1 compatibility fallback with Post recovery and return/reintegration after campaign-ending death | planned | R1 |
 | R3 | `armament-persistence-registration-core` | Field-acquired / recovered / registered armament data, Recovered Armory ownership, registration records, and three-capacity contract | planned | R2 |
 | R4 | `armament-death-site-recovery-semantics` | Registered re-provisioning, persisted inoperable prior instances, and unregistered death-site retrieval semantics | planned | R3 |
@@ -275,9 +275,8 @@ At closeout:
 
 ## Current Program Position
 
-**Current slice:** R1 `custodian-death-handoff-foundation`  
-**State:** design authority landed; implementation series initialized; R1
-packet authored against `main@22539b8`.  
+**Current slice:** R1 `custodian-death-handoff-foundation-recovery-1` (recovered queue identity)  
+**State:** design authority landed; original R1 checkpoint became stranded behind obsolete closeout gates; recovery packet is refreshed against current main and the old branch is donor evidence only.  
 **Next gate:** execute R1, land exactly-once Operator death -> campaign outcome
 handoff, then author R2 against the resulting live transition surface.  
 **Expected remaining implementation packets after R1:** 7.
