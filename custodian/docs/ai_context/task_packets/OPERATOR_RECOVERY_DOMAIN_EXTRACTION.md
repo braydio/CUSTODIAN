@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition, custodian-death-handoff-foundation`
+- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition, custodian-death-handoff-foundation-recovery-1`
 - Locks: `operator-runtime, custodian-death-flow`
 - Kind: `implementation`
 - Review: `manual`
@@ -36,4 +36,4 @@
 
 - Next action: Wait for death-handoff R1, extract damage/recovery ownership, then change only Field Patch presentation using the shared movement-permissive seam.
 - Best starting files: damage/death/Field Patch regions of `operator.gd`; `operator_integrity_reclaim.gd`; presentation controller; focused health/recovery tests.
-- Blockers or open questions: Dependency on `custodian-death-handoff-foundation` is intentional so this packet extracts the new death truth rather than the old GameState compatibility path.
+- Blockers or open questions: Dependency on `custodian-death-handoff-foundation-recovery-1` is intentional so this packet extracts the new death truth rather than the old GameState compatibility path.
