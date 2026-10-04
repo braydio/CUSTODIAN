@@ -2,10 +2,11 @@
 
 **Project:** CUSTODIAN  
 **Program ID:** `persistent-recovery-armament-registration`  
-**Status:** planned / first packet ready  
+**Status:** active / R1 complete / R2 dependency-gated  
 **Priority:** P1  
-**Reviewed main:** `22539b8d602cfbccb5399277ad302dd756824710`  
-**Last Updated:** 2026-10-01  
+**Reviewed main:** `d5ae87bff7a7`  
+**Last Updated:** 2026-10-04  
+**Planning / refresh chat:** https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search  
 **Design authority:** `design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`
 
 ## Purpose
@@ -94,7 +95,7 @@ That is the finish line.
 | Code | Workstream | Slice | Status | Depends on |
 | --- | --- | --- | --- | --- |
 | R1 | `custodian-death-handoff-foundation-recovery-1` | Operator death -> campaign outcome handoff, with current Game Over retained only as a compatibility fallback | **complete** | none |
-| R2 | `custodian-post-recovery-reintegration` | Replace the R1 compatibility fallback with Post recovery and return/reintegration after campaign-ending death | planned | R1 |
+| R2 | `custodian-post-recovery-reintegration` | Layer death-specific Post recovery/reintegration onto the reviewed generic Campaign return; remove the R1 fallback only when that return accepts the exact death outcome | **refreshed / blocked** | R1 review + reviewed H6 |
 | R3 | `armament-persistence-registration-core` | Field-acquired / recovered / registered armament data, Recovered Armory ownership, registration records, and three-capacity contract | planned | R2 |
 | R4 | `armament-death-site-recovery-semantics` | Registered re-provisioning, persisted inoperable prior instances, and unregistered death-site retrieval semantics | planned | R3 |
 | R5 | `local-creche-recovery` | Existing/restored local Crèche recovery path that continues the same campaign without rewind | planned | R2 + R4 |
@@ -106,6 +107,12 @@ That is the finish line.
 
 ```text
 R1 death handoff
+ └─ RR1 formal R1 review
+
+Hub H6 generic Campaign return
+ └─ HR6 formal H6 review
+
+RR1 + HR6
  └─ R2 Post recovery/reintegration
      ├─ R3 armament persistence/registration
      │   └─ R4 death-site equipment semantics
@@ -157,20 +164,65 @@ summary records final selected/passed/skipped counts. The recovery workstream
 lands this evidence through `workstream.py finish` to `origin/main`.
 
 Packet:
-`custodian/docs/ai_context/task_packets/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md`
+`custodian/docs/ai_context/task_packets/archived/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md`
+
+### R1 Manual Planning Review - 2026-10-04
+
+The landed R1 implementation satisfies its intended foundation boundary. No
+blocking R1 correction is required before formal paired review.
+
+Three next-slice corrections are locked into R2:
+
+1. `OperatorDeathCampaignBinding._handled` is currently process/node-lifetime
+   one-shot state. Once recovery exists, it must become life-scoped and re-arm
+   only after successful playable reintegration. Re-arming at outcome creation
+   or transition start would reopen duplicate/reentrant death races.
+2. R2 must correlate recovery to the exact `CampaignOutcome` produced by the
+   R1 death handoff, preferably by `outcome_id` plus the held structured death
+   context. It must not treat every `FAILURE` outcome as a death.
+3. H6 `hub-campaign-return` already owns generic CampaignOutcome -> HubState
+   application, Campaign teardown, Hub restoration, and Campaign -> Hub return.
+   R2 must consume that reviewed authority rather than create a second return
+   coordinator. The R1 Game Over fallback may be suppressed only after that
+   authority accepts the exact death return; failed/missing return keeps the
+   fail-safe.
+
+The formal paired R1 review remains a dependency. These findings are
+next-slice architecture corrections, not evidence that R1 missed its authored
+acceptance.
 
 ### R2 — Post Recovery / Reintegration
 
-Replace R1's temporary global-game-over fallback for ordinary Custodian death.
+R2 is now materially refreshed in
+`custodian/docs/ai_context/task_packets/CUSTODIAN_POST_RECOVERY_REINTEGRATION.md`.
 
-This slice owns the minimum truthful Campaign failure -> outcome application ->
-return/reintegration path required by the active architecture. Re-derive the
-live transition seam at packet-authoring time; do not invent a second persistent
-world-transition authority if the Campaign Flow / World Transition migration
-has advanced on main.
+It no longer owns generic Campaign -> Hub return. The Hub first-set H6 packet
+already owns exactly-once outcome application, Campaign teardown, Hub
+restoration, and return through the major-context lifecycle.
 
-**Exit:** campaign-ending Custodian death returns through the Post recovery
-surface and ordinary control resumes without using the global Game Over modal.
+R2 begins only after the formal R1 review and reviewed H6 exist. It then owns
+the death-specific layer:
+
+- correlate the exact outcome produced by the R1 death handoff;
+- suppress R1's compatibility Game Over only after generic return accepts that
+  exact outcome;
+- preserve fallback Game Over when return is missing/rejected/unsafe;
+- carry death context through return;
+- restore the persistent Operator into a playable reintegrated state;
+- re-arm the R1 one-shot death latch only after successful reintegration;
+- prove a later second death can hand off exactly once again.
+
+R2 must not classify all `FAILURE` outcomes as death and must not duplicate
+HubState mutation or world-return ownership.
+
+**Exit:** a campaign-ending death completes through reviewed H6 return plus
+death-specific reintegration with no Game Over modal, the persistent Operator is
+playable and re-armed for a later life, and failure to establish a safe return
+still falls back to Game Over.
+
+**Refresh gate:** after both prerequisite reviews land, return their summaries
+to https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search and re-derive the exact H6 return-accepted/return-complete API before
+setting R2 ready/auto.
 
 ### R3 — Armament Persistence + Registration Core
 
@@ -276,14 +328,17 @@ At closeout:
 3. update **Current Program Position**;
 4. re-derive the next planned packet against current main before promoting it
    to `ready`;
-5. preserve the expected eight-packet boundary unless live evidence proves a
+5. when a packet or review reports that a recovery successor needs
+   architecture/design refresh, its closing summary must surface this exact
+   planning chat URL: https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search;
+6. preserve the expected eight-packet boundary unless live evidence proves a
    slice must split or merge; if that happens, record the reason here rather
    than silently changing the count;
-6. do not mark the program complete until R8 proves the **Program End** list.
+7. do not mark the program complete until R8 proves the **Program End** list.
 
 ## Current Program Position
 
-**Current slice:** R2 Post Recovery / Reintegration
-**State:** R1 is implemented and its focused acceptance checks pass. Operator death now resolves the live CampaignSession exactly once before the transitional Game Over fallback; local and Post recovery remain unimplemented.
-**Next gate:** architecture-sensitive refresh of R2 against the landed R1 binding, current Campaign/Hub outcome application, and current return lifecycle; do not promote a packet to ready until that live surface is re-derived.
+**Current slice:** R2 Post Recovery / Reintegration, refreshed but dependency-gated.  
+**State:** R1 is landed and this planning review found no blocking R1 correction. Its formal paired review remains pending. R2 is now authored with the three required next-slice corrections: life-scoped latch re-arm, exact death-outcome correlation, and strict reuse of H6 generic Campaign-return authority. H6/HR6 are not landed yet, so R2 is correctly blocked/manual.  
+**Next gate:** complete the formal R1 review and the Hub H6/HR6 Campaign-return slice. Their closing evidence must reference the recovery planning chat https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search when surfacing the R2 refresh. Then refresh R2's exact integration API against live main and promote it to ready/auto.  
 **Expected remaining implementation packets after R1:** 7.
