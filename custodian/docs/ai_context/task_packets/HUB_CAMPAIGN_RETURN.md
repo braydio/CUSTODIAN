@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-campaign-return`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-hub-muster-continuity-port-deployment`
 - Locks: `hub-runtime, world-lifecycle, campaign-outcome`
@@ -32,10 +32,9 @@
 - Deferred: local/Post recovery program, specifically R2 `custodian-post-recovery-reintegration`; next offer cycle; save/load expansion; return audiovisual polish.
 - Cross-program recovery refresh chat: https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search. If H6 or its paired review lands evidence that requires R2 to be refreshed, the H6/HR6 closing summary must surface this exact URL and identify R2 as refresh-required.
 
-## Temporary Refresh Gate — REMOVE WHEN REFRESHED
+## Claim-Time Dependency Refresh
 
-After `review-hub-muster-continuity-port-deployment` passes, inspect the landed return API, accepted deployment/session identity, HubState owner, bootstrap cleanup policy, and current persistent-recovery/death-handoff state. R1 is now landed, so bind to its authoritative Campaign resolution path and preserve an outcome-keyed return acceptance/completion seam for R2. Update exact seams/tests, remove this section, set ready/auto. Refresh in place. If this refresh changes what R2 must consume, record that in the closing summary with https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search.
-
+This packet is intentionally `ready/auto` while its declared dependencies may still be incomplete. The dispatcher must keep it non-claimable until every `Depends on` workstream is archived `complete`. Once claimed, the execution agent must reconstruct the landed predecessor seams from current `main`, archived implementation/review summaries, and live public APIs before mutation. Reconcile private helper names and bounded implementation drift while preserving this packet's Goal, Completion boundary, Preserve, Non-goals, and Acceptance. Update directly stale packet/docs facts inside the workstream when needed. Do not stop for a ChatGPT/user refresh unless current evidence exposes a genuine unresolved design choice that existing authority cannot answer.
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -58,6 +57,6 @@ After `review-hub-muster-continuity-port-deployment` passes, inspect the landed 
 
 ## Handoff
 
-- Next action: Refresh after HR5; H7 waits for reviewed H6 plus reviewed optional H4.
+- Next action: Auto-claim after HR5 archives complete; self-refresh against the landed deployment and recovery/death-handoff authority. H7 remains dependency-gated on reviewed H6 plus reviewed H4.
 - Best starting files: reviewed H5 lifecycle/deploy owner; HubState; CampaignSession/Outcome; WorldSimulationRuntime; current recovery program; H1 return marker.
 - Blockers or open questions: exact return/cleanup API is a dependency/live-main output. R2 recovery remains separate and planning-chat gated at https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search.
