@@ -32,7 +32,10 @@
   - `ui/widgets/animation_detail.py` exposes raw `Workbench: EDITED`, source/workspace/document frame counts, migration, dependency status, workspace path, and Aseprite path as primary information.
   - `ui/state.py::SessionView` already carries `workbench_state`, `contract_state`, `dependency_status`, frame counts, layers, completeness, workspace, Aseprite and canvas.
   - `ui/state.py::PublishView` already carries publication operations and basic enable/block state.
-  - The prerequisite publish-readiness packet is intended to land structured checkout/main/dirty/LFS/stale/recovery readiness. This slice must consume it instead of parsing Git or reproducing readiness checks.
+  - The landed publish-readiness authority owns structured checkout/main/dirty/LFS/stale/recovery readiness. The new `operator-workbench-background-base-sync` prerequisite owns bounded launch-time reconciliation of an ahead-zero checkout whose dirt is provably Workbench-owned, including exact-byte preservation across an FF-only base advance.
+  - A checkout label such as `behind 256` is repository-history distance from `origin/main`, not 256 animation changes. Sparse checkout constrains materialized paths, not commit ancestry. UX1 must never present that number as an artist workload or imply hundreds of animation edits.
+  - After safe background reconciliation succeeds, primary state is simply `MAIN READY`; an unsafe preserve/sync case is `MAIN BLOCKED` with one concise actionable reason. Raw branch/ahead/behind/sparse detail remains Tier-3 diagnostics.
+  - This slice must consume the backend reconciliation/readiness projection instead of parsing Git or reproducing synchronization/recovery checks.
   - The prerequisite browser-snapshot packet owns accepted browser refresh state. This slice must not introduce another browser cache.
   - Live Aseprite modified state remains owned by the existing Live Bridge/UI controller; it should be projected, not reimplemented.
 - Evidence:
