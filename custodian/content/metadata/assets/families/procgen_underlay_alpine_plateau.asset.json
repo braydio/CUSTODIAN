@@ -1,0 +1,81 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_underlay_alpine_plateau",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "backgrounds/procgen/alpine_plateau",
+    "owner": "alpine_plateau",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 1536,
+    "height": 1024
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "far_world_a": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "far_world_a",
+      "layout": "copy",
+      "frame_width": 1536,
+      "frame_height": 1024
+    },
+    "far_world_b": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "far_world_b",
+      "layout": "copy",
+      "frame_width": 1536,
+      "frame_height": 1024
+    },
+    "depth_fog_a": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "depth_fog_a",
+      "layout": "copy",
+      "frame_width": 1536,
+      "frame_height": 1024
+    },
+    "depth_fog_b": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "depth_fog_b",
+      "layout": "copy",
+      "frame_width": 1536,
+      "frame_height": 1024
+    },
+    "near_cliff_mist_a": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "near_cliff_mist_a",
+      "layout": "copy",
+      "frame_width": 1536,
+      "frame_height": 1024
+    },
+    "near_cliff_mist_b": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "near_cliff_mist_b",
+      "layout": "copy",
+      "frame_width": 1536,
+      "frame_height": 1024
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/procgen/presentation/procgen_depth_backdrop.gd"
+    }
+  ]
+}

@@ -13664,6 +13664,137 @@
           "source_asset": null
         }
       }
+    },
+    "procgen_underlay_alpine_plateau": {
+      "kind": "backdrop",
+      "assets": {
+        "depth_fog_a::omni": {
+          "state_id": "depth_fog_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "alpine_plateau",
+            "backdrop",
+            "background",
+            "display",
+            "depth_fog_a",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_depth_fog_a_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "6e3c37839e95be86198ebac315866f73f25b23ecfd39c66f3c4b2acd88007877",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "depth_fog_b::omni": {
+          "state_id": "depth_fog_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "alpine_plateau",
+            "backdrop",
+            "background",
+            "display",
+            "depth_fog_b",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_depth_fog_b_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "a0e9e0b58a98d128112fa2b57a52c364c029c88818e69f7e4c062a9be6011bbc",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "far_world_a::omni": {
+          "state_id": "far_world_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "alpine_plateau",
+            "backdrop",
+            "background",
+            "display",
+            "far_world_a",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_far_world_a_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "ec5fa6dab608d7e20544c05c350f69fe9520a967b3fa9bd361482040b3aede2d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "far_world_b::omni": {
+          "state_id": "far_world_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "alpine_plateau",
+            "backdrop",
+            "background",
+            "display",
+            "far_world_b",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_far_world_b_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "5e8cc0f20a9c3808e8ad99f9e5b21e704dc442cbf56ccef4ddb19125ba62ad80",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "near_cliff_mist_a::omni": {
+          "state_id": "near_cliff_mist_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "alpine_plateau",
+            "backdrop",
+            "background",
+            "display",
+            "near_cliff_mist_a",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_near_cliff_mist_a_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "e8d4e8142671e680ec8b9f98b782de1704832cae51556a98b2c97d41c0bb721d",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "near_cliff_mist_b::omni": {
+          "state_id": "near_cliff_mist_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "alpine_plateau",
+            "backdrop",
+            "background",
+            "display",
+            "near_cliff_mist_b",
+            "omni"
+          ],
+          "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_near_cliff_mist_b_1536x1024.png",
+          "frames": 1,
+          "frame_size": [
+            1536,
+            1024
+          ],
+          "sha256": "13e2ded96241299cbe5789f0dc1768344287e3185f9aa848ebbf34559ce13ddd",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

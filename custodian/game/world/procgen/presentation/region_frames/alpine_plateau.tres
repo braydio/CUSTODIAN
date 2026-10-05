@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="ProcgenRegionFrameProfile" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_region_frame_profile.gd" id="1"]
-[ext_resource type="Resource" path="res://game/world/procgen/presentation/underlays/endless_forest_underlay.tres" id="2"]
+[ext_resource type="Resource" path="res://game/world/procgen/presentation/underlays/alpine_plateau_underlay.tres" id="2"]
 
 [resource]
 script = ExtResource("1")
 profile_id = &"alpine_plateau"
 display_name = "Alpine Plateau"
 underlay_profile = ExtResource("2")
-visual_fallback = true
-fallback_reason = "alpine underlay Asset V2 family pending (procgen-alpine-plateau-underlay-assets); compatible Endless Forest underlay bound as an explicit stand-in"
+visual_fallback = false
+fallback_reason = ""

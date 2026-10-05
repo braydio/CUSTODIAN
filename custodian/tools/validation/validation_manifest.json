@@ -517,6 +517,7 @@
       "owners": [
         "custodian/game/world/procgen/presentation/procgen_region_frame_profile.gd",
         "custodian/game/world/procgen/presentation/region_frames/alpine_plateau.tres",
+        "custodian/game/world/procgen/presentation/underlays/alpine_plateau_underlay.tres",
         "custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd",
         "custodian/game/world/procgen/terrain/nonwalkable_surface_classifier.gd",
         "custodian/game/world/procgen/custodian_contract_map.gd",

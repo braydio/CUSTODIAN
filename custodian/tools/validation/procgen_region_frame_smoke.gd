@@ -3,9 +3,11 @@ extends SceneTree
 ## Covers PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md (RF1): exterior vs
 ## internal CHASM derivation (boundary flood over CHASM only), OCEAN exclusion,
 ## explicit starting-region frame selection without planet_key inference,
-## alternate-frame passthrough, explicit visual-fallback telemetry, Drowned
-## Basilica override parity, and DepthBackdrop activation from the exterior
-## mask only.
+## alternate-frame passthrough, explicit visual-fallback telemetry (cleared for
+## the bound Alpine Plateau art, still reported for unresolved frames), Drowned
+## Basilica override parity, DepthBackdrop activation from the exterior mask
+## only, deterministic seed A/B selection, ocean-pocket exclusion (RFR1 R0-02)
+## and a real generated production-scene frame assertion (RFR1 R0-01).
 
 const CLASSIFIER := preload("res://game/world/procgen/terrain/nonwalkable_surface_classifier.gd")
 const CONTRACT_MAP_SCENE := preload("res://game/world/procgen/custodian_contract_map.tscn")
@@ -23,8 +25,11 @@ func _init() -> void:
 func _run() -> void:
 	_test_classifier_exterior_vs_internal()
 	_test_ocean_never_exterior()
+	_test_ocean_pocket_not_chasm_conduit()
 	await _test_contract_map_frame_selection()
 	await _test_tilemap_frame_and_backdrop()
+	_test_alpine_underlay_binding_and_seed_selection()
+	await _test_production_scene_frame_binding()
 	if _errors.is_empty():
 		print("[ProcgenRegionFrameSmoke] PASS")
 		quit(0)
@@ -94,6 +99,43 @@ func _test_ocean_never_exterior() -> void:
 	)
 
 
+func _test_ocean_pocket_not_chasm_conduit() -> void:
+	# RFR1 R0-02: an ocean pocket touching/bisecting exterior chasm must neither
+	# become a chasm flood conduit nor corrupt the exterior/internal partition.
+	var size := Vector2i(16, 16)
+	var floor_cells := _floor_rect(Rect2i(5, 5, 6, 6))
+	# A closed ocean-claim band enclosing a chasm pocket that touches no map edge
+	# except through ocean, plus an ocean arm that reaches the exterior chasm.
+	var claims: Array[Dictionary] = [{
+		"id": &"rf_r002_ocean", "kind": &"ocean",
+		"bounds": Rect2i(0, 3, 16, 2), "seed_edge": &"west",
+	}]
+	var result: Dictionary = CLASSIFIER.new().classify(size, floor_cells, claims)
+	var ocean: Dictionary = result["ocean_cells"]
+	var exterior: Dictionary = result["exterior_chasm_cells"]
+	var internal: Dictionary = result["internal_chasm_cells"]
+	var chasm: Dictionary = result["chasm_cells"]
+	_check(not ocean.is_empty(), "R0-02 fixture produced no ocean cells")
+	_check(ocean.has(Vector2i(0, 3)) and ocean.has(Vector2i(15, 4)), "R0-02 ocean band does not touch the map boundary")
+	# The band bisects the exterior chasm: north strip (y<3) is separated from
+	# the south chasm (y>=5) by ocean, yet both touch the map edge themselves.
+	_check(exterior.has(Vector2i(0, 0)) and exterior.has(Vector2i(0, 15)), "bisected exterior chasm halves lost exterior status")
+	for cell in ocean.keys():
+		_check(not exterior.has(cell) and not internal.has(cell) and not chasm.has(cell), "ocean cell %s leaked into a chasm mask" % str(cell))
+	_check(exterior.size() + internal.size() == chasm.size(), "R0-02 fixture broke the exterior/internal partition")
+	# An enclosed chasm pocket reachable only through ocean is internal, never exterior.
+	var pocket_floor := _floor_rect(Rect2i(2, 2, 12, 12), [Vector2i(7, 7)])
+	var pocket_claims: Array[Dictionary] = [{
+		"id": &"rf_r002_pocket", "kind": &"ocean",
+		"bounds": Rect2i(6, 6, 3, 3), "seed_edge": &"north",
+	}]
+	var pocket: Dictionary = CLASSIFIER.new().classify(size, pocket_floor, pocket_claims)
+	_check((pocket["exterior_chasm_cells"] as Dictionary).size() + (pocket["internal_chasm_cells"] as Dictionary).size() == (pocket["chasm_cells"] as Dictionary).size(), "ocean pocket broke the partition")
+	_check(not (pocket["exterior_chasm_cells"] as Dictionary).has(Vector2i(7, 7)), "an ocean-adjacent enclosed cell became exterior")
+	var again: Dictionary = CLASSIFIER.new().classify(size, floor_cells, claims)
+	_check((again["exterior_chasm_cells"] as Dictionary).keys() == exterior.keys(), "R0-02 exterior mask is not deterministic")
+
+
 func _test_contract_map_frame_selection() -> void:
 	var map := CONTRACT_MAP_SCENE.instantiate()
 	map.set("auto_generate_on_ready", false)
@@ -132,7 +174,7 @@ func _test_contract_map_frame_selection() -> void:
 
 func _test_tilemap_frame_and_backdrop() -> void:
 	_check(ALPINE_PROFILE.is_valid() and ALPINE_PROFILE.profile_id == &"alpine_plateau", "alpine_plateau profile resource is invalid")
-	_check(ALPINE_PROFILE.visual_fallback, "alpine profile must report its stand-in underlay as a visual fallback")
+	_check(not ALPINE_PROFILE.visual_fallback and ALPINE_PROFILE.fallback_reason == "", "alpine profile still reports a visual fallback after Alpine art was bound")
 	var map := PROCGEN_MAP_SCENE.instantiate() as ProcGenTilemap
 	root.add_child(map)
 	await process_frame
@@ -144,7 +186,8 @@ func _test_tilemap_frame_and_backdrop() -> void:
 	map.call("_rebuild_nonwalkable_surface_regions", size)
 	var snapshot: Dictionary = map.get_region_frame_debug_snapshot()
 	_check(snapshot["frame_id"] == "alpine_plateau" and snapshot["frame_resolved"] == true, "alpine frame did not resolve")
-	_check(snapshot["visual_fallback"] == true and String(snapshot["fallback_reason"]) != "", "missing Alpine art was not reported as a fallback")
+	_check(snapshot["visual_fallback"] == false and String(snapshot["fallback_reason"]) == "", "bound Alpine art still reported a fallback")
+	_check(snapshot["underlay_profile_id"] == "alpine_plateau", "alpine frame is not using the Alpine underlay profile (Endless Forest stand-in?)")
 	_check(snapshot["underlay_source"] == "region_frame", "underlay was not selected by the region frame")
 	_check(snapshot["underlay_profile_id"] == String(ALPINE_PROFILE.underlay_profile.profile_id), "frame underlay profile id mismatch")
 	_check(int(snapshot["exterior_chasm_count"]) > 0 and int(snapshot["internal_chasm_count"]) == 2, "exterior/internal counts are wrong for the fixture")
@@ -199,6 +242,68 @@ func _test_tilemap_frame_and_backdrop() -> void:
 
 	map.queue_free()
 	await process_frame
+
+
+func _test_alpine_underlay_binding_and_seed_selection() -> void:
+	var profile: ProcgenUnderlayProfile = ALPINE_PROFILE.underlay_profile
+	_check(profile.is_valid() and profile.profile_id == &"alpine_plateau", "alpine underlay profile is invalid or misnamed")
+	_check(profile.far_variants.size() == 2 and profile.middle_variants.size() == 2 and profile.near_variants.size() == 2, "alpine underlay must bind A/B for FAR, MIDDLE and NEAR")
+	for texture in profile.far_variants + profile.middle_variants + profile.near_variants:
+		_check(texture.get_size() == Vector2(1536, 1024), "alpine underlay texture is not 1536x1024: %s" % texture.resource_path)
+		_check(texture.resource_path.begins_with("res://content/backgrounds/procgen/alpine_plateau/"), "alpine underlay texture is outside its runtime domain: %s" % texture.resource_path)
+		_check(not texture.resource_path.contains("endless_forest") and not texture.resource_path.contains("archive_resolve"), "alpine underlay reuses a foreign/Archive Resolve asset")
+	var backdrop := ProcgenDepthBackdrop.new()
+	var seen := {"far": {}, "middle": {}, "near": {}}
+	for seed_value in range(1, 25):
+		backdrop.set_underlay_profile(profile, seed_value)
+		var first: Dictionary = backdrop.get_selected_variant_indices()
+		backdrop.set_underlay_profile(profile, seed_value)
+		_check(backdrop.get_selected_variant_indices() == first, "seed %d did not select deterministically" % seed_value)
+		for layer in seen.keys():
+			(seen[layer] as Dictionary)[int(first[layer])] = true
+	for layer in seen.keys():
+		_check((seen[layer] as Dictionary).size() == 2, "seed sweep never selected both %s variants" % layer)
+	backdrop.free()
+
+
+func _test_production_scene_frame_binding() -> void:
+	# RFR1 R0-01: a real generated starting scene reports the Alpine frame and
+	# the bound Alpine underlay after integration.
+	var contract_map := CONTRACT_MAP_SCENE.instantiate() as CustodianContractMap
+	contract_map.auto_generate_on_ready = false
+	contract_map.randomize_seed_on_ready = false
+	contract_map.map_generation_attempts = 1
+	root.add_child(contract_map)
+	await process_frame
+	contract_map.generate_contract(424242)
+	var tilemap: ProcGenTilemap = null
+	var frames := 0
+	while tilemap == null and frames < 1800:
+		frames += 1
+		await process_frame
+		if not contract_map.get_latest_contract().is_empty():
+			tilemap = _find_tilemap(contract_map)
+	_check(tilemap != null, "production starting scene produced no ProcGenTilemap")
+	if tilemap != null:
+		var snapshot: Dictionary = tilemap.get_region_frame_debug_snapshot()
+		_check(snapshot["frame_id"] == "alpine_plateau" and snapshot["frame_resolved"] == true, "generated production scene did not resolve the alpine_plateau frame")
+		_check(snapshot["visual_fallback"] == false, "generated production scene still reports a visual fallback")
+		_check(snapshot["underlay_source"] == "region_frame" and snapshot["underlay_profile_id"] == "alpine_plateau", "generated production scene is not bound to the Alpine underlay")
+		_check(tilemap.depth_backdrop.get_underlay_profile_id() == &"alpine_plateau", "generated production backdrop is not using the Alpine underlay")
+		_check(not (tilemap.depth_backdrop.get_selected_variant_indices() as Dictionary).is_empty() and int(tilemap.depth_backdrop.get_selected_variant_indices()["far"]) >= 0, "production backdrop has no deterministic variant selection")
+	await contract_map._clear_previous_instances()
+	contract_map.queue_free()
+	await process_frame
+
+
+func _find_tilemap(node: Node) -> ProcGenTilemap:
+	if node is ProcGenTilemap:
+		return node as ProcGenTilemap
+	for child in node.get_children():
+		var found := _find_tilemap(child)
+		if found != null:
+			return found
+	return null
 
 
 func _check(condition: bool, message: String) -> void:
