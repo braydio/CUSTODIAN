@@ -120,10 +120,14 @@ Required quality:
   When a material subjective decision remains after objective checks, instruct
   the execution agent to publish one compact Dropbox handoff with
   `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`,
-  include exact reviewer questions, return the emitted manifest path, and stop
-  rather than self-critiquing the art. Reference
-  `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` instead of restating its
-  remote/setup rules.
+  include exact reviewer questions, preserve the packet's exact `Authoring chat`,
+  return both the authoring-chat URL and emitted manifest path, and stop rather
+  than self-critiquing the art. The authoring ChatGPT conversation is the review
+  endpoint and should inspect that connected Dropbox path. New bundles default to
+  `delete_after_review`; after the verdict returns, the execution agent runs the
+  emitted `--cleanup-reviewed` command unless the packet/user explicitly chose
+  retention. Reference `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`
+  instead of restating its remote/setup rules.
 - **External implementation inputs** belong in a task packet's provenance/evidence
   section as an exact workstream, immutable handoff ID, and manifest path under
   `CUSTODIAN/implementation_inputs/`. Fetch them with
