@@ -166,7 +166,7 @@ As of the reviewed baseline:
 
 - pending frame/canvas migration;
 - source changed / refresh required;
-- safe main synchronization available;
+- brief background Workbench-base reconciliation in flight or a true reconciliation blocker;
 - LAND PENDING;
 - unbound/adoptable FX layer after the prerequisite feature lands;
 - incomplete/partial directional coverage.
