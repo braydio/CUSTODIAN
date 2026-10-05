@@ -1,6 +1,7 @@
 # Operator Workbench UX Hierarchy V1 Roadmap
 
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search
+**Background-sync addendum chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb
 
 > **REFRESH REQUIRED BEFORE IMPLEMENTATION**
 >
