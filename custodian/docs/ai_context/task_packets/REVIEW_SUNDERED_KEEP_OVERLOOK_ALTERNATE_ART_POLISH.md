@@ -27,7 +27,7 @@
 - Review focus: This is art-production and binding validation, not permission to redesign the composition or production route.
 - Acceptance: Findings-first review. Clean/non-blocking pass makes the polished standalone proof eligible for SKO-3 planning refresh. Blocking findings create `sundered-keep-overlook-alternate-art-polish-review-corrections-1`.
 - Non-goals: No production integration or live 3D recommendation.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets; do not edit reviewed implementation or asset bytes.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
