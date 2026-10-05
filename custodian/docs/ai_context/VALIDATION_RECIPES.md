@@ -83,7 +83,11 @@ python3 custodian/tools/iteration/test_publish_review_artifacts.py
 For a scoped transport implementation, follow with
 `python3 custodian/tools/validation/run_validation.py --changed --json` and the
 real-provider doctor/round-trip steps in
-`custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md`. These are external
+`custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md` /
+`VISUAL_REVIEW_HANDOFF.md`. For visual-review lifecycle work, also prove a
+unique sacrificial v2 upload can be reviewed and then removed with
+`--cleanup-reviewed --workstream <id> --run-id <run>`, while a retained
+manifest and a newer `LATEST.json` remain protected. These are external
 provider checks, not a reason to launch a broad Godot sweep.
 
 Check the live queue's review pairing against fetched `origin/main` directly:
