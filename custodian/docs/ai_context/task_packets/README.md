@@ -250,9 +250,13 @@ and uses global `claim-next` only when no same-series successor exists.
 ## Packet Handoff And Authoring-Chat Provenance
 
 Newly authored or materially refreshed V2 packets record
-`Authoring chat: <ChatGPT conversation URL | not-recorded | n/a>`. When the
-user provides the originating conversation URL, preserve it exactly. Agents
-must never derive or invent ChatGPT conversation URLs.
+`Authoring chat: <ChatGPT conversation URL | not-recorded | n/a>` and an
+explicit `Visual review: none | required-if-subjective | required` policy.
+When the user provides the originating conversation URL, preserve it exactly.
+Agents must never derive or invent ChatGPT conversation URLs. The dispatcher
+projects that exact authoring chat and the workstream's canonical Dropbox
+visual-review root into the claim receipt so autonomous agents have the review
+return channel without reconstructing chat history.
 
 Every completed packet/review reports the immediate successor in its own
 program/DAG through the required `Next Handoff` fields: next workstream,
