@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-fast-chain-south-continuity`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -78,3 +78,15 @@
 - Next action: Claim this packet in an Operator-art-capable environment, reconstruct current chain truth, then author Fast 02-04 South candidates through the isolated Workbench/Art Agent path.
 - Best starting files: `OPERATOR_FAST_01_SOUTH_MODULAR_CLAUDE_SUMMARY.md`, current Fast 02-04 E/W canonical layers, `operator_unarmed_fast_chain_smoke.gd`, Workbench/Art Agent docs and source-session tooling.
 - Blockers or open questions: Final subjective chain baseline remains human-owned. Technical implementation may proceed immediately; weak/unreviewable art must fail closed to the current fallback rather than land.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `blocked`
+- Friction severity: `medium`
+- What went wrong: `Fast 02, Fast 03, and Fast 04 have no authored South pose sources; current South selection therefore falls back to East. The supported Source Session can normalize and review supplied strips, while Workbench/Art Agent edits existing semantic animations and cannot synthesize these new poses.`
+- Root cause / contributing factors: `the accepted Fast 01 South strip and the Fast 02-04 East/West strips do not contain the distinct South poses required by the packet; the documented native new-animation authoring path remains planned.`
+- Prevention / pipeline improvement: `supply reviewed South Fast 02-04 pose strips through the approved Operator authoring path, or explicitly establish an approved pose-synthesis workflow before resuming.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `manual-follow-up`
+- What worked: `the registered inventory confirms East/West layers and exact 6/7/8-frame contracts; production South fallback remains untouched.`
