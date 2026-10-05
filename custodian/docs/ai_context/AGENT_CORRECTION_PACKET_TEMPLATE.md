@@ -22,6 +22,8 @@ parent implementation slice and cite the exact stable review finding IDs.
 - Review cycle: `<positive cycle number>`
 - Max automatic review cycles: `<inherited cap>`
 - Reviewed main: `<SHA where this correction contract was verified>`
+- Authoring chat: `<inherit the parent implementation's exact URL | not-recorded | n/a>`
+- Visual review: `<inherit or narrow: none | required-if-subjective | required>`
 - Parent implementation: `<implementation workstream and canonical archived packet path>`
 - Parent review: `<review workstream and canonical archived packet path>`
 - Findings addressed: `<full IDs, for example R0-02, R0-04>`
