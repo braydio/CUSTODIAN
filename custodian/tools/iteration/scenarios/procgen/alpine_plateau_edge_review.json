@@ -6,7 +6,7 @@
   "seed": 424242,
   "duration_ticks": 120,
   "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 240, "pause_during_setup": true},
-  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 119, "contact_sheet_ticks": [10, 30, 55, 70, 90, 115], "required_keyframes": true, "background": "opaque"},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 119, "contact_sheet_ticks": [10, 30, 55, 70, 90, 105], "required_keyframes": true, "background": "opaque"},
   "setup": {
     "remove_nodes": [],
     "roles": {"fixture": {"node_path": "."}},
