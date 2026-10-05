@@ -9,10 +9,18 @@ file set, declared size, and SHA-256 before atomically exposing files in local
 cache staging. It never extracts ZIPs or writes runtime/Asset V2 locations.
 Outbound subjective visual evidence remains under
 `CUSTODIAN/visual_review/<workstream>/<run-id>/` through
-`publish_review_artifacts.py`. Git remains authority for code, design, packets,
-and durable receipts; Asset Pipeline V2 owns any later source/inbox promotion.
-The shared transport/remote resolver is `custodian/tools/iteration/dropbox_transport.py`.
-See `IMPLEMENTATION_HANDOFF.md` and `VISUAL_REVIEW_HANDOFF.md` for the two
+`publish_review_artifacts.py`. New v2 review manifests embed the packet's exact
+authoring-chat URL and default to `delete_after_review`. Autonomous claim
+receipts surface that chat plus the canonical visual-review root. The authoring
+ChatGPT conversation reviews the connected Dropbox manifest/questions; after its
+verdict returns, the execution agent runs the exact-run, manifest-gated
+`--cleanup-reviewed` path unless explicit retention was requested. Matching
+`LATEST.json` is removed only when it still names the reviewed run, so newer
+evidence is protected. Git remains authority for code, design, packets, verdict
+summaries, and authoring-chat backlinks; Asset Pipeline V2 owns any later
+source/inbox promotion. The shared transport/remote resolver is
+`custodian/tools/iteration/dropbox_transport.py`. See
+`IMPLEMENTATION_HANDOFF.md` and `VISUAL_REVIEW_HANDOFF.md` for the two
 contracts and remote precedence.
 
 ## Custodian Death Handoff R1 (2026-10-04)
