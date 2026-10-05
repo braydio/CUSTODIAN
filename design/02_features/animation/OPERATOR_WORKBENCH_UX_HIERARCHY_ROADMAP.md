@@ -10,8 +10,8 @@
 > This roadmap and every packet in this series are planning drafts based on
 > `main@330422023f9a92362915af46b9658585e7c1d450`.
 > Do not claim or implement any slice yet. Before implementation, request a
-> fresh repository/interface review after the prerequisite Operator Workbench
-> hardening and FX-adoption series have landed. Remove this banner only after
+> fresh repository/interface review after the full prerequisite Operator Workbench
+> hardening chain through reviewed new-animation creation has landed. Remove this banner only after
 > the refreshed roadmap has been reconciled to current main and explicitly
 > signed off for execution.
 
