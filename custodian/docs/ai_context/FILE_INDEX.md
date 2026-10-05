@@ -5,7 +5,7 @@
 - `design/05_levels/SUNDERED_KEEP_OVERLOOK_ALTERNATE_ROADMAP.md` — standalone-first program for the fixed-oblique small-shelf / vast-depth Sundered Keep alternate, optional Asset V2 polish, and later authoring-chat-gated production/procgen integration planning.
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` + paired review — reviewed-2.5D-foundation consumer that builds a real-Operator standalone overlook proof from existing donor art before any production-route change.
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` + paired review — optional blocked/manual Asset V2 five-layer polish family `sundered_keep_overlook_alt_layers`, activated only when donor-art fidelity is the remaining limitation.
-- `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — manual planning-refresh gate that compares live production insertion seams after the standalone proof is reviewed.
+- `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` + `REVIEW_SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — manual authoring-chat planning refresh followed by a fresh architecture/workflow review before any production/procgen integration packet may execute.
 - `custodian/docs/ai_context/task_packets/REVIEW_ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md` — fresh-context reusable-foundation review gating Forum and Sundered showcase consumers.
 - `custodian/docs/ai_context/task_packets/CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` + paired review — P0 final-Operator-spawn correctness gate requiring accepted/reachable playable-component membership, not merely painted floor.
 
