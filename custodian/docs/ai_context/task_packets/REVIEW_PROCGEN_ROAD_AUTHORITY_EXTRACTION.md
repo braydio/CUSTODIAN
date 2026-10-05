@@ -12,7 +12,7 @@
 - Review target workstream: `procgen-road-authority-extraction`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ROAD_AUTHORITY_EXTRACTION.md`
 - Reviewed main: `ab7394ba27353d0a5ebcc4185fad656f65a7623c`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
 - Review modes: `code, architecture, runtime`
@@ -43,7 +43,7 @@
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: D2 must be re-inventoried against post-D1 live main so authored-claim, reservation, region, and ProcGenTilemap ownership boundaries are reconciled with the reviewed D1 extraction.
 - Next action: After D1 review passes, bring the D1 implementation/review summary and current-main evidence to the recorded ChatGPT planning chat, then refresh D2 in place with the user before execution.
 - Blockers or open questions: D2 must not be claimed until the ChatGPT/user refresh is complete.
