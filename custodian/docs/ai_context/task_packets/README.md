@@ -237,7 +237,10 @@ and `Locks` lists narrow contention IDs. A missing `Dispatch` remains manual.
 Claims create/resume exactly one existing `agent/<id>` workstream and do not
 edit packet state on main; normal lifecycle progression and archival happen
 on the task branch. A successful claim's `CLAIMED` banner and
-`CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line are the assignment authority; if
+`CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line are the assignment authority. The
+receipt also carries packet authoring-chat provenance, visual-review mode,
+canonical Dropbox workstream root, and the `delete-after-review` default so an
+autonomous claimant receives the human-review route together with assignment; if
 that output is lost, recover it read-only with `dispatch.py last-claim` (or
 `--json`) rather than inferring ownership from worktree/branch activity.
 Continuous workers and cross-machine leases are deferred.
@@ -292,7 +295,30 @@ or design interpretation may use `execution-agent`.
 
 Historical packets without an authoring URL remain valid; surface
 `Authoring chat: not-recorded` and ask the user to provide the originating
-chat URL if they have it.
+chat URL if they have it. For current packeted work, `workstream.py finish`
+programmatically rejects a committed closing summary that omits a recorded exact
+Authoring/Refresh chat URL.
+
+## Visual Review Handoff And Retention
+
+New/materially refreshed packets declare `Visual review: none | conditional | required`.
+`conditional` means objective checks run first and a subjective handoff is created
+only if a material question survives; `required` means the packet cannot close
+without the recorded ChatGPT/user decision.
+
+The authoring conversation supplies the exact review route: `Authoring chat`, the
+Dropbox root `/CUSTODIAN/visual_review/<workstream>/`, a bounded evidence budget,
+and exact reviewer questions. Execution/review agents publish with
+`publish_review_artifacts.py --important --reason ... --authoring-chat <url>`,
+return the emitted manifest path to that exact authoring conversation, and pause
+the same workstream at the subjective decision boundary. ChatGPT web should use
+the connected Dropbox source to inspect the exact manifest path rather than
+requesting duplicate media.
+
+Cloud review media defaults to `delete-after-review`. After the decision is
+recorded, the same workstream runs the emitted `cleanup_command`; explicit
+`--retain-after-review` is required to keep the run. Durable Git evidence keeps
+the manifest/run id, decision, and cleanup/retention result, not the bulk media.
 
 ## Paired Review Default And Independence
 
