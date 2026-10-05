@@ -18,7 +18,7 @@ Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_R
 
 Seven implementation slices are pre-authored with paired reviews. H1 `hub-first-set-blockout-v1-recovery-1` is complete and archived with its human-approved overview; its paired review is the immediate successor. H2-H7 remain `ready/auto`; their incomplete dependencies keep them non-claimable until predecessor reviews archive `complete`. Each downstream execution agent performs its own claim-time refresh from current main and landed predecessor evidence before mutation.
 
-- H1 `archived/HUB_FIRST_SET_BLOCKOUT_V1.md` / active review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics, current-main recovery + stale-H1 cleanup, human topology approved.
+- H1 `archived/HUB_FIRST_SET_BLOCKOUT_V1.md` / active review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics and human topology approval. The paired review owns verification/retirement of any residual H1-only diagnostic refs while preserving the donor archive.
 - H2 `HUB_AWAKENING_CONTEXT_HANDOFF.md` / review — reviewed Awakening completion → persistent Hub; also waits on reviewed Awakening handoff-readiness.
 - H3 `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` / review — explicit Dais acceptance + persistent accepted CampaignScenario/seed + one bootstrap generation.
 - H4 `HUB_CROWN_TRANSFER_TWIN_SOLARIA.md` / review — optional same-Hub Crown Transfer route to production Twin and back; may run parallel with H3 after H2.
@@ -54,9 +54,9 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 
 - `SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` — SKO-1 ready/auto behind the reviewed 2.5D foundation; composition proof using existing donor assets only.
 - `REVIEW_SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` — paired fresh-context runtime/composition review.
-- `SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — SKO-2 blocked/manual optional Asset V2 layered-art pass, activated only if SKO-1 composition passes and donor-art fidelity is the remaining problem.
+- `SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — SKO-2 ready/manual optional Asset V2 layered-art pass. This is an intentional user timing hold: claim only if SKO-1 composition passes and the user chooses bespoke art polish because donor-art fidelity remains the problem.
 - `REVIEW_SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — paired SKO-2 review.
-- `SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3 blocked/manual planning gate; returns to the chat above after reviewed standalone evidence and authors the production/procgen integration series from then-live seams.
+- `SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3 ready/manual planning gate. This is an intentional user timing hold: after reviewed standalone evidence, return to the chat above only when the user chooses to begin production/procgen integration planning.
 - `REVIEW_SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3R paired fresh-context architecture/workflow review; every production packet authored by SKO-3 must remain gated behind this review.
 - No production integration implementation packet is pre-authored yet.
 
