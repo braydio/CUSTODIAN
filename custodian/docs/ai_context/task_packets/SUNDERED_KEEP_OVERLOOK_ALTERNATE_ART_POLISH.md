@@ -15,8 +15,8 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `b2b3624fd748ffbf90d40d737e20448c1e41bee6`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
-- Summary backlink: Every durable implementation/review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Summary backlink: Every durable implementation/review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
 - Goal: If and only if SKO-1 proves the small-shelf/huge-world composition but existing donor art is the remaining limitation, create a compact Asset Pipeline V2 layered-art family that strengthens fake volume, perspective consistency and Sundered Keep depth without changing the validated 2D gameplay/composition architecture.
 - Completion boundary: Done when the SKO-1 human/review handoff explicitly activates this packet; the exact required source states below are created/provided, preserved under source_work, normalized into the registered Asset V2 family, ingested/bound/verified, wired only into the standalone overlook alternate, and human review accepts the polished result without changing the shelf's gameplay geometry/camera doctrine.
 - Current measured state: This packet is intentionally blocked before SKO-1 review. No new art should be produced until the standalone donor-art proof demonstrates that composition is correct and identifies which depth layer(s) need bespoke art. The user does not want Blender to be a prerequisite. First choice is authored 2D layered plates with convincing oblique perspective and painterly fake volume.
@@ -89,6 +89,6 @@
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Next action: After activated art polish lands and receives human approval, run the paired review, then return to the authoring chat for integration planning.
 - Blockers or open questions: Explicit SKO-1 review/human activation plus source art availability.
