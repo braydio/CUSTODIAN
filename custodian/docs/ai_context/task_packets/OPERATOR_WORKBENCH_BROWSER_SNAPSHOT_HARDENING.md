@@ -50,7 +50,7 @@
   - `WorkbenchUIState` owns accepted UI/session/presentation state. Do not turn `AnimationTree` or `AnimationFeature` into a second state authority.
   - `AnimationTree` remains rendering/navigation only.
   - Existing Live Bridge revision/document guards remain authoritative for live Aseprite preview results and should be composed with, not replaced by, the new preview-generation guard.
-  - The completed `operator-workbench-publish-readiness-recovery` workstream owns Git/publication readiness; this packet may coordinate F5 around active Publish mutation but must not redesign checkout/publish recovery.
+  - The completed `operator-workbench-publish-readiness-recovery` workstream owns publication readiness/recovery, and `operator-workbench-background-base-sync` owns bounded launch-time base reconciliation of the dedicated art checkout. This packet may coordinate F5 around active Publish mutation but must not redesign either checkout synchronization or publish recovery.
 - Work surface:
   - Primary owners: `custodian/tools/operator/ui/app.py`, `custodian/tools/operator/ui/state.py`, `custodian/tools/operator/ui/features/animations.py`, and `custodian/tools/operator/ui/service.py`.
   - Conditional widget touch: `custodian/tools/operator/ui/widgets/animation_tree.py` only if silent programmatic selection/event suppression cannot be achieved cleanly from the app layer.
