@@ -15,7 +15,7 @@
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
-- Review modes: `code, runtime, visual-evidence`
+- Review modes: `code, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
