@@ -337,7 +337,7 @@ program/DAG**, not an arbitrary globally eligible dispatcher candidate.
 - Next action: `<one concrete action>`
 - Blockers or open questions: `none | <exact blocker>`
 
-Use `Refresh owner: chatgpt-user` for architecture/design-sensitive packet
+Use `Refresh owner: chatgpt-user` only when a successor requires a genuine architecture/design choice that existing authority cannot resolve and the user must decide before claim. Do not use it merely because predecessor APIs are not landed yet.
 refreshes where the next packet must be reconciled against the original design
 conversation, user intent, or cross-workstream plan before implementation.
 Execution agents should report live-code drift and recommended facts, but should
@@ -350,7 +350,7 @@ summary and user-facing reply. If the URL is not recorded, write
 originating ChatGPT chat link to ChatGPT before refresh if available. Never
 invent a conversation URL.
 
-Use `Refresh owner: execution-agent` only for a genuinely mechanical refresh
+Use `Refresh owner: execution-agent` for the normal dependency-driven case: predecessor behavior is already bounded by design/packet authority and the claiming agent only needs to reconcile landed public APIs, private helper names, measured state, or validation paths before mutation.
 that changes no architecture/design choice, such as rebasing exact file names,
 SHAs, or already-decided API names onto live main. If there is any material
 judgment about scope, ownership, sequencing, visuals, lore, or acceptance,
