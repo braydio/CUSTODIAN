@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `state-machine/ownership extraction; independent review should verify behavior equivalence and one-authority closure`
 - Reviewed main: `92b05fa966`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Move the Savage pounce phase machine out of `enemy.gd` into one actor-local ability authority, reusing the landed Marine/Falcon host-service pattern without changing Savage rushdown behavior.
 - Completion boundary: This slice owns Savage pounce state/tuning extraction, the narrow host-service seam required by it, focused pounce diagnostics/tests, validation ownership, and docs made false by the extraction. It does not own the Savage two-hit chain.
@@ -41,5 +41,5 @@
 
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: Bring the landed NPA-1 implementation summary, paired-review receipt, final ability/config API, final `enemy.gd` diff, and any correction-cycle changes back to this chat. Re-derive NPA-2 against that reviewed live seam before promoting it to `ready/auto`.

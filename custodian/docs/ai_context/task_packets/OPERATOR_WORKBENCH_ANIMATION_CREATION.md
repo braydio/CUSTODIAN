@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `0a4bd5ec35`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Let an artist create an entirely new semantic Operator animation from OPUI, open a blank/reference-backed Aseprite Workbench, author and preview it, then publish the new canonical source through the existing guarded Operator production pipeline without hand-building filenames, manifests, inbox entries, runtime resources, or Git transactions.
 - Completion boundary: Add one human-authored **New Animation** flow for a semantic Operator action/direction that does not yet exist in canonical source. The flow owns identity/template selection, creation-session manifest construction, blank/reference-backed Aseprite assembly, preview, transactional CREATE publication, runtime/catalog/import/validation, and normal guarded landing. It consumes the FX-adoption packet's absent-source CREATE/rollback contract. It does not wire arbitrary new gameplay behavior, invent runtime selectors, auto-generate finished art, or replace Asset Pipeline V2's external-asset intake path.
