@@ -14,187 +14,215 @@
 - Paired review workstream: `review-operator-workbench-background-base-sync`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `persistent authoring-checkout lifecycle change that preserves unpublished binary art while advancing its repository base`
+- Review rationale: `persistent authoring-checkout lifecycle and interrupted-publication finalization change across a Git/pixel safety boundary`
 - Reviewed main: `7cfa2c12f5a99a90bfe087117856d16c92f8772a`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
-- Goal: Make normal `opui` startup self-heal the persistent sparse `workbench/operator-art` checkout when it is merely behind `origin/main` and its only local dirt is provably Workbench-owned unpublished art residue, so unfinished publication/edit output cannot indefinitely pin both the artwork checkout and the Workbench code to an old repository revision.
+- Goal: Make normal `opui` startup keep the persistent sparse `workbench/operator-art` checkout current without artist intervention whenever synchronization is provably safe, including automatically finishing a previously user-approved publication that validated its canonical outputs but was interrupted before Git commit/landing. Routine repository lag must not pin both art and checkout-local Workbench code to an old revision.
 - Completion boundary:
-  - Replace the current "existing OPUI checkout startup is inspection-only" rule with one bounded, fail-closed launch reconciliation owned by `operator_art_worktree.py`.
-  - A safe reconcile must preserve unpublished Workbench-owned local bytes exactly, advance an ahead-zero checkout to current `origin/main` with FF-only semantics, re-establish the current sparse/dependency profile, restore the exact unpublished bytes, and prove the resulting dirty set is identical to the preserved set.
-  - Unknown user dirt, staged/index changes, local commits ahead of main, `LAND PENDING`, unresolved Workbench transactions, same-path upstream changes, symlinks, or incomplete recovery proof remain real blockers and must never be auto-discarded, rebased, stashed, published, or guessed through.
-  - Do not change the canonical source -> runtime publication transaction, landing authority, animation art, gameplay/runtime animation behavior, or the UX Hierarchy V1 visual redesign beyond projecting the new structured reconciliation state.
+  - Existing-checkout startup becomes a bounded self-healing lifecycle rather than an inspection-only boundary.
+  - Clean ahead-zero lag fast-forwards automatically.
+  - Existing `LAND PENDING` is retried automatically when its current exact-identity proof still passes.
+  - A new durable **publication-finalization receipt** bridges the current gap between a successful Workbench transaction and the existing Git commit/`LAND PENDING` receipt. If a user-approved publication has already validated and its dirty postimage is exact, startup resumes finalization rather than leaving canonical outputs dirty indefinitely.
+  - The currently stranded Fast 01 96px -> 128px publication residue is inspected once during this workstream. If the existing COMMITTED Workbench transaction, saved manifest, current dirty set, hashes and upstream path history prove it is exactly a previously approved/validated publication awaiting Git finalization, finish it through the same scoped commit/landing path. If that proof does not hold, preserve it and report the exact blocker rather than guessing.
+  - Unknown dirty work, staged/index changes, local commits ahead of main, unresolved Workbench transactions, source/postimage mismatch, same-path upstream conflicts, or incomplete recovery proof remain fail-closed blockers. Do not generically carry arbitrary dirty bytes across a base update.
+  - Do not change animation art semantics, runtime/gameplay animation behavior, source/runtime naming, or the UX Hierarchy visual redesign beyond exposing structured reconciliation state for later UX packets.
 - Current measured state:
-  - `tools/custodian_aliases.sh::opui` invokes the current coordination-main `operator_art_worktree.py ensure`, then launches `operator_cli.py ui` from the returned art checkout. Therefore the OPUI code version is the art checkout's HEAD.
-  - `operator_art_worktree.ensure_art_worktree()` explicitly treats an already-attached art checkout as a read-only startup boundary: it preserves the checkout and returns without fetching/fast-forwarding it.
-  - `prepare_publish_checkout()` fetches and fast-forwards only when the checkout has no dirty paths, no pending land, no unresolved transaction, no source-freshness blocker, and no local commits ahead of main.
-  - `operator_art_worktree_smoke.py::startup_read_only_smoke()` currently asserts that reopening OPUI must not synchronize Git.
-  - `operator_art_worktree_smoke.py::sparse_sync_smoke()` currently asserts that one dirty authored Operator source file blocks all synchronization even when the branch is ahead zero.
-  - Checkout identity renders raw repository relation as `ahead N / behind N`. A value such as `behind 256` counts repository commits, not 256 Operator animation changes. Most of those commits may be unrelated to Operator art because the sparse checkout limits materialized paths, not Git history.
-  - User-observed case: unfinished Fast 01 publication/edit residue replaced 96px sheets with 128px sheets. Those tracked changes prevented the dedicated art checkout from advancing, which also kept the OPUI code in that checkout behind current main.
-  - The landed publish-readiness/recovery authority already records transaction journals/preimages and fails closed on ambiguous residue. This packet must compose with that authority, not weaken its rollback/recovery guarantees.
+  - `tools/custodian_aliases.sh::opui` invokes current coordination-main `operator_art_worktree.py ensure`, then launches `operator_cli.py ui` **from the returned art checkout**. Therefore an art checkout that is behind main also runs an older copy of OPUI code.
+  - `operator_art_worktree.ensure_art_worktree()` explicitly leaves an existing attached art checkout untouched at startup; only initial creation fetches/advances it.
+  - `prepare_publish_checkout()` can fetch/FF only after readiness proves no dirty paths, no pending land, no unresolved transaction, no source-freshness blocker and no local commits ahead of main.
+  - `animation_workbench.publish()` requires a clean Git pre-state, writes exact source/resource/import preimages, validates canonical mutation, then marks its local transaction journal `COMMITTED` before returning changed targets.
+  - `operator_art_worktree.publish_to_main()` runs **outside** that Workbench transaction. After `publish_once()` returns, it discovers the Git dirty set, validates the allowlist, stages, commits, writes `publish_land_pending.json`, then lands. There is currently no durable outer receipt before the Workbench transaction returns. A process/session interruption after Workbench `COMMITTED` but before Git commit leaves validated canonical outputs dirty with no automatic resume path.
+  - `operator_art_worktree_smoke.py::startup_read_only_smoke()` currently asserts reopening OPUI does not synchronize Git. `sparse_sync_smoke()` asserts dirty authored/canonical content blocks all synchronization.
+  - Checkout identity renders repository ancestry as `ahead N / behind N`. `behind 256` means 256 repository commits behind `origin/main`; it does **not** mean 256 Operator animation changes. Sparse checkout constrains the materialized file set, not commit ancestry, so many commits may concern unrelated game systems.
+  - User-observed live case: the persistent art checkout still contains Fast 01 publication changes replacing 96px sheets with 128px sheets. Those tracked changes prevent the existing clean-only FF path and therefore keep checkout-local Workbench code behind main.
+  - Existing publish-readiness/recovery already proves exact rollback/preimage behavior and `LAND PENDING` identity. This packet must extend that proof chain, not replace it with generic stash/reset behavior.
 - Evidence:
   - `tools/custodian_aliases.sh::opui`
-  - `custodian/tools/operator/operator_art_worktree.py::{ensure_art_worktree,_ensure_sparse_and_current,_status_paths,_dirty_categories,checkout_identity,inspect_publish_readiness,prepare_publish_checkout,publication_allowlist,upstream_source_conflicts}`
-  - `custodian/tools/operator/ui/service.py::{checkout_identity,readiness,prepare_publish}`
+  - `custodian/tools/operator/operator_art_worktree.py::{ensure_art_worktree,_ensure_sparse_and_current,_status_paths,_dirty_categories,checkout_identity,inspect_publish_readiness,prepare_publish_checkout,publication_allowlist,upstream_source_conflicts,publish_to_main,retry_pending_land}`
+  - `custodian/tools/operator/animation_workbench.py::{publish,_journal_stage,_verify_rollback_preimages}`
+  - `custodian/tools/operator/ui/service.py::{checkout_identity,readiness,publish_preview,publish}`
   - `custodian/tools/validation/operator_art_worktree_smoke.py::{startup_read_only_smoke,sparse_sync_smoke,readiness_classification_smoke,launcher_smoke}`
+  - `custodian/tools/validation/operator_workbench_mirror_publish_smoke.py`
   - `custodian/tools/validation/operator_workbench_ui_smoke.py`
   - `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`
-  - archived `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` and its paired review
+  - archived `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` plus its paired review
   - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_CLAUDE_SUMMARY.md`
 - Task-specific authority:
-  - `operator_art_worktree.py` remains the sole owner of the persistent art checkout's Git/sparse/readiness lifecycle.
-  - Workbench transaction journals/preimages remain the authority for interrupted publication recovery.
-  - Ignored `.ai/operator_animation_workbench/` state remains disposable authoring/recovery state and must never become canonical production authority.
-  - `origin/main` remains repository base truth; synchronization is FF-only for this persistent branch.
-  - Canonical source PNGs remain production source authority. Background reconciliation preserves local unpublished bytes but never publishes them.
+  - `operator_art_worktree.py` remains the sole owner of persistent art-checkout Git/sparse/startup/landing lifecycle.
+  - `animation_workbench.py` remains the sole authority for the canonical art mutation transaction and its source/resource/import preimage/postimage proof.
+  - A new finalization handshake may bridge those two authorities, but it must not create a second publisher.
+  - `origin/main` remains repository base truth. This persistent branch may only advance by the existing FF/serialized landing semantics; no rebase/reset-history path is introduced.
+  - Canonical source PNGs remain source authority. Ignored `.ai/operator_animation_workbench/` receipts/backups are recovery evidence only.
 - Work surface:
   - Primary: `custodian/tools/operator/operator_art_worktree.py`.
-  - Required focused regression: `custodian/tools/validation/operator_art_worktree_smoke.py`.
-  - UI projection/regression where needed: `custodian/tools/operator/ui/state.py`, `custodian/tools/operator/ui/service.py`, `custodian/tools/validation/operator_workbench_ui_smoke.py`.
-  - Launcher only if needed for a structured reconciliation receipt: `tools/custodian_aliases.sh`.
-  - Validation ownership only if current manifest coverage is insufficient: `custodian/tools/validation/validation_manifest.json`.
-  - Live docs after implementation: `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`, `custodian/docs/ai_context/CURRENT_STATE.md`, and `custodian/docs/ai_context/FILE_INDEX.md`.
+  - Transaction handshake: `custodian/tools/operator/animation_workbench.py`.
+  - UI orchestration/projection: `custodian/tools/operator/ui/service.py` and, only if a new typed projection is needed, `custodian/tools/operator/ui/state.py`.
+  - Required focused tests: `custodian/tools/validation/operator_art_worktree_smoke.py`, `custodian/tools/validation/operator_workbench_mirror_publish_smoke.py`, and `custodian/tools/validation/operator_workbench_ui_smoke.py`.
+  - Launcher: `tools/custodian_aliases.sh` only if the existing `ensure` exit/output contract cannot carry the new lifecycle cleanly.
+  - Validation ownership: `custodian/tools/validation/validation_manifest.json` only if current owner coverage does not select all changed helpers/tests.
+  - Active docs after behavior lands: `design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`, `custodian/docs/ai_context/CURRENT_STATE.md`, and `custodian/docs/ai_context/FILE_INDEX.md`.
 - Change:
-  1. Add one structured launch/base reconciliation result below `operator_art_worktree.py`'s existing lock. Recommended shape, names flexible:
+  1. Add one structured launch reconciliation result below the existing art-worktree lock. Recommended public shape, private names flexible:
      ```python
      @dataclass(frozen=True)
      class LaunchReconcileResult:
-         status: str                 # current | synced | synced_preserved | blocked | recovery_required
+         status: str  # current | synced | finalized_and_synced | blocked | recovery_required
          before_relation: str
          after_relation: str
-         preserved_paths: tuple[str, ...]
-         blockers: tuple[str, ...]
+         finalized_identity: dict[str, str] | None
+         blocker: str | None
          receipt: str | None
      ```
-     Keep it machine-readable enough for UI projection; do not make widgets parse human Git strings.
-  2. Existing-checkout `ensure_art_worktree()` must fetch `origin/main` and invoke the bounded reconciler before returning the path. New-checkout behavior remains sparse/current as today. The art-worktree lock continues to serialize checkout lifecycle mutation.
-  3. Only attempt dirty preservation/rebase when all of the following are true:
-     - checkout identity is the dedicated `workbench/operator-art` branch;
-     - `ahead == 0`;
-     - no `LAND PENDING` receipt;
-     - no unresolved Workbench transaction journal;
-     - no staged/index changes;
-     - every dirty path is provably Workbench-owned publication/edit residue;
-     - `origin/main` did not change any of those dirty paths since current HEAD;
-     - every preserved file is an ordinary file below the checkout with no symlink/path escape.
-  4. Determine Workbench-owned dirt from current saved Workbench manifests plus existing publication contracts, not merely from a broad `custodian/content/sprites/operator/**` prefix. Recommended implementation:
-     - scan valid ignored `.ai/operator_animation_workbench/**/workbench.json` manifests;
-     - collect each binding's `source_contract.path` and `publish_contract.path`;
-     - expand those through the existing `publication_allowlist()` logic for exact generated/runtime/timing sidecars;
-     - include only transaction-journal-owned metadata paths when an already-resolved journal proves their ownership/preimage;
-     - classify anything else as unknown user dirt and fail closed.
-     A stale/malformed manifest must not grant ownership to arbitrary paths.
-  5. Replace the current path-only status helper internally with, or add alongside it, a status-entry parser that preserves index/worktree status. Do not automatically reconcile staged paths. Normal Workbench residue is expected to be unstaged until the reviewed publish transaction stages it.
-  6. Before clearing any reconciliable dirty path, write an ignored exact-byte recovery snapshot under a bounded Workbench recovery directory, for example:
+     UI/service code must not parse human `ahead N / behind N` strings to decide workflow state.
+  2. Introduce a durable ignored outer finalization receipt, for example:
      ```text
-     .ai/operator_animation_workbench/recovery/base_sync/<run-id>/
-         snapshot.json
-         payload/<repo-relative-file>
+     .ai/operator_animation_workbench/publish_finalize_pending.json
      ```
-     The snapshot records at least old HEAD, fetched origin/main SHA, path/status, existence/deletion state, byte size, SHA-256, and whether the path was tracked or untracked. Never copy symlinks. Upload/publish nothing.
-  7. Check upstream overlap before mutation. With `ahead == 0`, compare HEAD -> fetched `origin/main` for the exact preserved path set. If any preserved path changed upstream, return a specific `same-path upstream conflict` blocker and leave HEAD/local bytes untouched.
-  8. Clear only the declared preserved paths so FF-only can run:
-     - use path-scoped `git restore --worktree --source=HEAD -- <tracked paths>` or an equally narrow reviewed primitive;
-     - remove only snapshot-declared safe untracked paths;
-     - do not use broad `git reset --hard`, `git clean`, automatic `git stash`, or rebase;
-     - verify the checkout is Git-clean before advancing.
-  9. FF-only to fetched `origin/main` with hooks suppressed as the existing synchronization path does. Then reapply the current sparse profile and required local-only LFS/dependency preparation while the checkout is clean.
-  10. Reapply the preserved local unpublished state by exact bytes/deletion intent from the snapshot. Use atomic file replacement where practical. Verify:
-      - every preserved file hash/size or deletion matches the snapshot;
-      - no extra dirty path appeared;
-      - the final dirty path set equals the preserved path set exactly;
-      - HEAD equals fetched `origin/main`;
-      - ignored Workbench/Aseprite bytes outside the recovery snapshot are unchanged.
-      Successful reconciliation leaves the unpublished art dirty on top of current main. It does not silently mark it published, saved, or accepted.
-  11. On a fully verified successful reapply, retain a compact ignored receipt with before/after SHAs and hashes; the full temporary payload may be deleted only after the exact final-state verification succeeds. If reconciliation fails after mutation begins, retain enough exact payload/receipt data to recover and classify the state `RECOVERY_REQUIRED`; never report ordinary success.
-  12. Keep local commits, `LAND PENDING`, unresolved transaction state, same-path upstream changes, staged changes, and unknown dirt out of this automatic path. Preserve them byte-for-byte and surface one actionable blocker.
-  13. Do not make raw `behind N` an artist-facing workload metric. Structured UI state should mean:
-      - successful launch reconcile -> `MAIN READY`;
-      - short in-flight reconcile -> `UPDATING WORKBENCH` or equivalent;
-      - unsafe reconcile -> `MAIN BLOCKED` plus one concise reason.
-      Raw ahead/behind counts remain Tier-3 diagnostics for UX1/UX3.
-  14. Preserve explicit Publish preparation as a second safety check. A later publish must re-inspect checkout/main/source freshness before canonical mutation even if launch reconciliation succeeded.
-  15. Update the active Workbench design/docs from "existing startup is read-only" to the new bounded self-healing rule only after the behavior and focused tests land.
+     Schema recommendation:
+     ```json
+     {
+       "schema": "custodian.operator_art_publish_finalize.v1",
+       "state": "mutation_authorized|validated_outputs_pending_git|git_committed|land_pending|landed|recovery_required",
+       "identity": {"profile":"...","group":"...","action":"...","direction":"..."},
+       "branch": "workbench/operator-art",
+       "base_head": "<sha>",
+       "origin_main_at_start": "<sha>",
+       "canonical_paths": ["..."],
+       "allowlist": ["..."],
+       "mirror": false,
+       "transaction_journal": "<workspace-relative journal path or null>",
+       "validated_outputs": [{"path":"...","exists":true,"size_bytes":0,"sha256":"..."}],
+       "commit": null
+     }
+     ```
+     The exact schema may be cleaner, but it must bind explicit user publication intent, base identity, scoped paths, exact validated postimages and transition to the existing landing receipt.
+  3. `publish_to_main()` must write the outer receipt **before** invoking canonical mutation, after checkout/source readiness and the user-selected identity/allowlist are known. It must never create this receipt merely from opening OPUI or viewing Publish.
+  4. Extend the Workbench transaction commit boundary so a successful `animation_workbench.publish()` exposes durable finalization proof before returning. Preferred seam: record in its COMMITTED transaction journal the Git base HEAD, semantic identity, final exact Git-visible postimage path set and per-file existence/size/SHA-256 after validation/metadata restoration. If keeping that data in the outer receipt is cleaner, use an atomic callback/handshake that is written as part of the COMMITTED transition rather than leaving an unprotected process-crash gap.
+  5. After the Workbench transaction reaches COMMITTED, `publish_to_main()` updates/validates the outer receipt, confirms the current dirty set is exactly the approved publication allowlist/postimage set, stages only that set, commits with existing deterministic summary rules, moves to the existing `LAND PENDING` identity, and lands as today. On success, mark/remove the finalization receipt only after landed reachability is proven.
+  6. Add `resume_pending_publication_finalize()` (name flexible) for startup/recovery:
+     - require dedicated art branch;
+     - fetch `origin/main`;
+     - verify outer receipt schema/identity/base and corresponding COMMITTED Workbench transaction;
+     - verify every current dirty path is declared and every declared postimage hash/size/existence matches;
+     - reject staged paths not created by the verified resume step;
+     - check that `origin/main` has not changed any canonical/published path since the receipt's base;
+     - if proof passes, stage only the verified set, commit using the recorded semantic identity, create/update existing landing receipt, and call the existing serialized landing authority;
+     - if proof fails, mutate nothing and report a precise blocker or `RECOVERY_REQUIRED`.
+  7. Existing `LAND PENDING` should be an automatic launch-resume candidate. Reuse `retry_pending_land()` and its stable publication identity. If its proof passes, retry landing without asking the artist to click Publish again. If it fails, preserve the receipt/branch and surface the blocker.
+  8. After pending publication/landing recovery, if the art checkout is clean and `ahead == 0`, fetch/FF-only to current `origin/main`, reapply/verify the current sparse profile, and perform the existing local-only exact LFS/dependency preparation. Ignored Workbench/Aseprite workspace bytes must remain unchanged.
+  9. A dirty checkout **without** a verifiable finalization/landing receipt is not a generic auto-sync candidate. Do not snapshot arbitrary dirt and carry it across main. Preserve it exactly and return `blocked`. This includes unknown tracked/untracked user work, staged changes, unresolved transactions and local commits.
+  10. Add a bounded legacy recovery path for the user's current Fast 01 residue created before the new outer-receipt schema:
+      - inspect the latest relevant saved Workbench manifest and COMMITTED transaction journal;
+      - reconstruct only the exact expected source/runtime/timing/generated-resource output set using current publication contracts/allowlist;
+      - require current dirty set to equal that reconstructed set with no staged/unknown paths;
+      - require source target hashes and generated-resource hashes recorded by the journal to match; derive runtime/timing postimages only through the same deterministic current pipeline/manifest evidence, not by directory prefix;
+      - require no upstream change to any affected canonical path since the transaction/base;
+      - record a one-time recovery receipt before mutation;
+      - only if all evidence proves "validated publication awaiting Git finalization", finish the existing publication through scoped commit/landing and then sync current main.
+      If any proof is missing or contradictory, leave the live art checkout untouched and report the exact evidence gap. Do not classify age or filename alone as proof.
+  11. Preserve existing Workbench failure recovery. PREPARED/SOURCE_SWAPPED/RUNTIME_BUILT/GODOT_IMPORTED/RESOURCES_BUILT/VALIDATED/RECOVERY_REQUIRED transactions do not become Git-finalization candidates unless the canonical Workbench transaction itself reaches its proven COMMITTED boundary.
+  12. Keep the finalization receipt and transaction journal linked. A normal successful publication should end with no stale "pending" receipt. A failure after canonical mutation must leave either verified rollback or durable recovery evidence sufficient to explain every remaining dirty path.
+  13. Artist-facing state must not use raw commit distance as workload. Backend/service projection should expose:
+      - `MAIN READY` after current/synced/finalized-and-synced;
+      - optional brief `UPDATING WORKBENCH` while a bounded launch reconcile is actually executing;
+      - `MAIN BLOCKED` plus one concise reason for an unsafe state.
+      Raw branch/ahead/behind/sparse details remain diagnostic.
+  14. Preserve explicit Publish preparation and immediate pre-mutation revalidation as independent safety gates. Background launch recovery is not permission to skip source freshness, dependency audit, compatibility preflight, publication allowlist, validation or landing checks.
+  15. Update active Workbench docs from "existing startup is read-only" to the new bounded self-healing contract only after focused implementation evidence passes.
 - Recommended implementation sketch:
   ```python
-  def reconcile_for_launch(root, coordination_root, workspace_root):
+  def reconcile_for_opui_launch(root, coordination_root, workspace_root):
       fetch_origin_main(root)
-      state = inspect_launch_reconcile_state(...)
-      if state.current:
-          return CURRENT
-      if state.ahead or state.pending_land or state.transaction:
-          return BLOCKED(state.reason)
-      if not state.dirty:
+
+      if land_pending_receipt(root, workspace_root):
+          result = retry_pending_land(root, land_pending_path(...))
+          if not result:
+              return BLOCKED("pending landing could not be proven")
+          fetch_origin_main(root)
+
+      if finalize_pending_receipt(root, workspace_root):
+          result = resume_pending_publication_finalize(...)
+          if result.status not in {"landed", "already_landed"}:
+              return result
+          fetch_origin_main(root)
+
+      state = inspect_checkout(root, workspace_root)
+      if state.dirty or state.transaction or state.ahead:
+          return BLOCKED(state.concise_reason)
+
+      if state.behind:
           ff_only_to_origin_main(root)
-          repair_sparse_and_local_dependencies(root, coordination_root)
-          return SYNCED
-
-      owned = workbench_owned_dirty_paths(root, workspace_root)
-      if state.dirty_paths - owned:
-          return BLOCKED("unknown local changes")
-      if state.has_staged_paths:
-          return BLOCKED("staged local changes")
-      if upstream_changed_any(root, state.dirty_paths):
-          return BLOCKED("same-path upstream conflict")
-
-      snapshot = snapshot_exact_local_state(root, state.dirty_entries, workspace_root)
-      clear_only_snapshot_paths(root, snapshot)
-      verify_clean(root)
-      ff_only_to_origin_main(root)
-      repair_sparse_and_local_dependencies(root, coordination_root)
-      restore_snapshot_exact_bytes(root, snapshot)
-      verify_restored_dirty_set_and_hashes(root, snapshot)
-      finalize_recovery_receipt(snapshot)
-      return SYNCED_PRESERVED
+      repair_sparse_profile(root)
+      hydrate_required_lfs_locally(root, coordination_root)
+      verify_clean_and_current(root)
+      return SYNCED if state.behind else CURRENT
   ```
-  This is guidance, not a requirement to use these exact private names.
+  Publication-side handshake recommendation:
+  ```python
+  receipt = begin_finalize_receipt(identity, base_head, canonical_paths, allowlist)
+  changed_sources = publish_once()  # Workbench transaction must durably reach COMMITTED
+  postimages = prove_validated_postimages_from_committed_transaction(...)
+  update_finalize_receipt(receipt, "validated_outputs_pending_git", postimages)
+  stage_only_verified_postimages(...)
+  commit = commit_scoped_publication(identity)
+  promote_to_land_pending(receipt, commit)
+  landed = retry_pending_land(...)
+  finish_finalize_receipt_only_after_reachability(landed)
+  ```
+  These are behavioral recommendations, not mandatory private names.
 - Preserve:
-  - Dedicated persistent `workbench/operator-art` checkout and `operator-authoring-v1` sparse architecture.
-  - Exact ignored Aseprite/Workbench document bytes.
+  - Dedicated persistent `workbench/operator-art` sparse checkout and `operator-authoring-v1` profile.
+  - Exact ignored Aseprite/Workbench workspace bytes.
   - Existing local-only LFS policy.
-  - Existing source freshness checks.
-  - Existing publication allowlist, transaction journal, rollback, commit, `LAND PENDING`, and `land_main.py` authority.
+  - Existing source freshness, publication allowlist, validation and compatibility gates.
+  - Workbench transaction preimages/rollback and `RECOVERY_REQUIRED`.
+  - Existing commit/`LAND PENDING`/serialized `land_main.py` authority.
   - Unknown local user work and local commits.
-  - Coordination-main checkout contents; this packet does not turn coordination main into tracked-publish authority.
+  - Coordination-main checkout contents; coordination main does not become tracked-publish authority.
 - Non-goals:
-  - No automatic publication of dirty art.
+  - No publication merely because a path is under Operator source/runtime directories.
+  - No auto-publication of ordinary unapproved dirty files.
   - No automatic Aseprite Save.
-  - No automatic discard of an unfinished Workbench.
+  - No generic dirty-byte carry-forward across main.
+  - No broad `git reset --hard`, `git clean`, hidden stash/pop, rebase or force push.
   - No generic repository/worktree self-healing framework.
-  - No rebase, broad reset/clean, or hidden stash/pop workflow.
-  - No network LFS acquisition beyond the existing policy.
-  - No animation resize, Fast-chain art correction, source/runtime schema change, or gameplay behavior change.
-  - No UX Hierarchy redesign. UX1/UX3 only consume the structured result after this backend lands.
+  - No network LFS acquisition beyond existing policy.
+  - No animation resize, Fast-chain art correction, source/runtime schema change or gameplay behavior change.
+  - No UX Hierarchy redesign. UX1/UX3/UX5 consume the structured result after this backend lands.
 - Acceptance:
-  1. Clean-behind launch fixture: reopening OPUI/ensure advances the existing dedicated checkout to fetched `origin/main` before launching the checkout-local UI code; ignored Workbench bytes remain byte-identical.
-  2. Dirty Workbench-owned binary fixture: an existing 96px-equivalent tracked PNG is changed locally to distinct 128px-equivalent binary bytes while unrelated `origin/main` commits advance. Launch reconciliation snapshots it, FFs to current main, restores the exact local binary bytes, leaves that path dirty, and reports HEAD == origin/main with no data loss or manual cleanup.
-  3. Multi-output fixture: source/runtime/timing/generated outputs provably belonging to one saved Workbench are preserved together; final dirty set equals the original allowed set and no unrelated path appears.
-  4. Sparse proof: unrelated upstream game commits advance repository history but their materialized files remain absent when outside the sparse profile. `behind N` is proven to be repository-history distance, not an Operator-change count.
-  5. Same-path conflict fixture: if origin/main changed one preserved local path, automatic reconciliation performs no checkout/base mutation and preserves the exact local bytes.
-  6. Unknown-dirt fixture: one unrelated tracked or untracked user file prevents automatic dirty reconcile; no snapshot-clear/FF occurs and bytes remain unchanged.
-  7. Staged-change fixture fails closed without changing index/worktree state.
-  8. Ahead/diverged local-commit fixture remains preserved; no rebase/reset occurs.
-  9. `LAND PENDING` and unresolved-transaction fixtures remain on their existing recovery paths and are never rewritten by background sync.
-  10. Successful dirty reconcile leaves a verifiable ignored receipt with old/new SHAs and preserved-path hashes. Failed post-snapshot reconciliation retains recovery evidence and reports `RECOVERY_REQUIRED`.
-  11. Publish preparation still rechecks readiness and source conflict before mutation after a successful launch reconcile.
-  12. UI/service projection can distinguish current/synced-preserved/blocked/recovery-required without parsing `ahead N / behind N` text. Raw commit counts remain available in diagnostics only.
-  13. No canonical Operator art is auto-published, no gameplay/runtime animation behavior changes, and no unrelated sparse file is materialized merely because main advanced.
+  1. **Clean behind:** reopening `opui` advances an existing clean ahead-zero art checkout to fetched `origin/main` automatically before checkout-local UI code launches; ignored Workbench bytes are byte-identical.
+  2. **Interrupted validated publication:** fixture starts with a user-authorized finalization receipt + COMMITTED Workbench transaction + exact dirty source/runtime/resource postimages but no Git commit. Launch verifies all bytes, stages only the declared set, commits, lands, removes/resolves pending receipts, and ends clean/current without another Publish click.
+  3. **Crash-window proof:** interruption at every meaningful boundary between finalization-receipt creation, Workbench COMMITTED, postimage receipt, Git commit and LAND PENDING either resumes deterministically or fails closed with complete recovery evidence. No state silently becomes ordinary unknown dirt.
+  4. **Fast 01 live recovery:** the current 96px -> 128px Fast 01 residue is either proven byte-for-byte as a validated previous publication and finalized/landed, or preserved untouched with a precise evidence gap. Merely having Fast 01 filenames/128px dimensions is insufficient proof.
+  5. **Sparse history semantics:** unrelated upstream game commits may increase raw `behind N`, but sparse-omitted unrelated files remain absent. Tests/documentation explicitly prove the number is repository commit distance, not animation-change count.
+  6. **Same-path upstream conflict:** if `origin/main` changed any affected canonical path since the pending publication's base, automatic finalization/base sync performs no commit/landing and preserves all local bytes/receipts.
+  7. **Unknown dirt:** unrelated tracked or untracked user changes with no verified pending-publication ownership block background sync without mutation.
+  8. **Staged dirt:** pre-existing staged/index changes fail closed without altering index or worktree.
+  9. **Ahead/diverged local commit:** preserved; no rebase/reset/automatic history rewrite.
+  10. **Unresolved Workbench transaction:** any non-COMMITTED/ROLLED_BACK unresolved state stays on existing transaction recovery and is not Git-finalized.
+  11. **LAND PENDING:** a valid pending receipt auto-retries landing; invalid identity/proof stays preserved and blocked.
+  12. **Publish remains safe:** a normal new publication still runs readiness/source/conflict/preflight/validation checks, exact allowlist staging and serialized landing. The new resume path cannot broaden the staged set.
+  13. **UI projection:** service/state can distinguish current/synced/finalized-and-synced/blocked/recovery-required without parsing raw `ahead N / behind N` text. Routine safe lag resolves to `MAIN READY`; raw commit counts are diagnostics only.
+  14. No canonical Operator art is changed by the background-sync mechanism except completing a separately proven, previously user-authorized publication. No gameplay/runtime animation semantics change.
 - Validation:
   - Rewrite/extend `python3 custodian/tools/validation/operator_art_worktree_smoke.py` first:
-    - replace `startup_read_only_smoke` with launch self-heal coverage;
-    - replace the "dirty authoring content blocks all synchronization" expectation with exact-byte safe preserve/FF/reapply coverage;
-    - add same-path conflict, unknown dirt, staged dirt, ahead commit, pending land, unresolved transaction, recovery receipt, and unrelated sparse-upstream cases.
+    - replace `startup_read_only_smoke` with clean launch self-heal;
+    - add interrupted-COMMITTED-publication resume;
+    - simulate crash windows across receipt/transaction/commit/landing boundaries;
+    - add same-path conflict, unknown/staged dirt, ahead commit, unresolved transaction, valid/invalid LAND PENDING and unrelated sparse-upstream cases.
+  - Extend `python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py` so direct/mirror transactions expose exact finalization postimages and retain rollback guarantees.
   - Extend `python3 custodian/tools/validation/operator_workbench_ui_smoke.py` for structured reconciliation projection and raw behind-count demotion.
-  - Keep existing publish/mirror/recovery smoke(s) green to prove the publication transaction did not weaken.
   - Run `python3 custodian/tools/validation/run_validation.py --changed --json` after focused checks pass.
-  - Run `python3 custodian/tools/agent/check_ai_context.py`.
+  - Run `python3 custodian/tools/agent/check_ai_context.py` and review-pairing validation.
   - Run `git diff --check`.
 - Task overrides:
-  - `TASK OVERRIDE: the user explicitly changes the prior read-only existing-checkout startup policy. OPUI startup may perform the bounded FF-only background reconciliation defined here when and only when exact Workbench-owned local bytes can be preserved and reverified; this does not authorize automatic publication, broad reset/clean/stash/rebase, or disposal of unknown local work.`
+  - `TASK OVERRIDE: the user explicitly changes the prior read-only existing-checkout startup policy. OPUI startup may automatically fast-forward a clean ahead-zero art checkout, retry a previously authorized LAND PENDING receipt, and finish a previously user-authorized Workbench publication only when durable transaction/finalization evidence proves the exact validated postimages and scoped Git operation. This does not authorize publishing arbitrary dirty files, broad reset/clean/stash/rebase, or disposal of unknown local work.`
+  - `TASK OVERRIDE: during this workstream, inspect the user's existing persistent art checkout and attempt the one-time Fast 01 stranded-publication recovery described above. Mutate it only if the exact existing transaction/postimage/upstream proof passes; otherwise preserve it and report the blocker.`
 - Deferred:
-  - UX1 owns final artist-facing wording/hierarchy for MAIN READY / MAIN BLOCKED and diagnostics disclosure.
+  - UX1 owns final artist-facing MAIN READY / MAIN BLOCKED hierarchy.
   - UX3 owns Publish decision-surface wording after this backend is available.
+  - UX5 owns final cross-mode consistency and diagnostic demotion.
   - General Git/worktree self-healing remains out of scope.
 
 ## Execution Feedback
@@ -217,5 +245,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb`
 - Refresh reason: `none`
-- Next action: `Run the paired fresh-context post-land review before the browser/PREVIEW hardening packet becomes the next backend slice.`
+- Next action: `Run the paired fresh-context post-land review before the browser/PREVIEW hardening packet becomes eligible.`
 - Blockers or open questions: `none`
