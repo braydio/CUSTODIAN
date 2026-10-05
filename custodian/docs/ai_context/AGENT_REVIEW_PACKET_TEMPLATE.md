@@ -85,9 +85,13 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
    already publish adequate compact evidence, use
    `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`
    after the objective review is complete. Publish only the minimum ROI/contact
-   sheet/keyframes needed, include exact reviewer questions, record the Dropbox
-   manifest path, and set the unresolved subjective decision to `human_required`.
-   Do not perform the aesthetic decision inside the coding/review agent.
+   sheet/keyframes needed, include exact reviewer questions, and report both the
+   inherited exact `Authoring chat` and Dropbox manifest path. The authoring
+   ChatGPT conversation is the review endpoint and should inspect the connected
+   Dropbox path. Set the unresolved subjective decision to `human_required`.
+   After its verdict returns, run the emitted `--cleanup-reviewed` command unless
+   retention was explicitly requested. Do not perform the aesthetic decision
+   inside the coding/review agent.
 11. Separate implementation findings from pipeline/process findings. Record
    pipeline friction through `custodian.task_feedback.v1`; fix a small safe
    workflow issue in-scope or name a follow-up for repeatable medium/high
