@@ -21,6 +21,8 @@ _sample_evenly = publisher._sample_evenly
 _slug = publisher._slug
 discover_artifacts = publisher.discover_artifacts
 resolve_remote = publisher.resolve_remote
+cleanup_reviewed = publisher.cleanup_reviewed
+_packet_authoring_chat = publisher._packet_authoring_chat
 
 
 class PublishReviewArtifactsTest(unittest.TestCase):
@@ -87,6 +89,126 @@ class PublishReviewArtifactsTest(unittest.TestCase):
         with patch.object(publisher, "_run", return_value=fake):
             with self.assertRaises(RuntimeError):
                 resolve_remote(None, env={})
+
+
+    def test_packet_authoring_chat_resolves_exact_workstream_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            root = repo / "custodian/docs/ai_context/task_packets"
+            root.mkdir(parents=True)
+            (root / "SAMPLE.md").write_text(
+                "# P\n\n"
+                "- Workstream: `sample-work`\n"
+                "- Status: `ready`\n"
+                "- Authoring chat: `https://chatgpt.com/c/sample-authoring`\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                _packet_authoring_chat(repo, "sample-work"),
+                "https://chatgpt.com/c/sample-authoring",
+            )
+            self.assertEqual(_packet_authoring_chat(repo, "other-work"), "not-recorded")
+
+    def test_cleanup_reviewed_purges_exact_v2_run_and_matching_latest(self) -> None:
+        manifest = {
+            "schema": publisher.VISUAL_REVIEW_SCHEMA,
+            "workstream": "sample-work",
+            "run_id": "run-1",
+            "retention": {"policy": publisher.DELETE_AFTER_REVIEW, "cleanup_owner": "execution-agent"},
+        }
+        latest = {
+            "schema": publisher.LATEST_SCHEMA,
+            "workstream": "sample-work",
+            "run_id": "run-1",
+        }
+        calls: list[list[str]] = []
+
+        def fake_run(args, check=True, capture_output=True):
+            calls.append(args)
+            joined = " ".join(args)
+            if args[:2] == ["rclone", "cat"] and args[-1].endswith("/run-1/REVIEW_MANIFEST.json"):
+                return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(manifest), stderr="")
+            if args[:2] == ["rclone", "purge"]:
+                return subprocess.CompletedProcess(args, 0, stdout="", stderr="")
+            if args[:2] == ["rclone", "lsf"]:
+                return subprocess.CompletedProcess(args, 1, stdout="", stderr="missing")
+            if args[:2] == ["rclone", "cat"] and args[-1].endswith("/LATEST.json"):
+                return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(latest), stderr="")
+            if args[:2] == ["rclone", "deletefile"]:
+                return subprocess.CompletedProcess(args, 0, stdout="", stderr="")
+            raise AssertionError(joined)
+
+        with patch.object(publisher, "_run", side_effect=fake_run):
+            self.assertEqual(cleanup_reviewed("dropbox:", publisher.DEFAULT_REMOTE_ROOT, "sample-work", "run-1"), 0)
+
+        self.assertTrue(any(args[:2] == ["rclone", "purge"] and args[-1].endswith("/sample-work/run-1") for args in calls))
+        self.assertTrue(any(args[:2] == ["rclone", "deletefile"] and args[-1].endswith("/sample-work/LATEST.json") for args in calls))
+
+    def test_cleanup_reviewed_preserves_newer_latest_pointer(self) -> None:
+        manifest = {
+            "schema": publisher.VISUAL_REVIEW_SCHEMA,
+            "workstream": "sample-work",
+            "run_id": "run-1",
+            "retention": {"policy": publisher.DELETE_AFTER_REVIEW, "cleanup_owner": "execution-agent"},
+        }
+        latest = {
+            "schema": publisher.LATEST_SCHEMA,
+            "workstream": "sample-work",
+            "run_id": "run-2",
+        }
+        calls: list[list[str]] = []
+
+        def fake_run(args, check=True, capture_output=True):
+            calls.append(args)
+            if args[:2] == ["rclone", "cat"] and args[-1].endswith("/run-1/REVIEW_MANIFEST.json"):
+                return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(manifest), stderr="")
+            if args[:2] == ["rclone", "purge"]:
+                return subprocess.CompletedProcess(args, 0, stdout="", stderr="")
+            if args[:2] == ["rclone", "lsf"]:
+                return subprocess.CompletedProcess(args, 1, stdout="", stderr="missing")
+            if args[:2] == ["rclone", "cat"] and args[-1].endswith("/LATEST.json"):
+                return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(latest), stderr="")
+            raise AssertionError(" ".join(args))
+
+        with patch.object(publisher, "_run", side_effect=fake_run):
+            self.assertEqual(cleanup_reviewed("dropbox:", publisher.DEFAULT_REMOTE_ROOT, "sample-work", "run-1"), 0)
+
+        self.assertFalse(any(args[:2] == ["rclone", "deletefile"] for args in calls))
+
+    def test_cleanup_reviewed_refuses_retained_or_legacy_evidence(self) -> None:
+        retained = {
+            "schema": publisher.VISUAL_REVIEW_SCHEMA,
+            "workstream": "sample-work",
+            "run_id": "run-1",
+            "retention": {"policy": publisher.RETAIN_AFTER_REVIEW, "cleanup_owner": "execution-agent"},
+        }
+        legacy = {
+            "schema": "custodian.visual_review_handoff.v1",
+            "workstream": "sample-work",
+            "run_id": "run-1",
+        }
+        for manifest, expected in ((retained, 4), (legacy, 3)):
+            with self.subTest(schema=manifest["schema"], retention=manifest.get("retention")):
+                def fake_run(args, check=True, capture_output=True, manifest=manifest):
+                    if args[:2] == ["rclone", "cat"]:
+                        return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(manifest), stderr="")
+                    raise AssertionError("cleanup mutated retained/legacy evidence")
+                with patch.object(publisher, "_run", side_effect=fake_run):
+                    self.assertEqual(
+                        cleanup_reviewed("dropbox:", publisher.DEFAULT_REMOTE_ROOT, "sample-work", "run-1"),
+                        expected,
+                    )
+
+    def test_cleanup_reviewed_is_idempotent_when_run_is_absent(self) -> None:
+        def fake_run(args, check=True, capture_output=True):
+            if args[:2] == ["rclone", "cat"]:
+                return subprocess.CompletedProcess(args, 1, stdout="", stderr="missing")
+            if args[:2] == ["rclone", "lsf"]:
+                return subprocess.CompletedProcess(args, 1, stdout="", stderr="missing")
+            raise AssertionError(" ".join(args))
+
+        with patch.object(publisher, "_run", side_effect=fake_run):
+            self.assertEqual(cleanup_reviewed("dropbox:", publisher.DEFAULT_REMOTE_ROOT, "sample-work", "run-1"), 0)
 
     def test_opt_in_skip_does_not_require_rclone_or_existing_source(self) -> None:
         self.assertEqual(
