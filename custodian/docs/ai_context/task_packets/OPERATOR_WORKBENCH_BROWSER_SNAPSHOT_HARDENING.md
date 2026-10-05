@@ -14,7 +14,7 @@
 - Paired review workstream: `review-operator-workbench-browser-preview-refresh-hardening`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `0a4bd5ec35`
+- Reviewed main: `7cfa2c12f5a99a90bfe087117856d16c92f8772a`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Make Operator Workbench browser refresh and page-3 PREVIEW reload transactional from the user's perspective: repeated F5, source scans, live Workbench updates, mode changes, and asynchronous preview/comparison/transition loads must never expose a transient half-state, silently change the selected animation, apply an older result over a newer request, or crash the UI.
