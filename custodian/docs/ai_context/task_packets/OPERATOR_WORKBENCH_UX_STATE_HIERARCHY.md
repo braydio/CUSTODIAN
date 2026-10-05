@@ -125,7 +125,8 @@
   - LAND PENDING and RECOVERY_REQUIRED remain distinct visible states.
   - A matching modified live Aseprite document produces a separate unsaved warning.
   - The default Activity surface is compact but the complete previous log remains accessible.
-  - Branch, sparse, checkout, paths and dependency internals remain available in diagnostics.
+  - Branch, sparse, checkout, paths and dependency internals remain available in diagnostics; raw `ahead N / behind N` is diagnostic repository history and is never labeled as animation-change count or artist workload.
+  - A safely reconciled behind checkout reads `MAIN READY` without requiring an artist sync action; an unsafe preserve/sync case reads `MAIN BLOCKED` with one concise backend-provided reason.
   - User-facing mode labels are QUEUE, WORKBENCH, REVIEW, SEQUENCE, MOTION while existing mode shortcuts continue to work.
   - No new Git/browser/workbench authority is introduced.
 - Validation:
