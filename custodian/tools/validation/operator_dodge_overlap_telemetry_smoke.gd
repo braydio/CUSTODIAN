@@ -26,18 +26,18 @@ func _run() -> void:
 	for attempt in range(20):
 		var expected_result := &"damaged"
 		if attempt < 8:
-			operator.set("_dodge_active", true)
-			operator.set("_dodge_iframe_timer", 0.1)
-			operator.set("_dodge_recovery_active", false)
+			operator.get("_dodge_controller").set("_active", true)
+			operator.get("_dodge_controller").set("_iframe_remaining", 0.1)
+			operator.get("_dodge_controller").set("_recovery_active", false)
 			expected_result = &"dodged"
 		elif attempt < 14:
-			operator.set("_dodge_active", true)
-			operator.set("_dodge_iframe_timer", 0.0)
-			operator.set("_dodge_recovery_active", false)
+			operator.get("_dodge_controller").set("_active", true)
+			operator.get("_dodge_controller").set("_iframe_remaining", 0.0)
+			operator.get("_dodge_controller").set("_recovery_active", false)
 		else:
-			operator.set("_dodge_active", false)
-			operator.set("_dodge_iframe_timer", 0.0)
-			operator.set("_dodge_recovery_active", true)
+			operator.get("_dodge_controller").set("_active", false)
+			operator.get("_dodge_controller").set("_iframe_remaining", 0.0)
+			operator.get("_dodge_controller").set("_recovery_active", true)
 		var result: Dictionary = operator.receive_enemy_hit(1.0, &"melee", "enemy", null, Vector2.RIGHT, -1.0, {
 			"attack_id": "dodge-overlap:%d" % attempt,
 			"attacker_id": 9001,
@@ -52,8 +52,8 @@ func _run() -> void:
 		if StringName(result.get("result", &"")) != expected_result:
 			_harness.expect(false, "overlap %d resolved %s instead of %s" % [attempt, result.get("result", ""), expected_result])
 
-	operator.set("_dodge_active", false)
-	operator.set("_dodge_recovery_active", false)
+	operator.get("_dodge_controller").set("_active", false)
+	operator.get("_dodge_controller").set("_recovery_active", false)
 	var classified: Array = observatory.get_recent_events(30, &"incoming_dodge_timing_classified")
 	if classified.size() != 20:
 		_harness.expect(false, "20 overlapping hits must produce exactly 20 canonical dodge classifications")

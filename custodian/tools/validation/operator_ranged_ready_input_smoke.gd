@@ -527,7 +527,7 @@ func _validate_dodge_fx_overlay(operator: Node) -> void:
 	_assert_true(dodge_fx.visible, "dodge FX should be visible during dodge")
 	_assert_true(dodge_fx.position.x < body_sprite.position.x, "east dodge FX should be offset behind the Custodian")
 	operator.call("_update_dodge", 1.0)
-	_assert_true(bool(operator.get("_dodge_recovery_active")), "finishing dodge should enter recovery when a recovery animation exists")
+	_assert_true(bool(operator.call("get_dodge_runtime_status").get("recovery_active")), "finishing dodge should enter recovery when a recovery animation exists")
 	_assert_true(String(body_sprite.animation) == "shared/transition/dodge_01/s/full_body", "authored full dodge should continue through recovery instead of restarting a split track")
 	_assert_true(dodge_fx.visible, "authored dodge FX should continue through recovery")
 	operator.call("_cancel_dodge")

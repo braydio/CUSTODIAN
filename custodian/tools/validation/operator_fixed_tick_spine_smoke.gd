@@ -18,8 +18,8 @@ const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
 ## as a named failure rather than a general one.
 const CLOCKS := {
 	"melee attack timeline": "melee_cooldown_remaining",
-	"dodge cooldown": "_dodge_cooldown_remaining",
-	"dodge iframes": "_dodge_iframe_timer",
+	"dodge cooldown": "cooldown_remaining",
+	"dodge iframes": "iframe_remaining",
 	"ranged fire cooldown": "fire_cooldown_remaining",
 }
 
@@ -74,7 +74,12 @@ func _run() -> void:
 func _arm_clocks(operator: Node) -> Dictionary:
 	var armed := {}
 	for label: String in CLOCKS:
-		operator.set(CLOCKS[label], 1.0)
+		if label.begins_with("dodge "):
+			var controller: Object = operator.get("_dodge_controller")
+			var field: String = "_cooldown_remaining" if label == "dodge cooldown" else "_iframe_remaining"
+			controller.set(field, 1.0)
+		else:
+			operator.set(CLOCKS[label], 1.0)
 		armed[label] = 1.0
 	return armed
 
@@ -86,7 +91,11 @@ func _check_render_tick_moves_nothing(operator: Node) -> void:
 		operator.call("_process", 0.1)
 		await process_frame
 	for label: String in CLOCKS:
-		var value := float(operator.get(CLOCKS[label]))
+		var value: float = 0.0
+		if label.begins_with("dodge "):
+			value = operator.call("get_dodge_runtime_status").get(CLOCKS[label])
+		else:
+			value = operator.get(CLOCKS[label])
 		_check(
 			is_equal_approx(value, 1.0),
 			"%s advanced from the render tick: %s is %.4f after 1.0 s of _process"
@@ -101,7 +110,11 @@ func _check_fixed_tick_advances(operator: Node) -> void:
 		operator.call("_advance_simulation", 0.1)
 		await process_frame
 	for label: String in CLOCKS:
-		var value := float(operator.get(CLOCKS[label]))
+		var value: float = 0.0
+		if label.begins_with("dodge "):
+			value = operator.call("get_dodge_runtime_status").get(CLOCKS[label])
+		else:
+			value = operator.get(CLOCKS[label])
 		_check(
 			absf(value - 0.6) <= 0.001,
 			"%s did not advance deterministically on the fixed tick: %s is %.4f, expected 0.600"
@@ -115,7 +128,7 @@ func _check_fixed_tick_advances(operator: Node) -> void:
 	await process_frame
 	for label: String in CLOCKS:
 		_check(
-			absf(float(operator.get(CLOCKS[label])) - 0.6) <= 0.001,
+			absf((float(operator.call("get_dodge_runtime_status").get(CLOCKS[label])) if label.begins_with("dodge ") else float(operator.get(CLOCKS[label]))) - 0.6) <= 0.001,
 			"%s is step-size dependent" % label
 		)
 

@@ -98,8 +98,7 @@ func _stand_still_unarmed(operator: Node, facing: Vector2 = Vector2.RIGHT) -> vo
 	operator.set("_melee_active", false)
 	operator.set("_melee_fast_windup", false)
 	operator.set("_melee_recovery_active", false)
-	operator.set("_dodge_active", false)
-	operator.set("_dodge_recovery_active", false)
+	operator.call("_cancel_dodge")
 	operator.set("melee_cooldown_remaining", 0.0)
 
 
@@ -359,8 +358,7 @@ func _check_real_owners_preempt_a_transition(operator: Node) -> void:
 		"a real dodge should drop the in-flight posture transition"
 	)
 	_check_single_body_owner(operator, "dodge preempting a posture transition")
-	operator.set("_dodge_active", false)
-	operator.set("_dodge_recovery_active", false)
+	operator.call("_cancel_dodge")
 	await process_frame
 
 	during = await _enter_transition(operator)
@@ -644,7 +642,7 @@ func _check_terminal_settle_is_not_installed_by_interruptions(operator: Node) ->
 		match case:
 			"dodge":
 				operator.set("_melee_active", false)
-				operator.set("_dodge_cooldown_remaining", 0.0)
+				operator.get("_dodge_controller").set("_cooldown_remaining", 0.0)
 				var started: bool = bool(operator.call(
 					"_try_start_dodge_with_profile", Vector2.RIGHT, &"tap", -1.0
 				))
@@ -657,8 +655,7 @@ func _check_terminal_settle_is_not_installed_by_interruptions(operator: Node) ->
 			not bool(operator.get("_unarmed_terminal_settle_pending")),
 			"a finisher interrupted by %s must not install the terminal settle" % case
 		)
-		operator.set("_dodge_active", false)
-		operator.set("_dodge_recovery_active", false)
+		operator.call("_cancel_dodge")
 		operator.set("_modular_damage_reaction_active", false)
 		operator.set("_melee_active", false)
 	await process_frame
