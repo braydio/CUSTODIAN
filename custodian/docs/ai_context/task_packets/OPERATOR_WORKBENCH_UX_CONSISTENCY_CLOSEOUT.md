@@ -80,6 +80,7 @@
   5. Audit information-tier discipline:
      - Tier 1 artist-critical state is never hidden behind diagnostics;
      - Tier 3 paths/hashes/checkout internals do not leak back into normal surfaces;
+     - raw `ahead N / behind N` remains repository-history diagnostics and is never framed as animation-change count, artist workload, or a routine manual-sync task after safe reconciliation succeeds;
      - blockers automatically promote exact useful reasons;
      - successful debug checks remain quiet.
   6. Audit error/empty/loading states for every mode. No mode should present stale prior content as current after a failed load. Preserve accepted browser/session state where the existing hardened contract requires it.
