@@ -338,6 +338,22 @@ neither can casually compel the other to open a constrained route. The player's
 prior identity, crèche personhood mechanism, Null Warrant's ultimate target, and
 the Custodian role in the Severing remain unresolved.
 
+## Hub First-Set H1 Blockout (2026-10-05)
+
+The post-Awakening Hub first set now has one runtime layout authority and one
+authored grid for geometry, named POI/spawn markers, navigation, and boundary
+collision. The standalone playtest uses the real Operator and camera at
+`Spawn_SouthReach`; the five Road production plate pairs remain presentation,
+with the prototype's legacy blockers disabled only in this Hub host. The
+focused H1 smoke proves the locked 188x190/32px bounds, 14 markers, 13,142
+walkable cells, 52 merged boundary rails, the north/south 4x8 Sepulcher links,
+the connector-restricted garden loop, and mandatory routes after deriving a
+25px clearance from the live Operator capsule and 10px boundary rail radius.
+The single 2048x2048 macro-topology overview received human approval on
+2026-10-05. This is H1 spatial/runtime only: Contract selection, world
+transitions, Twin transfer, deployment, and campaign return remain inert. The
+paired H1 review is the next lifecycle step.
+
 ## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 
 The optional, loopback-only Python WebSocket server now defaults to stable

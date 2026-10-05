@@ -42,6 +42,9 @@ const MODULES := [
 ## The Road owns camera bounds only when it is the whole world. Instanced as a
 ## translated zone inside a larger scene, the host owns them instead.
 @export var apply_camera_bounds := true
+## Hosts with their own walkability authority can keep Road art without its
+## legacy prototype collision treatment.
+@export var build_collision := true
 ## Width of the gap cut in the southern boundary wall, in local space. Zero keeps
 ## the map sealed; a positive value opens the causeway so the Road can be joined
 ## to walkable space to its south.
@@ -57,7 +60,8 @@ var _map_bounds := Rect2()
 
 func _ready() -> void:
 	_build_modules()
-	_build_collision()
+	if build_collision:
+		_build_collision()
 	_player = get_node_or_null(PLAYER_PATH) as Node2D
 	call_deferred("_apply_camera_bounds")
 

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-first-set-blockout-v1-recovery-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -18,7 +18,7 @@
 - Authoring chat: `not-recorded`
 - Goal: Build the complete runtime-ready blockout for the first persistent Hub set immediately north of Awakening, from Road of Witnesses South Reach through the Ashen Forum to the Archive/Crown Transfer branch and the Muster Court/Continuity Port deployment wing, so the second half of the first playable has one authoritative, navigable spatial target before world-transition and campaign-deployment behavior are wired.
 - Completion boundary: Implement one Hub-first-set spatial authority and one playable authored blockout scene using the exact coordinates locked in `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`; reuse the five Road production module pairs without duplicating their registration; make the first-set grid the sole Hub collision/navigation authority; expose all named markers; provide a standalone real-Operator/camera playtest; prove raw-grid and real-Operator-clearance connectivity, minimum authored route width, and a literal two-connection Sepulcher circulation loop; generate one human-review overview; repair directly related docs. Done means the player can traverse South Reach → Forum → both sides of the Sepulcher loop → Archive/Crown → Muster/Port while H2+ lifecycle behavior remains inert.
-- Current measured state: Awakening ends at world `(0,-6464)` inside the Road translated by `(6,-6626)`, yielding Road-local `Spawn_SouthReach=(-6,162)`. The five Road production module pairs remain Road-owned presentation; legacy Road blocker rectangles cannot own the larger first-set traversal. The retired donor implementation was `agent/hub-first-set-blockout-v1@720185d45930ff6603bd051676f3ff7cb20a655d`. Its durable summary/packet records 13,110 walkable cells, 48 merged rails, 14 markers, focused H1/Road/Twin greens, and 14/14 changed-file validation, but it never completed the final topology/clearance/Port-return closeout. The old remote alias was explicitly moved off that unique donor history onto a current-main snapshot on 2026-10-05, so it no longer carries unique implementation work. It remains only as a stale ref to delete during recovery closeout and must not be merged or rebased. This recovery workstream starts from current main, uses the pinned commit/durable evidence only for archaeology when useful, selectively reimplements still-valid H1 behavior, completes the locked corrections, and owns final cleanup of the obsolete H1 branch/worktree/diagnostic residue. No production major-context WorldTransitionManager exists yet.
+- Current measured state: Awakening ends at world `(0,-6464)` inside the Road translated by `(6,-6626)`, yielding Road-local `Spawn_SouthReach=(-6,162)`. H1 recovery now runs from current main as one layout/map authority with 13,142 walkable cells, 52 merged grid-boundary rails, 14 named markers, and 12,160 cells remaining after 25px clearance derived from the live Operator capsule and 10px boundary-rail radius. The locked north/south 4x8 Sepulcher connectors form a connector-restricted loop in both raw and Operator-clearance occupancy. Road's five production module pairs remain Road-owned presentation and its legacy blockers are disabled only in this Hub host. Road and Twin compatibility smokes pass. The one 2048x2048 overview was opened through the required Kitty/xdg-open review control and the human closed Kitty, recording approval on 2026-10-05. Historical donor `720185d45930ff6603bd051676f3ff7cb20a655d` recorded 13,110 cells/48 rails but did not prove final topology, clearance, or Port-return semantics; it was not merged, its local worktree/branch were removed, and its unique commit is preserved at `archive/agent-hub-first-set-blockout-v1-20261005`. The old main-contained alias and lifecycle-only diagnostic ref were retired, with branch-ledger evidence. No H2-H6 production lifecycle behavior was added.
 - Evidence: `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`; `design/04_architecture/HUB_SPATIAL_LAYOUT.md`; `design/04_architecture/CAMPAIGN_FLOW_AND_GAME_LOOP.md`; `design/04_architecture/WORLD_TRANSITION_SYSTEM.md`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/game/world/hub/road_of_witnesses_prototype.gd`; `custodian/game/world/levels/authored_blockout_grid_2d.gd`; `custodian/game/world/levels/authored_navigation_provider_2d.gd`.
 - Task-specific authority: `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` is the exact spatial/blockout authority. `HUB_SPATIAL_LAYOUT.md` owns district meaning/topology. `AWAKENING_FIRST_RETURN.md` and `awakening_layout.gd` own only the southern seam. `TWIN_SOLARIA.md` owns the later Crown Transfer destination contract. `WORLD_TRANSITION_SYSTEM.md` owns later context switching and must not be partially implemented here.
 - Work surface: New primary runtime surface under `custodian/game/world/hub/first_set/` plus one standalone playtest scene under `custodian/scenes/`; reuse the Road module scene/controller as presentation input; focused validation under `custodian/tools/validation/`; minimal current-state/index/Hub spatial docs updates. Do not modify Awakening progression or Twin Solaria runtime.
@@ -259,7 +259,8 @@ After all structural checks are green, generate exactly one deterministic full-m
 - Road module presentation visible where useful;
 - Spawn_SouthReach, CrownTransfer, and CampaignExitThreshold called out.
 
-The coding agent must not visually approve it.
+The coding agent must not visually approve it. Human approval was recorded by
+closing the review Kitty window after opening the overview on 2026-10-05.
 
 Use the established review control:
 
@@ -298,8 +299,29 @@ Before setting complete:
 - include the V2 completion receipt and execution feedback required by the task-packet template;
 - record exact structural validation and human overview approval.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: Yes. The current-main H1 map and standalone playtest cover the complete locked first-set spatial slice.
+- Completion boundary satisfied: Yes. Layout, grid navigation/collision, markers, Road presentation, inert lifecycle roots, Operator/camera playtest, route proofs, docs, overview, and obsolete-H1 cleanup are complete.
+- Acceptance satisfied: Yes. Exact bounds/envelopes/markers, all walkable cells, both separate 4x8 Sepulcher links, connector-restricted loop, raw connectivity, 25px live-Operator/boundary-rail clearance connectivity, 4-cell authored minimum, Port return bay, Road registration/ownership, and inert lifecycle checks passed.
+- Superseded/legacy production path disposition: The donor implementation was not merged. Its unique commit is preserved by `archive/agent-hub-first-set-blockout-v1-20261005`; its local worktree/branch, main-contained remote alias, and lifecycle-only diagnostic ref were retired.
+- Evidence: focused `hub_first_set_blockout` passed (13,142 cells; 52 rails; 14 markers; 12,160 clearance-safe cells; operator capsule clearance 15px + 10px rails); `road_of_witnesses_production` passed; `twin_solaria_runtime` passed; changed validation `/tmp/hub_first_set_blockout_validation.json` passed 13/13 with complete coverage; `git diff --check` passed; `reports/hub_first_set_blockout/overview.png` (2048x2048) received human approval by review-window closure.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: Fresh worktree startup required a full Godot import before global class/resource discovery; dummy headless rendering could not provide a viewport image; the first changed-file sweep found the overview capture script missing a manifest owner.
+- Root cause / contributing factors: The isolated worktree started without `.godot` import state; Godot's dummy renderer returns no root texture; manifest ownership initially listed the smoke but not its capture helper.
+- Prevention / pipeline improvement: Import once before Godot smoke runs in a fresh worktree; use an explicit GPU SubViewport for renderer evidence; include capture helpers in the owning validation entry.
+- Tooling / docs drift discovered: The active H1 status/index and H2 measured-state text still described H1 as unlanded; Hub spatial prose still described the grid as intended rather than live. These were corrected.
+- Follow-up: fixed-in-scope
+- What worked: The real Operator capsule plus active grid-boundary erosion and a connector-restricted loop test made the topology proof explicit and repeatable.
+
 ## Handoff
 
-- Next action: H2 wires reviewed Awakening completion into this reviewed map at `Spawn_SouthReach` through the world-lifecycle authority.
+- Next action: Start the fresh-context paired review `review-hub-first-set-blockout-v1`; confirm the archived implementation, focused evidence, and already approved overview. H2 then wires reviewed Awakening completion into this map at `Spawn_SouthReach` after its paired review and Awakening readiness review archive complete.
 - Best starting files: `HUB_FIRST_SET_BLOCKOUT.md`, Road prototype, generic authored blockout/navigation providers, current authored-level spawn APIs.
-- Blockers or open questions: none for H1. The exact visual identity of Muster Court/Continuity Port is intentionally deferred until the reviewed blockout proves the topology.
+- Blockers or open questions: H1 has no remaining implementation blocker. H2 remains dependency-gated on this paired review and `review-awakening-handoff-readiness-art-convergence-v1`. The exact visual identity of Muster Court/Continuity Port remains intentionally deferred.
