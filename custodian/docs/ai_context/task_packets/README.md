@@ -191,6 +191,14 @@ that output is lost, recover it read-only with `dispatch.py last-claim` (or
 `--json`) rather than inferring ownership from worktree/branch activity.
 Continuous workers and cross-machine leases are deferred.
 
+For interactive Codex, the repository also provides `$custodian-next` and the
+installable `/prompts:custodian-next` shortcut. They do not change dispatcher
+eligibility. They continue an already-active workstream, otherwise prefer the
+durable immediate `Next Handoff` in the same series, respect refresh/manual/
+dependency gates, and use global `claim-next` only when no same-series successor
+exists. Install the slash prompt with
+`python3 custodian/tools/agent/install_codex_prompts.py`.
+
 ## Packet Handoff And Authoring-Chat Provenance
 
 Newly authored or materially refreshed V2 packets record
