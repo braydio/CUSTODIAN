@@ -27,7 +27,7 @@
 - Review focus: Treat this as a reusable primitive review, not a visual-art taste review. The foundation is ready for downstream Forum/Sundered slices only if it is boring, deterministic, 2D-authoritative infrastructure.
 - Acceptance: Findings-first independent review. Blocking defects/material evidence gaps create `isometric-2-5d-presentation-foundation-review-corrections-1` plus paired re-review. A clean/non-blocking pass unlocks both `isometric-2-5d-forum-vertical-slice` and `sundered-keep-overlook-alternate-vertical-slice`.
 - Non-goals: Do not build the Forum or Sundered showcase, create new art, change production camera doctrine, or expand into live 3D.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only its durable review receipt, required closing summary, review-packet lifecycle/archive metadata, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
