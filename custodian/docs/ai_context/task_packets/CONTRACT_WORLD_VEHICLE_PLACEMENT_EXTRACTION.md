@@ -5,14 +5,14 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation`
+- Depends on: `review-contract-world-placement-foundation-r1`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `f7e84ae48a90ff9da0f968ef0c72ac9ba0c2c5ee`
+- Reviewed main: `76dac8bf6c`
 - Goal: Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
 - Completion boundary: Done when vehicle tile selection, positioning, scale/orientation/application, and fixed-seed placement results are service-owned and loader delegates through placement context.
-- Current measured state: Generated-world vehicle placement is still owned by `custodian/game/systems/core/systems/contract_world_loader.gd` through `_position_vehicles`, `_position_vehicle_nodes_on_tiles`, `_get_parking_zone_tiles`, canonical tile/world transforms, and loader placement order. `custodian/game/world/placement/` remains scaffold-only; existing validation exercises world-loader flags/boot and vehicle runtime behavior but there is no dedicated extracted-service file yet.
+- Current measured state: Generated-world vehicle placement is still owned by `custodian/game/systems/core/systems/contract_world_loader.gd` through `_position_vehicles`, `_position_vehicle_nodes_on_tiles`, `_get_parking_zone_tiles`, canonical tile/world transforms, and loader placement order. `custodian/game/world/placement/` now contains the landed read-only `WorldPlacementContext` foundation but no domain placement service yet; existing validation exercises world-loader flags/boot and vehicle runtime behavior but there is no dedicated extracted-service file yet.
 - Evidence: `custodian/game/systems/core/systems/contract_world_loader.gd`; `custodian/game/world/placement/README.md`; `custodian/tools/validation/world_contract_prewarm_smoke.gd`; `custodian/tools/validation/vehicle_exit_clearance_smoke.gd`; `custodian/tools/validation/validate_vehicle_registry.gd`; P1 placement-context contract.
 - Task-specific authority: world placement README; active vehicle runtime placement contract.
 - Work surface: `custodian/game/world/placement/vehicle_placement_service.gd` (or clearly equivalent file in the placement package), loader delegation in `custodian/game/systems/core/systems/contract_world_loader.gd`, placement README/index, and a focused deterministic placement snapshot created in this workstream if existing boot coverage cannot prove exact locations.
@@ -23,7 +23,7 @@
 - Validation: `res://tools/validation/world_contract_prewarm_smoke.gd`, `res://tools/validation/vehicle_exit_clearance_smoke.gd`, `res://tools/validation/validate_vehicle_registry.gd`, plus an implementation-created fixed-seed vehicle-placement snapshot if required; then changed-file closeout. Do not name a nonexistent new script in packet metadata before claim.
 - Task overrides: `none`
 - Deferred: Remaining placement domains and final loader contraction.
-- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
+- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 
