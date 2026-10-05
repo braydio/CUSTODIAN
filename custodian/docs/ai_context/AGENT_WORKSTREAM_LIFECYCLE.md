@@ -153,8 +153,14 @@ friction/prevention for every normal implementation. For V2 task packets, mirror
 the same receipt into `## Execution Feedback` before marking the packet complete
 and archiving it. Validation JSON is normally an ephemeral input to finish
 unless the task specifically needs it retained. Temporary logs/caches/previews
-may be deleted deliberately, while review evidence is retained only when it has
-future review value. Asset Pipeline V2 `source_work/` and `inbox/` material is
+may be deleted deliberately. Dropbox visual-review media is transient by
+default: after the verdict returns to the packet's exact authoring ChatGPT
+conversation, the execution agent runs the publisher's emitted
+`--cleanup-reviewed` command unless retention was explicitly requested. That
+command validates the v2 manifest and deletes only the reviewed run; do not use
+wildcards or age-based cleanup. The durable summary retains the authoring-chat
+backlink, run id, questions/verdict, and cleanup disposition even after remote
+media is gone. Asset Pipeline V2 `source_work/` and `inbox/` material is
 never disposable merely because it was created during a run.
 
 `workstream.py finish` runs an artifact preflight before synchronization and
