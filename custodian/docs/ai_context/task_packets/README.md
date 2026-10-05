@@ -19,7 +19,7 @@ Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_R
 
 Seven implementation slices are pre-authored with paired reviews. H1 `hub-first-set-blockout-v1-recovery-1` is complete and archived with its human-approved overview; its paired review is the immediate successor. H2-H7 remain `ready/auto`; their incomplete dependencies keep them non-claimable until predecessor reviews archive `complete`. Each downstream execution agent performs its own claim-time refresh from current main and landed predecessor evidence before mutation.
 
-- H1 `archived/HUB_FIRST_SET_BLOCKOUT_V1.md` / active review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics and human topology approval. The paired review owns verification/retirement of any residual H1-only diagnostic refs while preserving the donor archive.
+- H1 `archived/HUB_FIRST_SET_BLOCKOUT_V1.md` / active review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics and human topology approval. The paired review verifies the obsolete active H1 branch/worktree/claim is gone and donor history remains reachable; `agent-diagnostics/*` traces are preserved lifecycle evidence, not executable work.
 - H2 `HUB_AWAKENING_CONTEXT_HANDOFF.md` / review — reviewed Awakening completion → persistent Hub; also waits on reviewed Awakening handoff-readiness.
 - H3 `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` / review — explicit Dais acceptance + persistent accepted CampaignScenario/seed + one bootstrap generation.
 - H4 `HUB_CROWN_TRANSFER_TWIN_SOLARIA.md` / review — optional same-Hub Crown Transfer route to production Twin and back; may run parallel with H3 after H2.
@@ -108,8 +108,8 @@ The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are comple
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 implementation landed on `085a38a5`; archived receipt records renderer/visual proof missing, so do not treat it as fully accepted.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery with authoring-chat Dropbox approval recorded.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 paired review complete/passed.
-- `archived/CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` — complete P0 fix: final Operator spawn must be canonically valid and in `ProcGenTilemap.get_main_playable_component()`; paired `REVIEW_CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` is next and gates AR3.
-- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 refreshed/ready-auto with bounded semantic pre-echo, actual-final-spawn ingress resolve, and shortened reacquisition; waits on the P0 spawn-validity review. Paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is ready/auto behind AR3.
+- `archived/CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` + `archived/REVIEW_CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` — P0 implementation/review complete-passed: final Operator spawn must be canonically valid, runtime-walkable, outside ingress clearance, and in `ProcGenTilemap.get_main_playable_component()`; 0 blocking defects / 0 material evidence gaps. Review R0-03's missing full `_on_contract_generated()` real-compound/registered-ingress proof is intentionally carried into AR3's integration validation rather than a correction packet.
+- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 refreshed/ready-auto and now claimable: bounded semantic pre-echo, full-path actual-final-spawn ingress resolve, and shortened reacquisition. Paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is ready/auto behind AR3.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
 so extraction/contraction work cannot move or absorb the reveal seams before the
@@ -128,7 +128,7 @@ AR packet set is refreshed.
 
 ### Active Non-Player Actor Runtime Refactor Series
 
-Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search
+Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
 - Program tracker / architecture authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Expected program size: 11 implementation packets spanning standard combat-agent decomplexification, then commanded allies, fauna, encounter/social NPCs, static autonomous agents, and final compatibility cleanup.

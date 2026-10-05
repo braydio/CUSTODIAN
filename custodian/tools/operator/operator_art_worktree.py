@@ -806,6 +806,8 @@ def publication_allowlist(repo_root: Path, canonical_paths: Iterable[str]) -> se
     # Runtime sync regenerates this canonical SpriteFrames projection as part
     # of publishing selected Operator source art.
     allowed.add(CANONICAL_RUNTIME_FRAMES.as_posix())
+    # Canvas/frame migrations also regenerate the canonical runtime manifest.
+    allowed.add("custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json")
     return allowed
 
 

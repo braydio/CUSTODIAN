@@ -7,18 +7,18 @@
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `hub-first-set-blockout-v1-recovery-1`
-- Locks: `hub-runtime, hub-layout, agent-branch-hygiene`
+- Locks: `hub-runtime, hub-layout`
 - Review: `none`
 - Review target workstream: `hub-first-set-blockout-v1-recovery-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/HUB_FIRST_SET_BLOCKOUT_V1.md`
-- Review modes: `code, architecture, runtime, visual, workflow`
+- Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently verify that the landed Hub first-set blockout is one coherent, navigable spatial authority from South Reach through Forum/branches to Crown Transfer and Continuity Port, without smuggling in campaign/Twin/world-transition behavior.
 - Review focus: exact coordinate contract including both Sepulcher connectors; Road presentation reuse with no competing Road collision; first-set grid authority; raw and real-Operator-clearance connectivity; literal Sepulcher circulation loop rather than same-neck backtracking; >=4-cell authored width; valid markers/spawns including Campaign return in the Port west bay; no Operator/camera ownership in production map; inert lifecycle markers; human overview approval; truthful docs.
-- Acceptance: Produce a findings-first post-land review. Pass only if the blockout matches `HUB_FIRST_SET_BLOCKOUT.md`, structural/navigation evidence is green, the recorded human overview approval remains valid, no H2-H6 behavior leaked into H1, and obsolete H1 agent refs/worktree claims are retired while the preserved donor archive remains reachable. Blocking findings must use the normal bounded correction/re-review flow.
+- Acceptance: Produce a findings-first post-land review. Pass only if the blockout matches `HUB_FIRST_SET_BLOCKOUT.md`, structural/navigation evidence is green, the recorded human overview approval remains valid, and no H2-H6 behavior leaked into H1. Confirm the obsolete active H1 implementation branch/worktree/claim is gone and the preserved donor history remains reachable; lifecycle-only `agent-diagnostics/*` traces are non-executable evidence and are preserved under repository policy. Blocking findings must use the normal bounded correction/re-review flow.
 - Non-goals: Do not implement Awakening handoff, Contract prewarm, Twin traversal, Continuity Port deployment, Campaign return, production art, or layout redesign during review.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; it may also perform H1-only safe branch-hygiene cleanup through the repository branch-hygiene tooling after verifying preserved donor reachability. Do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Required Checks
 
@@ -35,7 +35,7 @@
 11. Verify no `WorldContractBootstrap` call, `game.tscn` handoff, `hub_twin_solaria` load, or world transition was introduced.
 12. Reuse the implementation's single full-map overview and durable human approval. Do not perform a second subjective model-vision approval unless implementation changed relevant geometry after that gate.
 13. Verify documentation describes only H1 as live and leaves H2-H7 deferred.
-14. Audit H1 branch hygiene from current remote truth. Confirm the obsolete `agent/hub-first-set-blockout-v1` implementation branch is absent; preserve the donor checkpoint/archive reachability recorded by the implementation; retire any remaining H1-only `agent-diagnostics/hub-first-set-blockout-v1*` or stale recovery claim refs/worktrees that branch-hygiene tooling proves safe to delete. Do not delete unrelated refs and do not remove the durable donor archive/tag.
+14. Audit H1 branch hygiene from current remote truth. Confirm the obsolete active `agent/hub-first-set-blockout-v1` implementation branch, attached worktree, and any live dispatch claim are absent; verify the preserved donor checkpoint/archive remains reachable. Treat `agent-diagnostics/*` refs as lifecycle-only preserved evidence per `branch_hygiene.py`, not as executable branches or cleanup blockers.
 
 ## Human Decision Gate
 

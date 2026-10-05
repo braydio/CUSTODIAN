@@ -431,10 +431,13 @@ def smoke() -> None:
         commit_remote(coordination, "README.md", b"unrelated upstream change\n", "unrelated upstream")
         paths = {SOURCE}
         allowlist = art.publication_allowlist(art_root, paths)
+        runtime_manifest = "custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json"
+        assert runtime_manifest in allowlist
         assert CANONICAL_RUNTIME_FRAMES in allowlist
         assert "custodian/game/actors/operator/operator_runtime_frames.tres" not in allowlist
 
         def publish_once():
+            (art_root / runtime_manifest).write_text("{}\n")
             (art_root / SOURCE).write_bytes(b"published art\n")
             (art_root / CANONICAL_RUNTIME_FRAMES).write_bytes(b"generated SpriteFrames\n")
             return [SOURCE]
@@ -447,6 +450,7 @@ def smoke() -> None:
             identity={"profile": "unarmed", "group": "attack", "action": "fast_01", "direction": "e"},
         )
         assert result["status"] == "landed"
+        assert runtime_manifest in result["staged_paths"]
         assert SOURCE in result["staged_paths"]
         assert CANONICAL_RUNTIME_FRAMES in result["staged_paths"]
         assert not art._status_paths(art_root)

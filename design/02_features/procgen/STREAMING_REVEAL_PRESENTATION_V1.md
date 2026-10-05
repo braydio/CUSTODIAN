@@ -1,7 +1,7 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; AR1/ARR1 complete; AR2/recovery/review passed; AR3 refreshed and spawn-validity-gated  
+**Status:** Design locked; AR1/ARR1 complete; AR2/recovery/review passed; spawn validity reviewed; AR3 ready  
 **Last updated:** 2026-10-03  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
@@ -410,7 +410,7 @@ Do not:
 
 ## Implementation Dependency
 
-The streaming-residency prerequisite is satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1/ARR1 are complete. AR2 implementation, graphical recovery, human Dropbox review, and fresh-context paired technical review are complete/passed; S1 remains `1773840677`. AR3 was refreshed in `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` against that reviewed state. A separately reproduced current-main spawn-validity defect is now the only AR3 dependency gate: the one-time ingress presentation may begin only after the final runtime Operator position belongs to the reviewed accepted playable component. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
+The streaming-residency prerequisite is satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1/ARR1 are complete. AR2 implementation, graphical recovery, human Dropbox review, and fresh-context paired technical review are complete/passed; S1 remains `1773840677`. AR3 was refreshed in `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` against that reviewed state. The separately reproduced current-main spawn-validity defect is now implemented/reviewed complete with 0 blocking defects / 0 material evidence gaps. AR3 is released, but its one-time ingress presentation may begin only after the final runtime Operator position belongs to that reviewed accepted playable component. The spawn review's remaining R0-03 evidence-shape gap (no full real-compound + registered-ingress `_on_contract_generated()` run) is closed by AR3's required end-to-end integration proof. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
 
 ## Recommended Implementation Slices
 

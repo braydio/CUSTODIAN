@@ -97,7 +97,7 @@ The current-main Operator-spawn-outside-playable-region defect is owned separate
 - `contract-world-playable-region-spawn-validity-fix`
 - `review-contract-world-playable-region-spawn-validity-fix`
 
-That P0 does not block building the standalone authored overlook scene, but it must be resolved before future procgen integration of this program is treated as production-ready.
+That P0 implementation and its fresh review are now complete/passed. The original underlevel-void reproduction was not replayed end-to-end by the reviewer, so future procgen integration should consume the reviewed spawn invariant and current AR3 full-path integration evidence rather than reopening spawn ownership.
 
 ## Blender / offline 3D decision
 

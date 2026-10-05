@@ -1,5 +1,7 @@
 # Severance Unarrival Lore Revision
 
+> **Historical packet / superseded canon:** This packet records the May 2026 Unarrival-as-root-cause revision. Its lore conclusions were superseded by the Reciprocal Continuity migration (`110b837286be873ea93ea6a61d3397f8723e69d8`) and canon-convergence correction (`1ad4054763ee27a566b4c381f9485c11e5b0c3b5`). Current authority is `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`; preserve the body below as execution history, not current lore truth.
+
 ## Packet Status
 
 - Status: complete

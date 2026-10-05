@@ -12,7 +12,7 @@
 - Review target workstream: `enemy-savage-chain-ability-extraction`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md`
 - Reviewed main: `d2ac337e13`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`
@@ -31,7 +31,7 @@
 
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: If review materially changes the chain/service boundary, bring the evidence back to this chat before NPA-4 is authored.
 
 ## Handoff

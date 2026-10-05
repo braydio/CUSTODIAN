@@ -61,6 +61,8 @@
 
 ## Canon migration
 
+- `custodian/docs/ai_context/task_packets/RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` + paired review — ready fail-closed validation slice that protects the landed Reciprocal Continuity / Ash-Bell history lock from documentation and runtime-ID regression.
+
 `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md` is the active migration
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
 reciprocity, and runtime-vs-fiction lifecycle terminology.
@@ -229,7 +231,7 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md` — archived authored-route migration / Encounter Completion V2 record for the live Forlorn-Ritualant Underground encounter
 - `custodian/docs/ai_context/task_packets/ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — blocked/manual Asset V2 closeout for the genuinely remaining Ritualant locomotion/reaction, Unarrived procession/apparition, and ritual-prop production art; unresolved animation cadence remains human-owned
 - `custodian/docs/ai_context/task_packets/RITUALANT_EXPANDED_ARENA_ASSET_FAMILY.md` — implementation record for the native-scale expanded arena, revised chapel underlays, lower-quarter seal, and White Thread telegraph Asset V2 pass
-- `custodian/docs/ai_context/task_packets/SEVERANCE_UNARRIVAL_LORE_REVISION.md` — completed packet for the Severance root-cause canon revision and Forlorn-Ritualant rename pass
+- `custodian/docs/ai_context/task_packets/archived/SEVERANCE_UNARRIVAL_LORE_REVISION.md` — historical completed packet for the superseded May 2026 Unarrival-as-root-cause revision and Forlorn-Ritualant rename pass; current cosmology authority is Reciprocal Continuity
 - `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` — complete V3 allied combat drone authority, including manager-owned fire discipline, close/far/free-roam formation behavior, and Operator/order-point guard anchors
 - `custodian/docs/ai_context/task_packets/archived/ARRN_RUNTIME_IMPLEMENTATION.md` — archived completed packet for the first Automated Relay Routing Network runtime implementation
 - `custodian/docs/ai_context/task_packets/RESOURCE_ID_CANONICALIZATION.md` — completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs
