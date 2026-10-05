@@ -94,7 +94,11 @@ second scheduler.
 
 A successful claim ends with `CLAIMED` and one
 `CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line: the receipt is the assignment
-authority. Never infer ownership from worktree creation, terminal activity,
+authority. For packeted work the receipt also carries the exact recorded
+`authoring_chat`, `visual_review` mode, canonical
+`/CUSTODIAN/visual_review/<workstream>/` root, and default
+`visual_review_retention` so autonomous workers do not have to rediscover the
+human-review route. Never infer ownership from worktree creation, terminal activity,
 branch existence, or another task being active. Before entering the checkout,
 verify the receipt's workstream/branch/worktree; if stdout was lost, recover
 with:
@@ -151,8 +155,11 @@ friction/prevention for every normal implementation. For V2 task packets, mirror
 the same receipt into `## Execution Feedback` before marking the packet complete
 and archiving it. Validation JSON is normally an ephemeral input to finish
 unless the task specifically needs it retained. Temporary logs/caches/previews
-may be deleted deliberately, while review evidence is retained only when it has
-future review value. Asset Pipeline V2 `source_work/` and `inbox/` material is
+may be deleted deliberately. Dropbox visual-review evidence is transient by
+default: after ChatGPT/user review, run the manifest's emitted cleanup command so
+`delete-after-review` purges the exact reviewed run and any matching `LATEST.json`
+pointer. Use `retain` only when the user/packet explicitly requires future cloud
+review value. Asset Pipeline V2 `source_work/` and `inbox/` material is
 never disposable merely because it was created during a run.
 
 `workstream.py finish` runs an artifact preflight before synchronization and
@@ -161,6 +168,28 @@ classified as task-packet, closing-summary, Asset V2 source, review evidence,
 disposable candidate, or unclassified. The agent must explicitly commit durable
 material or remove disposable material; ambiguous files are never silently
 removed.
+
+## Human / ChatGPT Visual Review Pause
+
+A required subjective visual decision is a pause inside the **current**
+workstream, not completion and not permission to claim unrelated work.
+
+1. Finish objective validation and publish the smallest Dropbox handoff through
+   `publish_review_artifacts.py`, passing the exact packet authoring-chat URL.
+2. Return the emitted `REVIEW_MANIFEST.json` path and reviewer questions to that
+   authoring conversation. ChatGPT web should use the connected Dropbox source to
+   inspect that exact path.
+3. Stop implementation at the subjective decision boundary. `$custodian-next`
+   must report the human-review blocker while this workstream remains active.
+4. When the decision returns, resume the same workstream, record the decision in
+   durable task evidence, and execute the emitted reviewed-evidence cleanup
+   command unless the manifest says `retain`.
+5. Continue validation/finish only after the human decision and cleanup/retention
+   result are resolved.
+
+The cleanup path is programmatic and path-confined by
+`custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest ...`.
+Do not manually delete broad Dropbox directories.
 
 ## Default Execution Economy
 
