@@ -115,6 +115,7 @@ class PublishReviewArtifactsTest(unittest.TestCase):
             "workstream": "sample-work",
             "run_id": "run-1",
             "retention": {"policy": publisher.DELETE_AFTER_REVIEW, "cleanup_owner": "execution-agent"},
+            "remote_relative_path": "/CUSTODIAN/visual_review/sample-work/run-1/",
         }
         latest = {
             "schema": publisher.LATEST_SCHEMA,
@@ -150,6 +151,7 @@ class PublishReviewArtifactsTest(unittest.TestCase):
             "workstream": "sample-work",
             "run_id": "run-1",
             "retention": {"policy": publisher.DELETE_AFTER_REVIEW, "cleanup_owner": "execution-agent"},
+            "remote_relative_path": "/CUSTODIAN/visual_review/sample-work/run-1/",
         }
         latest = {
             "schema": publisher.LATEST_SCHEMA,
@@ -181,6 +183,7 @@ class PublishReviewArtifactsTest(unittest.TestCase):
             "workstream": "sample-work",
             "run_id": "run-1",
             "retention": {"policy": publisher.RETAIN_AFTER_REVIEW, "cleanup_owner": "execution-agent"},
+            "remote_relative_path": "/CUSTODIAN/visual_review/sample-work/run-1/",
         }
         legacy = {
             "schema": "custodian.visual_review_handoff.v1",
@@ -198,6 +201,26 @@ class PublishReviewArtifactsTest(unittest.TestCase):
                         cleanup_reviewed("dropbox:", publisher.DEFAULT_REMOTE_ROOT, "sample-work", "run-1"),
                         expected,
                     )
+
+    def test_cleanup_reviewed_refuses_manifest_remote_path_mismatch(self) -> None:
+        manifest = {
+            "schema": publisher.VISUAL_REVIEW_SCHEMA,
+            "workstream": "sample-work",
+            "run_id": "run-1",
+            "retention": {"policy": publisher.DELETE_AFTER_REVIEW, "cleanup_owner": "execution-agent"},
+            "remote_relative_path": "/CUSTODIAN/visual_review/sample-work/some-other-run/",
+        }
+
+        def fake_run(args, check=True, capture_output=True):
+            if args[:2] == ["rclone", "cat"]:
+                return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(manifest), stderr="")
+            raise AssertionError("cleanup attempted mutation after manifest path mismatch")
+
+        with patch.object(publisher, "_run", side_effect=fake_run):
+            self.assertEqual(
+                cleanup_reviewed("dropbox:", publisher.DEFAULT_REMOTE_ROOT, "sample-work", "run-1"),
+                3,
+            )
 
     def test_cleanup_reviewed_is_idempotent_when_run_is_absent(self) -> None:
         def fake_run(args, check=True, capture_output=True):
