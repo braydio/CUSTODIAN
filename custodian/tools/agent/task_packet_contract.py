@@ -211,6 +211,8 @@ def parse_packet(path: str, text: str) -> Packet:
         if not re.fullmatch(r"https://[^\s]+", authoring_chat):
             errors.append("invalid Authoring chat metadata")
     visual_review = values.get("Visual review") or None
+    if visual_review is not None and visual_review not in {"none", "required-if-subjective", "required"}:
+        errors.append("invalid Visual review metadata")
 
     task_overrides = _header_field_with_continuations(text, "Task overrides")
     validation_scripts = _validation_script_references(text)
