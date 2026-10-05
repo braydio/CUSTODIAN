@@ -113,7 +113,7 @@ def _validate_authoring_chat(value: str) -> str:
 def _packet_authoring_chat(repo: Path, workstream: str) -> str:
     """Resolve exact durable authoring-chat metadata for one workstream."""
     workstream_line = re.compile(
-        rf"(?m)^\\s*-\\s*Workstream:\\s*`?{re.escape(workstream)}`?\\s*$"
+        rf"(?m)^\s*-\s*Workstream:\s*`?{re.escape(workstream)}`?\s*$"
     )
     chat_line = re.compile(r"(?m)^\\s*-\\s*Authoring chat:\\s*`?([^`\\n]+)`?\\s*$")
     matches: list[str] = []
