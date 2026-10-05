@@ -31,7 +31,7 @@ def packet(
     workstream, *, status="ready", dispatch_value=None, priority=None, depends=None, locks=None,
     kind=None, review=None, review_stage=None, review_modes=None, paired_review_workstream=None,
     review_cycle=None, max_review_cycles=None, review_target_workstream=None, review_target_packet=None,
-    task_overrides=None, authoring_chat=None, refresh_planning_chat=None,
+    task_overrides=None, authoring_chat=None, refresh_planning_chat=None, visual_review=None,
 ):
     rows = [f"- Workstream: `{workstream}`", f"- Status: `{status}`"]
     if dispatch_value is not None:
@@ -68,6 +68,8 @@ def packet(
         rows.append(f"- Authoring chat: `{authoring_chat}`")
     if refresh_planning_chat is not None:
         rows.append(f"- Refresh planning chat: `{refresh_planning_chat}`")
+    if visual_review is not None:
+        rows.append(f"- Visual review: `{visual_review}`")
     return "# Packet\n\n" + "\n".join(rows) + "\n"
 
 
@@ -142,6 +144,7 @@ class DispatchTests(unittest.TestCase):
             "visual-task",
             dispatch_value="auto",
             authoring_chat="https://chatgpt.com/c/authoring-example",
+            visual_review="required",
         )
         output = []
         with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=publish_workstream)), \
@@ -151,9 +154,11 @@ class DispatchTests(unittest.TestCase):
         sentinel = next(line for line in rendered.splitlines() if line.startswith("CUSTODIAN_DISPATCH_RESULT_JSON:"))
         receipt = json.loads(sentinel.removeprefix("CUSTODIAN_DISPATCH_RESULT_JSON:"))
         self.assertEqual(receipt["authoring_chat"], "https://chatgpt.com/c/authoring-example")
+        self.assertEqual(receipt["visual_review"], "required")
         self.assertEqual(receipt["visual_review_root"], "/CUSTODIAN/visual_review/visual-task/")
         self.assertEqual(receipt["visual_review_retention"], "delete-after-review")
         self.assertIn("authoring chat: https://chatgpt.com/c/authoring-example", rendered)
+        self.assertIn("visual review: required", rendered)
         self.assertIn("visual review root: /CUSTODIAN/visual_review/visual-task/", rendered)
 
     def test_non_ready_packet_is_not_eligible(self):
