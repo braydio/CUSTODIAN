@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-forum-adjudication-contract-prewarm`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-hub-awakening-context-handoff`
 - Locks: `hub-runtime, contract-bootstrap`
@@ -31,10 +31,9 @@
 - Task overrides: `none`
 - Deferred: full offer generation/recon; H5 retry/deploy; H6 outcome/return; production Forum art/audio.
 
-## Temporary Refresh Gate — REMOVE WHEN REFRESHED
+## Claim-Time Dependency Refresh
 
-After `review-hub-awakening-context-handoff` passes, inspect the landed major-context owner, Hub host/service lifetime, Dais marker access, and any HubState/coordinator H2 introduced. Update this packet to those exact seams, remove this section, and set ready/auto. Do not create a parallel persistent owner because this packet guessed a different private shape.
-
+This packet is intentionally `ready/auto` while its declared dependencies may still be incomplete. The dispatcher must keep it non-claimable until every `Depends on` workstream is archived `complete`. Once claimed, the execution agent must reconstruct the landed predecessor seams from current `main`, archived implementation/review summaries, and live public APIs before mutation. Reconcile private helper names and bounded implementation drift while preserving this packet's Goal, Completion boundary, Preserve, Non-goals, and Acceptance. Update directly stale packet/docs facts inside the workstream when needed. Do not stop for a ChatGPT/user refresh unless current evidence exposes a genuine unresolved design choice that existing authority cannot answer.
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -57,6 +56,6 @@ After `review-hub-awakening-context-handoff` passes, inspect the landed major-co
 
 ## Handoff
 
-- Next action: After HR2, refresh H3 and H4 in parallel.
+- Next action: After HR2 archives complete, H3 and H4 become auto-claimable in parallel and each self-refreshes from current main before mutation.
 - Best starting files: reviewed H2 owner/Hub host; HubState/CampaignScenario/default factory; WorldContractBootstrap; H1 Dais marker.
 - Blockers or open questions: persistent host/coordinator seam is an H2 output.
