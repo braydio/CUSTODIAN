@@ -345,9 +345,14 @@ results, baseline authority, runtime behavior, or Moment Forge's dependency
 boundary. Credentials/config remain outside the repository.
 
 The publisher is explicitly opt-in (`--important --reason ...`) and should carry
-specific reviewer questions. Agents return the Dropbox manifest path and stop;
-human/ChatGPT review owns aesthetics, composition, game feel, and baseline
-approval. See `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
+specific reviewer questions. Agents return the packet's exact authoring-chat URL
+and Dropbox manifest path, then stop. The authoring ChatGPT conversation reviews
+that connected Dropbox evidence; human/ChatGPT review owns aesthetics,
+composition, game feel, and baseline approval. New review bundles default to
+delete-after-review. After the verdict returns, the execution agent resumes the
+same workstream and runs the publisher's exact `--cleanup-reviewed` command
+unless retention was explicitly requested. See
+`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
 
 ### 5.7 Preserve Raw Capture
 
