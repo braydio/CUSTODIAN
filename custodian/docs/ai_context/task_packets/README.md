@@ -79,12 +79,17 @@ AR packet set is refreshed.
 
 ## Active Non-Player Actor Runtime Refactor Series
 
+Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search
+
 - Program tracker / architecture authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Expected program size: 11 implementation packets spanning standard combat-agent decomplexification, then commanded allies, fauna, encounter/social NPCs, static autonomous agents, and final compatibility cleanup.
-- Starter packets authored against `main@02ca0025b8`:
-  - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1, ready/auto, no dependency.
-  - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2, ready/auto, depends on NPA-1.
-  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3, ready/auto, depends on NPA-2.
+- Current first-wave packet state:
+  - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1 recovery workstream active at checkpoint `9af2adf59`; focused Marine/spatial/ambush gates pass, but landing is blocked by a pre-existing `grunt_falcon_reversal` baseline smoke failure reproduced on clean main.
+  - `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — paired NPA-1 review, dependency-gated until NPA-1 lands; verifies the 26-value parity, public request seam, host-service boundary, and full selected closeout after baseline validation is repaired.
+  - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2 blocked/manual; must be refreshed in this planning chat after the passed NPA-1 review before promotion to ready/auto.
+  - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — paired NPA-2 review, blocked with NPA-2.
+  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 blocked/manual; must be refreshed in this planning chat after the passed NPA-2 review.
+  - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review, blocked with NPA-3.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
 ## Cross-cutting Stealth Awareness Planning
