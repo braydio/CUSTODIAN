@@ -56,3 +56,22 @@
 - Tooling / docs drift discovered: The review-pairing contract did not represent planning-gated implementation/review pairs present on main; `grunt_falcon_reversal_smoke.gd` asserted a profile key that `_get_paired_execution_profile` never returns; `task_packet_index.py --write` still requires a Ready/Auto heading removed from the current README structure.
 - Follow-up: `fixed-in-scope`
 - What worked: Existing Marine behavior/parity evidence remained valid after sync; focused tests and the complete 23-check changed-file closeout now pass.
+
+## Independent Review
+
+- Status: `pending`
+- Review workstream: `review-enemy-marine-dash-ability-extraction-recovery-1`
+- Reviewed on main: `1ba0981e7859fa91ae86ea3bc638c0ce2474a1ad`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `1`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-02` (external coverage repair pending)
+- Next-slice finding IDs: `R0-01`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `review-enemy-marine-dash-ability-extraction-recovery-1` (resume after external coverage repair)
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`

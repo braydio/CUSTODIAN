@@ -36,3 +36,33 @@
 - ChatGPT/user planning refresh required: `yes`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
 - Refresh instruction: If review finds a material ownership/tuning/caller difference from checkpoint `9af2adf59`, bring the review evidence back to this chat before changing the NPA-2 host-service contract or broader actor architecture.
+
+## Review Progress
+
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed landed main: `1ba0981e7859fa91ae86ea3bc638c0ce2474a1ad`
+- Outcome: `pending`; no Marine blocking defect found. R0-01 is low-severity next-slice ownership prose drift. R0-02 is external changed-file coverage drift: all 23 selected tests pass, but `.agents/skills/custodian-next/agents/openai.yaml` is uncovered and makes the required report false (exit 6).
+- Runtime evidence: Three required focused tests pass after fresh-worktree import; parity is exactly 26 defaults + 26 scene values; `enemy.gd` is exactly 343 lines smaller. Detailed receipt: `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1_CLAUDE_SUMMARY.md`.
+- Preserve this workstream until the external owner gate is repaired; do not edit reviewed implementation or exempt validation.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: blocked
+- Friction severity: medium
+- What went wrong: Every selected closeout test passed, but the report failed coverage for unrelated current-main skill metadata; an initial focused invocation ran only its final repeated --test argument and encountered the fresh worktree's empty import cache.
+- Root cause / contributing factors: Commit 48d0871bb added .agents/skills/custodian-next/agents/openai.yaml without a validation owner. The focused CLI accepts one --test value, and fresh worktrees need initial Godot import before tests that omit needs_import.
+- Prevention / pipeline improvement: Repair the skill metadata's genuine validation ownership in a separate workstream; run individual focused IDs serially after import preflight/import.
+- Tooling / docs drift discovered: task_packet_index.py cannot find its uninitialized managed Ready/Auto block; VALIDATION_RECIPES.md explicitly documents that migration as separately reviewable. Stale Marine ownership prose remains in CONTEXT.md:117 and CURRENT_STATE.md:1486.
+- Follow-up: manual-follow-up
+- What worked: Independent 26-default/26-scene parity, state/caller audit, focused runtime gates, and all 23 selected closeout checks passed.
+
+## Next Handoff
+- Next workstream: review-enemy-marine-dash-ability-extraction-recovery-1
+- Next packet state: dependency-gated
+- Refresh owner: execution-agent
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search
+- Refresh reason: Required closeout is not green until current-main skill metadata has a validation owner.
+- Next action: Repair the unrelated coverage owner separately, then synchronize and resume this same review. After a passed review, refresh enemy-savage-pounce-ability-extraction in the authoring chat before implementation.
+- Blockers or open questions: .agents/skills/custodian-next/agents/openai.yaml is the sole uncovered path in /tmp/npa1-review-closeout.json; no Marine blocking defect found.
