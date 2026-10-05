@@ -7,8 +7,12 @@ packet work, prefer `dispatch.py claim-next --agent <agent-id>` (for example
 `CUSTODIAN_AGENT_ID` environment variable, then a neutral `unspecified` —
 never a silently assumed agent brand. The dispatcher
 reads fetched `origin/main`, checks packet dependencies and locks, then
-delegates branch/worktree creation to `workstream.py` under the same local
-mutex and remote unique-claim protocol. Direct `workstream.py start <id>` uses
+delegates branch/worktree creation to `workstream.py` under a shared local
+assignment mutex and the remote unique-claim protocol. The mutex covers packet
+selection, remote temporary-claim CAS, canonical `agent/<id>` publication,
+post-start verification, temporary-claim release, and the durable last-claim
+receipt. Best-effort diagnostic publication happens only after the mutex is
+released. Direct `workstream.py start <id>` uses
 that exclusive protocol for manual/unpacketed starts and fails closed if the
 branch, claim, or checkout already exists. It never silently adopts existing
 state. Truly read-only reviews may stay in
@@ -42,6 +46,33 @@ diagnostics under `agent-diagnostics/<id>/<run-id>`. Inspect with
 `python3 custodian/tools/agent/run_trace.py list` or
 `python3 custodian/tools/agent/run_trace.py export <run-id> --json`.
 Diagnostics contain lifecycle metadata only and cannot be landed as task code.
+Diagnostic `ls-remote`, fetch, and push operations have a bounded timeout;
+failure is recorded locally and cannot invalidate an otherwise successful task
+claim.
+
+### Local dispatcher contention
+
+The shared `dispatch.lock` is scoped to assignment-critical work and ordinary
+claims fail fast if another process sharing the same Git common directory owns
+it. A caller that intentionally wants a short bounded wait may pass
+`--lock-wait-seconds N` to `dispatch.py claim` or `claim-next`; the default is
+zero seconds. Never delete the lock file or terminate its holder to obtain the
+mutex. `flock` protects the file's inode, so unlinking it while held can split
+serialization across two inodes.
+
+Keep these conditions distinct:
+
+1. **`LOCAL DISPATCH BUSY`** means a local process is in the assignment-critical
+   section. Retry after it finishes; this says nothing about packet eligibility.
+2. **Packet logical lock conflict** means a selected packet's `Locks:` value
+   overlaps a different claimed packet. The selected packet is not eligible.
+3. **Remote recovery claim** means `dispatch-claims/<id>` exists without its
+   canonical `agent/<id>` branch. Inspect and recover it explicitly; it is not
+   evidence that the local mutex is busy.
+
+The dispatcher fetches packet truth from `origin/main`, so a stale local `main`
+checkout is not by itself a dispatcher blocker. Dispatch does not pull or
+otherwise move the user's local branch.
 
 Queued packet front door:
 
@@ -49,6 +80,7 @@ Queued packet front door:
 python3 custodian/tools/agent/dispatch.py status
 python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id>
 python3 custodian/tools/agent/dispatch.py claim <workstream-id> --agent <agent-id>
+python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id> --lock-wait-seconds 5
 ```
 
 Codex convenience routing is versioned in

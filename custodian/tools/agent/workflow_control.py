@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import fcntl
 import json
+import math
 import os
 import re
 import socket
@@ -20,6 +21,7 @@ TRACE_SCHEMA = "custodian.workflow_trace_event.v1"
 TRACE_VERSION = 1
 DIAGNOSTIC_PREFIX = "refs/heads/agent-diagnostics"
 CLAIM_PREFIX = "refs/heads/dispatch-claims"
+DIAGNOSTIC_NETWORK_TIMEOUT_SECONDS = 15.0
 SECRET_KEY = re.compile(r"(authorization|api.?key|access.?token|refresh.?token|password|secret|credential|private.?key)", re.I)
 SECRET_VALUE = re.compile(r"(?i)(bearer\s+|(?:gh[pousr]_|github_pat_|glpat-|xox[baprs]-)[A-Za-z0-9_./-]+|(?:token|password|secret|authorization)=)[^\s,;]+")
 URL_CREDENTIALS = re.compile(r"(?i)(https?://)[^/@\s:]+:[^/@\s]+@")
@@ -44,8 +46,14 @@ def resolve_agent_id(explicit: str | None) -> str:
     return env_value or DEFAULT_AGENT_ID
 
 
-def git(repo: Path, *args: str, check: bool = True, input_text: str | None = None) -> subprocess.CompletedProcess[str]:
-    result = subprocess.run(["git", *args], cwd=repo, input=input_text, text=True, capture_output=True)
+def git(
+    repo: Path,
+    *args: str,
+    check: bool = True,
+    input_text: str | None = None,
+    timeout: float | None = None,
+) -> subprocess.CompletedProcess[str]:
+    result = subprocess.run(["git", *args], cwd=repo, input=input_text, text=True, capture_output=True, timeout=timeout)
     if check and result.returncode:
         raise WorkflowControlError(f"git {' '.join(sanitize_argv(args))} failed: {redact(result.stderr or result.stdout)}")
     return result
@@ -62,16 +70,41 @@ def _valid_id(value: str) -> str:
     return value
 
 
+def dispatch_mutex_path(repo: Path) -> Path:
+    return common_dir(repo) / "custodian-workflow" / "dispatch.lock"
+
+
 @contextmanager
-def common_mutex(repo: Path, *, trace: "RunTrace | None" = None) -> Iterator[None]:
-    path = common_dir(repo) / "custodian-workflow" / "dispatch.lock"
+def common_mutex(
+    repo: Path,
+    *,
+    trace: "RunTrace | None" = None,
+    timeout_seconds: float = 0.0,
+) -> Iterator[None]:
+    if not math.isfinite(timeout_seconds):
+        raise WorkflowControlError("dispatch mutex wait timeout must be finite")
+    path = dispatch_mutex_path(repo)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a") as handle:
         started = time.monotonic()
-        fcntl.flock(handle, fcntl.LOCK_EX)
-        if trace:
-            trace.record("mutex_acquired", scope="dispatch", wait_ms=round((time.monotonic() - started) * 1000))
+        deadline = started + max(0.0, timeout_seconds)
+        while True:
+            try:
+                fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError as exc:
+                if time.monotonic() >= deadline:
+                    raise WorkflowControlError(
+                        "LOCAL DISPATCH BUSY: another local dispatcher is currently in the "
+                        "assignment-critical section.\n\n"
+                        f"lock: {path.resolve()}\n\n"
+                        "Do not delete the lock file or terminate the holder solely to obtain it. "
+                        "Retry after the active claim finishes."
+                    ) from exc
+                time.sleep(min(0.1, max(0.0, deadline - time.monotonic())))
         try:
+            if trace:
+                trace.record("mutex_acquired", scope="dispatch", wait_ms=round((time.monotonic() - started) * 1000))
             yield
         finally:
             fcntl.flock(handle, fcntl.LOCK_UN)
@@ -294,11 +327,17 @@ class RunTrace:
         """Best-effort publish a diagnostics-only snapshot outside task refs/main."""
         try:
             ref = self.diagnostic_ref
-            remote = git(self.repo, "ls-remote", "--heads", "origin", ref, check=False).stdout.strip()
+            remote = git(
+                self.repo, "ls-remote", "--heads", "origin", ref, check=False,
+                timeout=DIAGNOSTIC_NETWORK_TIMEOUT_SECONDS,
+            ).stdout.strip()
             parent = None
             if remote:
                 tracking = f"refs/custodian/diagnostics/{self.workstream_id}/{self.run_id}"
-                fetched = git(self.repo, "fetch", "origin", f"{ref}:{tracking}", check=False)
+                fetched = git(
+                    self.repo, "fetch", "origin", f"{ref}:{tracking}", check=False,
+                    timeout=DIAGNOSTIC_NETWORK_TIMEOUT_SECONDS,
+                )
                 if fetched.returncode:
                     raise WorkflowControlError(f"cannot fetch existing diagnostic ref {ref}")
                 parent = git(self.repo, "rev-parse", tracking).stdout.strip()
@@ -310,7 +349,10 @@ class RunTrace:
             args.extend(["-m", f"diagnostic trace {self.workstream_id} {self.run_id}"])
             commit = git(self.repo, *args, check=True).stdout.strip()
             started = time.monotonic()
-            pushed = git(self.repo, "push", "origin", f"{commit}:{ref}", check=False)
+            pushed = git(
+                self.repo, "push", "origin", f"{commit}:{ref}", check=False,
+                timeout=DIAGNOSTIC_NETWORK_TIMEOUT_SECONDS,
+            )
             self.command(["git", "push", "origin", f"{commit}:{ref}"], pushed, started)
             if pushed.returncode:
                 self._local_publish_failure(redact(pushed.stderr or pushed.stdout))
@@ -326,18 +368,20 @@ class RunTrace:
         # Avoid recursive export attempts. This still preserves the failure locally.
         self.record("diagnostic_publish_failed", reason=reason)
 
-    def complete(self, outcome: str, *, clear_active: bool = False) -> None:
+    def complete(self, outcome: str, *, clear_active: bool = False, publish: bool = True) -> None:
         self.record("run_completed", outcome=outcome)
-        self.publish()
+        if publish:
+            self.publish()
         if clear_active:
             try:
                 self.active_path.unlink()
             except FileNotFoundError:
                 pass
 
-    def finish_blocked(self, error: str) -> None:
+    def finish_blocked(self, error: str, *, publish: bool = True) -> None:
         self.record("run_blocked", reason=error)
-        self.publish()
+        if publish:
+            self.publish()
 
 
 def find_local_trace(repo: Path, run_id: str) -> Path | None:

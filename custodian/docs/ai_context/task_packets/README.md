@@ -204,6 +204,28 @@ that output is lost, recover it read-only with `dispatch.py last-claim` (or
 `--json`) rather than inferring ownership from worktree/branch activity.
 Continuous workers and cross-machine leases are deferred.
 
+The local dispatcher mutex is separate from packet eligibility. `claim` and
+`claim-next` fail fast with `LOCAL DISPATCH BUSY` when another process sharing
+the Git common directory is in the assignment-critical section. To wait
+intentionally, pass `--lock-wait-seconds N`; the wait is bounded and defaults
+to zero. Never delete `dispatch.lock` or terminate its holder: `flock` locks
+the inode, and unlinking a held file can allow two independent mutexes.
+
+Three blocked states must not be conflated:
+
+1. `LOCAL DISPATCH BUSY` is local process contention; retry after the active
+   assignment finishes.
+2. A packet `Locks:` conflict makes that candidate ineligible while a claimed
+   packet holds the same logical lock.
+3. A `dispatch-claims/<id>` ref without `agent/<id>` is interrupted remote
+   recovery state and requires explicit inspection.
+
+The dispatcher reads packet truth from fetched `origin/main`; a stale local
+`main` checkout alone does not block assignment. Diagnostic refs are
+best-effort and publish after the assignment-critical mutex is released, so a
+slow diagnostic push cannot hold up unrelated local claims. Diagnostic
+publication failure does not change the canonical claim or last-claim receipt.
+
 For interactive Codex, the repository provides the repo-local
 `$custodian-next` skill. It is also selectable from `/skills` and may appear
 directly in the slash picker. It does not change dispatcher eligibility: it
