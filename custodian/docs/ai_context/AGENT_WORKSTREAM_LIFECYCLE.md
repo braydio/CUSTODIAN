@@ -98,6 +98,10 @@ authority. For packeted work the receipt also carries the exact recorded
 `authoring_chat`, `visual_review` mode, canonical
 `/CUSTODIAN/visual_review/<workstream>/` root, and default
 `visual_review_retention` so autonomous workers do not have to rediscover the
+human-review route. For packeted work the receipt also carries the exact recorded
+`authoring_chat`, `visual_review` mode, canonical
+`/CUSTODIAN/visual_review/<workstream>/` root, and default
+`visual_review_retention` so autonomous workers do not have to rediscover the
 human-review route. Never infer ownership from worktree creation, terminal activity,
 branch existence, or another task being active. Before entering the checkout,
 verify the receipt's workstream/branch/worktree; if stdout was lost, recover
@@ -190,6 +194,27 @@ workstream, not completion and not permission to claim unrelated work.
 The cleanup path is programmatic and path-confined by
 `custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest ...`.
 Do not manually delete broad Dropbox directories.
+
+## Human / ChatGPT Visual Review Pause
+
+A required subjective visual decision is a pause inside the **current**
+workstream, not completion and not permission to claim unrelated work.
+
+1. Finish objective validation and publish the smallest Dropbox handoff through
+   `publish_review_artifacts.py`, passing the exact packet authoring-chat URL.
+2. Return the emitted `REVIEW_MANIFEST.json` path and reviewer questions to that
+   authoring conversation. ChatGPT web should use the connected Dropbox source to
+   inspect that exact path.
+3. Stop implementation at the subjective decision boundary. `$custodian-next`
+   must report the human-review blocker while this workstream remains active.
+4. When the decision returns, resume the same workstream, record the decision in
+   durable task evidence, and execute the emitted reviewed-evidence cleanup
+   command unless the manifest says `retain`.
+5. Continue validation/finish only after the human decision and cleanup/retention
+   result are resolved.
+
+The cleanup path is programmatic and path-confined by
+`custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest ...`.
 
 ## Default Execution Economy
 
