@@ -33,9 +33,17 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
    - A paired review named by the completed implementation is a normal immediate
      successor and should be preferred over unrelated global work.
 
-3. **Respect refresh and dependency gates.**
+3. **Respect refresh, human-review, and dependency gates.**
    - If the handoff says ChatGPT/user planning refresh is required, the next packet
      is blocked/manual, or the named successor is otherwise not eligible, stop.
+   - If the active/current workstream is waiting on subjective visual review,
+     stay on that workstream. Report the claim receipt's exact `authoring_chat`
+     plus the emitted Dropbox `manifest_path` and reviewer questions. Do not
+     claim unrelated work while that human-owned decision is unresolved.
+   - After the ChatGPT/user visual verdict is returned, continue the same
+     workstream. Unless retention was explicitly requested, run the emitted
+     `publish_review_artifacts.py --cleanup-reviewed ...` command before
+     continuing/finishing. Do not delete by wildcard or age.
    - Report the exact blocker and recorded authoring/refresh chat URL.
    - Do not edit packet status, silently reinterpret scope, or skip to unrelated
      work just to keep the command moving.
@@ -51,6 +59,9 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
 5. **After a successful claim, trust the structured receipt.**
    - Enter the returned worktree.
    - Read root `AGENTS.md`, `custodian/AGENTS.md`, and the returned task packet.
+   - Preserve the receipt's `authoring_chat` and `visual_review_root`. Those
+     are the durable return channel and Dropbox namespace for any required
+     subjective review.
    - Treat the task packet as the complete brief. Do not ask the user to restate it.
    - Execute and finish through the normal workstream lifecycle.
 
@@ -61,5 +72,7 @@ Return one compact status:
 - `CLAIMED <workstream>` plus returned worktree when a claim succeeds;
 - `REFRESH REQUIRED <workstream>` plus the exact recorded chat URL when planning
   is the gate;
+- `VISUAL REVIEW REQUIRED <workstream>` plus the exact authoring chat and
+  Dropbox manifest path when subjective review is the gate;
 - `BLOCKED <reason>` when a named continuation cannot proceed;
 - `NO ELIGIBLE AUTO TASK` when the global dispatcher has no eligible work.
