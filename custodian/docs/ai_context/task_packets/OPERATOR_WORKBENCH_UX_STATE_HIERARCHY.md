@@ -4,7 +4,7 @@
 >
 > This is a planning packet based on `main@330422023f9a92362915af46b9658585e7c1d450`.
 > Do not claim or implement it yet. Request a fresh OPUI repository/interface
-> review after `review-operator-workbench-fx-layer-adoption` is complete and
+> review after `review-operator-workbench-animation-creation` is complete and
 > archived. Remove this banner only after the packet is reconciled against
 > current main and explicitly signed off for execution.
 
