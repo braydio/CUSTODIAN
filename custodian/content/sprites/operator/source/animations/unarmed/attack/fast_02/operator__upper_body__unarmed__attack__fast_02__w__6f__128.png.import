@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dk5t2nlvpbugm"
-path="res://.godot/imported/operator__upper_body__unarmed__attack__fast_02__e__6f__96.png-817a2e51239d2d36fc62f4bf1fe597cd.ctex"
+uid="uid://chmar4g33y7fs"
+path="res://.godot/imported/operator__upper_body__unarmed__attack__fast_02__w__6f__128.png-608af031ee9fd15d8543c5aaaf23f49d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/source/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__e__6f__96.png"
-dest_files=["res://.godot/imported/operator__upper_body__unarmed__attack__fast_02__e__6f__96.png-817a2e51239d2d36fc62f4bf1fe597cd.ctex"]
+source_file="res://content/sprites/operator/source/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__w__6f__128.png"
+dest_files=["res://.godot/imported/operator__upper_body__unarmed__attack__fast_02__w__6f__128.png-608af031ee9fd15d8543c5aaaf23f49d.ctex"]
 
 [params]
 
