@@ -82,11 +82,11 @@
      - matching live document has unsaved changes;
      - publication/review will use last saved state.
      Do not collapse an unsaved editor warning into generic repository dirt.
-  3. Project main readiness through the prerequisite structured readiness authority:
-     - `MAIN READY`;
-     - safe update/synchronization available;
-     - blocked with one concise reason.
-     Raw branch/sparse/ahead-behind details belong in diagnostics unless they directly block the current action.
+  3. Project main readiness through the prerequisite structured readiness/reconciliation authority:
+     - `MAIN READY` after current or successfully reconciled launch state;
+     - `UPDATING WORKBENCH` only while a bounded reconciliation is actually in flight, if that transient state is exposed;
+     - `MAIN BLOCKED` with one concise reason for unsafe/failed reconciliation.
+     Do not present `behind N` as pending animation work or require the artist to trigger a routine safe sync manually. Raw branch/sparse/ahead-behind counts belong in diagnostics unless a true unsafe condition directly blocks the current action.
   4. Establish explicit precedence so blockers are never hidden by less important status. Recovery and blocked/stale states outrank ordinary modified/clean states. Unsaved Aseprite state remains an independent visible warning.
   5. Rewrite `WorkbenchStatusBar` around artist-critical state. Normal healthy presentation should center selected animation identity/status, main readiness, and Aseprite connection. Do not lead with branch name or sparse-profile text.
   6. Preserve all previous technical status data behind an expandable diagnostics/detail surface. Include exact branch/checkout identity, main relation, sparse profile, workspace path, Aseprite executable, dependency status and other current low-level status there rather than deleting observability.
