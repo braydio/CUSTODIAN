@@ -42,7 +42,7 @@
   - `custodian/tools/operator/ui/service.py::publish_preview/publish`
   - `custodian/tools/operator/animation_workbench.py::publish`
   - `custodian/tools/operator/operator_art_worktree.py`
-  - active Workbench design and prerequisite publish-readiness/FX-adoption packets
+  - active Workbench design and prerequisite publish-readiness/background-base-sync/FX-adoption packets
 - Task-specific authority:
   - Workbench publication transaction remains unchanged authority.
   - Land/main readiness comes only from the landed structured readiness authority.
