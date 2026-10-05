@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `awakening-room-connectors-polish`
+- Depends on: `review-awakening-room-connectors-polish`
 - Locks: `awakening-04-05-connector-presentation`
 - Kind: `implementation`
 - Review: `none`
@@ -13,7 +13,7 @@
 - Reviewed main: `43cb6ae3f6dc6da4924e0f8c031e68e2f2be1e78`
 - Goal: Make the repaired Dust Lung ↔ Locker Reliquary handoff durable by adding one repeatable bidirectional runtime/presentation regression path that can expose seam pops without requiring the user to manually rediscover the connector camera positions.
 - Completion boundary: After the existing connector visual-closeout workstream is complete/archived, add or reuse the narrowest stable runtime/Moment Forge coverage for traversal from Dust Lung through the single 04→05 dogleg connector into Locker Reliquary and back through that same connector, with synchronized alpha/evidence capture around both room handoffs. Do not reopen art direction or connector geometry unless the new regression proves a concrete technical defect.
-- Current measured state: **This packet is now downstream of `awakening-room-connectors-polish`, which changes the connector art source and alpha contract and is expected to add the same durable bidirectional traversal proof. Do not execute this packet's old fade-specific assertions unchanged. After the dependency lands, first check whether its committed scenario/telemetry fully satisfies this packet; if so, close this packet as superseded rather than duplicating the harness. If a residual regression gap remains, refresh only that gap.** The active legacy packet `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` correctly targets the current room-canvas seam but still carries obsolete three-segment review labels from the retired multi-piece connector implementation. It does not define a durable named bidirectional traversal scenario, and its acceptance can therefore prove static joins while still missing a direction-dependent alpha pop during forward/backtracking. The current repository already provides Moment Forge and focused Awakening smoke infrastructure, so this regression surface can be bounded without creating a new presentation system.
+- Current measured state: **This packet is now downstream of reviewed `awakening-room-connectors-polish`, which changes the connector art source and alpha contract and is expected to add the same durable bidirectional traversal proof. Do not execute this packet's old fade-specific assertions unchanged. After the dependency lands, first check whether its committed scenario/telemetry fully satisfies this packet; if so, close this packet as superseded rather than duplicating the harness. If a residual regression gap remains, refresh only that gap.** The active legacy packet `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` correctly targets the current room-canvas seam but still carries obsolete three-segment review labels from the retired multi-piece connector implementation. It does not define a durable named bidirectional traversal scenario, and its acceptance can therefore prove static joins while still missing a direction-dependent alpha pop during forward/backtracking. The current repository already provides Moment Forge and focused Awakening smoke infrastructure, so this regression surface can be bounded without creating a new presentation system.
 - Evidence: User runtime captures on 2026-09-29 show the remaining failure specifically at room/connector boundaries; the closeout packet requires direct connector/room-junction evidence; `custodian/game/world/awakening/awakening_first_return.gd` owns zone/connector alpha; `custodian/tools/validation/awakening_first_return_smoke.gd` owns static scene/fade assertions; `custodian/tools/iteration/run_moment.py` and `custodian/tools/iteration/scenarios/` are the live repeatable experiential-regression path.
 - Task-specific authority: `design/04_architecture/AWAKENING_FIRST_RETURN.md`; archived/completed `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT.md` when this dependency clears; `design/02_features/debug_ui/MOMENT_FORGE_SYSTEM.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`; live Awakening controller and focused smoke.
 - Work surface: Awakening connector presentation regression coverage only: the existing Awakening smoke and/or one narrowly scoped Moment Forge traversal scenario plus its capture/telemetry fixture. Touch runtime presentation code only if the new regression proves a concrete residual bug after the dependency lands.
@@ -27,7 +27,7 @@
 
 ## Handoff
 
-- Next action: The dispatcher auto-claims only after `awakening-room-connectors-polish` is complete and archived; then either close as superseded or implement only the residual regression gap.
+- Next action: The dispatcher auto-claims only after `review-awakening-room-connectors-polish` is complete and archived; then either close as superseded or implement only the residual regression gap.
 - Best starting files: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/tools/validation/awakening_first_return_smoke.gd`; `custodian/tools/iteration/run_moment.py`; `custodian/tools/iteration/scenarios/`.
 - Blockers or open questions: Dependency only. Do not begin while the visual-closeout workstream still owns connector presentation.
 
@@ -37,4 +37,4 @@
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
-- Refresh instruction: After `awakening-room-connectors-polish` is complete, inspect its landed bidirectional scenario, telemetry, and changed validation ownership. If they already prove both joins in both directions under the new opaque-overlap contract, disposition this packet as superseded/no additional implementation. Otherwise narrow execution to only the remaining regression gap inside the claimed workstream; no manual status flip or ChatGPT refresh is required.
+- Refresh instruction: After `review-awakening-room-connectors-polish` is complete, inspect its landed bidirectional scenario, telemetry, and changed validation ownership. If they already prove both joins in both directions under the new opaque-overlap contract, disposition this packet as superseded/no additional implementation. Otherwise narrow execution to only the remaining regression gap inside the claimed workstream; no manual status flip or ChatGPT refresh is required.
