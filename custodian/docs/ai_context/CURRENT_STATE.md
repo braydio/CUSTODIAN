@@ -1,5 +1,20 @@
 # CURRENT STATE — CUSTODIAN
 
+## Bidirectional Dropbox Handoff (2026-10-05)
+
+Dropbox has two separate transient transport lanes. Inbound implementation
+inputs use immutable `CUSTODIAN/implementation_inputs/<workstream>/<handoff-id>/`
+handoffs with `HANDOFF_MANIFEST.json` uploaded last; the fetcher verifies exact
+file set, declared size, and SHA-256 before atomically exposing files in local
+cache staging. It never extracts ZIPs or writes runtime/Asset V2 locations.
+Outbound subjective visual evidence remains under
+`CUSTODIAN/visual_review/<workstream>/<run-id>/` through
+`publish_review_artifacts.py`. Git remains authority for code, design, packets,
+and durable receipts; Asset Pipeline V2 owns any later source/inbox promotion.
+The shared transport/remote resolver is `custodian/tools/iteration/dropbox_transport.py`.
+See `IMPLEMENTATION_HANDOFF.md` and `VISUAL_REVIEW_HANDOFF.md` for the two
+contracts and remote precedence.
+
 ## Custodian Death Handoff R1 (2026-10-04)
 
 Operator lethal damage emits one structured `operator_down` snapshot after

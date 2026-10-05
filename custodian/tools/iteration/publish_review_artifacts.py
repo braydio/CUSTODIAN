@@ -27,15 +27,15 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import hashlib
 import json
-import os
 import re
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
 from typing import Iterable
+
+import dropbox_transport
 
 DEFAULT_REMOTE_ROOT = "CUSTODIAN/visual_review"
 DEFAULT_MAX_FILES = 12
@@ -67,13 +67,7 @@ def _run(
     check: bool = True,
     capture_output: bool = True,
 ) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        args,
-        check=check,
-        text=True,
-        stdout=subprocess.PIPE if capture_output else None,
-        stderr=subprocess.PIPE if capture_output else None,
-    )
+    return dropbox_transport.run(args, check=check, capture_output=capture_output)
 
 
 def _repo_root() -> Path:
@@ -100,11 +94,7 @@ def _slug(value: str, field: str = "value") -> str:
 
 
 def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    return dropbox_transport.sha256_file(path)
 
 
 def _unique_files(paths: Iterable[Path]) -> list[Path]:
@@ -179,45 +169,16 @@ def resolve_remote(explicit: str | None, env: dict[str, str] | None = None) -> s
     `git-dropbox-sync:` zero-config without guessing when multiple Dropbox-like
     remotes exist.
     """
-    environ = os.environ if env is None else env
-    remote = (explicit or environ.get("CUSTODIAN_REVIEW_REMOTE", "")).strip()
-    if remote:
-        return remote if remote.endswith(":") else f"{remote}:"
-
-    try:
-        result = _run(["rclone", "listremotes"])
-    except FileNotFoundError as exc:
-        raise RuntimeError("rclone is not installed") from exc
-    remotes = {line.strip() for line in result.stdout.splitlines() if line.strip()}
-    if "dropbox:" in remotes:
-        return "dropbox:"
-
-    dropbox_named = sorted(
-        remote_name for remote_name in remotes
-        if "dropbox" in remote_name.lower()
-    )
-    if len(dropbox_named) == 1:
-        return dropbox_named[0]
-    if len(dropbox_named) > 1:
-        raise RuntimeError(
-            "multiple Dropbox-like rclone remotes are configured; "
-            "pass --remote or set CUSTODIAN_REVIEW_REMOTE explicitly. "
-            f"Candidates: {', '.join(dropbox_named)}"
-        )
-
-    listed = ", ".join(sorted(remotes)) or "(none)"
-    raise RuntimeError(
-        "no review remote configured; pass --remote, set CUSTODIAN_REVIEW_REMOTE, "
-        "configure a remote named dropbox:, or keep exactly one configured remote "
-        f"whose name contains 'dropbox'. Configured remotes: {listed}"
+    return dropbox_transport.resolve_remote(
+        explicit,
+        env,
+        env_precedence=("CUSTODIAN_REVIEW_REMOTE",),
+        runner=_run,
     )
 
 
 def _remote_path(remote: str, remote_root: str, *parts: str) -> str:
-    clean_root = remote_root.strip("/")
-    clean_parts = [part.strip("/") for part in parts if part]
-    suffix = "/".join([clean_root, *clean_parts]) if clean_root else "/".join(clean_parts)
-    return f"{remote}{suffix}"
+    return dropbox_transport.remote_path(remote, remote_root, *parts)
 
 
 def _safe_name(path: Path, used: set[str]) -> str:

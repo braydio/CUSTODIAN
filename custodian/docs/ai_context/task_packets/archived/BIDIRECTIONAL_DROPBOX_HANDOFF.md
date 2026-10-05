@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `bidirectional-dropbox-handoff`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -120,13 +120,23 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- What went wrong: `pending execution`
-- Root cause / contributing factors: `pending execution`
-- Prevention / pipeline improvement: `pending execution`
-- Tooling / docs drift discovered: `pending execution`
-- Follow-up: `pending execution`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `the claimed worktree had no code-review graph database, so the required full index build took about two minutes; the first changed-file sweep also selected an unrelated world-placement smoke that timed out`
+- Root cause / contributing factors: `the isolated worktree had no graph index; validation_manifest.json was incorrectly listed as an owner of the unrelated world-placement check, so editing the registry selected that smoke`
+- Prevention / pipeline improvement: `removed false registry/shared-doc ownership links from world_placement_context; the relevant manifest, docs, and runtime checks remain covered by their own validators`
+- Tooling / docs drift discovered: `active context documented only the outbound visual-review lane; also found archived-feedback gate drift and three missing active packet fields, all corrected without rewriting historical receipts`
+- Follow-up: `fixed-in-scope`
+- What worked: `shared rclone resolution preserved outbound behavior; real rclone and ChatGPT Dropbox uploads both round-tripped through the same verified fetch path`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Real rclone and ChatGPT Dropbox connector PNG/ZIP handoffs fetched into hash-verified staging; outbound review artifact round-trip hash matched; focused inbound/outbound suites and changed-file validation passed.
 
 ## Handoff
 

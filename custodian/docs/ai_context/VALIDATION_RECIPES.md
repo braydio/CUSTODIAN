@@ -69,6 +69,23 @@ validity, dependency-gated eligibility, and the finite review-cycle cap):
 python3 custodian/tools/agent/test_dispatch.py
 ```
 
+## Dropbox Handoff Transport
+
+The inbound implementation lane and outbound visual-review lane share
+`custodian/tools/iteration/dropbox_transport.py`. Run their focused unit suites
+first; they require no Dropbox credentials:
+
+```bash
+python3 custodian/tools/iteration/test_implementation_handoff.py
+python3 custodian/tools/iteration/test_publish_review_artifacts.py
+```
+
+For a scoped transport implementation, follow with
+`python3 custodian/tools/validation/run_validation.py --changed --json` and the
+real-provider doctor/round-trip steps in
+`custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md`. These are external
+provider checks, not a reason to launch a broad Godot sweep.
+
 Check the live queue's review pairing against fetched `origin/main` directly:
 
 ```bash

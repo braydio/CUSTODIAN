@@ -7,6 +7,14 @@ inspect through the linked Dropbox source.
 This workflow does **not** replace deterministic validation. It begins only after
 the cheapest objective checks have already settled everything they can.
 
+This document owns only the outbound `CUSTODIAN/visual_review/` evidence lane.
+Inbound ChatGPT/user-generated implementation inputs are a separate immutable,
+manifest-committed lane under `CUSTODIAN/implementation_inputs/`; use
+`IMPLEMENTATION_HANDOFF.md` and `implementation_handoff.py` for that workflow.
+Both lanes share remote selection through `custodian/tools/iteration/dropbox_transport.py`.
+The payload and review roots are transient transport, not Git or Asset Pipeline
+V2 authority.
+
 ## Decision Boundary
 
 Use the Dropbox handoff only when all of the following are true:
