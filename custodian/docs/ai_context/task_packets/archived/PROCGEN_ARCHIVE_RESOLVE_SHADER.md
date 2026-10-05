@@ -129,22 +129,3 @@ Do not treat AR2 as review-complete or use it to unlock AR3 until:
 1. `procgen-archive-resolve-shader-recovery-1` completes with real-renderer + explicit user/ChatGPT visual evidence;
 2. `review-procgen-archive-resolve-shader` passes from a fresh context;
 3. AR3 is refreshed with the user in https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7.
-
-## Independent Review
-
-- Status: `passed`
-- Review workstream: `review-procgen-archive-resolve-shader`
-- Reviewed on main: `e60e097f2` (AR2 implementation `085a38a5e`; renderer recovery `procgen-archive-resolve-shader-recovery-1`)
-- Reviewer context: `fresh`
-- Reviewer provenance: `same-agent-fresh-context`
-- Review modes: `code, runtime, visual` (objective visual facts from a fresh real-renderer Moment Forge run; the aesthetic decision is the human's and was not substituted)
-- Blocking defects: `0`
-- Material evidence gaps: `0`
-- Non-blocking issues: `3`
-- Optional improvements: `1`
-- Correction finding IDs: `none`
-- Next-slice finding IDs: `R0-01, R0-02, R0-03`
-- Human-decision finding IDs: `none`
-- Detailed review summary: `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER_CLAUDE_SUMMARY.md`
-- Follow-up workstream: `none` (AR3 stays refresh-required with the user; see the summary's Next Handoff)
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
