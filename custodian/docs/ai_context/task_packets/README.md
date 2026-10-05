@@ -272,7 +272,17 @@ or design interpretation may use `execution-agent`.
 
 Historical packets without an authoring URL remain valid; surface
 `Authoring chat: not-recorded` and ask the user to provide the originating
-chat URL if they have it.
+chat URL if they have it. When a packet **does** record a concrete authoring
+URL, every durable implementation/review/correction/recovery closing summary
+must carry that exact `Authoring chat` line; `workstream.py finish` enforces
+this backlink before teardown.
+
+If a packet reaches a human-owned subjective visual gate, the authoring ChatGPT
+conversation is the review endpoint. The execution agent reports that exact chat
+URL plus the Dropbox manifest/questions and pauses the same workstream. After the
+verdict returns, reviewed Dropbox evidence is deleted through the manifest-gated
+`--cleanup-reviewed` command by default; explicit retain policy is the only
+normal exception.
 
 ## Paired Review Default And Independence
 
