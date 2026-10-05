@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `review-operator-workbench-publish-readiness-recovery`
+- Depends on: `review-operator-workbench-background-base-sync`
 - Locks: `operator-workbench-ui, operator-workbench-publish`
 - Kind: `implementation`
 - Review: `auto`
