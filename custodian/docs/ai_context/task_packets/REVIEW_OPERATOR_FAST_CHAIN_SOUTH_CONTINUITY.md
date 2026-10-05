@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-fast-chain-south-continuity`
 - Kind: `review`
-- Status: `blocked`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-fast-chain-south-continuity`
