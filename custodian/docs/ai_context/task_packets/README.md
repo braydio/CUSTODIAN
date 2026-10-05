@@ -106,6 +106,13 @@ Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_AL
 - `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/manual dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership.
 - Both remain intentionally non-claimable drafts until the stealth design boundary is accepted for implementation.
 
+## Active Bidirectional Dropbox Handoff
+
+- Authoring chat: https://chatgpt.com/share/6ac306f1-f2a0-83e9-9823-86add3c01c91?ogimg=plain
+- `BIDIRECTIONAL_DROPBOX_HANDOFF.md` — P1 ready/auto workflow packet. Adds immutable `CUSTODIAN/implementation_inputs/<workstream>/<handoff-id>/` for ChatGPT/user-generated PNG/ZIP/binary payloads, manifest/hash/path verification into staging only, preserves `CUSTODIAN/visual_review`, and requires one real Dropbox PNG+ZIP roundtrip.
+- `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — paired P1 post-land fresh-context code/architecture/workflow review with hostile-manifest, credential-boundary, and live-provider evidence checks.
+- The user explicitly authorizes Codex/Cloud execution surfaces to perform required rclone/Dropbox setup and unique sacrificial transport tests on their behalf; interactive provider authentication remains the only legitimate external stop condition.
+
 ## Selection
 
 - Skip packets for narrow, low-risk, single-session work.
