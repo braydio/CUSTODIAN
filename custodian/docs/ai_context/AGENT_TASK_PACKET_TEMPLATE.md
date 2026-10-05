@@ -25,7 +25,7 @@ coherent effort.
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<lowercase-kebab-id>`
 - Status: `draft`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `none`
@@ -67,8 +67,7 @@ When the user supplied an authoring-chat URL, reuse that same URL for
 
 Status values: `draft`, `ready`, `in_progress`, `blocked`, `complete`.
 
-Dispatch defaults safely to `manual`; only explicitly marked `auto` packets
-can be selected by `dispatch.py claim-next`. Priority is `P0` (highest)
+Executable packets default to `Dispatch: auto`. `Status`, dependencies, locks, and review pairing are the ordinary claim gates, so a `ready/auto` packet with incomplete dependencies remains blocked and becomes claimable automatically when those dependencies archive `complete`. Use `Dispatch: manual` only when the user explicitly wants to decide when an otherwise implementation-ready packet may be claimed. Priority is `P0` (highest)
 through `P3` (lowest). Dependencies name workstream IDs that must have complete
 archived packets on `origin/main`. Locks are comma-separated narrow ownership
 IDs held for the duration of a published claim, or `none`.
@@ -136,8 +135,9 @@ Required quality:
   accidental incompleteness.
 
 Do not promote a packet to `ready` while its implementation contract still
-contains unresolved design choices that require the user's judgment. Use
-`draft` or `Dispatch: manual` instead.
+contains unresolved design choices that require the user's judgment. Keep it
+`draft`. Use `Dispatch: manual` only when the contract is otherwise ready but
+the user explicitly wants to control claim timing.
 
 Do not encode duplicate technical truth already owned by a schema/resource.
 Reference the authority and state the closure condition.
