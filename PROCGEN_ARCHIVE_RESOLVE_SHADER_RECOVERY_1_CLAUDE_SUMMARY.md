@@ -13,7 +13,8 @@
 - Probes: REQUESTED/READY/RESOLVING/settled phases; active instances return to 0; `presentation_time` frozen at 2.05 during pause; reduced-effects reveal of 517 tiles; 44 reacquisition tiles after forced unload; one shared material; actor above the veil.
 - Focused tests passed: `procgen_archive_resolve_shader`, `procgen_reveal_presentation`, `procgen_pause_aware_streaming`, `procgen_runtime_health`, `procgen_region_frame`, Moment Forge schema/router smokes. S1 quick fingerprint `1773840677`. `git diff --check` clean.
 - Dropbox handoff: `/CUSTODIAN/visual_review/procgen-archive-resolve-shader-recovery-1/20261005T025507Z/REVIEW_MANIFEST.json`.
-- Visual decision: the user approved this pass in-session on 2026-10-05 (not in the recorded authoring chat).
+- Visual decision: ChatGPT/user approved the renderer-backed AR2 visual baseline in the recorded authoring chat after reviewing the published Dropbox contact sheet/keyframes. No pre-land visual tuning was requested.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
 
 ## Process Feedback
 
