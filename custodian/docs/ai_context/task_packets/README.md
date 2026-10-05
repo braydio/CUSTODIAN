@@ -164,8 +164,12 @@ material subjective judgment will still remain after those checks, route one
 compact external handoff through
 `custodian/tools/iteration/publish_review_artifacts.py` and
 `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`. The execution agent should
-return the Dropbox manifest path and reviewer questions, not perform a redundant
-aesthetic critique of its own captures.
+return the exact packet `Authoring chat`, Dropbox manifest path, reviewer
+questions, cleanup policy, and emitted cleanup command, not perform a redundant
+aesthetic critique of its own captures. The authoring ChatGPT conversation is
+the review endpoint. New bundles default to delete-after-review, and the
+execution agent performs the manifest-gated cleanup after the verdict unless
+retention was explicitly requested.
 
 ## Execution Feedback
 
