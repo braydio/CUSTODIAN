@@ -38,8 +38,11 @@ REQUIRED_CONTEXT_FILES = (
     "custodian/docs/ai_context/FILE_INDEX.md",
     "custodian/docs/ai_context/VALIDATION_RECIPES.md",
     "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+    "custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md",
     f"{PACKET_ROOT}/README.md",
     "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+    "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md",
+    "custodian/docs/ai_context/AGENT_CORRECTION_PACKET_TEMPLATE.md",
 )
 
 # A small, explicit manifest of tooling paths the AI-context docs depend on.
