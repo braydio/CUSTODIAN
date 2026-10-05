@@ -132,7 +132,7 @@
     - unsaved matching Aseprite;
     - LAND PENDING.
   - Run `operator_workbench_mirror_publish_smoke.py` unchanged as a backend regression.
-  - Run prerequisite publication-readiness focused smoke(s) selected by validation ownership.
+  - Run prerequisite background-base-sync and publication-readiness focused smoke(s) selected by validation ownership.
   - Run `python3 custodian/tools/validation/run_validation.py --changed --json`.
   - Run `git diff --check`.
 - Task overrides: `none`
