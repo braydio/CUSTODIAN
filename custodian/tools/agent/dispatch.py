@@ -376,12 +376,20 @@ def claim(
                     )
                 release_remote_claim(repo, remote_claim, trace=trace)
 
+                authoring_chat = (
+                    selected.authoring_chat
+                    or selected.refresh_planning_chat
+                    or "not-recorded"
+                )
                 receipt = {
                     "schema": "custodian.dispatch.claim.v1", "result": "claimed",
                     "workstream": selected.workstream, "prior_status": selected.status,
                     "branch": expected_branch, "worktree": str(worktree), "packet": selected.path,
                     "checkout": checkout, "verified": True, "agent": agent,
                     "run_id": trace.run_id, "trace_ref": trace.diagnostic_ref,
+                    "authoring_chat": authoring_chat,
+                    "visual_review_root": f"/CUSTODIAN/visual_review/{selected.workstream}/",
+                    "visual_review_retention": "delete-after-review",
                 }
                 _write_last_claim_receipt(repo, receipt)
                 trace.record("dispatch_receipt_written", packet=selected.path, branch=expected_branch, worktree=str(worktree))
@@ -401,6 +409,9 @@ def claim(
     print(f"branch: {receipt['branch']}")
     print(f"worktree: {receipt['worktree']}")
     print(f"packet: {receipt['packet']}")
+    print(f"authoring chat: {receipt['authoring_chat']}")
+    print(f"visual review root: {receipt['visual_review_root']}")
+    print("visual review retention: delete-after-review unless the packet/user explicitly says retain")
     print("\nNEXT:")
     print(f"cd {receipt['worktree']}")
     print(f"Read AGENTS.md, custodian/AGENTS.md, then {receipt['packet']}.")
@@ -462,6 +473,8 @@ def last_claim(repo: Path, *, as_json: bool) -> int:
         print(f"branch: {branch}")
         print(f"worktree: {worktree}")
         print(f"packet: {receipt.get('packet')}")
+        print(f"authoring chat: {receipt.get('authoring_chat', 'not-recorded')}")
+        print(f"visual review root: {receipt.get('visual_review_root', '')}")
         print(f"checkout: {receipt.get('checkout')}")
         suffix = f" ({'; '.join(stale_reasons)})" if stale_reasons else ""
         print(f"freshness: {freshness}{suffix}")
