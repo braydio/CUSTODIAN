@@ -58,8 +58,8 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — P1 ready/auto implementation packet. It consumes the user's local `~/Downloads/dust.png`, `connector.png`, and `locker.png` into the existing Dust Lung, 04→05 connector, and Locker Reliquary Asset V2 families; replaces the visible room-crossfade/room-strip seam machinery with direct registered art; reconciles the new Locker archive obstacles/P-9 bay; and keeps any still-missing Locker foreground honest rather than fabricating art.
 - `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH.md` — paired P1 post-land code/runtime/visual/asset-pipeline review.
-- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is ready/auto and dependency-gated on the room-connectors polish. On claim it must self-refresh from the landed implementation + paired-review evidence and must not restore the retired Zone04/05 feather/fade contract.
-- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is ready/auto and dependency-gated on the polish; on claim it first checks whether the new committed bidirectional regression fully supersedes it, closing as superseded when no residual gap remains.
+- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is ready/auto and dependency-gated on the paired review of room-connectors polish. On claim it must self-refresh from the landed implementation + paired-review evidence and must not restore the retired Zone04/05 feather/fade contract.
+- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is ready/auto and dependency-gated on the paired polish review; on claim it first checks whether the new committed bidirectional regression fully supersedes it, closing as superseded when no residual gap remains.
 
 ### Active Archive Resolve Presentation Series
 
