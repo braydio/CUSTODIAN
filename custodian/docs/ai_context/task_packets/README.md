@@ -7,6 +7,10 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 ## Active Packets
 
+### Ready / Auto Dispatch
+
+This section is owned by `custodian/tools/agent/task_packet_index.py`; run it with `--write` after packet changes to populate/update the bounded managed block.
+
 ### Active Hub First-Set / First Campaign Loop Series
 
 Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
@@ -34,10 +38,26 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 
 - K3D-1 remains complete/reviewed precursor evidence.
 - K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
-- `isometric-2-5d-presentation-foundation` is **ready/auto**; its K3D-1P dependency is satisfied by this landed precursor.
-- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the foundation.
+- `isometric-2-5d-presentation-foundation` is **ready/auto**; its K3D-1P dependency is satisfied.
+- `review-isometric-2-5d-presentation-foundation` is the new paired fresh-context review and gates downstream showcase consumers.
+- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the reviewed foundation.
+- `sundered-keep-overlook-alternate-vertical-slice` is an independent reviewed-foundation consumer tracked by the new Sundered overlook roadmap.
 - The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
 - Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
+
+### Active Sundered Keep Overlook Alternate Program
+
+Program tracker: `../../../design/05_levels/SUNDERED_KEEP_OVERLOOK_ALTERNATE_ROADMAP.md`.  
+Authoring / review / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
+
+The goal is a standalone playable fixed-oblique 2.5D alternate: a small foreground shelf/perch overlooking a vast apparent depth field with the Sundered Keep as the dominant distant destination. It stays on real Operator + PlayerController + Camera2D and does not replace the production route yet.
+
+- `SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` — SKO-1 ready/auto behind the reviewed 2.5D foundation; composition proof using existing donor assets only.
+- `REVIEW_SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` — paired fresh-context runtime/composition review.
+- `SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — SKO-2 blocked/manual optional Asset V2 layered-art pass, activated only if SKO-1 composition passes and donor-art fidelity is the remaining problem.
+- `REVIEW_SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — paired SKO-2 review.
+- `SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3 blocked/manual planning gate; returns to the chat above after reviewed standalone evidence and authors the production/procgen integration series from then-live seams.
+- No production integration implementation packet is pre-authored yet.
 
 ### Active Local Asset Intake
 
@@ -69,13 +89,15 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are complete/passed. AR2 implementation landed on `085a38a5`, but its archived closeout explicitly lacked the mandatory real-renderer compile/runtime proof and human visual decision. The ingress-spawn hotfix/review are now complete/passed, `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` closed the renderer gate (real-renderer proof + user visual approval); the existing AR2 paired review is now claimable. AR3 is `ready/auto` and dependency-gated on the recovered AR2 review; its execution agent reconstructs the landed seam from current main and predecessor evidence at claim time. Subjective visual/game-feel approval stays in the Dropbox + user/ChatGPT review lane.
+The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are complete/passed. AR2 implementation, renderer recovery, Dropbox visual approval, and fresh-context paired review are complete/passed with 0 blocking defects / 0 material evidence gaps and S1 `1773840677`. AR3 was refreshed in the recorded authoring chat and is `ready/auto`, but intentionally has a second dependency on the P0 playable-region spawn-validity review after current-main playtest reproduced an Operator spawn outside the accepted playable region. AR3 may present only an already-valid runtime spawn. Subjective visual/game-feel approval remains in the Dropbox + user/ChatGPT review lane.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — ARR1, complete: passed with 0 blocking defects; RFR1 R0-04 closed; next-slice items R0-01..R0-04 recorded on the archived AR1 packet.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 implementation landed on `085a38a5`; archived receipt records renderer/visual proof missing, so do not treat it as fully accepted.
-- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` is next.
-- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; ready/auto and dependency-gated until reviewed AR2, with claim-time execution-agent reconciliation; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is ready/auto behind AR3.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery with authoring-chat Dropbox approval recorded.
+- `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 paired review complete/passed.
+- `CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` / paired review — P0 current-main correctness fix ensuring final Operator spawn belongs to the authoritative accepted/reachable playable component rather than merely painted floor.
+- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 refreshed/ready-auto with bounded semantic pre-echo, actual-final-spawn ingress resolve, and shortened reacquisition; waits on the P0 spawn-validity review. Paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is ready/auto behind AR3.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
 so extraction/contraction work cannot move or absorb the reveal seams before the
