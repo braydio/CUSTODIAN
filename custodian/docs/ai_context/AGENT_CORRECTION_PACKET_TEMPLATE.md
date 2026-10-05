@@ -10,7 +10,7 @@ parent implementation slice and cite the exact stable review finding IDs.
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<parent-id>-review-corrections-<cycle>`
 - Status: `draft`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `<P0 | P1 | P2 | P3>`
 - Depends on: `<parent-review-workstream>`
 - Locks: `<relevant locks or none>`
