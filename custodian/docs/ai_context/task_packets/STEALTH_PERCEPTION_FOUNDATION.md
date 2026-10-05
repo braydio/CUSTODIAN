@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `stealth-perception-foundation`
 - Status: `draft`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `stealth-perception`
