@@ -243,7 +243,7 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/TERRAIN_BUILDER_ELEVATION_INTEGRATION.md` — completed packet for the dedicated terrain builder, elevation metadata, blocked terrain, and connectivity validation pass
 - `custodian/docs/ai_context/task_packets/CONTENT_DIRECTORY_STABILIZATION.md` — active packet for content-root layout documentation, duplicate audit coverage, and deferred asset path migration planning
 - `custodian/docs/ai_context/task_packets/FABRICATION_BALANCE_PIPELINE.md` — completed packet for the repeatable 30-minute fabrication/resource simulation, report, and JSON-only proposal pipeline.
-- `custodian/docs/ai_context/task_packets/OBSERVATORY_WORLD_TELEMETRY_FOUNDATION.md` — active packet for the first F9 observability and world-memory foundation: overlay, telemetry autoloads, heatmaps, and initial gameplay hooks.
+- `custodian/docs/ai_context/task_packets/archived/OBSERVATORY_WORLD_TELEMETRY_FOUNDATION.md` — archived foundation packet; the F9 observability/world-memory stack is live and substantially extended, so this record is historical rather than active queue work.
 
 ## Active Runtime Entry
 
