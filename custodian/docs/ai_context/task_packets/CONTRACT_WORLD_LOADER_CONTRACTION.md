@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `contract-world-loader-contraction`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `contract-world-resource-placement-extraction, contract-world-vehicle-placement-extraction, contract-world-relay-placement-extraction, contract-world-encounter-placement-extraction, contract-world-ingress-placement-extraction`
 - Locks: `contract-world-loader`
