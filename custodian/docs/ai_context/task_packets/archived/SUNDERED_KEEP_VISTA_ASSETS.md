@@ -1,6 +1,8 @@
 # SUNDERED_KEEP_VISTA_ASSETS
 
-- Status: `in_progress`
+> Lifecycle correction 2026-10-04: this July asset-manifest packet predates the current Sundered Keep production architecture and is no longer executable authority. Production presentation is now split between procgen distant ocean/storm/fortress reveal and the registered authored Vista Approach for Shore Parish / near-Keep traversal, while Forlorn Ritualant uses its independent registered world-ingress/authored-level path. The old 16-asset checklist, direct profile-lock framing, and legacy approach assumptions must not be resumed. Any remaining vista art need should be authored from current Sundered Keep/Asset V2 requirements instead.
+
+- Status: `superseded`
 - Authority: `design/02_features/` (Sundered Keep approach design specs)
 - Goal: Create all required assets for Sundered Keep Vista reveal and lock biome/profile to prevent Forlorn Ritualant contamination
 - Files: See Asset Manifest below

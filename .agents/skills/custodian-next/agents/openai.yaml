@@ -1,0 +1,7 @@
+interface:
+  display_name: "CUSTODIAN Next"
+  short_description: "Continue the current CUSTODIAN workstream or claim its immediate next packet."
+  default_prompt: "Continue the current CUSTODIAN workstream if one is active; otherwise claim the immediate same-series Next Handoff, falling back to the global queue only when no same-series successor exists."
+
+policy:
+  allow_implicit_invocation: false

@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation-r1-r1`
+- Depends on: `review-contract-world-placement-foundation-r1`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
@@ -23,7 +23,7 @@
 - Validation: `res://tools/validation/procgen_encounter_cadence_smoke.gd`, `res://tools/validation/procgen_ambient_enemy_real_world_spawn_smoke.gd`, `res://tools/validation/vaultwing_world_spawn_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, plus an implementation-created marker snapshot if needed; then changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains and loader contraction.
-- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
+- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 

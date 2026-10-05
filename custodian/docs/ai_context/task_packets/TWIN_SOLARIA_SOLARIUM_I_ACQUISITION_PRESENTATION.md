@@ -1,5 +1,6 @@
 # TWIN SOLARIA SOLARIUM I ACQUISITION PRESENTATION
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `twin-solaria-solarium-i-acquisition-presentation`
 - Kind: `implementation`
 - Status: `ready`
@@ -13,13 +14,19 @@
 - Paired review workstream: `review-twin-solaria-solarium-i-acquisition-presentation`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `b1e622dde554bfac88ae73a3b1a578f606027c91`
+- Authoring chat: `not-recorded`
 - Goal: Implement Twin Solaria Slice E so authorized route-review state drives a readable Solarium I observational-acquisition sequence through the Outbound/Reciprocal Anchors, Echo Drums, Coherence Witnesses, and Acquisition Aperture, while Passage remains physically and mechanically impossible.
+- Completion boundary: Done when reviewed Slice D authorization drives one bounded Solarium I presentation state machine, the three planned Asset V2 FX families and route-vista content resolve with exact provenance/registration, warning/shutdown fail closed, presentation never mutates route truth, no traversal/Passage is exposed, and structured runtime/asset evidence plus paired review are green.
 - Current measured state: The preserved production composite already contains the golden Resolved Route Vista in the Solarium I crop and canon interprets it as route-candidate observational resolve. The dedicated `twin-solaria-route-vista-samples-v1` slice now owns ingestion/registration of three neutral static destination samples and a reusable `TwinSolariaVistaPresentation`-style content layer. Slice D will own route truth and authorization. This slice owns aperture/instrument presentation and must consume the vista-sample family rather than baking destination imagery into FX.
+- Evidence: reviewed Slice D API, reviewed route-vista sample family, Twin Solaria design authority, Asset Pipeline V2 family/catalog truth, current authored layout, visual-validation economy contract, and the paired post-land review packet.
 - Task-specific authority: `design/05_levels/TWIN_SOLARIA.md` sections 7–9, 29, 30–32; live Asset Pipeline V2 schemas/tooling; reviewed Slice D route-review API.
+- Work surface: Solarium I presentation controller/state mapping, three scoped Asset V2 FX families, Route Vista presentation consumption, focused Twin/asset validation, and directly stale Twin docs.
 - Change: Add state-driven Solarium I acquisition presentation; publish the three explicitly planned V2 FX families; stage anchors/witnesses/drums/aperture through candidate, resolve, stable, warning, and shutdown states; add deterministic visual/runtime evidence.
 - Preserve: route-review authority decides safety/authorization; existing 2048×1536 layout/plate registration; missing Second Crown; no Passage; no new global route state; no replacement of preserved base plate art; no reference-landmark raster double rendering.
 - Non-goals: No cross-map travel; no Passage handoff; no Solarium II reconstruction; no Slice F; no campaign destination UI; no final full-level lighting/audio overhaul; no new Echo Drum raster family unless live review proves procedural presentation insufficient.
 - Acceptance: unauthorized/HOLD state cannot fully resolve Solarium I; authorized state performs a bounded industrial acquisition resolve into stable observational vista; reciprocal warning can force fail-closed shutdown; presentation never mutates route truth; no traversal is offered; all new art is Asset Pipeline V2 with exact family/state contracts and true alpha.
+- Validation: Run Asset V2 plan/status/doctor and focused presentation-state/interrupt/restore checks first; verify route truth is read-only, run Twin runtime/canon regressions, structured registration/alpha metrics and compact ROI evidence where needed, then changed-file validation and `git diff --check`.
 
 ## Asset Pipeline V2 Families
 

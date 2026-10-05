@@ -51,6 +51,15 @@ python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id>
 python3 custodian/tools/agent/dispatch.py claim <workstream-id> --agent <agent-id>
 ```
 
+Codex convenience routing is versioned in
+`.agents/skills/custodian-next/SKILL.md`. Invoke it directly as
+`$custodian-next`, or type `/skills` and choose **CUSTODIAN Next**. Enabled
+skills may also surface in the slash picker. The skill continues an already-active
+current workstream; otherwise it prefers the durable same-series `Next Handoff`,
+stops on refresh/dependency/manual gates, and only then falls back to global
+`claim-next`. It is a skill front end over the existing dispatcher, not a
+second scheduler.
+
 A successful claim ends with `CLAIMED` and one
 `CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line: the receipt is the assignment
 authority. Never infer ownership from worktree creation, terminal activity,

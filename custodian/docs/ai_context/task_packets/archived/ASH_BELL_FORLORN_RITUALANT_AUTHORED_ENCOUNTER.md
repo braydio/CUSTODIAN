@@ -1,5 +1,7 @@
 # Ash-Bell Forlorn-Ritualant Authored Encounter
 
+> Lifecycle correction 2026-10-04: the authored-route migration and Encounter Completion V2 runtime are landed. The packet's former "Next Production Slice" is partly obsolete because Ninth Answer, Orra Comes Late, dissolve, and violent death now use canonical 128×128 Asset V2 strips. Remaining production-art needs are tracked by `required_assets.registry.json` and the bounded `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` packet. This record is archived as runtime/migration history and must not be resumed as an active mixed code+art workstream.
+
 ## Packet Status
 
 - Status: route migration complete; encounter completion V2 implemented and under visual polish
