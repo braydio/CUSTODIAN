@@ -27,7 +27,7 @@
 - Review focus: The core invariant is "spawn belongs to authoritative playable world", not "spawn has a floor sprite". Do not accept a solution that merely moves the bad test seed or enlarges the map.
 - Acceptance: Findings-first independent review. Blocking defects/material gaps create `contract-world-playable-region-spawn-validity-fix-review-corrections-1` plus paired re-review. A clean/non-blocking pass releases AR3's initial-spawn presentation dependency.
 - Non-goals: No AR3 tuning, map-size recommendation, procgen topology redesign, or Sundered overlook work.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only its durable review receipt, required closing summary, review-packet lifecycle/archive metadata, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
