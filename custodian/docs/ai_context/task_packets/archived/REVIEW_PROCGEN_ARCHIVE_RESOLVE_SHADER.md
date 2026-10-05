@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-archive-resolve-shader`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-archive-resolve-shader-recovery-1`
@@ -38,5 +38,5 @@
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Refresh reason: AR3 must be re-derived against the reviewed AR2 shader/material/custom-data contract and the current semantic-owner surface before spawn/reacquisition/echo choreography is implemented.
-- Next action: After this review passes, STOP. Bring the AR2 parent implementation evidence, renderer-recovery summary, Independent Review receipt, and human visual-review decision/Dropbox manifest back to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7 and refresh AR3 in place before any AR3 claim.
+- Next action: Review passed (0 blocking, 0 material gaps; receipt on the archived recovery packet, summary `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER_CLAUDE_SUMMARY.md`). STOP. Bring the AR2 parent implementation evidence, renderer-recovery summary, Independent Review receipt, and human visual-review decision/Dropbox manifest back to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7 and refresh AR3 in place before any AR3 claim.
 - Blockers or open questions: AR3 must remain blocked/manual until that refresh completes.
