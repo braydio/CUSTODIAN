@@ -114,7 +114,8 @@
   - Contract/timing changes are called out explicitly.
   - Mirror-disabled state does not dump a full counterpart table; enabling mirror immediately shows the real counterpart CREATE/REPLACE consequence.
   - Successful audits reduce to one positive readiness state; failures expose the blocker rather than requiring Details.
-  - Safe main update vs blocked main vs LAND PENDING are visibly distinct.
+  - Current/safely reconciled main, true `MAIN BLOCKED`, and LAND PENDING are visibly distinct; routine safe lag does not ask the artist for a manual sync step.
+  - Raw `ahead N / behind N` remains available in Details as repository-history diagnostics and is never presented as a number of animation changes.
   - Matching unsaved Aseprite content warns that the last saved document will be used; merely open-and-clean Aseprite is not a warning.
   - Full technical detail remains available through Details.
   - Publish/landing behavior and exact generated changes are byte-for-byte governed by the existing backend.
