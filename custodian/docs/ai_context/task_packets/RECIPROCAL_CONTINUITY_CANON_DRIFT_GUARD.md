@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `validation infrastructure can silently become vacuous or overbroad; an independent pass should verify both drift detection and intentional historical-reference allowances`
-- Reviewed main: `c49cf7bb8cc25f91240179f6fb340177c59323e6`
+- Reviewed main: `2737eaacbd5e003518f4377ae425682056b83530`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silently return to provenance-as-metaphysics, the superseded Ash-Bell history, or retired runtime knowledge IDs.
