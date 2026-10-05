@@ -79,8 +79,15 @@ Publish one compact external review handoff with
 `custodian/tools/iteration/publish_review_artifacts.py` and return the emitted
 Dropbox manifest path plus the exact reviewer questions. The publisher is opt-in:
 use `--important --reason ...` only when the human/ChatGPT visual decision is
-material. Prefer ROI/contact sheets and sparse authored keyframes; do not commit
-bulk review media to Git. See
+material. New handoffs carry the task's exact `Authoring chat` and default to
+`delete_after_review`. The **authoring ChatGPT conversation is the review
+endpoint**: report that exact chat URL together with the Dropbox manifest path so
+ChatGPT web can open the connected Dropbox evidence and answer the recorded
+questions. After that verdict is returned to the execution agent, run the emitted
+`--cleanup-reviewed` command immediately unless the packet/user/manifest
+explicitly says to retain the evidence. Cleanup is path-scoped and manifest-gated;
+do not delete review media by wildcard or age. Prefer ROI/contact sheets and sparse
+authored keyframes; do not commit bulk review media to Git. See
 `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
 
 Task packets that require substantial visual evidence must state why non-visual
