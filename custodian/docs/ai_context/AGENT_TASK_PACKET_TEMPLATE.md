@@ -83,6 +83,7 @@ Required quality:
 
 - **Reviewed main** identifies the repository state actually investigated.
 - **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one.
+- **Visual review** declares whether this task has a human-owned presentation gate. When it is `required` or `required-if-subjective`, the authoring ChatGPT conversation should state the canonical review namespace `/CUSTODIAN/visual_review/<workstream>/`; the dispatcher repeats that exact namespace in the claim receipt, while the publisher creates the run-specific manifest path underneath it. Do not invent ad hoc Dropbox folders.
 - **Goal** states the user-visible or architecture outcome, not the implementation
   method.
 - **Completion boundary** says exactly what belongs in this workstream and what
