@@ -23,13 +23,14 @@ FIELDS = (
     "Kind", "Review", "Review stage", "Review modes", "Paired review workstream",
     "Review cycle", "Max automatic review cycles",
     "Review target workstream", "Review target packet", "Task overrides",
-    "Authoring chat", "Refresh planning chat",
+    "Authoring chat", "Refresh planning chat", "Visual review",
 )
 ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PRIORITY = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
 KINDS = {"implementation", "review", "correction"}
 REVIEW_INTENTS = {"auto", "manual", "none"}
 REVIEW_MODES = {"code", "architecture", "runtime", "visual", "asset-pipeline", "workflow"}
+VISUAL_REVIEW_VALUES = {"none", "conditional", "required"}
 BOUNDED_REVIEW_OVERRIDE = (
     "TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, "
     "this review packet's lifecycle/archive metadata, its required closing summary, and bounded "
@@ -94,6 +95,7 @@ class Packet:
     schema: str | None = None
     authoring_chat: str | None = None
     refresh_planning_chat: str | None = None
+    visual_review: str = "none"
 
 
 def parse_packet(path: str, text: str) -> Packet:
@@ -211,6 +213,10 @@ def parse_packet(path: str, text: str) -> Packet:
     schema = _header_field_with_continuations(text, "Packet schema")
     authoring_chat = _header_field_with_continuations(text, "Authoring chat")
     refresh_planning_chat = _header_field_with_continuations(text, "Refresh planning chat")
+    visual_review = (_header_field_with_continuations(text, "Visual review") or "none").lower()
+    if visual_review not in VISUAL_REVIEW_VALUES:
+        errors.append("invalid Visual review metadata")
+        visual_review = "none"
 
     return Packet(
         path, workstream, status, dispatch, dispatch_declared, priority, dependencies, locks,
@@ -221,6 +227,7 @@ def parse_packet(path: str, text: str) -> Packet:
         review_target_packet=review_target_packet, task_overrides=task_overrides,
         validation_scripts=validation_scripts, schema=schema,
         authoring_chat=authoring_chat, refresh_planning_chat=refresh_planning_chat,
+        visual_review=visual_review,
     )
 
 
