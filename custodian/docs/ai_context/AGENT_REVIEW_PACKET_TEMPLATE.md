@@ -30,6 +30,8 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
 - Review target workstream: `<implementation-id>`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/<IMPLEMENTATION_NAME>.md`
 - Reviewed main: `<full or short main SHA being reviewed>`
+- Authoring chat: `<inherit the implementation packet's exact URL | not-recorded | n/a>`
+- Visual review: `<inherit: none | required-if-subjective | required>`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent` | `same-agent-fresh-context`
 - Review modes: `<comma-separated: code, architecture, runtime, visual, asset-pipeline, workflow>`
