@@ -71,6 +71,16 @@ class ParsePacketTests(unittest.TestCase):
         self.assertIsNotNone(packet.error)
         self.assertIn("Workstream", packet.error)
 
+    def test_authoring_and_refresh_chat_metadata_parse(self):
+        text = (
+            legacy_packet("chat-work")
+            + "- Authoring chat: `https://chatgpt.com/c/example-authoring`\n"
+            + "- Refresh planning chat: `https://chatgpt.com/c/example-refresh`\n"
+        )
+        packet = tpc.parse_packet("p.md", text)
+        self.assertEqual(packet.authoring_chat, "https://chatgpt.com/c/example-authoring")
+        self.assertEqual(packet.refresh_planning_chat, "https://chatgpt.com/c/example-refresh")
+
     def test_duplicate_field_is_reported(self):
         text = legacy_packet("dup-work") + "- Status: `blocked`\n"
         packet = tpc.parse_packet("p.md", text)
