@@ -236,6 +236,7 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"reduced_on",
 			"reduced_off",
 		],
+		"alpine_plateau_edge": ["at_edge", "step_inward"],
 		"field_fabricator": [
 			"power_on",
 			"begin_fabrication",
