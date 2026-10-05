@@ -20,7 +20,7 @@ from workflow_control import (
     release_remote_claim, resolve_agent_id, workstream_mutex,
 )
 from task_packet_contract import (
-    completion_truth_required, parse_completion_truth, parse_packet,
+    completion_truth_required, header_field, parse_completion_truth, parse_packet,
 )
 
 class WorkstreamError(RuntimeError):
@@ -597,6 +597,39 @@ def closing_summary_committed_for_workstream(workstream_id: str, path: Path) -> 
     )
 
 
+def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
+    """Require the packet's recorded authoring chat in the committed closing summary.
+
+    This is deliberately non-retroactive for packets with no recorded chat. When a
+    URL is present, however, it is durable handoff identity and must survive the
+    implementation/review/correction summary rather than living only in terminal
+    output.
+    """
+    summary_name = closing_summary_committed_for_workstream(workstream_id, path)
+    summary_path = path / summary_name
+    try:
+        summary_text = summary_path.read_text()
+    except OSError as exc:
+        raise WorkstreamError(f"cannot read committed closing summary {summary_name}: {exc}") from exc
+
+    expected: list[str] = []
+    for packet in packets:
+        text = packet.read_text()
+        parsed = parse_packet(str(packet), text)
+        chat = parsed.authoring_chat
+        if not chat:
+            chat = header_field(text, "Refresh planning chat")
+        if chat and chat not in {"not-recorded", "n/a"} and chat not in expected:
+            expected.append(chat)
+
+    for chat in expected:
+        pattern = rf"(?m)^\\s*(?:-\\s*)?Authoring chat:\\s*`?{re.escape(chat)}`?\\s*$"
+        if not re.search(pattern, summary_text):
+            raise WorkstreamError(
+                "finish summary-backlink gate requires the exact packet authoring chat in "
+                f"{summary_name}: {chat}"
+            )
+
 def task_head_reachable_from_main(path: Path, remote_ref: str = "origin/main") -> bool:
     return subprocess.run(["git", "merge-base", "--is-ancestor", "HEAD", remote_ref], cwd=path).returncode == 0
 
@@ -684,6 +717,7 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     if not status_clean(path):
         raise WorkstreamError("finish requires a clean worktree and committed task files")
     closing_summary_committed_for_workstream(workstream_id, path)
+    _summary_backlink_preflight(workstream_id, path, packets)
     if not validation_green(validation_report):
         raise WorkstreamError("focused validation report is not green")
     if trace:
@@ -716,6 +750,7 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
                          sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
     packets = artifact_preflight(workstream_id, path)
     _completion_truth_preflight(packets)
+    _summary_backlink_preflight(workstream_id, path, packets)
     if not status_clean(path):
         raise WorkstreamError("main synchronization left the worktree dirty; recovery state retained")
     git("push", "origin", branch, cwd=path)
