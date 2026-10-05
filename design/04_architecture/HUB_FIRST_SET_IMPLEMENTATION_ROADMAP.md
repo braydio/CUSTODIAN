@@ -1,7 +1,7 @@
 # HUB FIRST-SET IMPLEMENTATION ROADMAP
 
 **Program ID:** `hub-first-set-first-campaign-loop`  
-**Status:** active / H1 in progress  
+**Status:** active / autonomous dependency queue  
 **Priority:** P1  
 **Reviewed main:** `5bb137655670`  
 **Last Updated:** 2026-10-03  
@@ -56,17 +56,17 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 
 ## Packet Series
 
-| Slice | Workstream | Current state | Depends on | Refresh required before ready |
+| Slice | Workstream | Packet state | Depends on | Claim-time refresh |
 |---|---|---|---|---|
-| H1 | `hub-first-set-blockout-v1-recovery-1` | in progress | none | sync current main + absorb H1 corrections |
-| H2 | `hub-awakening-context-handoff` | blocked/manual | HR1 + Awakening handoff review | yes |
-| H3 | `hub-forum-adjudication-contract-prewarm` | blocked/manual | HR2 | yes |
-| H4 | `hub-crown-transfer-twin-solaria` | blocked/manual | HR2 | yes |
-| H5 | `hub-muster-continuity-port-deployment` | blocked/manual | HR3 | yes |
-| H6 | `hub-campaign-return` | blocked/manual | HR5 | yes, including current recovery/death-handoff state |
-| H7 | `hub-first-set-integration-closeout` | blocked/manual | HR4 + HR6 | yes |
+| H1 | `hub-first-set-blockout-v1-recovery-1` | ready/auto | none | current-main recovery + stale-H1 cleanup inside workstream |
+| H2 | `hub-awakening-context-handoff` | ready/auto, dependency-gated | HR1 + Awakening handoff review | execution-agent |
+| H3 | `hub-forum-adjudication-contract-prewarm` | ready/auto, dependency-gated | HR2 | execution-agent |
+| H4 | `hub-crown-transfer-twin-solaria` | ready/auto, dependency-gated | HR2 | execution-agent |
+| H5 | `hub-muster-continuity-port-deployment` | ready/auto, dependency-gated | HR3 | execution-agent |
+| H6 | `hub-campaign-return` | ready/auto, dependency-gated | HR5 | execution-agent, including current recovery/death-handoff state |
+| H7 | `hub-first-set-integration-closeout` | ready/auto, dependency-gated | HR4 + HR6 | execution-agent |
 
-Refresh each downstream packet **in place** after its dependency review lands. Do not mint a `_v2` workstream because a predecessor chose different private helpers.
+Downstream packets stay `ready/auto` from authoring onward. The dispatcher keeps them non-claimable while dependencies are incomplete, then automatically exposes them when those dependencies archive `complete`. At claim time, the execution agent reconstructs current public seams from live `main` plus predecessor implementation/review evidence and reconciles private-helper drift inside the existing packet. Do not mint a `_v2` workstream merely because a predecessor chose different private helpers.
 
 ## H1 Corrections Locked Before Landing
 
@@ -74,7 +74,7 @@ Refresh each downstream packet **in place** after its dependency review lands. D
 - H1 must prove a real circulation loop, not enter/return through one neck.
 - Mandatory routes need Operator-clearance proof derived from the live collision shape and boundary rails in addition to raw grid connectivity.
 - `Spawn_CampaignReturn=(2592,-3008)` is the Continuity Port west return bay.
-- H1 must sync current main and rerun focused + changed validation before human overview approval/landing.
+- H1 recovery starts from current main, never rebases/merges the retired donor branch, reruns focused + changed validation before human overview approval/landing, and retires leftover old-H1 branch/worktree/diagnostic residue before finish.
 
 ## Program End
 
@@ -90,6 +90,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1 correction/sync before human topology review.  
-**Next:** land/review H1 and the Awakening completion seam, then refresh H2.  
+**Current:** H1 recovery and Awakening room-connectors polish are ready/auto and may run independently; all later slices are dependency-gated ready/auto.  
+**Next:** automatic workers claim H1 recovery and Awakening room-connectors polish; H2 becomes claimable automatically after HR1 and the reviewed Awakening handoff archive complete.  
 **Finish:** HR7 passes the complete first-campaign-loop proof.
