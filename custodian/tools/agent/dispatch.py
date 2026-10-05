@@ -468,6 +468,8 @@ def last_claim(repo: Path, *, as_json: bool) -> int:
         print(f"worktree: {worktree}")
         print(f"packet: {receipt.get('packet')}")
         print(f"checkout: {receipt.get('checkout')}")
+        print(f"authoring chat: {receipt.get('authoring_chat', 'not-recorded')}")
+        print(f"visual review root: {receipt.get('visual_review_root', 'not-recorded')}")
         suffix = f" ({'; '.join(stale_reasons)})" if stale_reasons else ""
         print(f"freshness: {freshness}{suffix}")
         print("\nNEXT:")
