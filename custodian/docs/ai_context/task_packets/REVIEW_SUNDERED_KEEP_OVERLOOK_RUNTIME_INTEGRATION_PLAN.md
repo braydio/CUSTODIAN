@@ -27,7 +27,7 @@
 - Review focus: Judge the integration architecture and packet graph, not the standalone art taste already human-approved.
 - Acceptance: Findings-first review. A clean/non-blocking pass releases the newly authored production integration series. Blocking findings create `sundered-keep-overlook-runtime-integration-plan-review-corrections-1` and keep all production packets dependency-blocked.
 - Non-goals: Do not implement or tune production runtime in the review.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets; do not edit production implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
