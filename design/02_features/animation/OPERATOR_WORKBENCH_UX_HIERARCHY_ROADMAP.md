@@ -215,9 +215,11 @@ Main/readiness state:
 
 ```text
 MAIN READY
-MAIN UPDATE AVAILABLE / SAFE SYNC
+UPDATING WORKBENCH
 MAIN BLOCKED
 ```
+
+`UPDATING WORKBENCH` is a brief transient only if launch-time base reconciliation is still in flight. A safely resolvable behind/ahead-zero checkout should not become a persistent artist action or `MAIN UPDATE AVAILABLE` state.
 
 Do not reduce distinct recovery/blocking states to a single generic "dirty"
 label.
