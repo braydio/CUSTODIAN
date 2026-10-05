@@ -14,7 +14,7 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-operator-workbench-fx-layer-adoption`
+- Depends on: `review-operator-workbench-animation-creation`
 - Locks: `operator-workbench-ui`
 - Kind: `implementation`
 - Review: `manual`
