@@ -58,7 +58,7 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 
 | Slice | Workstream | Packet state | Depends on | Claim-time refresh |
 |---|---|---|---|---|
-| H1 | `hub-first-set-blockout-v1-recovery-1` | ready/auto | none | current-main recovery + stale-H1 cleanup inside workstream |
+| H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review ready/auto | none | complete; donor history preserved and stale-H1 refs retired |
 | H2 | `hub-awakening-context-handoff` | ready/auto, dependency-gated | HR1 + Awakening handoff review | execution-agent |
 | H3 | `hub-forum-adjudication-contract-prewarm` | ready/auto, dependency-gated | HR2 | execution-agent |
 | H4 | `hub-crown-transfer-twin-solaria` | ready/auto, dependency-gated | HR2 | execution-agent |
@@ -68,13 +68,15 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 
 Downstream packets stay `ready/auto` from authoring onward. The dispatcher keeps them non-claimable while dependencies are incomplete, then automatically exposes them when those dependencies archive `complete`. At claim time, the execution agent reconstructs current public seams from live `main` plus predecessor implementation/review evidence and reconciles private-helper drift inside the existing packet. Do not mint a `_v2` workstream merely because a predecessor chose different private helpers.
 
-## H1 Corrections Locked Before Landing
+## H1 Corrections Completed Before Landing
 
 - Sepulcher Gardens has two separated 4x8 Forum connectors: north `Rect2i(44,68,4,8)`, south `Rect2i(44,85,4,8)`.
-- H1 must prove a real circulation loop, not enter/return through one neck.
-- Mandatory routes need Operator-clearance proof derived from the live collision shape and boundary rails in addition to raw grid connectivity.
+- H1 proves a real circulation loop, not enter/return through one neck.
+- Mandatory routes pass Operator-clearance proof derived from the live collision shape and boundary rails in addition to raw grid connectivity.
 - `Spawn_CampaignReturn=(2592,-3008)` is the Continuity Port west return bay.
-- H1 recovery starts from current main, never rebases/merges the retired donor branch, reruns focused + changed validation before human overview approval/landing, and retires leftover old-H1 branch/worktree/diagnostic residue before finish.
+- H1 recovery started from current main without merging the retired donor branch, passed focused + changed validation, received human overview approval, and retired the old-H1 branch/worktree/diagnostic residue. The donor commit remains available through its archive tag.
+
+H1 evidence: 13,142 walkable cells; 52 merged boundary rails; 14 markers; 12,160 cells after 25px live-Operator/boundary-rail clearance; connector-restricted loop passed in raw and clearance occupancy. Human overview: `reports/hub_first_set_blockout/overview.png`, approved 2026-10-05.
 
 ## Program End
 
@@ -90,6 +92,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1 recovery and Awakening room-connectors polish are ready/auto and may run independently; all later slices are dependency-gated ready/auto.  
-**Next:** automatic workers claim H1 recovery and Awakening room-connectors polish; H2 becomes claimable automatically after HR1 and the reviewed Awakening handoff archive complete.  
+**Current:** H1 implementation is complete/landed and awaits paired review; Awakening room-connectors polish is complete with downstream readiness review pending; all later Hub slices are dependency-gated ready/auto.
+**Next:** run HR1 from a fresh reviewer context; H2 becomes claimable automatically after HR1 and the reviewed Awakening handoff archive complete.
 **Finish:** HR7 passes the complete first-campaign-loop proof.

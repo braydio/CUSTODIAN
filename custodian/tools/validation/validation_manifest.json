@@ -293,6 +293,31 @@
       "needs_import": true
     },
     {
+      "id": "hub_first_set_blockout",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_first_set_blockout_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "layout",
+        "navigation",
+        "operator_clearance",
+        "playtest"
+      ],
+      "owners": [
+        "custodian/game/world/hub/first_set/**",
+        "custodian/game/world/hub/road_of_witnesses_prototype.gd",
+        "custodian/scenes/hub_first_set_blockout_playtest.tscn",
+        "custodian/scenes/road_of_witnesses_presentation.tscn",
+        "custodian/content/levels/hub/road_of_witnesses/**",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_first_set_blockout_smoke.gd",
+        "custodian/tools/validation/hub_first_set_overview_capture.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "biome_field",
       "type": "godot_script",
       "script": "res://tools/validation/biome_field_smoke.gd",

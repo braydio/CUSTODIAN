@@ -20,8 +20,11 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 >
 > The post-Awakening first-set geometry is now locked in
 > `HUB_FIRST_SET_BLOCKOUT.md` and tracked by
-> `HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`. H1 is implementation-in-progress,
-> not yet production-landed.
+> `HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`. H1 now has its runtime blockout,
+> named markers, single-grid collision/navigation, and standalone South Reach
+> Operator playtest. Its macro-topology overview received human approval on
+> 2026-10-05. The paired H1 review is next; H2-H7 lifecycle behavior is not yet
+> live.
 
 ---
 
@@ -161,7 +164,7 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 **Prototype Runtime Note:**
 - `res://scenes/hub_road_of_witnesses_prototype.tscn` is the current fast-playable authored preview for this district.
 - Road presentation uses five registered modular production plate pairs owned by `RoadOfWitnessesPrototype.MODULES`; it is not one monolithic authored background.
-- The prototype's hand-placed blockers remain local to the existing Road/Awakening use. The reviewed H1 first-set grid is intended to become the larger Hub blockout collision/navigation authority when H1 lands.
+- The prototype's hand-placed blockers remain local to the existing Road/Awakening use. The H1 first-set runtime reuses these five plate pairs as presentation and owns larger Hub collision/navigation through its single authored grid and boundary rails.
 - Production Twin Solaria is already an authored registered level (`hub_twin_solaria`) with internal traversal and `Spawn_CrownCauseway`. `res://scenes/twin_solaria_backdrop_test.tscn` remains only a development fidelity preview.
 
 ---
