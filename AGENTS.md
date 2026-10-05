@@ -179,7 +179,10 @@ Omitting `--agent` falls back to the `CUSTODIAN_AGENT_ID` environment variable,
 then a neutral `unspecified` — never a silently assumed brand.
 Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
 returned packet, then execute only that workstream through the lifecycle in
-`custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+`custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`. The structured
+claim receipt also carries the packet's exact `authoring_chat` and canonical
+`visual_review_root`; preserve those fields through visual-review and closing
+summary handoffs instead of rediscovering them from chat history.
 
 ### CUSTODIAN Next Shortcut
 
