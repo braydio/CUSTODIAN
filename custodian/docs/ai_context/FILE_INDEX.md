@@ -16,7 +16,7 @@
 - `design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md` — seven-slice H1-H7 tracker for blockout → Awakening handoff → Forum Contract/prewarm → optional Twin → Port deployment → Campaign return → end-to-end closeout, including dependency/refresh gates.
 - `custodian/game/world/hub/first_set/` and `custodian/scenes/hub_first_set_blockout_playtest.tscn` — H1 first-set spatial authority/map and standalone real-Operator/camera playtest; H2-H6 lifecycle handlers remain inert.
 - `custodian/tools/validation/hub_first_set_blockout_smoke.gd` and `hub_first_set_overview_capture.gd` — exact geometry, topology, raw/Operator-clearance connectivity, Road collision ownership, inert-lifecycle smoke, and deterministic single human-review overview capture.
-- `custodian/docs/ai_context/task_packets/archived/HUB_FIRST_SET_BLOCKOUT_V1.md` and `archived/REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — completed H1 implementation and passed paired review, with the approved macro-topology overview and durable review findings.
+- `custodian/docs/ai_context/task_packets/archived/HUB_FIRST_SET_BLOCKOUT_V1.md` and active `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — completed H1 implementation with approved macro-topology overview and the next paired post-land review.
 - `custodian/docs/ai_context/task_packets/HUB_AWAKENING_CONTEXT_HANDOFF.md` through `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` plus paired `REVIEW_HUB_*.md` packets — pre-authored H2-H7 first-campaign-loop series; downstream packets are dependency-gated and refreshed in place.
 
 ## Operator Workbench UX Hierarchy

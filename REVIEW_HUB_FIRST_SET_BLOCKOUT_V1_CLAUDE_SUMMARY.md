@@ -11,7 +11,7 @@ The runtime layout matches the exact world bounds, grid dimensions, all design e
 ## Findings
 
 - `R0-01` — `non_blocking_issue`, disposition `deferred`: the H1 smoke validates every marker's scene position against `HubFirstSetLayout.MARKERS`, but those expected values share the same source under test. It independently locks only selected marker coordinates. I compared all 14 values directly with `HUB_FIRST_SET_BLOCKOUT.md`; the current layout is correct. Independent expected-value assertions for every marker would improve future regression detection. No correction packet is needed.
-- `R0-02` — `non_blocking_issue`, disposition `deferred`: `CONTEXT.md`, `CURRENT_STATE.md`, and the H1 roadmap still describe the paired review as next or awaiting completion. The review packet restricts durable edits to its receipt, lifecycle/archive metadata, and summary. H2 has a claim-time documentation refresh and should reconcile these lifecycle sentences while preserving the accurate H2-H7 deferred-runtime statements.
+- `R0-02` — `non_blocking_issue`, disposition `deferred`: `CONTEXT.md`, `CURRENT_STATE.md`, the H1 roadmap, `FILE_INDEX.md`, and the task-packet README still describe the paired review as next/active or awaiting completion. The paired-review artifact gate restricts durable edits to the implementation target packet, review packet, bounded correction/re-review packets, and root summary. H2 has a claim-time documentation refresh and should reconcile those lifecycle sentences while preserving the accurate H2-H7 deferred-runtime statements.
 
 ## Evidence
 
@@ -28,11 +28,11 @@ The runtime layout matches the exact world bounds, grid dimensions, all design e
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: The review claim initially hit the prior packet's malformed override; after the user requested a pull, current main already contained the corrected bounded override and the explicit claim succeeded. The fresh review worktree required a full graph build. The repository-wide AI-context validator reported 13 unrelated packet-grammar/required-field findings in `ASSET_DOWNLOADS_INTAKE_SWEEP.md`.
-- Root cause / contributing factors: The earlier root checkout was behind current main when the first claim was attempted; a new isolated worktree began with an empty graph index; the unrelated active intake packet is malformed in current main.
-- Prevention / pipeline improvement: Refresh the coordination checkout before retrying dispatcher metadata failures; build the worktree graph before source review; repair the intake packet through its own workstream.
-- Tooling / docs drift discovered: H1 smoke marker assertions share the production layout authority for most coordinates; recorded as R0-01. `check_ai_context.py` reports no H1 review artifact errors.
-- Follow-up: manual-follow-up (repair the unrelated intake packet through its own workstream)
+- What went wrong: The review claim initially hit the prior packet's malformed override; after the user requested a pull, current main already contained the corrected bounded override and the explicit claim succeeded. The fresh review worktree required a full graph build. The repository-wide AI-context validator reported 13 unrelated packet-grammar/required-field findings in `ASSET_DOWNLOADS_INTAKE_SWEEP.md`. `task_packet_index.py` check mode also reported the current README lacks its managed Ready/Auto block; its broad generated output was reverted because the paired-review artifact gate forbids README edits.
+- Root cause / contributing factors: The earlier root checkout was behind current main when the first claim was attempted; a new isolated worktree began with an empty graph index; the unrelated active intake packet is malformed in current main; the README was missing the managed packet-index block.
+- Prevention / pipeline improvement: Refresh the coordination checkout before retrying dispatcher metadata failures; build the worktree graph before source review; route intake-packet repair and managed packet-index initialization through their own workstreams.
+- Tooling / docs drift discovered: H1 smoke marker assertions share the production layout authority for most coordinates; recorded as R0-01. Broader H1 lifecycle prose remains stale under the review artifact gate; recorded as R0-02. `check_ai_context.py` reports no H1 review artifact errors.
+- Follow-up: manual-follow-up (repair the unrelated intake packet and initialize the task-packet index through their own workstreams)
 - What worked: A temporary input driver established real-Operator traversal in both directions around the Garden without changing tracked implementation files.
 
 ## Next Handoff

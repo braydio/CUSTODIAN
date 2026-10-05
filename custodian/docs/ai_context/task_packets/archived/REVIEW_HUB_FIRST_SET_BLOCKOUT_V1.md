@@ -71,16 +71,16 @@ If the user rejects the blockout overview because macro topology, scale, or bran
 ### Findings
 
 - `R0-01` — `non_blocking_issue`, disposition `deferred`, area `validation`: the H1 smoke verifies each marker node and walkability against `HubFirstSetLayout.MARKERS`, but the expected dictionary is the same authority under test. It locks only selected marker coordinates independently. All 14 current values were manually compared with `HUB_FIRST_SET_BLOCKOUT.md` in this review. Consider independent expected-value assertions for every marker so future drift is caught automatically.
-- `R0-02` — `non_blocking_issue`, disposition `deferred`, area `documentation`: `CONTEXT.md`, `CURRENT_STATE.md`, and the H1 roadmap still say the paired review is next or awaiting completion. This review packet's narrow Task Override limits review edits to its receipt, packet lifecycle/archive metadata, and summary, so those broader authority docs were not changed. H2 already owns a claim-time refresh; it should reconcile those lifecycle sentences while keeping H2-H7 runtime behavior deferred.
+- `R0-02` — `non_blocking_issue`, disposition `deferred`, area `documentation`: `CONTEXT.md`, `CURRENT_STATE.md`, the H1 roadmap, `FILE_INDEX.md`, and the task-packet README still say the paired review is next/active or awaiting completion. The paired-review artifact gate permits only the implementation target packet, this review packet, bounded corrections/re-reviews, and the root summary; those broader indexes/authority docs were therefore left unchanged. H2's claim-time refresh should reconcile the stale lifecycle prose while keeping H2-H7 runtime behavior deferred.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: The first explicit claim found a malformed override on the stale root checkout; after the requested pull it succeeded. The repository-wide AI-context validator also reported 13 grammar/required-field findings in the unrelated active `ASSET_DOWNLOADS_INTAKE_SWEEP.md` packet.
-- Root cause / contributing factors: The root checkout was behind current main at first; the unrelated active packet is malformed in current main.
-- Prevention / pipeline improvement: Pull current main before retrying dispatcher metadata failures; route the intake-packet repair through its own workstream.
-- Tooling / docs drift discovered: The H1 smoke's all-marker check shares the layout source for many coordinates; recorded as R0-01. `check_ai_context.py` reported no H1 review packet error but does report 13 findings in `ASSET_DOWNLOADS_INTAKE_SWEEP.md`.
-- Follow-up: `manual-follow-up` (repair the unrelated intake packet through its own workstream)
+- What went wrong: The first explicit claim found an outdated bounded override on the stale root checkout; after the requested pull it succeeded. The repository-wide AI-context validator reported 13 findings in the unrelated active `ASSET_DOWNLOADS_INTAKE_SWEEP.md` packet, and `task_packet_index.py` check mode reported that the current README lacks its managed Ready/Auto block. Its broad `--write` output was reverted because the paired-review artifact gate forbids README edits.
+- Root cause / contributing factors: The root checkout was behind current main at first; the unrelated active intake packet is malformed in current main; the README was missing the packet indexer's managed block.
+- Prevention / pipeline improvement: Pull current main before retrying dispatcher metadata failures; route intake-packet repair and managed packet-index initialization through their own workstreams.
+- Tooling / docs drift discovered: The H1 smoke's all-marker check shares the layout source for many coordinates; recorded as R0-01. Stale H1 lifecycle sentences in broader docs are R0-02 because the artifact gate forbids changing them in this review. `check_ai_context.py` reports no H1 review packet error but reports 13 findings in the unrelated intake packet.
+- Follow-up: `manual-follow-up` (repair the unrelated intake packet and initialize the task-packet index through their own workstreams)
 - What worked: Independent live Operator traversal directly confirmed both Garden directions and the Port route without adding tracked test artifacts.
