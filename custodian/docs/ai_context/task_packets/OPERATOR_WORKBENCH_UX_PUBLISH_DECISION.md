@@ -77,11 +77,11 @@
   8. When mirror is disabled, do not show the full mirror operation table. Show at most the counterpart availability and a one-line consequence. When enabled, show only mirror CREATE/REPLACE rows by default plus a concise count of unchanged rows.
   9. Keep the technical fact `frame-wise mirror; temporal order preserved` in Details or secondary explanatory text, not as primary decision content.
   10. Collapse successful dependency audit + compatibility preflight into one positive readiness statement such as `READY TO PUBLISH`. If either fails, promote the exact blocking category and concise actionable reason into the primary surface.
-  11. Consume the prerequisite readiness authority for main synchronization:
-      - ready -> `MAIN READY`;
-      - safely behind -> `MAIN UPDATE AVAILABLE · WILL PREPARE BEFORE PUBLISH` or refreshed equivalent;
-      - dirty/diverged/recovery -> primary blocker with one concise reason.
-      Full branch/ahead-behind/path classification belongs in Details.
+  11. Consume the prerequisite readiness/reconciliation authority for main state:
+      - current or successfully launch-reconciled -> `MAIN READY`;
+      - a bounded reconcile actively in flight, if surfaced at all -> `UPDATING WORKBENCH`;
+      - unsafe/failed reconciliation, diverged/ahead, pending-land, transaction recovery, same-path upstream conflict, staged/unknown dirt -> `MAIN BLOCKED` with one concise actionable reason.
+      Do not make routine ahead-zero repository lag a Publish-time artist action after the background-sync backend can settle it safely. Full branch/ahead-behind/path classification belongs in Details, and raw `behind N` must never be labeled as animation-change count or workload.
   12. Improve Aseprite wording. Merely having Aseprite open should not look like a warning if the selected saved document is clean. Warn prominently when the matching document has unsaved changes and publication will use last saved state.
   13. Keep LAND PENDING as a distinct simplified screen:
       - semantic identity;
