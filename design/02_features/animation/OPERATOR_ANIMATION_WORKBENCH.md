@@ -221,7 +221,7 @@ unchanged.
 
 ## Acceptance
 
-The smoke covers exact extraction after rectangular-canvas placement, illegal outside-rectangle pixels, no-scale canvas expansion, visible-crop rejection, scope/dependency selection, and current lower/upper/Vigil semantic resolution. When Aseprite is available it stages Fast 02 E in a temporary workspace, proves centered RGBA identity, and exports the physical six-frame 128×128 Aseprite document. The UI smoke covers canvas-migration projections and the dirty-live-document guard; its Textual pilot remains optional.
+The smoke covers exact extraction after rectangular-canvas placement, illegal outside-rectangle pixels, no-scale canvas expansion, visible-crop rejection, scope/dependency selection, and current lower/upper/Vigil semantic resolution. When Aseprite is available it stages Fast 02 E in a temporary workspace, proves centered RGBA identity, and exports the physical six-frame Aseprite document after expanding the current source canvas by 32 pixels per axis. The UI smoke covers canvas-migration projections and the dirty-live-document guard; its Textual pilot remains optional.
 
 `operator_workbench_ui_smoke.py` exercises browser/session/context/error
 projections without a terminal, then uses Textual's headless pilot when the

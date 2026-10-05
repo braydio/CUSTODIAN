@@ -200,6 +200,9 @@ is selected by the `asset_workbench_ui` validation owner. Sequencing remains in
 
 ## Operator Workbench Isolated Art Checkout (2026-10-05)
 
+The mandatory Fast 02 canvas smoke derives dimensions from current sources and
+checks centered RGBA preservation during publication, including migrated sources.
+
 Publication allows the regenerated canonical runtime manifest so canvas/frame
 migrations can commit their complete validated output set.
 

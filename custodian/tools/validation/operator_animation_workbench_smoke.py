@@ -164,30 +164,34 @@ def main():
    assert len(both)==6 and all(f"__{old_clock+1}f__96.png" in p for p in both),both
    assert sum(1 for p in both if "__w__" in p)==3 and sum(1 for p in both if "__e__" in p)==3,both
  else: print("SKIP ASEPRITE INTEGRATION: aseprite executable unavailable")
- # Production Fast 02 E candidate set remains a useful canvas-migration contract.
+ # Exercise the live Fast 02 candidate at its current size, including during publish.
  fast02=m.build_plan("unarmed","fast_02","e",group="attack")
- fast02_report=fc.canvas_migration_report(fast02,128,128,"animation",m.REPO_ROOT)
+ target_width=fast02["canvas"]["width"]+32;target_height=fast02["canvas"]["height"]+32
+ fast02_report=fc.canvas_migration_report(fast02,target_width,target_height,"animation",m.REPO_ROOT)
  assert set(fast02_report["affected_bindings"])=={"lower_body","upper_body","fx"}
- assert fast02_report["new_document_size"]==[128,128] and fast02["timeline"]["workspace_clock_frames"]==6
+ assert fast02_report["new_document_size"]==[target_width,target_height] and fast02["timeline"]["workspace_clock_frames"]==6
  if shutil.which("aseprite"):
   with tempfile.TemporaryDirectory() as td:
    cli=Path(__file__).resolve().parents[1]/"operator/operator_cli.py";common=["unarmed","fast_02","e","--group","attack","--workspace-root",td]
    subprocess.run([sys.executable,str(cli),"anim","edit",*common,"--no-open"],check=True,stdout=subprocess.DEVNULL)
-   subprocess.run([sys.executable,str(cli),"anim","canvas","resize",*common,"--width","128","--height","128","--scope","animation"],check=True,stdout=subprocess.DEVNULL)
+   subprocess.run([sys.executable,str(cli),"anim","canvas","resize",*common,"--width",str(target_width),"--height",str(target_height),"--scope","animation"],check=True,stdout=subprocess.DEVNULL)
    manifest_path=Path(td)/"unarmed/attack/fast_02/e/workbench.json";staged=json.loads(manifest_path.read_text())
-   assert staged["canvas"]=={"width":128,"height":128} and staged["timeline"]["workspace_clock_frames"]==6
-   assert all(b["source_contract"]["frame_size"]==[96,96] and b["workspace_contract"]["frame_size"]==[128,128] and b["publish_contract"]["frame_size"]==[128,128] for b in staged["layers"])
-   assert all("__6f__128.png" in b["publish_contract"]["path"] for b in staged["layers"])
-   with Image.open(Path(staged["layers"][0]["input_path"])) as migrated: assert migrated.size==(768,128)
+   assert staged["canvas"]=={"width":target_width,"height":target_height} and staged["timeline"]["workspace_clock_frames"]==6
+   assert all(b["source_contract"]["frame_size"]==original["source_contract"]["frame_size"] and b["workspace_contract"]["frame_size"]==[target_width,target_height] and b["publish_contract"]["frame_size"]==[target_width,target_height] for original,b in zip(fast02["layers"],staged["layers"]))
+   size_token=str(target_width) if target_width==target_height else f"{target_width}x{target_height}"
+   assert all(f"__6f__{size_token}.png" in b["publish_contract"]["path"] for b in staged["layers"])
+   with Image.open(Path(staged["layers"][0]["input_path"])) as migrated: assert migrated.size==(6*target_width,target_height)
    # Every source RGBA cell is preserved byte-for-byte at the centered offset.
    original_plan=m.build_plan("unarmed","fast_02","e",group="attack")
    for old_binding,new_binding in zip(original_plan["layers"],staged["layers"]):
     with Image.open(m.REPO_ROOT/old_binding["source_contract"]["path"]) as original, Image.open(new_binding["input_path"]) as migrated:
      old=original.convert("RGBA");new=migrated.convert("RGBA")
-     assert new.size==(768,128)
-     for frame in range(6):assert old.crop((frame*96,0,(frame+1)*96,96)).tobytes()==new.crop((frame*128+16,16,frame*128+112,112)).tobytes(),(new_binding["binding_id"],frame+1)
+     assert new.size==(6*target_width,target_height)
+     source_width,source_height=old_binding["source_contract"]["frame_size"]
+     offset_x=(target_width-source_width)//2;offset_y=(target_height-source_height)//2
+     for frame in range(6):assert old.crop((frame*source_width,0,(frame+1)*source_width,source_height)).tobytes()==new.crop((frame*target_width+offset_x,offset_y,frame*target_width+offset_x+source_width,offset_y+source_height)).tobytes(),(new_binding["binding_id"],frame+1)
    exported=subprocess.run(["aseprite","-b",str(Path(td)/"unarmed/attack/fast_02/e/workbench.aseprite"),"--sheet",str(Path(td)/"assembled.png"),"--sheet-type","horizontal"],check=True,capture_output=True,text=True)
-   with Image.open(Path(td)/"assembled.png") as assembled:assert assembled.size==(768,128),exported.stdout+exported.stderr
+   with Image.open(Path(td)/"assembled.png") as assembled:assert assembled.size==(6*target_width,target_height),exported.stdout+exported.stderr
  else: print("SKIP ASEPRITE CANVAS INTEGRATION: aseprite executable unavailable")
  print("PASS operator_animation_workbench_smoke: frame and centered canvas migrations, RGBA preservation, crop guard, scopes, Fast 02 Aseprite assembly and contracts, ownership and compatibility")
 if __name__=="__main__":main()
