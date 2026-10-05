@@ -155,7 +155,9 @@ Before setting `Status: ready`:
 ```text
 [ ] Latest main was reviewed and Reviewed main is populated.
 [ ] Authoring chat is recorded when the user supplied a durable conversation URL.
-[ ] When an Authoring chat URL is supplied, Summary backlink requires that exact URL in every durable implementation/review/correction/recovery summary and final Next Handoff.
+[ ] Visual review is explicitly `none`, `required-if-subjective`, or `required` for current/new packet authoring.
+[ ] When an Authoring chat URL is supplied, Summary backlink requires that exact URL in every durable implementation/review/correction/recovery summary and final Next Handoff; workstream finish enforces the committed closing-summary backlink.
+[ ] If external visual review is required, the packet routes the Dropbox manifest back to that exact authoring ChatGPT conversation and defaults reviewed evidence to programmatic delete-after-review unless retention is explicitly requested.
 [ ] This is one coherent completion boundary.
 [ ] Existing Workstream identity was reused when appropriate.
 [ ] Current measured state and Evidence are factual, not speculative.
