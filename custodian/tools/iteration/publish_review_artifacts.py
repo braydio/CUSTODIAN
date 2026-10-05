@@ -115,7 +115,7 @@ def _packet_authoring_chat(repo: Path, workstream: str) -> str:
     workstream_line = re.compile(
         rf"(?m)^\s*-\s*Workstream:\s*`?{re.escape(workstream)}`?\s*$"
     )
-    chat_line = re.compile(r"(?m)^\\s*-\\s*Authoring chat:\\s*`?([^`\\n]+)`?\\s*$")
+    chat_line = re.compile(r"(?m)^\s*-\s*Authoring chat:\s*`?([^`\n]+)`?\s*$")
     matches: list[str] = []
     for root in (repo / PACKET_ROOT, repo / PACKET_ROOT / "archived"):
         if not root.is_dir():
