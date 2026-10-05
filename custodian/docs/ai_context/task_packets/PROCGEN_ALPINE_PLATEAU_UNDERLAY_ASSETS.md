@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-alpine-plateau-underlay-assets`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-region-frame-presentation-foundation`
 - Locks: `procgen-presentation, asset-pipeline`
@@ -87,7 +87,7 @@ This local ZIP is an input artifact, not repository authority and not a runtime 
 
 ## Source Art Gate
 
-The dependency/review gate is satisfied: RFR1 passed. The six source candidates are now provided through the exact local ZIP contract above, so this packet is `ready/manual` for a local agent that can access `~/Downloads`. Do not fabricate substitute art if the ZIP is missing or malformed. Final gameplay-scale visual acceptance remains a completion gate, not a pre-implementation blocker.
+The dependency/review gate is satisfied: RFR1 passed. The six source candidates are provided through the exact local ZIP contract above, so this packet is `ready/auto`. Input availability is not a claim-timing decision: at workstream start, verify `~/Downloads/alpine_plateau_underlay_assets.zip` before mutation and stop with a precise blocked handoff if it is missing or malformed. Do not fabricate substitute art. Final gameplay-scale visual acceptance remains a completion gate, not a pre-implementation blocker.
 
 ## Completion Truth
 
