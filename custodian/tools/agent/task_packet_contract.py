@@ -23,6 +23,7 @@ FIELDS = (
     "Kind", "Review", "Review stage", "Review modes", "Paired review workstream",
     "Review cycle", "Max automatic review cycles",
     "Review target workstream", "Review target packet", "Task overrides",
+    "Authoring chat", "Refresh planning chat",
 )
 ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PRIORITY = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
@@ -91,6 +92,8 @@ class Packet:
     task_overrides: str | None = None
     validation_scripts: tuple[str, ...] = ()
     schema: str | None = None
+    authoring_chat: str | None = None
+    refresh_planning_chat: str | None = None
 
 
 def parse_packet(path: str, text: str) -> Packet:
@@ -206,6 +209,8 @@ def parse_packet(path: str, text: str) -> Packet:
     task_overrides = _header_field_with_continuations(text, "Task overrides")
     validation_scripts = _validation_script_references(text)
     schema = _header_field_with_continuations(text, "Packet schema")
+    authoring_chat = _header_field_with_continuations(text, "Authoring chat")
+    refresh_planning_chat = _header_field_with_continuations(text, "Refresh planning chat")
 
     return Packet(
         path, workstream, status, dispatch, dispatch_declared, priority, dependencies, locks,
@@ -215,6 +220,7 @@ def parse_packet(path: str, text: str) -> Packet:
         max_review_cycles=max_review_cycles, review_target_workstream=review_target_workstream,
         review_target_packet=review_target_packet, task_overrides=task_overrides,
         validation_scripts=validation_scripts, schema=schema,
+        authoring_chat=authoring_chat, refresh_planning_chat=refresh_planning_chat,
     )
 
 
