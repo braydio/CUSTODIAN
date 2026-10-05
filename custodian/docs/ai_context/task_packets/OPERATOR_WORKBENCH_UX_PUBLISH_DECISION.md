@@ -45,7 +45,7 @@
   - active Workbench design and prerequisite publish-readiness/background-base-sync/FX-adoption packets
 - Task-specific authority:
   - Workbench publication transaction remains unchanged authority.
-  - Land/main readiness comes only from the landed structured readiness authority.
+  - Land/publication readiness comes from the landed publish-readiness authority; routine launch-time base reconciliation comes from `operator-workbench-background-base-sync`. UX3 consumes both structured projections and owns neither Git behavior.
   - UX1 owns artist-facing state vocabulary.
   - FX adoption owns CREATE-capable missing FX semantics and mirror default correctness.
   - This slice owns information hierarchy and decision presentation only.
