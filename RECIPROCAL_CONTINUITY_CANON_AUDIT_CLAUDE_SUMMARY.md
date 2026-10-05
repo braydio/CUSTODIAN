@@ -10,7 +10,7 @@ Re-audit the original Reciprocal Continuity lore migration and its requested-cha
 
 - Original migration: `110b837286be873ea93ea6a61d3397f8723e69d8` — `reciprocal continuity canon migration, provenance-as-metaphysics retired, ash-bell unarrival canon established`.
 - Canon-convergence correction: `1ad4054763ee27a566b4c381f9485c11e5b0c3b5` — `reciprocal continuity canon convergence, ash-bell history lock`.
-- Current main at audit authoring: `c49cf7bb8cc25f91240179f6fb340177c59323e6`.
+- Current main at audit authoring: `2737eaacbd5e003518f4377ae425682056b83530`.
 - Current authority: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`, `design/03_world/THE_ASH-BELL_CONTINUITY.md`, `design/03_world/lore/CORE_LORE.md`.
 - Current procedural/Hub/AI-context surfaces and `tools/lore/validate_reciprocal_continuity_migration.sh`.
 
