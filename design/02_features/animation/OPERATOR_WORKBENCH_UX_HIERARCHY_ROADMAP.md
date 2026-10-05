@@ -110,12 +110,13 @@ limits materialized paths rather than Git history, most of those commits may be
 unrelated to art. Current startup deliberately leaves an existing checkout
 untouched, and explicit Publish preparation advances only a clean checkout. The
 new `operator-workbench-background-base-sync` prerequisite changes that bounded
-policy: provably Workbench-owned unpublished residue is snapshotted byte-exactly,
-the ahead-zero base advances FF-only when no preserved path changed upstream,
-and the exact unpublished bytes are restored on current main. Unknown user dirt,
-staged changes, local commits, LAND PENDING, unresolved transactions, and
-same-path upstream changes still fail closed. UX1/UX3 must consume the structured
-result; raw ahead/behind counts remain diagnostics, not artist workload.
+policy: clean ahead-zero lag updates automatically, and a previously user-approved
+publication may resume automatically only when a durable COMMITTED Workbench
+transaction/finalization receipt proves the exact validated dirty postimages and
+no affected path changed upstream. Valid LAND PENDING may also retry automatically.
+Unknown user dirt, staged changes, local commits, unresolved transactions, and
+same-path upstream conflicts still fail closed. UX1/UX3 must consume the
+structured result; raw ahead/behind counts remain diagnostics, not artist workload.
 
 ## Existing UI baseline
 
