@@ -2,14 +2,14 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-04-05-connector-transition-regression`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `awakening-room-connectors-polish`
 - Locks: `awakening-04-05-connector-presentation`
 - Kind: `implementation`
 - Review: `none`
-- Review rationale: `low-risk exemption: this downstream packet is currently blocked for refresh and owns only a regression harness, not production behavior`
+- Review rationale: `low-risk exemption: this downstream packet owns only a regression harness, not production behavior, and may close as superseded when its dependency already proves the full contract`
 - Reviewed main: `43cb6ae3f6dc6da4924e0f8c031e68e2f2be1e78`
 - Goal: Make the repaired Dust Lung ↔ Locker Reliquary handoff durable by adding one repeatable bidirectional runtime/presentation regression path that can expose seam pops without requiring the user to manually rediscover the connector camera positions.
 - Completion boundary: After the existing connector visual-closeout workstream is complete/archived, add or reuse the narrowest stable runtime/Moment Forge coverage for traversal from Dust Lung through the single 04→05 dogleg connector into Locker Reliquary and back through that same connector, with synchronized alpha/evidence capture around both room handoffs. Do not reopen art direction or connector geometry unless the new regression proves a concrete technical defect.
@@ -27,7 +27,7 @@
 
 ## Handoff
 
-- Next action: Auto-claim only after `awakening-reliquary-dust-lung-connector` is complete and archived.
+- Next action: The dispatcher auto-claims only after `awakening-room-connectors-polish` is complete and archived; then either close as superseded or implement only the residual regression gap.
 - Best starting files: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/tools/validation/awakening_first_return_smoke.gd`; `custodian/tools/iteration/run_moment.py`; `custodian/tools/iteration/scenarios/`.
 - Blockers or open questions: Dependency only. Do not begin while the visual-closeout workstream still owns connector presentation.
 
@@ -37,5 +37,4 @@
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
-- Refresh instruction: After `awakening-room-connectors-polish` is complete, inspect its landed bidirectional scenario, telemetry, and changed validation ownership. If they already prove both joins in both directions under the new opaque-overlap contract, disposition this packet as superseded/no additional implementation. Otherwise rewrite the acceptance to cover only the remaining regression gap before making it ready again.
-
+- Refresh instruction: After `awakening-room-connectors-polish` is complete, inspect its landed bidirectional scenario, telemetry, and changed validation ownership. If they already prove both joins in both directions under the new opaque-overlap contract, disposition this packet as superseded/no additional implementation. Otherwise narrow execution to only the remaining regression gap inside the claimed workstream; no manual status flip or ChatGPT refresh is required.
