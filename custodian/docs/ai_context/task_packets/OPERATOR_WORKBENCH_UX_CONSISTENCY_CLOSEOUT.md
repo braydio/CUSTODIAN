@@ -125,7 +125,8 @@
   - Selection/frame continuity works across the documented cross-mode transitions.
   - Compact, normal and wide terminal fixtures remain usable without hiding primary state or producing unreadable overlapping panes.
   - All critical statuses have text meaning independent of color.
-  - Debug paths/hashes/checkout internals remain available but are not primary visual noise.
+  - Debug paths/hashes/checkout internals remain available but are not primary visual noise; raw ahead/behind commit counts stay in that diagnostic tier.
+  - Routine safe repository lag resolves behind the scenes and leaves the cockpit at `MAIN READY`; only genuinely unsafe reconciliation presents `MAIN BLOCKED` with a concise reason.
   - WARN/ERROR activity surfaces promptly while INFO remains compact.
   - Empty/loading/error states do not masquerade as valid stale content.
   - FX-adoption state, if present, is integrated without introducing new adoption semantics.
