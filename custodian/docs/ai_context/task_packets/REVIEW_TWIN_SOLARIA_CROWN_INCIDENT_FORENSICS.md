@@ -1,5 +1,6 @@
 # REVIEW: TWIN SOLARIA CROWN INCIDENT FORENSICS
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-twin-solaria-crown-incident-forensics`
 - Kind: `review`
 - Status: `ready`
@@ -13,6 +14,7 @@
 - Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `8d6a24dacd87153090383dcc1a6c94f09291393b`
 - Goal: Independently verify that the landed Twin Solaria Crown Incident forensic progression satisfies the staged evidence contract without creating route/Persistence authority leaks or resolving reserved setting mysteries.
 - Review focus:
   - one focused forensic progression authority rather than state smeared through layout/UI/global campaign code;
