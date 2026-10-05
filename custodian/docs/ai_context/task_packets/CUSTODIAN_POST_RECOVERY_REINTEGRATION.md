@@ -41,7 +41,7 @@
 ## Handoff
 
 - Next workstream: `armament-persistence-registration-core`
-- Next packet state: `dependency-gated ready/auto`
+- Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
