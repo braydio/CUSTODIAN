@@ -103,6 +103,20 @@ New Animation creation packet remain prerequisites. UX1-UX5 should refresh only
 after those reviewed backend capabilities land so the UX can expose them rather
 than recreate their logic.
 
+2026-10-05 background-sync addendum: a repository relation such as `behind 256`
+means the persistent art checkout is 256 repository commits behind `origin/main`;
+it does **not** mean 256 Operator animations changed. Because the sparse checkout
+limits materialized paths rather than Git history, most of those commits may be
+unrelated to art. Current startup deliberately leaves an existing checkout
+untouched, and explicit Publish preparation advances only a clean checkout. The
+new `operator-workbench-background-base-sync` prerequisite changes that bounded
+policy: provably Workbench-owned unpublished residue is snapshotted byte-exactly,
+the ahead-zero base advances FF-only when no preserved path changed upstream,
+and the exact unpublished bytes are restored on current main. Unknown user dirt,
+staged changes, local commits, LAND PENDING, unresolved transactions, and
+same-path upstream changes still fail closed. UX1/UX3 must consume the structured
+result; raw ahead/behind counts remain diagnostics, not artist workload.
+
 ## Existing UI baseline
 
 As of the reviewed baseline:
