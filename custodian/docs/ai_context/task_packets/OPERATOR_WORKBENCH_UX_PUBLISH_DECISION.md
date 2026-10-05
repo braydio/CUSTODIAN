@@ -31,7 +31,9 @@
   - `PublishView` currently exposes old/new frame counts, direct/mirror operations, publishing layers, timing, contract-changed bool, dependency audit, compatibility preflight, publish enable/block reason, and LAND PENDING.
   - Current primary wording uses pipeline concepts such as MIRROR PROMOTION, Dependency audit and Compatibility preflight.
   - Current `WorkbenchService.publish_preview()` determines CREATE/REPLACE/UNCHANGED from normalized candidate pixels and existing canonical targets.
-  - The prerequisite publish-readiness packet is expected to provide structured main/checkout preparation/block/recovery truth. This slice must present it rather than adding Git inspection.
+  - The landed publish-readiness authority provides structured publication preparation/block/recovery truth. The new `operator-workbench-background-base-sync` prerequisite owns routine launch-time reconciliation of a behind, ahead-zero art checkout when local dirt is provably Workbench-owned and byte-preservable.
+  - Raw `behind N` is repository commit distance, not a count of Operator animation changes. If background reconciliation succeeded before Publish, this dialog should see `MAIN READY`; it must not make the artist manually resolve ordinary repository lag or interpret the raw count as pending art work.
+  - Publish preparation remains an independent safety recheck before canonical mutation. Unsafe/failed launch reconciliation remains a real structured blocker and is not papered over by UX.
   - Active Workbench design requires mirror publication to be explicit/default-off. The FX-adoption prerequisite owns any CLI/default drift correction.
 - Evidence:
   - supplied OPUI Publish screenshot from 2026-10-01
