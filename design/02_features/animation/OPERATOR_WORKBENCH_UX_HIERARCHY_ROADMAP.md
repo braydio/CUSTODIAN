@@ -348,8 +348,8 @@ Every slice must:
 - No gameplay/runtime animation changes.
 - No replacement of Operator Workbench backend authority.
 - No replacement of Asset Pipeline V2.
-- No new Git synchronization implementation outside the publish-readiness
-  authority.
+- No new Git synchronization implementation outside the publish-readiness and
+  background-base-sync authorities.
 - No new browser discovery/cache authority outside the browser-snapshot
   hardening.
 - No new FX adoption or CREATE semantics.
