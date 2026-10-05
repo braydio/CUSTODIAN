@@ -132,11 +132,17 @@ judgment remain human-owned.
 If those subjective questions are important enough to require review after the
 objective checks are green, publish a compact external evidence bundle with
 `python3 custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`.
-The agent supplies focused reviewer questions and the Dropbox manifest path, then
-stops rather than performing its own aesthetic critique. Use
+The agent supplies focused reviewer questions, the exact packet `Authoring chat`,
+and the Dropbox manifest path, then stops rather than performing its own aesthetic
+critique. The authoring ChatGPT conversation is the review endpoint: ChatGPT web
+uses the connected Dropbox manifest/artifacts to answer those questions. Once the
+verdict returns, the execution agent must run the publisher's emitted
+`--cleanup-reviewed` command unless retention was explicitly requested. New
+handoffs default to `delete_after_review`; cleanup is exact-run and manifest
+gated, never wildcard cleanup. Use
 `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` for the gate, evidence
-budget, rclone/Dropbox path contract, and handoff format. Do not commit the cloud
-review binaries to Git as routine evidence.
+budget, rclone/Dropbox path contract, reviewer response, and cleanup format. Do
+not commit the cloud review binaries to Git as routine evidence.
 
 For task authoring, any request for more than two full-frame stills, repeated
 full-frame capture after each edit, or full-motion capture must explain why the
