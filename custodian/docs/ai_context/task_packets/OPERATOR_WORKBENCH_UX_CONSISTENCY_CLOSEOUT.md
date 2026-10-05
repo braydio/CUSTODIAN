@@ -46,6 +46,7 @@
   - UX3 owns Publish information hierarchy.
   - UX4 owns QUEUE.
   - Existing REVIEW/SEQUENCE/MOTION backend semantics remain authoritative.
+  - `operator-workbench-background-base-sync` remains the sole launch-time base-reconciliation authority; UX1/UX3 own its artist-facing vocabulary/projection.
   - This slice owns consistency/polish and final UX validation only.
 - Work surface:
   - `custodian/tools/operator/ui/app.py`
