@@ -18,6 +18,7 @@
 - Review modes: `code, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Summary backlink: Every durable implementation/review/recovery/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
 - Goal: Independently verify Archive Resolve V1's semantic echo, ingress/spawn resolve, and shortened reacquisition remain bounded presentation consumers with no copied semantic/gameplay authority and no player-control/readability regression.
 - Reviewed implementation acceptance: Reuse the archived refreshed AR3 packet acceptance. Explicit obligations include bounded presentation classes, read-only semantic queries, no uncommitted reveal, immediate control once the safety pocket is valid, deterministic first-resolve/reacquisition identity, measurably lighter/shorter reacquisition, pause and reduced/disabled parity, no permanent presentation after settlement, and no discovery/quest knowledge leaked through echo.
 - Review evidence: Archived AR3 packet/summary; reviewed AR1/AR2 receipts; live semantic query owners and presentation adapter; focused class/spawn/reacquisition smoke; affected streaming/runtime regressions; recorded Dropbox gameplay-scale visual-review manifest/path and user decision.
