@@ -52,21 +52,13 @@ python3 custodian/tools/agent/dispatch.py claim <workstream-id> --agent <agent-i
 ```
 
 Codex convenience routing is versioned in
-`.agents/skills/custodian-next/SKILL.md` and
-`custodian/tools/agent/prompts/custodian-next.md`. The skill may be invoked as
-`$custodian-next`. Because Codex custom prompts are user-scoped, install the
-repository prompt link with:
-
-```bash
-python3 custodian/tools/agent/install_codex_prompts.py
-python3 custodian/tools/agent/install_codex_prompts.py --check
-```
-
-After a Codex restart, `/prompts:custodian-next` applies the same routing:
-continue an already-active current workstream; otherwise prefer the durable
-same-series `Next Handoff`; stop on refresh/dependency/manual gates; only then
-fall back to global `claim-next`. It is a prompt/skill front end over the
-existing dispatcher, not a second scheduler.
+`.agents/skills/custodian-next/SKILL.md`. Invoke it directly as
+`$custodian-next`, or type `/skills` and choose **CUSTODIAN Next**. Enabled
+skills may also surface in the slash picker. The skill continues an already-active
+current workstream; otherwise it prefers the durable same-series `Next Handoff`,
+stops on refresh/dependency/manual gates, and only then falls back to global
+`claim-next`. It is a skill front end over the existing dispatcher, not a
+second scheduler.
 
 A successful claim ends with `CLAIMED` and one
 `CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line: the receipt is the assignment
