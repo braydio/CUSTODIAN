@@ -94,10 +94,12 @@ second scheduler.
 
 A successful claim ends with `CLAIMED` and one
 `CUSTODIAN_DISPATCH_RESULT_JSON:{...}` line: the receipt is the assignment
-authority. Never infer ownership from worktree creation, terminal activity,
-branch existence, or another task being active. Before entering the checkout,
-verify the receipt's workstream/branch/worktree; if stdout was lost, recover
-with:
+authority. It also projects the packet's exact `authoring_chat`,
+`visual_review` policy, and canonical `visual_review_root` so autonomous
+execution has a durable return channel for any human-owned visual decision.
+Never infer ownership from worktree creation, terminal activity, branch
+existence, or another task being active. Before entering the checkout, verify
+the receipt's workstream/branch/worktree; if stdout was lost, recover with:
 
 ```bash
 python3 custodian/tools/agent/dispatch.py last-claim
