@@ -48,6 +48,7 @@
   - `custodian/tools/operator/ui/widgets/animation_detail.py`
   - `custodian/tools/operator/ui/widgets/activity_log.py`
   - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md`
+  - `OPERATOR_WORKBENCH_BACKGROUND_BASE_SYNC.md`
   - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md`
   - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md`
 - Task-specific authority:
