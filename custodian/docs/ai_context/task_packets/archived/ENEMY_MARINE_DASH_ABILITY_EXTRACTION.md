@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `enemy-marine-dash-ability-extraction-recovery-1`
-- Status: `blocked`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -32,27 +32,27 @@
 
 ## Handoff
 
-- Next action: Resume this workstream after the pre-existing `grunt_falcon_reversal` profile/expectation mismatch is repaired; rerun changed-file closeout on the resumed branch, then archive and land normally. The extracted Marine code and focused gates are already green.
+- Next action: Land the validated extraction, then let `review-enemy-marine-dash-ability-extraction-recovery-1` run as the fresh-context paired review.
 - Best starting files: `enemy.gd`, `abilities/grunt_falcon_punch.gd`, Marine design doc, Marine smoke, spatial telemetry smoke, and Sundered Keep Marine ambush.
-- Blockers or open questions: `grunt_falcon_reversal` in `custodian/tools/validation/grunt_falcon_reversal_smoke.gd` fails its existing `ordinary_critical` frame-size assertion on clean main and blocks actor-tier completion; the Marine-owned gates pass. The old branch remains donor evidence only; this recovery branch is already reconciled to current main.
+- Blockers or open questions: none. The `grunt_falcon_reversal` smoke now measures the published ordinary-critical frame texture directly; the changed-file closeout passes all 23 selected checks.
 
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
-- Completion boundary satisfied: `no`
-- Acceptance satisfied: `no`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `removed`
-- Evidence: `MarineDash` owns dash phases/clocks/charge/prediction/contact/cadence/reset and `MarineDashConfig` owns typed values. The original and Marine-scene values match across all 26 fields. Focused Marine, spatial telemetry, and ambush smokes pass; static search finds no old actor phase fields or external private phase-helper calls. Required changed-file closeout fails `grunt_falcon_reversal` on the unrelated `ordinary_critical` 96×96 profile assertion, reproduced on unmodified project-root main, and skips three integration checks. The implementation is therefore not archived or landed.
+- Evidence: `MarineDash` owns dash phases/clocks/charge/prediction/contact/cadence/reset and `MarineDashConfig` owns typed values. The original and Marine-scene values match across all 26 fields. Focused Marine, spatial telemetry, and production ambush checks pass; static search finds no old actor phase fields or external private phase-helper calls. The `grunt_falcon_reversal` smoke now reads the ordinary-critical animation's actual published first-frame texture and confirms 96×96. The packet pairing contract accepts intentionally blocked/manual paired reviews when their implementation packet is planning-gated, while ready/auto implementations still require ready/auto reviews. Changed-file closeout against `origin/main` passes all 23 selected checks with no failures or skips.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `partial`
+- Outcome: `success`
 - Friction severity: `medium`
-- What went wrong: The changed-file closeout is blocked by the existing `grunt_falcon_reversal` profile-size assertion, despite all Marine-owned gates passing.
-- Root cause / contributing factors: The current main runtime's ordinary-critical paired-execution profile does not satisfy the smoke's hard-coded 96×96 expectation; the same failure reproduces outside this worktree on clean project-root main.
-- Prevention / pipeline improvement: Repair the baseline smoke/profile contract in its owning follow-up before using changed-file closeout as a green landing gate; do not weaken validation ownership or mark the failing result as passing.
-- Tooling / docs drift discovered: none beyond the existing baseline validation mismatch recorded above.
-- Follow-up: `manual-follow-up`
-- What worked: The original stale implementation commit replayed cleanly for runtime files; preserving current-main documentation/manifest state avoided donor snapshot rollback.
+- What went wrong: Latest-main closeout exposed a stale packet-pairing validator rule and the known Falcon smoke assertion; resolving the main-sync merge also required preserving newer packet-index and architecture content.
+- Root cause / contributing factors: Blocked/manual planning packets legitimately paired with blocked/manual reviews were rejected by the validator, and the Falcon smoke treated an absent `frame_size` dictionary entry as evidence about the actual animation texture size.
+- Prevention / pipeline improvement: Pairing validation now permits blocked/manual review pairs only while their implementation is gated; asset-size checks inspect published frame textures rather than metadata the runtime profile does not promise.
+- Tooling / docs drift discovered: The review-pairing contract did not represent planning-gated implementation/review pairs present on main; `grunt_falcon_reversal_smoke.gd` asserted a profile key that `_get_paired_execution_profile` never returns; `task_packet_index.py --write` still requires a Ready/Auto heading removed from the current README structure.
+- Follow-up: `fixed-in-scope`
+- What worked: Existing Marine behavior/parity evidence remained valid after sync; focused tests and the complete 23-check changed-file closeout now pass.

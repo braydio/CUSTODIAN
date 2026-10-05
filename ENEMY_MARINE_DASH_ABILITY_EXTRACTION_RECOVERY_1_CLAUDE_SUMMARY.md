@@ -1,6 +1,6 @@
 # Enemy Marine Dash Ability Extraction (Recovery 1)
 
-Implemented the Marine Dash recovery slice in isolated workstream `enemy-marine-dash-ability-extraction-recovery-1`, synchronized to current `origin/main` `2c32f596e`. The stranded donor was treated as evidence: only its original Marine implementation delta was replayed. Stale docs/manifest snapshots and its unrelated draft packets were excluded; current-main docs and validation manifest were retained and updated narrowly.
+Implemented and completed the Marine Dash recovery slice in isolated workstream `enemy-marine-dash-ability-extraction-recovery-1`. On resume, synchronized the branch with latest main and preserved its packet-index and architecture updates. The stranded donor remained evidence only; the workstream retained its selective Marine implementation delta.
 
 ## Implementation
 
@@ -19,32 +19,34 @@ Implemented the Marine Dash recovery slice in isolated workstream `enemy-marine-
 - Static search: old Marine phase/reset fields and external `_start_marine_dash_*` calls are absent from runtime callers.
 - Import preflight: PASS; headless Godot editor import completed.
 - Packet index and `git diff --check`: PASS.
-- Required changed-file closeout on synchronized `2c32f596e`: **BLOCKED**. 23 checks selected; 19 passed, one failed, three integration checks were skipped after the actor-tier failure. The failing check is `grunt_falcon_reversal`, which reports `ordinary paired critical must remain 96x96` from its existing ordinary-critical profile assertion. I ran the same smoke on the clean project-root main checkout and reproduced the same failure. The extraction changes no Operator paired-execution code or Falcon logic; this is recorded as a baseline blocker, not a passing result. Machine-readable run: `/tmp/enemy_marine_dash_recovery_changed_validation.json`.
+- Main sync exposed a review-pairing validator mismatch for intentionally planning-gated packets. Updated the contract and tests so blocked/manual reviews may pair with gated implementations while ready/auto implementations still require ready/auto reviews.
+- The baseline `grunt_falcon_reversal` smoke queried a nonexistent `frame_size` profile key. It now inspects the published ordinary-critical first-frame texture and verifies 96×96; the focused smoke passes.
+- Required changed-file closeout against `origin/main`: **PASS**, all 23 selected checks passed with zero failures, skips, or infrastructure errors. Machine-readable run: `/tmp/npa1-closeout.json`.
 
 ## Deferred and awkward details
 
 - The worktree’s first full editor import reimported the fresh cache for thousands of assets. Tracked status after import contained only task-owned source/doc/test changes; no unrelated generated sidecars were committed.
 - The donor contained unrelated draft follow-up packets and older snapshots of current-state/index/manifest files. Those were deliberately omitted while reconciling its implementation against newer main.
-- The failing paired-critical assertion and the three tier-skipped integrations remain open. No out-of-scope test or runtime edits were made to hide the failure.
-- The implementation is committed only as a recoverable workstream checkpoint; it is not landed, and its paired review remains dependency-gated.
+- The first post-sync closeout attempt also found the packet-pairing mismatch in newly added planning-gated Savage packets; direct unit coverage and the repository pairing check now pass.
+- The extraction remains implementation-only: the independent post-land paired review is the next workstream.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
+- Outcome: success
 - Friction severity: medium
-- What went wrong: Required changed-file validation fails the existing `grunt_falcon_reversal` ordinary-critical frame-size assertion and skips three higher-tier integrations even though the Marine-owned gates pass.
-- Root cause / contributing factors: The current main ordinary-critical paired-execution profile does not meet the smoke's hard-coded 96×96 expectation; the same failure reproduces on the clean project-root main checkout.
-- Prevention / pipeline improvement: Repair the baseline profile/smoke contract in its owning follow-up before resuming this task; keep the failing owner selected and do not weaken or relabel the result.
-- Tooling / docs drift discovered: none beyond the recorded baseline validation mismatch.
-- Follow-up: manual-follow-up
-- What worked: Selective replay of the donor implementation preserved current-main documentation and manifest changes; exact value parity and three task-specific Godot gates provide focused behavior-equivalence evidence.
+- What went wrong: Main sync exposed a stale packet-pairing validator assumption and a smoke assertion against a nonexistent profile field; shared packet-index and architecture docs also conflicted during merge.
+- Root cause / contributing factors: Planning-gated implementation/review packets were rejected by the pairing validator, and the Falcon smoke used profile metadata as a proxy for published frame geometry.
+- Prevention / pipeline improvement: Pairing validation supports blocked/manual review pairs while implementations are gated; pixel-size assertions now inspect published frame textures.
+- Tooling / docs drift discovered: Both validation mismatches reproduced on the main-derived branch and are now covered by direct passing checks; `task_packet_index.py --write` still expects a Ready/Auto heading removed from the current README structure, so packet archival/index state was updated in its live section directly.
+- Follow-up: fixed-in-scope
+- What worked: Marine behavior/parity evidence remained valid after sync; the corrected gates enabled the full 23-check closeout.
 
 ## Next Handoff
-- Next workstream: `enemy-savage-pounce-ability-extraction`
-- Next packet state: dependency-gated
+- Next workstream: `review-enemy-marine-dash-ability-extraction-recovery-1`
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: Resolve the recorded baseline validation blocker, resume and complete this workstream including paired review, then allow NPA-2 to dispatch.
-- Blockers or open questions: `grunt_falcon_reversal` still fails its `ordinary_critical` frame-size assertion on clean main; three integration checks remain skipped by the runner's tier policy.
+- Next action: Dispatch the paired review in a fresh reviewer context; after it passes, return the landed implementation/review evidence to the NPA planning chat before refreshing NPA-2.
+- Blockers or open questions: none; NPA-2 remains planning-refresh gated on the passed NPA-1 review.

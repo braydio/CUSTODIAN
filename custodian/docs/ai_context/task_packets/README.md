@@ -84,8 +84,8 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
 - Program tracker / architecture authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Expected program size: 11 implementation packets spanning standard combat-agent decomplexification, then commanded allies, fauna, encounter/social NPCs, static autonomous agents, and final compatibility cleanup.
 - Current first-wave packet state:
-  - `ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1 recovery workstream active at checkpoint `9af2adf59`; focused Marine/spatial/ambush gates pass, but landing is blocked by a pre-existing `grunt_falcon_reversal` baseline smoke failure reproduced on clean main.
-  - `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — paired NPA-1 review, dependency-gated until NPA-1 lands; verifies the 26-value parity, public request seam, host-service boundary, and full selected closeout after baseline validation is repaired.
+  - `archived/ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1 implementation landed after all 23 changed-file checks passed; `MarineDash` owns the complete lifecycle and typed tuning with exact 26-field parity.
+  - `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — paired NPA-1 review is ready after implementation landing; verifies the 26-value parity, public request seam, host-service boundary, and full selected closeout.
   - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2 blocked/manual; must be refreshed in this planning chat after the passed NPA-1 review before promotion to ready/auto.
   - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — paired NPA-2 review, blocked with NPA-2.
   - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 blocked/manual; must be refreshed in this planning chat after the passed NPA-2 review.

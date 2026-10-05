@@ -119,6 +119,30 @@ class ReviewPairingTests(unittest.TestCase):
         errors = tpc.validate_review_pairing([impl, review])
         self.assertEqual(errors, {})
 
+    def test_blocked_manual_implementation_can_keep_review_blocked_manual(self):
+        impl_text = (
+            legacy_packet("gated-work", status="blocked", dispatch="manual")
+            + "- Review: `auto`\n"
+            + "- Paired review workstream: `review-gated-work`\n"
+        )
+        review_text = (
+            "# Review Packet\n\n"
+            "- Workstream: `review-gated-work`\n"
+            "- Status: `blocked`\n"
+            "- Dispatch: `manual`\n"
+            "- Priority: `P2`\n"
+            "- Depends on: `gated-work`\n"
+            "- Locks: `none`\n"
+            "- Kind: `review`\n"
+            "- Review: `none`\n"
+            "- Review target workstream: `gated-work`\n"
+            f"- Review target packet: `{tpc.PACKET_ROOT}/archived/GATED_WORK.md`\n"
+            f"- Task overrides: `{tpc.BOUNDED_REVIEW_OVERRIDE}`\n"
+        )
+        impl = tpc.parse_packet(f"{tpc.PACKET_ROOT}/GATED_WORK.md", impl_text)
+        review = tpc.parse_packet(f"{tpc.PACKET_ROOT}/REVIEW_GATED_WORK.md", review_text)
+        self.assertEqual(tpc.validate_review_pairing([impl, review]), {})
+
     def test_missing_paired_review_is_reported(self):
         impl_text = (
             legacy_packet("orphan-work")
