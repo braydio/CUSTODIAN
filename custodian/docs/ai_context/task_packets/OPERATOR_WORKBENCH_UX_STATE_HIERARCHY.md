@@ -131,7 +131,7 @@
   - No new Git/browser/workbench authority is introduced.
 - Validation:
   - Extend `operator_workbench_ui_smoke.py` with fixtures for every artist-facing publication state, independent unsaved-live state, healthy/behind/blocked main projection, Activity collapse/expand, and user-facing mode labels.
-  - Run the prerequisite focused readiness/browser UI smokes selected by validation ownership after refresh.
+  - Run the prerequisite focused background-base-sync/readiness/browser UI smokes selected by validation ownership after refresh.
   - Run `python3 custodian/tools/validation/run_validation.py --changed --json`.
   - Run `git diff --check`.
 - Task overrides: `none`
