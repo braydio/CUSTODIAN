@@ -10,7 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Goal: Reduce procgen presentation node/render overhead by consolidating the highest-cost presentation-only owners identified by the attribution packet, without moving gameplay authority into visibility/render systems.
 - Completion boundary: REFRESH-GATED on landed `procgen-render-attribution-v1`. Do not choose a batching/lazy-realization target before attribution measures the post-D4/P7 runtime. After V1 attribution, rewrite this same packet in place to the exact top safe owner(s), exact files/material constraints, baseline counts, visual/objective parity checks, and target reduction.
 - Current measured state: Attribution V1 has not run, so there is no evidence-backed highest-cost compatible presentation owner to consolidate. Current pre-contraction runtime contains structural TileMaps plus separate macro/depth, foliage/dressing, road/surface decals, props, nonwalkable/coastline and shadow/overlay presentation, but D4/P7 may change ownership boundaries before attribution. The old packet incorrectly spoke as if the ranked attribution report already existed.
@@ -34,7 +34,7 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
