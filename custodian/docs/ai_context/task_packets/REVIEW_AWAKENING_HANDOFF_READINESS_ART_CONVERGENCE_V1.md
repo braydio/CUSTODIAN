@@ -1,5 +1,6 @@
 # REVIEW: AWAKENING HANDOFF READINESS + ART CONVERGENCE V1
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-awakening-handoff-readiness-art-convergence-v1`
 - Kind: `review`
 - Status: `ready`
@@ -13,6 +14,7 @@
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `4eec3a3bcb8447dc4d625b4dfdd654c2fde515e8`
 - Goal: Independently verify the landed Awakening convergence slice against its registration, seam, progression, asset-consumption, and South Reach handoff-readiness contract.
 - Review focus: Exact Layout-to-art registration; no speculative resizing; preservation of the corrected 1024×576 04→05 connector; machine seam metrics and compact ROI evidence for late joins rather than repeated full-frame review; Road/Approach join; Gate pylon alignment and central-body non-collision decision; exactly-once console+P-9 completion; production-named handoff seam without scene transition; no duplicate fixture rendering; no Contract prewarm; documentation truth.
 - Acceptance: Produce a findings-first independent review of live `main`. Either record a clean `passed` receipt or concrete findings. Blocking findings create the bounded correction pair through the normal review lifecycle. Do not patch reviewed implementation/runtime code inside this review workstream.
