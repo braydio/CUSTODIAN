@@ -172,6 +172,38 @@ Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
 returned packet, then execute only that workstream through the lifecycle in
 `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
 
+### CUSTODIAN Next Shortcut
+
+The repository owns a context-aware next-task workflow at
+`.agents/skills/custodian-next/SKILL.md`. In Codex, invoke it directly as
+`$custodian-next`.
+
+For a slash-menu shortcut, install the versioned custom prompt once:
+
+```bash
+python3 custodian/tools/agent/install_codex_prompts.py
+```
+
+Restart Codex, then use:
+
+```text
+/prompts:custodian-next
+```
+
+Semantics:
+
+1. If the current session is already in an active `agent/<workstream>`
+   checkout, continue that workstream rather than claiming another packet.
+2. Otherwise prefer the exact immediate successor recorded by the most recently
+   completed packet/review's durable `Next Handoff`, including its paired review.
+3. If that successor is refresh-gated, blocked/manual, or dependency-blocked,
+   stop and surface the exact blocker/refresh chat. Do not silently jump lanes.
+4. Only when there is no same-series successor, fall back to
+   `dispatch.py claim-next --agent codex`.
+
+The dispatcher receipt remains assignment authority; the shortcut never edits
+packet status to manufacture eligibility.
+
 ### Naming Work: The Task Packet Is the Brief
 
 When the user names CUSTODIAN work in any form — "claim X", "start X", "take X",
