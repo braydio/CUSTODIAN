@@ -33,5 +33,8 @@ metrics first. If a material subjective decision remains, do not perform the
 aesthetic judgment inside the reviewer agent. Reuse an existing Dropbox visual
 handoff when available, or publish one compact bundle with
 `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`
-and specific reviewer questions. Record the manifest path and route the
-subjective decision to `human_required`.
+and specific reviewer questions. Record the packet's exact `Authoring chat`
+and manifest path, then route the decision to `human_required`. The authoring
+ChatGPT conversation is the review endpoint for the connected Dropbox evidence.
+When its verdict returns, continue the same workstream and run the emitted
+`--cleanup-reviewed` command unless retention was explicitly requested.
