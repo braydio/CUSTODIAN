@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-muster-continuity-port-deployment`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-hub-forum-adjudication-contract-prewarm`
 - Locks: `hub-runtime, world-lifecycle, contract-bootstrap`
@@ -31,10 +31,9 @@
 - Task overrides: `none`
 - Deferred: H6 outcome/return; final Muster services/art; deployment interstitial polish.
 
-## Temporary Refresh Gate — REMOVE WHEN REFRESHED
+## Claim-Time Dependency Refresh
 
-After `review-hub-forum-adjudication-contract-prewarm` passes, inspect the exact accepted-scenario owner/seed contract, H2 major-context deploy API, H3 bootstrap retry/status API, and current `game.tscn`/WorldSimulationRuntime startup behavior. Reconcile parallel runtime changes, remove this section, and set ready/auto. Refresh in place.
-
+This packet is intentionally `ready/auto` while its declared dependencies may still be incomplete. The dispatcher must keep it non-claimable until every `Depends on` workstream is archived `complete`. Once claimed, the execution agent must reconstruct the landed predecessor seams from current `main`, archived implementation/review summaries, and live public APIs before mutation. Reconcile private helper names and bounded implementation drift while preserving this packet's Goal, Completion boundary, Preserve, Non-goals, and Acceptance. Update directly stale packet/docs facts inside the workstream when needed. Do not stop for a ChatGPT/user refresh unless current evidence exposes a genuine unresolved design choice that existing authority cannot answer.
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -57,6 +56,6 @@ After `review-hub-forum-adjudication-contract-prewarm` passes, inspect the exact
 
 ## Handoff
 
-- Next action: Refresh after HR3; H4 may proceed independently.
+- Next action: Auto-claim after HR3 archives complete; self-refresh from the landed accepted-scenario/bootstrap/deployment seams. H4 remains independent.
 - Best starting files: reviewed H3 coordinator; reviewed H2 lifecycle owner; WorldContractBootstrap/Proxy/Loader; game.tscn; WorldSimulationRuntime.
 - Blockers or open questions: accepted-scenario injection and deploy API are predecessor outputs.
