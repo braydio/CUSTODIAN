@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `custodian-post-recovery-reintegration`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-custodian-death-handoff-foundation-recovery-1, review-hub-campaign-return`
 - Locks: `custodian-death-flow, hub-runtime, world-lifecycle, operator-runtime`
@@ -33,18 +33,18 @@
 
 ## Refresh Planning Authority
 
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
-- Refresh instruction: After both prerequisite reviews land, bring the archived R1 review receipt and reviewed H6 implementation/review evidence back to this planning chat. Re-derive the exact H6 return-accepted/return-complete API, persistent Operator ownership, return spawn/reintegration point, and fallback suppression seam. Update Reviewed main, Current measured state, Work surface, Change, Acceptance, and Validation, then remove this refresh gate and set R2 `ready/auto`. Do not silently reinterpret Post recovery as a second Campaign-return system.
+- Refresh instruction: After both prerequisite reviews archive complete, the claiming execution agent reads the archived R1 review receipt plus reviewed H6 implementation/review evidence, then re-derives the exact H6 return-accepted/return-complete API, persistent Operator ownership, return spawn/reintegration point, and fallback suppression seam from current main before mutation. Update directly stale packet/docs facts inside this workstream. The planning-chat URL remains provenance, not a claim gate. Do not reinterpret Post recovery as a second Campaign-return system.
 
 ## Handoff
 
 - Next workstream: `armament-persistence-registration-core`
-- Next packet state: `refresh-required`
+- Next packet state: `dependency-gated ready/auto`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search`
 - Refresh reason: R3 must be re-derived against the landed persistent Operator/reintegration lifetime and whatever inventory ownership is live after R2.
 - Next action: after R2 lands and its paired review passes, return the R2 implementation/review summaries to the recorded planning chat and refresh R3.
-- Blockers or open questions: R2 itself is dependency-gated on the formal R1 review and reviewed H6 generic Campaign return; its exact integration API must be refreshed after those land.
+- Blockers or open questions: R2 is dependency-gated on the formal R1 review and reviewed H6 generic Campaign return; the execution agent derives the exact integration API automatically from those landed authorities.
