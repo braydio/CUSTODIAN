@@ -58,7 +58,7 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 
 | Slice | Workstream | Packet state | Depends on | Claim-time refresh |
 |---|---|---|---|---|
-| H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review ready/auto | none | complete; donor history preserved and stale-H1 refs retired |
+| H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review ready/auto | none | implementation complete; HR1 verifies/cleans any residual H1 diagnostic refs while preserving donor archive reachability |
 | H2 | `hub-awakening-context-handoff` | ready/auto, dependency-gated | HR1 + Awakening handoff review | execution-agent |
 | H3 | `hub-forum-adjudication-contract-prewarm` | ready/auto, dependency-gated | HR2 | execution-agent |
 | H4 | `hub-crown-transfer-twin-solaria` | ready/auto, dependency-gated | HR2 | execution-agent |
@@ -92,6 +92,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1 implementation is complete/landed and awaits paired review; Awakening room-connectors polish is complete with downstream readiness review pending; all later Hub slices are dependency-gated ready/auto.
-**Next:** run HR1 from a fresh reviewer context; H2 becomes claimable automatically after HR1 and the reviewed Awakening handoff archive complete.
+**Current:** H1 implementation is complete/landed and awaits its auto paired review. Awakening room-connectors polish is ready/auto; its review, handoff-readiness implementation/review, and H2-H7 are all pre-authored dependency-gated auto work.
+**Next:** HR1 and `awakening-room-connectors-polish` may proceed without manual assignment. Their paired reviews and the Awakening handoff-readiness slice unblock automatically through declared dependencies; H2 becomes claimable once HR1 and the reviewed Awakening handoff are archived complete.
 **Finish:** HR7 passes the complete first-campaign-loop proof.

@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `asset-downloads-intake-sweep`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `asset-pipeline`
