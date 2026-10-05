@@ -58,7 +58,7 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 
 | Slice | Workstream | Packet state | Depends on | Claim-time refresh |
 |---|---|---|---|---|
-| H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review ready/auto | none | implementation complete; HR1 verifies/cleans any residual H1 diagnostic refs while preserving donor archive reachability |
+| H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review ready/auto | none | implementation complete; HR1 verifies the obsolete active H1 branch/worktree/claim is gone and donor archive remains reachable; lifecycle diagnostic refs are preserved evidence |
 | H2 | `hub-awakening-context-handoff` | ready/auto, dependency-gated | HR1 + Awakening handoff review | execution-agent |
 | H3 | `hub-forum-adjudication-contract-prewarm` | ready/auto, dependency-gated | HR2 | execution-agent |
 | H4 | `hub-crown-transfer-twin-solaria` | ready/auto, dependency-gated | HR2 | execution-agent |
