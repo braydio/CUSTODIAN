@@ -264,7 +264,7 @@ class WorkstreamTests(unittest.TestCase):
     def _commit_task_work(self, path: Path, workstream_id: str, message: str = "work") -> None:
         (path / "feature").write_text("done\n")
         summary = workstream._expected_summary_filename(workstream_id)
-        (path / summary).write_text("completed\n")
+        (path / summary).write_text(summary_text)
         git(path, "add", "feature", summary)
         git(path, "commit", "-m", message)
 
@@ -398,7 +398,7 @@ class WorkstreamTests(unittest.TestCase):
             f"{extra}"
         )
 
-    def _archive_packet(self, path: Path, workstream_id: str, text: str) -> None:
+    def _archive_packet(self, path: Path, workstream_id: str, text: str, summary_text: str = "completed\n") -> None:
         archive_dir = path / "custodian/docs/ai_context/task_packets/archived"
         archive_dir.mkdir(parents=True, exist_ok=True)
         filename = workstream_id.upper().replace("-", "_") + ".md"
@@ -453,6 +453,54 @@ class WorkstreamTests(unittest.TestCase):
         workstream_id = "completion-truth-review"
         path = workstream.start(workstream_id, self.repo)
         self._archive_packet(path, workstream_id, self._v2_packet_text(workstream_id, kind="review"))
+        workstream.finish(workstream_id, self._green_report(), repo=path)
+        self.assertFalse(path.exists())
+
+    def test_finish_blocks_recorded_authoring_chat_missing_from_summary(self):
+        workstream_id = "authoring-chat-missing"
+        path = workstream.start(workstream_id, self.repo)
+        chat = "https://chatgpt.com/c/exact-authoring-chat"
+        completion_truth = (
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `yes`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Superseded/legacy production path disposition: `n/a`\n"
+            "- Evidence: tests green\n"
+        )
+        text = self._v2_packet_text(
+            workstream_id,
+            extra=f"- Authoring chat: `{chat}`\n" + completion_truth,
+        )
+        self._archive_packet(path, workstream_id, text, summary_text="completed without backlink\n")
+        with self.assertRaisesRegex(workstream.WorkstreamError, "summary-backlink gate"):
+            workstream.finish(workstream_id, self._green_report(), repo=path)
+        self.assertTrue(path.exists())
+
+    def test_finish_accepts_exact_authoring_chat_in_summary(self):
+        workstream_id = "authoring-chat-present"
+        path = workstream.start(workstream_id, self.repo)
+        chat = "https://chatgpt.com/c/exact-authoring-chat"
+        completion_truth = (
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `yes`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Superseded/legacy production path disposition: `n/a`\n"
+            "- Evidence: tests green\n"
+        )
+        text = self._v2_packet_text(
+            workstream_id,
+            extra=f"- Authoring chat: `{chat}`\n" + completion_truth,
+        )
+        self._archive_packet(
+            path,
+            workstream_id,
+            text,
+            summary_text=f"# Summary\n\nAuthoring chat: {chat}\n",
+        )
         workstream.finish(workstream_id, self._green_report(), repo=path)
         self.assertFalse(path.exists())
 
