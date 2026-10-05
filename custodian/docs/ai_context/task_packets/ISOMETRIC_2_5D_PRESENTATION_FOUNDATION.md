@@ -9,7 +9,12 @@
 - Depends on: `kenney-isometric-blockout-playtest`
 - Locks: `world-presentation, presentation-experiments`
 - Kind: `implementation`
-- Review: `none`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, runtime`
+- Paired review workstream: `review-isometric-2-5d-presentation-foundation`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
 - Reviewed main: `09ebb90e78e4568f81f4a7fc270da0a3d158d445`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 - Goal: Make CUSTODIAN's 2.5D doctrine an explicit reusable 2D runtime presentation contract by separating ground XY from visual elevation and converging existing depth-sort, roof-occlusion and contact-shadow precedents without creating a 3D gameplay path.
@@ -140,4 +145,15 @@ python custodian/tools/validation/run_validation.py --test isometric_2_5d_presen
 git diff --check
 ```
 
-Update the realization roadmap and finish normally. Next workstream: `isometric-2-5d-forum-vertical-slice`.
+Update the realization roadmap and finish normally. Next workstream: `review-isometric-2-5d-presentation-foundation`; the Forum and Sundered showcase slices remain dependency-gated until that fresh-context review passes.
+
+
+## Handoff
+
+- Next workstream: `review-isometric-2-5d-presentation-foundation`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Next action: Finish the foundation, then let the paired fresh-context review claim before showcase consumers.
+- Blockers or open questions: none.
