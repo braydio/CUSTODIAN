@@ -259,6 +259,8 @@ Minimum adjacency check:
 
 ## Agent Task Packets
 
+For packet metadata, executable work defaults to `Dispatch: auto`. Dependency ordering belongs in `Depends on`; incomplete design belongs in `Status: draft`; runtime/input failures belong in fail-closed execution evidence. Do not use `Dispatch: manual` as a generic blocker or refresh gate. It is valid only when the user explicitly asks to decide when an otherwise ready packet may be claimed.
+
 Task packets are optional risk-control and handoff records, not mandatory ceremony.
 When a packet is used, give it the stable workstream ID. Before a completed
 implementation workstream is torn down, mark its packet complete, move it to
