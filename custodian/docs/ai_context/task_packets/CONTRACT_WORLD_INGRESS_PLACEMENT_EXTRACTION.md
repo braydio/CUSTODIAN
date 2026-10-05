@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation-r1`
+- Depends on: `review-contract-world-placement-foundation-r1-r1`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
@@ -23,7 +23,7 @@
 - Validation: Start with `res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd`, then `res://tools/validation/sundered_keep_ingress_smoke.gd`, `res://tools/validation/world_ingress_spawner_smoke.gd`, `res://tools/validation/world_ingress_physics_reentry_smoke.gd`, `res://tools/validation/authored_level_ingress_return_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, then changed-file closeout. The recorded seed-0 Threadway sweep failure and `procgen_stuck_pocket_smoke.gd` failure are baseline/out-of-scope unless this extraction changes their owner paths.
 - Task overrides: `none`
 - Deferred: Other placement domains and final loader contraction.
-- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
+- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 
