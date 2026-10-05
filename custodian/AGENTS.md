@@ -70,7 +70,7 @@ For active work under `custodian/`, a user-supplied task name, slice name, packe
 
 ## Summary Backlink
 
-When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
+When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, closeout summary/handoff, and final user-facing handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link. The finish-time artifact gate programmatically checks the committed root closing summary.
 
 This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
 
@@ -132,11 +132,17 @@ judgment remain human-owned.
 If those subjective questions are important enough to require review after the
 objective checks are green, publish a compact external evidence bundle with
 `python3 custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`.
-The agent supplies focused reviewer questions and the Dropbox manifest path, then
-stops rather than performing its own aesthetic critique. Use
-`custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` for the gate, evidence
-budget, rclone/Dropbox path contract, and handoff format. Do not commit the cloud
-review binaries to Git as routine evidence.
+When the packet has an `Authoring chat:` URL, include it with
+`--authoring-chat <exact-url>`. The agent supplies focused reviewer questions,
+the exact authoring-chat URL, and the Dropbox `REVIEW_MANIFEST.json` path, then
+stops rather than performing its own aesthetic critique. ChatGPT web in that
+authoring conversation should inspect the exact Dropbox path through the connected
+Dropbox source. After the user/ChatGPT records the review decision, resume the
+same workstream and execute the emitted cleanup command; review uploads default to
+`delete-after-review`, with `--retain-after-review` reserved for an explicit
+retention requirement. Use `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`
+for the gate, evidence budget, rclone/Dropbox path contract, handoff, and cleanup
+format. Do not commit the cloud review binaries to Git as routine evidence.
 
 For task authoring, any request for more than two full-frame stills, repeated
 full-frame capture after each edit, or full-motion capture must explain why the
