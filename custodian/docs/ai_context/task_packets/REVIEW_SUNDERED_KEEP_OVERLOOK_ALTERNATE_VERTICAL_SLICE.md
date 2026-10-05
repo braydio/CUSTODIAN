@@ -27,7 +27,7 @@
 - Review focus: Separate **composition proof** from **art finish**. A visually rough slice may pass if it convincingly proves the spatial grammar and its remaining weakness is donor-art fidelity. Conversely, polished assets cannot rescue a composition that still reads as flat wallpaper.
 - Acceptance: Findings-first review. Blocking defects/material gaps create `sundered-keep-overlook-alternate-vertical-slice-review-corrections-1`. Clean/non-blocking result records whether SKO-2 is recommended, unnecessary, or rejected, then returns to the human program decision.
 - Non-goals: No procgen/production integration design, no Blender recommendation unless evidence demonstrates a specific authoring limitation, and no unrelated Sundered cleanup.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets; do not edit the reviewed implementation.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
