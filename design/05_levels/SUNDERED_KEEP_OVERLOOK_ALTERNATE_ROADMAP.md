@@ -59,6 +59,7 @@ Useful review targets rather than hard gameplay constraints:
 | SKO-2 | `sundered-keep-overlook-alternate-art-polish` | optional Asset V2 layered-art pass only if SKO-1 proves composition but donor art limits finish | blocked / manual |
 | SKO-2R | `review-sundered-keep-overlook-alternate-art-polish` | paired technical/art-intake review | ready / auto behind SKO-2 |
 | SKO-3 | `sundered-keep-overlook-runtime-integration-plan` | re-audit production/procgen seams and author the actual integration series | blocked / manual / planning-refresh required |
+| SKO-3R | `review-sundered-keep-overlook-runtime-integration-plan` | fresh-context architecture/workflow review of the selected integration seam and authored packet graph | ready / auto behind SKO-3 |
 
 ## SKO-1 exit gate
 
@@ -85,7 +86,7 @@ After SKO-1 review, and after SKO-2 review if SKO-2 is used, return to:
 
 https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
 
-Re-audit the then-current Sundered production approach, generated frontage/vista, world-ingress route, procgen placement, camera handoff, and spawn/playability state. Only then author production integration packets.
+Re-audit the then-current Sundered production approach, generated frontage/vista, world-ingress route, procgen placement, camera handoff, and spawn/playability state. Only then author production integration packets. Those implementation packets must remain dependency-blocked on `review-sundered-keep-overlook-runtime-integration-plan` (directly or through a reviewed predecessor) so the integration architecture is independently checked before production mutation begins.
 
 No production/procgen implementation packet is pre-authored now because the validated standalone composition may change what the correct insertion seam is.
 
