@@ -404,7 +404,7 @@ class WorkstreamTests(unittest.TestCase):
         filename = workstream_id.upper().replace("-", "_") + ".md"
         (archive_dir / filename).write_text(text)
         summary = workstream._expected_summary_filename(workstream_id)
-        (path / summary).write_text("completed\n")
+        (path / summary).write_text(summary_text)
         git(path, "add", "-A")
         git(path, "commit", "-m", "archive packet")
 
