@@ -103,10 +103,17 @@ structured metrics; it caps routine handoffs and requires explicit
 Dropbox remote and maintains `LATEST.json` per workstream.
 
 Execution agents report the emitted
-`CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` payload and stop. Human/ChatGPT review
-owns composition, atmosphere, aesthetic cohesion, gameplay-scale readability,
-game feel, and baseline approval. See `VISUAL_REVIEW_HANDOFF.md` for the full
-gate, evidence budget, remote contract, and credential rules.
+`CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` payload and stop. That payload carries
+the exact packet `authoring_chat`, Dropbox `manifest_path`, cleanup policy,
+and exact-run cleanup command. The authoring ChatGPT conversation is the review
+endpoint: ChatGPT web should inspect the connected Dropbox path and answer the
+manifest's questions. Human/ChatGPT review owns composition, atmosphere,
+aesthetic cohesion, gameplay-scale readability, game feel, and baseline
+approval. When the verdict returns, continue the same workstream and run the
+emitted `--cleanup-reviewed` command by default. Use `--retain-after-review`
+only when retention was explicitly requested. See `VISUAL_REVIEW_HANDOFF.md`
+for the full gate, evidence budget, remote contract, reviewer response, cleanup
+safety, and credential rules.
 
 ## External Implementation Input Handoff
 
