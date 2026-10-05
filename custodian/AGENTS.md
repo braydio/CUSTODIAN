@@ -72,7 +72,7 @@ For active work under `custodian/`, a user-supplied task name, slice name, packe
 
 When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
 
-This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision. `workstream.py finish` fails closed when a packet records an authoring/refresh URL but the committed closing summary omits that exact `Authoring chat` line.
 
 ## Tooling And Scripts
 
