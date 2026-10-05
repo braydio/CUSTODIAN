@@ -103,9 +103,9 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 | Slice | Workstream | Scope | Status |
 | --- | --- | --- | --- |
-| NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **recovery packet authored / ready** |
-| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the landed ability seam | **packet authored / dependency-gated** |
-| NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **packet authored / dependency-gated** |
+| NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **implementation checkpoint `9af2adf59` validated / active / blocked on external baseline smoke** |
+| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the landed ability seam | **blocked/manual / ChatGPT refresh after passed NPA-1 review** |
+| NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **blocked/manual / ChatGPT refresh after passed NPA-2 review** |
 | NPA-4 | TBD after NPA-3 | Extract ordinary standard-enemy melee execution/cadence authority | planned |
 | NPA-5 | TBD | Extract shared enemy reaction/posture/parry-critical authority where a coherent boundary exists | planned |
 | NPA-6 | TBD | Extract enemy death/corpse/loot lifecycle from combat coordinator | planned |
@@ -117,9 +117,15 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete.
 
+Current NPA-1 checkpoint evidence: `9af2adf59` adds actor-local `MarineDash` + typed `MarineDashConfig`, public `request_marine_dash`, exact 26-default/26-scene tuning parity, three focused Marine/spatial/production-ambush gates green, and a 343-line `enemy.gd` reduction in the recovery branch. It is **not production authority yet** because required changed-file closeout is blocked by the pre-existing `grunt_falcon_reversal` smoke on clean main. That smoke currently asks `_get_paired_execution_profile("ordinary_critical", "s")` for a `frame_size` key the runtime profile does not expose, while the design/runtime asset contract still says ordinary paired criticals are 96×96. Treat that as validation-owner drift to repair outside the Marine extraction rather than weakening NPA-1 validation.
+
 Cross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. NPA-8 must reuse it if available rather than inventing Vaultwing-only hearing or importing Enemy behavior policy.
 
 Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
+
+**Planning / refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search
+
+NPA-2 and NPA-3 are intentionally refresh-gated. Bring the passed predecessor implementation/review evidence back to this chat before promoting either packet; do not let an execution agent silently freeze provisional private APIs.
 
 ## Measured Baseline
 
