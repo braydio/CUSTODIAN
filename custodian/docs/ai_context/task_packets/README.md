@@ -11,6 +11,13 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 This section is owned by `custodian/tools/agent/task_packet_index.py`; run it with `--write` after packet changes to populate/update the bounded managed block.
 
+### Active Agent Workflow Visual Review Lifecycle
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb
+
+- `archived/VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — completed P0 control-plane/tooling slice: claim receipts expose authoring/visual-review routing, finish enforces exact summary backlinks, Dropbox review manifests default to delete-after-review and carry a path-confined cleanup command, and `$custodian-next` keeps human review inside the active workstream.
+- `REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — ready/auto fresh-context paired review, dependency-satisfied once this landing reaches main.
+
 ### Active Hub First-Set / First Campaign Loop Series
 
 Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
