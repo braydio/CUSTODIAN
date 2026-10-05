@@ -6,8 +6,8 @@ description: Continue the current CUSTODIAN workstream or claim the next eligibl
 # CUSTODIAN Next
 
 Use this skill when the user says "next CUSTODIAN task", "claim the next packet",
-"continue the workstream", or invokes the installed `/prompts:custodian-next`
-shortcut.
+"continue the workstream", explicitly invokes `$custodian-next`, or selects
+**CUSTODIAN Next** from `/skills` / the slash picker.
 
 ## Routing
 
