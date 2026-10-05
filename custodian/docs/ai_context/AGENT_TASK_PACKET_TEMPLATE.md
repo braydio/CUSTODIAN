@@ -38,6 +38,8 @@ coherent effort.
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
 - Reviewed main: `<short SHA>`
+- Authoring chat: `<exact ChatGPT conversation URL | not-recorded | n/a>`
+- Visual review: `<none | required-if-subjective | required>`
 - Goal:
 - Completion boundary:
 - Current measured state:
