@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-crown-transfer-twin-solaria`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-hub-awakening-context-handoff`
 - Locks: `hub-runtime, route-traversal`
@@ -31,10 +31,9 @@
 - Task overrides: `none`
 - Deferred: Twin Crown content slices; H5 Port deployment; production Transfer Court art.
 
-## Temporary Refresh Gate — REMOVE WHEN REFRESHED
+## Claim-Time Dependency Refresh
 
-After `review-hub-awakening-context-handoff` passes, inspect the landed Hub host identity/lifecycle and current route/level registry contracts. Verify whether RouteTraversalManager already handles world_context=hub without changes. Update exact Work surface/Acceptance/tests, remove this section, and set ready/auto. Refresh in place.
-
+This packet is intentionally `ready/auto` while its declared dependencies may still be incomplete. The dispatcher must keep it non-claimable until every `Depends on` workstream is archived `complete`. Once claimed, the execution agent must reconstruct the landed predecessor seams from current `main`, archived implementation/review summaries, and live public APIs before mutation. Reconcile private helper names and bounded implementation drift while preserving this packet's Goal, Completion boundary, Preserve, Non-goals, and Acceptance. Update directly stale packet/docs facts inside the workstream when needed. Do not stop for a ChatGPT/user refresh unless current evidence exposes a genuine unresolved design choice that existing authority cannot answer.
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -57,6 +56,6 @@ After `review-hub-awakening-context-handoff` passes, inspect the landed Hub host
 
 ## Handoff
 
-- Next action: Refresh in parallel with H3 after HR2.
+- Next action: After HR2 archives complete, auto-claim in parallel with H3 and self-refresh from the landed Hub host/route contracts.
 - Best starting files: reviewed H2 Hub host; Twin level JSON/layout; route registry; RouteTraversalManager/LevelLoader.
 - Blockers or open questions: exact Hub-host restoration adapter is an H2 output.
