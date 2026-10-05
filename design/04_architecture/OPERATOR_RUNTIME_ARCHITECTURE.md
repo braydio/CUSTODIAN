@@ -470,6 +470,18 @@ the pattern the procgen foliage organisation pass already used.
 Every measured debt family has exactly one slice that owns retiring it, so no
 counter is left without a home.
 
+### F0 dependency binding contract
+
+`OperatorRuntimeDependencies` is a typed bundle of explicit `Node` references,
+not a service locator: it exposes fixed fields and no tree-search API. The
+Operator facade builds and validates the bundle once at its integration
+boundary. World-owned dependencies resolve from the owning world/composition
+root; project autoload references are bound there once. Gameplay helpers and
+future domain controllers consume the injected fields and do not rediscover
+scene topology. A missing owning world is an integration error. Optional
+camera, UI, build, terminal, telemetry, history, and cognitive services remain
+nullable so their established fallback behavior is preserved.
+
 | Slice | Scope | Debt family it retires | State |
 |---|---|---|---|
 | A | Architecture contract, debt audit, characterization | — (establishes the ledger) | **done** |
@@ -480,7 +492,7 @@ counter is left without a home.
 | C2b.3 | Retire compatibility resources, nodes and updater; reconcile reachability/orphan output | Compatibility residue (not counted in the 75-item architecture ledger) | **done** |
 | D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | **done** |
 | E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | **done** |
-| F0 | Bind/inject Operator external dependencies before domain extraction | `absolute_scene_lookups` 38 → 0 | **queued** |
+| F0 | Bind/inject Operator external dependencies before domain extraction | `absolute_scene_lookups` 38 → 0 | **done** |
 | F1 | Extract loadout + per-weapon runtime state | `weapon_definition_runtime_state` 3 → 0 | **queued** |
 | F2–F6 | Extract melee, ranged, dodge, interaction, and recovery/survivability behind the facade; move scoped presentation policy with the owning domain | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
 | G | Collapse `operator.tscn` and `operator.gd`, delete compatibility infra, final audits | `--final` on every audit | **queued** |
@@ -499,9 +511,12 @@ gameplay facts instead of becoming another cross-cutting actor subsystem:
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` proves the bounded
   movement-owned-lower + action-owned-upper composition seam on the existing
   semantic presentation controller.
-- `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` is F0 and independently retires the
-  remaining 38 absolute scene lookups. F0 and mobile guard may land in either
-  order; F1/F5/F6 wait on both seams, F2 and F3 additionally wait on F1's stable
+- `OPERATOR_DEPENDENCY_INJECTION_SPINE.md` is complete: the live audit is now
+  zero absolute scene lookups, with only the three weapon-definition runtime
+  fields left for F1. `OperatorRuntimeDependencies` is a pure typed data bundle;
+  the facade binds it once through `bind_runtime_dependencies()`, and future
+  domain controllers receive explicit service references through that seam.
+  F1/F5/F6 wait on both F0 and mobile guard; F2/F3 also wait on F1's stable
   loadout/runtime-state APIs, while F4 only waits on F0 because dodge
   intentionally remains committed full-body presentation.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes the mobile composition

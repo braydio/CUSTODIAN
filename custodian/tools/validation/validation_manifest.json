@@ -2311,7 +2311,7 @@
         "custodian/tools/validation/operator_modular_layers_smoke.gd"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_modular_defense_ranged",
@@ -4192,6 +4192,24 @@
         "custodian/tools/validation/operator_architecture_debt_baseline.json"
       ],
       "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_dependency_binding",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_dependency_binding_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "architecture",
+        "dependency_injection"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/operator_runtime_dependencies.gd",
+        "custodian/tools/validation/operator_dependency_binding_smoke.gd"
+      ],
+      "timeout_sec": 45,
       "needs_import": false
     },
     {

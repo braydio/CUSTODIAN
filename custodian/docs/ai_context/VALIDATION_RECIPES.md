@@ -1713,6 +1713,24 @@ source by default or accepts `--source PATH --frames N --target-size N`, and
 hashes the production Operator tree before and after. Specialized ingest runs
 the existing `operator_runtime_build` post-process, including compatibility
 resource refresh.
+# Operator Dependency Binding F0
+
+For the Operator facade dependency seam, run the direct integration smoke and
+the measured architecture audit first:
+
+```bash
+python3 custodian/tools/validation/operator_architecture_debt_audit.py --json
+python3 custodian/tools/validation/run_validation.py --test operator_dependency_binding --json
+```
+
+The audit must report zero `absolute_scene_lookups`; the three weapon-definition
+runtime-state findings remain owned by Slice F1. The smoke verifies the fixed
+autoload and scene references at the binding boundary, plus null optional
+camera/observability/input-prompt/build/UI services failing closed. Follow with
+the directly affected Operator input, ranged projectile, Field Patch, and death
+handoff tests selected by the changed-file manifest, then one
+`run_validation.py --changed --json` closeout.
+
 # Operator Runtime Authority Migration Checks (in progress)
 
 These checks validate the preservation/selector foundations only; they do not

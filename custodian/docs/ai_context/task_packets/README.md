@@ -78,6 +78,14 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — P1 ready/auto production-art/runtime closeout for exact South Fast 02/03/04 lower+upper+FX at the locked 6/7/8-frame 96×96 contracts, preserving Fast 01 and all gameplay timing. Subjective final chain approval remains human/ChatGPT-owned through one compact Dropbox review handoff.
 - `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 ready/auto post-land review; dependency-gated until the Operator continuity implementation completes and archives.
 
+### Operator Runtime Authority Migration
+
+Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`.
+
+- `archived/OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — Slice F0 complete: zero absolute scene-tree lookups remain in `operator.gd`; the three mutable weapon-definition findings remain for F1.
+- `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 ready/auto next implementation slice for movement-owned lower-body locomotion plus action-owned upper-body guard presentation.
+- `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — P1 ready/auto, dependency-gated on F0 and mobile guard composition; it owns the three remaining weapon-definition runtime-state findings.
+
 ### Active Awakening 04→05 Production Art Refresh
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9

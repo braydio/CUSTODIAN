@@ -15,6 +15,7 @@ signal dodge_flow_changed(value: float, direction: Vector2)
 signal integrity_reclaim_changed(status: Dictionary)
 
 const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
+const OperatorRuntimeDependenciesScript = preload("res://game/actors/operator/operator_runtime_dependencies.gd")
 const OperatorActionControllerScript = preload("res://game/actors/operator/combat/operator_action_controller.gd")
 const OperatorPresentationControllerScript = preload("res://game/actors/operator/presentation/operator_presentation_controller.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
@@ -942,7 +943,53 @@ const MODULAR_SIDEARM_MUZZLE_OFFSETS := {
 @onready var hitbox_root: Node2D = $HitboxRoot if has_node("HitboxRoot") else null
 @onready var weapon_hitbox: Area2D = $HitboxRoot/WeaponHitbox if has_node("HitboxRoot/WeaponHitbox") else null
 @onready var weapon_hitbox_shape: CollisionShape2D = $HitboxRoot/WeaponHitbox/CollisionShape2D if has_node("HitboxRoot/WeaponHitbox/CollisionShape2D") else null
-@onready var weapon_factory: Node = get_node_or_null("/root/GameRoot/World/WeaponDefinitionFactory")
+var _runtime_dependencies: OperatorRuntimeDependencies
+
+## Binds all external runtime services once at the Operator facade boundary.
+## Later domain controllers receive this explicit bundle and never discover scene topology.
+func bind_runtime_dependencies(dependencies: OperatorRuntimeDependencies) -> bool:
+	if dependencies == null:
+		push_error("[Operator] Runtime dependency bundle is required")
+		return false
+	var errors := dependencies.validate_required()
+	if not errors.is_empty():
+		push_error("[Operator] Invalid runtime dependencies: %s" % ", ".join(errors))
+		return false
+	_runtime_dependencies = dependencies
+	return true
+
+
+func _compose_runtime_dependencies() -> OperatorRuntimeDependencies:
+	var dependencies := OperatorRuntimeDependenciesScript.new() as OperatorRuntimeDependencies
+	var world_root := get_parent()
+	var composition_root: Node = world_root.get_parent() if world_root != null else null
+	dependencies.world_root = world_root
+	dependencies.projectile_container = world_root.get_node_or_null("Projectiles") if world_root != null else null
+	dependencies.weapon_definition_factory = world_root.get_node_or_null("WeaponDefinitionFactory") if world_root != null else null
+	if dependencies.weapon_definition_factory == null and composition_root != null:
+		dependencies.weapon_definition_factory = composition_root.get_node_or_null("WeaponDefinitionFactory")
+	dependencies.camera = world_root.get_node_or_null("Camera2D") if world_root != null else null
+	dependencies.wall_placer = world_root.get_node_or_null("WallPlacer") if world_root != null else null
+	dependencies.wall_build_system = world_root.get_node_or_null("WallBuildSystem") if world_root != null else null
+	dependencies.terminal_deployment = world_root.get_node_or_null("TerminalDeployment") if world_root != null else null
+	dependencies.ui = composition_root.get_node_or_null("UI") if composition_root != null else null
+
+	# Bind the project's fixed autoload dependencies once at the facade seam.
+	# Consumers receive these references as data and never resolve tree paths.
+	var scene_root := get_tree().root if get_tree() != null else null
+	if scene_root != null:
+		dependencies.inventory_manager = scene_root.get_node_or_null("InventoryManager")
+		dependencies.cognitive_state = scene_root.get_node_or_null("CognitiveState")
+		dependencies.dev_observatory = scene_root.get_node_or_null("DevObservatory")
+		dependencies.sector_heatmap = scene_root.get_node_or_null("SectorHeatmap")
+		dependencies.material_intelligence = scene_root.get_node_or_null("MaterialIntelligence")
+		dependencies.noise_event_bus = scene_root.get_node_or_null("NoiseEventBus")
+		dependencies.input_prompt_service = scene_root.get_node_or_null("InputPromptService")
+		dependencies.world_history = scene_root.get_node_or_null("WorldHistory")
+		dependencies.dev_mode = scene_root.get_node_or_null("DevMode")
+		dependencies.game_state = scene_root.get_node_or_null("GameState")
+	return dependencies
+
 
 func _exit_tree() -> void:
 	_set_ranged_aim_camera_active(false)
@@ -952,6 +999,7 @@ func _exit_tree() -> void:
 
 
 func _ready():
+	bind_runtime_dependencies(_compose_runtime_dependencies())
 	add_to_group("player")
 	guard_config = guard_config.duplicate(true) as OperatorGuardConfig
 	_guard_controller.setup(self, guard_config)
@@ -960,7 +1008,7 @@ func _ready():
 	add_child(_engagement_tracker)
 	_engagement_tracker.configure(
 		self,
-		get_node_or_null("/root/InventoryManager")
+		_runtime_dependencies.inventory_manager
 	)
 	_engagement_tracker.vanguard_seal_activated.connect(
 		_on_vanguard_seal_activated
@@ -1336,7 +1384,7 @@ func _advance_movement(delta: float) -> void:
 		active_move_speed *= field_patch_move_multiplier
 		
 	# Apply cognitive state move speed modifier
-	var cognitive := get_node_or_null("/root/CognitiveState")
+	var cognitive := _runtime_dependencies.cognitive_state
 	if cognitive != null and cognitive.has_method("get_move_speed_multiplier"):
 		active_move_speed *= float(cognitive.call("get_move_speed_multiplier"))
 	set_movement_surface_multiplier(_query_movement_surface_multiplier("operator"))
@@ -4588,7 +4636,7 @@ func _is_ranged_fire_blocker(collider: Object) -> bool:
 func _spawn_ranged_impact_at(impact_position: Vector2) -> void:
 	if impact_scene == null:
 		return
-	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
+	var parent = _runtime_dependencies.projectile_container
 	var target = parent if parent != null else get_tree().current_scene
 	var spark = impact_scene.instantiate()
 	if spark == null:
@@ -4598,7 +4646,7 @@ func _spawn_ranged_impact_at(impact_position: Vector2) -> void:
 
 
 func _get_dev_observatory() -> Node:
-	return get_node_or_null("/root/DevObservatory")
+	return _runtime_dependencies.dev_observatory
 
 
 func _obs_log(kind: StringName, data: Dictionary = {}) -> void:
@@ -4662,7 +4710,7 @@ func _heatmap_add(
 	weight: float = 1.0,
 	position: Vector2 = global_position
 ) -> void:
-	var heatmap := get_node_or_null("/root/SectorHeatmap")
+	var heatmap := _runtime_dependencies.sector_heatmap
 	if heatmap != null and heatmap.has_method("add"):
 		heatmap.call("add", position, event_type, weight)
 
@@ -4672,9 +4720,7 @@ func _report_material_contact(
 	contact_kind: StringName,
 	data: Dictionary = {}
 ) -> void:
-	var material_intelligence := get_node_or_null(
-		"/root/MaterialIntelligence"
-	)
+	var material_intelligence := _runtime_dependencies.material_intelligence
 	if material_intelligence != null \
 	and material_intelligence.has_method("report_contact"):
 		material_intelligence.call(
@@ -4979,7 +5025,7 @@ func _request_ranged_shot() -> void:
 	last_fire_cooldown = float(profile["cooldown"])
 	fire_cooldown_remaining = last_fire_cooldown
 	# Apply cognitive attack recovery modifier (instinct reduces cooldown)
-	var cognitive := get_node_or_null("/root/CognitiveState")
+	var cognitive := _runtime_dependencies.cognitive_state
 	if cognitive != null and cognitive.has_method("get_attack_recovery_multiplier"):
 		var multiplier: float = float(cognitive.call("get_attack_recovery_multiplier"))
 		fire_cooldown_remaining *= multiplier
@@ -5031,7 +5077,7 @@ func _emit_pending_ranged_shot() -> void:
 	spread *= _get_movement_spread_multiplier()
 	spread *= _get_heat_spread_multiplier()
 	# Apply cognitive accuracy bonus (bearing reduces spread)
-	var cognitive := get_node_or_null("/root/CognitiveState")
+	var cognitive := _runtime_dependencies.cognitive_state
 	if cognitive != null and cognitive.has_method("get_player_accuracy_bonus"):
 		var accuracy_bonus: float = float(cognitive.call("get_player_accuracy_bonus"))
 		spread = max(0.0, spread - accuracy_bonus)
@@ -5101,7 +5147,7 @@ func _emit_pending_ranged_shot() -> void:
 	if cognitive != null and cognitive.has_method("get_player_crit_bonus"):
 		bullet.crit_chance = float(cognitive.call("get_player_crit_bonus"))
 
-	var container = get_node_or_null("/root/GameRoot/World/Projectiles")
+	var container = _runtime_dependencies.projectile_container
 	if container:
 		container.add_child(bullet)
 	else:
@@ -6617,9 +6663,9 @@ func _update_melee_attack(delta: float) -> void:
 			if _fast_chain_presentation_frame() < swing_frame \
 			or _melee_swing_sfx_frames_played.has(swing_frame):
 				continue
-			var audio_started: int = get_node_or_null("/root/DevObservatory").perf_span_begin() if get_node_or_null("/root/DevObservatory") != null else 0
+			var audio_started: int = _runtime_dependencies.dev_observatory.perf_span_begin() if _runtime_dependencies.dev_observatory != null else 0
 			_play_melee_fast_swing_sfx(_melee_fast_combo_step)
-			var obs := get_node_or_null("/root/DevObservatory")
+			var obs := _runtime_dependencies.dev_observatory
 			if obs != null:
 				obs.perf_span_end(&"operator_melee_audio", audio_started)
 			_melee_swing_sfx_frames_played[swing_frame] = true
@@ -6774,7 +6820,7 @@ func _apply_melee_hitbox_tick(semantic_frame: int = -1) -> void:
 		return
 	if weapon_hitbox == null:
 		return
-	var obs := get_node_or_null("/root/DevObservatory")
+	var obs := _runtime_dependencies.dev_observatory
 	var overlap_started: int = obs.perf_span_begin() if obs != null else 0
 	var overlapping_bodies := weapon_hitbox.get_overlapping_bodies()
 	if obs != null:
@@ -7259,7 +7305,7 @@ func _play_combat_sfx(stream: AudioStream, position: Vector2, volume_db: float =
 	parent.add_child(player)
 	player.global_position = position
 	player.add_to_group("combat_audio")
-	var obs := get_node_or_null("/root/DevObservatory")
+	var obs := _runtime_dependencies.dev_observatory
 	if obs != null and obs.has_method("adjust_gauge"):
 		obs.adjust_gauge(&"active_combat_audio", 1)
 		player.tree_exiting.connect(_on_observatory_audio_exit)
@@ -7269,7 +7315,7 @@ func _play_combat_sfx(stream: AudioStream, position: Vector2, volume_db: float =
 
 
 func _on_observatory_audio_exit() -> void:
-	var obs := get_node_or_null("/root/DevObservatory")
+	var obs := _runtime_dependencies.dev_observatory
 	if obs != null and obs.has_method("adjust_gauge"):
 		obs.adjust_gauge(&"active_combat_audio", -1)
 
@@ -8525,7 +8571,7 @@ func _update_melee_hitbox_transform() -> void:
 
 
 func _sync_melee_hitbox_window_from_animation() -> void:
-	var obs := get_node_or_null("/root/DevObservatory")
+	var obs := _runtime_dependencies.dev_observatory
 	var animation_started: int = obs.perf_span_begin() if obs != null else 0
 	# The hit-window scan follows the VISIBLE presentation clock. It used to read
 	# `animated_sprite` unconditionally, which meant a hidden-but-playing legacy
@@ -8887,7 +8933,7 @@ func _start_fast_attack_recovery() -> void:
 	_melee_recovery_active = true
 	_melee_recovery_timer = melee_fast_recovery_duration
 	# Apply cognitive attack recovery modifier (instinct reduces recovery time)
-	var cognitive := get_node_or_null("/root/CognitiveState")
+	var cognitive := _runtime_dependencies.cognitive_state
 	if cognitive != null and cognitive.has_method("get_attack_recovery_multiplier"):
 		var multiplier: float = float(cognitive.call("get_attack_recovery_multiplier"))
 		_melee_recovery_timer *= multiplier
@@ -8907,7 +8953,7 @@ func _update_melee_recovery(delta: float) -> void:
 
 
 func _spawn_melee_impact(pos: Vector2) -> void:
-	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
+	var parent = _runtime_dependencies.projectile_container
 	var target = parent if parent else get_tree().current_scene
 
 	var contact_profile: OperatorWeaponDefinition = (
@@ -9046,7 +9092,7 @@ func _notify_camera_damage_taken(hit_direction: Vector2) -> void:
 
 
 func _get_world_camera() -> Node:
-	return get_node_or_null("/root/GameRoot/World/Camera2D")
+	return _runtime_dependencies.camera
 
 
 ## Everything a confirmed contact asks the presentation layer for, resolved once.
@@ -10990,7 +11036,7 @@ func _ensure_target_ring_deferred() -> void:
 		ring.queue_free()
 		return
 	ring_node.visible = false
-	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
+	var parent = _runtime_dependencies.projectile_container
 	if parent:
 		parent.add_child(ring_node)
 	elif get_tree() != null and get_tree().current_scene != null:
@@ -11305,7 +11351,7 @@ func _spawn_muzzle_flash(direction: Vector2):
 		return
 	var spawn_position: Vector2 = _get_ranged_muzzle_position(direction)
 	flash.rotation = direction.angle()
-	var parent = get_node_or_null("/root/GameRoot/World/Projectiles")
+	var parent = _runtime_dependencies.projectile_container
 	if parent:
 		parent.add_child(flash)
 	else:
@@ -13138,7 +13184,7 @@ func _emit_weapon_noise(position: Vector2) -> void:
 	var weapon_definition := _get_active_ranged_weapon_definition()
 	if weapon_definition == null:
 		return
-	var bus := get_node_or_null("/root/NoiseEventBus")
+	var bus := _runtime_dependencies.noise_event_bus
 	if bus == null or not bus.has_method("emit_at"):
 		return
 	var suppressed := weapon_definition.get_noise_bool("suppressed", weapon_definition.suppressed)
@@ -13184,7 +13230,7 @@ func _is_ranged_aim_ready() -> bool:
 
 
 func _set_ranged_aim_camera_active(active: bool) -> void:
-	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	var camera := _runtime_dependencies.camera
 	if camera != null and camera.has_method("set_ranged_aim_camera_active"):
 		camera.call("set_ranged_aim_camera_active", active, aim_direction)
 
@@ -13385,10 +13431,9 @@ func _get_controller_aim_direction() -> Vector2:
 	return _input_frame.controller_aim
 
 
-## The one place the Operator resolves the input-prompt autoload. Both device
-## facts it reads come from here, so the absolute path is written once.
+## Input-prompt service access stays behind the injected Operator dependency bundle.
 func _get_input_prompt_service() -> Node:
-	return get_node_or_null("/root/InputPromptService")
+	return _runtime_dependencies.input_prompt_service
 
 
 ## `InputPromptService` stays the one device-family authority.
@@ -13526,7 +13571,8 @@ func equip_primary_carbine() -> void:
 
 
 func _create_weapon_from_factory(weapon_id: String) -> void:
-	if weapon_factory and weapon_factory.has_method("create_weapon_definition"):
+	var weapon_factory := _runtime_dependencies.weapon_definition_factory
+	if weapon_factory != null and weapon_factory.has_method("create_weapon_definition"):
 		primary_weapon_definition = weapon_factory.create_weapon_definition(weapon_id)
 		_configure_weapon_definition_defaults(primary_weapon_definition, "Carbine Rifle", "ranged", "ranged_unfocused_fire", "ranged_ready")
 		_rebuild_armed_weapon_list()
@@ -13806,7 +13852,7 @@ func take_damage(amount: float, trigger_reaction: bool = true, damage_context: D
 	_obs_gauge(&"player_health", health)
 	_play_damage_taken_sfx()
 
-	var world_history := get_node_or_null("/root/WorldHistory")
+	var world_history := _runtime_dependencies.world_history
 	if world_history != null:
 		world_history.call("record", "", "player_damage", global_position, {
 			"amount": amount,
@@ -13855,7 +13901,7 @@ func apply_debug_resource_overrides() -> void:
 func _is_debug_resource_override_enabled(
 	control: StringName
 ) -> bool:
-	var dev_mode := get_node_or_null("/root/DevMode")
+	var dev_mode := _runtime_dependencies.dev_mode
 	if dev_mode == null or not bool(dev_mode.get("debug_ui_enabled")):
 		return false
 	match control:
@@ -13885,7 +13931,7 @@ func apply_enemy_dash_impact(direction: Vector2, knockback_px: float, victim_hit
 	if _action_controller != null:
 		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
 		_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 24)
-	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	var camera := _runtime_dependencies.camera
 	if camera != null and camera.has_method("on_damage_taken"):
 		camera.call("on_damage_taken", impact_direction)
 
@@ -13905,7 +13951,7 @@ func apply_enemy_falcon_punch_impact(direction: Vector2, knockback_px: float, vi
 	if _action_controller != null:
 		_damage_reaction_strength = CombatConstants.HitStrength.HEAVY
 		_action_controller.request(OperatorActionControllerScript.DAMAGE_REACTION, 24)
-	var camera := get_node_or_null("/root/GameRoot/World/Camera2D")
+	var camera := _runtime_dependencies.camera
 	if camera != null and camera.has_method("on_damage_taken"):
 		camera.call("on_damage_taken", impact_direction)
 
@@ -14253,7 +14299,7 @@ func _handle_death() -> void:
 	_obs_gauge(&"player_last_live_loaded_ammo", int(last_live_weapon_status.get("loaded_ammo", 0)))
 	_obs_gauge(&"player_last_live_reserve_ammo", int(last_live_weapon_status.get("reserve_ammo", 0)))
 	_obs_gauge(&"player_last_live_stamina", stamina)
-	var world_history := get_node_or_null("/root/WorldHistory")
+	var world_history := _runtime_dependencies.world_history
 	if world_history != null:
 		world_history.call("record", "", "player_death", global_position, {})
 	current_health = 0.0  # Sync with ControllableActor
@@ -14294,7 +14340,7 @@ func _get_enemy_death_snapshot(nearby_radius: float = 192.0) -> Dictionary:
 	}
 
 func _finish_death() -> void:
-	var gs = get_node_or_null("/root/GameState")
+	var gs = _runtime_dependencies.game_state
 	if gs and gs.game_over:
 		return
 	_reset_fast_chain()
@@ -14383,7 +14429,7 @@ func process_input(input_vector: Vector2, aim_vector: Vector2, is_firing: bool) 
 
 func _damage_nearest_sector(amount: float):
 	var sectors = []
-	var world = get_node("/root/GameRoot/World")
+	var world = _runtime_dependencies.world_root
 	if world:
 		sectors = world.find_children("*", "Sector")
 	
@@ -14459,7 +14505,7 @@ func get_interaction_prompt() -> String:
 
 
 func _find_nearest_blueprint() -> Node:
-	var wall_placer = get_node_or_null("/root/GameRoot/World/WallPlacer")
+	var wall_placer = _runtime_dependencies.wall_placer
 	if wall_placer == null:
 		return null
 	
@@ -14483,7 +14529,7 @@ func _try_build(delta: float) -> bool:
 	if build_target == null:
 		return false
 	
-	var wall_build_system = get_node_or_null("/root/GameRoot/World/WallBuildSystem")
+	var wall_build_system = _runtime_dependencies.wall_build_system
 	if wall_build_system == null:
 		return false
 	
@@ -14494,14 +14540,14 @@ func _try_build(delta: float) -> bool:
 
 
 func _try_terminal_deploy_or_pickup() -> bool:
-	var terminal_deployment := get_node_or_null("/root/GameRoot/World/TerminalDeployment")
+	var terminal_deployment := _runtime_dependencies.terminal_deployment
 	if terminal_deployment == null or not terminal_deployment.has_method("handle_build_action"):
 		return false
 	return bool(terminal_deployment.call("handle_build_action"))
 
 
 func _is_terminal_carry_active() -> bool:
-	var terminal_deployment := get_node_or_null("/root/GameRoot/World/TerminalDeployment")
+	var terminal_deployment := _runtime_dependencies.terminal_deployment
 	if terminal_deployment == null or not terminal_deployment.has_method("is_carrying_terminal"):
 		return false
 	return bool(terminal_deployment.call("is_carrying_terminal"))
@@ -14564,7 +14610,7 @@ func _get_action_prompt_key(action_name: StringName, fallback: String) -> String
 
 
 func _is_terminal_open() -> bool:
-	var ui = get_node_or_null("/root/GameRoot/UI")
+	var ui = _runtime_dependencies.ui
 	if ui and ui.has_method("is_terminal_open"):
 		return bool(ui.is_terminal_open())
 	return false
