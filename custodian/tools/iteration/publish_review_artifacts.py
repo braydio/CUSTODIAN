@@ -209,6 +209,10 @@ def cleanup_reviewed(
     if manifest.get("workstream") != workstream or manifest.get("run_id") != run_id:
         print("FAIL: manifest identity does not match requested workstream/run.")
         return 3
+    expected_relative_path = f"/{remote_root}/{workstream}/{run_id}/"
+    if manifest.get("remote_relative_path") != expected_relative_path:
+        print("FAIL: manifest remote path does not match requested review run.")
+        return 3
     retention = manifest.get("retention")
     if not isinstance(retention, dict):
         print("FAIL: v2 manifest is missing retention policy.")
