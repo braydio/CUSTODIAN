@@ -623,7 +623,7 @@ def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Pa
             expected.append(chat)
 
     for chat in expected:
-        pattern = rf"(?m)^\\s*(?:-\\s*)?Authoring chat:\\s*`?{re.escape(chat)}`?\\s*$"
+        pattern = rf"(?m)^\s*(?:-\s*)?Authoring chat:\s*`?{re.escape(chat)}`?\s*$"
         if not re.search(pattern, summary_text):
             raise WorkstreamError(
                 "finish summary-backlink gate requires the exact packet authoring chat in "
