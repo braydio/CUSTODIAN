@@ -51,6 +51,8 @@ sparse checkout correction + review
         ↓
 publish readiness/recovery + review
         ↓
+background base sync + review
+        ↓
 browser/PREVIEW snapshot hardening + review
         ↓
 FX layer adoption + review
