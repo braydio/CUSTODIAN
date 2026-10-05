@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation-r1-r1`
+- Depends on: `review-contract-world-placement-foundation-r1`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
@@ -23,7 +23,7 @@
 - Validation: `res://tools/validation/world_contract_prewarm_smoke.gd` plus the current ARRN-focused validation selected by `custodian/tools/validation/validation_manifest.json`; add a deterministic relay-placement snapshot inside this workstream if exact position parity is otherwise unproved; then changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains and loader contraction.
-- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
+- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 
