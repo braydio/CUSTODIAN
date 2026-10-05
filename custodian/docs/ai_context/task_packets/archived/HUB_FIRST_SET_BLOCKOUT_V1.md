@@ -302,10 +302,10 @@ Before setting complete:
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: Yes. The current-main H1 map and standalone playtest cover the complete locked first-set spatial slice.
-- Completion boundary satisfied: Yes. Layout, grid navigation/collision, markers, Road presentation, inert lifecycle roots, Operator/camera playtest, route proofs, docs, overview, and obsolete-H1 cleanup are complete.
-- Acceptance satisfied: Yes. Exact bounds/envelopes/markers, all walkable cells, both separate 4x8 Sepulcher links, connector-restricted loop, raw connectivity, 25px live-Operator/boundary-rail clearance connectivity, 4-cell authored minimum, Port return bay, Road registration/ownership, and inert lifecycle checks passed.
-- Superseded/legacy production path disposition: The donor implementation was not merged. Its unique commit is preserved by `archive/agent-hub-first-set-blockout-v1-20261005`; its local worktree/branch, main-contained remote alias, and lifecycle-only diagnostic ref were retired.
+- Goal satisfied: yes. The current-main H1 map and standalone playtest cover the complete locked first-set spatial slice.
+- Completion boundary satisfied: yes. Layout, grid navigation/collision, markers, Road presentation, inert lifecycle roots, Operator/camera playtest, route proofs, docs, overview, and obsolete-H1 cleanup are complete.
+- Acceptance satisfied: yes. Exact bounds/envelopes/markers, all walkable cells, both separate 4x8 Sepulcher links, connector-restricted loop, raw connectivity, 25px live-Operator/boundary-rail clearance connectivity, 4-cell authored minimum, Port return bay, Road registration/ownership, and inert lifecycle checks passed.
+- Superseded/legacy production path disposition: removed. The donor implementation was not merged. Its unique commit is preserved by `archive/agent-hub-first-set-blockout-v1-20261005`; its local worktree/branch, main-contained remote alias, and lifecycle-only diagnostic ref were retired.
 - Evidence: focused `hub_first_set_blockout` passed (13,142 cells; 52 rails; 14 markers; 12,160 clearance-safe cells; operator capsule clearance 15px + 10px rails); `road_of_witnesses_production` passed; `twin_solaria_runtime` passed; changed validation `/tmp/hub_first_set_blockout_validation.json` passed 13/13 with complete coverage; `git diff --check` passed; `reports/hub_first_set_blockout/overview.png` (2048x2048) received human approval by review-window closure.
 
 ## Execution Feedback
