@@ -284,7 +284,7 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; Alpine Asset V2 remains ready/manual. Archive Resolve AR1/ARR1 and AR2 implementation/recovery/review are complete/passed with S1 `1773840677`; AR3 is now planning-refreshed/ready-auto but waits on a separate reviewed P0 playable-region spawn-validity fix after a current-main outside-playable spawn reproduction. P1/PR1 independently gate placement extractions; X2/X3 and renderer-consolidation retain their existing refresh rules. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; Alpine Asset V2 remains ready/manual. Archive Resolve AR1/ARR1 and AR2 implementation/recovery/review are complete/passed with S1 `1773840677`; the separate P0 playable-region spawn-validity implementation/review is also complete/passed; AR3 is planning-refreshed/ready-auto and claimable, with the spawn review's full-path integration evidence gap folded into AR3 validation. P1/PR1 independently gate placement extractions; X2/X3 and renderer-consolidation retain their existing refresh rules. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
@@ -304,7 +304,7 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; A
 | AR1 Archive Resolve presentation spine | complete / landed | P2 |
 | ARR1 Archive Resolve paired technical review | complete / passed | P2 |
 | AR2 Archive Resolve shader | implementation + real-renderer recovery + human visual + paired review complete/passed | P1 |
-| AR3 Archive Resolve semantic echo / spawn / reacquisition | ready / auto; refreshed, dependency-gated on reviewed playable-region spawn validity | P2 |
+| AR3 Archive Resolve semantic echo / spawn / reacquisition | ready / auto; refreshed and dependency-satisfied; full-path contract ingress proof required | P2 |
 
 **Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
 
