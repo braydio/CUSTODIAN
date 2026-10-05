@@ -388,6 +388,7 @@ def claim(
                     "checkout": checkout, "verified": True, "agent": agent,
                     "run_id": trace.run_id, "trace_ref": trace.diagnostic_ref,
                     "authoring_chat": authoring_chat,
+                    "visual_review": selected.visual_review,
                     "visual_review_root": f"/CUSTODIAN/visual_review/{selected.workstream}/",
                     "visual_review_retention": "delete-after-review",
                 }
@@ -410,6 +411,7 @@ def claim(
     print(f"worktree: {receipt['worktree']}")
     print(f"packet: {receipt['packet']}")
     print(f"authoring chat: {receipt['authoring_chat']}")
+    print(f"visual review: {receipt['visual_review']}")
     print(f"visual review root: {receipt['visual_review_root']}")
     print("visual review retention: delete-after-review unless the packet/user explicitly says retain")
     print("\nNEXT:")
@@ -474,6 +476,7 @@ def last_claim(repo: Path, *, as_json: bool) -> int:
         print(f"worktree: {worktree}")
         print(f"packet: {receipt.get('packet')}")
         print(f"authoring chat: {receipt.get('authoring_chat', 'not-recorded')}")
+        print(f"visual review: {receipt.get('visual_review', 'none')}")
         print(f"visual review root: {receipt.get('visual_review_root', '')}")
         print(f"checkout: {receipt.get('checkout')}")
         suffix = f" ({'; '.join(stale_reasons)})" if stale_reasons else ""
