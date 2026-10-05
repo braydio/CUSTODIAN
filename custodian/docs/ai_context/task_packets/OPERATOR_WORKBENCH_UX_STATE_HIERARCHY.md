@@ -2,7 +2,7 @@
 
 > **REFRESH REQUIRED BEFORE IMPLEMENTATION**
 >
-> This remains a refresh-gated planning packet originally based on `main@330422023f9a92362915af46b9658585e7c1d450`; the background-sync addendum below was re-reviewed against `main@7cfa2c12f5a99a90bfe087117856d16c92f8772a`.
+> This remains a refresh-gated planning packet originally based on `main@330422023f9a92362915af46b9658585e7c1d450`; the background-sync addendum below was re-reviewed against `main@09706b79318aa627ea5474205884a8d8e53d8292`.
 > Do not claim or implement it yet. Request a fresh OPUI repository/interface
 > review after `review-operator-workbench-animation-creation` is complete and
 > archived. Remove this banner only after the packet is reconciled against
@@ -18,7 +18,7 @@
 - Locks: `operator-workbench-ui`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `7cfa2c12f5a99a90bfe087117856d16c92f8772a`
+- Reviewed main: `09706b79318aa627ea5474205884a8d8e53d8292`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
 - Background-sync addendum chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
