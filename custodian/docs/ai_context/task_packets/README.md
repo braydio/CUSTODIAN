@@ -82,7 +82,7 @@ AR packet set is refreshed.
 - Planning / refresh chat: https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search
 - `archived/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 is complete: Operator death now resolves an active CampaignSession once before the temporary Game Over fallback; no-session worlds keep the safe fallback without inventing a campaign.
 - `REVIEW_CUSTODIAN_DEATH_HANDOFF_FOUNDATION_RECOVERY_1.md` — formal R1 paired review remains ready/auto.
-- `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — R2 is materially refreshed but correctly `blocked/manual`; it depends on the formal R1 review and reviewed H6 `hub-campaign-return`. R2 owns exact death-outcome correlation, fallback suppression only after accepted generic return, Operator reintegration, and life-scoped death-latch re-arm. It must not duplicate H6 HubState mutation or Campaign->Hub return.
+- `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — R2 is `ready/auto` and dependency-gated on the formal R1 review plus reviewed H6 `hub-campaign-return`; its claiming execution agent self-refreshes the exact integration seams from those landed authorities. R2 owns exact death-outcome correlation, fallback suppression only after accepted generic return, Operator reintegration, and life-scoped death-latch re-arm. It must not duplicate H6 HubState mutation or Campaign->Hub return.
 - `REVIEW_CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — paired post-land R2 review, dependency-gated on R2.
 - Program tracker: `../../../design/02_features/operator/PERSISTENT_RECOVERY_IMPLEMENTATION_ROADMAP.md`.
 - Design authority: `../../../design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`.
