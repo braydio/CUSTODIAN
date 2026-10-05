@@ -366,10 +366,13 @@ remains, publish the smallest useful evidence set through
 `custodian/tools/iteration/publish_review_artifacts.py` instead of extending the
 coding-agent screenshot review loop. The upload is opt-in and requires
 `--important --reason ...`; include concrete `--question` prompts for the
-human/ChatGPT reviewer. The agent reports the Dropbox manifest path and stops.
-See `VISUAL_REVIEW_HANDOFF.md`. Do not publish routine screenshots that repeat
-facts already settled by probes or metrics, and do not commit the cloud review
-media to Git.
+human/ChatGPT reviewer. The agent reports the exact authoring-chat URL and
+Dropbox manifest path, then stops. ChatGPT web reviews that connected Dropbox
+path in the same authoring conversation. After the verdict returns, the agent
+runs the emitted `--cleanup-reviewed` command unless retention was explicitly
+requested. See `VISUAL_REVIEW_HANDOFF.md`. Do not publish routine screenshots
+that repeat facts already settled by probes or metrics, and do not commit the
+cloud review media to Git.
 
 #### Tooling
 
