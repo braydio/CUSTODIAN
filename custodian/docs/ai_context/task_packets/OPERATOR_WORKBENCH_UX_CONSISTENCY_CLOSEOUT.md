@@ -17,8 +17,9 @@
 - Locks: `operator-workbench-ui`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `330422023f9a92362915af46b9658585e7c1d450`
+- Reviewed main: `7cfa2c12f5a99a90bfe087117856d16c92f8772a`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Background-sync addendum chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Roadmap: `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`
 - Goal: Close UX Hierarchy V1 by making the five OPUI modes feel like one coherent animation workstation: consistent terminology, focus/navigation, responsive layout, warning hierarchy, progressive diagnostics, help/key hints, accessibility, and final regression coverage.
