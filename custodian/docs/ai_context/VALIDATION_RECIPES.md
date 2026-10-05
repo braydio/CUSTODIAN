@@ -406,7 +406,22 @@ media to Git.
   no-network unit coverage is
   `python3 custodian/tools/iteration/test_publish_review_artifacts.py`.
   Use `--doctor` to check the configured rclone remote and
-  `--doctor --ensure-root` only for one-time review-root setup.
+  `--doctor --ensure-root` only for one-time review-root setup. New visual-review
+  uploads should pass the exact packet authoring URL with `--authoring-chat` and
+  default to `delete-after-review`. After ChatGPT/user review, execute the emitted
+  `cleanup_command` or `--reviewed-manifest <exact-manifest> --reviewed-by
+  chatgpt-user`; use `--retain-after-review` only when retention is explicit.
+
+For agent/control-plane changes that touch task-packet provenance, autonomous
+claims, visual-review routing, or finish-time summary gates, run these focused
+suites before the changed-file closeout sweep:
+
+```bash
+python3 custodian/tools/agent/test_task_packet_contract.py
+python3 custodian/tools/agent/test_dispatch.py
+python3 custodian/tools/agent/test_workstream_artifacts.py
+python3 custodian/tools/iteration/test_publish_review_artifacts.py
+```
 
 Do not run the focused test and `--changed` concurrently against the same
 project. If another agent/session already owns a broad sweep, wait for it or use
