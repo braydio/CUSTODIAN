@@ -2,7 +2,7 @@
 
 > **REFRESH REQUIRED BEFORE IMPLEMENTATION**
 >
-> This is a planning packet based on `main@330422023f9a92362915af46b9658585e7c1d450`.
+> This remains a refresh-gated planning packet originally based on `main@330422023f9a92362915af46b9658585e7c1d450`; the background-sync addendum below was re-reviewed against `main@7cfa2c12f5a99a90bfe087117856d16c92f8772a`.
 > Do not claim or implement it yet. Request a fresh OPUI repository/interface
 > review after UX2 has landed. Remove this banner only after the packet is
 > reconciled against current main and explicitly signed off for execution.
