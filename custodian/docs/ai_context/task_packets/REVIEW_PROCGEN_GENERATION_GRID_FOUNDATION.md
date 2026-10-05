@@ -12,7 +12,7 @@
 - Review target workstream: `procgen-generation-grid-foundation`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_GENERATION_GRID_FOUNDATION.md`
 - Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -32,7 +32,7 @@
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: X3 must be authored from the reviewed X1 inventory plus the actual reviewed X2 GenerationGrid API and canary/parity seam.
 - Next action: After XR2 passes, bring the X1/X2 summaries and reviewed grid contract to the recorded ChatGPT planning chat and refresh X3 in place before authoring the migration DAG.
 - Blockers or open questions: X3 must not be claimed from its pre-foundation assumptions.
