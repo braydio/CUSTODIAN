@@ -123,7 +123,7 @@ Cross-program dependency note: the stealth-perception foundation is not an NPA s
 
 Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
 
-**Planning / refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search
+**Planning / refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
 NPA-2 and NPA-3 are intentionally refresh-gated. Bring the passed predecessor implementation/review evidence back to this chat before promoting either packet; do not let an execution agent silently freeze provisional private APIs.
 
