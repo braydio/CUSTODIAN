@@ -76,6 +76,12 @@ class ParsePacketTests(unittest.TestCase):
         self.assertEqual(packet.authoring_chat, "https://chatgpt.com/c/example")
         self.assertEqual(packet.visual_review, "required-if-subjective")
 
+    def test_invalid_visual_review_policy_is_reported(self):
+        text = legacy_packet("bad-visual") + "- Visual review: `always-maybe`\n"
+        packet = tpc.parse_packet("p.md", text)
+        self.assertIsNotNone(packet.error)
+        self.assertIn("Visual review", packet.error)
+
     def test_invalid_authoring_chat_is_reported(self):
         text = legacy_packet("bad-chat") + "- Authoring chat: `ftp://bad.example`\n"
         packet = tpc.parse_packet("p.md", text)
