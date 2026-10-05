@@ -109,7 +109,10 @@ extracts archives, edits runtime/content, writes Asset V2 `source_work` or
 ## Remote selection and credentials
 
 Both directions share `custodian/tools/iteration/dropbox_transport.py` and never
-read or print rclone credentials. Inbound remote selection is:
+read or print rclone credentials. The outbound visual-review lane's default
+post-review cleanup policy does not apply to these immutable inbound
+`implementation_inputs` handoffs; their lifecycle remains governed by this
+document and the owning task. Inbound remote selection is:
 
 1. `--remote`;
 2. `CUSTODIAN_IMPLEMENTATION_REMOTE`;
