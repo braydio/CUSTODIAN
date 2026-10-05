@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-awakening-context-handoff`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-hub-first-set-blockout-v1, review-awakening-handoff-readiness-art-convergence-v1`
 - Locks: `hub-runtime, world-lifecycle`
@@ -23,7 +23,7 @@
 - Evidence: `design/04_architecture/WORLD_TRANSITION_SYSTEM.md`; `AWAKENING_FIRST_RETURN.md`; `HUB_FIRST_SET_BLOCKOUT.md`; active Awakening handoff-readiness packet/review; H1 packet/review; `game/app/boot/runtime_entrypoint.gd`; live camera/navigation/authored-level contracts.
 - Task-specific authority: reviewed Awakening completion contract; reviewed H1 map/spawn API; `WORLD_TRANSITION_SYSTEM.md`; runtime world/camera stabilization authority.
 - Work surface: Expected major-context lifecycle owner under `custodian/game/systems/world/` or the cleaner landed equivalent; one production Hub runtime host; completion binding; reviewed H1 map; camera/navigation/world binding; focused handoff smoke. The H1 map itself stays Operator/camera-free.
-- Change: Implement one authoritative request/state-machine seam sufficient for Awakening → persistent Hub and reusable by H5/H6. Awakening emits completion but does not call `change_scene_to_file()` into Hub. Resolve persistent-home taxonomy during refresh: if live architecture still says COMPOUND while the authored first-set is the Hub home context, keep one canonical context/alias migration instead of parallel HUB and COMPOUND managers. Place the Operator exactly at `Spawn_SouthReach`; validate target bindings before input unlock; return a deterministic structured failure and restore a safe source on target failure.
+- Change: Implement one authoritative request/state-machine seam sufficient for Awakening → persistent Hub and reusable by H5/H6. Awakening emits completion but does not call `change_scene_to_file()` into Hub. Resolve persistent-home taxonomy during the claim-time dependency refresh: if live architecture still says COMPOUND while the authored first-set is the Hub home context, keep one canonical context/alias migration instead of parallel HUB and COMPOUND managers. Place the Operator exactly at `Spawn_SouthReach`; validate target bindings before input unlock; return a deterministic structured failure and restore a safe source on target failure.
 - Preserve: default boot into Awakening; reviewed H1 geometry; current startup development modes; generation_count remains zero through H2; RouteTraversalManager/LevelLoader ownership of authored sub-level traversal; deterministic simulation.
 - Non-goals: No Dais interaction; no `WorldContractBootstrap.ensure_started()`; no Twin entry; no Port deploy; no Campaign return; no transit polish; no save/resume expansion.
 - Acceptance: one reviewed Awakening completion causes at most one successful Hub entry; duplicate/reentrant completion cannot create a second Hub; Awakening contains no direct Hub scene change/bootstrap call; the target is one production Hub host containing the reviewed H1 map with a real Operator exactly at `Spawn_SouthReach`; source and target are never simultaneously authoritative; camera/navigation/world binding completes before input unlock; forced target-stage/validation failure restores a playable source and reports failure; startup modes remain green; bootstrap generation_count remains zero.
@@ -31,10 +31,9 @@
 - Task overrides: `none`
 - Deferred: H3 Contract selection/prewarm; H4 Twin route; H5 deployment; H6 return; save/resume and transit presentation.
 
-## Temporary Refresh Gate — REMOVE WHEN REFRESHED
+## Claim-Time Dependency Refresh
 
-This packet is intentionally pre-authored before both prerequisite reviews land. After they pass: inspect archived review receipts and exact completion snapshot/H1 API/current world-binding seams; update Reviewed main, measured state, exact Work surface, Acceptance and validation paths; remove this section; set `Status: ready`, `Dispatch: auto`. Refresh this packet in place, not as a v2 duplicate.
-
+This packet is intentionally `ready/auto` while its declared dependencies may still be incomplete. The dispatcher must keep it non-claimable until every `Depends on` workstream is archived `complete`. Once claimed, the execution agent must reconstruct the landed predecessor seams from current `main`, archived implementation/review summaries, and live public APIs before mutation. Reconcile private helper names and bounded implementation drift while preserving this packet's Goal, Completion boundary, Preserve, Non-goals, and Acceptance. Update directly stale packet/docs facts inside the workstream when needed. Do not stop for a ChatGPT/user refresh unless current evidence exposes a genuine unresolved design choice that existing authority cannot answer.
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -57,6 +56,6 @@ This packet is intentionally pre-authored before both prerequisite reviews land.
 
 ## Handoff
 
-- Next action: Refresh after both prerequisite reviews pass.
+- Next action: Auto-claim after both prerequisite reviews archive complete; perform the claim-time dependency refresh before mutation.
 - Best starting files: archived Awakening convergence + H1 packets/reviews; `WORLD_TRANSITION_SYSTEM.md`; live startup/camera/navigation binding code.
 - Blockers or open questions: exact landed completion schema and Hub-host seam are dependency outputs.
