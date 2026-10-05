@@ -161,6 +161,8 @@ This applies whether the summary is written at repository root, beside archived 
 
 ## CUSTODIAN Task Dispatch
 
+Executable packet dispatch is automatic by default. Use `Status: ready` + `Dispatch: auto` even when declared dependencies are incomplete; the dispatcher keeps the packet blocked until those dependencies archive `complete`, then makes it claimable without a manual status flip. `Dispatch: manual` is reserved only for an explicit user instruction to hold an otherwise ready packet until the user chooses claim timing. Missing inputs, predecessor API drift, review ordering, and ordinary dependency waits are not manual-dispatch reasons; represent them with status/dependencies and fail-closed execution checks instead.
+
 For “Take the next CUSTODIAN task,” run
 `python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id>`
 (for example `--agent claude` or `--agent codex`).
