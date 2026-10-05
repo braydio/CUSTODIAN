@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `manual human visual approval + local ~/Downloads source bundle; technical ingest remains deterministic`
 - Reviewed main: `9093c9ff1613de39d37a876246f6ab61f24f5938`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Goal: Publish the six production Asset Pipeline V2 images for the first `ALPINE_PLATEAU` permanent underlay, bind them to the reviewed Region Frame profile, remove the explicit Endless Forest compatibility fallback for that frame, and obtain human visual approval of the cliff-fog-distant-world composition.
 - Completion boundary: Done when the `procgen_underlay_alpine_plateau` Asset V2 family exists and passes the live asset doctor; all six required 1536x1024 static states are ingested/bound/verified; `alpine_plateau_underlay.tres` deterministically selects FAR/MIDDLE/NEAR A/B variants by accepted procgen seed through the existing `ProcgenUnderlayProfile` path; the reviewed `ALPINE_PLATEAU` Region Frame selects that resource with fallback telemetry cleared; the runtime keeps Archive Resolve separate; and the user/human review accepts the gameplay-scale permanent edge composition.
 - Current measured state: RF1 landed as `49cbd3982d145283ef7aeb85a921057f854ea88e`; RFR1 passed on `07d2277e8` with 0 blocking defects and 0 material evidence gaps, making Region Frame stable presentation authority. Live `presentation/region_frames/alpine_plateau.tres` explicitly selects `profile_id=alpine_plateau`, binds Endless Forest only as an explicit `visual_fallback=true` stand-in, and uses exterior-only DepthBackdrop behavior. The user has now approved/provided the six generated source candidates as one local archive expected at `~/Downloads/alpine_plateau_underlay_assets.zip`. The archive contract is exact: six root-level RGBA PNGs named `far_world_a.png`, `far_world_b.png`, `depth_fog_a.png`, `depth_fog_b.png`, `near_cliff_mist_a.png`, `near_cliff_mist_b.png`, each 1536×1024, one frame, true alpha. Final gameplay-scale composition approval remains human-owned after runtime integration. RFR1 next-slice findings R0-01 (registered end-to-end production-scene frame assertion) and R0-02 (ocean-as-conduit exterior-mask pocket) are owned by this packet as technical proof hardening before final visual approval.
@@ -114,7 +114,7 @@ The dependency/review gate is satisfied: RFR1 passed. The six source candidates 
 
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh instruction: This packet has now been refreshed in the recorded planning chat against passed RFR1 and the local six-image ZIP contract. No further planning refresh is required before implementation unless live Asset Pipeline V2 or Region Frame APIs materially diverge; if they do, return to this same chat before changing architecture/scope.
 
 ## Handoff
@@ -123,7 +123,7 @@ The dependency/review gate is satisfied: RFR1 passed. The six source candidates 
 - Next packet state: `none`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: `none`
 - Next action: Claim this packet manually on the local machine with access to `~/Downloads/alpine_plateau_underlay_assets.zip`; complete deterministic Asset V2 ingest/binding first, then publish the compact Dropbox visual-review handoff for user approval.
 - Blockers or open questions: Final human art-direction approval remains required before completion; no implementation blocker remains if the exact ZIP is present.
