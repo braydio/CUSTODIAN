@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from datetime import datetime
@@ -12,6 +13,9 @@ from pathlib import Path
 
 class HygieneError(RuntimeError):
     pass
+
+
+FULL_SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 
 
 def git(*args: str, cwd: Path, check: bool = True) -> str:
@@ -67,10 +71,22 @@ def record(ledger: Path, branch: str, head: str, disposition: str, tag: str, not
         stream.write(row)
 
 
-def retire(repo: Path, branch: str, ledger: Path, note: str = "") -> None:
+def retire(
+    repo: Path,
+    branch: str,
+    ledger: Path,
+    note: str = "",
+    *,
+    expected_head: str | None = None,
+    protected: set[str] | None = None,
+) -> None:
     # Re-fetch and reclassify immediately before deletion.
     git("fetch", "--prune", "origin", cwd=repo)
-    state, head, _, ahead = classify(repo, branch, {"main"})
+    state, head, _, ahead = classify(repo, branch, {"main", *(protected or set())})
+    if expected_head is not None and head != expected_head:
+        raise HygieneError(
+            f"approved retirement head mismatch for {branch}: expected {expected_head}, found {head}"
+        )
     if state == "PROTECTED":
         raise HygieneError(f"refusing to retire protected branch {branch}")
     if state == "DIAGNOSTIC_PRESERVE":
@@ -94,18 +110,55 @@ def retire(repo: Path, branch: str, ledger: Path, note: str = "") -> None:
         if local_head != head:
             raise HygieneError(f"{branch} has attached local commits/state beyond its remote head; preserved at {path}")
     tag = ""
-    if ahead:
+    if ahead or expected_head is not None:
         tag = archive_tag(repo, branch, head, datetime.now().astimezone().strftime("%Y%m%d"))
-        record(ledger, branch, head, "archived unique history", tag, note)
+        disposition = "archived unique history" if ahead else "approved head preserved; already contained by main"
     else:
-        record(ledger, branch, head, "fully contained by main", "", note)
-    git("push", "origin", "--delete", branch, cwd=repo)
+        disposition = "fully contained by main"
+    try:
+        record(ledger, branch, head, disposition, tag, note)
+    except OSError as error:
+        raise HygieneError(f"could not write branch archive ledger for {branch}: {error}") from error
+    if expected_head is None:
+        git("push", "origin", "--delete", branch, cwd=repo)
+    else:
+        # Conditional deletion prevents a branch that advances after fetch from
+        # being removed under an approval for its former head.
+        git(
+            "push",
+            f"--force-with-lease=refs/heads/{branch}:{expected_head}",
+            "origin",
+            f":refs/heads/{branch}",
+            cwd=repo,
+        )
     git("fetch", "--prune", "origin", cwd=repo)
+
+
+def parse_approved_retirement(value: str) -> tuple[str, str]:
+    branch, separator, head = value.partition("=")
+    if not separator or not branch.startswith("agent/") or branch.startswith("agent-diagnostics/"):
+        raise HygieneError("approved retirement must name one non-diagnostic agent/<branch>=<40-char-sha>")
+    if not FULL_SHA_RE.fullmatch(head):
+        raise HygieneError("approved retirement SHA must be exactly 40 lowercase hexadecimal characters")
+    check = subprocess.run(
+        ["git", "check-ref-format", f"refs/heads/{branch}"], capture_output=True, text=True
+    )
+    if check.returncode:
+        raise HygieneError(f"invalid approved branch ref: {branch}")
+    return branch, head
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--apply", action="store_true", help="retire landed/identical branches and archive unique candidates")
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--apply", action="store_true", help="retire landed/identical branches and archive unique candidates")
+    modes.add_argument(
+        "--retire-approved",
+        action="append",
+        default=[],
+        metavar="BRANCH=SHA",
+        help="retire one operator-approved divergent agent branch at its exact audited SHA (repeatable)",
+    )
     parser.add_argument("--ledger", type=Path, default=Path("custodian/docs/ai_context/BRANCH_ARCHIVE.md"))
     parser.add_argument("--protected", action="append", default=[], help="additional protected remote branch name")
     parser.add_argument("--note", default="", help="ledger note applied to branches retired in this invocation")
@@ -113,6 +166,24 @@ def main() -> int:
     args = parser.parse_args()
     try:
         repo = Path(git("rev-parse", "--show-toplevel", cwd=Path.cwd())).resolve()
+        if args.retire_approved:
+            if args.branches:
+                raise HygieneError("positional branches cannot be combined with --retire-approved")
+            approved = [parse_approved_retirement(value) for value in args.retire_approved]
+            if len({branch for branch, _ in approved}) != len(approved):
+                raise HygieneError("each branch may appear only once in --retire-approved")
+            ledger = (repo / args.ledger).resolve() if not args.ledger.is_absolute() else args.ledger
+            for branch, expected_head in approved:
+                retire(
+                    repo,
+                    branch,
+                    ledger,
+                    args.note,
+                    expected_head=expected_head,
+                    protected=set(args.protected),
+                )
+                print(f"RETIRED_APPROVED\t{branch}\t{expected_head}")
+            return 0
         if args.apply:
             git("fetch", "--prune", "origin", cwd=repo)
         names = args.branches or [line.removeprefix("origin/") for line in git("branch", "-r", "--format=%(refname:short)", cwd=repo).splitlines() if line.startswith("origin/") and line != "origin/HEAD -> origin/main"]
