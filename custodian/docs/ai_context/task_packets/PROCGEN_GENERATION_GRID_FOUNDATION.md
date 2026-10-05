@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-generation-grid-foundation`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-generation-data-model-audit`
 - Locks: `procgen-generation`
@@ -53,8 +53,8 @@
 
 ## Refresh Planning Authority
 
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
