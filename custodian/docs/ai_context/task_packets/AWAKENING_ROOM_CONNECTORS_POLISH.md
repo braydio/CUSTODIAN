@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-room-connectors-polish`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `awakening-runtime, awakening-art-registration, awakening-04-05-connector-presentation`
@@ -62,6 +62,10 @@
 - Validation: Focused first: inspect `custodian/tools/assets/asset.py --help`, then run current plan/status/doctor/replace-ingest commands for the three named families; run the live Asset V2 schema/production smokes selected by those changes. Run `custodian/tools/validation/awakening_first_return_smoke.gd`, `custodian/tools/validation/awakening_first_return_geometry_smoke.gd`, `custodian/tools/validation/awakening_first_return_progression_smoke.gd`, and `custodian/tools/validation/awakening_designation_locker_presentation_smoke.gd`. Add/reuse the focused bidirectional 04→05 Moment Forge scenario described above and run it in no-capture mode before any evidence capture. Add changed-file ownership for any new normalization/validation seam. If objective pixel proof remains necessary, compute alpha/silhouette bounds and two join seam metrics first, then produce at most one compact two-join + Locker-overview contact sheet; publish through `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...` only if a material human visual decision remains. Finish with one `python3 custodian/tools/validation/run_validation.py --changed --json` sweep and `git diff --check`.
 - Task overrides: `none`
 - Deferred: Any genuinely new/generated art after this slice, especially a separately authored `awakening_locker_reliquary_environment/foreground` if exact-pixel extraction is not defensible; broader full-Awakening convergence/handoff work remains owned by `awakening-handoff-readiness-art-convergence-v1-r1`.
+
+## Auto-Dispatch Input Gate
+
+This packet is intentionally auto-claimable. The three approved local source files are an input-availability check, not a human claim-timing decision. At workstream start, verify all three exact paths before any mutation. If any are absent, stop with a precise blocked handoff naming the missing path(s); do not fabricate substitutes and do not convert this packet back to manual merely because an input is temporarily unavailable.
 
 ## Asset Intake Map
 
