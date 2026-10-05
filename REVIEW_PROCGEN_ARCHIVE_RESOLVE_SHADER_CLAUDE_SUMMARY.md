@@ -54,3 +54,10 @@ AR2 cycle-0 independent review on `e60e097f2` (implementation `085a38a5e`, rende
 ## Reminder
 
 Ran on `agent/review-procgen-archive-resolve-shader` in a separate worktree. Your root checkout should stay on `main`; switch back if you left it.
+
+
+## AR3 Refresh Resolution
+
+- R0-01 approval provenance is resolved at AR3 refresh time: current live `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` and `PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1_CLAUDE_SUMMARY.md` both record that ChatGPT/user approved the renderer-backed AR2 baseline in the recorded authoring chat after reviewing the published Dropbox contact sheet/keyframes.
+- The historical review finding is retained as what the reviewer observed from its snapshot; no correction packet is required.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7

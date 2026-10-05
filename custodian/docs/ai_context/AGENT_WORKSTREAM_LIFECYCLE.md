@@ -285,5 +285,13 @@ be deleted. Archive tags use
 `archive/<sanitized-branch>-<YYYYMMDD>` and are recorded in
 `BRANCH_ARCHIVE.md`.
 
+For an explicitly operator-approved stale `agent/*` ref, use the repeatable
+`--retire-approved BRANCH=SHA` option with the exact reviewed remote head. This
+path fetches before acting, rejects a changed head, protected/diagnostic refs,
+and dirty or mismatched attached worktrees, then reuses the archive-tag and
+ledger machinery. Remote deletion is leased to the approved SHA. Default
+reporting and `--apply` remain conservative and never age-delete divergent
+agent refs.
+
 Never force-push, reset user work, or stash automatically. Branches are active
 work queues; tags retain unique retired history.
