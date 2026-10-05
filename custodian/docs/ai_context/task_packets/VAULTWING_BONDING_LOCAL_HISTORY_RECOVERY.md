@@ -3,13 +3,13 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vaultwing-bonding-local-history-recovery`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `vaultwing-bonding-art-final-ingest, agent-branch-hygiene`
 - Kind: `implementation`
 - Review: `none`
-- Review rationale: `manual history recovery; no runtime or Asset V2 salvage may occur until the immutable checkpoint and per-commit disposition audit are complete`
+- Review rationale: `history recovery is auto-dispatchable; destructive mutation remains fail-closed behind the immutable checkpoint and complete per-commit disposition audit`
 - Reviewed main: `6af4db244544771abae14e1be63a901d915edb95`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Summary backlink: Include this exact Authoring chat URL in every durable recovery/audit summary and final `## Next Handoff`.
@@ -52,5 +52,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Refresh reason: `none`
-- Next action: `Manually claim this packet only after reviewing the preserved-history measurements and confirming the attached worktree is still unchanged.`
+- Next action: `Claim automatically when eligible. The execution agent must verify the preserved-history measurements and exact attached-worktree identity before any mutation; mismatch stops the run without requiring a manual dispatch gate.`
 - Blockers or open questions: `none`
