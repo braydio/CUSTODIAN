@@ -1,5 +1,6 @@
 # REVIEW: STARTUP WORLD ENTRY SPINE V1
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-startup-world-entry-spine-v1-r1`
 - Kind: `review`
 - Status: `ready`
@@ -14,6 +15,7 @@
 - Review modes: `code, architecture, runtime, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `4eec3a3bcb8447dc4d625b4dfdd654c2fde515e8`
 - Goal: Independently verify that the App/Boot spine makes Twin Solaria and the Contract sandbox directly bootable without changing production story order or duplicating generation/world-loading authorities.
 - Review focus: default Awakening preservation; no default prewarm; one bootstrap generation in Contract mode; existing proxy/loader reuse; Twin direct mode uses the existing production playtest wrapper without world-ingress/persistent-unlock mutation; boot layer remains free of procgen construction/gameplay authority; current boot docs match live behavior.
 - Acceptance: findings-first pass or bounded correction packet through the review pipeline. Reviewer does not patch implementation directly.
