@@ -8,8 +8,12 @@
 - Depends on: `review-sundered-keep-overlook-alternate-vertical-slice`
 - Locks: `sundered-keep-roadmap, procgen-presentation-roadmap`
 - Kind: `implementation`
-- Review: `none`
-- Review rationale: `planning/authority packet only; no production runtime mutation; implementation packets authored after user/ChatGPT refresh`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `architecture, workflow`
+- Paired review workstream: `review-sundered-keep-overlook-runtime-integration-plan`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
 - Reviewed main: `b2b3624fd748ffbf90d40d737e20448c1e41bee6`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Summary backlink: Every durable planning/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
@@ -55,11 +59,11 @@
 
 ## Handoff
 
-- Next workstream: `<authored after refresh>`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next workstream: `review-sundered-keep-overlook-runtime-integration-plan`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
-- Refresh reason: `Standalone composition evidence determines the correct production/procgen insertion seam.`
-- Next action: Do not implement production integration until this packet is refreshed and completed.
+- Refresh reason: `Planning refresh is a pre-claim requirement above; after this packet executes, the paired architecture/workflow review is next.`
+- Next action: After this packet is explicitly refreshed/claimed and completes its architecture/packet authoring, run the paired fresh-context integration-plan review. All production implementation packets authored here must remain dependency-blocked on that review.
 - Blockers or open questions: Reviewed standalone evidence + explicit authoring-chat refresh; if SKO-2 is activated, reviewed SKO-2 as well.
