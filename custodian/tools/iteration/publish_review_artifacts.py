@@ -105,7 +105,7 @@ def _validate_authoring_chat(value: str) -> str:
     value = value.strip()
     if value in {"not-recorded", "n/a"}:
         return value
-    if not re.fullmatch(r"https://[^\\s]+", value):
+    if not re.fullmatch(r"https://[^\s]+", value):
         raise ValueError("authoring chat must be an https URL, not-recorded, or n/a")
     return value
 
