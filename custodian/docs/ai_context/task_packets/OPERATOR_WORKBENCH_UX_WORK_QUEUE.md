@@ -10,8 +10,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Series: `operator-workbench-ux-hierarchy-v1`
 - Workstream: `operator-workbench-ux-work-queue`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-workbench-ux-publish-decision`
 - Locks: `operator-workbench-ui`
