@@ -39,7 +39,11 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
 - Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
 
-### Active Reusable Source-Material Intake
+### Active Local Asset Intake
+
+- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — ready/manual closeout for the supplied Awakening `service_basin_b` Asset V2 handoff plus a bounded inventory of CUSTODIAN-relevant asset packs still in `~/Downloads`. It must reuse existing packet/family/library ownership and may not ingest unrelated personal downloads.
+
+## Active Reusable Source-Material Intake
 
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
 
