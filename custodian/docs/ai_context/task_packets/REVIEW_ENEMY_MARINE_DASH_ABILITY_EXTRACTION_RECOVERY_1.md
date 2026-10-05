@@ -12,7 +12,7 @@
 - Review target workstream: `enemy-marine-dash-ability-extraction-recovery-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md`
 - Reviewed main: `67eb2d3e13`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Review modes: `code, architecture, runtime, workflow`
 - Review cycle: `0`
@@ -35,5 +35,5 @@
 
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: If review finds a material ownership/tuning/caller difference from checkpoint `9af2adf59`, bring the review evidence back to this chat before changing the NPA-2 host-service contract or broader actor architecture.
