@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-enemy-savage-chain-ability-extraction`
 - Kind: `review`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-savage-chain-ability-extraction`
 - Locks: `enemy-runtime`
