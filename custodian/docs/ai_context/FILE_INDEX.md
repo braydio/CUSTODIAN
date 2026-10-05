@@ -200,7 +200,7 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/DEBUG_SCREEN_UI.md` — completed packet for the dedicated F12/DevConsole debug screen and normal-HUD diagnostic cleanup.
 - `custodian/docs/ai_context/task_packets/TERMINAL_OVERLAY_SUPPRESSION.md` — completed packet for hiding gameplay HUD/debug overlays while the terminal interface is open.
 - `custodian/docs/ai_context/task_packets/ENEMY_MARINE_DASH_ATTACK.md` — completed packet for hardening the enemy marine dash into a heavy commitment attack and tracking required directional body/FX/audio assets.
-- `custodian/docs/ai_context/task_packets/BLACK_RELIQUARY_LIVE_MINIMAP.md` — completed packet for making the Black Reliquary HUD minimap compact and live by embedding the shared tactical minimap renderer and exporting Sundered Keep authored minimap data.
+- `custodian/docs/ai_context/task_packets/archived/BLACK_RELIQUARY_LIVE_MINIMAP.md` — archived completed packet for the compact live Black Reliquary tactical minimap and Sundered Keep authored minimap provider.
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_HUD_SCOPE.md` — completed packet for restricting Sundered Keep-specific HUD content to the active keep map and preserving that state through terminal overlay suppression.
 - `custodian/docs/ai_context/task_packets/SIDEARM_UNLOCK.md` — completed packet for progression-locking the P-9 sidearm fallback and granting it from the Sundered Keep Great Hall field-retention locker.
 - `custodian/docs/ai_context/task_packets/OPERATOR_DODGE_RANGED_MODULAR_WIRING.md` — completed packet for live N/S 9-frame full-dodge playback and partial E/N/W modular two-handed ranged-ready stance wiring.
@@ -212,7 +212,8 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/INDOOR_OUTDOOR_PROCGEN_REGIONS.md` — completed packet for the first region-aware indoor/outdoor procgen slice
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_PASSAGE_VISIBILITY.md` — completed packet for generated wall passage visibility on normal horizontal procgen wall runs
 - `custodian/docs/ai_context/task_packets/PROCGEN_WALL_TOP_SOURCE_PREPROCESSING.md` — completed packet for wall-top preprocessing support in the atlas builder
-- `custodian/docs/ai_context/task_packets/ASH_BELL_FORLORN_RITUALANT.md` — packet for the first authored Ash-Bell / Forlorn-Ritualant event implementation slice and deferred production asset/procgen integration work
+- `custodian/docs/ai_context/task_packets/archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md` — archived authored-route migration / Encounter Completion V2 record for the live Forlorn-Ritualant Underground encounter
+- `custodian/docs/ai_context/task_packets/ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — blocked/manual Asset V2 closeout for the genuinely remaining Ritualant locomotion/reaction, Unarrived procession/apparition, and ritual-prop production art; unresolved animation cadence remains human-owned
 - `custodian/docs/ai_context/task_packets/RITUALANT_EXPANDED_ARENA_ASSET_FAMILY.md` — implementation record for the native-scale expanded arena, revised chapel underlays, lower-quarter seal, and White Thread telegraph Asset V2 pass
 - `custodian/docs/ai_context/task_packets/SEVERANCE_UNARRIVAL_LORE_REVISION.md` — completed packet for the Severance root-cause canon revision and Forlorn-Ritualant rename pass
 - `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` — complete V3 allied combat drone authority, including manager-owned fire discipline, close/far/free-roam formation behavior, and Operator/order-point guard anchors
