@@ -10,7 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `ba04d9e8ee`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Harden the remaining Vaultwing runtime ownership seams exposed by the inclusive audit without recreating species-local hearing or changing wild combat/bond balance.
 - Completion boundary: This workstream begins after the shared stealth-perception foundation lands. It owns fixed-step bond advancement, bond-transition versus restore reconciliation, allegiance-sensitive damage compatibility output, `hostile_fauna` compatibility cleanup, narrowly proven dead Vaultwing fields, and focused regression coverage. Generic hearing/perception architecture belongs to `stealth-perception-foundation`.
@@ -29,5 +29,5 @@
 
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: Bring the landed predecessor/review evidence and any material live-main drift back to this conversation. Re-derive the packet here with the user before promoting it to implementation-ready; do not let the execution agent silently reinterpret architecture, scope, sequencing, or acceptance.

@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `0c2a646ccd`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Let an artist add or replace an FX layer directly inside an existing Operator Aseprite Workbench, explicitly adopt that saved layer as the animation's canonical `fx` source, preview the result, and publish it through the normal guarded source→runtime transaction without a separate inbox/manual-ingest detour.
 - Completion boundary: Add one narrow human-authored FX adoption path for an already-existing semantic Operator animation. Saved top-level Aseprite layers named `vfx` or `fx` may be discovered as unbound editor content, explicitly adopted as semantic layer `fx`, represented transactionally as CREATE or REPLACE against the canonical source target, included in Workbench preview/publish review, rebuilt into runtime/catalog resources, mirrored only when the existing explicit counterpart option is enabled, and rolled back exactly on failure. Do not add arbitrary new animation identities or general layer-creation/autopilot authority.
