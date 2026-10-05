@@ -57,6 +57,7 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 - `SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — SKO-2 blocked/manual optional Asset V2 layered-art pass, activated only if SKO-1 composition passes and donor-art fidelity is the remaining problem.
 - `REVIEW_SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — paired SKO-2 review.
 - `SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3 blocked/manual planning gate; returns to the chat above after reviewed standalone evidence and authors the production/procgen integration series from then-live seams.
+- `REVIEW_SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3R paired fresh-context architecture/workflow review; every production packet authored by SKO-3 must remain gated behind this review.
 - No production integration implementation packet is pre-authored yet.
 
 ### Active Local Asset Intake
