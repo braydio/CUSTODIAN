@@ -79,8 +79,16 @@ Publish one compact external review handoff with
 `custodian/tools/iteration/publish_review_artifacts.py` and return the emitted
 Dropbox manifest path plus the exact reviewer questions. The publisher is opt-in:
 use `--important --reason ...` only when the human/ChatGPT visual decision is
-material. Prefer ROI/contact sheets and sparse authored keyframes; do not commit
-bulk review media to Git. See
+material. When the packet records an `Authoring chat:` URL, pass it through
+`--authoring-chat <exact-url>` and report both that URL and the exact
+`/CUSTODIAN/visual_review/<workstream>/<run-id>/REVIEW_MANIFEST.json` path. The
+authoring ChatGPT/web conversation owns the human visual decision and should use
+that Dropbox path directly instead of asking the coding agent to duplicate the
+media into chat. Reviewed cloud evidence defaults to `delete-after-review`: after
+the ChatGPT/user decision is recorded, resume the same workstream and run the
+emitted cleanup command. Use `--retain-after-review` only when the user/packet
+explicitly requires retained cloud evidence. Prefer ROI/contact sheets and sparse
+authored keyframes; do not commit bulk review media to Git. See
 `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md`.
 
 Task packets that require substantial visual evidence must state why non-visual
@@ -157,7 +165,7 @@ If a recognizable name is ambiguous, prefer the packet/workstream whose durable 
 
 When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
 
-This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. `workstream.py finish` fails closed when a packet with a recorded authoring/refresh URL has a committed root closing summary that omits the exact `Authoring chat: <url>` line. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
 
 ## CUSTODIAN Task Dispatch
 
@@ -171,7 +179,10 @@ For “Take CUSTODIAN workstream `<id>`,” run
 Omitting `--agent` falls back to the `CUSTODIAN_AGENT_ID` environment variable,
 then a neutral `unspecified` — never a silently assumed brand.
 Enter the returned worktree, read `AGENTS.md`, `custodian/AGENTS.md`, and the
-returned packet, then execute only that workstream through the lifecycle in
+returned packet. The claim receipt also exposes `authoring_chat`, `visual_review`,
+`visual_review_root`, and the default review retention policy so autonomous agents
+carry the human-review route without reconstructing it from prose. Then execute
+only that workstream through the lifecycle in
 `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
 
 ### CUSTODIAN Next Shortcut
