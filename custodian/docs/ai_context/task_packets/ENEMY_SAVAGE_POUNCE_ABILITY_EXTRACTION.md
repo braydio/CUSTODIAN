@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `enemy-savage-pounce-ability-extraction`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-marine-dash-ability-extraction-recovery-1`
 - Locks: `enemy-runtime`
@@ -39,7 +39,7 @@
 - Blockers or open questions: reviewed NPA-1 is required. The current Marine checkpoint is strong implementation evidence but is not yet production authority.
 ## Refresh Planning Authority
 
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
 - Refresh instruction: Bring the landed NPA-1 implementation summary, paired-review receipt, final ability/config API, final `enemy.gd` diff, and any correction-cycle changes back to this chat. Re-derive NPA-2 against that reviewed live seam before promoting it to `ready/auto`.
