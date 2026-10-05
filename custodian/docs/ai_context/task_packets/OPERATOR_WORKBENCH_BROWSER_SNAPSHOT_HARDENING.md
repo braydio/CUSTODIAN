@@ -14,7 +14,7 @@
 - Paired review workstream: `review-operator-workbench-browser-preview-refresh-hardening`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `7cfa2c12f5a99a90bfe087117856d16c92f8772a`
+- Reviewed main: `09706b79318aa627ea5474205884a8d8e53d8292`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
 - Background-sync addendum chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
