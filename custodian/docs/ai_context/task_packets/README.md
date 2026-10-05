@@ -43,6 +43,21 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
 
+### Active Operator Workbench Hardening / UX Chain
+
+Primary design authority: `../../../design/02_features/animation/OPERATOR_ANIMATION_WORKBENCH.md`.
+UX roadmap: `../../../design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`.
+
+The persistent sparse `workbench/operator-art` checkout currently launches OPUI from its own checkout-local code. Existing startup preserves an attached checkout without advancing it, while explicit Publish preparation advances only a clean ahead-zero checkout. An unfinished Workbench publication/edit can therefore pin both unpublished art and the OPUI code to an older repository base. A raw label such as `behind 256` is repository commit distance, not 256 animation changes; sparse checkout limits materialized paths rather than Git ancestry.
+
+- `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — ready/auto paired review of the landed publication-readiness/recovery authority.
+- `OPERATOR_WORKBENCH_BACKGROUND_BASE_SYNC.md` — P0 ready/auto follow-up, dependency-gated on that review. It adds exact-byte, fail-closed launch reconciliation for a behind/ahead-zero art checkout when all local dirt is provably Workbench-owned and no preserved path changed upstream. It must never auto-publish, broad-reset/clean, stash, rebase, or discard unknown local work.
+- `REVIEW_OPERATOR_WORKBENCH_BACKGROUND_BASE_SYNC.md` — paired fresh-context P0 post-land review.
+- `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` now depends on the background-base-sync review, then the existing chain continues through browser review -> FX adoption/review -> new-animation creation/review.
+- UX1-UX5 remain blocked/manual refresh-gated planning packets. UX1 now waits on `review-operator-workbench-animation-creation`; UX1/UX3/UX5 consume the background-sync state but must not recreate Git synchronization. Routine safe lag resolves behind the scenes as `MAIN READY`; raw ahead/behind counts stay in diagnostics.
+
+Background-sync addendum chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb
+
 ### Stranded Branch Recovery / Operator Fast Chain South
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73
