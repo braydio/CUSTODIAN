@@ -20,7 +20,7 @@
 **UI lock:** `operator-workbench-ui`  
 **Area:** Operator Workbench / OPUI  
 **Baseline reviewed main:** `330422023f9a92362915af46b9658585e7c1d450`  
-**Last updated:** 2026-10-01
+**Last updated:** 2026-10-05
 
 ## Purpose
 
