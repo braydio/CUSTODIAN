@@ -382,6 +382,9 @@ def claim(
                     "branch": expected_branch, "worktree": str(worktree), "packet": selected.path,
                     "checkout": checkout, "verified": True, "agent": agent,
                     "run_id": trace.run_id, "trace_ref": trace.diagnostic_ref,
+                    "authoring_chat": selected.authoring_chat or "not-recorded",
+                    "visual_review": selected.visual_review or "unspecified",
+                    "visual_review_root": f"/CUSTODIAN/visual_review/{selected.workstream}/",
                 }
                 _write_last_claim_receipt(repo, receipt)
                 trace.record("dispatch_receipt_written", packet=selected.path, branch=expected_branch, worktree=str(worktree))
@@ -401,6 +404,8 @@ def claim(
     print(f"branch: {receipt['branch']}")
     print(f"worktree: {receipt['worktree']}")
     print(f"packet: {receipt['packet']}")
+    print(f"authoring chat: {receipt['authoring_chat']}")
+    print(f"visual review root: {receipt['visual_review_root']}")
     print("\nNEXT:")
     print(f"cd {receipt['worktree']}")
     print(f"Read AGENTS.md, custodian/AGENTS.md, then {receipt['packet']}.")
