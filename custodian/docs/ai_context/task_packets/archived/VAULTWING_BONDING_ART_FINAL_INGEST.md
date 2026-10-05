@@ -1,7 +1,9 @@
 # VAULTWING BONDING ART FINAL INGEST
 
+> Lifecycle correction 2026-10-04: this legacy packet is superseded by the landed `VAULTWING_BOND_GREET_FINAL_INGEST` workstream, which selectively reconciled the useful checkpoint, closed bonding coverage at 24/24 runtime directions and 80/80 family strips, and explicitly states that the old `vaultwing-bonding-art-final-ingest` branch is checkpoint history only. This file is archived as historical intent, not executable work.
+
 - Workstream: `vaultwing-bonding-art-final-ingest`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`

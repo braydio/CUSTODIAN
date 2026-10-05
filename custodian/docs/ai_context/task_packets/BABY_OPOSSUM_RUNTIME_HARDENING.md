@@ -1,18 +1,32 @@
 # BABY OPOSSUM RUNTIME HARDENING
 
-- Workstream: `baby-opossum-runtime-hardening`
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `baby-opossum-runtime-hardening-r1`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `baby-opossum-runtime`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, asset-pipeline`
+- Paired review workstream: `review-baby-opossum-runtime-hardening-r1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Reviewed main: `9d8221e4b9fad3d0c6b7d885fab90206ceed4480`
+- Authoring chat: `not-recorded`
 - Goal: Correct the Baby Opossum runtime state-transition and approach/retrieval semantics, tighten determinism and contract validation, and reconcile the active implementation documentation without changing the existing Asset V2 art pipeline.
-- Current measured state: On reviewed `main@49649b35`, the actor has a deterministic explicit state machine, generic passive attack rejection, layered presentation, 22 published body strips, and focused runtime/asset smokes. Review found that several public soft-action APIs can overwrite non-ambient sequences despite the design claiming reactions are gated; timed `APPROACH` states can advance remotely before reaching their target; `retrieve()` marks a target carried before contact; equal-distance discoverable selection has no explicit stable tie-break; runtime FPS metadata mirrors the family contract but parity is only proven for published clips; and the design still refers to generated `REQUIRED_ASSETS.md` as the tracker. Five production-art requirements remain intentionally open in the requirement registry.
+- Current measured state: The live actor still has the same bounded defects measured by the original packet: soft-action preemption is inconsistent, approach/retrieval can complete remotely, carrying can be claimed before contact, equal-distance search lacks an explicit stable tie-break, and unpublished-state FPS parity is not fully validated. The old `origin/agent/baby-opossum-runtime-hardening` branch is fully contained by current main with zero unique commits but still exists remotely, so the original workstream identity is permanently seen as claimed. This `-r1` packet is the canonical fresh queue identity. The five production-art requirements remain intentionally open and are not blockers for runtime hardening.
+- Completion boundary: Done when transition priority is explicit and deterministic; treat/retrieve success is arrival/contact-authoritative; carrying and target selection are deterministic; family/runtime timing parity is validated for published and unpublished states; current docs point to the requirement registry as asset-truth; and no new art or behavior-controller architecture is introduced.
+- Evidence: current Baby Opossum runtime/design files and focused smokes; `ambient_baby_opossum.asset.json`; the five active requirement-registry entries; stale remote branch classification above.
 - Task-specific authority: `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md`, `custodian/game/actors/ambient/baby_opossum/baby_opossum.gd`, `baby_opossum_animation_set.gd`, shared ambient presentation/rejection authorities, `ambient_baby_opossum.asset.json`, and the focused Baby Opossum validation smokes.
+- Work surface: `baby_opossum.gd`, `baby_opossum_animation_set.gd`, focused Baby Opossum runtime/asset validation, active Baby Opossum design/current-state docs, and archive hygiene for the completed legacy production-wiring record.
 - Change: Add one explicit transition-priority policy; make soft actions non-destructive while a sequence is active; make approach progression depend on arrival rather than a short fixed timer; make retrieval contact-authoritative; make equal-distance search selection deterministic; extend contract parity validation to missing/unpublished states; update active docs and archive the completed legacy production-wiring record.
 - Preserve: Existing state-machine ownership, manager-owned deterministic seeding, generic `AttackRejection`, shared ambient presentation, Asset Pipeline V2 publication/naming, current published art, and fail-soft fallback for missing clips.
 - Non-goals: No new behavior controller, planner, navigation system, friendship overhaul, save-system work, new art generation, source re-slicing, asset-family redesign, Operator tooling, or broad ambient-creature refactor.
 - Acceptance: Active soft sequences cannot be accidentally overwritten; hard attack/flee reactions have explicit tested priority; treat/retrieve approach does not resolve remotely; carrying begins only on matching contact; search tie selection is stable; family/runtime animation timing parity is validated for the whole contract; docs point to the requirement registry rather than generated Markdown; existing smokes remain green and new focused cases prove the fixes.
+- Validation: Follow the focused validation commands and numbered cases below first, then run changed-file validation and `git diff --check` once at closeout.
 - Task overrides: `none`
 - Deferred: The five existing Baby Opossum Asset V2 production-art requirements; broader friendship/command gameplay; navigation-aware long-range retrieval.
   
@@ -198,6 +212,6 @@ Before normal workstream finish:
 
 ## Handoff
 
-- Next action: `python3 custodian/tools/agent/dispatch.py claim baby-opossum-runtime-hardening --agent codex`
+- Next action: `python3 custodian/tools/agent/dispatch.py claim baby-opossum-runtime-hardening-r1 --agent codex`
 - Best starting files: `baby_opossum.gd`, `baby_opossum_runtime_smoke.gd`, `baby_opossum_animation_set.gd`, `ambient_baby_opossum.asset.json`, `BABY_OPOSSUM_RUNTIME.md`.
-- Blockers or open questions: None. Do not wait on the five existing art re-exports to harden runtime semantics.
+- Blockers or open questions: None. Do not wait on the five existing art re-exports to harden runtime semantics. Do not resume the stale original remote branch; it is contained by main and exists only as branch residue.
