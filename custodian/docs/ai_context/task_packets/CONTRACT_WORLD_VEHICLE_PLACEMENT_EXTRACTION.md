@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation-r1-r1`
+- Depends on: `review-contract-world-placement-foundation-r1`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
@@ -23,7 +23,7 @@
 - Validation: `res://tools/validation/world_contract_prewarm_smoke.gd`, `res://tools/validation/vehicle_exit_clearance_smoke.gd`, `res://tools/validation/validate_vehicle_registry.gd`, plus an implementation-created fixed-seed vehicle-placement snapshot if required; then changed-file closeout. Do not name a nonexistent new script in packet metadata before claim.
 - Task overrides: `none`
 - Deferred: Remaining placement domains and final loader contraction.
-- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
+- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 
