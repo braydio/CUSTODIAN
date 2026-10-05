@@ -76,7 +76,6 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - The unique high-resolution Fast 01 South donor master is already preserved on main at `b57ab98d` under `custodian/asset_drop/source_work/operator/unarmed/attack/fast_01/south/fast_1_south.png`; this preservation commit does not change runtime.
 - `archived/STRANDED_BRANCH_RECOVERY_CLOSEOUT.md` — P1 closeout landed. Adds fail-closed exact-SHA retirement; archive-tags and retires five reviewed stale refs. Vaultwing's attached history remains untouched and is routed to its separate manual recovery packet.
 - `VAULTWING_BONDING_LOCAL_HISTORY_RECOVERY.md` — P1 ready/manual recovery. First archive-tags the exact attached local HEAD remotely, then classifies the recorded 23-commit checkpoint-to-remote range and all commits unique to current main before any worktree/branch mutation or selective salvage.
-- `OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — P1 ready/auto production-art/runtime closeout for exact South Fast 02/03/04 lower+upper+FX at the locked 6/7/8-frame 96×96 contracts, preserving Fast 01 and all gameplay timing. Subjective final chain approval remains human/ChatGPT-owned through one compact Dropbox review handoff.
 - `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 ready/auto post-land review; dependency-gated until the Operator continuity implementation completes and archives.
 
 ### Operator Runtime Authority Migration

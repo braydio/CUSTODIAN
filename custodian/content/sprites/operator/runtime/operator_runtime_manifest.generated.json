@@ -4375,6 +4375,22 @@
             96,
             96
           ]
+        },
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__lower_body__unarmed__attack__fast_01__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__upper_body__unarmed__attack__fast_01__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
         }
       }
     },
@@ -4490,6 +4506,86 @@
         }
       }
     },
+    "unarmed/attack/fast_02/n": {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "n",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__full_body__unarmed__attack__fast_02__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__fx__unarmed__attack__fast_02__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__lower_body__unarmed__attack__fast_02__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__n__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "unarmed/attack/fast_02/s": {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_02",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__full_body__unarmed__attack__fast_02__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__fx__unarmed__attack__fast_02__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__lower_body__unarmed__attack__fast_02__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__s__6f__96.png",
+          "frames": 6,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "unarmed/attack/fast_02/w": {
       "profile": "unarmed",
       "group": "attack",
@@ -4554,6 +4650,86 @@
         }
       }
     },
+    "unarmed/attack/fast_03/n": {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "n",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__full_body__unarmed__attack__fast_03__n__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__n__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__n__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__n__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "unarmed/attack/fast_03/s": {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_03",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__full_body__unarmed__attack__fast_03__s__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__s__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__s__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__s__7f__96.png",
+          "frames": 7,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
     "unarmed/attack/fast_03/w": {
       "profile": "unarmed",
       "group": "attack",
@@ -4610,6 +4786,86 @@
         },
         "upper_body": {
           "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__e__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "unarmed/attack/fast_04/n": {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_04",
+      "direction": "n",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__full_body__unarmed__attack__fast_04__n__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__fx__unarmed__attack__fast_04__n__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__lower_body__unarmed__attack__fast_04__n__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__n__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        }
+      }
+    },
+    "unarmed/attack/fast_04/s": {
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_04",
+      "direction": "s",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__full_body__unarmed__attack__fast_04__s__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "fx": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__fx__unarmed__attack__fast_04__s__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "lower_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__lower_body__unarmed__attack__fast_04__s__8f__96.png",
+          "frames": 8,
+          "frame_size": [
+            96,
+            96
+          ]
+        },
+        "upper_body": {
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__s__8f__96.png",
           "frames": 8,
           "frame_size": [
             96,
