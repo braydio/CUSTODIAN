@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-landmark-vocabulary-v1`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-tilemap-facade-contraction`
 - Locks: `procgen-presentation`
