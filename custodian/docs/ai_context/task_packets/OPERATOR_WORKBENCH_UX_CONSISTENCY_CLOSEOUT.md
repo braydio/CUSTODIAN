@@ -31,7 +31,7 @@
   - Global Activity, status, browser, Publish and preview hierarchy will have been changed by UX1-4 before this packet is eligible.
   - FX adoption may add saved unbound/adoptable layer state that must fit the final inspector language without becoming a separate workflow.
   - Asset Workbench may independently extract generic preview primitives before this closeout; do not move shared code again unless refreshed current main proves duplication remains.
-  - The `operator-workbench-background-base-sync` prerequisite is expected to make routine ahead-zero repository lag self-healing while preserving provably Workbench-owned unpublished bytes. Final UX must not regress this into a manual sync chore or expose raw `behind N` commit distance as animation-change count.
+  - The `operator-workbench-background-base-sync` prerequisite is expected to make routine ahead-zero repository lag self-healing and to resume only transaction-proven previously user-approved publication/landing residue. Final UX must not regress this into a manual sync chore or expose raw `behind N` commit distance as animation-change count.
 - Evidence:
   - `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md`
   - landed UX1-4 implementation
