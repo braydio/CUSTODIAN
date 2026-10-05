@@ -2666,6 +2666,27 @@
       "needs_import": false
     },
     {
+      "id": "authored_vault_grunt_loot_marine",
+      "type": "godot_script",
+      "script": "res://tools/validation/authored_vault_grunt_loot_marine_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "enemy",
+        "marine"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/abilities/marine_dash.gd",
+        "custodian/game/actors/enemies/abilities/marine_dash_config.gd",
+        "custodian/game/actors/enemies/abilities/configs/marine_dash_default.tres",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/tools/validation/authored_vault_grunt_loot_marine_smoke.gd"
+      ],
+      "timeout_sec": 40,
+      "needs_import": false
+    },
+    {
       "id": "enemy_hit_spatial_telemetry",
       "type": "godot_script",
       "script": "res://tools/validation/enemy_hit_spatial_telemetry_smoke.gd",
@@ -2678,7 +2699,9 @@
       "owners": [
         "custodian/game/actors/enemies/enemy.gd",
         "custodian/game/systems/combat/enemy_hit_spatial_contract.gd",
-        "custodian/game/actors/operator/operator.gd"
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/enemies/abilities/marine_dash.gd",
+        "custodian/game/actors/enemies/abilities/marine_dash_config.gd"
       ],
       "timeout_sec": 40,
       "needs_import": false
@@ -4721,6 +4744,23 @@
       ],
       "timeout_sec": 45,
       "needs_import": true
+    },
+    {
+      "id": "sundered_keep_marine_ambush",
+      "type": "godot_script",
+      "script": "res://tools/validation/sundered_keep_marine_ambush_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "sundered_keep",
+        "marine",
+        "ambush"
+      ],
+      "owners": [
+        "custodian/game/world/sundered_keep/sundered_keep_marine_ambush.gd",
+        "custodian/tools/validation/sundered_keep_marine_ambush_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
     }
   ]
 }

@@ -287,10 +287,13 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
 
     Every active `Review: auto` packet must have a matching active review
     packet: same declared `Paired review workstream` id, `Kind: review`,
-    `Review: none`, `Status: ready`, `Dispatch: auto`, a dependency back on the
-    implementation workstream, and matching target workstream and canonical
-    archived target-packet path. Historical packets that omit review metadata
-    (`Review: none`, the default) are never required to pair.
+    `Review: none`, a dependency back on the implementation workstream, and
+    matching target workstream and canonical archived target-packet path. The
+    pair must be ready/auto or blocked/manual. A ready/auto implementation
+    requires a ready/auto review; a blocked/manual implementation may also
+    retain a ready/auto review waiting on its dependency. Historical packets
+    that omit review metadata (`Review: none`, the default) are never required
+    to pair.
     Reusable by dispatcher eligibility, check_ai_context.py, and tooling per
     the single reusable validation authority this contract requires.
     """
@@ -317,10 +320,16 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
             add(p.workstream, f"paired review '{paired_id}' must declare Kind: review")
         if paired.review != "none":
             add(p.workstream, f"paired review '{paired_id}' must declare Review: none")
-        if paired.status != "ready":
-            add(p.workstream, f"paired review '{paired_id}' must declare Status: ready")
-        if paired.dispatch != "auto":
-            add(p.workstream, f"paired review '{paired_id}' must declare Dispatch: auto")
+        paired_state = (paired.status, paired.dispatch)
+        implementation_is_ready = (p.status, p.dispatch) == ("ready", "auto")
+        valid_pair_states = {("ready", "auto"), ("blocked", "manual")}
+        if implementation_is_ready:
+            if paired.status != "ready":
+                add(p.workstream, f"paired review '{paired_id}' must declare Status: ready")
+            if paired.dispatch != "auto":
+                add(p.workstream, f"paired review '{paired_id}' must declare Dispatch: auto")
+        elif paired_state not in valid_pair_states:
+            add(p.workstream, f"paired review '{paired_id}' must be ready/auto or blocked/manual while its implementation is gated")
         if p.workstream not in paired.dependencies:
             add(p.workstream, f"paired review '{paired_id}' must depend on '{p.workstream}'")
         if paired.review_target_workstream != p.workstream:

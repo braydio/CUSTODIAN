@@ -8,6 +8,7 @@ import shutil
 import sys
 import tempfile
 import threading
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -214,13 +215,14 @@ class DispatchTests(unittest.TestCase):
                 with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=start)), mock.patch("builtins.print"):
                     dispatch.claim(repo, "race-task", "codex", False)
                 outcomes.append("claimed")
-            except dispatch.DispatchError as error:
+            except (dispatch.DispatchError, dispatch.WorkflowControlError) as error:
                 outcomes.append(str(error))
         threads = [threading.Thread(target=run, args=(repo,)) for repo in (self.repo, second)]
         for thread in threads: thread.start()
         for thread in threads: thread.join()
         self.assertEqual(len(calls), 1)
         self.assertEqual(sum(value == "claimed" for value in outcomes), 1)
+        self.assertEqual(len(outcomes), 2)
         self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/race-task"))
         self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/race-task"))
 
@@ -296,6 +298,128 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("lock: asset-catalog held by holder", rendered)
         self.assertIn("independent", rendered.split("READY (", 1)[1])
 
+    def test_cli_busy_dispatcher_fails_fast_without_claim_side_effects(self):
+        self.add_packet("busy-task", dispatch_value="auto")
+        main_before = git(self.repo, "rev-parse", "origin/main")
+        lock_path = dispatch._git_common_dir(self.repo) / "custodian-workflow" / "dispatch.lock"
+        lock_path.parent.mkdir(parents=True, exist_ok=True)
+        holder_code = (
+            "import fcntl,sys,time; handle=open(sys.argv[1],'a'); "
+            "fcntl.flock(handle,fcntl.LOCK_EX); print('ready',flush=True); time.sleep(10)"
+        )
+        holder = subprocess.Popen(
+            [sys.executable, "-c", holder_code, str(lock_path)],
+            stdout=subprocess.PIPE, text=True,
+        )
+        try:
+            self.assertEqual(holder.stdout.readline().strip(), "ready")
+            holder.stdout.close()
+            self.assertIn("busy-task", dispatch.status(self.repo, output=False))
+            started = time.monotonic()
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "claim-next", "--agent", "codex"],
+                cwd=self.repo, text=True, capture_output=True, timeout=3,
+            )
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+            self.assertIn("LOCAL DISPATCH BUSY", result.stderr)
+            self.assertLess(time.monotonic() - started, 1.0)
+            wait_started = time.monotonic()
+            waited = subprocess.run(
+                [sys.executable, str(SCRIPT), "claim", "busy-task", "--agent", "codex", "--lock-wait-seconds", "0.25"],
+                cwd=self.repo, text=True, capture_output=True, timeout=3,
+            )
+            waited_elapsed = time.monotonic() - wait_started
+            self.assertEqual(waited.returncode, 2, waited.stdout + waited.stderr)
+            self.assertIn("LOCAL DISPATCH BUSY", waited.stderr)
+            self.assertGreaterEqual(waited_elapsed, 0.25)
+            self.assertLess(waited_elapsed, 1.5)
+            self.assertTrue(lock_path.exists())
+            self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/busy-task"))
+            self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/busy-task"))
+            self.assertNotIn("refs/heads/agent/busy-task", git(self.repo, "worktree", "list", "--porcelain"))
+            self.assertFalse(git(self.repo, "branch", "--list", "agent/busy-task"))
+            self.assertFalse(dispatch._last_claim_path(self.repo).exists())
+            self.assertTrue((self.repo / dispatch.PACKET_ROOT / "BUSY_TASK.md").exists())
+            self.assertEqual(git(self.repo, "rev-parse", "origin/main"), main_before)
+        finally:
+            holder.terminate()
+            holder.wait(timeout=3)
+
+    def test_diagnostic_publication_does_not_hold_global_dispatch_mutex(self):
+        self.add_packet("task-a", dispatch_value="auto", priority="P0")
+        self.add_packet("task-b", dispatch_value="auto", priority="P1")
+        diagnostic_entered = threading.Event()
+        release_diagnostic = threading.Event()
+        task_b_finished = threading.Event()
+        errors = []
+        def delayed_publish(trace):
+            if trace.workstream_id == "task-a":
+                diagnostic_entered.set()
+                if not release_diagnostic.wait(timeout=5):
+                    raise AssertionError("test did not release task A diagnostic publication")
+            return True
+
+        def claim_a():
+            try:
+                dispatch.claim(self.repo, "task-a", "codex", False)
+            except Exception as error:  # surfaced in the parent after thread join
+                errors.append(error)
+
+        def claim_b():
+            try:
+                dispatch.claim(self.repo, "task-b", "codex", False)
+            except Exception as error:
+                errors.append(error)
+            finally:
+                task_b_finished.set()
+
+        thread_a = threading.Thread(target=claim_a)
+        with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=publish_workstream)), \
+             mock.patch.object(dispatch.RunTrace, "publish", delayed_publish), \
+             mock.patch("builtins.print"):
+            thread_a.start()
+            try:
+                self.assertTrue(diagnostic_entered.wait(timeout=5), "task A never reached delayed diagnostics")
+                thread_b = threading.Thread(target=claim_b)
+                thread_b.start()
+                self.assertTrue(task_b_finished.wait(timeout=5), "task B could not claim while task A diagnostics were delayed")
+                thread_b.join(timeout=1)
+                self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/task-b"))
+                self.assertTrue(dispatch._last_claim_path(self.repo).is_file())
+                self.assertIn('"workstream": "task-b"', dispatch._last_claim_path(self.repo).read_text())
+            finally:
+                release_diagnostic.set()
+                thread_a.join(timeout=5)
+        self.assertFalse(thread_a.is_alive())
+        self.assertFalse(errors, errors)
+
+    def test_failed_diagnostic_publish_does_not_invalidate_claim(self):
+        self.add_packet("diagnostic-failure", dispatch_value="auto")
+        output = []
+        def fail_publish(trace):
+            trace.record("diagnostic_publish_failed", reason="simulated diagnostic transport failure")
+            return False
+        with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=publish_workstream)), \
+             mock.patch.object(dispatch.RunTrace, "publish", fail_publish), \
+             mock.patch("builtins.print", side_effect=lambda *args, **kwargs: output.append(" ".join(map(str, args)))):
+            self.assertEqual(dispatch.claim(self.repo, "diagnostic-failure", "codex", False), 0)
+        rendered = "\n".join(output)
+        self.assertIn("CLAIMED", rendered)
+        self.assertIn("CUSTODIAN_DISPATCH_RESULT_JSON:", rendered)
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/diagnostic-failure"))
+        self.assertFalse(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/diagnostic-failure"))
+        receipt = json.loads(dispatch._last_claim_path(self.repo).read_text())
+        self.assertEqual(receipt["result"], "claimed")
+        self.assertTrue(receipt["verified"])
+        trace_path = (
+            dispatch._git_common_dir(self.repo) / "custodian-workflow" / "traces"
+            / "diagnostic-failure" / f"{receipt['run_id']}.jsonl"
+        )
+        events = [json.loads(line) for line in trace_path.read_text().splitlines()]
+        self.assertIn("diagnostic_publish_failed", [event["event"] for event in events])
+        self.assertEqual(events[-2]["event"], "run_completed")
+        self.assertEqual(events[-2]["data"]["outcome"], "claimed")
+
     def test_remote_main_discovery_works_when_local_main_is_stale(self):
         self.add_packet("remote-new", dispatch_value="auto")
         git(self.repo, "reset", "--hard", "HEAD^")
@@ -316,7 +440,7 @@ class DispatchTests(unittest.TestCase):
             captured.setdefault(thread_output.key, []).append(" ".join(map(str, args)))
         def run():
             thread_output.key = threading.get_ident()
-            dispatch.claim(self.repo, None, "codex", True)
+            dispatch.claim(self.repo, None, "codex", True, lock_wait_seconds=5)
             results.append("\n".join(captured[thread_output.key]))
         threads = [threading.Thread(target=run) for _ in range(2)]
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print", side_effect=capture):

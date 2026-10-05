@@ -10,7 +10,8 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `ba04d9e8ee`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Close the live typed-noise defect and establish one shared acoustic perception seam for ordinary enemies and Vaultwings so hearing is a stealth-system capability rather than species-local behavior.
 - Completion boundary: This workstream owns S0 and the narrowest S1 acoustic seam from `STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`: typed `NoiseEvent` propagation, receiver-side acoustic evaluation/observation, Enemy adoption, Vaultwing adoption, and focused deterministic validation. It does not own expanded emitters, visual-cone extraction beyond what is required for a coherent shared profile, alarm networks, player awareness UI, material footsteps, acoustic occlusion, or species behavior redesign.
 - Current measured state: On reviewed main, `NoiseEvent` is a real RefCounted class but its factory returns `RefCounted`; `NoiseEventBus` signals and returns `Variant`; `EnemyPerceptionComponent` consumes the object through string-key `get()`; and `VaultwingBehaviorController._on_noise_emitted()` uses Dictionary-only two-argument `get(key, default)` semantics, producing the reported runtime error when a real Operator gunshot reaches a HIGH Vaultwing. Enemy receiver tuning already includes vision/hearing range and detection thresholds, while Vaultwing has a separate awareness radius with direct bus handling.
@@ -29,7 +30,7 @@
 
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
 - Refresh instruction: Bring the landed predecessor/review evidence and any material live-main drift back to this conversation. Re-derive the packet here with the user before promoting it to implementation-ready; do not let the execution agent silently reinterpret architecture, scope, sequencing, or acceptance.
 
 ## Handoff

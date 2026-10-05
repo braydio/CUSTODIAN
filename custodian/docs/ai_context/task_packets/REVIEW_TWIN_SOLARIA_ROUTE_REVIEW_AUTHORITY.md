@@ -1,5 +1,6 @@
 # REVIEW: TWIN SOLARIA ROUTE REVIEW AUTHORITY
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-twin-solaria-route-review-authority`
 - Kind: `review`
 - Status: `ready`
@@ -14,6 +15,7 @@
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `8d6a24dacd87153090383dcc1a6c94f09291393b`
 - Goal: Independently verify fail-closed Twin Solaria route adjudication without travel or presentation authority leakage.
 - Review focus: Home Index prerequisite; evidence conflicts preserved; reciprocity cannot be skipped; HOLD/ABORT/AUTHORIZE semantics; no unsafe authorize state; no global campaign-state duplication; exact restore; no Crown traversal; Slice C coexistence.
 - Acceptance: findings-first pass or bounded correction packet through the review pipeline. Reviewer does not patch runtime directly.

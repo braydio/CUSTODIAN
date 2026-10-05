@@ -1,5 +1,6 @@
 # TWIN SOLARIA CROWN INCIDENT FORENSICS
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `twin-solaria-crown-incident-forensics`
 - Kind: `implementation`
 - Status: `ready`
@@ -13,13 +14,19 @@
 - Paired review workstream: `review-twin-solaria-crown-incident-forensics`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `b1e622dde554bfac88ae73a3b1a578f606027c91`
+- Authoring chat: `not-recorded`
 - Goal: Implement Twin Solaria Slice C as a deterministic, local Crown Incident forensic progression layered onto the already-live V1 authored level, without introducing route acquisition, strategic travel, Passage restoration, new production art, or a second campaign-state authority.
+- Completion boundary: Done when one focused local forensic authority owns Stage B-F progression and route-state persistence; later nodes cannot leak early evidence; the Second Crown overlay remains presentation-only; no acquisition/travel/Passage authority appears; focused runtime/canon/presentation checks are green; and active Twin documentation matches the landed state.
 - Current measured state: `hub_twin_solaria` is already live as a registered `AuthoredLevel2D` on the exact 2048×1536 Asset V2 coordinate authority with eight native-size plates, fidelity underlay, authored boundary rails, Crown Causeway spawn, playtest wrapper, production smoke, and seven dormant `WorldReadoutInteractable` readouts. Awakening A1–A4 hardening from the older combined packet is already present; the A5 fixture audit found only baked/unready states and intentionally added no duplicate fixture binding. Do not repeat that work.
+- Evidence: live `TwinSolariaLayout`/authored level, current dormant readouts, Twin canon/design authorities, existing runtime/canon smokes, visual-validation economy tooling, and the paired post-land review packet.
 - Task-specific authority: `design/05_levels/TWIN_SOLARIA.md`, `design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`, `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`, live `TwinSolariaLayout`, and the authored-level route-state contract.
+- Work surface: Twin Solaria local forensic state/controller, existing dormant readouts and presentation overlay, authored-level capture/restore hooks, focused Twin validation, and directly stale Twin docs only.
 - Change: Add a focused forensic-progression authority, staged Second Crown evidence, a restrained presentation-only architectural reconstruction overlay, route-state capture/restore for the local investigation state, and focused validation proving the canon/mystery boundaries and no-Passage contract.
 - Preserve: Existing plate registration, 2048×1536 production coordinates, current collision/bounds/spawn, Asset V2 family contracts, Crown Verge ambiguity, seven existing dormant readout roles, authored-level route lifecycle, current tactical portal behavior, Gate of Dust behavior, and all reserved Crown Incident mysteries.
 - Non-goals: No Solarium I route acquisition; no route candidate model; no Hold/Abort/Authorize gameplay; no cross-map Crown travel; no Solarium II reconstruction; no Passage capability; no new Asset V2 family; no landmark-raster double rendering; no final lighting/audio pass; no final camera-zone pass; no Hub-wide persistence redesign; no use of `NON-RECIPIENT` as an answer; no Ash-Bell causality claim; no Ground Zero claim.
 - Acceptance: A player can progress through a bounded Stage B–F Crown Incident evidence sequence that establishes the two-aperture architecture, Acquisition-vs-Passage distinction, deliberate Amputation, pre-cut anomaly, preexisting Null Warrant safety-chain involvement, and post-cut network-scale crisis. The sequence survives authored-level route-state capture/restore, cannot be skipped by reading later nodes early, never enables Solarium I or Passage travel, and leaves final authorization/cause/identity mysteries unresolved.
+- Validation: Run the focused Crown Incident forensic smoke first, then Twin runtime/canon/route-state regressions, structured overlay registration/alpha metrics, the compact Second-Crown ROI evidence path only where still required, changed-file validation, and `git diff --check`.
 - Task overrides: `none`
 - Deferred: Slice D route-review authority, Slice E Solarium I acquisition presentation/FX, Passage restoration, campaign-level durable knowledge persistence beyond the existing authored-route state lifetime, final camera/lighting/audio, and the legacy 3500×3000-vs-4000×3000 development-preview mismatch.
 

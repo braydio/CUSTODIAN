@@ -101,7 +101,15 @@ func _run_reversal_case(
 		&"ordinary_critical",
 		&"s"
 	)
-	_assert_true(ordinary_profile.get("frame_size") == Vector2i(96, 96), "ordinary paired critical must remain 96x96")
+	var ordinary_animation := StringName(ordinary_profile.get("body_animation", &""))
+	var ordinary_frame_texture: Texture2D = null
+	if operator_body.sprite_frames.has_animation(ordinary_animation) \
+			and operator_body.sprite_frames.get_frame_count(ordinary_animation) > 0:
+		ordinary_frame_texture = operator_body.sprite_frames.get_frame_texture(ordinary_animation, 0)
+	_assert_true(
+		ordinary_frame_texture != null and ordinary_frame_texture.get_size() == Vector2(96, 96),
+		"ordinary paired critical must remain 96x96"
+	)
 	var execution_anchor := grunt.get_node("CriticalExecutionAnchor") as Marker2D
 	_assert_true(operator.global_position.is_equal_approx(grunt.global_position), "Operator and victim should share one world root")
 	_assert_true(operator.global_position.is_equal_approx(execution_anchor.global_position), "shared root should equal CriticalExecutionAnchor")

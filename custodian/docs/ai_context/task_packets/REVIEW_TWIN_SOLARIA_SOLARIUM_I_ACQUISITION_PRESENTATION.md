@@ -1,5 +1,6 @@
 # REVIEW: TWIN SOLARIA SOLARIUM I ACQUISITION PRESENTATION
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-twin-solaria-solarium-i-acquisition-presentation`
 - Kind: `review`
 - Status: `ready`
@@ -14,6 +15,7 @@
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `8d6a24dacd87153090383dcc1a6c94f09291393b`
 - Goal: Independently verify that Solarium I acquisition is presentation-only, Asset V2-compliant, fail-closed, and never becomes Crown passage.
 - Review focus: route truth remains Slice D-owned; V2 provenance/contracts; dormant/candidate/stable/warning/shutdown transitions; stale one-shot cancellation; no duplicate landmark art; no Passage or route exit; structured presentation-state/registration/alpha metrics first, with targeted ROI evidence only where pixels remain necessary; subjective FX/readability preference stays human-owned.
 - Acceptance: findings-first pass or bounded correction through review pipeline. No reviewer runtime patching.

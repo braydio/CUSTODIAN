@@ -1,5 +1,6 @@
 # TWIN SOLARIA ROUTE REVIEW AUTHORITY
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `twin-solaria-route-review-authority`
 - Kind: `implementation`
 - Status: `ready`
@@ -13,13 +14,19 @@
 - Paired review workstream: `review-twin-solaria-route-review-authority`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `b1e622dde554bfac88ae73a3b1a578f606027c91`
+- Authoring chat: `not-recorded`
 - Goal: Implement Twin Solaria Slice D as one focused, fail-closed route-review authority that models a candidate route, classifies evidence, enforces Home Index and reciprocity sequencing, and records HOLD / ABORT / AUTHORIZE ACQUISITION without creating cross-map travel or presentation-owned route truth.
+- Completion boundary: Done when one local route-review authority owns the DORMANT-through-decision state machine, evidence and reciprocity checks fail closed, HOLD/ABORT/AUTHORIZE ACQUISITION semantics round-trip through authored-level state, no traversal/Passage/global route authority is introduced, and the paired review can verify the public diagnostic seam without actor-private state inspection.
 - Current measured state: Production Twin Solaria already has the authored 2048×1536 shell and dormant machine readouts. Slice C is queued to add Crown Incident forensic progression. Canon defines the operational sequence DORMANT → AUTHORITY WAKE → HOME REFERENCE → LISTENING → CORRELATING → ROUTE CANDIDATE → RECIPROCITY REVIEW → CUSTODIAN DECISION. Full Solarium I acquisition presentation remains Slice E.
+- Evidence: reviewed Slice C output, `TWIN_SOLARIA.md` route-review sections, Reciprocal Continuity doctrine, authored-level route-state hooks, existing Twin runtime/canon tests, and the paired post-land review packet.
 - Task-specific authority: `design/05_levels/TWIN_SOLARIA.md` sections 7–9 and 30–32; `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`; live authored-level route-state hooks; completed Slice C runtime.
+- Work surface: one Twin-local route-review model/controller, existing machine-interaction/readout wiring, authored-level capture/restore, focused route-review validation, and only Twin docs made false by implementation.
 - Change: Add a local Twin Solaria route-review state model/controller, evidence classifications, candidate/evidence snapshots, machine interaction wiring for Home Index/Witnesses/Echo/Needle/Dial/Authority Threshold, and deterministic capture/restore. Authorize Acquisition records permission only; it does not perform Slice E's full visual resolve.
 - Preserve: existing forensic progression and reserved mysteries; existing route traversal manager owns scene/world handoff; presentation reads route state but cannot decide safety; no new global campaign state; no Passage; no tactical portal changes.
 - Non-goals: No cross-map Crown traversal; no Solarium II reconstruction; no Passage handoff; no acquisition FX assets; no final camera/lighting/audio pass; no global route-network rewrite; no random route generation; no implicit route safety inference from visual state.
 - Acceptance: Home Index must converge before route work; evidence must progress through correlation and reciprocity before a decision; HOLD prevents stronger resolve while preserving evidence; ABORT returns to a safe local state; AUTHORIZE ACQUISITION is the only discretionary path that sets acquisition authorization; no action creates a route exit or player traversal; state round-trips through authored-level capture/restore.
+- Validation: Add/run focused route-review state-machine coverage for convergence/conflict/reciprocity/HOLD/ABORT/AUTHORIZE and restore; run Twin runtime/canon and authored-level state regressions, changed-file validation, and `git diff --check`.
 
 ## Runtime Authority
 

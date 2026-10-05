@@ -1718,3 +1718,20 @@ SOUTH warning while asserting empty results/identity isolation; success is its
 PASS marker and exit 0. The materializer must emit no errors and verifies 32
 mapped strips. Its source timing sidecars are not yet consumed by the old
 builder. Do not publish them through that builder as a completed migration.
+
+## Marine Dash Extraction Equivalence
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/authored_vault_grunt_loot_marine_smoke.gd
+godot --headless --path . --script res://tools/validation/enemy_hit_spatial_telemetry_smoke.gd
+godot --headless --path . --script res://tools/validation/sundered_keep_marine_ambush_smoke.gd
+cd ..
+python3 custodian/tools/validation/run_validation.py --changed --json
+```
+
+These cover typed tuning, exact phase clocks, one-shot prediction, cadence, reset,
+static-wall termination, one-hit contact and defense outcomes, stable spatial
+attack IDs/terminals, and production-map ambush staging/request/restore. The
+registered changed-file closeout runs the focused owners selected by the live
+validation manifest.

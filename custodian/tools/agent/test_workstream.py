@@ -1,6 +1,7 @@
 """Focused temporary-repository coverage for workstream lifecycle primitives."""
 
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -55,6 +56,47 @@ class WorkstreamTests(unittest.TestCase):
         self.assertFalse(path.is_relative_to(self.repo))
         self.assertEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
         self.assertEqual(git(path, "rev-parse", "@{upstream}"), git(self.repo, "rev-parse", "origin/agent/sample-work"))
+
+    def test_dispatch_owned_start_defers_trace_publication(self):
+        trace = workstream.RunTrace.start(self.repo, "deferred-start", agent="codex")
+        claim = workstream.RemoteClaim(
+            "deferred-start", "refs/heads/dispatch-claims/deferred-start",
+            "refs/custodian/claims/deferred-start/test-run", "claim-oid", "test-run",
+        )
+        with mock.patch.object(trace, "publish", return_value=True) as publish:
+            path = workstream.start(
+                "deferred-start", self.repo, _claim=claim, _trace=trace,
+                _lock_held=True, _publish_trace=False,
+            )
+        publish.assert_not_called()
+        self.assertTrue(path.is_dir())
+        self.assertEqual(git(path, "branch", "--show-current"), "agent/deferred-start")
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/agent/deferred-start"))
+        events = [json.loads(line)["event"] for line in trace.path.read_text().splitlines()]
+        self.assertIn("start_completed", events)
+
+    def test_dispatch_owned_start_failure_defers_blocked_trace_publication(self):
+        trace = workstream.RunTrace.start(self.repo, "deferred-start-failure", agent="codex")
+        claim = workstream.RemoteClaim(
+            "deferred-start-failure", "refs/heads/dispatch-claims/deferred-start-failure",
+            "refs/custodian/claims/deferred-start-failure/test-run", "claim-oid", "test-run",
+        )
+        with mock.patch.object(workstream, "git", side_effect=workstream.WorkstreamError("injected start failure")), \
+             mock.patch.object(trace, "publish", return_value=True) as publish:
+            with self.assertRaisesRegex(workstream.WorkstreamError, "injected start failure"):
+                workstream.start(
+                    "deferred-start-failure", self.repo, _claim=claim, _trace=trace,
+                    _lock_held=True, _publish_trace=False,
+                )
+        publish.assert_not_called()
+        events = [json.loads(line) for line in trace.path.read_text().splitlines()]
+        self.assertEqual(events[-1]["event"], "run_blocked")
+
+    def test_direct_start_keeps_best_effort_trace_publication(self):
+        with mock.patch.object(workstream.RunTrace, "publish", return_value=False) as publish:
+            path = workstream.start("direct-publish", self.repo)
+        self.assertTrue(path.is_dir())
+        publish.assert_called_once()
 
     def test_concurrent_direct_start_has_one_winner_and_preserves_checkout(self):
         def attempt():

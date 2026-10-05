@@ -1,5 +1,6 @@
 # REVIEW: PROCGEN RUNTIME OPTIMIZATION SERIES V1
 
+- Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-runtime-optimization-series-v1`
 - Kind: `review`
 - Status: `ready`

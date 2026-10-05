@@ -17,6 +17,7 @@
 - Review rationale: `state-machine/ownership extraction; independent review should verify two-hit/guard-pressure equivalence and removal of parallel state`
 - Reviewed main: `92b05fa966`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Move the Savage two-hit chain lifecycle out of `enemy.gd` into one actor-local ability authority while preserving the existing rushdown cadence and guard-pressure semantics.
 - Completion boundary: This slice owns only the Savage chain's state/tuning/execution extraction, its narrow host-service seam, focused diagnostics/tests, validation ownership, and docs made false by the extraction. Pounce is already owned by the dependency; ordinary generic enemy melee remains for the next program slice.
 - Current measured state: NPA-3 remains two steps downstream. NPA-1 has a validated but unlanded Marine extraction checkpoint (`9af2adf59`); NPA-2 is now deliberately refresh-gated on the passed NPA-1 review. Therefore the exact Savage-chain host-service seam must not be frozen from the old `main@02ca0025b8` snapshot. On current production main, Savage pounce and two-hit chain phase machines remain hosted by `enemy.gd`.

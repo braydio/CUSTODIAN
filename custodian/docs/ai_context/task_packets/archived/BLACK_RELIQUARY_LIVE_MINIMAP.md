@@ -1,5 +1,7 @@
 # Black Reliquary Live Minimap
 
+> Lifecycle correction 2026-10-04: this implementation is complete. The remaining visual playtest/tuning note is optional polish, not unfinished scope, and the live minimap/provider contract is already implemented and validated. This legacy packet is archived as completed history.
+
 Status: complete  
 Agent/session: Codex 2026-06-05  
 Last updated: 2026-06-05

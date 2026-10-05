@@ -1,6 +1,8 @@
 # OBSERVATORY WORLD TELEMETRY FOUNDATION
 
-- Status: `in_progress`
+> Lifecycle correction 2026-10-04: the original foundation is already live and has been extended substantially. `DevObservatory`, `WorldStateGraph`, `WorldHistory`, `SimulationInterestManager`, and `SectorHeatmap` are production autoload/runtime authorities with focused validation and current-state documentation. The stale `in_progress` header was lifecycle drift, so this legacy packet is archived as landed foundation history rather than executable queue work.
+
+- Status: `complete`
 - Authority:
   - `design/02_features/debug_ui/DEVELOPER_OBSERVATORY_SYSTEM.md`
   - `design/01_systems/WORLD_STATE_GRAPH_SYSTEM.md`

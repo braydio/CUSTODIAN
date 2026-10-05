@@ -68,6 +68,12 @@ For active work under `custodian/`, a user-supplied task name, slice name, packe
 - Prefer an existing packet that matches the durable DAG/current-state evidence; do not create a duplicate packet because the user used an alias.
 - Finish through the ordinary packet/workstream closeout.
 
+## Summary Backlink
+
+When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
+
+This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+
 ## Tooling And Scripts
 
 Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE_INDEX.md` is the high-signal map for tool ownership, and `docs/ai_context/VALIDATION_RECIPES.md` is the command-selection authority.

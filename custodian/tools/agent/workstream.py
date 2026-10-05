@@ -385,7 +385,7 @@ def sync_remote_branch(path: Path, branch: str) -> bool:
 
 def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None,
           agent: str | None = None, _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
-          _lock_held: bool = False) -> Path:
+          _lock_held: bool = False, _publish_trace: bool = True) -> Path:
     repo = (repo or root_repo()).resolve()
     branch = branch_for(workstream_id)
     trace = _trace
@@ -437,7 +437,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
             if report is not None:
                 report["checkout"] = "created"
             trace.record("start_completed", disposition="created", worktree=str(path), branch=branch)
-            trace.publish()
+            if _publish_trace:
+                trace.publish()
             receipt = {"schema": "custodian.dispatch.claim.v1", "result": "started", "workstream": workstream_id,
                        "branch": branch, "worktree": str(path), "verified": True, "run_id": trace.run_id,
                        "trace_ref": trace.diagnostic_ref}
@@ -447,7 +448,7 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
     except (WorkstreamError, WorkflowControlError) as exc:
         if trace is None:
             trace = RunTrace.start(repo, workstream_id)
-        trace.finish_blocked(str(exc))
+        trace.finish_blocked(str(exc), publish=_publish_trace)
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
