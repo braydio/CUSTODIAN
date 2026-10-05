@@ -117,7 +117,9 @@ credentials outside the repository.
    scenario. Prefer `--capture-mode evidence`; use `full` only when continuous
    motion/audio/game feel is itself the question.
 3. Build/reuse compact ROI/contact-sheet evidence when practical.
-4. If a subjective question still matters, publish it:
+4. Read the claimed packet/receipt's exact `Authoring chat`. That conversation is
+   the review endpoint. Do not invent or substitute another ChatGPT link.
+5. If a subjective question still matters, publish it:
 
 ```bash
 python3 custodian/tools/iteration/publish_review_artifacts.py \
@@ -129,15 +131,39 @@ python3 custodian/tools/iteration/publish_review_artifacts.py \
   --question "<specific reviewer question>"
 ```
 
-5. Stop. Do not spend coding-agent tokens performing subjective visual critique.
-6. Report the emitted `CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` payload, especially:
-   - workstream;
-   - commit/branch;
+The publisher resolves the packet's `Authoring chat` automatically. Use
+`--authoring-chat <exact-url>` only for a deliberate override. New bundles use
+`custodian.visual_review_handoff.v2` and default to
+`retention.policy=delete_after_review`. Use `--retain-after-review` only when
+the user/packet explicitly says the evidence must remain in Dropbox.
+
+6. Stop. Do not spend coding-agent tokens performing subjective visual critique.
+7. Report the emitted `CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` payload, especially:
+   - exact authoring-chat URL;
+   - workstream and commit/branch;
    - Dropbox manifest path;
    - exact reviewer questions;
+   - cleanup policy and emitted cleanup command;
    - any objective validation failures that remain.
+8. The user returns to the exact authoring ChatGPT conversation. ChatGPT web uses
+   the connected Dropbox manifest/path directly, reviews only the listed evidence,
+   and answers the recorded questions.
+9. When the verdict reaches the execution agent, continue the **same workstream**.
+   Unless the user/packet/manifest explicitly selected retention, run the exact
+   emitted cleanup command before continuing or finishing:
 
-The user can then ask ChatGPT to review that Dropbox manifest/path directly.
+```bash
+python3 custodian/tools/iteration/publish_review_artifacts.py \
+  --cleanup-reviewed \
+  --workstream <workstream-id> \
+  --run-id <run-id>
+```
+
+The cleanup command validates the v2 manifest identity and retention policy,
+purges exactly that run directory, and removes `LATEST.json` only when it still
+points to the reviewed run. A newer `LATEST.json` is preserved. Cleanup is
+idempotent after a successful purge. Never delete review evidence by wildcard,
+directory age, or guessed path.
 
 ## Evidence Budget
 
