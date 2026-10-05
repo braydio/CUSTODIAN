@@ -386,3 +386,4 @@ contract rather than forcing stale private symbols.
 | Date | Main | Change |
 |---|---|---|
 | 2026-10-01 | `3304220` | Initial five-packet UX Hierarchy V1 plan authored from current OPUI and ready prerequisite packet chain. |
+| 2026-10-05 | `7cfa2c1` | Inserted reviewed background-base-sync prerequisite so safe unpublished Workbench-owned art residue no longer pins the sparse checkout or checkout-local OPUI code behind main; raw commit distance remains diagnostics rather than artist workload. |
