@@ -2,10 +2,10 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-semantic-echo`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-procgen-archive-resolve-shader`
+- Depends on: `review-procgen-archive-resolve-shader, review-contract-world-playable-region-spawn-validity-fix`
 - Locks: `procgen-presentation`
 - Kind: `implementation`
 - Review: `auto`
@@ -15,41 +15,25 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial semantic-presentation/spawn choreography change; objective technical review plus separate human gameplay-scale visual approval`
-- Reviewed main: `73a3239fbb81df50a8b7bdc108291961b165896b`
+- Reviewed main: `4cdabbd4671590282917397bd5eaba38fcf57ce0`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Summary backlink: Every durable implementation/review/recovery/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
 - Goal: Complete Archive Resolve V1 with restrained semantic pre-echo, the one-time ingress/spawn resolution sequence, and a visibly lighter reacquisition treatment for previously resolved unloaded terrain.
 - Completion boundary: Done when a small bounded presentation-class vocabulary can influence echo/timing without gaining gameplay authority; first contract entry presents a controlled local Archive Resolve expansion while preserving immediate player control inside the safety pocket; previously resolved unloaded terrain uses a shorter reacquisition treatment; and the final effect remains subtle enough that normal settled play contains no persistent reveal UI/VFX.
-- Current measured state: AR1/ARR1 are reviewed complete. AR2 implementation is landed on main (parent implementation commit `085a38a5`) but its original closeout lacked the mandatory graphical-renderer/human visual evidence, so `procgen-archive-resolve-shader-recovery-1` now owns that missing gate and `review-procgen-archive-resolve-shader` depends on the recovery. The design still locks five broad presentation classes at most: natural, constructed, road, wall/cliff, and major/hero landmark. Do not finalize their live query mapping until the recovered AR2 review passes.
-- Evidence: `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; AR1/AR2 packets; current procgen semantic surface/road/macro/landmark query authorities after refresh.
-- Task-specific authority: `STREAMING_REVEAL_PRESENTATION_V1.md`; landed AR1/AR2 implementation; live semantic owners queried read-only.
-- Work surface: AR presentation owner, one small presentation-class adapter/query, ingress/spawn initialization seam, optional aggregate audio callback stub only if trivial and unused by default, focused V1 smoke, and gameplay-scale comparison evidence.
-- Change: Add no more than the design's bounded semantic presentation classes. Their only effects are tiny echo/timing/registration differences. Natural terrain remains mostly soot/dither; constructed surfaces may use slightly straighter registration; roads may show a brief interrupted vector; wall/cliff silhouettes may pre-echo slightly; major/hero landmarks may silhouette roughly 100-150 ms early. Initial spawn keeps a valid resolved safety pocket and allows control immediately while nearby committed terrain resolves outward over roughly 1-1.5 seconds. Reacquisition skips or shortens echo, reduces registration intensity, and settles roughly within 100-150 ms. All choices remain deterministic.
-- Preserve: Every semantic owner remains read-only; hidden presentation conveys no quest/discovery knowledge; no uncommitted cell is exposed; player safety/readability; AR1/AR2 performance and pause contracts; no permanent overlay after settlement.
+- Current measured state: AR1/ARR1 are reviewed complete. AR2 implementation + renderer recovery are landed and the fresh-context paired AR2 review passed with 0 blocking defects / 0 material evidence gaps; S1 remains `1773840677`. The live archived recovery receipt and recovery summary now both correctly record that ChatGPT/user visual approval occurred in this recorded authoring chat after review of the Dropbox contact sheet/keyframes, so the paired review's stale provenance note is resolved by current repository truth. A separate current-main playtest then reproduced an Operator spawn outside the accepted playable region over exterior underlevel/void presentation; that correctness defect is now owned by `contract-world-playable-region-spawn-validity-fix` and must pass review before AR3's one-time ingress presentation can execute. The design still locks five broad presentation classes at most: natural, constructed, road, wall/cliff, and major/hero landmark.
+- Evidence: `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; reviewed AR1/ARR1/AR2 receipts; `PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1_CLAUDE_SUMMARY.md`; `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER_CLAUDE_SUMMARY.md`; Dropbox `/CUSTODIAN/visual_review/procgen-archive-resolve-shader-recovery-1/20261005T025507Z/REVIEW_MANIFEST.json`; live read-only semantic seams `ProcGenTilemap.get_surface_material_at_tile`, `is_road_surface_tile`, `get_elevation_data_at_tile`, wall TileMap authority, `is_sundered_keep_frontage_protected`, and the future-neutral authored-landmark material ID.
+- Task-specific authority: `STREAMING_REVEAL_PRESENTATION_V1.md`; reviewed AR1/AR2 implementation; existing procgen surface/road/elevation/wall/authored-landmark owners queried read-only; reviewed `contract-world-playable-region-spawn-validity-fix` owns whether a final runtime spawn is valid. AR3 owns only how an already-valid arrival/reacquisition is presented.
+- Work surface: `custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd`, `archive_resolve.gdshader`, one small read-only presentation-class adapter under the same streaming namespace, the narrow `ProcGenTilemap` Archive Resolve adapter/API, and one bounded `ContractWorldLoader` call after final valid Operator placement. Add focused V1 smoke + a renderer-backed Moment Forge comparison. Do not move semantic or spawn-validity authority into presentation code.
+- Change: Add no more than the design's bounded semantic presentation classes. Classify each tile only from existing read-only authorities: `road` from live road/ruined-road/soft-path authority; `constructed` from hardened civic/industrial/bridge surface material; `wall_cliff` from existing wall/elevation/edge metadata; `major_hero_landmark` only when an existing authored-landmark material/claim such as the Sundered Keep frontage already says so; otherwise `natural`. Do not depend on or pre-implement the not-yet-landed generic Landmark Vocabulary program. Encode the bounded class as render-only assignment data (the AR2 `.b` channel is reserved for AR3 if still clean) rather than caching a second semantic map.
+- Change: Class differences stay subtle: natural remains mostly soot/dither; constructed may use slightly straighter registration; roads may show a brief interrupted vector; wall/cliff may pre-echo a faint contour; major/hero authored landmarks may silhouette roughly 100-150 ms early. No class may expose exact hidden content or alter request/commit order.
+- Change: Add a one-time presentation-only ingress trigger on `ProcGenTilemap`, called by `ContractWorldLoader` only **after** the final Operator position has passed the reviewed playable-region spawn-validity contract. The trigger centers on the actual runtime Operator tile, keeps a small committed safety pocket completely settled/visible, and may re-veil/re-resolve already-committed nearby cells outward over roughly 1.0-1.5 seconds. It must not enqueue discovery, repaint/unpaint authoritative tiles, move the Operator, delay control, or mutate collision/navigation/topology. Generation's early `_prepare_streaming_reveal()` prime around `get_player_spawn()` remains streaming authority and is not the authored arrival choreography.
+- Change: Reacquisition consumes AR1/AR2 lifecycle identity and the existing reacquisition custom-data bit; it skips/shortens semantic pre-echo, reduces registration/misregistration intensity, and settles roughly within 100-150 ms. First resolve and reacquisition must remain deterministic and independently measurable.
+- Preserve: Every semantic owner remains read-only; hidden presentation conveys no quest/discovery knowledge; no uncommitted cell is exposed; reviewed spawn validity and ingress-clearance correctness; immediate player control once a valid spawn exists; AR1/AR2 batching/performance/pause/live-toggle/actor-order contracts; S1 fingerprint `1773840677` unless independently approved; no permanent overlay after settlement.
 - Non-goals: No new landmark semantics; no map discovery mechanic; no audio production requirement; no gameplay gating on reveal completion; no lore text/UI; no generation changes; no broad per-biome special cases.
-- Acceptance: Presentation classes are bounded and queried without copying semantic authority; semantic echo changes only presentation timing/style; initial spawn never delays control once safety pocket is valid; reacquisition is measurably shorter/weaker than first resolve; same seed/path yields the same echo/order identity; reduced-effects/disabled modes remain valid; full V1 gameplay-scale review reads as an Archive process rather than loading, fog fade, square pop, or neon hologram.
-- Validation: **Refresh in the recorded planning chat after the paired AR2 review passes before implementation.** Re-audit current semantic owners, then add focused class-mapping/read-only tests, spawn-control/safety-halo timing checks, first-resolve vs reacquire duration/intensity checks, deterministic identity, pause, and disabled/reduced-effects fallbacks. Re-run reviewed AR1/AR2 focused smokes and affected streaming/runtime-health tests before changed-file closeout. Only after objective checks pass, publish the smallest gameplay-scale evidence through `python3 custodian/tools/iteration/publish_review_artifacts.py --important ...` under workstream `procgen-archive-resolve-semantic-echo`, following `VISUAL_REVIEW_HANDOFF.md`. Ask whether initial ingress resolves without delaying control or obscuring threats, reacquisition is visibly lighter/shorter than first resolve, and semantic echo adds useful structure without leaking gameplay/discovery knowledge or becoming visual clutter. Record the Dropbox manifest path in the completion summary; the execution agent does not self-approve game feel/art direction.
+- Acceptance: (1) presentation classes are bounded to the locked vocabulary and are queried without copying semantic authority; (2) class assignment cannot leak exact hidden content or alter streaming/gameplay state; (3) ingress choreography starts only after the reviewed final spawn-validity path succeeds and centers on the actual runtime Operator position; (4) a committed safety pocket is immediately visible and control is never gated by presentation; (5) surrounding already-committed/normal reveal cells resolve outward over the tuned ~1.0-1.5s window without changing request/commit/lifecycle truth; (6) reacquisition is measurably shorter and visually weaker than first resolve, target ~100-150ms; (7) same seed/path produces identical class/echo/order identity; (8) pause/reduced-effects/disabled modes remain valid; (9) batching/material/custom-data write discipline from AR2 is preserved; (10) S1 remains `1773840677` unless independently approved; (11) gameplay-scale human review reads as Archive resolution rather than loading, fog fade, square pop, holographic grid, or persistent UI/VFX.
+- Validation: Add focused class-mapping/read-only tests that deliberately mutate underlying surface/road/elevation/authored-claim fixtures and prove the adapter follows those owners without retaining a shadow semantic registry. Add an integration fixture that positions the Operator through the reviewed contract-world spawn path, invokes the new ingress presentation trigger at that actual final tile, asserts immediate control/safety pocket, and proves streaming/lifecycle/collision/navigation fingerprints are unchanged. Measure first resolve vs reacquisition duration/intensity and deterministic class identity; verify pause and disabled/reduced-effects fallbacks. Re-run `procgen_archive_resolve_shader`, `procgen_reveal_presentation`, pause-aware streaming, chunk lifecycle/cache/unload, runtime health, region frame, the reviewed playable-region spawn-validity smoke, and S1 quick. After objective checks pass, run the real graphical renderer/Moment Forge scenario (extend the reusable Archive Resolve scenario rather than duplicating it when clean) and publish compact evidence via `publish_review_artifacts.py --important` under workstream `procgen-archive-resolve-semantic-echo`. Ask whether ingress resolves outward without delaying control/obscuring threats, reacquisition is clearly lighter/shorter, semantic echo adds useful structure without leaking gameplay/discovery knowledge, and settled play stays ordinary. Record the Dropbox manifest plus explicit decision in the summary; the agent cannot self-approve aesthetics/game feel.
 - Task overrides: `none`
 - Deferred: Optional aggregate mechanical/relay audio, later accessibility presets beyond V1 controls, and any future biome-specific presentation nuance justified by actual visual review.
-
-## Temporary Refresh Gate — REMOVE WHEN THIS PACKET IS REFRESHED
-
-**DO NOT IMPLEMENT THIS PACKET UNTIL IT HAS BEEN REFRESHED WITH THE USER IN THIS CHAT:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
-
-Bring the landed predecessor implementation summary, Independent Review receipt, and any human visual-review manifest/decision back to that conversation. The execution agent must not perform this architecture/design refresh on its own.
-
-This packet is intentionally pre-authored before the final reviewed AR2 renderer contract and before the live Landmark/semantic owner surface is final.
-
-After `review-procgen-archive-resolve-shader` passes following `procgen-archive-resolve-shader-recovery-1`:
-
-1. bring the recovered AR2 summary, paired-review receipt, Dropbox manifest, and explicit user/ChatGPT visual decision to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7;
-2. fetch current `origin/main`;
-3. re-audit the exact read-only semantic query owners for surface/road/wall-cliff/landmark classification;
-4. update `Reviewed main`, measured state, work surface, class mapping, spawn seam, validation, and visual evidence plan;
-5. remove this entire **Temporary Refresh Gate** section;
-6. only then set `Status: ready` / `Dispatch: auto`.
-
-Do not create a second semantic registry for this effect.
 
 ## Completion Truth
 
@@ -74,10 +58,10 @@ Do not create a second semantic registry for this effect.
 
 ## Refresh Planning Authority
 
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
-- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
+- Refresh instruction: Refresh completed in the recorded authoring chat after clean AR2 review; no further pre-implementation design refresh is required.
 
 ## Handoff
 
@@ -87,5 +71,5 @@ Do not create a second semantic registry for this effect.
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Refresh reason: `none after this packet's required pre-implementation refresh is completed`
-- Next action: After reviewed AR2 lands, return to the recorded planning chat and refresh this packet in place; once implemented, objectively validated, and human visual/game-feel approval is recorded through Dropbox, complete/archive AR3 so its paired fresh-context technical review can claim automatically.
-- Blockers or open questions: This packet must not be implemented before reviewed AR2 and the required planning refresh. Keep semantic classes bounded; do not broaden class count without reviewed visual evidence.
+- Next action: Wait only for `review-contract-world-playable-region-spawn-validity-fix`; then implement AR3, complete objective + real-renderer evidence, obtain explicit human visual/game-feel approval through the recorded authoring chat, and archive so the paired fresh-context AR3 review can claim automatically.
+- Blockers or open questions: Reviewed AR2 and this planning refresh are complete. The only dependency gate is the separate reviewed playable-region spawn-validity fix. Keep semantic classes bounded; do not broaden class count or invent future Landmark Vocabulary authority.

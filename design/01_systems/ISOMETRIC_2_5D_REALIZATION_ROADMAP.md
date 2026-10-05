@@ -38,10 +38,12 @@ The two future implementation slots are now:
 | Slice | Workstream | Goal | State |
 | --- | --- | --- | --- |
 | precursor | `kenney-isometric-blockout-playtest` | finish walkable Kenney/native comparison harness | **complete / landed** |
-| 2.5D-1 | `isometric-2-5d-presentation-foundation` | converge ground anchors, visual elevation, depth bands and existing occlusion/shadow precedents | **ready / K3D-1P dependency satisfied** |
-| 2.5D-2 | `isometric-2-5d-forum-vertical-slice` | prove the language in one real playable Forum approach | **ready / depends on 2.5D-1** |
+| 2.5D-1 | `isometric-2-5d-presentation-foundation` | converge ground anchors, visual elevation, depth bands and existing occlusion/shadow precedents | **ready / auto** |
+| 2.5D-1R | `review-isometric-2-5d-presentation-foundation` | independently verify reusable 2D-authoritative presentation primitive | **ready / auto behind 2.5D-1** |
+| 2.5D-2 | `isometric-2-5d-forum-vertical-slice` | prove the language in one real playable Forum approach | **ready / behind reviewed 2.5D-1** |
+| SKO-1 | `sundered-keep-overlook-alternate-vertical-slice` | prove a tiny playable shelf over a vast Sundered Keep world in a standalone scene | **ready / behind reviewed 2.5D-1** |
 
-Expected new implementation packets: **2**.
+The core realization program still has **2** implementation packets. The Sundered Keep overlook is an independent downstream consumer tracked in `design/05_levels/SUNDERED_KEEP_OVERLOOK_ALTERNATE_ROADMAP.md`.
 
 ## Not on the active roadmap
 
@@ -105,6 +107,6 @@ If yes, the next work is production rollout and asset standards, not a return to
 
 ## Current position
 
-K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is now eligible from current main. 2.5D-2 follows the foundation; retain the user's A/B walkaround notes as tuning input for that Forum slice.
+K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is eligible now and has a new paired fresh-context review. Both the Forum vertical slice and the standalone Sundered Keep overlook alternate consume the **reviewed** foundation independently; neither blocks the other after that shared review passes. Retain the user's A/B walkaround notes as tuning input for the Forum slice and use the Sundered-specific authoring chat/roadmap for the overlook program.
 
 H1 remains separate. At 2.5D-2 claim time, use landed H1 layout constants if available; otherwise use locked Forum coordinates read-only.

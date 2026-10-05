@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ash-bell-forlorn-ritualant-production-art-closeout`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `draft`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `asset-pipeline, ash-bell-art`
@@ -53,6 +53,6 @@ Known source targets must enter Asset Pipeline V2, never legacy direct runtime p
 
 ## Handoff
 
-- Next action: Human/art-direction pass locks unresolved direction/frame contracts and supplies or approves production source; then change this packet to `ready/manual` and execute the corresponding Asset V2 families. Do not claim while source/cadence contracts remain unresolved.
+- Next action: Human/art-direction pass locks unresolved direction/frame contracts and supplies or approves production source; then change this packet to `ready/auto` and execute the corresponding Asset V2 families. Do not claim while source/cadence contracts remain unresolved.
 - Best starting files: `required_assets.registry.json`; `enemy_forlorn_ritualant.asset.json`; detailed encounter spec; `build_forlorn_ritualant_spriteframes.py`; current encounter scene.
 - Blockers or open questions: Exact walk/drag/turn/reaction direction/frame/FPS contracts; procession layout/frame count; apparition static-versus-directional production treatment; production source art itself.

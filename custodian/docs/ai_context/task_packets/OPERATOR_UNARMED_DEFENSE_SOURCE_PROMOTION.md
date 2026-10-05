@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-unarmed-defense-source-promotion`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `operator-assets`
@@ -45,6 +45,6 @@
 
 ## Handoff
 
-- Next action: Human review the ten raw source-work candidates, then normalize only the approved candidates through Source Session. Keep existing live canonical families unchanged until a replacement is explicitly accepted.
+- Next action: Auto-claim the technical triage/normalization-prep pass, publish one compact native-scale human review handoff for replacement decisions, then normalize/publish only candidates explicitly accepted by that review. Keep existing live canonical families unchanged until a replacement is explicitly accepted.
 - Best starting files: `temp/ASSET_MANIFEST.json`; `custodian/asset_drop/source_work/operator/unarmed_defense_10_generated/`; Source Session registration/profile tooling; current canonical Operator defense manifest/reachability.
 - Blockers or open questions: Subjective visual approval is required before any existing live canonical action is replaced. The raw files are not production-sized.

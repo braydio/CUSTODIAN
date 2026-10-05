@@ -7,6 +7,10 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 ## Active Packets
 
+### Ready / Auto Dispatch
+
+This section is owned by `custodian/tools/agent/task_packet_index.py`; run it with `--write` after packet changes to populate/update the bounded managed block.
+
 ### Active Hub First-Set / First Campaign Loop Series
 
 Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
@@ -14,7 +18,7 @@ Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_R
 
 Seven implementation slices are pre-authored with paired reviews. H1 is queue-recovered as `hub-first-set-blockout-v1-recovery-1` and is `ready/auto`. H2-H7 are also `ready/auto`; their incomplete dependencies keep them non-claimable until predecessor reviews archive `complete`. Each downstream execution agent performs its own claim-time refresh from current main and landed predecessor evidence before mutation.
 
-- H1 `HUB_FIRST_SET_BLOCKOUT_V1.md` / review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics, current-main sync, human topology gate.
+- H1 `HUB_FIRST_SET_BLOCKOUT_V1.md` / review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics, current-main recovery + stale-H1 cleanup, human topology gate.
 - H2 `HUB_AWAKENING_CONTEXT_HANDOFF.md` / review — reviewed Awakening completion → persistent Hub; also waits on reviewed Awakening handoff-readiness.
 - H3 `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` / review — explicit Dais acceptance + persistent accepted CampaignScenario/seed + one bootstrap generation.
 - H4 `HUB_CROWN_TRANSFER_TWIN_SOLARIA.md` / review — optional same-Hub Crown Transfer route to production Twin and back; may run parallel with H3 after H2.
@@ -34,12 +38,33 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 
 - K3D-1 remains complete/reviewed precursor evidence.
 - K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
-- `isometric-2-5d-presentation-foundation` is **ready/auto**; its K3D-1P dependency is satisfied by this landed precursor.
-- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the foundation.
+- `isometric-2-5d-presentation-foundation` is **ready/auto**; its K3D-1P dependency is satisfied.
+- `review-isometric-2-5d-presentation-foundation` is the new paired fresh-context review and gates downstream showcase consumers.
+- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the reviewed foundation.
+- `sundered-keep-overlook-alternate-vertical-slice` is an independent reviewed-foundation consumer tracked by the new Sundered overlook roadmap.
 - The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
 - Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
 
-### Active Reusable Source-Material Intake
+### Active Sundered Keep Overlook Alternate Program
+
+Program tracker: `../../../design/05_levels/SUNDERED_KEEP_OVERLOOK_ALTERNATE_ROADMAP.md`.  
+Authoring / review / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
+
+The goal is a standalone playable fixed-oblique 2.5D alternate: a small foreground shelf/perch overlooking a vast apparent depth field with the Sundered Keep as the dominant distant destination. It stays on real Operator + PlayerController + Camera2D and does not replace the production route yet.
+
+- `SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` — SKO-1 ready/auto behind the reviewed 2.5D foundation; composition proof using existing donor assets only.
+- `REVIEW_SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` — paired fresh-context runtime/composition review.
+- `SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — SKO-2 blocked/manual optional Asset V2 layered-art pass, activated only if SKO-1 composition passes and donor-art fidelity is the remaining problem.
+- `REVIEW_SUNDERED_KEEP_OVERLOOK_ALTERNATE_ART_POLISH.md` — paired SKO-2 review.
+- `SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3 blocked/manual planning gate; returns to the chat above after reviewed standalone evidence and authors the production/procgen integration series from then-live seams.
+- `REVIEW_SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3R paired fresh-context architecture/workflow review; every production packet authored by SKO-3 must remain gated behind this review.
+- No production integration implementation packet is pre-authored yet.
+
+### Active Local Asset Intake
+
+- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — ready/manual closeout for the supplied Awakening `service_basin_b` Asset V2 handoff plus a bounded inventory of CUSTODIAN-relevant asset packs still in `~/Downloads`. It must reuse existing packet/family/library ownership and may not ingest unrelated personal downloads.
+
+## Active Reusable Source-Material Intake
 
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
 
@@ -66,13 +91,15 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are complete/passed. AR2 implementation landed on `085a38a5`, but its archived closeout explicitly lacked the mandatory real-renderer compile/runtime proof and human visual decision. The ingress-spawn hotfix/review are now complete/passed, `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` closed the renderer gate (real-renderer proof + user visual approval); the existing AR2 paired review is now claimable. AR3 remains blocked/manual until the recovered AR2 review passes and this exact planning chat refreshes it. Subjective visual/game-feel approval stays in the Dropbox + user/ChatGPT review lane.
+The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are complete/passed. AR2 implementation, renderer recovery, Dropbox visual approval, and fresh-context paired review are complete/passed with 0 blocking defects / 0 material evidence gaps and S1 `1773840677`. AR3 was refreshed in the recorded authoring chat and is `ready/auto`, but intentionally has a second dependency on the P0 playable-region spawn-validity review after current-main playtest reproduced an Operator spawn outside the accepted playable region. AR3 may present only an already-valid runtime spawn. Subjective visual/game-feel approval remains in the Dropbox + user/ChatGPT review lane.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — ARR1, complete: passed with 0 blocking defects; RFR1 R0-04 closed; next-slice items R0-01..R0-04 recorded on the archived AR1 packet.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 implementation landed on `085a38a5`; archived receipt records renderer/visual proof missing, so do not treat it as fully accepted.
-- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` is next.
-- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; blocked/manual until reviewed AR2 + ChatGPT/user refresh; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is pre-authored.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery with authoring-chat Dropbox approval recorded.
+- `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 paired review complete/passed.
+- `CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` / paired review — P0 current-main correctness fix ensuring final Operator spawn belongs to the authoritative accepted/reachable playable component rather than merely painted floor.
+- `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 refreshed/ready-auto with bounded semantic pre-echo, actual-final-spawn ingress resolve, and shortened reacquisition; waits on the P0 spawn-validity review. Paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is ready/auto behind AR3.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
 so extraction/contraction work cannot move or absorb the reveal seams before the
@@ -98,24 +125,24 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
 - Current first-wave packet state:
   - `archived/ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1 implementation landed after all 23 changed-file checks passed; `MarineDash` owns the complete lifecycle and typed tuning with exact 26-field parity.
   - `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — paired NPA-1 review is ready after implementation landing; verifies the 26-value parity, public request seam, host-service boundary, and full selected closeout.
-  - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2 blocked/manual; must be refreshed in this planning chat after the passed NPA-1 review before promotion to ready/auto.
-  - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — paired NPA-2 review, blocked with NPA-2.
-  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 blocked/manual; must be refreshed in this planning chat after the passed NPA-2 review.
-  - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review, blocked with NPA-3.
+  - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2 ready/auto, dependency-gated on NPA-1; it self-refreshes from the landed NPA-1 implementation/review seam at claim time.
+  - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — paired NPA-2 review, ready/auto and dependency-gated on NPA-2.
+  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 ready/auto, dependency-gated on NPA-2; it self-refreshes from the landed NPA-2 implementation/review seam at claim time.
+  - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review, ready/auto and dependency-gated on NPA-3.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
 ### Ash-Bell / Forlorn-Ritualant Production Art Closeout
 
 - `archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md` — authored-route migration and Encounter Completion V2 runtime are landed; historical mixed code+art packet is no longer executable.
-- `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — blocked/manual Asset V2 closeout for the remaining production art. Known locked targets include an 8f 128×128 rise (1024×128), 32×48 procession-cell intent, 64×96 apparition intent, and static ritual props at 96×96 / 32×32 / 32×64 / 16×16. Walk/drag/turn/reaction direction/frame/FPS contracts remain deliberately unresolved and must be human-locked before claim.
+- `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — draft/auto Asset V2 closeout for the remaining production art; unresolved human-owned cadence/direction/source decisions keep the packet draft rather than abusing manual dispatch. Known locked targets include an 8f 128×128 rise (1024×128), 32×48 procession-cell intent, 64×96 apparition intent, and static ritual props at 96×96 / 32×32 / 32×64 / 16×16. Walk/drag/turn/reaction direction/frame/FPS contracts remain deliberately unresolved and must be human-locked before claim.
 - The current required-assets registry remains the open-need authority. Do not resume the archived encounter packet or hand-copy new art into legacy runtime paths.
 
 ### Cross-cutting Stealth Awareness Planning
 
 Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`.
 
-- `STEALTH_PERCEPTION_FOUNDATION.md` - P0 draft/manual S0/S1 packet for the typed NoiseEvent repair and shared Enemy + Vaultwing acoustic observation seam.
-- `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/manual dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership.
+- `STEALTH_PERCEPTION_FOUNDATION.md` - P0 draft/auto S0/S1 packet for the typed NoiseEvent repair and shared Enemy + Vaultwing acoustic observation seam.
+- `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/auto dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership.
 - Both remain intentionally non-claimable drafts until the stealth design boundary is accepted for implementation.
 
 ## Completed Bidirectional Dropbox Handoff

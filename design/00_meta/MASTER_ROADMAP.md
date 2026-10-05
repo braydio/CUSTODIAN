@@ -284,7 +284,7 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 and MR6R1 are complete, so S7 is closed. The cycle-1 review passed with 0 blocking defects and 0 material evidence gaps; five optional proof-hardening items N1-01..N1-05 are folded into RF1 rather than another correction cycle. D1-D3 satisfy their G5+MR6R1 dependencies; D1 has now been live-refreshed and is ready/auto with paired review, while D2/D3 still require individual live refreshes before implementation. RF1/RFR1 are complete/passed; Alpine Asset V2 is ready/manual from the local six-image bundle with final human visual approval required. Archive Resolve AR1/ARR1 are complete/passed; AR2 implementation landed; the ingress-spawn hotfix/review are complete/passed, so `procgen-archive-resolve-shader-recovery-1` is now the active renderer/human-visual closeout; AR3 remains recovered/reviewed-AR2 + planning-chat refresh gated. P1/PR1 independently gate P2-P6 and P7 refreshes only after those placement extractions exist. X2/X3 refresh after their predecessor reviews; renderer consolidation refreshes from measured attribution. The G3 re-derivation still feeds the reviewed GenerationGrid audit/foundation/series-authoring chain before D4. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; Alpine Asset V2 remains ready/manual. Archive Resolve AR1/ARR1 and AR2 implementation/recovery/review are complete/passed with S1 `1773840677`; AR3 is now planning-refreshed/ready-auto but waits on a separate reviewed P0 playable-region spawn-validity fix after a current-main outside-playable spawn reproduction. P1/PR1 independently gate placement extractions; X2/X3 and renderer-consolidation retain their existing refresh rules. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
@@ -303,11 +303,29 @@ V1 remains dependency-driven and evidence-gated: M4/MR4, M5/MR5, M6/MR6, M6C1 an
 | Alpine Plateau six-state Asset V2 underlay family | ready / manual (local ZIP supplied; human visual gate) | P1 |
 | AR1 Archive Resolve presentation spine | complete / landed | P2 |
 | ARR1 Archive Resolve paired technical review | complete / passed | P2 |
-| AR2 Archive Resolve shader | implementation landed; renderer/visual recovery ready behind ingress-spawn hotfix review | P1 |
-| AR3 Archive Resolve semantic echo / spawn / reacquisition | blocked / manual (recovered + reviewed AR2, then refresh in recorded chat); paired review authored | P2 |
+| AR2 Archive Resolve shader | implementation + real-renderer recovery + human visual + paired review complete/passed | P1 |
+| AR3 Archive Resolve semantic echo / spawn / reacquisition | ready / auto; refreshed, dependency-gated on reviewed playable-region spawn validity | P2 |
 
 **Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
 
+
+### Cross-cutting Isometric 2.5D / Sundered Overlook
+**Status:** in_progress
+
+| Feature | Status | Priority |
+|---------|--------|----------|
+| K3D-1P walkable precursor | complete / landed | P2 |
+| 2.5D presentation foundation | ready / auto | P2 |
+| 2.5D foundation paired review | ready / auto behind foundation | P2 |
+| Forum 2.5D vertical slice | ready / behind reviewed foundation | P2 |
+| Sundered Keep overlook alternate SKO-1 | ready / behind reviewed foundation | P2 |
+| Sundered overlook optional Asset V2 polish | blocked / manual after SKO-1 review | P2 |
+| Sundered production/procgen integration planning | blocked / authoring-chat refresh after reviewed standalone proof | P2 |
+
+**Docs:** `01_systems/ISOMETRIC_2_5D_REALIZATION_ROADMAP.md`, `05_levels/SUNDERED_KEEP_OVERLOOK_ALTERNATE_ROADMAP.md`  
+**Authoring chat for Sundered overlook:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
+
+---
 
 ### Cross-cutting Combat Resource and Readability
 **Status:** in_progress

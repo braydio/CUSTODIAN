@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-guard-break-presentation`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `operator-mobile-guard-composition, operator-unarmed-defense-source-promotion`
 - Locks: `operator-runtime, operator-assets`
