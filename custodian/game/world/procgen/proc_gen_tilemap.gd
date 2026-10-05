@@ -6794,6 +6794,29 @@ func is_valid_spawn_cell(tile: Vector2i) -> bool:
 	return traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_WALKABLE or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_RAMP or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_STAIR
 
 
+## Read-only accepted main playable component: every canonical valid-spawn,
+## runtime-walkable cell 4-connected to the world's player spawn origin. Pure
+## delegation to existing authority (`is_valid_spawn_cell`,
+## `is_runtime_navigation_walkable`, the pre-terrain reachability fill); never
+## painted-tile visibility. Computed fresh per call so it cannot go stale
+## against wall destruction or prop blockers. Empty when the origin itself is
+## not walkable, so callers fail closed.
+func get_main_playable_component() -> Dictionary:
+	if procgen_node == null:
+		return {}
+	return PRETERRAIN_DIAGNOSTICS_SCRIPT.reachable_from(
+		procgen_node.map_size,
+		get_player_spawn(),
+		Callable(self, "_is_main_playable_cell")
+	)
+
+
+func _is_main_playable_cell(cell: Vector2i, map_size: Vector2i) -> bool:
+	return _is_tile_inside_map(cell, map_size) \
+		and is_valid_spawn_cell(cell) \
+		and is_runtime_navigation_walkable(cell)
+
+
 func is_indoor_tile(tile: Vector2i) -> bool:
 	var region_type := get_region_type_at_tile(tile)
 	return region_type == "interior_floor" or region_type == "interior_wall" or region_type == "interior_threshold"

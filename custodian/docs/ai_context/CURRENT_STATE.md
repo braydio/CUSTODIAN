@@ -116,6 +116,21 @@ safe Operator tile remains, contract activation fails before later actors are
 relocated. `contract_world_ingress_spawn_clearance_smoke.gd` owns the
 deterministic Ash Bell collision/clearance regression.
 
+## Contract World Playable-Region Spawn Validity (2026-10-05)
+
+A painted floor tile is no longer enough for a final Operator spawn.
+`ContractWorldLoader._is_safe_operator_spawn_tile()` now also requires, on a
+`ProcGenTilemap`, canonical `is_valid_spawn_cell()`,
+`is_runtime_navigation_walkable()`, and membership in
+`ProcGenTilemap.get_main_playable_component()`: the read-only, freshly computed
+set of valid walkable cells 4-connected to `get_player_spawn()` (built on the
+pre-terrain diagnostics' `reachable_from`; the loader owns no flood fill). The
+same predicate gates compound candidate enumeration and the `player_spawn`
+fallback; selection order is unchanged, and no safe tile still fails contract
+activation before the Operator moves or the camera snaps.
+`contract_world_playable_region_spawn_validity_smoke.gd` owns the regression
+(exterior-painted and severed-island candidates).
+
 ## Operator Art Registration Profile (2026-10-02)
 
 The accepted structural Operator 96x96 ruler is defined once in

@@ -73,6 +73,12 @@ static func compute(context: Dictionary) -> Dictionary:
 	}
 
 
+## Public read-only reachability: the cells 4-connected to `start` through
+## `is_walkable(cell, map_size)`. Empty when `start` itself is not walkable.
+static func reachable_from(map_size: Vector2i, start: Vector2i, is_walkable: Callable) -> Dictionary:
+	return _flood_fill(map_size, start, is_walkable)
+
+
 static func _flood_fill(map_size: Vector2i, start: Vector2i, is_walkable: Callable) -> Dictionary:
 	var reachable := {}
 	if not is_walkable.is_valid() or not bool(is_walkable.call(start, map_size)):

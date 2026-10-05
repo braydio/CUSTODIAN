@@ -97,7 +97,7 @@ The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are comple
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 implementation landed on `085a38a5`; archived receipt records renderer/visual proof missing, so do not treat it as fully accepted.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery with authoring-chat Dropbox approval recorded.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 paired review complete/passed.
-- `CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` / paired review — P0 current-main correctness fix ensuring final Operator spawn belongs to the authoritative accepted/reachable playable component rather than merely painted floor.
+- `archived/CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` — complete P0 fix: final Operator spawn must be canonically valid and in `ProcGenTilemap.get_main_playable_component()`; paired `REVIEW_CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` is next and gates AR3.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 refreshed/ready-auto with bounded semantic pre-echo, actual-final-spawn ingress resolve, and shortened reacquisition; waits on the P0 spawn-validity review. Paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is ready/auto behind AR3.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards

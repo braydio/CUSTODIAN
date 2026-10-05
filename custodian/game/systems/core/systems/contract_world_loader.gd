@@ -183,6 +183,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 			_on_contract_generation_failed({
 				"generation_failed": true,
 				"failure_reason": "no_safe_operator_spawn_after_world_ingress_placement",
+				"detail": "no candidate passed canonical spawn validity and main playable component membership",
 			})
 			return
 	if reposition_spawn_nodes_from_contract:
@@ -679,6 +680,7 @@ func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 	var operator := get_node_or_null(operator_path) as Node2D
 	if operator == null:
 		return true
+	var main_component := _get_main_playable_component(map_instance)
 	var compound_spawn := _pick_compound_spawn_tile(level_data, map_instance)
 	if compound_spawn == Vector2i.ZERO:
 		var player_spawn: Variant = level_data.get("player_spawn")
@@ -686,7 +688,8 @@ func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 			player_spawn is Vector2i
 			and _is_safe_operator_spawn_tile(
 				map_instance,
-				player_spawn as Vector2i
+				player_spawn as Vector2i,
+				main_component
 			)
 		):
 			compound_spawn = player_spawn as Vector2i
@@ -696,11 +699,34 @@ func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 	return true
 
 
-func _is_safe_operator_spawn_tile(map_instance: Node, tile: Vector2i) -> bool:
-	return (
-		_is_walkable_floor_tile(map_instance, tile)
-		and not _is_inside_ingress_clearance(map_instance, tile)
-	)
+## A final Operator spawn must be painted walkable floor outside ingress
+## clearance AND (on a ProcGenTilemap) pass canonical spawn validity, runtime
+## walkability, and membership in the accepted main playable component.
+## `main_component` comes from `ProcGenTilemap.get_main_playable_component()`;
+## the loader owns no connectivity computation of its own.
+func _is_safe_operator_spawn_tile(
+	map_instance: Node,
+	tile: Vector2i,
+	main_component: Dictionary = {}
+) -> bool:
+	if not _is_walkable_floor_tile(map_instance, tile):
+		return false
+	if _is_inside_ingress_clearance(map_instance, tile):
+		return false
+	if map_instance is ProcGenTilemap:
+		var pg := map_instance as ProcGenTilemap
+		return (
+			pg.is_valid_spawn_cell(tile)
+			and pg.is_runtime_navigation_walkable(tile)
+			and main_component.has(tile)
+		)
+	return true
+
+
+func _get_main_playable_component(map_instance: Node) -> Dictionary:
+	if map_instance is ProcGenTilemap:
+		return (map_instance as ProcGenTilemap).get_main_playable_component()
+	return {}
 
 
 func _position_spawn_nodes(level_data: Dictionary, map_instance: Node) -> void:
@@ -1831,8 +1857,9 @@ func _is_inside_ingress_clearance(map_instance: Node, tile: Vector2i) -> bool:
 
 func _pick_compound_spawn_tile(level_data: Dictionary, map_instance: Node) -> Vector2i:
 	var walkable_tiles: Array[Vector2i] = []
+	var main_component := _get_main_playable_component(map_instance)
 	for tile in _get_compound_walkable_tiles(level_data, map_instance):
-		if not _is_inside_ingress_clearance(map_instance, tile):
+		if _is_safe_operator_spawn_tile(map_instance, tile, main_component):
 			walkable_tiles.append(tile)
 	if walkable_tiles.is_empty():
 		return Vector2i.ZERO

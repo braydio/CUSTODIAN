@@ -3428,6 +3428,26 @@
       "needs_import": false
     },
     {
+      "id": "contract_world_playable_region_spawn_validity",
+      "type": "godot_script",
+      "script": "res://tools/validation/contract_world_playable_region_spawn_validity_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "contract_world",
+        "spawn_validity",
+        "playability",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/procgen/diagnostics/procgen_preterrain_diagnostics.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/contract_world_playable_region_spawn_validity_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "contract_world_ingress_spawn_clearance",
       "type": "godot_script",
       "script": "res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd",

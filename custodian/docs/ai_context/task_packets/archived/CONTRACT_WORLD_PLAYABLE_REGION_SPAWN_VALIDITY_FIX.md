@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `contract-world-playable-region-spawn-validity-fix`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -39,21 +39,21 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Evidence: `custodian/game/world/procgen/proc_gen_tilemap.gd::get_main_playable_component` (read-only, fresh per call, reuses `procgen_preterrain_diagnostics.gd::reachable_from`); `contract_world_loader.gd::_is_safe_operator_spawn_tile/_pick_compound_spawn_tile/_position_operator`; new registered `contract_world_playable_region_spawn_validity` smoke passes and FAILS when the loader predicate is reverted (mutation-checked); `contract_world_ingress_spawn_clearance`, `world_ingress_spawner`, `ash_bell_lift_ingress_presentation`, `procgen_walkable_boundary`, `startup_world_entry`, `world_contract_prewarm`, `persistent_compound_runtime`, `procgen_performance_baseline_quick` (S1 fingerprint unchanged) pass. NOT green but identical on the unmodified base: `vaultwing_world_spawn`/`vaultwing_bond` (missing sprite files), `procgen_ambient_enemy_real_world_spawn` (zero camp markers), `required_ritualant_ingress_contract_sweep` seed 0 (Threadway checks). `contract_world_population_placement_smoke` exits 0 with no PASS line.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The required Ritualant ingress sweep (100 seeds, ~15 s generation each) cannot finish in a closeout budget and fails seed 0 on the unmodified base; three other changed-file tests also fail on the base, so the changed-file run cannot be green.`
+- Root cause / contributing factors: `Pre-existing: sweep couples placement checks to Threadway isolation; vaultwing sprites are absent from this checkout; ambient camp markers are not placed on the test map.`
+- Prevention / pipeline improvement: `Give the sweep a registered quick profile that excludes Threadway checks; triage the three base-red tests so --changed can gate green.`
+- Tooling / docs drift discovered: `None new; `contract_world_population_placement_smoke.gd` prints no PASS marker.`
 - Follow-up: `review-contract-world-playable-region-spawn-validity-fix`
 
 ## Handoff
