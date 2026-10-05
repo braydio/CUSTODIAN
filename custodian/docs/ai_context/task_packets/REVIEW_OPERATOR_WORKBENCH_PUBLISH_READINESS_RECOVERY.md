@@ -12,7 +12,8 @@
 - Review target workstream: `operator-workbench-publish-readiness-recovery`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md`
 - Reviewed main: `ca51381bf8`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Summary backlink: Include this exact Authoring chat URL in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`

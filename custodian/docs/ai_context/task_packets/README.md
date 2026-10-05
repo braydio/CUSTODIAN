@@ -56,12 +56,12 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are complete/passed. AR2 implementation landed on `085a38a5`, but its archived closeout explicitly lacked the mandatory real-renderer compile/runtime proof and human visual decision. The ingress-spawn hotfix/review are now complete/passed, so `PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` is the active `ready/auto` renderer-closeout slice; the existing AR2 paired review now depends on that recovery. AR3 remains blocked/manual until the recovered AR2 review passes and this exact planning chat refreshes it. Subjective visual/game-feel approval stays in the Dropbox + user/ChatGPT review lane.
+The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are complete/passed. AR2 implementation landed on `085a38a5`, but its archived closeout explicitly lacked the mandatory real-renderer compile/runtime proof and human visual decision. The ingress-spawn hotfix/review are now complete/passed, `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` closed the renderer gate (real-renderer proof + user visual approval); the existing AR2 paired review is now claimable. AR3 remains blocked/manual until the recovered AR2 review passes and this exact planning chat refreshes it. Subjective visual/game-feel approval stays in the Dropbox + user/ChatGPT review lane.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — ARR1, complete: passed with 0 blocking defects; RFR1 R0-04 closed; next-slice items R0-01..R0-04 recorded on the archived AR1 packet.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 implementation landed on `085a38a5`; archived receipt records renderer/visual proof missing, so do not treat it as fully accepted.
-- `PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — active renderer/visual closeout recovery; `ready/auto` after `review-contract-world-ingress-spawn-clearance-fix`; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` follows.
+- `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` is next.
 - `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3, bounded semantic pre-echo, spawn resolve, and shortened reacquisition; blocked/manual until reviewed AR2 + ChatGPT/user refresh; paired `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is pre-authored.
 
 The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards

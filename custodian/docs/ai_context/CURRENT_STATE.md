@@ -89,8 +89,9 @@ reacquisition flag) is written once per slot assignment. Controls:
 route through the settle path and `ProcGenTilemap.set_archive_resolve_enabled()`
 is the live toggle. `World/ContractMap` precedes the z2 actor containers in
 `game.tscn`. `procgen_archive_resolve_shader_smoke.gd` owns the contract. Shader
-compile and aesthetics are not verified headless; human playtest review is
-pending (waived for landing). ARR1 R0-03/R0-04 are covered by the AR2 and
+compile and aesthetics were proven on a real Vulkan renderer by
+`procgen/archive_resolve_shader_review` (Moment Forge; recovery-1) and the
+visual pass was approved by the user on 2026-10-05. ARR1 R0-03/R0-04 are covered by the AR2 and
 distant-unload smokes.
 
 ## Contract World Placement Foundation (2026-10-02)

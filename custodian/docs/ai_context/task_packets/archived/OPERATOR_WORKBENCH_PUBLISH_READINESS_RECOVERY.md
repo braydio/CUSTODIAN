@@ -15,7 +15,8 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `ca51381bf8`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Make Operator Workbench publication behave as one self-preparing, fail-closed transaction from the artist's perspective: before canonical mutation begins, OPUI must know whether the exact selected animation can publish from the dedicated art checkout, perform only objectively safe preparation, surface actionable blockers once rather than serially, and leave Git in a clean or explicitly recoverable state after success or failure.
 - Completion boundary: Add one authoritative publish-readiness/preparation contract spanning the persistent `workbench/operator-art` checkout, selected Workbench manifest, local-only LFS/materialization requirements, mandatory sparse validation dependencies, and import-sensitive Git metadata. Wire that contract into the existing Publish review/action so known-safe preparation happens before source mutation, stale/unsafe state fails before mutation, and publication-generated metadata churn is either transactionally restored or promoted to explicit `RECOVERY_REQUIRED`. Preserve the current scoped source→runtime transaction and `land_main.py` landing authority rather than introducing a second publisher.
 - Current measured state:

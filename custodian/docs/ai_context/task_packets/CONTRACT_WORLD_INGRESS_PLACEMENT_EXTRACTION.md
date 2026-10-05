@@ -10,6 +10,8 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `76dac8bf6c`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
+- Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Move authored world-ingress/destination placement from ContractWorldLoader into the canonical world-placement layer while preserving transition ownership elsewhere.
 - Completion boundary: Done when registered ingresses, Sundered Keep connection/frontage placement, ingress-adjacent spawn/edge projection, and related dressing-clearance placement policy are service-owned; loader delegates and transition systems still own entry/return behavior.
 - Current measured state: Authored ingress/destination placement is still split between loader policy and focused ingress authorities. `custodian/game/systems/core/systems/contract_world_loader.gd` owns `_place_gothic_compound_connection`, `_place_sundered_keep_connection`, `_place_registered_world_ingresses`, Sundered Keep vista/debug gateway placement, gate-tile pickers, `_project_ingress_to_edge`, `_pick_ingress_adjacent_spawn_tile`, and compound-ingress direction/offset helpers. Canonical ingress spawning/validation already exists at `custodian/game/world/levels/world_ingress_spawner.gd`, with procgen ingress-site data under `custodian/game/world/procgen/ingress/world_ingress_site.gd`. `custodian/game/world/placement/` contains the landed read-only `WorldPlacementContext` foundation but no authored-ingress placement service yet.

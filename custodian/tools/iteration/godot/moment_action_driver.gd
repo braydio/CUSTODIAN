@@ -226,6 +226,16 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"show_custodian_approach",
 			"show_late_service",
 		],
+		"archive_resolve": [
+			"step_east",
+			"step_west",
+			"step_north",
+			"unload_adjacent_west_chunk",
+			"pause_tree",
+			"resume_tree",
+			"reduced_on",
+			"reduced_off",
+		],
 		"field_fabricator": [
 			"power_on",
 			"begin_fabrication",

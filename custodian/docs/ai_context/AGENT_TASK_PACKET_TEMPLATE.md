@@ -149,6 +149,7 @@ Before setting `Status: ready`:
 ```text
 [ ] Latest main was reviewed and Reviewed main is populated.
 [ ] Authoring chat is recorded when the user supplied a durable conversation URL.
+[ ] When an Authoring chat URL is supplied, Summary backlink requires that exact URL in every durable implementation/review/correction/recovery summary and final Next Handoff.
 [ ] This is one coherent completion boundary.
 [ ] Existing Workstream identity was reused when appropriate.
 [ ] Current measured state and Evidence are factual, not speculative.
@@ -331,6 +332,7 @@ program/DAG**, not an arbitrary globally eligible dispatcher candidate.
 - Refresh owner: `none | chatgpt-user | execution-agent`
 - ChatGPT/user planning refresh required: `yes | no`
 - Authoring chat: `<ChatGPT conversation URL | not-recorded | n/a>`
+- Summary backlink: `<include the exact Authoring chat URL in every durable summary and final Next Handoff | n/a>`
 - Refresh reason: `none | <what must be re-derived/decided before the next packet runs>`
 - Next action: `<one concrete action>`
 - Blockers or open questions: `none | <exact blocker>`
