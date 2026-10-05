@@ -153,6 +153,12 @@ The user's explicit current-turn instructions may narrow, pause, or override exe
 
 If a recognizable name is ambiguous, prefer the packet/workstream whose durable metadata and current DAG position match the conversation. Do not invent a new packet merely because the user used a nickname or shorthand. Close out through the packet and ordinary workstream lifecycle.
 
+## Summary Backlink
+
+When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.
+
+This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
+
 ## CUSTODIAN Task Dispatch
 
 For “Take the next CUSTODIAN task,” run
