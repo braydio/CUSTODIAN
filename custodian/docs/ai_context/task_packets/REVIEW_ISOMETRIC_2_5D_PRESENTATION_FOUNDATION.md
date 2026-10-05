@@ -14,11 +14,11 @@
 - Reviewed main: `3d96a86a6c1957aa9a933e3433ecfba0f27481b0`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Review modes: `code, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
+- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
 - Goal: Independently verify that the reusable 2.5D foundation makes visual elevation, ground-root sorting, semantic presentation bands, roof occlusion reuse, and contact grounding available without moving any gameplay authority out of the existing 2D runtime.
 - Reviewed implementation acceptance: Reuse the implementation packet acceptance. In particular, authoritative ground XY must remain invariant while visual elevation changes; collision/navigation/camera state must remain unchanged; sorting must resolve from the ground/base anchor rather than elevated texture origin; semantic bands must remain presentation metadata rather than a second global depth authority; `RoofOccluder2D` and existing actor shadow authority must be reused rather than duplicated; and no Node3D/Camera3D/CharacterBody3D/3D collision/navigation path may appear.
 - Review evidence: Archived foundation packet/summary; `ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`; the landed reusable profile/anchor/helper; focused fixture/smoke; existing `RoofOccluder2D`, BlobShadow and Gothic Compound sort precedents.
@@ -35,7 +35,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: `none`
 - Next action: A clean review releases the two independent showcase consumers of the foundation.
 - Blockers or open questions: none.

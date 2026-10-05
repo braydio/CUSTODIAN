@@ -10,7 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Goal: Attribute procgen presentation node, rendered-object, and draw-call cost to concrete presentation owners before changing renderer structure.
 - Completion boundary: Done when deterministic fixed-seed runtime cases report per-owner node/render object counts and compatible-isolation deltas for the major procgen presentation families, with no visual/gameplay output changes.
 - Current measured state: Pre-contraction runtime already exposes a concrete render-isolation surface in `custodian/game/world/procgen/proc_gen_tilemap.gd`: `set_procgen_major_visuals_visible()`, `set_runtime_wall_collision_isolation_enabled()`, `set_wall_shadow_isolation_enabled()`, and `get_procgen_render_isolation_status()`. The status currently reports Floor, Walls, DepthBackdrop, NonWalkableSurfaceBase, NonWalkableSurfaceOverlay, SurfaceMaterialOverlay, runtime wall collision, and wall-shadow isolation. Presentation gauges already expose foliage sprite, road decal, interior prop, fruit sprite, and macro stamp counts. Focused presentation owners exist under `custodian/game/world/procgen/presentation/`, `foliage/`, `dressing/`, `surfaces/`, terrain/nonwalkable code, and ruin/interior prop paths. S1 provides total node/render/draw pressure, but there is still no canonical per-owner attribution report.
@@ -35,7 +35,7 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: V2 cannot choose a safe consolidation target until V1 measures the post-D4/P7 presentation owners, counts, material/z-order constraints, and attributable render cost.
 - Next action: After V1 lands its attribution report, bring that report and summary to the recorded ChatGPT planning chat and refresh V2 in place with the user before implementation.
 - Blockers or open questions: V2 remains blocked/manual until measured attribution exists and the ChatGPT/user refresh is complete.

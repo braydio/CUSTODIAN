@@ -14,11 +14,11 @@
 - Reviewed main: `223d15ab6695dc79e714398e5645d24b4c89e4c7`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Review modes: `code, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
+- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
 - Goal: Independently verify that the standalone alternate genuinely proves CUSTODIAN's fixed-oblique 2.5D Sundered composition while preserving real 2D gameplay and leaving production Sundered/runtime integration untouched.
 - Reviewed implementation acceptance: Reuse SKO-1 acceptance in full. Require real Operator/controller/Camera2D, compact valid shelf collision, presentation-only cliff thickness/depth, reviewed foundation semantics, readable front/behind motion, no production-route mutation, no 3D gameplay migration, and durable external human visual approval.
 - Review evidence: Archived SKO-1 packet/summary; reviewed 2.5D foundation receipt; standalone scene/rig; focused smoke; Moment Forge report; Dropbox manifest/keyframes/video if any; explicit user/ChatGPT decision in the recorded authoring chat; diff against production Sundered authority.
@@ -35,6 +35,6 @@
 - Next packet state: `manual decision`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Next action: Return the review + visual evidence to the authoring chat. Activate SKO-2 only if composition passed and art fidelity is the remaining limitation; otherwise refresh SKO-3 integration planning directly.
 - Blockers or open questions: The next branch depends on the user's visual-direction decision.

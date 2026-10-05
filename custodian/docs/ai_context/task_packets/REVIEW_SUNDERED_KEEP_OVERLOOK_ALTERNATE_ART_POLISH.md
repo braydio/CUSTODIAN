@@ -14,11 +14,11 @@
 - Reviewed main: `b2b3624fd748ffbf90d40d737e20448c1e41bee6`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Review modes: `code, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
+- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
 - Goal: Independently verify that optional bespoke overlook plates were necessary, correctly ingested through Asset V2, improve the approved SKO-1 composition, and remain presentation-only.
 - Reviewed implementation acceptance: Reuse SKO-2 acceptance including activation provenance, exact family/state contract, source_work preservation, normalized dimensions/alpha, runtime binding, SKO-1 gameplay/camera fingerprint preservation and human A/B preference.
 - Review evidence: Archived SKO-2 packet/summary; Asset V2 family/catalog/doctor status; source/inbox/runtime identity evidence; SKO-1 reviewed baseline; identical-camera A/B renderer evidence; explicit user/ChatGPT decision.
@@ -35,6 +35,6 @@
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Next action: Return the polished review + visual evidence to the authoring chat and refresh SKO-3 against live production/procgen seams.
 - Blockers or open questions: none after a clean review.

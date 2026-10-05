@@ -14,11 +14,11 @@
 - Reviewed main: `58a11afa75a576180351ec3104cac097f9c1eba8`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Review modes: `architecture, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
+- Summary backlink: Every durable review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
 - Goal: Independently verify that the post-standalone production integration plan chose the correct live Sundered/procgen ownership boundary, did not smuggle runtime changes into planning, and authored a coherent dependency/review series before any production implementation begins.
 - Reviewed implementation acceptance: Reuse the planning packet acceptance. Require live-main re-audit, explicit comparison of plausible insertion shapes, preservation of 2D gameplay/spawn/playability/route/camera authority, exact ownership of visible-but-nonplayable depth, coherent packet sizes/locks/dependencies, and no production runtime mutation in the planning workstream.
 - Review evidence: Archived integration-plan packet/summary; reviewed SKO-1 and SKO-2 if used; selected architecture rationale; live production Sundered/procgen/route/camera/spawn seams at plan time; all newly authored implementation/review packets and their dependency graph.
@@ -35,6 +35,6 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Next action: A clean review releases the integration series authored by SKO-3.
 - Blockers or open questions: none once the integration plan completes.

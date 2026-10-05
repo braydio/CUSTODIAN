@@ -15,8 +15,8 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `223d15ab6695dc79e714398e5645d24b4c89e4c7`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
-- Summary backlink: Every durable implementation/review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` exactly.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Summary backlink: Every durable implementation/review/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
 - Goal: Build a standalone playable alternate Sundered Keep overlook in which the real Operator occupies a compact foreground shelf/perch above a vast apparent depth field and the Sundered Keep reads as a large distant physical destination, using reviewed CUSTODIAN 2.5D presentation rules while gameplay remains entirely 2D.
 - Completion boundary: Done when a standalone dev/playtest level launches with the real Operator, real PlayerController and production Camera2D; its bounded shelf traversal is ordinary 2D gameplay; reviewed 2.5D foundation primitives stage visible shelf thickness, depth bands, distant Keep mass, atmospheric separation and foreground framing; the slice can be walked normally; existing Sundered donor assets are reused without modifying the production approach; objective validation passes; and renderer-backed evidence is published for explicit user/ChatGPT direction approval.
 - Current measured state: CUSTODIAN's active 2.5D contract preserves 2D XY simulation/collision/navigation/combat and Camera2D while permitting presentation-only visual elevation, semantic depth bands, base-root sorting, contact grounding and roof/foreground occlusion. The live Sundered approach already owns underlay/vista/playable/roof/foreground bands, far/mid/near fortress presentation, ocean/mist and parallax donors, but its production composition is a route-first authority and must remain untouched in this proof. The user wants a more dramatic fixed-elevated-oblique composition: small shelf in the lower foreground, visible vertical drop/negative space, Sundered Keep dominating the upper/mid distance, convincingly fake-volumetric in the spirit of the project's Lords-of-Pain dimensional reference. No Blender requirement.
@@ -64,6 +64,6 @@
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Next action: Run the paired fresh-context review after objective validation and explicit visual-direction approval.
 - Blockers or open questions: none beyond reviewed foundation dependency.

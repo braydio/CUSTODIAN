@@ -10,7 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `d20010d86eee9540e3dd6e759bb5e359de9a46a8`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Goal: Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
 - Completion boundary: HARD BLOCKED. XR3 is only the gate that authors/reviews the measured migration DAG; D4 still must not return to `ready` until that generated DAG has executed through its **final reviewed convergence workstream**. X3/XR3 must rewrite this packet's `Depends on` to that concrete final review ID. Only then re-audit `ProcGenTilemap` and define the exact contraction residue.
 - Current measured state: `ProcGenTilemap` remains the large generation/runtime façade and still owns generation working state, road/parking topology, authored claims, accepted-state export, streaming adapters, terrain integration, props/foliage, presentation and runtime mutation glue. M4/MR4 and M5/MR5 are complete; M6 is now refreshed and ready with paired MR6 required before S7 closes. D1/D2/D3 are explicitly refresh-gated on **MR6**, not merely M6 landing; X1 follows those extractions, X2/X3 remain refresh-gated on their paired reviews, and the measured migration DAG still does not exist. Therefore no truthful D4 deletion list or final dependency exists today.
@@ -55,7 +55,7 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff

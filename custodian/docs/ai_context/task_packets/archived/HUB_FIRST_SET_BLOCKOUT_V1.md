@@ -325,3 +325,26 @@ Before setting complete:
 - Next action: Start the fresh-context paired review `review-hub-first-set-blockout-v1`; confirm the archived implementation, focused evidence, and already approved overview. H2 then wires reviewed Awakening completion into this map at `Spawn_SouthReach` after its paired review and Awakening readiness review archive complete.
 - Best starting files: `HUB_FIRST_SET_BLOCKOUT.md`, Road prototype, generic authored blockout/navigation providers, current authored-level spawn APIs.
 - Blockers or open questions: H1 has no remaining implementation blocker. H2 remains dependency-gated on this paired review and `review-awakening-handoff-readiness-art-convergence-v1`. The exact visual identity of Muster Court/Continuity Port remains intentionally deferred.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-hub-first-set-blockout-v1`
+- Reviewed on main: `96532b7807d789666c95675782c04d6fb5aea1c7`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, visual`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none` (R0-01 is deferred test-hardening advice and does not require a correction packet)
+- Reviewer independence: The reviewer started in a fresh workstream and reconstructed acceptance from the archived implementation packet, current design authority, live runtime, and graph context. Focused H1/Road/Twin validations were rerun. A temporary headless driver controlled the real Operator through the complete required route and Garden loop in both directions. The approved overview and human decision were reused without model-vision reapproval.
+
+### Findings
+
+- `R0-01` — `non_blocking_issue`, disposition `deferred`, area `validation`: the H1 smoke checks marker nodes and walkability against `HubFirstSetLayout.MARKERS`, but that is the same source whose coordinates should be verified. It independently locks only selected values. This review manually compared all 14 positions against `HUB_FIRST_SET_BLOCKOUT.md`; add independent expected values if stronger future regression coverage is desired.
