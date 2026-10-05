@@ -123,7 +123,7 @@ If the graphical renderer reports a shader parse/link/runtime error, fix it in t
 
 The implementation landed as commit `085a38a5`, but this archived receipt also states that graphical shader compilation and human visual acceptance were not verified. That conflicts with the packet's own mandatory Real Renderer Gate and means the historical `Completion Truth` is not sufficient evidence of full AR2 acceptance.
 
-Active recovery authority: `custodian/docs/ai_context/task_packets/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md`.
+Recovery authority (complete): `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md`.
 
 Do not treat AR2 as review-complete or use it to unlock AR3 until:
 1. `procgen-archive-resolve-shader-recovery-1` completes with real-renderer + explicit user/ChatGPT visual evidence;

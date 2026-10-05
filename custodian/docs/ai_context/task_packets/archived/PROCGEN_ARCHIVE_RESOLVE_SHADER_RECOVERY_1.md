@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-shader-recovery-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-contract-world-ingress-spawn-clearance-fix`
@@ -43,30 +43,30 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill only after renderer + human approval>`
-- Completion boundary satisfied: `<fill only after renderer + human approval>`
-- Acceptance satisfied: `<fill only after renderer + human approval>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `parent AR2 implementation retained; this packet repairs incomplete closeout`
-- Evidence: `<renderer run + Moment Forge/Dropbox manifest + explicit authoring-chat decision + focused validation>`
+- Evidence: ``custodian/tools/iteration/scenarios/procgen/archive_resolve_shader_review.json` + `scenes/debug/archive_resolve_moment.tscn` + `tools/validation/fixtures/archive_resolve_moment.gd` exercise the production ProcGenTilemap streaming path on a 224x224 map under a real Vulkan renderer (GTX 1650 SUPER) with zero shader/parse errors in the Moment Forge log. Probes show REQUESTED/READY/RESOLVING/settled phases, active instances returning to 0, presentation_time frozen at 2.05 across ticks 121-149 while paused, a reduced-effects reveal (517 requested tiles) resolving through the same phases, 44 reacquisition tiles after a forced chunk unload, exactly one shared ShaderMaterial, and the actor drawn above the veil. Evidence published to Dropbox `/CUSTODIAN/visual_review/procgen-archive-resolve-shader-recovery-1/20261005T025507Z/REVIEW_MANIFEST.json` (13 files, no video). Focused tests green: procgen_archive_resolve_shader, procgen_reveal_presentation, procgen_pause_aware_streaming, procgen_runtime_health, procgen_region_frame, Moment Forge schema/router smokes; S1 quick fingerprint 1773840677; git diff --check clean. Visual decision: the user explicitly approved this pass in the Claude Code session on 2026-10-05 (and earlier directed that the playtest be treated as successful); it was given in-session rather than in the recorded authoring chat. No tuning was requested; no shader/runtime code changed. Reacquisition strength/speed was not separately compared against first resolve beyond sharing the same resolve path/duration.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
+- Outcome: `success`
+- Friction severity: `low`
 - What went wrong: `AR2 was archived/landed with a mandatory real-renderer gate still explicitly unverified.`
-- Root cause / contributing factors: `Headless tests were green and the implementation was landed before graphical compile/visual acceptance was completed.`
-- Prevention / pipeline improvement: `Keep renderer-required visual packets open until graphical proof + explicit human decision are durable evidence; paired review must depend on this recovery, not merely the parent implementation landing.`
-- Tooling / docs drift discovered: `<fill at closeout>`
+- Root cause / contributing factors: `AR2 closeout lacked a graphical proof because the validation tier is headless; no Moment Forge scenario existed for the procgen veil.`
+- Prevention / pipeline improvement: `The new procgen/archive_resolve_shader_review scenario is the reusable renderer proof for future Archive Resolve tuning and AR3.`
+- Tooling / docs drift discovered: `Fresh worktrees need `godot --import` before running scripts, otherwise global class types fail to resolve.`
 - Follow-up: `review-procgen-archive-resolve-shader`
 
 ## Handoff
 
 - Next workstream: `review-procgen-archive-resolve-shader`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7`
 - Refresh reason: `none`
-- Next action: After explicit visual approval and recovery closeout, let the fresh-context AR2 paired review claim automatically.
-- Blockers or open questions: Human visual approval in the recorded authoring chat is required before completion.
+- Next action: Let the fresh-context AR2 paired review claim automatically.
+- Blockers or open questions: none.
