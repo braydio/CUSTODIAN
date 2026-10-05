@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `carrow-yard-route-authority-migration`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `contract-world-loader-contraction`
 - Locks: `carrow-yard-route`
