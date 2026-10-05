@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `sundered-keep-overlook-alternate-art-polish`
-- Status: `blocked`
+- Status: `ready`
 - Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `review-sundered-keep-overlook-alternate-vertical-slice`
