@@ -43,6 +43,15 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
 
+### Stranded Branch Recovery / Operator Fast Chain South
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73
+
+- The unique high-resolution Fast 01 South donor master is already preserved on main at `b57ab98d` under `custodian/asset_drop/source_work/operator/unarmed/attack/fast_01/south/fast_1_south.png`; this preservation commit does not change runtime.
+- `STRANDED_BRANCH_RECOVERY_CLOSEOUT.md` — P1 ready/manual workflow closeout. Adds an exact-SHA-approved retirement path to the existing branch-hygiene tool, regression-covers it, then archive-tags/ledgers/retires exactly the six user-reviewed stale divergent agent refs. It must not merge donor implementation back into current production.
+- `OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — P1 ready/manual production-art/runtime closeout for exact South Fast 02/03/04 lower+upper+FX at the locked 6/7/8-frame 96×96 contracts, preserving Fast 01 and all gameplay timing. Subjective final chain approval remains human/ChatGPT-owned through one compact Dropbox review handoff.
+- `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 post-land review; blocked until the Operator continuity implementation completes and archives.
+
 ### Active Awakening 04→05 Production Art Refresh
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
