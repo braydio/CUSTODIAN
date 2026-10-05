@@ -203,6 +203,9 @@ document is refused until saved. Publish constructs the new canonical size-token
 paths through `operator_asset_schema.py`, then uses the existing transactional
 runtime, compatibility, resource, import, validation, and rollback pipeline.
 
+Canvas/frame migrations publish the regenerated canonical runtime manifest alongside
+the generated catalog, SpriteFrames, and scoped source/runtime sheets.
+
 ## Canonical SpriteFrames publication
 
 Workbench publish refreshes the V2 runtime and builds the canonical

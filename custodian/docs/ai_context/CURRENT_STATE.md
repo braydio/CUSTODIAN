@@ -186,7 +186,10 @@ coverage lives in `custodian/tools/validation/asset_workbench_ui_smoke.py` and
 is selected by the `asset_workbench_ui` validation owner. Sequencing remains in
 `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md`.
 
-## Operator Workbench Isolated Art Checkout (2026-10-04)
+## Operator Workbench Isolated Art Checkout (2026-10-05)
+
+Publication allows the regenerated canonical runtime manifest so canvas/frame
+migrations can commit their complete validated output set.
 
 The sparse authoring checkout includes `.githooks` and the required root
 `tools/validate_filenames.py` helper. Fixture commits run the real pre-commit
