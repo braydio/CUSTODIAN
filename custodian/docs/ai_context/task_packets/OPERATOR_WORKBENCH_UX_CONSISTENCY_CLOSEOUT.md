@@ -134,7 +134,7 @@
   - Human visual sign-off confirms the cockpit is materially easier to parse than the pre-UX1 baseline before the roadmap is marked complete.
 - Validation:
   - Expand `operator_workbench_ui_smoke.py` with a bounded full-flow Textual Pilot scenario across QUEUE -> WORKBENCH -> REVIEW -> SEQUENCE -> MOTION and back.
-  - Re-run focused readiness, browser snapshot, FX-adoption, preview, Live Bridge and publish UI regressions selected by changed-file ownership.
+  - Re-run focused background-base-sync, readiness, browser snapshot, FX-adoption, preview, Live Bridge and publish UI regressions selected by changed-file ownership.
   - Run `python3 custodian/tools/validation/run_validation.py --changed --json`.
   - Run `git diff --check`.
   - Perform explicit human visual review at compact/normal/wide terminal sizes before closeout.
