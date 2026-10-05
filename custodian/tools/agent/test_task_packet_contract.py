@@ -66,6 +66,22 @@ class ParsePacketTests(unittest.TestCase):
         self.assertEqual(packet.kind, "correction")
         self.assertTrue(tpc.is_v2_packet(packet))
 
+    def test_authoring_chat_and_visual_review_metadata_parse(self):
+        text = legacy_packet("chat-work") + (
+            "- Authoring chat: `https://chatgpt.com/c/example`\n"
+            "- Visual review: `required-if-subjective`\n"
+        )
+        packet = tpc.parse_packet("p.md", text)
+        self.assertIsNone(packet.error)
+        self.assertEqual(packet.authoring_chat, "https://chatgpt.com/c/example")
+        self.assertEqual(packet.visual_review, "required-if-subjective")
+
+    def test_invalid_authoring_chat_is_reported(self):
+        text = legacy_packet("bad-chat") + "- Authoring chat: `ftp://bad.example`\n"
+        packet = tpc.parse_packet("p.md", text)
+        self.assertIsNotNone(packet.error)
+        self.assertIn("Authoring chat", packet.error)
+
     def test_invalid_workstream_id_is_reported(self):
         packet = tpc.parse_packet("p.md", legacy_packet("Not Kebab"))
         self.assertIsNotNone(packet.error)
