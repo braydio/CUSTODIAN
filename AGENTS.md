@@ -178,17 +178,10 @@ The repository owns a context-aware next-task workflow at
 `.agents/skills/custodian-next/SKILL.md`. In Codex, invoke it directly as
 `$custodian-next`.
 
-For a slash-menu shortcut, install the versioned custom prompt once:
-
-```bash
-python3 custodian/tools/agent/install_codex_prompts.py
-```
-
-Restart Codex, then use:
-
-```text
-/prompts:custodian-next
-```
+It is also available through Codex's slash UI: type `/skills` and choose
+**CUSTODIAN Next**. Enabled skills may also appear directly in the slash picker
+when you type `/`. Do not create a project-local custom prompt for this workflow;
+Codex custom prompts are deprecated in favor of skills.
 
 Semantics:
 
