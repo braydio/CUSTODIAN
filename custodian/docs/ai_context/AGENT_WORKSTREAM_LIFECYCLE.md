@@ -214,6 +214,18 @@ wall time.
 This is instruction/contract hardening, not a requirement to build a general
 subagent manager.
 
+## Subjective Visual-Review Pause
+
+A material subjective visual decision is a pause in the **current** workstream,
+not permission to claim unrelated work. Publish the compact bundle, report the
+claim receipt's exact authoring-chat URL plus the Dropbox manifest/questions,
+and checkpoint if the implementation branch needs durable recovery while
+waiting. ChatGPT web reviews the connected Dropbox path in that authoring
+conversation. When the verdict returns, resume the same workstream, apply any
+requested correction, and run the exact cleanup command by default. If the user
+explicitly chose retention, record that instead. Only after this gate resolves
+may normal finish/Next Handoff routing continue.
+
 ## Exit paths
 
 For blocked, paused, or review-pending work, make intentional commits, ensure
