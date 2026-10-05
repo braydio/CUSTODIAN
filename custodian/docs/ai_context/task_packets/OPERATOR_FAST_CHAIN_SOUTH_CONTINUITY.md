@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-fast-chain-south-continuity`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `operator-assets, operator-runtime`
