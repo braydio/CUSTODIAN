@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-first-set-integration-closeout`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-hub-crown-transfer-twin-solaria, review-hub-campaign-return`
 - Locks: `hub-runtime, world-lifecycle, contract-bootstrap, route-traversal`
@@ -31,10 +31,9 @@
 - Task overrides: `none`
 - Deferred: production Hub art/population; next Contract cycle; save/resume; deeper Campaign objectives; final transition audiovisual polish.
 
-## Temporary Refresh Gate — REMOVE WHEN REFRESHED
+## Claim-Time Dependency Refresh
 
-After both `review-hub-crown-transfer-twin-solaria` and `review-hub-campaign-return` pass, inspect every landed H2-H6 public seam and focused smoke path. Update the harness to public production APIs, absorb any bounded review-correction names, remove this section, and set ready/auto. Refresh this packet in place.
-
+This packet is intentionally `ready/auto` while its declared dependencies may still be incomplete. The dispatcher must keep it non-claimable until every `Depends on` workstream is archived `complete`. Once claimed, the execution agent must reconstruct the landed predecessor seams from current `main`, archived implementation/review summaries, and live public APIs before mutation. Reconcile private helper names and bounded implementation drift while preserving this packet's Goal, Completion boundary, Preserve, Non-goals, and Acceptance. Update directly stale packet/docs facts inside the workstream when needed. Do not stop for a ChatGPT/user refresh unless current evidence exposes a genuine unresolved design choice that existing authority cannot answer.
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -57,6 +56,6 @@ After both `review-hub-crown-transfer-twin-solaria` and `review-hub-campaign-ret
 
 ## Handoff
 
-- Next action: Refresh after HR4 + HR6 pass.
+- Next action: Auto-claim after HR4 and HR6 archive complete; reconstruct all landed H2-H6 public seams at claim time before running the end-to-end closeout.
 - Best starting files: roadmap; archived H1-H6 packets/reviews; production startup/Awakening/Hub/Twin/Port/game/return owners; validation manifest.
 - Blockers or open questions: exact final APIs/tests are intentionally dependency-derived.
