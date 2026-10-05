@@ -52,7 +52,7 @@
   - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md`
   - `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md`
 - Task-specific authority:
-  - The landed publish-readiness result is the only authority for checkout/main publication readiness.
+  - The landed publish-readiness result owns publication readiness/recovery; `operator-workbench-background-base-sync` owns bounded launch-time art-checkout base reconciliation and its structured current/synced-preserved/blocked/recovery state.
   - The landed browser snapshot is the only authority for accepted browser state.
   - Workbench V2 remains source/workspace/publication authority.
   - Live Bridge remains current in-memory Aseprite connection/modified-state authority.
