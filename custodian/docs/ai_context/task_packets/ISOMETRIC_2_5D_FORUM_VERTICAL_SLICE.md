@@ -6,12 +6,13 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `isometric-2-5d-presentation-foundation`
+- Depends on: `review-isometric-2-5d-presentation-foundation`
 - Locks: `world-presentation, presentation-experiments, asset-pipeline`
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `09ebb90e78e4568f81f4a7fc270da0a3d158d445`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Coordination chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
 - Goal: Prove CUSTODIAN's realized 2.5D language in one normal playable Forum approach with the real Operator/controller/Camera2D, ground-rooted depth, raised/overhead architecture, tactical occlusion fade, contact grounding and the existing 16-direction Lords skeleton.
 - Completion boundary: Build one standalone authored/dev scene around Forum South → Adjudication Dais using the landed foundation and existing assets; include a raised mass/stair cue, sortable tall structure, overhead occluder, moving 16-direction skeleton and flat-vs-realized toggle; keep collision/navigation/gameplay completely 2D.
 - Current measured state: K3D-1/K3D-1P provide fixed-view/walkaround precursor evidence. `dev_lop_skeleton` already has 16 directional 8-frame walk strips. `RoofOccluder2D`, BlobShadow and base-root sorting already exist.
