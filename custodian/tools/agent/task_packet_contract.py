@@ -22,7 +22,8 @@ FIELDS = (
     "Workstream", "Status", "Dispatch", "Priority", "Depends on", "Locks",
     "Kind", "Review", "Review stage", "Review modes", "Paired review workstream",
     "Review cycle", "Max automatic review cycles",
-    "Review target workstream", "Review target packet", "Task overrides",
+    "Review target workstream", "Review target packet", "Authoring chat",
+    "Visual review", "Task overrides",
 )
 ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PRIORITY = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
@@ -91,6 +92,8 @@ class Packet:
     task_overrides: str | None = None
     validation_scripts: tuple[str, ...] = ()
     schema: str | None = None
+    authoring_chat: str | None = None
+    visual_review: str | None = None
 
 
 def parse_packet(path: str, text: str) -> Packet:
@@ -203,6 +206,12 @@ def parse_packet(path: str, text: str) -> Packet:
         errors.append("invalid Review target workstream metadata")
     review_target_packet = values.get("Review target packet") or None
 
+    authoring_chat = values.get("Authoring chat") or None
+    if authoring_chat is not None and authoring_chat not in {"not-recorded", "n/a"}:
+        if not re.fullmatch(r"https://[^\s]+", authoring_chat):
+            errors.append("invalid Authoring chat metadata")
+    visual_review = values.get("Visual review") or None
+
     task_overrides = _header_field_with_continuations(text, "Task overrides")
     validation_scripts = _validation_script_references(text)
     schema = _header_field_with_continuations(text, "Packet schema")
@@ -215,6 +224,7 @@ def parse_packet(path: str, text: str) -> Packet:
         max_review_cycles=max_review_cycles, review_target_workstream=review_target_workstream,
         review_target_packet=review_target_packet, task_overrides=task_overrides,
         validation_scripts=validation_scripts, schema=schema,
+        authoring_chat=authoring_chat, visual_review=visual_review,
     )
 
 
