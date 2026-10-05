@@ -197,19 +197,60 @@ over:
 Does this look good?
 ```
 
+## ChatGPT Web Review Contract
+
+The authoring ChatGPT conversation should receive the **Dropbox path**, not copied
+screenshots, whenever the connected Dropbox source can provide the evidence. The
+execution agent reports:
+
+```text
+Authoring chat: <exact packet URL>
+Dropbox manifest: /CUSTODIAN/visual_review/<workstream>/<run-id>/REVIEW_MANIFEST.json
+Questions:
+- ...
+Cleanup policy: delete_after_review | retain
+```
+
+ChatGPT web should inspect that manifest and its declared artifacts through the
+connected Dropbox source, answer the explicit questions, and return a compact
+verdict to the same conversation. A useful response shape is:
+
+```text
+Visual review verdict: approved | changes_required | blocked
+Findings: <specific visual findings or none>
+Cleanup: delete | retain
+```
+
+`Cleanup: delete` is the default whenever the manifest says
+`delete_after_review`. `retain` is used only when the user explicitly wants
+the evidence kept. ChatGPT does not need to perform destructive Dropbox deletion;
+the execution agent owns the exact-run cleanup command after receiving the
+verdict.
+
 ## Authority and Retention
 
-Dropbox review media is advisory evidence, not runtime or design authority.
+Dropbox review media is advisory, transient evidence, not runtime or design
+authority.
 
 Git remains authoritative for:
 
 - implementation;
 - schemas/contracts;
 - tests and deterministic receipts;
-- durable task/closing summaries.
+- durable task/closing summaries and the authoring-chat backlink.
+
+For new v2 handoffs, the default retention policy is **delete after review**.
+Once the authoring-chat verdict has been received, the execution agent runs the
+manifest-gated `--cleanup-reviewed` command automatically unless retention was
+explicitly requested. This avoids accumulating stale evidence and Dropbox disk
+usage while retaining the durable verdict/summary in Git.
 
 Do not commit Dropbox review binaries merely to preserve them. If a durable
-record matters, keep the implementation summary/receipt and record the Dropbox
-manifest path/run id there.
+record matters, keep the implementation summary/receipt and record the reviewed
+workstream/run id plus verdict. A Dropbox path may be recorded for traceability
+even after its transient payload has been deleted.
+
+The cleanup rule applies only to `CUSTODIAN/visual_review/`. It does **not**
+delete inbound `CUSTODIAN/implementation_inputs/` handoffs.
 
 Visual baseline approval remains an explicit human decision.
