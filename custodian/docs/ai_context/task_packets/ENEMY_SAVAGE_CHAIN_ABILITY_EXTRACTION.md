@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `enemy-savage-chain-ability-extraction`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-savage-pounce-ability-extraction`
 - Locks: `enemy-runtime`
@@ -39,7 +39,7 @@
 - Blockers or open questions: reviewed NPA-2 is required; this planning packet intentionally does not assume the final pounce service API.
 ## Refresh Planning Authority
 
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search`
 - Refresh instruction: Bring the landed NPA-2 implementation summary, paired-review receipt, final pounce ability/config API, and current `enemy.gd` chain ownership back to this chat. Re-derive NPA-3 against that reviewed live seam before promoting it to `ready/auto`.
