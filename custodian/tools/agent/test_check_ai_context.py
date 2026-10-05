@@ -249,6 +249,13 @@ class CheckAiContextTestCase(unittest.TestCase):
         report = cac.run_checks(self.repo)
         self.assertTrue(report.ok, report.to_json())
 
+    def test_archived_complete_v2_packet_without_current_feedback_is_allowed(self):
+        text = _v2_implementation_packet("old-work", status="complete").split("## Execution Feedback")[0]
+        self._write_archived("OLD_WORK.md", text)
+        self._write_readme()
+        report = cac.run_checks(self.repo)
+        self.assertTrue(report.ok, report.to_json())
+
 
 if __name__ == "__main__":
     unittest.main()

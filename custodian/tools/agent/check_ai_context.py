@@ -233,6 +233,10 @@ def check_completion_truth(entry: DiscoveredPacket, report: Report) -> None:
 
 
 def check_execution_feedback(entry: DiscoveredPacket, report: Report) -> None:
+    # Archived packets are durable history; only active packets are held to
+    # the current receipt schema (matching the other packet contract checks).
+    if entry.archived:
+        return
     if not is_v2_packet(entry.packet) or entry.packet.status != "complete":
         return
     body = _receipt_section(entry.text, "Execution Feedback")

@@ -1,11 +1,13 @@
 # Agent Task Packets
 
-Last updated: 2026-10-04
+Last updated: 2026-10-05
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
 
-## Active Hub First-Set / First Campaign Loop Series
+## Active Packets
+
+### Active Hub First-Set / First Campaign Loop Series
 
 Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
 Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`.
@@ -22,7 +24,7 @@ Seven implementation slices are pre-authored with paired reviews. H1 is queue-re
 
 Do not create v2 duplicates merely because a predecessor chose different private helpers; refresh the existing downstream packet and its review in the same docs change.
 
-## Active Isometric 2.5D Presentation Realization Series
+### Active Isometric 2.5D Presentation Realization Series
 
 Design authority: `../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`.
 Program tracker: `../../../design/01_systems/ISOMETRIC_2_5D_REALIZATION_ROADMAP.md`.
@@ -37,11 +39,11 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
 - Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
 
-## Active Reusable Source-Material Intake
+### Active Reusable Source-Material Intake
 
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — ready/auto reference-only intake for all four user-downloaded Kenney Pattern Pack Lines variants (30 motifs each, 120 PNGs total), with exact-copy provenance, license/hash metadata, and a curated CUSTODIAN usage shortlist. It does not create runtime assets; production use must promote selected motifs through the owning Asset V2 family.
 
-## Active Awakening 04→05 Production Art Refresh
+### Active Awakening 04→05 Production Art Refresh
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
 
@@ -50,7 +52,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is now blocked/manual on the room-connectors polish and must be refreshed in place from the landed implementation + paired-review evidence before its old Zone04/05 feather/fade preservation clauses are executable again.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is also blocked/manual on the polish; after landing, first check whether the new packet's committed bidirectional regression fully supersedes it rather than duplicating the harness.
 
-## Active Archive Resolve Presentation Series
+### Active Archive Resolve Presentation Series
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
@@ -66,7 +68,7 @@ The post-MR6 ProcGenTilemap rewrite packets carry temporary preservation guards
 so extraction/contraction work cannot move or absorb the reveal seams before the
 AR packet set is refreshed.
 
-## Persistent Recovery Series
+### Persistent Recovery Series
 
 - Planning / refresh chat: https://chatgpt.com/c/6abca2bb-1b3c-83ea-a3ae-e3d368c88461?src=history_search
 - `archived/CUSTODIAN_DEATH_HANDOFF_FOUNDATION.md` — R1 is complete: Operator death now resolves an active CampaignSession once before the temporary Game Over fallback; no-session worlds keep the safe fallback without inventing a campaign.
@@ -77,7 +79,7 @@ AR packet set is refreshed.
 - Design authority: `../../../design/02_features/operator/PERSISTENT_RECOVERY_AND_ARMAMENT_REGISTRATION.md`.
 - Whenever a recovery implementation/review says its successor needs architecture/design refresh, the closing summary and user-facing reply must surface the exact planning / refresh chat URL above. Do not silently re-author the recovery sequence from chatless live state.
 
-## Active Non-Player Actor Runtime Refactor Series
+### Active Non-Player Actor Runtime Refactor Series
 
 Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6abb151e-693c-83ea-8563-b7cd74c2960b?src=history_search
 
@@ -92,13 +94,13 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review, blocked with NPA-3.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
-## Ash-Bell / Forlorn-Ritualant Production Art Closeout
+### Ash-Bell / Forlorn-Ritualant Production Art Closeout
 
 - `archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md` — authored-route migration and Encounter Completion V2 runtime are landed; historical mixed code+art packet is no longer executable.
 - `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — blocked/manual Asset V2 closeout for the remaining production art. Known locked targets include an 8f 128×128 rise (1024×128), 32×48 procession-cell intent, 64×96 apparition intent, and static ritual props at 96×96 / 32×32 / 32×64 / 16×16. Walk/drag/turn/reaction direction/frame/FPS contracts remain deliberately unresolved and must be human-locked before claim.
 - The current required-assets registry remains the open-need authority. Do not resume the archived encounter packet or hand-copy new art into legacy runtime paths.
 
-## Cross-cutting Stealth Awareness Planning
+### Cross-cutting Stealth Awareness Planning
 
 Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`.
 
@@ -106,12 +108,12 @@ Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_AL
 - `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/manual dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership.
 - Both remain intentionally non-claimable drafts until the stealth design boundary is accepted for implementation.
 
-## Active Bidirectional Dropbox Handoff
+## Completed Bidirectional Dropbox Handoff
 
 - Authoring chat: https://chatgpt.com/share/6ac306f1-f2a0-83e9-9823-86add3c01c91?ogimg=plain
-- `BIDIRECTIONAL_DROPBOX_HANDOFF.md` — P1 ready/auto workflow packet. Adds immutable `CUSTODIAN/implementation_inputs/<workstream>/<handoff-id>/` for ChatGPT/user-generated PNG/ZIP/binary payloads, manifest/hash/path verification into staging only, preserves `CUSTODIAN/visual_review`, and requires one real Dropbox PNG+ZIP roundtrip.
-- `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — paired P1 post-land fresh-context code/architecture/workflow review with hostile-manifest, credential-boundary, and live-provider evidence checks.
-- The user explicitly authorizes Codex/Cloud execution surfaces to perform required rclone/Dropbox setup and unique sacrificial transport tests on their behalf; interactive provider authentication remains the only legitimate external stop condition.
+- `archived/BIDIRECTIONAL_DROPBOX_HANDOFF.md` — P1 implementation complete/landed. Adds immutable `CUSTODIAN/implementation_inputs/<workstream>/<handoff-id>/`, manifest/hash/path verification into non-production staging, preserves `CUSTODIAN/visual_review`, and passes real rclone plus ChatGPT Dropbox connector PNG/ZIP round-trips.
+- `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — paired P1 post-land fresh-context code/architecture/workflow review; becomes eligible after this implementation lands and archives, with hostile-manifest, credential-boundary, and live-provider evidence checks.
+- The packet authorized the one-time rclone/Dropbox setup and unique sacrificial transport tests; successful remote smoke evidence is retained through paired review.
 
 ## Selection
 

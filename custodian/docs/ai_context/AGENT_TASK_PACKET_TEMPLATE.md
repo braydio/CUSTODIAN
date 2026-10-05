@@ -123,6 +123,15 @@ Required quality:
   rather than self-critiquing the art. Reference
   `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` instead of restating its
   remote/setup rules.
+- **External implementation inputs** belong in a task packet's provenance/evidence
+  section as an exact workstream, immutable handoff ID, and manifest path under
+  `CUSTODIAN/implementation_inputs/`. Fetch them with
+  `custodian/tools/iteration/implementation_handoff.py`; Dropbox is transient
+  transport, and verified staging remains untrusted input until the owning task
+  and Asset Pipeline V2 authorize promotion. Never use Dropbox as a repository
+  mirror or direct runtime source. See
+  `custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md` for the manifest and
+  upload contract.
 - **Deferred** records intentional omissions so they are not rediscovered as
   accidental incompleteness.
 

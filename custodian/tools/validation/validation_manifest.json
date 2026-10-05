@@ -142,6 +142,7 @@
         "tooling"
       ],
       "owners": [
+        "custodian/tools/iteration/dropbox_transport.py",
         "custodian/tools/iteration/publish_review_artifacts.py",
         "custodian/tools/iteration/test_publish_review_artifacts.py",
         "custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md",
@@ -152,6 +153,31 @@
         "custodian/docs/ai_context/prompts/review_runtime_change.md",
         "AGENTS.md",
         "custodian/AGENTS.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
+      "id": "implementation_handoff",
+      "type": "python",
+      "script": "custodian/tools/iteration/test_implementation_handoff.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "external_transport",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/iteration/dropbox_transport.py",
+        "custodian/tools/iteration/implementation_handoff.py",
+        "custodian/tools/iteration/test_implementation_handoff.py",
+        "custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md",
+        "custodian/docs/ai_context/CURRENT_STATE.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/docs/ai_context/AGENT_TOOLING_BY_ASK.md",
+        "custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md",
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/VALIDATION_RECIPES.md"
       ],
       "timeout_sec": 20,
       "needs_import": false
@@ -3356,10 +3382,7 @@
         "custodian/game/world/placement/world_placement_context.gd",
         "custodian/game/systems/core/systems/contract_world_loader.gd",
         "custodian/game/world/placement/README.md",
-        "custodian/docs/ai_context/FILE_INDEX.md",
-        "custodian/docs/ai_context/VALIDATION_RECIPES.md",
-        "custodian/tools/validation/world_placement_context_smoke.gd",
-        "custodian/tools/validation/validation_manifest.json"
+        "custodian/tools/validation/world_placement_context_smoke.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false

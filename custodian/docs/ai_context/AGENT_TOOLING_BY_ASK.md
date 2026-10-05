@@ -108,6 +108,29 @@ owns composition, atmosphere, aesthetic cohesion, gameplay-scale readability,
 game feel, and baseline approval. See `VISUAL_REVIEW_HANDOFF.md` for the full
 gate, evidence budget, remote contract, and credential rules.
 
+## External Implementation Input Handoff
+
+Use the inbound Dropbox lane when a task needs a ChatGPT/user-generated PNG,
+ZIP, or other explicit binary file on the execution workstation:
+
+```bash
+python3 custodian/tools/iteration/implementation_handoff.py doctor --ensure-root
+python3 custodian/tools/iteration/implementation_handoff.py prepare \
+  --workstream <workstream-id> --handoff-id <new-kebab-id>
+python3 custodian/tools/iteration/implementation_handoff.py fetch \
+  --workstream <workstream-id> --handoff-id <handoff-id>
+```
+
+Upload payload files to the exact emitted `payload/` path, then upload
+`HANDOFF_MANIFEST.json` last. The manifest is the immutable handoff commit
+marker. Fetch verifies the manifest identity, exact remote file set, total size,
+per-file byte size, and SHA-256 before exposing anything under
+`~/.cache/custodian/implementation_inputs/` (or the configured XDG cache). The
+tool does not extract ZIPs or route files into `asset_drop`, runtime, or Asset
+V2 directories. Use the task packet and Asset Pipeline V2 for any later
+promotion. See `IMPLEMENTATION_HANDOFF.md` for the schema, upload contract,
+environment precedence, and credential boundaries.
+
 ## Modular Operator Asset Audit
 
 Use this section when the ask is about new Operator modular animation drops, missing modular parts, upper/lower visual fit, or source/runtime review for `custodian/content/sprites/operator/source/animations/` (V2 editable source tree).
