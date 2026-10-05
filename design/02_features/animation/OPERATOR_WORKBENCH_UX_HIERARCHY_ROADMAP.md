@@ -67,7 +67,7 @@ Those preceding packets own backend correctness:
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` owns structured checkout,
   origin/main relation, dirty-state classification, safe preparation,
   LAND PENDING, stale-source readiness, local LFS readiness, and recovery.
-- `OPERATOR_WORKBENCH_BACKGROUND_BASE_SYNC.md` owns launch-time reconciliation of a behind, ahead-zero persistent art checkout when its local dirt is provably Workbench-owned: exact-byte recovery snapshot, no-overlap FF-only base advance, exact dirty-byte restoration, and fail-closed handling for unknown/staged/ahead/pending/conflicting state. It explicitly prevents ordinary unpublished art residue from pinning OPUI code to an old repository revision.
+- `OPERATOR_WORKBENCH_BACKGROUND_BASE_SYNC.md` owns launch-time reconciliation of the persistent art checkout: clean ahead-zero lag FFs automatically; a transaction-proven previously user-approved publication interrupted before Git finalization resumes through exact allowlist/commit/landing proof; valid LAND PENDING retries automatically; unknown/staged/ahead/unresolved/conflicting dirt remains fail-closed. It explicitly prevents stranded publication residue from pinning OPUI code to an old repository revision without turning startup into a generic dirty-file publisher.
 - `OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` owns accepted browser
   snapshots, latest-request-wins refresh, selection preservation, F5/PREVIEW
   concurrency, and race protection.
