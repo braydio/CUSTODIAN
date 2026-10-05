@@ -2037,6 +2037,7 @@
         "observability"
       ],
       "owners": [
+        "custodian/game/actors/operator/traversal/operator_dodge_controller.gd",
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/systems/combat/enemy_hit_spatial_contract.gd",
         "custodian/tools/validation/support/headless_test_harness.gd"
@@ -2056,6 +2057,7 @@
         "presentation"
       ],
       "owners": [
+        "custodian/game/actors/operator/traversal/operator_dodge_controller.gd",
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/content/sprites/operator/runtime/animations/shared/transition/dodge_01/**",
@@ -2097,6 +2099,7 @@
         "dodge"
       ],
       "owners": [
+        "custodian/game/actors/operator/traversal/operator_dodge_controller.gd",
         "custodian/content/sprites/operator/source/animations/shared/attack/dodge_charge_windup_01/**",
         "custodian/content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/**",
         "custodian/content/sprites/operator/source/animations/shared/transition/dodge_chain_link_01/**",
@@ -4847,6 +4850,80 @@
       ],
       "timeout_sec": 90,
       "needs_import": false
+    },
+    {
+      "id": "operator_dodge_controller",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_dodge_controller_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "dodge",
+        "controller"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/traversal/operator_dodge_controller.gd",
+        "custodian/tools/validation/operator_dodge_controller_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
+      "id": "operator_charged_long_roll",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_charged_long_roll_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "operator",
+        "dodge",
+        "charge"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/traversal/operator_dodge_controller.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/tools/validation/operator_charged_long_roll_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
+      "id": "operator_dodge_charge_feedback",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_dodge_charge_feedback_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "operator",
+        "dodge",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/traversal/operator_dodge_controller.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/vfx/combat/dodge_charge_feedback.gd",
+        "custodian/game/vfx/combat/dodge_charge_feedback.tscn",
+        "custodian/tools/validation/operator_dodge_charge_feedback_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
+      "id": "operator_dodge_presentation",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_dodge_presentation_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "operator",
+        "dodge",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/traversal/operator_dodge_controller.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/operator_dodge_presentation_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
     }
   ]
 }

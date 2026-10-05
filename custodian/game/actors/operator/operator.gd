@@ -16,6 +16,7 @@ signal integrity_reclaim_changed(status: Dictionary)
 
 const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
 const OperatorRuntimeDependenciesScript = preload("res://game/actors/operator/operator_runtime_dependencies.gd")
+const OperatorDodgeControllerScript = preload("res://game/actors/operator/traversal/operator_dodge_controller.gd")
 const OperatorActionControllerScript = preload("res://game/actors/operator/combat/operator_action_controller.gd")
 const OperatorPresentationControllerScript = preload("res://game/actors/operator/presentation/operator_presentation_controller.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
@@ -466,7 +467,6 @@ var _melee_fast_chain_direction_active: bool = false
 ## chain links contain their own anticipation. What survives is the entry
 ## choice, not the skipping of a phase.
 var _dodge_fast_attack_entry_pending: bool = false
-var _dodge_fast_attack_buffered: bool = false
 var _dodge_fast_attack_presentation_active: bool = false
 var _buffered_attack_kind: String = ""
 var _buffered_attack_timer: float = 0.0
@@ -641,39 +641,16 @@ var _last_weapon_failure_feedback: StringName = &""
 var _pending_ranged_shot: Dictionary = {}
 var _ranged_ready_active: bool = false
 var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
-var _dodge_active: bool = false
-var _dodge_recovery_active: bool = false
-var _dodge_timer: float = 0.0
-var _dodge_iframe_timer: float = 0.0
-var _dodge_recovery_timer: float = 0.0
-var _dodge_cooldown_remaining: float = 0.0
-var _dodge_direction: Vector2 = Vector2.DOWN
-var _dodge_backstep_active: bool = false
-var _dodge_charge_active: bool = false
-var _dodge_charge_timer: float = 0.0
+# Dodge simulation state belongs exclusively to OperatorDodgeController.
+# These fields below are presentation-only state for the existing whole-body
+# presentation path and do not drive traversal or combat outcomes.
 var _dodge_charge_visual_compression: float = 0.0
 var _dodge_requested_presentation_sector: StringName = &"s"
 var _dodge_resolved_presentation_sector: StringName = &"s"
 var _dodge_charge_presentation_active: bool = false
 var _dodge_chain_presentation_active: bool = false
 var _dodge_presentation_animation: StringName = &""
-var _pending_dodge_direction: Vector2 = Vector2.ZERO
-var _active_dodge_profile: StringName = &"tap"
-var _active_dodge_speed: float = 0.0
-var _active_dodge_duration: float = 0.0
-var _active_dodge_recovery_duration: float = 0.0
-var _dodge_chain_buffered: bool = false
-var _dodge_chain_direction: Vector2 = Vector2.ZERO
-var _dodge_chain_index: int = 0
-var _dodge_chain_last_turn_angle: float = 0.0
-var _dodge_chain_last_retention: float = 1.0
-var _dodge_chain_end_reason: StringName = &"opener_complete"
-var _dodge_recovery_elapsed: float = 0.0
-var _dodge_flow: float = 0.0
-var _dodge_flow_direction: Vector2 = Vector2.ZERO
-var _dodge_flow_decay_timer: float = 0.0
-var _dodge_exit_velocity: Vector2 = Vector2.ZERO
-var _dodge_exit_timer: float = 0.0
+var _dodge_controller: OperatorDodgeController
 var _field_patch_active: bool = false
 var _field_patch_timer: float = 0.0
 var _field_patch_committed: bool = false
@@ -959,6 +936,72 @@ func bind_runtime_dependencies(dependencies: OperatorRuntimeDependencies) -> boo
 	return true
 
 
+func _ensure_dodge_controller() -> OperatorDodgeController:
+	if _dodge_controller == null:
+		_dodge_controller = OperatorDodgeControllerScript.new() as OperatorDodgeController
+		_dodge_controller.charge_changed.connect(_forward_dodge_charge_changed)
+		_dodge_controller.charge_released.connect(_forward_dodge_charge_released)
+		_dodge_controller.charge_cancelled.connect(_forward_dodge_charge_cancelled)
+		_dodge_controller.chain_started.connect(_forward_dodge_chain_started)
+		_dodge_controller.chain_ended.connect(_forward_dodge_chain_ended)
+		_dodge_controller.flow_changed.connect(_forward_dodge_flow_changed)
+	return _dodge_controller
+
+
+func _dodge_tuning() -> Dictionary:
+	return {
+		"speed": dodge_speed,
+		"duration": dodge_duration,
+		"iframe_duration": dodge_iframe_duration,
+		"recovery_duration": dodge_recovery_duration,
+		"cooldown": dodge_cooldown,
+		"stamina_cost": dodge_stamina_cost,
+		"long_distance_multiplier": dodge_long_distance_multiplier,
+		"committed_distance_multiplier": dodge_committed_distance_multiplier,
+		"long_recovery_multiplier": dodge_long_recovery_multiplier,
+		"committed_recovery_multiplier": dodge_committed_recovery_multiplier,
+		"long_stamina_cost": dodge_long_stamina_cost,
+		"committed_stamina_cost": dodge_committed_stamina_cost,
+		"flow_decay_delay": dodge_flow_decay_delay,
+		"flow_decay_per_second": dodge_flow_decay_per_second,
+		"flow_speed_bonus": dodge_flow_speed_bonus,
+		"flow_distance_bonus": dodge_flow_distance_bonus,
+		"flow_recovery_reduction": dodge_flow_recovery_reduction,
+		"exit_carry_duration": dodge_exit_carry_duration,
+		"combat_chain_stamina_costs": dodge_chain_combat_stamina_costs,
+		"combat_chain_iframe_durations": dodge_chain_combat_iframe_durations,
+		"combat_recovery_ceiling": dodge_flow_combat_recovery_ceiling,
+		"combat_exit_carry_speed_mult": dodge_flow_combat_exit_carry_speed_mult,
+		"combat_exit_carry_duration": dodge_flow_combat_exit_carry_duration,
+		"base_speed": SPEED,
+		"committed_min_hold": dodge_committed_roll_min_hold,
+	}
+
+
+func _forward_dodge_charge_changed(active: bool, ratio: float, ready: bool) -> void:
+	dodge_charge_changed.emit(active, ratio, ready)
+
+
+func _forward_dodge_charge_released(ratio: float, direction: Vector2) -> void:
+	dodge_charge_released.emit(ratio, direction)
+
+
+func _forward_dodge_charge_cancelled(reason: StringName) -> void:
+	dodge_charge_cancelled.emit(reason)
+
+
+func _forward_dodge_chain_started(index: int, flow: float, direction: Vector2) -> void:
+	dodge_chain_started.emit(index, flow, direction)
+
+
+func _forward_dodge_chain_ended(count: int, flow: float, reason: StringName) -> void:
+	dodge_chain_ended.emit(count, flow, reason)
+
+
+func _forward_dodge_flow_changed(value: float, direction: Vector2) -> void:
+	dodge_flow_changed.emit(value, direction)
+
+
 func _compose_runtime_dependencies() -> OperatorRuntimeDependencies:
 	var dependencies := OperatorRuntimeDependenciesScript.new() as OperatorRuntimeDependencies
 	var world_root := get_parent()
@@ -1000,6 +1043,7 @@ func _exit_tree() -> void:
 
 func _ready():
 	bind_runtime_dependencies(_compose_runtime_dependencies())
+	_ensure_dodge_controller()
 	add_to_group("player")
 	guard_config = guard_config.duplicate(true) as OperatorGuardConfig
 	_guard_controller.setup(self, guard_config)
@@ -1191,8 +1235,7 @@ func _advance_simulation(delta: float) -> void:
 	and _fast_chain_terminal_restart_grace_remaining <= 0.0:
 		_fast_chain_neutral_pending = false
 		_obs_log(&"vigil_fast_chain_neutral", {"elapsed_since_chain_start": _fast_chain_elapsed_since_start()})
-	_dodge_cooldown_remaining = max(0.0, _dodge_cooldown_remaining - delta)
-	_dodge_iframe_timer = maxf(0.0, _dodge_iframe_timer - delta)
+	_ensure_dodge_controller().advance_clocks(delta)
 	current_recoil = max(0.0, current_recoil - recoil_decay * delta)
 	_update_weapon_heat(delta)
 	_update_pending_ranged_shot(delta)
@@ -1256,7 +1299,7 @@ func _advance_simulation(delta: float) -> void:
 	_handle_offhand_secondary_input(delta)
 	_update_ranged_ready_state()
 	_handle_dodge_input(delta)
-	if _dodge_charge_active:
+	if _ensure_dodge_controller().is_charging():
 		return
 	if _input_frame.just_pressed(&"build"):
 		if _try_terminal_deploy_or_pickup():
@@ -1319,13 +1362,13 @@ func _advance_movement(delta: float) -> void:
 		_regenerate_stamina(stamina_regen_per_second * delta)
 		move_and_slide()
 		return
-	if _dodge_active:
+	if _ensure_dodge_controller().is_active():
 		_reset_unstuck_detector()
 		_update_dodge(delta)
 		_update_stealth_noise_snapshot(true)
 		move_and_slide()
 		return
-	if _dodge_charge_active and _dodge_charge_timer >= maxf(0.0, dodge_tap_release_window):
+	if _ensure_dodge_controller().is_charging() and _ensure_dodge_controller().get_charge_hold_time() >= maxf(0.0, dodge_tap_release_window):
 		_reset_unstuck_detector()
 		velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * delta)
 		is_sprinting = false
@@ -1333,7 +1376,7 @@ func _advance_movement(delta: float) -> void:
 		_update_stealth_noise_snapshot(false)
 		move_and_slide()
 		return
-	if _dodge_recovery_active:
+	if _ensure_dodge_controller().is_recovering():
 		_reset_unstuck_detector()
 		_update_dodge_recovery(delta)
 		_update_stealth_noise_snapshot(false)
@@ -1391,16 +1434,12 @@ func _advance_movement(delta: float) -> void:
 	active_move_speed *= max(0.0, movement_surface_multiplier)
 	active_move_speed *= maxf(0.0, presentation_movement_multiplier)
 	var target_velocity: Vector2 = input_direction * active_move_speed
-	if _dodge_exit_timer > 0.0:
-		var carry_ratio := clampf(_dodge_exit_timer / maxf(0.001, dodge_exit_carry_duration), 0.0, 1.0)
-		var carry_target := _dodge_exit_velocity * carry_ratio
-		if moving:
-			target_velocity = carry_target.lerp(target_velocity, 1.0 - carry_ratio)
-		else:
-			target_velocity = carry_target
-		_dodge_exit_timer = maxf(0.0, _dodge_exit_timer - delta)
-		if _dodge_exit_timer <= 0.0:
-			_dodge_exit_velocity = Vector2.ZERO
+	target_velocity = _ensure_dodge_controller().set_exit_carry_target(
+		target_velocity,
+		moving,
+		delta,
+		_dodge_tuning()
+	)
 	var accel_rate: float = move_acceleration if moving else move_deceleration
 	if movement_profile != null:
 		accel_rate *= movement_profile.acceleration_multiplier
@@ -1608,10 +1647,10 @@ func _update_animation():
 			_portal_arrival_animation_active = false
 		else:
 			return
-	if _dodge_active:
+	if _ensure_dodge_controller().is_active():
 		_play_dodge_animation()
 		return
-	if _dodge_recovery_active:
+	if _ensure_dodge_controller().is_recovering():
 		_play_dodge_recovery_animation()
 		return
 	if _field_patch_active:
@@ -2067,8 +2106,8 @@ func _update_melee_presentation_posture(delta: float) -> void:
 		or _melee_fast_windup
 		or _melee_recovery_active
 		or _is_block_state_active()
-		or _dodge_active
-		or _dodge_recovery_active
+		or _ensure_dodge_controller().is_active()
+		or _ensure_dodge_controller().is_recovering()
 		or _is_equip_weapon_state_active()
 		or _is_sheathe_weapon_state_active()
 		or not _vigil_posture_bridge_action.is_empty()
@@ -2119,8 +2158,8 @@ func _is_unarmed_posture_preempted() -> bool:
 		or _melee_fast_windup
 		or _melee_recovery_active
 		or _modular_damage_reaction_active
-		or _dodge_active
-		or _dodge_recovery_active
+		or _ensure_dodge_controller().is_active()
+		or _ensure_dodge_controller().is_recovering()
 		or _field_patch_active
 		or _parry_neutral_lock_active
 		or _is_block_state_active()
@@ -5284,25 +5323,26 @@ func _try_melee_attack(intent: String = ""):
 	if not _is_melee_loadout_active():
 		return
 	var requested_kind := _get_requested_attack_kind(intent)
-	if requested_kind == "fast" and _dodge_active and _active_dodge_profile == &"tap":
+	var dodge := _ensure_dodge_controller()
+	if requested_kind == "fast" and dodge.is_active() and dodge.get_profile() == &"tap":
 		if _can_start_attack_now():
-			_dodge_fast_attack_buffered = true
+			dodge.set_fast_attack_buffered(true)
 			_obs_log(&"player_fast_attack_dodge_buffered", {
-				"dodge_time_remaining": _dodge_timer,
-				"dodge_cooldown_remaining": _dodge_cooldown_remaining,
+				"dodge_time_remaining": dodge.get_active_remaining(),
+				"dodge_cooldown_remaining": dodge.get_cooldown_remaining(),
 			})
 		else:
 			_buffer_attack(requested_kind)
 		return
-	if requested_kind == "fast" and _dodge_recovery_active \
-	and _active_dodge_profile == &"tap" and _can_start_attack_now():
+	if requested_kind == "fast" and dodge.is_recovering() \
+	and dodge.get_profile() == &"tap" and _can_start_attack_now():
 		_cancel_dodge_recovery_for_fast_attack()
 		_dodge_fast_attack_entry_pending = true
-	if (_dodge_active or _dodge_recovery_active) and _active_dodge_profile != &"tap":
+	if (dodge.is_active() or dodge.is_recovering()) and dodge.get_profile() != &"tap":
 		_buffer_attack(requested_kind)
 		_buffered_attack_timer = maxf(
 			_buffered_attack_timer,
-			_dodge_timer + _dodge_recovery_timer + _active_dodge_recovery_duration + 0.05
+			dodge.get_active_remaining() + dodge.get_recovery_remaining() + dodge.get_profile_recovery_duration() + 0.05
 		)
 		return
 	if _can_start_attack_now():
@@ -5695,7 +5735,7 @@ func _can_start_guard_from_secondary() -> bool:
 		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
 		return false
-	if _dodge_charge_active or _dodge_active or _dodge_recovery_active:
+	if _ensure_dodge_controller().is_busy():
 		return false
 	return _is_melee_loadout_active()
 
@@ -5759,7 +5799,7 @@ func _can_start_parry() -> bool:
 		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
 		return false
-	if _dodge_charge_active or _dodge_active or _dodge_recovery_active:
+	if _ensure_dodge_controller().is_busy():
 		return false
 	return _is_melee_loadout_active()
 
@@ -5893,7 +5933,7 @@ func _attack_kind_from_intent(intent: String) -> String:
 func _can_start_attack_now() -> bool:
 	if _field_patch_active:
 		return false
-	if _dodge_charge_active:
+	if _ensure_dodge_controller().is_charging():
 		return false
 	if _melee_active:
 		return false
@@ -6432,7 +6472,7 @@ func _start_fast_attack() -> void:
 			"attack_key": _melee_attack_key,
 			"direction": _melee_forward,
 			"skipped_phase": "windup",
-			"dodge_cooldown_remaining": _dodge_cooldown_remaining,
+			"dodge_cooldown_remaining": _ensure_dodge_controller().get_cooldown_remaining(),
 		})
 	if not is_unarmed_attack:
 		_play_melee_fast_swing_sfx(
@@ -9218,7 +9258,7 @@ func can_use_field_patch() -> bool:
 		return false
 	if _reload_active:
 		return false
-	if _dodge_charge_active or _dodge_active or _dodge_recovery_active:
+	if _ensure_dodge_controller().is_busy():
 		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active:
 		return false
@@ -9244,7 +9284,7 @@ func _get_field_patch_rejection_reason() -> StringName:
 		return &"runtime_lock"
 	if _reload_active:
 		return &"reloading"
-	if _dodge_charge_active or _dodge_active or _dodge_recovery_active:
+	if _ensure_dodge_controller().is_busy():
 		return &"dodging"
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or attack_phase != AttackPhase.NONE:
 		return &"attack_locked"
@@ -9620,6 +9660,7 @@ func _is_action_just_released_any(action_names: Array) -> bool:
 
 
 func _handle_dodge_input(delta: float = 0.0) -> void:
+	var dodge := _ensure_dodge_controller()
 	var dodge_just_pressed := _is_action_just_pressed_any(
 		["dodge"]
 	)
@@ -9633,13 +9674,13 @@ func _handle_dodge_input(delta: float = 0.0) -> void:
 			_buffer_attack("dodge")
 		return
 	if dodge_chain_enabled and dodge_just_pressed:
-		if _dodge_active:
-			var active_elapsed := maxf(0.0, _active_dodge_duration - _dodge_timer)
-			if active_elapsed >= maxf(0.0, dodge_chain_buffer_start):
+		var chain_window := dodge.get_chain_buffer_window(dodge_chain_buffer_start, dodge_chain_late_grace)
+		if dodge.is_active():
+			if bool(chain_window.active_open):
 				_buffer_dodge_chain(_resolve_dodge_direction(), &"active_window")
 			return
-		if _dodge_recovery_active:
-			if _dodge_recovery_elapsed <= maxf(0.0, dodge_chain_late_grace):
+		if dodge.is_recovering():
+			if bool(chain_window.recovery_open):
 				_buffer_dodge_chain(_resolve_dodge_direction(), &"late_grace")
 				_launch_buffered_dodge_chain()
 			return
@@ -9647,42 +9688,27 @@ func _handle_dodge_input(delta: float = 0.0) -> void:
 		if dodge_just_pressed:
 			_try_start_dodge()
 		return
-	if _dodge_charge_active:
+	if dodge.is_charging():
 		if _is_action_just_released_any(["dodge"]):
 			_release_dodge_charge()
 			return
 		if not _is_action_pressed_any(["dodge"]):
 			_cancel_dodge_charge(&"input_lost")
 			return
-		_dodge_charge_timer = minf(
-			maxf(0.0, dodge_charge_max_hold),
-			_dodge_charge_timer + maxf(0.0, delta)
-		)
-		var ratio := _get_dodge_charge_ratio()
+		var charge_state := dodge.advance_charge(delta, dodge_charge_max_hold, dodge_committed_roll_min_hold)
+		var ratio := float(charge_state.get("ratio", 0.0))
 		_update_dodge_charge_presentation(ratio)
-		dodge_charge_changed.emit(true, ratio, ratio >= 1.0)
 		return
 	if dodge_just_pressed:
 		_begin_dodge_charge()
 
 
 func _buffer_dodge_chain(direction: Vector2, source: StringName) -> bool:
-	if not dodge_chain_enabled or (not _dodge_active and not _dodge_recovery_active):
+	var result := _ensure_dodge_controller().buffer_chain(direction, source, dodge_chain_enabled)
+	if not bool(result.get("buffered", false)):
 		return false
-	var resolved_direction := direction.normalized()
-	if resolved_direction == Vector2.ZERO:
-		resolved_direction = _dodge_direction
-	_dodge_chain_buffered = true
-	_dodge_chain_direction = resolved_direction
 	_obs_increment(&"player_dodge_chain_inputs_buffered")
-	_obs_log(&"player_dodge_chain_buffered", {
-		"source": String(source),
-		"next_index": _dodge_chain_index + 1,
-		"flow": _dodge_flow,
-		"direction": resolved_direction,
-		"active_remaining": _dodge_timer,
-		"recovery_elapsed": _dodge_recovery_elapsed,
-	})
+	_obs_log(&"player_dodge_chain_buffered", result)
 	return true
 
 
@@ -9692,16 +9718,14 @@ func _begin_dodge_charge() -> bool:
 		if rejection_reason == &"insufficient_stamina":
 			dodge_charge_cancelled.emit(&"insufficient_stamina")
 		return false
-	_dodge_charge_active = true
-	_dodge_charge_timer = 0.0
-	_pending_dodge_direction = _resolve_dodge_direction()
-	_dodge_fast_attack_buffered = false
+	var begin_result := _ensure_dodge_controller().begin_charge(_resolve_dodge_direction())
+	if not bool(begin_result.get("started", false)):
+		return false
 	_begin_dodge_charge_presentation()
-	dodge_charge_changed.emit(true, 0.0, false)
 	_obs_increment(&"player_dodge_charge_started")
 	_obs_log(&"player_dodge_charge_started", {
 		"position": global_position,
-		"direction": _pending_dodge_direction,
+		"direction": _ensure_dodge_controller().get_pending_direction(),
 		"tap_window": dodge_tap_release_window,
 		"long_threshold": dodge_long_roll_min_hold,
 		"committed_threshold": dodge_committed_roll_min_hold,
@@ -9710,24 +9734,26 @@ func _begin_dodge_charge() -> bool:
 
 
 func _release_dodge_charge() -> bool:
-	if not _dodge_charge_active:
+	var release := _ensure_dodge_controller().release_charge(
+		dodge_charge_max_hold,
+		dodge_long_roll_min_hold,
+		dodge_committed_roll_min_hold,
+		dodge_committed_roll_min_hold
+	)
+	if not bool(release.get("released", false)):
 		return false
-	var hold_time := minf(maxf(0.0, dodge_charge_max_hold), _dodge_charge_timer)
-	var charge_ratio := _get_dodge_charge_ratio()
-	var direction := _pending_dodge_direction
-	var profile := _get_dodge_profile_for_hold(hold_time)
-	_dodge_charge_active = false
-	_dodge_charge_timer = 0.0
-	_pending_dodge_direction = Vector2.ZERO
+	var hold_time := float(release.hold_time)
+	var charge_ratio := float(release.ratio)
+	var direction: Vector2 = release.direction
+	var profile: StringName = release.profile
 	_finish_dodge_charge_presentation()
-	dodge_charge_changed.emit(false, charge_ratio, charge_ratio >= 1.0)
 	var started := _try_start_dodge_with_profile(direction, profile, charge_ratio)
 	if started:
-		dodge_charge_released.emit(charge_ratio, direction)
+		_ensure_dodge_controller().confirm_charge_release(charge_ratio, direction)
 	else:
 		var required_stamina := float(_get_dodge_profile_config(profile).get("stamina_cost", dodge_stamina_cost))
 		var rejection_reason := _get_dodge_start_rejection_reason(required_stamina)
-		dodge_charge_cancelled.emit(rejection_reason if not rejection_reason.is_empty() else &"release_rejected")
+		_ensure_dodge_controller().notify_charge_cancelled(rejection_reason if not rejection_reason.is_empty() else &"release_rejected")
 	_obs_log(&"player_dodge_charge_released", {
 		"hold_time": hold_time,
 		"profile": String(profile),
@@ -9737,15 +9763,11 @@ func _release_dodge_charge() -> bool:
 
 
 func _cancel_dodge_charge(reason: StringName = &"cancelled") -> void:
-	if not _dodge_charge_active:
+	var result := _ensure_dodge_controller().cancel_charge(reason, dodge_committed_roll_min_hold)
+	if not bool(result.get("cancelled", false)):
 		return
-	var hold_time := _dodge_charge_timer
-	_dodge_charge_active = false
-	_dodge_charge_timer = 0.0
-	_pending_dodge_direction = Vector2.ZERO
+	var hold_time := float(result.hold_time)
 	_finish_dodge_charge_presentation()
-	dodge_charge_changed.emit(false, _get_dodge_charge_ratio_for_hold(hold_time), false)
-	dodge_charge_cancelled.emit(reason)
 	_obs_increment(&"player_dodge_charge_cancelled")
 	_obs_log(&"player_dodge_charge_cancelled", {
 		"reason": String(reason),
@@ -9754,7 +9776,7 @@ func _cancel_dodge_charge(reason: StringName = &"cancelled") -> void:
 
 
 func _begin_dodge_charge_presentation() -> bool:
-	var direction := _pending_dodge_direction
+	var direction := _ensure_dodge_controller().get_pending_direction()
 	if direction.length_squared() <= 0.0001:
 		direction = _get_move_input_vector()
 	if direction.length_squared() <= 0.0001:
@@ -9816,7 +9838,7 @@ func _finish_dodge_charge_presentation() -> void:
 		animated_sprite.stop()
 		_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
 	_hide_modular_locomotion_layers()
-	if not _dodge_active and not _dodge_recovery_active:
+	if not _ensure_dodge_controller().is_active() and not _ensure_dodge_controller().is_recovering():
 		_update_animation()
 
 
@@ -9855,32 +9877,24 @@ func _resolve_dodge_presentation_animation(
 
 
 func _get_dodge_charge_ratio() -> float:
-	return _get_dodge_charge_ratio_for_hold(_dodge_charge_timer)
+	return _ensure_dodge_controller().get_charge_ratio(dodge_committed_roll_min_hold)
 
 
 func _get_dodge_charge_ratio_for_hold(hold_time: float) -> float:
-	var ready_time := maxf(0.001, dodge_committed_roll_min_hold)
-	return clampf(maxf(0.0, hold_time) / ready_time, 0.0, 1.0)
+	return _ensure_dodge_controller().get_charge_ratio_for_hold(hold_time, dodge_committed_roll_min_hold)
 
 
 func get_dodge_charge_status() -> Dictionary:
-	var ratio := _get_dodge_charge_ratio()
-	return {
-		"active": _dodge_charge_active,
-		"ratio": ratio,
-		"ready": _dodge_charge_active and ratio >= 1.0,
-		"hold_time": _dodge_charge_timer,
-		"ready_time": dodge_committed_roll_min_hold,
-	}
+	return _ensure_dodge_controller().get_charge_status(dodge_committed_roll_min_hold)
 
 
 func _get_dodge_profile_for_hold(hold_time: float) -> StringName:
-	var clamped_hold := minf(maxf(0.0, dodge_charge_max_hold), maxf(0.0, hold_time))
-	if clamped_hold >= maxf(dodge_long_roll_min_hold, dodge_committed_roll_min_hold):
-		return &"committed"
-	if clamped_hold >= maxf(0.0, dodge_long_roll_min_hold):
-		return &"long"
-	return &"tap"
+	return _ensure_dodge_controller().get_profile_for_hold(
+		hold_time,
+		dodge_charge_max_hold,
+		dodge_long_roll_min_hold,
+		dodge_committed_roll_min_hold
+	)
 
 
 func _try_start_dodge() -> bool:
@@ -9892,36 +9906,22 @@ func _try_start_dodge_with_profile(direction: Vector2, profile: StringName, char
 	var stamina_cost := float(config.get("stamina_cost", dodge_stamina_cost))
 	if not _can_start_dodge(stamina_cost):
 		return false
+	var dodge := _ensure_dodge_controller()
+	var started := dodge.start_dodge(
+		direction,
+		profile,
+		charge_ratio,
+		_is_combat_pressure_active(),
+		stamina,
+		_is_dodge_backstep_request(direction),
+		_dodge_tuning()
+	)
+	if not bool(started.get("started", false)):
+		return false
 	_cancel_attack_drive(true)
 	_reset_fast_chain()
 	_parry_neutral_lock_active = false
-	_dodge_fast_attack_buffered = false
-	_dodge_chain_buffered = false
-	_dodge_chain_direction = Vector2.ZERO
-	_dodge_chain_index = 0
-	_dodge_chain_last_turn_angle = 0.0
-	_dodge_chain_last_retention = 1.0
-	_dodge_chain_end_reason = &"opener_complete"
-	_dodge_recovery_elapsed = 0.0
-	_dodge_exit_timer = 0.0
-	_dodge_exit_velocity = Vector2.ZERO
-	_active_dodge_profile = StringName(config.get("profile", &"tap"))
-	_active_dodge_speed = dodge_speed * float(config.get("speed_multiplier", 1.0))
-	_active_dodge_duration = maxf(0.05, dodge_duration)
-	_active_dodge_recovery_duration = maxf(
-		0.0,
-		dodge_recovery_duration * float(config.get("recovery_multiplier", 1.0))
-	)
-	_dodge_direction = direction.normalized() if direction.length_squared() > 0.0001 else _resolve_dodge_direction()
-	_dodge_backstep_active = _is_dodge_backstep_request(_dodge_direction)
-	_dodge_active = true
-	_dodge_recovery_active = false
-	_dodge_timer = _active_dodge_duration
-	_dodge_iframe_timer = minf(maxf(0.0, dodge_iframe_duration), _dodge_timer)
-	_dodge_recovery_timer = 0.0
-	_dodge_cooldown_remaining = 0.0
-	_establish_dodge_flow(_active_dodge_profile, charge_ratio, _dodge_direction)
-	_spend_stamina(stamina_cost, &"dodge")
+	_spend_stamina(float(started.stamina_cost), &"dodge")
 	is_sprinting = false
 	is_sneaking = false
 	_exit_ranged_ready()
@@ -9929,102 +9929,49 @@ func _try_start_dodge_with_profile(direction: Vector2, profile: StringName, char
 		_end_modular_primary_ranged_fire_presentation()
 		_set_ranged_aim_camera_active(false)
 	_cancel_reload()
-	velocity = _dodge_direction * _active_dodge_speed
-	movement_direction = _dodge_direction
-	visual_idle_direction = aim_direction.normalized() if _is_aiming_for_facing() and aim_direction.length_squared() > 0.0001 else _dodge_direction
+	velocity = started.direction * float(started.speed)
+	movement_direction = started.direction
+	visual_idle_direction = aim_direction.normalized() if _is_aiming_for_facing() and aim_direction.length_squared() > 0.0001 else started.direction
 	_play_dodge_animation(true)
 	var dodge_audio := _play_combat_sfx(DODGE_ROLL_SOUND, global_position, -3.0)
-	if dodge_audio != null and _active_dodge_profile != &"tap":
-		dodge_audio.volume_db += 1.0 if _active_dodge_profile == &"committed" else 0.5
-		dodge_audio.pitch_scale = 0.90 if _active_dodge_profile == &"committed" else 0.96
+	var started_profile: StringName = started.profile
+	if dodge_audio != null and started_profile != &"tap":
+		dodge_audio.volume_db += 1.0 if started_profile == &"committed" else 0.5
+		dodge_audio.pitch_scale = 0.90 if started_profile == &"committed" else 0.96
 	_obs_increment(&"player_dodges_started", 1)
 	_obs_log(&"player_dodge_started", {
 		"position": global_position,
-		"direction": _dodge_direction,
-		"backstep": _dodge_backstep_active,
-		"profile": String(_active_dodge_profile),
-		"speed": _active_dodge_speed,
-		"duration": _active_dodge_duration,
-		"iframe_duration": _dodge_iframe_timer,
-		"recovery_duration": _active_dodge_recovery_duration,
-		"stamina_cost": stamina_cost,
-		"cooldown": _dodge_cooldown_remaining,
-		"flow": _dodge_flow,
+		"direction": started.direction,
+		"backstep": started.backstep,
+		"profile": String(started_profile),
+		"speed": started.speed,
+		"duration": started.duration,
+		"iframe_duration": started.iframe_duration,
+		"recovery_duration": started.recovery_duration,
+		"stamina_cost": started.stamina_cost,
+		"cooldown": dodge.get_cooldown_remaining(),
+		"flow": dodge.get_flow_value(),
 		"stamina": stamina,
 	})
-	_obs_increment(StringName("player_dodges_started_%s" % String(_active_dodge_profile)))
+	_obs_increment(StringName("player_dodges_started_%s" % String(started_profile)))
 	_obs_gauge(&"player_stamina", stamina)
 	return true
 
 
 func _get_dodge_profile_config(profile: StringName) -> Dictionary:
-	match profile:
-		&"long":
-			return {
-				"profile": &"long",
-				"speed_multiplier": maxf(1.0, dodge_long_distance_multiplier),
-				"recovery_multiplier": maxf(1.0, dodge_long_recovery_multiplier),
-				"stamina_cost": maxf(dodge_stamina_cost, dodge_long_stamina_cost),
-			}
-		&"committed":
-			return {
-				"profile": &"committed",
-				"speed_multiplier": maxf(1.0, dodge_committed_distance_multiplier),
-				"recovery_multiplier": maxf(1.0, dodge_committed_recovery_multiplier),
-				"stamina_cost": maxf(dodge_stamina_cost, dodge_committed_stamina_cost),
-			}
-		_:
-			return {
-				"profile": &"tap",
-				"speed_multiplier": 1.0,
-				"recovery_multiplier": 1.0,
-				"stamina_cost": dodge_stamina_cost,
-			}
-
-
-func _establish_dodge_flow(profile: StringName, charge_ratio: float, direction: Vector2) -> void:
-	var initial_flow := 0.35
-	if charge_ratio >= 0.0:
-		initial_flow = lerpf(0.35, 1.0, clampf(charge_ratio, 0.0, 1.0))
-	else:
-		match profile:
-			&"long":
-				initial_flow = 0.65
-			&"committed":
-				initial_flow = 1.0
-	_set_dodge_flow(initial_flow, direction)
-	_dodge_flow_decay_timer = maxf(0.0, dodge_flow_decay_delay)
+	return _ensure_dodge_controller().get_profile_config(profile, _dodge_tuning())
 
 
 func _flow_retention_for_turn(old_direction: Vector2, new_direction: Vector2) -> float:
-	if old_direction.length_squared() <= 0.0001 or new_direction.length_squared() <= 0.0001:
-		return 0.0
-	var angle := absf(rad_to_deg(old_direction.normalized().angle_to(new_direction.normalized())))
-	if angle <= 45.001:
-		return 1.0
-	if angle <= 90.001:
-		return 0.75
-	if angle <= 135.001:
-		return 0.40
-	return 0.0
+	return _ensure_dodge_controller().flow_retention_for_turn(old_direction, new_direction)
 
 
 func _dodge_chain_animation_start_frame(turn_angle: float) -> int:
-	if turn_angle <= 45.001:
-		return 2
-	if turn_angle <= 90.001:
-		return 1
-	return 0
+	return _ensure_dodge_controller().get_chain_animation_start_frame(turn_angle)
 
 
 func _get_dodge_flow_end_speed_factor(flow: float) -> float:
-	var safe_flow := clampf(flow, 0.0, 1.0)
-	var base_end_speed_factor := 0.45
-	var peak_multiplier := lerpf(1.0, 1.0 + maxf(0.0, dodge_flow_speed_bonus), safe_flow)
-	var distance_multiplier := lerpf(1.0, 1.0 + maxf(0.0, dodge_flow_distance_bonus), safe_flow)
-	var base_average_factor := (1.0 + base_end_speed_factor) * 0.5
-	var desired_average_factor := base_average_factor * distance_multiplier / maxf(0.001, peak_multiplier)
-	return clampf(desired_average_factor * 2.0 - 1.0, base_end_speed_factor, 1.0)
+	return _ensure_dodge_controller().get_flow_end_speed_factor(flow, _dodge_tuning())
 
 
 ## Combat-pressure dodge fatigue: escalating per-link stamina cost. Chain
@@ -10032,19 +9979,13 @@ func _get_dodge_flow_end_speed_factor(flow: float) -> float:
 ## (out-of-combat) dodges remain free via the existing _spend_stamina() gate
 ## regardless of what this returns.
 func _get_dodge_chain_link_stamina_cost(chain_index: int, combat_pressure_active: bool) -> float:
-	if not combat_pressure_active or dodge_chain_combat_stamina_costs.is_empty():
-		return dodge_stamina_cost
-	var clamped_index := mini(maxi(chain_index, 0), dodge_chain_combat_stamina_costs.size() - 1)
-	return dodge_chain_combat_stamina_costs[clamped_index]
+	return _ensure_dodge_controller().get_chain_stamina_cost(chain_index, combat_pressure_active, _dodge_tuning())
 
 
 ## Combat-pressure dodge fatigue: shrinking per-link iframe duration.
 ## Traversal iframe duration (dodge_iframe_duration) is unaffected.
 func _get_dodge_chain_link_iframe_duration(chain_index: int, combat_pressure_active: bool) -> float:
-	if not combat_pressure_active or dodge_chain_combat_iframe_durations.is_empty():
-		return dodge_iframe_duration
-	var clamped_index := mini(maxi(chain_index, 0), dodge_chain_combat_iframe_durations.size() - 1)
-	return dodge_chain_combat_iframe_durations[clamped_index]
+	return _ensure_dodge_controller().get_chain_iframe_duration(chain_index, combat_pressure_active, _dodge_tuning())
 
 
 ## Under combat pressure, recovery lerps toward dodge_flow_combat_recovery_ceiling
@@ -10052,104 +9993,67 @@ func _get_dodge_chain_link_iframe_duration(chain_index: int, combat_pressure_act
 ## a long combat escape chain must not get a fast-recovery reward. Short
 ## chains (low Flow) keep the existing responsive base value either way.
 func _resolve_dodge_recovery_duration(combat_pressure_active: bool) -> float:
-	if combat_pressure_active:
-		return maxf(
-			0.0,
-			lerpf(dodge_recovery_duration, dodge_flow_combat_recovery_ceiling, _dodge_flow)
-		)
-	return maxf(
-		0.0,
-		dodge_recovery_duration * lerpf(1.0, maxf(0.0, 1.0 - dodge_flow_recovery_reduction), _dodge_flow)
-	)
+	return _ensure_dodge_controller().resolve_recovery_duration(combat_pressure_active, _dodge_tuning())
 
 
 func _launch_buffered_dodge_chain() -> bool:
-	if not _dodge_chain_buffered:
-		return false
-	var next_direction := _dodge_chain_direction.normalized()
-	_dodge_chain_buffered = false
-	_dodge_chain_direction = Vector2.ZERO
-	if next_direction == Vector2.ZERO:
-		next_direction = _dodge_direction
-	if _is_dead or _enemy_impact_lock_timer > 0.0 or _portal_transition_locked or _portal_arrival_animation_active:
-		_dodge_chain_end_reason = &"runtime_lock"
+	var dodge := _ensure_dodge_controller()
+	if not dodge.is_chain_buffered():
 		return false
 	var combat_pressure_active := _is_combat_pressure_active()
-	var upcoming_link_cost := _get_dodge_chain_link_stamina_cost(_dodge_chain_index + 1, combat_pressure_active)
-	if stamina < maxf(0.0, upcoming_link_cost):
-		_dodge_chain_end_reason = &"insufficient_stamina"
-		dodge_charge_cancelled.emit(&"insufficient_stamina")
-		_obs_increment(&"player_dodge_chain_rejected_stamina")
-		return false
-
-	var previous_direction := _dodge_flow_direction if _dodge_flow_direction.length_squared() > 0.0001 else _dodge_direction
-	var turn_angle := absf(rad_to_deg(previous_direction.normalized().angle_to(next_direction)))
-	var retention := _flow_retention_for_turn(previous_direction, next_direction)
-	var retained_flow := clampf(_dodge_flow * retention, 0.0, 1.0)
-	_dodge_chain_last_turn_angle = turn_angle
-	_dodge_chain_last_retention = retention
-	_set_dodge_flow(retained_flow, next_direction)
-
-	_dodge_chain_index += 1
-	_dodge_chain_end_reason = &"input_released"
-	_active_dodge_profile = &"chain"
-	_active_dodge_speed = dodge_speed * lerpf(1.0, 1.0 + maxf(0.0, dodge_flow_speed_bonus), _dodge_flow)
-	_active_dodge_duration = maxf(0.05, dodge_duration)
-	_active_dodge_recovery_duration = _resolve_dodge_recovery_duration(combat_pressure_active)
-	_dodge_direction = next_direction
-	_dodge_backstep_active = _is_dodge_backstep_request(_dodge_direction)
-	_dodge_active = true
-	_dodge_recovery_active = false
-	_dodge_timer = _active_dodge_duration
-	var link_iframe_duration := _get_dodge_chain_link_iframe_duration(_dodge_chain_index, combat_pressure_active)
-	_dodge_iframe_timer = minf(maxf(0.0, link_iframe_duration), _dodge_timer)
-	_dodge_recovery_timer = 0.0
-	_dodge_recovery_elapsed = 0.0
-	_dodge_cooldown_remaining = 0.0
-	_dodge_fast_attack_buffered = false
-	_spend_stamina(upcoming_link_cost, &"dodge_chain")
-	_obs_log(&"combat_dodge_chain_link", {
-		"index": _dodge_chain_index,
+	var result := dodge.launch_buffered_chain({
+		"runtime_locked": _is_dead or _enemy_impact_lock_timer > 0.0 or _portal_transition_locked or _portal_arrival_animation_active,
 		"combat_pressure": combat_pressure_active,
-		"flow": _dodge_flow,
+		"available_stamina": stamina,
+		"backstep": _is_dodge_backstep_request(dodge.get_chain_buffer_direction()),
+	}, _dodge_tuning())
+	if not bool(result.get("started", false)):
+		if result.get("reason", &"") == &"insufficient_stamina":
+			dodge.notify_charge_cancelled(&"insufficient_stamina")
+			_obs_increment(&"player_dodge_chain_rejected_stamina")
+		return false
+	_spend_stamina(float(result.stamina_cost), &"dodge_chain")
+	_obs_log(&"combat_dodge_chain_link", {
+		"index": result.index,
+		"combat_pressure": combat_pressure_active,
+		"flow": result.flow,
 	})
 	_obs_log(&"combat_dodge_chain_stamina_cost", {
-		"index": _dodge_chain_index,
+		"index": result.index,
 		"combat_pressure": combat_pressure_active,
-		"cost": upcoming_link_cost,
+		"cost": result.stamina_cost,
 	})
 	_obs_log(&"combat_dodge_chain_iframe_duration", {
-		"index": _dodge_chain_index,
+		"index": result.index,
 		"combat_pressure": combat_pressure_active,
-		"duration": _dodge_iframe_timer,
+		"duration": result.iframe_duration,
 	})
 	is_sprinting = false
 	is_sneaking = false
-	velocity = _dodge_direction * _active_dodge_speed
-	movement_direction = _dodge_direction
-	visual_idle_direction = _dodge_direction
-	var start_frame := _dodge_chain_animation_start_frame(turn_angle)
+	velocity = result.direction * float(result.speed)
+	movement_direction = result.direction
+	visual_idle_direction = result.direction
+	var start_frame := int(result.animation_start_frame)
 	var used_link_presentation := false
-	if turn_angle <= 90.001:
+	if float(result.turn_angle) <= 90.001:
 		used_link_presentation = _play_dodge_chain_link_presentation()
 	if not used_link_presentation:
 		_dodge_chain_presentation_active = false
 		_play_dodge_animation(true, start_frame)
 	var chain_audio := _play_combat_sfx(DODGE_ROLL_SOUND, global_position, -2.5)
 	if chain_audio != null:
-		chain_audio.pitch_scale = minf(1.08, 1.0 + float(_dodge_chain_index) * 0.025)
-	dodge_chain_started.emit(_dodge_chain_index, _dodge_flow, _dodge_direction)
+		chain_audio.pitch_scale = minf(1.08, 1.0 + float(result.index) * 0.025)
 	_obs_increment(&"player_dodge_chain_links_started")
-	_obs_gauge(&"player_dodge_chain_index", _dodge_chain_index)
-	_obs_gauge(&"player_dodge_flow", _dodge_flow)
+	_obs_gauge(&"player_dodge_chain_index", result.index)
+	_obs_gauge(&"player_dodge_flow", result.flow)
 	_obs_log(&"player_dodge_chain_started", {
-		"index": _dodge_chain_index,
-		"flow": _dodge_flow,
-		"direction": _dodge_direction,
-		"turn_angle": turn_angle,
-		"retention": retention,
-		"speed": _active_dodge_speed,
-		"recovery_duration": _active_dodge_recovery_duration,
+		"index": result.index,
+		"flow": result.flow,
+		"direction": result.direction,
+		"turn_angle": result.turn_angle,
+		"retention": result.retention,
+		"speed": result.speed,
+		"recovery_duration": result.recovery_duration,
 		"animation_start_frame": start_frame,
 		"requested_presentation_sector": _dodge_requested_presentation_sector,
 		"resolved_body_sector": _dodge_resolved_presentation_sector,
@@ -10157,7 +10061,7 @@ func _launch_buffered_dodge_chain() -> bool:
 		"presentation_fallback": (
 			_dodge_requested_presentation_sector != _dodge_resolved_presentation_sector
 		),
-		"iframe_duration": _dodge_iframe_timer,
+		"iframe_duration": result.iframe_duration,
 		"stamina": stamina,
 	})
 	return true
@@ -10168,7 +10072,7 @@ func _play_dodge_chain_link_presentation() -> bool:
 		return false
 	var resolved := _resolve_dodge_presentation_animation(
 		DODGE_CHAIN_LINK_BASE,
-		_dodge_direction
+		_ensure_dodge_controller().get_direction()
 	)
 	var animation_name: StringName = resolved.get("animation", &"")
 	if animation_name.is_empty():
@@ -10198,103 +10102,57 @@ func _clear_dodge_body_presentation() -> void:
 
 
 func _set_dodge_flow(value: float, direction: Vector2) -> void:
-	var clamped_value := clampf(value, 0.0, 1.0)
+	var dodge := _ensure_dodge_controller()
+	var previous_flow := dodge.get_flow_value()
+	var previous_direction := dodge.get_flow_direction()
+	dodge.set_flow(value, direction)
 	var normalized_direction := direction.normalized()
-	var changed := not is_equal_approx(clamped_value, _dodge_flow) \
-		or (normalized_direction != Vector2.ZERO and not normalized_direction.is_equal_approx(_dodge_flow_direction))
-	_dodge_flow = clamped_value
-	if normalized_direction != Vector2.ZERO:
-		_dodge_flow_direction = normalized_direction
-	if _dodge_flow <= 0.0 and normalized_direction == Vector2.ZERO:
-		_dodge_flow_direction = Vector2.ZERO
+	var changed := not is_equal_approx(dodge.get_flow_value(), previous_flow) \
+		or (normalized_direction != Vector2.ZERO and not normalized_direction.is_equal_approx(previous_direction))
 	if changed:
-		dodge_flow_changed.emit(_dodge_flow, _dodge_flow_direction)
-		_obs_gauge(&"player_dodge_flow", _dodge_flow)
+		_obs_gauge(&"player_dodge_flow", dodge.get_flow_value())
 
 
 func _update_dodge_flow_decay(delta: float) -> void:
-	if _dodge_flow <= 0.0:
-		return
-	if _dodge_charge_active or _dodge_active or _dodge_recovery_active or _dodge_exit_timer > 0.0:
-		_dodge_flow_decay_timer = maxf(0.0, dodge_flow_decay_delay)
-		return
-	if _dodge_flow_decay_timer > 0.0:
-		_dodge_flow_decay_timer = maxf(0.0, _dodge_flow_decay_timer - delta)
-		return
-	var decay_rate := maxf(0.0, dodge_flow_decay_per_second)
-	var move_direction := _get_move_input_vector()
-	if is_sprinting and move_direction.length_squared() > 0.01 \
-	and move_direction.normalized().dot(_dodge_flow_direction) >= 0.70:
-		decay_rate *= 0.45
-	var next_flow := maxf(0.0, _dodge_flow - decay_rate * delta)
-	_set_dodge_flow(next_flow, _dodge_flow_direction if next_flow > 0.0 else Vector2.ZERO)
-
-
-func _begin_dodge_exit_carry() -> void:
-	if _dodge_flow <= 0.0 or _dodge_flow_direction.length_squared() <= 0.0001:
-		_dodge_exit_velocity = Vector2.ZERO
-		_dodge_exit_timer = 0.0
-		return
-	# Under combat pressure, exit carry is capped well below the traversal
-	# maximum -- a long combat escape chain must not exit into a long,
-	# fast, hard-to-punish slide.
-	var carry_speed_mult := dodge_flow_combat_exit_carry_speed_mult if _is_combat_pressure_active() else 1.45
-	var carry_duration := dodge_flow_combat_exit_carry_duration if _is_combat_pressure_active() else dodge_exit_carry_duration
-	var exit_speed := SPEED * lerpf(1.0, carry_speed_mult, _dodge_flow)
-	_dodge_exit_velocity = _dodge_flow_direction * exit_speed
-	_dodge_exit_timer = maxf(0.0, carry_duration)
-	velocity = _dodge_exit_velocity
+	var dodge := _ensure_dodge_controller()
+	var previous_flow := dodge.get_flow_value()
+	dodge.update_flow_decay(delta, _get_move_input_vector(), is_sprinting, _dodge_tuning(), _is_combat_pressure_active())
+	if not is_equal_approx(previous_flow, dodge.get_flow_value()):
+		_obs_gauge(&"player_dodge_flow", dodge.get_flow_value())
 
 
 func _finish_dodge_flow_sequence(reason: StringName, allow_exit_carry: bool = true) -> void:
-	var final_flow := _dodge_flow
-	var chain_count := _dodge_chain_index
+	var result := _ensure_dodge_controller().finish_flow_sequence(reason, allow_exit_carry, _is_combat_pressure_active(), _dodge_tuning())
 	if allow_exit_carry:
-		_begin_dodge_exit_carry()
-	else:
-		_dodge_exit_velocity = Vector2.ZERO
-		_dodge_exit_timer = 0.0
-	if chain_count > 0:
-		dodge_chain_ended.emit(chain_count, final_flow, reason)
+		velocity = result.exit_velocity
 	_obs_log(&"player_dodge_chain_ended", {
-		"count": chain_count,
-		"flow": final_flow,
-		"direction": _dodge_flow_direction,
+		"count": result.count,
+		"flow": result.flow,
+		"direction": result.direction,
 		"reason": String(reason),
-		"exit_velocity": _dodge_exit_velocity,
-		"exit_duration": _dodge_exit_timer,
+		"exit_velocity": result.exit_velocity,
+		"exit_duration": result.exit_duration,
 	})
 	_obs_gauge(&"player_dodge_chain_index", 0)
 	_obs_log(&"combat_dodge_chain_ended", {
-		"count": chain_count,
-		"flow": final_flow,
+		"count": result.count,
+		"flow": result.flow,
 		"combat_pressure": _is_combat_pressure_active(),
 		"reason": String(reason),
 	})
-	_dodge_chain_buffered = false
-	_dodge_chain_direction = Vector2.ZERO
-	_dodge_chain_index = 0
-	_dodge_flow_decay_timer = maxf(0.0, dodge_flow_decay_delay)
 
 
 func get_dodge_flow_status() -> Dictionary:
-	return {
-		"flow": _dodge_flow,
-		"direction": _dodge_flow_direction,
-		"chain_index": _dodge_chain_index,
-		"chain_buffered": _dodge_chain_buffered,
-		"chain_direction": _dodge_chain_direction,
-		"turn_angle": _dodge_chain_last_turn_angle,
-		"retention": _dodge_chain_last_retention,
-		"exit_velocity": _dodge_exit_velocity,
-		"exit_time_remaining": _dodge_exit_timer,
+	return _ensure_dodge_controller().get_flow_status({
 		"requested_presentation_sector": _dodge_requested_presentation_sector,
 		"resolved_body_sector": _dodge_resolved_presentation_sector,
 		"presentation_animation": _dodge_presentation_animation,
-		"presentation_fallback": (
-			_dodge_requested_presentation_sector != _dodge_resolved_presentation_sector
-		),
-	}
+		"presentation_fallback": _dodge_requested_presentation_sector != _dodge_resolved_presentation_sector,
+	})
+
+
+func get_dodge_runtime_status() -> Dictionary:
+	return _ensure_dodge_controller().get_runtime_status()
 
 
 func _can_start_dodge(required_stamina: float = -1.0) -> bool:
@@ -10302,7 +10160,8 @@ func _can_start_dodge(required_stamina: float = -1.0) -> bool:
 
 
 func _get_dodge_start_rejection_reason(required_stamina: float = -1.0) -> StringName:
-	if _dodge_charge_active or _dodge_active or _dodge_recovery_active or _dodge_cooldown_remaining > 0.0:
+	var dodge := _ensure_dodge_controller()
+	if dodge.is_busy() or dodge.get_cooldown_remaining() > 0.0:
 		return &"dodge_locked"
 	if _is_dead or _enemy_impact_lock_timer > 0.0 or _is_terminal_open() or _is_ui_text_input_focused():
 		return &"runtime_lock"
@@ -10340,60 +10199,39 @@ func _is_dodge_backstep_request(dodge_direction: Vector2) -> bool:
 
 
 func _update_dodge(delta: float) -> void:
-	_dodge_timer = maxf(0.0, _dodge_timer - delta)
-	var active_duration := _active_dodge_duration if _active_dodge_duration > 0.0 else maxf(0.05, dodge_duration)
-	var active_speed := _active_dodge_speed if _active_dodge_speed > 0.0 else dodge_speed
-	var remaining_ratio := _dodge_timer / active_duration
-	var end_speed_factor := 0.45
-	if _active_dodge_profile == &"chain":
-		end_speed_factor = _get_dodge_flow_end_speed_factor(_dodge_flow)
-	var eased_speed := active_speed * lerpf(end_speed_factor, 1.0, remaining_ratio)
-	velocity = _dodge_direction * eased_speed
-	if _dodge_timer <= 0.0:
-		_dodge_active = false
+	var result := _ensure_dodge_controller().advance_active(delta, _dodge_tuning())
+	velocity = result.get("velocity", Vector2.ZERO)
+	if bool(result.get("ended", false)):
 		_start_dodge_recovery()
 
 
 func _start_dodge_recovery() -> void:
-	_dodge_iframe_timer = 0.0
-	if _dodge_chain_buffered and _launch_buffered_dodge_chain():
+	var dodge := _ensure_dodge_controller()
+	if dodge.is_chain_buffered() and _launch_buffered_dodge_chain():
 		return
 	_dodge_chain_presentation_active = false
-	var recovery_duration := _active_dodge_recovery_duration \
-		if _active_dodge_duration > 0.0 else dodge_recovery_duration
-	_dodge_recovery_timer = maxf(0.0, recovery_duration)
-	_dodge_recovery_elapsed = 0.0
-	_dodge_cooldown_remaining = maxf(dodge_cooldown, _dodge_recovery_timer)
-	if _dodge_fast_attack_buffered and _active_dodge_profile == &"tap":
-		_dodge_fast_attack_buffered = false
-		_dodge_recovery_active = true
+	var recovery := dodge.begin_recovery(dodge_cooldown)
+	if dodge.has_fast_attack_buffered() and dodge.get_profile() == &"tap":
+		dodge.consume_fast_attack_buffered()
+		dodge.set_recovery_active(true)
 		_cancel_dodge_recovery_for_fast_attack()
 		_dodge_fast_attack_entry_pending = true
 		_request_attack_state("fast")
 		return
-	if _dodge_recovery_timer <= 0.0 or not _has_dodge_recovery_animation():
-		var completed_profile := _active_dodge_profile
+	if float(recovery.duration) <= 0.0 or not _has_dodge_recovery_animation():
+		var completed_profile := dodge.complete_recovery()
 		var will_consume_attack := completed_profile != &"tap" and not _buffered_attack_kind.is_empty()
-		_dodge_recovery_active = false
 		velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * get_physics_process_delta_time())
-		_active_dodge_profile = &"tap"
-		_finish_dodge_flow_sequence(_dodge_chain_end_reason, not will_consume_attack)
+		_finish_dodge_flow_sequence(dodge.get_chain_end_reason(), not will_consume_attack)
 		if will_consume_attack:
 			_set_dodge_flow(0.0, Vector2.ZERO)
 			_request_attack_state(_consume_buffered_attack())
 		return
-	_dodge_recovery_active = true
 	_play_dodge_recovery_animation(true)
 
 
 func _cancel_dodge_recovery_for_fast_attack() -> void:
-	_dodge_active = false
-	_dodge_recovery_active = false
-	_dodge_timer = 0.0
-	_dodge_iframe_timer = 0.0
-	_dodge_recovery_timer = 0.0
-	_dodge_backstep_active = false
-	_active_dodge_profile = &"tap"
+	_ensure_dodge_controller().cancel_recovery_for_fast_attack(_is_combat_pressure_active(), _dodge_tuning())
 	_clear_dodge_body_presentation()
 	_hide_dodge_fx()
 	_finish_dodge_flow_sequence(&"attack_cancel", false)
@@ -10404,45 +10242,31 @@ func _cancel_dodge_recovery_for_fast_attack() -> void:
 
 
 func _update_dodge_recovery(delta: float) -> void:
-	_dodge_recovery_elapsed += delta
-	_dodge_recovery_timer = maxf(0.0, _dodge_recovery_timer - delta)
+	var result := _ensure_dodge_controller().advance_recovery(delta)
 	velocity = velocity.move_toward(Vector2.ZERO, move_deceleration * delta)
-	if _dodge_recovery_timer <= 0.0:
-		var completed_profile := _active_dodge_profile
+	if bool(result.get("ended", false)):
+		var completed_profile: StringName = result.profile
 		var will_consume_attack := completed_profile != &"tap" and not _buffered_attack_kind.is_empty()
-		_dodge_recovery_active = false
-		_dodge_backstep_active = false
-		_active_dodge_profile = &"tap"
 		_hide_dodge_fx()
-		_finish_dodge_flow_sequence(_dodge_chain_end_reason, not will_consume_attack)
+		_finish_dodge_flow_sequence(_ensure_dodge_controller().get_chain_end_reason(), not will_consume_attack)
 		if will_consume_attack:
 			_set_dodge_flow(0.0, Vector2.ZERO)
 			_request_attack_state(_consume_buffered_attack())
 
 
 func _cancel_dodge(reason: StringName = &"cancelled") -> void:
-	var had_flow_sequence := _dodge_flow > 0.0 or _dodge_chain_index > 0
+	var dodge := _ensure_dodge_controller()
+	var flow_before := dodge.get_flow_value()
+	var chain_before := dodge.get_chain_index()
 	_cancel_dodge_charge(reason)
-	_dodge_active = false
-	_dodge_recovery_active = false
-	_dodge_timer = 0.0
-	_dodge_iframe_timer = 0.0
-	_dodge_recovery_timer = 0.0
-	_dodge_backstep_active = false
-	_dodge_fast_attack_buffered = false
-	_active_dodge_profile = &"tap"
-	_active_dodge_speed = 0.0
-	_active_dodge_duration = 0.0
-	_active_dodge_recovery_duration = 0.0
+	dodge.cancel(reason, _is_combat_pressure_active(), _dodge_tuning())
 	_clear_dodge_body_presentation()
 	_hide_dodge_fx()
-	if had_flow_sequence:
-		_finish_dodge_flow_sequence(reason, false)
-	_set_dodge_flow(0.0, Vector2.ZERO)
+	_obs_log(&"player_dodge_cancelled", {"reason": String(reason), "flow": flow_before, "chain_count": chain_before})
 
 
 func _is_dodge_invulnerable() -> bool:
-	return _dodge_active and _dodge_iframe_timer > 0.0 and not _is_dead
+	return _ensure_dodge_controller().is_invulnerable(_is_dead)
 
 
 func is_dodge_invulnerable() -> bool:
@@ -10450,15 +10274,7 @@ func is_dodge_invulnerable() -> bool:
 
 
 func get_dodge_telemetry_phase() -> StringName:
-	if _dodge_charge_active:
-		return &"windup"
-	if _dodge_active and _dodge_iframe_timer > 0.0:
-		return &"iframe"
-	if _dodge_active:
-		return &"late_active"
-	if _dodge_recovery_active:
-		return &"recovery"
-	return &"none"
+	return _ensure_dodge_controller().get_phase()
 
 
 func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
@@ -10471,9 +10287,9 @@ func _should_ignore_incoming_damage_for_dodge(source: String = "") -> bool:
 	_obs_log(&"player_damage_avoided_by_iframe", {
 		"source": source,
 		"position": global_position,
-		"dodge_timer": _dodge_timer,
-		"iframe_timer": _dodge_iframe_timer,
-		"direction": _dodge_direction,
+		"dodge_timer": _ensure_dodge_controller().get_active_remaining(),
+		"iframe_timer": _ensure_dodge_controller().get_iframe_remaining(),
+		"direction": _ensure_dodge_controller().get_direction(),
 	})
 	return true
 
@@ -10486,7 +10302,7 @@ func _play_dodge_animation(force_restart: bool = false, start_frame: int = 0) ->
 		return
 	_hide_modular_locomotion_layers()
 	_update_primary_weapon_visual(false)
-	animated_sprite.flip_h = _is_facing_left(_dodge_direction)
+	animated_sprite.flip_h = _is_facing_left(_ensure_dodge_controller().get_direction())
 	animated_sprite.speed_scale = 1.0
 	var animation_name := _get_dodge_step_animation()
 	_dodge_presentation_animation = animation_name
@@ -10503,7 +10319,7 @@ func _play_dodge_recovery_animation(force_restart: bool = false) -> void:
 		return
 	_hide_modular_locomotion_layers()
 	_update_primary_weapon_visual(false)
-	animated_sprite.flip_h = _is_facing_left(_dodge_direction)
+	animated_sprite.flip_h = _is_facing_left(_ensure_dodge_controller().get_direction())
 	animated_sprite.speed_scale = 1.0
 	if _is_full_dodge_animation(animated_sprite.animation):
 		return
@@ -10520,13 +10336,13 @@ func _get_dodge_step_animation() -> StringName:
 	var full_animation := _get_full_dodge_animation()
 	if animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(full_animation):
 		return full_animation
-	if _dodge_backstep_active and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(DODGE_BACKSTEP_ANIMATION):
+	if _ensure_dodge_controller().get_backstep() and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(DODGE_BACKSTEP_ANIMATION):
 		return DODGE_BACKSTEP_ANIMATION
 	return DODGE_STEP_ANIMATION
 
 
 func _get_full_dodge_animation() -> StringName:
-	return DODGE_FULL_NORTH_ANIMATION if _dodge_direction.y < -0.05 else DODGE_FULL_SOUTH_ANIMATION
+	return DODGE_FULL_NORTH_ANIMATION if _ensure_dodge_controller().get_direction().y < -0.05 else DODGE_FULL_SOUTH_ANIMATION
 
 
 ## The canonical dodge FX identity for the current dodge direction.
@@ -10536,7 +10352,7 @@ func _get_full_dodge_animation() -> StringName:
 ## builder this replaced also did. Choosing between the two authored facings is
 ## presentation policy and stays here rather than in the selector.
 func _get_full_dodge_fx_animation() -> StringName:
-	var sector: StringName = &"n" if _dodge_direction.y < -0.05 else &"s"
+	var sector: StringName = &"n" if _ensure_dodge_controller().get_direction().y < -0.05 else &"s"
 	return _get_operator_animation_selector().resolve_sector(
 		&"shared", &"transition", &"dodge_01", sector, &"fx"
 	)
@@ -10547,7 +10363,7 @@ func _is_full_dodge_animation(animation_name: StringName) -> bool:
 
 
 func _get_dodge_recovery_animation() -> StringName:
-	if _dodge_backstep_active and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(DODGE_BACKSTEP_RECOVERY_ANIMATION):
+	if _ensure_dodge_controller().get_backstep() and animated_sprite and animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(DODGE_BACKSTEP_RECOVERY_ANIMATION):
 		return DODGE_BACKSTEP_RECOVERY_ANIMATION
 	return DODGE_RECOVERY_ANIMATION
 
@@ -10571,8 +10387,9 @@ func _play_dodge_fx(force_restart: bool = false, start_frame: int = 0) -> void:
 	dodge_fx_back_sprite.visible = true
 	dodge_fx_back_sprite.z_index = -1
 	dodge_fx_back_sprite.modulate = Color(1.0, 1.0, 1.0, DODGE_FX_BACK_ALPHA)
-	dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + _get_dodge_fx_back_offset(_dodge_direction)
-	dodge_fx_back_sprite.flip_h = _is_facing_left(_dodge_direction)
+	var dodge_direction := _ensure_dodge_controller().get_direction()
+	dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + _get_dodge_fx_back_offset(dodge_direction)
+	dodge_fx_back_sprite.flip_h = _is_facing_left(dodge_direction)
 	dodge_fx_back_sprite.speed_scale = 1.0
 	if force_restart or dodge_fx_back_sprite.animation != animation_name or not dodge_fx_back_sprite.is_playing():
 		_animation_player.play(dodge_fx_back_sprite, animation_name)
@@ -11259,9 +11076,9 @@ func get_debug_snapshot() -> Dictionary:
 		"health": {"current": current_health, "max": max_health},
 		"dodge": {
 			"phase": String(get_dodge_telemetry_phase()),
-			"active": _dodge_active,
-			"iframe_remaining": _dodge_iframe_timer,
-			"recovery_active": _dodge_recovery_active,
+			"active": _ensure_dodge_controller().is_active(),
+			"iframe_remaining": _ensure_dodge_controller().get_iframe_remaining(),
+			"recovery_active": _ensure_dodge_controller().is_recovering(),
 		},
 		"combat": {
 			"loadout_mode": String(combat_loadout_mode),
@@ -12142,7 +11959,7 @@ func _apply_body_recoil_offset() -> void:
 	if animated_sprite:
 		animated_sprite.position = _animated_sprite_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
 	if dodge_fx_back_sprite:
-		var dodge_offset := _get_dodge_fx_back_offset(_dodge_direction) if _dodge_active else Vector2.ZERO
+		var dodge_offset := _get_dodge_fx_back_offset(_ensure_dodge_controller().get_direction()) if _ensure_dodge_controller().is_active() else Vector2.ZERO
 		dodge_fx_back_sprite.position = _dodge_fx_back_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_offset
 	if modular_lower_body_sprite:
 		modular_lower_body_sprite.position = _modular_lower_body_base_position + _body_recoil_offset + _fake_elevation_visual_offset + dodge_charge_offset
@@ -12991,7 +12808,7 @@ func _can_reload() -> bool:
 		return false
 	if _field_patch_active:
 		return false
-	if _dodge_charge_active:
+	if _ensure_dodge_controller().is_charging():
 		return false
 	if _melee_active or _melee_heavy_anticipating or _melee_fast_windup or _melee_recovery_active or _is_block_state_active():
 		return false
@@ -13393,7 +13210,7 @@ func get_stealth_snapshot() -> Dictionary:
 		"velocity": velocity,
 		"is_sprinting": is_sprinting,
 		"is_firing": _is_ranged_fire_animation_active() or not _pending_ranged_shot.is_empty(),
-		"is_dodging": _dodge_charge_active or _dodge_active or _dodge_recovery_active,
+		"is_dodging": _ensure_dodge_controller().is_busy(),
 		"cover_visibility_mult": 1.0,
 		"light_visibility_mult": 1.0,
 	}
@@ -13607,15 +13424,15 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 		hit_context["attacker_position"] = hit_context.get("attacker_position", attacker.global_position)
 		hit_context["separation_px"] = hit_context.get("separation_px", attacker.global_position.distance_to(global_position))
 	hit_context["dodge_classification"] = "neutral_hit"
-	if _dodge_charge_active:
+	if _ensure_dodge_controller().is_charging():
 		_obs_increment(&"incoming_hit_during_dodge_charge")
 		_obs_increment(&"incoming_dodge_classification_windup_hit")
 		hit_context["dodge_classification"] = "windup_hit"
 		_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "windup_hit"}, true))
 		_cancel_dodge_charge(&"incoming_hit")
-	elif _dodge_active:
+	elif _ensure_dodge_controller().is_active():
 		_obs_increment(&"incoming_hit_during_dodge")
-		if _dodge_iframe_timer > 0.0:
+		if _ensure_dodge_controller().get_iframe_remaining() > 0.0:
 			_obs_increment(&"incoming_hit_during_iframe")
 			_obs_increment(&"incoming_dodge_classification_iframe_avoid")
 			hit_context["dodge_classification"] = "iframe_avoid"
@@ -13625,7 +13442,7 @@ func receive_enemy_hit(amount: float, hit_kind: StringName = &"melee", attacker_
 			_obs_increment(&"incoming_dodge_classification_miss_late")
 			hit_context["dodge_classification"] = "miss_late"
 			_obs_log(&"incoming_dodge_timing_classified", hit_context.merged({"classification": "miss_late"}, true))
-	elif _dodge_recovery_active:
+	elif _ensure_dodge_controller().is_recovering():
 		_obs_increment(&"incoming_hit_during_dodge_recovery")
 		_obs_increment(&"dodge_timing_miss_late")
 		_obs_increment(&"incoming_dodge_classification_recovery_hit")

@@ -99,7 +99,7 @@ func _validate_charge_presentation(operator: Node, feedback: Node) -> void:
 	Input.action_release("dodge")
 	operator.call("_sample_input_frame")
 	operator.call("_handle_dodge_input", 0.0)
-	_assert(bool(operator.get("_dodge_active")), "release must preserve the ordinary dodge execution")
+	_assert(bool(operator.call("get_dodge_runtime_status").get("active")), "release must preserve the ordinary dodge execution")
 	_assert((feedback.get_node("ReleaseSprite") as AnimatedSprite2D).visible, "release must start the origin burst")
 	_assert((feedback.get_node("TrailSprite") as Sprite2D).visible, "release must start the charge-scaled trail")
 	_assert(is_zero_approx(float(operator.get("_dodge_charge_visual_compression"))), "release must snap body compression back to neutral")
@@ -123,13 +123,14 @@ func _validate_cancellation(operator: Node, feedback: Node) -> void:
 	_reset_operator(operator)
 	operator.set("stamina", 100.0)
 	_assert(bool(operator.call("_begin_dodge_charge")), "cancellation setup charge should begin")
-	operator.set("_dodge_charge_timer", 0.10)
+	operator.get("_dodge_controller").set("_charge_elapsed", 0.10)
 	operator.emit_signal("dodge_charge_changed", true, 0.10 / 0.30, false)
 	var meter := feedback.get_node("MeterSprite") as AnimatedSprite2D
 	_assert(meter.visible, "cancellation setup must have a visible ring")
 	operator.call("_cancel_dodge_charge", &"incoming_hit")
 	_assert(meter.visible, "cancellation must contract instead of disappearing immediately")
-	await create_timer(0.10).timeout
+	await create_timer(0.15).timeout
+	await process_frame
 	_assert(not meter.visible, "cancellation contraction must extinguish after approximately 0.08 seconds")
 
 
@@ -147,7 +148,7 @@ func _validate_hud_copy(world: Node) -> void:
 
 func _reset_operator(operator: Node) -> void:
 	operator.call("_cancel_dodge")
-	operator.set("_dodge_cooldown_remaining", 0.0)
+	operator.get("_dodge_controller").set("_cooldown_remaining", 0.0)
 	operator.set("_enemy_impact_lock_timer", 0.0)
 	operator.set("_melee_active", false)
 	operator.set("_melee_heavy_anticipating", false)

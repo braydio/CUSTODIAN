@@ -76,8 +76,8 @@ func _run() -> void:
 	# the south strip. Asserting the played identity is what makes this bite --
 	# _play_dodge_fx() returns silently when nothing resolves.
 	for direction: Vector2 in [Vector2.UP, Vector2.DOWN]:
-		operator.set("_dodge_direction", direction)
-		operator.set("_dodge_active", true)
+		operator.get("_dodge_controller").set("_direction", direction)
+		operator.get("_dodge_controller").set("_active", true)
 		operator.call("_play_dodge_fx", true, 0)
 		var expected := StringName(
 			"shared/transition/dodge_01/%s/fx" % ("n" if direction.y < -0.05 else "s")

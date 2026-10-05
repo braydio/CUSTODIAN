@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-dodge-domain-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-dependency-injection-spine`
@@ -32,6 +32,27 @@
 
 ## Handoff
 
-- Next action: Extract state/timers first, leave movement application in the chassis, then reconnect presentation and interruption through explicit APIs.
-- Best starting files: dodge sections of `operator.gd`; dodge feedback node; focused dodge smokes.
+- Next action: F5 may build on the stable Dodge and facade boundaries.
+- Best starting files: `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`, `OperatorDodgeController`, and the focused Dodge smokes.
 - Blockers or open questions: None.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `the charged-roll smoke raced the fixed-tick sampler and was converted to explicit input-frame injection; the fixed-tick and compatibility smokes expected actor-private Dodge timers and now read the controller snapshot; changed-file validation was gated by the pre-existing review-hub-first-set-blockout-v1 TASK OVERRIDE; the isolated composite unarmed fast-chain smoke reported camera/carry fixture failures, while ranged-ready input failed at its queued parry-counter assertion`
+- Root cause / contributing factors: `domain extraction intentionally removed actor-local Dodge state; test harnesses depended on raw synthetic input or private state; the live queue contains malformed review-packet metadata; the composite and parry smoke failures are outside the exercised Dodge paths`
+- Prevention / pipeline improvement: `keep controller tests on public state/results and inject deterministic OperatorInputFrame values for press/hold/release cases`
+- Tooling / docs drift discovered: `fixed-tick smoke timer lookups needed migration to get_dodge_runtime_status()`
+- Follow-up: `manual-follow-up`
+- What worked: `the focused controller and Dodge/Flow/presentation checks provide deterministic evidence while preserving chassis movement ownership`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `the dodge-tagged changed validation selects seven checks and all seven pass; additional focused fixed-tick, input-frame, action-arbitration, and guard-flow checks pass. The controller is the sole Dodge simulation-state authority; operator.gd delegates status and lifecycle while retaining chassis-only movement application. The broader changed-file result selected 58 checks, passed 16, failed only at the unrelated review_pairing_contract metadata gate, and skipped 41 downstream checks; the isolated unarmed fast-chain smoke limitation is recorded in the closing summary.`

@@ -494,7 +494,9 @@ nullable so their established fallback behavior is preserved.
 | E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | **done** |
 | F0 | Bind/inject Operator external dependencies before domain extraction | `absolute_scene_lookups` 38 → 0 | **done** |
 | F1 | Extract loadout + per-weapon runtime state | `weapon_definition_runtime_state` 3 → 0 | **queued** |
-| F2–F6 | Extract melee, ranged, dodge, interaction, and recovery/survivability behind the facade; move scoped presentation policy with the owning domain | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
+| F2–F3 | Extract melee and ranged behind the facade; move scoped presentation policy with the owning domain | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
+| F4 | Extract Dodge/charge/Flow/chain lifecycle to `OperatorDodgeController`; preserve full-body displacement presentation and chassis movement ownership | one Dodge state authority; actor keeps facade/orchestration and sole `move_and_slide()` | **done** |
+| F5–F6 | Extract interaction and recovery/survivability behind the facade | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
 | G | Collapse `operator.tscn` and `operator.gd`, delete compatibility infra, final audits | `--final` on every audit | **queued** |
 
 Slice C was split because the repo gave better information than the original
@@ -519,13 +521,18 @@ gameplay facts instead of becoming another cross-cutting actor subsystem:
   F1/F5/F6 wait on both F0 and mobile guard; F2/F3 also wait on F1's stable
   loadout/runtime-state APIs, while F4 only waits on F0 because dodge
   intentionally remains committed full-body presentation.
+- `OPERATOR_DODGE_DOMAIN_EXTRACTION.md` is complete: `OperatorDodgeController`
+  owns charge/profile selection, active/iframe/recovery clocks, Flow/chain,
+  exit carry, and cancellation; the actor applies movement intent through its
+  existing chassis and keeps intentional full-body Dodge presentation.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes the mobile composition
   seam for Vigil guard and movement-permissive parry attempt/recovery.
-- F1–F6 are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
+- The F1–F6 packets are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
   `OPERATOR_MELEE_DOMAIN_EXTRACTION.md`, `OPERATOR_RANGED_DOMAIN_EXTRACTION.md`,
   `OPERATOR_DODGE_DOMAIN_EXTRACTION.md`,
   `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md`, and
-  `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md`.
+  `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md`; F4 is complete and the other slices
+  remain queued or dependency-gated.
 - `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` finishes the already-live
   static Carbine/socket presentation after ranged extraction.
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` is Slice G and owns final shell/scene

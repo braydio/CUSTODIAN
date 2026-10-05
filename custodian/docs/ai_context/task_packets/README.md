@@ -9,6 +9,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 ### Ready / Auto Dispatch
 
+
 This section is owned by `custodian/tools/agent/task_packet_index.py`; run it with `--write` after packet changes to populate/update the bounded managed block.
 
 ### Active Hub First-Set / First Campaign Loop Series
@@ -83,6 +84,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`.
 
 - `archived/OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — Slice F0 complete: zero absolute scene-tree lookups remain in `operator.gd`; the three mutable weapon-definition findings remain for F1.
+- `archived/OPERATOR_DODGE_DOMAIN_EXTRACTION.md` — Slice F4 complete: charge, profile selection, iframe/recovery clocks, Flow/chain, exit carry, and cancellation live in `OperatorDodgeController`; full-body dodge presentation and chassis movement ownership remain intact.
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 ready/auto next implementation slice for movement-owned lower-body locomotion plus action-owned upper-body guard presentation.
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — P1 ready/auto, dependency-gated on F0 and mobile guard composition; it owns the three remaining weapon-definition runtime-state findings.
 

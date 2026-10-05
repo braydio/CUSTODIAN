@@ -14,6 +14,18 @@ optional camera, observability, prompt, build, and UI services. The main scene's
 `WeaponDefinitionFactory` is a GameRoot child, so the binder accepts it from the
 composition root as well as the owning World for standalone compositions.
 
+## Operator Dodge Domain Extraction F4 (2026-10-05)
+
+`OperatorDodgeController` now owns Dodge charge/profile classification, active
+and iframe clocks, Flow/chain progression, recovery/cooldown, exit carry, and
+cancellation state. `operator.gd` keeps the facade and action/presentation
+orchestration, applies controller velocity intent through the existing movement
+chassis, and remains the only `move_and_slide()` owner. Full-body Dodge,
+chain-link, and dodge-fast presentation plus independent charge/Flow FX remain
+intact. Controller, charge, Flow, overlap telemetry, canonical FX, presentation,
+fixed-tick, input-frame, action-arbitration, and guard-flow focused checks pass;
+see the F4 packet receipt for bounded composite-smoke limitations.
+
 ## Bidirectional Dropbox Handoff (2026-10-05)
 
 Dropbox has two separate transient transport lanes. Inbound implementation
