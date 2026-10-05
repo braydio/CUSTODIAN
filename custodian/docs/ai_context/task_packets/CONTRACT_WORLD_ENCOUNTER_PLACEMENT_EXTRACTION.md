@@ -5,11 +5,11 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-contract-world-placement-foundation`
+- Depends on: `review-contract-world-placement-foundation-r1`
 - Locks: `contract-world-loader`
 - Kind: `implementation`
 - Review: `none`
-- Reviewed main: `f7e84ae48a90ff9da0f968ef0c72ac9ba0c2c5ee`
+- Reviewed main: `76dac8bf6c`
 - Goal: Move ambient enemy/encounter marker placement policy from ContractWorldLoader into one focused placement service without moving enemy spawning or AI authority.
 - Completion boundary: Done when encounter-plan markers, legacy ambient markers, candidate tile scoring, Vaultwing marker placement, and related placement telemetry are service-owned; loader delegates and spawner/director remain simulation owners.
 - Current measured state: `custodian/game/systems/core/systems/contract_world_loader.gd` still owns `_place_ambient_enemy_camps`, `_place_encounter_plan_markers`, `_place_legacy_ambient_enemy_markers`, `_place_vaultwing_markers` / candidate variants, `_build_ambient_enemy_candidate_tiles`, `_ambient_enemy_tile_score`, generated-marker cleanup, and spawner refresh orchestration. Encounter planning itself already has a focused owner at `custodian/game/world/procgen/encounters/encounter_cadence_planner.gd`; actual ambient spawning remains in `custodian/game/systems/spawning/ambient_enemy_spawner.gd` / `ambient_enemy_camp.gd`, and Vaultwing actor spawning remains under `custodian/game/systems/spawning/vaultwing_spawner.gd`.
@@ -23,7 +23,7 @@
 - Validation: `res://tools/validation/procgen_encounter_cadence_smoke.gd`, `res://tools/validation/procgen_ambient_enemy_real_world_spawn_smoke.gd`, `res://tools/validation/vaultwing_world_spawn_smoke.gd`, `res://tools/validation/world_contract_prewarm_smoke.gd`, plus an implementation-created marker snapshot if needed; then changed-file closeout.
 - Task overrides: `none`
 - Deferred: Other placement domains and loader contraction.
-- Foundation gate: Do not claim until PR1 `review-contract-world-placement-foundation` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
+- Foundation gate: Do not claim until PR1 recovery review `review-contract-world-placement-foundation-r1` passes. At claim time, re-read the reviewed placement-context API and refresh this packet in place first if any work-surface/API assumption no longer matches the landed foundation.
 
 ## Series Contract
 
