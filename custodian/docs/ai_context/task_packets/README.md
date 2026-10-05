@@ -12,7 +12,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
 Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`.
 
-Seven implementation slices are pre-authored with paired reviews. H1 is queue-recovered as `hub-first-set-blockout-v1-recovery-1` and is `ready/auto`; the original remote branch is donor evidence only. H2-H7 are deliberately `blocked/manual` and must be refreshed **in place** from landed predecessor review evidence before becoming `ready/auto`.
+Seven implementation slices are pre-authored with paired reviews. H1 is queue-recovered as `hub-first-set-blockout-v1-recovery-1` and is `ready/auto`. H2-H7 are also `ready/auto`; their incomplete dependencies keep them non-claimable until predecessor reviews archive `complete`. Each downstream execution agent performs its own claim-time refresh from current main and landed predecessor evidence before mutation.
 
 - H1 `HUB_FIRST_SET_BLOCKOUT_V1.md` / review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics, current-main sync, human topology gate.
 - H2 `HUB_AWAKENING_CONTEXT_HANDOFF.md` / review — reviewed Awakening completion → persistent Hub; also waits on reviewed Awakening handoff-readiness.
@@ -22,7 +22,7 @@ Seven implementation slices are pre-authored with paired reviews. H1 is queue-re
 - H6 `HUB_CAMPAIGN_RETURN.md` / review — exactly-once CampaignOutcome → HubState mutation, Campaign teardown, Port return.
 - H7 `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` / review — full boot→Awakening→Hub→optional Twin→Campaign→outcome→Hub proof.
 
-Do not create v2 duplicates merely because a predecessor chose different private helpers; refresh the existing downstream packet and its review in the same docs change.
+Do not create v2 duplicates merely because a predecessor chose different private helpers; the downstream agent must reconcile those private seams at claim time while preserving the packet's public behavioral contract.
 
 ### Active Isometric 2.5D Presentation Realization Series
 
@@ -48,18 +48,18 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73
 
 - The unique high-resolution Fast 01 South donor master is already preserved on main at `b57ab98d` under `custodian/asset_drop/source_work/operator/unarmed/attack/fast_01/south/fast_1_south.png`; this preservation commit does not change runtime.
-- `STRANDED_BRANCH_RECOVERY_CLOSEOUT.md` — P1 ready/manual workflow closeout. Adds an exact-SHA-approved retirement path to the existing branch-hygiene tool, regression-covers it, then archive-tags/ledgers/retires exactly the six user-reviewed stale divergent agent refs. It must not merge donor implementation back into current production.
-- `OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — P1 ready/manual production-art/runtime closeout for exact South Fast 02/03/04 lower+upper+FX at the locked 6/7/8-frame 96×96 contracts, preserving Fast 01 and all gameplay timing. Subjective final chain approval remains human/ChatGPT-owned through one compact Dropbox review handoff.
-- `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 post-land review; blocked until the Operator continuity implementation completes and archives.
+- `STRANDED_BRANCH_RECOVERY_CLOSEOUT.md` — P1 ready/auto workflow closeout. Adds an exact-SHA-approved retirement path to the existing branch-hygiene tool, regression-covers it, then archive-tags/ledgers/retires exactly the six user-reviewed stale divergent agent refs. It must not merge donor implementation back into current production.
+- `OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — P1 ready/auto production-art/runtime closeout for exact South Fast 02/03/04 lower+upper+FX at the locked 6/7/8-frame 96×96 contracts, preserving Fast 01 and all gameplay timing. Subjective final chain approval remains human/ChatGPT-owned through one compact Dropbox review handoff.
+- `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 ready/auto post-land review; dependency-gated until the Operator continuity implementation completes and archives.
 
 ### Active Awakening 04→05 Production Art Refresh
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
 
-- `AWAKENING_ROOM_CONNECTORS_POLISH.md` — P1 ready/manual implementation packet. It consumes the user's local `~/Downloads/dust.png`, `connector.png`, and `locker.png` into the existing Dust Lung, 04→05 connector, and Locker Reliquary Asset V2 families; replaces the visible room-crossfade/room-strip seam machinery with direct registered art; reconciles the new Locker archive obstacles/P-9 bay; and keeps any still-missing Locker foreground honest rather than fabricating art.
+- `AWAKENING_ROOM_CONNECTORS_POLISH.md` — P1 ready/auto implementation packet. It consumes the user's local `~/Downloads/dust.png`, `connector.png`, and `locker.png` into the existing Dust Lung, 04→05 connector, and Locker Reliquary Asset V2 families; replaces the visible room-crossfade/room-strip seam machinery with direct registered art; reconciles the new Locker archive obstacles/P-9 bay; and keeps any still-missing Locker foreground honest rather than fabricating art.
 - `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH.md` — paired P1 post-land code/runtime/visual/asset-pipeline review.
-- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is now blocked/manual on the room-connectors polish and must be refreshed in place from the landed implementation + paired-review evidence before its old Zone04/05 feather/fade preservation clauses are executable again.
-- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is also blocked/manual on the polish; after landing, first check whether the new packet's committed bidirectional regression fully supersedes it rather than duplicating the harness.
+- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is ready/auto and dependency-gated on the room-connectors polish. On claim it must self-refresh from the landed implementation + paired-review evidence and must not restore the retired Zone04/05 feather/fade contract.
+- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is ready/auto and dependency-gated on the polish; on claim it first checks whether the new committed bidirectional regression fully supersedes it, closing as superseded when no residual gap remains.
 
 ### Active Archive Resolve Presentation Series
 
@@ -193,8 +193,7 @@ unpacketed tasks also leave process feedback.
 
 ## Dispatch
 
-Packets are manual by default. Add `Dispatch: auto` only when the ready packet
-is safe for a Codex terminal to claim without additional human selection.
+Implementation-ready packets default to `Dispatch: auto`. `Status`, dependencies, locks, and paired-review consistency are the normal claim gates. A `ready/auto` packet with incomplete dependencies is shown as blocked by the dispatcher and becomes claimable automatically once every dependency archives `complete`. Use `Dispatch: manual` only when the user explicitly wants to decide when an otherwise ready packet may be claimed.
 `dispatch.py status` reads packet truth from fetched `origin/main`; use
 `dispatch.py claim-next --agent <agent-id>` (for example `--agent claude` or
 `--agent codex`) to claim the highest-priority eligible auto packet, or
@@ -256,7 +255,7 @@ program/DAG through the required `Next Handoff` fields: next workstream,
 packet state, refresh owner, whether ChatGPT/user planning refresh is required,
 authoring-chat URL, refresh reason, next action, and blockers.
 
-Architecture/design-sensitive refreshes default to `Refresh owner: chatgpt-user`.
+Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen at claim time from current main plus landed predecessor evidence. Use `Refresh owner: chatgpt-user` only when a genuine unresolved design choice requires the user's judgment before implementation can proceed.
 The execution/review agent supplies the live-state evidence and drift, but the
 user brings the recorded authoring chat back to ChatGPT so the packet can be
 re-derived against both original intent and current main. Mechanical refreshes
