@@ -1,0 +1,161 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261006T071720Z_b3fe674c",
+  "timestamp": "2026-10-06T07:17:20.221356+00:00",
+  "family": "procgen_underlay_alpine_plateau",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_underlay_alpine_plateau/depth_fog_a.png",
+      "sha256": "2e81fd38ced69a80bc00a8afb9b0eb3022b48b3dc2af2c1faffb6c63f2706be7"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_underlay_alpine_plateau/depth_fog_b.png",
+      "sha256": "2b49bdbcc0c4ca6e97a267e870a88e2dc5f284a6a979aa4e57da4dc699c34685"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_underlay_alpine_plateau/far_world_a.png",
+      "sha256": "8f0a808f1acb876aaf10ddba339a43cba906e9fd3d37641beadfa1027f0b7b76"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_underlay_alpine_plateau/far_world_b.png",
+      "sha256": "1a58d9f4fd82a571509012888ee3c6257806a66835301de2e0dd6863154b393b"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_underlay_alpine_plateau/near_cliff_mist_a.png",
+      "sha256": "218080071cf12d5f05c5ae147ef87713e9e97914dec8c398b2a2e05724731aad"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_underlay_alpine_plateau/near_cliff_mist_b.png",
+      "sha256": "521ab841904b4696b009f8fdbfdace7ff40d7b2a643d3b6efc91d2eb34da8316"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "depth_fog_a",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "background",
+        "display",
+        "depth_fog_a",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_depth_fog_a_1536x1024.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2e81fd38ced69a80bc00a8afb9b0eb3022b48b3dc2af2c1faffb6c63f2706be7",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "depth_fog_b",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "background",
+        "display",
+        "depth_fog_b",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_depth_fog_b_1536x1024.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2b49bdbcc0c4ca6e97a267e870a88e2dc5f284a6a979aa4e57da4dc699c34685",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "far_world_a",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "background",
+        "display",
+        "far_world_a",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_far_world_a_1536x1024.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "8f0a808f1acb876aaf10ddba339a43cba906e9fd3d37641beadfa1027f0b7b76",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "far_world_b",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "background",
+        "display",
+        "far_world_b",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_far_world_b_1536x1024.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "1a58d9f4fd82a571509012888ee3c6257806a66835301de2e0dd6863154b393b",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "near_cliff_mist_a",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "background",
+        "display",
+        "near_cliff_mist_a",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_near_cliff_mist_a_1536x1024.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "218080071cf12d5f05c5ae147ef87713e9e97914dec8c398b2a2e05724731aad",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "near_cliff_mist_b",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "background",
+        "display",
+        "near_cliff_mist_b",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/alpine_plateau/alpine_plateau_near_cliff_mist_b_1536x1024.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "521ab841904b4696b009f8fdbfdace7ff40d7b2a643d3b6efc91d2eb34da8316",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

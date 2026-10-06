@@ -22,4 +22,4 @@ middle_parallax = 0.08
 near_parallax = 0.12
 parallax_max_px = 64.0
 guarantee_viewport_coverage = true
-base_fill_color = Color(0.13, 0.17, 0.22, 1)
+base_fill_color = Color(0.42, 0.47, 0.54, 1)
