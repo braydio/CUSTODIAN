@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-frontier-restraint`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-archive-resolve-semantic-echo`
@@ -45,22 +45,23 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Acceptance note: `yes`. Criteria 1-11 are proven by objective evidence. Criterion 12 (gameplay-scale human review) was explicitly **waived to playtest** by the user/ChatGPT decision in the recorded authoring chat: land the current tuning unchanged (radius 11, fringe +/-2, 84 starts/s, burst 8, resolve 0.22 s, reacquisition 0.12 s) as the first production playtest baseline; final temporal game-feel judgment is deferred to ordinary play. Renderer evidence showed 26-83% of on-screen floor unresolved while moving, no visible veiled tile in the Operator halo, reacquisition 0.133 s, and wall/room curtains. Human disposition: `WAIVE-TO-PLAYTEST`.
+- Superseded/legacy production path disposition: `intentionally-preserved` (AR3 FIFO pacing remains behind `frontier_enabled = false` for pure-owner fixtures/debug)
+- Evidence: `custodian/game/world/procgen/streaming/procgen_visual_frontier.gd`, `procgen_reveal_presentation.gd`; `ProcGenTilemap.is_archive_resolve_occluder_tile/get_archive_resolve_camera_tile_rect`. New smoke `procgen_archive_resolve_frontier_restraint` (distance, wall/door LOS, wall-destruction invalidation, camera margin, 30 vs 144 fps pacing, halo occlusion, settled memory, echo/reacquisition/ingress gating, fail-open, tilemap wiring; falsified by a disabled-gate mutation). Updated `contract_world_archive_resolve_ingress` (ingress resolves only frontier-admitted cells). Green: archive-resolve tag (5), pause_aware_streaming, chunk_lifecycle, payload_cache, distant_chunk_unload, runtime_health, region_frame, camera_presentation_subject_constraint, candidate_materializer_parity, spawn_validity, ingress_spawn_clearance, S1 quick `1773840677`. Moment Forge `procgen/archive_resolve_frontier_restraint_review`; Dropbox `/CUSTODIAN/visual_review/procgen-archive-resolve-frontier-restraint/20261006T143657Z/REVIEW_MANIFEST.json` (commit `dac538ff9`; manifest `questions` was empty - pipeline drift, not an AR4 defect). Not run: full `--changed` sweep, standalone wall-destruction/navigation regressions. No cliff/elevation occlusion (no unambiguous authority).
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none`
-- Root cause / contributing factors: `none`
-- Prevention / pipeline improvement: `none`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Packet carried an invalid Review modes value (performance) that blocked claim; fixture Operator walked through walls and exposed a no-fail-open gap; publish_review_artifacts left manifest questions empty.`
+- Root cause / contributing factors: `Packet authored without running the contract validator; fixture had no collision; --question not passed to the publisher.`
+- Prevention / pipeline improvement: `Run task_packet_contract on authored packets; have the publisher populate manifest questions from the packet.`
 - Tooling / docs drift discovered: `none`
-- Follow-up: `none | fixed-in-scope | manual-follow-up`
+- Follow-up: `manual-follow-up` (publisher questions hardening, not an AR4 correction)
 
 ## Refresh Planning Authority
 
@@ -72,11 +73,11 @@
 ## Handoff
 
 - Next workstream: `review-procgen-archive-resolve-frontier-restraint`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Refresh reason: `none`
-- Next action: After AR3 paired review archives complete, claim AR4 automatically, implement the bounded visual frontier, obtain the required gameplay-scale visual decision, then land so the paired fresh-context AR4 review can claim.
-- Blockers or open questions: AR3 paired review must archive complete first. Exact tuning values may move inside the bounded ranges above based on objective/renderer evidence; the architecture and settled-memory decision are locked.
+- Next action: AR4 landed with tuning unchanged; fresh-context paired review may claim automatically. Playtest AR4 and report whether the frontier trails movement obstructively or clears too aggressively.
+- Blockers or open questions: none; temporal game-feel verdict deferred to playtest.
