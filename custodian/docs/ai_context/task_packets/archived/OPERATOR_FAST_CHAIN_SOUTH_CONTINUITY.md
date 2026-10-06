@@ -70,13 +70,13 @@
   - no VFX requirement is marked complete from placeholder tracks and documentation/generated reachability truth does not overstate VFX coverage.
 - Validation: Start with exact image/hash/registration checks and the current Operator animation contract report. Run `operator_fast01_south_decomposition_smoke.py`, `operator_unarmed_fast_chain_smoke.gd -- --selection-only` for exact directional layer/clock validation, `operator_modular_fast_attack_smoke.gd`, `operator_modular_layers_smoke.gd`, and the specialized Operator pipeline/schema checks. Also run the full chain gameplay smoke and compare any unrelated carry-fixture failures against baseline; Fast 02-04 North/South FX tracks are intentionally transparent authoring placeholders, not completed VFX. Run the smallest changed-file closeout only after focused tests pass. Use Moment Forge/evidence only if runtime-scale chain timing/readability cannot be proven by the existing preview/telemetry path; never use repeated full-frame captures.
 - Task overrides: `USER OVERRIDE (2026-10-05): all new authored Operator body/FX art is 96×96 cells via the repository pixelart alias, crisp method 1, using one shared whole-strip transform; preserve Fast 01 South body/FX and existing Fast 01 North FX; split approved N/S full-body strips into exact lower/upper layers; create zero-alpha FX placeholders only for missing Fast 02-04 N/S identities; ingest those tracks through the specialized Operator pipeline; placeholders are not VFX completion; later VFX edits use guarded OPUI/Aseprite REPLACE publication.`
-- Deferred: North/diagonal authored Fast 02-04 expansion; any chain gameplay retune; optional additional VFX redesign beyond making current South directional FX coherent.
+- Deferred: diagonal authored Fast 02-04 expansion; real Fast 02-04 North/South VFX authoring in OPUI/Aseprite Workbench using the canonical placeholder tracks and guarded REPLACE publication; any chain gameplay retune; the three baseline carry interruption/collision smoke failures.
 
 ## Handoff
 
 - Next action: Paired post-land review of the North/South body art and registration; keep blank FX explicitly labeled as authoring placeholders.
 - Best starting files: `OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY_CLAUDE_SUMMARY.md`, this packet, and the compact review artifact manifest.
-- Blockers or open questions: Subjective body scale, pelvis/cloth continuity, silhouette distinctness, and grounding remain human-owned; unrelated camera-impact/interruption checks in the broad chain smoke remain failing.
+- Blockers or open questions: Subjective body scale, pelvis/cloth continuity, silhouette distinctness, and grounding remain human-owned; the six Fast 02-04 N/S FX tracks are intentionally transparent authoring placeholders; three broad-chain carry interruption/collision assertions remain baseline-equivalent and are deferred outside this art slice.
 
 ## Execution Feedback
 
