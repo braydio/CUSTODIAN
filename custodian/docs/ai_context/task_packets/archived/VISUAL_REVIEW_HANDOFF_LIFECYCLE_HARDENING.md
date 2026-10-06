@@ -94,3 +94,32 @@
 - Refresh reason: `none`
 - Next action: `Run the fresh-context paired review against landed main.`
 - Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-visual-review-handoff-lifecycle-hardening`
+- Reviewed on main: `18d5f1f7392dc44ba1b70e4465e615866b7837ca`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `5`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01, R0-02, R0-03, R0-04, R0-05`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none` (all findings are deferred hardening advice)
+- Reviewer independence: Started in a fresh workstream and reconstructed acceptance from this archived packet and live main. Focused suites were rerun (contract 23, dispatch 73, workstream artifacts 9, publisher OK, review pairing PASS) and hostile cleanup cases were added with a faked rclone.
+
+### Findings
+
+- `R0-01` — `non_blocking_issue`, deferred, area `cleanup`: `cleanup_reviewed` assumes `LATEST.json` is a JSON object; a valid non-object (e.g. `[]`) raises an uncaught `AttributeError`. Nothing is deleted (fail-safe) but the exit is a traceback, not the clean `FAIL` used for unreadable JSON.
+- `R0-02` — `non_blocking_issue`, deferred, area `finish-gate`: the backlink gate matches `Authoring chat: <url>` as a substring, so a recorded URL that is a prefix of a different URL in the summary would pass.
+- `R0-03` — `non_blocking_issue`, deferred, area `compatibility`: a manifest with no `retention` key defaults to `delete-after-review`, so an explicit cleanup of a legacy manifest deletes it. Only on an explicit command, but it sits against "no forced retention migration for old manifests".
+- `R0-04` — `non_blocking_issue`, deferred, area `claim-receipt`: `visual_review_root` and retention are hardcoded in `dispatch.py`, while the publisher takes a configurable remote root; these could drift.
+- `R0-05` — `non_blocking_issue`, deferred, area `cleanup`: the run is purged before the matching `LATEST.json` is deleted; a failure between them leaves a dangling pointer (reported as a failure, not silent).
+
+Confirmed safe: `..`/`.` path components are rejected before any call; workstream/run-id must match the manifest path, so deletion is confined to one run; a `LATEST.json` pointing at a different run is left alone; unsupported retention policies and explicit `retain` perform no deletion; unreadable `LATEST.json` refuses cleanup.
