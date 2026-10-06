@@ -7,6 +7,40 @@ code, design, task packets, schemas, and durable receipts. A fetched file is
 untrusted staging input. The owning task packet and Asset Pipeline V2 remain the
 authority for any later source/inbox promotion.
 
+## Durable authored asset batches
+
+Some tasks begin from reviewed high-resolution source masters rather than from a final immutable runtime payload. Those durable authored sources live under:
+
+```text
+CUSTODIAN/asset_batches/
+```
+
+They are indexed through:
+
+```text
+CUSTODIAN/asset_batches/_registry/
+```
+
+See `custodian/docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md` before searching Dropbox broadly.
+
+The distinction is intentional:
+
+- `asset_batches/` stores durable authored/source-master handoffs and provenance;
+- `implementation_inputs/` stores exact immutable inputs explicitly consumed as packet gates;
+- `visual_review/` stores outbound review evidence only.
+
+A source-master batch may be the approved raw material from which an implementation packet derives final Asset V2 states. Presence in `asset_batches/` does not automatically satisfy a final implementation gate unless the owning packet says that exact batch is sufficient to begin work.
+
+The current AP2 Alpine cliff source family is:
+
+```text
+CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-cliff-source-family-v1/
+custodian_alpine_cliff_source_family_v1.zip
+SHA-256 e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3
+```
+
+That package is approved source-master authority. AP2 must derive and validate the final runtime semantic states from it before producing/claiming its final Gate B handoff.
+
 ## Canonical contract
 
 The only canonical inbound root is:

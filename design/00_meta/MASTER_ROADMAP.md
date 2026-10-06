@@ -284,7 +284,7 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; the Alpine presentation continuation is now explicitly asset-gated by `ALPINE_PLATEAU_PRESENTATION_ASSET_MANIFEST.md`: AP1/AP2/AP3 remain blocked until immutable Dropbox implementation-input Gates A/B/C exist, while AP4 remains dependency-gated behind their completed production art. AP5 is a post-closeout, non-blocking variety extension behind AP4; it preserves the AP1 six-state baseline while adding deterministic ordinary alternates and rare scenic-landmark seed plates from a separate 24-plate immutable handoff. Archive Resolve AR1/ARR1 and AR2 implementation/recovery/review are complete/passed with S1 `1773840677`; the separate P0 playable-region spawn-validity implementation/review is also complete/passed; AR3 is planning-refreshed/ready-auto and claimable, with the spawn review's full-path integration evidence gap folded into AR3 validation. P1/PR1 independently gate placement extractions; X2/X3 and renderer-consolidation retain their existing refresh rules. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated. RF1/RFR1 and AP1 are complete/landed. AP2 is now ready/auto from the registered approved `alpine-cliff-source-family-v1` Dropbox source-master batch; AP2 derives and validates the final 26 cliff/contact/depth runtime states and publishes Gate B at closeout. AP3 remains blocked behind AP2 + immutable Gate C, while AP4 remains dependency-gated behind AP1-AP3. AP5 is a post-closeout, non-blocking variety extension behind AP4; it preserves the AP1 six-state baseline while adding deterministic ordinary alternates and rare scenic-landmark seed plates from a separate 24-plate immutable handoff. Archive Resolve AR1/ARR1 and AR2 implementation/recovery/review are complete/passed with S1 `1773840677`; the separate P0 playable-region spawn-validity implementation/review is also complete/passed; AR3 is planning-refreshed/ready-auto and claimable, with the spawn review's full-path integration evidence gap folded into AR3 validation. P1/PR1 independently gate placement extractions; X2/X3 and renderer-consolidation retain their existing refresh rules. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
@@ -300,7 +300,10 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; t
 |---------|--------|----------|
 | RF1 Region Frame presentation foundation | complete / landed | P1 |
 | RFR1 Region Frame paired review | complete / passed | P1 |
-| AP1 Alpine Plateau omnidirectional underlay continuation | blocked / immutable Dropbox Gate A required | P1 |\n| AP2 Alpine cliff / contact / depth presentation | blocked / AP1 + immutable Dropbox Gate B required | P1 |\n| AP3 Alpine Rocky Upland + Meridian surface plates | blocked / AP2 + immutable Dropbox Gate C required | P1 |\n| AP4 Alpine environment cohesion / final visual closeout | blocked / AP1+AP2+AP3; no new art gate | P2 |
+| AP1 Alpine Plateau omnidirectional underlay continuation | complete / landed | P1 |
+| AP2 Alpine cliff / contact / depth presentation | ready / auto; approved Dropbox source-master batch registered | P1 |
+| AP3 Alpine Rocky Upland + Meridian surface plates | blocked / AP2 + immutable Dropbox Gate C required | P1 |
+| AP4 Alpine environment cohesion / final visual closeout | blocked / AP1+AP2+AP3; no new art gate | P2 |
 | AP5 Alpine underlay variety + rare scenic landmarks | blocked / AP4 + immutable 24-plate variety handoff; non-blocking to AP1–AP4 | P2 |
 | AR1 Archive Resolve presentation spine | complete / landed | P2 |
 | ARR1 Archive Resolve paired technical review | complete / passed | P2 |
