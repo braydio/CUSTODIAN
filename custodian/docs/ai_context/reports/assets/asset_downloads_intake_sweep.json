@@ -1,0 +1,397 @@
+{
+  "schema": "custodian.asset_downloads_intake_sweep.v1",
+  "created_utc": "2026-10-06T16:53:42+00:00",
+  "inspection_scope": {
+    "root": "~/Downloads",
+    "immediate_entries_seen": 68,
+    "ignored_unrelated_count": 35,
+    "ignored_unrelated_count_scope": "aggregate count of immediate entries not listed as CUSTODIAN-relevant; names intentionally omitted",
+    "relevant_immediate_entries_count": 33
+  },
+  "basin_b": {
+    "job_id": "job_20261006T164434Z_7ba36e74",
+    "family": "awakening_ambulatory_fixtures",
+    "family_ready": "6/6 required",
+    "runtime_sha256": "b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924",
+    "runtime_dimensions": "128x128 RGBA with real alpha",
+    "scene_binding": "BAKED_ONLY; no scene binding added"
+  },
+  "downloads_items": [
+    {
+      "local_path": "awakening_service_b_handoff_v1.zip",
+      "classification": "implemented",
+      "owner": "awakening_ambulatory_fixtures / ASSET_DOWNLOADS_INTAKE_SWEEP",
+      "product": "Awakening Recovery Ambulatory service_basin_b handoff",
+      "provenance": "User-approved immutable implementation handoff; ZIP SHA-256 749cba1851e5bae8e5c68cbb0293b1b0b58ac447204b024fadc911b7665e189c; supplied source SHA-256 506f36de93096f32b37991fc7a4a5b27d0bb476c00afe7d47d3b608f010efc15; normalized input SHA-256 b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924",
+      "repository_paths": [
+        "custodian/asset_drop/source_work/awakening/awakening_ambulatory_fixtures/service_basin_b_source.png",
+        "custodian/asset_drop/source_work/awakening/awakening_ambulatory_fixtures/pre_handoff_history/service_basin_b_source_20261006.png",
+        "custodian/asset_drop/inbox/awakening_ambulatory_fixtures/service_basin_b.png",
+        "custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_b__omni__1f__128.png",
+        "custodian/asset_drop/archive/job_20261006T164434Z_7ba36e74/",
+        "custodian/asset_drop/logs/job_20261006T164434Z_7ba36e74.json"
+      ],
+      "pack_inspection": {
+        "archive_file_count": 6,
+        "raster_image_count": 2,
+        "observed_dimensions": [
+          "1254x1254",
+          "128x128"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_pattern-pack-lines.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md",
+      "product": "Kenney Pattern Pack Lines 1.0",
+      "provenance": "Bundled License.txt identifies CC0 (credit optional); contains four PNG variant roots of 30 files each, 256px/512px. Existing packet requires pattern_000.png through pattern_029.png; archive uses pattern_0000.png through pattern_0029.png. Per packet contract, stopped without renaming or copying.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 192,
+        "raster_image_count": 125,
+        "observed_dimensions": [
+          "256x256",
+          "512x512",
+          "1280x1536",
+          "2560x3072",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_isometric-miniature-prototype.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / existing Kenney source library",
+      "product": "Kenney Isometric Miniature Prototype",
+      "provenance": "Previously inventoried source pack; CC0 provenance recorded in K3D source inventory.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 657,
+        "raster_image_count": 651,
+        "observed_dimensions": [
+          "256x512",
+          "640x592",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_isometric-miniature-bases.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / existing Kenney source library",
+      "product": "Kenney Isometric Miniature Bases",
+      "provenance": "Previously inventoried source pack; CC0 provenance recorded in K3D source inventory.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 329,
+        "raster_image_count": 323,
+        "observed_dimensions": [
+          "256x512",
+          "640x592",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_prototype-kit.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / existing Kenney source library",
+      "product": "Kenney Prototype Kit",
+      "provenance": "Previously inventoried source pack; CC0 provenance recorded in K3D source inventory.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 740,
+        "raster_image_count": 155,
+        "observed_dimensions": [
+          "512x512",
+          "64x64",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_modular-space-kit_1.0.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / existing Kenney source library",
+      "product": "Kenney Modular Space Kit",
+      "provenance": "Previously inventoried source pack; CC0 provenance recorded in K3D source inventory.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 214,
+        "raster_image_count": 49,
+        "observed_dimensions": [
+          "512x512",
+          "64x64",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_space-station-kit.zip and kenney_space-station-kit(1).zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / existing Kenney source library",
+      "product": "Kenney Space Station Kit",
+      "provenance": "Previously inventoried source pack; CC0 provenance recorded in K3D source inventory. Both archives are byte-identical (SHA-256 215e79bd5415cff93665183390f0343ed9acf87780306331013b78520170c6d8).",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 497,
+        "raster_image_count": 104,
+        "observed_dimensions": [
+          "512x512",
+          "64x64",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_factory-kit_3.0.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / existing Kenney source library",
+      "product": "Kenney Factory Kit",
+      "provenance": "Previously inventoried source pack; CC0 provenance recorded in K3D source inventory.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 727,
+        "raster_image_count": 150,
+        "observed_dimensions": [
+          "512x512",
+          "64x64",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "kenney_city-kit-industrial_2.0.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / existing Kenney source library",
+      "product": "Kenney City Kit Industrial",
+      "provenance": "Previously inventoried source pack; CC0 provenance recorded in K3D source inventory.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 201,
+        "raster_image_count": 48,
+        "observed_dimensions": [
+          "512x512",
+          "64x64",
+          "918x515"
+        ]
+      }
+    },
+    {
+      "local_path": "CUSTODIAN-fast-chain-east-reference.zip and CUSTODIAN-fast-chain-east-reference/",
+      "classification": "deferred_needs_design",
+      "owner": "none found",
+      "product": "Operator unarmed East Fast 01–04 reference sequence",
+      "provenance": "Reference manifest identifies source references and an older repository head; no active packet or runtime ownership found. Reference only; no copy or production promotion.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 33,
+        "raster_image_count": 32,
+        "observed_dimensions": [
+          "96x96",
+          "576x96",
+          "672x96",
+          "768x96",
+          "768x128",
+          "128x128",
+          "2298x1262"
+        ]
+      }
+    },
+    {
+      "local_path": "CUSTODIAN-unarmed-fast-east-vfx-reference/",
+      "classification": "deferred_needs_design",
+      "owner": "none found",
+      "product": "Operator unarmed East VFX reference",
+      "provenance": "Local reference images; no active owning packet or production contract found.",
+      "repository_paths": []
+    },
+    {
+      "local_path": "CUSTODIAN_Playable_Knight_reference.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md",
+      "product": "Playable Knight reference assets",
+      "provenance": "Existing active audit packet owns evaluation; left source untouched pending that authority.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 30,
+        "raster_image_count": 29,
+        "observed_dimensions": [
+          "1920x1024"
+        ]
+      }
+    },
+    {
+      "local_path": "2D HD Character Knight/ and 2D HD Character Knight.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md",
+      "product": "Knight character source/reference",
+      "provenance": "Existing active audit packet owns evaluation; no independent runtime promotion.",
+      "repository_paths": []
+    },
+    {
+      "local_path": "alpine_plateau_underlay_assets.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "archived PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md",
+      "product": "Alpine Plateau underlay assets",
+      "provenance": "Previously completed and landed source/runtime work; no duplicate ingest.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 6,
+        "raster_image_count": 6,
+        "observed_dimensions": [
+          "1536x1024"
+        ]
+      }
+    },
+    {
+      "local_path": "awakening_04_05_seam_refs.zip and awakening_04_05_seam_refs(1).zip and awakening_04_05_seam_refs/",
+      "classification": "owned_by_existing_packet",
+      "owner": "AWAKENING_ROOM_CONNECTORS_POLISH.md / AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md",
+      "product": "Awakening 04–05 connector seam references",
+      "provenance": "Existing active connector sequence owns this material. The two ZIPs are byte-identical (SHA-256 265912a098aa913f3c19d9fba4f85dc97ad5f1cc9c9b55921464f29a9cf20c7d).",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 4,
+        "raster_image_count": 4,
+        "observed_dimensions": [
+          "1024x576",
+          "1216x1216",
+          "1374x1145",
+          "704x704"
+        ]
+      }
+    },
+    {
+      "local_path": "awakening_next10_generation_reference_bundle.zip and awakening_next10_generation_reference_bundle/",
+      "classification": "owned_by_existing_packet",
+      "owner": "AWAKENING_ASSET_V2_FAMILIES.md / current Asset V2 families",
+      "product": "Awakening next-10 generation reference bundle",
+      "provenance": "Existing/completed Asset V2 family work; bundle is historical reference and does not override live catalog state.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 49,
+        "raster_image_count": 42,
+        "observed_dimensions": [
+          "multiple; see archive"
+        ]
+      }
+    },
+    {
+      "local_path": "awakening_service_basin_b_reference_bundle.zip and awakening_service_basin_b_reference_bundle/",
+      "classification": "owned_by_existing_packet",
+      "owner": "ASSET_DOWNLOADS_INTAKE_SWEEP.md (superseded reference snapshot)",
+      "product": "Older Basin B reference bundle",
+      "provenance": "Historical snapshot says Basin B outstanding; superseded by the exact current handoff and live Asset V2 family/catalog state.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 21,
+        "raster_image_count": 15,
+        "observed_dimensions": [
+          "multiple; see archive"
+        ]
+      }
+    },
+    {
+      "local_path": "custodian_awakening_detail_asset_review.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "completed Awakening detail asset work / AWAKENING_ASSET_V2_FAMILIES.md",
+      "product": "Awakening detail asset review",
+      "provenance": "Completed handoff/review material; no duplicate copy.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 39,
+        "raster_image_count": 38,
+        "observed_dimensions": [
+          "multiple; see archive"
+        ]
+      }
+    },
+    {
+      "local_path": "custodian_awakening_detail_batch_01_asset_handoff_v1/",
+      "classification": "owned_by_existing_packet",
+      "owner": "completed Awakening detail asset work / AWAKENING_ASSET_V2_FAMILIES.md",
+      "product": "Awakening detail batch 01",
+      "provenance": "Previously handled handoff material; left untouched.",
+      "repository_paths": []
+    },
+    {
+      "local_path": "custodian_awakening_detail_batch_02_asset_handoff_v1.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "AWAKENING_DETAIL_ASSETS_BATCH_02_CLAUDE_SUMMARY.md",
+      "product": "Awakening detail batch 02",
+      "provenance": "Completed handoff; no duplicate copy.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 27,
+        "raster_image_count": 22,
+        "observed_dimensions": [
+          "multiple; see archive"
+        ]
+      }
+    },
+    {
+      "local_path": "custodian_awakening_remaining_detail_assets_handoff_v1.zip and custodian_awakening_remaining_detail_assets_handoff_v1(1).zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "AWAKENING_REMAINING_DETAIL_ASSETS_HANDOFF_V1_CLAUDE_SUMMARY.md",
+      "product": "Remaining Awakening detail assets",
+      "provenance": "Completed handoff; the two archives are byte-identical (SHA-256 749aa51625f10481590aaa03479189099f21d0506f7560e3523490aed381e677).",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 24,
+        "raster_image_count": 20,
+        "observed_dimensions": [
+          "multiple; see archive"
+        ]
+      }
+    },
+    {
+      "local_path": "custodian_procgen_presentation_reference.zip",
+      "classification": "owned_by_existing_packet",
+      "owner": "K3D source inventory / ProcGen presentation source work",
+      "product": "CUSTODIAN ProcGen presentation reference",
+      "provenance": "Previously inventoried ProcGen/K3D reference; no duplicate copy.",
+      "repository_paths": [],
+      "pack_inspection": {
+        "archive_file_count": 128,
+        "raster_image_count": 42,
+        "observed_dimensions": [
+          "multiple; see archive"
+        ]
+      }
+    },
+    {
+      "local_path": "custodian_vaultwing_reference_20260925T194717Z_3542193/ and (1)/ and (2)/",
+      "classification": "owned_by_existing_packet",
+      "owner": "vaultwing-bonding-local-history-recovery",
+      "product": "Vaultwing bonding references",
+      "provenance": "Three local snapshots correspond to active Vaultwing recovery ownership; left untouched.",
+      "repository_paths": []
+    },
+    {
+      "local_path": "procgen_surface_meridian_hardstand_normalized_v1/",
+      "classification": "owned_by_existing_packet",
+      "owner": "PROCGEN_ALPINE_SURFACE_PLATES_V1.md",
+      "product": "Meridian hardstand normalized surface plates",
+      "provenance": "Local normalization handoff includes manifest, generated contact sheet, profile recommendations, and explicit Asset V2 family metadata; the active Alpine Surface Plates packet owns six Meridian hardstand states. No copying or re-normalization performed.",
+      "pack_inspection": {
+        "top_level_file_count": 10,
+        "manifest_family": "procgen_surface_meridian_hardstand",
+        "normalized_state_count": 6
+      },
+      "repository_paths": []
+    },
+    {
+      "local_path": "CUSTODIAN-unarmed-fast-east-vfx-reference/",
+      "classification": "deferred_needs_design",
+      "owner": "none found",
+      "product": "Operator unarmed East VFX references",
+      "provenance": "Three reference files; no active packet or production contract found. Deferred without copying.",
+      "pack_inspection": {
+        "file_count": 3
+      },
+      "repository_paths": []
+    }
+  ]
+}

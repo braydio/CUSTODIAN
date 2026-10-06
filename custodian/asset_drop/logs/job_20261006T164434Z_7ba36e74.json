@@ -1,0 +1,46 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261006T164434Z_7ba36e74",
+  "timestamp": "2026-10-06T16:44:34.502247+00:00",
+  "family": "awakening_ambulatory_fixtures",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_ambulatory_fixtures/service_basin_b.png",
+      "sha256": "b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "service_basin_b",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_ambulatory_fixtures",
+        "world_prop",
+        "body",
+        "fixture",
+        "service_basin_b",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_b__omni__1f__128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

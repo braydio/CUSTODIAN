@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `asset-downloads-intake-sweep`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -224,3 +224,35 @@ Report only:
 ## Next Handoff
 
 After this closes, return to the active Awakening presentation sequence. The remaining scene-level work should not be silently absorbed here.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: Live Asset V2 family/catalog and generated requirements view are authoritative; old intake manifests remain historical.
+- Evidence: Basin B handoff hashes verified; Asset V2 job `job_20261006T164434Z_7ba36e74` published the expected 128×128 RGBA runtime asset with SHA-256 `b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924`; family is 6/6 required-ready; doctor healthy; requirements projection current. Receipt `custodian/docs/ai_context/reports/assets/asset_downloads_intake_sweep.json` inventories relevant Downloads material. Kenney Pattern Lines was left with its owning packet after the explicit filename contract mismatch (`pattern_0000.png`–`pattern_0029.png` delivered; `pattern_000.png`–`pattern_029.png` required). Changed-file suite passes with runtime-family ownership added to the validation manifest.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: Initial changed-file validation failed coverage because Asset V2 runtime outputs for this Awakening family had no owning validation-manifest pattern. During setup, a copy command without an explicit worktree caused temporary writes in the persistent root; the old source was restored and the exact approved bytes/history were transferred to the claimed worktree, and root status was verified clean.
+- Root cause / contributing factors: Validation coverage did not include the family runtime directory; one setup command omitted its workdir.
+- Prevention / pipeline improvement: Added the narrowly scoped runtime directory pattern to the `asset_pipeline_v2` owner set. Verified all root writes were reverted and continued only in the claimed worktree.
+- Tooling / docs drift discovered: The Pattern Lines source-library contract's canonical filename requirement does not match the delivered four-digit `pattern_0000`…`pattern_0029` names. Per that packet's stop rule, no mapping or source copy was invented. Runtime output coverage was missing from the validation manifest and is now covered.
+- Follow-up: kenney-pattern-lines-source-library
+- What worked: Asset V2 source history and generated requirements were updated through the owning pipeline; exact Basin B family status and import agreed.
+
+## Next Handoff
+- Next workstream: awakening-room-connectors-polish
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
+- Refresh reason: none
+- Next action: Return to the active Awakening presentation sequence; `awakening-room-connectors-polish` remains blocked while `awakening-04-05-connector-transition-regression` holds its connector-presentation lock.
+- Blockers or open questions: Kenney Pattern Lines remains owned by its ready packet and needs a bounded packet correction for the filename mismatch before implementation.

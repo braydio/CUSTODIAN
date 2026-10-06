@@ -96,7 +96,7 @@ The opening dungeon ships as a greybox blockout and is fully playable without an
 | Status | Asset | Target Path | Purpose | Notes |
 |---|---|---|---|---|
 | needed | P1 `awakening_late_service_relay_lamp` | `custodian/content/sprites/environment/props/awakening/awakening_late_service_relay_lamp/runtime/body/awakening_late_service_relay_lamp__body__state__idle__omni__1f__192x224.png` | Relay-lamp altar hero prop. | Required state: `idle`. |
-| partial | P1 zone fixture families | `custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png` | Room-specific required set pieces and recommended dressing. | `awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts. |
+| partial | P1 zone fixture families | `custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png` | Room-specific required set pieces and recommended dressing. | `awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` required set is complete (6/6). Other listed fixture families remain governed by their live contracts. |
 
 ## Common Vaultwing Bonding Presentation
 

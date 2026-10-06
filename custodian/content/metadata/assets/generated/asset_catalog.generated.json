@@ -8429,6 +8429,27 @@
           "sha256": "7258a942cb7b0203eb3588297135057f467410c1158fe6d7928ad173c94819f7",
           "provenance": "authored",
           "source_asset": null
+        },
+        "service_basin_b::omni": {
+          "state_id": "service_basin_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "service_basin_b",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_b__omni__1f__128.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },

@@ -12,7 +12,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — (no Goal recorded)
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
@@ -189,7 +188,6 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 
 ### Active Local Asset Intake
 
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — ready/manual closeout for the supplied Awakening `service_basin_b` Asset V2 handoff plus a bounded inventory of CUSTODIAN-relevant asset packs still in `~/Downloads`. It must reuse existing packet/family/library ownership and may not ingest unrelated personal downloads.
 
 ## Active Reusable Source-Material Intake
 
