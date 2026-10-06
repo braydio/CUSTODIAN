@@ -10,7 +10,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Series: `operator-workbench-ux-hierarchy-v1`
 - Workstream: `operator-workbench-ux-consistency-closeout`
-- Status: `ready`
+- Status: `draft`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `operator-workbench-ux-work-queue`
