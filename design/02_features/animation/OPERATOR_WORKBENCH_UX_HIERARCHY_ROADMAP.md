@@ -14,12 +14,20 @@
 > the refreshed roadmap has been reconciled to current main and explicitly
 > signed off for execution.
 
-**Status:** planned / blocked pending refresh  
+**Status:** planned / draft refresh-required / migration cockpit precedes UX polish  
 **Series:** `operator-workbench-ux-hierarchy-v1`  
 **UI lock:** `operator-workbench-ui`  
 **Area:** Operator Workbench / OPUI  
 **Baseline reviewed main:** `330422023f9a92362915af46b9658585e7c1d450`  
 **Last updated:** 2026-10-01
+
+## 2.5D migration-cockpit relationship
+
+A newer user-directed program now owns the immediate Operator migration-production workflow: `design/02_features/animation/OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md`.
+
+- UX4 queue/coverage scope is superseded by WB25-1/WB25-4 and must not be implemented as authored.
+- UX1/UX2/UX3/UX5 remain possible later UI-polish work but must be refreshed only after the migration cockpit is reviewed so they consume its generation/target/ingress/review state.
+- UX1-UX5 packet metadata is being returned to `draft` to match their own REFRESH REQUIRED banners and prevent accidental dispatch.
 
 ## Purpose
 
@@ -309,7 +317,7 @@ This slice must not turn into a backend feature grab bag.
 
 Every slice must:
 
-1. remain `blocked/manual` while its refresh banner exists;
+1. remain `draft/auto` while its refresh banner exists; the draft status, not manual dispatch, is the claim gate;
 2. request a fresh repo/interface review before implementation;
 3. remove its refresh banner only after reconciliation and explicit sign-off;
 4. update `Reviewed main`, current measured state, dependencies, exact work

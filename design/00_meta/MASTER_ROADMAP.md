@@ -308,9 +308,10 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 and AP1 are complete/l
 | AR1 Archive Resolve presentation spine | complete / landed | P2 |
 | ARR1 Archive Resolve paired technical review | complete / passed | P2 |
 | AR2 Archive Resolve shader | implementation + real-renderer recovery + human visual + paired review complete/passed | P1 |
-| AR3 Archive Resolve semantic echo / spawn / reacquisition | ready / auto; refreshed and dependency-satisfied; full-path contract ingress proof required | P2 |
+| AR3 Archive Resolve semantic echo / spawn / reacquisition | implementation complete / landed; paired review ready | P2 |
+| AR4 Archive Resolve frontier restraint | ready / auto behind AR3 review; distance + LOS + camera + time-based local resolve frontier | P1 |
 
-**Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md`, `PROCGEN_ALPINE_SURFACE_PLATES_V1.md`, `PROCGEN_ALPINE_ENVIRONMENT_COHESION_V1.md`, `PROCGEN_ALPINE_UNDERLAY_VARIETY_V1.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
+**Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md`, `PROCGEN_ALPINE_SURFACE_PLATES_V1.md`, `PROCGEN_ALPINE_ENVIRONMENT_COHESION_V1.md`, `PROCGEN_ALPINE_UNDERLAY_VARIETY_V1.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`, `PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT.md`.
 
 
 ### Cross-cutting Isometric 2.5D / Sundered Overlook

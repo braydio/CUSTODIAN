@@ -6,11 +6,13 @@
 > Do not claim or implement it yet. Request a fresh OPUI repository/interface
 > review after UX3 has landed. Remove this banner only after the packet is
 > reconciled against current main and explicitly signed off for execution.
+>
+> **SUPERSEDED SCOPE NOTE:** The 2.5D migration queue/coverage authority is now owned by `operator-2-5d-workbench-cockpit-foundation` + `operator-2-5d-workbench-production-queue`. Refresh must retire or substantially retarget this packet; do not implement a competing queue.
 
 - Packet schema: `custodian.task_packet.v2`
 - Series: `operator-workbench-ux-hierarchy-v1`
 - Workstream: `operator-workbench-ux-work-queue`
-- Status: `ready`
+- Status: `draft`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-workbench-ux-publish-decision`
