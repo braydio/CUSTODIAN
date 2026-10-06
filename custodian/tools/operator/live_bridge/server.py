@@ -90,9 +90,14 @@ class LiveBridgeServer:
         self.paths.validate_message_paths(message)
         return message
 
-    async def send_command(self, message_type: MessageType, payload: dict[str, Any]) -> int:
+    async def send_command(
+        self, message_type: MessageType, payload: dict[str, Any], *,
+        on_issued: Callable[[int], None] | None = None,
+    ) -> int:
         message = self._command_message(message_type, payload)
         self.state.track_command(message.sequence)
+        if on_issued is not None:
+            on_issued(message.sequence)
         await self._client.send(message.to_json())
         return message.sequence
 

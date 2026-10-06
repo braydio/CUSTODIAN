@@ -657,7 +657,16 @@ class WorkbenchService:
             readiness_preparations=readiness.preparations if readiness else (),
         )
 
-    def publish(self, selection: AnimationSelection, full_validate: bool = False, mirror_counterpart: bool = False):
+    def publish(
+        self, selection: AnimationSelection, full_validate: bool = False,
+        mirror_counterpart: bool = False, *, prepare: bool = False, force_stale: bool = False,
+    ):
+        """Publish through the single scoped authority shared by the UI and the CLI.
+
+        ``prepare`` runs structured readiness/preparation before any mutation (the UI does
+        this in its Publish review step). ``force_stale`` only waives source-freshness; it
+        never waives checkout identity, dirty state, dependencies, transactions, or landing.
+        """
         pending_path = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
         if pending_path.exists() and self.model is model and self.workbench is workbench:
             checkout = self.checkout_identity()
@@ -679,7 +688,7 @@ class WorkbenchService:
         plan = self._plan(selection)
         manifest = self.workspace(selection) / "workbench.json"
         if self.model is not model and self.workbench is not workbench:
-            return self.workbench.publish(manifest, self.aseprite, False, False, full_validate, plan, mirror_counterpart)
+            return self.workbench.publish(manifest, self.aseprite, force_stale, False, full_validate, plan, mirror_counterpart)
         data = self.workbench.load(manifest)
         canonical_paths: set[str] = set()
         for binding in data.get("layers", ()):
@@ -698,9 +707,21 @@ class WorkbenchService:
                 if existing:
                     canonical_paths.add(self.model.rel(Path(existing[0])))
         allowlist = operator_art_worktree.publication_allowlist(self.repo_root, canonical_paths)
+        def freshness_for(current):
+            return {} if force_stale else self.workbench.source_contract_freshness(current,self.repo_root)
+        if prepare:
+            prepared = operator_art_worktree.prepare_publish_checkout(
+                self.repo_root, self.coordination_root, self.workspace_root,
+                selected_paths=canonical_paths, source_freshness=freshness_for(data),
+            )
+            if prepared.status != "ready":
+                raise operator_art_worktree.ArtWorktreeError(
+                    "PUBLISH READINESS " + prepared.status.upper() + "\n"
+                    + "\n".join(prepared.blockers or prepared.preparations)
+                )
         def revalidate_before_mutation():
             current=self.workbench.load(manifest)
-            stale=self.workbench.source_contract_freshness(current,self.repo_root)
+            stale=freshness_for(current)
             check=operator_art_worktree.inspect_publish_readiness(
                 self.repo_root,self.coordination_root,self.workspace_root,
                 selected_paths=canonical_paths,source_freshness=stale,
@@ -715,7 +736,7 @@ class WorkbenchService:
             workspace_root=self.workspace_root, canonical_paths=canonical_paths,
             allowlist=allowlist,
             publish_once=lambda: self.workbench.publish(
-                manifest, self.aseprite, False, False, full_validate, plan, mirror_counterpart,
+                manifest, self.aseprite, force_stale, False, full_validate, plan, mirror_counterpart,
             ),
             identity={
                 "profile": selection.profile, "group": selection.group,

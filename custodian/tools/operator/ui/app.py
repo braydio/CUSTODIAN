@@ -303,11 +303,14 @@ class OperatorWorkbenchApp(App):
         expected = self._selected_live_workbench_path()
         if expected is None:
             return False
-        actual = document_path or self.live_bridge.server.state.active_document_path
-        if not actual:
+        active = self.live_bridge.server.state.active_document_path
+        if not active:
             return False
         try:
-            return Path(actual).resolve() == expected
+            return (
+                Path(active).resolve() == expected
+                and (document_path is None or Path(document_path).resolve() == expected)
+            )
         except OSError:
             return False
 
@@ -389,17 +392,25 @@ class OperatorWorkbenchApp(App):
         if workbench is None:
             return
         try:
-            await self.live_bridge.export_preview(workbench, revision)
+            await self.live_bridge.export_preview(
+                workbench, revision,
+                preview_context=(generation, selection.identity, "workbench"),
+            )
         except (ConnectionError, ValueError):
             return
 
     async def _apply_live_preview(self, event: LiveBridgeEvent) -> None:
         if not event.ok:
             return
-        generation = self.state.preview_generation
+        generation = event.request_generation
         selection = self.state.selection
+        examiner_mode = self.state.preview_examiner_mode
         if (
-            selection is None
+            generation is None
+            or event.request_identity is None
+            or selection is None
+            or event.request_identity != selection.identity
+            or event.request_source != "workbench"
             or not self._preview_request_current(generation, selection, "workbench")
             or self.state.mode != "preview"
             or self.state.preview_source != "workbench"
@@ -435,7 +446,9 @@ class OperatorWorkbenchApp(App):
             return
         if (
             event.revision != self.live_bridge.server.state.document_revision
+            or not self._live_document_matches_selection(event.document_path)
             or not self._preview_request_current(generation, selection, "workbench")
+            or self.state.preview_examiner_mode != examiner_mode
             or self._preview_replacing
             or not live.frames
         ):
@@ -452,19 +465,25 @@ class OperatorWorkbenchApp(App):
                         animation_transition.analyze_transition,
                         live.frames, target_view.frames, tail=2, head=2,
                     ))
-                    if target_identity != self.state.transition_target_identity:
+                    if (target_identity != self.state.transition_target_identity
+                            or self.state.preview_examiner_mode != examiner_mode
+                            or not self._live_document_matches_selection(event.document_path)):
                         return
                 else:
                     compare_source = self._compare_source_for(live)
                     comparison = await self._thread(self.service.preview, selection, compare_source)
-                    if not self._preview_request_current(generation, selection, "workbench"):
+                    if (not self._preview_request_current(generation, selection, "workbench")
+                            or self.state.preview_examiner_mode != examiner_mode
+                            or not self._live_document_matches_selection(event.document_path)):
                         return
                     comparisons = animation_preview.compare_previews(live, comparison)
         except Exception:
             return
         if (
             event.revision != self.live_bridge.server.state.document_revision
+            or not self._live_document_matches_selection(event.document_path)
             or not self._preview_request_current(generation, selection, "workbench")
+            or self.state.preview_examiner_mode != examiner_mode
             or self._preview_replacing
         ):
             return
@@ -554,18 +573,15 @@ class OperatorWorkbenchApp(App):
             previous_selection = self.state.selection
             previous_snapshot = self.state.browser_snapshot
             destructive = self._browser_candidate_is_destructive(previous_snapshot, records)
-            self.state.browser_snapshot = tuple(records)
-            self.state.browser_generation += 1
             filtered = self.features["animations"].build_navigation(
-                self.state.browser_snapshot, self.state.search_filter,
+                records, self.state.search_filter,
                 show_superseded=self.state.show_superseded,
             )
             tree = self._main_widget("#animation-tree", AnimationTree)
-            tree.set_records(list(filtered))
 
             selection = previous_selection
             if selection is not None and not selection.group:
-                matches = [row.selection for row in self.state.browser_snapshot if (
+                matches = [row.selection for row in records if (
                     row.selection.profile, row.selection.action, row.selection.direction
                 ) == (selection.profile, selection.action, selection.direction)]
                 if len(matches) == 1:
@@ -574,7 +590,7 @@ class OperatorWorkbenchApp(App):
                         resolved.profile, resolved.group, resolved.action, resolved.direction,
                         selection.weapon_id, selection.linked_profile,
                     )
-            selected_row = next((row for row in self.state.browser_snapshot if selection and (
+            selected_row = next((row for row in records if selection and (
                 row.selection.profile, row.selection.group, row.selection.action, row.selection.direction
             ) == (selection.profile, selection.group, selection.action, selection.direction)), None)
             if selected_row is not None:
@@ -585,28 +601,45 @@ class OperatorWorkbenchApp(App):
                 )
             elif previous_selection is not None and destructive:
                 # The candidate was already stabilized above; fall back only for a confirmed deletion.
-                selection = self.state.browser_snapshot[0].selection if self.state.browser_snapshot else None
+                selection = records[0].selection if records else None
                 if selection is not None:
                     selection = self.state.contextualize(selection)
-                    self._activity(
-                        f"browser selection removed: {previous_selection.identity} → {selection.identity}",
-                        "WARN",
-                    )
-                else:
-                    self._activity(f"browser selection removed: {previous_selection.identity}; no replacement available", "WARN")
-            elif selection is None and self.state.browser_snapshot:
-                selection = self.state.contextualize(self.state.browser_snapshot[0].selection)
+            elif selection is None and records:
+                selection = self.state.contextualize(records[0].selection)
 
             if selection is not None:
-                tree.select_identity(selection)
                 if not await self._load_session(
                     selection, load_preview=not preview_handoff,
                     invalidate_preview=not preview_handoff,
+                    browser_generation=generation, load_mode_preview=False,
                 ):
                     return
-            else:
+            elif self._browser_generation_current(generation):
                 self.state.selection = None
                 self.session_view = None
+            if not self._browser_generation_current(generation):
+                return
+            # Session projection succeeded; now publish its browser candidate in the
+            # same event-loop turn so a failed replacement cannot expose a partial deletion.
+            self.state.browser_snapshot = tuple(records)
+            self.state.browser_generation += 1
+            tree.set_records(list(filtered))
+            if selection is not None:
+                tree.select_identity(selection)
+            if previous_selection is not None and selection is not None and destructive and (
+                previous_selection.identity != selection.identity
+            ):
+                self._activity(
+                    f"browser selection removed: {previous_selection.identity} → {selection.identity}",
+                    "WARN",
+                )
+            elif previous_selection is not None and destructive and selection is None:
+                self._activity(
+                    f"browser selection removed: {previous_selection.identity}; no replacement available",
+                    "WARN",
+                )
+            if selection is not None and self.state.mode == "motion" and previous_selection != selection:
+                await self._load_motion_preview()
             if preview_handoff and selection is not None:
                 await self._load_preview(generation=preview_generation)
             if not self._browser_generation_current(generation):
@@ -650,7 +683,8 @@ class OperatorWorkbenchApp(App):
 
     async def _load_session(
         self, selection: AnimationSelection, *, load_preview: bool = True,
-        invalidate_preview: bool = True,
+        invalidate_preview: bool = True, browser_generation: int | None = None,
+        load_mode_preview: bool = True,
     ) -> bool:
         self.state.session_generation += 1
         generation = self.state.session_generation
@@ -663,10 +697,13 @@ class OperatorWorkbenchApp(App):
                 self.state.preview_playing = False
         try:
             session = await self._thread(self.service.session, selection)
-            if generation != self.state.session_generation:
+            watch_signature = self.service.watch_signature(selection)
+            if (generation != self.state.session_generation
+                    or (browser_generation is not None
+                        and not self._browser_generation_current(browser_generation))):
                 return False
             self.session_view = session
-            self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
+            self.state.selection = selection; self.state.watch_signature = watch_signature
             if changed:
                 self.preview_compare_view = None
                 self.preview_comparisons = ()
@@ -687,12 +724,16 @@ class OperatorWorkbenchApp(App):
                 if self.live_bridge.server.state.active_layer:
                     layer_table.select_live_layer(str(self.live_bridge.server.state.active_layer))
             self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
-            if changed and self.state.mode == "motion":
+            if changed and load_mode_preview and self.state.mode == "motion":
                 await self._load_motion_preview()
             if changed and load_preview and self.state.mode == "preview":
                 await self._load_preview(generation=preview_generation)
             return True
         except Exception as error:
+            if (generation != self.state.session_generation
+                    or (browser_generation is not None
+                        and not self._browser_generation_current(browser_generation))):
+                return False
             projected = self.service.project_error(error)
             if projected.title == "WORKBENCH CONTEXT MISMATCH":
                 existing = self.service.existing_context(selection)
@@ -708,7 +749,9 @@ class OperatorWorkbenchApp(App):
             self._error(error)
             return False
         finally:
-            if generation == self.state.session_generation and self.state.mode == "preview":
+            if (generation == self.state.session_generation and self.state.mode == "preview"
+                    and (browser_generation is None
+                         or self._browser_generation_current(browser_generation))):
                 if not self._browser_refresh_in_progress:
                     self._preview_replacing = False
 
@@ -882,10 +925,17 @@ class OperatorWorkbenchApp(App):
             return
         self._preview_replacing = True
         source = self.state.preview_source
+        examiner_mode = self.state.preview_examiner_mode
+        def request_current() -> bool:
+            return (
+                self._preview_request_current(generation, selection, source)
+                and self.state.preview_examiner_mode == examiner_mode
+            )
         try:
             primary = None
             live_revision = None
-            if source == "workbench" and self._live_document_matches_selection():
+            live_document_path = self.live_bridge.server.state.active_document_path
+            if source == "workbench" and self._live_document_matches_selection(live_document_path):
                 workbench = self._selected_live_workbench_path()
                 if workbench is not None:
                     for _attempt in range(3):
@@ -894,8 +944,10 @@ class OperatorWorkbenchApp(App):
                             exported = await self.live_bridge.request_preview_export(workbench, revision)
                         except (ConnectionError, ValueError):
                             break
-                        if not self._preview_request_current(generation, selection, source):
+                        if not request_current():
                             return
+                        if not self._live_document_matches_selection(live_document_path):
+                            break
                         if revision != self.live_bridge.server.state.document_revision:
                             continue
                         output_path = Path(exported["output_path"])
@@ -907,8 +959,10 @@ class OperatorWorkbenchApp(App):
                                 frames=int(exported["frames"]),
                                 frame_size=(int(exported["frame_width"]), int(exported["frame_height"])),
                             )
-                        if not self._preview_request_current(generation, selection, source):
+                        if not request_current():
                             return
+                        if not self._live_document_matches_selection(live_document_path):
+                            break
                         if revision == self.live_bridge.server.state.document_revision:
                             primary = candidate
                             live_revision = revision
@@ -917,9 +971,12 @@ class OperatorWorkbenchApp(App):
                         self._activity("Live preview unavailable during refresh; loading the saved Workbench preview", "WARN")
             if primary is None:
                 primary = await self._thread(self.service.preview, selection, source)
-            if not self._preview_request_current(generation, selection, source):
+            if not request_current():
                 return
-            if live_revision is not None and live_revision != self.live_bridge.server.state.document_revision:
+            if live_revision is not None and (
+                live_revision != self.live_bridge.server.state.document_revision
+                or not self._live_document_matches_selection(live_document_path)
+            ):
                 self._pending_live_preview_revision = self.live_bridge.server.state.document_revision
                 return
 
@@ -931,29 +988,39 @@ class OperatorWorkbenchApp(App):
             target = None
             if self.state.preview_examiner_mode == "transition":
                 candidates = tuple(await self._thread(self.service.transition_candidates, selection))
-                if not self._preview_request_current(generation, selection, source):
+                if not request_current():
+                    return
+                if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                     return
                 target = next((item for item in candidates if item.identity == self.state.transition_target_identity), None)
                 if target is None and candidates:
                     target = candidates[0]
                 if target is not None:
                     target_view = await self._thread(self.service.transition_preview, target, primary.source)
-                    if not self._preview_request_current(generation, selection, source):
+                    if not request_current():
+                        return
+                    if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                         return
                     transition_analysis = await self._thread(partial(
                         animation_transition.analyze_transition,
                         primary.frames, target_view.frames, tail=2, head=2,
                     ))
-                    if not self._preview_request_current(generation, selection, source):
+                    if not request_current():
+                        return
+                    if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                         return
             elif self.state.preview_examiner_mode != "single":
                 compare_source = self._compare_source_for(primary)
                 comparison = await self._thread(self.service.preview, selection, compare_source)
-                if not self._preview_request_current(generation, selection, source):
+                if not request_current():
+                    return
+                if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                     return
                 comparisons = animation_preview.compare_previews(primary, comparison)
 
-            if not self._preview_request_current(generation, selection, source):
+            if (not request_current()
+                    or (live_revision is not None
+                        and not self._live_document_matches_selection(live_document_path))):
                 return
             self.preview_view = primary
             self.preview_compare_view = comparison
@@ -1007,6 +1074,7 @@ class OperatorWorkbenchApp(App):
         generation = self.state.preview_generation
         primary = self.preview_view
         source_requested = self.state.preview_source
+        examiner_mode = self.state.preview_examiner_mode
         source = self._normalized_compare_source()
         if not force and self.preview_compare_view is not None and self.preview_compare_view.source == source and self.preview_compare_view.identity == self.preview_view.identity:
             self._rebuild_preview_comparison(); return
@@ -1018,6 +1086,7 @@ class OperatorWorkbenchApp(App):
                 or self.state.selection is None
                 or self.state.selection.identity != selection.identity
                 or self.state.preview_source != source_requested
+                or self.state.preview_examiner_mode != examiner_mode
                 or self.preview_view is not primary
             ):
                 return
@@ -1045,23 +1114,28 @@ class OperatorWorkbenchApp(App):
         primary = self.preview_view
         generation = self.state.preview_generation
         source = self.state.preview_source
+        examiner_mode = self.state.preview_examiner_mode
         requested_target = self.state.transition_target_identity
         try:
             candidates = tuple(await self._thread(self.service.transition_candidates, selection))
             if (not self._preview_request_current(generation, selection, source)
                     or self.preview_view is not primary
+                    or self.state.preview_examiner_mode != examiner_mode
                     or self.state.transition_target_identity != requested_target):
                 return
-            self.transition_candidates = candidates
-            target = self._transition_target()
+            target = next((candidate for candidate in candidates
+                           if candidate.identity == requested_target), None)
+            if target is None and candidates:
+                target = candidates[0]
             if target is None:
+                self.transition_candidates = candidates
                 self.transition_target_view = None; self.transition_analysis = None
                 self._activity("No compatible transition target", "WARN")
                 self._render_preview(); return
-            requested_target = target.identity
             target_view = await self._thread(self.service.transition_preview, target, primary.source)
             if (not self._preview_request_current(generation, selection, source)
                     or self.preview_view is not primary
+                    or self.state.preview_examiner_mode != examiner_mode
                     or self.state.transition_target_identity != requested_target):
                 return
             analysis = await self._thread(partial(
@@ -1070,10 +1144,13 @@ class OperatorWorkbenchApp(App):
             ))
             if (not self._preview_request_current(generation, selection, source)
                     or self.preview_view is not primary
+                    or self.state.preview_examiner_mode != examiner_mode
                     or self.state.transition_target_identity != requested_target):
                 return
             self.transition_target_view = target_view
             self.transition_analysis = analysis
+            self.transition_candidates = candidates
+            self.state.transition_target_identity = target.identity
             self.state.preview_playing = False
             self._render_preview()
         except Exception as error:

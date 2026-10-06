@@ -79,14 +79,14 @@ All three families already exist. Do not create duplicate family schemas. Asset 
 
 ## Handoff
 
-- Next workstream: `awakening-handoff-readiness-art-convergence-v1-r1`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
-- Refresh reason: The full-Awakening convergence packet currently freezes the old Zone04/05 art and 04→05 feather/crossfade behavior; after this replacement lands and is independently reviewed, its registration/seam acceptance must be re-derived from the new live art/foreground completeness.
-- Next action: Bring the landed implementation summary plus paired review receipt back to the recorded authoring chat, refresh the blocked convergence packet in place, then resume the broader Awakening handoff-readiness program.
-- Blockers or open questions: The local Downloads inputs must exist on the execution machine. A new Locker foreground may remain as an explicit art gap.
+- Next workstream: `review-awakening-room-connectors-polish`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83b3-ffb3b715d0d9`
+- Refresh reason: `none`
+- Next action: Finish/archive this implementation normally so its paired fresh-context review becomes eligible automatically. After that review passes, `awakening-handoff-readiness-art-convergence-v1-r1` is dependency-gated `ready/auto` and performs its own claim-time refresh from live predecessor evidence.
+- Blockers or open questions: The local Downloads inputs must exist on the execution machine. A new Locker foreground may remain as an explicit art gap; neither requires a user-controlled dispatch gate.
 
 ## Completion Truth
 

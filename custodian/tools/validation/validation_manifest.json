@@ -1278,6 +1278,27 @@
       "needs_import": false
     },
     {
+      "id": "operator_cli_publish_boundary",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_cli_publish_boundary_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation",
+        "tooling",
+        "worktree",
+        "git"
+      ],
+      "owners": [
+        "custodian/tools/operator/operator_cli.py",
+        "custodian/tools/operator/operator_art_worktree.py",
+        "custodian/tools/operator/ui/service.py",
+        "custodian/tools/validation/operator_cli_publish_boundary_smoke.py"
+      ],
+      "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
       "id": "operator_workbench_ui",
       "type": "python",
       "script": "custodian/tools/validation/operator_workbench_ui_smoke.py",
@@ -1293,7 +1314,7 @@
         "custodian/tools/operator/ui/**",
         "custodian/tools/validation/operator_workbench_ui_smoke.py"
       ],
-      "timeout_sec": 20,
+      "timeout_sec": 60,
       "needs_import": false
     },
     {

@@ -1,12 +1,16 @@
-
 # ISOMETRIC 2.5D FORUM VERTICAL SLICE
+
+> **REFRESH REQUIRED AFTER OPERATOR 2.5D ANIMATION AUDIT HUMAN DECISION**
+>
+> The reusable 2.5D foundation may continue through independent review, but this Operator-heavy showcase must not claim until `operator-2-5d-animation-viability-audit` is complete and the user/ChatGPT has refreshed this packet from its visual verdict.
+
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `isometric-2-5d-forum-vertical-slice`
-- Status: `ready`
+- Status: `draft`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-isometric-2-5d-presentation-foundation`
+- Depends on: `review-isometric-2-5d-presentation-foundation, operator-2-5d-animation-viability-audit`
 - Locks: `world-presentation, presentation-experiments, asset-pipeline`
 - Kind: `implementation`
 - Review: `none`
@@ -15,7 +19,7 @@
 - Coordination chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4
 - Goal: Prove CUSTODIAN's realized 2.5D language in one normal playable Forum approach with the real Operator/controller/Camera2D, ground-rooted depth, raised/overhead architecture, tactical occlusion fade, contact grounding and the existing 16-direction Lords skeleton.
 - Completion boundary: Build one standalone authored/dev scene around Forum South → Adjudication Dais using the landed foundation and existing assets; include a raised mass/stair cue, sortable tall structure, overhead occluder, moving 16-direction skeleton and flat-vs-realized toggle; keep collision/navigation/gameplay completely 2D.
-- Current measured state: K3D-1/K3D-1P provide fixed-view/walkaround precursor evidence. `dev_lop_skeleton` already has 16 directional 8-frame walk strips. `RoofOccluder2D`, BlobShadow and base-root sorting already exist.
+- Current measured state: K3D-1/K3D-1P provide fixed-view/walkaround precursor evidence. The reusable 2.5D foundation has landed and awaits fresh-context review. The current Operator art is not yet approved as the human visual benchmark: `operator-2-5d-animation-viability-audit` now owns that decision using current runtime pixels plus LoP/Playable-Knight goalposts. `dev_lop_skeleton` already has 16 directional 8-frame walk strips. `RoofOccluder2D`, BlobShadow and base-root sorting already exist.
 - Evidence: 2.5D presentation contract/foundation; K3D-1P wrapper; Lords skeleton family/manifest; current Hub/Forum authority at execution time.
 - Task-specific authority: the 2.5D contract plus live H1 layout constants if H1 has landed. If not, use locked `HUB_FIRST_SET_BLOCKOUT.md` coordinates read-only.
 - Work surface: new authored/dev vertical-slice scene/wrapper/local helper; Lords skeleton consumer metadata; focused validation and roadmap/index docs.

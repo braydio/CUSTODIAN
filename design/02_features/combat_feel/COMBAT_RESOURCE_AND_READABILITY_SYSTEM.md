@@ -33,8 +33,9 @@ below; this document does not duplicate their runtime ownership.
 | Integrity Reclaim | complete-v1 | Unblocked damage creates independently expiring recoverable integrity; confirmed direct hostile damage restores it at melee/critical/ranged efficiencies through the trailing health-bar segment | `OPERATOR_INTEGRITY_RECLAIM.md` |
 | Field Patch healing/restock | complete-v1 | Operator carries limited Field Patches, uses a timed commit heal, slows during use, restores 35% max health at commit, and interrupts before commit on damage or conflicting actions. Restock v1 is terminal/crafting based through `lattice_field_patch`, with emergency cache pickup fallback materials when full. | This document |
 | Stamina, dodge, guard, parry | complete-v1 | Dodge/heavy/parry costs, guard chip and stamina damage, timed parry, enemy stagger, and counter window are live | `COMBAT_FEEL_SYSTEM.md` |
-| Dedicated riposte/opened state | partial | Parry grants a counter damage window, but there is no unique riposte action or persistent enemy-opened state | This document |
-| Hit readability | partial | Operator hit recoil and enemy recoil/stagger thresholds are live; strength taxonomy, armor deflect, guard-break presentation, and complete animation coverage are not | This document |
+| Critical-open / paired execution | complete-v1 | Enemy-owned ENTER/HOLD/RECOVER/EXECUTING state, atomic reservation, and synchronized paired execution are live | `PARRY_CRITICAL_BRANCHING_AND_VFX.md` |
+| Dedicated semantic riposte | queued | Parry already grants the tuned counter window and ordinary fast melee can consume its bonus, but there is no distinct riposte action identity tied to the actually parried attacker; `operator-parry-riposte-completion` owns that remaining tail | `HIT_TAXONOMY_AND_RIPOSTE.md`, task packet `OPERATOR_PARRY_RIPOSTE_COMPLETION.md` |
+| Hit taxonomy / reaction readability | complete-v1 / polish pending | HitStrength/DamageType flow, posture-aware reactions, marine light-flinch resistance, armor deflect behavior, Operator heavy-hit reaction, and guard-break simulation are live; dedicated guard-break presentation remains separately queued polish | `HIT_TAXONOMY_AND_RIPOSTE.md`, `COMBAT_FEEL_SYSTEM.md` |
 | Durability | pending | No weapon, armor, tool, drone, turret, or deployable durability economy | This document |
 | Physical storage and theft | complete-v1 | Typed vault storage, enemy theft/sabotage/escape, permanent loss, dropped recovery bundles, and state textures are live | `ENEMY_OBJECTIVE_SYSTEM.md` |
 | Portable turrets | complete-v1 | Fabrication build tokens, placement preview/validation, placement, pickup/redeployment, health, targeting, and power hooks are live | `turret/implementation.md`, `RESOURCE_FABRICATION_SYSTEM.md` |
@@ -192,15 +193,17 @@ Acceptance: healing is finite, cannot be animation-cancelled for free, and does
 not regenerate health passively. Runtime v1 acceptance is covered by
 `custodian/tools/validation/field_patch_smoke.gd`.
 
-### Milestone C — Hit taxonomy and full riposte
+### Milestone C — Hit taxonomy and riposte closeout
 
-- Normalize hit-strength metadata at the existing damage boundary.
-- Add differentiated enemy and Operator reactions with heavy-enemy resistance.
-- Add explicit guard-break presentation.
-- Add enemy-opened state and unique riposte action after successful parry.
+- **Complete-v1:** hit-strength metadata at the existing damage boundary.
+- **Complete-v1:** differentiated enemy and Operator reactions with heavy-enemy resistance / armor-deflect behavior.
+- **Complete-v1:** enemy-owned critical-open ENTER/HOLD/RECOVER/EXECUTING state and atomic paired critical execution.
+- **Queued separately:** dedicated guard-break presentation polish.
+- **Queued:** dedicated semantic riposte fallback after successful parry when no valid paired critical execution is available. This must use the current live counter window/tuning and the actual parried attacker rather than reviving the legacy 0.5s/1.5x sketch.
 
-Acceptance: players can distinguish hurt, deflect, stagger, parry-opened, guard
-impact, and guard break; simulation remains deterministic.
+Acceptance for the remaining riposte slice: paired critical execution keeps first
+priority; the fallback riposte is explicit, target-bound and exactly once; current
+guard/parry and damage authorities remain deterministic.
 
 ### Milestone D — Durability and field repair
 
@@ -237,7 +240,7 @@ for cadence, readability, animation interruption, and control regressions.
 ## Next Agent Slice
 
 Goal: perform the manual feel/mix review for completed Milestone A, replace shared
-P-9 cues when weapon-specific audio arrives, then begin Milestone C hit taxonomy.
+P-9 cues when weapon-specific audio arrives, then execute the remaining Milestone C semantic-riposte closeout when its melee-domain dependency is complete.
 
 Files: combat resource feedback presenter/HUD, ranged weapon JSON/audio, and the
 combat hit/reaction boundaries named by Milestone C.

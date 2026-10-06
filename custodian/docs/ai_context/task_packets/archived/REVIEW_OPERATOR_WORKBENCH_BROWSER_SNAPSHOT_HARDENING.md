@@ -1,0 +1,91 @@
+# REVIEW: OPERATOR WORKBENCH BROWSER / PREVIEW REFRESH HARDENING
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-operator-workbench-browser-preview-refresh-hardening`
+- Kind: `review`
+- Status: `complete`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `operator-workbench-browser-preview-refresh-hardening`
+- Locks: `operator-workbench-ui, operator-workbench-publish`
+- Review: `none`
+- Review target workstream: `operator-workbench-browser-preview-refresh-hardening`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md`
+- Reviewed main: `0a4bd5ec35`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
+- Review modes: `code, architecture, runtime, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify that the landed browser/PREVIEW hardening makes F5 and asynchronous refresh latest-request-wins without creating a second state authority, hiding genuine deletions, weakening Live Bridge safety, or converting page-3 crashes into silent stale-state corruption.
+- Reviewed implementation acceptance: Review the archived implementation packet's complete acceptance contract, especially side-effect-free discovery, one accepted unfiltered browser snapshot, destructive-candidate stabilization, pure Search, confirmed-deletion fallback only, browser/preview generations, atomic page-3 replacement while playing, stale async result rejection, F5/PUBLISH coalescing, 30 Hz tick guards, error preservation, and no duplicate session loads.
+- Review evidence: Reuse the implementation's deterministic barrier/fake-provider race fixtures, Textual Pilot results, state-transition assertions, worker-generation traces where retained, changed-file validation report, and closing summary. Recapture no renderer media because this packet's acceptance is UI state/concurrency rather than visual composition.
+- Correction threshold: Create correction work for any confirmed stale-result application, silent selection change on transient/filter state, preview-generation mix, escaped page-3 refresh exception, duplicate session load violating acceptance, browser authority duplication, or evidence gap that prevents confidence in those guarantees. Optional messaging/layout polish is non-blocking.
+- Focused validation: Inspect ownership in `app.py`, `state.py`, `features/animations.py`, and `service.py`; rerun `python3 custodian/tools/validation/operator_workbench_ui_smoke.py` with its deterministic race fixtures and available Textual Pilot coverage. Run `python3 custodian/tools/validation/operator_animation_workbench_smoke.py` only if the landed implementation touched source-discovery semantics below the UI boundary. Finish with the smallest changed-file validation needed to verify findings.
+- Review focus:
+  - Preserve the already-landed dismissible stale/error modal contract: one dialog, exact backend text, Escape/Enter/click dismissal, paused preview/motion clocks, and no implicit saved-document mutation.
+  - No mutable browser cache may be owned by worker/provider code after the accepted snapshot becomes UI authority.
+  - `exclusive=True` must not be mistaken for thread cancellation; every stale completion needs an explicit generation/identity rejection path.
+  - Search must not mutate canonical selection, and F5 must not use a filtered view to infer deletion.
+  - Stable deletion must still become visible after confirmation; hardening must not freeze stale browser state forever.
+  - PREVIEW replacement must preserve the last usable view until the newest coherent view is ready and must not let the 30 Hz tick bridge generations.
+  - Live Bridge's document/revision/output guards must remain intact and be strengthened, not duplicated or bypassed.
+  - One refresh should not recursively trigger duplicate selection/session work.
+  - Publish coordination may defer/coalesce F5 but must not broaden this review into Git transaction redesign.
+- Acceptance: Produce a findings-first independent review of live `main`. Record a `passed` receipt or concrete findings. Give each finding a stable cycle-scoped ID (`R<cycle>-<NN>`) and the required class, domain, affected acceptance, evidence, disposition, and rationale. Blocking defects and material acceptance-proof gaps create `operator-workbench-browser-preview-refresh-hardening-review-corrections-<n>` plus its paired review packet. Do not patch reviewed implementation code.
+- Non-goals: Do not redesign Operator art/runtime behavior, publication Git recovery, generic Asset Workbench, or Textual layout. Do not require screenshots or subjective visual judgment for deterministic state/concurrency acceptance.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Procedure
+
+1. Claim only after the implementation dependency is complete and archived on `origin/main`.
+2. Read root/local AGENTS, the archived implementation packet and closing summary, current Workbench design, and the landed UI orchestration.
+3. Start from deterministic race tests rather than manually mashing F5.
+4. Verify old-browser and old-preview completions are provably unable to mutate accepted state after a newer generation exists.
+5. Verify a genuine stable deletion still advances state and that Search-hidden selection remains session authority.
+6. Verify page-3 repeated F5 while playing remains mounted and coherent with no escaped exception and no stale render/session application.
+7. Verify exception handling retains the previous usable state rather than swallowing a corrupted partial refresh.
+8. Record receipt/findings and scaffold correction work only when the correction threshold is met.
+9. Complete/archive through normal paired-review lifecycle.
+
+## Human Decision Gate
+
+No subjective visual/art-direction decision is expected. If a residual crash cannot be reproduced by the deterministic harness and only a user terminal traceback can distinguish causes, record an evidence gap and request that exact traceback rather than guessing.
+
+## Handoff
+
+- Next action: Claim after `operator-workbench-browser-preview-refresh-hardening` completes.
+- Blockers or open questions: None for ordinary review; a genuinely unreproduced residual process crash may require user-provided traceback evidence.
+## Review Result
+
+- Disposition: `findings`
+- Reviewed live main: `83f5a9dcebf91df7e853a02fbaffbb652490b777`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `3`
+- Material evidence gaps: `1`
+- Findings: `R0-01, R0-02, R0-03, R0-04`; details and executable probes in `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_REFRESH_HARDENING_CLAUDE_SUMMARY.md`.
+- Correction workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-1`
+- Focused validation: Pinned Textual UI smoke PASS; animation Workbench smoke PASS; three independent deterministic defect probes reproduced; changed-artifact closeout validation PASS (2/2: review_pairing_contract and visual_review_handoff), git diff --check PASS.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: Existing green UI smoke omitted multiple required race and negative-control assertions. The initial review failure probe exited before the error modal mounted and produced shutdown noise; allowing the Pilot to drain removed it.
+- Root cause / contributing factors: The implementation completion receipt treated helper-only stabilization checks as complete end-to-end acceptance; export-request generation and browser-owned session projection were not exercised.
+- Prevention / pipeline improvement: Correction cycle 1 explicitly maps durable end-to-end assertions to R0-01 through R0-04; reproduction code is retained below.
+- Tooling / docs drift discovered: Reviewed main in the original packet is a preimplementation baseline; actual implementation is ab6bfd008 plus summary rename 328a46a76. Implementation summary says 14 validations, while retained JSON reports 16 passed.
+- Follow-up: operator-workbench-browser-preview-refresh-hardening-review-corrections-1
+- What worked: Pinned Textual environment, fresh independent probes, and isolated bounded review checkout.
+
+## Next Handoff
+- Next workstream: operator-workbench-browser-preview-refresh-hardening-review-corrections-1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Refresh reason: none
+- Next action: Claim correction cycle 1, resolve R0-01 through R0-04, then run its paired independent review before continuing the FX-adoption lane.
+- Blockers or open questions: none; the original production crash traceback remains unavailable and is not used to infer a crash root cause.

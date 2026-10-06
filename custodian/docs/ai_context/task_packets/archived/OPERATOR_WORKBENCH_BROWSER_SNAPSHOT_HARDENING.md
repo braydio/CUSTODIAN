@@ -181,3 +181,22 @@
 - Tooling / docs drift discovered: none
 - Follow-up: `review-operator-workbench-browser-preview-refresh-hardening`
 - What worked: F5 retains and atomically replaces the last usable page-3 preview under latest-request-wins guards.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-browser-preview-refresh-hardening`
+- Reviewed on main: `83f5a9dcebf91df7e853a02fbaffbb652490b777`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, workflow`
+- Blocking defects: `3`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02, R0-03, R0-04`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_REFRESH_HARDENING_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-1`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`

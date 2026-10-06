@@ -5782,27 +5782,27 @@
       "direction": "e",
       "layers": {
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__e__7f__96.png",
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__e__7f__128.png",
           "frames": 7,
           "frame_size": [
-            96,
-            96
+            128,
+            128
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__e__7f__96.png",
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__e__7f__128.png",
           "frames": 7,
           "frame_size": [
-            96,
-            96
+            128,
+            128
           ]
         },
         "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__e__7f__96.png",
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__e__7f__128.png",
           "frames": 7,
           "frame_size": [
-            96,
-            96
+            128,
+            128
           ]
         }
       }
@@ -5814,27 +5814,27 @@
       "direction": "w",
       "layers": {
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__w__7f__96.png",
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__lower_body__unarmed__attack__fast_03__w__7f__128.png",
           "frames": 7,
           "frame_size": [
-            96,
-            96
+            128,
+            128
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__w__7f__96.png",
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__w__7f__128.png",
           "frames": 7,
           "frame_size": [
-            96,
-            96
+            128,
+            128
           ]
         },
         "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__w__7f__96.png",
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__w__7f__128.png",
           "frames": 7,
           "frame_size": [
-            96,
-            96
+            128,
+            128
           ]
         }
       }
@@ -8942,24 +8942,24 @@
       "direction": "w",
       "layers": {
         "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__fx__unarmed__defense__parry_01__w__6f__96.png",
-          "frames": 6,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__fx__unarmed__defense__parry_01__w__5f__96.png",
+          "frames": 5,
           "frame_size": [
             96,
             96
           ]
         },
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__w__6f__96.png",
-          "frames": 6,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__w__5f__96.png",
+          "frames": 5,
           "frame_size": [
             96,
             96
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__w__6f__96.png",
-          "frames": 6,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__w__5f__96.png",
+          "frames": 5,
           "frame_size": [
             96,
             96

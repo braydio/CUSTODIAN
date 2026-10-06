@@ -12,10 +12,9 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
-- `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1.md` — Make the documented CLI publication route obey the same dedicated-checkout readiness and scoped landing contract as the UI, or fail closed before canonical m...
-- `REVIEW_OPERATOR_WORKBENCH_BROWSER_SNAPSHOT_HARDENING.md` — Independently verify that the landed browser/PREVIEW hardening makes F5 and asynchronous refresh latest-request-wins without creating a second state authorit...
-- `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 closes parent finding `R0-01` so no documented CLI invocation can mutate canonical Operator art outside the reviewed r...
-- `REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — Independently verify authoring-chat provenance, autonomous claim routing, same-workstream human-review pause behavior, and exact reviewed-evidence cleanup sa...
+- `OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md` — Read-only runtime-pixel audit of production-reachable Operator animations against the LoP 16-angle and Playable Knight 8-direction goalposts; outputs exact 2.5D art backlog and requires human visual review.
+- `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Close the remaining manifest-path retargeting path in R0-01 before any unrelated Operator source can be mutated or landed by a selected Workbench publication.
+- `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Independently verify that cycle 2 closes R0-01 by proving mutable Workbench paths cannot retarget CLI publication outside the selected animation.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
@@ -101,7 +100,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
 - `ISOMETRIC_2_5D_FORUM_VERTICAL_SLICE.md` — Prove CUSTODIAN's realized 2.5D language in one normal playable Forum approach with the real Operator/controller/Camera2D, ground-rooted depth, raised/overhe...
-- `ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md` — Make CUSTODIAN's 2.5D doctrine an explicit reusable 2D runtime presentation contract by separating ground XY from visual elevation and converging existing de...
 - `KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md` — Preserve the user's four downloaded Kenney Pattern Pack Lines variants as a durable, searchable, provenance-complete CUSTODIAN source-material library so fut...
 - `OPERATOR_GUARD_BREAK_PRESENTATION.md` — Give guard break its own committed, readable whole-body failure presentation, distinct from ordinary non-breaking recoil, without weakening the existing move...
 - `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` — Turn the newly generated unarmed-defense source-work set into reviewed, registration-correct 96×96 Operator production assets through Source Session + Asset...
@@ -126,7 +124,15 @@ This section is owned by `custodian/tools/agent/task_packet_index.py`; run it wi
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6a8afb3b-5934-83ea-a84a-4c7a4b7778fb
 
 - `archived/VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — completed P0 control-plane/tooling slice: claim receipts expose authoring/visual-review routing, finish enforces exact summary backlinks, Dropbox review manifests default to delete-after-review and carry a path-confined cleanup command, and `$custodian-next` keeps human review inside the active workstream.
-- `REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — ready/auto fresh-context paired review, dependency-satisfied once this landing reaches main.
+- `archived/REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — complete: paired review passed (0 blocking, 5 non-blocking deferred findings R0-01..R0-05).
+
+### Active Operator Workbench Preview Disconnect Ownership Correction
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+
+- `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized bounded successor for exhausted-lineage finding R2-01. Adds exact Live Bridge connection/session ownership to Preview acceptance so disconnect or reconnect cannot revive a held result while last-known path/revision remain equal.
+- `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review requiring real disconnect and same-document reconnect controls. Passing this review is now the direct gate for `operator-workbench-fx-layer-adoption`.
+- This is intentionally **not** automatic correction cycle 3 of the prior Browser/PREVIEW chain; the authoring chat supplied the required human decision.
 
 ### Active Persistent Checkout Sync Hardening
 
@@ -164,7 +170,8 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
 - `isometric-2-5d-presentation-foundation` is **complete**; the paired fresh-context review is next.
 - `review-isometric-2-5d-presentation-foundation` is the new paired fresh-context review and gates downstream showcase consumers.
-- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the reviewed foundation.
+- `operator-2-5d-animation-viability-audit` is **ready/auto** and is the required human visual/art gate before the Operator-heavy Forum showcase. It is read-only and quantifies exactly how much existing Operator art can survive the 2.5D pivot.
+- `isometric-2-5d-forum-vertical-slice` is now **draft/refresh-required** behind both the reviewed foundation and the completed Operator audit human decision.
 - `sundered-keep-overlook-alternate-vertical-slice` is an independent reviewed-foundation consumer tracked by the new Sundered overlook roadmap.
 - The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
 - Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.

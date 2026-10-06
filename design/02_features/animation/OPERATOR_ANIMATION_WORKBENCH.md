@@ -116,18 +116,29 @@ Browser discovery runs as a side-effect-free candidate operation. One immutable,
 unfiltered snapshot in `WorkbenchUIState` is the accepted browser-record authority;
 Search and superseded visibility are pure projections of that snapshot and do
 not scan the filesystem or change the selected Workbench session. Refreshes use
-monotonic request generations so an older `asyncio.to_thread()` scan cannot
-overwrite a newer accepted candidate. Destructive candidates are confirmed by
+monotonic request generations for discovery and browser-owned session projection,
+so an older scan or session cannot overwrite a newer accepted candidate. Candidate
+browser/tree state is committed only after its selected session projection succeeds;
+a failed replacement preserves the previous coherent snapshot and selection.
+Destructive candidates are confirmed by
 bounded semantic rescans; missing identities and incomplete modular body-clock
 migrations keep the last accepted snapshot until stable. Selection survives
 Search and accepted refreshes while its semantic identity remains present.
 
 Page-3 PREVIEW asynchronous work uses a separate generation bound to semantic
 selection, source, and mode. Preview, comparison, transition, and Live Bridge
-results are discarded when their generation is stale. F5 keeps the last usable
-preview visible while browser/session state and a coherent replacement preview
-are prepared, then applies the replacement and restores prior playback intent
-only when the same semantic preview remains valid. Refresh requests during
+results are discarded when their generation is stale. Asynchronous Live Bridge
+export commands carry their originating preview generation and semantic selection
+through the command cause sequence to result application. A live result must also
+match both its exported document path and the editor's currently active Workbench
+document; that ownership is rechecked after each live-image, comparison, or
+transition-analysis await and immediately before applying preview state. A document
+switch or disconnect rejects the detached result even when revision and preview
+generation values are unchanged. Synchronous F5 live export/load follows the same
+document guard and falls back to the saved Workbench preview when it remains valid.
+F5 keeps the last usable preview visible while browser/session state and a coherent
+replacement preview are prepared, then applies the replacement and restores prior
+playback intent only when the same semantic preview remains valid. Refresh requests during
 canonical PUBLISH mutation are coalesced and run once after publication ends.
 
 Persistent shell widgets belong to the retained main screen, not whichever
@@ -154,7 +165,7 @@ operator anim canvas resize unarmed fast_02 e --group attack --width 128 --heigh
 
 The manifest records exact repo-relative source/runtime provenance, file and pixel hashes, original frame contracts, centered integer placement, presentation-clock mapping, and the ordered editable-layer whitelist. Lua only assembles and exports workspace data. Python rejects unexpected pixels outside a binding rectangle, validates every candidate before replacement, backs up sources, performs atomic replacement, and invokes production rebuilding.
 
-Publishing edits the requested authored direction and, only when explicitly enabled in the publish review, may promote it to its horizontal counterpart (`e↔w`, `ne↔nw`, `se↔sw`). The option defaults OFF and is unavailable for `n`, `s`, and `omni`. Preview lists direct and mirror targets with CREATE/REPLACE status; replacing authored counterpart art is permitted only by this explicit promotion. Every publishing layer participates while reference/nonpublishing layers remain excluded. Mirroring flips each frame cell independently and reassembles the cells in their original temporal order, never flips the whole strip. Counterpart PNGs and timing sidecars share the direct publish transaction, journal, downstream build, validation, and rollback. The backend constructs counterpart paths through `operator_asset_schema.py`; this flow never uses `asset_drop/inbox`. CLI automation uses `--mirror-counterpart`. A source changed after assembly makes the session stale; publishing refuses unless the explicit `--force-stale-source` escape hatch is supplied.
+Publishing edits the requested authored direction and, only when explicitly enabled in the publish review, may promote it to its horizontal counterpart (`e↔w`, `ne↔nw`, `se↔sw`). The option defaults OFF and is unavailable for `n`, `s`, and `omni`. Preview lists direct and mirror targets with CREATE/REPLACE status; replacing authored counterpart art is permitted only by this explicit promotion. Every publishing layer participates while reference/nonpublishing layers remain excluded. Mirroring flips each frame cell independently and reassembles the cells in their original temporal order, never flips the whole strip. Counterpart PNGs and timing sidecars share the direct publish transaction, journal, downstream build, validation, and rollback. The backend constructs counterpart paths through `operator_asset_schema.py`; this flow never uses `asset_drop/inbox`. CLI automation uses `--mirror-counterpart`. A source changed after assembly makes the session stale; publishing refuses unless the explicit `--force-stale-source` escape hatch is supplied. Non-dry-run `operator anim publish` routes through the same `WorkbenchService.publish` authority as the UI: dedicated `workbench/operator-art` identity, structured readiness/preparation, a final pre-mutation readiness check, and the scoped `publish_to_main` stage/commit/land flow. It fails closed before canonical mutation from coordination `main`, an arbitrary/detached checkout, or a readiness-blocked art checkout. `--force-stale-source` waives only source freshness, never checkout identity, dirty state, dependencies, transactions, or landing. `--dry-run` stays workspace-only.
 
 ## Planned V3: new semantic animation creation
 

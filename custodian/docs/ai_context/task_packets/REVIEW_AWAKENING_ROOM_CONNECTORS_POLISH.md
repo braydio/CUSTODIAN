@@ -34,10 +34,10 @@ Objective registration, alpha, z-order, duplicate/missing presentation, collisio
 ## Handoff
 
 - Next workstream: `awakening-handoff-readiness-art-convergence-v1-r1`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
-- Refresh reason: The broader convergence packet must be re-derived against the landed Zone04/05 art, actual foreground completeness, and new connector presentation contract.
-- Next action: On pass, return the review receipt plus implementation summary to the authoring chat and refresh the blocked broader Awakening convergence packet in place.
+- Refresh reason: The successor already carries a claim-time dependency refresh contract. After this review archives complete, its execution agent must reconstruct the landed Zone04/05 art, foreground completeness, and connector presentation truth from current main and this review evidence; no ChatGPT/user planning stop is required unless that evidence exposes a genuinely unresolved design choice.
+- Next action: Archive this review normally. The dispatcher then makes `awakening-handoff-readiness-art-convergence-v1-r1` eligible automatically; its claiming agent performs the bounded claim-time refresh before mutation.
 - Blockers or open questions: `none`
