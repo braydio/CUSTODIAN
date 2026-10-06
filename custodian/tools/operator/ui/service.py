@@ -53,18 +53,27 @@ class WorkbenchService:
         self.sequence_root = self.workspace_root / "sequences"
         self.motion_request_path = self.repo_root / ".ai/operator_animation_workbench/motion_lab_request.json"
         self.clipboard_root = self.repo_root / ".ai/operator_animation_workbench/clipboard"
-        self.show_superseded = False
-
-    def _reachability_status(self, selection: AnimationSelection) -> str | None:
+    def _reachability_statuses(self) -> dict[tuple[str, str, str], str]:
         path = self.repo_root / "custodian/content/data/operator/operator_animation_reachability.json"
         try:
             rows = json.loads(path.read_text()).get("entries", [])
         except (OSError, json.JSONDecodeError):
-            return None
-        statuses = [str(row.get("status")) for row in rows if isinstance(row, dict) and all(
-            row.get(key) == value for key, value in (("profile", selection.profile), ("group", selection.group), ("action", selection.action))
-        )]
-        return "SUPERSEDED" if "SUPERSEDED" in statuses else (statuses[0] if statuses else None)
+            return {}
+        action_status: dict[tuple[str, str, str], str] = {}
+        layer_statuses: dict[tuple[str, str, str], list[str]] = {}
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            key = (str(row.get("profile", "")), str(row.get("group", "")), str(row.get("action", "")))
+            status = str(row.get("status", ""))
+            if row.get("layer"):
+                layer_statuses.setdefault(key, []).append(status)
+            elif status:
+                action_status[key] = status
+        for key, statuses in layer_statuses.items():
+            if key not in action_status and statuses:
+                action_status[key] = "SUPERSEDED" if "SUPERSEDED" in statuses else statuses[0]
+        return action_status
 
     def _index(self):
         return self.model.source_index(self.source_root, self.weapon_root)
@@ -108,9 +117,11 @@ class WorkbenchService:
         if matches:
             raise self.model.WorkbenchError("SAVE WORKBENCH BEFORE CONTRACT MIGRATION\n\nCanvas migration rebuilds the Aseprite document from saved pixels. Save the current document, then retry.")
 
-    def browser_records(self) -> list[AnimationRecord]:
+    def discover_browser_records(self) -> tuple[AnimationRecord, ...]:
+        source_index = self._index()
+        reachability = self._reachability_statuses()
         grouped: dict[tuple[str, str, str, str], list[Any]] = {}
-        for sid, (_path, key) in self._index().items():
+        for sid, (_path, key) in source_index.items():
             if sid[0] != "operator":
                 continue
             grouped.setdefault((sid[2], sid[3], sid[4], sid[5]), []).append(key)
@@ -125,17 +136,22 @@ class WorkbenchService:
             frames = clocks[0] if clocks else max(key.frames for key in visible_keys)
             completeness, detail = self.classify_layers(layers)
             selection = AnimationSelection(profile, group, action, direction)
-            status = self._reachability_status(selection)
-            if status == "SUPERSEDED" and not self.show_superseded:
-                continue
+            if modular:
+                lower = next(key.frames for key in visible_keys if key.layer == "lower_body")
+                upper = next(key.frames for key in visible_keys if key.layer == "upper_body")
+                if lower != upper:
+                    completeness, detail = "PARTIAL", f"contract mismatch · lower {lower}f / upper {upper}f"
+            status = reachability.get((profile, group, action))
             if status == "SUPERSEDED":
                 detail = f"SUPERSEDED · {detail}"
-            records.append(AnimationRecord(selection, frames, layers, completeness, detail))
-        return records
+            records.append(AnimationRecord(selection, frames, layers, completeness, detail, status))
+        return tuple(records)
 
-    def toggle_superseded(self) -> bool:
-        self.show_superseded = not self.show_superseded
-        return self.show_superseded
+    def browser_records(self, *, show_superseded: bool = False) -> tuple[AnimationRecord, ...]:
+        records = self.discover_browser_records()
+        if show_superseded:
+            return records
+        return tuple(record for record in records if record.reachability_status != "SUPERSEDED")
 
     @staticmethod
     def _png_bytes(frames: tuple[Image.Image, ...]) -> bytes:
@@ -366,11 +382,15 @@ class WorkbenchService:
         return "PARTIAL", f"{visible} only; no body presentation layer"
 
     @staticmethod
-    def filter_records(records: list[AnimationRecord], query: str) -> list[AnimationRecord]:
+    def filter_records(
+        records: tuple[AnimationRecord, ...] | list[AnimationRecord], query: str,
+        *, show_superseded: bool = False,
+    ) -> list[AnimationRecord]:
         needle = query.casefold().strip()
+        visible = [record for record in records if show_superseded or record.reachability_status != "SUPERSEDED"]
         if not needle:
-            return records
-        return [record for record in records if needle in " ".join((
+            return visible
+        return [record for record in visible if needle in " ".join((
             record.selection.profile, record.selection.group,
             record.selection.action, record.selection.direction,
         )).casefold()]

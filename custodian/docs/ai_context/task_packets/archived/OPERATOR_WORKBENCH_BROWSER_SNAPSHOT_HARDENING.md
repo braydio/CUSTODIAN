@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-browser-preview-refresh-hardening`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-operator-workbench-publish-readiness-recovery`
@@ -163,23 +163,21 @@
 
 ## Completion Truth
 
-Required before completion.
-
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes | no`
-- Completion boundary satisfied: `yes | no`
-- Acceptance satisfied: `yes | no`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `removed`
-- Evidence: fill with exact implementation paths and deterministic race/refresh validation results. `removed` means the legacy mutable `AnimationFeature._records`/direct-worker-to-tree authority described by the superseded pre-V2 packet no longer exists as production state authority.
+- Evidence: `AnimationFeature` no longer retains `_records`; `WorkbenchService.discover_browser_records()` returns an immutable candidate and Search/superseded filtering project from `WorkbenchUIState.browser_snapshot`. `OperatorWorkbenchApp` owns browser/session/preview generations, bounded destructive stabilization, selection retention, F5/PUBLISH coalescing, staged PREVIEW application, Live Bridge guards, and tick validation. Deterministic UI smoke coverage proves candidate-only Search, transient deletion recovery, stable deletion, half-clock recovery, out-of-order browser scan rejection, Search selection retention without rediscovery, and repeated page-3 F5 atomicity/latest-preview/playback intent. `operator_workbench_ui_smoke.py`, changed-file validation, and `git diff --check` passed.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none` or concrete failures/near-misses
-- Root cause / contributing factors: `none` or concise cause
-- Prevention / pipeline improvement: `none` or smallest repeatable fix
-- Tooling / docs drift discovered: `none` or exact stale/missing authority
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
-- What worked: optional, one short line at most
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: Existing Textual Pilot first exposed a transition-target guard rejecting its own stabilized target; the disconnected Live Bridge path also returned early instead of loading the saved Workbench preview. The first changed-file run caught a test-fixture fallback compatibility error, which was corrected.
+- Root cause / contributing factors: New generation ownership made a previously implicit transition-target change stale; Live Bridge export failure had been conflated with total preview failure.
+- Prevention / pipeline improvement: Added deterministic barrier-controlled browser and preview race pilots and installed the pinned UI requirements in a temporary virtual environment for the full Pilot run.
+- Tooling / docs drift discovered: none
+- Follow-up: `review-operator-workbench-browser-preview-refresh-hardening`
+- What worked: F5 retains and atomically replaces the last usable page-3 preview under latest-request-wins guards.
