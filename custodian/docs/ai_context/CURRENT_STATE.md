@@ -1293,6 +1293,12 @@ Documentation updates this session:
   decision, the same workstream runs the manifest's path-confined cleanup command.
   Dispatcher claim receipts expose authoring-chat provenance, visual-review mode,
   Dropbox workstream root, and retention default, while `workstream.py finish`
+  rejects a packeted closing summary that omits its recorded exact Authoring chat. The outbound handoff now
+  carries the exact packet authoring-chat URL and defaults reviewed cloud media to
+  `delete-after-review`; after the authoring ChatGPT/user records the subjective
+  decision, the same workstream runs the manifest's path-confined cleanup command.
+  Dispatcher claim receipts expose authoring-chat provenance, visual-review mode,
+  Dropbox workstream root, and retention default, while `workstream.py finish`
   rejects a packeted closing summary that omits its recorded exact Authoring chat. Sparse evidence capture no longer awaits an unbounded
   `frame_post_draw` signal: evidence runs disable VSync and explicitly render
   selected authored physics ticks, while full Movie Writer runs
