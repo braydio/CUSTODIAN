@@ -21,6 +21,8 @@ _sample_evenly = publisher._sample_evenly
 _slug = publisher._slug
 discover_artifacts = publisher.discover_artifacts
 resolve_remote = publisher.resolve_remote
+cleanup_reviewed = publisher.cleanup_reviewed
+_normalize_review_manifest_path = publisher._normalize_review_manifest_path
 
 
 class PublishReviewArtifactsTest(unittest.TestCase):
@@ -98,6 +100,80 @@ class PublishReviewArtifactsTest(unittest.TestCase):
             ]),
             0,
         )
+
+    def test_review_manifest_path_is_confined_to_visual_review_root(self) -> None:
+        self.assertEqual(
+            _normalize_review_manifest_path(
+                "/CUSTODIAN/visual_review/example-work/20261005T010000Z/REVIEW_MANIFEST.json",
+                "CUSTODIAN/visual_review",
+            ),
+            "/CUSTODIAN/visual_review/example-work/20261005T010000Z/REVIEW_MANIFEST.json",
+        )
+        with self.assertRaises(ValueError):
+            _normalize_review_manifest_path(
+                "/CUSTODIAN/implementation_inputs/example/REVIEW_MANIFEST.json",
+                "CUSTODIAN/visual_review",
+            )
+
+    def test_cleanup_reviewed_deletes_run_and_matching_latest_pointer(self) -> None:
+        manifest_path = "/CUSTODIAN/visual_review/example-work/run-1/REVIEW_MANIFEST.json"
+        manifest = {
+            "schema": "custodian.visual_review_handoff.v1",
+            "workstream": "example-work",
+            "run_id": "run-1",
+            "remote_relative_path": "/CUSTODIAN/visual_review/example-work/run-1/",
+            "retention": {"policy": "delete-after-review"},
+        }
+        latest = {"manifest": manifest_path}
+        calls = []
+
+        def fake_run(args, **kwargs):
+            calls.append(args)
+            if args[:2] == ["rclone", "cat"] and args[-1].endswith("REVIEW_MANIFEST.json"):
+                return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(manifest), stderr="")
+            if args[:2] == ["rclone", "cat"] and args[-1].endswith("LATEST.json"):
+                return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(latest), stderr="")
+            return subprocess.CompletedProcess(args, 0, stdout="", stderr="")
+
+        with patch.object(publisher, "_run", side_effect=fake_run):
+            self.assertEqual(
+                cleanup_reviewed(
+                    "dropbox:",
+                    "CUSTODIAN/visual_review",
+                    manifest_path,
+                    reviewed_by="chatgpt-user",
+                ),
+                0,
+            )
+        self.assertTrue(any(args[:2] == ["rclone", "purge"] for args in calls))
+        self.assertTrue(any(args[:2] == ["rclone", "deletefile"] for args in calls))
+
+    def test_cleanup_reviewed_respects_explicit_retain_policy(self) -> None:
+        manifest_path = "/CUSTODIAN/visual_review/example-work/run-2/REVIEW_MANIFEST.json"
+        manifest = {
+            "schema": "custodian.visual_review_handoff.v1",
+            "workstream": "example-work",
+            "run_id": "run-2",
+            "remote_relative_path": "/CUSTODIAN/visual_review/example-work/run-2/",
+            "retention": {"policy": "retain"},
+        }
+        calls = []
+
+        def fake_run(args, **kwargs):
+            calls.append(args)
+            return subprocess.CompletedProcess(args, 0, stdout=__import__("json").dumps(manifest), stderr="")
+
+        with patch.object(publisher, "_run", side_effect=fake_run):
+            self.assertEqual(
+                cleanup_reviewed(
+                    "dropbox:",
+                    "CUSTODIAN/visual_review",
+                    manifest_path,
+                    reviewed_by="chatgpt-user",
+                ),
+                0,
+            )
+        self.assertFalse(any(args[:2] == ["rclone", "purge"] for args in calls))
 
 
 if __name__ == "__main__":
