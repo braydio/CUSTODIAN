@@ -3,6 +3,7 @@ import argparse,json,subprocess,sys
 from pathlib import Path
 import animation_workbench_model as m
 import animation_workbench as w
+from operator_art_worktree import ArtWorktreeError
 from art_agent.cli import configure_art_parser, dispatch_art_command
 
 def common(p,identity=True,dry_run=False):
@@ -55,12 +56,19 @@ def main():
                 out,ws=w.ensure(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite)
                 if not x.no_open: subprocess.run([str(w.resolve_aseprite(x.aseprite,True)),str(ws/"workbench.aseprite")],check=True)
             elif x.cmd=="refresh": out,ws=w.refresh(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.discard_edits)
-            else: out={"changed_sources":w.publish(mf,x.aseprite,x.force_stale_source,x.dry_run,x.full_validate,plan,x.mirror_counterpart)}
+            elif x.dry_run: out={"changed_sources":w.publish(mf,x.aseprite,x.force_stale_source,True,x.full_validate,plan,x.mirror_counterpart)}
+            else:
+                from ui.service import WorkbenchService
+                from ui.state import AnimationSelection
+                ident=plan["identity"]
+                svc=WorkbenchService(workspace_root=x.workspace_root,aseprite=x.aseprite)
+                sel=AnimationSelection(ident["profile"],ident["group"],ident["action"],ident["direction"],x.weapon,x.linked_profile)
+                out=svc.publish(sel,x.full_validate,x.mirror_counterpart,prepare=True,force_stale=x.force_stale_source)
         if getattr(x,"json",False): print(json.dumps(out,indent=2))
         else:
             if x.cmd=="status": print(f"OPERATOR ANIMATION\n{x.profile} / {out['identity']['group']} / {x.action} / {x.direction}\nsource contract: {out['timeline']['source_clock_frames']}f\nworkspace contract: {out['timeline']['workspace_clock_frames']}f\ndocument frames: {out['timeline']['document_frames']}\neditable layers:"); [print(f"  {b['aseprite_layer_name']}\n    source: {b['source_contract']['path']}\n    {b['source_contract']['frames']}f -> {b['publish_contract']['frames']}f {b['frame_size'][0]}x{b['frame_size'][1]}\n    canonical: YES") for b in out['layers']]; print(f"migration: {out['contract_state']}\nworkbench: {out['workbench_state']}\naseprite: {out['aseprite']}")
             elif x.cmd=="list": [print(f"{r['group']}/{r['action']}: {r['assets']}") for r in out]
             else: print(json.dumps(out,indent=2))
-    except (m.WorkbenchError,subprocess.CalledProcessError) as e: print(f"operator: {e}",file=sys.stderr); return 2
+    except (m.WorkbenchError,subprocess.CalledProcessError,ArtWorktreeError) as e: print(f"operator: {e}",file=sys.stderr); return 2
     return 0
 if __name__=="__main__": raise SystemExit(main())
