@@ -12,6 +12,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
+- `OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md` — Read-only runtime-pixel audit of production-reachable Operator animations against the LoP 16-angle and Playable Knight 8-direction goalposts; outputs exact 2.5D art backlog and requires human visual review.
 - `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Close the remaining manifest-path retargeting path in R0-01 before any unrelated Operator source can be mutated or landed by a selected Workbench publication.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Independently verify that cycle 2 closes R0-01 by proving mutable Workbench paths cannot retarget CLI publication outside the selected animation.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
@@ -169,7 +170,8 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
 - `isometric-2-5d-presentation-foundation` is **complete**; the paired fresh-context review is next.
 - `review-isometric-2-5d-presentation-foundation` is the new paired fresh-context review and gates downstream showcase consumers.
-- `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the reviewed foundation.
+- `operator-2-5d-animation-viability-audit` is **ready/auto** and is the required human visual/art gate before the Operator-heavy Forum showcase. It is read-only and quantifies exactly how much existing Operator art can survive the 2.5D pivot.
+- `isometric-2-5d-forum-vertical-slice` is now **draft/refresh-required** behind both the reviewed foundation and the completed Operator audit human decision.
 - `sundered-keep-overlook-alternate-vertical-slice` is an independent reviewed-foundation consumer tracked by the new Sundered overlook roadmap.
 - The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
 - Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
