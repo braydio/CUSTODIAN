@@ -16,4 +16,13 @@
 - Required evidence: source hash/dimensions/order; source-cell reconstruction; profile v1/v2 backward compatibility; legacy-96 + canonical-128 selection; reproducible landmarks/measurements; deterministic palette/brightness/silhouette reports; Aseprite guide exclusion; intentional drift fixtures caught; turnaround/overlay faithful to the approved source.
 - Acceptance: zero blocking source-integrity/profile-migration/guide-leak defects. Subjective visual concerns return to the authoring chat rather than being silently corrected.
 - Validation: focused canonical visual-contract + registration-profile tests + `git diff --check` only.
-- Handoff: on pass, mark the canonical 2.5D Operator contract reviewed and release the first production animation-art slice.
+## Handoff
+
+- Next workstream: `operator-2-5d-workbench-cockpit-foundation`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Refresh reason: `none; WB25-1 is already authored and additionally waits for the completed viability audit and reviewed New Animation backend`
+- Next action: `allow WB25-1 to claim only when all declared dependencies are complete`
+- Blockers or open questions: `none beyond declared dependencies`
