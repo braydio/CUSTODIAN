@@ -23,3 +23,14 @@ combo_a_gen3_default, combo_b_gen3_alt, combo_c_gen3_gen2_mix, combo_d_gen2_bala
 3. **combo_d_gen2_balanced** — calmest and most subordinate; flattest.
 - combo_b: more breakup/movement, viable alternate. combo_e: citadel/arch/glyph read as hero architecture, correctly too rare for default. combo_f: cloud-sea dominates, little geography. combo_g: scenic-forward reference.
 - Observation: the dark slate base fill is visible in upper-left corners for C and F where the plates have transparent gaps; judge whether that reads as intended depth.
+
+## Follow-up: final six-state candidate family, 8 A/B permutations (review-only)
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4
+
+- Earlier six-state Gate A pack is treated as superseded donor/provenance; nothing was promoted and no production resource, Asset V2 family or Gate A handoff was created.
+- Final six (review-only, from the staged candidates): far A=gen2 `alpine_ruins_among_fog_islands`, far B=gen3 `snowy_custodian_ruins_above_the_clouds`, fog A=gen3 `misty_alpine_ruins_overlay`, fog B=gen2 `translucent_alpine_ruins_cloudscape`, near A=gen3 `floating_alpine_cliffs_in_mist`, near B=gen2 `misty_ruined_alpine_plateau_cutout`.
+- Base fill: the plates' alpha-weighted mean tone is ~(0.58,0.62,0.66); the production-branch fill (0.13,0.17,0.22) read as a distinct dark plane. Review profile uses (0.42,0.47,0.54) via env `ALPINE_REVIEW_BASEFILL`; corners now read as soft haze. Production `.tres` still carries the old value (unchanged).
+- Fixture: env `ALPINE_REVIEW_FINAL=<FAR><FOG><NEAR>` (A/B each) builds the temporary single-variant profile; probes record `review_combo=final_<perm>`. Same seed/zoom/N-E-S-W logic.
+- Ran all eight: AAA AAB ABA ABB BAA BAB BBA BBB (each: contact sheet + 6 keyframes + metrics).
+- Dropbox: `/CUSTODIAN/visual_review/procgen-alpine-plateau-underlay-combos/20261006T0628Z-final_<PERM>/` (eight folders) and `20261006T0628Z-final8-comparison/` (rows AAA..BBB; columns E/S/W/N).
+- Open items before Gate A: human selection/approval of the permutations; packet refresh (Gate A provenance note now points at the superseded first-10 ZIP; packet Authoring chat drifted to 6ac40778 vs requested 6ac3be53); selective re-apply from current main instead of merging this diverged donor branch.

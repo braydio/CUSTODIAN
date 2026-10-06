@@ -9,6 +9,12 @@ extends Node2D
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const FIXTURE_SEED := 424242
 const REVIEW_CANDIDATE_ROOT := "res://content/backgrounds/procgen/alpine_plateau/review_candidates/"
+## Review-only final six-state candidate family: [layer][variant A/B] -> candidate file.
+const FINAL_SIX := {
+	"far": ["generation_02/alpine_ruins_among_fog_islands.png", "generation_03/snowy_custodian_ruins_above_the_clouds.png"],
+	"fog": ["generation_03/misty_alpine_ruins_overlay.png", "generation_02/translucent_alpine_ruins_cloudscape.png"],
+	"near": ["generation_03/floating_alpine_cliffs_in_mist.png", "generation_02/misty_ruined_alpine_plateau_cutout.png"],
+}
 const REVIEW_ZOOM := 0.74  # tightest ordinary gameplay zoom (camera.gd heavy_zoom)
 
 var frame_id := ""
@@ -81,6 +87,10 @@ func _ready() -> void:
 ## Alpine tuning. Candidates are loaded from disk (the directory carries a
 ## .gdignore, so they are never imported) and no production resource is touched.
 func _apply_review_combo() -> void:
+	var final_pick := OS.get_environment("ALPINE_REVIEW_FINAL").to_upper()
+	if final_pick != "":
+		_apply_final_six(final_pick)
+		return
 	var combo_id := OS.get_environment("ALPINE_REVIEW_COMBO")
 	if combo_id == "":
 		return
@@ -103,6 +113,27 @@ func _apply_review_combo() -> void:
 		review_combo = combo_id
 		return
 	push_error("[AlpineEdgeMoment] unknown review combo %s" % combo_id)
+
+
+## ALPINE_REVIEW_FINAL = three letters (FAR, FOG, NEAR) each A or B, e.g. "ABA";
+## optional ALPINE_REVIEW_BASEFILL = "r,g,b" (0..1) overrides the base fill tone.
+func _apply_final_six(pick: String) -> void:
+	if pick.length() != 3 or pick.replace("A", "").replace("B", "") != "":
+		push_error("[AlpineEdgeMoment] ALPINE_REVIEW_FINAL must be three of A/B, got %s" % pick)
+		return
+	var accepted: ProcgenUnderlayProfile = _map.depth_backdrop.underlay_profile
+	var profile := accepted.duplicate() as ProcgenUnderlayProfile
+	profile.profile_id = StringName("review_final_%s" % pick)
+	profile.far_variants = [_load_candidate(FINAL_SIX["far"][0 if pick[0] == "A" else 1])]
+	profile.middle_variants = [_load_candidate(FINAL_SIX["fog"][0 if pick[1] == "A" else 1])]
+	profile.near_variants = [_load_candidate(FINAL_SIX["near"][0 if pick[2] == "A" else 1])]
+	var fill := OS.get_environment("ALPINE_REVIEW_BASEFILL")
+	if fill != "":
+		var parts := fill.split(",")
+		if parts.size() == 3:
+			profile.base_fill_color = Color(float(parts[0]), float(parts[1]), float(parts[2]), 1.0)
+	_map.depth_backdrop.set_underlay_profile(profile, FIXTURE_SEED)
+	review_combo = "final_%s" % pick
 
 
 func _load_candidate(relative_path: String) -> Texture2D:
