@@ -12,6 +12,14 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Review queue accounting and deterministic brief export.
+- `OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Migration throughput queue, dashboard and generation briefs; refresh-required.
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Review anti-drift, sequence and sandbox isolation.
+- `OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Canonical QA, sequence review and runtime sandbox proof; refresh-required.
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Review ingress provenance, rollback and generation isolation.
+- `OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Guided one-click 2.5D New/Import and directional package intake; refresh-required.
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md` — Review generation namespace and target-state truth.
+- `OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md` — Establish generation-aware dual legacy/2.5D target trees and missing-leaf migration matrix.
 - `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Lock the approved 8-direction Operator as deterministic 128x128 authoring authority while preserving legacy 96 art.
 - `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Fresh-context review of canonical Operator source/profile/QA integrity.
 - `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Make Live Bridge preview results valid only for the exact bridge connection/session lifetime that issued them, so a disconnect or reconnect cannot authorize...
@@ -183,6 +191,18 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 
 - `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — **ready/manual after the active audit releases the Operator-art lock**; preserves the approved turnaround, creates dual legacy-96/canonical-128 profiles, measures all directions, and wires canonical ghost/QA support into the existing Operator authoring stack.
 - `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — paired fresh-context source/profile/measurement/guide review.
+
+### Operator 2.5D Workbench Migration Cockpit
+
+Program tracker: `../../../design/02_features/animation/OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md`.  
+Authoring / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+
+- WB25-1 `OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md` — ready/auto, dependency-gated on completed viability audit, reviewed canonical visual contract, and reviewed New Animation backend.
+- WB25-2 `OPERATOR_2_5D_WORKBENCH_INGRESS.md` — draft/refresh-required after WB25-1 review.
+- WB25-3 `OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — draft/refresh-required after WB25-2 review.
+- WB25-4 `OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — draft/refresh-required after WB25-3 review.
+- Every implementation has a paired fresh-context review. The user explicitly requires ChatGPT/user refresh of each substantial dependent before it may become ready.
+- The series owns generation separation, target-driven missing leaves, guided ingress, canonical review automation, migration queue/dashboard and generation-brief export. It does not cut production gameplay over to 2.5D art.
 
 ### Active Sundered Keep Overlook Alternate Program
 
