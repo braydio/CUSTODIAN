@@ -317,7 +317,7 @@ This slice must not turn into a backend feature grab bag.
 
 Every slice must:
 
-1. remain `blocked/manual` while its refresh banner exists;
+1. remain `draft/auto` while its refresh banner exists; the draft status, not manual dispatch, is the claim gate;
 2. request a fresh repo/interface review before implementation;
 3. remove its refresh banner only after reconciliation and explicit sign-off;
 4. update `Reviewed main`, current measured state, dependencies, exact work
