@@ -284,14 +284,14 @@ state.
 
 The detailed roadmap owns execution status and evidence. Every completed slice must update that file in its landed change; this master entry tracks the program at feature-planning granularity.
 
-V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; Alpine Asset V2 remains ready/manual. Archive Resolve AR1/ARR1 and AR2 implementation/recovery/review are complete/passed with S1 `1773840677`; the separate P0 playable-region spawn-validity implementation/review is also complete/passed; AR3 is planning-refreshed/ready-auto and claimable, with the spawn review's full-path integration evidence gap folded into AR3 validation. P1/PR1 independently gate placement extractions; X2/X3 and renderer-consolidation retain their existing refresh rules. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
+V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; the Alpine presentation continuation is now explicitly asset-gated by `ALPINE_PLATEAU_PRESENTATION_ASSET_MANIFEST.md`: AP1/AP2/AP3 remain blocked until immutable Dropbox implementation-input Gates A/B/C exist, while AP4 remains dependency-gated behind their completed production art. Archive Resolve AR1/ARR1 and AR2 implementation/recovery/review are complete/passed with S1 `1773840677`; the separate P0 playable-region spawn-validity implementation/review is also complete/passed; AR3 is planning-refreshed/ready-auto and claimable, with the spawn review's full-path integration evidence gap folded into AR3 validation. P1/PR1 independently gate placement extractions; X2/X3 and renderer-consolidation retain their existing refresh rules. The detailed roadmap owns packet-level dependencies and refresh gates; this master table remains the macro feature-status mirror.
 
 ---
 
 ### Cross-cutting Procgen World Presentation
 **Status:** in_progress  
 **Priority:** P1  
-**Docs:** `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`, `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`, `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`  
+**Docs:** `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`, `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`, `design/02_features/procgen/ALPINE_PLATEAU_PRESENTATION_ASSET_MANIFEST.md`, `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`  
 **Depends on:** reviewed M6/MR6 streaming-residency seam for runtime presentation integration
 
 **Summary:** Keep three visual concepts independent: local ecological biome, permanent region-frame/border/underlay presentation, and Archive Resolve streaming/reacquisition. The first generated starting region uses `ALPINE_PLATEAU`; future generated regions may select other frame profiles.
@@ -300,13 +300,13 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; A
 |---------|--------|----------|
 | RF1 Region Frame presentation foundation | complete / landed | P1 |
 | RFR1 Region Frame paired review | complete / passed | P1 |
-| Alpine Plateau six-state Asset V2 underlay family | ready / manual (local ZIP supplied; human visual gate) | P1 |
+| AP1 Alpine Plateau omnidirectional underlay continuation | blocked / immutable Dropbox Gate A required | P1 |\n| AP2 Alpine cliff / contact / depth presentation | blocked / AP1 + immutable Dropbox Gate B required | P1 |\n| AP3 Alpine Rocky Upland + Meridian surface plates | blocked / AP2 + immutable Dropbox Gate C required | P1 |\n| AP4 Alpine environment cohesion / final visual closeout | blocked / AP1+AP2+AP3; no new art gate | P2 |
 | AR1 Archive Resolve presentation spine | complete / landed | P2 |
 | ARR1 Archive Resolve paired technical review | complete / passed | P2 |
 | AR2 Archive Resolve shader | implementation + real-renderer recovery + human visual + paired review complete/passed | P1 |
 | AR3 Archive Resolve semantic echo / spawn / reacquisition | ready / auto; refreshed and dependency-satisfied; full-path contract ingress proof required | P2 |
 
-**Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
+**Implementation packets:** `PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `REVIEW_PROCGEN_REGION_FRAME_PRESENTATION_FOUNDATION.md`, `PROCGEN_ALPINE_PLATEAU_UNDERLAY_ASSETS.md`, `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md`, `PROCGEN_ALPINE_SURFACE_PLATES_V1.md`, `PROCGEN_ALPINE_ENVIRONMENT_COHESION_V1.md`, `PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md`, `PROCGEN_ARCHIVE_RESOLVE_SHADER.md`, `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`.
 
 
 ### Cross-cutting Isometric 2.5D / Sundered Overlook
