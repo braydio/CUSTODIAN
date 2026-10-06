@@ -16,6 +16,7 @@
 - Required evidence: source hash/dimensions/order; source-cell reconstruction; profile v1/v2 backward compatibility; legacy-96 + canonical-128 selection; reproducible landmarks/measurements; deterministic palette/brightness/silhouette reports; Aseprite guide exclusion; intentional drift fixtures caught; turnaround/overlay faithful to the approved source.
 - Acceptance: zero blocking source-integrity/profile-migration/guide-leak defects. Subjective visual concerns return to the authoring chat rather than being silently corrected.
 - Validation: focused canonical visual-contract + registration-profile tests + `git diff --check` only.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 ## Handoff
 
 - Next workstream: `operator-2-5d-workbench-cockpit-foundation`
