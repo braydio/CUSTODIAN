@@ -10,7 +10,7 @@
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
-- Review modes: `code, runtime, performance, visual`
+- Review modes: `code, runtime, visual`
 - Paired review workstream: `review-procgen-archive-resolve-frontier-restraint`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
