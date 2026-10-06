@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-unarmed-fast-chain-north-vfx`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -126,26 +126,26 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `pending`
-- Completion boundary satisfied: `pending`
-- Acceptance satisfied: `pending`
-- Superseded/legacy production path disposition: `pending`
-- Evidence: `pending`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Immutable handoff SHA-256 `e021b421682b2f9c8d395853cae8df4e3e0b0fcd84ea49c35ae960c65c921107` verified; all four source-work masters preserved; the guarded Source Session replacement/ingest produced exact 6/6/7/8-frame 96px source/runtime FX strips with real alpha, every cell populated, and source/runtime byte parity. The durable `operator_unarmed_fast_chain_north_vfx_contract` check covers inbox, normalized, canonical source, runtime, dimensions, alpha, and populated cells. Strict animation contract has 0 required gaps; modular-layer, fast-attack, selector, source-session, V2 Art Agent pilot, and changed-file validations pass (12/12 selected, complete coverage). The V2 pilot uses a deliberately unavailable relay only from the validation wrapper and passed with exact workbench restore and production immutability; production bridge defaults remain unchanged. ChatGPT/user approved the 4/4 final-scale visual review for scale/grounding, pelvis/garment continuity, and attack silhouette readability. The reviewed Dropbox manifest `/CUSTODIAN/visual_review/operator-unarmed-fast-chain-north-vfx/20261006T064816Z/REVIEW_MANIFEST.json` was cleaned with `--reviewed-by chatgpt-user`; the publisher reported `deleted`. No body art, other directions, or gameplay/timing data changed.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `pending`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
-- What worked: `pending`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: the V2 pilot initially routed temporary worktree files through the ambient relay and was denied by its authorized-root guard; the validation coverage map also lacked the new inbox/runtime strips.
+- Root cause / contributing factors: the production relay is intentionally confined to persistent `.ai` roots, while standard workstreams use isolated roots; the generic coverage manifest had no owner for these specialized Operator pipeline outputs.
+- Prevention / pipeline improvement: the V2 pilot now accepts a bridge factory while retaining `ArtAgentBridge` as its production default. Only the validation entry point injects an unavailable relay, forcing headless Aseprite in the isolated worktree. Added a focused asset contract test and explicit file ownership so dimensions, alpha, populated cells, pipeline parity, and runtime parity are validated.
+- Tooling / docs drift discovered: the review-pairing contract currently scans unrelated active/archived packets when any packet path changes; a newer unrelated Operator 2.5D review packet causes that global check to fail after lifecycle metadata edits. The implementation changed-file report was therefore generated with this packet held at its current-main metadata while all implementation, asset, and validation files were tested (12/12, complete coverage). The unrelated packet was not modified.
+- Follow-up: `manual-follow-up`
+- What worked: the standard isolated worktree and production live relay stayed separate; the user-approved visual disposition and exact Dropbox cleanup receipt were carried into this handoff.
 
 ## Handoff
 
-- Next action: Claim `operator-unarmed-fast-chain-north-vfx`, fetch `north-vfx-20261006-a1`, normalize and replace the four North FX identities, validate, land, then run the paired review.
-- Best starting files: `design/VFX_DESIGN_LOCK.md`, `custodian/tools/operator/README.md`, `custodian/docs/ai_context/IMPLEMENTATION_HANDOFF.md`, archived North/South continuity packet/review, and the immutable handoff package.
-- Blockers or open questions: None. The Workbench FX-layer-adoption packet is a separate tooling lane and is not a dependency for this external-source replacement batch.
+- Next action: After this implementation lands, claim `review-operator-unarmed-fast-chain-north-vfx` in a fresh reviewer context.
+- Best starting files: `design/VFX_DESIGN_LOCK.md`, this archived implementation packet and summary, `REVIEW_OPERATOR_UNARMED_FAST_CHAIN_NORTH_VFX.md`, the immutable handoff manifest, and the final-scale review disposition.
+- Blockers or open questions: none for the implementation. Persistent project-root synchronization may remain pending if its unrelated dirty `BRANCH_ARCHIVE.md` prevents fast-forward.

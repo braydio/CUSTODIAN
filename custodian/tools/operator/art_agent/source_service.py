@@ -460,7 +460,7 @@ class SourceArtService:
         self.save(path, session)
         return {"selected": method, "candidate": session.selected_candidate}
 
-    def review(self, session_path: Path | str) -> dict[str, Any]:
+    def review(self, session_path: Path | str, *, allow_baseline_motion: bool = False) -> dict[str, Any]:
         session, root, path = self.load(session_path)
         if not session.selected_candidate:
             raise model.WorkbenchError("select or convert a candidate before review")
@@ -499,7 +499,7 @@ class SourceArtService:
         make_contact_sheet(frame_paths, contact_sheet)
         make_silhouette_sheet(frame_paths, silhouette)
         make_animation_gif(frame_paths, animation, fps=12.0)
-        result = review_normalization(frames=frames)
+        result = review_normalization(frames=frames, allow_baseline_motion=allow_baseline_motion)
         result.update({
             "source_sha256": session.source_sha256,
             "candidate": str(candidate),
@@ -578,10 +578,10 @@ class SourceArtService:
         canonical_relative = model.SCHEMA.canonical_source_path(destination_key)
         canonical_directory = self.canonical_root / canonical_relative.parent
         if canonical_directory.exists():
-            for candidate in sorted(canonical_directory.glob("*.png")):
-                inspect_existing(candidate)
-        for candidate in sorted(self.handoff_root.glob("*.png")):
-            inspect_existing(candidate)
+            for existing_candidate in sorted(canonical_directory.glob("*.png")):
+                inspect_existing(existing_candidate)
+        for existing_candidate in sorted(self.handoff_root.glob("*.png")):
+            inspect_existing(existing_candidate)
         unique_existing: dict[str, dict[str, Any]] = {item["path"]: item for item in existing_assets}
         existing_assets = list(unique_existing.values())
         existing = existing_assets or None

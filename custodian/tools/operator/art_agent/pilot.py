@@ -13,6 +13,7 @@ import animation_workbench as workbench
 import animation_workbench_model as model
 
 from . import masks as mask_store
+from .aseprite_bridge import ArtAgentBridge
 from .metrics import animation_metrics
 from .render import make_before_after, make_diff
 from .service import ArtAgentService, write_json
@@ -253,7 +254,13 @@ def print_result(result: dict[str, Any], *, json_output: bool = False) -> None:
     print(json.dumps(result, indent=2) if json_output else _format_text(result))
 
 
-def run_v2_pilot(*, keep_artifacts: bool = False, allow_skip_aseprite: bool = False, repo_root: Path | None = None) -> dict[str, Any]:
+def run_v2_pilot(
+    *,
+    keep_artifacts: bool = False,
+    allow_skip_aseprite: bool = False,
+    repo_root: Path | None = None,
+    bridge_factory=ArtAgentBridge,
+) -> dict[str, Any]:
     repo_root = (repo_root or model.REPO_ROOT).resolve()
     timestamp = _timestamp()
     report = repo_root / "reports/operator_art_agent/v2_pilot" / timestamp
@@ -269,7 +276,7 @@ def run_v2_pilot(*, keep_artifacts: bool = False, allow_skip_aseprite: bool = Fa
         _write(report / "pilot_result.json", result)
         return result
 
-    service = ArtAgentService(aseprite=aseprite)
+    service = ArtAgentService(aseprite=aseprite, bridge_factory=bridge_factory)
     session: Path | None = None
     baseline_bytes: bytes | None = None
     workbench_path: Path | None = None

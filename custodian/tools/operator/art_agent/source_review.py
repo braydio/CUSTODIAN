@@ -20,13 +20,16 @@ def normalized_frame_metrics(frame: Image.Image) -> dict:
     }
 
 
-def review_normalization(*, frames: list[Image.Image]) -> dict:
+def review_normalization(*, frames: list[Image.Image], allow_baseline_motion: bool = False) -> dict:
     metrics = [normalized_frame_metrics(frame) for frame in frames]
     baselines = [item["baseline_y"] for item in metrics if item["baseline_y"] is not None]
     findings: list[dict] = []
+    empty = [index + 1 for index, item in enumerate(metrics) if item["bbox"] is None]
+    if empty:
+        findings.append({"severity": "major", "issue": "normalized animation contains empty frames", "frames": empty})
     if not baselines:
         findings.append({"severity": "major", "issue": "normalized animation contains no visible pixels"})
-    elif max(baselines) - min(baselines) > 4:
+    elif max(baselines) - min(baselines) > 4 and not allow_baseline_motion:
         findings.append({"severity": "review", "issue": "large baseline spread", "range": [min(baselines), max(baselines)]})
     clipped = []
     for index, item in enumerate(metrics):

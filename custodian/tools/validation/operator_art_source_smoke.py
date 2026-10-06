@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import sys
 import tempfile
 from dataclasses import asdict
@@ -15,6 +16,7 @@ sys.path.insert(0, str(ROOT / "custodian/tools/operator"))
 import animation_workbench_model as model
 from art_agent.source_models import NormalizationPlan
 from art_agent.source_service import SourceArtService
+from art_agent.source_review import review_normalization
 
 
 def make_source(path: Path) -> None:
@@ -114,6 +116,20 @@ def main() -> int:
         assert handoff["status"] == "READY_FOR_INGEST" and Path(handoff["candidate"]).exists()
         assert source.read_bytes() == original
 
+        # FX animation may move vertically under one shared transform. The
+        # explicit option suppresses only the character-baseline heuristic;
+        # clipping and empty-frame checks remain active.
+        moving_frames = [Image.new("RGBA", (96, 96), (0, 0, 0, 0)) for _ in range(2)]
+        ImageDraw.Draw(moving_frames[0]).rectangle((40, 20, 55, 40), fill=(255, 180, 40, 255))
+        ImageDraw.Draw(moving_frames[1]).rectangle((40, 45, 55, 65), fill=(255, 180, 40, 255))
+        assert review_normalization(frames=moving_frames)["status"] == "NEEDS_REVIEW"
+        effect_review = review_normalization(frames=moving_frames, allow_baseline_motion=True)
+        assert effect_review["status"] == "PASS" and effect_review["findings"] == []
+        clipped_frame = Image.new("RGBA", (96, 96), (0, 0, 0, 0))
+        ImageDraw.Draw(clipped_frame).rectangle((0, 20, 10, 40), fill=(255, 180, 40, 255))
+        assert review_normalization(frames=[clipped_frame], allow_baseline_motion=True)["status"] == "NEEDS_REVIEW"
+        assert review_normalization(frames=[moving_frames[0], Image.new("RGBA", (96, 96))], allow_baseline_motion=True)["status"] == "NEEDS_REVIEW"
+
         replacement = service.start(source_path=source, frames=2, target_size=96)
         service.analyze(replacement); service.plan_normalization(replacement); service.convert(replacement); service.review(replacement)
         try:
@@ -145,6 +161,16 @@ def main() -> int:
         assert contract_dry["operation"] == "REPLACE_CONTRACT"
         assert contract_dry["old"][0]["frames"] == 5
         assert contract_dry["new"]["frames"] == 6
+        contract_candidate = Path(service.status(contract_session)["selected_candidate"])
+        expected_candidate_hash = hashlib.sha256(contract_candidate.read_bytes()).hexdigest()
+        assert contract_dry["new"]["sha256"] == expected_candidate_hash
+        contract_applied = service.handoff(
+            contract_session,
+            destination_name="operator__upper_body__unarmed__locomotion__walk_01__e__6f__96.png",
+            replace=True,
+        )
+        assert contract_applied["operation"] == "REPLACE_CONTRACT"
+        assert Path(contract_applied["candidate"]).read_bytes() == contract_candidate.read_bytes()
 
         stale_session = service.start(source_path=source, frames=2, target_size=96)
         service.analyze(stale_session); service.plan_normalization(stale_session); service.convert(stale_session); service.review(stale_session)

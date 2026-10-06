@@ -120,6 +120,8 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     for name in ("source-status", "source-analyze", "source-convert", "source-review", "source-palette"):
         command = commands.add_parser(name)
         command.add_argument("session", type=Path)
+        if name == "source-review":
+            command.add_argument("--allow-baseline-motion", action="store_true", help="allow expected alpha-baseline motion for effects while retaining clipping and empty-frame checks")
         command.add_argument("--json", action="store_true")
     source_plan = commands.add_parser("source-plan")
     source_plan.add_argument("session", type=Path)
@@ -244,7 +246,7 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
             )
             elif command == "source-register": result = source.set_frame_registration(args.session, frame=args.frame, dx=args.dx, dy=args.dy)
             elif command == "source-convert": result = source.convert(args.session)
-            elif command == "source-review": result = source.review(args.session)
+            elif command == "source-review": result = source.review(args.session, allow_baseline_motion=args.allow_baseline_motion)
             elif command == "source-palette": result = source.palette_inspect(args.session)
             elif command == "source-select": result = source.select_candidate(args.session, args.method)
             elif command == "source-handoff": result = source.handoff(args.session, destination_name=args.destination_name, replace=args.replace, dry_run=args.dry_run)

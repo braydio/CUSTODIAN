@@ -1222,6 +1222,46 @@
       "needs_import": false
     },
     {
+      "id": "operator_unarmed_fast_chain_north_vfx_contract",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_unarmed_fast_chain_north_vfx_contract.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "asset_contract"
+      ],
+      "owners": [
+        "custodian/docs/ai_context/task_packets/OPERATOR_UNARMED_FAST_CHAIN_NORTH_VFX.md",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/asset_drop/source_work/operator/unarmed/attack/fast_01/north/operator_unarmed_fast_01_n_vfx_generated_master.png",
+        "custodian/asset_drop/source_work/operator/unarmed/attack/fast_02/north/operator_unarmed_fast_02_n_vfx_generated_master.png",
+        "custodian/asset_drop/source_work/operator/unarmed/attack/fast_03/north/operator_unarmed_fast_03_n_vfx_generated_master.png",
+        "custodian/asset_drop/source_work/operator/unarmed/attack/fast_04/north/operator_unarmed_fast_04_n_vfx_generated_master.png",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_01__n__6f__96.png",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_01__n__6f__96.json",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_02__n__6f__96.png",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_02__n__6f__96.json",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_03__n__7f__96.png",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_03__n__7f__96.json",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_04__n__8f__96.png",
+        "custodian/content/sprites/_pipeline/inbox/operator__fx__unarmed__attack__fast_04__n__8f__96.json",
+        "custodian/content/sprites/_pipeline/normalized/operator__fx__unarmed__attack__fast_01__n__6f__96.png",
+        "custodian/content/sprites/_pipeline/normalized/operator__fx__unarmed__attack__fast_02__n__6f__96.png",
+        "custodian/content/sprites/_pipeline/normalized/operator__fx__unarmed__attack__fast_03__n__7f__96.png",
+        "custodian/content/sprites/_pipeline/normalized/operator__fx__unarmed__attack__fast_04__n__8f__96.png",
+        "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__n__6f__96.png",
+        "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_02/operator__fx__unarmed__attack__fast_02__n__6f__96.png",
+        "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__n__7f__96.png",
+        "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_04/operator__fx__unarmed__attack__fast_04__n__8f__96.png",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__fx__unarmed__attack__fast_01__n__6f__96.png",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__fx__unarmed__attack__fast_02__n__6f__96.png",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__fx__unarmed__attack__fast_03__n__7f__96.png",
+        "custodian/content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__fx__unarmed__attack__fast_04__n__8f__96.png"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_art_source_pilot",
       "type": "python",
       "script": "custodian/tools/validation/operator_art_source_real_pilot.py",
