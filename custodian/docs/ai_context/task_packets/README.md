@@ -119,6 +119,13 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 <!-- task_packet_index:managed:end -->
 This section is owned by `custodian/tools/agent/task_packet_index.py`; run it with `--write` after packet changes to populate/update the bounded managed block.
 
+### Active Persistent Checkout Sync Hardening
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+
+- `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — P1 ready/auto workflow hardening that creates one fail-closed persistent-checkout sync authority for the user's coordination `~/Projects/CUSTODIAN/` main checkout and the sparse `workbench/operator-art` OPUI checkout, with `csync` / `opui-sync` helpers and safe OPUI pre-authoring synchronization.
+- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context code/architecture/workflow review; dependency-gated on the implementation and focused on dirty/diverged preservation, ignored Workbench byte safety, locking/races, and absence of destructive Git recovery.
+
 ### Active Hub First-Set / First Campaign Loop Series
 
 Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
