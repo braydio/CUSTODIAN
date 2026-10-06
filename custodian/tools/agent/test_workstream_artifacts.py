@@ -77,6 +77,26 @@ class WorkstreamArtifactTests(unittest.TestCase):
         packets = workstream.artifact_preflight("artifact-gate", self.repo)
         self.assertEqual(packets, [packet])
 
+    def test_archived_packet_with_authoring_chat_requires_exact_summary_backlink(self):
+        packet = self.archive_root / "CHAT_TASK.md"
+        packet.write_text(
+            "# CHAT TASK\n\n"
+            "- Workstream: `chat-gate`\n"
+            "- Status: `complete`\n"
+            "- Authoring chat: `https://chatgpt.com/c/exact-authoring-chat`\n"
+        )
+        summary = self.repo / "CHAT_GATE_CLAUDE_SUMMARY.md"
+        summary.write_text("Completed without provenance.\n")
+        self.commit_all()
+        with self.assertRaisesRegex(workstream.WorkstreamError, "summary backlink gate"):
+            workstream.artifact_preflight("chat-gate", self.repo)
+        summary.write_text(
+            "Authoring chat: https://chatgpt.com/c/exact-authoring-chat\n"
+            "Completed with provenance.\n"
+        )
+        self.commit_all("fix summary backlink")
+        self.assertEqual(workstream.artifact_preflight("chat-gate", self.repo), [packet])
+
     def test_archived_incomplete_packet_blocks(self):
         packet = self.archive_root / "SOME_TASK.md"
         packet.write_text(

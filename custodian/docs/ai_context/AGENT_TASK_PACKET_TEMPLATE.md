@@ -38,6 +38,8 @@ coherent effort.
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
 - Reviewed main: `<short SHA>`
+- Authoring chat: `<exact ChatGPT conversation URL | not-recorded | n/a>`
+- Visual review: `none | conditional | required`
 - Goal:
 - Completion boundary:
 - Current measured state:
@@ -80,7 +82,7 @@ repository state without reconstructing intent from chat history.
 Required quality:
 
 - **Reviewed main** identifies the repository state actually investigated.
-- **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one.
+- **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one. Every durable implementation/review/correction/recovery/closeout summary and final user-facing handoff must repeat the exact URL as `Authoring chat: <url>`; `workstream.py finish` enforces this on the committed closing summary.
 - **Goal** states the user-visible or architecture outcome, not the implementation
   method.
 - **Completion boundary** says exactly what belongs in this workstream and what
@@ -121,7 +123,13 @@ Required quality:
   include exact reviewer questions, return the emitted manifest path, and stop
   rather than self-critiquing the art. Reference
   `custodian/docs/ai_context/VISUAL_REVIEW_HANDOFF.md` instead of restating its
-  remote/setup rules.
+  remote/setup rules. Set `Visual review: conditional` when subjective review may be
+  needed after objective checks, or `required` when the packet cannot close without
+  that human/ChatGPT decision. The authoring chat should name the canonical Dropbox
+  root `/CUSTODIAN/visual_review/<workstream>/`, exact reviewer questions, and the
+  evidence budget. Uploads default to `delete-after-review`; use the emitted cleanup
+  command after ChatGPT/user review unless the packet/user explicitly requires
+  `--retain-after-review`.
 - **External implementation inputs** belong in a task packet's provenance/evidence
   section as an exact workstream, immutable handoff ID, and manifest path under
   `CUSTODIAN/implementation_inputs/`. Fetch them with
@@ -149,7 +157,7 @@ Before setting `Status: ready`:
 ```text
 [ ] Latest main was reviewed and Reviewed main is populated.
 [ ] Authoring chat is recorded when the user supplied a durable conversation URL.
-[ ] When an Authoring chat URL is supplied, Summary backlink requires that exact URL in every durable implementation/review/correction/recovery summary and final Next Handoff.
+[ ] When an Authoring chat URL is supplied, Summary backlink requires that exact URL in every durable implementation/review/correction/recovery/closeout summary and final Next Handoff; finish-time tooling enforces the committed closing summary.
 [ ] This is one coherent completion boundary.
 [ ] Existing Workstream identity was reused when appropriate.
 [ ] Current measured state and Evidence are factual, not speculative.
@@ -158,7 +166,7 @@ Before setting `Status: ready`:
 [ ] Acceptance is measurable.
 [ ] Validation names focused checks before broad checks.
 [ ] Visual evidence is minimized and justified; non-visual alternatives are named first when presentation is in scope.
-[ ] If subjective visual judgment remains material, the packet routes one compact handoff through publish_review_artifacts.py and gives the external reviewer specific questions instead of asking the coding agent for aesthetic critique.
+[ ] `Visual review` is explicitly `none`, `conditional`, or `required`; when not `none`, the packet routes one compact handoff through publish_review_artifacts.py, records the exact authoring chat and `/CUSTODIAN/visual_review/<workstream>/` root, gives the external reviewer specific questions, and defaults reviewed cloud evidence to programmatic deletion unless explicit retention is required.
 [ ] Dependencies and Locks reflect actual ordering/contention.
 [ ] Review intent is explicit; substantial/risky work defaults to paired `auto` review.
 [ ] `Review: none` carries a concrete `Review rationale: low-risk exemption: ...` rather than convenience/queue avoidance.
