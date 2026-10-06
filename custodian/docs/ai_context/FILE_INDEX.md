@@ -20,6 +20,11 @@
 - `custodian/docs/ai_context/task_packets/archived/HUB_FIRST_SET_BLOCKOUT_V1.md` and active `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — completed H1 implementation with approved macro-topology overview and the next paired post-land review.
 - `custodian/docs/ai_context/task_packets/HUB_AWAKENING_CONTEXT_HANDOFF.md` through `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` plus paired `REVIEW_HUB_*.md` packets — pre-authored H2-H7 first-campaign-loop series; downstream packets are dependency-gated and refreshed in place.
 
+## Operator Player VFX
+
+- `design/VFX_DESIGN_LOCK.md` — active Black-Gold Afterimage / Amber Vector player-VFX authority: motion-first directional geometry, compact white-hot contact, sparse angular breakup, silhouette-first readability, and explicit Fast 01→04 escalation.
+- `custodian/docs/ai_context/task_packets/OPERATOR_UNARMED_FAST_CHAIN_NORTH_VFX.md` + paired review — ready P1 asset/runtime slice consuming immutable handoff `north-vfx-20261006-a1` to replace only Fists Fast 01-04 North `fx` identities at 6/6/7/8 × 96px while preserving gameplay and all other directions. This external-source replacement path is independent of the still-gated generic Workbench FX-layer-adoption tooling.
+
 ## Operator Workbench UX Hierarchy
 
 - `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` + paired review — P0 human-authorized successor to exhausted Browser/PREVIEW review finding R2-01; binds accepted live preview results to the exact Live Bridge connection/session lifetime and gates FX-layer adoption on a fresh real-disconnect/reconnect review.
