@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1`
@@ -47,14 +47,32 @@ Address only R1-01 and remaining R0-04 proof; retain original finding IDs and pr
 
 ## Execution Feedback
 
-Complete the standard `custodian.task_feedback.v1` receipt before archive.
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `_live_document_matches_selection` now requires both the active editor document and any supplied result path to match the selected Workbench. Async live results recheck document identity after live-image, comparison, and transition-analysis awaits and before accepted mutation. Synchronous F5 export/load captures document identity, rejects a switch during either export or image loading, and uses the saved Workbench fallback when still valid. Barrier-controlled tests cover the real app debounce/controller/server send/cause path, invalid document/revision/output/issue context, editor disconnect, document switches during live/comparison/transition awaits, synchronous export and load barriers, valid current results, saved fallback, and selection/source/examiner-mode supersession with preview, comparison, transition, frame, and control-widget preservation.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The first synchronous-loader probe matched a replaced callable incorrectly; the barrier was moved into the service loader. Expanded Pilot runs also exposed a transient Textual shutdown timer error once; a clean rerun passed. The final code was then revalidated with the pinned UI environment and repository changed-file runner.
+- Root cause / contributing factors: The application did not recheck active editor document identity after asynchronous work; reviewer evidence also had not isolated examiner-mode changes from preview generation changes. The system Python runner skips optional Textual coverage, so pinned-environment evidence is needed for the app-level race.
+- Prevention / pipeline improvement: Check active document independently of the reported document path at every acceptance boundary; deterministic barriers now cover live export, live image, comparison, transition analysis, selection, source, examiner mode, and disconnect controls.
+- Tooling / docs drift discovered: The repository changed-file runner's system-Python UI test reports `SKIP TEXTUAL PILOT`; pinned `/tmp/custodian-opui` is the authoritative app-level smoke environment. No specification/tooling mismatch was found.
+- Follow-up: `review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2`
+- What worked: The real server send/cause route and explicit async barriers give deterministic stale-result proofs without renderer capture.
 
 ## Next Handoff
 - Next workstream: review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2
-- Next packet state: dependency-gated
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 - Refresh reason: none
-- Next action: Complete this final automatic correction and run its fresh paired review; if clean, surface the FX-adoption lane's exact live gate.
+- Next action: Land correction cycle 2, then claim the fresh paired review; if clean, surface the FX-adoption lane's exact live gate.
 - Blockers or open questions: Unresolved correction-worthy findings at cycle-2 review require human decision; no cycle 3.

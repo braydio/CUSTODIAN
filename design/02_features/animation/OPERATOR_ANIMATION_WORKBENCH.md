@@ -129,10 +129,16 @@ Page-3 PREVIEW asynchronous work uses a separate generation bound to semantic
 selection, source, and mode. Preview, comparison, transition, and Live Bridge
 results are discarded when their generation is stale. Asynchronous Live Bridge
 export commands carry their originating preview generation and semantic selection
-through the command cause sequence to result application. F5 keeps the last usable
-preview visible while browser/session state and a coherent replacement preview
-are prepared, then applies the replacement and restores prior playback intent
-only when the same semantic preview remains valid. Refresh requests during
+through the command cause sequence to result application. A live result must also
+match both its exported document path and the editor's currently active Workbench
+document; that ownership is rechecked after each live-image, comparison, or
+transition-analysis await and immediately before applying preview state. A document
+switch or disconnect rejects the detached result even when revision and preview
+generation values are unchanged. Synchronous F5 live export/load follows the same
+document guard and falls back to the saved Workbench preview when it remains valid.
+F5 keeps the last usable preview visible while browser/session state and a coherent
+replacement preview are prepared, then applies the replacement and restores prior
+playback intent only when the same semantic preview remains valid. Refresh requests during
 canonical PUBLISH mutation are coalesced and run once after publication ends.
 
 Persistent shell widgets belong to the retained main screen, not whichever

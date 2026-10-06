@@ -1498,10 +1498,202 @@ async def live_preview_generation_smoke() -> None:
     print("PASS LIVE PREVIEW GENERATION: issue-time context follows result; stale result rejected, current result accepted")
 
 
+async def live_document_ownership_smoke() -> None:
+    import asyncio
+    import json
+    from dataclasses import replace
+    from ui.app import OperatorWorkbenchApp
+    from live_bridge.protocol import Message, MessageType
+    import ui.app as app_module
+
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        app.action_mode_preview()
+        await pilot.pause(0.2)
+        app.state.preview_source = "workbench"
+        workbench = app._selected_live_workbench_path()
+        assert workbench is not None
+        controller = app.live_bridge
+        controller.server.state.active_document_path = str(workbench)
+        controller.server.state.document_revision = 42
+        issued = []
+        class FakeClient:
+            async def send(self, raw):
+                issued.append(json.loads(raw))
+            async def close(self, **_kwargs):
+                return None
+        controller.server._client = FakeClient()
+        old_debounce = app_module.LIVE_PREVIEW_DEBOUNCE_SEC
+        app_module.LIVE_PREVIEW_DEBOUNCE_SEC = 0
+
+        async def current_event():
+            generation = app.state.preview_generation
+            await app._debounced_live_preview(
+                42, generation, app.state.selection, str(workbench),
+            )
+            sequence = issued[-1]["sequence"]
+            controller._on_message(Message(
+                controller.server.state.bridge_session_id, sequence + 100,
+                MessageType.COMMAND_RESULT,
+                {"operation": "export_preview", "ok": True,
+                 "document_path": str(workbench),
+                 "output_path": str(controller._live_preview_path(workbench)),
+                 "revision": 42, "frames": 6, "frame_width": 96,
+                 "frame_height": 96}, cause=sequence,
+            ))
+            return await controller.next_event()
+
+        baseline = app.preview_view
+        event = await current_event()
+        other_document = workbench.parent.parent / "other-document" / "workbench.aseprite"
+        invalid_events = (
+            replace(event, document_path=str(other_document)),
+            replace(event, revision=41),
+            replace(event, output_path=str(other_document)),
+            replace(event, request_generation=None),
+            replace(event, request_identity=None),
+            replace(event, request_source=None),
+        )
+        for invalid in invalid_events:
+            await app._apply_live_preview(invalid)
+            assert app.preview_view is baseline
+        controller.server.state.active_document_path = None
+        await app._apply_live_preview(event)
+        assert app.preview_view is baseline, "disconnected editor accepted a live result"
+        controller.server.state.active_document_path = str(workbench)
+
+        # Hold the actual live loader, change only the active editor document,
+        # then release. Equal revision and UI generation cannot authorize it.
+        live_result = replace(baseline, source="live", paths=("controlled-live",))
+        started, release = asyncio.Event(), asyncio.Event()
+        original_thread = app._thread
+        service.live_preview = lambda *args, **kwargs: live_result
+
+        async def held_live_loader(function, *args, **kwargs):
+            if getattr(function, "func", None) == service.live_preview:
+                started.set()
+                await release.wait()
+                return live_result
+            return await original_thread(function, *args, **kwargs)
+
+        app._thread = held_live_loader
+        loading = asyncio.create_task(app._apply_live_preview(event))
+        await asyncio.wait_for(started.wait(), timeout=3)
+        controller.server.state.active_document_path = str(other_document)
+        assert controller.server.state.document_revision == 42
+        release.set()
+        await loading
+        assert app.preview_view is baseline
+
+        # A valid current result still applies when document ownership holds.
+        controller.server.state.active_document_path = str(workbench)
+        current = await current_event()
+        await app._apply_live_preview(current)
+        assert app.preview_view is live_result
+
+        # Document ownership is checked after comparison and transition
+        # analysis awaits as well as after the initial live-image loader.
+        other_document = workbench.parent.parent / "other-document" / "workbench.aseprite"
+        for examiner, blocked_function in (
+            ("compare", service.preview),
+        ):
+            app.preview_view = baseline
+            app.state.preview_examiner_mode = examiner
+            started_analysis, release_analysis = asyncio.Event(), asyncio.Event()
+            async def held_analysis(function, *args, **kwargs):
+                if function == blocked_function:
+                    started_analysis.set()
+                    await release_analysis.wait()
+                return await original_thread(function, *args, **kwargs)
+            app._thread = held_analysis
+            pending = asyncio.create_task(app._apply_live_preview(await current_event()))
+            await asyncio.wait_for(started_analysis.wait(), timeout=3)
+            controller.server.state.active_document_path = str(other_document)
+            release_analysis.set()
+            await pending
+            assert app.preview_view is baseline
+
+        import animation_transition
+        app.preview_view = baseline
+        app.state.preview_examiner_mode = "transition"
+        app.transition_target_view = baseline
+        app.state.transition_target_identity = "controlled-target"
+        analysis_started, analysis_release = asyncio.Event(), asyncio.Event()
+        async def held_transition_analysis(function, *args, **kwargs):
+            if getattr(function, "func", None) is animation_transition.analyze_transition:
+                analysis_started.set()
+                await analysis_release.wait()
+            return await original_thread(function, *args, **kwargs)
+        controller.server.state.active_document_path = str(workbench)
+        app._thread = held_transition_analysis
+        pending = asyncio.create_task(app._apply_live_preview(await current_event()))
+        await asyncio.wait_for(analysis_started.wait(), timeout=3)
+        controller.server.state.active_document_path = str(other_document)
+        analysis_release.set()
+        await pending
+        assert app.preview_view is baseline
+        app._thread = original_thread
+
+        # Synchronous F5 export/load is also guarded through the loader await;
+        # switching documents falls back to the saved preview for this selection.
+        saved = baseline
+        app.state.preview_examiner_mode = "single"
+        controller.server.state.active_document_path = str(workbench)
+        export_started, export_release = asyncio.Event(), asyncio.Event()
+        async def held_export(_path, _revision):
+            export_started.set()
+            await export_release.wait()
+            return {"output_path": str(controller._live_preview_path(workbench)),
+                    "frames": 6, "frame_width": 96, "frame_height": 96}
+        controller.request_preview_export = held_export
+        import threading
+        live_started, live_release = threading.Event(), threading.Event()
+        saved_calls = []
+        service.preview = lambda selection, source: saved_calls.append(source) or saved
+        def held_live_preview(*_args, **_kwargs):
+            live_started.set()
+            assert live_release.wait(3), "live loader barrier was not released"
+            return live_result
+        service.live_preview = held_live_preview
+        app._thread = original_thread
+        app.preview_view = saved
+        refresh = asyncio.create_task(app._load_preview(generation=app._next_preview_generation()))
+        await asyncio.wait_for(export_started.wait(), timeout=3)
+        export_release.set()
+        assert await asyncio.to_thread(live_started.wait, 3), "synchronous live loader did not start"
+        controller.server.state.active_document_path = str(other_document)
+        live_release.set()
+        await refresh
+        assert app.preview_view is saved
+        assert saved_calls == ["workbench"]
+
+        # Also switch during the export await itself. The stale live render is
+        # never loaded, and the still-valid saved preview is selected instead.
+        controller.server.state.active_document_path = str(workbench)
+        export_started, export_release = asyncio.Event(), asyncio.Event()
+        controller.request_preview_export = held_export
+        live_calls = []
+        service.live_preview = lambda *args, **kwargs: live_calls.append(True) or live_result
+        export_refresh = asyncio.create_task(
+            app._load_preview(generation=app._next_preview_generation())
+        )
+        await asyncio.wait_for(export_started.wait(), timeout=3)
+        controller.server.state.active_document_path = str(other_document)
+        export_release.set()
+        await export_refresh
+        assert app.preview_view is saved
+        assert not live_calls
+        app_module.LIVE_PREVIEW_DEBOUNCE_SEC = old_debounce
+    print("PASS LIVE DOCUMENT OWNERSHIP: invalid result metadata rejected; async and synchronous document switches preserve saved preview; valid current result applies")
+
+
 async def preview_negative_controls_smoke() -> None:
     import asyncio
     from dataclasses import replace
     from ui.app import OperatorWorkbenchApp
+    from ui.widgets import PreviewControls
     import animation_preview
 
     service = PilotService()
@@ -1549,6 +1741,94 @@ async def preview_negative_controls_smoke() -> None:
         await transition_load
         assert app.transition_candidates is old_candidates
         assert app.transition_target_view is old_target
+
+        # The ownership matrix must reject each independent UI owner change,
+        # even when the preview generation itself is left untouched.
+        app.state.mode = "preview"
+        app.state.preview_examiner_mode = "single"
+        await app._load_preview(generation=app._next_preview_generation())
+        await pilot.pause(0.1)
+        original_selection = app.state.selection
+        original_source = app.state.preview_source
+        other_source = "runtime" if original_source != "runtime" else "canonical"
+        original_mode = app.state.mode
+        original_examiner_mode = app.state.preview_examiner_mode
+        async def supersede_comparison(axis):
+            app.state.mode = "preview"
+            app.state.preview_examiner_mode = "compare"
+            app.state.selection = original_selection
+            app.state.preview_source = original_source
+            app.preview_view = valid
+            app.preview_compare_view = valid
+            app.preview_comparisons = (valid,)
+            old_compare = app.preview_compare_view
+            old_comparisons = app.preview_comparisons
+            old_frame = app.state.preview_frame
+            old_controls = str(app._main_widget("#preview-controls", PreviewControls).render())
+            started, release = asyncio.Event(), asyncio.Event()
+            async def barrier(function, *args, **kwargs):
+                if function == service.preview:
+                    started.set()
+                    await release.wait()
+                return await original_thread(function, *args, **kwargs)
+            app._thread = barrier
+            pending = asyncio.create_task(app._load_preview_comparison(force=True))
+            await asyncio.wait_for(started.wait(), timeout=3)
+            if axis == "selection":
+                app.state.selection = replace(original_selection, direction="w")
+            elif axis == "source":
+                app.state.preview_source = other_source
+            else:
+                app.state.preview_examiner_mode = "single"
+            release.set()
+            await pending
+            assert app.preview_compare_view is old_compare, (axis, old_compare, app.preview_compare_view)
+            assert app.preview_comparisons is old_comparisons, axis
+            assert app.state.preview_frame == old_frame
+            assert str(app._main_widget("#preview-controls", PreviewControls).render()) == old_controls
+
+        async def supersede_transition(axis):
+            app.state.mode = "preview"
+            app.state.preview_examiner_mode = "transition"
+            app.state.selection = original_selection
+            app.state.preview_source = original_source
+            app.preview_view = valid
+            old_candidates = app.transition_candidates
+            old_target = app.transition_target_view
+            old_analysis = app.transition_analysis
+            old_frame = app.state.preview_frame
+            old_controls = str(app._main_widget("#preview-controls", PreviewControls).render())
+            started, release = asyncio.Event(), asyncio.Event()
+            async def barrier(function, *args, **kwargs):
+                if function == service.transition_preview:
+                    started.set()
+                    await release.wait()
+                return await original_thread(function, *args, **kwargs)
+            app._thread = barrier
+            pending = asyncio.create_task(app._load_transition_examiner())
+            await asyncio.wait_for(started.wait(), timeout=3)
+            if axis == "selection":
+                app.state.selection = replace(original_selection, direction="w")
+            elif axis == "source":
+                app.state.preview_source = other_source
+            else:
+                app.state.preview_examiner_mode = "single"
+            release.set()
+            await pending
+            assert app.transition_candidates is old_candidates
+            assert app.transition_target_view is old_target
+            assert app.transition_analysis is old_analysis
+            assert app.state.preview_frame == old_frame
+            assert str(app._main_widget("#preview-controls", PreviewControls).render()) == old_controls
+
+        for ownership_axis in ("selection", "source", "mode"):
+            await supersede_comparison(ownership_axis)
+            await supersede_transition(ownership_axis)
+        app._thread = original_thread
+        app.state.selection = original_selection
+        app.state.preview_source = original_source
+        app.state.mode = original_mode
+        app.state.preview_examiner_mode = original_examiner_mode
 
         # Tick guards: replacement, empty view, wrong identity/source all no-op;
         # a valid view clamps an out-of-range stored frame to its final frame.
@@ -1740,6 +2020,7 @@ def main() -> None:
         asyncio.run(repeated_preview_f5_smoke())
         asyncio.run(browser_session_transaction_smoke())
         asyncio.run(live_preview_generation_smoke())
+        asyncio.run(live_document_ownership_smoke())
         asyncio.run(preview_negative_controls_smoke())
         asyncio.run(fast_chain_refresh_smoke())
         asyncio.run(publish_refresh_coalescing_smoke())

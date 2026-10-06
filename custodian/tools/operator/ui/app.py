@@ -303,11 +303,14 @@ class OperatorWorkbenchApp(App):
         expected = self._selected_live_workbench_path()
         if expected is None:
             return False
-        actual = document_path or self.live_bridge.server.state.active_document_path
-        if not actual:
+        active = self.live_bridge.server.state.active_document_path
+        if not active:
             return False
         try:
-            return Path(actual).resolve() == expected
+            return (
+                Path(active).resolve() == expected
+                and (document_path is None or Path(document_path).resolve() == expected)
+            )
         except OSError:
             return False
 
@@ -401,6 +404,7 @@ class OperatorWorkbenchApp(App):
             return
         generation = event.request_generation
         selection = self.state.selection
+        examiner_mode = self.state.preview_examiner_mode
         if (
             generation is None
             or event.request_identity is None
@@ -442,7 +446,9 @@ class OperatorWorkbenchApp(App):
             return
         if (
             event.revision != self.live_bridge.server.state.document_revision
+            or not self._live_document_matches_selection(event.document_path)
             or not self._preview_request_current(generation, selection, "workbench")
+            or self.state.preview_examiner_mode != examiner_mode
             or self._preview_replacing
             or not live.frames
         ):
@@ -459,19 +465,25 @@ class OperatorWorkbenchApp(App):
                         animation_transition.analyze_transition,
                         live.frames, target_view.frames, tail=2, head=2,
                     ))
-                    if target_identity != self.state.transition_target_identity:
+                    if (target_identity != self.state.transition_target_identity
+                            or self.state.preview_examiner_mode != examiner_mode
+                            or not self._live_document_matches_selection(event.document_path)):
                         return
                 else:
                     compare_source = self._compare_source_for(live)
                     comparison = await self._thread(self.service.preview, selection, compare_source)
-                    if not self._preview_request_current(generation, selection, "workbench"):
+                    if (not self._preview_request_current(generation, selection, "workbench")
+                            or self.state.preview_examiner_mode != examiner_mode
+                            or not self._live_document_matches_selection(event.document_path)):
                         return
                     comparisons = animation_preview.compare_previews(live, comparison)
         except Exception:
             return
         if (
             event.revision != self.live_bridge.server.state.document_revision
+            or not self._live_document_matches_selection(event.document_path)
             or not self._preview_request_current(generation, selection, "workbench")
+            or self.state.preview_examiner_mode != examiner_mode
             or self._preview_replacing
         ):
             return
@@ -913,10 +925,17 @@ class OperatorWorkbenchApp(App):
             return
         self._preview_replacing = True
         source = self.state.preview_source
+        examiner_mode = self.state.preview_examiner_mode
+        def request_current() -> bool:
+            return (
+                self._preview_request_current(generation, selection, source)
+                and self.state.preview_examiner_mode == examiner_mode
+            )
         try:
             primary = None
             live_revision = None
-            if source == "workbench" and self._live_document_matches_selection():
+            live_document_path = self.live_bridge.server.state.active_document_path
+            if source == "workbench" and self._live_document_matches_selection(live_document_path):
                 workbench = self._selected_live_workbench_path()
                 if workbench is not None:
                     for _attempt in range(3):
@@ -925,8 +944,10 @@ class OperatorWorkbenchApp(App):
                             exported = await self.live_bridge.request_preview_export(workbench, revision)
                         except (ConnectionError, ValueError):
                             break
-                        if not self._preview_request_current(generation, selection, source):
+                        if not request_current():
                             return
+                        if not self._live_document_matches_selection(live_document_path):
+                            break
                         if revision != self.live_bridge.server.state.document_revision:
                             continue
                         output_path = Path(exported["output_path"])
@@ -938,8 +959,10 @@ class OperatorWorkbenchApp(App):
                                 frames=int(exported["frames"]),
                                 frame_size=(int(exported["frame_width"]), int(exported["frame_height"])),
                             )
-                        if not self._preview_request_current(generation, selection, source):
+                        if not request_current():
                             return
+                        if not self._live_document_matches_selection(live_document_path):
+                            break
                         if revision == self.live_bridge.server.state.document_revision:
                             primary = candidate
                             live_revision = revision
@@ -948,9 +971,12 @@ class OperatorWorkbenchApp(App):
                         self._activity("Live preview unavailable during refresh; loading the saved Workbench preview", "WARN")
             if primary is None:
                 primary = await self._thread(self.service.preview, selection, source)
-            if not self._preview_request_current(generation, selection, source):
+            if not request_current():
                 return
-            if live_revision is not None and live_revision != self.live_bridge.server.state.document_revision:
+            if live_revision is not None and (
+                live_revision != self.live_bridge.server.state.document_revision
+                or not self._live_document_matches_selection(live_document_path)
+            ):
                 self._pending_live_preview_revision = self.live_bridge.server.state.document_revision
                 return
 
@@ -962,29 +988,39 @@ class OperatorWorkbenchApp(App):
             target = None
             if self.state.preview_examiner_mode == "transition":
                 candidates = tuple(await self._thread(self.service.transition_candidates, selection))
-                if not self._preview_request_current(generation, selection, source):
+                if not request_current():
+                    return
+                if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                     return
                 target = next((item for item in candidates if item.identity == self.state.transition_target_identity), None)
                 if target is None and candidates:
                     target = candidates[0]
                 if target is not None:
                     target_view = await self._thread(self.service.transition_preview, target, primary.source)
-                    if not self._preview_request_current(generation, selection, source):
+                    if not request_current():
+                        return
+                    if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                         return
                     transition_analysis = await self._thread(partial(
                         animation_transition.analyze_transition,
                         primary.frames, target_view.frames, tail=2, head=2,
                     ))
-                    if not self._preview_request_current(generation, selection, source):
+                    if not request_current():
+                        return
+                    if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                         return
             elif self.state.preview_examiner_mode != "single":
                 compare_source = self._compare_source_for(primary)
                 comparison = await self._thread(self.service.preview, selection, compare_source)
-                if not self._preview_request_current(generation, selection, source):
+                if not request_current():
+                    return
+                if live_revision is not None and not self._live_document_matches_selection(live_document_path):
                     return
                 comparisons = animation_preview.compare_previews(primary, comparison)
 
-            if not self._preview_request_current(generation, selection, source):
+            if (not request_current()
+                    or (live_revision is not None
+                        and not self._live_document_matches_selection(live_document_path))):
                 return
             self.preview_view = primary
             self.preview_compare_view = comparison
@@ -1038,6 +1074,7 @@ class OperatorWorkbenchApp(App):
         generation = self.state.preview_generation
         primary = self.preview_view
         source_requested = self.state.preview_source
+        examiner_mode = self.state.preview_examiner_mode
         source = self._normalized_compare_source()
         if not force and self.preview_compare_view is not None and self.preview_compare_view.source == source and self.preview_compare_view.identity == self.preview_view.identity:
             self._rebuild_preview_comparison(); return
@@ -1049,6 +1086,7 @@ class OperatorWorkbenchApp(App):
                 or self.state.selection is None
                 or self.state.selection.identity != selection.identity
                 or self.state.preview_source != source_requested
+                or self.state.preview_examiner_mode != examiner_mode
                 or self.preview_view is not primary
             ):
                 return
@@ -1076,11 +1114,13 @@ class OperatorWorkbenchApp(App):
         primary = self.preview_view
         generation = self.state.preview_generation
         source = self.state.preview_source
+        examiner_mode = self.state.preview_examiner_mode
         requested_target = self.state.transition_target_identity
         try:
             candidates = tuple(await self._thread(self.service.transition_candidates, selection))
             if (not self._preview_request_current(generation, selection, source)
                     or self.preview_view is not primary
+                    or self.state.preview_examiner_mode != examiner_mode
                     or self.state.transition_target_identity != requested_target):
                 return
             target = next((candidate for candidate in candidates
@@ -1095,6 +1135,7 @@ class OperatorWorkbenchApp(App):
             target_view = await self._thread(self.service.transition_preview, target, primary.source)
             if (not self._preview_request_current(generation, selection, source)
                     or self.preview_view is not primary
+                    or self.state.preview_examiner_mode != examiner_mode
                     or self.state.transition_target_identity != requested_target):
                 return
             analysis = await self._thread(partial(
@@ -1103,6 +1144,7 @@ class OperatorWorkbenchApp(App):
             ))
             if (not self._preview_request_current(generation, selection, source)
                     or self.preview_view is not primary
+                    or self.state.preview_examiner_mode != examiner_mode
                     or self.state.transition_target_identity != requested_target):
                 return
             self.transition_target_view = target_view
