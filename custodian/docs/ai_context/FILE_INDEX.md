@@ -21,6 +21,7 @@
 
 ## Operator Workbench UX Hierarchy
 
+- `custodian/docs/ai_context/task_packets/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` + paired review — ready P1 persistent Git hygiene slice that centralizes safe FF-only synchronization for the coordination root and `workbench/operator-art`, adds `csync`/`opui-sync`, and makes clean OPUI sessions start from current main without rewriting blocked local state.
 - `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY.md` — completed P0 readiness/recovery implementation record for read-only startup, bounded clean-FF/sparse/local-LFS preparation, metadata rollback proof, stable pending-land identity, and saved-document frame reconciliation.
 - `custodian/tools/operator/operator_art_worktree.py` and `custodian/tools/operator/animation_workbench.py` — structured Operator publish readiness/preparation, exact local-only dependency materialization, scoped transaction metadata preimages, stable landing receipts, and verified recovery.
 - `design/02_features/animation/OPERATOR_WORKBENCH_UX_HIERARCHY_ROADMAP.md` - refresh-gated five-slice OPUI UX hierarchy plan covering artist-facing state, preview-first Workbench home, changes-first Publish, actionable Queue, and final cross-mode UX closeout. It consumes, rather than duplicates, the publish-readiness, browser-snapshot, FX-adoption, and new-animation-creation backend authorities.
