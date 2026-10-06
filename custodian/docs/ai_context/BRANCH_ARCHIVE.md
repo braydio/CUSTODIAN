@@ -28,3 +28,37 @@ branches need no tag because main retains their history.
 | `agent/awakening-connector-04-05` | `fe3f3f7788bec3208f544c2be0e79c03384bfee6` | 2026-10-05 | archived unique history | `archive/agent-awakening-connector-04-05-20261005` | Unique history is an obsolete visual-acceptance packet; current 04-to-05 connector ownership is awakening-room-connectors-polish and its refreshed downstream gates. |
 | `agent/awakening-detail-assets-batch-01` | `66be9592722c3c67d5b12dfbc49237c7c5506440` | 2026-10-05 | archived unique history | `archive/agent-awakening-detail-assets-batch-01-20261005` | Useful source masters are preserved on main; prior standalone publication and binding assumptions are superseded by the current baked-only/not-ready Awakening consumption truth. |
 | `agent/visual-review-dropbox-handoff` | `b91659c63ff7786925dfe9f106c4134d8325f03e` | 2026-10-05 | archived unique history | `archive/agent-visual-review-dropbox-handoff-20261005` | Publisher, tests, and docs landed on main and have since evolved, including bidirectional Dropbox handoff work; the old branch must not overwrite the newer workflow. |
+| `agent/asset-workbench-review-studio` | `c7f4069faf66ef25a9bbb380f42c311ce91c7f23` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/awakening-handoff-readiness-art-convergence-v1` | `dfaf9e269d4c12d98bc03f5800cc34ce3530a50a` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/awakening-runtime-assets-batch02` | `5f588c473b58d0cfccebfa13f40102cb0f9f3cc0` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/baby-opossum-runtime-hardening` | `791eb9a621ec5816317a6b9d7ec9585d377c2004` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/lfs-bandwidth-degraded-mode` | `a3fbd8f9b0f393e02b82652ac8b1049cc7c7dd28` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/procgen-alpine-plateau-underlay-assets` | `d642281290ff3f82316603113fe41f2e9bdc6672` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/procgen-authored-claim-registry-extraction` | `16566c4832b65d0508f485956b02512ca647f63a` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/review-contract-world-placement-foundation` | `1fed82305df4d953b33e71e07755561505d57de9` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/review-operator-art-registration-profile-review-corrections-1` | `1fed82305df4d953b33e71e07755561505d57de9` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/review-operator-workbench-publish-readiness-recovery` | `3880e3aead8244f6e9cc7d6fc65d5be4b92bd6f2` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/review-startup-world-entry-spine-v1` | `6979005e70f4706f4f9c0eb9b809d3d4b3234107` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/review-visual-validation-economy-tooling-v1-review-corrections-1` | `1dc10bed71afa141b0ea40a26f226a46b232e4cb` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/twin-solaria-development-preview-consistency` | `ea3c9ed7e18ac567116f6274c4cb38b0644584a5` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/visual-review-rclone-remote-detect` | `34db774a77e625ff871e40beede260449c3a6591` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/workstream-finish-entrypoint-guard` | `31ddc98b2c3ef571b7d43124d497fe309244ae8e` | 2026-10-05 | fully contained by main | — | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `dispatch-claims/review-procgen-region-frame-presentation-foundation` | `969d69062b38ee07a2e7c7a68dd4d42da5b23faf` | 2026-10-05 | archived unique history | `archive/dispatch-claims-review-procgen-region-frame-presentation-foundation-20261005` | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
+| `session-transcript/procgen-performance-baseline-v1` | `1df7ce9065a2bdbe9aafd81503406a097e44270f` | 2026-10-05 | archived unique history | `archive/session-transcript-procgen-performance-baseline-v1-20261005` | stale initial
+  claim; no implementation committed; packet retained for immediate re-dispatch |
