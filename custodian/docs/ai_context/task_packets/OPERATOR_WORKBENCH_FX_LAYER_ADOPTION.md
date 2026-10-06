@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-operator-workbench-browser-preview-refresh-hardening`
+- Depends on: `review-operator-workbench-browser-preview-disconnect-ownership-correction`
 - Locks: `operator-workbench-ui, operator-workbench-publish`
 - Kind: `implementation`
 - Review: `auto`
@@ -14,12 +14,13 @@
 - Paired review workstream: `review-operator-workbench-fx-layer-adoption`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `0c2a646ccd`
+- Reviewed main: `f64ee5c71ebb42ed7e192fccb71dec4fba3664d9`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Let an artist add or replace an FX layer directly inside an existing Operator Aseprite Workbench, explicitly adopt that saved layer as the animation's canonical `fx` source, preview the result, and publish it through the normal guarded source→runtime transaction without a separate inbox/manual-ingest detour.
 - Completion boundary: Add one narrow human-authored FX adoption path for an already-existing semantic Operator animation. Saved top-level Aseprite layers named `vfx` or `fx` may be discovered as unbound editor content, explicitly adopted as semantic layer `fx`, represented transactionally as CREATE or REPLACE against the canonical source target, included in Workbench preview/publish review, rebuilt into runtime/catalog resources, mirrored only when the existing explicit counterpart option is enabled, and rolled back exactly on failure. Do not add arbitrary new animation identities or general layer-creation/autopilot authority.
 - Current measured state:
+  - 2026-10-06 human refresh: the predecessor Browser/PREVIEW review exhausted its automatic correction cap with confirmed disconnect-ownership defect `R2-01`. This authoring chat chose a bounded correction rather than an acceptance exception. FX adoption is now gated by `review-operator-workbench-browser-preview-disconnect-ownership-correction`; do not claim this packet until that fresh review passes.
   - The user's immediate `unarmed/defense/block_hold_01` FX is already live on current main through the earlier Operator V2 inbox path: canonical/runtime east+west `fx` strips exist, generated resources include them, and held unarmed guard playback consumes the FX. This packet is therefore the **next tooling slice**, not another block-FX runtime-wiring task.
   - `animation_workbench_model.build_plan()` only creates Workbench bindings from canonical sources already returned by `source_index()`. A new Aseprite layer has no manifest binding and therefore no source/runtime publication intent.
   - `operator_animation_workbench.lua` assembles and exports only `p.layers`; it has no saved-document layer-inspection mode and cannot export an unbound layer for adoption.
@@ -66,9 +67,9 @@
 
 ## Handoff
 
-- Next action: Auto-claim only after `review-operator-workbench-sparse-art-checkout-review-corrections-1` completes/archives, then reproduce the body-only + saved `vfx` fixture before modifying production Workbench code.
+- Next action: Auto-claim only after `review-operator-workbench-browser-preview-disconnect-ownership-correction` completes/archives, then reproduce the body-only + saved `vfx` fixture before modifying production Workbench code.
 - Best starting files: `animation_workbench_model.py::build_plan/assert_context`, `animation_workbench.py::state/_baseline/publish`, `operator_animation_workbench.lua`, `ui/service.py::session/publish_preview/publish`, `operator_cli.py`, and the three focused Workbench smokes.
-- Blockers or open questions: None. The immediate block-hold runtime FX is already live; this task closes the missing authoring/publication path for doing the same operation from Aseprite/OPUI next time.
+- Blockers or open questions: Dependency gate only: `R2-01` disconnect ownership must be reviewed green first. The immediate block-hold runtime FX is already live; this task closes the missing authoring/publication path for doing the same operation from Aseprite/OPUI next time.
 
 ## Execution Feedback
 
