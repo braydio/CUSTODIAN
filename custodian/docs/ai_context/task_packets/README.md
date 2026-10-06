@@ -76,7 +76,8 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - The unique high-resolution Fast 01 South donor master is already preserved on main at `b57ab98d` under `custodian/asset_drop/source_work/operator/unarmed/attack/fast_01/south/fast_1_south.png`; this preservation commit does not change runtime.
 - `archived/STRANDED_BRANCH_RECOVERY_CLOSEOUT.md` — P1 closeout landed. Adds fail-closed exact-SHA retirement; archive-tags and retires five reviewed stale refs. Vaultwing's attached history remains untouched and is routed to its separate manual recovery packet.
 - `VAULTWING_BONDING_LOCAL_HISTORY_RECOVERY.md` — P1 ready/manual recovery. First archive-tags the exact attached local HEAD remotely, then classifies the recorded 23-commit checkpoint-to-remote range and all commits unique to current main before any worktree/branch mutation or selective salvage.
-- `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 ready/auto post-land review; dependency-gated until the Operator continuity implementation completes and archives.
+- `archived/OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — P1 implementation complete/landed at `e7402591`: seven approved Fast 01 N + Fast 02-04 N/S body masters normalized to 96×96, exact lower/upper recomposition, six true-alpha-zero Fast 02-04 N/S FX authoring placeholders, protected Fast 01 authorities unchanged, gameplay data untouched.
+- `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 ready/auto post-land review and **claimable now**. Reviews landed North/South body continuity, exact 96×96/pipeline contracts, truthful blank-FX placeholder semantics, protected Fast 01/E/W assets, and baseline-vs-landed carry-smoke parity. It must not treat intentionally transparent FX as unfinished implementation or touch the dirty project-root `BRANCH_ARCHIVE.md`.
 
 ### Operator Runtime Authority Migration
 
