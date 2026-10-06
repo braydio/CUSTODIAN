@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-operator-workbench-publish-readiness-recovery`
@@ -44,7 +44,30 @@
 - Task overrides: `none`
 - Deferred: none.
 
+## Completion Truth
+
+Required before completion.
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `operator_cli.py` non-dry-run publish now calls `WorkbenchService.publish(..., prepare=True, force_stale=...)` instead of `animation_workbench.publish()`. `ui/service.py` runs `prepare_publish_checkout` before mutation, then `publish_to_main` with the existing final `inspect_publish_readiness` revalidation and allowlist; `force_stale` waives only source freshness. New `operator_cli_publish_boundary_smoke.py` (registered as `operator_cli_publish_boundary`) drives `operator_cli.main` against fixture remotes: coordination main (with and without `--force-stale-source`), detached checkout, and dirty art checkout all exit 2 with unchanged hashes/HEAD/status and no publish call; dry-run makes no change or commit; the eligible art checkout runs prepare, then inspect, then publish, stages exactly `[SOURCE]` and lands on origin/main. The test fails (exit 0 from coordination main) against the pre-fix code. The four focused Workbench smokes and `git diff --check` pass; `run_validation.py --changed --base origin/main` passed 12/12 with complete coverage.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first test run exited silently with argparse code 2 (extra positional `group`), because the harness swallowed `SystemExit` inside its stdout/stderr redirect. `run_validation.py --changed` without `--base` selected zero tests on a committed tree, which `validation_green` treats as not green.
+- Root cause / contributing factors: Test harness captured argparse errors without surfacing them; the default `--changed` base is the working-tree diff.
+- Prevention / pipeline improvement: Pass `--base origin/main` when generating the finish validation report from a committed branch.
+- Tooling / docs drift discovered: The Workbench doc described only `--force-stale-source` for CLI publish; updated with the shared-authority and fail-closed contract.
+- Follow-up: `none`
+- What worked: Reusing the art-worktree smoke's fixture remote exercised the real checkout identity, readiness and landing code with only the Aseprite backend stubbed.
+
 ## Handoff
 
-- Next action: Implement the shared CLI publication boundary, then complete the paired review before any downstream Workbench lane advances.
+- Next action: Paired review `review-operator-workbench-publish-readiness-recovery-review-corrections-1` before any downstream Workbench lane advances.
 - Blockers or open questions: none.
