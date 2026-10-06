@@ -12,6 +12,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
+- `OPERATOR_UNARMED_FAST_CHAIN_NORTH_VFX.md` — Replace the North-facing Fists Fast 01-04 FX tracks with the four visually approved Black-Gold Afterimage / Amber Vector source masters from immutable handoff `north-vfx-20261006-a1`; use guarded Operator Source Session replacement and preserve gameplay/timing.
 - `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Lock the approved 8-direction Operator as deterministic 128x128 authoring authority while preserving legacy 96 art.
 - `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Fresh-context review of canonical Operator source/profile/QA integrity.
 - `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Make Live Bridge preview results valid only for the exact bridge connection/session lifetime that issued them, so a disconnect or reconnect cannot authorize...

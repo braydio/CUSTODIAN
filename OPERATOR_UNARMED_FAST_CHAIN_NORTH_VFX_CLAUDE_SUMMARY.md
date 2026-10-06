@@ -1,6 +1,7 @@
 # OPERATOR UNARMED FAST CHAIN NORTH VFX — CLAUDE SUMMARY
 
 - Workstream: `operator-unarmed-fast-chain-north-vfx`
+- State: North implementation complete in the workstream; landing is paused on one unrelated after-sync validation failure.
 - Branch: `agent/operator-unarmed-fast-chain-north-vfx`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
@@ -24,7 +25,7 @@ Passed after synchronizing with `origin/main@875692745`:
 - `operator_animation_contract_report.py --strict`: 0 required missing.
 - Modular layers, modular fast attack, North fast-chain selector, Source Session smoke, and focused North FX contract checks.
 - Direct `operator_art_agent_v2_pilot.py --json`: `PASS`, exact workbench restore, production immutability true, no new QA findings.
-- `run_validation.py --changed --json`: 12/12 selected passed, complete coverage, no uncovered files. This report covers the implementation/assets/wrapper changes; task packet closeout metadata was held at its current-main version for the run because the global `review_pairing_contract` also scans an unrelated newly active 2.5D review packet with a malformed override. That unrelated packet was not changed.
+- `run_validation.py --changed --json` on the pre-f8ef synchronized implementation diff: 12/12 selected passed, complete coverage, no uncovered files. `workstream.py finish` then merged `origin/main@f8ef4c84`. The required after-sync run (`--changed --base origin/main`) has complete coverage but fails `review_pairing_contract` on the unrelated active `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` because its bounded review-artifact override is missing; later tiers are skipped. North-specific checks and the direct V2 pilot pass on that same latest tree. That unrelated packet remains untouched pending user direction.
 - `git diff --check`.
 
 The V2 pilot initially failed because the active live relay correctly rejected the isolated worktree’s session paths. The validation entry point now injects an unavailable relay so the pilot uses headless Aseprite only in validation; ordinary production pilot invocations retain the live-relay default. Added a focused image-contract test and manifest ownership for the North inbox, normalized, source, runtime, and source-work paths.
@@ -33,7 +34,7 @@ The broader Operator ingest command previously reached an unrelated Vigil Dagger
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: success
+- Outcome: partial
 - Friction severity: medium
 - What went wrong: the V2 pilot originally contacted the ambient relay; the validation coverage map also lacked ownership for newly staged specialized Operator assets.
 - Root cause / contributing factors: isolated workstream roots intentionally differ from the relay’s persistent authorized roots; asset coverage was not mapped to a focused contract test.
@@ -44,10 +45,10 @@ The broader Operator ingest command previously reached an unrelated Vigil Dagger
 
 ## Next Handoff
 - Next workstream: review-operator-unarmed-fast-chain-north-vfx
-- Next packet state: ready
+- Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 - Refresh reason: none
-- Next action: claim the paired post-land review in a fresh reviewer context and follow its asset-pipeline/runtime/visual review contract.
-- Blockers or open questions: root checkout fast-forward synchronization may remain pending because the unrelated dirty `BRANCH_ARCHIVE.md` is preserved.
+- Next action: resolve the after-sync review-packet contract failure, rerun the changed suite, then finish/land before a fresh-context paired review.
+- Blockers or open questions: `review_pairing_contract` fails on the unrelated 2.5D review packet; user direction is pending on whether to make that bounded metadata correction. The persistent root is clean at `f8ef4c84`; VFX synchronization waits for landing.
