@@ -13,7 +13,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 <!-- task_packet_index:managed:start -->
 - `OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md` — Read-only runtime-pixel audit of production-reachable Operator animations against the LoP 16-angle and Playable Knight 8-direction goalposts; outputs exact 2.5D art backlog and requires human visual review.
-- `OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Close the remaining manifest-path retargeting path in R0-01 before any unrelated Operator source can be mutated or landed by a selected Workbench publication.
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Independently verify that cycle 2 closes R0-01 by proving mutable Workbench paths cannot retarget CLI publication outside the selected animation.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
@@ -291,6 +290,11 @@ Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_AL
 - `archived/BIDIRECTIONAL_DROPBOX_HANDOFF.md` — P1 implementation complete/landed. Adds immutable `CUSTODIAN/implementation_inputs/<workstream>/<handoff-id>/`, manifest/hash/path verification into non-production staging, preserves `CUSTODIAN/visual_review`, and passes real rclone plus ChatGPT Dropbox connector PNG/ZIP round-trips.
 - `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — paired P1 post-land fresh-context code/architecture/workflow review; becomes eligible after this implementation lands and archives, with hostile-manifest, credential-boundary, and live-provider evidence checks.
 - The packet authorized the one-time rclone/Dropbox setup and unique sacrificial transport tests; successful remote smoke evidence is retained through paired review.
+
+## Completed Operator Workbench Publish Readiness Cycle 2 Correction
+
+- `archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Cycle 2 closes R0-01 by binding Workbench publication paths to the selected animation plan and rejecting initial or pre-mutation manifest retargeting; all five focused Workbench validations pass.
+- `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Paired fresh-context cycle-2 review is the immediate successor and becomes claimable after this correction lands and archives.
 
 ## Selection
 
