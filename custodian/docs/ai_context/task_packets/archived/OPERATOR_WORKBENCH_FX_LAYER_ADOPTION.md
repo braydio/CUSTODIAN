@@ -44,6 +44,10 @@
 
 ## Completion Truth
 
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Result: Complete. Explicit saved-layer FX adoption is available for existing semantic animations through the shared Workbench backend and UI/CLI; direct CREATE/REPLACE and optional mirrored publication use the existing schema, transaction, rebuild, and rollback authority.
 - Evidence: `operator_animation_workbench_smoke.py` (real Aseprite saved `vfx`, adoption, exact pixel preview); `operator_workbench_mirror_publish_smoke.py` (CREATE/REPLACE, mirror opt-in, rollback, collision); `operator_workbench_ui_smoke.py` (service plus Textual pilot); `operator_art_worktree_smoke.py`; Godot import preflight and runtime SpriteFrames import; focused modular defense smoke; final changed-file validation report.
 - Deferred: General nonexistent-layer adoption for head/cape/weapon; Art Agent autonomous `create_layer`; entirely new semantic animation authoring.
