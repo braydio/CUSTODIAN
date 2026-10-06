@@ -62,7 +62,7 @@
 - Retained finding dispositions: `R2-01`, `R1-01`, and original-lineage `R0-04` fixed; original `R0-01/R0-02/R0-03` remain fixed.
 - Independent controls: Actual disconnect preserves last-known path/revision and exact accepted object/widget state; identical-session same-document reconnect rejects stale A and accepts fresh B; compare and transition-analysis await controls pass; synchronous document-switch and disconnect use saved fallback.
 - Validation: Exact implementation changed-file sweep passed 9/9 with complete coverage and zero skipped/timed-out/infrastructure errors; pinned Textual UI smoke and original adapted executable proofs passed. Review-artifact changed validation and diff checks are recorded in the durable summary.
-- Durable summary: `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION_REVIEW_CLAUDE_SUMMARY.md`
+- Durable summary: `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION_CLAUDE_SUMMARY.md`
 - Follow-up workstream: `none`
 
 ## Execution Feedback
@@ -70,10 +70,10 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: `The review packet carried a pre-implementation main hash; graph coverage is empty in the isolated checkout.`
-- Root cause / contributing factors: `Reviewed-main metadata was inherited from planning; the worktree has no indexed graph nodes.`
-- Prevention / pipeline improvement: `Refresh review lifecycle metadata to the actual reviewed HEAD and derive the review surface from the named implementation commit before changed-file routing.`
-- Tooling / docs drift discovered: `R0-01 records the stale Reviewed main field; actual target was safely identified and the review metadata/receipt now record it.`
+- What went wrong: `The review packet carried a pre-implementation main hash; graph coverage is empty in the isolated checkout; the initially delegated summary filename was rejected by the canonical paired-review artifact gate before landing.`
+- Root cause / contributing factors: `Reviewed-main metadata was inherited from planning; the worktree had no indexed graph nodes; the delegated summary name placed REVIEW after the task name while finish requires the workstream-derived REVIEW prefix.`
+- Prevention / pipeline improvement: `Refresh review lifecycle metadata to the actual reviewed HEAD, derive the review surface from the named implementation commit, and use the workstream-derived canonical closing-summary filename. The summary was renamed in-scope with all receipt links updated; no lifecycle implementation was edited.`
+- Tooling / docs drift discovered: `R0-01 records the stale Reviewed main field; actual target was safely identified and the review metadata/receipt now record it. The finish artifact/backlink gates require canonical summary naming even though the closing-summary finder recognizes packet-declared alternates; naming recovery completed in-scope.`
 - Follow-up: `fixed-in-scope`
 - What worked: `Identical-session reconnect controls prove connection generation independently of path, revision, UI generation, and client identity.`
 

@@ -131,6 +131,6 @@
 - Human-decision finding IDs: `none`
 - No-action finding IDs: `R0-01`
 - Retained findings: `R2-01`, `R1-01`, original `R0-04` fixed; original `R0-01/R0-02/R0-03` remain fixed.
-- Detailed review summary: `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION_REVIEW_CLAUDE_SUMMARY.md`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION_CLAUDE_SUMMARY.md`
 - Follow-up workstream: `none`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
