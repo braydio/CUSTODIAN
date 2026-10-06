@@ -16,7 +16,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Fresh-context review of canonical Operator source/profile/QA integrity.
 - `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Make Live Bridge preview results valid only for the exact bridge connection/session lifetime that issued them, so a disconnect or reconnect cannot authorize...
 - `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Independently prove that live Preview result ownership is tied to the exact bridge connection/session lifetime that issued it, including disconnect and disco...
-- `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Independently verify that cycle 2 closes R0-01 by proving mutable Workbench paths cannot retarget CLI publication outside the selected animation.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
@@ -303,7 +302,7 @@ Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_AL
 ## Completed Operator Workbench Publish Readiness Cycle 2 Correction
 
 - `archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Cycle 2 closes R0-01 by binding Workbench publication paths to the selected animation plan and rejecting initial or pre-mutation manifest retargeting; all five focused Workbench validations pass.
-- `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Paired fresh-context cycle-2 review is the immediate successor and becomes claimable after this correction lands and archives.
+- `archived/REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Fresh-context paired cycle-2 review passed; R0-01 is fixed with no additional findings. The next existing Workbench packet is the human-authorized browser Preview disconnect-ownership correction.
 
 ## Selection
 

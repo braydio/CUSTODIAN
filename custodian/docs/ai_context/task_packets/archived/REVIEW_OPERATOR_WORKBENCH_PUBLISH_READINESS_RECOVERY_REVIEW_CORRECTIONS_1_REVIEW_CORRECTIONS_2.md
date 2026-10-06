@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
@@ -12,7 +12,7 @@
 - Review target workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md`
 - Review modes: `code, workflow`
-- Reviewed main: `094be7ed98e492e1d0b68ec4dcd33e7fd1e5b967`
+- Reviewed main: `8756927453ee8fc0eee2ab194e8c7098f2a6271a`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include this exact Authoring chat URL in the review summary and final handoff.
 - Reviewer context: `fresh`
@@ -28,13 +28,34 @@
 - Non-goals: Do not edit reviewed implementation code, art/gameplay, Workbench design, or unrelated source.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
-## Handoff
+## Next Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `operator-workbench-browser-preview-disconnect-ownership-correction`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh reason: `none`
-- Next action: Review cycle 2 after its correction lands; if R0-01 remains open, surface `human_required` in the exact authoring conversation.
+- Next action: Claim the already human-authorized browser Preview disconnect-ownership correction; FX-layer adoption remains dependency-gated on its paired review.
 - Blockers or open questions: none.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Cycle-2 review found `R0-01` fixed; initial and pre-mutation path-retarget controls, selected-path fixture landing, four existing Workbench smokes, reviewed-code freeze, and `git diff --check` all pass.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The code-review graph index was empty in this worktree; targeted symbol and path reads supplied the required code evidence.
+- Root cause / contributing factors: The review worktree did not have indexed graph data.
+- Prevention / pipeline improvement: Continue with exact source fallback when the graph reports it is empty; no code change was needed.
+- Tooling / docs drift discovered: Code-review graph index unavailable in this worktree. `task_packet_index.py` reports the managed block stale; its writer also proposed unrelated 2.5D packet removals and a Procgen description rewrite, so those out-of-scope changes were preserved rather than committed.
+- Follow-up: `none`
+- What worked: Fixture-backed CLI controls proved both retarget cases fail before mutation and the selected-path control lands through the approved scoped publisher.

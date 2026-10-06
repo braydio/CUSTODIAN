@@ -68,6 +68,39 @@
 
 ## Handoff
 
-- Next action: Complete the paired cycle-2 review on fresh main after correction 2 lands.
-- Best starting files: `custodian/tools/operator/ui/service.py`; `custodian/tools/operator/animation_workbench_model.py`; `custodian/tools/operator/animation_workbench.py`; `custodian/tools/validation/operator_cli_publish_boundary_smoke.py`.
-- Blockers or open questions: None beyond the acceptance and validation above.
+- Next action: Paired cycle-2 review passed; continue with the existing browser Preview disconnect-ownership correction packet.
+- Best starting files: `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` and its paired review packet.
+- Blockers or open questions: none.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
+- Reviewed on main: `8756927453ee8fc0eee2ab194e8c7098f2a6271a`
+- Review modes: `code, workflow`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Retained dispositions: `R0-01 fixed`; no cycle-2 findings.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+
+### Findings
+
+- **R0-01** (`fixed`, blocking correctness, publication boundary/workflow): `_validated_publication_paths()` binds each manifest binding's semantic identity, source path, and publish path to the selected animation plan before readiness preparation. The allowlist is derived only from these validated direct and mirror targets. `publish_to_main()` invokes the final callback immediately before the backend; that callback reloads the manifest, revalidates the exact path set, and rechecks readiness before `animation_workbench.publish()` runs. The CLI regression rejects an initially retargeted manifest with coherent alternate-source freshness metadata and a post-preparation retarget; both controls prove no backend call and unchanged source/runtime hashes, HEAD, and Git status. The selected-path positive control stages exactly `[SOURCE]` and lands that file on the fixture remote. Cycle-1 checkout, dirty-state, dry-run, stale override, and landing controls remain covered. The correction commit changes no art or gameplay files, and reviewed implementation files are unchanged after that correction commit.
+
+### Verification Performed
+
+- `operator_cli_publish_boundary_smoke.py` — PASS; initial and post-preparation manifest retargets rejected; selected-path positive control landed only the selected source on its fixture remote.
+- `operator_art_worktree_smoke.py` — PASS; fixture-only race/retry and filename-hook controls completed.
+- `operator_workbench_mirror_publish_smoke.py` — PASS.
+- `operator_workbench_ui_smoke.py` — PASS; optional Textual pilot skipped because Textual is not installed.
+- `operator_animation_workbench_smoke.py` — PASS.
+- `git diff --check` — PASS.
