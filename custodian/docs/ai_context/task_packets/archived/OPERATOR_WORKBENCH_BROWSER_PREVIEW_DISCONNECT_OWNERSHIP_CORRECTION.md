@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-browser-preview-disconnect-ownership-correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -89,26 +89,26 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `pending`
-- Completion boundary satisfied: `pending`
-- Acceptance satisfied: `pending`
-- Superseded/legacy production path disposition: `pending`
-- Evidence: `pending`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `PreviewOwnership tokens bind each live result to the connected bridge generation, client session, active document path, and revision. The pinned UI smoke exercised actual disconnect, same-document reconnect, stale A rejection, current B acceptance, and the synchronous saved-preview fallback. Changed validation passed all 7 selected checks with complete coverage; git diff --check passed. See OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION_CLAUDE_SUMMARY.md.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `pending`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
-- What worked: `pending`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The system python3 changed-file run could not import websockets. The finalized unfiltered changed run also selected review_pairing_contract, which fails on the unrelated REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT packet's missing bounded TASK OVERRIDE. The pinned Operator UI interpreter's Operator-tagged changed run passed all 7 scoped checks with complete coverage.`
+- Root cause / contributing factors: `The default interpreter lacks the optional Operator UI websockets dependency; a separate active review packet predates the required review-artifact commit override.`
+- Prevention / pipeline improvement: `Use the documented pinned Operator UI interpreter when changed validation selects Live Bridge or Textual UI coverage; repair the separately named review packet before expecting the unfiltered packet-doc sweep to pass.`
+- Tooling / docs drift discovered: `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md lacks the bounded TASK OVERRIDE required by review_pairing_contract.`
+- Follow-up: `manual-follow-up: REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT`
+- What worked: `Issue-time ownership tokens made disconnect and reconnect invalidation explicit while preserving last-known editor metadata.`
 
 ## Handoff
 
-- Next action: Claim `operator-workbench-browser-preview-disconnect-ownership-correction`, reproduce R2-01 first, implement only the connection/session ownership barrier, validate, land, then run the paired fresh-context review.
+- Next action: Claim the paired fresh-context review and verify the durable implementation evidence before any FX-layer adoption.
 - Best starting files: `live_bridge/state.py`, `ui/live_bridge_controller.py`, `ui/app.py`, `operator_workbench_ui_smoke.py`, and the cycle-2 review summary.
-- Blockers or open questions: None. The human decision required by the exhausted review chain is supplied by this packet.
+- Blockers or open questions: None.

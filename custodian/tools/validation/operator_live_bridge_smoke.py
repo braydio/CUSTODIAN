@@ -35,12 +35,15 @@ def envelope(session: str, sequence: int, kind: str, payload: dict, cause: int |
     })
 
 
-def hello(session: str, sequence: int = 1, capabilities: list[str] | None = None) -> str:
+def hello(session: str, sequence: int = 1, capabilities: list[str] | None = None,
+          document_path: Path | None = None, revision: int = 7) -> str:
     return envelope(session, sequence, "client.hello", {
         "aseprite_version": "test-version",
         "api_version": "test-api",
         "capabilities": sorted(REQUIRED_CAPABILITIES if capabilities is None else capabilities),
-        "editor_state": {"frame": 2, "layer": "upper_body", "modified": False, "revision": 7},
+        "editor_state": {"frame": 2, "layer": "upper_body", "modified": False,
+                         "revision": revision,
+                         **({"document_path": str(document_path.resolve())} if document_path else {})},
     })
 
 
@@ -173,9 +176,10 @@ async def controller_lifecycle_smoke(repo_root: Path) -> None:
     assert waiting.status is LiveBridgeUIStatus.WAITING
     assert waiting.host == "127.0.0.1" and controller.server.listening_port
     uri = f"ws://127.0.0.1:{controller.server.listening_port}"
+    workbench = repo_root / ".ai/operator_animation_workbench/live/frame-test/workbench.aseprite"
 
     async with connect(uri) as client:
-        await client.send(hello("controller-first"))
+        await client.send(hello("controller-first", document_path=workbench, revision=42))
         await client.recv()
         hello_event = await asyncio.wait_for(controller.next_event(), timeout=0.2)
         assert hello_event.user_originated and hello_event.frame == 2
@@ -183,7 +187,6 @@ async def controller_lifecycle_smoke(repo_root: Path) -> None:
             lambda: controller.snapshot().status is LiveBridgeUIStatus.CONNECTED,
             "controller connected",
         )
-        workbench = repo_root / ".ai/operator_animation_workbench/live/frame-test/workbench.aseprite"
         request = await controller.select_frame(workbench, 6)
         command = parse_message(await client.recv())
         assert command.sequence == request and command.payload == {
@@ -223,6 +226,9 @@ async def controller_lifecycle_smoke(repo_root: Path) -> None:
         assert exported.revision == 42 and exported.frame_count == 8
         assert exported.frame_width == 96 and exported.frame_height == 96
         assert exported.output_path == str(expected_output) and not exported.user_originated
+        assert exported.request_ownership is not None
+        assert exported.request_ownership.client_session_id == "controller-first"
+        assert exported.request_ownership.document_path == str(workbench.resolve())
         await client.send(envelope("controller-first", 5, "layer.state_changed", {
             "document_path": str(workbench.resolve()), "layer": "upper_body",
             "layer_id": "upper-id", "visible": True,

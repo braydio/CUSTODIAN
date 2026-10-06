@@ -10,12 +10,12 @@
 - Kind: `implementation`
 - Review: `none`
 - Review stage: `post-land`
-- Review modes: `asset-pipeline, docs`
+- Review modes: `asset-pipeline, workflow`
 - Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `0`
 - Reviewed main: `7a8ad89c84263043d2fb127576ba0aba47789f06`
-- Authoring chat: `not-provided`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Branch: `agent/asset-downloads-intake-sweep`
 
 ## Goal

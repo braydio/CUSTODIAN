@@ -41,16 +41,16 @@
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Acceptance note: `yes` carries a user waiver on criterion 13: criteria 1-12 are proven by objective evidence; criterion 13 (gameplay-scale human read as Archive resolution rather than grid/loading/fog) was NOT signed off by ChatGPT review (technical approve / visual hold: reviewer could not view pixels). The user explicitly directed landing for hands-on playtest, accepting criterion 13 as pending their own playtest judgment. Likely tuning, if any: constructed-class echo only (88% of echo events, 16 px lattice).
+- Acceptance note: `yes`. Criteria 1-12 are proven by objective evidence. Criterion 13 is now explicitly human-approved in the recorded authoring chat after direct inspection of the gameplay-scale six-frame contact sheet (ticks 3/36/72/138/224/330). The ingress wave reads as outward Archive resolution rather than a global fade; constructed-class lattice fragments remain restrained despite dominating the echo count; reacquisition is visibly lighter/shorter than first resolve; semantic echo does not expose useful hidden gameplay information; and settled play is visually ordinary with no persistent grid/fog/UI/VFX. Human disposition: `APPROVED`, no presentation tuning required.
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `custodian/game/world/procgen/streaming/procgen_presentation_class.gd`, `procgen_reveal_presentation.gd`, `archive_resolve.gdshader`; `ProcGenTilemap.get_archive_resolve_presentation_class/begin_archive_resolve_ingress`; `ContractWorldLoader._begin_archive_resolve_ingress`. New smokes `procgen_archive_resolve_semantic_echo` and `contract_world_archive_resolve_ingress` (real loader, registered ingress + Gothic gate, ordering, exact final tile, canonical validity/main component, zero added component queries; negative control fails). Green: procgen_archive_resolve_shader, procgen_reveal_presentation, pause_aware_streaming, chunk_lifecycle, payload_cache, distant_chunk_unload, runtime_health, region_frame, world_ingress_spawner, spawn_validity, ingress_spawn_clearance, camera_presentation_subject_constraint, S1 quick `1773840677`. Moment Forge `procgen/archive_resolve_semantic_echo_review`: ingress ~1.2 s, reacquisition 0.133 s vs <=0.33 s first resolve, pocket never veiled. Dropbox `/CUSTODIAN/visual_review/procgen-archive-resolve-semantic-echo/20261006T092059Z/REVIEW_MANIFEST.json` (manifest names `b086e552`; run was from the dirty tree that became commit `e14f5792`, clean rerun not performed). Technical review disposition from the authoring chat: pass; visual: hold, waived by user for playtest.
+- Evidence: `custodian/game/world/procgen/streaming/procgen_presentation_class.gd`, `procgen_reveal_presentation.gd`, `archive_resolve.gdshader`; `ProcGenTilemap.get_archive_resolve_presentation_class/begin_archive_resolve_ingress`; `ContractWorldLoader._begin_archive_resolve_ingress`. New smokes `procgen_archive_resolve_semantic_echo` and `contract_world_archive_resolve_ingress` (real loader, registered ingress + Gothic gate, ordering, exact final tile, canonical validity/main component, zero added component queries; negative control fails). Green: procgen_archive_resolve_shader, procgen_reveal_presentation, pause_aware_streaming, chunk_lifecycle, payload_cache, distant_chunk_unload, runtime_health, region_frame, world_ingress_spawner, spawn_validity, ingress_spawn_clearance, camera_presentation_subject_constraint, S1 quick `1773840677`. Moment Forge `procgen/archive_resolve_semantic_echo_review`: ingress ~1.2 s, reacquisition 0.133 s vs <=0.33 s first resolve, pocket never veiled. Dropbox `/CUSTODIAN/visual_review/procgen-archive-resolve-semantic-echo/20261006T092059Z/REVIEW_MANIFEST.json` (manifest names `b086e552`; run was from the dirty tree that became commit `e14f5792`, clean rerun not performed). The same published six-frame contact sheet was subsequently inspected directly in the authoring chat and received explicit human visual/game-feel approval with no tuning required. The manifest/commit provenance mismatch remains a historical evidence-hygiene note, not a runtime or aesthetic defect.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: `Landmark class initially covered ~99% of echoes on a real map; evidence manifest provenance points at the pre-commit dirty tree; landed with visual sign-off outstanding at user direction.`
+- What went wrong: `Landmark class initially covered ~99% of echoes on a real map; evidence manifest provenance points at the pre-commit dirty tree; the packet landed before the reviewer could inspect the actual contact-sheet pixels, so the archive temporarily recorded a visual waiver. Direct pixel review later completed and approved the landed presentation without tuning.`
 - Root cause / contributing factors: `Assumed material/claim names matched hero semantics without probing a real map; evidence published before committing.`
 - Prevention / pipeline improvement: `Probe class distributions on a real generated map before wiring; commit before publishing review evidence.`
 - Tooling / docs drift discovered: `Packet wording on authored-landmark material was too broad (fixed here); Moment Forge fixture commands must be registered in moment_action_driver.gd.`
@@ -73,3 +73,20 @@
 - Refresh reason: `none after this packet's required pre-implementation refresh is completed`
 - Next action: Let the fresh-context AR3 paired review claim automatically. Review should include the user's playtest verdict on constructed-class echo strength (possible constructed-only tuning).
 - Blockers or open questions: None. Reviewed AR2, this planning refresh, and reviewed playable-region spawn validity are complete. Keep semantic classes bounded; do not broaden class count, invent future Landmark Vocabulary authority, or fold R0-01 component-query optimization into AR3.
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-procgen-archive-resolve-semantic-echo`
+- Reviewed on main: `2e375923e` (implementation `e14f5792a`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, runtime, visual` (objective visual facts only; aesthetic decision is the recorded human approval)
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `3`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none` (ready AR4 `procgen-archive-resolve-frontier-restraint` owns the playtest-routed ordinary-frontier restraint)

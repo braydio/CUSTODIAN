@@ -11,7 +11,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Series: `operator-workbench-ux-hierarchy-v1`
 - Workstream: `operator-workbench-ux-state-hierarchy`
-- Status: `ready`
+- Status: `draft`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-workbench-fx-layer-adoption`

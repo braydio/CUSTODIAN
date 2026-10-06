@@ -6,14 +6,14 @@
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`
-- Claim gate: `do not claim while operator-2-5d-animation-viability-audit still owns operator-art-agent; claim after that workstream releases the shared lock`
+- Claim gate: `do not claim while operator-2-5d-animation-viability-audit still owns operator-art-agent; after that workstream releases the shared lock, implementation may begin but the canonical 128 anchor/floor/profile must still pause at the PRE-LOCK CALIBRATION GATE for human approval before acceptance`
 - Locks: `operator-art-agent, operator-source-normalization, operator-aseprite-tooling`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, asset-pipeline, workflow, visual-contract`
 - Paired review workstream: `review-operator-2-5d-canonical-visual-contract`
-- Reviewed main: `ca5e7d2acc5282f304a8d969343db127462326f1`
+- Reviewed main: `2e375923edf450a64b4b9fb4b41ce02ca3fa1ff1`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 - Goal: Turn the user's approved 8-direction Operator design reference into the single deterministic visual/registration authority for all future 2.5D Operator animation authoring: preserve the approved source bytes, measure and landmark every direction, define the new 128x128 authoring/runtime frame contract without breaking existing 96x96 assets, make Aseprite/Workbench/Art Agent show the canonical directional reference, and add structural/color/brightness/silhouette QA that prevents body/camera/material drift while preserving intentional pose motion.
 - Completion boundary: Preserve the exact source under source_work; emit a canonical per-direction measurement/landmark record; migrate the art-profile authority so legacy 96 and canonical 128 profiles coexist; make Aseprite/Workbench consume the canonical reference and profile; add deterministic geometry/material/alpha QA; update active art/design docs; do not replace runtime animations in this slice.
@@ -42,6 +42,246 @@ workstream: operator-2-5d-canonical-visual-contract
 branch: agent/operator-2-5d-canonical-visual-contract
 closing summary: OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT_CLAUDE_SUMMARY.md
 ```
+
+## PRE-LOCK CALIBRATION GATE
+
+Do **not** freeze the canonical 128 registration merely from the 2048x256 design-reference cell bounds. Two distinct artifacts exist and have different jobs:
+
+### High-resolution design authority
+
+The user-approved final design sheet supplied in the authoring chat measures:
+
+```text
+2048 x 256 RGBA
+8 x 256x256 cells
+order: N, NE, E, SE, S, SW, W, NW
+sha256: 2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323
+```
+
+This file owns anatomy, armor/cloak topology, projection, palette/material language and directional identity. It is **not** itself proof of runtime centering/floor registration.
+
+### Runtime-registration candidate
+
+The user's earlier crisp resize/canvas pass in this same chat measures:
+
+```text
+1024 x 128 RGBA
+8 x 128x128 cells
+sha256: 31bfc4fc40cbb1d2738037070b962d8e68b1f3ca87414b8f8c5f2ae1e60493c7
+alpha: binary only (0/255)
+```
+
+Measured alpha bounds:
+
+| Dir | bbox width | bbox height | bbox center x | top y | bottom y |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| N | 49 | 87 | 63.0 | 20 | 106 |
+| NE | 42 | 86 | 62.5 | 20 | 105 |
+| E | 32 | 88 | 60.5 | 20 | 107 |
+| SE | 43 | 87 | 63.0 | 20 | 106 |
+| S | 49 | 85 | 64.0 | 20 | 104 |
+| SW | 39 | 86 | 64.0 | 20 | 105 |
+| W | 31 | 87 | 65.0 | 20 | 106 |
+| NW | 42 | 84 | 64.5 | 20 | 103 |
+
+The body is therefore already correctly sized for the intended "roughly old 96px body inside a 128px action canvas" strategy: apparent height is 84-88px with all directions beginning at y=20. Do not enlarge the body simply to fill the 128px cell.
+
+### Candidate canonical root/floor
+
+The accepted legacy profile uses `anchor_y=84`, `ground_y=85`; the viability audit found normal legacy sprite baselines at roughly y=84. Preserve that semantic relationship in the new profile.
+
+Candidate new registration:
+
+```text
+frame: 128x128
+center_x: 64
+support/body baseline: y=106
+root anchor: [64, 106]
+ground_y: 107
+bottom safety margin below ground: 20px
+```
+
+If bottommost opaque support contact is used as the initial normalization evidence, the candidate whole-sprite integer Y translations are:
+
+```text
+N   +0
+NE  +1
+E   -1
+SE  +0
+S   +2
+SW  +1
+W   +0
+NW  +3
+```
+
+These translations are **calibration candidates, not permission to finalize blindly**.
+
+Before final profile write:
+
+1. landmark semantic `hip_center` and both visible/inferable toe/support contacts on all 8 directions;
+2. verify that x=64 represents the projected body/root axis from semantic landmarks, not alpha-bbox centering;
+3. verify y=106 against support-contact landmarks and the existing anchor-vs-ground semantics;
+4. create one deterministic 8-direction calibration overlay showing cell bounds, x=64, candidate anchor y=106, ground y=107, support contacts, hip centers and applied integer translations;
+5. publish that single overlay through the visual-review handoff and **pause for human/ChatGPT approval before the v3 profile/reference is declared accepted**;
+6. if the user changes anchor/floor/body scale, update the profile measurements and this report from that decision. Do not reinterpret the visual design itself.
+
+No direction may be independently rescaled to make its feet/bbox match. Whole-sprite integer translation is the only allowed pre-lock geometric adjustment after the one shared crisp body scale is established.
+
+If the exact 1024x128 candidate is available locally, preserve it as additional source-work evidence under a name such as `OPERATOR_DESIGN_REFERENCE_128.png` and verify the SHA above. If it is not available, deterministically reproduce the 128 candidate from the approved source through the existing pixelart/normalization tooling and require the calibration overlay/human gate before accepting the result.
+
+## AAA TECHNICAL-ART PRE-FREEZE ADDENDUM
+
+This addendum supersedes any earlier implication that the lowest opaque pixel should be normalized to one common Y. The approved 2.5D art is now visually lockable; registration remains a semantic technical-art calibration.
+
+### Audit disposition
+
+Treat the current approved 8-direction character design as:
+
+- **visual identity / anatomy / armor / cloak:** LOCK;
+- **camera / projection:** LOCK;
+- **runtime neutral body scale:** PASS;
+- **frame center X:** LOCK at `64` for the 128 profile;
+- **root/floor Y:** PROVISIONAL;
+- **128x128 as a universal body-animation canvas:** PROVISIONAL until action-envelope proof;
+- **mass animation production:** HOLD until the semantic-root and action-envelope gates below pass.
+
+Measured neutral 128 reference evidence remains:
+
+```text
+cell: 128x128
+apparent body height: 84-88 px
+top alpha row: y=20 for all current neutral reference cells
+bottom alpha row: y=103..107 depending on direction
+binary alpha only
+detached alpha islands: none
+```
+
+Do not enlarge the neutral body merely to fill the frame.
+
+### Critical floor/root correction
+
+**Do not normalize direction registration by alpha bottom.**
+
+In a fixed elevated 2.5D projection, two feet can both contact the same physical ground plane while appearing at different screen-space Y coordinates. Therefore:
+
+- lowest opaque Y is clipping/silhouette evidence only;
+- equal alpha bottoms are not a registration invariant;
+- equal head-top Y is not a registration invariant;
+- the earlier candidate whole-sprite Y shifts derived from bottommost opaque pixels are diagnostic only and must not be applied merely to equalize bottoms.
+
+Before accepting the canonical 128 registration, landmark for every direction:
+
+```text
+hip_center
+left_foot_contact
+right_foot_contact
+projected_world_root
+shadow_origin
+```
+
+Reuse existing near/far toe landmarks where they map cleanly, but add an explicit projected-root/shadow-origin concept if the current schema cannot represent the distinction without ambiguity.
+
+The intended model is:
+
+```text
+world/root authority: fixed gameplay point
+projected root: fixed screen-space registration point for the profile
+foot contacts: direction-specific positions around that root
+shadow origin: grounded presentation point
+```
+
+Candidate registration remains:
+
+```text
+frame: 128x128
+center_x: 64
+candidate root: [64, 106]
+candidate ground_y: 107
+```
+
+but Y=106/107 is **not accepted merely because it is near the current lowest pixels**.
+
+Prove or revise it from the semantic landmarks.
+
+### Required human calibration proof
+
+Before writing the new 128 profile as accepted, generate one deterministic eight-direction technical overlay showing, for every cell:
+
+- 128x128 cell boundary;
+- x=64 root axis;
+- candidate/final projected root;
+- ground reference;
+- hip center;
+- left/right foot contacts;
+- shadow origin;
+- alpha bbox;
+- no geometric scaling difference between directions.
+
+Publish that single overlay and pause at the existing human calibration gate.
+
+The human decision is about root/floor/scale registration only. Do not reopen the approved character design/camera unless the overlay exposes an actual contradiction.
+
+### 128 universal action-envelope proof
+
+The neutral turnaround proves that the standing Operator fits comfortably inside 128x128. It does **not** by itself prove that 128x128 is a universal canvas for every future body animation.
+
+Before declaring the 128 profile universal for new Operator body art, prove a bounded maximum-action envelope using representative worst extents from current/planned production semantics:
+
+- deepest dodge/crouch;
+- maximum fast-chain body extension;
+- widest block-hit/reaction;
+- raised/overhead melee pose;
+- longest 1H attack body reach;
+- ranged aim extension;
+- large hit-reaction recoil;
+- downed/death body extremity where relevant.
+
+The proof may use existing art, canonicalized temporary poses, or measured legacy/reference envelopes. It does not require authoring a finished new animation family.
+
+Acceptance:
+
+- body anatomy fits the 128 body canvas with a deliberate safety margin;
+- no body scale reduction is used to make an extreme pose fit;
+- root remains stable under pose motion;
+- intentional root-driving motion is represented explicitly rather than recentering the frame;
+- if weapon/FX extents exceed the body canvas, solve that with the appropriate weapon/FX presentation envelope or layer contract, **never by shrinking the Operator body**.
+
+If the body itself cannot fit a representative production pose safely at 128, stop and return that evidence for human/ChatGPT profile-size review before mass production.
+
+### Runtime-pixel cleanup gate
+
+The reviewed 128 candidate has correct binary alpha and connected silhouettes but contains a small number of embedded cool/green/blue palette contaminants.
+
+Cleanup is allowed only on the normalized 128 authoring reference, not the immutable high-resolution design source.
+
+Allowed cleanup:
+
+- replace isolated non-warm contaminant pixels with locally appropriate graphite or warm-gold values;
+- preserve perceptual brightness hierarchy;
+- preserve exact alpha mask;
+- preserve dimensions, silhouette, root, floor, scale, pose and topology.
+
+Required proof:
+
+- before/after hashes;
+- exact changed-pixel list;
+- alpha-mask equality;
+- identical connected-component topology;
+- 4x or greater diff/marked preview for human inspection.
+
+Do not perform broad palette reduction or recolor.
+
+The immutable high-resolution design-source hash remains the visual provenance authority even if the normalized 128 reference receives approved pixel cleanup and therefore has its own new reference hash.
+
+### Final pre-freeze rule
+
+The 128 profile may become accepted only after all three conditions are true:
+
+1. semantic root/floor overlay is human-approved;
+2. 128 body action-envelope proof passes or a revised frame size is human-approved;
+3. normalized 128 pixel cleanup is reviewed and its final hash is recorded.
+
+Until then, the implementation may build measurement/report/tooling support but must keep the new profile explicitly provisional.
 
 ## 1. Preserve the approved source exactly
 
@@ -456,3 +696,16 @@ After reviewed landing:
 1. recompute the animation-art backlog against this contract;
 2. author canonical unarmed locomotion/posture as the first production art tranche;
 3. refresh the Forum 2.5D packet only after that art plan is accepted.
+
+
+## Handoff
+
+- Next workstream: `review-operator-2-5d-canonical-visual-contract`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Summary backlink: include the exact Authoring chat URL in the closing summary and final Next Handoff
+- Refresh reason: `none`
+- Next action: `paired fresh-context review, then WB25-1 may proceed when its other dependencies are complete`
+- Blockers or open questions: `none beyond declared dependencies`
