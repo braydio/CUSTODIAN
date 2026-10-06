@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-workbench-browser-preview-disconnect-ownership-correction`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `operator-workbench-browser-preview-disconnect-ownership-correction`
@@ -11,10 +11,12 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-browser-preview-disconnect-ownership-correction`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
 - Review modes: `code, architecture, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `f64ee5c71ebb42ed7e192fccb71dec4fba3664d9`
+- Reviewed main: `c463a1cfde5363e3e2eeac2e9c5b20362c6e9f67`
 - Human authorization basis: `fresh-context review of the human-authorized bounded successor that closes exhausted-lineage finding R2-01; this review is not cycle 3 of the original automatic correction chain`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
@@ -48,5 +50,40 @@
 
 ## Handoff
 
-- Next action: Auto-dispatch after `operator-workbench-browser-preview-disconnect-ownership-correction` lands and archives.
-- Blockers or open questions: Dependency only.
+- Next action: Review passed; archive and land this gate, then claim `operator-workbench-fx-layer-adoption`.
+- Blockers or open questions: None.
+
+## Review Result
+
+- Disposition: `passed`
+- Reviewed implementation commit: `c4652e6b7248a6f60dcae9993742b7fcdaa8826c`
+- Actual reviewed main: `c463a1cfde5363e3e2eeac2e9c5b20362c6e9f67`
+- Findings: `R0-01` is a non-blocking pipeline metadata issue, disposition `no_action`; the review lifecycle metadata and archived implementation receipt now record the actual reviewed target. No blocking defects or material evidence gaps.
+- Retained finding dispositions: `R2-01`, `R1-01`, and original-lineage `R0-04` fixed; original `R0-01/R0-02/R0-03` remain fixed.
+- Independent controls: Actual disconnect preserves last-known path/revision and exact accepted object/widget state; identical-session same-document reconnect rejects stale A and accepts fresh B; compare and transition-analysis await controls pass; synchronous document-switch and disconnect use saved fallback.
+- Validation: Exact implementation changed-file sweep passed 9/9 with complete coverage and zero skipped/timed-out/infrastructure errors; pinned Textual UI smoke and original adapted executable proofs passed. Review-artifact changed validation and diff checks are recorded in the durable summary.
+- Durable summary: `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION_REVIEW_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The review packet carried a pre-implementation main hash; graph coverage is empty in the isolated checkout.`
+- Root cause / contributing factors: `Reviewed-main metadata was inherited from planning; the worktree has no indexed graph nodes.`
+- Prevention / pipeline improvement: `Refresh review lifecycle metadata to the actual reviewed HEAD and derive the review surface from the named implementation commit before changed-file routing.`
+- Tooling / docs drift discovered: `R0-01 records the stale Reviewed main field; actual target was safely identified and the review metadata/receipt now record it.`
+- Follow-up: `fixed-in-scope`
+- What worked: `Identical-session reconnect controls prove connection generation independently of path, revision, UI generation, and client identity.`
+
+## Next Handoff
+
+- Next workstream: `operator-workbench-fx-layer-adoption`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Refresh reason: `none`
+- Next action: Claim the existing FX adoption packet after this paired review lands and archives; reproduce its saved body-only Workbench plus vfx fixture first.
+- Blockers or open questions: `none`
