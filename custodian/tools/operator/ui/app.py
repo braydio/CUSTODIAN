@@ -20,6 +20,7 @@ from .dialogs import (
 from .features import AnimationFeature
 from .live_bridge_controller import LiveBridgeController, LiveBridgeEvent, LiveBridgeUIStatus
 from live_bridge.protocol import MessageType
+from live_bridge.state import ConnectionState, PreviewOwnership
 from .screens import MainScreen
 from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
@@ -303,7 +304,10 @@ class OperatorWorkbenchApp(App):
         expected = self._selected_live_workbench_path()
         if expected is None:
             return False
-        active = self.live_bridge.server.state.active_document_path
+        bridge_state = self.live_bridge.server.state
+        if bridge_state.connection is not ConnectionState.CONNECTED or not bridge_state.client_session_id:
+            return False
+        active = bridge_state.active_document_path
         if not active:
             return False
         try:
@@ -313,6 +317,21 @@ class OperatorWorkbenchApp(App):
             )
         except OSError:
             return False
+
+    def _live_preview_ownership_matches(
+        self, ownership: PreviewOwnership | None, document_path: str | None = None,
+        revision: int | None = None,
+    ) -> bool:
+        bridge_state = self.live_bridge.server.state
+        if not bridge_state.owns_preview(ownership):
+            return False
+        if document_path is not None:
+            try:
+                if Path(document_path).resolve() != Path(ownership.document_path).resolve():
+                    return False
+            except OSError:
+                return False
+        return revision is None or revision == ownership.revision
 
     async def _consume_live_bridge_events(self) -> None:
         while True:
@@ -415,6 +434,7 @@ class OperatorWorkbenchApp(App):
             or self.state.mode != "preview"
             or self.state.preview_source != "workbench"
             or not self._live_document_matches_selection(event.document_path)
+            or not self._live_preview_ownership_matches(event.request_ownership, event.document_path, event.revision)
             or event.revision is None
             or event.revision != self.live_bridge.server.state.document_revision
             or event.output_path is None
@@ -447,6 +467,7 @@ class OperatorWorkbenchApp(App):
         if (
             event.revision != self.live_bridge.server.state.document_revision
             or not self._live_document_matches_selection(event.document_path)
+            or not self._live_preview_ownership_matches(event.request_ownership, event.document_path, event.revision)
             or not self._preview_request_current(generation, selection, "workbench")
             or self.state.preview_examiner_mode != examiner_mode
             or self._preview_replacing
@@ -467,14 +488,16 @@ class OperatorWorkbenchApp(App):
                     ))
                     if (target_identity != self.state.transition_target_identity
                             or self.state.preview_examiner_mode != examiner_mode
-                            or not self._live_document_matches_selection(event.document_path)):
+                            or not self._live_document_matches_selection(event.document_path)
+                            or not self._live_preview_ownership_matches(event.request_ownership, event.document_path, event.revision)):
                         return
                 else:
                     compare_source = self._compare_source_for(live)
                     comparison = await self._thread(self.service.preview, selection, compare_source)
                     if (not self._preview_request_current(generation, selection, "workbench")
                             or self.state.preview_examiner_mode != examiner_mode
-                            or not self._live_document_matches_selection(event.document_path)):
+                            or not self._live_document_matches_selection(event.document_path)
+                            or not self._live_preview_ownership_matches(event.request_ownership, event.document_path, event.revision)):
                         return
                     comparisons = animation_preview.compare_previews(live, comparison)
         except Exception:
@@ -482,6 +505,7 @@ class OperatorWorkbenchApp(App):
         if (
             event.revision != self.live_bridge.server.state.document_revision
             or not self._live_document_matches_selection(event.document_path)
+            or not self._live_preview_ownership_matches(event.request_ownership, event.document_path, event.revision)
             or not self._preview_request_current(generation, selection, "workbench")
             or self.state.preview_examiner_mode != examiner_mode
             or self._preview_replacing
@@ -931,9 +955,17 @@ class OperatorWorkbenchApp(App):
                 self._preview_request_current(generation, selection, source)
                 and self.state.preview_examiner_mode == examiner_mode
             )
+        async def recover_saved_if_live_ownership_lost() -> bool:
+            if live_revision is None or self._live_preview_ownership_matches(
+                live_ownership, live_document_path, live_revision
+            ):
+                return False
+            await self._load_preview(generation=generation)
+            return True
         try:
             primary = None
             live_revision = None
+            live_ownership = None
             live_document_path = self.live_bridge.server.state.active_document_path
             if source == "workbench" and self._live_document_matches_selection(live_document_path):
                 workbench = self._selected_live_workbench_path()
@@ -948,6 +980,9 @@ class OperatorWorkbenchApp(App):
                             return
                         if not self._live_document_matches_selection(live_document_path):
                             break
+                        live_ownership = exported.get("ownership")
+                        if not self._live_preview_ownership_matches(live_ownership, live_document_path, revision):
+                            break
                         if revision != self.live_bridge.server.state.document_revision:
                             continue
                         output_path = Path(exported["output_path"])
@@ -961,7 +996,8 @@ class OperatorWorkbenchApp(App):
                             )
                         if not request_current():
                             return
-                        if not self._live_document_matches_selection(live_document_path):
+                        if (not self._live_document_matches_selection(live_document_path)
+                                or not self._live_preview_ownership_matches(live_ownership, live_document_path, revision)):
                             break
                         if revision == self.live_bridge.server.state.document_revision:
                             primary = candidate
@@ -976,7 +1012,10 @@ class OperatorWorkbenchApp(App):
             if live_revision is not None and (
                 live_revision != self.live_bridge.server.state.document_revision
                 or not self._live_document_matches_selection(live_document_path)
+                or not self._live_preview_ownership_matches(live_ownership, live_document_path, live_revision)
             ):
+                if await recover_saved_if_live_ownership_lost():
+                    return
                 self._pending_live_preview_revision = self.live_bridge.server.state.document_revision
                 return
 
@@ -990,7 +1029,10 @@ class OperatorWorkbenchApp(App):
                 candidates = tuple(await self._thread(self.service.transition_candidates, selection))
                 if not request_current():
                     return
-                if live_revision is not None and not self._live_document_matches_selection(live_document_path):
+                if live_revision is not None and (not self._live_document_matches_selection(live_document_path)
+                        or not self._live_preview_ownership_matches(live_ownership, live_document_path, live_revision)):
+                    if await recover_saved_if_live_ownership_lost():
+                        return
                     return
                 target = next((item for item in candidates if item.identity == self.state.transition_target_identity), None)
                 if target is None and candidates:
@@ -999,7 +1041,10 @@ class OperatorWorkbenchApp(App):
                     target_view = await self._thread(self.service.transition_preview, target, primary.source)
                     if not request_current():
                         return
-                    if live_revision is not None and not self._live_document_matches_selection(live_document_path):
+                    if live_revision is not None and (not self._live_document_matches_selection(live_document_path)
+                            or not self._live_preview_ownership_matches(live_ownership, live_document_path, live_revision)):
+                        if await recover_saved_if_live_ownership_lost():
+                            return
                         return
                     transition_analysis = await self._thread(partial(
                         animation_transition.analyze_transition,
@@ -1007,20 +1052,29 @@ class OperatorWorkbenchApp(App):
                     ))
                     if not request_current():
                         return
-                    if live_revision is not None and not self._live_document_matches_selection(live_document_path):
+                    if live_revision is not None and (not self._live_document_matches_selection(live_document_path)
+                            or not self._live_preview_ownership_matches(live_ownership, live_document_path, live_revision)):
+                        if await recover_saved_if_live_ownership_lost():
+                            return
                         return
             elif self.state.preview_examiner_mode != "single":
                 compare_source = self._compare_source_for(primary)
                 comparison = await self._thread(self.service.preview, selection, compare_source)
                 if not request_current():
                     return
-                if live_revision is not None and not self._live_document_matches_selection(live_document_path):
+                if live_revision is not None and (not self._live_document_matches_selection(live_document_path)
+                        or not self._live_preview_ownership_matches(live_ownership, live_document_path, live_revision)):
+                    if await recover_saved_if_live_ownership_lost():
+                        return
                     return
                 comparisons = animation_preview.compare_previews(primary, comparison)
 
             if (not request_current()
                     or (live_revision is not None
-                        and not self._live_document_matches_selection(live_document_path))):
+                        and (not self._live_document_matches_selection(live_document_path)
+                             or not self._live_preview_ownership_matches(live_ownership, live_document_path, live_revision)))):
+                if await recover_saved_if_live_ownership_lost():
+                    return
                 return
             self.preview_view = primary
             self.preview_compare_view = comparison

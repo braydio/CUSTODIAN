@@ -12,9 +12,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
-- `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Lock the approved 8-direction Operator as deterministic 128x128 authoring authority while preserving legacy 96 art.
-- `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Fresh-context review of canonical Operator source/profile/QA integrity.
-- `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Make Live Bridge preview results valid only for the exact bridge connection/session lifetime that issued them, so a disconnect or reconnect cannot authorize...
 - `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Independently prove that live Preview result ownership is tied to the exact bridge connection/session lifetime that issued it, including disconnect and disco...
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
@@ -46,7 +43,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `OPERATOR_WORKBENCH_UX_WORKBENCH_HOME.md` — Turn Page 2 WORKBENCH into the default visual animation-authoring home: navigation on the left, the selected animation as the dominant center object, and a c...
 - `OPERATOR_WORKBENCH_UX_WORK_QUEUE.md` — Replace Page 1's low-value spreadsheet-style PLAN view with an actionable QUEUE that preserves authored implementation rank/priority/state while making missi...
 - `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Give the user one safe, repeatable way to keep the persistent coordination checkout at `~/Projects/CUSTODIAN/` and the persistent OPUI `workbench/operator-ar...
-- `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Derive the Alpine Region Frame's gray-granite fascia, directional contact plates, and depth chunks from the registered approved source-master batch, then publish the exact final Gate B runtime handoff after validation.
+- `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic...
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Extract authored floor/overlook/ingress-clearance/reservation ownership from ProcGenTilemap into one canonical claim registry.
 - `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Re-derive the post-D1/D2/D3 generation core from live code and produce the authoritative migration contract for replacing TileMapLayer-as-working-memory with...
 - `PROCGEN_GENERATION_GRID_FOUNDATION.md` — Introduce the neutral generation-cell storage seam proven by the audited post-D1/D2/D3 call graph, with a TileMap-backed compatibility backend that preserves...
@@ -130,14 +127,6 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 - `archived/VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — completed P0 control-plane/tooling slice: claim receipts expose authoring/visual-review routing, finish enforces exact summary backlinks, Dropbox review manifests default to delete-after-review and carry a path-confined cleanup command, and `$custodian-next` keeps human review inside the active workstream.
 - `archived/REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — complete: paired review passed (0 blocking, 5 non-blocking deferred findings R0-01..R0-05).
-
-### Active Operator Workbench Preview Disconnect Ownership Correction
-
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
-
-- `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized bounded successor for exhausted-lineage finding R2-01. Adds exact Live Bridge connection/session ownership to Preview acceptance so disconnect or reconnect cannot revive a held result while last-known path/revision remain equal.
-- `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review requiring real disconnect and same-document reconnect controls. Passing this review is now the direct gate for `operator-workbench-fx-layer-adoption`.
-- This is intentionally **not** automatic correction cycle 3 of the prior Browser/PREVIEW chain; the authoring chat supplied the required human decision.
 
 ### Active Persistent Checkout Sync Hardening
 
@@ -304,6 +293,13 @@ Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_AL
 
 - `archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Cycle 2 closes R0-01 by binding Workbench publication paths to the selected animation plan and rejecting initial or pre-mutation manifest retargeting; all five focused Workbench validations pass.
 - `archived/REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Fresh-context paired cycle-2 review passed; R0-01 is fixed with no additional findings. The next existing Workbench packet is the human-authorized browser Preview disconnect-ownership correction.
+
+## Completed Operator Workbench Preview Disconnect Ownership Correction
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+
+- `archived/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized R2-01 correction complete; live preview acceptance is bound to the issuing bridge connection/session, including same-document reconnects.
+- `archived/REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review is the direct gate for `operator-workbench-fx-layer-adoption`.
 
 ## Selection
 

@@ -1442,8 +1442,10 @@ async def live_preview_generation_smoke() -> None:
         await pilot.pause(0.2)
         workbench = app._selected_live_workbench_path()
         assert workbench is not None
-        app.live_bridge.server.state.active_document_path = str(workbench)
-        app.live_bridge.server.state.document_revision = 42
+        app.live_bridge.server.state.connect(Message("generation-smoke", 1, MessageType.CLIENT_HELLO, {
+            "aseprite_version": "smoke", "api_version": "1", "capabilities": [],
+            "editor_state": {"document_path": str(workbench), "revision": 42},
+        }))
         controller = app.live_bridge
         issued = []
 
@@ -1516,8 +1518,10 @@ async def live_document_ownership_smoke() -> None:
         workbench = app._selected_live_workbench_path()
         assert workbench is not None
         controller = app.live_bridge
-        controller.server.state.active_document_path = str(workbench)
-        controller.server.state.document_revision = 42
+        controller.server.state.connect(Message("ownership-smoke-a", 1, MessageType.CLIENT_HELLO, {
+            "aseprite_version": "smoke", "api_version": "1", "capabilities": [],
+            "editor_state": {"document_path": str(workbench), "revision": 42},
+        }))
         issued = []
         class FakeClient:
             async def send(self, raw):
@@ -1525,6 +1529,17 @@ async def live_document_ownership_smoke() -> None:
             async def close(self, **_kwargs):
                 return None
         controller.server._client = FakeClient()
+        def disconnect_client():
+            controller.server._client = None
+            controller.server.state.disconnect()
+        def reconnect_client(session_id):
+            if controller.server.state.connection.value == "connected":
+                disconnect_client()
+            controller.server.state.connect(Message(session_id, 1, MessageType.CLIENT_HELLO, {
+                "aseprite_version": "smoke", "api_version": "1", "capabilities": [],
+                "editor_state": {"document_path": str(workbench), "revision": 42},
+            }))
+            controller.server._client = FakeClient()
         old_debounce = app_module.LIVE_PREVIEW_DEBOUNCE_SEC
         app_module.LIVE_PREVIEW_DEBOUNCE_SEC = 0
 
@@ -1546,6 +1561,20 @@ async def live_document_ownership_smoke() -> None:
             return await controller.next_event()
 
         baseline = app.preview_view
+        def accepted_preview_snapshot():
+            fields = ("preview_view", "preview_compare_view", "preview_comparisons",
+                      "transition_candidates", "transition_target_view", "transition_analysis")
+            widgets = ("#preview-canvas", "#preview-compare-canvas", "#preview-diff-metrics",
+                       "#preview-filmstrip", "#preview-controls")
+            def widget_state(selector):
+                widget = app.main_screen.query_one(selector)
+                source_frame = getattr(widget, "source_frame", None)
+                contact_sheet = getattr(widget, "contact_sheet", None)
+                return (source_frame.tobytes() if source_frame is not None else None,
+                        str(getattr(widget, "_content", "")),
+                        contact_sheet.tobytes() if contact_sheet is not None else None)
+            return (tuple(id(getattr(app, key)) for key in fields), app.state.preview_frame,
+                    app.state.preview_playing, tuple(widget_state(key) for key in widgets))
         event = await current_event()
         other_document = workbench.parent.parent / "other-document" / "workbench.aseprite"
         invalid_events = (
@@ -1559,13 +1588,20 @@ async def live_document_ownership_smoke() -> None:
         for invalid in invalid_events:
             await app._apply_live_preview(invalid)
             assert app.preview_view is baseline
-        controller.server.state.active_document_path = None
+        # Exercise the server's actual accepted-client teardown behavior.
+        disconnect_client()
+        assert controller.server.state.active_document_path == str(workbench)
+        assert controller.server.state.document_revision == 42
+        assert not app._live_document_matches_selection(str(workbench))
         await app._apply_live_preview(event)
         assert app.preview_view is baseline, "disconnected editor accepted a live result"
-        controller.server.state.active_document_path = str(workbench)
+        reconnect_client("ownership-smoke-b")
+        await app._apply_live_preview(event)
+        assert app.preview_view is baseline, "connection A result crossed same-document reconnect to B"
+        event = await current_event()
 
-        # Hold the actual live loader, change only the active editor document,
-        # then release. Equal revision and UI generation cannot authorize it.
+        # Hold the actual live loader across disconnect and reconnect to the
+        # same document/revision. Connection A must not authorize its result.
         live_result = replace(baseline, source="live", paths=("controlled-live",))
         started, release = asyncio.Event(), asyncio.Event()
         original_thread = app._thread
@@ -1579,16 +1615,18 @@ async def live_document_ownership_smoke() -> None:
             return await original_thread(function, *args, **kwargs)
 
         app._thread = held_live_loader
+        accepted_before_disconnect = accepted_preview_snapshot()
         loading = asyncio.create_task(app._apply_live_preview(event))
         await asyncio.wait_for(started.wait(), timeout=3)
-        controller.server.state.active_document_path = str(other_document)
+        disconnect_client()
+        reconnect_client("ownership-smoke-c")
         assert controller.server.state.document_revision == 42
         release.set()
         await loading
-        assert app.preview_view is baseline
+        assert accepted_preview_snapshot() == accepted_before_disconnect
 
         # A valid current result still applies when document ownership holds.
-        controller.server.state.active_document_path = str(workbench)
+        reconnect_client("ownership-smoke-d")
         current = await current_event()
         await app._apply_live_preview(current)
         assert app.preview_view is live_result
@@ -1626,7 +1664,7 @@ async def live_document_ownership_smoke() -> None:
                 analysis_started.set()
                 await analysis_release.wait()
             return await original_thread(function, *args, **kwargs)
-        controller.server.state.active_document_path = str(workbench)
+        reconnect_client("ownership-smoke-e")
         app._thread = held_transition_analysis
         pending = asyncio.create_task(app._apply_live_preview(await current_event()))
         await asyncio.wait_for(analysis_started.wait(), timeout=3)
@@ -1640,12 +1678,13 @@ async def live_document_ownership_smoke() -> None:
         # switching documents falls back to the saved preview for this selection.
         saved = baseline
         app.state.preview_examiner_mode = "single"
-        controller.server.state.active_document_path = str(workbench)
+        reconnect_client("ownership-smoke-f")
         export_started, export_release = asyncio.Event(), asyncio.Event()
         async def held_export(_path, _revision):
+            ownership = controller.server.state.capture_preview_ownership(workbench, 42)
             export_started.set()
             await export_release.wait()
-            return {"output_path": str(controller._live_preview_path(workbench)),
+            return {"output_path": str(controller._live_preview_path(workbench)), "ownership": ownership,
                     "frames": 6, "frame_width": 96, "frame_height": 96}
         controller.request_preview_export = held_export
         import threading
@@ -1663,7 +1702,7 @@ async def live_document_ownership_smoke() -> None:
         await asyncio.wait_for(export_started.wait(), timeout=3)
         export_release.set()
         assert await asyncio.to_thread(live_started.wait, 3), "synchronous live loader did not start"
-        controller.server.state.active_document_path = str(other_document)
+        disconnect_client()
         live_release.set()
         await refresh
         assert app.preview_view is saved
@@ -1671,7 +1710,7 @@ async def live_document_ownership_smoke() -> None:
 
         # Also switch during the export await itself. The stale live render is
         # never loaded, and the still-valid saved preview is selected instead.
-        controller.server.state.active_document_path = str(workbench)
+        reconnect_client("ownership-smoke-g")
         export_started, export_release = asyncio.Event(), asyncio.Event()
         controller.request_preview_export = held_export
         live_calls = []
@@ -1680,7 +1719,7 @@ async def live_document_ownership_smoke() -> None:
             app._load_preview(generation=app._next_preview_generation())
         )
         await asyncio.wait_for(export_started.wait(), timeout=3)
-        controller.server.state.active_document_path = str(other_document)
+        disconnect_client()
         export_release.set()
         await export_refresh
         assert app.preview_view is saved

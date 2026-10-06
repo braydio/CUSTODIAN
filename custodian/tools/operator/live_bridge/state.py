@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
@@ -14,10 +15,19 @@ class ConnectionState(str, Enum):
     CONNECTED = "connected"
 
 
+@dataclass(frozen=True, slots=True)
+class PreviewOwnership:
+    connection_generation: int
+    client_session_id: str
+    document_path: str
+    revision: int
+
+
 @dataclass(slots=True)
 class BridgeState:
     bridge_session_id: str = field(default_factory=lambda: uuid4().hex)
     connection: ConnectionState = ConnectionState.DISCONNECTED
+    connection_generation: int = 0
     client_session_id: str | None = None
     aseprite_version: str | None = None
     api_version: str | None = None
@@ -39,6 +49,7 @@ class BridgeState:
 
     def connect(self, hello: Message) -> None:
         payload = hello.payload
+        self.connection_generation += 1
         self.connection = ConnectionState.CONNECTED
         self.client_session_id = hello.session_id
         self.aseprite_version = payload["aseprite_version"]
@@ -47,6 +58,31 @@ class BridgeState:
         self.last_received_sequence = hello.sequence
         if isinstance(payload.get("editor_state"), dict):
             self._apply_editor_payload(payload["editor_state"])
+
+    def capture_preview_ownership(
+        self, document_path: str | Path, revision: int,
+    ) -> PreviewOwnership | None:
+        if (
+            self.connection is not ConnectionState.CONNECTED
+            or not self.client_session_id
+            or self.active_document_path is None
+            or revision != self.document_revision
+        ):
+            return None
+        try:
+            requested = str(Path(document_path).resolve())
+            active = str(Path(self.active_document_path).resolve())
+        except OSError:
+            return None
+        if requested != active:
+            return None
+        return PreviewOwnership(self.connection_generation, self.client_session_id, active, revision)
+
+    def owns_preview(self, ownership: PreviewOwnership | None) -> bool:
+        if ownership is None:
+            return False
+        current = self.capture_preview_ownership(ownership.document_path, ownership.revision)
+        return current == ownership
 
     def disconnect(self) -> None:
         self.connection = ConnectionState.DISCONNECTED
