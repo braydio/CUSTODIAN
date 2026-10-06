@@ -25,6 +25,17 @@
 - Task overrides: `none`
 - Deferred: Broader Awakening end-to-end visual walkthrough automation and authored connector foreground occlusion remain separate work.
 
+## Closure Decision — 2026-10-06
+
+- Decision: **Option 1 — close this workstream as superseded after `review-awakening-room-connectors-polish` archives complete, provided that review confirms the upstream packet's required bidirectional durability evidence.**
+- Do **not** merge or rebase `agent/awakening-04-05-connector-transition-regression` onto current main. Its checkpoint `456f8a89e` is donor evidence only.
+- Preserve the donor branch until the replacement implementation/review evidence is durable. The branch is the only copy of the old scenario and must not be deleted before that comparison.
+- The old scenario's reusable ideas are limited to its deterministic fixed-step traversal fixture, checkpoint/evidence structure, forward/reverse symmetry checks, and Moment Forge registration pattern. Its concrete C→B→A waypoint names, legacy three-piece connector assumptions, and fade assertions are **not** salvageable.
+- In particular, the donor scenario asserts transient Zone04/Zone05/connector alpha values around `0.0` and `0.5`; the replacement `awakening-room-connectors-polish` contract requires the visible room and single connector presentation to remain fully opaque at the joins. Those old assertions encode superseded behavior and must never be landed unchanged.
+- If the upstream review passes its bidirectional single-connector/opaque-overlap acceptance, archive this packet as superseded/no additional implementation and then retire the donor branch through the repository's normal archive/branch-ledger workflow.
+- If that review exposes a real residual regression-coverage gap, keep this same workstream identity but refresh from current main and implement **only that residual gap**. Mine the donor for fixture technique if useful; do not rebase or transplant the stale scenario wholesale.
+
+
 ## Handoff
 
 - Next action: The dispatcher auto-claims only after `review-awakening-room-connectors-polish` is complete and archived; then either close as superseded or implement only the residual regression gap.
