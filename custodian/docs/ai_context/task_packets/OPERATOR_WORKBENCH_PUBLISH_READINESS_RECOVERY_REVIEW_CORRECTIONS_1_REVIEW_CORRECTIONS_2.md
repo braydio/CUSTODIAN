@@ -1,7 +1,7 @@
 # CORRECTION: OPERATOR WORKBENCH PUBLISH READINESS — CYCLE 2
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
@@ -11,7 +11,7 @@
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Paired review workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
 - Review cycle: `2`
 - Max automatic review cycles: `2`
 - Reviewed main: `094be7ed98e492e1d0b68ec4dcd33e7fd1e5b967`

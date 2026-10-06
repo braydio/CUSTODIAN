@@ -32,12 +32,12 @@ No reviewed implementation files were modified. I created bounded cycle-2 correc
 - Root cause / contributing factors: Publication candidate paths and allowlist scope both come from manifest paths; final revalidation does not bind those paths to the selected animation. Summary naming followed the correction packet's task name instead of the review workstream ID. The latest main commit deleted the three files while this worktree retained their prior checkout bytes.
 - Prevention / pipeline improvement: Add negative controls for a tampered manifest and for path changes between initial selection and pre-mutation validation. Name review summaries from the claimed review workstream ID and check tracked state after syncing latest main.
 - Tooling / docs drift discovered: none
-- Follow-up: operator-workbench-publish-readiness-recovery-review-corrections-2
+- Follow-up: operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2
 - What worked: Fixture-backed CLI and Workbench smokes validate the ordinary readiness and landing contract.
 
 ## Next Handoff
 
-- Next workstream: `operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Next workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no

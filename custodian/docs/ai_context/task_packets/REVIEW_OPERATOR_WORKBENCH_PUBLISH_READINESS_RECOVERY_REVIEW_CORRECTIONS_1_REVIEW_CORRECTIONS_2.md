@@ -1,16 +1,16 @@
 # REVIEW: OPERATOR WORKBENCH PUBLISH READINESS — CYCLE 2
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Depends on: `operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
 - Locks: `operator-workbench-ui, operator-workbench-publish`
 - Review: `none`
-- Review target workstream: `operator-workbench-publish-readiness-recovery-review-corrections-2`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_2.md`
+- Review target workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md`
 - Review modes: `code, workflow`
 - Reviewed main: `094be7ed98e492e1d0b68ec4dcd33e7fd1e5b967`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
