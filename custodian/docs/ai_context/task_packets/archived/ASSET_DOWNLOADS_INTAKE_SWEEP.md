@@ -238,13 +238,13 @@ After this closes, return to the active Awakening presentation sequence. The rem
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: success
+- Outcome: partial
 - Friction severity: medium
-- What went wrong: Initial changed-file validation failed coverage because Asset V2 runtime outputs for this Awakening family had no owning validation-manifest pattern. During setup, a copy command without an explicit worktree caused temporary writes in the persistent root; the old source was restored and the exact approved bytes/history were transferred to the claimed worktree, and root status was verified clean.
-- Root cause / contributing factors: Validation coverage did not include the family runtime directory; one setup command omitted its workdir.
+- What went wrong: Initial changed-file validation failed coverage because Asset V2 runtime outputs for this Awakening family had no owning validation-manifest pattern; this was fixed. During setup, a copy command without an explicit worktree caused temporary writes in the persistent root; the old source was restored and the exact approved bytes/history were transferred to the claimed worktree, and root status was verified clean. After newer main synchronized, changed-file validation failed only `review_pairing_contract` because the unrelated void-spawn correction packet has an invalid paired-review status and bounded override. The branch remains unlanded pending a green post-sync report.
+- Root cause / contributing factors: Validation coverage did not include the family runtime directory; one setup command omitted its workdir; newer main contains the unrelated review-pairing metadata defect.
 - Prevention / pipeline improvement: Added the narrowly scoped runtime directory pattern to the `asset_pipeline_v2` owner set. Verified all root writes were reverted and continued only in the claimed worktree.
 - Tooling / docs drift discovered: The Pattern Lines source-library contract's canonical filename requirement does not match the delivered four-digit `pattern_0000`…`pattern_0029` names. Per that packet's stop rule, no mapping or source copy was invented. Runtime output coverage was missing from the validation manifest and is now covered.
-- Follow-up: kenney-pattern-lines-source-library
+- Follow-up: contract-world-operator-void-spawn-failsafe-correction; kenney-pattern-lines-source-library
 - What worked: Asset V2 source history and generated requirements were updated through the owning pipeline; exact Basin B family status and import agreed.
 
 ## Next Handoff
@@ -254,5 +254,5 @@ After this closes, return to the active Awakening presentation sequence. The rem
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
 - Refresh reason: none
-- Next action: Return to the active Awakening presentation sequence; `awakening-room-connectors-polish` remains blocked while `awakening-04-05-connector-transition-regression` holds its connector-presentation lock.
-- Blockers or open questions: Kenney Pattern Lines remains owned by its ready packet and needs a bounded packet correction for the filename mismatch before implementation.
+- Next action: Resolve the reported main-level review-pairing metadata gate, rerun changed-file validation after sync, and finish this retained workstream; then return to the active Awakening presentation sequence. `awakening-room-connectors-polish` remains blocked while `awakening-04-05-connector-transition-regression` holds its connector-presentation lock.
+- Blockers or open questions: Post-sync `review_pairing_contract` failure on newer main; Kenney Pattern Lines remains owned by its ready packet and needs a bounded packet correction for the filename mismatch before implementation.

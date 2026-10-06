@@ -19,7 +19,7 @@ Updated the generated requirements projection from its authoritative registry so
 - Asset V2 plan, dry run, ingest, status, and doctor: passed; family `6/6`, doctor healthy.
 - `python3 custodian/tools/validation/asset_pipeline_v2_smoke.py`: passed.
 - `python3 custodian/tools/assets/asset.py needs --check`: passed.
-- `python3 custodian/tools/validation/run_validation.py --changed --json`: passed, 6 selected tests, 6 passed, no uncovered files.
+- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` passed before main synchronization (8/8 selected, no uncovered files). After `workstream.py finish` merged newer `main`, the required post-sync run selected 8 tests: 7 passed and `review_pairing_contract` failed because `contract-world-operator-void-spawn-failsafe-correction` has a not-ready paired review and malformed bounded override. The same failure reproduces with `python3 custodian/tools/agent/validate_review_pairing.py`; it is unrelated to this asset intake. The workstream remains unlanded pending that main-level metadata gate.
 - `git diff --check`: passed before closeout.
 
 The first changed-file run exited 6 because the newly published runtime PNG was not covered by a validation owner. The focused smoke and requirements tests passed. The validation-manifest owner pattern was added for this exact Awakening fixture runtime directory, after which changed-file validation passed.
@@ -28,13 +28,13 @@ During initial setup, one copy command omitted its explicit worktree and briefly
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: success
+- Outcome: partial
 - Friction severity: medium
-- What went wrong: Initial validation coverage lacked the new family runtime path; one setup command omitted its worktree.
-- Root cause / contributing factors: Coverage manifest had no owner pattern for this generated runtime directory; command was run without an explicit workdir.
+- What went wrong: Initial validation coverage lacked the new family runtime path; one setup command omitted its worktree; after synchronization the changed-file suite found an unrelated malformed review-pairing packet on newer main.
+- Root cause / contributing factors: Coverage manifest had no owner pattern for this generated runtime directory; command was run without an explicit workdir; newer main has an invalid review-pairing contract for the void-spawn correction packet.
 - Prevention / pipeline improvement: Added a family-scoped asset pipeline coverage pattern and verified root restoration before continuing.
 - Tooling / docs drift discovered: Kenney Pattern Lines delivered filenames violate its active packet's canonical name contract.
-- Follow-up: kenney-pattern-lines-source-library
+- Follow-up: contract-world-operator-void-spawn-failsafe-correction; kenney-pattern-lines-source-library
 - What worked: Asset V2 and `needs --write` kept runtime, catalog, history, and requirements projections in agreement.
 
 ## Next Handoff
@@ -45,4 +45,4 @@ During initial setup, one copy command omitted its explicit worktree and briefly
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
 - Refresh reason: none
 - Next action: Return to the active Awakening presentation sequence after the connector transition regression work releases its lock.
-- Blockers or open questions: `awakening-room-connectors-polish` is lock-blocked by `awakening-04-05-connector-transition-regression`; Kenney Pattern Lines needs its owner to correct or clarify the filename mapping contract.
+- Blockers or open questions: Landing is pending a green post-sync changed-file run; `review_pairing_contract` fails on newer main due to the void-spawn correction packet metadata. After closeout, `awakening-room-connectors-polish` remains lock-blocked by `awakening-04-05-connector-transition-regression`. Kenney Pattern Lines needs its owner to correct or clarify the filename mapping contract.
