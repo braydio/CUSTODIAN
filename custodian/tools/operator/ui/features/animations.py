@@ -9,15 +9,16 @@ class AnimationFeature:
 
     def __init__(self, service: WorkbenchService) -> None:
         self.service = service
-        self._records = []
 
     def refresh(self):
-        self._records = self.service.browser_records()
-        return self._records
+        """Return a discovery candidate without retaining mutable browser state."""
+        discover = getattr(self.service, "discover_browser_records", None)
+        if discover is None:
+            discover = self.service.browser_records
+        return tuple(discover())
 
-    def build_navigation(self, query: str = ""):
-        if not self._records: self.refresh()
-        return self.service.filter_records(self._records, query)
+    def build_navigation(self, records, query: str = "", *, show_superseded: bool = False):
+        return self.service.filter_records(records, query, show_superseded=show_superseded)
 
     def build_detail(self, selection):
         return self.service.session(selection)

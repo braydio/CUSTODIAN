@@ -13,6 +13,7 @@ OPERATOR_ROOT = Path(__file__).resolve().parents[1] / "operator"
 sys.path.insert(0, str(OPERATOR_ROOT))
 
 from ui.service import WorkbenchService
+from ui.features.animations import AnimationFeature
 from ui.state import AnimationRecord, AnimationSelection, CanvasMigrationView, ExistingContextView, LayerView, MigrationView, PublishRow, PublishView, SessionView
 import animation_motion_preview
 import animation_preview
@@ -195,25 +196,53 @@ def pure_service_smoke() -> None:
         else: raise AssertionError("strict context assertion was weakened")
 
 
+def browser_projection_contract_smoke() -> None:
+    """Discovery returns candidates; only UI state owns an accepted snapshot."""
+    one = AnimationRecord(AnimationSelection("unarmed", "attack", "fast_01", "e"), 6,
+                          ("lower_body", "upper_body"))
+    two = AnimationRecord(AnimationSelection("unarmed", "attack", "fast_02", "e"), 6,
+                          ("lower_body", "upper_body"))
+    calls = []
+    class Provider:
+        def discover_browser_records(self):
+            calls.append(1)
+            return (one, two)
+        @staticmethod
+        def filter_records(records, query, *, show_superseded=False):
+            return tuple(row for row in records if query.casefold() in row.selection.action.casefold())
+    feature = AnimationFeature(Provider())
+    candidate = feature.refresh()
+    assert isinstance(candidate, tuple) and len(calls) == 1
+    assert feature.build_navigation(candidate, "fast_01") == (one,)
+    assert feature.build_navigation(candidate, "fast_02") == (two,)
+    assert len(calls) == 1, "Search must project the accepted candidate without rediscovery"
+
+
 class PilotService:
     def __init__(self):
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
         self.model = SimpleNamespace(WorkbenchError=RuntimeError)
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
         self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0; self.publish_calls = []
+        self.session_calls = 0; self.browser_calls = 0; self.browser_provider = None
         self.runtime_selection = None
         self.copy_calls = []
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
     def browser_records(self):
+        self.browser_calls += 1
+        if self.browser_provider is not None:
+            return tuple(self.browser_provider())
         return [
             AnimationRecord(self.selection, 6, ("lower_body", "upper_body")),
             AnimationRecord(AnimationSelection("unarmed", "locomotion", "run_01", "w"), 6, ("lower_body", "upper_body")),
             AnimationRecord(AnimationSelection("unarmed", "locomotion", "walk_01", "e"), 5, ("full_body",)),
             AnimationRecord(AnimationSelection("unarmed", "defense", "guard_01", "e"), 4, ("full_body",)),
         ]
-    def filter_records(self, records, query): return WorkbenchService.filter_records(records, query)
+    def filter_records(self, records, query, *, show_superseded=False):
+        return WorkbenchService.filter_records(records, query, show_superseded=show_superseded)
     def available_directions(self, selection): return WorkbenchService.available_directions(self, selection)
     def session(self, selection):
+        self.session_calls += 1
         self.last_selection = selection
         workspace = self.repo_root / ".ai/operator_animation_workbench/ui-pilot"
         return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", workspace, "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
@@ -1130,6 +1159,142 @@ async def textual_smoke() -> None:
         assert "⇧R Resize Canvas" not in str(shortcut_app.main_screen.query_one("#context-key-bar", ContextKeyBar).render())
 
 
+async def browser_stabilization_smoke() -> None:
+    from ui.app import OperatorWorkbenchApp
+
+    def record(action, completeness="COMPLETE", detail=""):
+        return AnimationRecord(AnimationSelection("unarmed", "attack", action, "e"), 6,
+                               ("lower_body", "upper_body"), completeness, detail)
+
+    initial = tuple(record(f"fast_0{i}") for i in range(1, 5))
+    transient = (initial[0], initial[3])
+    recovered = initial
+
+    async def no_wait(_seconds):
+        return None
+
+    app = OperatorWorkbenchApp(service=PilotService())
+    app.state.browser_snapshot = initial
+    app.state.browser_refresh_generation = 1
+    scans = iter((recovered, recovered))
+    app.features["animations"].refresh = lambda: next(scans)
+    app._sleep = no_wait
+    result, stable = await app._stabilize_browser_candidate(transient, 1)
+    assert stable and tuple(row.selection.identity for row in result) == tuple(row.selection.identity for row in initial)
+
+    mismatch = (record("fast_01"), record("fast_02", "PARTIAL", "contract mismatch · lower 7f / upper 6f"), *initial[2:])
+    synchronized = (initial[0], AnimationRecord(
+        initial[1].selection, 7, initial[1].layers, "COMPLETE", ""), *initial[2:])
+    app.state.browser_snapshot = initial
+    scans = iter((synchronized, synchronized))
+    app.features["animations"].refresh = lambda: next(scans)
+    result, stable = await app._stabilize_browser_candidate(mismatch, 1)
+    assert stable and result[1].frames == 7 and result[1].completeness == "COMPLETE"
+
+    deleted = (initial[0], initial[2], initial[3])
+    app.state.browser_snapshot = initial
+    scans = iter((deleted,))
+    app.features["animations"].refresh = lambda: next(scans)
+    result, stable = await app._stabilize_browser_candidate(deleted, 1)
+    assert stable and tuple(row.selection.identity for row in result) == tuple(row.selection.identity for row in deleted)
+    print("PASS BROWSER STABILIZATION: transient deletion, clock mismatch recovery, stable deletion")
+
+
+async def out_of_order_browser_smoke() -> None:
+    import threading
+    from ui.app import OperatorWorkbenchApp
+
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        original = tuple(service.browser_records())
+        older = original + (AnimationRecord(AnimationSelection("unarmed", "attack", "fast_05", "e"), 6,
+                                             ("lower_body", "upper_body")),)
+        newer = original + (AnimationRecord(AnimationSelection("unarmed", "attack", "fast_06", "e"), 6,
+                                             ("lower_body", "upper_body")),)
+        entered = threading.Event()
+        release = threading.Event()
+        calls = 0
+
+        def provider():
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                entered.set()
+                assert release.wait(3), "older source scan was not released"
+                return older
+            return newer
+
+        service.browser_provider = provider
+        first = asyncio.create_task(app._reload_browser())
+        while not entered.is_set():
+            await pilot.pause(0.01)
+        await app._reload_browser()
+        release.set()
+        await first
+        identities = {row.selection.action for row in app.state.browser_snapshot}
+        assert "fast_06" in identities and "fast_05" not in identities
+        assert app.state.selection == service.selection
+        from ui.widgets import AnimationTree
+        scans_before_search = service.browser_calls
+        app.state.search_filter = "fast_06"
+        app._render_browser_snapshot()
+        assert app.state.selection == service.selection
+        assert service.browser_calls == scans_before_search
+        app.state.search_filter = ""
+        app._render_browser_snapshot()
+        await pilot.pause(0.05)
+        tree = app.main_screen.query_one("#animation-tree", AnimationTree)
+        assert any(node.data == service.selection for node in tree._walk_nodes())
+        assert service.browser_calls == scans_before_search
+        print("PASS BROWSER GENERATIONS: stale scan discarded; Search preserves selection without rescanning")
+
+
+async def repeated_preview_f5_smoke() -> None:
+    import threading
+    from dataclasses import replace
+    from ui.app import OperatorWorkbenchApp
+
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        app.action_mode_preview()
+        await pilot.pause(0.2)
+        assert app.preview_view is not None
+        original_preview = app.preview_view
+        app.state.preview_playing = True
+        entered = threading.Event()
+        release = threading.Event()
+        calls = 0
+        base_preview = service.preview
+
+        def delayed_preview(selection, source="runtime"):
+            nonlocal calls
+            calls += 1
+            request = calls
+            if calls == 1:
+                entered.set()
+                assert release.wait(3), "stale preview was not released"
+            preview = base_preview(selection, source)
+            return replace(preview, paths=(f"preview-request-{request}",))
+
+        service.preview = delayed_preview
+        older = asyncio.create_task(app._reload_browser())
+        while not entered.is_set():
+            await pilot.pause(0.01)
+        assert app.preview_view is original_preview, "F5 blanked the last usable preview during replacement"
+        await app._reload_browser()
+        newest_view = app.preview_view
+        assert newest_view is not original_preview and newest_view.paths == ("preview-request-2",), (calls, newest_view.paths, app.state.preview_generation)
+        assert app.state.preview_playing, "overlapping F5 lost the original playback intent"
+        release.set()
+        await older
+        assert app.preview_view is newest_view and app.state.preview_playing
+        print("PASS PREVIEW F5: atomic retained view, latest preview wins, playback intent survives repeated refresh")
+
+
 async def stale_error_smoke() -> None:
     from ui.app import OperatorWorkbenchApp
     from ui.dialogs import ErrorDialog
@@ -1218,11 +1383,15 @@ def real_repo_read_only() -> None:
 
 def main() -> None:
     pure_service_smoke()
+    browser_projection_contract_smoke()
     try:
         import textual  # noqa: F401
         import textual_image  # noqa: F401
     except ModuleNotFoundError: print("SKIP TEXTUAL PILOT: install custodian/tools/operator/ui/requirements.txt")
     else:
+        asyncio.run(browser_stabilization_smoke())
+        asyncio.run(out_of_order_browser_smoke())
+        asyncio.run(repeated_preview_f5_smoke())
         asyncio.run(stale_error_smoke())
         asyncio.run(textual_smoke())
     real_repo_read_only()

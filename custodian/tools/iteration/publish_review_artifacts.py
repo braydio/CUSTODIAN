@@ -41,6 +41,7 @@ DEFAULT_REMOTE_ROOT = "CUSTODIAN/visual_review"
 DEFAULT_MAX_FILES = 12
 DEFAULT_MAX_MIB = 50.0
 DEFAULT_MAX_KEYFRAMES = 6
+DEFAULT_RETENTION_POLICY = "delete-after-review"
 
 METADATA_NAMES = (
     "metrics.json",
@@ -252,6 +253,106 @@ def doctor(remote: str, remote_root: str, *, ensure_root: bool) -> int:
     return 0
 
 
+def _normalize_review_manifest_path(value: str, remote_root: str) -> str:
+    path = "/" + value.strip().lstrip("/")
+    root = "/" + remote_root.strip("/") + "/"
+    if not path.startswith(root) or not path.endswith("/REVIEW_MANIFEST.json"):
+        raise ValueError(
+            f"review manifest must be under {root}<workstream>/<run-id>/REVIEW_MANIFEST.json"
+        )
+    if "/../" in path or "/./" in path or "//" in path:
+        raise ValueError("review manifest path contains unsupported traversal or empty components")
+    return path
+
+
+def cleanup_reviewed(
+    remote: str,
+    remote_root: str,
+    manifest_path: str,
+    *,
+    reviewed_by: str,
+) -> int:
+    """Delete one reviewed visual-evidence run unless its manifest opts into retention."""
+    if not reviewed_by.strip():
+        print("FAIL: --reviewed-manifest requires --reviewed-by.")
+        return 2
+    try:
+        normalized = _normalize_review_manifest_path(manifest_path, remote_root)
+    except ValueError as exc:
+        print(f"FAIL: {exc}")
+        return 2
+
+    manifest_remote = f"{remote}{normalized.lstrip('/')}"
+    try:
+        manifest_result = _run(["rclone", "cat", manifest_remote])
+        manifest = json.loads(manifest_result.stdout)
+    except (subprocess.CalledProcessError, json.JSONDecodeError):
+        print(f"FAIL: could not read a valid review manifest at {normalized}.")
+        return 3
+
+    if manifest.get("schema") != "custodian.visual_review_handoff.v1":
+        print("FAIL: review manifest schema is not custodian.visual_review_handoff.v1.")
+        return 3
+    workstream = str(manifest.get("workstream", "")).strip()
+    run_id = str(manifest.get("run_id", "")).strip()
+    try:
+        _slug(workstream, "workstream")
+    except ValueError as exc:
+        print(f"FAIL: invalid manifest workstream: {exc}")
+        return 3
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", run_id):
+        print("FAIL: review manifest has an invalid run_id.")
+        return 3
+
+    expected = f"/{remote_root.strip('/')}/{workstream}/{run_id}/REVIEW_MANIFEST.json"
+    if normalized != expected or manifest.get("remote_relative_path") != expected.removesuffix("REVIEW_MANIFEST.json"):
+        print("FAIL: review manifest path/identity does not match its declared workstream and run id.")
+        return 3
+
+    retention = manifest.get("retention") if isinstance(manifest.get("retention"), dict) else {}
+    policy = str(retention.get("policy", DEFAULT_RETENTION_POLICY))
+    payload = {
+        "schema": "custodian.visual_review_cleanup.v1",
+        "workstream": workstream,
+        "run_id": run_id,
+        "manifest_path": normalized,
+        "reviewed_by": reviewed_by.strip(),
+        "retention_policy": policy,
+    }
+    if policy == "retain":
+        payload["status"] = "retained"
+        print("CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON:" + json.dumps(payload, sort_keys=True))
+        return 0
+    if policy != DEFAULT_RETENTION_POLICY:
+        print(f"FAIL: unsupported retention policy in manifest: {policy!r}.")
+        return 3
+
+    latest_remote = _remote_path(remote, remote_root, workstream, "LATEST.json")
+    latest_points_here = False
+    latest_result = _run(["rclone", "cat", latest_remote], check=False)
+    if latest_result.returncode == 0:
+        try:
+            latest = json.loads(latest_result.stdout)
+            latest_points_here = latest.get("manifest") == normalized
+        except json.JSONDecodeError:
+            print("FAIL: LATEST.json is unreadable; refusing cleanup that could leave a stale pointer.")
+            return 4
+
+    destination = _remote_path(remote, remote_root, workstream, run_id)
+    try:
+        _run(["rclone", "purge", destination], capture_output=False)
+        if latest_points_here:
+            _run(["rclone", "deletefile", latest_remote], capture_output=False)
+    except subprocess.CalledProcessError as exc:
+        print(f"FAIL: reviewed-evidence cleanup failed with exit {exc.returncode}.")
+        return exc.returncode or 4
+
+    payload["status"] = "deleted"
+    payload["latest_pointer_removed"] = latest_points_here
+    print("CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON:" + json.dumps(payload, sort_keys=True))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Publish important CUSTODIAN visual-review evidence through rclone."
@@ -263,6 +364,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="With --doctor, create the configured review root when missing.",
     )
     parser.add_argument("--important", action="store_true", help="Required gate for an actual upload.")
+    parser.add_argument("--authoring-chat", default="", help="Exact ChatGPT authoring/review conversation URL when recorded by the packet.")
+    parser.add_argument("--retain-after-review", action="store_true", help="Keep this evidence in Dropbox after review instead of the default delete-after-review policy.")
+    parser.add_argument("--reviewed-manifest", help="Mark an exact Dropbox REVIEW_MANIFEST.json path reviewed and apply its retention policy.")
+    parser.add_argument("--reviewed-by", default="", help="Reviewer identity for --reviewed-manifest, e.g. chatgpt-user.")
     parser.add_argument("--reason", help="Why subjective human/ChatGPT visual review is warranted.")
     parser.add_argument("--workstream", help="Stable lowercase kebab-case Workstream ID.")
     parser.add_argument("--source", type=Path, help="Moment Forge/report directory or one file.")
@@ -301,7 +406,7 @@ def main(argv: list[str] | None = None) -> int:
     # The opt-in gate is intentionally evaluated before any rclone discovery so
     # routine agent runs do not touch provider configuration or fail merely
     # because external review is unnecessary.
-    if not args.doctor and not args.important:
+    if not args.doctor and not args.reviewed_manifest and not args.important:
         print(
             "SKIP: review artifact publication is opt-in. "
             "Re-run with --important --reason only when objective validation cannot "
@@ -321,6 +426,13 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.doctor:
         return doctor(remote, args.remote_root, ensure_root=args.ensure_root)
+    if args.reviewed_manifest:
+        return cleanup_reviewed(
+            remote,
+            args.remote_root,
+            args.reviewed_manifest,
+            reviewed_by=args.reviewed_by,
+        )
 
     if not args.reason or not args.reason.strip():
         print("FAIL: --important requires --reason.")
@@ -392,8 +504,13 @@ def main(argv: list[str] | None = None) -> int:
             "git": {"commit": commit, "branch": branch},
             "scenario": args.scenario.strip(),
             "reason": args.reason.strip(),
+            "authoring_chat": args.authoring_chat.strip() or "not-recorded",
             "questions": [question.strip() for question in args.question if question.strip()],
             "artifacts": artifacts,
+            "retention": {
+                "policy": "retain" if args.retain_after_review else DEFAULT_RETENTION_POLICY,
+                "reviewed_cleanup_required": not args.retain_after_review,
+            },
             "limits": {
                 "max_files": args.max_files,
                 "max_bytes": max_bytes,
@@ -402,6 +519,11 @@ def main(argv: list[str] | None = None) -> int:
             },
             "remote_relative_path": f"/{remote_root}/{workstream}/{run_id}/",
         }
+        remote_manifest_path = f"/{remote_root}/{workstream}/{run_id}/REVIEW_MANIFEST.json"
+        manifest["retention"]["cleanup_command"] = (
+            "python3 custodian/tools/iteration/publish_review_artifacts.py "
+            f"--reviewed-manifest {remote_manifest_path} --reviewed-by chatgpt-user"
+        )
         manifest_path = staging / "REVIEW_MANIFEST.json"
         manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
@@ -437,7 +559,7 @@ def main(argv: list[str] | None = None) -> int:
             "workstream": workstream,
             "run_id": run_id,
             "commit": commit,
-            "manifest": f"/{remote_root}/{workstream}/{run_id}/REVIEW_MANIFEST.json",
+            "manifest": remote_manifest_path,
             "updated_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         }
         latest_path = Path(temp) / "LATEST.json"
@@ -466,10 +588,13 @@ def main(argv: list[str] | None = None) -> int:
             "commit": commit,
             "branch": branch,
             "dropbox_path": f"/{remote_root}/{workstream}/{run_id}/",
-            "manifest_path": f"/{remote_root}/{workstream}/{run_id}/REVIEW_MANIFEST.json",
+            "manifest_path": remote_manifest_path,
             "latest_path": f"/{remote_root}/{workstream}/LATEST.json",
             "file_count": len(remote_files),
             "questions": manifest["questions"],
+            "authoring_chat": manifest["authoring_chat"],
+            "retention_policy": manifest["retention"]["policy"],
+            "cleanup_command": manifest["retention"]["cleanup_command"],
         }
         print("CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON:" + json.dumps(payload, sort_keys=True))
         print(

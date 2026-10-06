@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-alpine-plateau-underlay-assets`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-region-frame-presentation-foundation`
@@ -14,80 +14,50 @@
 - Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `manual human visual approval + local ~/Downloads source bundle; technical ingest remains deterministic`
-- Reviewed main: `9093c9ff1613de39d37a876246f6ab61f24f5938`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
-- Goal: Publish the six production Asset Pipeline V2 images for the first `ALPINE_PLATEAU` permanent underlay, bind them to the reviewed Region Frame profile, remove the explicit Endless Forest compatibility fallback for that frame, and obtain human visual approval of the cliff-fog-distant-world composition.
-- Completion boundary: Done when the `procgen_underlay_alpine_plateau` Asset V2 family exists and passes the live asset doctor; all six required 1536x1024 static states are ingested/bound/verified; `alpine_plateau_underlay.tres` deterministically selects FAR/MIDDLE/NEAR A/B variants by accepted procgen seed through the existing `ProcgenUnderlayProfile` path; the reviewed `ALPINE_PLATEAU` Region Frame selects that resource with fallback telemetry cleared; the runtime keeps Archive Resolve separate; and the user/human review accepts the gameplay-scale permanent edge composition.
-- Current measured state: RF1 landed as `49cbd3982d145283ef7aeb85a921057f854ea88e`; RFR1 passed on `07d2277e8` with 0 blocking defects and 0 material evidence gaps, making Region Frame stable presentation authority. Live `presentation/region_frames/alpine_plateau.tres` explicitly selects `profile_id=alpine_plateau`, binds Endless Forest only as an explicit `visual_fallback=true` stand-in, and uses exterior-only DepthBackdrop behavior. The user has now approved/provided the six generated source candidates as one local archive expected at `~/Downloads/alpine_plateau_underlay_assets.zip`. The archive contract is exact: six root-level RGBA PNGs named `far_world_a.png`, `far_world_b.png`, `depth_fog_a.png`, `depth_fog_b.png`, `near_cliff_mist_a.png`, `near_cliff_mist_b.png`, each 1536×1024, one frame, true alpha. Final gameplay-scale composition approval remains human-owned after runtime integration. RFR1 next-slice findings R0-01 (registered end-to-end production-scene frame assertion) and R0-02 (ocean-as-conduit exterior-mask pocket) are owned by this packet as technical proof hardening before final visual approval.
-- Evidence: `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`; `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`; RF1 landed commit `49cbd3982d145283ef7aeb85a921057f854ea88e`; `presentation/procgen_region_frame_profile.gd`; `presentation/region_frames/alpine_plateau.tres`; `procgen_region_frame_smoke.gd`; live `drowned_basilica_underlay.asset.json`; `procgen_underlay_profile.gd`; `drowned_basilica_underlay.tres`; Asset Pipeline V2 tooling at `custodian/tools/assets/asset.py`.
-- Task-specific authority: Asset Pipeline V2 live family schema/tooling; `PROCGEN_REGION_FRAME_PROFILES.md`; `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`; reviewed Region Frame foundation.
-- Work surface: Local source bundle `~/Downloads/alpine_plateau_underlay_assets.zip`; new family metadata `custodian/content/metadata/assets/families/procgen_underlay_alpine_plateau.asset.json`; source masters under `custodian/asset_drop/source_work/procgen/procgen_underlay_alpine_plateau/`; normalized intake under `custodian/asset_drop/inbox/procgen_underlay_alpine_plateau/`; runtime domain `custodian/content/backgrounds/procgen/alpine_plateau/`; new `custodian/game/world/procgen/presentation/underlays/alpine_plateau_underlay.tres`; narrow reviewed Region Frame profile binding only.
-- Change: Register this exact family contract using the current live schema:
-  - schema: `custodian.asset_family.v2`
-  - id: `procgen_underlay_alpine_plateau`
-  - kind: `backdrop`
-  - runtime domain: `backgrounds/procgen/alpine_plateau`
-  - owner: `alpine_plateau`
-  - filename policy: same current template policy used by Drowned Basilica
-  - canvas: `1536x1024`
-  - direction_policy: `omni`
-  - auto_mirror: `false`
-  - every state: required, static, one frame, layout `copy`, layer `background`, action_group `display`.
-- Change: Required states and semantics:
-  - `far_world_a`, `far_world_b`: very subdued distant lower-world ridges/valleys, forest masses, snow bands and sparse far infrastructure; no readable gameplay routes.
-  - `depth_fog_a`, `depth_fog_b`: broad obscuring valley fog/cloud shelf that hides the cliff terminus without reading as Archive Resolve graphite veil.
-  - `near_cliff_mist_a`, `near_cliff_mist_b`: near depth haze with restrained descending conifer/rock silhouette, subordinate to world-positioned cliff fascia.
-- Source-work save paths:
-  - `custodian/asset_drop/source_work/procgen/procgen_underlay_alpine_plateau/far_world_a_source.png`
-  - `.../far_world_b_source.png`
-  - `.../depth_fog_a_source.png`
-  - `.../depth_fog_b_source.png`
-  - `.../near_cliff_mist_a_source.png`
-  - `.../near_cliff_mist_b_source.png`
-- Normalized inbox names, each exactly `1536x1024`, one frame, RGBA PNG, preserve true alpha/no matte and never stretch:
-  - `custodian/asset_drop/inbox/procgen_underlay_alpine_plateau/far_world_a.png`
-  - `.../far_world_b.png`
-  - `.../depth_fog_a.png`
-  - `.../depth_fog_b.png`
-  - `.../near_cliff_mist_a.png`
-  - `.../near_cliff_mist_b.png`
-- Expected canonical runtime outputs are pipeline-owned; for review they should resolve under `custodian/content/backgrounds/procgen/alpine_plateau/` to the current template equivalents of `alpine_plateau_<variant>_1536x1024.png`. Do not hand-author runtime filenames or copy raw generated art directly into runtime.
-- Change: Build `alpine_plateau_underlay.tres` with FAR = far_world A/B, MIDDLE = depth_fog A/B, NEAR = near_cliff_mist A/B. Keep opacity values data-driven in the resource; initial values should be tuned against gameplay capture, not copied blindly from Endless Forest or Drowned Basilica. Region Frame selection clears `visual_fallback` only when all six runtime assets and the profile validate.
-- Preserve: Region Frame exterior-mask semantics; M3-M6 streaming; Archive Resolve; local biome; collision/navigation; existing Drowned Basilica and Endless Forest resources; deterministic seed variant selection; pixel/gameplay readability.
-- Non-goals: No Archive Resolve shader/effect work; no new cliff-fascia tile art; no future region-frame assets; no minimap/compass; no generation/topology change.
-- Acceptance: (1) The exact `~/Downloads/alpine_plateau_underlay_assets.zip` contract is verified before ingest and raw generated bytes are preserved in `source_work`. (2) All six family states are `ingested/bound/verified` under the current Asset V2 tracker/doctor. (3) Runtime images are exactly 1536×1024 with true alpha and no accidental scaling/matte/registration shift. (4) Fixed seeds select deterministic A/B combinations. (5) Alpine frame no longer reports fallback and uses the Alpine profile. (6) Internal ravines do not cause the global underlay to appear; exterior plateau border does. (7) RFR1 R0-01 is closed by a registered end-to-end production-scene assertion that a real generated starting scene reports `frame_id=alpine_plateau` and the correct bound Alpine underlay after integration. (8) RFR1 R0-02 is closed by a deterministic classifier fixture proving an OCEAN pocket touching/bisecting exterior CHASM does not become a CHASM flood conduit or corrupt the exterior/internal partition. (9) No Archive Resolve state/material is used by this family. (10) Objective asset checks are green before subjective review. (11) One compact gameplay-scale edge evidence bundle demonstrates readable plateau/cliff, obscuring fog, and only faint distant lower world. (12) Human review explicitly accepts the final art balance; if not, packet remains open.
-- Validation: Before ingest, verify the exact local ZIP contract and inspect `python3 custodian/tools/assets/asset.py --help`; use current commands, not stale guessed syntax. Run current family plan/status/doctor equivalents before and after ingest and Godot import as required by the live pipeline. Extend/register focused Region Frame coverage for RFR1 R0-01 production-scene frame/binding truth and R0-02 ocean-as-conduit exclusion, then run `procgen_region_frame`, nonwalkable-surface coverage, Drowned underlay regression, `elevated_world_asset_contract`, asset validation, changed-file validation, and `git diff --check`. Only after objective checks pass, create the smallest representative fixed-seed plateau-edge evidence bundle and publish it through `python3 custodian/tools/iteration/publish_review_artifacts.py --important ...` under workstream `procgen-alpine-plateau-underlay-assets`, following `VISUAL_REVIEW_HANDOFF.md`. Ask specifically whether the three-depth composition keeps the playable cliff readable, fog convincingly hides the lower terminus, and the far world remains subordinate/non-navigable. Record the Dropbox manifest path in the completion summary; the execution agent does not self-approve aesthetics.
+- Review rationale: `human-owned final composition approval remains required after objective Asset V2/runtime checks`
+- Reviewed main: `1ef9201f31f108afdfed5065ee736bc101008c23`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Prior authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Goal: Continue the already-proven Alpine Region Frame underlay foundation with an omnidirectional aerial-oblique FAR/MIDDLE/NEAR art set that remains believable around every exterior edge of the normal top-down gameplay camera, while preserving the existing six-state Asset V2 identity, deterministic profile binding, exterior-only presentation semantics, Archive Resolve separation, and Moment Forge review path.
+- Completion boundary: Done when the exact Gate A implementation handoff from `ALPINE_PLATEAU_PRESENTATION_ASSET_MANIFEST.md` is verified; the existing `procgen_underlay_alpine_plateau` family publishes all six revised 1536×1024 states through Asset Pipeline V2; `alpine_plateau_underlay.tres` consumes them with deterministic A/B selection; optional per-layer parallax/overscan is data-driven and bounded; north/east/south/west exterior approaches show no fixed side-scroller horizon or exposed canvas; non-Alpine underlay behavior remains compatible; and compact gameplay-scale evidence receives human visual approval.
+- Current measured state: RF1/RFR1 are complete/passed and remain stable Region Frame authority. The currently active `agent/procgen-alpine-plateau-underlay-assets` branch contains two useful implementation commits from the first-pass art integration: the six-state Asset V2 family, first-pass runtime textures, `alpine_plateau_underlay.tres`, Region Frame binding, proof hardening, and an Alpine Moment Forge review scenario. That branch is now behind live main and predates this continuation design; preserve it as implementation/donor evidence rather than landing it wholesale. The first-pass visual audit validated atmospheric scale and the FAR/MIDDLE/NEAR concept but identified a composition constraint: the current source art carries a strong bottom-screen scenic horizon and is not suitable as an unrestricted omnidirectional top-down underlay. This is scoped continuation, not a failure disposition. The required immutable Gate A Dropbox handoff is not currently present.
+- Evidence: `design/02_features/procgen/ALPINE_PLATEAU_PRESENTATION_ASSET_MANIFEST.md`; `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`; `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md`; `design/02_features/procgen/ELEVATED_WORLD_PRESENTATION.md`; `custodian/game/world/procgen/presentation/procgen_underlay_profile.gd`; `custodian/game/world/procgen/presentation/procgen_depth_backdrop.gd`; `custodian/game/world/procgen/presentation/region_frames/alpine_plateau.tres`; active branch `agent/procgen-alpine-plateau-underlay-assets`; outbound review evidence under `CUSTODIAN/visual_review/procgen-alpine-plateau-underlay-assets/`.
+- Task-specific authority: `ALPINE_PLATEAU_PRESENTATION_ASSET_MANIFEST.md`; Asset Pipeline V2 live schema/tooling; `PROCGEN_REGION_FRAME_PROFILES.md`; `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md`; reviewed Region Frame foundation; `IMPLEMENTATION_HANDOFF.md`; `VISUAL_REVIEW_HANDOFF.md`.
+- Work surface: Existing family metadata `custodian/content/metadata/assets/families/procgen_underlay_alpine_plateau.asset.json` once refreshed from donor work; source masters under `custodian/asset_drop/source_work/procgen/procgen_underlay_alpine_plateau/`; normalized intake under `custodian/asset_drop/inbox/procgen_underlay_alpine_plateau/`; runtime domain `custodian/content/backgrounds/procgen/alpine_plateau/`; `custodian/game/world/procgen/presentation/{procgen_underlay_profile.gd,procgen_depth_backdrop.gd}`; `presentation/underlays/alpine_plateau_underlay.tres`; `presentation/region_frames/alpine_plateau.tres`; focused validation and Alpine Moment Forge scenario.
+- Change: Reuse the existing six semantic states exactly: `far_world_a`, `far_world_b`, `depth_fog_a`, `depth_fog_b`, `near_cliff_mist_a`, `near_cliff_mist_b`. Fetch them only from the immutable Gate A handoff. Preserve fetched raw bytes as untrusted staging until this packet and Asset Pipeline V2 promote them. Reuse the existing family id and runtime domain; do not create an Alpine-underlay-v2 family. Replace/refine source/runtime art only through Asset Pipeline V2. Keep FAR/MIDDLE/NEAR opacity data-driven. If depth needs camera-relative motion, extend `ProcgenUnderlayProfile` with optional per-layer parallax strengths whose default preserves current non-Alpine behavior, and implement bounded layer displacement in `ProcgenDepthBackdrop`. Preserve native-scale camera-following behavior; use sufficient overscan/coverage to make gray/unpainted exposure impossible over supported viewport sizes and camera motion. Update the review scenario to exercise multiple exterior directions rather than validating only a south-facing scenic composition.
+- Preserve: Region Frame exterior/internal CHASM semantics; accepted-seed determinism; A/B selection; Drowned Basilica override; Endless Forest compatibility behavior; M3-M6 streaming; Archive Resolve; local biome field; collision/navigation; `RuntimeWalkableBoundary`; gameplay camera authority; pixel/gameplay readability.
+- Non-goals: No cliff-fascia art change; no large playable-surface plates; no environment/weather tuning; no dynamic camera pitch/rotation; no 3D conversion; no generation/topology change; no new local biome; no new gameplay surface authority.
+- Acceptance: (1) exact Gate A `HANDOFF_MANIFEST.json` verifies workstream/id, authoring chat, six expected payload paths, hashes, sizes and dimensions; (2) all six revised states are 1536×1024 RGBA one-frame assets and Asset V2 status/doctor are green; (3) `alpine_plateau_underlay.tres` uses the revised family with deterministic fixed-seed A/B selection; (4) Alpine frame reports the intended underlay and no compatibility fallback once the asset family is valid; (5) internal ravines do not activate the permanent underlay; (6) north/east/south/west exterior review positions reveal no conventional fixed horizon; (7) supported viewport/camera motion cannot expose gray/unpainted canvas; (8) FAR reads as subdued non-navigable lower world, MIDDLE hides cliff termination, NEAR bridges cliff-root depth; (9) non-Alpine underlay profiles retain prior behavior; (10) no Archive Resolve state/material is used by this family; (11) objective checks are green before visual review; (12) one compact Dropbox review bundle receives explicit human approval.
+- Validation: Fetch Gate A only with `custodian/tools/iteration/implementation_handoff.py` and validate the immutable manifest before repository mutation. Run current Asset V2 family plan/status/doctor commands using live `asset.py --help`; run `procgen_region_frame`, `elevated_world_asset_contract`, nonwalkable-surface coverage, Drowned underlay regression, changed-file validation and `git diff --check`. Add a focused coverage assertion for supported viewport/overscan if existing tests do not prove it. Then run the smallest multi-direction Alpine Moment Forge evidence scenario and publish only the necessary contact sheet/keyframes through `publish_review_artifacts.py --important`. Ask whether the underlay works from all exterior directions, the far world remains subordinate/non-navigable, fog hides the depth terminus, and no canvas boundary is perceptible.
 - Task overrides: `none`
-- Deferred: Additional region frames and additional Alpine variants beyond A/B.
+- Deferred: Alpine frame-specific cliff/fascia/contact art is `procgen-alpine-cliff-presentation-v1`; large Rocky Upland/Meridian plates are `procgen-alpine-surface-plates-v1`; final weather/lighting/wind tuning is `procgen-alpine-environment-cohesion-v1`; directional cinematic/vista camera framing is a separate future design.
 
-## Local Source Bundle
+## Required External Input — Gate A
 
-The user-provided/generated source bundle is expected at:
+The only valid input is:
 
 ```text
-~/Downloads/alpine_plateau_underlay_assets.zip
+CUSTODIAN/implementation_inputs/
+  procgen-alpine-plateau-underlay-assets/
+    alpine-underlay-omnidirectional-v2/
+      HANDOFF_MANIFEST.json
+      payload/
+        procgen_underlay_alpine_plateau/
+          far_world_a.png
+          far_world_b.png
+          depth_fog_a.png
+          depth_fog_b.png
+          near_cliff_mist_a.png
+          near_cliff_mist_b.png
 ```
 
-Before touching repository asset state:
+The manifest must use schema `custodian.implementation_handoff.v1` and record this exact authoring chat URL. The payload set must be exact: six PNGs, no substitutions.
 
-1. verify that exact file exists locally; do not search arbitrary Downloads archives or substitute another bundle;
-2. inspect the ZIP without mutating the repository and require exactly these six root-level PNG entries:
-   - `far_world_a.png`
-   - `far_world_b.png`
-   - `depth_fog_a.png`
-   - `depth_fog_b.png`
-   - `near_cliff_mist_a.png`
-   - `near_cliff_mist_b.png`
-3. verify every image is RGBA, exactly 1536×1024, one static frame, and contains a real alpha channel; reject rather than stretch/reformat a dimension mismatch;
-4. copy/extract each raw generated file first into the exact `source_work` path below using the `*_source.png` name, then stage normalized semantic copies under `asset_drop/inbox/procgen_underlay_alpine_plateau/`; never extract directly into runtime;
-5. preserve original generated bytes in `source_work`. Any normalization that materially changes composition, crop, alpha edge, or color requires user review rather than silent correction.
+This packet remains `blocked` until that exact committed handoff exists and verifies. The earlier `/CUSTODIAN/visual_review/` artifacts and any local `~/Downloads` bundle are review/provenance evidence only and cannot satisfy this implementation gate.
 
-This local ZIP is an input artifact, not repository authority and not a runtime dependency.
+## Existing Branch Disposition
 
-## Source Art Gate
-
-The dependency/review gate is satisfied: RFR1 passed. The six source candidates are provided through the exact local ZIP contract above, so this packet is `ready/auto`. Input availability is not a claim-timing decision: at workstream start, verify `~/Downloads/alpine_plateau_underlay_assets.zip` before mutation and stop with a precise blocked handoff if it is missing or malformed. Do not fabricate substitute art. Final gameplay-scale visual acceptance remains a completion gate, not a pre-implementation blocker.
+`agent/procgen-alpine-plateau-underlay-assets` is preserved as donor/reference evidence. When Gate A becomes available, resume from current main and selectively reuse/rebase proven implementation pieces rather than merging the stale branch wholesale. Re-derive any touched public API against live main first.
 
 ## Completion Truth
 
@@ -107,23 +77,23 @@ The dependency/review gate is satisfied: RFR1 passed. The six source candidates 
 - Root cause / contributing factors: `none`
 - Prevention / pipeline improvement: `none`
 - Tooling / docs drift discovered: `none`
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
-
+- Follow-up: `none | fixed-in-scope | procgen-alpine-cliff-presentation-v1 | manual-follow-up`
 
 ## Refresh Planning Authority
 
-- Refresh owner: `none`
+- Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
-- Refresh instruction: This packet has now been refreshed in the recorded planning chat against passed RFR1 and the local six-image ZIP contract. No further planning refresh is required before implementation unless live Asset Pipeline V2 or Region Frame APIs materially diverge; if they do, return to this same chat before changing architecture/scope.
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Refresh instruction: No design refresh is required if Gate A exactly matches the manifest. Once the handoff exists, verify its immutable identity/payload, re-check live main and donor-branch drift, then change only the claim gate to `ready` if the implementation contract remains valid. Escalate to this chat only if live APIs or the supplied art materially change the projection/authority decision.
 
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `procgen-alpine-cliff-presentation-v1`
+- Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `none`
-- Next action: Claim this packet manually on the local machine with access to `~/Downloads/alpine_plateau_underlay_assets.zip`; complete deterministic Asset V2 ingest/binding first, then publish the compact Dropbox visual-review handoff for user approval.
-- Blockers or open questions: Final human art-direction approval remains required before completion; no implementation blocker remains if the exact ZIP is present.
+- Next action: After AP1 completes, verify Gate B and allow the Alpine cliff packet to become claimable.
+- Blockers or open questions: Gate A art is not yet present in the immutable Dropbox implementation-input lane.

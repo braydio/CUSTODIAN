@@ -265,6 +265,27 @@ journals retain primary and recovery failures separately and clear
 `RECOVERY_REQUIRED` only after source/runtime/resource/import metadata,
 document bytes, and Git cleanliness preimages verify.
 
+## Operator Workbench Browser / PREVIEW Refresh (2026-10-06)
+
+OPUI browser discovery now returns immutable candidates without retaining an
+`AnimationFeature` cache. `WorkbenchUIState.browser_snapshot` is the accepted,
+unfiltered canonical browser-record authority; Search and superseded visibility
+only project that snapshot. Monotonic browser generations discard late scans,
+and destructive candidates use bounded semantic rescans before acceptance.
+Refresh keeps the selected semantic identity even when Search hides its row;
+only a stable confirmed deletion permits one explicit fallback and activity
+event. Modular lower/upper clock mismatches remain PARTIAL and cannot replace a
+last-known-good COMPLETE snapshot as a stable candidate.
+
+PREVIEW asynchronous work has a separate generation tied to mode, selection,
+and source. Ordinary preview, comparison, transition, and Live Bridge results
+prove that generation before UI mutation. F5 on PREVIEW pauses frame advancement
+while retaining the visible preview, then applies a coherent replacement and
+restores playback only if the same semantic preview is still active. Refresh is
+coalesced across canonical PUBLISH mutation and runs once after that mutation.
+`operator_workbench_ui_smoke.py` owns deterministic discovery ordering,
+stabilization, selection/Search, session-load, and PREVIEW race coverage.
+
 ## Asset Requirements Pipeline (2026-09-28)
 
 `custodian/content/metadata/assets/required_assets.registry.json` is the sole
@@ -1287,7 +1308,19 @@ Documentation updates this session:
   `custodian/tools/iteration/publish_review_artifacts.py`: after objective proof,
   agents may publish one compact rclone/Dropbox evidence bundle with explicit
   reviewer questions and hand the manifest to human/ChatGPT review instead of
-  spending coding-agent turns on aesthetic self-review. Sparse evidence capture no longer awaits an unbounded
+  spending coding-agent turns on aesthetic self-review. The outbound handoff now
+  carries the exact packet authoring-chat URL and defaults reviewed cloud media to
+  `delete-after-review`; after the authoring ChatGPT/user records the subjective
+  decision, the same workstream runs the manifest's path-confined cleanup command.
+  Dispatcher claim receipts expose authoring-chat provenance, visual-review mode,
+  Dropbox workstream root, and retention default, while `workstream.py finish`
+  rejects a packeted closing summary that omits its recorded exact Authoring chat. The outbound handoff now
+  carries the exact packet authoring-chat URL and defaults reviewed cloud media to
+  `delete-after-review`; after the authoring ChatGPT/user records the subjective
+  decision, the same workstream runs the manifest's path-confined cleanup command.
+  Dispatcher claim receipts expose authoring-chat provenance, visual-review mode,
+  Dropbox workstream root, and retention default, while `workstream.py finish`
+  rejects a packeted closing summary that omits its recorded exact Authoring chat. Sparse evidence capture no longer awaits an unbounded
   `frame_post_draw` signal: evidence runs disable VSync and explicitly render
   selected authored physics ticks, while full Movie Writer runs
   retain post-draw synchronization. A 20-tick, six-keyframe regression scenario

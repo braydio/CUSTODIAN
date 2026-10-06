@@ -112,6 +112,24 @@ document is connected, the table also shows editor visibility/focus state;
 these controls are limited to manifest-authorized layers and do not alter the
 manifest-complete LIVE preview composition.
 
+Browser discovery runs as a side-effect-free candidate operation. One immutable,
+unfiltered snapshot in `WorkbenchUIState` is the accepted browser-record authority;
+Search and superseded visibility are pure projections of that snapshot and do
+not scan the filesystem or change the selected Workbench session. Refreshes use
+monotonic request generations so an older `asyncio.to_thread()` scan cannot
+overwrite a newer accepted candidate. Destructive candidates are confirmed by
+bounded semantic rescans; missing identities and incomplete modular body-clock
+migrations keep the last accepted snapshot until stable. Selection survives
+Search and accepted refreshes while its semantic identity remains present.
+
+Page-3 PREVIEW asynchronous work uses a separate generation bound to semantic
+selection, source, and mode. Preview, comparison, transition, and Live Bridge
+results are discarded when their generation is stale. F5 keeps the last usable
+preview visible while browser/session state and a coherent replacement preview
+are prepared, then applies the replacement and restores prior playback intent
+only when the same semantic preview remains valid. Refresh requests during
+canonical PUBLISH mutation are coalesced and run once after publication ends.
+
 Persistent shell widgets belong to the retained main screen, not whichever
 modal is currently topmost. Activity events always append to UI state and the
 underlying main-screen log while dialogs are open. A failed session projection

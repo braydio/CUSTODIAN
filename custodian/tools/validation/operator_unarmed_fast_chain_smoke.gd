@@ -27,9 +27,11 @@ class ShakeProbe extends Node2D:
 		heavies.clear()
 
 var _failed := false
+var _selection_only := false
 
 
 func _init() -> void:
+	_selection_only = OS.get_cmdline_user_args().has("--selection-only")
 	call_deferred("_run")
 
 
@@ -61,9 +63,6 @@ func _run() -> void:
 			var key: String = UNARMED.fast_chain_keys[index]
 			var profile = UNARMED.fast_chain_attack_profiles[index]
 			var expected_sector := sector
-			if direction == Vector2.DOWN and index > 0:
-				# Fast 02-04 do not yet author South modular pairs.
-				expected_sector = "e"
 			operator.set("_melee_fast_combo_step", index)
 			operator.set("_melee_attack_key", key)
 			operator.set("_active_melee_attack_profile", profile)
@@ -78,6 +77,15 @@ func _run() -> void:
 			_assert_true(lower.sprite_frames.get_frame_count(lower.animation) == EXPECTED_FRAMES[index], "%s frame contract mismatch" % key)
 			_assert_true(upper.sprite_frames.get_frame_count(upper.animation) == EXPECTED_FRAMES[index], "%s upper clock mismatch" % key)
 			_assert_true(is_equal_approx(lower.speed_scale, upper.speed_scale), "%s modular clocks must match" % key)
+
+	if _selection_only:
+		if _failed:
+			push_error("operator_unarmed_fast_chain_smoke selector checks failed")
+			quit(1)
+		else:
+			print("operator_unarmed_fast_chain_smoke selector checks passed")
+			quit(0)
+		return
 
 	operator.set("_melee_fast_combo_step", 0)
 	_assert_true(bool(operator.call("_advance_fast_chain_step")), "01 must queue 02")
@@ -398,6 +406,11 @@ func _validate_impact_progression(operator: Node) -> void:
 	world.add_child(probe)
 	game_root.add_child(world)
 	get_root().add_child(game_root)
+	# The production camera dependency is captured from the actor's direct world
+	# parent in _ready(). This fixture root is intentionally built after the actor,
+	# so inject the probe through the already-bound dependency bundle explicitly.
+	var runtime_dependencies = operator.get("_runtime_dependencies")
+	runtime_dependencies.camera = probe
 	await process_frame
 	_assert_true(
 		operator.call("_get_world_camera") == probe,

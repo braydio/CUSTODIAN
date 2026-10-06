@@ -1,0 +1,39 @@
+{
+  "schema": "custodian.operator_fast_chain_normalization_receipt.v1",
+  "identity": "unarmed/attack/fast_04/s",
+  "approved_master": "full_body_source.png",
+  "approved_master_sha256": "9c4bd5feaf722dbcc27df43d82fafe880c077e7a63c7cb49ab8a056c7732aa60",
+  "approved_master_size": [
+    2172,
+    724
+  ],
+  "frame_count": 8,
+  "whole_strip_input": "shared_strip_input.png",
+  "whole_strip_input_size": [
+    2168,
+    724
+  ],
+  "whole_strip_crop": "shared crop removed only rightmost columns until strip width was divisible by frame count; no per-frame crop/reposition",
+  "shared_converter_transform": {
+    "frames": 8,
+    "source_cell": "271x724",
+    "shared_union_bbox": "(1, 222, 257, 512)",
+    "shared_scale": 2.427586,
+    "shared_offset": "(73, 32)"
+  },
+  "command": "pixelart <shared_strip_input.png> <normalized_full_body_96.png> --sheet --frames N --size 96 --choose 1 --force",
+  "semantic_split": {
+    "rule": "global horizontal seam at local y=58 in every 96x96 cell; y<58 assigned upper_body; y>=58 assigned lower_body",
+    "partition_proof": "every alpha>0 source pixel copied unchanged into exactly one layer; alpha-composite lower+upper equals normalized full_body byte-for-byte"
+  },
+  "blank_fx": {
+    "file": "blank_fx_96.png",
+    "dimensions": [
+      768,
+      96
+    ],
+    "mode": "RGBA",
+    "alpha": "all zero",
+    "status": "editable authoring placeholder; not VFX completion"
+  }
+}

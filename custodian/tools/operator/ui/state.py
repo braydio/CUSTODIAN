@@ -28,6 +28,7 @@ class AnimationRecord:
     layers: tuple[str, ...]
     completeness: str = "COMPLETE"
     completeness_detail: str = ""
+    reachability_status: str | None = None
 
     @property
     def summary(self) -> str:
@@ -205,6 +206,11 @@ class WorkbenchUIState:
     preview_compare_source: str = "workbench"
     copy_mode: str = "body"
     show_superseded: bool = False
+    browser_snapshot: tuple[AnimationRecord, ...] = ()
+    browser_generation: int = 0
+    browser_refresh_generation: int = 0
+    session_generation: int = 0
+    preview_generation: int = 0
     transition_target_identity: str = ""
     transition_view: str = "ghost"
     sequence_name: str = "review"

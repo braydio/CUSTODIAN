@@ -59,7 +59,7 @@ Offline 3D authoring may be reconsidered later only as a way to generate 2D prod
 
 ## 2.5D-1: presentation foundation
 
-Packet: `custodian/docs/ai_context/task_packets/ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md`
+Packet: `custodian/docs/ai_context/task_packets/archived/ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md`
 
 Implement the smallest reusable 2D presentation primitive that makes explicit:
 
@@ -72,6 +72,8 @@ Implement the smallest reusable 2D presentation primitive that makes explicit:
 - reuse of actor contact shadows.
 
 No production-actor/procgen retrofit in this slice.
+
+**Status:** implemented in `custodian/game/world/presentation/isometric_2_5d/` (`IsometricPresentationProfile`, `IsometricVisualAnchor2D`); focused smoke `isometric_2_5d_presentation_foundation`. Awaiting `review-isometric-2-5d-presentation-foundation`.
 
 ## 2.5D-2: Forum vertical slice
 

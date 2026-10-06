@@ -26,7 +26,7 @@ fail a run.
 
 When objective checks are complete but an important subjective presentation
 question remains, publish the smallest useful review surface with
-`publish_review_artifacts.py --important --reason ...`. It sends compact
+`publish_review_artifacts.py --important --reason ... --authoring-chat <exact-url>`. It sends compact
 ROI/contact sheets, sparse keyframes, and selected metadata to the configured
 rclone Dropbox review root and emits a manifest path for human/ChatGPT review.
 Do not use this as a substitute for probes/metrics, and do not ask the coding

@@ -155,6 +155,121 @@ class OperatorWorkbenchApp(App):
         self._motion_last_tick = time.monotonic()
         self._preview_last_tick = time.monotonic()
         self._preview_elapsed_sec = 0.0
+        self._browser_refresh_in_progress = False
+        self._preview_replacing = False
+        self._publish_refresh_pending = False
+        self._pending_live_preview_revision: int | None = None
+        self._pending_preview_play_intent = False
+        self._browser_preview_play_intent = False
+        self._sleep = asyncio.sleep
+
+    def _next_preview_generation(self) -> int:
+        self.state.preview_generation += 1
+        return self.state.preview_generation
+
+    def _preview_request_current(
+        self, generation: int, selection: AnimationSelection, source: str,
+    ) -> bool:
+        return (
+            generation == self.state.preview_generation
+            and self.state.mode == "preview"
+            and self.state.selection is not None
+            and self.state.selection.identity == selection.identity
+            and self.state.preview_source == source
+        )
+
+    def _preview_matches_active(self, preview=None) -> bool:
+        preview = self.preview_view if preview is None else preview
+        selection = self.state.selection
+        if preview is None or selection is None or not preview.frames:
+            return False
+        if getattr(getattr(preview, "identity", None), "key", "") != selection.identity:
+            return False
+        return preview.source == self.state.preview_source or (
+            self.state.preview_source == "workbench" and preview.source == "live"
+        )
+
+    def _schedule_pending_live_preview(self) -> None:
+        revision = self._pending_live_preview_revision
+        selection = self.state.selection
+        if (
+            revision is None or selection is None or self.state.mode != "preview"
+            or self.state.preview_source != "workbench"
+            or revision != self.live_bridge.server.state.document_revision
+        ):
+            self._pending_live_preview_revision = None
+            self._pending_preview_play_intent = False
+            return
+        self._pending_live_preview_revision = None
+        self.run_worker(
+            self._load_preview(), group="live-preview-retry", exclusive=True,
+            exit_on_error=False,
+        )
+
+    @staticmethod
+    def _browser_signature(records) -> tuple:
+        return tuple(sorted((
+            row.selection.profile, row.selection.group, row.selection.action,
+            row.selection.direction, tuple(sorted(row.layers)), row.frames,
+            row.completeness, row.completeness_detail, row.reachability_status,
+        ) for row in records))
+
+    @staticmethod
+    def _browser_candidate_has_body_clock_mismatch(records) -> bool:
+        return any(
+            row.completeness != "COMPLETE"
+            and "contract mismatch" in row.completeness_detail.casefold()
+            for row in records
+        )
+
+    def _browser_generation_current(self, generation: int) -> bool:
+        if generation != self.state.browser_refresh_generation:
+            return False
+        if self.state.active_operation == "PUBLISH":
+            self._publish_refresh_pending = True
+            return False
+        return True
+
+    @staticmethod
+    def _browser_candidate_is_destructive(previous, candidate) -> bool:
+        old = {row.selection.identity: row for row in previous}
+        new = {row.selection.identity: row for row in candidate}
+        for identity, before in old.items():
+            after = new.get(identity)
+            if after is None:
+                return True
+            before_layers, after_layers = set(before.layers), set(after.layers)
+            if before.completeness == "COMPLETE" and after.completeness != "COMPLETE":
+                return True
+            required = before_layers & {"full_body", "lower_body", "upper_body"}
+            if required - after_layers:
+                return True
+        return False
+
+    async def _stabilize_browser_candidate(self, candidate, generation: int):
+        accepted = self.state.browser_snapshot
+        if not self._browser_candidate_is_destructive(accepted, candidate):
+            return candidate, True
+        first_signature = self._browser_signature(candidate)
+        await self._sleep(0.1)
+        if not self._browser_generation_current(generation):
+            return (), False
+        second = tuple(await self._thread(self.features["animations"].refresh))
+        if not self._browser_generation_current(generation):
+            return (), False
+        second_signature = self._browser_signature(second)
+        if first_signature == second_signature and not self._browser_candidate_has_body_clock_mismatch(second):
+            return second, True
+        await self._sleep(0.25)
+        if not self._browser_generation_current(generation):
+            return (), False
+        third = tuple(await self._thread(self.features["animations"].refresh))
+        if not self._browser_generation_current(generation):
+            return (), False
+        if (second_signature == self._browser_signature(third)
+                and not self._browser_candidate_has_body_clock_mismatch(third)):
+            return third, True
+        return (), False
 
     def on_mount(self) -> None:
         self.main_screen = MainScreen()
@@ -222,7 +337,10 @@ class OperatorWorkbenchApp(App):
                     and self._live_document_matches_selection(event.document_path)
                 ):
                     self.run_worker(
-                        self._debounced_live_preview(event.revision),
+                        self._debounced_live_preview(
+                            event.revision, self.state.preview_generation,
+                            self.state.selection, event.document_path,
+                        ),
                         group="live-preview-export", exclusive=True,
                         exit_on_error=False,
                     )
@@ -251,12 +369,19 @@ class OperatorWorkbenchApp(App):
                 if self.preview_view is not None:
                     self._render_preview()
 
-    async def _debounced_live_preview(self, revision: int) -> None:
+    async def _debounced_live_preview(
+        self, revision: int, generation: int | None = None,
+        selection: AnimationSelection | None = None, document_path: str | None = None,
+    ) -> None:
+        generation = self.state.preview_generation if generation is None else generation
+        selection = self.state.selection if selection is None else selection
         await asyncio.sleep(LIVE_PREVIEW_DEBOUNCE_SEC)
         if (
-            self.state.mode != "preview"
+            selection is None
+            or not self._preview_request_current(generation, selection, "workbench")
+            or self.state.mode != "preview"
             or self.state.preview_source != "workbench"
-            or not self._live_document_matches_selection()
+            or not self._live_document_matches_selection(document_path)
             or revision != self.live_bridge.server.state.document_revision
         ):
             return
@@ -271,8 +396,12 @@ class OperatorWorkbenchApp(App):
     async def _apply_live_preview(self, event: LiveBridgeEvent) -> None:
         if not event.ok:
             return
+        generation = self.state.preview_generation
+        selection = self.state.selection
         if (
-            self.state.mode != "preview"
+            selection is None
+            or not self._preview_request_current(generation, selection, "workbench")
+            or self.state.mode != "preview"
             or self.state.preview_source != "workbench"
             or not self._live_document_matches_selection(event.document_path)
             or event.revision is None
@@ -292,8 +421,8 @@ class OperatorWorkbenchApp(App):
                 return
         except OSError:
             return
-        selection = self.state.selection
-        if selection is None:
+        if self._preview_replacing:
+            self._pending_live_preview_revision = event.revision
             return
         try:
             loader = partial(
@@ -304,18 +433,47 @@ class OperatorWorkbenchApp(App):
             live = await self._thread(loader)
         except Exception:
             return
-        if event.revision != self.live_bridge.server.state.document_revision:
+        if (
+            event.revision != self.live_bridge.server.state.document_revision
+            or not self._preview_request_current(generation, selection, "workbench")
+            or self._preview_replacing
+            or not live.frames
+        ):
+            return
+        comparison = None
+        comparisons = ()
+        target_analysis = None
+        try:
+            if self.state.preview_examiner_mode != "single":
+                if self.state.preview_examiner_mode == "transition" and self.transition_target_view is not None:
+                    target_view = self.transition_target_view
+                    target_identity = self.state.transition_target_identity
+                    target_analysis = await self._thread(partial(
+                        animation_transition.analyze_transition,
+                        live.frames, target_view.frames, tail=2, head=2,
+                    ))
+                    if target_identity != self.state.transition_target_identity:
+                        return
+                else:
+                    compare_source = self._compare_source_for(live)
+                    comparison = await self._thread(self.service.preview, selection, compare_source)
+                    if not self._preview_request_current(generation, selection, "workbench"):
+                        return
+                    comparisons = animation_preview.compare_previews(live, comparison)
+        except Exception:
+            return
+        if (
+            event.revision != self.live_bridge.server.state.document_revision
+            or not self._preview_request_current(generation, selection, "workbench")
+            or self._preview_replacing
+        ):
             return
         self.preview_view = live
-        self.state.preview_frame = min(self.state.preview_frame, len(live.frames) - 1)
-        if self.state.preview_examiner_mode != "single":
-            if self.state.preview_examiner_mode == "transition" and self.transition_target_view is not None:
-                self.transition_analysis = animation_transition.analyze_transition(
-                    self.preview_view.frames, self.transition_target_view.frames, tail=2, head=2,
-                )
-            else:
-                await self._load_preview_comparison()
-                self._rebuild_preview_comparison()
+        self.preview_compare_view = comparison
+        self.preview_comparisons = comparisons
+        if target_analysis is not None:
+            self.transition_analysis = target_analysis
+        self.state.preview_frame = max(0, min(self.state.preview_frame, len(live.frames) - 1))
         self._render_preview()
 
     def _update_status_bar(self) -> None:
@@ -366,44 +524,148 @@ class OperatorWorkbenchApp(App):
         except (OSError, subprocess.CalledProcessError): return "unknown", False
 
     async def _reload_browser(self) -> None:
+        if self.state.active_operation == "PUBLISH":
+            self._publish_refresh_pending = True
+            return
+        self.state.browser_refresh_generation += 1
+        generation = self.state.browser_refresh_generation
+        self._browser_refresh_in_progress = True
+        preview_handoff = self.state.mode == "preview"
+        was_playing = self.state.preview_playing
+        preview_generation = self._next_preview_generation() if preview_handoff else self.state.preview_generation
+        if preview_handoff:
+            if not self._preview_replacing:
+                self._browser_preview_play_intent = was_playing
+            was_playing = self._browser_preview_play_intent
+            self._preview_replacing = True
+            self.state.preview_playing = False
+            self._reset_preview_clock()
         try:
-            records = await self._thread(self.features["animations"].refresh)
-            query = self.state.search_filter
-            filtered = self.service.filter_records(records, query)
-            tree = self._main_widget("#animation-tree", AnimationTree); tree.set_records(filtered)
-            if self.state.selection and not self.state.selection.group:
-                requested = self.state.selection
-                matches = [row.selection for row in filtered if (
+            candidate = tuple(await self._thread(self.features["animations"].refresh))
+            if not self._browser_generation_current(generation):
+                return
+            records, stable = await self._stabilize_browser_candidate(candidate, generation)
+            if not self._browser_generation_current(generation):
+                return
+            if not stable:
+                self._activity("browser refresh unstable: keeping last accepted canonical snapshot", "WARN")
+                return
+
+            previous_selection = self.state.selection
+            previous_snapshot = self.state.browser_snapshot
+            destructive = self._browser_candidate_is_destructive(previous_snapshot, records)
+            self.state.browser_snapshot = tuple(records)
+            self.state.browser_generation += 1
+            filtered = self.features["animations"].build_navigation(
+                self.state.browser_snapshot, self.state.search_filter,
+                show_superseded=self.state.show_superseded,
+            )
+            tree = self._main_widget("#animation-tree", AnimationTree)
+            tree.set_records(list(filtered))
+
+            selection = previous_selection
+            if selection is not None and not selection.group:
+                matches = [row.selection for row in self.state.browser_snapshot if (
                     row.selection.profile, row.selection.action, row.selection.direction
-                ) == (requested.profile, requested.action, requested.direction)]
+                ) == (selection.profile, selection.action, selection.direction)]
                 if len(matches) == 1:
                     resolved = matches[0]
-                    self.state.selection = AnimationSelection(
+                    selection = AnimationSelection(
                         resolved.profile, resolved.group, resolved.action, resolved.direction,
-                        requested.weapon_id, requested.linked_profile,
+                        selection.weapon_id, selection.linked_profile,
                     )
-            if self.state.selection and tree.select_identity(self.state.selection): await self._load_session(self.state.selection)
-            elif filtered:
-                self.state.selection = self.state.contextualize(filtered[0].selection)
-                tree.select_identity(self.state.selection)
-                await self._load_session(self.state.selection)
+            selected_row = next((row for row in self.state.browser_snapshot if selection and (
+                row.selection.profile, row.selection.group, row.selection.action, row.selection.direction
+            ) == (selection.profile, selection.group, selection.action, selection.direction)), None)
+            if selected_row is not None:
+                selection = AnimationSelection(
+                    selected_row.selection.profile, selected_row.selection.group,
+                    selected_row.selection.action, selected_row.selection.direction,
+                    selection.weapon_id, selection.linked_profile,
+                )
+            elif previous_selection is not None and destructive:
+                # The candidate was already stabilized above; fall back only for a confirmed deletion.
+                selection = self.state.browser_snapshot[0].selection if self.state.browser_snapshot else None
+                if selection is not None:
+                    selection = self.state.contextualize(selection)
+                    self._activity(
+                        f"browser selection removed: {previous_selection.identity} → {selection.identity}",
+                        "WARN",
+                    )
+                else:
+                    self._activity(f"browser selection removed: {previous_selection.identity}; no replacement available", "WARN")
+            elif selection is None and self.state.browser_snapshot:
+                selection = self.state.contextualize(self.state.browser_snapshot[0].selection)
+
+            if selection is not None:
+                tree.select_identity(selection)
+                if not await self._load_session(
+                    selection, load_preview=not preview_handoff,
+                    invalidate_preview=not preview_handoff,
+                ):
+                    return
+            else:
+                self.state.selection = None
+                self.session_view = None
+            if preview_handoff and selection is not None:
+                await self._load_preview(generation=preview_generation)
+            if not self._browser_generation_current(generation):
+                return
             self._status_branch, self._status_dirty = await self._thread(self._repo_status)
+            if not self._browser_generation_current(generation):
+                return
             try:
-                self._status_checkout = await self._thread(self.service.checkout_status_label, self.state.selection)
+                checkout_label = await self._thread(self.service.checkout_status_label, self.state.selection)
+                if not self._browser_generation_current(generation):
+                    return
+                self._status_checkout = checkout_label
             except (AttributeError, OSError, RuntimeError):
                 self._status_checkout = "unknown checkout"
             self._status_aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
             self._update_status_bar()
             if hasattr(self.service, "animation_plan"):
-                self._main_widget("#plan-table", PlanTable).set_items(await self._thread(self.service.animation_plan))
+                plan = await self._thread(self.service.animation_plan)
+                if not self._browser_generation_current(generation):
+                    return
+                self._main_widget("#plan-table", PlanTable).set_items(plan)
             action_count = len({(row.selection.profile, row.selection.group, row.selection.action) for row in filtered})
             self._activity(f"browser refreshed: {len(filtered)} directional variants, {action_count} actions", "OK")
-        except Exception as error: self._error(error)
+        except Exception as error:
+            self._error(error)
+        finally:
+            if generation == self.state.browser_refresh_generation:
+                self._browser_refresh_in_progress = False
+                if preview_handoff:
+                    self._preview_replacing = False
+                    same_preview = bool(was_playing and self._preview_matches_active())
+                    pending_live = (
+                        self._pending_live_preview_revision is not None
+                        and self._pending_live_preview_revision == self.live_bridge.server.state.document_revision
+                    )
+                    self._pending_preview_play_intent = same_preview and pending_live
+                    self.state.preview_playing = same_preview and not pending_live
+                    self._browser_preview_play_intent = False
+                    self._reset_preview_clock()
+                self._schedule_pending_live_preview()
 
-    async def _load_session(self, selection: AnimationSelection) -> bool:
+    async def _load_session(
+        self, selection: AnimationSelection, *, load_preview: bool = True,
+        invalidate_preview: bool = True,
+    ) -> bool:
+        self.state.session_generation += 1
+        generation = self.state.session_generation
+        changed = self.state.selection is None or self.state.selection != selection
+        preview_generation = self.state.preview_generation
+        if changed and invalidate_preview:
+            preview_generation = self._next_preview_generation()
+            if self.state.mode == "preview":
+                self._preview_replacing = True
+                self.state.preview_playing = False
         try:
-            changed = self.state.selection is None or self.state.selection.identity != selection.identity
-            session = await self._thread(self.service.session, selection); self.session_view = session
+            session = await self._thread(self.service.session, selection)
+            if generation != self.state.session_generation:
+                return False
+            self.session_view = session
             self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
             if changed:
                 self.preview_compare_view = None
@@ -427,6 +689,8 @@ class OperatorWorkbenchApp(App):
             self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
             if changed and self.state.mode == "motion":
                 await self._load_motion_preview()
+            if changed and load_preview and self.state.mode == "preview":
+                await self._load_preview(generation=preview_generation)
             return True
         except Exception as error:
             projected = self.service.project_error(error)
@@ -443,6 +707,10 @@ class OperatorWorkbenchApp(App):
                     return False
             self._error(error)
             return False
+        finally:
+            if generation == self.state.session_generation and self.state.mode == "preview":
+                if not self._browser_refresh_in_progress:
+                    self._preview_replacing = False
 
     def _accept_context_mismatch(
         self, result: str | None, requested: AnimationSelection,
@@ -517,8 +785,7 @@ class OperatorWorkbenchApp(App):
     async def on_input_changed(self, event: Input.Changed) -> None:
         if event.input.id != "search": return
         self.state.search_filter = event.value
-        records = self.features["animations"].build_navigation(event.value)
-        self._main_widget("#animation-tree", AnimationTree).set_records(records)
+        self._render_browser_snapshot()
 
     def action_search(self) -> None:
         search = self._main_widget("#search", Input); search.remove_class("hidden"); search.focus()
@@ -534,8 +801,21 @@ class OperatorWorkbenchApp(App):
         self.notify(f"Copy mode: {label}", severity="information", timeout=2.5)
 
     def action_toggle_superseded(self) -> None:
-        self.state.show_superseded = self.service.toggle_superseded()
-        self.run_worker(self._reload_browser(), group="browser", exclusive=True)
+        self.state.show_superseded = not self.state.show_superseded
+        self._render_browser_snapshot()
+
+    def _render_browser_snapshot(self) -> None:
+        records = self.features["animations"].build_navigation(
+            self.state.browser_snapshot, self.state.search_filter,
+            show_superseded=self.state.show_superseded,
+        )
+        tree = self._main_widget("#animation-tree", AnimationTree)
+        tree.set_records(records)
+        if self.state.selection is not None:
+            tree.select_identity(self.state.selection)
+        self._main_widget("#context-key-bar", ContextKeyBar).set_mode(
+            self.state.mode, self.state.copy_mode, self.state.show_superseded,
+        )
 
     def action_copy_spritesheet(self) -> None:
         if self.state.selection is None:
@@ -561,15 +841,24 @@ class OperatorWorkbenchApp(App):
         except Exception as error:
             self.notify(f"Copy failed: {error}", severity="error", timeout=5.0)
             self._error(error)
-    def action_full_refresh(self) -> None: self.run_worker(self._reload_browser(), group="browser", exclusive=True)
+    def action_full_refresh(self) -> None:
+        if self.state.active_operation == "PUBLISH":
+            self._publish_refresh_pending = True
+            return
+        self.run_worker(self._reload_browser(), group="browser", exclusive=True)
 
     def _set_mode(self, mode: str) -> None:
+        preview_generation = self.state.preview_generation
+        if mode == "preview" or (mode != self.state.mode and self.state.mode == "preview"):
+            preview_generation = self._next_preview_generation()
+            self.state.preview_playing = False
+            self._preview_replacing = mode == "preview"
         self.state.mode = mode
         self._reset_preview_clock()
         ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode", "motion": "#motion-mode"}
         for name, selector in ids.items(): self._main_widget(selector, Widget).set_class(name != mode, "hidden")
         self._main_widget("#context-key-bar", ContextKeyBar).set_mode(mode, self.state.copy_mode, self.state.show_superseded)
-        if mode == "preview": self.run_worker(self._load_preview(), group="preview-image", exclusive=True)
+        if mode == "preview": self.run_worker(self._load_preview(generation=preview_generation), group="preview-image", exclusive=True)
         if mode == "timeline":
             self._main_widget("#timeline-table", TimelineTable).set_sequence(self.sequence)
             self.run_worker(self._load_timeline(), group="timeline-image", exclusive=True)
@@ -583,53 +872,156 @@ class OperatorWorkbenchApp(App):
     def action_mode_timeline(self): self._set_mode("timeline")
     def action_mode_motion(self): self._set_mode("motion")
 
-    async def _load_preview(self) -> None:
-        selection = self._require_selection()
-        if not selection: return
+    async def _load_preview(self, *, generation: int | None = None) -> None:
+        selection = self.state.selection
+        if not selection or self.state.mode != "preview":
+            return
+        if generation is None:
+            generation = self._next_preview_generation()
+        if not self._preview_request_current(generation, selection, self.state.preview_source):
+            return
+        self._preview_replacing = True
+        source = self.state.preview_source
         try:
-            if self.state.preview_source == "workbench" and self._live_document_matches_selection():
+            primary = None
+            live_revision = None
+            if source == "workbench" and self._live_document_matches_selection():
                 workbench = self._selected_live_workbench_path()
                 if workbench is not None:
-                    try:
-                        await self.live_bridge.export_preview(
-                            workbench, self.live_bridge.server.state.document_revision,
-                        )
-                        return
-                    except (ConnectionError, ValueError):
-                        pass
-            self.preview_view = await self._thread(self.service.preview, selection, self.state.preview_source)
-            self.state.preview_frame = min(self.state.preview_frame, len(self.preview_view.frames) - 1)
-            self._reset_preview_clock()
-            if self.state.preview_examiner_mode == "transition":
-                await self._load_transition_examiner()
-            else:
-                await self._load_preview_comparison()
-            self._render_preview()
-        except Exception as error: self._error(error)
+                    for _attempt in range(3):
+                        revision = self.live_bridge.server.state.document_revision
+                        try:
+                            exported = await self.live_bridge.request_preview_export(workbench, revision)
+                        except (ConnectionError, ValueError):
+                            break
+                        if not self._preview_request_current(generation, selection, source):
+                            return
+                        if revision != self.live_bridge.server.state.document_revision:
+                            continue
+                        output_path = Path(exported["output_path"])
+                        expected_output = self.live_bridge._live_preview_path(workbench)
+                        if output_path.resolve() != expected_output:
+                            break
+                        candidate = await self._thread(
+                                self.service.live_preview, selection, expected_output,
+                                frames=int(exported["frames"]),
+                                frame_size=(int(exported["frame_width"]), int(exported["frame_height"])),
+                            )
+                        if not self._preview_request_current(generation, selection, source):
+                            return
+                        if revision == self.live_bridge.server.state.document_revision:
+                            primary = candidate
+                            live_revision = revision
+                            break
+                    if primary is None:
+                        self._activity("Live preview unavailable during refresh; loading the saved Workbench preview", "WARN")
+            if primary is None:
+                primary = await self._thread(self.service.preview, selection, source)
+            if not self._preview_request_current(generation, selection, source):
+                return
+            if live_revision is not None and live_revision != self.live_bridge.server.state.document_revision:
+                self._pending_live_preview_revision = self.live_bridge.server.state.document_revision
+                return
 
-    def _normalized_compare_source(self) -> str:
+            comparison = None
+            comparisons = ()
+            candidates = self.transition_candidates
+            target_view = None
+            transition_analysis = None
+            target = None
+            if self.state.preview_examiner_mode == "transition":
+                candidates = tuple(await self._thread(self.service.transition_candidates, selection))
+                if not self._preview_request_current(generation, selection, source):
+                    return
+                target = next((item for item in candidates if item.identity == self.state.transition_target_identity), None)
+                if target is None and candidates:
+                    target = candidates[0]
+                if target is not None:
+                    target_view = await self._thread(self.service.transition_preview, target, primary.source)
+                    if not self._preview_request_current(generation, selection, source):
+                        return
+                    transition_analysis = await self._thread(partial(
+                        animation_transition.analyze_transition,
+                        primary.frames, target_view.frames, tail=2, head=2,
+                    ))
+                    if not self._preview_request_current(generation, selection, source):
+                        return
+            elif self.state.preview_examiner_mode != "single":
+                compare_source = self._compare_source_for(primary)
+                comparison = await self._thread(self.service.preview, selection, compare_source)
+                if not self._preview_request_current(generation, selection, source):
+                    return
+                comparisons = animation_preview.compare_previews(primary, comparison)
+
+            if not self._preview_request_current(generation, selection, source):
+                return
+            self.preview_view = primary
+            self.preview_compare_view = comparison
+            self.preview_comparisons = comparisons
+            self.transition_candidates = candidates
+            self.transition_target_view = target_view
+            self.transition_analysis = transition_analysis
+            if self.state.preview_examiner_mode == "transition":
+                self.state.transition_target_identity = target.identity if target is not None else ""
+                self.state.preview_playing = False
+            frame_count = len(primary.frames)
+            self.state.preview_frame = max(0, min(self.state.preview_frame, frame_count - 1)) if frame_count else 0
+            if live_revision is not None and live_revision == self.live_bridge.server.state.document_revision:
+                self._pending_live_preview_revision = None
+                self.state.preview_playing = self._pending_preview_play_intent
+                self._pending_preview_play_intent = False
+            self._reset_preview_clock()
+            self._render_preview()
+        except Exception as error:
+            if self._preview_request_current(generation, selection, source):
+                self._error(error)
+        finally:
+            if generation == self.state.preview_generation and not self._browser_refresh_in_progress:
+                self._preview_replacing = False
+                self._schedule_pending_live_preview()
+
+    def _compare_source_for(self, primary) -> str:
         sources = ("workbench", "canonical", "runtime")
         requested = self.state.preview_compare_source
-        primary = self.preview_view.source if self.preview_view is not None else self.state.preview_source
-        if primary == "live" and requested in sources:
+        primary_source = primary.source
+        if primary_source == "live" and requested in sources:
             return requested
         start = sources.index(requested) if requested in sources else -1
         for offset in range(1, len(sources) + 1):
             candidate = sources[(start + offset) % len(sources)]
-            if candidate != primary:
+            if candidate != primary_source:
                 return candidate
         return "workbench"
+
+    def _normalized_compare_source(self) -> str:
+        primary = self.preview_view
+        if primary is None:
+            return "workbench"
+        return self._compare_source_for(primary)
 
     async def _load_preview_comparison(self, *, force: bool = False) -> None:
         if self.state.mode != "preview" or self.state.preview_examiner_mode == "single" or self.preview_view is None:
             self.preview_compare_view = None; self.preview_comparisons = (); return
         selection = self.state.selection
         if selection is None: return
+        generation = self.state.preview_generation
+        primary = self.preview_view
+        source_requested = self.state.preview_source
         source = self._normalized_compare_source()
         if not force and self.preview_compare_view is not None and self.preview_compare_view.source == source and self.preview_compare_view.identity == self.preview_view.identity:
             self._rebuild_preview_comparison(); return
         try:
-            self.preview_compare_view = await self._thread(self.service.preview, selection, source)
+            comparison = await self._thread(self.service.preview, selection, source)
+            if (
+                generation != self.state.preview_generation
+                or self.state.mode != "preview"
+                or self.state.selection is None
+                or self.state.selection.identity != selection.identity
+                or self.state.preview_source != source_requested
+                or self.preview_view is not primary
+            ):
+                return
+            self.preview_compare_view = comparison
             self.state.preview_compare_source = source
             self._rebuild_preview_comparison()
         except Exception as error:
@@ -649,22 +1041,44 @@ class OperatorWorkbenchApp(App):
     async def _load_transition_examiner(self) -> None:
         if self.state.mode != "preview" or self.state.preview_examiner_mode != "transition" or self.preview_view is None or self.state.selection is None:
             return
+        selection = self.state.selection
+        primary = self.preview_view
+        generation = self.state.preview_generation
+        source = self.state.preview_source
+        requested_target = self.state.transition_target_identity
         try:
-            self.transition_candidates = await self._thread(self.service.transition_candidates, self.state.selection)
+            candidates = tuple(await self._thread(self.service.transition_candidates, selection))
+            if (not self._preview_request_current(generation, selection, source)
+                    or self.preview_view is not primary
+                    or self.state.transition_target_identity != requested_target):
+                return
+            self.transition_candidates = candidates
             target = self._transition_target()
             if target is None:
                 self.transition_target_view = None; self.transition_analysis = None
                 self._activity("No compatible transition target", "WARN")
                 self._render_preview(); return
-            self.transition_target_view = await self._thread(self.service.transition_preview, target, self.preview_view.source)
-            self.transition_analysis = await self._thread(partial(
+            requested_target = target.identity
+            target_view = await self._thread(self.service.transition_preview, target, primary.source)
+            if (not self._preview_request_current(generation, selection, source)
+                    or self.preview_view is not primary
+                    or self.state.transition_target_identity != requested_target):
+                return
+            analysis = await self._thread(partial(
                 animation_transition.analyze_transition,
-                self.preview_view.frames, self.transition_target_view.frames, tail=2, head=2,
+                primary.frames, target_view.frames, tail=2, head=2,
             ))
+            if (not self._preview_request_current(generation, selection, source)
+                    or self.preview_view is not primary
+                    or self.state.transition_target_identity != requested_target):
+                return
+            self.transition_target_view = target_view
+            self.transition_analysis = analysis
             self.state.preview_playing = False
             self._render_preview()
         except Exception as error:
-            self.transition_target_view = None; self.transition_analysis = None
+            if not self._preview_request_current(generation, selection, source):
+                return
             self._activity(f"Transition Examiner unavailable: {error}", "WARN")
             self._render_preview()
 
@@ -747,7 +1161,7 @@ class OperatorWorkbenchApp(App):
             fps = self.sequence.clips[clip].review_fps
             self._main_widget("#timeline-controls", PreviewControls).show(frame=index, frames=len(self.timeline_frames), fps=fps, playing=self.state.preview_playing, loop=self.state.preview_loop, source=self.state.preview_source, zoom=self.state.preview_zoom)
             return
-        if not self.preview_view: return
+        if not self.preview_view or not self.preview_view.frames: return
         primary = self.preview_view
         index = min(self.state.preview_frame, len(primary.frames) - 1)
         self.state.preview_frame = index
@@ -820,13 +1234,11 @@ class OperatorWorkbenchApp(App):
         if self.state.mode != "preview": return
         modes = ("single", "split", "diff", "transition")
         self.state.preview_examiner_mode = modes[(modes.index(self.state.preview_examiner_mode) + 1) % len(modes)]
+        generation = self._next_preview_generation()
         if self.state.preview_examiner_mode == "single":
             self.preview_compare_view = None; self.preview_comparisons = (); self.transition_target_view = None; self.transition_analysis = None; self._render_preview(); return
-        if self.state.preview_examiner_mode == "transition":
-            self.preview_compare_view = None; self.preview_comparisons = ()
-            self.run_worker(self._load_transition_examiner(), group="transition-examiner", exclusive=True, exit_on_error=False); return
-        self.transition_target_view = None; self.transition_analysis = None
-        self.run_worker(self._load_preview_comparison(), group="preview-comparison", exclusive=True, exit_on_error=False)
+        self._preview_replacing = True
+        self.run_worker(self._load_preview(generation=generation), group="preview-image", exclusive=True, exit_on_error=False)
 
     def action_preview_compare_source(self) -> None:
         if self.state.mode != "preview" or self.state.preview_examiner_mode in ("single", "transition"): return
@@ -838,6 +1250,7 @@ class OperatorWorkbenchApp(App):
             if primary == "live" or candidate != primary:
                 self.state.preview_compare_source = candidate; break
         self.preview_compare_view = None; self.preview_comparisons = ()
+        self._next_preview_generation()
         self.run_worker(self._load_preview_comparison(force=True), group="preview-comparison", exclusive=True, exit_on_error=False)
 
     def on_preview_filmstrip_selected(self, event: PreviewFilmstrip.Selected) -> None:
@@ -976,12 +1389,15 @@ class OperatorWorkbenchApp(App):
             self._timeline_pending_focus = (clip, source_frame)
         sources = ("workbench", "canonical", "runtime")
         self.state.preview_source = sources[(sources.index(self.state.preview_source) + 1) % len(sources)]
+        generation = self._next_preview_generation() if self.state.mode == "preview" else self.state.preview_generation
+        if self.state.mode == "preview":
+            self._preview_replacing = True
         self.preview_compare_view = None
         self.preview_comparisons = ()
         self.transition_target_view = None
         self.transition_analysis = None
         self._reset_preview_clock()
-        task = self._load_timeline() if self.state.mode == "timeline" else self._load_motion_preview() if self.state.mode == "motion" else self._load_preview()
+        task = self._load_timeline() if self.state.mode == "timeline" else self._load_motion_preview() if self.state.mode == "motion" else self._load_preview(generation=generation)
         self.run_worker(task, group="preview-image", exclusive=True)
 
     def action_transition_target(self) -> None:
@@ -991,6 +1407,7 @@ class OperatorWorkbenchApp(App):
         index = next((i for i, candidate in enumerate(self.transition_candidates) if candidate.identity == current), -1)
         target = self.transition_candidates[(index + 1) % len(self.transition_candidates)]
         self.state.transition_target_identity = target.identity
+        self._next_preview_generation()
         self.transition_target_view = None; self.transition_analysis = None
         self.run_worker(self._load_transition_examiner(), group="transition-examiner", exclusive=True, exit_on_error=False)
 
@@ -1260,6 +1677,14 @@ class OperatorWorkbenchApp(App):
         now = time.monotonic()
         delta = max(0.0, now - self._preview_last_tick)
         self._preview_last_tick = now
+        if self.state.mode == "timeline":
+            if not self.timeline_frames:
+                return
+            self.state.preview_frame = max(0, min(self.state.preview_frame, len(self.timeline_frames) - 1))
+        if self.state.mode == "preview":
+            if self._preview_replacing or not self._preview_matches_active():
+                return
+            self.state.preview_frame = max(0, min(self.state.preview_frame, len(self.preview_view.frames) - 1))
         if self.state.mode not in ("preview", "timeline") or not self.state.preview_playing: return
         self._preview_elapsed_sec += delta
         while self.state.preview_playing:
@@ -1300,19 +1725,15 @@ class OperatorWorkbenchApp(App):
     async def _watch_selected(self) -> None:
         selection = self.state.selection
         if not selection: return
-        signature = self.service.watch_signature(selection)
-        if signature != self.state.watch_signature:
+        signature = self.service.watch_signature(selection) if not self._browser_refresh_in_progress else self.state.watch_signature
+        if not self._browser_refresh_in_progress and signature != self.state.watch_signature:
             self.state.watch_signature = signature
             if self.preview_compare_view is not None and self.preview_compare_view.source == "workbench":
                 self.preview_compare_view = None
                 self.preview_comparisons = ()
-            self._activity("workbench changed", "OK"); await self._load_session(selection)
-            if self.state.mode == "preview":
-                if self.state.preview_examiner_mode == "transition":
-                    await self._load_transition_examiner()
-                elif self.state.preview_examiner_mode != "single":
-                    await self._load_preview_comparison(force=True)
-                self._render_preview()
+            self._activity("workbench changed", "OK")
+            if await self._load_session(selection, load_preview=False) and self.state.mode == "preview":
+                await self._load_preview()
         process = self.state.aseprite_process
         if process is not None and process.poll() is not None:
             self.state.aseprite_process = None; self._activity("Aseprite closed")
@@ -1354,10 +1775,14 @@ class OperatorWorkbenchApp(App):
                 if transaction:
                     severity = "ERROR" if transaction[0] in ("ROLLED_BACK", "RECOVERY_REQUIRED") else "OK"
                     self._activity(transaction[0].replace("_", " "), severity)
-            if selection: await self._load_session(selection)
-            if operation == "PUBLISH": await self._reload_browser()
+            if selection and operation != "PUBLISH":
+                await self._load_session(selection)
         except Exception as error: self._error(error)
-        finally: self.state.active_operation = ""
+        finally:
+            self.state.active_operation = ""
+            if operation == "PUBLISH":
+                self._publish_refresh_pending = False
+                await self._reload_browser()
 
     def action_edit(self) -> None:
         selection=self._require_selection()

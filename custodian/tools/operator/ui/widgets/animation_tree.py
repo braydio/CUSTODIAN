@@ -12,6 +12,7 @@ class AnimationTree(Tree[object]):
     def __init__(self, records: list[AnimationRecord] | None = None) -> None:
         super().__init__("ANIMATIONS", id="animation-tree")
         self._records = records or []
+        self._silent_selection_identity = ""
 
     def set_records(self, records: list[AnimationRecord]) -> None:
         expanded = {
@@ -57,10 +58,14 @@ class AnimationTree(Tree[object]):
                 ancestor = node.parent
                 while ancestor is not None:
                     ancestor.expand(); ancestor = ancestor.parent
+                self._silent_selection_identity = selection.identity
                 self.select_node(node)
                 return True
         return False
 
     def on_tree_node_selected(self, event: Tree.NodeSelected[str]) -> None:
         if isinstance(event.node.data, AnimationSelection):
+            if event.node.data.identity == self._silent_selection_identity:
+                self._silent_selection_identity = ""
+                return
             self.post_message(self.Selected(event.node.data))
