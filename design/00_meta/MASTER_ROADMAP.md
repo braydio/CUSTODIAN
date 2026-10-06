@@ -336,7 +336,8 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 are complete/passed; t
 | Weapon heat, overheat, positional gunshot noise | complete | P0 |
 | Production combat-pressure feedback | in_progress | P1 |
 | Field Patch healing | planned | P1 |
-| Hit taxonomy and full riposte | planned | P1 |
+| Hit taxonomy / reactions | complete-v1 | P1 |
+| Dedicated semantic riposte | queued | P1 |
 | Durability and field repair | backlog | P2 |
 | Physical vault theft | complete | P1 |
 | Portable turret placement | complete | P1 |
