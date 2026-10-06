@@ -1,0 +1,443 @@
+{
+  "schema": "custodian.operator_2_5d_scale_ab_summary.v1",
+  "status": "pending_human_scale_choice",
+  "root_model": "same provisional model for both: hip_center x=64, lowest toe sole on row 111",
+  "previous_runtime_candidate_height_px": [
+    84,
+    88
+  ],
+  "candidates": {
+    "A": {
+      "scale": "1/5",
+      "scale_value": 0.2,
+      "reduced_cell_px": 96,
+      "directions": {
+        "n": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/n.png",
+          "sha256": "2a2d9e1c7725c0c70f4e9188ec2aa554f25946f8f17c5cc24bc5c1d1f3811f80",
+          "offset_xy": [
+            18,
+            25
+          ],
+          "apparent_height": 77,
+          "apparent_width": 43,
+          "alpha_bbox": [
+            43,
+            35,
+            86,
+            112
+          ],
+          "margins": {
+            "top": 35,
+            "bottom": 16,
+            "left": 43,
+            "right": 42
+          },
+          "head_hip_px": 28.0,
+          "toe_near_y": 105.2,
+          "toe_far_y": 111.6
+        },
+        "ne": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/ne.png",
+          "sha256": "f4219e7b06140076166001c7ab14e7eb579b7ec87f89778acbd71598d679cb68",
+          "offset_xy": [
+            18,
+            26
+          ],
+          "apparent_height": 75,
+          "apparent_width": 36,
+          "alpha_bbox": [
+            46,
+            37,
+            82,
+            112
+          ],
+          "margins": {
+            "top": 37,
+            "bottom": 16,
+            "left": 46,
+            "right": 46
+          },
+          "head_hip_px": 29.04,
+          "toe_near_y": 111.8,
+          "toe_far_y": 99.8
+        },
+        "e": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/e.png",
+          "sha256": "3dbde6a2f52577a78cd212d5d9e0c2f951cd75b382d18538354690e0b2241d52",
+          "offset_xy": [
+            17,
+            24
+          ],
+          "apparent_height": 77,
+          "apparent_width": 28,
+          "alpha_bbox": [
+            47,
+            35,
+            75,
+            112
+          ],
+          "margins": {
+            "top": 35,
+            "bottom": 16,
+            "left": 47,
+            "right": 53
+          },
+          "head_hip_px": 31.06,
+          "toe_near_y": 111.6,
+          "toe_far_y": 111.6
+        },
+        "se": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/se.png",
+          "sha256": "8a8e352eeaaec934bb438421d2259b91c28f6a4fbf3b5c202a61d2806f002a0d",
+          "offset_xy": [
+            16,
+            25
+          ],
+          "apparent_height": 77,
+          "apparent_width": 37,
+          "alpha_bbox": [
+            44,
+            35,
+            81,
+            112
+          ],
+          "margins": {
+            "top": 35,
+            "bottom": 16,
+            "left": 44,
+            "right": 47
+          },
+          "head_hip_px": 28.0,
+          "toe_near_y": 111.8,
+          "toe_far_y": 101.4
+        },
+        "s": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/s.png",
+          "sha256": "4ce375d4fce282fe8e0a962c4c1b97574d31812bfbea6ca9cc52fe0a57a2fdea",
+          "offset_xy": [
+            18,
+            27
+          ],
+          "apparent_height": 75,
+          "apparent_width": 42,
+          "alpha_bbox": [
+            44,
+            37,
+            86,
+            112
+          ],
+          "margins": {
+            "top": 37,
+            "bottom": 16,
+            "left": 44,
+            "right": 42
+          },
+          "head_hip_px": 25.4,
+          "toe_near_y": 104.6,
+          "toe_far_y": 112.0
+        },
+        "sw": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/sw.png",
+          "sha256": "25e2a342b5e19eeaba3db04280caa0990bf58821c9875b5c33223893049e3c3c",
+          "offset_xy": [
+            18,
+            26
+          ],
+          "apparent_height": 76,
+          "apparent_width": 34,
+          "alpha_bbox": [
+            48,
+            36,
+            82,
+            112
+          ],
+          "margins": {
+            "top": 36,
+            "bottom": 16,
+            "left": 48,
+            "right": 46
+          },
+          "head_hip_px": 27.45,
+          "toe_near_y": 111.6,
+          "toe_far_y": 99.6
+        },
+        "w": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/w.png",
+          "sha256": "9cda5504826ac68a1008e09a6234b8582998f3221bea0e5a64c844b4a83a3b0a",
+          "offset_xy": [
+            15,
+            25
+          ],
+          "apparent_height": 76,
+          "apparent_width": 27,
+          "alpha_bbox": [
+            50,
+            36,
+            77,
+            112
+          ],
+          "margins": {
+            "top": 36,
+            "bottom": 16,
+            "left": 50,
+            "right": 51
+          },
+          "head_hip_px": 30.02,
+          "toe_near_y": 111.4,
+          "toe_far_y": 111.4
+        },
+        "nw": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_a_0200/nw.png",
+          "sha256": "93ac921e2c2ecabeabfd380637eee44bf9a45809ae7be3361999526e9bb1ef2f",
+          "offset_xy": [
+            16,
+            27
+          ],
+          "apparent_height": 75,
+          "apparent_width": 37,
+          "alpha_bbox": [
+            45,
+            37,
+            82,
+            112
+          ],
+          "margins": {
+            "top": 37,
+            "bottom": 16,
+            "left": 45,
+            "right": 46
+          },
+          "head_hip_px": 29.02,
+          "toe_near_y": 111.4,
+          "toe_far_y": 100.6
+        }
+      },
+      "directions_sha256": "2fda7abceacaf4e60c33920b50328c34e7e76e5d7e03d41641c5fae0e9aa9964",
+      "height_px": {
+        "min": 75,
+        "max": 77,
+        "median": 76.0
+      },
+      "within_previous_runtime_candidate_range": false,
+      "min_margin_px": 16,
+      "clips": false
+    },
+    "B": {
+      "scale": "9/40",
+      "scale_value": 0.225,
+      "reduced_cell_px": 108,
+      "directions": {
+        "n": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/n.png",
+          "sha256": "ec0a9578a9cc39d61b4ff69222cd74f2756984d6ee7b9ea7a40ed1ee1ba6b24b",
+          "offset_xy": [
+            12,
+            14
+          ],
+          "apparent_height": 86,
+          "apparent_width": 48,
+          "alpha_bbox": [
+            40,
+            26,
+            88,
+            112
+          ],
+          "margins": {
+            "top": 26,
+            "bottom": 16,
+            "left": 40,
+            "right": 40
+          },
+          "head_hip_px": 31.5,
+          "toe_near_y": 104.23,
+          "toe_far_y": 111.42
+        },
+        "ne": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/ne.png",
+          "sha256": "62de6d6d62cf94a9ab6943d0d1afcc924843e024493e80201f24547475027ac5",
+          "offset_xy": [
+            12,
+            15
+          ],
+          "apparent_height": 85,
+          "apparent_width": 42,
+          "alpha_bbox": [
+            43,
+            27,
+            85,
+            112
+          ],
+          "margins": {
+            "top": 27,
+            "bottom": 16,
+            "left": 43,
+            "right": 43
+          },
+          "head_hip_px": 32.68,
+          "toe_near_y": 111.53,
+          "toe_far_y": 98.03
+        },
+        "e": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/e.png",
+          "sha256": "cfb0f26ce8ee09440a8df46924035f33def1596166777a497817790c22b3127a",
+          "offset_xy": [
+            11,
+            13
+          ],
+          "apparent_height": 87,
+          "apparent_width": 32,
+          "alpha_bbox": [
+            45,
+            25,
+            77,
+            112
+          ],
+          "margins": {
+            "top": 25,
+            "bottom": 16,
+            "left": 45,
+            "right": 51
+          },
+          "head_hip_px": 34.94,
+          "toe_near_y": 111.55,
+          "toe_far_y": 111.55
+        },
+        "se": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/se.png",
+          "sha256": "3f54718749c169dd16f1d1c30bdd1070f6da118b63180092693fb03e957eaba7",
+          "offset_xy": [
+            10,
+            14
+          ],
+          "apparent_height": 86,
+          "apparent_width": 41,
+          "alpha_bbox": [
+            42,
+            26,
+            83,
+            112
+          ],
+          "margins": {
+            "top": 26,
+            "bottom": 16,
+            "left": 42,
+            "right": 45
+          },
+          "head_hip_px": 31.5,
+          "toe_near_y": 111.65,
+          "toe_far_y": 99.95
+        },
+        "s": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/s.png",
+          "sha256": "5860bd3487c34ee8ab215d96a2ff8051f4e753a1b300eb8fd8a6c7ab4a3ea98a",
+          "offset_xy": [
+            12,
+            16
+          ],
+          "apparent_height": 84,
+          "apparent_width": 48,
+          "alpha_bbox": [
+            41,
+            28,
+            89,
+            112
+          ],
+          "margins": {
+            "top": 28,
+            "bottom": 16,
+            "left": 41,
+            "right": 39
+          },
+          "head_hip_px": 28.58,
+          "toe_near_y": 103.3,
+          "toe_far_y": 111.62
+        },
+        "sw": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/sw.png",
+          "sha256": "dff00ba80f20bf66b5e55ebfc7fc1ca6eb0ee7e9315d87863e9ac94f3f31a13d",
+          "offset_xy": [
+            12,
+            16
+          ],
+          "apparent_height": 84,
+          "apparent_width": 38,
+          "alpha_bbox": [
+            46,
+            28,
+            84,
+            112
+          ],
+          "margins": {
+            "top": 28,
+            "bottom": 16,
+            "left": 46,
+            "right": 44
+          },
+          "head_hip_px": 30.88,
+          "toe_near_y": 112.3,
+          "toe_far_y": 98.8
+        },
+        "w": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/w.png",
+          "sha256": "8141c510e085c7a5abdd8c607b7ab1c0e9bd2ca2ab3e66e44d972583e713aa71",
+          "offset_xy": [
+            9,
+            15
+          ],
+          "apparent_height": 85,
+          "apparent_width": 31,
+          "alpha_bbox": [
+            48,
+            27,
+            79,
+            112
+          ],
+          "margins": {
+            "top": 27,
+            "bottom": 16,
+            "left": 48,
+            "right": 49
+          },
+          "head_hip_px": 33.76,
+          "toe_near_y": 112.2,
+          "toe_far_y": 112.2
+        },
+        "nw": {
+          "png": "custodian/content/sprites/operator/reference/operator_2_5d/scale_candidates/scale_b_0225/nw.png",
+          "sha256": "bef1d7ccef3390344a818c303237fe071bae233ebdfd204ada45358d00feda4f",
+          "offset_xy": [
+            10,
+            17
+          ],
+          "apparent_height": 83,
+          "apparent_width": 42,
+          "alpha_bbox": [
+            42,
+            29,
+            84,
+            112
+          ],
+          "margins": {
+            "top": 29,
+            "bottom": 16,
+            "left": 42,
+            "right": 44
+          },
+          "head_hip_px": 32.65,
+          "toe_near_y": 111.95,
+          "toe_far_y": 99.8
+        }
+      },
+      "directions_sha256": "0b66bc4fb67a188177e3bc87e9c880927f80f0576726a44c3ba87723c3e2a037",
+      "height_px": {
+        "min": 83,
+        "max": 87,
+        "median": 85.0
+      },
+      "within_previous_runtime_candidate_range": true,
+      "min_margin_px": 16,
+      "clips": false
+    }
+  }
+}

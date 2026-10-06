@@ -1286,9 +1286,12 @@
       ],
       "owners": [
         "custodian/tools/operator/art_agent/canonical_contract.py",
+        "custodian/tools/operator/art_agent/canonical_calibration.py",
         "custodian/tools/operator/art_agent/registration_profile.py",
+        "custodian/tools/operator/art_agent/source_service.py",
         "custodian/content/data/operator/authoring/operator_art_profile.json",
         "custodian/content/data/operator/authoring/operator_2_5d_design_reference.json",
+        "reports/operator_presentation/canonical_visual_contract/**",
         "custodian/content/data/operator/authoring/operator_2_5d_landmark_annotations.json",
         "custodian/content/sprites/operator/reference/operator_2_5d/**",
         "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/**",

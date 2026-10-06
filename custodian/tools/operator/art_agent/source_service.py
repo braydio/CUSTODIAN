@@ -28,7 +28,7 @@ from .source_models import (
 from .source_normalization import build_plan, shared_transform_from_plan
 from .source_review import review_normalization
 from . import landmarks as landmark_store
-from .registration_profile import LEGACY_PROFILE_ID, load_profile, profile_report
+from .registration_profile import LEGACY_PROFILE_ID, ProfileNotAccepted, load_profile, profile_report, require_accepted
 from . import palette as palette_core
 from . import recolor as recolor_store
 
@@ -328,11 +328,20 @@ class SourceArtService:
         report["report"] = str(path.resolve())
         return report
 
+    @staticmethod
+    def _require_frozen_profile(plan: NormalizationPlan, operation: str) -> None:
+        """Provisional profiles may plan/preview/QA for calibration; production authority needs an accepted profile."""
+        try:
+            require_accepted(load_profile(profile_id=plan.profile_id or LEGACY_PROFILE_ID), operation=operation)
+        except ProfileNotAccepted as error:
+            raise model.WorkbenchError(str(error)) from error
+
     def production_command(self, session_path: Path | str) -> dict[str, Any]:
         session, root, _path = self.load(session_path)
         plan = self._load_plan(root, session=session)
         if plan.mode != "operator_profile":
             raise model.WorkbenchError("production command requires operator_profile normalization")
+        self._require_frozen_profile(plan, "production command")
         output = root / "production/crisp.png"
         command = ["pixelart", str(Path(session.source_original)), str(output), "--sheet", "--frames",
                    str(session.geometry.frame_count), "--source-cell", f"{session.geometry.source_cell_width}x{session.geometry.source_cell_height}",
@@ -346,6 +355,7 @@ class SourceArtService:
         plan = self._load_plan(root, session=session)
         if plan.mode != "operator_profile" or plan.method != "crisp":
             raise model.WorkbenchError("production verification requires a crisp operator_profile plan")
+        self._require_frozen_profile(plan, "production verification")
         if plan.profile_sha256 != load_profile(profile_id=plan.profile_id or LEGACY_PROFILE_ID)["sha256"]:
             raise model.WorkbenchError("registration profile changed after planning")
         output = root / "production/crisp.png"
@@ -530,6 +540,7 @@ class SourceArtService:
         if Path(destination_name).name != destination_name or not destination_name.lower().endswith(".png"):
             raise model.WorkbenchError("handoff destination must be a plain PNG filename")
         if (root / "normalization_plan.json").exists() and self._load_plan(root, session=session).mode == "operator_profile":
+            self._require_frozen_profile(self._load_plan(root, session=session), "operator_profile handoff")
             output = root / "production/crisp.png"
             proof_path = root / "production/verification.json"
             if not proof_path.exists():

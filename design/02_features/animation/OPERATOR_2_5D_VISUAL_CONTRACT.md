@@ -2,10 +2,28 @@
 
 ## Status
 
-Hard visual/registration authority for all future 2.5D Operator animation
-authoring. Approved by the user on 2026-10-06 as a `user_approved_visual_lock`.
+Visual/registration authority for future 2.5D Operator animation authoring.
+The character design and camera/projection are **locked** (user-approved
+2026-10-06, `user_approved_visual_lock`). The 128 registration profile is
+**provisional** until a human accepts root/floor, shared body scale, the 128
+action envelope and the cleanup-certified normalized hash.
 Measurements and tolerances are generated, not hand-typed:
 `custodian/content/data/operator/authoring/operator_2_5d_design_reference.json`.
+
+| Item | State |
+|---|---|
+| visual design | locked |
+| camera / projection | locked |
+| `operator_2_5d_128` profile | **provisional** (legacy_96 stays accepted) |
+| root / floor | pending human calibration |
+| shared body scale | pending A/B approval (0.200 vs 0.225) |
+| universal 128 envelope | pending proof (projection evidence only) |
+| final normalized hash | pending cleanup certification (per-candidate zero-change receipts exist) |
+
+Provisional geometry loads for measurement, preview, guides, QA and authoring
+calibration. Operations that need frozen authority (Source Session production
+command/verification/handoff) call `require_accepted` and refuse a provisional
+profile (`PROFILE_NOT_ACCEPTED`).
 
 ## Identity and direction order
 
@@ -32,10 +50,15 @@ screen projection, not anatomical side.
 - **128 reference** (`custodian/content/sprites/operator/reference/operator_2_5d/`):
   derived authoring ghosts. They are not gameplay animation states and do not
   replace any runtime Operator art in this slice.
-- Derivation: one shared 1/5 crisp area reduction for all eight directions
-  (body about 75-77 px tall inside the 128 frame, close to the legacy ~70 px
-  gameplay body), binary alpha, integer translation only. Never rotate, shear,
-  or scale a direction independently to equalize apparent height.
+- Derivation: one shared crisp area reduction for all eight directions, binary
+  alpha, integer translation only. Never rotate, shear, or scale a direction
+  independently to equalize apparent height.
+- Scale is **not decided**. Candidate A (0.200) gives a ~75-77 px body; the
+  previously reviewed runtime candidate was ~84-88 px; candidate B (0.225, 9/40)
+  gives ~83-87 px. 1/5 is not canonical merely because the source cells are
+  480x480. A/B artifacts: `reference/operator_2_5d/scale_candidates/`,
+  `operator_2_5d_scale_ab_comparison.png`, `operator_2_5d_scale_ab_summary.json`.
+  The human chooses the canonical body scale.
 
 ## Frame and canvas strategy
 
@@ -47,9 +70,21 @@ screen projection, not anatomical side.
 
 ## Root and floor semantics
 
+Distinct concepts, persisted per direction under `root_model` and never
+collapsed into one: `hip_center`, `left_foot_contact`, `right_foot_contact`
+(screen left/right), `projected_world_root`, `shadow_origin`, plus the
+support-foot baseline row and a candidate ground rail.
+
 - Center X = 64, from semantic `hip_center` (never alpha-bbox center).
-- Support contact (sole of the lowest `toe_near/toe_far`) = row **111**; anchor
-  `[64, 111]`; ground rail `y=112`. Alpha bottom is a fallback, never authority.
+- Row **111** is the *support-foot baseline*: the lowest toe sole after
+  integer placement. It is **not** a proven `projected_world_root`; the
+  provisional anchor `[64, 111]` / ground rail 112 only follows from that.
+- Foot-contact midpoints (normalized y): N 108.4, NE 105.8, E 111.6, SE 106.6,
+  S 108.3, SW 105.6, W 111.4, NW 106.0; median ~107.45. This is evidence, not a
+  definition of root_y. `projected_world_root` and `shadow_origin` are
+  candidates (`proven: false`) until human calibration; comparison rows 106-108
+  vs the current 111 are drawn in `operator_2_5d_registration_overlay.png`.
+- Alpha bottom is a fallback, never authority.
 - Never recenter a frame around its alpha bbox, weapon, FX, cloak tip or
   extended fist. Weapons/FX may trigger clipping refusal; they may never shrink
   the body.
@@ -117,6 +152,26 @@ ratio, apparent-height/area drift) · `ART_DIRECTION_WARN` (gold/visor
 lightness/hue/chroma drift) · `INFO` (intentional pose motion). Services:
 `ArtAgentService.canonical_reference`, `canonical_qa`; CLI `canonical-reference`,
 `canonical-qa`; MCP `operator_art_canonical_reference`, `operator_art_canonical_qa`.
+
+## 128 action envelope
+
+`operator_2_5d_action_envelope.json/.png` projects body-layer extents of the
+current runtime art (per-sheet feet-band anchor; split lower/upper modules,
+because `full_body` can have the weapon baked in) onto the 128 canvas for each
+required class: deepest dodge/crouch, fast-chain extension, block-hit/reaction,
+raised/overhead melee, longest 1H reach, ranged aim, large hit react,
+downed/death. The body is never shrunk to fit. Weapon/FX/cape overflow is
+measured separately and needs its own presentation envelope (the longest 1H
+reach overflows 128 for the weapon layer). This is feasibility evidence; the
+envelope is not proven until canonical frames are authored.
+
+## Pixel cleanup certification
+
+`operator_2_5d_cleanup_certification.json` records, per scale candidate and
+direction, before/after hashes, the exact changed-pixel list (empty), alpha-mask
+and component-topology equality. Current result: zero change. Any proposed
+cleanup is never auto-applied and pauses for review if it alters alpha/topology
+or exceeds 3 px.
 
 ## Aseprite guides
 

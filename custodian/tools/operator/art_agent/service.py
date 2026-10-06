@@ -88,6 +88,10 @@ def mutation_lock(workbench_path: Path) -> Iterator[None]:
             fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
 
 
+def entry_root_model(reference: dict[str, Any], direction: str) -> dict[str, Any] | None:
+    return reference.get("directions", {}).get(direction, {}).get("root_model")
+
+
 class ArtAgentService:
     def __init__(
         self,
@@ -633,6 +637,7 @@ class ArtAgentService:
             raise ValueError(f"unknown direction: {direction}")
         entry = reference["directions"][direction]
         return {"direction": direction, "profile_id": profile["profile_id"], "profile_sha256": profile["sha256"],
+                "registration_status": profile["registration_status"], "root_model": entry_root_model(reference, direction),
                 "source_sha256": reference["source"]["sha256"], "reference_png": str((contract.REPO / entry["reference_png"]).resolve()),
                 "reference_sha256": entry["reference_sha256"], "landmarks": entry["landmarks"]["normalized_128"],
                 "registration": entry["registration"], "geometry": entry["geometry"], "anatomy": entry["anatomy"],
@@ -649,10 +654,13 @@ class ArtAgentService:
         flags = [True if baseline_frames is None else (index + 1) in baseline_frames for index in range(len(images))]
         report = contract.evaluate_animation(images, direction, baseline=flags)
         report.update({"profile_id": profile["profile_id"], "profile_sha256": profile["sha256"], "canvas": size,
+                       "registration_status": profile["registration_status"], "authority": profile["profile"].get("profiles", {}).get(profile["profile_id"], {}).get("registration", {}).get("authority"),
                        "baseline_frames": [i + 1 for i, f in enumerate(flags) if f], "read_only": True})
         if size != [contract.FRAME, contract.FRAME]:
             report["findings"].insert(0, contract.finding("HARD_FAIL", "FRAME_SIZE", f"session canvas {size} is not the canonical 128x128 profile"))
             report["status"] = "HARD_FAIL"
+        if not profile["accepted"]:
+            report["findings"].append(contract.finding("INFO", "PROFILE_PROVISIONAL", f"{profile['profile_id']} is provisional: results are calibration evidence, not frozen canonical authority"))
         output = root / "previews/canonical_qa.json"
         write_json(output, report)
         report["report"] = str(output.resolve())
@@ -693,12 +701,12 @@ class ArtAgentService:
             palette_findings=palette_findings,
         )
         registration = profile_state["registration"] if profile_state else None
-        if registration and registration.get("status") == "accepted":
+        if registration and registration.get("status") in ("accepted", "provisional"):
             canvas_size = [int(manifest["canvas"]["width"]), int(manifest["canvas"]["height"])]
             matches = canvas_size == registration["frame_size"]
             value["registration_context"]["frame_size_matches"] = matches
             if not matches:
-                value["findings"].append({"severity": "critical", "class": "structural", "issue": "canvas size does not match accepted registration profile", "expected": registration["frame_size"], "actual": canvas_size})
+                value["findings"].append({"severity": "critical", "class": "structural", "issue": "canvas size does not match the registration profile", "expected": registration["frame_size"], "actual": canvas_size})
                 value["status"] = "RED"
         write_json(root/"qa.json",value); return value
 

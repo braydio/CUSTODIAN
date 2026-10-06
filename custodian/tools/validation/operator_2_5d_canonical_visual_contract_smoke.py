@@ -19,7 +19,8 @@ sys.path.insert(0, str(ROOT / "custodian/tools/art"))
 
 from art_agent import canonical_contract as cc
 from art_agent import landmarks as landmark_store
-from art_agent.registration_profile import CANONICAL_PROFILE_ID, LEGACY_PROFILE_ID, load_profile
+from art_agent import canonical_calibration as calibration
+from art_agent.registration_profile import CANONICAL_PROFILE_ID, LEGACY_PROFILE_ID, ProfileNotAccepted, load_profile, require_accepted
 
 EXPECTED_ORDER = ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
 
@@ -125,10 +126,29 @@ def main() -> int:
         legacy = load_profile(profile_id=LEGACY_PROFILE_ID)
         assert legacy["registration"]["frame_size"] == [96, 96] and legacy["registration"]["anchor"] == [48, 84]
         assert legacy["registration"] == legacy_registration
+        assert legacy["accepted"] is True and legacy["registration_status"] == "accepted"
         canonical = load_profile()
         assert canonical["profile_id"] == CANONICAL_PROFILE_ID == v3["active_authoring_profile"]
         reg = canonical["registration"]
         assert reg["frame_size"] == [128, 128] and reg["anchor"] == [64, 111] and reg["ground_y"] == 112
+        # a) provisional 128 loads for calibration; b) legacy stays accepted; c) acceptance-only operations reject provisional
+        assert reg["status"] == "provisional" and canonical["registration_status"] == "provisional" and canonical["accepted"] is False
+        assert reg["authority"]["root_floor"] == "pending_human_calibration" and reg["authority"]["shared_body_scale"] == "pending_ab_approval"
+        assert require_accepted(legacy, operation="legacy production")["profile_id"] == LEGACY_PROFILE_ID
+        try:
+            require_accepted(canonical, operation="production handoff")
+        except ProfileNotAccepted as error:
+            assert "PROFILE_NOT_ACCEPTED" in str(error)
+        else:
+            raise AssertionError("acceptance-only operation accepted a provisional profile")
+        bad_legacy = copy.deepcopy(v2); bad_legacy["registration"]["status"] = "provisional"
+        (temp / "bad_legacy.json").write_text(json.dumps(bad_legacy))
+        try:
+            load_profile(temp / "bad_legacy.json")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("legacy 96 profile must not be loadable as provisional")
         assert load_profile(frame_size=[96, 96])["profile_id"] == LEGACY_PROFILE_ID
         assert load_profile(frame_size=[128, 128])["profile_id"] == CANONICAL_PROFILE_ID
         assert legacy["sha256"] != canonical["sha256"]
@@ -224,6 +244,100 @@ def main() -> int:
         hue_swapped = cc.evaluate_frame(bluegold, "s", reference=reference)
         assert {"PALETTE_DRIFT", "GOLD_TRIM_PRESENCE"} & codes(hue_swapped, "ART_DIRECTION_WARN") and not codes(hue_swapped, "STRUCTURAL_WARN")
 
+        # provisional authority flows through Source Sessions: planning (calibration) works, production/handoff are refused
+        from art_agent.source_service import SourceArtService
+        import animation_workbench_model as workbench_model
+        source_root = temp / "inbox"; source_root.mkdir()
+        source = source_root / "synthetic.png"
+        fixture = Image.new("RGBA", (768, 768), (0, 0, 0, 0))
+        from PIL import ImageDraw
+        draw = ImageDraw.Draw(fixture)
+        draw.ellipse((300, 40, 468, 210), fill=(20, 20, 25, 255)); draw.rectangle((250, 210, 518, 470), fill=(40, 40, 45, 255))
+        draw.rectangle((270, 450, 350, 650), fill=(60, 50, 45, 255)); draw.rectangle((420, 450, 500, 650), fill=(60, 50, 45, 255)); fixture.save(source)
+        service = SourceArtService(root=temp / "sessions", allowed_source_roots=(source_root,), handoff_root=temp / "handoff", canonical_root=temp / "canonical")
+        session_path = service.start(source_path=source, frames=1)       # default target size is the canonical 128
+        assert service.load(session_path)[0].target_width == 128
+        service.analyze(session_path)
+        service.set_source_landmarks(session_path, [
+            {"frame": 1, "name": "head_center", "x": 384, "y": 125, "semantic_side": "center", "confidence": 1.0, "provenance": "human", "approved": True},
+            {"frame": 1, "name": "hip_center", "x": 384, "y": 397, "semantic_side": "center", "confidence": 1.0, "provenance": "human", "approved": True},
+            {"frame": 1, "name": "toe_near", "x": 310, "y": 650, "semantic_side": "near", "confidence": 1.0, "provenance": "human", "approved": True},
+            {"frame": 1, "name": "toe_far", "x": 460, "y": 650, "semantic_side": "far", "confidence": 1.0, "provenance": "human", "approved": True}])
+        service.render_source(session_path)
+        plan = service.plan_normalization(session_path, mode="operator_profile")
+        assert plan["profile_id"] == CANONICAL_PROFILE_ID and plan["profile_sha256"] == canonical["sha256"]
+        try:
+            service.production_command(session_path)
+        except workbench_model.WorkbenchError as error:
+            assert "PROFILE_NOT_ACCEPTED" in str(error)
+        else:
+            raise AssertionError("production command accepted a provisional profile")
+
+        # root/floor: five separate concepts per direction; 111 is a support baseline, not a proven world root
+        for d in EXPECTED_ORDER:
+            model = reference["directions"][d]["root_model"]
+            for concept in ("hip_center", "left_foot_contact", "right_foot_contact", "projected_world_root", "shadow_origin"):
+                assert concept in model, (d, concept)
+            assert model["left_foot_contact"]["x"] <= model["right_foot_contact"]["x"]
+            assert model["projected_world_root"]["proven"] is False and "pending_human_calibration" in model["projected_world_root"]["status"]
+            assert model["shadow_origin"]["proven"] is False
+            assert model["support_baseline_row"] == cc.SUPPORT_ROW
+        global_root = reference["root_model"]
+        assert global_root["status"] == "pending_human_calibration" and abs(global_root["median_foot_contact_midpoint_y"] - 107.45) <= 0.05
+        assert global_root["median_foot_contact_midpoint_y"] != cc.SUPPORT_ROW and global_root["comparison_candidate_root_rows"] == [106, 107, 108]
+        assert reference["authority"] == cc.AUTHORITY and cc.AUTHORITY["profile_128"] == "provisional"
+
+        # scale A/B: one shared scale per candidate, same canvas and root model, no per-direction scaling
+        assert cc.SCALE_CANDIDATES == {"A": (1, 5), "B": (9, 40)}
+        for key, pair in cc.SCALE_CANDIDATES.items():
+            folder = calibration.SCALE_DIR / calibration.SCALE_DIRNAMES[key]
+            for d, cell in zip(EXPECTED_ORDER, cells):
+                png = Image.open(folder / f"{d}.png").convert("RGBA")
+                assert png.size == (128, 128)
+                reduced = cc.normalize_cell(cell, pair)
+                pts = cc.refine_source_landmarks(cell, annotations["directions"][d])
+                norm = cc.normalize_direction(cell, pts, pair)
+                ox, oy = norm["offset"]
+                shifted = Image.new("RGBA", (128, 128), (0, 0, 0, 0)); shifted.alpha_composite(reduced, (ox, oy))
+                assert shifted.tobytes() == png.tobytes(), (key, d)
+                assert cc.silhouette_metrics(png)["alpha_bbox"][3] == cc.SUPPORT_ROW + 1
+        ab = json.loads((cc.REPORT_DIR / "operator_2_5d_scale_ab_summary.json").read_text())
+        assert ab["status"] == "pending_human_scale_choice"
+        assert ab["candidates"]["A"]["height_px"]["median"] < 84 <= ab["candidates"]["B"]["height_px"]["median"] <= 88
+        assert ab["candidates"]["B"]["within_previous_runtime_candidate_range"] is True
+        assert (cc.REPORT_DIR / "operator_2_5d_scale_ab_comparison.png").is_file() and (cc.REPORT_DIR / "operator_2_5d_registration_overlay.png").is_file()
+
+        # pixel cleanup certification: zero-change receipt; a contaminated fixture is proposed (not applied) and flagged
+        receipt = json.loads((cc.REPORT_DIR / "operator_2_5d_cleanup_certification.json").read_text())
+        assert receipt["status"] == "zero_change" and receipt["applied"] is False
+        for key in ("A", "B"):
+            for d, entry in receipt["candidates"][key]["directions"].items():
+                assert entry["changed_pixels"] == [] and entry["alpha_mask_equal"] and entry["component_topology_equal"]
+                assert entry["before_rgba_sha256"] == entry["after_rgba_sha256"]
+        assert "pending" in receipt["final_normalized_hash"]
+        dirty = np.array(south); ys, xs = np.where(dirty[..., 3] == 255)
+        dirty[ys[40], xs[40], :3] = (20, 40, 255)                              # blue contaminant inside the body
+        dirty[2, 2] = (255, 255, 255, 255)                                      # detached 1px island
+        proposal = calibration.propose_cleanup(Image.fromarray(dirty, "RGBA"))
+        kinds = {c["kind"] for c in proposal["changed"]}
+        assert kinds == {"contaminant_recolor", "island_removed"}
+        assert proposal["counts"]["contaminant_pixels"] == 1 and proposal["counts"]["detached_islands_1_2px"] == 1
+        assert not np.array_equal(np.array(proposal["cleaned"].getchannel("A")), dirty[..., 3]), "island removal must be visible as an alpha change"
+
+        # action envelope: evidence only; body never shrunk; weapon/fx separate
+        envelope = json.loads((cc.REPORT_DIR / "operator_2_5d_action_envelope.json").read_text())
+        assert "NOT proven" in envelope["status"] and set(envelope["classes"]) == set(calibration.ENVELOPE_CLASSES)
+        for name, info in envelope["classes"].items():
+            assert info["sheets_measured"] > 0 and set(info["body_worst"]) == {"up", "down", "left", "right"}, name
+            assert "presentation_worst" in info
+        assert "never shrunk" in envelope["method"]
+
+        # report states the freeze status
+        report_text = (cc.REPORT_DIR / "OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT_REPORT.md").read_text()
+        for phrase in ("visual design | locked", "camera projection | locked", "profile 128 | provisional", "root floor | pending human calibration",
+                       "shared body scale | pending ab approval", "universal 128 envelope | pending proof", "final normalized hash | pending cleanup certification"):
+            assert phrase in report_text, phrase
+
         # 12 guide layers cannot leak into the clean render / publish
         guide = (ROOT / "custodian/tools/aseprite/operator_anchor_guides.lua").read_text()
         bridge = (ROOT / "custodian/tools/aseprite/operator_live_bridge/art_agent_ops.lua").read_text()
@@ -235,7 +349,7 @@ def main() -> int:
             assert forbidden not in guide, "guide script must not retype geometry constants"
         note = aseprite_checks(temp)
 
-    print(f"PASS operator_2_5d_canonical_visual_contract_smoke: source lock, cells, profile registry, 8 directions, deterministic metrics, drift QA, guides ({note})")
+    print(f"PASS operator_2_5d_canonical_visual_contract_smoke: source lock, cells, provisional-vs-accepted profile registry, root model, scale A/B, cleanup receipt, envelope, 8 directions, deterministic metrics, drift QA, guides ({note})")
     return 0
 
 

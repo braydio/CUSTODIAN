@@ -123,7 +123,7 @@
     },
     "operator_2_5d_128": {
       "registration": {
-        "status": "accepted",
+        "status": "provisional",
         "frame_size": [
           128,
           128
@@ -133,10 +133,20 @@
           111
         ],
         "ground_y": 112,
+        "anchor_semantics": "support_foot_baseline_provisional (not a proven projected_world_root)",
         "provenance": {
-          "kind": "user_approved_visual_lock_derived",
-          "accepted_date": "2026-10-06",
+          "kind": "agent_derived_from_user_approved_visual_lock",
+          "accepted": false,
           "source_sha256": "37e080b8dda825dcfe048439e12f0ad4a66c70b33393d3296cd550761e1b0621"
+        },
+        "authority": {
+          "visual_design": "locked",
+          "camera_projection": "locked",
+          "profile_128": "provisional",
+          "root_floor": "pending_human_calibration",
+          "shared_body_scale": "pending_ab_approval",
+          "universal_128_envelope": "pending_proof",
+          "final_normalized_hash": "pending_cleanup_certification"
         },
         "guide": {
           "horizontal": {
@@ -233,5 +243,5 @@
     "rotation_lock_path": "custodian/content/sprites/operator/reference/operator_2_5d/operator_2_5d_rotation_lock_128.png",
     "directions_dir": "custodian/content/sprites/operator/reference/operator_2_5d/directions"
   },
-  "note": "Registration geometry is human-accepted structural guidance; artistic tolerances remain advisory. legacy_96 and operator_2_5d_128 coexist; new authoring defaults to operator_2_5d_128."
+  "note": "legacy_96 is accepted. operator_2_5d_128 is PROVISIONAL: it loads for measurement, preview, guides, QA and calibration but is not human-accepted; root/floor, shared body scale, the universal 128 envelope and the final normalized hash are pending. New authoring defaults to operator_2_5d_128 for calibration only."
 }

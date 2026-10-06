@@ -18,14 +18,26 @@ LEGACY_PROFILE_ID = "legacy_96"
 CANONICAL_PROFILE_ID = "operator_2_5d_128"
 
 
+ACCEPTED = "accepted"
+PROVISIONAL = "provisional"
+REGISTRATION_STATUSES = {ACCEPTED, PROVISIONAL}
+
+
+class ProfileNotAccepted(ValueError):
+    """Raised by operations that need frozen, human-accepted registration authority."""
+
+
 def _canonical_json(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
 def _validate_registration(registration: dict[str, Any]) -> None:
     frame_size = registration.get("frame_size")
-    if registration.get("status") != "accepted" or frame_size not in ([96, 96], [128, 128]):
-        raise ValueError("Operator registration profile must be accepted 96x96 or 128x128 geometry")
+    status = registration.get("status")
+    if status not in REGISTRATION_STATUSES or frame_size not in ([96, 96], [128, 128]):
+        raise ValueError("Operator registration profile must be accepted or provisional 96x96 or 128x128 geometry")
+    if frame_size == [96, 96] and status != ACCEPTED:
+        raise ValueError("the legacy 96x96 registration profile must stay accepted")
     guide = registration.get("guide", {})
     for group in ("horizontal", "vertical", "points"):
         if not isinstance(guide.get(group), dict):
@@ -99,11 +111,25 @@ def load_profile(path: Path = PROFILE_PATH, profile_id: str | None = None, frame
     else:
         effective = file_sha  # v1/v2 identity is unchanged so existing plans/receipts keep matching
     result = {"profile": value, "sha256": effective, "file_sha256": file_sha, "profile_id": profile_id,
+              "registration_status": registration.get("status") if registration else None,
+              "accepted": bool(registration and registration.get("status") == ACCEPTED),
               "available_profiles": sorted(registry), "active_authoring_profile": value.get("active_authoring_profile", LEGACY_PROFILE_ID),
               "canonical_visual_reference": reference, "registration": registration}
     if registration is not None:
         _validate_registration(registration)
     return result
+
+
+def require_accepted(loaded: dict[str, Any], *, operation: str) -> dict[str, Any]:
+    """Gate for operations that need frozen canonical authority (production, handoff, replay).
+
+    Provisional geometry is valid for measurement, preview, guides, QA and calibration only.
+    """
+    if not loaded.get("accepted"):
+        raise ProfileNotAccepted(
+            f"PROFILE_NOT_ACCEPTED: {operation} requires an accepted registration profile; "
+            f"{loaded.get('profile_id')} is {loaded.get('registration_status')}")
+    return loaded
 
 
 def weighted_median(observations: list[dict[str, Any]]) -> float:
@@ -204,6 +230,7 @@ def profile_report(*, landmarks: list[dict[str, Any]], frames: list[dict[str, An
     return {
         "schema": "custodian.operator_art_registration_report.v1",
         "profile_sha256": loaded["sha256"], "profile_id": loaded.get("profile_id", LEGACY_PROFILE_ID),
+        "registration_status": loaded.get("registration_status", ACCEPTED),
         "target_anchor": reg["anchor"], "guide": reg["guide"],
         "anchor_context": {"coordinate": reg["anchor"], "coordinate_space": "profile_coordinates"},
         "global_scale": global_scale, "clipping_safe_scale": clipping_safe_scale,

@@ -44,7 +44,7 @@ if not profile_id or profile_id == "" then
   end
 end
 local registration = assert(registry[profile_id], "Profile has no registration block: " .. tostring(profile_id))
-assert(registration.status == "accepted", "Registration geometry is not accepted")
+assert(registration.status == "accepted" or registration.status == "provisional", "Registration geometry status must be accepted or provisional")
 local cell_w, cell_h = registration.frame_size[1], registration.frame_size[2]
 assert((cell_w == 96 or cell_w == 128) and cell_w == cell_h, "Expected a 96x96 or 128x128 profile")
 assert(tiles(registration), "Canvas must be an exact grid of " .. cell_w .. "px cells")
@@ -140,4 +140,4 @@ else
 end
 app.activeLayer = last_layer
 app.refresh()
-print("[OperatorRegistration] " .. profile_id .. " guide rendered: " .. profile_path)
+print("[OperatorRegistration] " .. profile_id .. " (" .. registration.status .. ") guide rendered: " .. profile_path)

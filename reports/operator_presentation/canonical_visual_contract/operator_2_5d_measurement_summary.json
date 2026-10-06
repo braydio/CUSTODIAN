@@ -18,7 +18,8 @@
     ],
     "x_authority": "semantic hip_center",
     "y_authority": "semantic support contact (toe_near/toe_far); alpha bottom is fallback only",
-    "derivation": "support row 111 leaves a 16px floor margin under the shared 0.2-scale body; ground rail = support row + 1"
+    "derivation": "PROVISIONAL. Support baseline row 111 is the lowest toe sole after integer placement; it is a support-foot baseline, not a proven projected_world_root. Ground rail 112 is a candidate pending human calibration.",
+    "scale_status": "provisional candidate A (0.200); candidate B (0.225) compared in the A/B artifacts"
   },
   "tolerances": {
     "basis": "landmark/silhouette noise = 1.0px at 128 (one crisp pixel); structural tolerance = 2.0 x noise; palette tolerance = observed cross-direction spread of the approved reference with a floor",
@@ -34,7 +35,7 @@
     "palette": {
       "mean_lightness": 0.02,
       "mean_chroma": 0.01,
-      "gold_median_lightness": 0.042,
+      "gold_median_lightness": 0.032,
       "gold_median_hue_deg": 4.0
     },
     "enforcement": {
@@ -270,7 +271,7 @@
           "ring2": 0.6923,
           "ring3": 0.5361
         },
-        "outlier_hue_contaminant_pixels": 1,
+        "outlier_hue_contaminant_pixels": 0,
         "detached_islands_1_2px": 0,
         "alpha_components": 1,
         "largest_component_area": 1695,
@@ -377,7 +378,7 @@
           "ring2": 0.6994,
           "ring3": 0.6347
         },
-        "outlier_hue_contaminant_pixels": 1,
+        "outlier_hue_contaminant_pixels": 0,
         "detached_islands_1_2px": 0,
         "alpha_components": 1,
         "largest_component_area": 1381,
@@ -698,7 +699,7 @@
           "ring2": 0.7721,
           "ring3": 0.5476
         },
-        "outlier_hue_contaminant_pixels": 1,
+        "outlier_hue_contaminant_pixels": 0,
         "detached_islands_1_2px": 0,
         "alpha_components": 1,
         "largest_component_area": 1589,
@@ -805,7 +806,7 @@
           "ring2": 0.6875,
           "ring3": 0.6364
         },
-        "outlier_hue_contaminant_pixels": 2,
+        "outlier_hue_contaminant_pixels": 0,
         "detached_islands_1_2px": 0,
         "alpha_components": 1,
         "largest_component_area": 1330,
@@ -912,7 +913,7 @@
           "ring2": 0.7232,
           "ring3": 0.5576
         },
-        "outlier_hue_contaminant_pixels": 1,
+        "outlier_hue_contaminant_pixels": 0,
         "detached_islands_1_2px": 0,
         "alpha_components": 1,
         "largest_component_area": 1693,

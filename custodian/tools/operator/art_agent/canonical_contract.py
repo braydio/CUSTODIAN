@@ -32,10 +32,20 @@ DIRECTIONS = ("n", "ne", "e", "se", "s", "sw", "w", "nw")
 SOURCE_CELL = 480
 SOURCE_SIZE = (SOURCE_CELL * len(DIRECTIONS), SOURCE_CELL)
 FRAME = 128
-SCALE_NUM, SCALE_DEN = 1, 5            # 480px source cell -> 96px content at one shared scale
+SCALE_NUM, SCALE_DEN = 1, 5            # provisional candidate A: 480px source cell -> 96px content
+PRIMARY_SCALE = (SCALE_NUM, SCALE_DEN)
+SCALE_CANDIDATES = {"A": (1, 5), "B": (9, 40)}   # 0.200 and 0.225 (480 -> 96 / 108 px); human chooses
 CENTER_X = FRAME // 2
-SUPPORT_ROW = 111                      # sole contact row; ground rail is SUPPORT_ROW + 1
-GROUND_Y = SUPPORT_ROW + 1
+SUPPORT_ROW = 111                      # current support-foot baseline (lowest toe sole). NOT a proven world root.
+GROUND_Y = SUPPORT_ROW + 1             # provisional candidate ground rail, pending human calibration
+ROOT_CANDIDATE_ROWS = (106, 107, 108)  # comparison rows around the median foot-contact midpoint
+FAMILY_HUE = (25.0, 110.0)             # gold/amber family incl. yellow speculars (observed up to ~104 deg)
+GOLD_HUE = (40.0, 110.0)
+AUTHORITY = {
+    "visual_design": "locked", "camera_projection": "locked", "profile_128": "provisional",
+    "root_floor": "pending_human_calibration", "shared_body_scale": "pending_ab_approval",
+    "universal_128_envelope": "pending_proof", "final_normalized_hash": "pending_cleanup_certification",
+}
 ALPHA_CUTOFF = 128
 LANDMARK_NOISE_PX = 1.0                # one crisp pixel of quantization at 128px
 TOLERANCE_K = 2.0
@@ -235,16 +245,20 @@ def refine_source_landmarks(cell: Image.Image, annotation: dict[str, Any]) -> di
     return {name: points[name] for name in LANDMARK_ORDER}
 
 
-def normalize_cell(cell: Image.Image) -> Image.Image:
-    """Shared crisp conversion: exact 5:1 area reduction, binary alpha. No rotation, shear or per-direction scale."""
-    size = SOURCE_CELL * SCALE_NUM // SCALE_DEN
+def _scale(scale: tuple[int, int]) -> float:
+    return scale[0] / scale[1]
+
+
+def normalize_cell(cell: Image.Image, scale: tuple[int, int] = PRIMARY_SCALE) -> Image.Image:
+    """Shared crisp conversion: one area reduction, binary alpha. No rotation, shear or per-direction scale."""
+    size = int(round(SOURCE_CELL * scale[0] / scale[1]))
     reduced = cell.resize((size, size), Image.Resampling.BOX)
     return converter.clamp_alpha_binary(reduced, cutoff=ALPHA_CUTOFF)
 
 
-def support_contact_row(reduced: Image.Image, points: dict[str, dict[str, Any]]) -> tuple[int, str]:
+def support_contact_row(reduced: Image.Image, points: dict[str, dict[str, Any]], scale_pair: tuple[int, int] = PRIMARY_SCALE) -> tuple[int, str]:
     alpha = _rgba(reduced)[..., 3]
-    scale = SCALE_NUM / SCALE_DEN
+    scale = _scale(scale_pair)
     rows = []
     for name in ("toe_near", "toe_far"):
         p = points[name]
@@ -258,12 +272,12 @@ def support_contact_row(reduced: Image.Image, points: dict[str, dict[str, Any]])
     return int(rows_all.max()), "alpha_bottom_fallback"
 
 
-def normalize_direction(cell: Image.Image, points: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    reduced = normalize_cell(cell)
-    scale = SCALE_NUM / SCALE_DEN
+def normalize_direction(cell: Image.Image, points: dict[str, dict[str, Any]], scale_pair: tuple[int, int] = PRIMARY_SCALE) -> dict[str, Any]:
+    reduced = normalize_cell(cell, scale_pair)
+    scale = _scale(scale_pair)
     hip_x = points["hip_center"]["x"] * scale
     ox = CENTER_X - int(round(hip_x))
-    support, basis = support_contact_row(reduced, points)
+    support, basis = support_contact_row(reduced, points, scale_pair)
     oy = SUPPORT_ROW - support
     canvas = Image.new("RGBA", (FRAME, FRAME), (0, 0, 0, 0))
     canvas.alpha_composite(reduced, (ox, oy))
@@ -392,7 +406,7 @@ def color_metrics(image: Image.Image, head_rows: list[int] | None = None) -> dic
     for key, count in sorted(zip(*np.unique(keys, return_counts=True)), key=lambda kv: (-kv[1], kv[0]))[:8]:
         sel = keys == key
         clusters.append({"srgb": [int(v) for v in np.round(rgb[sel].mean(axis=0))], "share": _r(count / keys.size, 4)})
-    gold = (hue >= 40) & (hue <= 95) & (chroma >= 0.07)
+    gold = (hue >= GOLD_HUE[0]) & (hue <= GOLD_HUE[1]) & (chroma >= 0.07)
     visor = gold & (lightness >= 0.78) & (chroma >= 0.12)
     if head_rows is not None:
         rows = np.broadcast_to(((np.arange(FRAME) >= head_rows[0]) & (np.arange(FRAME) <= head_rows[1]))[:, None], opaque.shape)[opaque]
@@ -475,7 +489,7 @@ def outline_metrics(image: Image.Image) -> dict[str, Any]:
     ring2 = mask & ~perimeter & _perimeter(mask & ~perimeter)
     ring3_base = mask & ~perimeter & ~ring2
     ring3 = ring3_base & _perimeter(ring3_base)
-    contaminants = mask & (chroma > 0.05) & ~((hue >= 30) & (hue <= 100))
+    contaminants = mask & (chroma > 0.05) & ~((hue >= FAMILY_HUE[0]) & (hue <= FAMILY_HUE[1]))
     sizes = _components(mask)
     return {
         "alpha_perimeter_pixels": int(perimeter.sum()),
@@ -549,8 +563,49 @@ def derive_tolerances(per_direction: dict[str, dict[str, Any]]) -> dict[str, Any
 
 
 # --------------------------------------------------------------------------- build
+def root_model(points: dict[str, dict[str, Any]], support_row: int) -> dict[str, Any]:
+    """Explicit, separate root/floor concepts. The projected world root is a candidate, never inferred from the front foot."""
+    def contact(side: str) -> dict[str, Any]:
+        p = points[f"toe_{side}"]
+        return {"x": p["x"], "y": p["y"], "semantic": f"toe_{side}", "confidence": p["confidence"], "provenance": p["provenance"]}
+
+    near, far = contact("near"), contact("far")
+    left, right = sorted((near, far), key=lambda c: (c["x"], c["semantic"]))
+    mid_x, mid_y = _r((near["x"] + far["x"]) / 2, 2), _r((near["y"] + far["y"]) / 2, 2)
+    hip = points["hip_center"]
+    return {
+        "hip_center": {"x": hip["x"], "y": hip["y"], "confidence": hip["confidence"]},
+        "left_foot_contact": {**left, "screen_side": "left"},
+        "right_foot_contact": {**right, "screen_side": "right"},
+        "foot_contact_midpoint": {"x": mid_x, "y": mid_y},
+        "support_baseline_row": support_row,
+        "projected_world_root": {
+            "x": hip["x"], "y": mid_y, "status": "candidate_pending_human_calibration", "proven": False,
+            "basis": "hip_center x; foot-contact midpoint y. Not the front/lowest toe and not the ground rail."},
+        "shadow_origin": {
+            "x": hip["x"], "y": mid_y, "status": "candidate_follows_projected_world_root_pending_human_calibration", "proven": False},
+    }
+
+
+def global_root_model(per_direction: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    mids = {d: v["root_model"]["foot_contact_midpoint"]["y"] for d, v in per_direction.items()}
+    return {
+        "status": "pending_human_calibration",
+        "concepts": ["hip_center", "left_foot_contact", "right_foot_contact", "projected_world_root", "shadow_origin",
+                     "support_baseline_row", "candidate_ground_rail"],
+        "current_support_baseline_row": SUPPORT_ROW,
+        "current_candidate_ground_rail": GROUND_Y,
+        "foot_contact_midpoint_y": mids,
+        "median_foot_contact_midpoint_y": _r(float(np.median(list(mids.values()))), 2),
+        "comparison_candidate_root_rows": list(ROOT_CANDIDATE_ROWS),
+        "finding": "y=111 is the lowest support-toe baseline of the current normalization; it is not yet a semantic "
+                   "projected_world_root. The median foot-contact midpoint is the evidence for a root row, and does not "
+                   "by itself define root_y.",
+    }
+
+
 def build_reference(master: Path | None = None, *, write_reports: bool = True) -> dict[str, Any]:
-    master = master or (REPO / MASTER_NAME)
+    master = master or (SOURCE_DIR / MASTER_NAME)
     manifest = preserve_source(master)
     annotations = load_annotations()
     cells = split_cells(SOURCE_DIR / MASTER_NAME)
@@ -584,7 +639,7 @@ def build_reference(master: Path | None = None, *, write_reports: bool = True) -
                           "source": {n: {"x": p["x"], "y": p["y"], "confidence": p["confidence"], "provenance": p["provenance"]}
                                      for n, p in source_points.items()},
                           "normalized_128": {n: {k: v for k, v in p.items() if k != "source_xy"} for n, p in points.items()}},
-            "registration": registration, "geometry": geometry,
+            "registration": registration, "root_model": root_model(points, _support_row(image)), "geometry": geometry,
             "anatomy": anatomy_metrics({n: points[n] for n in points}, geometry),
             "color": color_metrics(image, head_band(points)), "outline": outline_metrics(image),
         }
@@ -605,8 +660,12 @@ def build_reference(master: Path | None = None, *, write_reports: bool = True) -
             "method": "crisp: BOX area reduction then binary alpha (cutoff 128); integer translation only; no rotation, shear or per-direction scale",
             "center_x": CENTER_X, "support_row": SUPPORT_ROW, "ground_y": GROUND_Y, "anchor": [CENTER_X, SUPPORT_ROW],
             "x_authority": "semantic hip_center", "y_authority": "semantic support contact (toe_near/toe_far); alpha bottom is fallback only",
-            "derivation": "support row 111 leaves a 16px floor margin under the shared 0.2-scale body; ground rail = support row + 1",
+            "derivation": "PROVISIONAL. Support baseline row 111 is the lowest toe sole after integer placement; it is a support-foot "
+                          "baseline, not a proven projected_world_root. Ground rail 112 is a candidate pending human calibration.",
+            "scale_status": "provisional candidate A (0.200); candidate B (0.225) compared in the A/B artifacts",
         },
+        "authority": dict(AUTHORITY),
+        "root_model": global_root_model(per_direction),
         "annotations": {"path": rel(ANNOTATIONS_PATH), "sha256": sha256_file(ANNOTATIONS_PATH),
                         "provenance": "agent visual annotation; confidence recorded per point; occluded points <= 0.4"},
         "rotation_lock": {"path": rel(lock_path), "sha256": sha256_file(lock_path), "directions_sha256": sheet_sha},
@@ -617,12 +676,15 @@ def build_reference(master: Path | None = None, *, write_reports: bool = True) -
         "human_authority_only": [
             "numeric camera pitch (not derivable from flattened pixels; the turnaround is projection authority)",
             "subjective visor/gold highlight taste", "occluded-landmark placement below confidence 0.6",
-            "sign-off on the 5:1 crisp reduction of the approved render"],
+            "projected_world_root / shadow_origin row (candidates only)", "canonical shared body scale (A/B)",
+            "sign-off on the crisp reduction of the approved render"],
     }
     write_json(REFERENCE_JSON_PATH, reference)
     profile = write_profile(reference)
     if write_reports:
         write_reports_bundle(reference, images, profile)
+        from . import canonical_calibration
+        canonical_calibration.build_calibration(reference, cells, annotations)
     return reference
 
 
@@ -685,9 +747,11 @@ def write_profile(reference: dict[str, Any]) -> dict[str, Any]:
             LEGACY_PROFILE_ID: legacy,
             PROFILE_ID: {
                 "registration": {
-                    "status": "accepted", "frame_size": [FRAME, FRAME], "anchor": norm["anchor"], "ground_y": GROUND_Y,
-                    "provenance": {"kind": "user_approved_visual_lock_derived", "accepted_date": "2026-10-06",
+                    "status": "provisional", "frame_size": [FRAME, FRAME], "anchor": norm["anchor"], "ground_y": GROUND_Y,
+                    "anchor_semantics": "support_foot_baseline_provisional (not a proven projected_world_root)",
+                    "provenance": {"kind": "agent_derived_from_user_approved_visual_lock", "accepted": False,
                                    "source_sha256": reference["source"]["sha256"]},
+                    "authority": dict(AUTHORITY),
                     "guide": {k: guide[k] for k in ("horizontal", "vertical", "points", "modular_split_reference_y")},
                     "normalization": {
                         "mode": "shared_scale", "source_landmark_min_confidence": 0.75,
@@ -708,8 +772,9 @@ def write_profile(reference: dict[str, Any]) -> dict[str, Any]:
             "rotation_lock_path": reference["rotation_lock"]["path"],
             "directions_dir": rel(REFERENCE_DIR / "directions"),
         },
-        "note": "Registration geometry is human-accepted structural guidance; artistic tolerances remain advisory. "
-                "legacy_96 and operator_2_5d_128 coexist; new authoring defaults to operator_2_5d_128.",
+        "note": "legacy_96 is accepted. operator_2_5d_128 is PROVISIONAL: it loads for measurement, preview, guides, QA and "
+                "calibration but is not human-accepted; root/floor, shared body scale, the universal 128 envelope and the "
+                "final normalized hash are pending. New authoring defaults to operator_2_5d_128 for calibration only.",
     }
     write_json(PROFILE_PATH, profile)
     return profile
@@ -792,10 +857,17 @@ Generated deterministically by `custodian/tools/operator/art_agent/canonical_con
 - Source geometry: {reference['source']['dimensions'][0]}x{reference['source']['dimensions'][1]} RGBA, eight {SOURCE_CELL}x{SOURCE_CELL} cells
 - Direction order: {', '.join(d.upper() for d in DIRECTIONS)}
 - Packet deviation: the packet recorded a 2048x256 attachment (`2d5de16d...5323`); the user confirmed the 3840x480 repository-root file as the approved lock.
-- Profile registry: `operator_art_profile.v3`, active `{PROFILE_ID}`, legacy `{LEGACY_PROFILE_ID}` retained unchanged
+- Profile registry: `operator_art_profile.v3`, active `{PROFILE_ID}` (**provisional**), legacy `{LEGACY_PROFILE_ID}` (accepted) retained unchanged
 - Effective profile hash (`{PROFILE_ID}`): `{profile_sha}`
-- Canonical 128 frame: center x = {CENTER_X}, anchor = [{CENTER_X}, {SUPPORT_ROW}], ground_y = {GROUND_Y}
-- Shared scale: {SCALE_NUM}/{SCALE_DEN} (one scale for all eight directions); translation is integer-only per direction
+- Provisional 128 frame: center x = {CENTER_X}, support-foot baseline row = {SUPPORT_ROW}, candidate ground rail = {GROUND_Y}
+- Provisional shared scale (candidate A): {SCALE_NUM}/{SCALE_DEN}; candidate B (9/40) is in the A/B artifacts; translation is integer-only per direction
+
+## Status
+| Item | State |
+|---|---|
+{chr(10).join(f"| {k.replace('_', ' ')} | {v.replace('_', ' ')} |" for k, v in AUTHORITY.items())}
+
+Root/floor: y={SUPPORT_ROW} is the lowest support-toe baseline of this normalization, not a proven projected_world_root. Median foot-contact midpoint y = {reference['root_model']['median_foot_contact_midpoint_y']}; this is evidence, not a definition of root_y. See `root_model` in the design reference JSON and `operator_2_5d_registration_overlay.png`.
 
 ## Per-direction summary (normalized 128)
 | Dir | Height | Width | Support y | Hip x offset | Head-hip px | Mean OKLab L | Visor | Fringe px |
@@ -804,6 +876,7 @@ Generated deterministically by `custodian/tools/operator/art_agent/canonical_con
 
 ## Tolerances (derived, not invented)
 - Basis: {tol['basis']}
+- Tolerances are provisional until the profile is accepted.
 - Hard: frame size, alpha contract (binary, no clipping), per-frame scale (> {tol['per_frame_scale_ratio']:.0%} ratio spread across baseline frames), profile identity.
 - Structural (warn): apparent height +/-{tol['apparent_height_px']}px, support contact +/-{tol['support_contact_px']}px, hip x +/-{tol['hip_center_x_px']}px, silhouette area +/-{tol['silhouette_area_ratio']:.0%}, limb ratios per-segment (see design reference JSON).
 - Art-direction (warn): palette tolerances {tol['palette']}.
@@ -995,4 +1068,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    # Re-enter through the package so relative imports (calibration) and module state are single-instance.
+    sys.path.insert(0, str(CUSTODIAN / "tools/operator"))
+    from art_agent.canonical_contract import main as _package_main
+    raise SystemExit(_package_main())

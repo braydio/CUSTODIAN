@@ -1,0 +1,6496 @@
+{
+  "schema": "custodian.operator_2_5d_action_envelope_projection.v1",
+  "status": "projected_feasibility_evidence_only; universal 128 envelope is NOT proven until canonical frames are authored",
+  "method": "Measure body-layer alpha extents of the current 96-based runtime art about a per-sheet root anchor (feet band), scale by canonical/legacy neutral body height, compare to the 128 canvas room below each candidate root row. The body is never shrunk to fit; weapon/fx/cape layers are reported separately as presentation overflow.",
+  "projection": {
+    "A": {
+      "canonical_body_height_px": 76.0,
+      "legacy_neutral_body_height_px": 71.0,
+      "factor": 1.0704225352112675
+    },
+    "B": {
+      "canonical_body_height_px": 85.0,
+      "legacy_neutral_body_height_px": 71.0,
+      "factor": 1.1971830985915493
+    }
+  },
+  "canvas_room_by_root_row": {
+    "106": {
+      "up": 106,
+      "down": 21,
+      "left": 64,
+      "right": 64
+    },
+    "107": {
+      "up": 107,
+      "down": 20,
+      "left": 64,
+      "right": 64
+    },
+    "108": {
+      "up": 108,
+      "down": 19,
+      "left": 64,
+      "right": 64
+    },
+    "111": {
+      "up": 111,
+      "down": 16,
+      "left": 64,
+      "right": 64
+    }
+  },
+  "classes": {
+    "deepest_dodge_crouch": {
+      "sheets_measured": 20,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 77.0,
+          "key": "shared/transition/dodge_01/n"
+        },
+        "down": {
+          "legacy_px": 3.0,
+          "key": "unarmed/attack/dodge_fast_attack_01/e"
+        },
+        "left": {
+          "legacy_px": 42.5,
+          "key": "shared/attack/dodge_charge_windup_01/e"
+        },
+        "right": {
+          "legacy_px": 42.5,
+          "key": "shared/attack/dodge_charge_windup_01/nw"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 84.0,
+          "key": "shared/transition/dodge_01/n"
+        },
+        "down": {
+          "legacy_px": 3.0,
+          "key": "shared/transition/dodge_01/n"
+        },
+        "left": {
+          "legacy_px": 57.0,
+          "key": "unarmed/attack/dodge_fast_attack_01/e"
+        },
+        "right": {
+          "legacy_px": 57.0,
+          "key": "unarmed/attack/dodge_fast_attack_01/w"
+        }
+      },
+      "records": [
+        {
+          "key": "shared/transition/dodge_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 9,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            47.5,
+            85.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            15,
+            8,
+            80,
+            88
+          ],
+          "presentation_union": [
+            2,
+            1,
+            85,
+            89
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 77.0,
+            "down": 2.0,
+            "left": 32.5,
+            "right": 32.5
+          },
+          "presentation_extents": {
+            "up": 84.0,
+            "down": 3.0,
+            "left": 45.5,
+            "right": 37.5
+          }
+        },
+        {
+          "key": "shared/transition/dodge_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 9,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            47.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            20,
+            17,
+            75,
+            85
+          ],
+          "presentation_union": [
+            0,
+            8,
+            94,
+            86
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 67.0,
+            "down": 0.0,
+            "left": 27.0,
+            "right": 28.0
+          },
+          "presentation_extents": {
+            "up": 76.0,
+            "down": 1.0,
+            "left": 47.0,
+            "right": 47.0
+          }
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            43.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            1,
+            24,
+            84,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 42.5,
+            "right": 40.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            43.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            1,
+            24,
+            84,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 42.5,
+            "right": 40.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/ne",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            43.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            1,
+            24,
+            84,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 42.5,
+            "right": 40.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/nw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            52.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            12,
+            24,
+            95,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 40.5,
+            "right": 42.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            43.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            1,
+            24,
+            84,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 42.5,
+            "right": 40.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/se",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            43.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            1,
+            24,
+            84,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 42.5,
+            "right": 40.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/sw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            43.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            1,
+            24,
+            84,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 42.5,
+            "right": 40.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/attack/dodge_charge_windup_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            52.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            12,
+            24,
+            95,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 60.0,
+            "down": 0.0,
+            "left": 40.5,
+            "right": 42.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            42.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            26,
+            68,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 19.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            42.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            26,
+            68,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 19.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/ne",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            42.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            26,
+            68,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 19.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/nw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            53.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            28,
+            26,
+            73,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 25.5,
+            "right": 19.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            42.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            26,
+            68,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 19.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/se",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            42.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            26,
+            68,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 19.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/sw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            42.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            26,
+            68,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 19.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "shared/transition/dodge_chain_link_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            53.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            28,
+            26,
+            73,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 58.0,
+            "down": 0.0,
+            "left": 25.5,
+            "right": 19.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/dodge_fast_attack_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 11,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            57.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            15,
+            11,
+            96,
+            88
+          ],
+          "presentation_union": [
+            0,
+            14,
+            91,
+            85
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 73.0,
+            "down": 3.0,
+            "left": 42.0,
+            "right": 39.0
+          },
+          "presentation_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 57.0,
+            "right": 34.0
+          }
+        },
+        {
+          "key": "unarmed/attack/dodge_fast_attack_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 11,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            39.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            0,
+            11,
+            81,
+            88
+          ],
+          "presentation_union": [
+            5,
+            14,
+            96,
+            85
+          ],
+          "presentation_layers": [
+            "fx",
+            "cape"
+          ],
+          "body_extents": {
+            "up": 73.0,
+            "down": 3.0,
+            "left": 39.0,
+            "right": 42.0
+          },
+          "presentation_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 34.0,
+            "right": 57.0
+          }
+        }
+      ]
+    },
+    "fast_chain_body_extension": {
+      "sheets_measured": 40,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 87.0,
+          "key": "unarmed/attack/fast_01/n"
+        },
+        "down": {
+          "legacy_px": 3.0,
+          "key": "unarmed/attack/fast_02/s"
+        },
+        "left": {
+          "legacy_px": 49.5,
+          "key": "unarmed/attack/fast_04/w"
+        },
+        "right": {
+          "legacy_px": 49.5,
+          "key": "unarmed/attack/fast_04/e"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 82.0,
+          "key": "unarmed/attack/fast_strike_01/ne"
+        },
+        "down": {
+          "legacy_px": -5.0,
+          "key": "unarmed/attack/fast_recovery_01/n"
+        },
+        "left": {
+          "legacy_px": 59.0,
+          "key": "unarmed/attack/fast_01/w"
+        },
+        "right": {
+          "legacy_px": 59.0,
+          "key": "unarmed/attack/fast_01/e"
+        }
+      },
+      "records": [
+        {
+          "key": "unarmed/attack/fast_01/e",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            64.0,
+            100.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            26,
+            30,
+            112,
+            101
+          ],
+          "presentation_union": [
+            35,
+            31,
+            123,
+            69
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 38.0,
+            "right": 48.0
+          },
+          "presentation_extents": {
+            "up": 69.0,
+            "down": -32.0,
+            "left": 29.0,
+            "right": 59.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            51.0,
+            91.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            5,
+            4,
+            91,
+            92
+          ],
+          "presentation_union": [
+            16,
+            12,
+            78,
+            74
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 87.0,
+            "down": 0.0,
+            "left": 46.0,
+            "right": 40.0
+          },
+          "presentation_extents": {
+            "up": 79.0,
+            "down": -18.0,
+            "left": 35.0,
+            "right": 27.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            53.0,
+            91.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            8,
+            4,
+            87,
+            92
+          ],
+          "presentation_union": [
+            20,
+            27,
+            61,
+            61
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 87.0,
+            "down": 0.0,
+            "left": 45.0,
+            "right": 34.0
+          },
+          "presentation_extents": {
+            "up": 64.0,
+            "down": -31.0,
+            "left": 33.0,
+            "right": 8.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_01/w",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            64.0,
+            100.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            16,
+            30,
+            102,
+            101
+          ],
+          "presentation_union": [
+            5,
+            31,
+            93,
+            69
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 48.0,
+            "right": 38.0
+          },
+          "presentation_extents": {
+            "up": 69.0,
+            "down": -32.0,
+            "left": 59.0,
+            "right": 29.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_02/e",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            64.0,
+            101.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            31,
+            111,
+            102
+          ],
+          "presentation_union": [
+            34,
+            36,
+            118,
+            66
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 41.0,
+            "right": 47.0
+          },
+          "presentation_extents": {
+            "up": 65.0,
+            "down": -36.0,
+            "left": 30.0,
+            "right": 54.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_02/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.0,
+            91.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            4,
+            79,
+            92
+          ],
+          "presentation_union": null,
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 87.0,
+            "down": 0.0,
+            "left": 33.0,
+            "right": 29.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_02/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.0,
+            88.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            10,
+            4,
+            86,
+            92
+          ],
+          "presentation_union": null,
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 84.0,
+            "down": 3.0,
+            "left": 40.0,
+            "right": 36.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_02/w",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            64.0,
+            101.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            31,
+            105,
+            102
+          ],
+          "presentation_union": [
+            10,
+            36,
+            94,
+            66
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 47.0,
+            "right": 41.0
+          },
+          "presentation_extents": {
+            "up": 65.0,
+            "down": -36.0,
+            "left": 54.0,
+            "right": 30.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_03/e",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 7,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            63.0,
+            100.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            25,
+            30,
+            105,
+            101
+          ],
+          "presentation_union": [
+            40,
+            19,
+            110,
+            74
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 38.0,
+            "right": 42.0
+          },
+          "presentation_extents": {
+            "up": 81.0,
+            "down": -27.0,
+            "left": 23.0,
+            "right": 47.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_03/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 7,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.0,
+            89.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            11,
+            4,
+            85,
+            92
+          ],
+          "presentation_union": null,
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 85.0,
+            "down": 2.0,
+            "left": 39.0,
+            "right": 35.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_03/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 7,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.5,
+            91.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            6,
+            4,
+            90,
+            92
+          ],
+          "presentation_union": null,
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 87.0,
+            "down": 0.0,
+            "left": 40.5,
+            "right": 43.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_03/w",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 7,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            65.0,
+            100.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            30,
+            103,
+            101
+          ],
+          "presentation_union": [
+            18,
+            19,
+            88,
+            74
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 42.0,
+            "right": 38.0
+          },
+          "presentation_extents": {
+            "up": 81.0,
+            "down": -27.0,
+            "left": 47.0,
+            "right": 23.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_04/e",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 8,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            61.5,
+            101.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            21,
+            33,
+            111,
+            102
+          ],
+          "presentation_union": [
+            46,
+            24,
+            112,
+            81
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 68.0,
+            "down": 0.0,
+            "left": 40.5,
+            "right": 49.5
+          },
+          "presentation_extents": {
+            "up": 77.0,
+            "down": -21.0,
+            "left": 15.5,
+            "right": 50.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_04/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 8,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            49.25,
+            91.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            19,
+            4,
+            76,
+            92
+          ],
+          "presentation_union": null,
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 87.0,
+            "down": 0.0,
+            "left": 30.2,
+            "right": 26.8
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_04/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 8,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.5,
+            91.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            9,
+            4,
+            87,
+            92
+          ],
+          "presentation_union": null,
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 87.0,
+            "down": 0.0,
+            "left": 41.5,
+            "right": 36.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_04/w",
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 8,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            66.5,
+            101.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            33,
+            107,
+            102
+          ],
+          "presentation_union": [
+            16,
+            24,
+            82,
+            81
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 68.0,
+            "down": 0.0,
+            "left": 49.5,
+            "right": 40.5
+          },
+          "presentation_extents": {
+            "up": 77.0,
+            "down": -21.0,
+            "left": 50.5,
+            "right": 15.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.0,
+            89.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            21,
+            92,
+            91
+          ],
+          "presentation_union": [
+            23,
+            22,
+            88,
+            58
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 68.0,
+            "down": 1.0,
+            "left": 29.0,
+            "right": 46.0
+          },
+          "presentation_extents": {
+            "up": 67.0,
+            "down": -32.0,
+            "left": 23.0,
+            "right": 42.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.5,
+            87.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            22,
+            6,
+            80,
+            88
+          ],
+          "presentation_union": [
+            7,
+            13,
+            85,
+            82
+          ],
+          "presentation_layers": [
+            "fx",
+            "cape"
+          ],
+          "body_extents": {
+            "up": 81.0,
+            "down": 0.0,
+            "left": 26.5,
+            "right": 31.5
+          },
+          "presentation_extents": {
+            "up": 74.0,
+            "down": -6.0,
+            "left": 41.5,
+            "right": 36.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/ne",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            44.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            11,
+            13,
+            79,
+            89
+          ],
+          "presentation_union": [
+            39,
+            4,
+            88,
+            73
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 73.0,
+            "down": 2.0,
+            "left": 33.5,
+            "right": 34.5
+          },
+          "presentation_extents": {
+            "up": 82.0,
+            "down": -14.0,
+            "left": 5.5,
+            "right": 43.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/nw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            51.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            13,
+            85,
+            89
+          ],
+          "presentation_union": [
+            8,
+            4,
+            57,
+            73
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 73.0,
+            "down": 2.0,
+            "left": 34.5,
+            "right": 33.5
+          },
+          "presentation_extents": {
+            "up": 82.0,
+            "down": -14.0,
+            "left": 43.5,
+            "right": 5.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            20,
+            15,
+            70,
+            86
+          ],
+          "presentation_union": [
+            13,
+            36,
+            44,
+            76
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 69.0,
+            "down": 1.0,
+            "left": 26.0,
+            "right": 24.0
+          },
+          "presentation_extents": {
+            "up": 48.0,
+            "down": -9.0,
+            "left": 33.0,
+            "right": -2.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/se",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            45.5,
+            90.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            16,
+            11,
+            86,
+            92
+          ],
+          "presentation_union": [
+            0,
+            29,
+            96,
+            66
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 79.0,
+            "down": 1.0,
+            "left": 29.5,
+            "right": 40.5
+          },
+          "presentation_extents": {
+            "up": 61.0,
+            "down": -25.0,
+            "left": 45.5,
+            "right": 50.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/sw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.5,
+            90.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            10,
+            11,
+            80,
+            92
+          ],
+          "presentation_union": [
+            0,
+            29,
+            96,
+            66
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 79.0,
+            "down": 1.0,
+            "left": 40.5,
+            "right": 29.5
+          },
+          "presentation_extents": {
+            "up": 61.0,
+            "down": -25.0,
+            "left": 50.5,
+            "right": 45.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_strike_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.0,
+            89.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            4,
+            21,
+            79,
+            91
+          ],
+          "presentation_union": [
+            8,
+            22,
+            73,
+            58
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 68.0,
+            "down": 1.0,
+            "left": 46.0,
+            "right": 29.0
+          },
+          "presentation_extents": {
+            "up": 67.0,
+            "down": -32.0,
+            "left": 42.0,
+            "right": 23.0
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            20,
+            16,
+            80,
+            87
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 28.0,
+            "right": 32.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            20,
+            17,
+            70,
+            87
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 69.0,
+            "down": 0.0,
+            "left": 26.5,
+            "right": 23.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/ne",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            49.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            17,
+            75,
+            88
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 69.0,
+            "down": 1.0,
+            "left": 32.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/nw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            21,
+            17,
+            79,
+            88
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 69.0,
+            "down": 1.0,
+            "left": 25.5,
+            "right": 32.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            47.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            20,
+            11,
+            74,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 73.0,
+            "down": 0.0,
+            "left": 27.0,
+            "right": 27.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/se",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            39.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            10,
+            12,
+            71,
+            87
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 74.0,
+            "down": 0.0,
+            "left": 29.5,
+            "right": 31.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/sw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            56.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            25,
+            12,
+            86,
+            87
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 74.0,
+            "down": 0.0,
+            "left": 31.5,
+            "right": 29.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_windup_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            16,
+            16,
+            76,
+            87
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 32.0,
+            "right": 28.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.0,
+            85.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            22,
+            15,
+            81,
+            86
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 28.0,
+            "right": 31.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.5,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            20,
+            9,
+            73,
+            87
+          ],
+          "presentation_union": [
+            7,
+            11,
+            66,
+            82
+          ],
+          "presentation_layers": [
+            "fx",
+            "cape"
+          ],
+          "body_extents": {
+            "up": 77.0,
+            "down": 0.0,
+            "left": 26.5,
+            "right": 26.5
+          },
+          "presentation_extents": {
+            "up": 75.0,
+            "down": -5.0,
+            "left": 39.5,
+            "right": 19.5
+          }
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/ne",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.5,
+            88.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            7,
+            77,
+            89
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 81.0,
+            "down": 0.0,
+            "left": 25.5,
+            "right": 28.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/nw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            47.5,
+            88.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            19,
+            7,
+            73,
+            89
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 81.0,
+            "down": 0.0,
+            "left": 28.5,
+            "right": 25.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            16,
+            74,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 68.0,
+            "down": 0.0,
+            "left": 23.5,
+            "right": 27.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/se",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            24,
+            13,
+            73,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 71.0,
+            "down": 0.0,
+            "left": 22.5,
+            "right": 26.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/sw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            49.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            13,
+            72,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 71.0,
+            "down": 0.0,
+            "left": 26.5,
+            "right": 22.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/attack/fast_recovery_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            47.0,
+            87.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            18,
+            7,
+            82,
+            88
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 80.0,
+            "down": 0.0,
+            "left": 29.0,
+            "right": 35.0
+          },
+          "presentation_extents": null
+        }
+      ]
+    },
+    "block_hit_reaction": {
+      "sheets_measured": 10,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 72.0,
+          "key": "melee_1h/defense/block_hit_01/e"
+        },
+        "down": {
+          "legacy_px": 2.0,
+          "key": "melee_1h_heavy/defense/block_enter_01/s"
+        },
+        "left": {
+          "legacy_px": 34.5,
+          "key": "unarmed/defense/parry_01/w"
+        },
+        "right": {
+          "legacy_px": 34.5,
+          "key": "unarmed/defense/parry_01/e"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 73.0,
+          "key": "unarmed/defense/parry_01/e"
+        },
+        "down": {
+          "legacy_px": -5.0,
+          "key": "melee_1h_heavy/defense/block_hold_01/s"
+        },
+        "left": {
+          "legacy_px": 43.0,
+          "key": "unarmed/defense/parry_01/n"
+        },
+        "right": {
+          "legacy_px": 47.8,
+          "key": "melee_1h_heavy/defense/block_exit_01/s"
+        }
+      },
+      "records": [
+        {
+          "key": "unarmed/defense/block_hit_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            51.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            21,
+            14,
+            79,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 30.0,
+            "right": 28.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/defense/block_hit_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            45.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            14,
+            75,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 28.0,
+            "right": 30.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "melee_1h/defense/block_hit_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            19,
+            12,
+            75,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 72.0,
+            "down": 0.0,
+            "left": 29.0,
+            "right": 27.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "melee_1h/defense/block_hit_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            21,
+            12,
+            77,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 72.0,
+            "down": 0.0,
+            "left": 27.0,
+            "right": 29.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/defense/parry_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            14,
+            85,
+            85
+          ],
+          "presentation_union": [
+            53,
+            11,
+            83,
+            68
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 33.5,
+            "right": 34.5
+          },
+          "presentation_extents": {
+            "up": 73.0,
+            "down": -17.0,
+            "left": -2.5,
+            "right": 32.5
+          }
+        },
+        {
+          "key": "unarmed/defense/parry_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            85.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            16,
+            14,
+            69,
+            86
+          ],
+          "presentation_union": [
+            5,
+            12,
+            76,
+            69
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 71.0,
+            "down": 0.0,
+            "left": 32.0,
+            "right": 21.0
+          },
+          "presentation_extents": {
+            "up": 73.0,
+            "down": -17.0,
+            "left": 43.0,
+            "right": 28.0
+          }
+        },
+        {
+          "key": "unarmed/defense/parry_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            45.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            11,
+            14,
+            79,
+            85
+          ],
+          "presentation_union": [
+            13,
+            11,
+            43,
+            68
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 34.5,
+            "right": 33.5
+          },
+          "presentation_extents": {
+            "up": 73.0,
+            "down": -17.0,
+            "left": 32.5,
+            "right": -2.5
+          }
+        },
+        {
+          "key": "melee_1h_heavy/defense/block_enter_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            47.75,
+            82.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            31,
+            18,
+            65,
+            85
+          ],
+          "presentation_union": [
+            44,
+            13,
+            95,
+            57
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 64.0,
+            "down": 2.0,
+            "left": 16.8,
+            "right": 17.2
+          },
+          "presentation_extents": {
+            "up": 69.0,
+            "down": -26.0,
+            "left": 3.8,
+            "right": 47.2
+          }
+        },
+        {
+          "key": "melee_1h_heavy/defense/block_hold_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 1,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            45.5,
+            82.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            28,
+            16,
+            63,
+            83
+          ],
+          "presentation_union": [
+            32,
+            24,
+            77,
+            78
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 66.0,
+            "down": 0.0,
+            "left": 17.5,
+            "right": 17.5
+          },
+          "presentation_extents": {
+            "up": 58.0,
+            "down": -5.0,
+            "left": 13.5,
+            "right": 31.5
+          }
+        },
+        {
+          "key": "melee_1h_heavy/defense/block_exit_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 2,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            47.25,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            27,
+            18,
+            67,
+            85
+          ],
+          "presentation_union": [
+            37,
+            16,
+            95,
+            54
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 66.0,
+            "down": 0.0,
+            "left": 20.2,
+            "right": 19.8
+          },
+          "presentation_extents": {
+            "up": 68.0,
+            "down": -31.0,
+            "left": 10.2,
+            "right": 47.8
+          }
+        }
+      ]
+    },
+    "raised_overhead_melee": {
+      "sheets_measured": 6,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 72.0,
+          "key": "melee_1h_heavy/attack/heavy_01/s"
+        },
+        "down": {
+          "legacy_px": 10.0,
+          "key": "melee_1h_heavy/attack/heavy_windup_01/s"
+        },
+        "left": {
+          "legacy_px": 45.5,
+          "key": "unarmed/attack/heavy_01/w"
+        },
+        "right": {
+          "legacy_px": 47.0,
+          "key": "melee_1h_heavy/attack/heavy_windup_01/s"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 82.0,
+          "key": "melee_1h_heavy/attack/heavy_windup_01/s"
+        },
+        "down": {
+          "legacy_px": 13.0,
+          "key": "melee_1h_heavy/attack/heavy_01/s"
+        },
+        "left": {
+          "legacy_px": 52.0,
+          "key": "melee_1h_heavy/attack/heavy_01/s"
+        },
+        "right": {
+          "legacy_px": 43.0,
+          "key": "melee_1h_heavy/attack/heavy_01/s"
+        }
+      },
+      "records": [
+        {
+          "key": "melee_1h_heavy/attack/heavy_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 7,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            53.0,
+            82.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            13,
+            10,
+            92,
+            87
+          ],
+          "presentation_union": [
+            1,
+            1,
+            96,
+            96
+          ],
+          "presentation_layers": [
+            "weapon",
+            "fx"
+          ],
+          "body_extents": {
+            "up": 72.0,
+            "down": 4.0,
+            "left": 40.0,
+            "right": 39.0
+          },
+          "presentation_extents": {
+            "up": 81.0,
+            "down": 13.0,
+            "left": 52.0,
+            "right": 43.0
+          }
+        },
+        {
+          "key": "melee_1h_heavy/attack/heavy_windup_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            82.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            19,
+            95,
+            93
+          ],
+          "presentation_union": [
+            47,
+            0,
+            91,
+            57
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 63.0,
+            "down": 10.0,
+            "left": 25.0,
+            "right": 47.0
+          },
+          "presentation_extents": {
+            "up": 82.0,
+            "down": -26.0,
+            "left": 1.0,
+            "right": 43.0
+          }
+        },
+        {
+          "key": "unarmed/attack/heavy_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 7,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            45.5,
+            83.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            22,
+            26,
+            91,
+            84
+          ],
+          "presentation_union": [
+            20,
+            27,
+            87,
+            63
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 57.0,
+            "down": 0.0,
+            "left": 23.5,
+            "right": 45.5
+          },
+          "presentation_extents": {
+            "up": 56.0,
+            "down": -21.0,
+            "left": 25.5,
+            "right": 41.5
+          }
+        },
+        {
+          "key": "unarmed/attack/heavy_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 8,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            82.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            10,
+            10,
+            89,
+            87
+          ],
+          "presentation_union": [
+            19,
+            8,
+            75,
+            58
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 72.0,
+            "down": 4.0,
+            "left": 38.0,
+            "right": 41.0
+          },
+          "presentation_extents": {
+            "up": 74.0,
+            "down": -25.0,
+            "left": 29.0,
+            "right": 27.0
+          }
+        },
+        {
+          "key": "unarmed/attack/heavy_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 7,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            13,
+            82,
+            90
+          ],
+          "presentation_union": [
+            10,
+            15,
+            84,
+            93
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 71.0,
+            "down": 5.0,
+            "left": 31.0,
+            "right": 34.0
+          },
+          "presentation_extents": {
+            "up": 69.0,
+            "down": 8.0,
+            "left": 38.0,
+            "right": 36.0
+          }
+        },
+        {
+          "key": "unarmed/attack/heavy_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 7,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            50.5,
+            83.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            5,
+            26,
+            74,
+            84
+          ],
+          "presentation_union": [
+            9,
+            27,
+            76,
+            63
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 57.0,
+            "down": 0.0,
+            "left": 45.5,
+            "right": 23.5
+          },
+          "presentation_extents": {
+            "up": 56.0,
+            "down": -21.0,
+            "left": 41.5,
+            "right": 25.5
+          }
+        }
+      ]
+    },
+    "longest_1h_body_reach": {
+      "sheets_measured": 12,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 76.0,
+          "key": "melee_1h/attack/fast_02/e"
+        },
+        "down": {
+          "legacy_px": 4.0,
+          "key": "melee_1h/attack/fast_01/w"
+        },
+        "left": {
+          "legacy_px": 48.2,
+          "key": "melee_1h_heavy/attack/fast_01/w"
+        },
+        "right": {
+          "legacy_px": 46.2,
+          "key": "melee_1h/attack/fast_02/e"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 84.0,
+          "key": "melee_1h/attack/fast_02/e"
+        },
+        "down": {
+          "legacy_px": 11.0,
+          "key": "melee_1h/attack/fast_01/e"
+        },
+        "left": {
+          "legacy_px": 89.2,
+          "key": "melee_1h/attack/fast_02/w"
+        },
+        "right": {
+          "legacy_px": 106.8,
+          "key": "melee_1h/attack/fast_01/e"
+        }
+      },
+      "records": [
+        {
+          "key": "melee_1h/attack/fast_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            49.25,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            7,
+            15,
+            85,
+            85
+          ],
+          "presentation_union": [
+            21,
+            13,
+            156,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 69.0,
+            "down": 0.0,
+            "left": 42.2,
+            "right": 35.8
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 28.2,
+            "right": 106.8
+          }
+        },
+        {
+          "key": "melee_1h/attack/fast_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            15,
+            14,
+            81,
+            89
+          ],
+          "presentation_union": [
+            0,
+            13,
+            135,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 4.0,
+            "left": 33.5,
+            "right": 32.5
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 48.5,
+            "right": 86.5
+          }
+        },
+        {
+          "key": "melee_1h/attack/fast_02/e",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 8,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            66.75,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            32,
+            8,
+            113,
+            89
+          ],
+          "presentation_union": [
+            16,
+            0,
+            156,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 76.0,
+            "down": 4.0,
+            "left": 34.8,
+            "right": 46.2
+          },
+          "presentation_extents": {
+            "up": 84.0,
+            "down": 11.0,
+            "left": 50.8,
+            "right": 89.2
+          }
+        },
+        {
+          "key": "melee_1h/attack/fast_02/w",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 8,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            89.25,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            43,
+            8,
+            124,
+            89
+          ],
+          "presentation_union": [
+            0,
+            0,
+            140,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 76.0,
+            "down": 4.0,
+            "left": 46.2,
+            "right": 34.8
+          },
+          "presentation_extents": {
+            "up": 84.0,
+            "down": 11.0,
+            "left": 89.2,
+            "right": 50.8
+          }
+        },
+        {
+          "key": "melee_1h/attack/fast_03/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.75,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            12,
+            8,
+            84,
+            86
+          ],
+          "presentation_union": [
+            4,
+            1,
+            145,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 76.0,
+            "down": 1.0,
+            "left": 36.8,
+            "right": 35.2
+          },
+          "presentation_extents": {
+            "up": 83.0,
+            "down": 11.0,
+            "left": 44.8,
+            "right": 96.2
+          }
+        },
+        {
+          "key": "melee_1h/attack/fast_03/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            48.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            12,
+            8,
+            84,
+            86
+          ],
+          "presentation_union": [
+            11,
+            1,
+            152,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 76.0,
+            "down": 1.0,
+            "left": 36.0,
+            "right": 36.0
+          },
+          "presentation_extents": {
+            "up": 83.0,
+            "down": 11.0,
+            "left": 37.0,
+            "right": 104.0
+          }
+        },
+        {
+          "key": "melee_1h_heavy/attack/fast_01/e",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            66.75,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            32,
+            13,
+            113,
+            89
+          ],
+          "presentation_union": [
+            21,
+            13,
+            156,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 71.0,
+            "down": 4.0,
+            "left": 34.8,
+            "right": 46.2
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 45.8,
+            "right": 89.2
+          }
+        },
+        {
+          "key": "melee_1h_heavy/attack/fast_01/w",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            89.25,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            41,
+            14,
+            124,
+            89
+          ],
+          "presentation_union": [
+            0,
+            13,
+            135,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 4.0,
+            "left": 48.2,
+            "right": 34.8
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 89.2,
+            "right": 45.8
+          }
+        },
+        {
+          "key": "melee_1h_heavy/attack/fast_02/e",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            66.75,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            32,
+            13,
+            113,
+            89
+          ],
+          "presentation_union": [
+            21,
+            13,
+            156,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 71.0,
+            "down": 4.0,
+            "left": 34.8,
+            "right": 46.2
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 45.8,
+            "right": 89.2
+          }
+        },
+        {
+          "key": "melee_1h_heavy/attack/fast_02/w",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            89.25,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            41,
+            14,
+            124,
+            89
+          ],
+          "presentation_union": [
+            0,
+            13,
+            135,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 4.0,
+            "left": 48.2,
+            "right": 34.8
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 89.2,
+            "right": 45.8
+          }
+        },
+        {
+          "key": "melee_1h_heavy/attack/fast_03/e",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            66.75,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            32,
+            13,
+            113,
+            89
+          ],
+          "presentation_union": [
+            21,
+            13,
+            156,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 71.0,
+            "down": 4.0,
+            "left": 34.8,
+            "right": 46.2
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 45.8,
+            "right": 89.2
+          }
+        },
+        {
+          "key": "melee_1h_heavy/attack/fast_03/w",
+          "frame_size": [
+            156,
+            96
+          ],
+          "frames": 10,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            89.25,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            41,
+            14,
+            124,
+            89
+          ],
+          "presentation_union": [
+            0,
+            13,
+            135,
+            96
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 4.0,
+            "left": 48.2,
+            "right": 34.8
+          },
+          "presentation_extents": {
+            "up": 71.0,
+            "down": 11.0,
+            "left": 89.2,
+            "right": 45.8
+          }
+        }
+      ]
+    },
+    "ranged_aim": {
+      "sheets_measured": 11,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 76.0,
+          "key": "ranged_2h/cosmetic/reload_01/omni"
+        },
+        "down": {
+          "legacy_px": 2.0,
+          "key": "ranged_2h/cosmetic/reload_01/omni"
+        },
+        "left": {
+          "legacy_px": 39.5,
+          "key": "ranged_2h/cosmetic/aim_01/w"
+        },
+        "right": {
+          "legacy_px": 39.5,
+          "key": "ranged_2h/cosmetic/fire_01/se"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 81.0,
+          "key": "ranged_2h/cosmetic/fire_01/e"
+        },
+        "down": {
+          "legacy_px": 2.0,
+          "key": "ranged_2h/cosmetic/fire_01/e"
+        },
+        "left": {
+          "legacy_px": 52.5,
+          "key": "ranged_2h/cosmetic/fire_01/w"
+        },
+        "right": {
+          "legacy_px": 52.5,
+          "key": "ranged_2h/cosmetic/fire_01/e"
+        }
+      },
+      "records": [
+        {
+          "key": "ranged_2h/cosmetic/aim_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            45.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            22,
+            14,
+            83,
+            86
+          ],
+          "presentation_union": [
+            54,
+            28,
+            86,
+            50
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 1.0,
+            "left": 23.5,
+            "right": 37.5
+          },
+          "presentation_extents": {
+            "up": 56.0,
+            "down": -35.0,
+            "left": -8.5,
+            "right": 40.5
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/aim_01/se",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            45.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            27,
+            14,
+            83,
+            85
+          ],
+          "presentation_union": [
+            41,
+            30,
+            76,
+            65
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 18.0,
+            "right": 38.0
+          },
+          "presentation_extents": {
+            "up": 54.0,
+            "down": -20.0,
+            "left": 4.0,
+            "right": 31.0
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/aim_01/sw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            51.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            13,
+            14,
+            69,
+            85
+          ],
+          "presentation_union": [
+            20,
+            30,
+            55,
+            65
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 70.0,
+            "down": 0.0,
+            "left": 38.0,
+            "right": 18.0
+          },
+          "presentation_extents": {
+            "up": 54.0,
+            "down": -20.0,
+            "left": 31.0,
+            "right": 4.0
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/aim_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            11,
+            13,
+            74,
+            86
+          ],
+          "presentation_union": [
+            10,
+            28,
+            42,
+            50
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 71.0,
+            "down": 1.0,
+            "left": 39.5,
+            "right": 23.5
+          },
+          "presentation_extents": {
+            "up": 56.0,
+            "down": -35.0,
+            "left": 40.5,
+            "right": -8.5
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/fire_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            40.5,
+            81.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            17,
+            13,
+            70,
+            82
+          ],
+          "presentation_union": [
+            0,
+            0,
+            93,
+            84
+          ],
+          "presentation_layers": [
+            "weapon",
+            "fx"
+          ],
+          "body_extents": {
+            "up": 68.0,
+            "down": 0.0,
+            "left": 23.5,
+            "right": 29.5
+          },
+          "presentation_extents": {
+            "up": 81.0,
+            "down": 2.0,
+            "left": 40.5,
+            "right": 52.5
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/fire_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.0,
+            86.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            31,
+            14,
+            72,
+            87
+          ],
+          "presentation_union": [
+            41,
+            12,
+            61,
+            54
+          ],
+          "presentation_layers": [
+            "weapon"
+          ],
+          "body_extents": {
+            "up": 72.0,
+            "down": 0.0,
+            "left": 19.0,
+            "right": 22.0
+          },
+          "presentation_extents": {
+            "up": 74.0,
+            "down": -33.0,
+            "left": 9.0,
+            "right": 11.0
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/fire_01/se",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            45.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            25,
+            12,
+            85,
+            85
+          ],
+          "presentation_union": [
+            49,
+            35,
+            96,
+            84
+          ],
+          "presentation_layers": [
+            "weapon",
+            "fx"
+          ],
+          "body_extents": {
+            "up": 72.0,
+            "down": 0.0,
+            "left": 20.5,
+            "right": 39.5
+          },
+          "presentation_extents": {
+            "up": 49.0,
+            "down": -1.0,
+            "left": -3.5,
+            "right": 50.5
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/fire_01/sw",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            50.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            11,
+            12,
+            71,
+            85
+          ],
+          "presentation_union": [
+            0,
+            35,
+            47,
+            84
+          ],
+          "presentation_layers": [
+            "weapon",
+            "fx"
+          ],
+          "body_extents": {
+            "up": 72.0,
+            "down": 0.0,
+            "left": 39.5,
+            "right": 20.5
+          },
+          "presentation_extents": {
+            "up": 49.0,
+            "down": -1.0,
+            "left": 50.5,
+            "right": -3.5
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/fire_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 6,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            55.5,
+            81.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            26,
+            13,
+            79,
+            82
+          ],
+          "presentation_union": [
+            3,
+            0,
+            96,
+            84
+          ],
+          "presentation_layers": [
+            "weapon",
+            "fx"
+          ],
+          "body_extents": {
+            "up": 68.0,
+            "down": 0.0,
+            "left": 29.5,
+            "right": 23.5
+          },
+          "presentation_extents": {
+            "up": 81.0,
+            "down": 2.0,
+            "left": 52.5,
+            "right": 40.5
+          }
+        },
+        {
+          "key": "ranged_2h/cosmetic/fire_walk_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 7,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            43.5,
+            80.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            31,
+            36,
+            54,
+            82
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 44.0,
+            "down": 1.0,
+            "left": 12.5,
+            "right": 10.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "ranged_2h/cosmetic/reload_01/omni",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 4,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            47.75,
+            82.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            30,
+            6,
+            71,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 76.0,
+            "down": 2.0,
+            "left": 17.8,
+            "right": 23.2
+          },
+          "presentation_extents": null
+        }
+      ]
+    },
+    "large_hit_react": {
+      "sheets_measured": 5,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 69.0,
+          "key": "unarmed/locomotion/idle_hitreact_01/s"
+        },
+        "down": {
+          "legacy_px": 1.0,
+          "key": "unarmed/reaction/light_hitreact_01/s"
+        },
+        "left": {
+          "legacy_px": 43.5,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "right": {
+          "legacy_px": 42.5,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 67.0,
+          "key": "unarmed/reaction/light_hitreact_01/s"
+        },
+        "down": {
+          "legacy_px": 1.0,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "left": {
+          "legacy_px": 49.5,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "right": {
+          "legacy_px": 50.0,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/w"
+        }
+      },
+      "records": [
+        {
+          "key": "unarmed/reaction/light_hitreact_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 3,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            45.5,
+            83.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            23,
+            19,
+            74,
+            85
+          ],
+          "presentation_union": [
+            33,
+            16,
+            63,
+            44
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 64.0,
+            "down": 1.0,
+            "left": 22.5,
+            "right": 28.5
+          },
+          "presentation_extents": {
+            "up": 67.0,
+            "down": -40.0,
+            "left": 12.5,
+            "right": 17.5
+          }
+        },
+        {
+          "key": "unarmed/locomotion/idle_hitreact_01/n",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            46.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            26,
+            31,
+            73,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 53.0,
+            "down": 0.0,
+            "left": 20.5,
+            "right": 26.5
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/locomotion/idle_hitreact_01/s",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 5,
+          "body_layers": [
+            "lower_body",
+            "upper_body"
+          ],
+          "anchor_xy": [
+            49.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            29,
+            15,
+            70,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 69.0,
+            "down": 0.0,
+            "left": 20.0,
+            "right": 21.0
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 12,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            49.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            6,
+            18,
+            92,
+            86
+          ],
+          "presentation_union": [
+            0,
+            32,
+            96,
+            86
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 66.0,
+            "down": 1.0,
+            "left": 43.5,
+            "right": 42.5
+          },
+          "presentation_extents": {
+            "up": 52.0,
+            "down": 1.0,
+            "left": 49.5,
+            "right": 46.5
+          }
+        },
+        {
+          "key": "unarmed/reaction/bodyslam_knockdown_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 12,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            46.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            4,
+            18,
+            86,
+            86
+          ],
+          "presentation_union": [
+            0,
+            32,
+            96,
+            86
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 66.0,
+            "down": 1.0,
+            "left": 42.0,
+            "right": 40.0
+          },
+          "presentation_extents": {
+            "up": 52.0,
+            "down": 1.0,
+            "left": 46.0,
+            "right": 50.0
+          }
+        }
+      ]
+    },
+    "downed_death_extent": {
+      "sheets_measured": 3,
+      "missing_or_unavailable": [],
+      "body_worst": {
+        "up": {
+          "legacy_px": 71.0,
+          "key": "unarmed/reaction/death_01/omni"
+        },
+        "down": {
+          "legacy_px": 1.0,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "left": {
+          "legacy_px": 43.5,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "right": {
+          "legacy_px": 42.5,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        }
+      },
+      "presentation_worst": {
+        "up": {
+          "legacy_px": 52.0,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "down": {
+          "legacy_px": 1.0,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "left": {
+          "legacy_px": 49.5,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e"
+        },
+        "right": {
+          "legacy_px": 50.0,
+          "key": "unarmed/reaction/bodyslam_knockdown_01/w"
+        }
+      },
+      "records": [
+        {
+          "key": "unarmed/reaction/death_01/omni",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 8,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            44.75,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            9,
+            13,
+            87,
+            85
+          ],
+          "presentation_union": null,
+          "presentation_layers": [],
+          "body_extents": {
+            "up": 71.0,
+            "down": 0.0,
+            "left": 35.8,
+            "right": 42.2
+          },
+          "presentation_extents": null
+        },
+        {
+          "key": "unarmed/reaction/bodyslam_knockdown_01/e",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 12,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            49.5,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            6,
+            18,
+            92,
+            86
+          ],
+          "presentation_union": [
+            0,
+            32,
+            96,
+            86
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 66.0,
+            "down": 1.0,
+            "left": 43.5,
+            "right": 42.5
+          },
+          "presentation_extents": {
+            "up": 52.0,
+            "down": 1.0,
+            "left": 49.5,
+            "right": 46.5
+          }
+        },
+        {
+          "key": "unarmed/reaction/bodyslam_knockdown_01/w",
+          "frame_size": [
+            96,
+            96
+          ],
+          "frames": 12,
+          "body_layers": [
+            "full_body"
+          ],
+          "anchor_xy": [
+            46.0,
+            84.0
+          ],
+          "anchor_basis": "median feet-band (12 rows) x centre and median body bottom row across frames",
+          "body_union": [
+            4,
+            18,
+            86,
+            86
+          ],
+          "presentation_union": [
+            0,
+            32,
+            96,
+            86
+          ],
+          "presentation_layers": [
+            "fx"
+          ],
+          "body_extents": {
+            "up": 66.0,
+            "down": 1.0,
+            "left": 42.0,
+            "right": 40.0
+          },
+          "presentation_extents": {
+            "up": 52.0,
+            "down": 1.0,
+            "left": 46.0,
+            "right": 50.0
+          }
+        }
+      ]
+    }
+  },
+  "verdicts": {
+    "A": {
+      "deepest_dodge_crouch": {
+        "106": {
+          "up": {
+            "body_projected_px": 82.4,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 3.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 82.4,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 3.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 82.4,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 3.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 82.4,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 3.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 61.0,
+            "presentation_fits": true
+          }
+        }
+      },
+      "fast_chain_body_extension": {
+        "106": {
+          "up": {
+            "body_projected_px": 93.1,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 93.1,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 93.1,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 93.1,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.2,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 53.0,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 63.2,
+            "presentation_fits": true
+          }
+        }
+      },
+      "block_hit_reaction": {
+        "106": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 78.1,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.2,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 78.1,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.2,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 78.1,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.2,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 78.1,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 36.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.2,
+            "presentation_fits": true
+          }
+        }
+      },
+      "raised_overhead_melee": {
+        "106": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 10.7,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 13.9,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 48.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 10.7,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 13.9,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 48.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 10.7,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 13.9,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 48.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 77.1,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 87.8,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 10.7,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 13.9,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 48.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 46.0,
+            "presentation_fits": true
+          }
+        }
+      },
+      "longest_1h_body_reach": {
+        "106": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.3,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 11.8,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 51.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 95.5,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 49.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 114.3,
+            "presentation_fits": false
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.3,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 11.8,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 51.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 95.5,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 49.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 114.3,
+            "presentation_fits": false
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.3,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 11.8,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 51.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 95.5,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 49.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 114.3,
+            "presentation_fits": false
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 89.9,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.3,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 11.8,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 51.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 95.5,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 49.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 114.3,
+            "presentation_fits": false
+          }
+        }
+      },
+      "ranged_aim": {
+        "106": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 86.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 2.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 86.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 2.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 86.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 2.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 81.4,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 86.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.1,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 2.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 42.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 56.2,
+            "presentation_fits": true
+          }
+        }
+      },
+      "large_hit_react": {
+        "106": {
+          "up": {
+            "body_projected_px": 73.9,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 71.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 73.9,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 71.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 73.9,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 71.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 73.9,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 71.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        }
+      },
+      "downed_death_extent": {
+        "106": {
+          "up": {
+            "body_projected_px": 76.0,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 76.0,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 76.0,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 76.0,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 55.7,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.1,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 1.1,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 46.6,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.0,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 45.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 53.5,
+            "presentation_fits": true
+          }
+        }
+      }
+    },
+    "B": {
+      "deepest_dodge_crouch": {
+        "106": {
+          "up": {
+            "body_projected_px": 92.2,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 3.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 92.2,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 3.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 92.2,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 3.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 92.2,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 3.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 68.2,
+            "presentation_fits": false
+          }
+        }
+      },
+      "fast_chain_body_extension": {
+        "106": {
+          "up": {
+            "body_projected_px": 104.2,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 104.2,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 104.2,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 104.2,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 3.6,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 59.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 70.6,
+            "presentation_fits": false
+          }
+        }
+      },
+      "block_hit_reaction": {
+        "106": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 87.4,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 57.2,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 87.4,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 57.2,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 87.4,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 57.2,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 87.4,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 0.0,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 41.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 57.2,
+            "presentation_fits": true
+          }
+        }
+      },
+      "raised_overhead_melee": {
+        "106": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 12.0,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 15.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 54.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 56.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 12.0,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 15.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 54.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 56.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 12.0,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 15.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 54.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 56.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 86.2,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 98.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 12.0,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 15.6,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 54.5,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 56.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 51.5,
+            "presentation_fits": true
+          }
+        }
+      },
+      "longest_1h_body_reach": {
+        "106": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.8,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 13.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 57.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 106.8,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 55.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 127.9,
+            "presentation_fits": false
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.8,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 13.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 57.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 106.8,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 55.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 127.9,
+            "presentation_fits": false
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.8,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 13.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 57.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 106.8,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 55.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 127.9,
+            "presentation_fits": false
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 100.6,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 4.8,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 13.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 57.7,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 106.8,
+            "presentation_fits": false
+          },
+          "right": {
+            "body_projected_px": 55.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 127.9,
+            "presentation_fits": false
+          }
+        }
+      },
+      "ranged_aim": {
+        "106": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 97.0,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 2.4,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 97.0,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 2.4,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 97.0,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 2.4,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 91.0,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 97.0,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 2.4,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 2.4,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 47.3,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 62.9,
+            "presentation_fits": true
+          }
+        }
+      },
+      "large_hit_react": {
+        "106": {
+          "up": {
+            "body_projected_px": 82.6,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 80.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 82.6,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 80.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 82.6,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 80.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 82.6,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 80.2,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        }
+      },
+      "downed_death_extent": {
+        "106": {
+          "up": {
+            "body_projected_px": 85.0,
+            "room_px": 106,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 21,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        },
+        "107": {
+          "up": {
+            "body_projected_px": 85.0,
+            "room_px": 107,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 20,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        },
+        "108": {
+          "up": {
+            "body_projected_px": 85.0,
+            "room_px": 108,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 19,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        },
+        "111": {
+          "up": {
+            "body_projected_px": 85.0,
+            "room_px": 111,
+            "body_fits": true,
+            "presentation_projected_px": 62.3,
+            "presentation_fits": true
+          },
+          "down": {
+            "body_projected_px": 1.2,
+            "room_px": 16,
+            "body_fits": true,
+            "presentation_projected_px": 1.2,
+            "presentation_fits": true
+          },
+          "left": {
+            "body_projected_px": 52.1,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.3,
+            "presentation_fits": true
+          },
+          "right": {
+            "body_projected_px": 50.9,
+            "room_px": 64,
+            "body_fits": true,
+            "presentation_projected_px": 59.9,
+            "presentation_fits": true
+          }
+        }
+      }
+    }
+  },
+  "class_status": {
+    "A": {
+      "deepest_dodge_crouch": "body_fits_projected",
+      "fast_chain_body_extension": "body_fits_projected",
+      "block_hit_reaction": "body_fits_projected",
+      "raised_overhead_melee": "body_fits_projected",
+      "longest_1h_body_reach": "body_fits_projected",
+      "ranged_aim": "body_fits_projected",
+      "large_hit_react": "body_fits_projected",
+      "downed_death_extent": "body_fits_projected"
+    },
+    "B": {
+      "deepest_dodge_crouch": "body_fits_projected",
+      "fast_chain_body_extension": "body_fits_projected",
+      "block_hit_reaction": "body_fits_projected",
+      "raised_overhead_melee": "body_fits_projected",
+      "longest_1h_body_reach": "body_fits_projected",
+      "ranged_aim": "body_fits_projected",
+      "large_hit_react": "body_fits_projected",
+      "downed_death_extent": "body_fits_projected"
+    }
+  },
+  "anchor_basis": "per sheet: median feet-band x centre and median body bottom row (no frame-centre assumption)"
+}

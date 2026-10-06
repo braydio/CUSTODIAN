@@ -1,28 +1,39 @@
-# Operator 2.5D Canonical Visual Contract — Summary
+# Operator 2.5D Canonical Visual Contract — Summary (calibration correction pass)
 
-Workstream `operator-2-5d-canonical-visual-contract`, branch `agent/operator-2-5d-canonical-visual-contract` (worktree `.custodian-worktrees/operator-2-5d-canonical-visual-contract`).
+Workstream `operator-2-5d-canonical-visual-contract`, branch `agent/operator-2-5d-canonical-visual-contract` (worktree `.custodian-worktrees/operator-2-5d-canonical-visual-contract`). **Not merged. Do not merge** until the viability audit releases `operator-art-agent` and the human calibration decisions below are made.
 
 ## Reminder
-This work lives on a separate worktree/branch. Switch back to your original branch/worktree for any other in-progress work (main checkout: `/home/braydenchaffee/Projects/CUSTODIAN`, branch `main`). Other open Operator work: `agent/operator-2-5d-animation-viability-audit`.
+Separate worktree/branch. Switch back to your other in-progress work: main checkout `/home/braydenchaffee/Projects/CUSTODIAN` (`main`), and `agent/operator-2-5d-animation-viability-audit` (still holds the lock).
 
-## Deviations from the packet (user-approved)
-- The approved source is the repo-root `OPERATOR_DESIGN_REFERENCE_480.png`: **3840x480 RGBA, eight 480x480 cells**, SHA-256 `37e080b8dda825dcfe048439e12f0ad4a66c70b33393d3296cd550761e1b0621`. The packet's 2048x256 / `2d5de16d...` identity was a mistaken reference; the user confirmed the root file. Recorded in the manifest.
-- Claim gate: the viability-audit worktree still held the `operator-art-agent` lock when this started. Work is on an isolated branch and is **not landed**; resolve the lock before merging.
+## Status
+| Item | State |
+|---|---|
+| visual design | **locked** |
+| camera / projection | **locked** |
+| `operator_2_5d_128` profile | **provisional** (`legacy_96` accepted, unchanged) |
+| root / floor | **pending human calibration** |
+| shared body scale | **pending A/B approval** (0.200 vs 0.225) |
+| universal 128 envelope | **pending proof** (projection evidence only) |
+| final normalized hash | **pending** (zero-change cleanup receipts exist per candidate; final hash set after scale/root choice) |
 
-## What changed
-- Preserved master + manifest + 8 exact source cells (reconstruct pixel-for-pixel) under `custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/`. The root copy was left in place (byte-identical).
-- `art_agent/canonical_contract.py`: deterministic build/verify, 128 normalization (one shared 1/5 crisp BOX reduction, binary alpha, integer translation; center x=64 from `hip_center`, support row 111 from toe contact, ground 112), landmarks, geometry/anatomy/color/outline measurements, rotational continuity, derived tolerances, and drift QA (`HARD_FAIL / STRUCTURAL_WARN / ART_DIRECTION_WARN / INFO`).
-- `operator_art_profile.v3` registry (`legacy_96` unchanged + `operator_2_5d_128`, default). `registration_profile.load_profile` selects an explicit profile (id, frame size, or active); v1/v2 still load. Source Sessions pick profile by target size (default target size now 128); plans carry `profile_id` + effective hash; converter replay uses the same hash.
-- Aseprite `operator_anchor_guides.lua`: 128 mode draws locked FLOOR/CENTER/BODY/CANONICAL_REFERENCE layers (`direction=` code or `grid`); 96 mode keeps the single ruler.
-- Services/CLI/MCP: `canonical_reference`, `canonical_qa`.
-- Docs: new `design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`; style bible, roadmap, tools/aseprite READMEs, FILE_INDEX updated.
-- Evidence: `reports/operator_presentation/canonical_visual_contract/` (turnaround, landmark overlay, measurement/palette JSON, report).
+## Corrections made
+1. **Profile status.** `operator_2_5d_128` is `provisional`. `registration_profile.py` loads accepted or provisional geometry (legacy 96 must stay accepted), exposes `registration_status`/`accepted`, and `require_accepted()` / `ProfileNotAccepted` gate frozen-authority operations. Source Session production command, production verification and handoff now refuse a provisional profile (`PROFILE_NOT_ACCEPTED`); planning, QA, guides, overlays and calibration still work. Smoke proves (a) provisional 128 loads, (b) legacy accepted behaviour unchanged, (c) acceptance-only operations reject provisional.
+2. **Root / floor.** Row 111 is now described and persisted as the *support-foot baseline* only. Per direction `root_model` persists `hip_center`, `left_foot_contact`, `right_foot_contact`, `projected_world_root` (candidate, `proven:false`), `shadow_origin` (candidate) plus `support_baseline_row`; global `root_model` records the median foot-contact midpoint (107.45) and comparison rows 106–108. Midpoints reproduce your table (N 108.4, NE 105.8, E 111.6, SE 106.6, S 108.3, SW 105.6, W 111.4, NW 106.0). No root_y is chosen.
+3. **Registration overlay.** `operator_2_5d_registration_overlay.png`: 8 directions with cell bounds, x=64, both foot contacts, hip centre, candidate root/shadow origin, rails 106/107/108 vs 111/112, alpha bbox, shared scale.
+4. **Scale A/B.** Deterministic, same canvas/root model, one scale per candidate: A 1/5 → 75–77 px (median 76); B 9/40 → 83–87 px (median 85, inside the previous 84–88 runtime range). Candidate PNGs under `reference/operator_2_5d/scale_candidates/`; `operator_2_5d_scale_ab_comparison.png` + summary JSON. Primary `directions/` remain candidate A, provisional. Human chooses.
+5. **Action envelope.** Projection from the current runtime art for all 8 required classes (dodge/crouch, fast-chain, block-hit, overhead, longest 1H reach, ranged aim, large hit react, downed/death), per-sheet feet-band anchor, split lower/upper body modules (the `full_body` layer of melee_1h attack sheets has the sword baked in, so it would overstate body reach). **Body fits the 128 canvas projected for both A and B at root 111** in every class; weapon/FX/cape overflow is separate (longest 1H reach overflows 128 for A and B; dodge/fast-chain overflow for B) and needs its own presentation envelope. This is feasibility evidence, **not** proof of a universal 128 envelope: it needs authored canonical frames.
+6. **Pixel cleanup certification.** Zero-change receipts for A and B (before/after hashes, empty changed-pixel list, alpha-mask and topology equality). The earlier contaminant flags were 6 yellow-gold speculars at hue 101–104° that my narrower 30–100° band missed; inspected, in-family, so the family band is now 25–110° (no pixel edited). Proposed cleanups are never auto-applied and pause for review.
+7. **Source duplicate.** References now point at the preserved `source_work` copy (builder default included). The redundant repo-root `OPERATOR_DESIGN_REFERENCE_480.png` is removed on this branch; no code or current owner references it (only archived/active packet text). It disappears from `main` only when this branch merges, together with the preserved copy.
+8. **Lock / main.** The audit worktree still owns `operator-art-agent` and is not archived on main. Branch is ahead of / behind `origin/main` (14 commits at last check); `git merge-tree` against current `origin/main` is clean. No rebase done yet (would rewrite the pushed branch): rebase/reconcile onto fresh main after the audit closes, then merge.
 
 ## Validation (all pass)
-`operator_2_5d_canonical_visual_contract` (new), `operator_art_registration_profile` (updated to assert the new default + legacy), `operator_art_agent_aseprite_smoke`, `operator_art_agent_mcp_smoke`, `run_validation.py --changed --max-tier unit` (19/19), `git diff --check`. No Godot/runtime files touched; no runtime Operator art changed.
+`operator_2_5d_canonical_visual_contract` (extended), `operator_art_registration_profile`, `operator_art_agent_aseprite_smoke`, `operator_art_agent_mcp_smoke`, `run_validation.py --changed --max-tier unit` (15/15), `git diff --check`. No runtime/Godot files touched.
 
-## Needs human attention
-- Landmarks are **agent visual annotations** (confidence per point; occluded points <= 0.4); hood_top and toe/support rows are alpha-refined. Correct `operator_2_5d_landmark_annotations.json` and rebuild if any are off.
-- The 5:1 crisp reduction of the approved render is the one appearance-changing step; review the turnaround/overlay.
-- Old 96 Source Session plans carry the previous file hash and will report "profile changed; create a new plan" (intentional, no silent migration).
-- Numeric camera pitch stays human-authority only.
+## Human decisions needed
+- Root/floor model: pick `projected_world_root`/`shadow_origin` rule and root row (106/107/108 vs 111) from the overlay.
+- Canonical body scale: A 0.200 vs B 0.225.
+- Review/approve the presentation-envelope approach for weapon/FX overflow.
+- Then accept the profile (flip registration status) and re-run the cleanup certification on the chosen candidate to fix the final normalized hash.
+- Landmarks remain agent visual annotations (confidence per point).
+
+Visual review upload: see the Dropbox manifest in the chat reply.
