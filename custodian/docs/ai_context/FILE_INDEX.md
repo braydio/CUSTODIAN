@@ -9,6 +9,7 @@
 - `custodian/docs/ai_context/task_packets/REVIEW_ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md` — fresh-context reusable-foundation review gating Forum and Sundered showcase consumers.
 - `custodian/docs/ai_context/task_packets/CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` + paired review — P0 final-Operator-spawn correctness gate requiring accepted/reachable playable-component membership, not merely painted floor.
 
+- `custodian/game/world/presentation/isometric_2_5d/` — reusable 2.5D presentation contract: `IsometricPresentationProfile` (elevation/band/sort offset) and `IsometricVisualAnchor2D` (ground root + VisualRoot elevation); no collision/nav ownership. Smoke: `custodian/tools/validation/isometric_2_5d_presentation_foundation_smoke.gd`.
 - `custodian/game/world/levels/authored/dev/kenney_isometric_blockout_playtest/` — standalone K3D-1P real-Operator walkaround with shared native/Kenney presentation, neutral boundary collision, and 1/2/Tab A/B controls.
 - `custodian/scenes/debug/kenney_isometric_blockout_presentation.gd` — shared presentation-only construction used by both K3D-1's deterministic capture rig and K3D-1P's playable level.
 - `custodian/tools/validation/levels/kenney_isometric_blockout_playtest_smoke.gd` — focused wrapper, spawn, presentation switching, collision-ownership, asset, bounds, and production-main-scene checks.

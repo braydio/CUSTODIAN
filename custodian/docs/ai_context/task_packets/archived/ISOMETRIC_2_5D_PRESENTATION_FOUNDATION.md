@@ -3,7 +3,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `isometric-2-5d-presentation-foundation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `kenney-isometric-blockout-playtest`
@@ -149,6 +149,27 @@ git diff --check
 
 Update the realization roadmap and finish normally. Next workstream: `review-isometric-2-5d-presentation-foundation`; the Forum and Sundered showcase slices remain dependency-gated until that fresh-context review passes.
 
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `isometric_2_5d_presentation_foundation` smoke passes via `run_validation.py` (elevation moves only VisualRoot, ground position identical, band z-order, y-sort by ground roots, `RoofOccluder2D` reused, main scene unchanged, no 3D types in new surface). New: `isometric_presentation_profile.gd`, `isometric_visual_anchor_2d.gd`, README, fixture, smoke. `roof_occluder_2d.gd`, `blob_shadow.gd` and production scenes untouched.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: first smoke run failed because the test reset the profile to null, which intentionally leaves z_index alone; the assertion was wrong, not the helper.
+- Root cause / contributing factors: test assumed null profile resets the band.
+- Prevention / pipeline improvement: none
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: focused smoke alone covered all acceptance points.
 
 ## Handoff
 
