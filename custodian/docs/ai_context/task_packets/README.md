@@ -163,7 +163,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 
 - K3D-1 remains complete/reviewed precursor evidence.
 - K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
-- `isometric-2-5d-presentation-foundation` is **ready/auto**; its K3D-1P dependency is satisfied.
+- `isometric-2-5d-presentation-foundation` is **complete**; the paired fresh-context review is next.
 - `review-isometric-2-5d-presentation-foundation` is the new paired fresh-context review and gates downstream showcase consumers.
 - `isometric-2-5d-forum-vertical-slice` is authored and dependency-gated on the reviewed foundation.
 - `sundered-keep-overlook-alternate-vertical-slice` is an independent reviewed-foundation consumer tracked by the new Sundered overlook roadmap.

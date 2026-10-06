@@ -4987,6 +4987,25 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "isometric_2_5d_presentation_foundation",
+      "type": "godot_script",
+      "script": "res://tools/validation/isometric_2_5d_presentation_foundation_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "presentation",
+        "isometric",
+        "2_5d"
+      ],
+      "owners": [
+        "custodian/game/world/presentation/isometric_2_5d/isometric_presentation_profile.gd",
+        "custodian/game/world/presentation/isometric_2_5d/isometric_visual_anchor_2d.gd",
+        "custodian/tools/validation/isometric_2_5d_presentation_foundation_smoke.gd",
+        "custodian/tools/validation/fixtures/isometric_2_5d_presentation_foundation.tscn"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
     }
   ]
 }

@@ -73,6 +73,8 @@ Implement the smallest reusable 2D presentation primitive that makes explicit:
 
 No production-actor/procgen retrofit in this slice.
 
+**Status:** implemented in `custodian/game/world/presentation/isometric_2_5d/` (`IsometricPresentationProfile`, `IsometricVisualAnchor2D`); focused smoke `isometric_2_5d_presentation_foundation`. Awaiting `review-isometric-2-5d-presentation-foundation`.
+
 ## 2.5D-2: Forum vertical slice
 
 Packet: `custodian/docs/ai_context/task_packets/ISOMETRIC_2_5D_FORUM_VERTICAL_SLICE.md`
