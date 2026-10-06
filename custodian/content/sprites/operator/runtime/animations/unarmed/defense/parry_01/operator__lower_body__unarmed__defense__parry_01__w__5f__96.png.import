@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmjud2smky1q1"
-path="res://.godot/imported/operator__upper_body__unarmed__defense__parry_01__w__6f__96.png-19cb272924377399a0a0d819ed182163.ctex"
+uid="uid://eo2guxc5xgjp"
+path="res://.godot/imported/operator__lower_body__unarmed__defense__parry_01__w__5f__96.png-3737debcb026e860b65ae775d0b5cdf2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/operator/source/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__w__6f__96.png"
-dest_files=["res://.godot/imported/operator__upper_body__unarmed__defense__parry_01__w__6f__96.png-19cb272924377399a0a0d819ed182163.ctex"]
+source_file="res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__w__5f__96.png"
+dest_files=["res://.godot/imported/operator__lower_body__unarmed__defense__parry_01__w__5f__96.png-3737debcb026e860b65ae775d0b5cdf2.ctex"]
 
 [params]
 
