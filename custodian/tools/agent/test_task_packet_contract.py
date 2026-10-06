@@ -71,6 +71,32 @@ class ParsePacketTests(unittest.TestCase):
         self.assertIsNotNone(packet.error)
         self.assertIn("Workstream", packet.error)
 
+    def test_authoring_and_refresh_chat_metadata_parse(self):
+        text = (
+            legacy_packet("chat-work")
+            + "- Authoring chat: `https://chatgpt.com/c/example-authoring`\n"
+            + "- Refresh planning chat: `https://chatgpt.com/c/example-refresh`\n"
+        )
+        packet = tpc.parse_packet("p.md", text)
+        self.assertEqual(packet.authoring_chat, "https://chatgpt.com/c/example-authoring")
+        self.assertEqual(packet.refresh_planning_chat, "https://chatgpt.com/c/example-refresh")
+
+    def test_visual_review_metadata_defaults_none_and_validates(self):
+        packet = tpc.parse_packet("p.md", legacy_packet("no-visual"))
+        self.assertEqual(packet.visual_review, "none")
+        required = tpc.parse_packet(
+            "p.md",
+            legacy_packet("visual-required") + "- Visual review: `required`\n",
+        )
+        self.assertIsNone(required.error)
+        self.assertEqual(required.visual_review, "required")
+        invalid = tpc.parse_packet(
+            "p.md",
+            legacy_packet("visual-invalid") + "- Visual review: `sometimes`\n",
+        )
+        self.assertIsNotNone(invalid.error)
+        self.assertIn("Visual review", invalid.error)
+
     def test_duplicate_field_is_reported(self):
         text = legacy_packet("dup-work") + "- Status: `blocked`\n"
         packet = tpc.parse_packet("p.md", text)

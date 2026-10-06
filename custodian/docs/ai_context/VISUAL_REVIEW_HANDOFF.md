@@ -2,7 +2,8 @@
 
 Purpose: move important last-mile runtime/presentation evidence out of coding-agent
 reasoning and into a compact external review bundle that the user and ChatGPT can
-inspect through the linked Dropbox source.
+inspect through the linked Dropbox source, then remove reviewed cloud evidence by
+default so the transport does not become a long-lived media archive.
 
 This workflow does **not** replace deterministic validation. It begins only after
 the cheapest objective checks have already settled everything they can.
@@ -135,9 +136,13 @@ python3 custodian/tools/iteration/publish_review_artifacts.py \
    - commit/branch;
    - Dropbox manifest path;
    - exact reviewer questions;
-   - any objective validation failures that remain.
+   - any objective validation failures that remain;
+   - exact `authoring_chat`, retention policy, and emitted cleanup command.
 
 The user can then ask ChatGPT to review that Dropbox manifest/path directly.
+When a packet has an `Authoring chat:` URL, that exact conversation is the default
+review destination. The agent should return the manifest path there rather than
+uploading duplicate screenshots into the conversation.
 
 ## Evidence Budget
 
@@ -171,6 +176,62 @@ over:
 Does this look good?
 ```
 
+## Authoring Chat And Dropbox Path Contract
+
+Task authoring owns the route to human/ChatGPT review, not only the coding agent.
+
+When a packet's `Visual review` metadata is `conditional` or `required`:
+
+1. Record the exact packet `Authoring chat:` URL.
+2. Use the canonical Dropbox workstream root:
+   `/CUSTODIAN/visual_review/<workstream>/`.
+3. State the smallest evidence budget and exact reviewer questions in the packet.
+4. The execution agent publishes with `--authoring-chat <exact-url>` and returns
+   the emitted exact `REVIEW_MANIFEST.json` path.
+5. ChatGPT web in the recorded authoring conversation should open that Dropbox
+   path through the connected Dropbox source and make the requested visual
+   decision there. Do not ask the execution agent to re-send the same binaries
+   into chat when Dropbox already carries them.
+6. A required human/ChatGPT decision pauses the current workstream. It does not
+   authorize `$custodian-next` or `claim-next` to abandon the workstream and
+   claim unrelated work.
+
+Dispatcher claim receipts expose the packet's `authoring_chat`, `visual_review`,
+canonical `visual_review_root`, and retention default so autonomous workers can
+carry this route forward without reconstructing it from surrounding prose.
+
+## Review Resolution And Automatic Cleanup
+
+Review media is transient by default. New handoffs use:
+
+`retention.policy = delete-after-review`
+
+After the user/ChatGPT has actually reviewed the evidence and the decision is
+recorded, resume the same workstream and run the `cleanup_command` emitted in
+`CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` / `REVIEW_MANIFEST.json`. Equivalent
+explicit form:
+
+```bash
+python3 custodian/tools/iteration/publish_review_artifacts.py \
+  --reviewed-manifest /CUSTODIAN/visual_review/<workstream>/<run-id>/REVIEW_MANIFEST.json \
+  --reviewed-by chatgpt-user
+```
+
+Cleanup is programmatic and fail-closed. It validates that the manifest path is
+inside the canonical visual-review root, verifies manifest workstream/run
+identity, purges only that exact run directory, and removes `LATEST.json` only
+when the pointer references the run being deleted. It emits
+`CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON`.
+
+Use `--retain-after-review` only when the user or task packet explicitly says the
+cloud evidence has continuing value. A retained manifest carries
+`retention.policy = retain`; the reviewed cleanup command then reports
+`retained` and performs no deletion.
+
+The durable Git summary should keep the manifest path/run id, reviewer decision,
+and cleanup/retention result. It should not preserve the Dropbox binaries simply
+to keep a historical screenshot archive.
+
 ## Authority and Retention
 
 Dropbox review media is advisory evidence, not runtime or design authority.
@@ -186,4 +247,6 @@ Do not commit Dropbox review binaries merely to preserve them. If a durable
 record matters, keep the implementation summary/receipt and record the Dropbox
 manifest path/run id there.
 
-Visual baseline approval remains an explicit human decision.
+Visual baseline approval remains an explicit human decision. Unless the user or
+packet explicitly requests retention, reviewed Dropbox media is deleted after
+that decision while the durable Git receipt retains the decision provenance.
