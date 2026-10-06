@@ -26,20 +26,20 @@ intact. Controller, charge, Flow, overlap telemetry, canonical FX, presentation,
 fixed-tick, input-frame, action-arbitration, and guard-flow focused checks pass;
 see the F4 packet receipt for bounded composite-smoke limitations.
 
-## Bidirectional Dropbox Handoff (2026-10-05)
+## Dropbox Handoff And Asset Batch Registry (2026-10-06)
 
-Dropbox has two separate transient transport lanes. Inbound implementation
-inputs use immutable `CUSTODIAN/implementation_inputs/<workstream>/<handoff-id>/`
-handoffs with `HANDOFF_MANIFEST.json` uploaded last; the fetcher verifies exact
-file set, declared size, and SHA-256 before atomically exposing files in local
-cache staging. It never extracts ZIPs or writes runtime/Asset V2 locations.
-Outbound subjective visual evidence remains under
-`CUSTODIAN/visual_review/<workstream>/<run-id>/` through
-`publish_review_artifacts.py`. Git remains authority for code, design, packets,
-and durable receipts; Asset Pipeline V2 owns any later source/inbox promotion.
-The shared transport/remote resolver is `custodian/tools/iteration/dropbox_transport.py`.
-See `IMPLEMENTATION_HANDOFF.md` and `VISUAL_REVIEW_HANDOFF.md` for the two
-contracts and remote precedence.
+Dropbox now has three intentionally separate lanes. Immutable inbound implementation
+inputs remain under `CUSTODIAN/implementation_inputs/<workstream>/<handoff-id>/`
+with `HANDOFF_MANIFEST.json` as commit marker. Outbound subjective visual evidence
+remains under `CUSTODIAN/visual_review/<workstream>/<run-id>/`. Durable reviewed
+authored/source-master batches live under `CUSTODIAN/asset_batches/` and are indexed
+from `CUSTODIAN/asset_batches/_registry/`; they carry batch identity, source-chat
+backlink, checksum, status and replacement provenance. `asset_batches/` is not an
+implicit implementation gate: the owning task packet decides whether an exact
+registered source batch is sufficient to begin derivation. Git remains authority for
+code/design/packets/schemas; Asset Pipeline V2 owns source/inbox/runtime promotion.
+See `IMPLEMENTATION_HANDOFF.md`, `DROPBOX_ASSET_BATCH_REGISTRY.md`, and
+`VISUAL_REVIEW_HANDOFF.md`.
 
 ## Custodian Death Handoff R1 (2026-10-04)
 
@@ -74,21 +74,19 @@ roadmap. The planned live-3D K3D-2/K3D-3 workstreams are canceled.
 
 `lords_of_pain_test_gallery` is registered as a dev `world_ingress` destination. Its generated production scene uses the persistent Operator lifecycle and owns no Operator, camera, or controller. The walkable blockout presents Asset V2 Ground Stone, the real Meridian hardened-floor base, Gold Drop/Glint, Highlight/Loot Indicator UI samples, and Warrior/Skeleton animations with all 16 authored directions selectable. A DEMO-scoped manifest records seven available semantic entries, five animation entries, pack/license provenance, and user-approved exclusions for Cursor Gauntlet, Rocks, and Mushrooms. District Transfer Frame art presents both procgen ingress and the normal `return_world` exit. Asset V2 doctor is healthy; gallery, registry, ingress, return, re-entry, and camera smokes pass.
 
-## Procgen Region Frame Foundation (2026-10-03)
+## Alpine Region Frame And Underlay AP1 (2026-10-06)
 
-RF1 separates the permanent map-edge presentation from local biome and Archive
-Resolve. `NonwalkableSurfaceClassifier` derives `exterior_chasm_cells` /
-`internal_chasm_cells` (CHASM-only boundary flood; structural surface kinds are
-unchanged). `ProcgenRegionFrameProfile` + `region_frames/alpine_plateau.tres`
-select the underlay; Alpine currently reports an explicit `visual_fallback`
-(Endless Forest stand-in) until its asset family lands. The frame id is explicit
-data: `CustodianContractMap.region_frame_profile_id` is set to `alpine_plateau`
-only in `custodian_contract_map.tscn` and is never inferred from `planet_key`.
-The global `ProcgenDepthBackdrop` follows the exterior mask only; internal-only
-chasms do not activate it. `procgen_region_frame_smoke.gd` owns the contract
-(registered `procgen_region_frame`); `procgen_distant_chunk_unload_smoke.gd` was
-hardened with the carried-forward M6 proofs (counted flush coalescing, real A*
-path, guaranteed road removal, hermetic portal protection, tree/cluster parity).
+RF1 still separates permanent map-edge presentation from local biome and Archive
+Resolve. `NonwalkableSurfaceClassifier` derives exterior/internal CHASM masks while
+structural surface kinds remain unchanged. AP1 is now complete/landed: the
+`procgen_underlay_alpine_plateau` Asset V2 family publishes the reviewed six-state
+FAR/MIDDLE/NEAR Alpine underlay and `region_frames/alpine_plateau.tres` consumes the
+real family rather than the old Endless Forest visual fallback. Frame identity remains
+explicit through `CustodianContractMap.region_frame_profile_id`; the global
+`ProcgenDepthBackdrop` still follows exterior CHASM only. AP2 cliff presentation is
+now ready from the registered Dropbox source-master batch
+`alpine-cliff-source-family-v1`; its final Gate B is produced only after Codex derives
+and validates the exact fascia/contact/depth runtime states.
 
 ## Archive Resolve Presentation Spine (AR1, 2026-10-03)
 
