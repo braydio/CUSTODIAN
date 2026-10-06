@@ -166,7 +166,7 @@ func _run() -> void:
 		presentation.advance(0.016, final_tile, map.streaming_chunk_size_tiles)
 		guard += 1
 		var s := presentation.get_snapshot()
-		if int(s["ingress_pending_count"]) == 0 and int(s["resolving_count"]) == 0 and int(s["committed_ready_count"]) == 0:
+		if int(s["resolving_count"]) == 0 and _eligible_unresolved(presentation, map, final_tile).is_empty():
 			break
 	var settled := presentation.get_snapshot()
 	# Real frames between the trigger and this manual stepping already advanced the
@@ -175,9 +175,29 @@ func _run() -> void:
 	var elapsed := float(settled["presentation_time"]) - float(snap["presentation_time"])
 	var drift := start_time - float(snap["presentation_time"])
 	_expect(elapsed - drift <= 1.6 and elapsed <= 1.6 + maxf(0.0, drift), "ingress took %.2f s to resolve" % elapsed)
-	_expect(int(settled["ingress_pending_count"]) == 0 and int(settled["resolving_count"]) == 0, "ingress left unresolved cells")
+	# AR4: the wave only resolves cells the visual frontier admits (distance cap,
+	# Operator line of sight, camera). Cells it does not admit stay veiled until the
+	# Operator approaches; no admitted cell may be left behind.
+	var stuck := _eligible_unresolved(presentation, map, final_tile)
+	_expect(stuck.is_empty() and int(settled["resolving_count"]) == 0, "ingress left frontier-eligible cells unresolved: %s" % [stuck.slice(0, 5)])
 
 	_finish(game_root, map)
+
+
+## Ingress/ready cells the AR4 frontier currently admits (should drain to none).
+func _eligible_unresolved(presentation: ProcGenRevealPresentation, map: ProcGenTilemap, operator_tile: Vector2i) -> Array[Vector2i]:
+	var frontier := presentation.get_frontier()
+	var out: Array[Vector2i] = []
+	var r := presentation.visual_resolve_radius_tiles + presentation.visual_resolve_fringe_tiles + 1
+	for x in range(operator_tile.x - r, operator_tile.x + r + 1):
+		for y in range(operator_tile.y - r, operator_tile.y + r + 1):
+			var tile := Vector2i(x, y)
+			var state := presentation.get_tile_state(tile)
+			if state != ProcGenRevealPresentation.TileState.INGRESS and state != ProcGenRevealPresentation.TileState.READY:
+				continue
+			if Vector2(tile - operator_tile).length() <= frontier.distance_limit(tile) and frontier.is_visible_from_center(tile):
+				out.append(tile)
+	return out
 
 
 ## Committed (non-REQUESTED) cells inside the pocket that still carry a veil.

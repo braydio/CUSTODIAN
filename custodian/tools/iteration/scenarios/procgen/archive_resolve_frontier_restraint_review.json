@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "id": "procgen/archive_resolve_frontier_restraint_review",
+  "description": "AR4 gameplay-scale Archive Resolve frontier: persistent unresolved sections on screen, wall/turn curtains while walking at gameplay speed, settled-terrain stability, and a forced-unload reacquisition on the real renderer.",
+  "scene": "res://scenes/debug/archive_resolve_frontier_restraint_moment.tscn",
+  "seed": 424242,
+  "duration_ticks": 600,
+  "simulation": {
+    "physics_hz": 60,
+    "warmup_ticks": 2,
+    "max_wall_seconds": 240,
+    "pause_during_setup": true
+  },
+  "capture": {
+    "width": 1280,
+    "height": 720,
+    "fps": 60,
+    "audio": false,
+    "start_tick": 0,
+    "end_tick": 599,
+    "contact_sheet_ticks": [
+      10,
+      80,
+      180,
+      300,
+      420,
+      540
+    ],
+    "required_keyframes": true,
+    "background": "opaque"
+  },
+  "setup": {
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      }
+    },
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {
+      "id": "archive_resolve_frontier_restraint",
+      "config": {}
+    }
+  },
+  "timeline": [
+    {
+      "tick": 2,
+      "action": "fixture_command",
+      "name": "begin_ingress"
+    },
+    {
+      "tick": 100,
+      "action": "fixture_command",
+      "name": "walk_east"
+    },
+    {
+      "tick": 220,
+      "action": "fixture_command",
+      "name": "walk_south"
+    },
+    {
+      "tick": 340,
+      "action": "fixture_command",
+      "name": "stop"
+    },
+    {
+      "tick": 360,
+      "action": "fixture_command",
+      "name": "unload_adjacent_west_chunk"
+    },
+    {
+      "tick": 380,
+      "action": "fixture_command",
+      "name": "walk_west"
+    },
+    {
+      "tick": 560,
+      "action": "fixture_command",
+      "name": "stop"
+    },
+    {
+      "tick": 590,
+      "action": "finish"
+    }
+  ],
+  "probes": [
+    {
+      "id": "veil",
+      "role": "fixture",
+      "fields": [
+        "onscreen_tiles",
+        "onscreen_unresolved",
+        "onscreen_unresolved_pct",
+        "active_instances",
+        "frontier_eligible",
+        "frontier_ineligible_distance",
+        "frontier_ineligible_occlusion",
+        "frontier_ineligible_camera",
+        "mask_rebuilds",
+        "mask_rebuild_usec",
+        "started_total",
+        "burst_max",
+        "halo_blocked",
+        "halo_visible_veiled",
+        "settled_count",
+        "reacq_settled",
+        "reacq_age_max",
+        "presentation_time",
+        "actor_above_veil",
+        "operator_tile_x",
+        "operator_tile_y",
+        "reacq_total",
+        "near_ready",
+        "near_ready_eligible",
+        "near_requested",
+        "operator_in_wall"
+      ],
+      "ticks": [
+        3,
+        30,
+        60,
+        100,
+        150,
+        220,
+        260,
+        340,
+        370,
+        400,
+        440,
+        480,
+        520,
+        560,
+        595
+      ],
+      "required": true
+    }
+  ],
+  "assertions": [
+    {
+      "type": "role_exists",
+      "role": "fixture",
+      "severity": "error"
+    },
+    {
+      "type": "no_unreleased_inputs",
+      "severity": "error"
+    },
+    {
+      "type": "output_exists",
+      "path": "telemetry.json",
+      "severity": "error"
+    }
+  ],
+  "stable_fingerprint": {
+    "event_payload_fields": {},
+    "counters": [],
+    "probes": [
+      "veil"
+    ],
+    "position_quantum_px": 0.25,
+    "float_quantum": 0.0001
+  },
+  "tags": [
+    "procgen",
+    "archive_resolve",
+    "visual_review",
+    "frontier_restraint"
+  ]
+}

@@ -870,6 +870,10 @@ func _ready() -> void:
 	_reveal_presentation.set_presentation_class_resolver(
 		Callable(self, "get_archive_resolve_presentation_class")
 	)
+	_reveal_presentation.set_frontier_inputs(
+		Callable(self, "is_archive_resolve_occluder_tile"),
+		Callable(self, "get_archive_resolve_camera_tile_rect")
+	)
 	add_to_group("procgen_render_isolation")
 	_cache_procgen_major_visual_items()
 	var dev_mode := get_node_or_null("/root/DevMode")
@@ -10726,6 +10730,26 @@ func set_archive_resolve_enabled(enabled: bool) -> void:
 
 func debug_get_reveal_presentation() -> ProcGenRevealPresentation:
 	return _reveal_presentation
+
+
+## Archive Resolve (AR4) read-only occlusion input: canonical generated walls
+## only (runtime wall destruction erases them from the same dictionary). Foliage,
+## props, actors and pixels are never occluders. No state is kept here.
+func is_archive_resolve_occluder_tile(tile: Vector2i) -> bool:
+	return _generated_wall_cells.has(tile)
+
+
+## Archive Resolve (AR4) read-only camera input: the active Camera2D's visible
+## world rect as a tile rect. Empty (no camera) makes the frontier fall back to
+## distance + line of sight; this never owns or moves the camera.
+func get_archive_resolve_camera_tile_rect() -> Rect2i:
+	var viewport := get_viewport()
+	if viewport == null or viewport.get_camera_2d() == null:
+		return Rect2i()
+	var world_rect: Rect2 = viewport.get_canvas_transform().affine_inverse() * viewport.get_visible_rect()
+	var lo := _global_to_tile(world_rect.position)
+	var hi := _global_to_tile(world_rect.end)
+	return Rect2i(lo, hi - lo + Vector2i.ONE)
 
 
 ## Archive Resolve (AR3) presentation class for one cell. Read-only adapter:

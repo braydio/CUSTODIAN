@@ -1,7 +1,7 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; AR1/ARR1 complete; AR2/recovery/review passed; spawn validity reviewed; AR3 complete (visual verdict pending user playtest)  
+**Status:** Design locked; AR1/ARR1 complete; AR2/recovery/review passed; spawn validity reviewed; AR3 complete/reviewed; AR4 frontier restraint implemented (visual verdict pending)  
 **Last updated:** 2026-10-03  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
@@ -487,3 +487,27 @@ It should **not** be described as:
 
 The final effect should be memorable during movement and nearly invisible once
 settled.
+
+## AR4 Frontier Restraint (implemented)
+
+Ordinary first-resolve, semantic echo, ingress and reacquisition may only
+**begin** for committed cells the presentation frontier admits
+(`ProcGenVisualFrontier`, owned by `ProcGenRevealPresentation`):
+
+- distance cap `visual_resolve_radius_tiles = 11` with a deterministic +/-2 tile
+  per-tile fringe (stable tile hash);
+- Operator line of sight over canonical generated walls (bounded Bresenham over
+  the local window, rebuilt on Operator tile change or a 0.2 s revision tick; no
+  per-ready-tile physics rays; fails open when the Operator stands on an opaque
+  tile);
+- active camera tile rect plus a 2-tile margin (distance + LOS only when no
+  camera exists);
+- time-based start budget `84 starts/s`, burst cap 8, rotating bounded scan
+  (`frontier_enabled = false` restores the AR3 FIFO fallback for pure-owner
+  fixtures).
+
+Resolving tiles always finish; settled tiles never re-veil for leaving the
+frontier; the safety halo only settles cells visible from the Operator.
+Streaming, lifecycle, collision, navigation and generation are unchanged.
+Cliff/elevation occlusion is not used (no unambiguous opacity authority yet).
+

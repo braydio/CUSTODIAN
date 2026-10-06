@@ -32,6 +32,12 @@ extends MultiMeshInstance2D
 ## ingress resolve that re-veils already-committed cells outside a settled
 ## safety pocket and releases them outward over `ingress_wave_sec`.
 
+## AR4 adds the presentation frontier (`ProcGenVisualFrontier`): ordinary
+## first-resolve, echo, ingress and reacquisition may only BEGIN for committed
+## cells inside a distance cap that Operator line of sight and the camera rect
+## also admit, paced by a time-based token budget. Settled cells are never
+## re-veiled by the frontier, and RESOLVING cells always finish.
+
 enum TileState { REQUESTED = 1, READY = 2, RESOLVING = 3, INGRESS = 4 }
 
 const ARCHIVE_RESOLVE_SHADER := preload("res://game/world/procgen/streaming/archive_resolve.gdshader")
@@ -55,8 +61,21 @@ const REDUCED_REGISTRATION_SCALE := 0.25
 			_settle_all_immediately()
 @export_range(64, 65536, 1) var slot_capacity: int = 8192
 ## Ordinary settlement work bound: READY tiles that may begin resolving/frame.
+## Legacy frame-based pacing; used only when `frontier_enabled` is false.
 @export_range(1, 4096, 1) var resolve_starts_per_frame: int = 48
-@export_range(0.0, 2.0, 0.01) var resolve_duration_sec: float = 0.18
+## AR4 master switch for the frontier + time-based pacing. Off restores the AR3
+## FIFO behaviour (kept for pure-owner fixtures and as a debug fallback).
+@export var frontier_enabled: bool = true
+## Time-based start budget: tokens accrue per second of presentation time and
+## are spent per started tile, capped per frame by `resolve_burst_cap`.
+@export_range(1.0, 600.0, 1.0) var resolve_starts_per_sec: float = 84.0
+@export_range(1, 256, 1) var resolve_burst_cap: int = 8
+## Bounded per-frame eligibility scan of the READY queue (rotating cursor).
+@export_range(16, 8192, 1) var eligibility_scan_per_frame: int = 1024
+@export_range(1, 32, 1) var visual_resolve_radius_tiles: int = 11
+@export_range(0, 8, 1) var visual_resolve_fringe_tiles: int = 2
+@export_range(0, 16, 1) var camera_margin_tiles: int = 2
+@export_range(0.0, 2.0, 0.01) var resolve_duration_sec: float = 0.22
 ## Reacquisition (previously resolved, later unloaded) settles much faster.
 @export_range(0.0, 1.0, 0.01) var reacquisition_duration_sec: float = 0.12
 ## One-time ingress resolve: Chebyshev tile radius re-veiled around the final
@@ -122,6 +141,18 @@ var reacquisition_age_max: float = 0.0
 ## tile -> semantic class (int); read-only query supplied by the owner of the
 ## semantics. Null/invalid means every cell is natural.
 var class_resolver: Callable = Callable()
+## tile -> bool; true when the tile is an opaque canonical blocker (walls).
+## Read-only presentation input supplied by the tilemap façade.
+var occluder: Callable = Callable()
+## () -> Rect2i of the active camera's tile rect, or an empty Rect2i.
+var camera_rect_provider: Callable = Callable()
+var frontier_start_tokens: float = 0.0
+var frontier_started_count: int = 0
+var frontier_burst_max: int = 0
+var frontier_halo_blocked_count: int = 0
+
+var _frontier: ProcGenVisualFrontier = ProcGenVisualFrontier.new()
+var _scan_cursor: int = 0
 
 var _ingress_active: bool = false
 var _ingress_center: Vector2i = Vector2i.ZERO
@@ -188,6 +219,13 @@ func reset() -> void:
 	_ingress_queue.clear()
 	_reacq_tiles.clear()
 	_echo_lead.clear()
+	frontier_start_tokens = 0.0
+	frontier_started_count = 0
+	frontier_burst_max = 0
+	frontier_halo_blocked_count = 0
+	_scan_cursor = 0
+	_frontier.reset()
+	_frontier.set_occluder(occluder)
 	_reset_slot_pool()
 
 
@@ -197,6 +235,16 @@ func set_effect_enabled(enabled: bool) -> void:
 
 func set_presentation_class_resolver(resolver: Callable) -> void:
 	class_resolver = resolver
+
+
+func set_frontier_inputs(opaque_tile: Callable, camera_tile_rect: Callable) -> void:
+	occluder = opaque_tile
+	camera_rect_provider = camera_tile_rect
+	_frontier.set_occluder(opaque_tile)
+
+
+func get_frontier() -> ProcGenVisualFrontier:
+	return _frontier
 
 
 ## REQUEST observation: called before any authoritative commit of these tiles.
@@ -271,14 +319,30 @@ func advance(delta: float, operator_tile: Vector2i, chunk_size_tiles: int) -> vo
 		return
 	_presentation_time += maxf(0.0, delta)
 	_sync_material_time()
+	var gated := frontier_enabled and operator_tile != NO_OPERATOR_TILE
+	if gated:
+		_frontier.radius_tiles = visual_resolve_radius_tiles
+		_frontier.fringe_tiles = visual_resolve_fringe_tiles
+		_frontier.camera_margin_tiles = camera_margin_tiles
+		var cam := Rect2i()
+		if camera_rect_provider.is_valid():
+			cam = camera_rect_provider.call() as Rect2i
+			if cam.has_area():
+				cam = cam.grow(camera_margin_tiles)
+		_frontier.update(operator_tile, cam, _presentation_time)
+	else:
+		_frontier.update(NO_OPERATOR_TILE, Rect2i(), _presentation_time)
 	_apply_safety_halo(operator_tile, chunk_size_tiles)
 	if _ingress_active:
-		_advance_ingress()
-	var starts := mini(resolve_starts_per_frame, _ready_queue.size())
-	for i in range(starts):
-		_begin_resolving(_ready_queue[i], _presentation_time)
-	if starts > 0:
-		_ready_queue = _ready_queue.slice(starts)
+		_advance_ingress(gated)
+	if gated:
+		_start_ready_tiles_paced(delta)
+	else:
+		var starts := mini(resolve_starts_per_frame, _ready_queue.size())
+		for i in range(starts):
+			_begin_resolving(_ready_queue[i], _presentation_time)
+		if starts > 0:
+			_ready_queue = _ready_queue.slice(starts)
 	var settled: Array[Vector2i] = []
 	var still_resolving: Array[Vector2i] = []
 	for tile in _resolving_queue:
@@ -296,6 +360,42 @@ func advance(delta: float, operator_tile: Vector2i, chunk_size_tiles: int) -> vo
 		_record_settle_age(tile, _presentation_time - float(_resolve_start[tile]))
 		_settle_tile(tile, chunk_size_tiles)
 	_resolving_queue = still_resolving
+
+
+## AR4 ordinary start: token-bucket pacing in presentation time (frame-rate
+## invariant), bounded burst, and a bounded rotating scan. Ineligible READY
+## tiles stay veiled and consume no start budget.
+func _start_ready_tiles_paced(delta: float) -> void:
+	frontier_start_tokens = minf(
+		frontier_start_tokens + maxf(0.0, delta) * resolve_starts_per_sec,
+		float(resolve_burst_cap) + 1.0
+	)
+	var budget := mini(int(frontier_start_tokens), resolve_burst_cap)
+	var count := _ready_queue.size()
+	if count == 0:
+		_scan_cursor = 0
+		return
+	if budget <= 0:
+		return
+	var scanned := mini(count, eligibility_scan_per_frame)
+	var started: Dictionary = {}
+	var idx := _scan_cursor % count
+	for _i in range(scanned):
+		if started.size() >= budget:
+			break
+		var tile := _ready_queue[idx]
+		if _frontier.check(tile):
+			started[tile] = true
+			_begin_resolving(tile, _presentation_time)
+		idx = (idx + 1) % count
+	_scan_cursor = idx
+	if started.is_empty():
+		return
+	frontier_start_tokens -= float(started.size())
+	frontier_started_count += started.size()
+	frontier_burst_max = maxi(frontier_burst_max, started.size())
+	_ready_queue = _ready_queue.filter(func(t: Vector2i) -> bool: return not started.has(t))
+	_scan_cursor = 0 if _ready_queue.is_empty() else mini(_scan_cursor, _ready_queue.size() - 1)
 
 
 ## One-time ingress resolve. Re-veils already-committed cells in the ring
@@ -387,7 +487,7 @@ func _enqueue_ingress(tile: Vector2i, start_time: float) -> void:
 	_ingress_queue.append(tile)
 
 
-func _advance_ingress() -> void:
+func _advance_ingress(gated: bool = false) -> void:
 	if _ingress_queue.is_empty():
 		if _presentation_time > _ingress_t0 + ingress_wave_sec + 0.1:
 			_ingress_active = false
@@ -397,7 +497,7 @@ func _advance_ingress() -> void:
 		if not _states.has(tile) or int(_states[tile]) != TileState.INGRESS:
 			continue
 		var start := float(_ingress_start[tile])
-		if start <= _presentation_time:
+		if start <= _presentation_time and (not gated or _frontier.check(tile)):
 			_ingress_start.erase(tile)
 			_begin_resolving(tile, start)
 		else:
@@ -474,6 +574,11 @@ func get_snapshot() -> Dictionary:
 		"ingress_active": _ingress_active,
 		"ingress_begin_count": ingress_begin_count,
 		"ingress_veiled_count": ingress_veiled_count,
+		"frontier": _frontier.get_snapshot(),
+		"frontier_started_count": frontier_started_count,
+		"frontier_burst_max": frontier_burst_max,
+		"frontier_start_tokens": frontier_start_tokens,
+		"frontier_halo_blocked_count": frontier_halo_blocked_count,
 		"echo_write_count": echo_write_count,
 		"echo_identity_hash": echo_identity_hash,
 		"echo_class_counts": echo_class_counts.duplicate(),
@@ -543,6 +648,10 @@ func _apply_safety_halo(operator_tile: Vector2i, chunk_size_tiles: int) -> void:
 			var tile := Vector2i(x, y)
 			var state := int(_states.get(tile, 0))
 			if state != TileState.READY and state != TileState.RESOLVING and state != TileState.INGRESS:
+				continue
+			# AR4: the pocket never punches through an opaque barrier.
+			if frontier_enabled and _frontier.has_center() and not _frontier.is_visible_from_center(tile):
+				frontier_halo_blocked_count += 1
 				continue
 			_settle_tile(tile, chunk_size_tiles)
 			forced_safety_settle_count += 1

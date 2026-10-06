@@ -39,6 +39,7 @@ func _make_owner(capacity: int = 256) -> ProcGenRevealPresentation:
 	var owner_node := PRESENTATION_SCRIPT.new() as ProcGenRevealPresentation
 	owner_node.slot_capacity = capacity
 	owner_node.resolve_starts_per_frame = 4
+	owner_node.frontier_enabled = false  # AR3-era pure-owner fixture: legacy FIFO pacing
 	owner_node.resolve_duration_sec = 0.1
 	owner_node.safety_halo_tiles = 2
 	root.add_child(owner_node)

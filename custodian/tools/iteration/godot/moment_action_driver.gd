@@ -243,6 +243,14 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"mark_reacq_baseline",
 			"unload_adjacent_west_chunk",
 		],
+		"archive_resolve_frontier_restraint": [
+			"begin_ingress",
+			"walk_east",
+			"walk_south",
+			"walk_west",
+			"stop",
+			"unload_adjacent_west_chunk",
+		],
 		"alpine_plateau_edge": ["at_north", "at_east", "at_south", "at_west"],
 		"field_fabricator": [
 			"power_on",

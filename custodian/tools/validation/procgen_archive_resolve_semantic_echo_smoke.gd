@@ -42,6 +42,7 @@ func _make_owner(resolver: Callable = Callable()) -> ProcGenRevealPresentation:
 	var owner_node := PRESENTATION_SCRIPT.new() as ProcGenRevealPresentation
 	owner_node.slot_capacity = 2048
 	owner_node.resolve_starts_per_frame = 64
+	owner_node.frontier_enabled = false  # AR3-era pure-owner fixture: legacy FIFO pacing
 	owner_node.resolve_duration_sec = 0.18
 	owner_node.reacquisition_duration_sec = 0.12
 	owner_node.safety_halo_tiles = 3
