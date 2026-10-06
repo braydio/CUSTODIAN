@@ -70,3 +70,41 @@
 - Tooling / docs drift discovered: None.
 - Follow-up: `review-operator-workbench-fx-layer-adoption`
 - What worked: Focused fixture and UI coverage exercised exact saved-layer adoption, transaction rollback, mirror choice, collision guards, and real Aseprite preview.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-fx-layer-adoption`
+- Reviewed on main: `1e62ce7e2ff5dec8e1c76cff1850715f5a1e89dd`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `R0-02`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-fx-layer-adoption-review-corrections-1`
+
+### Findings
+
+#### R0-01 — REPLACE source can change after freshness validation and still be overwritten
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: The packet requires publication to refuse when the canonical FX source changes after adoption and requires rollback to preserve pre-transaction canonical bytes.
+- Evidence: `custodian/tools/operator/animation_workbench.py` checks `source_contract_freshness(data)` before export/transaction setup, then backs up current `old` bytes and replaces the target later without comparing those bytes against the adopted `file_sha256` at the source-swap boundary. CREATE has an atomic no-overwrite guard, but REPLACE uses `os.replace`; an external update in the gap is overwritten and may become the rollback preimage.
+- Disposition: `correction`
+- Rationale: This violates the changed-source refusal contract and can discard another writer's canonical edit. Correction `operator-workbench-fx-layer-adoption-review-corrections-1` adds a deterministic interleaving regression and protects rollback ownership.
+
+#### R0-02 — Modular-defense smoke emits broad pre-existing project/resource errors
+
+- Class: `non_blocking_issue`
+- Domain: `pipeline`
+- Affected acceptance: Existing focused Operator guard smokes remain green.
+- Evidence: The fresh `operator_modular_defense_ranged_smoke.gd` process exited 0 and printed PASS, but emitted missing-class/imported-resource diagnostics and `Invalid call. Nonexistent function '_exit_ranged_ready (via call)'` while running a test helper. The implementation summary already records missing-resource/animation diagnostics.
+- Disposition: `deferred`
+- Rationale: This Workbench/tooling change does not alter gameplay code, and focused Workbench/UI/mirror checks plus import-preflight passed. Preserve the diagnostic caveat for a separate smoke-harness reliability task.
