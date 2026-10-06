@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-operator-workbench-browser-preview-refresh-hardening`
@@ -55,3 +55,34 @@ Address only R0-01 through R0-04. Preserve IDs for re-review dispositions. Re-re
 - Refresh reason: `none`
 - Next action: Complete correction cycle 1, then claim its fresh independent paired review.
 - Blockers or open questions: `none`
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: R0-01 now carries browser generation into `_load_session` and validates it after the session/watch projection await but before accepted mutation. R0-02 resolves against the candidate and stages browser snapshot/tree commit until the selected session succeeds; fallback activity is emitted only after commit. R0-03 binds generation, semantic identity, and source to the issued Live Bridge command sequence before send, copies that context onto the result event, and rejects missing/stale ownership. `operator_workbench_ui_smoke.py` now asserts browser/session barriers, failed and successful stable deletion, direct selection latest-wins, transient Fast 02/03 recovery, Search-hidden F5, one session projection, stale/current live results, stale comparison/transition results, tick controls, PUBLISH coalescing, and reachability precedence.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The first transactional deletion regression revealed selection resolution still consulted the accepted snapshot instead of the staged candidate; the end-to-end test caught and corrected that remaining defect. The first changed-file validation attempt lacked `websockets` in system Python; running the expanded optional Textual Pilot through the 20-second runner limit also timed out.
+- Root cause / contributing factors: Browser/session generation ownership was checked only after session state had already committed, and Live Bridge result handling reconstructed ownership from receiver state instead of issue-time request context. The UI smoke's expanded Pilot duration exceeded its prior runner timeout.
+- Prevention / pipeline improvement: Added event/barrier-controlled tests at the app/provider boundaries and issue-time command-cause context propagation. Increased only the `operator_workbench_ui` validation timeout to 60 seconds; final changed-file validation ran with the pinned UI environment.
+- Tooling / docs drift discovered: The system Python does not provide the optional Operator UI/Live Bridge packages; the repository UI virtual environment supplies them.
+- Follow-up: `review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1`
+- What worked: Deterministic probes reproduced each review finding and now pass as regression tests.
+
+## Next Handoff
+- Next workstream: `review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Refresh reason: `none`
+- Next action: Claim the paired fresh-context re-review and independently verify R0-01 through R0-04.
+- Blockers or open questions: none; the original production crash traceback remains unavailable and is not used to infer a crash root cause.

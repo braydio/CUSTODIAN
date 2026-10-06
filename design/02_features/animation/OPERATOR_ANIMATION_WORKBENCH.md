@@ -116,15 +116,20 @@ Browser discovery runs as a side-effect-free candidate operation. One immutable,
 unfiltered snapshot in `WorkbenchUIState` is the accepted browser-record authority;
 Search and superseded visibility are pure projections of that snapshot and do
 not scan the filesystem or change the selected Workbench session. Refreshes use
-monotonic request generations so an older `asyncio.to_thread()` scan cannot
-overwrite a newer accepted candidate. Destructive candidates are confirmed by
+monotonic request generations for discovery and browser-owned session projection,
+so an older scan or session cannot overwrite a newer accepted candidate. Candidate
+browser/tree state is committed only after its selected session projection succeeds;
+a failed replacement preserves the previous coherent snapshot and selection.
+Destructive candidates are confirmed by
 bounded semantic rescans; missing identities and incomplete modular body-clock
 migrations keep the last accepted snapshot until stable. Selection survives
 Search and accepted refreshes while its semantic identity remains present.
 
 Page-3 PREVIEW asynchronous work uses a separate generation bound to semantic
 selection, source, and mode. Preview, comparison, transition, and Live Bridge
-results are discarded when their generation is stale. F5 keeps the last usable
+results are discarded when their generation is stale. Asynchronous Live Bridge
+export commands carry their originating preview generation and semantic selection
+through the command cause sequence to result application. F5 keeps the last usable
 preview visible while browser/session state and a coherent replacement preview
 are prepared, then applies the replacement and restores prior playback intent
 only when the same semantic preview remains valid. Refresh requests during

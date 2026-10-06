@@ -1292,7 +1292,7 @@
         "custodian/tools/operator/ui/**",
         "custodian/tools/validation/operator_workbench_ui_smoke.py"
       ],
-      "timeout_sec": 20,
+      "timeout_sec": 60,
       "needs_import": false
     },
     {

@@ -389,17 +389,24 @@ class OperatorWorkbenchApp(App):
         if workbench is None:
             return
         try:
-            await self.live_bridge.export_preview(workbench, revision)
+            await self.live_bridge.export_preview(
+                workbench, revision,
+                preview_context=(generation, selection.identity, "workbench"),
+            )
         except (ConnectionError, ValueError):
             return
 
     async def _apply_live_preview(self, event: LiveBridgeEvent) -> None:
         if not event.ok:
             return
-        generation = self.state.preview_generation
+        generation = event.request_generation
         selection = self.state.selection
         if (
-            selection is None
+            generation is None
+            or event.request_identity is None
+            or selection is None
+            or event.request_identity != selection.identity
+            or event.request_source != "workbench"
             or not self._preview_request_current(generation, selection, "workbench")
             or self.state.mode != "preview"
             or self.state.preview_source != "workbench"
@@ -554,18 +561,15 @@ class OperatorWorkbenchApp(App):
             previous_selection = self.state.selection
             previous_snapshot = self.state.browser_snapshot
             destructive = self._browser_candidate_is_destructive(previous_snapshot, records)
-            self.state.browser_snapshot = tuple(records)
-            self.state.browser_generation += 1
             filtered = self.features["animations"].build_navigation(
-                self.state.browser_snapshot, self.state.search_filter,
+                records, self.state.search_filter,
                 show_superseded=self.state.show_superseded,
             )
             tree = self._main_widget("#animation-tree", AnimationTree)
-            tree.set_records(list(filtered))
 
             selection = previous_selection
             if selection is not None and not selection.group:
-                matches = [row.selection for row in self.state.browser_snapshot if (
+                matches = [row.selection for row in records if (
                     row.selection.profile, row.selection.action, row.selection.direction
                 ) == (selection.profile, selection.action, selection.direction)]
                 if len(matches) == 1:
@@ -574,7 +578,7 @@ class OperatorWorkbenchApp(App):
                         resolved.profile, resolved.group, resolved.action, resolved.direction,
                         selection.weapon_id, selection.linked_profile,
                     )
-            selected_row = next((row for row in self.state.browser_snapshot if selection and (
+            selected_row = next((row for row in records if selection and (
                 row.selection.profile, row.selection.group, row.selection.action, row.selection.direction
             ) == (selection.profile, selection.group, selection.action, selection.direction)), None)
             if selected_row is not None:
@@ -585,28 +589,45 @@ class OperatorWorkbenchApp(App):
                 )
             elif previous_selection is not None and destructive:
                 # The candidate was already stabilized above; fall back only for a confirmed deletion.
-                selection = self.state.browser_snapshot[0].selection if self.state.browser_snapshot else None
+                selection = records[0].selection if records else None
                 if selection is not None:
                     selection = self.state.contextualize(selection)
-                    self._activity(
-                        f"browser selection removed: {previous_selection.identity} → {selection.identity}",
-                        "WARN",
-                    )
-                else:
-                    self._activity(f"browser selection removed: {previous_selection.identity}; no replacement available", "WARN")
-            elif selection is None and self.state.browser_snapshot:
-                selection = self.state.contextualize(self.state.browser_snapshot[0].selection)
+            elif selection is None and records:
+                selection = self.state.contextualize(records[0].selection)
 
             if selection is not None:
-                tree.select_identity(selection)
                 if not await self._load_session(
                     selection, load_preview=not preview_handoff,
                     invalidate_preview=not preview_handoff,
+                    browser_generation=generation, load_mode_preview=False,
                 ):
                     return
-            else:
+            elif self._browser_generation_current(generation):
                 self.state.selection = None
                 self.session_view = None
+            if not self._browser_generation_current(generation):
+                return
+            # Session projection succeeded; now publish its browser candidate in the
+            # same event-loop turn so a failed replacement cannot expose a partial deletion.
+            self.state.browser_snapshot = tuple(records)
+            self.state.browser_generation += 1
+            tree.set_records(list(filtered))
+            if selection is not None:
+                tree.select_identity(selection)
+            if previous_selection is not None and selection is not None and destructive and (
+                previous_selection.identity != selection.identity
+            ):
+                self._activity(
+                    f"browser selection removed: {previous_selection.identity} → {selection.identity}",
+                    "WARN",
+                )
+            elif previous_selection is not None and destructive and selection is None:
+                self._activity(
+                    f"browser selection removed: {previous_selection.identity}; no replacement available",
+                    "WARN",
+                )
+            if selection is not None and self.state.mode == "motion" and previous_selection != selection:
+                await self._load_motion_preview()
             if preview_handoff and selection is not None:
                 await self._load_preview(generation=preview_generation)
             if not self._browser_generation_current(generation):
@@ -650,7 +671,8 @@ class OperatorWorkbenchApp(App):
 
     async def _load_session(
         self, selection: AnimationSelection, *, load_preview: bool = True,
-        invalidate_preview: bool = True,
+        invalidate_preview: bool = True, browser_generation: int | None = None,
+        load_mode_preview: bool = True,
     ) -> bool:
         self.state.session_generation += 1
         generation = self.state.session_generation
@@ -663,10 +685,13 @@ class OperatorWorkbenchApp(App):
                 self.state.preview_playing = False
         try:
             session = await self._thread(self.service.session, selection)
-            if generation != self.state.session_generation:
+            watch_signature = self.service.watch_signature(selection)
+            if (generation != self.state.session_generation
+                    or (browser_generation is not None
+                        and not self._browser_generation_current(browser_generation))):
                 return False
             self.session_view = session
-            self.state.selection = selection; self.state.watch_signature = self.service.watch_signature(selection)
+            self.state.selection = selection; self.state.watch_signature = watch_signature
             if changed:
                 self.preview_compare_view = None
                 self.preview_comparisons = ()
@@ -687,12 +712,16 @@ class OperatorWorkbenchApp(App):
                 if self.live_bridge.server.state.active_layer:
                     layer_table.select_live_layer(str(self.live_bridge.server.state.active_layer))
             self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
-            if changed and self.state.mode == "motion":
+            if changed and load_mode_preview and self.state.mode == "motion":
                 await self._load_motion_preview()
             if changed and load_preview and self.state.mode == "preview":
                 await self._load_preview(generation=preview_generation)
             return True
         except Exception as error:
+            if (generation != self.state.session_generation
+                    or (browser_generation is not None
+                        and not self._browser_generation_current(browser_generation))):
+                return False
             projected = self.service.project_error(error)
             if projected.title == "WORKBENCH CONTEXT MISMATCH":
                 existing = self.service.existing_context(selection)
@@ -708,7 +737,9 @@ class OperatorWorkbenchApp(App):
             self._error(error)
             return False
         finally:
-            if generation == self.state.session_generation and self.state.mode == "preview":
+            if (generation == self.state.session_generation and self.state.mode == "preview"
+                    and (browser_generation is None
+                         or self._browser_generation_current(browser_generation))):
                 if not self._browser_refresh_in_progress:
                     self._preview_replacing = False
 
@@ -1052,13 +1083,15 @@ class OperatorWorkbenchApp(App):
                     or self.preview_view is not primary
                     or self.state.transition_target_identity != requested_target):
                 return
-            self.transition_candidates = candidates
-            target = self._transition_target()
+            target = next((candidate for candidate in candidates
+                           if candidate.identity == requested_target), None)
+            if target is None and candidates:
+                target = candidates[0]
             if target is None:
+                self.transition_candidates = candidates
                 self.transition_target_view = None; self.transition_analysis = None
                 self._activity("No compatible transition target", "WARN")
                 self._render_preview(); return
-            requested_target = target.identity
             target_view = await self._thread(self.service.transition_preview, target, primary.source)
             if (not self._preview_request_current(generation, selection, source)
                     or self.preview_view is not primary
@@ -1074,6 +1107,8 @@ class OperatorWorkbenchApp(App):
                 return
             self.transition_target_view = target_view
             self.transition_analysis = analysis
+            self.transition_candidates = candidates
+            self.state.transition_target_identity = target.identity
             self.state.preview_playing = False
             self._render_preview()
         except Exception as error:

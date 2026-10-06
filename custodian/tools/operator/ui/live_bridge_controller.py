@@ -51,6 +51,9 @@ class LiveBridgeEvent:
     layer: str | None = None
     layer_id: str | None = None
     visible: bool | None = None
+    request_generation: int | None = None
+    request_identity: str | None = None
+    request_source: str | None = None
 
 
 def _project_string(value: object) -> str | None:
@@ -80,6 +83,7 @@ class LiveBridgeController:
         self._status = LiveBridgeUIStatus.STOPPED
         self._error: str | None = None
         self._events: asyncio.Queue[LiveBridgeEvent] = asyncio.Queue()
+        self._preview_request_context: dict[int, tuple[int, str, str]] = {}
         self.server.add_message_listener(self._on_message)
 
     def _on_message(self, message: Message) -> None:
@@ -99,6 +103,9 @@ class LiveBridgeController:
             return
         if not isinstance(payload, dict):
             return
+        preview_context = self._preview_request_context.pop(message.cause, None) if (
+            message.type is MessageType.COMMAND_RESULT and message.cause is not None
+        ) else None
         document_path = payload.get("document_path")
         frame = payload.get("frame")
         revision = payload.get("revision")
@@ -121,6 +128,9 @@ class LiveBridgeController:
             layer=_project_string(payload.get("layer")),
             layer_id=_project_string(payload.get("layer_id")),
             visible=payload.get("visible") if isinstance(payload.get("visible"), bool) else None,
+            request_generation=preview_context[0] if preview_context is not None else None,
+            request_identity=preview_context[1] if preview_context is not None else None,
+            request_source=preview_context[2] if preview_context is not None else None,
         ))
 
     async def next_event(self) -> LiveBridgeEvent:
@@ -170,7 +180,20 @@ class LiveBridgeController:
         output.parent.mkdir(parents=True, exist_ok=True)
         return output
 
-    async def export_preview(self, workbench_path: Path, revision: int, composition: str = "body_fx") -> int:
+    def _preview_context_callback(self, context: tuple[int, str, str] | None):
+        if context is None:
+            return None
+        def remember(sequence: int) -> None:
+            self._preview_request_context[sequence] = context
+            if len(self._preview_request_context) > 256:
+                for stale in sorted(self._preview_request_context)[:-128]:
+                    self._preview_request_context.pop(stale, None)
+        return remember
+
+    async def export_preview(
+        self, workbench_path: Path, revision: int, composition: str = "body_fx",
+        *, preview_context: tuple[int, str, str] | None = None,
+    ) -> int:
         if revision < 0:
             raise ValueError("revision must be non-negative")
         document = self.server.paths.validate_workbench(workbench_path)
@@ -182,9 +205,14 @@ class LiveBridgeController:
         }
         if composition != "body_fx":
             payload["composition"] = composition
-        return await self.server.send_command(MessageType.EXPORT_PREVIEW, payload)
+        return await self.server.send_command(
+            MessageType.EXPORT_PREVIEW, payload,
+            on_issued=self._preview_context_callback(preview_context),
+        )
 
-    async def request_preview_export(self, workbench_path: Path, revision: int, composition: str = "body_fx") -> dict[str, object]:
+    async def request_preview_export(
+        self, workbench_path: Path, revision: int, composition: str = "body_fx",
+    ) -> dict[str, object]:
         """Synchronously export a live composition and return its detached contract."""
         if revision < 0:
             raise ValueError("revision must be non-negative")

@@ -218,6 +218,30 @@ def browser_projection_contract_smoke() -> None:
     assert len(calls) == 1, "Search must project the accepted candidate without rediscovery"
 
 
+def reachability_projection_smoke() -> None:
+    with tempfile.TemporaryDirectory(prefix="operator_ui_reachability_") as raw:
+        root = Path(raw)
+        service, _backend = fixture_service(root)
+        reachability = root / "custodian/content/data/operator/operator_animation_reachability.json"
+        reachability.parent.mkdir(parents=True)
+        reachability.write_text(json.dumps({"entries": [
+            {"profile": "unarmed", "group": "locomotion", "action": "run_01", "status": "LIVE"},
+            {"profile": "unarmed", "group": "locomotion", "action": "run_01", "layer": "lower_body", "status": "ALTERNATE_LAYER"},
+        ]}))
+        reads = 0
+        original = service._reachability_statuses
+        def counted_read():
+            nonlocal reads
+            reads += 1
+            return original()
+        service._reachability_statuses = counted_read
+        records = service.discover_browser_records()
+        run = next(row for row in records if row.selection.action == "run_01")
+        assert reads == 1
+        assert run.reachability_status == "LIVE"
+    print("PASS REACHABILITY: one source read per discovery; action LIVE outranks layer classification")
+
+
 class PilotService:
     def __init__(self):
         self.repo_root = Path.cwd(); self.aseprite = None; self.workbench = SimpleNamespace(resolve_aseprite=lambda *_: Path("/bin/true")); self.mutations = 0
@@ -1248,7 +1272,22 @@ async def out_of_order_browser_smoke() -> None:
         tree = app.main_screen.query_one("#animation-tree", AnimationTree)
         assert any(node.data == service.selection for node in tree._walk_nodes())
         assert service.browser_calls == scans_before_search
-        print("PASS BROWSER GENERATIONS: stale scan discarded; Search preserves selection without rescanning")
+        app.state.search_filter = "fast_06"
+        app._render_browser_snapshot()
+        session_calls_before = service.session_calls
+        scans_before_f5 = service.browser_calls
+        app.action_full_refresh()
+        await pilot.pause(0.3)
+        assert app.state.selection == service.selection
+        assert service.session_calls == session_calls_before + 1
+        assert service.browser_calls == scans_before_f5 + 1
+        scans_after_f5 = service.browser_calls
+        app.state.search_filter = ""
+        app._render_browser_snapshot()
+        await pilot.pause(0.05)
+        assert service.browser_calls == scans_after_f5
+        assert any(node.data == service.selection for node in tree._walk_nodes())
+        print("PASS BROWSER GENERATIONS: stale scan discarded; Search-hidden F5 retains selection with one session and no rescan")
 
 
 async def repeated_preview_f5_smoke() -> None:
@@ -1293,6 +1332,312 @@ async def repeated_preview_f5_smoke() -> None:
         await older
         assert app.preview_view is newest_view and app.state.preview_playing
         print("PASS PREVIEW F5: atomic retained view, latest preview wins, playback intent survives repeated refresh")
+
+
+async def browser_session_transaction_smoke() -> None:
+    import asyncio
+    from dataclasses import replace
+    from ui.app import OperatorWorkbenchApp
+    from ui.widgets import AnimationTree
+
+    # R0-01: A's session is held after discovery; B starts and owns a newer
+    # browser generation before A's stale session returns.
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        baseline_session = app.session_view
+        original_thread = app._thread
+        session_started, release_session = asyncio.Event(), asyncio.Event()
+        scan_started, release_scan = asyncio.Event(), asyncio.Event()
+        scans = sessions = 0
+
+        async def controlled_thread(function, *args, **kwargs):
+            nonlocal scans, sessions
+            if function == app.features["animations"].refresh:
+                scans += 1
+                if scans == 2:
+                    scan_started.set()
+                    await release_scan.wait()
+            if function == service.session:
+                sessions += 1
+                if sessions == 1:
+                    session_started.set()
+                    await release_session.wait()
+                    result = await original_thread(function, *args, **kwargs)
+                    return replace(result, document_frames=101)
+            return await original_thread(function, *args, **kwargs)
+
+        app._thread = controlled_thread
+        first = asyncio.create_task(app._reload_browser())
+        await asyncio.wait_for(session_started.wait(), timeout=3)
+        first_generation = app.state.browser_refresh_generation
+        second = asyncio.create_task(app._reload_browser())
+        await asyncio.wait_for(scan_started.wait(), timeout=3)
+        release_session.set()
+        await first
+        assert app.state.browser_refresh_generation > first_generation
+        assert app.session_view is baseline_session and app.state.selection == service.selection
+        release_scan.set()
+        await second
+        assert app.session_view.document_frames == 6
+
+        # Direct user selection still uses the independent latest-session token.
+        old_selection = service.selection
+        new_selection = AnimationSelection("unarmed", "locomotion", "walk_01", "e")
+        direct_started, direct_release = asyncio.Event(), asyncio.Event()
+        async def delayed_direct_session(function, *args, **kwargs):
+            if function == service.session and args[0] == old_selection:
+                direct_started.set()
+                await direct_release.wait()
+            return await original_thread(function, *args, **kwargs)
+        app._thread = delayed_direct_session
+        old_load = asyncio.create_task(app._load_session(old_selection, load_preview=False))
+        await asyncio.wait_for(direct_started.wait(), timeout=3)
+        assert await app._load_session(new_selection, load_preview=False)
+        direct_release.set()
+        await old_load
+        assert app.state.selection == new_selection
+
+    # R0-02: failure to project a stable-deletion fallback leaves all accepted
+    # browser/session state intact; successful deletion projects once and logs once.
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        snapshot, session, selection = app.state.browser_snapshot, app.session_view, app.state.selection
+        tree = app.main_screen.query_one("#animation-tree", AnimationTree)
+        before_ids = {node.data for node in tree._walk_nodes()}
+        service.browser_provider = lambda: tuple(row for row in snapshot if row.selection.identity != selection.identity)
+        async def no_wait(_seconds):
+            return None
+        app._sleep = no_wait
+        original_session = service.session
+        service.session = lambda _selection: (_ for _ in ()).throw(RuntimeError("controlled fallback failure"))
+        await app._reload_browser()
+        after_ids = {node.data for node in tree._walk_nodes()}
+        assert app.state.browser_snapshot == snapshot and app.session_view is session
+        assert app.state.selection == selection and after_ids == before_ids
+        assert sum(event.severity == "ERROR" for event in app.state.activity) == 1
+        service.session = original_session
+        before_calls = service.session_calls
+        await app._reload_browser()
+        assert app.state.selection.identity != selection.identity, (app.state.selection, selection, app.state.browser_refresh_generation, service.session_calls, [event.message for event in app.state.activity[-5:]])
+        assert service.session_calls == before_calls + 1
+        assert sum("browser selection removed:" in event.message for event in app.state.activity) == 1
+    print("PASS BROWSER SESSION OWNERSHIP: stale session rejected; failed deletion is atomic; successful fallback occurs once")
+
+
+async def live_preview_generation_smoke() -> None:
+    from dataclasses import replace
+    from ui.app import OperatorWorkbenchApp
+    from live_bridge.protocol import Message, MessageType
+
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        app.action_mode_preview()
+        app.state.preview_source = "workbench"
+        await pilot.pause(0.2)
+        workbench = app._selected_live_workbench_path()
+        assert workbench is not None
+        app.live_bridge.server.state.active_document_path = str(workbench)
+        app.live_bridge.server.state.document_revision = 42
+        controller = app.live_bridge
+        issued = []
+
+        async def fake_send(_type, _payload, *, on_issued=None):
+            sequence = 17 + len(issued)
+            issued.append(sequence)
+            if on_issued:
+                on_issued(sequence)
+            return sequence
+
+        controller.server.send_command = fake_send
+        generation_a = app.state.preview_generation
+        await controller.export_preview(
+            workbench, 42,
+            preview_context=(generation_a, service.selection.identity, "workbench"),
+        )
+        generation_b = app._next_preview_generation()
+        await app._load_preview(generation=generation_b)
+        latest = app.preview_view
+        expected = controller._live_preview_path(workbench)
+
+        def result_event(sequence):
+            message = Message(
+                controller.server.state.bridge_session_id, sequence + 100,
+                MessageType.COMMAND_RESULT,
+                {"operation": "export_preview", "ok": True,
+                 "document_path": str(workbench), "output_path": str(expected),
+                 "revision": 42, "frames": 6, "frame_width": 96, "frame_height": 96,
+                 "modified": False},
+                cause=sequence,
+            )
+            controller._on_message(message)
+
+        result_event(17)
+        stale_event = await controller.next_event()
+        assert stale_event.request_generation == generation_a
+        await app._apply_live_preview(stale_event)
+        assert app.preview_view is latest, "old live export crossed the newer preview generation"
+
+        await controller.export_preview(
+            workbench, 42,
+            preview_context=(generation_b, service.selection.identity, "workbench"),
+        )
+        result_event(18)
+        current_event = await controller.next_event()
+        assert current_event.request_generation == generation_b
+        service.live_preview = lambda selection, path, **kwargs: replace(
+            latest, source="live", paths=(str(path),),
+        )
+        await app._apply_live_preview(current_event)
+        assert app.preview_view.source == "live"
+    print("PASS LIVE PREVIEW GENERATION: issue-time context follows result; stale result rejected, current result accepted")
+
+
+async def preview_negative_controls_smoke() -> None:
+    import asyncio
+    from dataclasses import replace
+    from ui.app import OperatorWorkbenchApp
+    import animation_preview
+
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        app.action_mode_preview()
+        await pilot.pause(0.2)
+        valid = app.preview_view
+        assert valid is not None
+
+        # Comparison and transition loaders retain all accepted state when a
+        # generation changes while their provider is blocked.
+        original_thread = app._thread
+        compare_started, compare_release = asyncio.Event(), asyncio.Event()
+        async def delayed_compare(function, *args, **kwargs):
+            if function == service.preview:
+                compare_started.set()
+                await compare_release.wait()
+            return await original_thread(function, *args, **kwargs)
+        app._thread = delayed_compare
+        app.state.preview_examiner_mode = "compare"
+        old_comparison = app.preview_compare_view
+        comparison_load = asyncio.create_task(app._load_preview_comparison(force=True))
+        await asyncio.wait_for(compare_started.wait(), timeout=3)
+        app._next_preview_generation()
+        compare_release.set()
+        await comparison_load
+        assert app.preview_compare_view is old_comparison
+
+        transition_started, transition_release = asyncio.Event(), asyncio.Event()
+        async def delayed_transition(function, *args, **kwargs):
+            if function == service.transition_preview:
+                transition_started.set()
+                await transition_release.wait()
+            return await original_thread(function, *args, **kwargs)
+        app._thread = delayed_transition
+        app.state.preview_examiner_mode = "transition"
+        old_candidates = app.transition_candidates
+        old_target = app.transition_target_view
+        transition_load = asyncio.create_task(app._load_transition_examiner())
+        await asyncio.wait_for(transition_started.wait(), timeout=3)
+        app._next_preview_generation()
+        transition_release.set()
+        await transition_load
+        assert app.transition_candidates is old_candidates
+        assert app.transition_target_view is old_target
+
+        # Tick guards: replacement, empty view, wrong identity/source all no-op;
+        # a valid view clamps an out-of-range stored frame to its final frame.
+        app.state.preview_examiner_mode = "single"
+        app.state.preview_playing = False
+        app.state.preview_frame = 4
+        app._preview_replacing = True
+        app._preview_tick()
+        assert app.state.preview_frame == 4
+        app._preview_replacing = False
+        app.preview_view = replace(valid, frames=())
+        app._preview_tick()
+        assert app.state.preview_frame == 4
+        app.preview_view = replace(valid, identity=animation_preview.SemanticIdentity("stale", "g", "a", "e"))
+        app._preview_tick()
+        assert app.state.preview_frame == 4
+        app.preview_view = valid
+        app.state.preview_source = "workbench" if valid.source != "workbench" else "runtime"
+        app._preview_tick()
+        assert app.state.preview_frame == 4
+        app.state.preview_source = valid.source
+        app.state.preview_frame = 999
+        app._preview_tick()
+        assert app.state.preview_frame == len(valid.frames) - 1
+    print("PASS PREVIEW NEGATIVE CONTROLS: stale comparison/transition discarded; tick guards and clamp verified")
+
+
+async def fast_chain_refresh_smoke() -> None:
+    from ui.app import OperatorWorkbenchApp
+    from ui.widgets import AnimationTree
+
+    service = PilotService()
+    fast_rows = tuple(AnimationRecord(
+        AnimationSelection("unarmed", "attack", f"fast_0{i}", "e"), 6,
+        ("lower_body", "upper_body"),
+    ) for i in range(1, 5))
+    selected = fast_rows[1].selection
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        app.state.browser_snapshot = fast_rows
+        app.state.browser_generation += 1
+        tree = app.main_screen.query_one("#animation-tree", AnimationTree)
+        tree.set_records(list(fast_rows))
+        assert await app._load_session(selected, load_preview=False)
+        transient = (fast_rows[0], fast_rows[3])
+        scans = iter((transient, fast_rows, fast_rows))
+        service.browser_provider = lambda: next(scans)
+        async def no_wait(_seconds):
+            return None
+        app._sleep = no_wait
+        session_calls = service.session_calls
+        await app._reload_browser()
+        visible_fast = {node.data.action for node in tree._walk_nodes()
+                        if isinstance(node.data, AnimationSelection) and node.data.action.startswith("fast_")}
+        assert visible_fast == {row.selection.action for row in fast_rows}
+        assert app.state.selection == selected and service.last_selection == selected
+        assert service.session_calls == session_calls + 1
+        assert not any("browser selection removed:" in event.message for event in app.state.activity)
+    print("PASS FAST CHAIN: transient Fast 02/03 omission preserves tree, selected session, and avoids fallback")
+
+
+async def publish_refresh_coalescing_smoke() -> None:
+    import asyncio
+    import threading
+    from ui.app import OperatorWorkbenchApp
+
+    service = PilotService()
+    app = OperatorWorkbenchApp(service=service, startup=service.selection)
+    async with app.run_test(size=(80, 35)) as pilot:
+        await pilot.pause(0.3)
+        started, release = threading.Event(), threading.Event()
+        def publish_barrier():
+            started.set()
+            assert release.wait(3), "publish barrier was not released"
+            return None
+        task = asyncio.create_task(app._mutate("PUBLISH", publish_barrier))
+        while not started.is_set():
+            await pilot.pause(0.01)
+        scans_before = service.browser_calls
+        app.action_full_refresh()
+        app.action_full_refresh()
+        assert app._publish_refresh_pending
+        assert service.browser_calls == scans_before, "F5 scanned canonical source inside PUBLISH mutation"
+        release.set()
+        await task
+        assert service.browser_calls == scans_before + 1
+        assert not app._publish_refresh_pending
+    print("PASS PUBLISH COALESCING: F5 defers during mutation and runs exactly one post-mutation refresh")
 
 
 async def stale_error_smoke() -> None:
@@ -1384,6 +1729,7 @@ def real_repo_read_only() -> None:
 def main() -> None:
     pure_service_smoke()
     browser_projection_contract_smoke()
+    reachability_projection_smoke()
     try:
         import textual  # noqa: F401
         import textual_image  # noqa: F401
@@ -1392,6 +1738,11 @@ def main() -> None:
         asyncio.run(browser_stabilization_smoke())
         asyncio.run(out_of_order_browser_smoke())
         asyncio.run(repeated_preview_f5_smoke())
+        asyncio.run(browser_session_transaction_smoke())
+        asyncio.run(live_preview_generation_smoke())
+        asyncio.run(preview_negative_controls_smoke())
+        asyncio.run(fast_chain_refresh_smoke())
+        asyncio.run(publish_refresh_coalescing_smoke())
         asyncio.run(stale_error_smoke())
         asyncio.run(textual_smoke())
     real_repo_read_only()

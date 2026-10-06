@@ -275,11 +275,16 @@ and destructive candidates use bounded semantic rescans before acceptance.
 Refresh keeps the selected semantic identity even when Search hides its row;
 only a stable confirmed deletion permits one explicit fallback and activity
 event. Modular lower/upper clock mismatches remain PARTIAL and cannot replace a
-last-known-good COMPLETE snapshot as a stable candidate.
+last-known-good COMPLETE snapshot as a stable candidate. A browser-owned session
+projection must still match its browser request before commit. The candidate
+snapshot/tree publish only after that projection succeeds; failed deletion
+fallback preserves the prior snapshot, tree, selection, and session.
 
 PREVIEW asynchronous work has a separate generation tied to mode, selection,
 and source. Ordinary preview, comparison, transition, and Live Bridge results
-prove that generation before UI mutation. F5 on PREVIEW pauses frame advancement
+prove that generation before UI mutation. Asynchronous Live Bridge export results
+carry the issuing generation and semantic identity through their command sequence;
+an older result cannot adopt the receiver's current generation. F5 on PREVIEW pauses frame advancement
 while retaining the visible preview, then applies a coherent replacement and
 restores playback only if the same semantic preview is still active. Refresh is
 coalesced across canonical PUBLISH mutation and runs once after that mutation.
