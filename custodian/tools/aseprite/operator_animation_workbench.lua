@@ -57,4 +57,25 @@ elseif mode=="inspect_contract" then
   local report={frames=#s.frames,width=s.width,height=s.height,durations=durations}
   local f=assert(io.open(app.fs.joinPath(root,".document_contract.json"),"wb"))
   f:write(json.encode(report)); f:close(); s:close()
+elseif mode=="inspect_layers" then
+  -- Read-only inspection of the saved .aseprite document. Layer adoption is
+  -- authorized from this snapshot, never from unsaved Live Bridge state.
+  local s=app.open(wb); local rows={}
+  local function walk(layers,parent_name,depth)
+    for _,layer in ipairs(layers) do
+      local occupied={}; local count=0
+      for index=1,#s.frames do
+        local cel=layer:cel(index)
+        if cel then occupied[#occupied+1]=index; count=count+1 end
+      end
+      rows[#rows+1]={name=layer.name,parent=parent_name or "",depth=depth,top_level=(depth==0),
+        visible=layer.isVisible,reference=(string.sub(layer.name,1,11)=="__REFERENCE"),
+        cel_frames=occupied,occupied_frames=count}
+      if layer.isGroup then walk(layer.layers,layer.name,depth+1) end
+    end
+  end
+  walk(s.layers,nil,0)
+  local report={frames=#s.frames,width=s.width,height=s.height,layers=rows}
+  local f=assert(io.open(app.fs.joinPath(root,".layer_inspection.json"),"wb"))
+  f:write(json.encode(report)); f:close(); s:close()
 else error("unknown mode: "..mode) end

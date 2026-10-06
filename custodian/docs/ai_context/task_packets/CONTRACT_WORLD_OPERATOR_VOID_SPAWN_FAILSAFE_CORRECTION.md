@@ -1,0 +1,70 @@
+# CONTRACT WORLD OPERATOR VOID SPAWN FAILSAFE CORRECTION
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `contract-world-operator-void-spawn-failsafe-correction`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `review-contract-world-playable-region-spawn-validity-fix`
+- Locks: `contract-world-loader, procgen-playability`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, runtime`
+- Paired review workstream: `review-contract-world-operator-void-spawn-failsafe-correction`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Reviewed main: `8ba836d40553f189487fdf2b292e434057388282`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Summary backlink: Every durable implementation/review/recovery/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
+- Goal: Eliminate the still-reproducible live contract-world start where the Operator appears over exterior/underlevel void even though the previously reviewed spawn-validity predicate is present. Make final placement recover deterministically to a safe tile in the already-accepted main playable component whenever one exists, and make a truly unrecoverable contract failure incapable of presenting the legacy authored Operator/camera position as if it were a successful spawn.
+- Completion boundary: Done when a real contract installation that invalidates every preferred compound candidate and the exported `player_spawn` still places the Operator on a canonical safe tile from the accepted main component if any such tile exists; the loader no longer uses `Vector2i.ZERO` as an ambiguous “no spawn” sentinel; the exact final world position round-trips to the selected safe tile before camera/ready; and an unrecoverable no-safe-cell failure never leaves a visible/control-ready Operator at the scene-authored legacy coordinates over void.
+- Current measured state: A direct user playtest on current main still reproduces spawning over the void after the reviewed `contract-world-playable-region-spawn-validity-fix` and the AR3 full-path proof. The canonical predicate itself is present: `ContractWorldLoader._is_safe_operator_spawn_tile()` requires painted floor, ingress-clearance exclusion, `is_valid_spawn_cell()`, `is_runtime_navigation_walkable()`, and membership in `ProcGenTilemap.get_main_playable_component()`. The missing runtime path is after those checks: `_position_operator()` only tries safe compound candidates and then `level_data.player_spawn`; if both fail it returns `false` without moving the Operator. The focused smoke explicitly treats “Operator unchanged” as correct failure behavior. In the real `game.tscn`, however, the authored Operator starts at approximately `Vector2(717.45905, -485.33954)` and Camera2D at `Vector2(720, -480)`, outside the ordinary positive procgen tile-space presentation. `_on_contract_generation_failed()` marks failure/stops combat but does not relocate/hide the stale Operator/camera. Therefore a correct fail-closed predicate can still visibly present the user over void. A second correctness smell is that spawn selection uses `Vector2i.ZERO` as both a legitimate tile value and “none”.
+- Evidence: live `custodian/game/systems/core/systems/contract_world_loader.gd::_on_contract_generated/_position_operator/_pick_compound_spawn_tile/_is_safe_operator_spawn_tile/_tile_to_world/_on_contract_generation_failed`; `custodian/scenes/game.tscn` authored Operator/Camera2D positions; `ProcGenTilemap.get_main_playable_component/is_valid_spawn_cell/is_runtime_navigation_walkable`; archived `CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` and paired review; AR3 real-loader ingress smoke; user live reproduction in the recorded authoring chat.
+- Task-specific authority: `ProcGenTilemap` remains owner of canonical spawn validity/runtime walkability/main-component membership. `ContractWorldLoader` owns final placement orchestration and failure-state presentation. Do not add a second connectivity/flood-fill authority. Prefer a loader-only correction so the active AR4 procgen-presentation workstream does not need to merge around unrelated `ProcGenTilemap` edits.
+- Work surface: `custodian/game/systems/core/systems/contract_world_loader.gd`; focused validation under `custodian/tools/validation/`; `validation_manifest.json` if a new smoke is registered; concise current-state/roadmap correction after behavior lands. Touch `ProcGenTilemap` only if live main lacks a required read-only seam, and do not duplicate existing reachability.
+- Change: Compute/obtain the accepted main playable component once for final Operator placement and reuse that same snapshot throughout selection. Do not perform a second independent component flood fill inside `_pick_compound_spawn_tile()`.
+- Change: Replace `Vector2i.ZERO` as the “no candidate” sentinel in the Operator spawn-selection path with an unambiguous nullable/result representation. Tile `(0,0)` must remain representable as a valid tile if canonical authority says it is safe.
+- Change: Preserve the existing preferred order: safe ingress-adjacent/open compound candidate first, then the exported `player_spawn` if safe. If both are unavailable, deterministically choose a **main-component fallback** from the same accepted component rather than immediately failing. Filter fallback candidates through the exact existing `_is_safe_operator_spawn_tile()` invariant, including painted-floor and ingress-clearance checks. Prefer an open tile when possible and rank deterministically by distance to the intended spawn anchor (compound center when present, otherwise exported/canonical player spawn) with stable coordinate tie-breaking. Do not create or repair topology to manufacture a fallback.
+- Change: After selection but before contract-ready/camera handoff, convert the chosen tile through the canonical tile→global path, place the Operator, round-trip the resulting world position through the map's canonical global→tile seam, and assert/guard that the round-tripped tile equals the chosen tile and still satisfies the reused accepted-component/safe-spawn contract. If that guard fails, treat activation as failed rather than proceeding with a stale/void position.
+- Change: Make the source of the chosen tile observable in the existing install trace/diagnostic as one of `compound`, `player_spawn`, or `main_component_fallback`, together with selected tile/world position. Keep this transition-level only.
+- Change: If no safe cell exists anywhere in the accepted component, contract activation must fail without presenting the authored legacy Operator/camera coordinates as a playable spawn. Reuse the existing failed-contract state; do not invent a new UI. The Operator must not remain visibly/control-ready at the stale scene-authored position, and the camera must not perform the successful-spawn snap/ready sequence. Restore ordinary visibility/control only on a subsequent successful placement.
+- Change: Add a real end-to-end regression that starts the Operator at the production scene's legacy negative-Y position, uses a real generated `ProcGenTilemap` and registered ingress placement, deliberately makes all compound candidates and the exported `player_spawn` fail the final safe predicate while leaving at least one safe accepted-component tile elsewhere, then drives the real `_on_contract_generated()`. It must prove the contract reaches ready, the selection source is `main_component_fallback`, the Operator round-trips to that exact safe tile, the camera snaps there, and the final tile is painted, valid, runtime-walkable, outside ingress clearance, and in the accepted main component.
+- Change: Add the complementary catastrophic case: no safe accepted-component tile exists. Prove activation fails, contract-ready/camera-success path does not run, and the Operator is not left visible/control-ready at the authored `(717,-485)`-class legacy location. Mutation-check the successful fallback test by disabling/removing the main-component fallback and require it to reproduce the failure/void condition.
+- Preserve: registered-ingress-before-Operator ordering; Ash Bell/Forlorn dressing-clearance authority; canonical procgen topology; main-component definition; navigation/collision; AR1-AR4 presentation behavior; camera ownership; deterministic selection; S1 fingerprint; existing `player_spawn` and compound preference when they are valid.
+- Non-goals: No map-size increase; no procgen topology repair; no playable-area expansion; no Archive Resolve tuning; no ingress relocation; no camera redesign; no broad `ContractWorldLoader` extraction; no new loading/failure UI; no “teleport to nearest painted tile” path that bypasses canonical validity/component checks.
+- Acceptance: (1) preferred safe compound spawn remains first choice; (2) safe exported `player_spawn` remains second choice; (3) when both fail but at least one safe accepted-component cell exists, deterministic main-component fallback succeeds and the contract reaches ready; (4) final Operator world position round-trips exactly to the selected tile and that tile is painted, canonically valid, runtime-walkable, outside ingress clearance, and in the accepted component; (5) `Vector2i.ZERO` is not used as no-result state in this placement path; (6) no second connectivity authority is introduced and one accepted-component snapshot is reused for selection; (7) no-safe-anywhere failure cannot present/control the Operator at stale legacy coordinates and cannot execute successful camera/ready handoff; (8) the direct user-repro shape is represented by an end-to-end real-loader test; (9) previous spawn-clearance, playable-component, AR3 ingress-order, camera, navigation, streaming and S1 contracts remain green.
+- Validation: Run the new/reworked void-spawn end-to-end smoke first and mutation-check it by disabling the component fallback. Then run `contract_world_playable_region_spawn_validity`, `contract_world_ingress_spawn_clearance`, `contract_world_archive_resolve_ingress`, `world_ingress_spawner`, the focused camera handoff regression, procgen spatial normalization, runtime navigation/walkable-boundary coverage, and S1 quick (require `1773840677` unless independently changed on current main). Finish with `git diff --check`, packet/review pairing and changed-file validation. If a renderer fixture is cheap, publish one compact before/after capture of the forced-fallback case showing the Operator on authored floor rather than the void; this is supporting evidence, not a separate aesthetic gate.
+- Task overrides: `none`
+- Deferred: Any broader contract-generation retry UX or map-rescue/regeneration policy. This packet only guarantees correct final placement when a safe accepted-component tile exists and a non-playable failure state when none exists.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `<fill at closeout>`
+- Completion boundary satisfied: `<fill at closeout>`
+- Acceptance satisfied: `<fill at closeout>`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `<fill at closeout>`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success | partial | blocked`
+- Friction severity: `none | low | medium | high`
+- What went wrong: `none`
+- Root cause / contributing factors: `none`
+- Prevention / pipeline improvement: `none`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none | fixed-in-scope | manual-follow-up`
+
+## Handoff
+
+- Next workstream: `review-contract-world-operator-void-spawn-failsafe-correction`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Refresh reason: `none`
+- Next action: Implement the narrow final-spawn fallback/failure-state correction from current main, then land and run the paired fresh-context review.
+- Blockers or open questions: none.

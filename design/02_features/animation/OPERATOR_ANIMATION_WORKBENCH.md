@@ -169,6 +169,13 @@ The manifest records exact repo-relative source/runtime provenance, file and pix
 
 Publishing edits the requested authored direction and, only when explicitly enabled in the publish review, may promote it to its horizontal counterpart (`e↔w`, `ne↔nw`, `se↔sw`). The option defaults OFF and is unavailable for `n`, `s`, and `omni`. Preview lists direct and mirror targets with CREATE/REPLACE status; replacing authored counterpart art is permitted only by this explicit promotion. Every publishing layer participates while reference/nonpublishing layers remain excluded. Mirroring flips each frame cell independently and reassembles the cells in their original temporal order, never flips the whole strip. Counterpart PNGs and timing sidecars share the direct publish transaction, journal, downstream build, validation, and rollback. The backend constructs counterpart paths through `operator_asset_schema.py`; this flow never uses `asset_drop/inbox`. CLI automation uses `--mirror-counterpart`. A source changed after assembly makes the session stale; publishing refuses unless the explicit `--force-stale-source` escape hatch is supplied. Non-dry-run `operator anim publish` routes through the same `WorkbenchService.publish` authority as the UI: dedicated `workbench/operator-art` identity, structured readiness/preparation, a final pre-mutation readiness check, and the scoped `publish_to_main` stage/commit/land flow. It fails closed before canonical mutation from coordination `main`, an arbitrary/detached checkout, or a readiness-blocked art checkout. `--force-stale-source` waives only source freshness, never checkout identity, dirty state, dependencies, transactions, or landing. `--dry-run` stays workspace-only.
 
+For an existing semantic animation, a saved top-level Aseprite layer named
+`vfx` or `fx` can be explicitly adopted as semantic FX. Adoption remains a
+human Workbench action: unbound layers are read-only until selected, unsaved
+live layers cannot be adopted, and CREATE/REPLACE publication uses the normal
+schema-derived transaction and rollback. No general semantic animation
+creation or Art Agent autonomous layer-creation authority is implied.
+
 ## Planned V3: new semantic animation creation
 
 Tracked by `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`.

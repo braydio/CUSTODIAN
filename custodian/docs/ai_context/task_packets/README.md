@@ -12,7 +12,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
-- `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Independently prove that live Preview result ownership is tied to the exact bridge connection/session lifetime that issued it, including disconnect and disco...
+- `CONTRACT_WORLD_OPERATOR_VOID_SPAWN_FAILSAFE_CORRECTION.md` — Eliminate the still-reproducible live contract-world start where the Operator appears over exterior/underlevel void even though the previously reviewed spawn...
 - `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — (no Goal recorded)
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
@@ -38,7 +38,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect...
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authoritie...
 - `OPERATOR_WORKBENCH_ANIMATION_CREATION.md` — Let an artist create an entirely new semantic Operator animation from OPUI, open a blank/reference-backed Aseprite Workbench, author and preview it, then pub...
-- `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — Let an artist add or replace an FX layer directly inside an existing Operator Aseprite Workbench, explicitly adopt that saved layer as the animation's canoni...
+- `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md` — Prevent Workbench REPLACE publication from overwriting a canonical source changed after its adopted baseline was recorded.
 - `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Give the user one safe, repeatable way to keep the persistent coordination checkout at `~/Projects/CUSTODIAN/` and the persistent OPUI `workbench/operator-ar...
 - `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic...
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Extract authored floor/overlook/ingress-clearance/reservation ownership from ProcGenTilemap into one canonical claim registry.
@@ -74,7 +74,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
 - `REVIEW_OPERATOR_WORKBENCH_ANIMATION_CREATION.md` — Independently verify that OPUI can create a genuinely absent Operator semantic animation and publish it through the existing specialized Operator production...
-- `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — Independently verify that the landed Workbench FX-adoption slice safely turns an explicit saved Aseprite `vfx`/`fx` layer into canonical Operator `fx` source...
+- `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md` — Independently verify that correction `R0-01` closes the REPLACE source-conflict window without weakening successful publication, CREATE collision refusal, or...
 - `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Independently verify that the shared persistent-checkout sync implementation keeps the coordination root and OPUI art checkout current only when synchronizat...
 - `REVIEW_PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT.md` — Independently verify AR4 makes Archive Resolve a genuinely local, visibility-aware, frame-rate-independent presentation frontier without absorbing streaming/...
 - `REVIEW_PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Independently verify that the post-D1/D2/D3 generation-data audit completely and truthfully maps the remaining TileMap-backed generation core before any abst...
@@ -227,7 +227,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
 
-The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are complete/passed. AR2 implementation, renderer recovery, Dropbox visual approval, and fresh-context paired review are complete/passed with 0 blocking defects / 0 material evidence gaps and S1 `1773840677`. The P0 playable-region spawn-validity implementation/review are also complete/passed with 0 blocking defects / 0 material evidence gaps. AR3 is refreshed, `ready/auto`, and claimable now. It may present only the already-valid final runtime spawn and must close spawn-review R0-03 with a real `_on_contract_generated()` + real compound + registered-ingress integration proof before human visual/game-feel approval. Subjective approval remains in the Dropbox + user/ChatGPT review lane.
+The Archive Resolve implementation series is evidence-gated. AR1/ARR1, AR2 and AR3 are complete/passed, with AR3 human visual approval and paired review closed. AR4 frontier restraint is the active presentation slice. Separately, a new P0 live-playtest regression reopens contract-world start correctness: the existing safe-tile predicate can fail closed by leaving the production scene-authored Operator/camera at legacy negative-Y coordinates over void when both compound and exported `player_spawn` candidates are rejected. `contract-world-operator-void-spawn-failsafe-correction` owns that placement/failure-state gap and is independent of AR4 presentation.
 
 - `archived/PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — AR1, complete/landed presentation-only request/commit/unload spine and one batched flat diagnostic veil.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_PRESENTATION_SPINE.md` — ARR1, complete: passed with 0 blocking defects; RFR1 R0-04 closed; next-slice items R0-01..R0-04 recorded on the archived AR1 packet.
@@ -235,6 +235,8 @@ The Archive Resolve implementation series is evidence-gated. AR1/ARR1 are comple
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1.md` — complete renderer/visual closeout recovery with authoring-chat Dropbox approval recorded.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 paired review complete/passed.
 - `archived/CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` + `archived/REVIEW_CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` — P0 implementation/review complete-passed: final Operator spawn must be canonically valid, runtime-walkable, outside ingress clearance, and in `ProcGenTilemap.get_main_playable_component()`; 0 blocking defects / 0 material evidence gaps. Review R0-03's missing full `_on_contract_generated()` real-compound/registered-ingress proof is intentionally carried into AR3's integration validation rather than a correction packet.
+- `CONTRACT_WORLD_OPERATOR_VOID_SPAWN_FAILSAFE_CORRECTION.md` — P0 ready/auto correction for the still-reproducible live void start: reuse the accepted main-component authority, add a deterministic main-component fallback when preferred spawn candidates are invalid, eliminate `Vector2i.ZERO` as a no-result sentinel, and make unrecoverable activation failure non-playable instead of leaving the Operator at the legacy scene-authored void position.
+- `REVIEW_CONTRACT_WORLD_OPERATOR_VOID_SPAWN_FAILSAFE_CORRECTION.md` — dependency-gated paired fresh-context review of the P0 correction.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 complete: bounded semantic echo, one-time ingress resolve, lighter reacquisition; landed and subsequently human-approved from the gameplay-scale contact sheet with no presentation tuning required. Paired review `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is next; retain the review-manifest dirty-tree commit mismatch as evidence-hygiene context only.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT.md` — AR4 complete: distance + LOS + camera frontier with time-based pacing; landed at current tuning, visual verdict waived to playtest.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 paired review complete: passed, 0 blocking defects, 3 non-blocking; AR4 frontier restraint is next.
@@ -295,12 +297,19 @@ Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_AL
 - `archived/OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Cycle 2 closes R0-01 by binding Workbench publication paths to the selected animation plan and rejecting initial or pre-mutation manifest retargeting; all five focused Workbench validations pass.
 - `archived/REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Fresh-context paired cycle-2 review passed; R0-01 is fixed with no additional findings. The next existing Workbench packet is the human-authorized browser Preview disconnect-ownership correction.
 
+## Completed Operator Workbench FX Layer Adoption
+
+- `archived/OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — Explicit saved `vfx`/`fx` adoption for existing semantic animations, with schema-derived CREATE/REPLACE, review, optional mirror, and transactional rollback.
+- Workstream: `operator-workbench-fx-layer-adoption`
+- Implementation summary: `OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_CLAUDE_SUMMARY.md`
+- Next workstream: `review-operator-workbench-fx-layer-adoption`
+
 ## Completed Operator Workbench Preview Disconnect Ownership Correction
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
 - `archived/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized R2-01 correction complete; live preview acceptance is bound to the issuing bridge connection/session, including same-document reconnects.
-- `archived/REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review is the direct gate for `operator-workbench-fx-layer-adoption`.
+- `archived/REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review passed actual disconnect and identical-session reconnect controls; `operator-workbench-fx-layer-adoption` is the ready immediate successor.
 
 ## Selection
 

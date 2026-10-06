@@ -19,12 +19,14 @@ def main():
     lp=anim.add_parser("list"); lp.add_argument("profile"); lp.add_argument("--group",default=""); lp.add_argument("--json",action="store_true")
     for name in ("status","edit","refresh"): common(anim.add_parser(name))
     common(anim.add_parser("publish"),dry_run=True)
+    layer=anim.add_parser("layer").add_subparsers(dest="layer_cmd",required=True)
+    adopt=layer.add_parser("adopt"); common(adopt); adopt.add_argument("--aseprite-layer",required=True); adopt.add_argument("--as",dest="semantic_layer",choices=("fx",),required=True)
     frame=anim.add_parser("frame").add_subparsers(dest="frame_cmd",required=True)
     add=frame.add_parser("add"); common(add,dry_run=True); add.add_argument("--after",type=int,required=True); add.add_argument("--fill",choices=("duplicate-prev","duplicate-next","blank"),default="duplicate-prev"); add.add_argument("--layers",default="auto")
     remove=frame.add_parser("remove"); common(remove,dry_run=True); remove.add_argument("--frame",type=int,required=True); remove.add_argument("--layers",default="auto")
     canvas=anim.add_parser("canvas").add_subparsers(dest="canvas_cmd",required=True)
     resize=canvas.add_parser("resize"); common(resize,dry_run=True); resize.add_argument("--width",type=int,required=True); resize.add_argument("--height",type=int,required=True); resize.add_argument("--scope",choices=("animation","body","all"),default="animation")
-    anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true"); anim.choices["publish"].add_argument("--mirror-counterpart",action="store_true",default=True,help="publish the horizontal counterpart as a mirror of this direction (default)"); anim.choices["publish"].add_argument("--no-mirror-counterpart",dest="mirror_counterpart",action="store_false",help="author the counterpart separately instead of mirroring")
+    anim.choices["edit"].add_argument("--no-open",action="store_true"); anim.choices["refresh"].add_argument("--discard-edits",action="store_true"); anim.choices["publish"].add_argument("--force-stale-source",action="store_true"); anim.choices["publish"].add_argument("--full-validate",action="store_true"); anim.choices["publish"].add_argument("--mirror-counterpart",action="store_true",default=False,help="explicitly publish the horizontal counterpart as a frame-wise mirror (default: off)"); anim.choices["publish"].add_argument("--no-mirror-counterpart",dest="mirror_counterpart",action="store_false",help="keep counterpart promotion off")
     x=ap.parse_args()
     if x.area=="art": return dispatch_art_command(x)
     if x.area=="ui":
@@ -47,6 +49,11 @@ def main():
             out=w.frame_migrate(x.profile,x.action,x.direction,operation,position,getattr(x,"fill","duplicate-prev"),x.layers,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.dry_run)
         elif x.cmd=="canvas":
             out=w.canvas_migrate(x.profile,x.action,x.direction,x.width,x.height,x.scope,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.dry_run)
+        elif x.cmd=="layer":
+            plan=m.build_plan(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile)
+            mf=w.workspace(x.workspace_root,plan["identity"])/"workbench.json"
+            if x.semantic_layer!="fx": raise m.WorkbenchError("only semantic FX adoption is supported")
+            out=w.adopt_fx_layer(mf,x.aseprite_layer,x.aseprite)
         else:
             plan=m.build_plan(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile); ws=w.workspace(x.workspace_root,plan["identity"]); mf=ws/"workbench.json"; wb=ws/"workbench.aseprite"
             if x.cmd=="status":

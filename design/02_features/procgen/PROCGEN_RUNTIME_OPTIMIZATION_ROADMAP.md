@@ -217,6 +217,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | MR6R1 | `review-procgen-distant-chunk-unload-review-corrections-1` | **complete — passed; 0 blocking / 0 material gaps; S7 closed** | M6C1 |
 | HOTFIX | `contract-world-ingress-spawn-clearance-fix` | **complete / reviewed passed — Operator/Ash-Bell spawn collision fixed** | independent |
 | HOTFIX | `contract-world-playable-region-spawn-validity-fix` | **complete / reviewed passed — final Operator spawn must belong to canonical accepted playable component** | prerequisite satisfied; R0-03 full-path proof carried into AR3 validation |
+| HOTFIX | `contract-world-operator-void-spawn-failsafe-correction` | **ready / P0 — live void-start still reproduces when preferred safe spawn selection fails and legacy Operator position is left unchanged** | reviewed playable-region fix; independent of AR4 presentation |
 | P1 | `contract-world-placement-foundation` | **complete — accepted-world read context landed** | S1 |
 | PR1 | `review-contract-world-placement-foundation-r1` | **ready / auto post-land review** | P1 |
 | P2 | `contract-world-resource-placement-extraction` | queued | PR1 |

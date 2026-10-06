@@ -52,7 +52,7 @@ def frame_bytes(path: Path) -> tuple[bytes, ...]:
         return tuple(image.crop((frame * 4, 0, (frame + 1) * 4, 2)).convert("RGBA").tobytes() for frame in range(FRAMES))
 
 
-def fixture(root: Path, seed: int) -> tuple[Path, dict[str, Path], dict[str, Path]]:
+def fixture(root: Path, seed: int, *, existing_fx: bool = False) -> tuple[Path, dict[str, Path], dict[str, Path]]:
     custodian = root / "custodian"
     workspace = root / ".ai/workbench/unarmed/defense/block_hold_01/e"
     workspace.mkdir(parents=True)
@@ -82,6 +82,10 @@ def fixture(root: Path, seed: int) -> tuple[Path, dict[str, Path], dict[str, Pat
             "publish_contract": {"path": str(east[layer].relative_to(root)), "frames": FRAMES,
                                  "frame_size": list(FRAME_SIZE)},
         })
+    if existing_fx:
+        for direction, mapping, seed_offset in (("e",east,150),("w",west,190)):
+            fx_key=model.SCHEMA.OperatorAssetKey("operator","fx","unarmed","defense","block_hold_01",direction,FRAMES,*FRAME_SIZE)
+            fx_path=custodian/model.SCHEMA.canonical_source_path(fx_key);make_strip(fx_path,seed_offset);mapping["fx"]=fx_path
     metadata = root / "custodian/content/fixtures/unrelated.png.import"
     metadata.parent.mkdir(parents=True, exist_ok=True); metadata.write_bytes(b"original tracked import metadata\n")
     generated = root / "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
@@ -111,10 +115,12 @@ def fixture(root: Path, seed: int) -> tuple[Path, dict[str, Path], dict[str, Pat
     return manifest_path, east, west
 
 
-def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = False, dirty_metadata: bool = False) -> None:
+def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = False, dirty_metadata: bool = False,
+             adopt_fx: bool = False, existing_fx: bool = False, create_collision: bool = False,
+             replace_collision: bool = False) -> None:
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
-        manifest_path, east, west = fixture(root, 20)
+        manifest_path, east, west = fixture(root, 20,existing_fx=existing_fx)
         originals = {path: path.read_bytes() for path in (*east.values(), *west.values())}
         canonical_frames = root / "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres"
         for resource, content in ((canonical_frames, b"canonical frames before"),):
@@ -125,8 +131,8 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
         original_timing = {path: path.read_bytes() for path in timing_paths}
         metadata_path=root/"custodian/content/fixtures/unrelated.png.import"
         metadata_preimage=metadata_path.read_bytes(); import_calls=0
-        exported = {layer: manifest_path.parent / f"edited_{layer}.png" for layer in LAYERS}
-        for offset, layer in enumerate(LAYERS): make_strip(exported[layer], 50 + offset * 20)
+        exported = {layer: manifest_path.parent / f"edited_{layer}.png" for layer in LAYERS+(("fx",) if adopt_fx else ())}
+        for offset, layer in enumerate(exported): make_strip(exported[layer], 50 + offset * 20)
 
         saved = {
             "repo": model.REPO_ROOT, "custodian": model.CUSTODIAN_ROOT, "pipelines": model.PIPELINES,
@@ -139,7 +145,12 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
         calls = 0
         def source_index(*_args, **_kwargs):
             result = {}
-            for layer, path in west.items(): result[("operator", layer, "unarmed", "defense", "block_hold_01", "w")] = (path, None)
+            for layer, path in east.items():
+                if layer=="fx" and not existing_fx: continue
+                result[("operator", layer, "unarmed", "defense", "block_hold_01", "e")] = (path, model.SCHEMA.parse_filename(path.name))
+            for layer, path in west.items():
+                if layer=="fx" and not existing_fx: continue
+                result[("operator", layer, "unarmed", "defense", "block_hold_01", "w")] = (path, model.SCHEMA.parse_filename(path.name))
             return result
         def aseprite_run(_binary, path, mode):
             data = json.loads(path.read_text())
@@ -149,9 +160,16 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
                     "durations": [1.0 / data["timeline"]["preview_fps"]] * FRAMES,
                 }))
                 return
+            if mode=="inspect_layers":
+                (path.parent/".layer_inspection.json").write_text(json.dumps({"frames":FRAMES,"width":data["canvas"]["width"],"height":data["canvas"]["height"],"layers":[
+                    {"name":"vfx","parent":"","depth":0,"top_level":True,"reference":False,"cel_frames":[1,3],"occupied_frames":2},
+                    {"name":"scratch","parent":"","depth":0,"top_level":True,"reference":False,"cel_frames":[1],"occupied_frames":1},
+                    {"name":"__REFERENCE_GUIDE","parent":"","depth":0,"top_level":True,"reference":True,"cel_frames":[1],"occupied_frames":1},
+                    {"name":"vfx","parent":"group","depth":1,"top_level":False,"reference":False,"cel_frames":[1],"occupied_frames":1}]}))
+                return
             raw = path.parent / "exports" / data["export_stamp"] / "raw"
             raw.mkdir(parents=True, exist_ok=True)
-            for layer in LAYERS: shutil.copy2(exported[layer], raw / f"{layer}.png")
+            for binding in data["layers"]: shutil.copy2(exported[binding["binding_id"]], raw / f"{binding['binding_id']}.png")
         def downstream(*_args, **_kwargs):
             nonlocal calls
             calls += 1
@@ -178,6 +196,28 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
                     return downstream(command,*args,**kwargs)
                 return real_run(command,*args,**kwargs)
             workbench.subprocess.run=routed_run
+            if adopt_fx:
+                adopted=workbench.adopt_fx_layer(manifest_path,"vfx",Path("/bin/true"))
+                assert adopted["operation"]==("REPLACE" if existing_fx else "CREATE")
+                binding=next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")
+                assert binding["aseprite_layer_name"]=="vfx" and binding["workspace_contract"]["frames"]==FRAMES
+            if create_collision:
+                target=root/next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")["publish_contract"]["path"]
+                target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(b"external concurrent FX")
+                try: workbench.publish(manifest_path,mirror_counterpart=mirror)
+                except model.WorkbenchError as error: assert "CREATE target" in str(error) or "REBASE/REFRESH" in str(error)
+                else: raise AssertionError("external CREATE collision was overwritten")
+                assert target.read_bytes()==b"external concurrent FX"
+                return
+            if replace_collision:
+                binding=next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")
+                target=root/binding["source_contract"]["path"]
+                target.write_bytes(b"externally changed canonical FX")
+                try: workbench.publish(manifest_path,mirror_counterpart=mirror)
+                except model.WorkbenchError as error: assert "canonical source bytes changed" in str(error)
+                else: raise AssertionError("changed adopted REPLACE source was published")
+                assert target.read_bytes()==b"externally changed canonical FX"
+                return
             if dirty_metadata:
                 metadata_path.write_bytes(b"pre-existing user metadata edit\n")
                 before={path:path.read_bytes() for path in east.values()}
@@ -203,6 +243,13 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
                 assert all(path.read_bytes() == content for path, content in originals.items())
                 assert all(path.read_bytes() == content for path, content in original_timing.items())
                 assert all(path.read_bytes() == content for path, content in original_resources.items())
+                if adopt_fx and not existing_fx:
+                    fx_binding=next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")
+                    assert not (root/fx_binding["publish_contract"]["path"]).exists()
+                    if mirror:
+                        key=model.SCHEMA.parse_filename(Path(fx_binding["publish_contract"]["path"]).name)
+                        counterpart_key=model.SCHEMA.OperatorAssetKey(key.owner,key.layer,key.animation_profile,key.action_group,key.action,"w",key.frames,key.frame_width,key.frame_height)
+                        assert not (root/"custodian"/model.SCHEMA.canonical_source_path(counterpart_key)).exists()
                 journal = json.loads(sorted((manifest_path.parent / "transactions").glob("*/transaction.json"))[-1].read_text())
                 assert journal["state"] == "ROLLED_BACK" and journal["mirror_promotion"]["enabled"] is mirror
                 assert journal["primary_failure"]["stage"] == "runtime_build"
@@ -216,12 +263,26 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
                 journal=json.loads(sorted((manifest_path.parent/"transactions").glob("*/transaction.json"))[-1].read_text())
                 assert metadata_path.read_bytes()==metadata_preimage, (metadata_path.read_bytes(), metadata_preimage, journal)
                 assert "custodian/content/fixtures/unrelated.png.import" in journal["restored_import_metadata"]
-                for layer in LAYERS: assert east[layer].read_bytes() == exported[layer].read_bytes()
+                if adopt_fx and not existing_fx:
+                    fx_binding=next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")
+                    assert fx_binding["source_contract"].get("file_sha256") and fx_binding["source_contract"].get("pixel_sha256")
+                    assert "operation" not in fx_binding["source_contract"] and "adopted_from_saved_layer" not in fx_binding
+                    assert fx_binding["source_contract"]["path"]==fx_binding["publish_contract"]["path"]
+                    east["fx"]=root/fx_binding["publish_contract"]["path"]
+                    if mirror:
+                        key=model.SCHEMA.parse_filename(Path(fx_binding["publish_contract"]["path"]).name)
+                        counterpart_key=model.SCHEMA.OperatorAssetKey(key.owner,key.layer,key.animation_profile,key.action_group,key.action,"w",key.frames,key.frame_width,key.frame_height)
+                        west["fx"]=root/"custodian"/model.SCHEMA.canonical_source_path(counterpart_key)
+                for layer in exported: assert east[layer].read_bytes() == exported[layer].read_bytes()
                 if mirror:
-                    for layer in LAYERS: assert frame_bytes(west[layer]) == framewise_mirror_bytes(east[layer])
+                    for layer in exported: assert frame_bytes(west[layer]) == framewise_mirror_bytes(east[layer])
                     assert timing_paths[0].read_bytes() == timing_paths[1].read_bytes()
                 else:
-                    assert all(path.read_bytes() == originals[path] for path in west.values())
+                    assert all(path.read_bytes() == originals[path] for path in west.values() if path in originals)
+                    if adopt_fx and not existing_fx:
+                        key=model.SCHEMA.parse_filename(Path(next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")["publish_contract"]["path"]).name)
+                        counterpart_key=model.SCHEMA.OperatorAssetKey(key.owner,key.layer,key.animation_profile,key.action_group,key.action,"w",key.frames,key.frame_width,key.frame_height)
+                        assert not (root/"custodian"/model.SCHEMA.canonical_source_path(counterpart_key)).exists()
                     assert timing_paths[1].read_bytes() == original_timing[timing_paths[1]]
         finally:
             model.REPO_ROOT=saved["repo"]; model.CUSTODIAN_ROOT=saved["custodian"]; model.PIPELINES=saved["pipelines"]
@@ -242,7 +303,14 @@ def main() -> None:
     run_case(mirror=True, fail_downstream=True)
     run_case(mirror=False, fail_downstream=False, ambiguous_import=True)
     run_case(mirror=False, fail_downstream=False, dirty_metadata=True)
-    print("PASS operator_workbench_mirror_publish_smoke: scoped publish, import metadata restore, ambiguous-output recovery, atomic rollback")
+    run_case(mirror=False, fail_downstream=False, adopt_fx=True)
+    run_case(mirror=True, fail_downstream=False, adopt_fx=True)
+    run_case(mirror=True, fail_downstream=True, adopt_fx=True)
+    run_case(mirror=False, fail_downstream=True, adopt_fx=True, existing_fx=True)
+    run_case(mirror=True, fail_downstream=False, adopt_fx=True, existing_fx=True)
+    run_case(mirror=False, fail_downstream=False, adopt_fx=True, create_collision=True)
+    run_case(mirror=False, fail_downstream=False, adopt_fx=True, existing_fx=True, replace_collision=True)
+    print("PASS operator_workbench_mirror_publish_smoke: scoped publish, FX CREATE/REPLACE and mirror transactions, collision refusal, import metadata restore, rollback")
 
 
 if __name__ == "__main__": main()
