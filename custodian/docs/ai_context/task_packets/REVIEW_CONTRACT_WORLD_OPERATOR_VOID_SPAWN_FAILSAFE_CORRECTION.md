@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-contract-world-operator-void-spawn-failsafe-correction`
 - Kind: `review`
-- Status: `dependency-gated`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `contract-world-operator-void-spawn-failsafe-correction`
@@ -25,7 +25,7 @@
 - Focused validation: First rerun the new end-to-end forced-fallback smoke and verify the actual production initial Operator position is part of the fixture. Mutation-disable the fallback and confirm the smoke fails in the expected way. Then independently run `contract_world_playable_region_spawn_validity`, `contract_world_ingress_spawn_clearance`, `contract_world_archive_resolve_ingress`, spatial normalization, camera handoff, navigation/walkable-boundary and S1 quick. Inspect the live placement code to confirm one main-component snapshot is reused and no loader-local flood fill was introduced. If implementation published a compact renderer capture, verify it corresponds to the exact forced-fallback run and not a hand-positioned fixture.
 - Acceptance: Findings-first independent review. Zero blocking defects/material evidence gaps closes the correction. Any blocking/material finding creates `contract-world-operator-void-spawn-failsafe-correction-review-corrections-1` plus paired re-review.
 - Non-goals: Do not redesign procgen generation, Archive Resolve, map size, ingress layout, camera system or failure UX.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, review packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
