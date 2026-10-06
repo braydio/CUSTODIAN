@@ -14,7 +14,7 @@
 - Review modes: `asset-pipeline, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `d75e0ee03cfd1348e997518b669485e2df5e8216`
+- Reviewed main: `4fd73d43c8480ec63c492fc182bac484279f4825`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Independently verify that the immutable North Fast 01-04 VFX handoff was normalized and published through the existing Operator replacement authority without gameplay drift, direction bleed, source/runtime divergence, alpha/cell defects, or loss of the approved Black-Gold Afterimage / Amber Vector escalation.
