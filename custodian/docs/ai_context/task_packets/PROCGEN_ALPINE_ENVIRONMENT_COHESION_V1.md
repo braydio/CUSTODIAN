@@ -29,7 +29,7 @@
 - Acceptance: (1) AP1/AP2/AP3 complete with their human art gates; (2) `alpine_plateau_exterior.tres` validates and is selected only for the intended Alpine starting Region Frame/context through existing data plumbing; (3) equal seed/time/environment inputs remain deterministic; (4) snow and mist render only through existing atmosphere authority; (5) foliage remains shared-material based and wind/gust state remains bounded; (6) UI is not graded and indoor exposure behavior remains intact; (7) representative clear/overcast/snow-or-mist captures keep Operator, threats, cliff edge, routes and hazards readable; (8) FAR/MIDDLE/NEAR remain subordinate to gameplay; (9) environment does not create an obvious disagreement between precipitation, foliage and fog motion; (10) no required new art is discovered silently; if a new texture becomes materially required, stop and return to the authoring chat rather than fabricating it; (11) active docs/required-assets state matches runtime; (12) final compact review bundle receives explicit human acceptance of the complete Alpine presentation.
 - Validation: Run existing world-environment focused validation, `world_atmosphere_smoke.gd`, `lighting_system_smoke.gd`, affected procgen combat-readability coverage, Region Frame regression, changed-file validation and `git diff --check`. Reuse deterministic state/metrics before renderer evidence. Then publish the smallest final Alpine review set showing interior plateau, multiple exterior directions, hardstand/natural transition and one active weather state. Ask whether the plateau reads as one geographic body, all exterior directions belong to the same world, cliff/ground/underlay integrate, tile cadence is sufficiently suppressed, infrastructure feels embedded in hostile terrain, and environment motion/grade supports rather than competes with gameplay.
 - Task overrides: `none`
-- Deferred: Dynamic camera projection/vista modes; dynamic accumulation/wetness; additional Region Frames; additional local-biome production vocabulary beyond the approved Alpine closeout.
+- Deferred: Dynamic camera projection/vista modes; dynamic accumulation/wetness; additional Region Frames; additional local-biome production vocabulary beyond the approved Alpine closeout. Post-closeout deterministic underlay alternates and rare scenic-landmark plates are owned by `procgen-alpine-underlay-variety-v1`; AP4 must not pull that optional variety work into the closeout critical path.
 
 ## Asset Gate
 
@@ -83,12 +83,12 @@ Do not rewrite historical summaries as if the earlier state had never been true.
 
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `procgen-alpine-underlay-variety-v1`
+- Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `none`
-- Next action: Final human Alpine presentation disposition after the compact visual handoff.
-- Blockers or open questions: AP1/AP2/AP3 must complete first; no new image-asset blocker is declared for AP4.
+- Next action: Final human Alpine presentation disposition after the compact visual handoff; after AP4 closes, the optional AP5 variety packet may become claimable once its separate 24-plate immutable handoff exists.
+- Blockers or open questions: AP1/AP2/AP3 must complete first; no new image-asset blocker is declared for AP4. AP5 is intentionally non-blocking to AP4.
