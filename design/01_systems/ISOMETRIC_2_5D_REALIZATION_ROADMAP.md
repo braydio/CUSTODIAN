@@ -59,7 +59,7 @@ Offline 3D authoring may be reconsidered later only as a way to generate 2D prod
 
 ## 2.5D-1: presentation foundation
 
-Packet: `custodian/docs/ai_context/task_packets/ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md`
+Packet: `custodian/docs/ai_context/task_packets/archived/ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md`
 
 Implement the smallest reusable 2D presentation primitive that makes explicit:
 
