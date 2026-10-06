@@ -2,7 +2,7 @@
 
 > **REFRESH REQUIRED AFTER OPERATOR 2.5D ANIMATION AUDIT HUMAN DECISION**
 >
-> The reusable 2.5D foundation may continue through independent review, but this Operator-heavy showcase must not claim until `operator-2-5d-animation-viability-audit` is complete and the user/ChatGPT has refreshed this packet from its visual verdict.
+> The reusable 2.5D foundation may continue through independent review, but this Operator-heavy showcase must not claim until the animation audit is complete, the canonical Operator visual contract is implemented/reviewed, and the user/ChatGPT has refreshed this packet from those results.
 
 
 - Packet schema: `custodian.task_packet.v2`
@@ -10,7 +10,7 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `review-isometric-2-5d-presentation-foundation, operator-2-5d-animation-viability-audit`
+- Depends on: `review-isometric-2-5d-presentation-foundation, operator-2-5d-animation-viability-audit, review-operator-2-5d-canonical-visual-contract`
 - Locks: `world-presentation, presentation-experiments, asset-pipeline`
 - Kind: `implementation`
 - Review: `none`

@@ -12,6 +12,8 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
+- `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Lock the approved 8-direction Operator as deterministic 128x128 authoring authority while preserving legacy 96 art.
+- `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Fresh-context review of canonical Operator source/profile/QA integrity.
 - `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Make Live Bridge preview results valid only for the exact bridge connection/session lifetime that issued them, so a disconnect or reconnect cannot authorize...
 - `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — Independently prove that live Preview result ownership is tied to the exact bridge connection/session lifetime that issued it, including disconnect and disco...
 - `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md` — Independently verify that cycle 2 closes R0-01 by proving mutable Workbench paths cannot retarget CLI publication outside the selected animation.
@@ -179,6 +181,9 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - `sundered-keep-overlook-alternate-vertical-slice` is an independent reviewed-foundation consumer tracked by the new Sundered overlook roadmap.
 - The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
 - Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
+
+- `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — **ready/manual after the active audit releases the Operator-art lock**; preserves the approved turnaround, creates dual legacy-96/canonical-128 profiles, measures all directions, and wires canonical ghost/QA support into the existing Operator authoring stack.
+- `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — paired fresh-context source/profile/measurement/guide review.
 
 ### Active Sundered Keep Overlook Alternate Program
 

@@ -4,7 +4,7 @@
 **Program ID:** `isometric-2-5d-realization`
 **Status:** active / foundation implemented / Operator art viability gate inserted before Forum
 **Priority:** P2
-**Reviewed main:** `df80ee151473724aa524a1d24c36cd7d32389bd2`
+**Reviewed main:** `ca5e7d2acc5282f304a8d969343db127462326f1`
 **Last Updated:** 2026-10-04
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 **Design authority:** `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`
@@ -40,7 +40,9 @@ The two future implementation slots are now:
 | precursor | `kenney-isometric-blockout-playtest` | finish walkable Kenney/native comparison harness | **complete / landed** |
 | 2.5D-1 | `isometric-2-5d-presentation-foundation` | converge ground anchors, visual elevation, depth bands and existing occlusion/shadow precedents | **complete / landed** |
 | 2.5D-1R | `review-isometric-2-5d-presentation-foundation` | independently verify reusable 2D-authoritative presentation primitive | **ready / auto behind 2.5D-1** |
-| OP-2.5D-A | `operator-2-5d-animation-viability-audit` | determine whether current Operator art actually satisfies the new spatial/volumetric contract and quantify the art backlog | **ready / auto / human visual gate** |
+| OP-2.5D-A | `operator-2-5d-animation-viability-audit` | determine whether current Operator art actually satisfies the new spatial/volumetric contract and quantify the art backlog | **active / human visual review completed on agent branch; closeout pending** |
+| OP-2.5D-0 | `operator-2-5d-canonical-visual-contract` | preserve/measure approved Operator; establish canonical 128 authoring profile and anti-drift tooling | **ready / manual after audit lock release** |
+| OP-2.5D-0R | `review-operator-2-5d-canonical-visual-contract` | verify source/profile/measurement/guide integrity | **ready / auto behind OP-2.5D-0** |
 | 2.5D-2 | `isometric-2-5d-forum-vertical-slice` | prove the language in one real playable Forum approach | **draft / behind reviewed foundation + Operator audit human refresh** |
 | SKO-1 | `sundered-keep-overlook-alternate-vertical-slice` | prove a tiny playable shelf over a vast Sundered Keep world in a standalone scene | **ready / behind reviewed 2.5D-1** |
 
@@ -87,6 +89,10 @@ The audit is read-only and uses the current Operator runtime/catalog plus two ex
 
 It must quantify production-reachable keep/cleanup/new-direction/redraw/projection buckets and produce a ranked art-production backlog. The Forum packet remains a draft until the user/ChatGPT reviews those matrices and refreshes it. Foundation review may proceed independently; Sundered's separate showcase does not inherit this Operator-art gate unless its own scope later depends on production Operator art quality.
 
+## Canonical Operator visual lock
+
+The user has approved a new eight-direction Operator body/material/projection reference. Before production animation regeneration or the Forum showcase treats the Operator as visually authoritative, `operator-2-5d-canonical-visual-contract` must preserve the exact source, establish dual legacy-96/canonical-128 authoring profiles, measure/landmark every direction, and wire canonical ghost/QA support into the existing Operator authoring stack. Its paired fresh-context review must pass before mass animation production.
+
 ## 2.5D-2: Forum vertical slice
 
 Packet: `custodian/docs/ai_context/task_packets/ISOMETRIC_2_5D_FORUM_VERTICAL_SLICE.md`
@@ -121,6 +127,6 @@ If yes, the next work is production rollout and asset standards, not a return to
 
 ## Current position
 
-K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is implemented and awaits its fresh-context review. The Operator 2.5D animation viability audit is independently claimable now. After the foundation review passes, the Sundered Keep overlook may proceed independently; the Forum vertical slice additionally waits for the Operator audit's human decision and a ChatGPT/user refresh. Retain the user's A/B walkaround notes as tuning input for the Forum slice and use the Sundered-specific authoring chat/roadmap for the overlook program.
+K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is implemented and awaits its fresh-context review. The Operator animation audit completed its human visual decision on its active branch and still needs closeout/landing. The canonical visual-contract packet is the next Operator-art gate after that lock releases. After the foundation review passes, the Sundered Keep overlook may proceed independently; the Forum vertical slice additionally waits for the Operator audit's human decision and a ChatGPT/user refresh. Retain the user's A/B walkaround notes as tuning input for the Forum slice and use the Sundered-specific authoring chat/roadmap for the overlook program.
 
 H1 remains separate. At 2.5D-2 claim time, use landed H1 layout constants if available; otherwise use locked Forum coordinates read-only.
