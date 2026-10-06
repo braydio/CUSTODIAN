@@ -80,7 +80,7 @@
         "visual_fallback",
         "backdrop_visible",
         "backdrop_mode",
-        "direction",
+        "direction","review_combo",
         "variant_far",
         "variant_middle",
         "variant_near",

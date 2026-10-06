@@ -8,6 +8,7 @@ extends Node2D
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const FIXTURE_SEED := 424242
+const REVIEW_CANDIDATE_ROOT := "res://content/backgrounds/procgen/alpine_plateau/review_candidates/"
 const REVIEW_ZOOM := 0.74  # tightest ordinary gameplay zoom (camera.gd heavy_zoom)
 
 var frame_id := ""
@@ -25,6 +26,7 @@ var parallax_far_px := 0.0
 var parallax_near_px := 0.0
 var coverage_ok := false
 var direction := ""
+var review_combo := ""
 
 var _map: ProcGenTilemap = null
 var _operator: Node2D = null
@@ -54,6 +56,7 @@ func _ready() -> void:
 	_map.auto_bake_nav = false
 	_map.generate()
 	_pick_edge_tiles()
+	_apply_review_combo()
 	_operator = Node2D.new()
 	_operator.name = "Operator"
 	_operator.z_index = 2
@@ -70,6 +73,41 @@ func _ready() -> void:
 	_camera.zoom = Vector2.ONE * REVIEW_ZOOM
 	_operator.add_child(_camera)
 	_camera.make_current()
+
+
+## Review-only candidate wiring: when ALPINE_REVIEW_COMBO names a combination
+## from review_candidates/UNDERLAY_REVIEW_MANIFEST.json, swap the backdrop's
+## underlay for one temporary single-variant profile built from the accepted
+## Alpine tuning. Candidates are loaded from disk (the directory carries a
+## .gdignore, so they are never imported) and no production resource is touched.
+func _apply_review_combo() -> void:
+	var combo_id := OS.get_environment("ALPINE_REVIEW_COMBO")
+	if combo_id == "":
+		return
+	var manifest_path := ProjectSettings.globalize_path(REVIEW_CANDIDATE_ROOT + "UNDERLAY_REVIEW_MANIFEST.json")
+	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	if not manifest is Dictionary:
+		push_error("[AlpineEdgeMoment] review manifest unreadable")
+		return
+	for combo_variant in (manifest as Dictionary).get("review_combinations", []):
+		var combo := combo_variant as Dictionary
+		if String(combo.get("combo_id", "")) != combo_id:
+			continue
+		var accepted: ProcgenUnderlayProfile = _map.depth_backdrop.underlay_profile
+		var profile := accepted.duplicate() as ProcgenUnderlayProfile
+		profile.profile_id = StringName("review_%s" % combo_id)
+		profile.far_variants = [_load_candidate(String(combo["far"]))]
+		profile.middle_variants = [_load_candidate(String(combo["fog"]))]
+		profile.near_variants = [_load_candidate(String(combo["near"]))]
+		_map.depth_backdrop.set_underlay_profile(profile, FIXTURE_SEED)
+		review_combo = combo_id
+		return
+	push_error("[AlpineEdgeMoment] unknown review combo %s" % combo_id)
+
+
+func _load_candidate(relative_path: String) -> Texture2D:
+	var image := Image.load_from_file(ProjectSettings.globalize_path(REVIEW_CANDIDATE_ROOT + relative_path))
+	return ImageTexture.create_from_image(image)
 
 
 ## Outermost floor cell toward each compass direction among floor cells that
