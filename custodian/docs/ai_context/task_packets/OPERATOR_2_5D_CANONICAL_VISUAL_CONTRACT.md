@@ -6,7 +6,7 @@
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`
-- Claim gate: `do not claim while operator-2-5d-animation-viability-audit still owns operator-art-agent; claim after that workstream releases the shared lock`
+- Claim gate: `do not claim while operator-2-5d-animation-viability-audit still owns operator-art-agent; after that workstream releases the shared lock, implementation may begin but the canonical 128 anchor/floor/profile must still pause at the PRE-LOCK CALIBRATION GATE for human approval before acceptance`
 - Locks: `operator-art-agent, operator-source-normalization, operator-aseprite-tooling`
 - Kind: `implementation`
 - Review: `auto`
@@ -42,6 +42,92 @@ workstream: operator-2-5d-canonical-visual-contract
 branch: agent/operator-2-5d-canonical-visual-contract
 closing summary: OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT_CLAUDE_SUMMARY.md
 ```
+
+## PRE-LOCK CALIBRATION GATE
+
+Do **not** freeze the canonical 128 registration merely from the 2048x256 design-reference cell bounds. Two distinct artifacts exist and have different jobs:
+
+### High-resolution design authority
+
+The user-approved final design sheet supplied in the authoring chat measures:
+
+```text
+2048 x 256 RGBA
+8 x 256x256 cells
+order: N, NE, E, SE, S, SW, W, NW
+sha256: 2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323
+```
+
+This file owns anatomy, armor/cloak topology, projection, palette/material language and directional identity. It is **not** itself proof of runtime centering/floor registration.
+
+### Runtime-registration candidate
+
+The user's earlier crisp resize/canvas pass in this same chat measures:
+
+```text
+1024 x 128 RGBA
+8 x 128x128 cells
+sha256: 31bfc4fc40cbb1d2738037070b962d8e68b1f3ca87414b8f8c5f2ae1e60493c7
+alpha: binary only (0/255)
+```
+
+Measured alpha bounds:
+
+| Dir | bbox width | bbox height | bbox center x | top y | bottom y |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| N | 49 | 87 | 63.0 | 20 | 106 |
+| NE | 42 | 86 | 62.5 | 20 | 105 |
+| E | 32 | 88 | 60.5 | 20 | 107 |
+| SE | 43 | 87 | 63.0 | 20 | 106 |
+| S | 49 | 85 | 64.0 | 20 | 104 |
+| SW | 39 | 86 | 64.0 | 20 | 105 |
+| W | 31 | 87 | 65.0 | 20 | 106 |
+| NW | 42 | 84 | 64.5 | 20 | 103 |
+
+The body is therefore already correctly sized for the intended "roughly old 96px body inside a 128px action canvas" strategy: apparent height is 84-88px with all directions beginning at y=20. Do not enlarge the body simply to fill the 128px cell.
+
+### Candidate canonical root/floor
+
+The accepted legacy profile uses `anchor_y=84`, `ground_y=85`; the viability audit found normal legacy sprite baselines at roughly y=84. Preserve that semantic relationship in the new profile.
+
+Candidate new registration:
+
+```text
+frame: 128x128
+center_x: 64
+support/body baseline: y=106
+root anchor: [64, 106]
+ground_y: 107
+bottom safety margin below ground: 20px
+```
+
+If bottommost opaque support contact is used as the initial normalization evidence, the candidate whole-sprite integer Y translations are:
+
+```text
+N   +0
+NE  +1
+E   -1
+SE  +0
+S   +2
+SW  +1
+W   +0
+NW  +3
+```
+
+These translations are **calibration candidates, not permission to finalize blindly**.
+
+Before final profile write:
+
+1. landmark semantic `hip_center` and both visible/inferable toe/support contacts on all 8 directions;
+2. verify that x=64 represents the projected body/root axis from semantic landmarks, not alpha-bbox centering;
+3. verify y=106 against support-contact landmarks and the existing anchor-vs-ground semantics;
+4. create one deterministic 8-direction calibration overlay showing cell bounds, x=64, candidate anchor y=106, ground y=107, support contacts, hip centers and applied integer translations;
+5. publish that single overlay through the visual-review handoff and **pause for human/ChatGPT approval before the v3 profile/reference is declared accepted**;
+6. if the user changes anchor/floor/body scale, update the profile measurements and this report from that decision. Do not reinterpret the visual design itself.
+
+No direction may be independently rescaled to make its feet/bbox match. Whole-sprite integer translation is the only allowed pre-lock geometric adjustment after the one shared crisp body scale is established.
+
+If the exact 1024x128 candidate is available locally, preserve it as additional source-work evidence under a name such as `OPERATOR_DESIGN_REFERENCE_128.png` and verify the SHA above. If it is not available, deterministically reproduce the 128 candidate from the approved source through the existing pixelart/normalization tooling and require the calibration overlay/human gate before accepting the result.
 
 ## 1. Preserve the approved source exactly
 
