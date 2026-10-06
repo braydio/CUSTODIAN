@@ -62,3 +62,4 @@ branches need no tag because main retains their history.
   claim; no implementation committed; packet retained for immediate re-dispatch |
 | `session-transcript/procgen-performance-baseline-v1` | `1df7ce9065a2bdbe9aafd81503406a097e44270f` | 2026-10-05 | archived unique history | `archive/session-transcript-procgen-performance-baseline-v1-20261005` | stale initial
   claim; no implementation committed; packet retained for immediate re-dispatch |
+| `agent/operator-mobile-guard-composition` | `f8ed9a41dbb8ff178fc80e866fd053f7feb72023` | 2026-10-06 | fully contained by main | — | Stranded zero-ahead claim; branch fully contained by main, releasing operator-runtime lock for operator-unarmed-fast-chain-north-vfx |
