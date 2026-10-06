@@ -152,7 +152,13 @@
         "custodian/docs/ai_context/VALIDATION_RECIPES.md",
         "custodian/docs/ai_context/prompts/review_runtime_change.md",
         "AGENTS.md",
-        "custodian/AGENTS.md"
+        "custodian/AGENTS.md",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+        "custodian/docs/ai_context/task_packets/README.md",
+        ".agents/skills/custodian-next/SKILL.md",
+        "custodian/tools/agent/dispatch.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/tools/agent/workstream.py"
       ],
       "timeout_sec": 20,
       "needs_import": false
@@ -4924,6 +4930,63 @@
       ],
       "timeout_sec": 30,
       "needs_import": true
+    },
+    {
+      "id": "task_packet_contract_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_task_packet_contract.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "task_packets",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/tools/agent/test_task_packet_contract.py",
+        "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+        "custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
+      "id": "dispatch_claim_contract_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_dispatch.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "dispatch",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/agent/dispatch.py",
+        "custodian/tools/agent/test_dispatch.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        ".agents/skills/custodian-next/SKILL.md"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "workstream_artifact_contract_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_workstream_artifacts.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "workstream",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/test_workstream_artifacts.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
     }
   ]
 }
