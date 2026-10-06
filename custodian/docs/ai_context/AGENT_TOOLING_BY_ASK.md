@@ -1,6 +1,6 @@
 # Agent Tooling By Ask
 
-Last updated: 2026-10-03
+Last updated: 2026-10-05
 
 Purpose: give agents a fast routing table for which repo tools to use for a specific ask. This complements `VALIDATION_RECIPES.md`: use this file to pick the tool, then use validation recipes to decide how much proof is needed.
 
@@ -92,6 +92,7 @@ python3 custodian/tools/iteration/publish_review_artifacts.py \
   --important \
   --reason "subjective presentation review remains after objective checks passed" \
   --workstream <workstream-id> \
+  --authoring-chat <exact-packet-authoring-chat-url> \
   --source <moment-forge-or-review-directory> \
   --question "<specific reviewer question>"
 ```
@@ -103,10 +104,26 @@ structured metrics; it caps routine handoffs and requires explicit
 Dropbox remote and maintains `LATEST.json` per workstream.
 
 Execution agents report the emitted
-`CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` payload and stop. Human/ChatGPT review
-owns composition, atmosphere, aesthetic cohesion, gameplay-scale readability,
-game feel, and baseline approval. See `VISUAL_REVIEW_HANDOFF.md` for the full
-gate, evidence budget, remote contract, and credential rules.
+`CUSTODIAN_VISUAL_REVIEW_HANDOFF_JSON` payload and stop. Report the exact packet
+`Authoring chat:` URL plus the exact Dropbox `REVIEW_MANIFEST.json` path. ChatGPT
+web in that authoring conversation should inspect the path through the connected
+Dropbox source rather than asking the agent to duplicate the media into chat.
+Human/ChatGPT review owns composition, atmosphere, aesthetic cohesion,
+gameplay-scale readability, game feel, and baseline approval.
+
+After the decision is recorded, resume the same workstream and run the emitted
+`cleanup_command`, equivalent to:
+
+```bash
+python3 custodian/tools/iteration/publish_review_artifacts.py \
+  --reviewed-manifest /CUSTODIAN/visual_review/<workstream>/<run-id>/REVIEW_MANIFEST.json \
+  --reviewed-by chatgpt-user
+```
+
+Review uploads default to `delete-after-review`; use `--retain-after-review` only
+when the user/packet explicitly requires persistent cloud evidence. See
+`VISUAL_REVIEW_HANDOFF.md` for the full gate, evidence budget, remote contract,
+credential rules, and cleanup behavior.
 
 ## External Implementation Input Handoff
 
