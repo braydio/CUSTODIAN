@@ -76,3 +76,24 @@ Address only R1-01 and remaining R0-04 proof; retain original finding IDs and pr
 - Refresh reason: none
 - Next action: Land correction cycle 2, then claim the fresh paired review; if clean, surface the FX-adoption lane's exact live gate.
 - Blockers or open questions: Unresolved correction-worthy findings at cycle-2 review require human decision; no cycle 3.
+
+## Independent Review
+
+- Status: `human_required`
+- Review workstream: `review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2`
+- Reviewed on main: `032d5f037bc846a0b7d291d27300645fcab2ea34`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `R2-01` (retained R1-01/R0-04 disconnected-editor acceptance unresolved)
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_REFRESH_HARDENING_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none` (maximum automatic cycle reached; authoring-chat decision required)
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Retained dispositions: R0-01/R0-02/R0-03 fixed; R0-04 unresolved only through actual-disconnect ownership control; R1-01 document-switch portion fixed, disconnected-editor portion unresolved.
+- Evidence: Pinned expanded UI smoke passes; independent real send/cause→held-live-loader→actual state.disconnect reproduction mutates accepted preview and rendered widgets at revision 42/generation 2. Synchronous live-image disconnect also applies; document-switch controls reject and retain saved fallback. No automatic cycle 3 or implementation edit.
