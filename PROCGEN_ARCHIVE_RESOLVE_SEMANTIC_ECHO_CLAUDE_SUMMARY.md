@@ -2,7 +2,7 @@
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4
 
-**Status: implemented and objectively validated; waiting on human visual/game-feel approval. Packet NOT archived, NOT landed.**
+**Status: complete and landed at the user's direction. Visual/game-feel criterion 13 is NOT signed off: ChatGPT review = technical approve / visual hold (could not view pixels); user waived the hold to playtest. Possible tuning: constructed-class echo only (88% of echoes, 16 px lattice).**
 
 ## What changed
 - `ProcGenPresentationClass` (new): five bounded classes (natural/road/constructed/wall_cliff/major_landmark), echo leads 0–130 ms.
@@ -15,7 +15,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - New: `procgen_archive_resolve_semantic_echo`, `contract_world_archive_resolve_ingress` (real loader, real registered ingress + Gothic gate; ordering, exact final tile, canonical validity/main component, zero added component queries). Negative control: removing the trigger fails the integration smoke.
 - Green: procgen_archive_resolve_shader, procgen_reveal_presentation, pause_aware_streaming, chunk_lifecycle, payload_cache, distant_chunk_unload, runtime_health, region_frame, world_ingress_spawner, spawn_validity, ingress_spawn_clearance, camera_presentation_subject_constraint, S1 quick (fingerprint 1773840677).
 - Moment Forge `procgen/archive_resolve_semantic_echo_review`: ingress settles ≈1.2 s, reacquisition settle 0.133 s vs first resolve ≤0.33 s, pocket never veiled.
-- Dropbox: `/CUSTODIAN/visual_review/procgen-archive-resolve-semantic-echo/20261006T092059Z/REVIEW_MANIFEST.json`. **Human decision: pending.**
+- Dropbox: `/CUSTODIAN/visual_review/procgen-archive-resolve-semantic-echo/20261006T092059Z/REVIEW_MANIFEST.json`. Human decision: technical pass; visual hold waived by user for playtest. Manifest names `b086e552` (dirty-tree run later committed as `e14f5792`); clean rerun not done.
 
 ## Awkward parts
 - First class mapping was wrong on real maps: `authored_landmark` material covers the spawn hardstand and `fortress_exclusion_cells` is a large ellipse, so 569/574 echoes read as landmark. Found only via the renderer probe; unit smoke missed it. Now landmark = Sundered Keep `terminal_apron_cells` claim only; `authored_landmark` material counts as constructed. Packet text should be updated accordingly.
@@ -28,7 +28,7 @@ Root checkout `CUSTODIAN` (main) still has an uncommitted `BRANCH_ARCHIVE.md` ch
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
+- Outcome: success
 - Friction severity: low
 - What went wrong: landmark class over-broad until renderer probe; fixture command registration missed first.
 - Root cause / contributing factors: assumed material/claim names matched hero semantics without probing a real map.
@@ -38,11 +38,11 @@ Root checkout `CUSTODIAN` (main) still has an uncommitted `BRANCH_ARCHIVE.md` ch
 - What worked: lazy per-tile class query; integration trace seam.
 
 ## Next Handoff
-- Next workstream: procgen-archive-resolve-semantic-echo
-- Next packet state: human-required
-- Refresh owner: chatgpt-user
+- Next workstream: review-procgen-archive-resolve-semantic-echo
+- Next packet state: ready
+- Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4
 - Refresh reason: none
-- Next action: record visual decision on the Dropbox manifest; then resume, fill packet Completion Truth, archive, finish, run Dropbox cleanup command.
-- Blockers or open questions: human visual approval
+- Next action: playtest AR3 on main; report constructed-echo feel; paired review claims automatically. Dropbox run left up until that verdict (cleanup command in the manifest handoff).
+- Blockers or open questions: none (user playtest verdict pending)

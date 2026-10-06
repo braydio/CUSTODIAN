@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-semantic-echo`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `review-procgen-archive-resolve-shader, review-contract-world-playable-region-spawn-validity-fix`
@@ -24,7 +24,7 @@
 - Evidence: `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; reviewed AR1/ARR1/AR2 receipts; `PROCGEN_ARCHIVE_RESOLVE_SHADER_RECOVERY_1_CLAUDE_SUMMARY.md`; `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER_CLAUDE_SUMMARY.md`; Dropbox `/CUSTODIAN/visual_review/procgen-archive-resolve-shader-recovery-1/20261005T025507Z/REVIEW_MANIFEST.json`; archived `CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md`; `REVIEW_CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX_CLAUDE_SUMMARY.md`; live `ContractWorldLoader._on_contract_generated/_position_operator`; live read-only semantic seams `ProcGenTilemap.get_surface_material_at_tile`, `is_road_surface_tile`, `get_elevation_data_at_tile`, wall TileMap authority, `is_sundered_keep_frontage_protected`, and authored-landmark material/claim authority.
 - Task-specific authority: `STREAMING_REVEAL_PRESENTATION_V1.md`; reviewed AR1/AR2 implementation; existing procgen surface/road/elevation/wall/authored-landmark owners queried read-only; reviewed playable-region spawn validity owns whether a final runtime spawn is valid. AR3 must consume the already-final Operator position after `ContractWorldLoader._position_operator()` succeeds. It may not call `get_main_playable_component()` itself, introduce a spawn-validity cache, or revalidate/move the Operator.
 - Work surface: `custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd`, `archive_resolve.gdshader`, one small read-only presentation-class adapter under the same streaming namespace, the narrow `ProcGenTilemap` Archive Resolve adapter/API, and one bounded `ContractWorldLoader` call after final valid Operator placement. Add focused V1 smoke + a renderer-backed Moment Forge comparison. Do not move semantic or spawn-validity authority into presentation code.
-- Change: Add no more than the design's bounded semantic presentation classes. Classify each tile only from existing read-only authorities: `road` from live road/ruined-road/soft-path authority; `constructed` from hardened civic/industrial/bridge surface material; `wall_cliff` from existing wall/elevation/edge metadata; `major_hero_landmark` only when an existing authored-landmark material/claim such as the Sundered Keep frontage already says so; otherwise `natural`. Do not depend on or pre-implement the not-yet-landed generic Landmark Vocabulary program. Encode the bounded class as render-only assignment data (the AR2 `.b` channel is reserved for AR3 if still clean) rather than caching a second semantic map.
+- Change: Add no more than the design's bounded semantic presentation classes. Classify each tile only from existing read-only authorities: `road` from live road/ruined-road/soft-path authority; `constructed` from hardened civic/industrial/bridge surface material; `wall_cliff` from existing wall/elevation/edge metadata; `major_hero_landmark` only from an explicit narrow authored hero claim (implemented: the Sundered Keep `terminal_apron_cells` claim; the broad `authored_landmark` surface material covers ordinary spawn hardstand and `fortress_exclusion_cells` is a large keep-out ellipse, so both read as `constructed`/not-hero); otherwise `natural`. Do not depend on or pre-implement the not-yet-landed generic Landmark Vocabulary program. Encode the bounded class as render-only assignment data (the AR2 `.b` channel is reserved for AR3 if still clean) rather than caching a second semantic map.
 - Change: Class differences stay subtle: natural remains mostly soot/dither; constructed may use slightly straighter registration; roads may show a brief interrupted vector; wall/cliff may pre-echo a faint contour; major/hero authored landmarks may silhouette roughly 100-150 ms early. No class may expose exact hidden content or alter request/commit order.
 - Change: Add a one-time presentation-only ingress trigger on `ProcGenTilemap`, called by `ContractWorldLoader` only **after** `_position_operator()` returns success **and after the remaining contract-world placement phase completes, including `_place_gothic_compound_connection()` when enabled**, in the real `_on_contract_generated()` flow, immediately before `_refresh_camera()` / contract-ready closeout. The trigger consumes the Operator's already-final world/tile position; it does not query `get_main_playable_component()`, choose a spawn, cache validity, or move the Operator. It centers the effect on that actual runtime tile, keeps a small committed safety pocket completely settled/visible, and may re-veil/re-resolve already-committed nearby cells outward over roughly 1.0-1.5 seconds. It must not enqueue discovery, repaint/unpaint authoritative tiles, delay control, or mutate collision/navigation/topology. Generation's early `_prepare_streaming_reveal()` prime around `get_player_spawn()` remains streaming authority and is not the authored arrival choreography.
 - Change: Reacquisition consumes AR1/AR2 lifecycle identity and the existing reacquisition custom-data bit; it skips/shortens semantic pre-echo, reduces registration/misregistration intensity, and settles roughly within 100-150 ms. First resolve and reacquisition must remain deterministic and independently measurable.
@@ -38,23 +38,22 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes-with-visual-waiver`: criteria 1-12 are proven by objective evidence; criterion 13 (gameplay-scale human read as Archive resolution rather than grid/loading/fog) was NOT signed off by ChatGPT review (technical approve / visual hold: reviewer could not view pixels). The user explicitly directed landing for hands-on playtest, accepting criterion 13 as pending their own playtest judgment. Likely tuning, if any: constructed-class echo only (88% of echo events, 16 px lattice).
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Evidence: `custodian/game/world/procgen/streaming/procgen_presentation_class.gd`, `procgen_reveal_presentation.gd`, `archive_resolve.gdshader`; `ProcGenTilemap.get_archive_resolve_presentation_class/begin_archive_resolve_ingress`; `ContractWorldLoader._begin_archive_resolve_ingress`. New smokes `procgen_archive_resolve_semantic_echo` and `contract_world_archive_resolve_ingress` (real loader, registered ingress + Gothic gate, ordering, exact final tile, canonical validity/main component, zero added component queries; negative control fails). Green: procgen_archive_resolve_shader, procgen_reveal_presentation, pause_aware_streaming, chunk_lifecycle, payload_cache, distant_chunk_unload, runtime_health, region_frame, world_ingress_spawner, spawn_validity, ingress_spawn_clearance, camera_presentation_subject_constraint, S1 quick `1773840677`. Moment Forge `procgen/archive_resolve_semantic_echo_review`: ingress ~1.2 s, reacquisition 0.133 s vs <=0.33 s first resolve, pocket never veiled. Dropbox `/CUSTODIAN/visual_review/procgen-archive-resolve-semantic-echo/20261006T092059Z/REVIEW_MANIFEST.json` (manifest names `b086e552`; run was from the dirty tree that became commit `e14f5792`, clean rerun not performed). Technical review disposition from the authoring chat: pass; visual: hold, waived by user for playtest.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
-
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Landmark class initially covered ~99% of echoes on a real map; evidence manifest provenance points at the pre-commit dirty tree; landed with visual sign-off outstanding at user direction.`
+- Root cause / contributing factors: `Assumed material/claim names matched hero semantics without probing a real map; evidence published before committing.`
+- Prevention / pipeline improvement: `Probe class distributions on a real generated map before wiring; commit before publishing review evidence.`
+- Tooling / docs drift discovered: `Packet wording on authored-landmark material was too broad (fixed here); Moment Forge fixture commands must be registered in moment_action_driver.gd.`
+- Follow-up: `review-procgen-archive-resolve-semantic-echo`
 
 ## Refresh Planning Authority
 
@@ -66,10 +65,10 @@
 ## Handoff
 
 - Next workstream: `review-procgen-archive-resolve-semantic-echo`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: `none after this packet's required pre-implementation refresh is completed`
-- Next action: Spawn correctness is reviewed/passed. Claim AR3 now; implement the full-path post-placement ingress trigger + bounded semantic echo/reacquisition, complete objective + real-renderer evidence, obtain explicit human visual/game-feel approval through the recorded authoring chat, and archive so the paired fresh-context AR3 review can claim automatically.
+- Next action: Let the fresh-context AR3 paired review claim automatically. Review should include the user's playtest verdict on constructed-class echo strength (possible constructed-only tuning).
 - Blockers or open questions: None. Reviewed AR2, this planning refresh, and reviewed playable-region spawn validity are complete. Keep semantic classes bounded; do not broaden class count, invent future Landmark Vocabulary authority, or fold R0-01 component-query optimization into AR3.

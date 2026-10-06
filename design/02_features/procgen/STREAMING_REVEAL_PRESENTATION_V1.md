@@ -1,7 +1,7 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; AR1/ARR1 complete; AR2/recovery/review passed; spawn validity reviewed; AR3 ready  
+**Status:** Design locked; AR1/ARR1 complete; AR2/recovery/review passed; spawn validity reviewed; AR3 complete (visual verdict pending user playtest)  
 **Last updated:** 2026-10-03  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
