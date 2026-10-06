@@ -14,7 +14,7 @@
 - Paired review workstream: `review-operator-unarmed-fast-chain-north-vfx`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `d75e0ee03cfd1348e997518b669485e2df5e8216`
+- Reviewed main: `4fd73d43c8480ec63c492fc182bac484279f4825`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Replace the North-facing Fists Fast 01-04 FX tracks with the four visually approved Black-Gold Afterimage / Amber Vector source masters from immutable handoff `north-vfx-20261006-a1`, normalize them to the live 96×96-per-frame Operator contract, publish them through the existing guarded Operator asset pipeline, and prove source/runtime/selector/timing integrity without changing gameplay or other directions.
