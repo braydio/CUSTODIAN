@@ -92,7 +92,7 @@
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Superseded/legacy production path disposition: `none; existing document-switch and saved-preview fallback paths were preserved`
+- Superseded/legacy production path disposition: `intentionally-preserved; existing document-switch and saved-preview fallback paths remain in use`
 - Evidence: `PreviewOwnership tokens bind each live result to the connected bridge generation, client session, active document path, and revision. The pinned UI smoke exercised actual disconnect, same-document reconnect, stale A rejection, current B acceptance, and the synchronous saved-preview fallback. Changed validation passed all 7 selected checks with complete coverage; git diff --check passed. See OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION_CLAUDE_SUMMARY.md.`
 
 ## Execution Feedback
