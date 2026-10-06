@@ -1,7 +1,7 @@
 # CORRECTION: OPERATOR WORKBENCH BROWSER / PREVIEW — CYCLE 2
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-2`
+- Workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
@@ -11,7 +11,7 @@
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, runtime, workflow`
-- Paired review workstream: `review-operator-workbench-browser-preview-refresh-hardening-review-corrections-2`
+- Paired review workstream: `review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2`
 - Review cycle: `2`
 - Max automatic review cycles: `2`
 - Reviewed main: `18d5f1f7392dc44ba1b70e4465e615866b7837ca`
@@ -50,7 +50,7 @@ Address only R1-01 and remaining R0-04 proof; retain original finding IDs and pr
 Complete the standard `custodian.task_feedback.v1` receipt before archive.
 
 ## Next Handoff
-- Next workstream: review-operator-workbench-browser-preview-refresh-hardening-review-corrections-2
+- Next workstream: review-operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no

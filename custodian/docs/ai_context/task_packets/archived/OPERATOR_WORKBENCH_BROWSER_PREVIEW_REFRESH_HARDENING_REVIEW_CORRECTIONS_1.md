@@ -104,5 +104,5 @@ Address only R0-01 through R0-04. Preserve IDs for re-review dispositions. Re-re
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
 - Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_REFRESH_HARDENING_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
-- Follow-up workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-2`
+- Follow-up workstream: `operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`

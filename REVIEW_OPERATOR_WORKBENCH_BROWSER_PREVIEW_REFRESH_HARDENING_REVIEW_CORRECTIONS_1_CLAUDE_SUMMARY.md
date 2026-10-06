@@ -43,7 +43,7 @@ Disposition: `findings` — one blocking defect and one retained material eviden
 - `/tmp/custodian-opui/bin/python /tmp/custodian-r1-live-probe.py .`: PASS for R0-03 issue-to-result generation proof; reproduced R1-01 (`revision=42`, request/active generation `2`, active document mismatch, old document result accepted).
 - `python3 custodian/tools/validation/operator_animation_workbench_smoke.py`: PASS supporting discovery/source-authority preservation.
 - Scoped graph change/callee analysis was used first; graph is stale at `cbc4acc` and exact source/diff reads supplied current evidence. Graph test gaps are not treated as proof that smoke coverage is absent.
-- Changed-artifact closeout validation: PASS 2/2 (`review_pairing_contract`, `visual_review_handoff`), complete coverage, zero failed/timed-out/skipped; report `/tmp/custodian-r1-review-validation.json`. `git diff --check`: PASS.
+- Changed-artifact closeout validation: PASS 2/2 (`review_pairing_contract`, `visual_review_handoff`), complete coverage, zero failed/timed-out/skipped; report `/tmp/custodian-r1-review-validation-renamed.json`. `git diff --check`: PASS.
 - Moment Forge: not run — deterministic authoring-tool state/concurrency review. Renderer/media capture: not required.
 - Original production crash traceback remains unavailable; no crash-root-cause claim is made.
 
@@ -176,15 +176,15 @@ asyncio.run(synchronous_live_probe())
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: Expanded green smoke still omitted direct document-switch-during-loader and selection/source/mode supersession controls. The graph reports stale source positions; the first independent browser probe used the wrong ErrorDialog import and was corrected before execution.
+- What went wrong: Expanded green smoke still omitted direct document-switch-during-loader and selection/source/mode supersession controls. The first finish attempt rejected root-series cycle-2 filenames because its artifact scope requires the immediate review-target prefix; renamed the new packets/workstreams to that namespace while retaining review cycle 2/cap 2. The graph reports stale source positions; the first independent browser probe used the wrong ErrorDialog import and was corrected before execution.
 - Root cause / contributing factors: Generation is now propagated correctly, but active editor document ownership is not rechecked around awaits; a generation-only comparison/transition fixture cannot prove all requested ownership triggers.
 - Prevention / pipeline improvement: Cycle 2 names explicit guard/await checkpoints and an executable issue-to-result negative control; use Textual 0.89.1 and event barriers.
-- Tooling / docs drift discovered: Review packet Reviewed main is the prior review baseline, not the landed correction target; this receipt records the actual target 18d5f1f7392dc44ba1b70e4465e615866b7837ca. Graph build cbc4acc is stale, so exact references come from live source.
-- Follow-up: operator-workbench-browser-preview-refresh-hardening-review-corrections-2
+- Tooling / docs drift discovered: Finish packet naming must extend the immediate target correction workstream, yielding the nested cycle-2 identifier. Review packet Reviewed main is the prior review baseline, not the landed correction target; this receipt records the actual target 18d5f1f7392dc44ba1b70e4465e615866b7837ca. Graph build cbc4acc is stale, so exact references come from live source.
+- Follow-up: operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2
 - What worked: Fresh isolated review and independent app/server issue-to-result probes reproduced the remaining defect while confirming the three original fixes.
 
 ## Next Handoff
-- Next workstream: operator-workbench-browser-preview-refresh-hardening-review-corrections-2
+- Next workstream: operator-workbench-browser-preview-refresh-hardening-review-corrections-1-review-corrections-2
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
