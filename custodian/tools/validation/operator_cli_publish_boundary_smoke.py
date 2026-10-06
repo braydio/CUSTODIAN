@@ -10,6 +10,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+from PIL import Image
 
 OPERATOR_TOOLS = Path(__file__).resolve().parents[1] / "operator"
 sys.path.insert(0, str(OPERATOR_TOOLS))
@@ -19,9 +20,10 @@ import animation_workbench_model as m
 import operator_art_worktree as art
 import operator_cli
 from ui import service as ui_service
-from operator_art_worktree_smoke import SOURCE, CANONICAL_RUNTIME_FRAMES, fixture, git
+from operator_art_worktree_smoke import SOURCE, CANONICAL_RUNTIME_FRAMES, commit_remote, fixture, git
 
 IDENTITY = {"profile": "unarmed", "group": "attack", "action": "fast_01", "direction": "e"}
+OTHER_SOURCE = "custodian/content/sprites/operator/source/animations/unarmed/attack/fast_02/lower_body__operator__unarmed__attack__fast_02__e__6f__96.png"
 PUBLISHED = b"cli published art\n"
 
 
@@ -32,12 +34,33 @@ def digest(root: Path) -> dict[str, str | None]:
     }
 
 
-def run_cli(repo_root: Path, coordination: Path, *extra: str):
+def run_cli(repo_root: Path, coordination: Path, *extra: str, tamper_initially: bool = False, tamper_after_prepare: bool = False):
     """Run operator_cli.main against the fixture checkout with the Aseprite backend stubbed."""
     workspace_root = repo_root / ".ai/operator_animation_workbench"
     events: list[str] = []
     publish_calls: list[dict] = []
-    manifest_data = {"layers": [{"source_contract": {"path": SOURCE}, "publish_contract": {"path": SOURCE}}]}
+    semantic = {"owner": "operator", "layer": "lower_body", "profile": "unarmed", "group": "attack", "action": "fast_01", "direction": "e"}
+    binding = {
+        **semantic, "binding_id": "lower_body", "source_path": SOURCE,
+        "semantic_identity": dict(semantic), "source_contract": {"path": SOURCE, "frames": 6, "frame_size": [96, 96]},
+        "publish_contract": {"path": SOURCE, "frames": 6, "frame_size": [96, 96]},
+    }
+    manifest_data = {"identity": dict(IDENTITY), "layers": [binding]}
+
+    def retarget_manifest():
+        alternate_sha = m.file_sha256(repo_root / OTHER_SOURCE)
+        alternate_pixels = m.pixel_sha256(repo_root / OTHER_SOURCE)
+        manifest_data["layers"][0].update({
+            "source_path": OTHER_SOURCE,
+            "source_file_sha256": alternate_sha,
+            "source_pixel_sha256": alternate_pixels,
+            "source_contract": {"path": OTHER_SOURCE, "frames": 6, "frame_size": [96, 96],
+                                "file_sha256": alternate_sha, "pixel_sha256": alternate_pixels},
+            "publish_contract": {"path": OTHER_SOURCE, "frames": 6, "frame_size": [96, 96]},
+        })
+
+    if tamper_initially:
+        retarget_manifest()
 
     def fake_publish(manifest, aseprite=None, force_stale=False, dry_run=False, *_rest):
         events.append("publish")
@@ -49,12 +72,21 @@ def run_cli(repo_root: Path, coordination: Path, *extra: str):
     def wrap(name, original):
         def wrapped(*args, **kwargs):
             events.append(name)
-            return original(*args, **kwargs)
+            result = original(*args, **kwargs)
+            if name == "prepare" and tamper_after_prepare:
+                retarget_manifest()
+            return result
         return wrapped
+
+    plan_binding = {
+        **semantic, "binding_id": "lower_body", "source_path": SOURCE,
+        "semantic_identity": dict(semantic), "source_contract": {"path": SOURCE, "frames": 6, "frame_size": [96, 96]},
+        "publish_contract": {"path": SOURCE, "frames": 6, "frame_size": [96, 96]},
+    }
 
     real_service = ui_service.WorkbenchService
     patches = [
-        (m, "build_plan", lambda *_a, **_k: {"identity": dict(IDENTITY)}),
+        (m, "build_plan", lambda *_a, **_k: {"identity": dict(IDENTITY), "layers": [plan_binding]}),
         (w, "workspace", lambda root, _identity: Path(root) / "unarmed/attack/fast_01/e"),
         (w, "load", lambda _path: manifest_data),
         (w, "source_contract_freshness", lambda *_a, **_k: {}),
@@ -128,6 +160,28 @@ def smoke() -> None:
         assert_blocked(art_root, coordination, "dirty art checkout", "--force-stale-source", expect="unrelated_dirt.txt")
         assert (art_root / "unrelated_dirt.txt").read_text() == "preserve me"
         (art_root / "unrelated_dirt.txt").unlink()
+
+        # A fully rebound manifest with coherent path metadata still cannot retarget another valid source.
+        alternate = Image.new("RGBA", (96 * 6, 96), (15, 20, 25, 255))
+        encoded = io.BytesIO(); alternate.save(encoded, format="PNG")
+        commit_remote(coordination, OTHER_SOURCE, encoded.getvalue(), "fixture alternate Operator source")
+        git(art_root, "fetch", "origin", "main")
+        git(art_root, "merge", "--ff-only", "origin/main")
+        # Keep main and the art checkout aligned to the same fixture head for readiness.
+        before, head, status = digest(art_root), git(art_root, "rev-parse", "HEAD"), git(art_root, "status", "--porcelain")
+        code, _out, err, events, calls = run_cli(art_root, coordination, tamper_initially=True)
+        assert code == 2 and "SOURCE PATH DOES NOT MATCH THE SELECTED ANIMATION PLAN" in err, err
+        assert not calls and "publish" not in events, (events, calls)
+        assert digest(art_root) == before and git(art_root, "rev-parse", "HEAD") == head
+        assert git(art_root, "status", "--porcelain") == status
+
+        # A manifest changed after initial preparation is reloaded and rejected at the final boundary.
+        before, head, status = digest(art_root), git(art_root, "rev-parse", "HEAD"), git(art_root, "status", "--porcelain")
+        code, _out, err, events, calls = run_cli(art_root, coordination, tamper_after_prepare=True)
+        assert code == 2 and "SOURCE PATH DOES NOT MATCH THE SELECTED ANIMATION PLAN" in err, err
+        assert events[0] == "prepare" and "publish" not in events and not calls, (events, calls)
+        assert digest(art_root) == before and git(art_root, "rev-parse", "HEAD") == head
+        assert git(art_root, "status", "--porcelain") == status
 
         before = digest(art_root)
         code, out, err, events, calls = run_cli(art_root, coordination)

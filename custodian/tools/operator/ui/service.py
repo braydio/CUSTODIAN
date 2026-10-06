@@ -690,22 +690,8 @@ class WorkbenchService:
         if self.model is not model and self.workbench is not workbench:
             return self.workbench.publish(manifest, self.aseprite, force_stale, False, full_validate, plan, mirror_counterpart)
         data = self.workbench.load(manifest)
-        canonical_paths: set[str] = set()
-        for binding in data.get("layers", ()):
-            for contract in (binding.get("source_contract", {}), binding.get("publish_contract", {})):
-                path = str(contract.get("path", ""))
-                if path:
-                    canonical_paths.add(path)
+        canonical_paths = self._validated_publication_paths(selection, plan, data, mirror_counterpart)
         counterpart = self.workbench.horizontal_counterpart(selection.direction) if mirror_counterpart else None
-        if counterpart:
-            index = self._index()
-            for binding in data.get("layers", ()):
-                target = self.workbench._counterpart_target(binding, counterpart)
-                canonical_paths.add(self.model.rel(target))
-                identity = (binding.get("owner"), binding.get("layer"), binding.get("profile"), binding.get("group"), binding.get("action"), counterpart)
-                existing = index.get(identity)
-                if existing:
-                    canonical_paths.add(self.model.rel(Path(existing[0])))
         allowlist = operator_art_worktree.publication_allowlist(self.repo_root, canonical_paths)
         def freshness_for(current):
             return {} if force_stale else self.workbench.source_contract_freshness(current,self.repo_root)
@@ -721,6 +707,11 @@ class WorkbenchService:
                 )
         def revalidate_before_mutation():
             current=self.workbench.load(manifest)
+            current_paths = self._validated_publication_paths(selection, plan, current, mirror_counterpart)
+            if current_paths != self._validated_publication_paths(selection, plan, data, mirror_counterpart):
+                raise operator_art_worktree.ArtWorktreeError(
+                    "WORKBENCH PUBLICATION BINDING CHANGED BEFORE SOURCE MUTATION"
+                )
             stale=freshness_for(current)
             check=operator_art_worktree.inspect_publish_readiness(
                 self.repo_root,self.coordination_root,self.workspace_root,
@@ -749,6 +740,120 @@ class WorkbenchService:
                 self.coordination_root if self.coordination_root_configured else None
             )
         return result
+
+    def _validated_publication_paths(
+        self, selection: AnimationSelection, plan: dict[str, Any], data: dict[str, Any],
+        mirror_counterpart: bool,
+    ) -> set[str]:
+        """Bind mutable manifest contracts to the trusted selected-animation plan."""
+        expected_identity = {
+            "profile": selection.profile, "group": selection.group,
+            "action": selection.action, "direction": selection.direction,
+        }
+        manifest_identity = data.get("identity")
+        if not isinstance(manifest_identity, dict) or any(
+            manifest_identity.get(key) != value for key, value in expected_identity.items()
+        ):
+            raise operator_art_worktree.ArtWorktreeError(
+                "WORKBENCH PUBLICATION IDENTITY DOES NOT MATCH THE SELECTED ANIMATION"
+            )
+        plan_layers = plan.get("layers", ())
+        if not isinstance(plan_layers, (list, tuple)) or any(not isinstance(row, dict) for row in plan_layers):
+            raise operator_art_worktree.ArtWorktreeError("SELECTED ANIMATION PLAN HAS INVALID PUBLICATION BINDINGS")
+        planned = {str(binding.get("binding_id", "")): binding for binding in plan_layers}
+        bindings = data.get("layers", ())
+        if not isinstance(bindings, (list, tuple)) or any(not isinstance(row, dict) for row in bindings):
+            raise operator_art_worktree.ArtWorktreeError("WORKBENCH MANIFEST HAS INVALID PUBLICATION BINDINGS")
+        if not planned or len(planned) != len(plan_layers) or {
+            str(binding.get("binding_id", "")) for binding in bindings
+        } != set(planned):
+            raise operator_art_worktree.ArtWorktreeError(
+                "WORKBENCH PUBLICATION BINDINGS DO NOT MATCH THE SELECTED ANIMATION PLAN"
+            )
+
+        paths: set[str] = set()
+        validated_bindings: list[tuple[dict[str, Any], dict[str, Any], str]] = []
+        identity_fields = ("owner", "layer", "profile", "group", "action", "direction")
+        for binding in bindings:
+            binding_id = str(binding.get("binding_id", ""))
+            trusted = planned[binding_id]
+            trusted_semantic = trusted.get("semantic_identity", {})
+            actual_semantic = binding.get("semantic_identity", {})
+            if not isinstance(trusted_semantic, dict) or not isinstance(actual_semantic, dict):
+                raise operator_art_worktree.ArtWorktreeError(
+                    f"WORKBENCH PUBLICATION IDENTITY IS INVALID FOR BINDING {binding_id}"
+                )
+            if any(binding.get(field) != trusted.get(field) for field in identity_fields) or any(
+                actual_semantic.get(field) != trusted_semantic.get(field) for field in identity_fields
+            ):
+                raise operator_art_worktree.ArtWorktreeError(
+                    f"WORKBENCH PUBLICATION IDENTITY CHANGED FOR BINDING {binding_id}"
+                )
+
+            source_path = str(trusted.get("source_path", ""))
+            if not source_path or binding.get("source_path") != source_path:
+                raise operator_art_worktree.ArtWorktreeError(
+                    f"WORKBENCH SOURCE PATH DOES NOT MATCH THE SELECTED ANIMATION PLAN: {binding_id}"
+                )
+            source_contract = binding.get("source_contract", {})
+            publish_contract = binding.get("publish_contract", {})
+            if not isinstance(source_contract, dict) or not isinstance(publish_contract, dict):
+                raise operator_art_worktree.ArtWorktreeError(
+                    f"WORKBENCH PUBLICATION CONTRACT IS INVALID FOR {binding_id}"
+                )
+            if source_contract.get("path") != source_path:
+                raise operator_art_worktree.ArtWorktreeError(
+                    f"WORKBENCH SOURCE CONTRACT PATH DOES NOT MATCH THE SELECTED ANIMATION PLAN: {binding_id}"
+                )
+
+            planned_publish = trusted.get("publish_contract", {})
+            publish_frames = publish_contract.get("frames")
+            publish_size = publish_contract.get("frame_size")
+            if (publish_frames, publish_size) == (
+                planned_publish.get("frames"), planned_publish.get("frame_size")
+            ):
+                expected_publish_path = str(planned_publish.get("path", source_path))
+            else:
+                try:
+                    key = self.model.SCHEMA.parse_filename(Path(source_path).name)
+                    frames = int(publish_frames)
+                    width, height = (int(value) for value in publish_size)
+                    resized_key = self.model.SCHEMA.OperatorAssetKey(
+                        key.owner, key.layer, key.animation_profile, key.action_group,
+                        key.action, key.direction, frames, width, height,
+                    )
+                    expected_publish_path = (
+                        Path(source_path).parent / self.model.SCHEMA.canonical_filename(resized_key)
+                    ).as_posix()
+                except (TypeError, ValueError, AttributeError) as error:
+                    raise operator_art_worktree.ArtWorktreeError(
+                        f"WORKBENCH PUBLISH CONTRACT IS INVALID FOR {binding_id}: {error}"
+                    ) from error
+            if publish_contract.get("path") != expected_publish_path:
+                raise operator_art_worktree.ArtWorktreeError(
+                    f"WORKBENCH PUBLISH PATH DOES NOT MATCH THE SELECTED ANIMATION PLAN: {binding_id}"
+                )
+            paths.update((source_path, expected_publish_path))
+            validated_bindings.append((trusted, binding, expected_publish_path))
+
+        if mirror_counterpart:
+            counterpart = self.workbench.horizontal_counterpart(selection.direction)
+            if counterpart:
+                index = self._index()
+                for trusted, binding, publish_path in validated_bindings:
+                    key = self.model.SCHEMA.parse_filename(Path(publish_path).name)
+                    target_key = self.model.SCHEMA.OperatorAssetKey(
+                        key.owner, key.layer, key.animation_profile, key.action_group,
+                        key.action, counterpart, key.frames, key.frame_width, key.frame_height,
+                    )
+                    target = self.model.CUSTODIAN_ROOT / self.model.SCHEMA.canonical_source_path(target_key)
+                    paths.add(self.model.rel(target))
+                    semantic = trusted.get("semantic_identity", {})
+                    identity = tuple(semantic.get(key, "") for key in identity_fields[:-1]) + (counterpart,)
+                    existing = index.get(identity)
+                    if existing:
+                        paths.add(self.model.rel(Path(existing[0])))
+        return paths
 
     def refresh(self, selection: AnimationSelection, discard: bool = False):
         return self.workbench.refresh(

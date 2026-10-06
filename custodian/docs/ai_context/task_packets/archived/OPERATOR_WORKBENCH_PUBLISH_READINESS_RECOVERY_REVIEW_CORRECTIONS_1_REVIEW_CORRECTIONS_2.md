@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1-review-corrections-2`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-operator-workbench-publish-readiness-recovery-review-corrections-1`
@@ -44,6 +44,27 @@
 - Validation: Run `operator_cli_publish_boundary_smoke.py` first with the two new tampered-manifest controls, then `operator_art_worktree_smoke.py`, `operator_workbench_mirror_publish_smoke.py`, `operator_workbench_ui_smoke.py`, `operator_animation_workbench_smoke.py`, and `git diff --check`. Use fixture remotes only; never publish test data to the real project remote.
 - Task overrides: `none`.
 - Deferred: Any unresolved correction-worthy defect after paired cycle-2 review requires `human_required`; do not create an automatic cycle 3.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `WorkbenchService._validated_publication_paths` derives direct and mirror targets from the selected plan, rejects manifest identity/source/publish path drift before readiness and again before mutation, and rechecks the exact binding set immediately before backend publication. `operator_cli_publish_boundary_smoke.py` proves an initially retargeted manifest with matching source hashes and dimensions, a post-preparation retarget, and the eligible selected-path publication control; both negative controls preserve source/runtime hashes, HEAD, and Git status and make no backend publish call. The five packet smokes (`operator_cli_publish_boundary_smoke.py`, `operator_art_worktree_smoke.py`, `operator_workbench_mirror_publish_smoke.py`, `operator_workbench_ui_smoke.py`, `operator_animation_workbench_smoke.py`) pass; the optional Textual pilot is unavailable. `git diff --check` and Python compilation pass.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first retarget fixture changed both semantic identity and paths, so it exercised the identity rejection first. The control was narrowed to preserve selected identity and use a real alternate source with internally consistent hashes. The first artifact graph query also reported an empty index; targeted source search supplied the needed context.
+- Root cause / contributing factors: The initial fixture combined multiple invalid conditions; the worktree's code-review graph index was not populated.
+- Prevention / pipeline improvement: Keep hostile controls single-fault and assert the intended boundary; fall back to exact source searches when the graph reports an empty index.
+- Tooling / docs drift discovered: Code-review graph returned `graph is empty: nothing is indexed` in this worktree; no repository code change was needed.
+- Follow-up: none
+- What worked: Fixture remotes exercised real checkout readiness and landing without publishing test data to the project remote.
 
 ## Handoff
 
