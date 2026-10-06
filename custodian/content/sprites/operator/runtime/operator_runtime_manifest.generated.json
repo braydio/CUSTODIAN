@@ -6947,24 +6947,24 @@
       "direction": "w",
       "layers": {
         "fx": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__fx__unarmed__defense__parry_01__w__6f__96.png",
-          "frames": 6,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__fx__unarmed__defense__parry_01__w__5f__96.png",
+          "frames": 5,
           "frame_size": [
             96,
             96
           ]
         },
         "lower_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__w__6f__96.png",
-          "frames": 6,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__lower_body__unarmed__defense__parry_01__w__5f__96.png",
+          "frames": 5,
           "frame_size": [
             96,
             96
           ]
         },
         "upper_body": {
-          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__w__6f__96.png",
-          "frames": 6,
+          "path": "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__w__5f__96.png",
+          "frames": 5,
           "frame_size": [
             96,
             96
