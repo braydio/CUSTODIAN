@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "id": "procgen/archive_resolve_semantic_echo_review",
+  "description": "AR3 gameplay-scale Archive Resolve: one-time ingress resolve outward from a settled pocket, first-contact semantic evidence echo, and a lighter/shorter forced-unload reacquisition on the real renderer.",
+  "scene": "res://scenes/debug/archive_resolve_semantic_echo_moment.tscn",
+  "seed": 424242,
+  "duration_ticks": 420,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 240, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 419, "contact_sheet_ticks": [3, 36, 72, 138, 224, 330], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {"fixture": {"node_path": "."}},
+    "spawns": [],
+    "properties": [],
+    "processing": [],
+    "fixture": {"id": "archive_resolve_semantic_echo", "config": {}}
+  },
+  "timeline": [
+    {"tick": 2, "action": "fixture_command", "name": "begin_ingress"},
+    {"tick": 130, "action": "fixture_command", "name": "step_east"},
+    {"tick": 190, "action": "fixture_command", "name": "mark_reacq_baseline"},
+    {"tick": 192, "action": "fixture_command", "name": "unload_adjacent_west_chunk"},
+    {"tick": 220, "action": "fixture_command", "name": "step_west"},
+    {"tick": 400, "action": "finish"}
+  ],
+  "probes": [{"id": "veil", "role": "fixture", "fields": ["ingress_pending", "ingress_begin_count", "ingress_owned", "resolving", "active_instances", "presentation_time", "echo_writes", "echo_natural", "echo_road", "echo_constructed", "echo_wall_cliff", "echo_landmark", "first_resolve_age_max", "first_resolve_age_avg", "reacq_settled", "reacq_age_max", "reacq_age_avg", "reacq_echo_writes_delta", "actor_above_veil", "pocket_veiled_committed"], "ticks": [0, 3, 18, 36, 54, 72, 96, 120, 129, 134, 142, 160, 189, 219, 224, 230, 260, 399], "required": true}],
+  "assertions": [
+    {"type": "role_exists", "role": "fixture", "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["veil"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["procgen", "archive_resolve", "visual_review", "semantic_echo"]
+}

@@ -21,9 +21,18 @@ extends MultiMeshInstance2D
 ## registration trace, optional <=1 px phase misregistration) and a one-shot
 ## per-slot identity write into MultiMesh custom data. `COLOR.a` stays the
 ## authoritative progress/opacity channel; the shader owns no lifecycle state and
-## the scheduling above is unchanged. AR3 owns pre-echo and presentation classes.
+## the scheduling above is unchanged.
+##
+## AR3 adds three presentation-only behaviours, all driven by the same unpaused
+## clock and never by lifecycle truth: (1) a bounded semantic evidence echo
+## (`ProcGenPresentationClass`) shown only for already-committed first-resolve
+## cells, resolved lazily per starting tile through `class_resolver` and written
+## once into the `.b/.a` custom-data channels; (2) a shorter, lighter
+## reacquisition treatment keyed to the lifecycle identity; (3) a one-time
+## ingress resolve that re-veils already-committed cells outside a settled
+## safety pocket and releases them outward over `ingress_wave_sec`.
 
-enum TileState { REQUESTED = 1, READY = 2, RESOLVING = 3 }
+enum TileState { REQUESTED = 1, READY = 2, RESOLVING = 3, INGRESS = 4 }
 
 const ARCHIVE_RESOLVE_SHADER := preload("res://game/world/procgen/streaming/archive_resolve.gdshader")
 
@@ -48,6 +57,14 @@ const REDUCED_REGISTRATION_SCALE := 0.25
 ## Ordinary settlement work bound: READY tiles that may begin resolving/frame.
 @export_range(1, 4096, 1) var resolve_starts_per_frame: int = 48
 @export_range(0.0, 2.0, 0.01) var resolve_duration_sec: float = 0.18
+## Reacquisition (previously resolved, later unloaded) settles much faster.
+@export_range(0.0, 1.0, 0.01) var reacquisition_duration_sec: float = 0.12
+## One-time ingress resolve: Chebyshev tile radius re-veiled around the final
+## Operator tile, the always-settled pocket inside it, and the outward wave
+## duration. First tiles start immediately; total settle is wave + resolve.
+@export_range(2, 32, 1) var ingress_radius_tiles: int = 14
+@export_range(0, 16, 1) var ingress_pocket_tiles: int = 4
+@export_range(0.2, 2.0, 0.05) var ingress_wave_sec: float = 1.0
 ## Chebyshev tile radius around the Operator inside which already-committed
 ## cells are force-settled. Never reveals an uncommitted cell.
 @export_range(0, 16, 1) var safety_halo_tiles: int = 3
@@ -68,7 +85,13 @@ const REDUCED_REGISTRATION_SCALE := 0.25
 	set(value):
 		phase_misregistration_intensity = value
 		_sync_material_controls()
-## Calmer profile: no phase misregistration, much weaker registration trace.
+## Semantic evidence-echo strength (faint contour/registration hint).
+@export_range(0.0, 1.0, 0.01) var semantic_echo_intensity: float = 0.5:
+	set(value):
+		semantic_echo_intensity = value
+		_sync_material_controls()
+## Calmer profile: no phase misregistration, much weaker registration trace,
+## and no semantic evidence echo.
 ## Never changes request/commit/order/timing or the unresolved safety cover.
 @export var reduced_effects: bool = false:
 	set(value):
@@ -84,7 +107,30 @@ var overflow_count: int = 0
 var unveiled_commit_count: int = 0
 var identity_mismatch_count: int = 0
 var identity_write_count: int = 0
+var echo_write_count: int = 0
+var echo_identity_hash: int = 0
+var echo_class_counts: Array[int] = [0, 0, 0, 0, 0]
+var ingress_begin_count: int = 0
+var ingress_veiled_count: int = 0
+var first_resolve_settle_count: int = 0
+var first_resolve_age_sum: float = 0.0
+var first_resolve_age_max: float = 0.0
+var reacquisition_settle_count: int = 0
+var reacquisition_age_sum: float = 0.0
+var reacquisition_age_max: float = 0.0
 
+## tile -> semantic class (int); read-only query supplied by the owner of the
+## semantics. Null/invalid means every cell is natural.
+var class_resolver: Callable = Callable()
+
+var _ingress_active: bool = false
+var _ingress_center: Vector2i = Vector2i.ZERO
+var _ingress_t0: float = 0.0
+var _ingress_chunk_size: int = 16
+var _ingress_start: Dictionary = {}
+var _ingress_queue: Array[Vector2i] = []
+var _reacq_tiles: Dictionary = {}
+var _echo_lead: Dictionary = {}
 var _presentation_time: float = 0.0
 var _tile_to_global: Callable = Callable()
 var _tile_size: Vector2 = Vector2(32, 32)
@@ -126,11 +172,31 @@ func reset() -> void:
 	unveiled_commit_count = 0
 	identity_mismatch_count = 0
 	identity_write_count = 0
+	echo_write_count = 0
+	echo_identity_hash = 0
+	echo_class_counts = [0, 0, 0, 0, 0]
+	ingress_begin_count = 0
+	ingress_veiled_count = 0
+	first_resolve_settle_count = 0
+	first_resolve_age_sum = 0.0
+	first_resolve_age_max = 0.0
+	reacquisition_settle_count = 0
+	reacquisition_age_sum = 0.0
+	reacquisition_age_max = 0.0
+	_ingress_active = false
+	_ingress_start.clear()
+	_ingress_queue.clear()
+	_reacq_tiles.clear()
+	_echo_lead.clear()
 	_reset_slot_pool()
 
 
 func set_effect_enabled(enabled: bool) -> void:
 	effect_enabled = enabled
+
+
+func set_presentation_class_resolver(resolver: Callable) -> void:
+	class_resolver = resolver
 
 
 ## REQUEST observation: called before any authoritative commit of these tiles.
@@ -154,6 +220,8 @@ func note_tiles_requested(chunk_pos: Vector2i, tiles: Array[Vector2i], reacquisi
 		var slot: int = _free_slots.pop_back()
 		_slot_of[tile] = slot
 		_states[tile] = TileState.REQUESTED
+		if reacquisition:
+			_reacq_tiles[tile] = true
 		_write_slot(slot, tile, 1.0)
 		_write_slot_identity(slot, tile, reacquisition)
 
@@ -161,6 +229,13 @@ func note_tiles_requested(chunk_pos: Vector2i, tiles: Array[Vector2i], reacquisi
 ## COMMIT observation: only a committed tile may become eligible to resolve.
 func note_tile_committed(tile: Vector2i) -> void:
 	if int(_states.get(tile, 0)) == TileState.REQUESTED:
+		if _ingress_active and not _reacq_tiles.has(tile):
+			if _in_ingress_pocket(tile):
+				_settle_tile(tile, _ingress_chunk_size)
+				return
+			if _in_ingress_ring(tile):
+				_enqueue_ingress(tile, ingress_start_time(tile))
+				return
 		_states[tile] = TileState.READY
 		_ready_queue.append(tile)
 		return
@@ -185,8 +260,7 @@ func note_chunk_unloaded(chunk_pos: Vector2i, chunk_size_tiles: int) -> void:
 				_release_tile(tile)
 				removed = true
 	if removed:
-		_ready_queue = _ready_queue.filter(func(t: Vector2i) -> bool: return _states.has(t))
-		_resolving_queue = _resolving_queue.filter(func(t: Vector2i) -> bool: return _states.has(t))
+		_filter_queues_to_live_tiles()
 
 
 ## Advances the presentation clock and settlement. Called only from ordinary
@@ -198,31 +272,189 @@ func advance(delta: float, operator_tile: Vector2i, chunk_size_tiles: int) -> vo
 	_presentation_time += maxf(0.0, delta)
 	_sync_material_time()
 	_apply_safety_halo(operator_tile, chunk_size_tiles)
+	if _ingress_active:
+		_advance_ingress()
 	var starts := mini(resolve_starts_per_frame, _ready_queue.size())
 	for i in range(starts):
-		var tile: Vector2i = _ready_queue[i]
-		_states[tile] = TileState.RESOLVING
-		_resolve_start[tile] = _presentation_time
-		_resolving_queue.append(tile)
+		_begin_resolving(_ready_queue[i], _presentation_time)
 	if starts > 0:
 		_ready_queue = _ready_queue.slice(starts)
-	var settle_count := 0
+	var settled: Array[Vector2i] = []
+	var still_resolving: Array[Vector2i] = []
 	for tile in _resolving_queue:
 		var age: float = _presentation_time - float(_resolve_start[tile])
-		if age >= resolve_duration_sec:
-			settle_count += 1
+		var lead: float = float(_echo_lead.get(tile, 0.0))
+		var duration := _duration_for(tile)
+		if age - lead >= duration:
+			settled.append(tile)
 			continue
-		_write_slot(int(_slot_of[tile]), tile, 1.0 - age / maxf(resolve_duration_sec, 0.0001))
-	for i in range(settle_count):
-		_settle_tile(_resolving_queue[i], chunk_size_tiles)
-	if settle_count > 0:
-		_resolving_queue = _resolving_queue.slice(settle_count)
+		still_resolving.append(tile)
+		if age < lead:
+			continue
+		_write_slot(int(_slot_of[tile]), tile, 1.0 - (age - lead) / maxf(duration, 0.0001))
+	for tile in settled:
+		_record_settle_age(tile, _presentation_time - float(_resolve_start[tile]))
+		_settle_tile(tile, chunk_size_tiles)
+	_resolving_queue = still_resolving
+
+
+## One-time ingress resolve. Re-veils already-committed cells in the ring
+## outside the always-settled pocket and releases them outward; cells in the
+## ring that are only requested stay veiled and join the wave when they commit.
+## `committed_tiles` is the caller's authoritative list of painted cells; it is
+## never used to reveal anything. Returns the number of cells the wave owns.
+func begin_ingress_resolve(center_tile: Vector2i, committed_tiles: Array[Vector2i], chunk_size_tiles: int = 16) -> int:
+	if not effect_enabled or not _multimesh_ready:
+		return 0
+	_ingress_active = true
+	_ingress_center = center_tile
+	_ingress_t0 = _presentation_time
+	_ingress_chunk_size = chunk_size_tiles
+	ingress_begin_count += 1
+	var owned := 0
+	# The committed safety pocket is visible immediately: settle anything already
+	# committed there. Requested-but-uncommitted pocket cover is never touched.
+	var pocket := _pocket_radius()
+	var settled_in_pocket := false
+	for x in range(center_tile.x - pocket, center_tile.x + pocket + 1):
+		for y in range(center_tile.y - pocket, center_tile.y + pocket + 1):
+			var pocket_tile := Vector2i(x, y)
+			var state := int(_states.get(pocket_tile, 0))
+			if state == TileState.READY or state == TileState.RESOLVING or state == TileState.INGRESS:
+				_settle_tile(pocket_tile, chunk_size_tiles)
+				settled_in_pocket = true
+	if settled_in_pocket:
+		_filter_queues_to_live_tiles()
+	# READY cells inside the ring leave the ordinary queue and join the wave.
+	for tile in _ready_queue.duplicate():
+		if _in_ingress_ring(tile):
+			_ready_queue.erase(tile)
+			_enqueue_ingress(tile, ingress_start_time(tile))
+			owned += 1
+	var fresh: Array[Vector2i] = []
+	for tile in committed_tiles:
+		if not _in_ingress_ring(tile) or _states.has(tile):
+			continue
+		fresh.append(tile)
+	fresh.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var sa := ingress_start_time(a)
+		var sb := ingress_start_time(b)
+		if not is_equal_approx(sa, sb):
+			return sa < sb
+		return a.y < b.y or (a.y == b.y and a.x < b.x)
+	)
+	for tile in fresh:
+		if _free_slots.is_empty():
+			overflow_count += 1
+			continue
+		var slot: int = _free_slots.pop_back()
+		_slot_of[tile] = slot
+		_write_slot(slot, tile, 1.0)
+		_write_slot_identity(slot, tile, false)
+		_enqueue_ingress(tile, ingress_start_time(tile))
+		ingress_veiled_count += 1
+		owned += 1
+	return owned
+
+
+## Absolute presentation-clock time at which a ring cell starts resolving:
+## outward by Euclidean distance with a tiny deterministic per-cell jitter.
+func ingress_start_time(tile: Vector2i) -> float:
+	var pocket := float(_pocket_radius())
+	var span := maxf(1.0, float(ingress_radius_tiles) * 1.4142 - pocket)
+	var dist := Vector2(tile - _ingress_center).length()
+	var t := clampf((dist - pocket) / span, 0.0, 1.0)
+	var jitter := (cell_identity_hash(tile) - 0.5) * 0.08
+	return _ingress_t0 + maxf(0.0, t * ingress_wave_sec + jitter)
+
+
+func _pocket_radius() -> int:
+	return maxi(ingress_pocket_tiles, safety_halo_tiles)
+
+
+func _in_ingress_pocket(tile: Vector2i) -> bool:
+	return maxi(absi(tile.x - _ingress_center.x), absi(tile.y - _ingress_center.y)) <= _pocket_radius()
+
+
+func _in_ingress_ring(tile: Vector2i) -> bool:
+	var d := maxi(absi(tile.x - _ingress_center.x), absi(tile.y - _ingress_center.y))
+	return d > _pocket_radius() and d <= ingress_radius_tiles
+
+
+func _enqueue_ingress(tile: Vector2i, start_time: float) -> void:
+	_states[tile] = TileState.INGRESS
+	_ingress_start[tile] = start_time
+	_ingress_queue.append(tile)
+
+
+func _advance_ingress() -> void:
+	if _ingress_queue.is_empty():
+		if _presentation_time > _ingress_t0 + ingress_wave_sec + 0.1:
+			_ingress_active = false
+		return
+	var waiting: Array[Vector2i] = []
+	for tile in _ingress_queue:
+		if not _states.has(tile) or int(_states[tile]) != TileState.INGRESS:
+			continue
+		var start := float(_ingress_start[tile])
+		if start <= _presentation_time:
+			_ingress_start.erase(tile)
+			_begin_resolving(tile, start)
+		else:
+			waiting.append(tile)
+	_ingress_queue = waiting
+
+
+## READY/INGRESS -> RESOLVING. First-resolve cells with a non-natural class get
+## a one-shot evidence-echo write and a short lead during which the veil stays
+## fully opaque; reacquisition cells never echo. `base_start` is the schedule
+## time (frame-rate independent for ingress).
+func _begin_resolving(tile: Vector2i, base_start: float) -> void:
+	_states[tile] = TileState.RESOLVING
+	_resolve_start[tile] = base_start
+	_resolving_queue.append(tile)
+	if reduced_effects or _reacq_tiles.has(tile) or not class_resolver.is_valid():
+		return
+	var kind := int(class_resolver.call(tile))
+	var lead := ProcGenPresentationClass.echo_lead_sec(kind)
+	if lead <= 0.0:
+		return
+	_echo_lead[tile] = lead
+	echo_write_count += 1
+	echo_class_counts[clampi(kind, 0, ProcGenPresentationClass.KIND_COUNT - 1)] += 1
+	echo_identity_hash = (echo_identity_hash * 31 + tile.x * 73856093 + tile.y * 19349663 + kind) & 0x7FFFFFFF
+	multimesh.set_instance_custom_data(
+		int(_slot_of[tile]),
+		Color(cell_identity_hash(tile), 0.0, ProcGenPresentationClass.encode(kind), 1.0)
+	)
+
+
+func _duration_for(tile: Vector2i) -> float:
+	return reacquisition_duration_sec if _reacq_tiles.has(tile) else resolve_duration_sec
+
+
+func _record_settle_age(tile: Vector2i, age: float) -> void:
+	if _reacq_tiles.has(tile):
+		reacquisition_settle_count += 1
+		reacquisition_age_sum += age
+		reacquisition_age_max = maxf(reacquisition_age_max, age)
+	else:
+		first_resolve_settle_count += 1
+		first_resolve_age_sum += age
+		first_resolve_age_max = maxf(first_resolve_age_max, age)
+
+
+func _filter_queues_to_live_tiles() -> void:
+	_ready_queue = _ready_queue.filter(func(t: Vector2i) -> bool: return _states.has(t))
+	_resolving_queue = _resolving_queue.filter(func(t: Vector2i) -> bool: return _states.has(t))
+	_ingress_queue = _ingress_queue.filter(func(t: Vector2i) -> bool: return _states.has(t))
 
 
 func get_snapshot() -> Dictionary:
 	var uncommitted := 0
 	var ready := 0
 	var resolving := 0
+	var ingress := 0
 	for state in _states.values():
 		match int(state):
 			TileState.REQUESTED:
@@ -231,11 +463,26 @@ func get_snapshot() -> Dictionary:
 				ready += 1
 			TileState.RESOLVING:
 				resolving += 1
+			TileState.INGRESS:
+				ingress += 1
 	return {
 		"effect_enabled": effect_enabled,
 		"requested_uncommitted_count": uncommitted,
 		"committed_ready_count": ready,
 		"resolving_count": resolving,
+		"ingress_pending_count": ingress,
+		"ingress_active": _ingress_active,
+		"ingress_begin_count": ingress_begin_count,
+		"ingress_veiled_count": ingress_veiled_count,
+		"echo_write_count": echo_write_count,
+		"echo_identity_hash": echo_identity_hash,
+		"echo_class_counts": echo_class_counts.duplicate(),
+		"first_resolve_settle_count": first_resolve_settle_count,
+		"first_resolve_age_avg": first_resolve_age_sum / maxf(1.0, float(first_resolve_settle_count)),
+		"first_resolve_age_max": first_resolve_age_max,
+		"reacquisition_settle_count": reacquisition_settle_count,
+		"reacquisition_age_avg": reacquisition_age_sum / maxf(1.0, float(reacquisition_settle_count)),
+		"reacquisition_age_max": reacquisition_age_max,
 		"settled_count": settled_count,
 		"forced_safety_settle_count": forced_safety_settle_count,
 		"first_resolve_count": first_resolve_count,
@@ -295,14 +542,13 @@ func _apply_safety_halo(operator_tile: Vector2i, chunk_size_tiles: int) -> void:
 		for y in range(operator_tile.y - safety_halo_tiles, operator_tile.y + safety_halo_tiles + 1):
 			var tile := Vector2i(x, y)
 			var state := int(_states.get(tile, 0))
-			if state != TileState.READY and state != TileState.RESOLVING:
+			if state != TileState.READY and state != TileState.RESOLVING and state != TileState.INGRESS:
 				continue
 			_settle_tile(tile, chunk_size_tiles)
 			forced_safety_settle_count += 1
 			forced = true
 	if forced:
-		_ready_queue = _ready_queue.filter(func(t: Vector2i) -> bool: return _states.has(t))
-		_resolving_queue = _resolving_queue.filter(func(t: Vector2i) -> bool: return _states.has(t))
+		_filter_queues_to_live_tiles()
 
 
 func _settle_tile(tile: Vector2i, chunk_size_tiles: int) -> void:
@@ -324,6 +570,11 @@ func _settle_all_immediately() -> void:
 		_release_tile(tile)
 	_ready_queue.clear()
 	_resolving_queue.clear()
+	_ingress_queue.clear()
+	_ingress_start.clear()
+	_reacq_tiles.clear()
+	_echo_lead.clear()
+	_ingress_active = false
 
 
 func _release_tile(tile: Vector2i) -> void:
@@ -334,6 +585,9 @@ func _release_tile(tile: Vector2i) -> void:
 	_slot_of.erase(tile)
 	_states.erase(tile)
 	_resolve_start.erase(tile)
+	_ingress_start.erase(tile)
+	_reacq_tiles.erase(tile)
+	_echo_lead.erase(tile)
 
 
 func _build_multimesh() -> void:
@@ -382,7 +636,9 @@ func _write_slot(slot: int, tile: Vector2i, alpha: float) -> void:
 
 ## One-shot per-slot render identity, written only on slot assignment (never
 ## rescanned per frame). r = deterministic cell hash, g = reacquisition flag
-## (carried for AR3; the AR2 shader does not style it), b/a reserved neutral.
+## (AR3 shader scales registration/misregistration by it), b = semantic class
+## and a = evidence-echo strength, both written only when a committed
+## first-resolve cell starts resolving (never for uncommitted cover).
 func _write_slot_identity(slot: int, tile: Vector2i, reacquisition: bool) -> void:
 	if not _multimesh_ready:
 		return
@@ -407,6 +663,7 @@ func _sync_material_controls() -> void:
 	_veil_material.set_shader_parameter("registration_intensity", registration)
 	_veil_material.set_shader_parameter("unresolved_haze_intensity", unresolved_haze_intensity)
 	_veil_material.set_shader_parameter("phase_misregistration_intensity", misregistration)
+	_veil_material.set_shader_parameter("semantic_echo_intensity", 0.0 if reduced_effects else semantic_echo_intensity)
 
 
 ## Pause-safe: called only from reset() and the unpaused advance() clock. The

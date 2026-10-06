@@ -83,6 +83,11 @@ var _contract_map_node: Node = null
 var _active_procgen_map: Node = null
 var _contract_generation_failed: bool = false
 var _last_failure_result: Dictionary = {}
+## Ordered phase log of the latest successful `_on_contract_generated()` and
+## the telemetry of its one-time Archive Resolve ingress trigger. Validation
+## seam only; nothing in gameplay reads it.
+var _install_trace: Array[Dictionary] = []
+var _last_archive_resolve_ingress: Dictionary = {}
 
 
 func _ready() -> void:
@@ -146,6 +151,8 @@ func _bind_contract_map() -> void:
 func _on_contract_generated(contract: Dictionary) -> void:
 	_contract_generation_failed = false
 	_last_failure_result = {}
+	_install_trace.clear()
+	_last_archive_resolve_ingress = {}
 	var map_block: Dictionary = contract.get("map", {}) as Dictionary
 	var world_profile: Dictionary = contract.get("world_profile", {}) as Dictionary
 	_apply_contract_lighting_profile(world_profile)
@@ -169,6 +176,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	if place_registered_level_connections:
 		if not _place_registered_world_ingresses(level_data, map_instance):
 			return
+		_trace_install(&"registered_ingress_placed")
 	elif place_sundered_keep_connection:
 		_place_sundered_keep_connection(level_data, map_instance)
 
@@ -186,6 +194,7 @@ func _on_contract_generated(contract: Dictionary) -> void:
 				"detail": "no candidate passed canonical spawn validity and main playable component membership",
 			})
 			return
+		_trace_install(&"operator_placed", {"component_queries": _component_query_count(map_instance)})
 	if reposition_spawn_nodes_from_contract:
 		_position_spawn_nodes(level_data, map_instance)
 	if reposition_terminal_from_contract:
@@ -208,10 +217,49 @@ func _on_contract_generated(contract: Dictionary) -> void:
 		_place_vaultwing_markers(level_data, map_instance)
 	if place_gothic_compound_connection:
 		_place_gothic_compound_connection(level_data, map_instance)
+		_trace_install(&"compound_connection_placed", {"component_queries": _component_query_count(map_instance)})
+	if reposition_operator_from_contract:
+		_begin_archive_resolve_ingress(map_instance)
 	if reposition_camera_from_contract:
+		_trace_install(&"camera_refresh")
 		_refresh_camera(map_instance)
 	_rebuild_navigation(map_instance)
+	_trace_install(&"contract_ready")
 	_mark_contract_ready()
+
+
+## One-time presentation-only arrival resolve, centred on the Operator's
+## already-final position. Never moves the Operator, never queries spawn
+## validity or the playable component, and never gates control.
+func _begin_archive_resolve_ingress(map_instance: Node) -> void:
+	if not (map_instance is ProcGenTilemap):
+		return
+	var operator := get_node_or_null(operator_path) as Node2D
+	if operator == null:
+		return
+	var pg := map_instance as ProcGenTilemap
+	_last_archive_resolve_ingress = pg.begin_archive_resolve_ingress(operator.global_position)
+	_last_archive_resolve_ingress["operator_global_position"] = operator.global_position
+	_last_archive_resolve_ingress["component_queries"] = _component_query_count(map_instance)
+	_trace_install(&"archive_resolve_ingress", _last_archive_resolve_ingress)
+
+
+func _component_query_count(map_instance: Node) -> int:
+	if map_instance is ProcGenTilemap:
+		return (map_instance as ProcGenTilemap).main_playable_component_query_count
+	return 0
+
+
+func _trace_install(phase: StringName, detail: Dictionary = {}) -> void:
+	_install_trace.append({"phase": phase, "detail": detail})
+
+
+func get_install_trace() -> Array[Dictionary]:
+	return _install_trace.duplicate(true)
+
+
+func get_last_archive_resolve_ingress() -> Dictionary:
+	return _last_archive_resolve_ingress.duplicate(true)
 
 
 func _place_ambient_enemy_camps(level_data: Dictionary, map_instance: Node) -> void:

@@ -521,6 +521,7 @@ var _runtime_prop_blocker_sources: Dictionary = {}
 var _streaming_reveal_queue: Array[Vector2i] = []
 var _pause_aware_streaming: ProcGenPauseAwareStreaming = null
 var _reveal_presentation: ProcGenRevealPresentation = null
+var _archive_resolve_ingress_done: bool = false
 var _chunk_lifecycle: ProcGenChunkLifecycle = null
 var _chunk_payload_cache: ProcGenChunkPayloadCache = null
 var _chunk_residency_policy: ProcGenChunkResidencyPolicy = null
@@ -866,6 +867,9 @@ func _ready() -> void:
 		add_child(_reveal_presentation)
 	_reveal_presentation.configure(tile_to_global_position, get_runtime_tile_size())
 	_reveal_presentation.effect_enabled = archive_resolve_enabled
+	_reveal_presentation.set_presentation_class_resolver(
+		Callable(self, "get_archive_resolve_presentation_class")
+	)
 	add_to_group("procgen_render_isolation")
 	_cache_procgen_major_visual_items()
 	var dev_mode := get_node_or_null("/root/DevMode")
@@ -6801,7 +6805,13 @@ func is_valid_spawn_cell(tile: Vector2i) -> bool:
 ## painted-tile visibility. Computed fresh per call so it cannot go stale
 ## against wall destruction or prop blockers. Empty when the origin itself is
 ## not walkable, so callers fail closed.
+## Observability only (spawn-review R0-01): how many full component fills this
+## map has served. Archive Resolve must add zero.
+var main_playable_component_query_count: int = 0
+
+
 func get_main_playable_component() -> Dictionary:
+	main_playable_component_query_count += 1
 	if procgen_node == null:
 		return {}
 	return PRETERRAIN_DIAGNOSTICS_SCRIPT.reachable_from(
@@ -10357,6 +10367,7 @@ func _prepare_streaming_reveal() -> void:
 	if _reveal_presentation != null:
 		_reveal_presentation.set_effect_enabled(archive_resolve_enabled)
 		_reveal_presentation.reset()
+	_archive_resolve_ingress_done = false
 	_streaming_player = null
 	_streaming_current_chunk = Vector2i(999999, 999999)
 	_navigation_rebuild_pending = false
@@ -10715,6 +10726,59 @@ func set_archive_resolve_enabled(enabled: bool) -> void:
 
 func debug_get_reveal_presentation() -> ProcGenRevealPresentation:
 	return _reveal_presentation
+
+
+## Archive Resolve (AR3) presentation class for one cell. Read-only adapter:
+## it queries the existing owners (authored-landmark material/claim, generated
+## wall + elevation edge metadata, road authority, surface material) at call
+## time and keeps no semantic registry of its own. Presentation-only; the result
+## never affects generation, walkability, collision, navigation, or discovery.
+func get_archive_resolve_presentation_class(tile: Vector2i) -> int:
+	var material := get_surface_material_at_tile(tile)
+	# Hero landmark = the explicit authored Sundered Keep gate-apron claim only.
+	# The AUTHORED_LANDMARK *material* is broad authored ground (it covers the
+	# spawn compound hardstand on real maps) and `fortress_exclusion_cells` is a
+	# large keep-out ellipse, so neither is a silhouette-worthy hero read.
+	var landmark := (_sundered_keep_frontage.get("terminal_apron_cells", {}) as Dictionary).has(tile)
+	var wall_or_cliff := _generated_wall_cells.has(tile)
+	if not wall_or_cliff and elevation_map != null:
+		var traversal := String(get_elevation_data_at_tile(tile).get("traversal_type", ""))
+		wall_or_cliff = traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_LEDGE \
+			or traversal == ELEVATION_MAP_SCRIPT.TRAVERSAL_DROP
+	var road := is_road_surface_tile(tile) or material == SURFACE_MATERIAL_IDS.RUINED_ROAD
+	var constructed := material in [
+		SURFACE_MATERIAL_IDS.HARDENED_CIVIC,
+		SURFACE_MATERIAL_IDS.HARDENED_INDUSTRIAL,
+		SURFACE_MATERIAL_IDS.BRIDGE,
+		SURFACE_MATERIAL_IDS.AUTHORED_LANDMARK,
+	]
+	return ProcGenPresentationClass.classify(landmark, wall_or_cliff, road, constructed)
+
+
+## One-time Archive Resolve arrival (AR3). Called by the contract-world loader
+## after the final Operator placement; consumes the Operator's already-final
+## world position, performs no spawn validity/component query, never moves the
+## Operator, and never enqueues discovery or touches tiles/collision/navigation.
+## Already-painted cells outside the settled pocket are re-veiled and released
+## outward; control is never gated on it. Returns telemetry for the caller.
+func begin_archive_resolve_ingress(operator_global_position: Vector2) -> Dictionary:
+	var center := _global_to_tile(operator_global_position)
+	var result := {"center_tile": center, "owned_cells": 0, "triggered": false}
+	if _reveal_presentation == null or _archive_resolve_ingress_done or not archive_resolve_enabled:
+		return result
+	if floor_tilemap == null:
+		return result
+	_archive_resolve_ingress_done = true
+	var radius := _reveal_presentation.ingress_radius_tiles
+	var painted: Array[Vector2i] = []
+	for x in range(center.x - radius, center.x + radius + 1):
+		for y in range(center.y - radius, center.y + radius + 1):
+			var tile := Vector2i(x, y)
+			if floor_tilemap.get_cell_source_id(tile) >= 0 or _has_wall_cell(tile):
+				painted.append(tile)
+	result["owned_cells"] = _reveal_presentation.begin_ingress_resolve(center, painted, streaming_chunk_size_tiles)
+	result["triggered"] = true
+	return result
 
 
 ## PREPARE: cache-backed lookup into already-generated (seed-authored) floor/

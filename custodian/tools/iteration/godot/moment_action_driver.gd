@@ -236,6 +236,13 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"reduced_on",
 			"reduced_off",
 		],
+		"archive_resolve_semantic_echo": [
+			"begin_ingress",
+			"step_east",
+			"step_west",
+			"mark_reacq_baseline",
+			"unload_adjacent_west_chunk",
+		],
 		"alpine_plateau_edge": ["at_north", "at_east", "at_south", "at_west"],
 		"field_fabricator": [
 			"power_on",
