@@ -1,7 +1,7 @@
 # OPERATOR UNARMED FAST CHAIN NORTH VFX — CLAUDE SUMMARY
 
 - Workstream: `operator-unarmed-fast-chain-north-vfx`
-- State: North implementation complete in the workstream; landing is paused on one unrelated after-sync validation failure.
+- State: implementation and approved visual review complete; required post-sync validation is green and the workstream is ready to land.
 - Branch: `agent/operator-unarmed-fast-chain-north-vfx`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
@@ -20,35 +20,29 @@ The user approved the compact final-scale BODY+FX review (4/4 pass), including s
 
 ## Validation
 
-Passed after synchronizing with `origin/main@875692745`:
+After merging repaired `origin/main@b16be3ea5`, the required `run_validation.py --changed --base origin/main --json` passed all 13 selected checks, with complete coverage, zero failures, and zero skips. This included the formerly failing `review_pairing_contract` (36 auto-review packets correctly paired), the V2 Art Agent pilot, Operator timing preservation (279 identities checked), and North FX pipeline contracts. `git diff --check` passed. Earlier focused validation also passed `operator_animation_contract_report.py --strict` with 0 required gaps, modular layers, modular fast attack, North selector, Source Session smoke, and the direct V2 pilot with exact workbench restore and production immutability.
 
-- `operator_animation_contract_report.py --strict`: 0 required missing.
-- Modular layers, modular fast attack, North fast-chain selector, Source Session smoke, and focused North FX contract checks.
-- Direct `operator_art_agent_v2_pilot.py --json`: `PASS`, exact workbench restore, production immutability true, no new QA findings.
-- `run_validation.py --changed --json` on the pre-f8ef synchronized implementation diff: 12/12 selected passed, complete coverage, no uncovered files. `workstream.py finish` then merged `origin/main@f8ef4c84`. The required after-sync run (`--changed --base origin/main`) has complete coverage but fails `review_pairing_contract` on the unrelated active `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` because its bounded review-artifact override is missing; later tiers are skipped. North-specific checks and the direct V2 pilot pass on that same latest tree. That unrelated packet remains untouched pending user direction.
-- `git diff --check`.
+The V2 pilot initially failed because the active live relay correctly rejected the isolated worktree’s session paths. The validation entry point now injects an unavailable relay so the pilot uses headless Aseprite only in validation; ordinary production pilot invocations retain the live-relay default. Added a focused image-contract test and manifest ownership for the North inbox, normalized, source, runtime, and source-work paths. The repository-wide review-pairing gate also exposed a separate missing bounded override in the active 2.5D review packet; the exact one-line metadata repair landed separately on main before this workstream synchronized. Synchronization then exposed one task-packet-index conflict, resolved from the newer main version, which retains the active North implementation/review entries and repaired 2.5D packet.
 
-The V2 pilot initially failed because the active live relay correctly rejected the isolated worktree’s session paths. The validation entry point now injects an unavailable relay so the pilot uses headless Aseprite only in validation; ordinary production pilot invocations retain the live-relay default. Added a focused image-contract test and manifest ownership for the North inbox, normalized, source, runtime, and source-work paths.
-
-The broader Operator ingest command previously reached an unrelated Vigil Dagger camera assertion; the required focused checks pass. Three fast-chain carry interruption/collision failures are known baseline failures and were not retuned.
+The broader Operator ingest command previously reached an unrelated Vigil Dagger camera assertion. Three fast-chain carry interruption/collision failures reproduce on baseline and were not retuned.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
+- Outcome: success
 - Friction severity: medium
-- What went wrong: the V2 pilot originally contacted the ambient relay; the validation coverage map also lacked ownership for newly staged specialized Operator assets.
+- What went wrong: the V2 pilot originally contacted the ambient relay; the validation coverage map lacked ownership for newly staged specialized Operator assets; the repository-wide pairing gate blocked the first synchronized closeout until its separate authorized metadata repair landed.
 - Root cause / contributing factors: isolated workstream roots intentionally differ from the relay’s persistent authorized roots; asset coverage was not mapped to a focused contract test.
 - Prevention / pipeline improvement: injectable bridge factory with production default preserved; validation wrapper alone selects an unavailable relay. Added durable North strip contract validation and explicit coverage ownership.
-- Tooling / docs drift discovered: the global review-pairing validator can fail on unrelated current packet defects when packet lifecycle files are edited; this task did not alter that unrelated packet.
-- Follow-up: manual-follow-up
+- Tooling / docs drift discovered: repository-wide review-pairing validation reads committed HEAD and gates changed packet work on all current auto-review packet metadata; a managed task-packet index can conflict when main archives unrelated packets during a long-running branch.
+- Follow-up: fixed-in-scope
 - What worked: focused objective image/runtime checks plus the user-approved compact visual review closed the art acceptance without changing gameplay.
 
 ## Next Handoff
 - Next workstream: review-operator-unarmed-fast-chain-north-vfx
-- Next packet state: dependency-gated
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 - Refresh reason: none
-- Next action: resolve the after-sync review-packet contract failure, rerun the changed suite, then finish/land before a fresh-context paired review.
-- Blockers or open questions: `review_pairing_contract` fails on the unrelated 2.5D review packet; user direction is pending on whether to make that bounded metadata correction. The persistent root is clean at `f8ef4c84`; VFX synchronization waits for landing.
+- Next action: land this implementation, then start the paired North VFX review from a fresh reviewer context.
+- Blockers or open questions: none.
