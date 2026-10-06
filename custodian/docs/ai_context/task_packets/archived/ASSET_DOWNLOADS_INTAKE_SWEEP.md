@@ -232,7 +232,7 @@ After this closes, return to the active Awakening presentation sequence. The rem
 - Goal satisfied: yes
 - Completion boundary satisfied: yes
 - Acceptance satisfied: yes
-- Superseded/legacy production path disposition: Live Asset V2 family/catalog and generated requirements view are authoritative; old intake manifests remain historical.
+- Superseded/legacy production path disposition: intentionally-preserved
 - Evidence: Basin B handoff hashes verified; Asset V2 job `job_20261006T164434Z_7ba36e74` published the expected 128×128 RGBA runtime asset with SHA-256 `b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924`; family is 6/6 required-ready; doctor healthy; requirements projection current. Receipt `custodian/docs/ai_context/reports/assets/asset_downloads_intake_sweep.json` inventories relevant Downloads material. Kenney Pattern Lines was left with its owning packet after the explicit filename contract mismatch (`pattern_0000.png`–`pattern_0029.png` delivered; `pattern_000.png`–`pattern_029.png` required). Changed-file suite passes with runtime-family ownership added to the validation manifest.
 
 ## Execution Feedback
