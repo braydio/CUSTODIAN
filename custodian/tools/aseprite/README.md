@@ -34,6 +34,9 @@ a pilot-only Aseprite path or gain publication authority.
 `operator_anchor_guides.lua` renders the approved registration profile into a
 visible, locked `__ART_GUIDE_OPERATOR_REGISTRATION` group. Supply
 `--script-param profile=<path>` and optionally `repo=<root>` for headless use.
+For the canonical 128 profile it draws four locked layers (FLOOR, CENTER, BODY and a
+low-opacity CANONICAL_REFERENCE direction ghost; `--script-param direction=<n|ne|e|se|s|sw|w|nw|grid>`
+and `profile_id=` select direction/profile); legacy 96 canvases get the single ruler.
 Clean Art Agent rendering excludes this guide group, which never creates a
 publishing binding.
 

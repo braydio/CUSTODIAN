@@ -96,6 +96,7 @@ class NormalizationPlan:
     registrations: list[FrameRegistration] = field(default_factory=list)
     mode: Literal["contain", "operator_profile"] = "contain"
     profile_sha256: str = ""
+    profile_id: str = ""
     clipping_safe_scale: float | None = None
     scale_observations: list[dict[str, Any]] = field(default_factory=list)
     registration_basis: dict[str, Any] = field(default_factory=dict)

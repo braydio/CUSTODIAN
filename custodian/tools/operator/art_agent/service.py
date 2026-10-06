@@ -593,6 +593,7 @@ class ArtAgentService:
         if session_path is not None:
             _session, manifest, _root = self._checked_session(session_path)
             canvas = manifest["canvas"]
+            value = load_profile(frame_size=[int(canvas["width"]), int(canvas["height"])])
             value["session_frame_size"] = [int(canvas["width"]), int(canvas["height"])]
             value["matches_profile_frame_size"] = value.get("registration") is not None and value["registration"]["frame_size"] == value["session_frame_size"]
         return value
@@ -603,7 +604,7 @@ class ArtAgentService:
         canvas = manifest["canvas"]
         frame_size = [int(canvas["width"]), int(canvas["height"])]
         report = profile_report(landmarks=self.get_landmarks(session_path), frames=metrics.get("frames", []),
-                                profile=load_profile(), registered_canvas=True, frame_size=frame_size)
+                                profile=load_profile(frame_size=frame_size), registered_canvas=True, frame_size=frame_size)
         output = root / "previews/registration_report.json"
         write_json(output, report)
         report["report"] = str(output.resolve())
@@ -619,9 +620,43 @@ class ArtAgentService:
             frame_landmarks = [item for item in landmarks if item["frame"] == index + 1]
             output = root / f"previews/registration_overlay_{index + 1:02d}.png"
             paths.append(render_overlay(output=output, frame_size=(int(canvas["width"]), int(canvas["height"])),
-                                        profile=load_profile(), landmarks=frame_landmarks))
-        loaded = load_profile()
-        return {"overlays": paths, "profile_sha256": loaded["sha256"], "read_only": True}
+                                        profile=load_profile(frame_size=(int(canvas["width"]), int(canvas["height"]))), landmarks=frame_landmarks))
+        loaded = load_profile(frame_size=(int(canvas["width"]), int(canvas["height"])))
+        return {"overlays": paths, "profile_sha256": loaded["sha256"], "profile_id": loaded["profile_id"], "read_only": True}
+
+    def canonical_reference(self, direction: str) -> dict[str, Any]:
+        """Canonical normalized direction ghost plus landmark/registration overlay inputs (read-only)."""
+        from . import canonical_contract as contract
+        reference = contract.load_reference()
+        profile = load_profile(profile_id=contract.PROFILE_ID)
+        if direction not in contract.DIRECTIONS:
+            raise ValueError(f"unknown direction: {direction}")
+        entry = reference["directions"][direction]
+        return {"direction": direction, "profile_id": profile["profile_id"], "profile_sha256": profile["sha256"],
+                "source_sha256": reference["source"]["sha256"], "reference_png": str((contract.REPO / entry["reference_png"]).resolve()),
+                "reference_sha256": entry["reference_sha256"], "landmarks": entry["landmarks"]["normalized_128"],
+                "registration": entry["registration"], "geometry": entry["geometry"], "anatomy": entry["anatomy"],
+                "palette": entry["color"], "outline": entry["outline"], "tolerances": reference["tolerances"], "read_only": True}
+
+    def canonical_qa(self, session_path: Path, direction: str, *, baseline_frames: list[int] | None = None) -> dict[str, Any]:
+        """Geometry/palette/silhouette QA of a 128 session against the canonical direction reference."""
+        from . import canonical_contract as contract
+        _session, manifest, root = self._checked_session(session_path)
+        size = [int(manifest["canvas"]["width"]), int(manifest["canvas"]["height"])]
+        profile = load_profile(profile_id=contract.PROFILE_ID)
+        artifacts = self.render(session_path)
+        images = [Image.open(path).convert("RGBA") for path in artifacts["frames"]]
+        flags = [True if baseline_frames is None else (index + 1) in baseline_frames for index in range(len(images))]
+        report = contract.evaluate_animation(images, direction, baseline=flags)
+        report.update({"profile_id": profile["profile_id"], "profile_sha256": profile["sha256"], "canvas": size,
+                       "baseline_frames": [i + 1 for i, f in enumerate(flags) if f], "read_only": True})
+        if size != [contract.FRAME, contract.FRAME]:
+            report["findings"].insert(0, contract.finding("HARD_FAIL", "FRAME_SIZE", f"session canvas {size} is not the canonical 128x128 profile"))
+            report["status"] = "HARD_FAIL"
+        output = root / "previews/canonical_qa.json"
+        write_json(output, report)
+        report["report"] = str(output.resolve())
+        return report
 
     def plan(self, session_path: Path, recipe: str) -> dict[str, Any]:
         session,manifest,root=self._checked_session(session_path); recipes=model.CUSTODIAN_ROOT/"tools/operator/art_recipes"; projection=json.loads((model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_direction_projection.json").read_text()); refs=assemble_references(manifest,source_root=model.SOURCE_ROOT)
@@ -633,7 +668,10 @@ class ArtAgentService:
         metrics=self.get_metrics(session_path)
         profile_path=model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_art_profile.json"
         profile=json.loads(profile_path.read_text()) if profile_path.exists() else None
-        profile_state = load_profile(profile_path) if profile_path.exists() else None
+        canvas_for_profile = [int(manifest["canvas"]["width"]), int(manifest["canvas"]["height"])]
+        profile_state = load_profile(profile_path, frame_size=canvas_for_profile) if profile_path.exists() else None
+        if profile_state:
+            profile={"enforcement":profile.get("enforcement",{}),"registration":profile_state["registration"],"profile_id":profile_state["profile_id"]}
         palette_findings=[]
         for plan_path in sorted((root/"recolor_plans").glob("*.json")) if (root/"recolor_plans").exists() else []:
             plan=recolor_store.load(plan_path)
@@ -654,7 +692,7 @@ class ArtAgentService:
             expected_frame_count=int(manifest["timeline"]["document_frames"]),
             palette_findings=palette_findings,
         )
-        registration = profile.get("registration") if profile else None
+        registration = profile_state["registration"] if profile_state else None
         if registration and registration.get("status") == "accepted":
             canvas_size = [int(manifest["canvas"]["width"]), int(manifest["canvas"]["height"])]
             matches = canvas_size == registration["frame_size"]

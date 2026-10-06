@@ -28,7 +28,7 @@ from .source_models import (
 from .source_normalization import build_plan, shared_transform_from_plan
 from .source_review import review_normalization
 from . import landmarks as landmark_store
-from .registration_profile import load_profile, profile_report
+from .registration_profile import LEGACY_PROFILE_ID, load_profile, profile_report
 from . import palette as palette_core
 from . import recolor as recolor_store
 
@@ -94,7 +94,7 @@ class SourceArtService:
         *,
         source_path: Path | str,
         frames: int,
-        target_size: int = 96,
+        target_size: int = 128,
         columns: int | None = None,
         rows: int = 1,
     ) -> Path:
@@ -314,7 +314,8 @@ class SourceArtService:
             raise model.WorkbenchError("source must be analyzed before registration report")
         analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
         plan = self._load_plan(root, session=session) if (root / "normalization_plan.json").exists() else None
-        current_profile = load_profile()
+        current_profile = load_profile(profile_id=(plan.profile_id or LEGACY_PROFILE_ID) if plan and plan.mode == "operator_profile" else None,
+                                       frame_size=[session.target_width, session.target_height])
         if plan and plan.mode == "operator_profile" and plan.profile_sha256 != current_profile["sha256"]:
             raise model.WorkbenchError("registration profile changed after planning; create a new plan")
         report = profile_report(landmarks=self._load_source_landmarks(session, root), frames=analysis["frames"],
@@ -335,7 +336,7 @@ class SourceArtService:
         output = root / "production/crisp.png"
         command = ["pixelart", str(Path(session.source_original)), str(output), "--sheet", "--frames",
                    str(session.geometry.frame_count), "--source-cell", f"{session.geometry.source_cell_width}x{session.geometry.source_cell_height}",
-                   "--size", "96", "--choose", "1", "--force", "--normalization-plan", str(root / "normalization_plan.json")]
+                   "--size", str(session.target_width), "--choose", "1", "--force", "--normalization-plan", str(root / "normalization_plan.json")]
         command.extend(["--expected-normalization-plan-sha256", session.approved_normalization_plan_sha256])
         return {"command": command, "output": str(output.resolve()), "executes": False}
 
@@ -345,7 +346,7 @@ class SourceArtService:
         plan = self._load_plan(root, session=session)
         if plan.mode != "operator_profile" or plan.method != "crisp":
             raise model.WorkbenchError("production verification requires a crisp operator_profile plan")
-        if plan.profile_sha256 != load_profile()["sha256"]:
+        if plan.profile_sha256 != load_profile(profile_id=plan.profile_id or LEGACY_PROFILE_ID)["sha256"]:
             raise model.WorkbenchError("registration profile changed after planning")
         output = root / "production/crisp.png"
         if not output.is_file():
@@ -353,7 +354,7 @@ class SourceArtService:
         request = SheetConversionRequest(source=Path(session.source_original), columns=session.geometry.columns,
                                          rows=session.geometry.rows, frame_count=session.geometry.frame_count,
                                          source_cell=(session.geometry.source_cell_width, session.geometry.source_cell_height),
-                                         target_size=(96, 96), method="crisp", transform=shared_transform_from_plan(plan),
+                                         target_size=(session.target_width, session.target_height), method="crisp", transform=shared_transform_from_plan(plan),
                                          registrations=tuple((item.dx, item.dy) for item in plan.registrations))
         expected = convert_sheet_request(request)
         with Image.open(output) as actual:

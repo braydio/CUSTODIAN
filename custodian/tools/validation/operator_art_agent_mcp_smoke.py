@@ -25,7 +25,7 @@ def main():
     for item in definitions:
         schema=item["inputSchema"]
         assert schema["type"]=="object" and schema["additionalProperties"] is False, item["name"]
-        if item["name"] not in {"operator_art_start","operator_art_source_start"}: assert "session" in schema["properties"], item["name"]
+        if item["name"] not in {"operator_art_start","operator_art_source_start","operator_art_canonical_reference"}: assert "session" in schema["properties"], item["name"]
     source_lm_schema=next(x["inputSchema"] for x in definitions if x["name"]=="operator_art_source_set_landmarks")
     assert source_lm_schema["properties"]["landmarks"]["items"]["additionalProperties"] is False
     plan_schema=next(x["inputSchema"] for x in definitions if x["name"]=="operator_art_source_plan_normalization")

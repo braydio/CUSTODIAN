@@ -3,7 +3,10 @@
 ## Status
 
 V2 provisional authoring authority. Structural rules are enforceable; artistic
-tolerances remain advisory until canonical samples and provenance are reviewed.
+tolerances remain advisory. The approved eight-direction turnaround is now the
+canonical sample: see `OPERATOR_2_5D_VISUAL_CONTRACT.md` for the hard
+projection, 128x128 registration, geometry and palette authority. Legacy 96x96
+art stays valid under profile `legacy_96`.
 
 ## Projection
 
@@ -18,7 +21,8 @@ numeric camera angle is authoritative until calibrated against gameplay.
 - Integer coordinates and opaque pixel clusters are the default.
 - V2 never scales, rotates, filters, or resamples authored parts.
 - Head scale, baseline, torso proportion, crossover silhouettes, grip, and
-  weapon-tip continuity are review concerns across frames.
+  weapon-tip continuity are review concerns across frames; for 128 authoring they
+  are measured against the canonical direction reference.
 - Semantic edits draft first. A bake may expose gaps and must report that risk.
 - Provisional metrics produce warnings, not fabricated artistic truth.
 

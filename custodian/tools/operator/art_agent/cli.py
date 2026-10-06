@@ -115,7 +115,7 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     source_start.add_argument("--frames", type=int, required=True)
     source_start.add_argument("--columns", type=int)
     source_start.add_argument("--rows", type=int, default=1)
-    source_start.add_argument("--target-size", type=int, default=96)
+    source_start.add_argument("--target-size", type=int, default=128)
     source_start.add_argument("--json", action="store_true")
     for name in ("source-status", "source-analyze", "source-convert", "source-review", "source-palette"):
         command = commands.add_parser(name)
@@ -147,11 +147,16 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     for name in ("source-render", "source-get-landmarks", "source-validate-landmarks", "source-registration-report", "source-production-command", "source-verify-production", "registration-profile"):
         command = commands.add_parser(name)
         if name != "registration-profile": command.add_argument("session", type=Path)
+        else: command.add_argument("--profile-id", default=None, help="legacy_96 or operator_2_5d_128 (default: active authoring profile)")
         command.add_argument("--json", action="store_true")
     source_landmarks = commands.add_parser("source-set-landmarks")
     source_landmarks.add_argument("session", type=Path); source_landmarks.add_argument("landmarks", type=Path); source_landmarks.add_argument("--json", action="store_true")
     registration_report = commands.add_parser("registration-report")
     registration_report.add_argument("session", type=Path); registration_report.add_argument("--json", action="store_true")
+    canonical_reference = commands.add_parser("canonical-reference")
+    canonical_reference.add_argument("--direction", required=True, choices=("n", "ne", "e", "se", "s", "sw", "w", "nw")); canonical_reference.add_argument("--json", action="store_true")
+    canonical_qa = commands.add_parser("canonical-qa")
+    canonical_qa.add_argument("session", type=Path); canonical_qa.add_argument("--direction", required=True, choices=("n", "ne", "e", "se", "s", "sw", "w", "nw")); canonical_qa.add_argument("--json", action="store_true")
     registration_overlay = commands.add_parser("registration-overlay")
     registration_overlay.add_argument("session", type=Path); registration_overlay.add_argument("--json", action="store_true")
     source_recolor_plan=commands.add_parser("source-recolor-plan");source_recolor_plan.add_argument("session",type=Path);source_recolor_plan.add_argument("profile");source_recolor_plan.add_argument("action");source_recolor_plan.add_argument("direction");source_recolor_plan.add_argument("--group",required=True);source_recolor_plan.add_argument("--layer",required=True);source_recolor_plan.add_argument("--json",action="store_true")
@@ -264,8 +269,12 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
             return 0
         if command == "registration-profile":
             from .registration_profile import load_profile
-            result = load_profile()
+            result = load_profile(profile_id=args.profile_id)
             print(json.dumps(result, indent=2)); return 0
+        if command == "canonical-reference":
+            print(json.dumps(_service(args).canonical_reference(args.direction), indent=2)); return 0
+        if command == "canonical-qa":
+            print(json.dumps(_service(args).canonical_qa(args.session, args.direction), indent=2)); return 0
         if command == "registration-report":
             result = _service(args).registration_report(args.session)
             print(json.dumps(result, indent=2)); return 0

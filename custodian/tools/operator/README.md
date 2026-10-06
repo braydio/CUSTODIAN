@@ -160,8 +160,13 @@ with old/new hashes and frame contracts. It does not publish canonical source
 or runtime assets; specialized ingest runs the existing runtime and
 compatibility-resource refresh.
 
-The accepted 96x96 registration guide is authoritative in
-`content/data/operator/authoring/operator_art_profile.json`. Existing plans use
+`content/data/operator/authoring/operator_art_profile.json` is a profile registry
+(`operator_art_profile.v3`): `legacy_96` (accepted 96x96 guide, unchanged) and
+`operator_2_5d_128` (canonical, default for new authoring; see
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`). Source
+Sessions select the profile by target size and plans record `profile_id` and the
+effective profile hash. `art_agent/canonical_contract.py` builds/verifies the
+canonical reference and powers `canonical-reference` / `canonical-qa`. Existing plans use
 `contain`; `source-plan --mode operator_profile` requires source landmarks and
 derives one shared scale and anchor from reviewed semantic evidence. Read-only
 source render, landmark, registration-report, and production-command actions

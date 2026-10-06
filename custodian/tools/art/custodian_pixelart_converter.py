@@ -1928,8 +1928,10 @@ def main() -> int:
             if plan.get("schema") not in {"custodian.operator_art_normalization_plan.v1", "custodian.operator_art_normalization_plan.v2"}:
                 raise SystemExit("normalization plan has unsupported schema")
             if plan.get("mode", "contain") == "operator_profile":
-                profile_path = Path(__file__).resolve().parents[2] / "content/data/operator/authoring/operator_art_profile.json"
-                profile_sha = hashlib.sha256(profile_path.read_bytes()).hexdigest()
+                # One identity rule for plans and replay: the effective profile hash from the registry loader.
+                sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "operator"))
+                from art_agent.registration_profile import LEGACY_PROFILE_ID, load_profile
+                profile_sha = load_profile(profile_id=plan.get("profile_id") or LEGACY_PROFILE_ID)["sha256"]
                 if plan.get("profile_sha256") != profile_sha:
                     raise SystemExit("normalization plan registration profile hash is stale")
             if hashlib.sha256(source_path.read_bytes()).hexdigest() != plan.get("source_sha256"):

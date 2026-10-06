@@ -21,9 +21,10 @@ from art_agent.service import ArtAgentService
 
 
 def main() -> int:
-    profile = load_profile()
+    assert load_profile()["profile_id"] == "operator_2_5d_128", "new authoring must default to the canonical 128 profile"
+    profile = load_profile(profile_id="legacy_96")
     registration = profile["registration"]
-    assert registration["anchor"] == [48, 84]
+    assert registration["anchor"] == [48, 84] and registration["frame_size"] == [96, 96]
     assert registration["guide"]["horizontal"]["hips"] == 58
     assert profile["profile"]["enforcement"]["artistic"] is False
     assert weighted_median([{"ratio": 2.0, "weight": 1.0, "frame": 1, "segment": "a"},

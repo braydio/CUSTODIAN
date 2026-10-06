@@ -1263,12 +1263,40 @@
         "custodian/tools/operator/art_agent/qa.py",
         "custodian/tools/operator/art_agent/cli.py",
         "custodian/tools/operator/art_agent/mcp_server.py",
+        "custodian/tools/operator/art_agent/canonical_contract.py",
         "custodian/tools/art/custodian_pixelart_converter.py",
         "custodian/tools/aseprite/operator_anchor_guides.lua",
         "custodian/tools/aseprite/operator_live_bridge/art_agent_ops.lua",
         "custodian/tools/validation/operator_art_registration_profile_smoke.py"
       ],
       "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_2_5d_canonical_visual_contract",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_2_5d_canonical_visual_contract_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation",
+        "registration",
+        "visual-contract",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/operator/art_agent/canonical_contract.py",
+        "custodian/tools/operator/art_agent/registration_profile.py",
+        "custodian/content/data/operator/authoring/operator_art_profile.json",
+        "custodian/content/data/operator/authoring/operator_2_5d_design_reference.json",
+        "custodian/content/data/operator/authoring/operator_2_5d_landmark_annotations.json",
+        "custodian/content/sprites/operator/reference/operator_2_5d/**",
+        "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/**",
+        "custodian/tools/aseprite/operator_anchor_guides.lua",
+        "custodian/tools/validation/operator_2_5d_canonical_visual_contract_smoke.py",
+        "design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md"
+      ],
+      "timeout_sec": 120,
       "needs_import": false
     },
     {

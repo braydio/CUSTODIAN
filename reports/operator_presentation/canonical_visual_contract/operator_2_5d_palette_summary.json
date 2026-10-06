@@ -1,0 +1,1276 @@
+{
+  "schema": "custodian.operator_2_5d_palette_summary.v1",
+  "source_sha256": "37e080b8dda825dcfe048439e12f0ad4a66c70b33393d3296cd550761e1b0621",
+  "tolerances": {
+    "mean_lightness": 0.02,
+    "mean_chroma": 0.01,
+    "gold_median_lightness": 0.042,
+    "gold_median_hue_deg": 4.0
+  },
+  "directions": {
+    "n": {
+      "opaque_pixels": 1901,
+      "alpha_histogram": {
+        "bins16": [
+          14483,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1901
+        ],
+        "zero": 14483,
+        "full": 1901,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            19,
+            16,
+            15
+          ],
+          "share": 0.3456
+        },
+        {
+          "srgb": [
+            48,
+            44,
+            43
+          ],
+          "share": 0.3083
+        },
+        {
+          "srgb": [
+            40,
+            27,
+            15
+          ],
+          "share": 0.0747
+        },
+        {
+          "srgb": [
+            68,
+            59,
+            53
+          ],
+          "share": 0.0426
+        },
+        {
+          "srgb": [
+            77,
+            46,
+            12
+          ],
+          "share": 0.04
+        },
+        {
+          "srgb": [
+            49,
+            35,
+            22
+          ],
+          "share": 0.0368
+        },
+        {
+          "srgb": [
+            112,
+            73,
+            21
+          ],
+          "share": 0.0279
+        },
+        {
+          "srgb": [
+            82,
+            68,
+            52
+          ],
+          "share": 0.0168
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.141,
+        "p50": 0.269,
+        "p95": 0.545,
+        "p99": 0.714,
+        "mean": 0.286
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.019,
+        "p95": 0.157,
+        "p99": 0.36
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.007,
+        "p95": 0.103,
+        "p99": 0.132,
+        "mean": 0.024
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0053,
+        "L_ge_0.85": 0.0011
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4314,
+          "mid": 0.4219,
+          "light": 0.0231
+        },
+        "gold": {
+          "dark": 0.0757,
+          "mid": 0.0431,
+          "highlight": 0.0047
+        },
+        "visor_share": 0.0,
+        "gold_share": 0.1236,
+        "graphite_share": 0.8069,
+        "cloth_share": 0.0694
+      },
+      "gold": {
+        "median_L": 0.5116,
+        "median_chroma": 0.0975,
+        "median_hue": 70.8042
+      },
+      "darkest_outline_band": {
+        "p05": 0.123,
+        "p50": 0.165,
+        "p95": 0.345,
+        "perimeter_pixels": 271
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2599,
+        "visor_minus_gold_L": null,
+        "visor_minus_body_L": null
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": null,
+        "gold_specular_p95": 0.734,
+        "gold_trim_median": 0.5116,
+        "graphite_highlight_p95": 0.3621,
+        "cloth_mid_median": 0.3126,
+        "outline_median": 0.165
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": false
+    },
+    "ne": {
+      "opaque_pixels": 1695,
+      "alpha_histogram": {
+        "bins16": [
+          14689,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1695
+        ],
+        "zero": 14689,
+        "full": 1695,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            19,
+            16,
+            14
+          ],
+          "share": 0.3345
+        },
+        {
+          "srgb": [
+            48,
+            44,
+            43
+          ],
+          "share": 0.3032
+        },
+        {
+          "srgb": [
+            38,
+            26,
+            15
+          ],
+          "share": 0.0755
+        },
+        {
+          "srgb": [
+            69,
+            59,
+            53
+          ],
+          "share": 0.0549
+        },
+        {
+          "srgb": [
+            78,
+            46,
+            12
+          ],
+          "share": 0.0484
+        },
+        {
+          "srgb": [
+            49,
+            37,
+            24
+          ],
+          "share": 0.0407
+        },
+        {
+          "srgb": [
+            115,
+            73,
+            20
+          ],
+          "share": 0.0218
+        },
+        {
+          "srgb": [
+            80,
+            68,
+            57
+          ],
+          "share": 0.0183
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.14,
+        "p50": 0.273,
+        "p95": 0.524,
+        "p99": 0.717,
+        "mean": 0.286
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.02,
+        "p95": 0.141,
+        "p99": 0.363
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.008,
+        "p95": 0.097,
+        "p99": 0.129,
+        "mean": 0.023
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0083,
+        "L_ge_0.85": 0.0012
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4189,
+          "mid": 0.4401,
+          "light": 0.0348
+        },
+        "gold": {
+          "dark": 0.0649,
+          "mid": 0.0342,
+          "highlight": 0.0059
+        },
+        "visor_share": 0.0012,
+        "gold_share": 0.105,
+        "graphite_share": 0.8189,
+        "cloth_share": 0.0749
+      },
+      "gold": {
+        "median_L": 0.4816,
+        "median_chroma": 0.0919,
+        "median_hue": 68.6911
+      },
+      "darkest_outline_band": {
+        "p05": 0.123,
+        "p50": 0.177,
+        "p95": 0.36,
+        "perimeter_pixels": 217
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2229,
+        "visor_minus_gold_L": 0.3359,
+        "visor_minus_body_L": 0.5588
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": 0.8261,
+        "gold_specular_p95": 0.7558,
+        "gold_trim_median": 0.4816,
+        "graphite_highlight_p95": 0.3698,
+        "cloth_mid_median": 0.3143,
+        "outline_median": 0.1767
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": true
+    },
+    "e": {
+      "opaque_pixels": 1381,
+      "alpha_histogram": {
+        "bins16": [
+          15003,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1381
+        ],
+        "zero": 15003,
+        "full": 1381,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            19,
+            16,
+            14
+          ],
+          "share": 0.3164
+        },
+        {
+          "srgb": [
+            48,
+            44,
+            43
+          ],
+          "share": 0.2404
+        },
+        {
+          "srgb": [
+            39,
+            26,
+            15
+          ],
+          "share": 0.1144
+        },
+        {
+          "srgb": [
+            51,
+            36,
+            21
+          ],
+          "share": 0.0558
+        },
+        {
+          "srgb": [
+            76,
+            46,
+            13
+          ],
+          "share": 0.0507
+        },
+        {
+          "srgb": [
+            69,
+            60,
+            55
+          ],
+          "share": 0.0471
+        },
+        {
+          "srgb": [
+            77,
+            67,
+            58
+          ],
+          "share": 0.0369
+        },
+        {
+          "srgb": [
+            84,
+            74,
+            67
+          ],
+          "share": 0.0188
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.141,
+        "p50": 0.267,
+        "p95": 0.536,
+        "p99": 0.741,
+        "mean": 0.289
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.019,
+        "p95": 0.15,
+        "p99": 0.398
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.01,
+        "p95": 0.096,
+        "p99": 0.124,
+        "mean": 0.025
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0101,
+        "L_ge_0.85": 0.0029
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4359,
+          "mid": 0.4164,
+          "light": 0.0485
+        },
+        "gold": {
+          "dark": 0.0601,
+          "mid": 0.0304,
+          "highlight": 0.008
+        },
+        "visor_share": 0.0007,
+        "gold_share": 0.0985,
+        "graphite_share": 0.7994,
+        "cloth_share": 0.1014
+      },
+      "gold": {
+        "median_L": 0.5166,
+        "median_chroma": 0.0945,
+        "median_hue": 69.232
+      },
+      "darkest_outline_band": {
+        "p05": 0.13,
+        "p50": 0.188,
+        "p95": 0.331,
+        "perimeter_pixels": 184
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2627,
+        "visor_minus_gold_L": 0.3273,
+        "visor_minus_body_L": 0.59
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": 0.8439,
+        "gold_specular_p95": 0.7697,
+        "gold_trim_median": 0.5166,
+        "graphite_highlight_p95": 0.3899,
+        "cloth_mid_median": 0.3021,
+        "outline_median": 0.1885
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": true
+    },
+    "se": {
+      "opaque_pixels": 1704,
+      "alpha_histogram": {
+        "bins16": [
+          14680,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1704
+        ],
+        "zero": 14680,
+        "full": 1704,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            19,
+            16,
+            14
+          ],
+          "share": 0.3351
+        },
+        {
+          "srgb": [
+            49,
+            44,
+            42
+          ],
+          "share": 0.2365
+        },
+        {
+          "srgb": [
+            39,
+            26,
+            15
+          ],
+          "share": 0.0892
+        },
+        {
+          "srgb": [
+            70,
+            60,
+            53
+          ],
+          "share": 0.0481
+        },
+        {
+          "srgb": [
+            77,
+            46,
+            12
+          ],
+          "share": 0.0434
+        },
+        {
+          "srgb": [
+            49,
+            35,
+            21
+          ],
+          "share": 0.0387
+        },
+        {
+          "srgb": [
+            79,
+            68,
+            57
+          ],
+          "share": 0.0299
+        },
+        {
+          "srgb": [
+            114,
+            74,
+            18
+          ],
+          "share": 0.0252
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.141,
+        "p50": 0.272,
+        "p95": 0.564,
+        "p99": 0.755,
+        "mean": 0.296
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.02,
+        "p95": 0.177,
+        "p99": 0.424
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.01,
+        "p95": 0.104,
+        "p99": 0.131,
+        "mean": 0.027
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0112,
+        "L_ge_0.85": 0.0012
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4313,
+          "mid": 0.3762,
+          "light": 0.061
+        },
+        "gold": {
+          "dark": 0.0851,
+          "mid": 0.037,
+          "highlight": 0.0076
+        },
+        "visor_share": 0.0018,
+        "gold_share": 0.1297,
+        "graphite_share": 0.7793,
+        "cloth_share": 0.0892
+      },
+      "gold": {
+        "median_L": 0.5008,
+        "median_chroma": 0.0968,
+        "median_hue": 69.6716
+      },
+      "darkest_outline_band": {
+        "p05": 0.131,
+        "p50": 0.174,
+        "p95": 0.288,
+        "perimeter_pixels": 249
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2497,
+        "visor_minus_gold_L": 0.3105,
+        "visor_minus_body_L": 0.5602
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": 0.8411,
+        "gold_specular_p95": 0.7552,
+        "gold_trim_median": 0.5008,
+        "graphite_highlight_p95": 0.3983,
+        "cloth_mid_median": 0.3206,
+        "outline_median": 0.1738
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": true
+    },
+    "s": {
+      "opaque_pixels": 1849,
+      "alpha_histogram": {
+        "bins16": [
+          14535,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1849
+        ],
+        "zero": 14535,
+        "full": 1849,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            18,
+            15,
+            13
+          ],
+          "share": 0.3386
+        },
+        {
+          "srgb": [
+            49,
+            44,
+            43
+          ],
+          "share": 0.2336
+        },
+        {
+          "srgb": [
+            39,
+            27,
+            16
+          ],
+          "share": 0.0876
+        },
+        {
+          "srgb": [
+            78,
+            46,
+            12
+          ],
+          "share": 0.0487
+        },
+        {
+          "srgb": [
+            69,
+            60,
+            53
+          ],
+          "share": 0.0454
+        },
+        {
+          "srgb": [
+            50,
+            35,
+            20
+          ],
+          "share": 0.0389
+        },
+        {
+          "srgb": [
+            81,
+            69,
+            56
+          ],
+          "share": 0.026
+        },
+        {
+          "srgb": [
+            113,
+            74,
+            20
+          ],
+          "share": 0.0233
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.136,
+        "p50": 0.273,
+        "p95": 0.6,
+        "p99": 0.762,
+        "mean": 0.299
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.02,
+        "p95": 0.211,
+        "p99": 0.44
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.01,
+        "p95": 0.114,
+        "p99": 0.136,
+        "mean": 0.029
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0124,
+        "L_ge_0.85": 0.0016
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4267,
+          "mid": 0.3688,
+          "light": 0.0541
+        },
+        "gold": {
+          "dark": 0.0871,
+          "mid": 0.053,
+          "highlight": 0.0076
+        },
+        "visor_share": 0.0027,
+        "gold_share": 0.1476,
+        "graphite_share": 0.7593,
+        "cloth_share": 0.0903
+      },
+      "gold": {
+        "median_L": 0.5094,
+        "median_chroma": 0.0973,
+        "median_hue": 70.571
+      },
+      "darkest_outline_band": {
+        "p05": 0.124,
+        "p50": 0.169,
+        "p95": 0.308,
+        "perimeter_pixels": 285
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2598,
+        "visor_minus_gold_L": 0.3221,
+        "visor_minus_body_L": 0.5819
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": 0.8566,
+        "gold_specular_p95": 0.7522,
+        "gold_trim_median": 0.5094,
+        "graphite_highlight_p95": 0.3855,
+        "cloth_mid_median": 0.3219,
+        "outline_median": 0.1692
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": true
+    },
+    "sw": {
+      "opaque_pixels": 1589,
+      "alpha_histogram": {
+        "bins16": [
+          14795,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1589
+        ],
+        "zero": 14795,
+        "full": 1589,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            19,
+            16,
+            14
+          ],
+          "share": 0.3361
+        },
+        {
+          "srgb": [
+            49,
+            44,
+            42
+          ],
+          "share": 0.2278
+        },
+        {
+          "srgb": [
+            40,
+            26,
+            14
+          ],
+          "share": 0.09
+        },
+        {
+          "srgb": [
+            78,
+            46,
+            11
+          ],
+          "share": 0.0529
+        },
+        {
+          "srgb": [
+            69,
+            59,
+            51
+          ],
+          "share": 0.051
+        },
+        {
+          "srgb": [
+            49,
+            36,
+            22
+          ],
+          "share": 0.0384
+        },
+        {
+          "srgb": [
+            79,
+            68,
+            57
+          ],
+          "share": 0.0315
+        },
+        {
+          "srgb": [
+            112,
+            73,
+            20
+          ],
+          "share": 0.0245
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.141,
+        "p50": 0.272,
+        "p95": 0.559,
+        "p99": 0.739,
+        "mean": 0.295
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.02,
+        "p95": 0.17,
+        "p99": 0.399
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.01,
+        "p95": 0.104,
+        "p99": 0.129,
+        "mean": 0.027
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0088,
+        "L_ge_0.85": 0.0006
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4248,
+          "mid": 0.3839,
+          "light": 0.0535
+        },
+        "gold": {
+          "dark": 0.0938,
+          "mid": 0.0365,
+          "highlight": 0.0057
+        },
+        "visor_share": 0.0019,
+        "gold_share": 0.1359,
+        "graphite_share": 0.7684,
+        "cloth_share": 0.0938
+      },
+      "gold": {
+        "median_L": 0.4848,
+        "median_chroma": 0.0954,
+        "median_hue": 67.6583
+      },
+      "darkest_outline_band": {
+        "p05": 0.128,
+        "p50": 0.176,
+        "p95": 0.314,
+        "perimeter_pixels": 222
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2331,
+        "visor_minus_gold_L": 0.3507,
+        "visor_minus_body_L": 0.5838
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": 0.8425,
+        "gold_specular_p95": 0.735,
+        "gold_trim_median": 0.4848,
+        "graphite_highlight_p95": 0.3886,
+        "cloth_mid_median": 0.3242,
+        "outline_median": 0.1762
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": true
+    },
+    "w": {
+      "opaque_pixels": 1330,
+      "alpha_histogram": {
+        "bins16": [
+          15054,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1330
+        ],
+        "zero": 15054,
+        "full": 1330,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            19,
+            16,
+            14
+          ],
+          "share": 0.3519
+        },
+        {
+          "srgb": [
+            48,
+            44,
+            42
+          ],
+          "share": 0.2692
+        },
+        {
+          "srgb": [
+            39,
+            26,
+            15
+          ],
+          "share": 0.0895
+        },
+        {
+          "srgb": [
+            79,
+            46,
+            11
+          ],
+          "share": 0.0541
+        },
+        {
+          "srgb": [
+            69,
+            59,
+            52
+          ],
+          "share": 0.0489
+        },
+        {
+          "srgb": [
+            49,
+            36,
+            23
+          ],
+          "share": 0.0414
+        },
+        {
+          "srgb": [
+            79,
+            68,
+            57
+          ],
+          "share": 0.0218
+        },
+        {
+          "srgb": [
+            116,
+            74,
+            21
+          ],
+          "share": 0.0195
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.142,
+        "p50": 0.262,
+        "p95": 0.524,
+        "p99": 0.704,
+        "mean": 0.282
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.018,
+        "p95": 0.142,
+        "p99": 0.349
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.009,
+        "p95": 0.093,
+        "p99": 0.132,
+        "mean": 0.024
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0075,
+        "L_ge_0.85": 0.0008
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4496,
+          "mid": 0.403,
+          "light": 0.0406
+        },
+        "gold": {
+          "dark": 0.0669,
+          "mid": 0.0331,
+          "highlight": 0.0038
+        },
+        "visor_share": 0.003,
+        "gold_share": 0.1038,
+        "graphite_share": 0.8128,
+        "cloth_share": 0.0805
+      },
+      "gold": {
+        "median_L": 0.4746,
+        "median_chroma": 0.0909,
+        "median_hue": 69.0483
+      },
+      "darkest_outline_band": {
+        "p05": 0.122,
+        "p50": 0.179,
+        "p95": 0.357,
+        "perimeter_pixels": 186
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2252,
+        "visor_minus_gold_L": 0.347,
+        "visor_minus_body_L": 0.5722
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": 0.8269,
+        "gold_specular_p95": 0.7251,
+        "gold_trim_median": 0.4746,
+        "graphite_highlight_p95": 0.3748,
+        "cloth_mid_median": 0.3133,
+        "outline_median": 0.179
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": true
+    },
+    "nw": {
+      "opaque_pixels": 1693,
+      "alpha_histogram": {
+        "bins16": [
+          14691,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1693
+        ],
+        "zero": 14691,
+        "full": 1693,
+        "distinct_values": 2
+      },
+      "dominant_srgb_clusters": [
+        {
+          "srgb": [
+            19,
+            16,
+            14
+          ],
+          "share": 0.3355
+        },
+        {
+          "srgb": [
+            48,
+            44,
+            43
+          ],
+          "share": 0.3125
+        },
+        {
+          "srgb": [
+            39,
+            26,
+            16
+          ],
+          "share": 0.0862
+        },
+        {
+          "srgb": [
+            69,
+            59,
+            51
+          ],
+          "share": 0.0455
+        },
+        {
+          "srgb": [
+            77,
+            47,
+            13
+          ],
+          "share": 0.0443
+        },
+        {
+          "srgb": [
+            48,
+            35,
+            22
+          ],
+          "share": 0.0343
+        },
+        {
+          "srgb": [
+            109,
+            71,
+            21
+          ],
+          "share": 0.0219
+        },
+        {
+          "srgb": [
+            140,
+            85,
+            19
+          ],
+          "share": 0.0142
+        }
+      ],
+      "oklab_lightness": {
+        "p05": 0.14,
+        "p50": 0.268,
+        "p95": 0.525,
+        "p99": 0.726,
+        "mean": 0.283
+      },
+      "luminance": {
+        "p05": 0.003,
+        "p50": 0.019,
+        "p95": 0.14,
+        "p99": 0.378
+      },
+      "chroma": {
+        "p05": 0.002,
+        "p50": 0.008,
+        "p95": 0.099,
+        "p99": 0.132,
+        "mean": 0.024
+      },
+      "highlight_occupancy": {
+        "L_ge_0.75": 0.0065,
+        "L_ge_0.85": 0.0006
+      },
+      "bands": {
+        "graphite_cloth": {
+          "dark": 0.4282,
+          "mid": 0.4353,
+          "light": 0.0248
+        },
+        "gold": {
+          "dark": 0.0738,
+          "mid": 0.0325,
+          "highlight": 0.0047
+        },
+        "visor_share": 0.0006,
+        "gold_share": 0.111,
+        "graphite_share": 0.808,
+        "cloth_share": 0.0803
+      },
+      "gold": {
+        "median_L": 0.5004,
+        "median_chroma": 0.0951,
+        "median_hue": 69.3287
+      },
+      "darkest_outline_band": {
+        "p05": 0.116,
+        "p50": 0.178,
+        "p95": 0.379,
+        "perimeter_pixels": 229
+      },
+      "contrast": {
+        "gold_minus_graphite_L": 0.2458,
+        "visor_minus_gold_L": 0.3247,
+        "visor_minus_body_L": 0.5705
+      },
+      "hierarchy_tiers_L": {
+        "visor_core_p95": 0.8251,
+        "gold_specular_p95": 0.7348,
+        "gold_trim_median": 0.5004,
+        "graphite_highlight_p95": 0.3584,
+        "cloth_mid_median": 0.325,
+        "outline_median": 0.1779
+      },
+      "hierarchy_monotonic": true,
+      "visor_present": true
+    }
+  }
+}

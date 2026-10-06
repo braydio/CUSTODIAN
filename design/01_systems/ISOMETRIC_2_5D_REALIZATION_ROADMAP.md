@@ -41,7 +41,7 @@ The two future implementation slots are now:
 | 2.5D-1 | `isometric-2-5d-presentation-foundation` | converge ground anchors, visual elevation, depth bands and existing occlusion/shadow precedents | **complete / landed** |
 | 2.5D-1R | `review-isometric-2-5d-presentation-foundation` | independently verify reusable 2D-authoritative presentation primitive | **ready / auto behind 2.5D-1** |
 | OP-2.5D-A | `operator-2-5d-animation-viability-audit` | determine whether current Operator art actually satisfies the new spatial/volumetric contract and quantify the art backlog | **active / human visual review completed on agent branch; closeout pending** |
-| OP-2.5D-0 | `operator-2-5d-canonical-visual-contract` | preserve/measure approved Operator; establish canonical 128 authoring profile and anti-drift tooling | **ready / manual after audit lock release** |
+| OP-2.5D-0 | `operator-2-5d-canonical-visual-contract` | preserve/measure approved Operator; establish canonical 128 authoring profile and anti-drift tooling | **implemented on agent branch / review pending; claim gate (audit lock) still open at authoring time** |
 | OP-2.5D-0R | `review-operator-2-5d-canonical-visual-contract` | verify source/profile/measurement/guide integrity | **ready / auto behind OP-2.5D-0** |
 | 2.5D-2 | `isometric-2-5d-forum-vertical-slice` | prove the language in one real playable Forum approach | **draft / behind reviewed foundation + Operator audit human refresh** |
 | SKO-1 | `sundered-keep-overlook-alternate-vertical-slice` | prove a tiny playable shelf over a vast Sundered Keep world in a standalone scene | **ready / behind reviewed 2.5D-1** |
@@ -91,7 +91,7 @@ It must quantify production-reachable keep/cleanup/new-direction/redraw/projecti
 
 ## Canonical Operator visual lock
 
-The user has approved a new eight-direction Operator body/material/projection reference. Before production animation regeneration or the Forum showcase treats the Operator as visually authoritative, `operator-2-5d-canonical-visual-contract` must preserve the exact source, establish dual legacy-96/canonical-128 authoring profiles, measure/landmark every direction, and wire canonical ghost/QA support into the existing Operator authoring stack. Its paired fresh-context review must pass before mass animation production.
+The user has approved a new eight-direction Operator body/material/projection reference (`OPERATOR_DESIGN_REFERENCE_480.png`, 3840x480, 8x480 cells; authority: `design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`). Before production animation regeneration or the Forum showcase treats the Operator as visually authoritative, `operator-2-5d-canonical-visual-contract` must preserve the exact source, establish dual legacy-96/canonical-128 authoring profiles, measure/landmark every direction, and wire canonical ghost/QA support into the existing Operator authoring stack. Its paired fresh-context review must pass before mass animation production.
 
 ## 2.5D-2: Forum vertical slice
 

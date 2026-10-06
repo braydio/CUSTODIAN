@@ -286,6 +286,7 @@ def run_qa(
         "registration_context": {
             "accepted": bool(registration and registration.get("status") == "accepted"),
             "profile_sha256": profile_sha256,
+            "profile_id": profile.get("profile_id") if profile else None,
             "enforcement_artistic": bool(profile and profile.get("enforcement", {}).get("artistic", False)),
             "frame_size": registration.get("frame_size") if registration else None,
             "anchor": registration.get("anchor") if registration else None,

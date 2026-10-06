@@ -51,9 +51,9 @@ def build_plan(
     destination_x, destination_y = transform.destination_offset
     registration_basis: dict = {}
     if mode == "operator_profile":
-        if (session.target_width, session.target_height) != (96, 96):
-            raise model.WorkbenchError("operator_profile normalization requires 96x96 target frames")
-        loaded_profile = load_profile()
+        if (session.target_width, session.target_height) not in {(96, 96), (128, 128)}:
+            raise model.WorkbenchError("operator_profile normalization requires 96x96 (legacy_96) or 128x128 (operator_2_5d_128) target frames")
+        loaded_profile = load_profile(frame_size=[session.target_width, session.target_height])
         registration = loaded_profile.get("registration")
         if registration is None:
             raise model.WorkbenchError("accepted Operator registration profile is unavailable")
@@ -184,6 +184,7 @@ def build_plan(
         registrations=[FrameRegistration(frame=index + 1) for index in range(session.geometry.frame_count)],
         mode=mode,
         profile_sha256=loaded_profile["sha256"] if loaded_profile else "",
+        profile_id=loaded_profile["profile_id"] if loaded_profile else "",
         clipping_safe_scale=clipping_safe_scale,
         scale_observations=scale_observations,
         registration_basis=registration_basis,

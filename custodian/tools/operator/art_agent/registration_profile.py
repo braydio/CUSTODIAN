@@ -13,24 +13,24 @@ import animation_workbench_model as model
 from . import landmarks
 
 PROFILE_PATH = model.CUSTODIAN_ROOT / "content/data/operator/authoring/operator_art_profile.json"
-SUPPORTED_SCHEMAS = {"custodian.operator_art_profile.v1", "custodian.operator_art_profile.v2"}
+SUPPORTED_SCHEMAS = {"custodian.operator_art_profile.v1", "custodian.operator_art_profile.v2", "custodian.operator_art_profile.v3"}
+LEGACY_PROFILE_ID = "legacy_96"
+CANONICAL_PROFILE_ID = "operator_2_5d_128"
 
 
-def load_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
-    raw = path.read_bytes()
-    value = json.loads(raw)
-    if value.get("schema") not in SUPPORTED_SCHEMAS:
-        raise ValueError("unsupported Operator art profile schema")
-    registration = value.get("registration")
-    if registration is None:
-        return {"profile": value, "sha256": hashlib.sha256(raw).hexdigest(), "registration": None}
-    if registration.get("status") != "accepted" or registration.get("frame_size") != [96, 96]:
-        raise ValueError("Operator registration profile must be accepted 96x96 geometry")
+def _canonical_json(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
+
+
+def _validate_registration(registration: dict[str, Any]) -> None:
+    frame_size = registration.get("frame_size")
+    if registration.get("status") != "accepted" or frame_size not in ([96, 96], [128, 128]):
+        raise ValueError("Operator registration profile must be accepted 96x96 or 128x128 geometry")
     guide = registration.get("guide", {})
     for group in ("horizontal", "vertical", "points"):
         if not isinstance(guide.get(group), dict):
             raise ValueError(f"registration guide is missing {group}")
-    width, height = registration["frame_size"]
+    width, height = frame_size
     for key, point in guide["points"].items():
         if not isinstance(point, list) or len(point) != 2 or not all(isinstance(v, int) for v in point):
             raise ValueError(f"invalid registration guide point: {key}")
@@ -59,7 +59,51 @@ def load_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
             raise ValueError("scale segment references unknown semantic landmark")
         if segment.get("target_length", 0) <= 0 or segment.get("weight", 0) <= 0:
             raise ValueError("scale segment lengths and weights must be positive")
-    return {"profile": value, "sha256": hashlib.sha256(raw).hexdigest(), "registration": registration}
+
+
+def available_profiles(value: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Profile registry view: v1/v2 files expose their single registration as legacy_96."""
+    if value.get("schema") == "custodian.operator_art_profile.v3":
+        return dict(value.get("profiles", {}))
+    return {LEGACY_PROFILE_ID: {"registration": value.get("registration"), "measurements": value.get("measurements", {})}}
+
+
+def load_profile(path: Path = PROFILE_PATH, profile_id: str | None = None, frame_size: list[int] | tuple[int, int] | None = None) -> dict[str, Any]:
+    """Load one explicit profile.
+
+    Selection order: ``profile_id``; else the profile whose frame size matches ``frame_size``;
+    else the file's ``active_authoring_profile`` (new authoring); v1/v2 files only have legacy_96.
+    ``sha256`` is the identity of the *effective* profile (carried into plans/receipts);
+    ``file_sha256`` hashes the whole file.
+    """
+    raw = path.read_bytes()
+    value = json.loads(raw)
+    if value.get("schema") not in SUPPORTED_SCHEMAS:
+        raise ValueError("unsupported Operator art profile schema")
+    file_sha = hashlib.sha256(raw).hexdigest()
+    registry = available_profiles(value)
+    if profile_id is None and frame_size is not None:
+        wanted = list(frame_size)
+        for key, block in registry.items():
+            reg = block.get("registration")
+            if reg and reg.get("frame_size") == wanted:
+                profile_id = key
+                break
+    profile_id = profile_id or value.get("active_authoring_profile") or LEGACY_PROFILE_ID
+    if profile_id not in registry:
+        raise ValueError(f"unknown Operator art profile: {profile_id}")
+    registration = registry[profile_id].get("registration")
+    reference = value.get("canonical_visual_reference")
+    if value.get("schema") == "custodian.operator_art_profile.v3":
+        effective = hashlib.sha256(_canonical_json({"id": profile_id, "profile": registry[profile_id], "reference": reference}).encode()).hexdigest()
+    else:
+        effective = file_sha  # v1/v2 identity is unchanged so existing plans/receipts keep matching
+    result = {"profile": value, "sha256": effective, "file_sha256": file_sha, "profile_id": profile_id,
+              "available_profiles": sorted(registry), "active_authoring_profile": value.get("active_authoring_profile", LEGACY_PROFILE_ID),
+              "canonical_visual_reference": reference, "registration": registration}
+    if registration is not None:
+        _validate_registration(registration)
+    return result
 
 
 def weighted_median(observations: list[dict[str, Any]]) -> float:
@@ -77,7 +121,7 @@ def weighted_median(observations: list[dict[str, Any]]) -> float:
 
 
 def render_overlay(*, output: Path, frame_size: tuple[int, int] = (96, 96), profile: dict[str, Any] | None = None, landmarks: list[dict[str, Any]] | None = None) -> str:
-    loaded = profile or load_profile()
+    loaded = profile or load_profile(frame_size=frame_size)
     registration = loaded.get("registration")
     if registration is None:
         raise ValueError("profile has no accepted registration geometry")
@@ -110,7 +154,7 @@ def render_overlay(*, output: Path, frame_size: tuple[int, int] = (96, 96), prof
 
 
 def profile_report(*, landmarks: list[dict[str, Any]], frames: list[dict[str, Any]], profile: dict[str, Any] | None = None, global_scale: float | None = None, clipping_safe_scale: float | None = None, plan: Any = None, registered_canvas: bool = False, frame_size: list[int] | None = None) -> dict[str, Any]:
-    loaded = profile or load_profile()
+    loaded = profile or load_profile(frame_size=frame_size)
     reg = loaded.get("registration")
     if reg is None:
         raise ValueError("profile has no accepted registration geometry")
@@ -159,7 +203,7 @@ def profile_report(*, landmarks: list[dict[str, Any]], frames: list[dict[str, An
                                                "interpretation": "measurement only; no Source Session scale normalization applied"})
     return {
         "schema": "custodian.operator_art_registration_report.v1",
-        "profile_sha256": loaded["sha256"],
+        "profile_sha256": loaded["sha256"], "profile_id": loaded.get("profile_id", LEGACY_PROFILE_ID),
         "target_anchor": reg["anchor"], "guide": reg["guide"],
         "anchor_context": {"coordinate": reg["anchor"], "coordinate_space": "profile_coordinates"},
         "global_scale": global_scale, "clipping_safe_scale": clipping_safe_scale,

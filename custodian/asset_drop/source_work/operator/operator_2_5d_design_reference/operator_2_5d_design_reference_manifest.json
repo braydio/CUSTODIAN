@@ -1,0 +1,108 @@
+{
+  "schema": "custodian.operator_2_5d_design_reference_manifest.v1",
+  "filename": "OPERATOR_DESIGN_REFERENCE_480.png",
+  "sha256": "37e080b8dda825dcfe048439e12f0ad4a66c70b33393d3296cd550761e1b0621",
+  "bytes": 836506,
+  "dimensions": [
+    3840,
+    480
+  ],
+  "mode": "RGBA",
+  "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/OPERATOR_DESIGN_REFERENCE_480.png",
+  "layout": "8x1",
+  "cell_size": [
+    480,
+    480
+  ],
+  "order": [
+    "n",
+    "ne",
+    "e",
+    "se",
+    "s",
+    "sw",
+    "w",
+    "nw"
+  ],
+  "approval_date": "2026-10-06",
+  "provenance": "user_approved_visual_lock",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff",
+  "filename_note": "The `480` token matches the measured 480x480 cell size of this master.",
+  "packet_supersession": {
+    "packet_recorded_attachment": {
+      "dimensions": [
+        2048,
+        256
+      ],
+      "cell": 256,
+      "sha256": "2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323"
+    },
+    "decision": "User confirmed on 2026-10-06 that the 3840x480 repository-root file is the approved lock; the packet's 2048x256 identity was a mistaken reference."
+  },
+  "cells": {
+    "n": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/n_source.png",
+      "sha256": "108fc808f606dfbec81dcbb31f80fdf3a1d07aba824be974e0d1e4a0701110b0",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "ne": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/ne_source.png",
+      "sha256": "504dc5d86b157a8d75174fec1d9824298c9c49bf97c55f8d50b29bc2f9714d18",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "e": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/e_source.png",
+      "sha256": "9467cec0989e441f8610a72fbbcff78fe4d91de5b23ffe857283a5ea3d2f75d5",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "se": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/se_source.png",
+      "sha256": "1124906d7f94e531cf3fbadba5cb447a9e8bdb858e93c4abf56e26beec40ab1b",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "s": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/s_source.png",
+      "sha256": "0ba78e56829dc48491ec701bc6db381a736e2f8b641993620f5acf678f44ab9f",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "sw": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/sw_source.png",
+      "sha256": "0acc6269241ce07f28ab3ee7840b04c0e11968c85e035e23922333c98fb121d6",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "w": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/w_source.png",
+      "sha256": "ba934182f219b18cd3905433a5b9d9d3e7f205d2c8f18fbf1520136f4b5aa1d0",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "nw": {
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/source_cells/nw_source.png",
+      "sha256": "d019fb070f6e867415296e9bba5b85fe1d0d688e2e148043169bfcb19a5ca660",
+      "size": [
+        480,
+        480
+      ]
+    }
+  }
+}
