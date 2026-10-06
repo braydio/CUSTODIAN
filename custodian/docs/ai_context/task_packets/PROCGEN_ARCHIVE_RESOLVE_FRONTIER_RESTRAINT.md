@@ -1,0 +1,82 @@
+# PROCGEN ARCHIVE RESOLVE FRONTIER RESTRAINT
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `procgen-archive-resolve-frontier-restraint`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `review-procgen-archive-resolve-semantic-echo`
+- Locks: `procgen-presentation`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, runtime, performance, visual`
+- Paired review workstream: `review-procgen-archive-resolve-frontier-restraint`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Archive Resolve presentation pacing/visibility changes are player-facing and performance-sensitive while preserving streaming/gameplay authority`
+- Visual review: `required`
+- Reviewed main: `f8ef4c84adf8f332713d4284a4c3aaa89ef51fb0`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
+- Summary backlink: Every durable implementation/review/recovery/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73` exactly.
+- Goal: Make the landed Archive Resolve frontier visibly persist around the Operator instead of rapidly settling every committed on-screen tile: ordinary first-resolve, AR3 semantic echo, ingress wave, and reacquisition may begin only inside a bounded visual-resolution frontier that respects distance, Operator line of sight/occlusion, and camera relevance, while streaming/gameplay readiness continue farther ahead.
+- Completion boundary: Done when committed READY tiles can remain visibly unresolved until they become presentation-eligible; the eligibility frontier is distance-capped, line-of-sight/occlusion aware, camera-relevant, deterministic, and cheap; resolution start rate is time-based rather than render-frame-based; the safety pocket cannot punch through opaque walls; AR3 echo/ingress/reacquisition consume the same frontier; already-settled terrain never re-unresolves merely because it leaves the local frontier; and gameplay-scale evidence shows meaningful unresolved sections surviving on screen without hiding reachable hazards.
+- Current measured state: AR3 is complete/landed at `e14f5792` and its paired review is ready. The user playtest approves the core Archive Resolve visual language but reports the live streaming frontier resolves too far and too quickly: no meaningful yet-to-resolve sections remain on screen, nearby areas behind visual blockers can resolve despite not being visible from the Operator, and the effect therefore loses the intended sense of local attestation. Live `ProcGenRevealPresentation.advance()` still starts up to `resolve_starts_per_frame = 48` READY tiles every rendered frame and uses `resolve_duration_sec = 0.18`; ordinary start eligibility has no distance, camera, or LOS test. `ProcGenTilemap` may COMMIT up to `streaming_reveal_tiles_per_frame = 96` with 16-tile chunks and an active chunk radius of 2. The only local spatial override is `safety_halo_tiles = 3`, currently a square coordinate sweep that can force-settle committed cells regardless of an intervening wall. AR3 added semantic echo, a 14-tile ingress ring with a 4-tile pocket, and 0.12 s reacquisition, all on the same presentation owner. The design's existing three-radius model already requires the visual resolution frontier to trail inside gameplay readiness; this slice implements that missing restraint rather than shrinking streaming.
+- Evidence: `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; archived `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md`; `PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO_CLAUDE_SUMMARY.md`; live `custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd`; `procgen_presentation_class.gd`; `archive_resolve.gdshader`; `ProcGenTilemap` streaming defaults and AR adapters; AR1/AR2/AR3 focused smokes; user playtest in the recorded authoring chat.
+- Task-specific authority: `ProcGenRevealPresentation` remains sole owner of presentation state/scheduling. `ProcGenTilemap` remains streaming/semantic façade and may expose only narrow read-only visibility inputs/adapters. Existing canonical wall/elevation/traversal authorities may be queried read-only to build presentation occlusion. Streaming request/PREPARE/COMMIT, chunk lifecycle, cache/residency, collision/navigation, AR3 semantic-class authority, Region Frame, and gameplay discovery remain unchanged.
+- Work surface: Prefer a small focused visibility/frontier helper under `custodian/game/world/procgen/streaming/` plus narrow changes to `procgen_reveal_presentation.gd` and the minimum `ProcGenTilemap` adapter needed to supply Operator/camera/occluder truth. Touch `proc_gen_map.tscn` only for explicit presentation defaults. Extend existing AR smokes and add/register one focused AR4 smoke after choosing its exact filename inside the workstream. Do not grow `ProcGenTilemap` into another stateful visibility system.
+- Change: Replace ordinary FIFO “first N READY tiles per rendered frame” start eligibility with a presentation frontier. A READY tile may begin first-resolve/reacquisition/ingress resolution only when it is committed and satisfies the current frontier policy. Starting a resolve is presentation-only; COMMIT/lifecycle truth remains untouched. Once a tile begins RESOLVING, allow it to finish even if the Operator/camera moves so partially resolved cells do not snap back.
+- Change: Add a configurable hard distance cap from the Operator. Initial authoring target: `visual_resolve_radius_tiles = 11` with a deterministic irregular fringe of roughly ±2 tiles, derived from stable world/tile identity rather than per-frame randomness. The cap is a presentation eligibility radius only. Do not reduce `streaming_active_chunk_radius`, PREPARE/COMMIT range, navigation readiness, collision readiness, or residency range to create the visual effect.
+- Change: Add bounded Operator line-of-sight/occlusion gating. Use a tile-grid visibility mask / deterministic shadow-cast or equivalently bounded grid algorithm over the local frontier. Do not issue one physics raycast per READY tile per frame. Opaque authority begins with canonical generated/runtime walls; add cliff/elevation occlusion only where existing read-only authority unambiguously says the edge is visually/physically opaque. The occluding wall/edge itself may resolve; cells behind it remain unresolved until visible through a doorway/opening/changed topology. Do not treat foliage, enemies, ordinary props, shader alpha, or image pixels as LOS authority.
+- Change: Cache/recompute the bounded visibility mask only when needed, such as Operator tile movement and relevant local wall/topology revision/mutation. Reuse an existing semantic/cache revision seam if one cleanly exists; otherwise add the narrowest presentation invalidation notification at existing wall-authority mutation funnels. No whole-map scan and no per-frame full-mask rebuild.
+- Change: Add camera relevance to normal resolution starts: candidate tiles must intersect the active world-camera visible rect expanded by approximately 2 semantic tiles. Off-screen COMMIT/readiness continues normally, but ordinary Archive Resolve budget is not spent settling distant presentation before the player can see it. If camera authority is unavailable for a frame, fail safely to distance+LOS rather than blocking gameplay or creating a second camera owner.
+- Change: Replace `resolve_starts_per_frame` as the production pacing authority with a delta/time-based token budget so reveal speed does not scale with monitor/render FPS. Initial authoring target: roughly `84 tile starts/sec` with a burst cap around `8 starts/frame`; tune inside a bounded 72-96 starts/sec gameplay range if renderer evidence shows better continuity. Preserve deterministic candidate ordering for the same seed/trajectory/tick samples. Retain a legacy/debug compatibility field only if required by existing tests/tools, but production scheduling must be time-based.
+- Change: Start with `resolve_duration_sec` near 0.22 s rather than 0.18 s if needed to preserve readable micro-fronts; final value is bounded game-feel tuning, not simulation authority. Prefer connected 3-8-cell micro-fronts from the eligible set over a long uniform ring. Do not animate chunks.
+- Change: Refine the committed safety halo so it guarantees readable/reachable nearby authority without revealing through walls. The safety pocket remains approximately 2-3 tiles and force-settles only committed READY/RESOLVING cells that are locally visible/reachable from the Operator under the same occlusion mask or a bounded local flood that cannot cross canonical blockers. Never expose uncommitted cells.
+- Change: AR3 semantic echo must obey the same frontier and therefore cannot announce a road/constructed/wall/landmark cell through an opaque barrier or far outside the active visual frontier. AR3 ingress resolution and reacquisition also use frontier eligibility when their queued cells actually begin resolving; the ingress trigger itself remains where AR3 placed it and does not move/revalidate the Operator. Reacquisition remains shorter/weaker after it becomes eligible.
+- Change: Preserve resolved memory. A tile that reaches settled stays visually settled while resident even after leaving distance/LOS/camera eligibility. The only ordinary return path is existing M6 unload -> authoritative reacquisition. Do not implement continuous re-unresolve, flashlight-style darkness, map discovery, or fog-of-war in AR4.
+- Preserve: AR1/AR2/AR3 request-before-commit, committed-only resolve, one MultiMesh/shared material, pause-safe presentation time, deterministic custom-data identity, reduced/disabled effect behavior, AR3 semantic classes, ingress ordering, reacquisition identity/intensity, actor/foreground layering, gameplay collision/navigation, Region Frame, M3-M6 streaming semantics, spawn validity, camera ownership, and accepted deterministic procgen fingerprint unless independently changed.
+- Non-goals: No fog-of-war or minimap discovery system; no re-veiling settled cells merely for leaving the radius; no streaming-radius reduction; no gameplay stealth/perception coupling; no per-cell physics-ray workload; no new semantic class; no shader redesign; no biome-specific reveal rules; no map-generation/topology changes; no component/spawn query optimization.
+- Acceptance: (1) committed READY tiles outside the visual distance cap remain veiled and do not consume resolve-start budget; (2) a nearby committed room/courtyard behind an opaque canonical wall remains unresolved until a valid opening/LOS exists, while the blocking wall itself can resolve; (3) a doorway/removed wall causes newly visible committed cells to become eligible without generation or lifecycle mutation; (4) ordinary start pace is approximately invariant across at least two materially different render-frame cadences and obeys the per-second/burst budget; (5) off-camera cells outside the configured margin do not consume ordinary visual start budget; (6) the safety halo cannot force-settle through an opaque barrier and still prevents the Operator from encountering invisible committed reachable hazards; (7) semantic echo never leaks through the same visibility gate; (8) ingress and reacquisition preserve AR3 timing identity while respecting eligibility at start time; (9) already-settled cells stay settled when the Operator walks away or turns behind cover; (10) request/PREPARE/COMMIT, lifecycle, cache, unload/reload, navigation/collision, spawn, Region Frame, and deterministic world output remain unchanged; (11) no per-cell Node/Tween/Timer/material or per-ready-tile physics-ray growth; (12) gameplay-scale renderer evidence shows a persistent unresolved frontier on screen, meaningful around-corner/room reveal, no chunk rectangles, and no hidden reachable hazard.
+- Validation: Begin with an implementation-created focused AR4 smoke that proves distance gating, wall/door LOS gating, wall-destruction invalidation, camera-margin gating, settled-memory persistence, safety-halo occlusion, semantic-echo gating, ingress/reacquisition eligibility, and time-based pacing under two simulated frame cadences. Use a deterministic miniature wall/door fixture so failure is machine-falsifiable. Instrument aggregate frontier counters only: eligible/ineligible-by-distance/ineligible-by-occlusion/ineligible-by-camera, start-budget carry/burst, visibility-mask rebuild count/cost; do not emit per-tile event spam. Then rerun `procgen_reveal_presentation`, `procgen_archive_resolve_shader`, `procgen_archive_resolve_semantic_echo`, `contract_world_archive_resolve_ingress`, pause-aware streaming, chunk lifecycle/cache/unload, runtime health, Region Frame, camera-presentation coverage, wall-destruction/collision/navigation regressions, candidate-materializer parity, and S1 quick. Require no world-output/fingerprint movement unless independently approved. Run changed-file validation and `git diff --check`. Finally run a real graphical Moment Forge traversal with at least: open terrain, an L-turn/doorway or walled room, ordinary movement at gameplay speed, and an unload/reacquire leg. Publish the smallest useful contact sheet + short clip through `publish_review_artifacts.py --important` under this workstream. Ask: (a) are unresolved sections now visibly present without feeling sluggish; (b) do walls/turns act as convincing reveal curtains; (c) does the frontier stay local rather than clearing the whole screen; (d) are hazards/path immediately around the Operator always readable; (e) does settled terrain remain stable rather than pumping in/out?
+- Task overrides: `none`
+- Deferred: Fog-of-war/map knowledge remains a separate future system. Re-unresolution of previously settled world is reserved for an explicit exceptional instability/corruption mechanic if ever designed, not ordinary traversal.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `<fill at closeout>`
+- Completion boundary satisfied: `<fill at closeout>`
+- Acceptance satisfied: `<fill at closeout>`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `<fill at closeout>`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success | partial | blocked`
+- Friction severity: `none | low | medium | high`
+- What went wrong: `none`
+- Root cause / contributing factors: `none`
+- Prevention / pipeline improvement: `none`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none | fixed-in-scope | manual-follow-up`
+
+## Refresh Planning Authority
+
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
+- Refresh instruction: This packet is the explicit user/ChatGPT playtest refresh after AR3 landed. At claim time, re-derive exact helper names and current AR3 review findings from live main, but do not reopen the agreed distance + LOS + camera + time-budget design unless the paired AR3 review found a correctness defect that materially changes ownership.
+
+## Handoff
+
+- Next workstream: `review-procgen-archive-resolve-frontier-restraint`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
+- Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
+- Refresh reason: `none`
+- Next action: After AR3 paired review archives complete, claim AR4 automatically, implement the bounded visual frontier, obtain the required gameplay-scale visual decision, then land so the paired fresh-context AR4 review can claim.
+- Blockers or open questions: AR3 paired review must archive complete first. Exact tuning values may move inside the bounded ranges above based on objective/renderer evidence; the architecture and settled-memory decision are locked.
