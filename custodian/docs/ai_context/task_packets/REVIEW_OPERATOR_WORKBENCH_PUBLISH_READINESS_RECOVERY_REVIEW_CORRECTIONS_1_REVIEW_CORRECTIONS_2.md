@@ -26,7 +26,7 @@
 - Review focus: No canonical mutation on rebound or racing manifest paths; exact selected source set; allowlist cannot expand from mutable state; CLI and UI share one authority; no stale override bypass; no implementation edits by reviewer.
 - Acceptance: Produce a findings-first fresh-context review of live main, retaining R0-01 and any cycle-scoped finding dispositions. If fixed with no further blocker, close the parent readiness review lineage and surface its existing next packet. If any correction-worthy finding remains, use `human_required` and return to the authoring conversation; no automatic cycle 3.
 - Non-goals: Do not edit reviewed implementation code, art/gameplay, Workbench design, or unrelated source.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and a bounded correction/re-review packet. Never edit reviewed implementation code or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
