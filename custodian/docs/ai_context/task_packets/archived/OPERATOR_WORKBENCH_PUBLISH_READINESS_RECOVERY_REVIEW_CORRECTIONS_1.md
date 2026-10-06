@@ -71,3 +71,26 @@ Required before completion.
 
 - Next action: Paired review `review-operator-workbench-publish-readiness-recovery-review-corrections-1` before any downstream Workbench lane advances.
 - Blockers or open questions: none.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1`
+- Reviewed on main: `094be7ed98e492e1d0b68ec4dcd33e7fd1e5b967`
+- Review modes: `code, architecture, workflow`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+
+### Findings
+
+- **R0-01** (`unresolved`, blocking correctness, publication boundary/workflow; affected acceptance: CLI publication must land only the selected animation's canonical assets through the scoped authority): correction 1 closes the direct CLI bypass, but the shared service derives `canonical_paths` and its allowlist from mutable `workbench.json` binding paths (`ui/service.py:695-709`). `animation_workbench.publish()` writes to those manifest-provided paths (`animation_workbench.py:413-424, 463-469`), while `publication_allowlist()` accepts each supplied path and its sidecars without validating that it belongs to the selected animation (`operator_art_worktree.py:801-811`). A modified manifest can therefore rebind a selected animation to another existing Operator source path, update its freshness fields, and have that unselected source treated as allowlisted. The final check reloads the manifest but does not compare its binding paths with the initial selection snapshot (`ui/service.py:722-737`). Correction required: establish and revalidate an immutable selection-bound path set before any canonical mutation; reject mismatched paths before calling the mutating backend. The new CLI fixture exercises ordinary safe/unsafe checkout identities but does not mutate binding paths.

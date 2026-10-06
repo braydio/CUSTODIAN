@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `operator-workbench-publish-readiness-recovery-review-corrections-1`
@@ -30,11 +30,54 @@
 
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh reason: `none`
-- Next action: `Verify R0-01 against live main after correction 1 lands; if fixed, allow the browser/PREVIEW successor to proceed.`
-- Blockers or open questions: `none`
+- Next action: `Implement cycle-2 correction to bind publication paths to the selected animation and reject tampered or changed Workbench manifests before canonical mutation.`
+- Blockers or open questions: `R0-01 remains unresolved pending the cycle-2 correction and paired review.`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `partial`
+- Evidence: The direct CLI publisher bypass is removed. The new CLI smoke and four focused Workbench smokes pass. Review found that the shared publisher trusts mutable Workbench binding paths to construct both candidate writes and the publication allowlist, so an eligible art checkout can retarget a selected animation to another Operator source asset. The final revalidation reloads readiness but does not compare binding paths to the selected animation snapshot. R0-01 remains unresolved; bounded cycle-2 correction and review packets are created.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `low`
+- What went wrong: The required regression covers checkout identity, dirt, dry-run, and normal scoped landing, but omits manifest path tampering.
+- Root cause / contributing factors: Candidate paths and allowlist are both derived from mutable binding paths; readiness revalidation does not bind them to the selected animation.
+- Prevention / pipeline improvement: Add a negative control that tampers with source/publish paths before invocation and during the pre-mutation window; validate exact selected-path ownership before mutation.
+- Tooling / docs drift discovered: none
+- Follow-up: `operator-workbench-publish-readiness-recovery-review-corrections-2`
+- What worked: Fixture-backed CLI and four focused Workbench smokes provide broad evidence for the original checkout/readiness boundary.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1`
+- Reviewed on main: `094be7ed98e492e1d0b68ec4dcd33e7fd1e5b967`
+- Review modes: `code, architecture, workflow`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-publish-readiness-recovery-review-corrections-2`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+
+### Findings
+
+- **R0-01** (`unresolved`, blocking correctness): the correction routes CLI publish through the shared service and closes direct invocation from coordination main, arbitrary/detached checkouts, and dirty art checkout. However, the shared service derives canonical targets and allowlist from mutable manifest binding paths, and final readiness revalidation does not bind those paths to the selected animation. A modified Workbench manifest can authorize publication of another Operator source asset. See the archived correction packet for source locations and the bounded evidence chain.
