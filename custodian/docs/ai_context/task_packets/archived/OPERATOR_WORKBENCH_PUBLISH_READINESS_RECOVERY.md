@@ -197,3 +197,25 @@ Required before completion.
 - Tooling / docs drift discovered: Existing Workbench docs described startup synchronization and cache-only Operator hydration; updated to explicit read-only startup and cache-then-verified-donor preparation.
 - Follow-up: `manual-follow-up`
 - What worked: Fixture remotes, actual local Git LFS, Aseprite contract inspection, and the changed-file suite exercised the recovery boundaries without touching production art.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-publish-readiness-recovery`
+- Reviewed on main: `21ffccb775b24ed3d8c7e8d7651acdd438a18017`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1`
+
+### Findings
+
+- **R0-01** (`blocking correctness`, publication boundary/workflow; affected acceptance: publication is permitted only from the dedicated `workbench/operator-art` checkout, uses structured readiness/preparation, and lands through the scoped authority): the documented CLI entry point bypasses that boundary. `operator_cli.py:58` calls `animation_workbench.publish(...)` directly. That function lacks checkout-identity/readiness guards and replaces canonical source paths; only `WorkbenchService.publish` routes through `operator_art_worktree.publish_to_main`. A clean coordination-main CLI invocation can mutate canonical files without the isolated checkout, readiness gate, scoped staging, or approved landing handoff. Correction required; the review did not edit implementation code.

@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-workbench-publish-readiness-recovery`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `operator-workbench-publish-readiness-recovery`
@@ -17,6 +17,9 @@
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
+- Reviewed main: `21ffccb775b24ed3d8c7e8d7651acdd438a18017`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
 - Goal: Independently verify that the landed Workbench publication hardening converts the recent serial Git/LFS/manifest/import failure chain into one bounded readiness/preparation contract without weakening source authority, sparse-checkout safety, validation, or user-work preservation.
 - Reviewed implementation acceptance: Review the archived implementation packet's full acceptance contract, with special emphasis on clean-behind auto preparation, unknown-dirt preservation, `LAND PENDING` resume, local-only LFS handling (shared cache first, exact verified hydrated-checkout donor second, no network), sparse validation dependency proof, stale selected-manifest rejection before mutation, exact Godot metadata preimage restoration, clean-or-`RECOVERY_REQUIRED` failure postconditions, and unchanged scoped landing/allowlist authority.
 - Review evidence: Reuse the implementation's fixture-isolated readiness classifications, publish transaction journals, exact before/after hashes, LFS network-negative controls, metadata-restoration receipts, UI readiness projections, successful publication fixture, changed-file validation report, and closing summary. Gather fresh evidence only where those artifacts do not prove an acceptance criterion.
@@ -57,5 +60,54 @@ No subjective art or visual baseline is in scope. If a policy question arises ab
 
 ## Handoff
 
-- Next action: Claim after the implementation dependency completes.
-- Blockers or open questions: None.
+- Next workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Refresh reason: `none`
+- Next action: `Claim the bounded CLI publication-boundary correction after this review archives.`
+- Blockers or open questions: `none`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The review exposed a documented CLI publication route that bypasses the new readiness and isolated-checkout boundary; the full-checkout LFS preflight also could not enumerate a missing local LFS object.
+- Root cause / contributing factors: Review coverage exercised the UI service and fixtures but not the production CLI dispatch; this coordination clone lacks one LFS object required by `git lfs ls-files`.
+- Prevention / pipeline improvement: Add CLI-level boundary and end-to-end scoped-landing coverage to the correction; use the correct sparse art checkout or durable exact-head proof for import preflight.
+- Tooling / docs drift discovered: `operator anim publish` remains documented but bypasses the service-owned publication contract.
+- Follow-up: `operator-workbench-publish-readiness-recovery-review-corrections-1`
+- What worked: The four required Workbench smoke scripts passed and graph-guided caller tracing identified the untested CLI entrypoint.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-publish-readiness-recovery`
+- Reviewed on main: `21ffccb775b24ed3d8c7e8d7651acdd438a18017`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_PUBLISH_READINESS_RECOVERY_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-publish-readiness-recovery-review-corrections-1`
+
+### Findings
+
+- **R0-01** (`blocking correctness`, publication boundary/workflow; affected acceptance: publication is permitted only from the dedicated `workbench/operator-art` checkout, uses the structured readiness/preparation gate, and lands only through the existing scoped publication authority): the documented CLI entry point bypasses that boundary. `custodian/tools/operator/operator_cli.py:58` calls `animation_workbench.publish(...)` directly. That function has no checkout-identity or readiness/preparation guard and replaces canonical source paths at `custodian/tools/operator/animation_workbench.py:463-476`; unlike `WorkbenchService.publish`, the CLI does not route through `operator_art_worktree.publish_to_main` (`custodian/tools/operator/ui/service.py:680-705`). A clean coordination-main invocation can therefore mutate canonical files without the dedicated art checkout, dependency readiness, scoped staging, or approved landing handoff. Correction required; reviewed implementation code was not changed.
+
+### Verification Performed
+
+- `python3 custodian/tools/validation/operator_art_worktree_smoke.py` — PASS.
+- `python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py` — PASS.
+- `python3 custodian/tools/validation/operator_workbench_ui_smoke.py` — PASS; optional Textual pilot skipped because Textual is not installed.
+- `python3 custodian/tools/validation/operator_animation_workbench_smoke.py` — PASS.
+- `python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian` — could not complete in this full coordination checkout: Git LFS reported missing object `df9378d1c7b5ada8dc967939c275f6f2cb5abe94`. The implementation closing summary records preflight passing after verified local materialization; this review did not treat the environmental failure as a product finding.
+- `git diff --check` — PASS after review-artifact authoring.
