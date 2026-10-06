@@ -410,7 +410,7 @@ Do not:
 
 ## Implementation Dependency
 
-The streaming-residency prerequisite is satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1/ARR1 are complete. AR2 implementation, graphical recovery, human Dropbox review, and fresh-context paired technical review are complete/passed; S1 remains `1773840677`. AR3 was refreshed in `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7` against that reviewed state. The separately reproduced current-main spawn-validity defect is now implemented/reviewed complete with 0 blocking defects / 0 material evidence gaps. AR3 is released, but its one-time ingress presentation may begin only after the final runtime Operator position belongs to that reviewed accepted playable component. The spawn review's remaining R0-03 evidence-shape gap (no full real-compound + registered-ingress `_on_contract_generated()` run) is closed by AR3's required end-to-end integration proof. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
+The streaming-residency prerequisite is satisfied: M6/MR6, M6C1/MR6R1 and RF1/RFR1 have landed/reviewed their relevant request/commit/unload and permanent Region Frame seams. AR1/ARR1 are complete. AR2 implementation, graphical recovery, human Dropbox review, and fresh-context paired technical review are complete/passed; S1 remains `1773840677`. AR3 semantic echo / ingress / reacquisition is implemented and landed; its real `_on_contract_generated()` integration proof closes the earlier spawn-review evidence-shape gap, and its paired review is ready. A follow-up hands-on playtest approves the core Archive Resolve visual language but shows ordinary streaming resolution settling too broad/fast and ignoring visual occlusion. AR4 therefore owns the missing restraint in the existing three-radius model: a smaller distance-capped, LOS/occlusion-aware, camera-relevant, time-budgeted visual frontier inside unchanged gameplay readiness. Settled cells remain settled; AR4 is not Fog of War. The later procgen decomplexification series must preserve Archive Resolve as a presentation consumer rather than absorbing it into generation/state authorities.
 
 ## Recommended Implementation Slices
 
@@ -449,6 +449,22 @@ not chunk catch-up or per-cell pop.
 
 Acceptance: major spatial information reads early without becoming gameplay
 authority or visual clutter.
+
+### AR4 — Frontier Restraint
+
+- keep streaming/gameplay readiness larger than visual resolution;
+- apply a bounded Operator-distance cap to resolve starts;
+- gate starts by local canonical LOS/occlusion and camera relevance;
+- pace starts from delta/time rather than render-frame count;
+- keep the safety halo local without resolving through opaque walls;
+- make AR3 echo/ingress/reacquisition obey the same start frontier;
+- once a cell settles, keep it settled until ordinary residency unload/reacquisition.
+
+Acceptance: gameplay traversal visibly retains unresolved world ahead and behind
+occluding geometry, walls/doorways create convincing reveal curtains, reveal
+speed is materially frame-rate independent, nearby reachable hazards remain
+readable, and ordinary movement never causes already-settled world to
+re-unresolve. Fog-of-war/map discovery remains separate future work.
 
 ## Visual Acceptance
 
