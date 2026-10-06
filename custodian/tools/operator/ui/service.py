@@ -455,6 +455,16 @@ class WorkbenchService:
             data = self.workbench.load(manifest_path)
             self.model.assert_context(data, plan)
             state = self.workbench.state(data, document_path)
+            existing_ids={binding.get("binding_id") for binding in data.get("layers",()) if not binding.get("adopted_from_saved_layer")}
+            new_ids={binding.get("binding_id") for binding in plan.get("layers",())}
+            if new_ids-existing_ids and state=="CLEAN":
+                ensure=getattr(self.workbench,"ensure",None)
+                if ensure:
+                    data,_ws=ensure(selection.profile,selection.action,selection.direction,selection.group,
+                        selection.weapon_id,selection.linked_profile,self.workspace_root,self.aseprite)
+                    state=self.workbench.state(data,document_path)
+                else:
+                    state="CANONICAL LAYER DRIFT"
         timeline = data["timeline"]
         migration = self.migration_view(data.get("pending_migration"))
         layers = []
@@ -471,6 +481,19 @@ class WorkbenchService:
                 int(publish.get("frames", binding.get("frames", 0))),
                 f"{frame_size[0]}×{frame_size[1]}", bool(binding.get("editable", False)),
             ))
+        inspect=getattr(self.workbench,"inspect_saved_layers",None)
+        resolver=getattr(self.workbench,"resolve_aseprite",None)
+        if manifest_path.is_file() and document_path.is_file() and inspect and resolver and resolver(self.aseprite):
+            report=inspect(manifest_path,self.aseprite)
+            bound={binding.get("aseprite_layer_name",binding.get("binding_id","")) for binding in (*data.get("layers",()),*data.get("references",()))}
+            for row in report.get("layers",()):
+                name=str(row.get("name",""))
+                if not name or name in bound or not row.get("top_level"): continue
+                reserved=bool(row.get("reference")) or name.startswith("__")
+                eligible=name in {"vfx","fx"} and not reserved
+                layers.append(LayerView(name,"reference" if reserved else "unbound","operator",selection.profile,0,
+                    int(row.get("occupied_frames",0)),int(timeline["workspace_clock_frames"]),
+                    f"{report['width']}×{report['height']}",False,eligible))
         dependency = migration.audit if migration else "GREEN"
         publishing_layers = tuple(layer.layer for layer in layers if layer.publishing)
         completeness, completeness_detail = self.classify_layers(publishing_layers)
@@ -499,6 +522,14 @@ class WorkbenchService:
         )
         binary = self.workbench.resolve_aseprite(self.aseprite, True)
         return self._popen([str(binary), str(ws / "workbench.aseprite")])
+
+    def adopt_fx_layer(self, selection: AnimationSelection, layer_name: str, *, live_document_path: str | None = None, live_modified: bool | None = None):
+        manifest=self.workspace(selection)/"workbench.json"
+        if not manifest.is_file():
+            raise self.model.WorkbenchError("Workbench absent; open/edit the selected animation before adopting an FX layer")
+        return self.workbench.adopt_fx_layer(manifest,layer_name,self.aseprite,
+            live_document_path=live_document_path,live_modified=live_modified,
+            source_root=self.source_root,weapon_root=self.weapon_root,repo_root=self.repo_root)
 
     def frame_preview(self, selection: AnimationSelection, operation: str, position: int, fill: str = "duplicate-prev") -> MigrationView:
         report = self.workbench.frame_migrate(
@@ -590,6 +621,15 @@ class WorkbenchService:
         counterpart = self.workbench.horizontal_counterpart(selection.direction)
         changed = self.workbench.publish(manifest_path, self.aseprite, False, True, full_validate, plan, bool(counterpart))
         data = self.workbench.load(manifest_path)
+        if self.model is model and self.workbench is workbench:
+            reviewed_hashes={}
+            for candidate in changed:
+                path=Path(candidate)
+                try: relative=path.resolve().relative_to(self.repo_root.resolve()).as_posix()
+                except ValueError as error: raise operator_art_worktree.ArtWorktreeError(f"preview target escaped selected repository: {path}") from error
+                reviewed_hashes[relative]=self.model.file_sha256(path) if path.is_file() else None
+            data["publish_review"]={"target_hashes":reviewed_hashes,"created_at":__import__("datetime").datetime.now().astimezone().isoformat()}
+            self.workbench.save(manifest_path,data)
         migration = self.migration_view(data.get("pending_migration"))
         old_frames = int(data["timeline"]["source_clock_frames"])
         new_frames = int(data["timeline"]["workspace_clock_frames"])
@@ -621,7 +661,7 @@ class WorkbenchService:
             mirror_operations.append(operation(normalized/f"mirror__{binding['binding_id']}.png",Path(existing[0]) if existing else None))
         direct_rows = tuple(PublishRow(
             str(binding.get("binding_id", binding.get("layer", ""))), selection.direction,
-            operation_name, str(binding.get("source_contract", {}).get("path", "")),
+            operation_name, "" if operation_name=="CREATE" else str(binding.get("source_contract", {}).get("path", "")),
             str(binding.get("publish_contract", {}).get("path", "")),
         ) for binding,operation_name in zip(bindings,direct_operations))
         mirror_rows = []
@@ -764,9 +804,14 @@ class WorkbenchService:
         bindings = data.get("layers", ())
         if not isinstance(bindings, (list, tuple)) or any(not isinstance(row, dict) for row in bindings):
             raise operator_art_worktree.ArtWorktreeError("WORKBENCH MANIFEST HAS INVALID PUBLICATION BINDINGS")
-        if not planned or len(planned) != len(plan_layers) or {
-            str(binding.get("binding_id", "")) for binding in bindings
-        } != set(planned):
+        adopted = [binding for binding in bindings if binding.get("adopted_from_saved_layer")]
+        manifest_ids={str(binding.get("binding_id", "")) for binding in bindings}
+        permitted_ids=set(planned)
+        if len(adopted)>1:
+            raise operator_art_worktree.ArtWorktreeError("ONLY ONE ADOPTED FX BINDING IS PERMITTED")
+        if adopted:
+            permitted_ids.add("fx")
+        if not planned or len(planned) != len(plan_layers) or manifest_ids != permitted_ids:
             raise operator_art_worktree.ArtWorktreeError(
                 "WORKBENCH PUBLICATION BINDINGS DO NOT MATCH THE SELECTED ANIMATION PLAN"
             )
@@ -776,7 +821,25 @@ class WorkbenchService:
         identity_fields = ("owner", "layer", "profile", "group", "action", "direction")
         for binding in bindings:
             binding_id = str(binding.get("binding_id", ""))
-            trusted = planned[binding_id]
+            trusted = planned.get(binding_id)
+            if trusted is None:
+                trusted=binding
+                semantic=binding.get("semantic_identity",{})
+                identity={"owner":"operator","layer":"fx","profile":selection.profile,"group":selection.group,"action":selection.action,"direction":selection.direction}
+                contract=binding.get("source_contract",{}); publish_contract=binding.get("publish_contract",{})
+                try:
+                    key=self.model.SCHEMA.OperatorAssetKey("operator","fx",selection.profile,selection.group,selection.action,selection.direction,int(publish_contract["frames"]),*map(int,publish_contract["frame_size"]))
+                    schema_path=(Path("custodian")/self.model.SCHEMA.canonical_source_path(key)).as_posix()
+                except (KeyError,TypeError,ValueError) as error:
+                    raise operator_art_worktree.ArtWorktreeError(f"ADOPTED FX PUBLISH CONTRACT IS INVALID: {error}") from error
+                if (not binding.get("adopted_from_saved_layer") or binding.get("binding_id")!="fx"
+                        or binding.get("aseprite_layer_name") not in {"vfx","fx"}
+                        or any(binding.get(field)!=value or semantic.get(field)!=value for field,value in identity.items())
+                        or contract.get("path")!=schema_path or publish_contract.get("path")!=schema_path
+                        or contract.get("operation") not in {"CREATE","REPLACE"}):
+                    raise operator_art_worktree.ArtWorktreeError("ADOPTED FX BINDING IS NOT AUTHORIZED BY THE SAVED-LAYER CONTRACT")
+                if contract.get("operation")=="CREATE" and (contract.get("file_sha256") or contract.get("pixel_sha256")):
+                    raise operator_art_worktree.ArtWorktreeError("ADOPTED FX CREATE CONTRACT MUST NOT CLAIM BASELINE HASHES")
             trusted_semantic = trusted.get("semantic_identity", {})
             actual_semantic = binding.get("semantic_identity", {})
             if not isinstance(trusted_semantic, dict) or not isinstance(actual_semantic, dict):

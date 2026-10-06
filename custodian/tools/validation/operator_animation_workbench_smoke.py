@@ -69,6 +69,21 @@ def main():
   cat=root/"catalog.json";cat.write_text(json.dumps({"weapons":{x:{"animation_profile":"melee_1h_dagger","presentation_mode":"authored_overlay"} for x in ("weapon_a","weapon_b")}}))
   a=m.build_plan("melee_1h","idle_relaxed_01","e",weapon_id="weapon_a",source_root=sr,weapon_root=wr,catalog_path=cat,repo_root=root);bb=m.build_plan("melee_1h","idle_relaxed_01","e",weapon_id="weapon_b",source_root=sr,weapon_root=wr,catalog_path=cat,repo_root=root)
   assert [x["owner"] for x in a["layers"] if x["layer"]=="weapon"]==["weapon_a"]
+  adopted_create=m.fx_adoption_binding(a,"vfx",source_root=sr,weapon_root=wr,repo_root=root)
+  assert adopted_create["layer"]=="fx" and adopted_create["aseprite_layer_name"]=="vfx"
+  assert adopted_create["source_contract"]["operation"]=="CREATE" and not adopted_create["source_contract"].get("file_sha256")
+  assert adopted_create["publish_contract"]["path"].startswith("custodian/content/sprites/operator/source/animations/")
+  assert adopted_create["workspace_contract"]["timeline_slots"]==[1,2,3,4]
+  assert w.source_contract_freshness({"identity":a["identity"],"timeline":a["timeline"],"layers":[adopted_create]},root)=={}
+  created_target=root/adopted_create["publish_contract"]["path"];created_target.parent.mkdir(parents=True,exist_ok=True);created_target.write_bytes(b"external target")
+  assert "CREATE target appeared" in next(iter(w.source_contract_freshness({"identity":a["identity"],"timeline":a["timeline"],"layers":[adopted_create]},root).values()))
+  fx_key=key("operator","fx"); canonical_source_root=root/"custodian/content/sprites/operator/source/animations"
+  existing_fx=canonical_source_root/fx_key.animation_profile/fx_key.action_group/fx_key.action/m.SCHEMA.canonical_filename(fx_key);strip(existing_fx,fx_key.frames)
+  adopted_replace=m.fx_adoption_binding(a,"fx",source_root=canonical_source_root,weapon_root=wr,repo_root=root)
+  assert adopted_replace["source_contract"]["operation"]=="REPLACE" and adopted_replace["source_contract"]["file_sha256"]==m.file_sha256(existing_fx)
+  for invalid_layer in ("scratch","__REFERENCE_GUIDE"):
+   try:m.fx_adoption_binding(a,invalid_layer,source_root=sr,weapon_root=wr,repo_root=root);raise AssertionError(f"ineligible FX layer accepted: {invalid_layer}")
+   except m.WorkbenchError:pass
   try:m.assert_context(a,bb);raise AssertionError("context mismatch accepted")
   except m.WorkbenchError:pass
   v1={"schema":"custodian.operator_animation_workbench.v1","identity":a["identity"],"weapon_context":a["weapon_context"],"timeline":{"frames":4},"layers":[]}
@@ -157,12 +172,28 @@ def main():
    manifest=json.loads((Path(td)/"melee_1h/posture/idle_relaxed_01/e/workbench.json").read_text());assert manifest["timeline"]["workspace_clock_frames"]==old_clock+1 and manifest["pending_migration"]["affected_bindings"]==["lower_body","upper_body","weapon__vigil_pattern_dagger"]
    # Opting out isolates the frame migration: three bindings, one direction.
    solo=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--no-mirror-counterpart","--dry-run","--json"],check=True,capture_output=True,text=True);targets=json.loads(solo.stdout)["changed_sources"];assert len(targets)==3 and all(f"__{old_clock+1}f__96.png" in p for p in targets),targets
-   # The default now also publishes the mirrored counterpart, so the same edit
-   # covers both directions. This is the halved-authoring policy; if it silently
-   # reverted, this assertion is what notices.
-   mirrored=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--dry-run","--json"],check=True,capture_output=True,text=True);both=json.loads(mirrored.stdout)["changed_sources"]
+   # Counterpart promotion is opt-in; the CLI default matches Workbench review.
+   default=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--dry-run","--json"],check=True,capture_output=True,text=True);default_targets=json.loads(default.stdout)["changed_sources"]
+   assert len(default_targets)==3 and all("__e__" in p for p in default_targets),default_targets
+   mirrored=subprocess.run([sys.executable,str(cli),"anim","publish",*common,"--mirror-counterpart","--dry-run","--json"],check=True,capture_output=True,text=True);both=json.loads(mirrored.stdout)["changed_sources"]
    assert len(both)==6 and all(f"__{old_clock+1}f__96.png" in p for p in both),both
    assert sum(1 for p in both if "__w__" in p)==3 and sum(1 for p in both if "__e__" in p)==3,both
+   # A saved editor-authored vfx layer remains unbound until the explicit CLI
+   # action, then exports to the exact transparent/full-clock FX strip.
+   adopt_root=Path(td)/"adopt";adopt_common=["melee_1h","idle_relaxed_01","e","--group","posture","--workspace-root",str(adopt_root)]
+   subprocess.run([sys.executable,str(cli),"anim","edit",*adopt_common,"--no-open"],check=True,stdout=subprocess.DEVNULL)
+   document=adopt_root/"melee_1h/posture/idle_relaxed_01/e/workbench.aseprite"; add_script=Path(td)/"add_vfx.lua"
+   add_script.write_text('local path=app.params["document"]; local s=app.open(path); local layer=s:newLayer(); layer.name="vfx"; local image=Image(s.width,s.height,ColorMode.RGB); image:putPixel(2,3,Color{r=11,g=22,b=33,a=255}); s:newCel(layer,1,image,Point(0,0)); s:saveAs(path); s:close()\n')
+   subprocess.run(["aseprite","-b","--script-param",f"document={document}","--script",str(add_script)],check=True,capture_output=True,text=True)
+   manifest_path=adopt_root/"melee_1h/posture/idle_relaxed_01/e/workbench.json"
+   before=json.loads(manifest_path.read_text());assert all(binding["layer"]!="fx" for binding in before["layers"])
+   subprocess.run([sys.executable,str(cli),"anim","layer","adopt",*adopt_common,"--aseprite-layer","vfx","--as","fx","--json"],check=True,capture_output=True,text=True)
+   adopted=json.loads(manifest_path.read_text());fx=next(binding for binding in adopted["layers"] if binding["layer"]=="fx")
+   assert fx["aseprite_layer_name"]=="vfx" and fx["source_contract"]["operation"]=="CREATE" and not fx["source_contract"].get("file_sha256")
+   normalized=w.export_preview(manifest_path)
+   with Image.open(normalized/"fx.png") as strip_image:
+    strip_pixels=strip_image.convert("RGBA");assert strip_pixels.size==(fx["workspace_contract"]["frames"]*fx["frame_size"][0],fx["frame_size"][1])
+    assert strip_pixels.getpixel((2,3))==(11,22,33,255) and strip_pixels.getpixel((fx["frame_size"][0]+2,3))[3]==0,(strip_pixels.getpixel((2,3)),strip_pixels.getpixel((fx["frame_size"][0]+2,3)))
  else: print("SKIP ASEPRITE INTEGRATION: aseprite executable unavailable")
  # Exercise the live Fast 02 candidate at its current size, including during publish.
  fast02=m.build_plan("unarmed","fast_02","e",group="attack")

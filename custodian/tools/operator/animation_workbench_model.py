@@ -63,6 +63,49 @@ def assert_context(manifest:dict, requested:dict):
     if actual!=requested.get("context",{}).get("fingerprint",""):
         raise WorkbenchError("WORKBENCH CONTEXT MISMATCH\nexisting and requested weapon/profile context differ; refresh with --discard-edits to recontextualize")
 
+def binding_set_fingerprint(plan:dict) -> str:
+    """Stable identity for canonical bindings that a clean Workbench assembles."""
+    rows=sorted((str(b.get("binding_id","")),str(b.get("source_path","")),int(b.get("frames",0)),tuple(b.get("frame_size",()))) for b in plan.get("layers",()))
+    return hashlib.sha256(json.dumps(rows,separators=(",",":"),sort_keys=True).encode()).hexdigest()
+
+def fx_adoption_binding(manifest:dict, layer_name:str, *, source_root=SOURCE_ROOT, weapon_root=WEAPON_ROOT, repo_root=REPO_ROOT):
+    """Build the sole permitted unbound binding: a saved vfx/fx layer -> semantic fx."""
+    if layer_name not in {"vfx","fx"}:
+        raise WorkbenchError("only saved top-level layers named 'vfx' or 'fx' can be adopted as FX")
+    identity=manifest.get("identity",{}); timeline=manifest.get("timeline",{}); canvas=manifest.get("canvas",{})
+    if manifest.get("pending_migration"):
+        raise WorkbenchError("FX adoption is blocked while a frame/canvas migration is pending")
+    if any(b.get("layer")=="fx" for b in manifest.get("layers",())):
+        raise WorkbenchError("the Workbench already has an adopted/canonical FX binding")
+    frames=int(timeline.get("workspace_clock_frames",0)); width=int(canvas.get("width",0)); height=int(canvas.get("height",0))
+    if min(frames,width,height)<=0 or int(timeline.get("document_frames",frames))!=frames:
+        raise WorkbenchError("saved Workbench frame/canvas contract is incompatible with the selected animation clock")
+    index=source_index(Path(source_root),Path(weapon_root))
+    sid=("operator","fx",identity["profile"],identity["group"],identity["action"],identity["direction"])
+    existing=index.get(sid)
+    if existing:
+        source,key=existing
+        if key.frames!=frames:
+            raise WorkbenchError(f"canonical FX source has {key.frames} frames; selected animation clock has {frames}")
+        target=rel(Path(source),Path(repo_root)); fw,fh=key.frame_width,key.frame_height
+        path=Path(source)
+        source_contract={"path":target,"frames":frames,"frame_size":[fw,fh],"file_sha256":file_sha256(path),"pixel_sha256":pixel_sha256(path),"operation":"REPLACE"}
+    else:
+        key=SCHEMA.OperatorAssetKey("operator","fx",identity["profile"],identity["group"],identity["action"],identity["direction"],frames,width,height)
+        target=(Path("custodian")/SCHEMA.canonical_source_path(key)).as_posix(); fw,fh=width,height
+        source_contract={"path":target,"frames":frames,"frame_size":[fw,fh],"operation":"CREATE"}
+    if fw>width or fh>height or (width-fw)%2 or (height-fh)%2:
+        raise WorkbenchError("canonical FX frame canvas cannot be centered in the saved Workbench canvas")
+    runtime=(Path("custodian")/SCHEMA.canonical_runtime_path(key)).as_posix()
+    semantic={"owner":"operator","layer":"fx","profile":identity["profile"],"group":identity["group"],"action":identity["action"],"direction":identity["direction"]}
+    binding={"binding_id":"fx","aseprite_layer_name":layer_name,"role":"editable","editable":True,**semantic,
+        "source_path":target,"runtime_path":runtime,"source_file_sha256":source_contract.get("file_sha256",""),"source_pixel_sha256":source_contract.get("pixel_sha256",""),
+        "frames":frames,"frame_size":[fw,fh],"placement":[(width-fw)//2,(height-fh)//2],"timeline_mapping":"exact",
+        "semantic_identity":semantic,"source_contract":source_contract,
+        "workspace_contract":{"frames":frames,"frame_size":[fw,fh],"placement":[(width-fw)//2,(height-fh)//2],"timeline_slots":list(range(1,frames+1))},
+        "publish_contract":{"path":target,"frames":frames,"frame_size":[fw,fh]},"input_path":"","adopted_from_saved_layer":True}
+    return binding
+
 def upgrade_v1_manifest_to_v2(data:dict) -> dict:
     if data.get("schema")==SCHEMA_NAME: return data
     if data.get("schema")!="custodian.operator_animation_workbench.v1": raise WorkbenchError(f"unsupported workbench schema: {data.get('schema')}")

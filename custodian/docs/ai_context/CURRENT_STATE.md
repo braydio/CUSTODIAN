@@ -947,6 +947,12 @@ different emergency/salvage assets, not the facade semantics named by V1.
 
 ## Operator Animation Workbench V2 (2026-08-28)
 
+Human Workbench FX adoption is implemented for existing semantic animations:
+saved top-level `vfx`/`fx` layers are explicitly adopted, reviewed, and
+published as schema-derived FX CREATE/REPLACE transactions. The CLI mirror
+promotion default is OFF, matching Workbench review. This capability does not
+provide general new-animation creation or Art Agent autonomous layer creation.
+
 `operator anim list|status|edit|refresh|publish` now provides semantic,
 provenance-checked Aseprite round-trip editing over canonical Operator V2 PNGs.
 Ignored `.ai/operator_animation_workbench/` documents are disposable pixel

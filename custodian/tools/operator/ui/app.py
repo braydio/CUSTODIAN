@@ -97,6 +97,7 @@ class OperatorWorkbenchApp(App):
         Binding("x", "remove_frame", "Remove Frame", show=False), Binding("p", "publish", "Publish", show=False),
         Binding("r", "refresh_workbench", "Refresh", show=False), Binding("w", "weapon_context", "Weapon", show=False),
         Binding("v", "validate", "Validate", show=False), Binding("j", "cursor_down", "Down", show=False),
+        Binding("f", "adopt_fx_layer", "Adopt as FX", show=False),
         Binding("k", "cursor_up", "Up", show=False),
         Binding("1", "mode_plan", "Plan", priority=True, show=False), Binding("2", "mode_workbench", "Workbench", priority=True, show=False),
         Binding("3", "mode_preview", "Preview", priority=True, show=False), Binding("4", "mode_timeline", "Timeline", priority=True, show=False),
@@ -739,8 +740,14 @@ class OperatorWorkbenchApp(App):
                 self.state.motion.playing = False
                 self.state.motion.heading = selection.direction
             self._main_widget("#animation-detail", AnimationDetail).show_session(session)
-            self._main_widget("#layer-table", LayerTable).show_session(session)
             layer_table = self._main_widget("#layer-table", LayerTable)
+            live_state=self.live_bridge.server.state
+            try: live_matches=(live_state.connection is ConnectionState.CONNECTED and bool(live_state.active_document_path)
+                and Path(live_state.active_document_path).resolve()==(session.workspace_path/"workbench.aseprite").resolve())
+            except OSError: live_matches=False
+            live_names=set(live_state.layer_visibility)
+            if live_state.active_layer: live_names.add(str(live_state.active_layer))
+            layer_table.show_session(session,live_layer_names=live_names if live_matches else (),live_modified=bool(live_matches and live_state.document_modified))
             layer_table.clear_live_state()
             if self._live_document_matches_selection():
                 for layer, visible in self.live_bridge.server.state.layer_visibility.items():
@@ -1919,6 +1926,19 @@ class OperatorWorkbenchApp(App):
         selection=self._require_selection()
         if selection:self.run_worker(self._mutate("EDIT",self.service.edit,selection),group="mutation")
 
+    def action_adopt_fx_layer(self) -> None:
+        if self.state.mode!="workbench" or not self._guard_preview(): return
+        selection=self._require_selection(); table=self._main_widget("#layer-table",LayerTable)
+        layer=table.selected_layer_name()
+        if not selection or not layer or not table.selected_layer_adoptable(): return
+        live_state=self.live_bridge.server.state
+        matching=self._live_document_matches_selection()
+        self.run_worker(self._mutate("ADOPT FX",lambda:self.service.adopt_fx_layer(
+            selection,layer,
+            live_document_path=live_state.active_document_path if matching else None,
+            live_modified=live_state.document_modified if matching else None,
+        )),group="mutation")
+
     async def _prepare_add(self) -> None:
         selection=self._require_selection()
         if not selection:return
@@ -1991,7 +2011,7 @@ class OperatorWorkbenchApp(App):
         if not self._guard_preview(): return
         selection=self._require_selection()
         if not selection:return
-        if self.session_view and (self.session_view.workbench_state!="CLEAN" or self.session_view.migration):
+        if self.session_view and (self.session_view.workbench_state.startswith("EDITED") or self.session_view.migration):
             self.push_screen(RefreshDialog(),lambda discard:self._accept_refresh(discard))
         else:self.run_worker(self._mutate("REFRESH",self.service.refresh,selection,False),group="mutation")
     def _accept_refresh(self,discard:bool|None)->None:

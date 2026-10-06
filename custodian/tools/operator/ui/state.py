@@ -49,6 +49,7 @@ class LayerView:
     publish_frames: int
     canvas: str
     publishing: bool = True
+    adoptable: bool = False
 
 
 @dataclass(frozen=True)

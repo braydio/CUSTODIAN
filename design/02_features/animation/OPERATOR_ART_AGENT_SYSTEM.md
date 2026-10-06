@@ -815,6 +815,10 @@ ownership.
 Add nonexistent-source Workbench creation contracts, transactional new-source
 publication, rebuild/import/test, and exact rollback deletion/restoration.
 
+The first human Workbench nonexistent-source capability is complete only for
+explicit FX adoption (`vfx`/`fx`) on an existing semantic animation. It does
+not complete this Art Agent phase or grant autonomous `create_layer` authority.
+
 The human-authored Workbench half of this prerequisite is now tracked concretely
 by `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`.
 Art Agent creation must consume that landed backend later; it must not invent a

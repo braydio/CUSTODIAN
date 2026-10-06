@@ -64,11 +64,18 @@ class FakeModel:
 
 class FakeWorkbench:
     DEFAULT_ROOT = Path("unused")
-    def __init__(self): self.applied = 0; self.published = 0
+    def __init__(self): self.applied = 0; self.published = 0; self.adoptions=[]
     def workspace(self, root, identity): return Path(root) / identity["profile"] / identity["group"] / identity["action"] / identity["direction"]
     def resolve_aseprite(self, _value=None, _required=False): return Path("/bin/true")
     def load(self, path, upgrade=True): return json.loads(path.read_text())
     def state(self, _data, _path): return "CLEAN"
+    def inspect_saved_layers(self, _manifest, _aseprite=None):
+        return {"frames":6,"width":96,"height":96,"layers":[
+            {"name":"vfx","top_level":True,"depth":0,"reference":False,"cel_frames":[1,3],"occupied_frames":2},
+            {"name":"scratch","top_level":True,"depth":0,"reference":False,"cel_frames":[1],"occupied_frames":1},
+            {"name":"__REFERENCE_GUIDE","top_level":True,"depth":0,"reference":True,"cel_frames":[1],"occupied_frames":1}]}
+    def adopt_fx_layer(self,manifest,layer_name,_aseprite=None,**kwargs):
+        self.adoptions.append((Path(manifest),layer_name,kwargs));return {"operation":"CREATE","target":"fixture/fx.png"}
     def frame_migrate(self, *_args):
         operation, position, fill, dry_run = _args[3], _args[4], _args[5], _args[-1]
         if not dry_run: self.applied += 1
@@ -172,6 +179,10 @@ def pure_service_smoke() -> None:
         (ws / "workbench.json").write_text(json.dumps(plan)); (ws / "workbench.aseprite").write_bytes(b"fixture")
         pending = service.session(run.selection)
         assert pending.contract_state == "MIGRATION_PENDING" and pending.migration.audit == "GREEN"
+        unbound={layer.layer:layer for layer in pending.layers if not layer.publishing}
+        assert unbound["vfx"].adoptable and not unbound["scratch"].adoptable and not unbound["__REFERENCE_GUIDE"].adoptable
+        result=service.adopt_fx_layer(run.selection,"vfx",live_document_path="/tmp/live.aseprite",live_modified=False)
+        assert result["operation"]=="CREATE" and backend.adoptions[-1][1]=="vfx"
         add = service.frame_preview(run.selection, "add", 3)
         remove = service.frame_preview(run.selection, "remove", 6)
         assert (add.old_frames, add.new_frames, add.affected) == (6, 7, ("lower_body", "upper_body"))
@@ -248,6 +259,7 @@ class PilotService:
         self.model = SimpleNamespace(WorkbenchError=RuntimeError)
         self.selection = AnimationSelection("unarmed", "locomotion", "run_01", "e")
         self.last_selection = None; self.preview_calls = 0; self.runtime_calls = 0; self.publish_calls = []
+        self.adoption_calls=[]; self.include_vfx=False
         self.session_calls = 0; self.browser_calls = 0; self.browser_provider = None
         self.runtime_selection = None
         self.copy_calls = []
@@ -269,7 +281,9 @@ class PilotService:
         self.session_calls += 1
         self.last_selection = selection
         workspace = self.repo_root / ".ai/operator_animation_workbench/ui-pilot"
-        return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", workspace, "/bin/true", (LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96"),))
+        layers=[LayerView("lower_body", "operator_layer", "operator", "unarmed", 6, 6, 6, "96×96")]
+        if self.include_vfx: layers.append(LayerView("vfx", "unbound", "operator", "unarmed", 0, 2, 6, "96×96", False, True))
+        return SessionView(selection, 6, 6, 6, "CLEAN", "NONE", "GREEN", workspace, "/bin/true", tuple(layers))
     def watch_signature(self, _selection): return (None, None)
     def frame_preview(self, _selection, operation, position, fill):
         if operation == "remove": return MigrationView("remove", position, fill, 6, 5, ("lower_body",), (), "GREEN")
@@ -277,6 +291,7 @@ class PilotService:
     def canvas_preview(self, _selection, width, height, scope):
         return CanvasMigrationView((96,96),(width,height),(width,height),scope,("lower_body","upper_body"),(),"GREEN",{"layer_changes":[{"binding_id":"lower_body","old_size":[96,96],"new_size":[width,height]},{"binding_id":"upper_body","old_size":[96,96],"new_size":[width,height]}]})
     def canvas_apply(self, *_args): self.mutations += 1
+    def adopt_fx_layer(self,selection,layer_name,**kwargs): self.adoption_calls.append((selection,layer_name,kwargs));self.mutations+=1;return {"operation":"CREATE"}
     def publish_preview(self, selection, _full):
         old = "custodian/content/sprites/operator/source/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png"
         upper = old.replace("lower_body", "upper_body")
@@ -495,6 +510,27 @@ async def textual_smoke() -> None:
             await pilot.pause(0.1)
             assert app.preview_view.source == "live"
             assert "SOURCE: LIVE" in str(app.main_screen.query_one("#preview-controls").render())
+
+            # A live-only vfx layer is visible but cannot be adopted until the
+            # same document is saved; once represented in the saved session, F
+            # sends the explicit adoption through the shared service.
+            app.action_mode_workbench(); await pilot.pause()
+            bridge_state=app.live_bridge.server.state
+            bridge_state.active_layer="vfx"; bridge_state.document_modified=True
+            service.include_vfx=False
+            await app._load_session(service.selection,load_preview=False); await pilot.pause()
+            layer_table=app.main_screen.query_one("#layer-table",LayerTable)
+            assert layer_table.row_count==2 and layer_table.layer_name_at(1)=="vfx"
+            layer_table.move_cursor(row=1)
+            assert not layer_table.selected_layer_adoptable() and "UNSAVED" in str(layer_table.get_row_at(1)[0])
+            bridge_state.document_modified=False; service.include_vfx=True
+            await app._load_session(service.selection,load_preview=False); await pilot.pause()
+            layer_table=app.main_screen.query_one("#layer-table",LayerTable); layer_table.move_cursor(row=1)
+            assert layer_table.selected_layer_adoptable()
+            app.set_focus(None); await pilot.press("f"); await pilot.pause(0.2)
+            assert service.adoption_calls and service.adoption_calls[-1][1]=="vfx", (layer_table.cursor_row,layer_table.selected_layer_name(),layer_table.selected_layer_adoptable(),app.state.active_operation,app.state.activity[-3:])
+            assert service.adoption_calls[-1][2]["live_modified"] is False
+            service.mutations=0
 
             # Timeline is a persisted-source review surface: row selection,
             # trim/loop/FPS edits, and playback never send bridge commands.
@@ -858,7 +894,7 @@ async def textual_smoke() -> None:
         layer_table = app.screen.query_one("#layer-table")
         assert list(layer_table.columns.values())[0].label.plain == "LAYER"
         assert len(layer_table.columns) == 4
-        assert layer_table.max_scroll_x == 0
+        assert layer_table.max_scroll_x == 0, (layer_table.max_scroll_x,[column.label.plain for column in layer_table.columns.values()],layer_table.get_row_at(0))
         assert not app.main_screen.query(Footer)
         key_bar = app.main_screen.query_one("#context-key-bar", ContextKeyBar)
         assert "E Edit" in str(key_bar.render())
