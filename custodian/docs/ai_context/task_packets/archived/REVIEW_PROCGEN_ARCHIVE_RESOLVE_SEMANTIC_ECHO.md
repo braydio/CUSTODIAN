@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-archive-resolve-semantic-echo`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `procgen-archive-resolve-semantic-echo`
@@ -37,5 +37,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Refresh reason: `explicit post-AR3 user playtest approved the visual language but requested a bounded distance + LOS + camera + time-based frontier restraint slice`
-- Next action: If AR3 review passes without correction-worthy findings, archive it and allow ready/auto AR4 to claim immediately.
+- Next action: Review passed (0 blocking, 0 material gaps; receipt on the archived AR3 packet, summary `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO_CLAUDE_SUMMARY.md`). Ready/auto AR4 may claim immediately.
 - Blockers or open questions: none; AR4 owns ordinary-frontier restraint and must not be folded backward into AR3 review correction work.
