@@ -280,9 +280,15 @@ the sidearm slot is empty or defensive, and primary pressed while guard-ready tr
 defensive skill expression without overloading the held sidearm-ready state.
 
 Unarmed block presentation uses the modular lower/upper body stack: authored entry, looping hold, and blocked-hit
-reaction clips play through the existing block state path, and exit reuses entry in reverse. While held guard is moving,
-movement remains slowed by `block_move_multiplier`; the lower layer reuses modular `unarmed_walk` locomotion while the
-upper layer holds the authored block loop. Parry gameplay now uses the same state path for timing, plays the generated
+reaction clips play through the existing block state path, and exit reuses entry in reverse. Whenever the Operator is
+moving during guard enter, hold, non-break blocked-hit recoil or exit, the guard is a movement-permissive composition
+decided by `OperatorPresentationController`: the lower layer is movement-owned `unarmed_walk` locomotion (direction from
+movement) and only the upper layer plays the defensive action (direction from aim), so strafing no longer slides a planted
+paired lower clip. Movement stays slowed by `block_move_multiplier`, sprint stays disabled, and the lower clip is not
+restarted when only the upper phase changes. Recoil uses dedicated `block_light/heavy_recoil_01` and exit uses
+`block_exit_01` only when those canonical actions are published, otherwise `block_hit_01` and reversed `block_enter_01`.
+Stationary guard presents the authored paired lower+upper pose; guard break / break recovery stay impact-locked paired
+poses and never compose; a missing layer falls back to the complete paired pose. Parry gameplay now uses the same state path for timing, plays the generated
 modular `parry_01` lower/upper/FX stack when available, and falls back to block animations when `unarmed_parry*` clips are missing. The curated `parry_01` playback is intentionally
 registered at 12 FPS for a slightly heavier read. Successful parries spawn the authored five-frame
 `operator__fx__unarmed__defense__parry_success_01` sheet as an independent world-space success burst at the captured

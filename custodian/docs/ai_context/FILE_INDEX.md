@@ -1374,3 +1374,4 @@ Last updated: 2026-10-02
 - `scenes/twin_solaria_playtest.tscn` and `tools/validation/twin_solaria_runtime_smoke.gd` — standalone movement wrapper and production registration/native-size/collision/POI smoke.
 
 - `custodian/tools/validation/python_sim_remap2_smoke.gd` — deterministic REMAP-2 regression coverage for macro wear/fidelity, repair/fabrication contracts, relay/assault corrections, and snapshot continuation.
+- `custodian/tools/validation/operator_mobile_guard_composition_smoke.gd` — moving guard enter/hold/recoil/exit lifecycle: movement-owned lower + upper guard action, lower-progress continuity, opposed/orthogonal directions, stationary paired pose, stop-mid-phase, guard-break negative control, missing-layer fallback

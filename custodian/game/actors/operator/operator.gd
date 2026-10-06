@@ -717,6 +717,9 @@ var _modular_damage_reaction_sector: StringName = &"s"
 var _modular_lower_action_animation: StringName = &""
 var _modular_upper_action_animation: StringName = &""
 var _modular_upper_fx_action_animation: StringName = &""
+## How the unarmed guard body is currently presented: &"moving" (movement-owned lower
+## + action-owned upper), &"paired" (authored paired defensive pose) or &"" (neither).
+var _guard_presentation_mode: StringName = &""
 var _modular_sidearm_action_animation: StringName = &""
 var _modular_sidearm_fx_animation: StringName = &""
 var _warned_missing_modular_fast_attack_fx: bool = false
@@ -1718,7 +1721,7 @@ func _update_animation():
 		)
 		if is_attacking and _sync_modular_action_domains():
 			return
-		if is_block_anim and _sync_modular_block_hold_movement_presentation():
+		if is_block_anim and _sync_modular_block_movement_presentation():
 			return
 		if is_block_anim and _is_modular_block_active():
 			return
@@ -3824,6 +3827,12 @@ const MODULAR_BODY_IDENTITIES := {
 	"unarmed_block_enter": [&"unarmed", &"defense", &"block_enter_01"],
 	"unarmed_block_hold": [&"unarmed", &"defense", &"block_hold_01"],
 	"unarmed_block_hitreact": [&"unarmed", &"defense", &"block_hit_01"],
+	# Optional canonical guard actions. Nothing is published for them yet, so the
+	# resolver returns empty and presentation keeps the current block_hit/enter
+	# fallbacks; they start working the moment approved Asset V2 art lands.
+	"unarmed_block_light_recoil": [&"unarmed", &"defense", &"block_light_recoil_01"],
+	"unarmed_block_heavy_recoil": [&"unarmed", &"defense", &"block_heavy_recoil_01"],
+	"unarmed_block_exit": [&"unarmed", &"defense", &"block_exit_01"],
 	"unarmed_fast_windup_lower": [&"unarmed", &"attack", &"fast_windup_01"],
 	"unarmed_fast_windup_upper": [&"unarmed", &"attack", &"fast_windup_01"],
 	"unarmed_fast_strike_lower": [&"unarmed", &"attack", &"fast_strike_01"],
@@ -3868,6 +3877,19 @@ const MODULAR_BODY_AUTHORED_SECTORS := {
 		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
 	},
 	"parry_recovery_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	# the optional canonical guard actions share the defensive e/w guard-facing policy
+	"block_light_recoil_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	"block_heavy_recoil_01/lower_body": {
+		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
+		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
+	},
+	"block_exit_01/lower_body": {
 		&"n": &"e", &"ne": &"e", &"e": &"e", &"se": &"e",
 		&"s": &"e", &"sw": &"w", &"w": &"w", &"nw": &"w",
 	},
@@ -4537,6 +4559,7 @@ func _hide_presentation_layer(layer, stop_playback := true) -> void:
 
 
 func _hide_modular_locomotion_layers() -> void:
+	_guard_presentation_mode = &""
 	_reset_melee_locomotion_socket_presentation()
 	_modular_lower_action_animation = &""
 	_modular_upper_action_animation = &""
@@ -8119,24 +8142,130 @@ func _hide_vigil_semantic_block() -> void:
 	)
 
 
-func _play_modular_unarmed_block(base_animation: String) -> bool:
+## Legacy guard base animation -> composition phase.
+const GUARD_COMPOSITION_PHASES := {
+	"unarmed_block_enter": &"enter",
+	"unarmed_block_hold": &"hold",
+	"unarmed_block_hitreact": &"recoil",
+	"unarmed_block_exit": &"exit",
+}
+
+
+func _play_modular_unarmed_block(base_animation: String, phase_transition := true) -> bool:
 	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
 		return false
 	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
 		return false
+	var phase: StringName = GUARD_COMPOSITION_PHASES.get(base_animation, &"")
+	var decision := OperatorPresentationControllerScript.decide_guard_composition(
+		phase, velocity.length() > 0.01, _is_guard_presentation_impact_locked()
+	)
+	if phase_transition and base_animation != "unarmed_block_hold":
+		_hide_modular_block_hold_fx()
+	if decision == OperatorPresentationControllerScript.GuardComposition.MOVEMENT_LOWER_UPPER_ACTION \
+			and _compose_moving_guard_presentation(base_animation, phase_transition):
+		_guard_presentation_mode = &"moving"
+		return true
+	# Complete-presentation fallback: a composition that cannot play changed nothing,
+	# so the authored paired defensive pose is presented whole.
+	var paired := _play_paired_modular_guard(base_animation)
+	_guard_presentation_mode = &"paired" if paired else &""
+	return paired
 
+
+## True while guard break / break recovery owns the body: gameplay movement-locks
+## these phases and the recoil velocity they carry is not movement intent.
+func _is_guard_presentation_impact_locked() -> bool:
+	return _guard_controller.is_break_locked() or _block_phase == &"guard_break" or _enemy_impact_lock_timer > 0.0
+
+
+func _guard_presentation_direction() -> Vector2:
 	var direction := aim_direction if aim_direction.length_squared() > 0.001 else visual_idle_direction
-	var resolved_base := "unarmed_block_enter" if base_animation == "unarmed_block_exit" else base_animation
+	return direction if direction.length_squared() > 0.001 else Vector2.DOWN
 
+
+## Base animation whose canonical upper action should play for this guard phase,
+## preferring approved dedicated actions and otherwise today's fallbacks.
+func _resolve_guard_upper_action(base_animation: String, direction: Vector2) -> Dictionary:
+	var candidates: Array[String] = []
+	match base_animation:
+		"unarmed_block_hitreact":
+			candidates.append(
+				"unarmed_block_heavy_recoil"
+				if _guard_controller.phase == OperatorGuardController.Phase.HEAVY_RECOIL
+				else "unarmed_block_light_recoil"
+			)
+			candidates.append("unarmed_block_hitreact")
+		"unarmed_block_exit":
+			candidates.append("unarmed_block_exit")
+			candidates.append("unarmed_block_enter")
+		_:
+			candidates.append(base_animation)
+	for candidate in candidates:
+		var identity := _resolve_modular_body_animation(candidate, &"upper_body", direction)
+		if not identity.is_empty() and _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, identity):
+			return {
+				"base": candidate, "identity": identity,
+				"backwards": base_animation == "unarmed_block_exit" and candidate == "unarmed_block_enter",
+			}
+	return {}
+
+
+## Movement-owned lower locomotion under the action-owned upper guard action.
+func _compose_moving_guard_presentation(base_animation: String, restart_upper: bool) -> bool:
+	if not modular_locomotion_layers_enabled or not _is_current_profile_unarmed():
+		return false
+	var upper_direction := _guard_presentation_direction()
+	var upper_action := _resolve_guard_upper_action(base_animation, upper_direction)
+	if upper_action.is_empty():
+		return false
+	var lower_direction := movement_direction if movement_direction.length_squared() > 0.001 else visual_idle_direction
+	if lower_direction.length_squared() <= 0.001:
+		lower_direction = upper_direction
+	var lower_identity := _resolve_modular_body_animation(
+		_get_modular_lower_body_motion_base(), &"lower_body", lower_direction
+	)
+	var controller := _get_operator_presentation_controller()
+	if not controller.can_compose_lower_upper(
+		modular_lower_body_sprite, lower_identity, modular_upper_body_sprite, upper_action["identity"]
+	):
+		return false
+	# Resolve, declare, then configure: the whole composition is known playable.
+	_declare_modular_body_composition()
+	_show_body_layer(modular_lower_body_sprite)
+	_show_body_layer(modular_upper_body_sprite)
+	var is_hold: bool = base_animation == "unarmed_block_hold"
+	var exit_scale: float = guard_exit_speed_scale if base_animation == "unarmed_block_exit" else 1.0
+	var composed := controller.compose_lower_upper(
+		modular_lower_body_sprite, lower_identity, clampf(block_move_multiplier, 0.2, 1.0),
+		modular_upper_body_sprite, upper_action["identity"], exit_scale,
+		restart_upper, upper_action["backwards"],
+		(func(): _sync_modular_block_hold_fx(upper_direction)) if is_hold else Callable()
+	)
+	if composed:
+		_claim_modular_body_owner()
+	return composed
+
+
+## The authored paired presentation (lower and upper both play the defensive action).
+## Stationary guard phases and any composition fallback land here.
+func _play_paired_modular_guard(base_animation: String) -> bool:
+	var direction := _guard_presentation_direction()
 	if base_animation == "unarmed_block_exit":
 		_hide_modular_block_hold_fx()
-		# Exit: lower body uses directional locomotion (modular walking),
-		# only upper body plays the exit animation (enter played backwards).
+		# A dedicated complete block_exit_01 pair wins when published.
+		var exit_lower := _resolve_modular_body_animation("unarmed_block_exit", &"lower_body", direction)
+		var exit_upper := _resolve_modular_body_animation("unarmed_block_exit", &"upper_body", direction)
+		if not exit_lower.is_empty() and not exit_upper.is_empty() \
+				and _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, exit_lower) \
+				and _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, exit_upper):
+			return _present_paired_guard_layers(exit_lower, exit_upper, 1.0)
+		# Otherwise: lower body on locomotion, upper plays the enter action in reverse.
 		var lower_base := _get_modular_lower_body_motion_base()
 		var lower_direction := movement_direction if velocity.length() > 0.01 else visual_idle_direction
 		if not _sync_modular_lower_body_layer(lower_base, lower_direction, 1.0):
 			return false
-		var upper_anim := _resolve_modular_body_animation(String(resolved_base), &"upper_body", direction)
+		var upper_anim := _resolve_modular_body_animation("unarmed_block_enter", &"upper_body", direction)
 		if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
 			return false
 		_show_body_layer(modular_upper_body_sprite)
@@ -8146,75 +8275,115 @@ func _play_modular_unarmed_block(base_animation: String) -> bool:
 		_claim_modular_body_owner()
 		return true
 
-	if base_animation == "unarmed_block_hold" and velocity.length() > 0.01:
-		return _sync_modular_block_hold_movement_presentation()
-	if base_animation != "unarmed_block_hold":
-		_hide_modular_block_hold_fx()
-
-	# Enter / hold / hitreact: both layers play the same animation
-	var lower_anim := _resolve_modular_body_animation(String(resolved_base), &"lower_body", direction)
-	var upper_anim := _resolve_modular_body_animation(String(resolved_base), &"upper_body", direction)
+	var paired_base := base_animation
+	if base_animation == "unarmed_block_hitreact":
+		# Prefer a complete approved recoil pair, else the current block_hit_01 pair.
+		var recoil_base := (
+			"unarmed_block_heavy_recoil"
+			if _guard_controller.phase == OperatorGuardController.Phase.HEAVY_RECOIL
+			else "unarmed_block_light_recoil"
+		)
+		var recoil_lower := _resolve_modular_body_animation(recoil_base, &"lower_body", direction)
+		var recoil_upper := _resolve_modular_body_animation(recoil_base, &"upper_body", direction)
+		if not recoil_lower.is_empty() and not recoil_upper.is_empty() \
+				and _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, recoil_lower) \
+				and _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, recoil_upper):
+			paired_base = recoil_base
+	var lower_anim := _resolve_modular_body_animation(paired_base, &"lower_body", direction)
+	var upper_anim := _resolve_modular_body_animation(paired_base, &"upper_body", direction)
 	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
 		return false
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
 		return false
-
-	_hide_modular_locomotion_layers()
-	# Declare before configuring: the hide above hands the body back to legacy,
-	# so the modular composition must claim it again before showing its layers.
-	_declare_modular_body_composition()
-	_show_body_layer(modular_lower_body_sprite)
-	modular_lower_body_sprite.speed_scale = 1.0
-	_show_body_layer(modular_upper_body_sprite)
-	modular_upper_body_sprite.speed_scale = 1.0
-	_animation_player.play(modular_lower_body_sprite, lower_anim)
-	_animation_player.play(modular_upper_body_sprite, upper_anim)
+	if not _present_paired_guard_layers(lower_anim, upper_anim, 1.0):
+		return false
 	if base_animation == "unarmed_block_hold":
 		_sync_modular_block_hold_fx(direction)
 	return true
 
 
+func _present_paired_guard_layers(lower_anim: StringName, upper_anim: StringName, speed_scale: float) -> bool:
+	_hide_modular_locomotion_layers()
+	# Declare before configuring: the hide above hands the body back to legacy,
+	# so the modular composition must claim it again before showing its layers.
+	_declare_modular_body_composition()
+	_show_body_layer(modular_lower_body_sprite)
+	modular_lower_body_sprite.flip_h = false
+	modular_lower_body_sprite.speed_scale = speed_scale
+	_show_body_layer(modular_upper_body_sprite)
+	modular_upper_body_sprite.flip_h = false
+	modular_upper_body_sprite.speed_scale = speed_scale
+	_animation_player.play(modular_lower_body_sprite, lower_anim)
+	_animation_player.play(modular_upper_body_sprite, upper_anim)
+	return true
+
+
+## Per-frame upkeep for any movement-permissive guard phase.
+##
+## Moving: the lower locomotion follows movement direction/speed while the upper
+## action keeps its own clock (nothing restarts unless an identity genuinely
+## changes). Stopping mid-phase hands the lower body back to the paired lower of
+## the current action without touching the upper. Returns true when this call
+## fully handled the frame's guard presentation.
+func _sync_modular_block_movement_presentation() -> bool:
+	if not _is_current_profile_unarmed() or not modular_locomotion_layers_enabled:
+		return false
+	var base := _guard_base_animation_for_phase()
+	if base.is_empty():
+		return false
+	var phase: StringName = GUARD_COMPOSITION_PHASES.get(base, &"")
+	var decision := OperatorPresentationControllerScript.decide_guard_composition(
+		phase, velocity.length() > 0.01, _is_guard_presentation_impact_locked()
+	)
+	if decision == OperatorPresentationControllerScript.GuardComposition.MOVEMENT_LOWER_UPPER_ACTION:
+		if _compose_moving_guard_presentation(base, false):
+			_guard_presentation_mode = &"moving"
+			return true
+		return false
+	if _guard_presentation_mode == &"moving":
+		return _return_guard_lower_to_paired(base)
+	return false
+
+
+func _guard_base_animation_for_phase() -> String:
+	match _block_phase:
+		&"enter": return "unarmed_block_enter"
+		&"hold": return "unarmed_block_hold"
+		&"hitreact": return "unarmed_block_hitreact"
+		&"exit": return "unarmed_block_exit"
+	return ""
+
+
+## The player stopped moving during a composed phase: swap only the lower body to
+## the paired lower of the current action. The upper clip and its progress stay.
+func _return_guard_lower_to_paired(base_animation: String) -> bool:
+	var direction := _guard_presentation_direction()
+	var lower_base := base_animation
+	if base_animation == "unarmed_block_exit":
+		lower_base = "unarmed_block_enter"
+	elif base_animation == "unarmed_block_hitreact":
+		lower_base = "unarmed_block_hitreact"
+	var lower_anim := _resolve_modular_body_animation(lower_base, &"lower_body", direction)
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
+		return false
+	_guard_presentation_mode = &"paired"
+	_show_body_layer(modular_lower_body_sprite)
+	modular_lower_body_sprite.flip_h = false
+	modular_lower_body_sprite.speed_scale = 1.0
+	if modular_lower_body_sprite.animation != lower_anim or not modular_lower_body_sprite.is_playing():
+		_animation_player.play(modular_lower_body_sprite, lower_anim)
+		# Keep the paired lower aligned with the upper clock the player already sees.
+		if base_animation != "unarmed_block_exit":
+			_animation_player.sync_frame(modular_upper_body_sprite, modular_lower_body_sprite)
+	_claim_modular_body_owner()
+	return true
+
+
+## Kept for the existing hold-only callers: the generalized sync covers hold.
 func _sync_modular_block_hold_movement_presentation() -> bool:
 	if _block_phase != &"hold":
 		return false
-	if not _is_current_profile_unarmed() or not modular_locomotion_layers_enabled:
-		return false
-	if modular_lower_body_sprite == null or modular_upper_body_sprite == null:
-		return false
-	if modular_lower_body_sprite.sprite_frames == null or modular_upper_body_sprite.sprite_frames == null:
-		return false
-
-	var upper_direction := aim_direction if aim_direction.length_squared() > 0.001 else visual_idle_direction
-	if upper_direction.length_squared() <= 0.001:
-		upper_direction = Vector2.DOWN
-	var upper_anim := _resolve_modular_body_animation("unarmed_block_hold", &"upper_body", upper_direction)
-	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
-		return false
-
-	var lower_synced := false
-	if velocity.length() > 0.01:
-		var lower_direction := movement_direction if movement_direction.length_squared() > 0.001 else visual_idle_direction
-		if lower_direction.length_squared() <= 0.001:
-			lower_direction = upper_direction
-		lower_synced = _sync_modular_lower_body_layer("unarmed_walk", lower_direction, clampf(block_move_multiplier, 0.2, 1.0))
-	if not lower_synced:
-		var lower_anim := _resolve_modular_body_animation("unarmed_block_hold", &"lower_body", upper_direction)
-		if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
-			return false
-		_show_body_layer(modular_lower_body_sprite)
-		modular_lower_body_sprite.flip_h = false
-		modular_lower_body_sprite.speed_scale = 1.0
-		if modular_lower_body_sprite.animation != lower_anim or not modular_lower_body_sprite.is_playing():
-			_animation_player.play(modular_lower_body_sprite, lower_anim)
-
-	_show_body_layer(modular_upper_body_sprite)
-	modular_upper_body_sprite.flip_h = false
-	modular_upper_body_sprite.speed_scale = 1.0
-	if modular_upper_body_sprite.animation != upper_anim or not modular_upper_body_sprite.is_playing():
-		_animation_player.play(modular_upper_body_sprite, upper_anim)
-	_sync_modular_block_hold_fx(upper_direction)
-	_claim_modular_body_owner()
-	return true
+	return _sync_modular_block_movement_presentation()
 
 
 func _sync_modular_block_hold_fx(direction: Vector2) -> bool:

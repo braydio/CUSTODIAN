@@ -2425,6 +2425,31 @@
       "needs_import": true
     },
     {
+      "id": "operator_mobile_guard_composition",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_mobile_guard_composition_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "operator",
+        "animation",
+        "modular",
+        "defense",
+        "guard",
+        "body"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
+        "custodian/game/actors/operator/presentation/operator_animation_player.gd",
+        "custodian/game/actors/operator/combat/operator_guard_controller.gd",
+        "custodian/tools/validation/operator_mobile_guard_composition_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "operator_modular_defense_ranged",
       "type": "godot_script",
       "script": "res://tools/validation/operator_modular_defense_ranged_smoke.gd",
