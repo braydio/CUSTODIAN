@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-workbench-fx-layer-adoption`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-workbench-fx-layer-adoption`
@@ -11,7 +11,9 @@
 - Review: `none`
 - Review target workstream: `operator-workbench-fx-layer-adoption`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md`
-- Reviewed main: `0c2a646ccd`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `1e62ce7e2ff5dec8e1c76cff1850715f5a1e89dd`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Review modes: `code, architecture, asset-pipeline, workflow`
@@ -37,5 +39,43 @@
 
 ## Handoff
 
-- Next action: Auto-dispatch after `operator-workbench-fx-layer-adoption` completes and archives.
-- Blockers or open questions: none.
+- Next action: Claim the bounded correction after this review is archived, then run its paired fresh-context review.
+- Blockers or open questions: Correction `R0-01` is required before the source-conflict acceptance is closed.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-workbench-fx-layer-adoption`
+- Reviewed on main: `1e62ce7e2ff5dec8e1c76cff1850715f5a1e89dd`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `R0-02`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-workbench-fx-layer-adoption-review-corrections-1`
+
+### Findings
+
+#### R0-01 — REPLACE source can change after freshness validation and still be overwritten
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: The archived implementation packet requires publication to refuse when the canonical FX source changes after adoption and requires rollback to preserve pre-transaction canonical bytes.
+- Evidence: `custodian/tools/operator/animation_workbench.py` checks `source_contract_freshness(data)` at lines 449–455, then later backs up the current `old` bytes and replaces the target at lines 519–557 without comparing those bytes to the adopted `file_sha256` immediately at the source-swap boundary. CREATE has an atomic `os.link` no-overwrite guard; REPLACE uses `os.replace`, which overwrites a path changed after the earlier check. A concurrent edit in this interval is therefore accepted and can also become the rollback preimage.
+- Disposition: `correction`
+- Rationale: This violates the explicit changed-source refusal and can discard another writer's canonical edit. Add an interleaving regression that changes the REPLACE target after initial freshness validation and proves publish refuses without changing the external bytes; ensure rollback cannot restore over a concurrent replacement.
+
+#### R0-02 — Modular-defense smoke emits broad pre-existing project/resource errors
+
+- Class: `non_blocking_issue`
+- Domain: `pipeline`
+- Affected acceptance: Existing focused Operator guard smokes remain green.
+- Evidence: The focused `operator_modular_defense_ranged_smoke.gd` process exited 0 and printed its PASS marker, but emitted project-wide missing-class/imported-resource diagnostics and `Invalid call. Nonexistent function '_exit_ranged_ready (via call)'` while executing a test helper. The implementation summary already records the missing-resource/animation diagnostics; this fresh rerun saw the helper-call error too.
+- Disposition: `deferred`
+- Rationale: This Workbench/tooling change does not alter gameplay code, and the dedicated Workbench/UI/mirror tests plus import-preflight passed. Keep the caveat attached to the smoke evidence; a focused smoke reliability repair can be handled separately.
