@@ -12,6 +12,8 @@
 - Review target workstream: `operator-fast-chain-south-continuity`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md`
 - Reviewed main: `e7402591337fbd7540ea13d5219fedff36f67a47`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent` | `same-agent-fresh-context`
 - Reviewed implementation commit: `e7402591337fbd7540ea13d5219fedff36f67a47`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Summary backlink: Include this exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
@@ -68,7 +70,7 @@
   - no mutation of the dirty project-root checkout or unrelated `BRANCH_ARCHIVE.md` state.
 - Acceptance: Produce a findings-first independent review of live `main` from a fresh isolated reviewer context. Record `passed` only when objective contracts are proven and the required human/ChatGPT visual disposition exists; use `human_required` when objective checks pass but the normalized contact sheet still needs subjective disposition. Give each finding a stable cycle-scoped ID (`R<cycle>-<NN>`) with class, domain, affected acceptance, evidence, disposition, and rationale. Blocking defects/material proof gaps create `operator-fast-chain-south-continuity-review-corrections-<n>` plus paired re-review. Do not patch reviewed implementation code.
 - Non-goals: Do not redesign/regenerate the chain; author finished Fast 02-04 N/S VFX; migrate East/West canvas sizes; change gameplay timing; expand diagonal coverage; modify Workbench architecture; repair baseline carry interruption/collision behavior; reconcile/synchronize the dirty project-root checkout; edit `BRANCH_ARCHIVE.md`; or fix reviewed implementation directly.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation, the dirty root checkout, BRANCH_ARCHIVE.md, or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
