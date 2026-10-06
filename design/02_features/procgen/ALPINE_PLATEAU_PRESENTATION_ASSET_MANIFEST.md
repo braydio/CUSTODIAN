@@ -1,9 +1,9 @@
 # Alpine Plateau Presentation Asset Manifest
 
 **Status:** locked continuation manifest  
-**Date:** 2026-10-05  
+**Date:** 2026-10-06  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d  
-**Reviewed repository:** `braydio/CUSTODIAN` `main@1ef9201f31f108afdfed5065ee736bc101008c23`  
+**Reviewed base:** `braydio/CUSTODIAN` `main@b086e552de00cea8551d62884c996558d33f12e6`  
 **Scope:** believable production presentation for the first generated `ALPINE_PLATEAU` Region Frame  
 **Asset authority:** Asset Pipeline V2 family contracts remain canonical for runtime routing and naming.
 
@@ -113,6 +113,98 @@ Bridge world-space cliff art into depth with low mist, partial rock ledges, desc
 
 ---
 
+## Alpine Cliff Source-Master Pipeline
+
+AP1 is now complete/landed. AP2 uses a reviewed high-resolution source-master family rather than requiring image generation to emit final runtime canvases directly.
+
+Canonical active Dropbox batch:
+
+```text
+batch_id: alpine-cliff-source-family-v1
+CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-cliff-source-family-v1/
+custodian_alpine_cliff_source_family_v1.zip
+SHA-256 e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3
+```
+
+Discovery/registry authority:
+
+```text
+CUSTODIAN/asset_batches/_registry/
+custodian/docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md
+```
+
+The source package contains 12 approved high-resolution masters:
+
+### Fascia source masters
+
+```text
+body_strata_01_source.png
+body_strata_02_source.png
+body_cracked_01_source.png
+body_snow_streak_01_source.png
+body_rooted_01_source.png
+body_retaining_01_source.png
+bottom_mist_01_source.png
+bottom_mist_broken_01_source.png
+```
+
+These are source authority for the eight body/bottom fascia states. The four `top_*` runtime fascia states are derived from appropriate crown regions of the approved large contact masters so the crown/fascia/contact art remains one geological family.
+
+### Large contact/source masters
+
+```text
+contact_natural_plateau_master_source.png
+contact_industrial_master_source.png
+contact_vegetated_broken_master_source.png
+contact_clean_granite_master_source.png
+```
+
+These are high-detail 2.5D gray-granite authority for crown, directional contact and depth-chunk derivation. They are not final contact canvases and must not be nonuniformly squashed into target aspect ratios.
+
+### Locked source-master style
+
+- high-detail CUSTODIAN 2.5D realistic presentation;
+- cold neutral gray columnar granite;
+- restrained warm mineral weathering only;
+- dirty sparse snow, scree, alpine scrub/conifers;
+- weathered Custodian retaining infrastructure embedded in geology and kept rare/subordinate;
+- no purple/lavender fallback cliff language;
+- final fascia must look like selected/cropped fragments of the same large geological plates.
+
+### Derivation rule
+
+High-resolution source masters may exceed runtime dimensions. Runtime dimensions in Families B/C/D remain exact output contracts.
+
+For fascia:
+
+```text
+source master
+  -> crop/select one semantic geological fragment
+  -> project pixel-art resizer/normalizer
+  -> explicit alpha cleanup
+  -> exact runtime state
+  -> assembled 4–8 tile repetition test
+  -> Asset V2 publication
+```
+
+For contact/depth assets:
+
+```text
+source master
+  -> crop/recompose for required direction/role
+  -> preserve projection and lighting
+  -> exact target canvas
+  -> explicit alpha cleanup
+  -> deterministic placement review
+  -> Asset V2 publication
+```
+
+Do not use generic smooth interpolation, nonuniform stretching, or PNG alpha as gameplay authority. Solid geology/structure should normalize to alpha 255; exterior/background to alpha 0; partial alpha is reserved for intentional mist/fog transitions.
+
+The source package is sufficient to begin AP2 derivation. The final 26-state Gate B handoff is an AP2 **output/closeout receipt**, not a prerequisite that must already exist before Codex can claim AP2.
+
+---
+
 ## Family B — `procgen_alpine_cliff_fascia`
 
 **Action:** new frame-specific Asset Pipeline V2 family. It supplements rather than replaces the generic `void_cliff_face` fallback.
@@ -124,8 +216,9 @@ Bridge world-space cliff art into depth with low mist, partial rock ledges, desc
 - owner: `alpine_plateau`
 - source-work: `custodian/asset_drop/source_work/procgen/procgen_alpine_cliff_fascia/`
 - inbox: `custodian/asset_drop/inbox/procgen_alpine_cliff_fascia/`
-- canvas: `32×32`
-- one frame per state, RGBA, true alpha
+- **runtime canvas:** `32×32`
+- approved source masters may be higher resolution and are normalized/derived through the source-master pipeline above
+- one frame per runtime state, RGBA, true alpha
 - direction policy: `omni`
 - auto mirror: `false`
 
@@ -146,7 +239,7 @@ bottom_mist_01
 bottom_mist_broken_01
 ```
 
-Source-work filenames use `<state>_source.png`; inbox filenames use `<state>.png`.
+Final source-work/runtime derivations use `<state>_source.png` / `<state>.png` naming as appropriate. The active Dropbox source-master package uses the canonical source filenames listed in the Source-Master Pipeline section; Codex maps those masters to final semantic states before Asset V2 intake.
 
 ### Material lock
 
@@ -433,7 +526,22 @@ CUSTODIAN/implementation_inputs/
 
 Exactly 6 PNGs.
 
-### Gate B — cliff/depth presentation
+### AP2 source-master input and Gate B closeout
+
+AP2 begins from the active durable source-master batch:
+
+```text
+CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-cliff-source-family-v1/
+  custodian_alpine_cliff_source_family_v1.zip
+```
+
+Verify SHA-256:
+
+```text
+e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3
+```
+
+Codex derives, normalizes and validates the final semantic states from those approved masters. At closeout, AP2 publishes/verifies the final immutable runtime-output handoff:
 
 ```text
 CUSTODIAN/implementation_inputs/
@@ -441,12 +549,12 @@ CUSTODIAN/implementation_inputs/
     alpine-cliff-presentation-v1/
       HANDOFF_MANIFEST.json
       payload/
-        procgen_alpine_cliff_fascia/     # 12 PNGs
-        procgen_alpine_cliff_contact/    # 10 PNGs
-        procgen_depth_chunks/            # 4 PNGs
+        procgen_alpine_cliff_fascia/     # 12 final PNGs
+        procgen_alpine_cliff_contact/    # 10 final PNGs
+        procgen_depth_chunks/            # 4 final PNGs
 ```
 
-Exactly 26 PNGs.
+Exactly 26 final PNGs. This Gate B handoff is the verified AP2 closeout artifact and downstream contract, not the source-master input.
 
 ### Gate C — playable surface plates
 
@@ -464,13 +572,15 @@ Exactly 16 PNGs.
 
 ### Gate policy
 
-Until the exact declared handoff exists and verifies:
+Gate A and Gate C remain traditional immutable-input gates. AP2 is the explicit exception documented above: its reviewed source-master batch under `asset_batches/` is sufficient to begin derivation, and its final Gate B is produced/verified at closeout.
 
-- the consuming implementation packet remains `blocked`;
+For every lane:
+
 - execution may not substitute visual-review artifacts;
 - execution may not use arbitrary `~/Downloads` files;
 - execution may not generate placeholder art;
-- execution may not silently use another family.
+- execution may not silently use another family;
+- exact package/batch identity and hashes must be verified before mutation.
 
 Dropbox is transport only. After fetch, the owning packet and Asset Pipeline V2 authorize any promotion into `source_work`, inbox and runtime.
 
@@ -515,8 +625,8 @@ Human visual approval remains final aesthetic authority.
 
 ## Packet Sequence
 
-1. `procgen-alpine-plateau-underlay-assets` — revised omnidirectional underlay, Gate A.
-2. `procgen-alpine-cliff-presentation-v1` — fascia/contact/depth integration, Gate B.
+1. `procgen-alpine-plateau-underlay-assets` — revised omnidirectional underlay, **complete/landed**.
+2. `procgen-alpine-cliff-presentation-v1` — derive fascia/contact/depth runtime states from the approved source-master batch, then publish/verify Gate B at closeout.
 3. `procgen-alpine-surface-plates-v1` — large Rocky/Hardstand plate vocabulary, Gate C.
 4. `procgen-alpine-environment-cohesion-v1` — existing atmosphere/wind/lighting tuning and final cohesive review.
 
