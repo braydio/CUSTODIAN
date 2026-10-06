@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-05
+Last updated: 2026-10-06
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -70,7 +70,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
-- `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — Independently verify the landed Fast-chain cardinal art closeout on live `main`: seven approved North/South body strips are preserved and normalized at 96×96...
 - `REVIEW_OPERATOR_WORKBENCH_ANIMATION_CREATION.md` — Independently verify that OPUI can create a genuinely absent Operator semantic animation and publish it through the existing specialized Operator production...
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION.md` — Independently verify that the landed Workbench FX-adoption slice safely turns an explicit saved Aseprite `vfx`/`fx` layer into canonical Operator `fx` source...
 - `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Independently verify that the shared persistent-checkout sync implementation keeps the coordination root and OPUI art checkout current only when synchronizat...
@@ -195,7 +194,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `archived/STRANDED_BRANCH_RECOVERY_CLOSEOUT.md` — P1 closeout landed. Adds fail-closed exact-SHA retirement; archive-tags and retires five reviewed stale refs. Vaultwing's attached history remains untouched and is routed to its separate manual recovery packet.
 - `VAULTWING_BONDING_LOCAL_HISTORY_RECOVERY.md` — P1 ready/manual recovery. First archive-tags the exact attached local HEAD remotely, then classifies the recorded 23-commit checkpoint-to-remote range and all commits unique to current main before any worktree/branch mutation or selective salvage.
 - `archived/OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — P1 implementation complete/landed at `e7402591`: seven approved Fast 01 N + Fast 02-04 N/S body masters normalized to 96×96, exact lower/upper recomposition, six true-alpha-zero Fast 02-04 N/S FX authoring placeholders, protected Fast 01 authorities unchanged, gameplay data untouched.
-- `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 ready/auto post-land review and **claimable now**. Reviews landed North/South body continuity, exact 96×96/pipeline contracts, truthful blank-FX placeholder semantics, protected Fast 01/E/W assets, and baseline-vs-landed carry-smoke parity. It must not treat intentionally transparent FX as unfinished implementation or touch the dirty project-root `BRANCH_ARCHIVE.md`.
+- `archived/REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md` — paired P1 review complete/passed with objective acceptance proven and human visual approval recorded; see `REVIEW_OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY_CLAUDE_SUMMARY.md`.
 
 ### Operator Runtime Authority Migration
 

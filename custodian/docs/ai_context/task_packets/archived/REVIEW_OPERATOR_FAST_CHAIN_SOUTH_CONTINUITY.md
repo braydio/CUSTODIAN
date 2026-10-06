@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-fast-chain-south-continuity`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-fast-chain-south-continuity`
@@ -13,7 +13,7 @@
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_FAST_CHAIN_SOUTH_CONTINUITY.md`
 - Reviewed main: `e7402591337fbd7540ea13d5219fedff36f67a47`
 - Reviewer context: `fresh`
-- Reviewer provenance: `different-agent` | `same-agent-fresh-context`
+- Reviewer provenance: `same-agent-fresh-context`
 - Reviewed implementation commit: `e7402591337fbd7540ea13d5219fedff36f67a47`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Summary backlink: Include this exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
@@ -72,7 +72,19 @@
 - Non-goals: Do not redesign/regenerate the chain; author finished Fast 02-04 N/S VFX; migrate East/West canvas sizes; change gameplay timing; expand diagonal coverage; modify Workbench architecture; repair baseline carry interruption/collision behavior; reconcile/synchronize the dirty project-root checkout; edit `BRANCH_ARCHIVE.md`; or fix reviewed implementation directly.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `fresh review worktree needed a Godot first import; initial protected-asset comparison used hydrated content against LFS pointer text and was corrected to compare object IDs.`
+- Root cause / contributing factors: `ephemeral worktrees do not carry ignored .godot import state; LFS pointer files represent content by object ID rather than hydrated PNG bytes.`
+- Prevention / pipeline improvement: `bootstrap Godot cache before focused smokes; compare LFS object IDs when checking pointer-backed assets.`
+- Tooling / docs drift discovered: `the packet README generated managed index block was absent; task_packet_index.py --write materialized it and task_packet_index.py then reported it up to date.`
+- Follow-up: `none`
+- What worked: `exact pixel, hash, selector, and baseline checks separated technical acceptance from human art direction; user approval completed the subjective review gate.`
+
 ## Handoff
 
-- Next action: Auto-dispatch now from fresh `origin/main`; the implementation dependency is complete and archived at `e7402591`. Review the landed N/S body art and truthful placeholder-FX contract, reusing the existing Dropbox evidence.
-- Blockers or open questions: No implementation blocker. Human visual disposition of the normalized body contact sheet may still be required. The dirty project-root checkout and baseline carry-smoke debt are explicitly outside this review.
+- Next action: Close the paired review with the recorded human visual approval and objective review evidence.
+- Blockers or open questions: None. Three baseline carry interruption/collision smoke assertions remain outside this art review and are documented in the implementation receipt.
