@@ -2,6 +2,12 @@ class_name ProcgenDepthBackdrop
 extends Node2D
 
 const TILE_SIZE := 32
+## Upper bound for the coverage-guaranteeing plate scale (zoom >= ~0.5 on the
+## 1280x720 base viewport); beyond it the plate stops growing rather than blur.
+const MAX_COVER_SCALE := 2.6
+## Half-extent (local px) of the optional opaque base fill: covers any visible
+## world rectangle up to zoom ~0.2 on a 1280x720 base viewport.
+const BASE_FILL_HALF_EXTENT := 8192.0
 const MIN_REGION_SCALE := 0.75
 const MAX_REGION_SCALE := 1.25
 const CARDINAL_NEIGHBORS: Array[Vector2i] = [
@@ -35,11 +41,18 @@ var near_alpha := 0.48
 var _regions_root: Node2D
 var _camera: Camera2D
 var _camera_search_elapsed := 0.0
+var _camera_searched := false
 var _world_stack: Node2D
 var _debug_mode := "hidden"
 var _selected_variants := {"far": -1, "middle": -1, "near": -1}
 var _configured_visible := false
 var _connected_map_isolated := false
+var _parallax := {"far": 0.0, "middle": 0.0, "near": 0.0}
+var _parallax_max_px := 0.0
+var _guarantee_coverage := false
+var _base_fill_color := Color(0.0, 0.0, 0.0, 0.0)
+var _motion_anchor := Vector2.ZERO
+var _motion_anchor_set := false
 
 
 func _ready() -> void:
@@ -92,6 +105,10 @@ func _apply_profile(profile: ProcgenUnderlayProfile, seed_value: int) -> void:
 	if profile == null or not profile.is_valid():
 		push_error("[ProcgenDepthBackdrop] Invalid underlay profile; chasm presentation cannot render.")
 		return
+	_parallax = {"far": profile.far_parallax, "middle": profile.middle_parallax, "near": profile.near_parallax}
+	_parallax_max_px = profile.parallax_max_px
+	_guarantee_coverage = profile.guarantee_viewport_coverage
+	_base_fill_color = profile.base_fill_color
 	far_alpha = profile.far_alpha
 	middle_alpha = profile.middle_alpha
 	near_alpha = profile.near_alpha
@@ -113,14 +130,79 @@ func _process(delta: float) -> void:
 	if not follow_camera or _world_stack == null:
 		return
 	if _camera == null or not is_instance_valid(_camera):
-		_camera_search_elapsed += delta
-		if _camera_search_elapsed < camera_search_interval_sec:
-			return
-		_camera_search_elapsed = 0.0
+		# First lookup is immediate so the stack never lags the camera at start-up;
+		# retries after a failed lookup stay throttled.
+		if _camera_searched:
+			_camera_search_elapsed += delta
+			if _camera_search_elapsed < camera_search_interval_sec:
+				return
+			_camera_search_elapsed = 0.0
+		_camera_searched = true
 		_camera = get_viewport().get_camera_2d()
 	if _camera == null:
 		return
 	_world_stack.global_position = _camera.global_position
+	_update_depth_motion()
+
+
+## Smallest uniform plate scale whose painted area covers the visible world
+## rectangle plus the parallax margin on every side. Pure so tests can sweep it.
+static func required_cover_scale(visible_size: Vector2, zoom: Vector2, texture_size: Vector2, margin_px: float) -> float:
+	if zoom.x <= 0.0 or zoom.y <= 0.0:
+		return MAX_COVER_SCALE
+	var usable := texture_size - Vector2.ONE * (2.0 * margin_px)
+	if usable.x <= 0.0 or usable.y <= 0.0:
+		return MAX_COVER_SCALE
+	return clampf(maxf(visible_size.x / zoom.x / usable.x, visible_size.y / zoom.y / usable.y), 1.0, MAX_COVER_SCALE)
+
+
+## Bounded layer displacement (local, pre-scale px) for a camera displacement
+## since the anchor; smooth, never exceeds max_px in any direction.
+static func parallax_offset(camera_delta: Vector2, strength: float, max_px: float) -> Vector2:
+	if strength <= 0.0 or max_px <= 0.0:
+		return Vector2.ZERO
+	var v := -camera_delta * strength
+	var length := v.length()
+	if length <= 0.0001:
+		return Vector2.ZERO
+	return v / length * max_px * tanh(length / max_px)
+
+
+func get_depth_motion_snapshot() -> Dictionary:
+	var result := {"stack_scale": 1.0, "base_fill": false, "guarantee_coverage": _guarantee_coverage, "parallax_max_px": _parallax_max_px, "offsets": {}}
+	if _world_stack == null or not is_instance_valid(_world_stack):
+		return result
+	result["stack_scale"] = _world_stack.scale.x
+	result["base_fill"] = _world_stack.get_node_or_null("BaseFill") != null
+	for layer in ["Far", "Middle", "Near"]:
+		var sprite := _world_stack.get_node_or_null(layer) as Sprite2D
+		if sprite != null:
+			(result["offsets"] as Dictionary)[layer.to_lower()] = sprite.position
+	return result
+
+
+func _update_depth_motion() -> void:
+	var moving := _parallax_max_px > 0.0
+	if not _guarantee_coverage and not moving:
+		return
+	if not _motion_anchor_set:
+		_motion_anchor = _camera.global_position
+		_motion_anchor_set = true
+	var margin := _parallax_max_px if moving else 0.0
+	if _guarantee_coverage:
+		var base := clampf(camera_overscan_scale, 1.0, 1.08)
+		var texture_size := Vector2(1536.0, 1024.0)
+		if middle_texture != null:
+			texture_size = Vector2(middle_texture.get_size())
+		var cover := required_cover_scale(get_viewport().get_visible_rect().size, _camera.zoom, texture_size, margin)
+		_world_stack.scale = Vector2.ONE * maxf(base, cover)
+	if not moving:
+		return
+	var delta := _camera.global_position - _motion_anchor
+	for layer in ["far", "middle", "near"]:
+		var sprite := _world_stack.get_node_or_null(layer.capitalize()) as Sprite2D
+		if sprite != null:
+			sprite.position = parallax_offset(delta, float(_parallax[layer]), _parallax_max_px)
 
 
 func configure_from_cells(world_cells: Array) -> void:
@@ -230,6 +312,15 @@ func _create_world_bounds_stack(
 	_world_stack.set_meta("world_cell_bounds", bounds)
 	_regions_root.add_child(_world_stack)
 
+	if _base_fill_color.a > 0.0:
+		var fill := Polygon2D.new()
+		fill.name = "BaseFill"
+		fill.polygon = PackedVector2Array([Vector2(-BASE_FILL_HALF_EXTENT, -BASE_FILL_HALF_EXTENT), Vector2(BASE_FILL_HALF_EXTENT, -BASE_FILL_HALF_EXTENT), Vector2(BASE_FILL_HALF_EXTENT, BASE_FILL_HALF_EXTENT), Vector2(-BASE_FILL_HALF_EXTENT, BASE_FILL_HALF_EXTENT)])
+		fill.color = _base_fill_color
+		fill.z_as_relative = true
+		fill.z_index = -4
+		_world_stack.add_child(fill)
+
 	_create_layer(
 		_world_stack,
 		"Far",
@@ -320,6 +411,9 @@ func _create_layer(
 func _refresh_existing_layers() -> void:
 	if _world_stack == null or not is_instance_valid(_world_stack):
 		return
+	var base_fill := _world_stack.get_node_or_null("BaseFill") as Polygon2D
+	if base_fill != null:
+		base_fill.color = _base_fill_color
 	_update_layer(_world_stack.get_node_or_null("Far"), far_texture, far_alpha)
 	_update_layer(_world_stack.get_node_or_null("Middle"), middle_texture, middle_alpha)
 	_update_layer(_world_stack.get_node_or_null("Near"), near_texture, near_alpha)
@@ -374,7 +468,9 @@ func _decode_cell(value: Variant) -> Vector2i:
 
 func _clear_regions() -> void:
 	_world_stack = null
+	_motion_anchor_set = false
 	_camera = null
+	_camera_searched = false
 	_camera_search_elapsed = 0.0
 	if _regions_root == null:
 		return

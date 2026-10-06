@@ -264,6 +264,48 @@ func _test_alpine_underlay_binding_and_seed_selection() -> void:
 	for layer in seen.keys():
 		_check((seen[layer] as Dictionary).size() == 2, "seed sweep never selected both %s variants" % layer)
 	backdrop.free()
+	_test_depth_motion_coverage(profile)
+
+
+## Continuation acceptance: supported viewport/zoom/parallax combinations can
+## never expose unpainted plate canvas; displacement is bounded; non-Alpine
+## underlays keep the pre-continuation (zero-motion, no-coverage-scaling) defaults.
+func _test_depth_motion_coverage(profile: ProcgenUnderlayProfile) -> void:
+	_check(profile.guarantee_viewport_coverage and profile.has_depth_motion(), "alpine underlay must enable bounded depth motion and coverage")
+	_check(profile.parallax_max_px > 0.0 and profile.parallax_max_px <= 128.0, "alpine parallax bound is outside the intended subtle range")
+	_check(profile.base_fill_color.a == 1.0, "alpine underlay needs an opaque base fill so transparent plate gaps never show the engine clear colour")
+	for other_path in [
+		"res://game/world/procgen/presentation/underlays/drowned_basilica_underlay.tres",
+		"res://game/world/procgen/presentation/underlays/endless_forest_underlay.tres",
+	]:
+		var other := load(other_path) as ProcgenUnderlayProfile
+		_check(other != null and other.base_fill_color.a == 0.0, "%s gained a base fill" % other_path)
+		_check(other != null and not other.has_depth_motion() and not other.guarantee_viewport_coverage, "%s must keep zero depth motion/default coverage" % other_path)
+		_check(other.far_parallax == 0.0 and other.middle_parallax == 0.0 and other.near_parallax == 0.0 and other.parallax_max_px == 0.0, "%s gained parallax" % other_path)
+	var texture_size := Vector2(1536.0, 1024.0)
+	var margin := profile.parallax_max_px
+	var worst_scale := 0.0
+	for visible: Vector2 in [Vector2(1280, 720), Vector2(1600, 900), Vector2(1920, 1080), Vector2(2560, 1080)]:
+		for zoom_value: float in [0.74, 0.84, 0.94, 1.0, 1.25, 1.5]:
+			var zoom: Vector2 = Vector2.ONE * zoom_value
+			var scale_value := ProcgenDepthBackdrop.required_cover_scale(visible, zoom, texture_size, margin)
+			worst_scale = maxf(worst_scale, scale_value)
+			var half_painted: Vector2 = texture_size * scale_value * 0.5
+			var half_needed: Vector2 = visible / zoom * 0.5 + Vector2.ONE * margin * scale_value
+			_check(scale_value >= 1.0 and half_painted.x >= half_needed.x - 0.01 and half_painted.y >= half_needed.y - 0.01,
+				"plate does not cover %s at zoom %.2f (scale %.3f)" % [str(visible), zoom_value, scale_value])
+	_check(worst_scale <= ProcgenDepthBackdrop.MAX_COVER_SCALE, "supported combinations exceeded the cover scale cap")
+	_check(ProcgenDepthBackdrop.required_cover_scale(Vector2(1280, 720), Vector2.ZERO, texture_size, margin) == ProcgenDepthBackdrop.MAX_COVER_SCALE, "degenerate zoom must clamp to the cover cap")
+	# Parallax: zero by default, bounded for any travel, deterministic, direction-opposed.
+	_check(ProcgenDepthBackdrop.parallax_offset(Vector2(5000, 5000), 0.0, 64.0) == Vector2.ZERO, "zero strength displaced a layer")
+	_check(ProcgenDepthBackdrop.parallax_offset(Vector2(5000, 5000), 0.1, 0.0) == Vector2.ZERO, "zero bound displaced a layer")
+	for travel: Vector2 in [Vector2(10, 0), Vector2(-4000, 300), Vector2(1.0e6, -1.0e6), Vector2(0, 2500)]:
+		for strength: float in [profile.far_parallax, profile.middle_parallax, profile.near_parallax]:
+			var offset: Vector2 = ProcgenDepthBackdrop.parallax_offset(travel, strength, margin)
+			_check(offset.length() <= margin + 0.001, "parallax exceeded its bound for travel %s" % str(travel))
+			_check(offset == ProcgenDepthBackdrop.parallax_offset(travel, strength, margin), "parallax is not deterministic")
+			if offset != Vector2.ZERO:
+				_check(offset.dot(travel) < 0.0, "parallax did not oppose camera travel")
 
 
 func _test_production_scene_frame_binding() -> void:
@@ -290,6 +332,7 @@ func _test_production_scene_frame_binding() -> void:
 		_check(snapshot["visual_fallback"] == false, "generated production scene still reports a visual fallback")
 		_check(snapshot["underlay_source"] == "region_frame" and snapshot["underlay_profile_id"] == "alpine_plateau", "generated production scene is not bound to the Alpine underlay")
 		_check(tilemap.depth_backdrop.get_underlay_profile_id() == &"alpine_plateau", "generated production backdrop is not using the Alpine underlay")
+		_check(bool(tilemap.depth_backdrop.get_depth_motion_snapshot()["base_fill"]), "production backdrop has no base fill under the plates")
 		_check(not (tilemap.depth_backdrop.get_selected_variant_indices() as Dictionary).is_empty() and int(tilemap.depth_backdrop.get_selected_variant_indices()["far"]) >= 0, "production backdrop has no deterministic variant selection")
 	await contract_map._clear_previous_instances()
 	contract_map.queue_free()

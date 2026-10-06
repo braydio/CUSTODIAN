@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-alpine-plateau-underlay-assets`
-- Status: `blocked`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-region-frame-presentation-foundation`
@@ -54,6 +54,10 @@ CUSTODIAN/implementation_inputs/
 The manifest must use schema `custodian.implementation_handoff.v1` and record this exact authoring chat URL. The payload set must be exact: six PNGs, no substitutions.
 
 This packet remains `blocked` until that exact committed handoff exists and verifies. The earlier `/CUSTODIAN/visual_review/` artifacts and any local `~/Downloads` bundle are review/provenance evidence only and cannot satisfy this implementation gate.
+
+## Gate A Provenance Note (user-directed)
+
+The `implementation_inputs/` lane still holds the superseded first Gate A upload (prior chat URL, older bytes). By explicit user direction the regenerated replacement was taken instead from `CUSTODIAN/generated_asset_batches/alpine_plateau_first10_20261005/alpine_plateau_presentation_first10_runtime_ready.zip` (Dropbox revision `65d22b039b058915cdd61`, modified 2026-10-06 02:23:47 UTC). Its embedded `HANDOFF_MANIFEST_GATE_A.json` (schema `custodian.implementation_handoff.v1`, handoff id `alpine-underlay-omnidirectional-v2`, created 2026-10-06T02:21:25Z) records this packet's authoring chat `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`; all six payload SHA-256 values were verified against that manifest and every PNG is RGBA 1536x1024 one-frame. The four `procgen_alpine_cliff_fascia` tiles in the same ZIP belong to `procgen-alpine-cliff-presentation-v1` (partial Gate B, 4 of 26) and were not consumed here.
 
 ## Existing Branch Disposition
 

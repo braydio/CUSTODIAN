@@ -1,31 +1,137 @@
 {
   "schema_version": 1,
   "id": "procgen/alpine_plateau_edge_review",
-  "description": "Alpine Plateau permanent underlay at gameplay scale on a real renderer: playable cliff edge, then ten tiles inward, with FAR world / FOG / NEAR cliff-mist bound by the alpine_plateau Region Frame.",
+  "description": "Alpine Plateau permanent underlay at gameplay scale (zoom 0.74) on a real renderer from the north, east, south and west exterior edges: FAR world / FOG / NEAR cliff-mist bound by the alpine_plateau Region Frame, with bounded parallax and guaranteed viewport coverage.",
   "scene": "res://scenes/debug/alpine_plateau_edge_moment.tscn",
   "seed": 424242,
-  "duration_ticks": 120,
-  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 240, "pause_during_setup": true},
-  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 119, "contact_sheet_ticks": [10, 30, 55, 70, 90, 105], "required_keyframes": true, "background": "opaque"},
+  "duration_ticks": 130,
+  "simulation": {
+    "physics_hz": 60,
+    "warmup_ticks": 2,
+    "max_wall_seconds": 240,
+    "pause_during_setup": true
+  },
+  "capture": {
+    "width": 1280,
+    "height": 720,
+    "fps": 60,
+    "audio": false,
+    "start_tick": 0,
+    "end_tick": 129,
+    "contact_sheet_ticks": [
+      10,
+      25,
+      55,
+      85,
+      115,
+      125
+    ],
+    "required_keyframes": true,
+    "background": "opaque"
+  },
   "setup": {
     "remove_nodes": [],
-    "roles": {"fixture": {"node_path": "."}},
+    "roles": {
+      "fixture": {
+        "node_path": "."
+      }
+    },
     "spawns": [],
     "properties": [],
     "processing": [],
-    "fixture": {"id": "alpine_plateau_edge", "config": {}}
+    "fixture": {
+      "id": "alpine_plateau_edge",
+      "config": {}
+    }
   },
   "timeline": [
-    {"tick": 5, "action": "fixture_command", "name": "at_edge"},
-    {"tick": 60, "action": "fixture_command", "name": "step_inward"},
-    {"tick": 110, "action": "finish"}
+    {
+      "tick": 5,
+      "action": "fixture_command",
+      "name": "at_north"
+    },
+    {
+      "tick": 35,
+      "action": "fixture_command",
+      "name": "at_east"
+    },
+    {
+      "tick": 65,
+      "action": "fixture_command",
+      "name": "at_south"
+    },
+    {
+      "tick": 95,
+      "action": "fixture_command",
+      "name": "at_west"
+    },
+    {
+      "tick": 128,
+      "action": "finish"
+    }
   ],
-  "probes": [{"id": "frame", "role": "fixture", "fields": ["frame_id", "underlay_profile_id", "visual_fallback", "backdrop_visible", "backdrop_mode", "edge_tile_x", "edge_tile_y", "variant_far", "variant_middle", "variant_near"], "ticks": [10, 40, 70, 100], "required": true}],
+  "probes": [
+    {
+      "id": "frame",
+      "role": "fixture",
+      "fields": [
+        "frame_id",
+        "underlay_profile_id",
+        "visual_fallback",
+        "backdrop_visible",
+        "backdrop_mode",
+        "direction",
+        "variant_far",
+        "variant_middle",
+        "variant_near",
+        "stack_scale",
+        "parallax_far_px",
+        "parallax_near_px",
+        "coverage_ok"
+      ],
+      "ticks": [
+        10,
+        25,
+        40,
+        55,
+        70,
+        85,
+        100,
+        115,
+        125
+      ],
+      "required": true
+    }
+  ],
   "assertions": [
-    {"type": "role_exists", "role": "fixture", "severity": "error"},
-    {"type": "no_unreleased_inputs", "severity": "error"},
-    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+    {
+      "type": "role_exists",
+      "role": "fixture",
+      "severity": "error"
+    },
+    {
+      "type": "no_unreleased_inputs",
+      "severity": "error"
+    },
+    {
+      "type": "output_exists",
+      "path": "telemetry.json",
+      "severity": "error"
+    }
   ],
-  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["frame"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
-  "tags": ["procgen", "alpine_plateau", "region_frame", "visual_review"]
+  "stable_fingerprint": {
+    "event_payload_fields": {},
+    "counters": [],
+    "probes": [
+      "frame"
+    ],
+    "position_quantum_px": 0.25,
+    "float_quantum": 0.0001
+  },
+  "tags": [
+    "procgen",
+    "alpine_plateau",
+    "region_frame",
+    "visual_review"
+  ]
 }
