@@ -242,7 +242,32 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
             "archived task packet is still listed as active/recently-complete in "
             f"task_packets/README.md: {rendered}"
         )
+    _summary_backlink_preflight(workstream_id, path, packets)
     return packets
+
+
+def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
+    """Require the durable closing summary to preserve packet authoring-chat provenance."""
+    summary = path / _expected_summary_filename(workstream_id)
+    expected_urls: list[str] = []
+    for packet in packets:
+        header = parse_packet(str(packet), packet.read_text())
+        chat = header.authoring_chat or header.refresh_planning_chat
+        if chat and chat not in {"not-recorded", "n/a"} and chat not in expected_urls:
+            expected_urls.append(chat)
+    if not expected_urls:
+        return
+    if not summary.is_file():
+        raise WorkstreamError(
+            f"finish summary backlink gate requires {summary.name} before teardown"
+        )
+    summary_text = summary.read_text()
+    missing = [url for url in expected_urls if f"Authoring chat: {url}" not in summary_text]
+    if missing:
+        raise WorkstreamError(
+            "finish summary backlink gate requires exact Authoring chat provenance in "
+            f"{summary.name}: " + ", ".join(missing)
+        )
 
 
 def _completion_truth_preflight(packets: list[Path]) -> None:

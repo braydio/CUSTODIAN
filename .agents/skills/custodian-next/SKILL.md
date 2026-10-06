@@ -16,6 +16,12 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
    - If the branch is `agent/<workstream-id>`, continue that workstream from its
      packet and current state. Do not claim another packet merely because one is
      available.
+   - If that active workstream is waiting on required/conditional Dropbox visual
+     review, return `HUMAN REVIEW REQUIRED <workstream>` with the exact recorded
+     Authoring chat URL and `REVIEW_MANIFEST.json` path. Do not fall through to
+     another claim. After the ChatGPT/user decision returns, continue the same
+     workstream, run the manifest cleanup command unless retention was explicit,
+     then close it normally.
    - If ownership is unclear, use
      `python3 custodian/tools/agent/dispatch.py last-claim --json` as read-only
      recovery evidence. The dispatch receipt, not terminal history, is claim authority.
@@ -49,6 +55,10 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
      ```
 
 5. **After a successful claim, trust the structured receipt.**
+   - Read `authoring_chat`, `visual_review`, `visual_review_root`, and
+     `visual_review_retention` from the receipt. These are the autonomous route to
+     the authoring conversation and Dropbox review lane when presentation review
+     is required.
    - Enter the returned worktree.
    - Read root `AGENTS.md`, `custodian/AGENTS.md`, and the returned task packet.
    - Treat the task packet as the complete brief. Do not ask the user to restate it.
@@ -61,5 +71,6 @@ Return one compact status:
 - `CLAIMED <workstream>` plus returned worktree when a claim succeeds;
 - `REFRESH REQUIRED <workstream>` plus the exact recorded chat URL when planning
   is the gate;
+- `HUMAN REVIEW REQUIRED <workstream>` plus exact Authoring chat and Dropbox manifest when the active workstream is waiting on subjective review;
 - `BLOCKED <reason>` when a named continuation cannot proceed;
 - `NO ELIGIBLE AUTO TASK` when the global dispatcher has no eligible work.

@@ -30,6 +30,8 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
 - Review target workstream: `<implementation-id>`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/<IMPLEMENTATION_NAME>.md`
 - Reviewed main: `<full or short main SHA being reviewed>`
+- Authoring chat: `<copy exact implementation Authoring chat URL | not-recorded | n/a>`
+- Visual review: `none | conditional | required`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent` | `same-agent-fresh-context`
 - Review modes: `<comma-separated: code, architecture, runtime, visual, asset-pipeline, workflow>`
@@ -84,8 +86,13 @@ REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
    `custodian/tools/iteration/publish_review_artifacts.py --important --reason ...`
    after the objective review is complete. Publish only the minimum ROI/contact
    sheet/keyframes needed, include exact reviewer questions, record the Dropbox
-   manifest path, and set the unresolved subjective decision to `human_required`.
-   Do not perform the aesthetic decision inside the coding/review agent.
+   manifest path, exact authoring-chat URL, and set the unresolved subjective decision to `human_required`.
+   The canonical review root is `/CUSTODIAN/visual_review/<workstream>/`; return the
+   exact manifest path to the recorded authoring chat so ChatGPT web can review it
+   through the connected Dropbox source. Do not perform the aesthetic decision inside
+   the coding/review agent. After the ChatGPT/user decision is recorded, resume this
+   same review workstream and run the manifest's emitted cleanup command unless the
+   manifest explicitly says `retain`.
 11. Separate implementation findings from pipeline/process findings. Record
    pipeline friction through `custodian.task_feedback.v1`; fix a small safe
    workflow issue in-scope or name a follow-up for repeatable medium/high
@@ -135,7 +142,11 @@ Do not auto-approve genuinely subjective choices such as visual baselines, art
 direction, game-feel tradeoffs not locked by design, or unresolved canon/design
 interpretation. For these, finish technical review, set the receipt to
 `human_required`, and identify the exact decision/evidence without guessing
-the user's preference. Objective technical defects in the same task still
+the user's preference. Surface the exact `Authoring chat:` URL and Dropbox
+`REVIEW_MANIFEST.json` path. Once that authoring chat records the decision,
+resume the same workstream, record the outcome durably, and delete the reviewed
+Dropbox run through `publish_review_artifacts.py --reviewed-manifest ...` unless
+explicit retention was requested. Objective technical defects in the same task still
 become corrections automatically.
 
 ## Handoff
