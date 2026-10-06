@@ -125,6 +125,14 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `archived/VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — completed P0 control-plane/tooling slice: claim receipts expose authoring/visual-review routing, finish enforces exact summary backlinks, Dropbox review manifests default to delete-after-review and carry a path-confined cleanup command, and `$custodian-next` keeps human review inside the active workstream.
 - `archived/REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — complete: paired review passed (0 blocking, 5 non-blocking deferred findings R0-01..R0-05).
 
+### Active Operator Workbench Preview Disconnect Ownership Correction
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+
+- `OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized bounded successor for exhausted-lineage finding R2-01. Adds exact Live Bridge connection/session ownership to Preview acceptance so disconnect or reconnect cannot revive a held result while last-known path/revision remain equal.
+- `REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review requiring real disconnect and same-document reconnect controls. Passing this review is now the direct gate for `operator-workbench-fx-layer-adoption`.
+- This is intentionally **not** automatic correction cycle 3 of the prior Browser/PREVIEW chain; the authoring chat supplied the required human decision.
+
 ### Active Persistent Checkout Sync Hardening
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
