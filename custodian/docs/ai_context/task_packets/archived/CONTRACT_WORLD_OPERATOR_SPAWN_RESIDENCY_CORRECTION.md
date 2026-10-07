@@ -61,11 +61,24 @@
 
 ## Handoff
 
-- Next workstream: `review-contract-world-operator-spawn-residency-correction`
+- Next workstream: `procgen-archive-resolve-frontier-restraint`
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: `none`
-- Next action: Claim and perform the paired fresh-context code/runtime review; then resume AR4 playtest only after review disposition.
+- Next action: Resume the AR4 frontier-restraint slice and its stated manual playtest now that the P0 paired review passed.
 - Blockers or open questions: none.
+
+## Independent Review
+
+- Outcome: `passed`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `78dee2c0fd939f5e245ca779a6095deb459739bd`
+- Review modes: `code, runtime`
+- Findings: `none`
+- Evidence: `contract_world_operator_spawn_residency and the 13 packet-named compatibility checks passed independently; readiness-seam disable and painted-floor-filter restoration mutations each failed the residency regression as required; git diff --check passed.`
+- Review conclusion: `canonical spawn authority stays independent of presentation residency; only the selected safe tile is realized through the existing lifecycle path before Operator, camera, and Archive Resolve handoff; genuine no-safe-cell failure remains fail-closed.`
+- Review summary: `REVIEW_CONTRACT_WORLD_OPERATOR_SPAWN_RESIDENCY_CORRECTION_CLAUDE_SUMMARY.md`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
