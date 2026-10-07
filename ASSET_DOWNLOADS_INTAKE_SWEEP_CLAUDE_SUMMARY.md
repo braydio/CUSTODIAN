@@ -59,6 +59,6 @@ Updated the current required-assets registry/projection, Awakening runtime inges
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
-- Refresh reason: the current Attestation/Reliquary ZIP does not match this packet's immutable hash, so the intake cannot complete yet.
-- Next action: obtain the exact A2 archive or explicitly refresh its packet authority, then resume this same workstream.
-- Blockers or open questions: current A2 SHA-256 is 82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4; expected 7192a7e2a2c291d5db11c70e5027fbeea9d5597e24d32a8033b428b6c3a9c4b3.
+- Refresh reason: the refreshed A2 package fails the required attestation_dais alpha-island threshold in source and normalized images.
+- Next action: obtain corrected dais art or authoritative replacement input through the originating planning conversation, then resume this same workstream.
+- Blockers or open questions: source satellite area is 1.0666%; normalized satellite area is 1.3971%; no A2 assets have been staged.
