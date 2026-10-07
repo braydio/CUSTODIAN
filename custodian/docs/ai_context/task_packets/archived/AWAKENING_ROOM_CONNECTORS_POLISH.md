@@ -104,7 +104,7 @@
 - Correction finding IDs: `none`
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
-- Detailed review summary: `AWAKENING_ROOM_CONNECTORS_POLISH_REVIEW_CLAUDE_SUMMARY.md`
+- Detailed review summary: `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH_CLAUDE_SUMMARY.md`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Reviewer independence: `The paired review ran from a newly claimed worktree and reconstructed the landed implementation from this archived implementation packet, source receipts, the live scene and layout, Asset V2 contracts, and fresh focused validation. The reviewed runtime implementation was not modified.`
 - Focused evidence: `Exact Dropbox hashes match; Dust and connector runtime files are byte-identical to source; Locker normalization and foreground deferral pass the asset contract; source contacts map within 0.003 world units of the fixed room anchors; gameplay A/B/C geometry is unchanged; Asset V2 doctor is healthy; Awakening scene, Designation Locker presentation, progression, geometry, and bidirectional traversal checks pass.`
