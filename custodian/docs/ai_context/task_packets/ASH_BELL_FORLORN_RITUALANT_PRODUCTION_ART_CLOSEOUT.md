@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ash-bell-forlorn-ritualant-production-art-closeout`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `review-ash-bell-ritualant-runtime-truth-closeout`
 - Locks: `asset-pipeline, ash-bell-art`
