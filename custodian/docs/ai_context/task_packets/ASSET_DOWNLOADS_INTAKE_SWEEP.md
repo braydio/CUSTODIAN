@@ -20,7 +20,7 @@
 - Branch: `agent/asset-downloads-intake-sweep`
 - Goal: `Consume every currently actionable, unimplemented production asset handoff under /CUSTODIAN/implementation_inputs without treating the Dropbox folder itself as runtime authority, publish all valid supplied states through their existing Asset V2 families, preserve source provenance, and leave already-landed, partial, superseded, smoke-test, or design-ambiguous payloads with their existing owners.`
 - Completion boundary: `Twenty-one supplied required Awakening states across five existing families are hash-verified, source-preserved, ingested through Asset V2, imported, and reflected in current status/catalog truth; any objectively contaminated PNG is corrected only by the bounded alpha-island rule below or fails closed; the Dropbox audit receipt truthfully classifies every current implementation_inputs entry; no duplicate Operator/Alpine work or speculative scene binding is introduced.`
-- Current measured state: `The retained implementation workstream is active on origin/agent/asset-downloads-intake-sweep at checkpoint 10e9ed5d96f387657db2e7faa67097e8d460e632, not yet landed on main. That checkpoint has successfully published 11/21 required states through Asset V2: Ambulatory 6/6, Dust Lung structures 4/4, and Undergate machinery 6/6; Attestation remains 0/7 and Reliquary 0/3. A1 and A3 package/per-file hashes, dimensions, RGBA/alpha, imports, Asset V2 status/doctor, focused status/requirements smokes, and git diff --check pass. A2 was correctly withheld because the packet's author-time outer ZIP hash predated the sole current Dropbox revision. This packet now refreshes A2 outer-archive authority to that sole current revision while retaining strict manifest/per-file/state-set validation before any extraction or publication.`
+- Current measured state: `The retained implementation workstream remains active at origin/agent/asset-downloads-intake-sweep checkpoint 4159753f4. A1 and A3 remain successfully published for 11/21 required states: Ambulatory 6/6, Dust Lung structures 4/4, Undergate machinery 6/6. Refreshed A2 provenance and package verification are now complete: the authorized ZIP SHA-256, intended manifest, exact ten-state membership, all 20 source/normalized file hashes, dimensions, RGBA/alpha contracts, and canonical target paths pass. Attestation is still 0/7 and Reliquary 0/3 only because the original generic <1% dais satellite-alpha rule proved slightly too conservative for the verified supplied extraction: source satellites are 848/79,506 nontransparent pixels = 1.0666%; normalized satellites are 204/14,602 = 1.3971%. No A2 files have been staged and the dais remains byte-identical to the package. This planning refresh authorizes the exact measured bounded cleanup below for this A2 revision only; it does not loosen the family-wide art gate.`
 - Evidence: `origin/agent/asset-downloads-intake-sweep checkpoint 10e9ed5d and ASSET_DOWNLOADS_INTAKE_SWEEP_CLAUDE_SUMMARY.md; Dropbox /CUSTODIAN/implementation_inputs/awakening_next10_required_fixtures_handoff_v1.zip file id id:8NXqdXuW6GUAAAAAAAABWQ, sole revision 65d22e7369f4c915cdd61, server modified 2026-10-06T02:39:09Z, size 4337769, Dropbox content hash e82d597365062adbde48b7ef4f62e34b07bfd55c1cc55efcea6142d8110fce90; current ZIP SHA-256 82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4; original packet commit 3cbf59bbe74109691eb55565fff27c262c4a761d authored 2026-10-05 before that Dropbox revision existed; existing Asset V2 family contracts and live asset CLI.`
 - Task-specific authority: `custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json; awakening_attestation_fixtures.asset.json; awakening_reliquary_fixtures.asset.json; awakening_dust_lung_structures.asset.json; awakening_undergate_machinery.asset.json; design/04_architecture/AWAKENING_ASSET_MANIFEST.md; live custodian/tools/assets/asset.py CLI.`
 - Work surface: `custodian/asset_drop/source_work/awakening/{awakening_ambulatory_fixtures,awakening_attestation_fixtures,awakening_reliquary_fixtures,awakening_dust_lung_structures,awakening_undergate_machinery}/; matching Asset V2 inbox/runtime/catalog/archive surfaces; current generated required-asset/status views; custodian/docs/ai_context/reports/assets/dropbox_unstaged_asset_intake.json.`
@@ -102,20 +102,30 @@ Use the package `MANIFEST.json` as exact source/inbox/hash authority.
 
 #### Bounded art-integrity correction: attestation_dais
 
-Visual preflight found a small disconnected edge fragment in the current supplied `attestation_dais` extraction.
+Visual preflight found disconnected edge/outside-principal alpha fragments in the supplied `attestation_dais` extraction. The original generic <1% cap was an author-time safety heuristic, not an art-direction requirement. The verified current A2 revision narrowly exceeds it while all package identity and state-set checks pass.
+
+**Authoritative one-revision exception (2026-10-07 planning refresh):**
+- Applies only to Dropbox A2 revision `65d22e7369f4c915cdd61`, outer ZIP SHA-256 `82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4`.
+- Source measurement must reproduce exactly one principal component of 78,658 nontransparent pixels plus satellite alpha totaling **no more than 848 pixels** (observed 848/79,506 = 1.0666%).
+- Normalized measurement must reproduce exactly one principal component of 14,398 nontransparent pixels plus satellite alpha totaling **no more than 204 pixels** (observed 204/14,602 = 1.3971%).
+- This is an exact measured ceiling, **not** a new generic 1.5% rule and not permission to accept additional islands.
 
 Before staging that state:
-1. compute connected components on the normalized PNG alpha mask;
-2. identify the principal authored component by alpha-pixel area;
-3. an automatic correction is allowed **only** when every satellite component is disconnected from the principal component, touches an outer image edge or sits wholly outside the principal component's expanded bounding region, and all satellites together are <1% of nontransparent alpha pixels;
-4. remove only those satellite alpha components, preserving RGB/alpha bytes of the principal component exactly;
-5. preserve the original supplied PNG as provenance and write a tiny correction receipt with before/after SHA-256 and component areas;
-6. apply the same objective island removal to the canonical source master only if its alpha segmentation proves the same condition.
+1. recompute 8-connected components on both supplied source and normalized PNG alpha masks;
+2. identify the principal component by alpha-pixel area;
+3. require every removed satellite to remain disconnected from the principal component and to touch an outer image edge or sit wholly outside the principal component's expanded bounding region;
+4. require the source and normalized counts to remain at or below the exact ceilings above; any additional component/pixel drift fails closed;
+5. remove **only** those qualifying satellite alpha components, preserving every RGBA byte belonging to the principal component exactly;
+6. preserve the original supplied source and normalized PNGs as immutable provenance;
+7. write a correction receipt containing package revision/hash, before/after SHA-256, image dimensions, component count, each component area + bounding box, removed-pixel totals/ratios, and proof that retained principal-component bytes are unchanged;
+8. apply the same objective island removal to the canonical source master only when its segmentation independently satisfies these exact source conditions;
+9. verify the corrected normalized image still matches the declared 256×192 RGBA runtime contract and then publish through the existing Asset V2 family normally.
 
-If those conditions do not hold, fail closed on `attestation_dais` and report the art blocker. Do not redraw or generatively repair it inside this workstream.
+If the recomputed topology does not match those measured conditions, if any satellite intersects/attaches to the principal authored object, or if correction requires repainting/inpainting/resampling, fail closed and return the exact discrepancy to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9. Do not redraw, generatively repair, or otherwise alter authored pixels inside this workstream.
 
 No other A2 state may be artistically modified by this packet.
 
+**Rationale:** the observed misses are only +0.0666 and +0.3971 percentage points above the original heuristic, while the package, ten-state membership, dimensions, alpha contracts, and per-file hashes are already verified. An exact pixel-count/topology exception is narrower and more reproducible than requesting replacement art or globally relaxing the gate.
 ### A3 — Dust Lung + Undergate Required Fixtures
 
 Remote:
@@ -243,4 +253,4 @@ Report:
 
 ## Next Handoff
 
-Resume this same retained workstream from checkpoint `10e9ed5d96f387657db2e7faa67097e8d460e632`, re-fetch/verify only A2 against the refreshed authority above, complete Attestation/Reliquary ingest + the bounded dais integrity check, rerun focused/changed-file closeout, then finish/land normally. After this packet lands, refresh the active Awakening scene/art-convergence work from current main. The next planning question is **visual reauthoring**, not more blind intake: compare older live/baked fixture and hero-prop art against the new Dust Lung/Undergate family language, preserve already-strong room plates/inlays/decals, and author replacement art only where the visual gain is real.
+Resume this same retained workstream from checkpoint `4159753f4`. After this packet lands, refresh the active Awakening scene/art-convergence work from current main. The next planning question is **visual reauthoring**, not more blind intake: compare older live/baked fixture and hero-prop art against the new Dust Lung/Undergate family language, preserve already-strong room plates/inlays/decals, and author replacement art only where the visual gain is real.

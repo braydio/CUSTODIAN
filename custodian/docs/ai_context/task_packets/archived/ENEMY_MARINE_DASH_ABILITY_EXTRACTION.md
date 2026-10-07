@@ -10,6 +10,7 @@
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
+- Independent review: `passed`
 - Review modes: `code, architecture, runtime, workflow`
 - Paired review workstream: `review-enemy-marine-dash-ability-extraction-recovery-1`
 - Review cycle: `0`
@@ -56,3 +57,19 @@
 - Tooling / docs drift discovered: The review-pairing contract did not represent planning-gated implementation/review pairs present on main; `grunt_falcon_reversal_smoke.gd` asserted a profile key that `_get_paired_execution_profile` never returns; `task_packet_index.py --write` still requires a Ready/Auto heading removed from the current README structure.
 - Follow-up: `fixed-in-scope`
 - What worked: Existing Marine behavior/parity evidence remained valid after sync; focused tests and the complete 23-check changed-file closeout now pass.
+
+## Independent Review
+
+- Review schema: `custodian.paired_review.v1`
+- Status: `passed`
+- Review workstream: `review-enemy-marine-dash-ability-extraction-recovery-1`
+- Reviewed main: `498469cd17acc459dc4458d29e914d7ed305eb60`
+- Reviewer provenance: `different-agent`; fresh workstream reconstructed the landed target from durable packet/code evidence.
+- Review modes: `code, architecture, runtime, workflow`
+- Findings: blocking `0`; material gaps `0`; nonblocking `1`; optional `0`.
+- Review disposition: Pass. The ability/config are the sole Marine Dash authority; exact 26-field defaults and Marine-scene tuning parity hold; old private phase helpers and duplicated actor phase state are absent; the public request seam serves the Sundered Keep ambush; and `enemy.gd` remains 343 lines below the measured baseline.
+- R0-01 (nonblocking, `next-slice`): Ownership prose remains stale in `design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md` under Measured Baseline and in `custodian/docs/ai_context/CONTEXT.md` lines 117–118. Refresh those statements during the NPA-2 planning refresh; no implementation correction packet is warranted.
+- Validation: current-main focused Marine smoke, spatial telemetry smoke, Sundered Keep ambush smoke, and `grunt_falcon_reversal` all pass. The archived implementation closeout records 23 selected checks, all passed with no skips. A historical replay with a symlinked import cache was invalid due missing imported assets and is not counted as a product failure; the current-main Falcon gate passes independently.
+- Review worktree had no implementation changes. No reviewed runtime or tuning files were edited.
+- Evidence limit: the historical closeout replay was not reproducible using a shared generated import cache; durable implementation closeout evidence plus current-main focused gates satisfy this review's proof requirements.
+- Next action: return this passed receipt to the authoring conversation for the required NPA-2 ownership/tuning/caller remeasurement and planning refresh. Keep NPA-2 blocked/manual until that refresh.

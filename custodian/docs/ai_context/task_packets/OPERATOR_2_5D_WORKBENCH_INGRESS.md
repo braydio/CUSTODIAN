@@ -19,7 +19,7 @@
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
 - Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Goal: From one missing 2.5D target leaf, let an artist choose NEW or IMPORT and reach an identity-bound editable Workbench without manual filenames, Source Session CLI choreography, or legacy-path risk; support one-direction intake and an eight-direction family package.
 - Completion boundary: Add guided intake orchestration over landed WB25-1 target identity. Native creation delegates to reviewed New Animation. External/generated PNGs delegate to SourceArtService and the existing publisher. Add resumable directional package manifests. Do not add network generation, pixel-polish automation, review sequencing, or runtime cutover.
@@ -96,7 +96,7 @@ The exact private wrapper may differ after WB25-1 lands; preserve this ownership
 
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh instruction: Bring WB25-1 implementation/review summaries and live generation-aware target/schema APIs back to this chat. Re-derive exact selection key, creation backend entrypoint, Source Session metadata extension, package fields, locks, and focused tests before ready.
 
 ## Handoff
@@ -105,7 +105,7 @@ The exact private wrapper may differ after WB25-1 lands; preserve this ownership
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: none after refresh/implementation
 - Next action: paired review
