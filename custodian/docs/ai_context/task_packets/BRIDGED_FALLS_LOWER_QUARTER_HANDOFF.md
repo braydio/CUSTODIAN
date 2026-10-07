@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `bridged-falls-lower-quarter-handoff`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-ritualant-north-egress-and-chapel-vista, review-bridged-falls-vista-waterfall-presentation`
 - Locks: `ash-bell-route-cutover, lower-quarter-entry`
