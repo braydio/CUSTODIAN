@@ -468,6 +468,75 @@ class WorkstreamTests(unittest.TestCase):
         workstream.finish(workstream_id, self._green_report(), repo=path)
         self.assertFalse(path.exists())
 
+    def _paired_review_packet(self, target: str, cycle: int, max_cycles: int = 2) -> str:
+        return (
+            "# Paired Review\n\n"
+            f"- Workstream: `review-{target}`\n"
+            "- Kind: `review`\n"
+            f"- Review target workstream: `{target}`\n"
+            "- Review target packet: `custodian/docs/ai_context/task_packets/archived/TARGET.md`\n"
+            f"- Review cycle: `{cycle}`\n"
+            f"- Max automatic review cycles: `{max_cycles}`\n"
+        )
+
+    def _correction_review_artifacts(self, correction: str) -> tuple[list[str], dict[str, str]]:
+        correction_path = f"custodian/docs/ai_context/task_packets/{correction.upper().replace('-', '_')}.md"
+        paired_path = f"custodian/docs/ai_context/task_packets/REVIEW_{correction.upper().replace('-', '_')}.md"
+        return [correction_path, paired_path], {
+            correction_path: f"- Workstream: `{correction}`\n- Findings addressed: `R1-02, R1-03`\n",
+        }
+
+    def test_paired_review_artifact_gate_allows_first_correction_cycle(self):
+        correction = "sample-review-corrections-1"
+        changed, contents = self._correction_review_artifacts(correction)
+        error = workstream.paired_review_artifact_scope_error(
+            "review-sample", Path("REVIEW_SAMPLE.md"), self._paired_review_packet("sample", 0), changed, contents,
+        )
+        self.assertIsNone(error)
+
+    def test_paired_review_artifact_gate_allows_next_correction_in_existing_lineage(self):
+        target = "sample-review-corrections-1"
+        correction = "sample-review-corrections-2"
+        changed, contents = self._correction_review_artifacts(correction)
+        error = workstream.paired_review_artifact_scope_error(
+            "review-sample-review-corrections-1", Path("REVIEW_SAMPLE_REVIEW_CORRECTIONS_1.md"),
+            self._paired_review_packet(target, 1), changed, contents,
+        )
+        self.assertIsNone(error)
+
+    def test_paired_review_artifact_gate_rejects_nested_or_out_of_cycle_corrections(self):
+        target = "sample-review-corrections-1"
+        nested = "sample-review-corrections-1-review-corrections-2"
+        changed, contents = self._correction_review_artifacts(nested)
+        error = workstream.paired_review_artifact_scope_error(
+            "review-sample-review-corrections-1", Path("REVIEW_SAMPLE_REVIEW_CORRECTIONS_1.md"),
+            self._paired_review_packet(target, 1), changed, contents,
+        )
+        self.assertIn("unauthorized change", error or "")
+
+    def test_paired_review_artifact_gate_rejects_nested_target_and_cycle_mismatch(self):
+        nested_target = "sample-review-corrections-1-review-corrections-2"
+        error = workstream.paired_review_artifact_scope_error(
+            "review-nested", Path("REVIEW_NESTED.md"),
+            self._paired_review_packet(nested_target, 2), [], {},
+        )
+        self.assertIn("nested target lineage", error or "")
+
+        mismatch_target = "sample-review-corrections-1"
+        error = workstream.paired_review_artifact_scope_error(
+            "review-mismatch", Path("REVIEW_MISMATCH.md"),
+            self._paired_review_packet(mismatch_target, 0), [], {},
+        )
+        self.assertIn("cycle does not match target lineage", error or "")
+
+    def test_paired_review_artifact_gate_rejects_corrections_after_cycle_limit(self):
+        changed, contents = self._correction_review_artifacts("sample-review-corrections-3")
+        error = workstream.paired_review_artifact_scope_error(
+            "review-sample-review-corrections-2", Path("REVIEW_SAMPLE_REVIEW_CORRECTIONS_2.md"),
+            self._paired_review_packet("sample-review-corrections-2", 2), changed, contents,
+        )
+        self.assertIn("maximum correction cycle", error or "")
+
 
 if __name__ == "__main__":
     unittest.main()
