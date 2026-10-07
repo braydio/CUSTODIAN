@@ -69,6 +69,37 @@ Start with `proc_gen_tilemap.gd` road state declarations and the road blocks aro
 - Tooling / docs drift discovered: `The test manifest selected a stale compound smoke fixture; the completion-truth parser is stricter than its prose example suggests.`
 - Follow-up: `fixed-in-scope`
 
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-procgen-road-authority-extraction`
+- Reviewed on main: `57e546c55e64d3af48bef5c0b6a551952b10235a`
+- Review modes: `code, architecture, runtime`
+- Reviewer provenance: `different-agent` (D1 implemented by codex; reviewed by claude in a fresh context)
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `2`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01, R0-02`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_PROCGEN_ROAD_AUTHORITY_EXTRACTION_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+### Findings
+
+- **R0-01** — class: `non_blocking_issue`; domain: `validation`; affected acceptance: Acceptance items 1-2 (single owner / no stale canonical state).
+  - Evidence: mutation probe — making `_prune_small_edge_road_components()` skip `_road_authority.clear_generated_road_tiles(tile)` left `procgen_road_authority_smoke`, `procgen_road_surface_roles_smoke` and the rest of the focused set green. The owner-level smoke proves `edge_prune_plan` and the clear separately but nothing drives the façade's application of a prune plan with real pruned tiles; production roads are disabled and the opt-in seed 420777 run prunes nothing.
+  - Why non-blocking: no production reach (wide roads disabled, no road state to prune), behavior is unchanged from pre-D1, and every enumerated acceptance item has direct passing evidence.
+  - Disposition: `next_slice` — add a façade-level prune-application probe (seeded edge fragment, assert owner state and decals cleared).
+
+- **R0-02** — class: `non_blocking_issue`; domain: `architecture`; affected acceptance: Acceptance item 2 (no mutable mirrors).
+  - Evidence: `ProcgenRoadAuthority` state is public vars; `ProcGenTilemap` reads them by live reference in ~60 places and passes them by reference into pre-terrain/surface contexts (`road_cells`, `parking_cells`, `compound_connector_centerline_tiles`). No code mutates through them (grep for writes outside the owner's methods is empty), so single-owner holds, but nothing enforces it.
+  - Disposition: `next_slice` — expose read-only accessors/snapshots when the GenerationGrid work touches these contexts.
+
+### Verified acceptance
+Owner holds all nine canonical state fields and no façade backing field remains (1); no mirror or direct write (2); getters delegate (3); `procgen_road_surface_roles_smoke` seed 420777 matches D1's recorded baseline exactly — 1,372 roads, 63 parking, 1,372 decals (5); authored-scene authority, compound road/wall, M6 distant-chunk-unload, candidate-materializer parity and S1 quick (`determinism_ok`) all pass (4, 6-8); Road Semantics V2 smoke passes and the resolver is untouched (9). Mutation A (re-adding a legacy façade field) is detected by the owner smoke.
+
 ## Handoff
 
 - Next workstream: `review-procgen-road-authority-extraction`
