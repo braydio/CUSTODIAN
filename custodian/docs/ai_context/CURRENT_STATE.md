@@ -935,9 +935,12 @@ not mark production seen, completed Bell/Thread/Orra beats close to gameplay,
 and repeat topics use short recaps. Completed first contact plus all three core
 topics unlocks the Stilling Pin; taking it disables basin INSPECT and leaves
 `SET STILLING PIN` as the sole basin action. That action requires the upstream
-White Thread Knot and directly runs apparition/procession, final three-beat
-stabilization, and dissolution without the prior hidden stand timer. Unseen
-departure produces no Ritualant speech.
+White Thread Knot and is intended to directly run apparition/procession, final three-beat
+stabilization, and dissolution with no hidden stand timer. **Live runtime drift remains:**
+`forlorn_ritualant_site.gd` still carries the legacy `fountain_stabilize_seconds = 4.5`
+passive stabilization path; `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` is the
+ready correction that removes it and adds the negative regression. Unseen departure
+produces no Ritualant speech.
 
 ## Ritualant Mapper-Backed Arena Re-authoring (2026-08-29)
 
