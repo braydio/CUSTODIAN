@@ -7,6 +7,12 @@
 
 ---
 
+## Active recovery program
+
+- Implementation roadmap: `design/02_features/vehicles/VEHICLE_RECOVERY_IMPLEMENTATION_ROADMAP.md`
+- Reverse-engineering authority: `design/02_features/vehicles/VEHICLE_RECOVERY_REVERSE_ENGINEERING.md`
+- Production-art contract: `design/02_features/vehicles/VEHICLE_RECOVERY_ART_MANIFEST.md`
+
 ## 1. Purpose
 
 Scalable **Vehicle Registry System** supporting `Faction -> Domain -> Chassis -> Role -> Variant -> Loadout`, shipping the first production pilotable vehicle without one-off controller hacks.
