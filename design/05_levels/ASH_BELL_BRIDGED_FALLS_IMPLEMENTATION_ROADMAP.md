@@ -25,12 +25,12 @@ Seven implementation packets follow.
 | --- | --- | --- | --- |
 | BF0 | design lock / roadmap | landing now | none |
 | BF1 | `bridged-falls-generated-region-lifecycle` | ready | none |
-| BF2 | `ash-bell-highlands-generated-destination` | draft | BF1 |
-| BF3 | `ritualant-north-egress-and-chapel-vista` | draft | BF1, BF2 |
-| BF4 | `bridged-falls-procgen-topology` | draft | BF2 |
-| BF5 | `bridged-falls-bridge-grammar-asset-v2` | draft | BF4 |
-| BF6 | `bridged-falls-vista-waterfall-presentation` | draft | BF4, BF5 |
-| BF7 | `bridged-falls-lower-quarter-handoff` | draft | BF3, BF4, BF5, BF6 |
+| BF2 | `ash-bell-highlands-generated-destination` | draft | BF1 review |
+| BF3 | `ritualant-north-egress-and-chapel-vista` | draft | BF2 review |
+| BF4 | `bridged-falls-procgen-topology` | draft | BF2 review |
+| BF5 | `bridged-falls-bridge-grammar-asset-v2` | draft | BF4 review |
+| BF6 | `bridged-falls-vista-waterfall-presentation` | draft | BF5 review |
+| BF7 | `bridged-falls-lower-quarter-handoff` | draft | BF3 review + BF6 review |
 
 Assumption used while drafting downstream packets: every listed predecessor
 lands cleanly and satisfies its own acceptance contract. Later packets with
