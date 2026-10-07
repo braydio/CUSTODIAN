@@ -12,7 +12,7 @@
 - Series: `operator-workbench-ux-hierarchy-v1`
 - Workstream: `operator-workbench-ux-state-hierarchy`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-operator-workbench-fx-layer-adoption`
 - Locks: `operator-workbench-ui`
