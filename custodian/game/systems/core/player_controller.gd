@@ -12,9 +12,7 @@ class_name PlayerController
 const VehicleInputAdapter = preload("res://game/vehicles/vehicle_input_adapter.gd")
 
 var operator: Node = null
-var current_vehicle: Node = null
-var controlled_vehicle: Node = null
-var is_in_vehicle: bool = false
+var current_vehicle: PilotableVehicle = null
 
 
 func _ready() -> void:
@@ -38,7 +36,7 @@ func _physics_process(delta: float) -> void:
 		_handle_interaction()
 	
 	# Route input to current controller
-	if is_in_vehicle and current_vehicle:
+	if is_instance_valid(current_vehicle):
 		_route_vehicle_input(delta)
 	else:
 		# Operator handles its own input natively
@@ -47,7 +45,7 @@ func _physics_process(delta: float) -> void:
 
 ## Handle interaction (enter/exit vehicle).
 func _handle_interaction() -> void:
-	if is_in_vehicle and current_vehicle:
+	if is_instance_valid(current_vehicle):
 		exit_vehicle()
 	else:
 		try_enter_nearby_vehicle()
@@ -55,7 +53,7 @@ func _handle_interaction() -> void:
 
 ## Check for nearby vehicle and enter if possible.
 func try_enter_nearby_vehicle() -> void:
-	if not operator or is_in_vehicle:
+	if operator == null or is_instance_valid(current_vehicle):
 		return
 	
 	var nearby = _find_nearby_vehicle()
@@ -64,67 +62,38 @@ func try_enter_nearby_vehicle() -> void:
 
 
 ## Enter the specified vehicle.
-func enter_vehicle(vehicle: Node) -> void:
-	if is_in_vehicle or not vehicle:
-		return
-
-	var entered := false
-	if vehicle.has_method("enter_vehicle"):
-		entered = bool(vehicle.call("enter_vehicle", operator))
-	elif vehicle.has_method("enter"):
-		vehicle.call("enter", operator)
-		entered = true
-
-	if not entered:
-		return
-
+func enter_vehicle(vehicle: PilotableVehicle) -> bool:
+	if operator == null or is_instance_valid(current_vehicle) or not is_instance_valid(vehicle):
+		return false
+	if not vehicle.enter_vehicle(operator):
+		return false
 	current_vehicle = vehicle
-	controlled_vehicle = vehicle
-	is_in_vehicle = true
+	if not vehicle.pilot_released.is_connected(_on_vehicle_pilot_released):
+		vehicle.pilot_released.connect(_on_vehicle_pilot_released, CONNECT_ONE_SHOT)
 	_set_camera_follow_target(vehicle)
-	
 	print("Entered vehicle: ", vehicle.name)
+	return true
 
 
 ## Exit the current vehicle.
-func exit_vehicle() -> void:
-	if not is_in_vehicle or not current_vehicle:
-		return
-
-	var exited := false
-	if current_vehicle.has_method("exit_vehicle"):
-		exited = bool(current_vehicle.call("exit_vehicle"))
-	elif current_vehicle.has_method("exit"):
-		var exit_pos: Vector2 = current_vehicle.call("exit")
-		if operator:
-			operator.global_position = exit_pos
-			if operator.has_method("set_visible"):
-				operator.set_visible(true)
-		exited = true
-
-	if not exited:
-		return
-
-	# Clear vehicle reference
-	current_vehicle = null
-	controlled_vehicle = null
-	is_in_vehicle = false
-	_set_camera_follow_target(operator)
-	
+func exit_vehicle() -> bool:
+	if not is_instance_valid(current_vehicle):
+		current_vehicle = null
+		return false
+	var vehicle := current_vehicle
+	if not vehicle.exit_vehicle():
+		return false
 	print("Exited vehicle")
+	return true
 
 
 ## Route input to vehicle (called each frame when in vehicle).
 func _route_vehicle_input(delta: float) -> void:
-	if not current_vehicle:
+	if not is_instance_valid(current_vehicle):
 		return
-	
 	var input_dir := VehicleInputAdapter.read_movement_vector()
 	var actions := VehicleInputAdapter.read_actions()
-	if current_vehicle.has_method("route_vehicle_input"):
-		current_vehicle.call("route_vehicle_input", input_dir, actions, delta)
-	elif current_vehicle.has_method("process_input"):
-		current_vehicle.call("process_input", input_dir, _get_aim_input(), bool(actions.get("primary", false)))
+	current_vehicle.route_vehicle_input(input_dir, actions, delta)
 
 
 ## Find nearest vehicle within range.
@@ -136,19 +105,13 @@ func _find_nearby_vehicle() -> Node:
 	var nearest: Node = null
 	var nearest_dist: float = range
 	
-	var candidates: Array[Node] = []
-	candidates.append_array(get_tree().get_nodes_in_group("pilotable_vehicles"))
-	candidates.append_array(get_tree().get_nodes_in_group("vehicle"))
-	for node in candidates:
-		if node == null or not (node is Node2D):
+	for vehicle in _get_nearby_vehicle_candidates():
+		if not _vehicle_can_be_entered(vehicle):
 			continue
-		if not _vehicle_can_be_entered(node):
-			continue
-		
-		var dist = operator.global_position.distance_to(node.global_position)
+		var dist = operator.global_position.distance_to(vehicle.global_position)
 		if dist < nearest_dist:
 			nearest_dist = dist
-			nearest = node
+			nearest = vehicle
 	
 	return nearest
 
@@ -191,31 +154,17 @@ func _get_camera():
 
 ## Check if currently in vehicle.
 func is_vehicle_mode() -> bool:
-	return is_in_vehicle
+	return is_instance_valid(current_vehicle)
 
 
 ## Get current vehicle for HUD.
 func get_current_vehicle() -> Node:
-	return current_vehicle
-
-
-## Handle vehicle destruction while occupied.
-func on_vehicle_destroyed() -> void:
-	if is_in_vehicle and current_vehicle:
-		# Exit at current position
-		if operator:
-			if operator.has_method("set_visible"):
-				operator.set_visible(true)
-		current_vehicle = null
-		controlled_vehicle = null
-		is_in_vehicle = false
-		_set_camera_follow_target(operator)
-		print("Vehicle destroyed - ejected")
+	return current_vehicle if is_instance_valid(current_vehicle) else null
 
 
 ## Show interaction prompt for nearby vehicle.
 func get_interaction_prompt() -> String:
-	if is_in_vehicle:
+	if is_instance_valid(current_vehicle):
 		if current_vehicle and current_vehicle.has_method("get_interaction_prompt"):
 			return String(current_vehicle.call("get_interaction_prompt"))
 		return "PRESS %s TO EXIT" % _get_action_prompt_key(&"interact", "INTERACT")
@@ -229,7 +178,7 @@ func get_interaction_prompt() -> String:
 
 ## Check if can show interaction prompt.
 func should_show_prompt() -> bool:
-	if is_in_vehicle:
+	if is_instance_valid(current_vehicle):
 		return true
 	
 	var nearby = _find_nearby_vehicle()
@@ -237,13 +186,33 @@ func should_show_prompt() -> bool:
 
 
 func _vehicle_can_be_entered(vehicle: Node) -> bool:
-	if vehicle == null:
-		return false
-	if vehicle.has_method("can_enter"):
-		return bool(vehicle.call("can_enter", operator))
-	if vehicle.has_method("can_be_entered"):
-		return bool(vehicle.call("can_be_entered"))
-	return false
+	return vehicle is PilotableVehicle and (vehicle as PilotableVehicle).can_enter(operator)
+
+
+func _get_nearby_vehicle_candidates() -> Array[PilotableVehicle]:
+	var unique: Array[PilotableVehicle] = []
+	var seen_instance_ids: Dictionary = {}
+	if get_tree() == null:
+		return unique
+	for group_name in [&"pilotable_vehicles", &"vehicle"]:
+		for node in get_tree().get_nodes_in_group(group_name):
+			if not (node is PilotableVehicle) or not is_instance_valid(node):
+				continue
+			var instance_id := node.get_instance_id()
+			if seen_instance_ids.has(instance_id):
+				continue
+			seen_instance_ids[instance_id] = true
+			unique.append(node as PilotableVehicle)
+	return unique
+
+
+func _on_vehicle_pilot_released(
+	vehicle: PilotableVehicle, actor: Node, _reason: StringName
+) -> void:
+	if current_vehicle != vehicle or actor != operator:
+		return
+	current_vehicle = null
+	_set_camera_follow_target(operator)
 
 
 func _set_camera_follow_target(target: Node) -> void:

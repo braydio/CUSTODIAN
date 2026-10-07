@@ -13,7 +13,12 @@
     "tmp/**",
     "custodian/.godot/**",
     "**/*.import",
-    "**/*.uid"
+    "**/*.uid",
+    "custodian/game/actors/base/controllable_actor.gd",
+    "custodian/game/actors/base/light_buggy.tscn.txt",
+    "custodian/game/actors/base/vehicle_base.gd",
+    "custodian/game/actors/base/vehicle_interaction.gd",
+    "scripts/repomix-elevation.sh"
   ],
   "tests": [
     {
@@ -3737,7 +3742,26 @@
         "custodian/tools/validation/vehicle_exit_clearance_smoke.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
+    },
+    {
+      "id": "vehicle_runtime_lifecycle",
+      "type": "godot_script",
+      "script": "res://tools/validation/vehicle_runtime_lifecycle_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "vehicle",
+        "lifecycle",
+        "damage",
+        "player-control"
+      ],
+      "owners": [
+        "custodian/game/vehicles/pilotable_vehicle.gd",
+        "custodian/game/systems/core/player_controller.gd",
+        "custodian/tools/validation/vehicle_runtime_lifecycle_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
     },
     {
       "id": "wave_manager_debug_grunt_spawn_gate",

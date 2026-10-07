@@ -1,5 +1,7 @@
 # Vehicle Registry + Pilotable Vehicle System — Persistent Design Doc
 
+> **Historical review/design draft.** This document predates the consolidated vehicle contract. Current authority is [`VEHICLES.md`](VEHICLES.md), with active vehicle-series work in [`FIELD_SCOUT_BUGGY_MK1.md`](FIELD_SCOUT_BUGGY_MK1.md). Production lifecycle authority is `PilotableVehicle`.
+
 **Status:** persistent / canonical design document  
 **Implementation tracked in:** `design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`  
 **Last Updated:** 2026-05-27

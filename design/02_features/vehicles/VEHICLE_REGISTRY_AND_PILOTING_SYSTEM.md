@@ -1,5 +1,7 @@
 # Vehicle Registry + Pilotable Vehicle System — Implementation Tracking
 
+> **Superseded authority notice (2026-10-07).** This document is retained for registry history. Current vehicle-system behavior and implementation authority live in [`VEHICLES.md`](VEHICLES.md); lifecycle closure and remaining Field Scout work are tracked in [`FIELD_SCOUT_BUGGY_MK1.md`](FIELD_SCOUT_BUGGY_MK1.md). `PilotableVehicle` is the sole production lifecycle authority.
+
 **Status:** in_progress  
 **Priority:** high — first pilotable vehicle moving into production  
 **Persistent design doc:** `design/VEHICLES_REVIEW.md`  

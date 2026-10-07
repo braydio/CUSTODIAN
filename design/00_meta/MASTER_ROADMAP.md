@@ -379,7 +379,7 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 and AP1 are complete/l
 | Feature | Status | Priority |
 |---------|--------|----------|
 | ControllableActor interface | design | P0 |
-| VehicleBase class | design | P0 |
+| PilotableVehicle lifecycle authority | complete | P0 |
 | Player controller routing | design | P0 |
 | Enter/exit mechanics | design | P0 |
 | Light Hover Buggy archetype | design | P1 |

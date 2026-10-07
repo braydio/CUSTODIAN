@@ -646,7 +646,8 @@ Last updated: 2026-10-02
 - `custodian/game/vehicles/vehicle_definition.gd` — vehicle archetype data loader, display-name generator, tag/mobility helpers, and core definition validation for registry-backed vehicles
 - `custodian/game/vehicles/vehicle_registry.gd` — registry store for `res://content/vehicles/vehicle_archetypes.json`, including ID lookup and faction/domain/chassis/role/tier/pilotable queries
 - `custodian/game/vehicles/vehicle_spawn_resolver.gd` — registry ID to live scene resolver; validates runtime support, instantiates scenes, applies definitions, and assigns vehicle groups
-- `custodian/game/vehicles/pilotable_vehicle.gd` — pilotable `CharacterBody2D` base that owns vehicle movement response, enter/exit state, terrain multiplier lookup with `actor_kind = "vehicle"`, pilot visibility/collision handoff, and interaction prompts
+- `custodian/game/vehicles/pilotable_vehicle.gd` — sole pilotable vehicle lifecycle authority for movement, damage/destruction, disable/teardown release, pilot property restoration, terrain multipliers, and interaction prompts
+- `custodian/tools/validation/vehicle_runtime_lifecycle_smoke.gd` — focused occupied disable/destruction/teardown and blocked-exit smoke, including pilot restoration, controller/camera handoff, and duplicate group discovery
 - `custodian/game/vehicles/vehicle_input_adapter.gd` — guarded InputMap reader used by `PlayerController` for vehicle movement/action intent
 - `custodian/game/vehicles/vehicle_seat.gd` — small seat/entry bridge used by pilotable vehicle scenes
 - `custodian/game/vehicles/scenes/pilotable_vehicle_base.tscn` — reusable base scene layout for registry-backed pilotable vehicles
@@ -889,9 +890,8 @@ Last updated: 2026-10-02
 ## Active Interaction/UI Files
 
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
-- `custodian/game/actors/base/vehicle_base.gd` — legacy/compatibility vehicle base retained for older scenes and references
 - `custodian/game/actors/vehicles/light_buggy.tscn` — first production vehicle scene, now backed by `PilotableVehicle` and registry ID `custodian_ground_buggy_scout_light`
-- `custodian/game/systems/core/player_controller.gd` — input router for Operator vs vehicle control, including guarded vehicle actions and camera follow-target handoff
+- `custodian/game/systems/core/player_controller.gd` — input router with one canonical pilotable-vehicle reference, deduplicated group discovery, and signal-owned camera handoff
 - `custodian/game/world/camera.gd` — world camera controller with `set_follow_target(target)` for Operator/vehicle follow switching, map-bound clamping, manual middle-mouse panning, movement-input recovery, and optional final post-bounds presentation-subject safe-frame containment
 - `custodian/tools/validation/camera_presentation_subject_constraint_smoke.gd` — focused rendered-viewport smoke for generic presentation-subject containment, telemetry, and clear behavior
 - `custodian/game/actors/terminal/command_terminal.gd` — in-world `command_terminal` prop interaction and activation/deactivation animation, with fallback compatibility to the older `computer_terminal` sheets and the authored `builder_terminal` pickup/deploy sheet

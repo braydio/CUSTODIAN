@@ -3,7 +3,8 @@ class_name ControllableActor
 ## Shared interface for player operator and vehicles.
 ## Enables unified control handoff system.
 ##
-## Both the Operator and VehicleBase classes should extend this interface
+## The Operator extends this interface. PilotableVehicle has its own lifecycle
+## and movement authority; PlayerController routes through its typed reference.
 ## to allow the PlayerController to route input seamlessly between them.
 ##
 ## Usage:

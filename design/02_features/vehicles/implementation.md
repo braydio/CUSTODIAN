@@ -1,5 +1,7 @@
 # Vehicles Implementation Plan
 
+> **Superseded implementation draft.** This historical plan predates the registry-backed Godot runtime and is not implementation authority. Use [`VEHICLES.md`](VEHICLES.md) for the current vehicle system contract and [`FIELD_SCOUT_BUGGY_MK1.md`](FIELD_SCOUT_BUGGY_MK1.md) for the active production vehicle series. Production control is owned by `PilotableVehicle`; `ControllableActor` remains the Operator interface.
+
 **Project:** CUSTODIAN  
 **Created:** 2026-04-05  
 **Status:** draft (Phase 1 implemented)  

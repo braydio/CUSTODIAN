@@ -1,5 +1,7 @@
 # Vehicle Registry + Pilotable Vehicle — Implementation Notes
 
+> **Historical implementation notes.** This checklist is retained as implementation history. Use [`VEHICLES.md`](VEHICLES.md) and [`FIELD_SCOUT_BUGGY_MK1.md`](FIELD_SCOUT_BUGGY_MK1.md) for current authority; `PilotableVehicle` is the production lifecycle owner.
+
 **Source spec:** `design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md`
 **Status:** review → complete (update after validation)
 

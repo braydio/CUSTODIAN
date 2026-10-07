@@ -192,10 +192,8 @@ This is migration evidence, not the wheeled class art contract.
 
 ## Known live defects this series closes
 
-- `PilotableVehicle.disable_vehicle()` can strand an occupied pilot by switching to DISABLED before pilot restoration.
-- The production destruction callback path is not owned end-to-end by `PilotableVehicle`.
-- PlayerController keeps duplicate vehicle references and overlapping-group discovery.
-- Old `VehicleBase` behavior survives as compatibility/history residue.
+Lifecycle V1 closes the occupied-disable/destruction/teardown stranding path, centralizes the production damage-to-zero transition in `PilotableVehicle`, consolidates PlayerController ownership and group discovery, and removes the unused parallel `VehicleBase` behavior. The following Field Scout series defects remain live:
+
 - WHEELED/Scout taxonomy points at hover-buggy presentation.
 - `update_vehicle_runtime_resources.gd` is hard-coded to `hover_buggy`.
 - Required-assets entries target nonexistent `light_buggy/runtime` paths while live compatibility art is under `hover_buggy/runtime`.

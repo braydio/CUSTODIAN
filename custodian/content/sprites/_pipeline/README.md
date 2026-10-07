@@ -256,7 +256,7 @@ hover_buggy__body__idle_loop__omni__6f__256.png
 hover_buggy__body__move__e__6f__256.png
 ```
 
-`VehicleBase` currently consumes the animation names `idle`, `idle_start`, `idle_loop`, and `move`, so those action names are the safest inbox targets for hover buggy replacements.
+`PilotableVehicle` currently consumes the animation names `idle`, `idle_start`, `idle_loop`, and `move`, so those action names are the safest inbox targets for hover buggy replacements.
 
 ## Automation
 

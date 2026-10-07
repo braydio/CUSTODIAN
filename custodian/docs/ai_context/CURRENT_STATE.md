@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
+
+`PilotableVehicle` is the sole production vehicle lifecycle owner. Ordinary exits
+remain blocked when no clear reachable location exists; disable, destruction, and
+tree teardown force release through the same pilot-state restoration and emit one
+release signal. `take_damage()` clamps health at zero and triggers destruction; a
+disabled or zero-health vehicle cannot accept entry or movement. `PlayerController`
+holds one canonical vehicle reference, listens for release to clear ownership and
+restore camera follow, and deduplicates overlapping vehicle groups. The unused
+`VehicleBase`/`VehicleInteraction` scripts and text scene template were removed.
+Focused coverage is registered as `vehicle_runtime_lifecycle`; see
+`VALIDATION_RECIPES.md` for commands.
+
 ## Operator Dependency Injection F0 (2026-10-05)
 
 `OperatorRuntimeDependencies` is now the facade's explicit typed reference bundle.

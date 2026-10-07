@@ -1786,3 +1786,18 @@ static-wall termination, one-hit contact and defense outcomes, stable spatial
 attack IDs/terminals, and production-map ambush staging/request/restore. The
 registered changed-file closeout runs the focused owners selected by the live
 validation manifest.
+
+
+## Vehicle Runtime Lifecycle
+
+Run the focused lifecycle and safe-exit contracts, plus registry validation:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test vehicle_runtime_lifecycle --json
+python3 custodian/tools/validation/run_validation.py --test vehicle_exit_clearance --json
+godot --headless --path custodian --script res://tools/validation/validate_vehicle_registry.gd
+```
+
+The lifecycle smoke covers occupied disable, lethal damage/destruction, tree teardown,
+blocked ordinary exit and recovery, exact pilot property restoration, single camera/controller
+release, and deduplicated nearby discovery. Finish with `run_validation.py --changed --json`.

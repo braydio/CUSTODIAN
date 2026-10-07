@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vehicle-runtime-lifecycle-hardening-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -41,5 +41,38 @@
 - Authoring chat: `not-recorded`
 - Summary backlink: `n/a`
 - Refresh reason: `none`
-- Next action: Finish normally so paired fresh-context review can verify lifecycle closure.
+- Next action: Claim `review-vehicle-runtime-lifecycle-hardening-v1` after this implementation lands; perform the paired fresh-context review.
+- Blockers or open questions: `none`
+
+## Completion Truth
+
+- Outcome: `complete`
+- Landed behavior: `PilotableVehicle` owns entry/exit, damage-to-zero, disabled/destroyed release, and teardown release; a single snapshot restoration path restores actor visibility, collision, and processing state. Blocked ordinary exit retains occupancy. PlayerController owns one canonical typed vehicle reference, listens for release to restore camera/control once, and deduplicates overlapping groups.
+- Legacy disposition: Removed unused `VehicleBase`, `VehicleInteraction`, their UID sidecars, and the unreferenced text LightBuggy template after live runtime search found no consumers. Updated current design/context references; historical specs are clearly marked as superseded/history.
+- Focused coverage: `custodian/tools/validation/vehicle_runtime_lifecycle_smoke.gd`, registered as `vehicle_runtime_lifecycle`.
+- Validation: `vehicle_runtime_lifecycle` PASS; `vehicle_exit_clearance` PASS; `validate_vehicle_registry.gd` PASS; changed-file closeout PASS (13 selected, 13 passed, complete coverage); `bash -n scripts/repomix-elevation.sh` PASS; `git diff --check` PASS.
+- Known expected test output: The lifecycle and safe-exit smokes intentionally exercise blocked exits and therefore log `no valid exit position`; both then assert the expected safe state.
+- Deferred: Field Scout taxonomy/presentation and Asset V2 work remain with their successor packets; no art or handling tuning changed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The first changed-file sweep correctly reported incomplete coverage for removed legacy files and doc/tool-only edits. Explicit coverage exclusions were added for those non-runtime inputs and the complete 13-test changed-file sweep then passed. The expected blocked-exit warning remains visible in test output.`
+- Root cause / contributing factors: `The validator's default changed-file contract requires runtime owners; deleted compatibility files and a packaging-script path update have no runtime test owner.`
+- Prevention / pipeline improvement: `Classify non-runtime/deleted paths explicitly in coverage_excludes when a task removes compatibility surfaces; retain runtime owners for behavior changes.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `A focused production-script smoke exercised disable, lethal damage, blocked-exit recovery, teardown, state restoration, group de-duplication, and camera/controller signal handoff.`
+
+## Next Handoff
+
+- Next workstream: `review-vehicle-runtime-lifecycle-hardening-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: `After landing, claim the paired review packet and independently verify the lifecycle and runtime evidence from a fresh context.`
 - Blockers or open questions: `none`

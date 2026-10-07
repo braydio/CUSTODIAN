@@ -1,6 +1,11 @@
 class_name PilotableVehicle
 extends CharacterBody2D
 
+signal pilot_released(vehicle: PilotableVehicle, actor: Node, reason: StringName)
+signal vehicle_disabled(reason: String)
+signal vehicle_destroyed
+signal health_changed(current: float, maximum: float)
+
 const VehicleDefinitionScript = preload("res://game/vehicles/vehicle_definition.gd")
 
 enum ControlState { UNOCCUPIED, ENTERING, PILOTED, EXITING, DISABLED }
@@ -36,12 +41,14 @@ var movement_profile: Dictionary = {}
 var current_speed := 0.0
 var facing_direction := Vector2.DOWN
 var disabled_reason: String = ""
+var is_destroyed := false
 
 @onready var animated_sprite: AnimatedSprite2D = get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 @onready var exit_marker: Node2D = get_node_or_null("ExitMarker") as Node2D
 
 var _pilot_collision_layer := 0
 var _pilot_collision_mask := 0
+var _pilot_state_snapshot: Dictionary = {}
 var _pilot_entry_global_position := Vector2.INF
 var _last_exit_candidate_count := 0
 var _last_exit_used_emergency_fallback := false
@@ -91,6 +98,7 @@ func enter_vehicle(actor: Node) -> bool:
 		return false
 	control_state = ControlState.ENTERING
 	pilot = actor
+	_pilot_state_snapshot = _capture_pilot_state(actor)
 	if actor is Node2D:
 		_pilot_entry_global_position = (actor as Node2D).global_position
 	_obs_increment(&"vehicle_entered")
@@ -141,34 +149,7 @@ func exit_vehicle() -> bool:
 			"failure_reason": "no_safe_position",
 		})
 		return false
-	if pilot is Node2D:
-		(pilot as Node2D).global_position = exit_position
-	if pilot is CollisionObject2D:
-		var collision_actor := pilot as CollisionObject2D
-		collision_actor.collision_layer = _pilot_collision_layer
-		collision_actor.collision_mask = _pilot_collision_mask
-	if pilot is CanvasItem:
-		(pilot as CanvasItem).visible = true
-	if pilot.has_method("set_physics_process"):
-		pilot.set_physics_process(true)
-	if pilot.has_method("set_process"):
-		pilot.set_process(true)
-	if pilot.has_method("set_process_input"):
-		pilot.set_process_input(true)
-	pilot = null
-	control_state = ControlState.UNOCCUPIED
-	velocity = Vector2.ZERO
-	current_speed = 0.0
-	_pilot_entry_global_position = Vector2.INF
-	_obs_increment(&"vehicle_exit_succeeded")
-	_obs_log(&"vehicle_exit_succeeded", {
-		"vehicle_id": name,
-		"vehicle_position": global_position,
-		"selected_position": exit_position,
-		"candidate_count": _last_exit_candidate_count,
-		"used_emergency_fallback": _last_exit_used_emergency_fallback,
-	})
-	_update_movement_animation()
+	_complete_pilot_release(exit_position, ControlState.UNOCCUPIED, &"exit")
 	return true
 
 
@@ -180,7 +161,7 @@ func exit() -> Vector2:
 
 
 func route_vehicle_input(input_vector: Vector2, actions: Dictionary, delta: float) -> void:
-	if control_state != ControlState.PILOTED:
+	if control_state != ControlState.PILOTED or current_health <= 0.0 or is_destroyed:
 		return
 	if bool(actions.get("exit_pressed", false)):
 		return
@@ -191,11 +172,129 @@ func process_input(input_vector: Vector2, _aim_vector: Vector2 = Vector2.ZERO, _
 	route_vehicle_input(input_vector, {}, get_physics_process_delta_time())
 
 
+func take_damage(amount: float, _hit_strength: int = 0) -> void:
+	if amount <= 0.0 or control_state == ControlState.DISABLED or is_destroyed:
+		return
+	current_health = maxf(0.0, current_health - amount)
+	health_changed.emit(current_health, max_health)
+	if current_health <= 0.0:
+		destroy_vehicle()
+
+
 func disable_vehicle(reason: String = "") -> void:
+	_transition_to_disabled(reason, false)
+
+
+func destroy_vehicle() -> void:
+	if is_destroyed:
+		return
+	is_destroyed = true
+	current_health = 0.0
+	_transition_to_disabled("destroyed", true)
+
+
+func _transition_to_disabled(reason: String, destroyed: bool) -> void:
+	if control_state == ControlState.DISABLED:
+		return
 	disabled_reason = reason
-	control_state = ControlState.DISABLED
+	if pilot != null:
+		var release_position := _find_exit_position()
+		if release_position == Vector2.INF:
+			release_position = _forced_release_fallback_position()
+		_complete_pilot_release(release_position, ControlState.DISABLED, &"destroyed" if destroyed else &"disabled")
+	else:
+		control_state = ControlState.DISABLED
 	velocity = Vector2.ZERO
 	current_speed = 0.0
+	vehicle_disabled.emit(disabled_reason)
+	if destroyed:
+		vehicle_destroyed.emit()
+
+
+func _exit_tree() -> void:
+	if pilot == null:
+		return
+	var release_position := _find_exit_position()
+	if release_position == Vector2.INF:
+		release_position = _forced_release_fallback_position()
+	if disabled_reason.is_empty():
+		disabled_reason = "teardown"
+	_complete_pilot_release(release_position, ControlState.DISABLED, &"teardown")
+
+
+func _capture_pilot_state(actor: Node) -> Dictionary:
+	var snapshot := {
+		"process": actor.is_processing(),
+		"physics_process": actor.is_physics_processing(),
+		"process_input": actor.is_processing_input(),
+	}
+	if actor is CanvasItem:
+		snapshot["visible"] = (actor as CanvasItem).visible
+	if actor is CollisionObject2D:
+		var collision_actor := actor as CollisionObject2D
+		_pilot_collision_layer = collision_actor.collision_layer
+		_pilot_collision_mask = collision_actor.collision_mask
+		snapshot["collision_layer"] = _pilot_collision_layer
+		snapshot["collision_mask"] = _pilot_collision_mask
+	return snapshot
+
+
+func _complete_pilot_release(
+	position: Vector2, final_state: ControlState, reason: StringName
+) -> void:
+	var released_pilot := pilot
+	if released_pilot == null:
+		return
+	if is_instance_valid(released_pilot):
+		if released_pilot is Node2D:
+			(released_pilot as Node2D).global_position = position
+		if released_pilot is CollisionObject2D:
+			var collision_actor := released_pilot as CollisionObject2D
+			collision_actor.collision_layer = int(_pilot_state_snapshot.get("collision_layer", _pilot_collision_layer))
+			collision_actor.collision_mask = int(_pilot_state_snapshot.get("collision_mask", _pilot_collision_mask))
+		if released_pilot is CanvasItem:
+			(released_pilot as CanvasItem).visible = bool(_pilot_state_snapshot.get("visible", true))
+		released_pilot.set_physics_process(bool(_pilot_state_snapshot.get("physics_process", true)))
+		released_pilot.set_process(bool(_pilot_state_snapshot.get("process", true)))
+		released_pilot.set_process_input(bool(_pilot_state_snapshot.get("process_input", true)))
+	pilot = null
+	control_state = final_state
+	velocity = Vector2.ZERO
+	current_speed = 0.0
+	_pilot_state_snapshot.clear()
+	_pilot_collision_layer = 0
+	_pilot_collision_mask = 0
+	_pilot_entry_global_position = Vector2.INF
+	_obs_increment(&"vehicle_exit_succeeded")
+	_obs_log(&"vehicle_exit_succeeded", {
+		"vehicle_id": name,
+		"vehicle_position": global_position,
+		"selected_position": position,
+		"candidate_count": _last_exit_candidate_count,
+		"used_emergency_fallback": _last_exit_used_emergency_fallback,
+		"release_reason": reason,
+	})
+	_update_movement_animation()
+	pilot_released.emit(self, released_pilot, reason)
+
+
+func _forced_release_fallback_position() -> Vector2:
+	_last_exit_used_emergency_fallback = true
+	_obs_increment(&"vehicle_exit_forced_fallback")
+	var fallback := _pilot_entry_global_position
+	if fallback == Vector2.INF:
+		var direction := facing_direction.normalized()
+		if direction.length_squared() < 0.01:
+			direction = Vector2.DOWN
+		fallback = global_position + direction * 64.0
+	push_warning("PilotableVehicle: forcing pilot release at fallback position for %s" % name)
+	_obs_log(&"vehicle_exit_forced_fallback", {
+		"vehicle_id": name,
+		"vehicle_position": global_position,
+		"selected_position": fallback,
+		"candidate_count": _last_exit_candidate_count,
+	})
+	return fallback
 
 
 func is_piloted() -> bool:

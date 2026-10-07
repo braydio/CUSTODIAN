@@ -346,7 +346,14 @@ func enter_vehicle(actor: Node) -> bool
 func exit_vehicle() -> bool
 func route_vehicle_input(input_vector: Vector2, actions: Dictionary, delta: float) -> void
 func disable_vehicle(reason: String = "") -> void
+func take_damage(amount: float, hit_strength: int = 0) -> void
+func destroy_vehicle() -> void
 func is_piloted() -> bool
+
+signal pilot_released(vehicle, actor, reason)
+signal vehicle_disabled(reason)
+signal vehicle_destroyed
+signal health_changed(current, maximum)
 ```
 
 Expected node layout:
@@ -363,6 +370,9 @@ PilotableVehicle
 Behavior:
 - Unoccupied: no input consumed
 - Entered: Operator visual/control hidden (not deleted), camera follows vehicle
+- Ordinary exit: release succeeds only when a safe reachable position exists; blocked exit preserves occupancy.
+- Disable, destruction, and teardown: one release transition restores the pilot snapshot and emits `pilot_released`; PlayerController clears its canonical vehicle reference and returns camera authority.
+- Health at zero rejects entry and routed driving; lethal `take_damage()` authoritatively disables and destroys the vehicle.
 - PlayerController routes input to vehicle
 - Exit places Operator at valid nearby ExitMarker; if blocked, search nearby; if none valid, deny exit + warning
 
