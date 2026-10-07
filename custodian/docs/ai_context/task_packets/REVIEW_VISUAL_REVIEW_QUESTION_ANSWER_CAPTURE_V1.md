@@ -12,6 +12,8 @@
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`
 - Paired review workstream: `none`
+- Review target workstream: `visual-review-question-answer-capture-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/VISUAL_REVIEW_QUESTION_ANSWER_CAPTURE_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `fresh-context verification of human-review evidence integrity and cleanup safety`
