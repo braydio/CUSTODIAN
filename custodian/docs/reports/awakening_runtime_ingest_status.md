@@ -6,12 +6,19 @@ not imply a separate scene binding.
 
 ## Completed
 
-Crèche console, console activation FX, recovery alcove idle/wake, Custodian
-Approach, Designation Locker, Dust Lung lift, Gate Plaza, Undergate, Gate of
-Dust components, and Late Service underlay/foreground are present in the Asset
-V2 catalog and load through the Awakening runtime route. Late Service uses the
-canonical 704×768 pair under `content/levels/awakening/09_late_service/` with
-one shared resize transform and production foreground occlusion.
+Crèche console and console activation FX both have verified Asset V2 runtime
+outputs, but publication is not the same as live scene consumption. The current
+Awakening creates its Crèche readout interaction from
+`WorldReadoutInteractable`/the room presentation and does **not** reference the
+activation-FX runtime sheet, so the 8-frame activation effect is currently
+cataloged/imported but not visible in play. Active P0
+`awakening-interaction-feedback-console-activation` owns that binding. Recovery
+alcove idle/wake, Custodian Approach, Designation Locker, Dust Lung lift, Gate
+Plaza, Undergate, Gate of Dust components, and Late Service
+underlay/foreground remain present in the Asset V2 catalog/runtime path. Late
+Service uses the canonical 704×768 pair under
+`content/levels/awakening/09_late_service/` with one shared resize transform
+and production foreground occlusion.
 
 The Crèche fixture family has all seven required states published. The
 `awakening_ambulatory_fixtures` family now has all six required states,
