@@ -89,9 +89,9 @@
 - Next action: Claim the paired review from a fresh reviewer context, then continue the interaction-feedback/console activation successor after the review archives complete.
 - Blockers or open questions: Paired post-land review pending; Locker foreground source art remains deferred until underlay parity can be restored.
 
-## Independent Review Receipt
+## Independent Review
 
-- Status: `pass`
+- Status: `passed`
 - Review workstream: `review-awakening-room-connectors-polish`
 - Reviewed on main: `20531b1e2e58ba92b972a91864718e56a3fc2db4`
 - Reviewer context: `fresh`
