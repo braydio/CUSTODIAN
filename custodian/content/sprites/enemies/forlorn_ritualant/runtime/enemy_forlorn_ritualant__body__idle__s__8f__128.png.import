@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c1uxgxv3uevod"
-path="res://.godot/imported/enemy_forlorn_ritualant__body__idle__s__7f__128.png-6f665cf22e32e92786ec61fd74590d1b.ctex"
+uid="uid://bwa6fljw61fll"
+path="res://.godot/imported/enemy_forlorn_ritualant__body__idle__s__8f__128.png-f1ad44cbab786c9a4d9729246f60b820.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://content/sprites/_pipeline/archive/enemy_forlorn_ritualant__body__idle__s__7f__128.png"
-dest_files=["res://.godot/imported/enemy_forlorn_ritualant__body__idle__s__7f__128.png-6f665cf22e32e92786ec61fd74590d1b.ctex"]
+source_file="res://content/sprites/enemies/forlorn_ritualant/runtime/enemy_forlorn_ritualant__body__idle__s__8f__128.png"
+dest_files=["res://.godot/imported/enemy_forlorn_ritualant__body__idle__s__8f__128.png-f1ad44cbab786c9a4d9729246f60b820.ctex"]
 
 [params]
 

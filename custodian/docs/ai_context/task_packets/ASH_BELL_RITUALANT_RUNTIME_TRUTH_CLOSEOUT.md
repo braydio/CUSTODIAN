@@ -50,13 +50,13 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `The required completion smoke fails five lower-lift geometry assertions, the authored Underground smoke fails two route/scene assertions, and the changed-file sweep also reports the mapper chapel-art bounds assertion. The task-specific encounter assertions pass when the unrelated lower-lift section is omitted; required validation is not green, so this workstream cannot land yet.`
+- Root cause / contributing factors: `Existing lower-lift and chapel/Underground validation surfaces are stale or mismatched with authored scene geometry; none of their implementation files are in this packet's work surface. The owner SpriteFrames builder also rewrote its generated resource into canonical formatting while regenerating it.`
+- Prevention / pipeline improvement: `Split unrelated lower-lift checks from the focused Ritualant completion smoke and reconcile the stale Underground/mapper assertions in their owning route or scene workstream before retrying the required closeout validation.`
+- Tooling / docs drift discovered: `Active design and CURRENT_STATE documented the absence of passive stabilization while runtime still had the 4.5-second path; corrected here. The builder's generated-resource formatting had drifted from its canonical output; regenerated and verified with --check.`
+- Follow-up: `manual-follow-up`
 
 ## Handoff
 

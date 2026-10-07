@@ -27,8 +27,8 @@ class Animation:
 ANIMATIONS = (
     Animation("dissolve", "body/death/enemy_forlorn_ritualant__body__death__dissolve__s__8f__128.png", 8, 6.0, False),
     Animation("hostile_idle", "enemy_forlorn_ritualant__body__hostile_idle__s__6f__128.png", 6, 5.0, True),
-    Animation("idle", "enemy_forlorn_ritualant__body__idle__s__7f__128.png", 8, 5.0, True),
-    Animation("kneel_idle", "enemy_forlorn_ritualant__body__idle__s__7f__128.png", 8, 5.0, True),
+    Animation("idle", "enemy_forlorn_ritualant__body__idle__s__8f__128.png", 8, 5.0, True),
+    Animation("kneel_idle", "enemy_forlorn_ritualant__body__idle__s__8f__128.png", 8, 5.0, True),
     Animation("ninth_answer", "body/special/enemy_forlorn_ritualant__body__special__ninth_answer__s__8f__128.png", 8, 8.0, False),
     Animation("orra_late", "body/special/enemy_forlorn_ritualant__body__special__orra_late__s__8f__128.png", 8, 8.0, False),
     Animation("pin_strike", "enemy_forlorn_ritualant__body__pin_strike__s__10f__128.png", 10, 5.0, False),

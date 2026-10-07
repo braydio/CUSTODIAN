@@ -31,7 +31,6 @@ signal request_knowledge_unlock(knowledge_id: StringName)
 @export_group("Encounter Tuning")
 @export var fountain_pressure_tick_seconds: float = 2.0
 @export var fountain_pressure_per_tick: int = 1
-@export var fountain_stabilize_seconds: float = 4.5
 @export var peaceful_exit_requires_thread_touch: bool = false
 
 @onready var forlorn_ritualant: Node = get_node_or_null(forlorn_ritualant_path)
@@ -64,7 +63,6 @@ var _resolution_sequence_running := false
 var _deferred_hostility_reason: StringName = &""
 var _debug_last_hostility_reason: StringName = &""
 
-var _fountain_stabilize_time: float = 0.0
 var _thread_snap_handled := false
 var _resolved_thread_anchors: Dictionary = {}
 const THREAD_ANCHOR_ORDER: Array[StringName] = [&"west", &"north", &"east"]
@@ -123,7 +121,6 @@ func _process(delta: float) -> void:
 		_start_hostile_phase(deferred_reason)
 	if suppresses_encounter_hazards():
 		_fountain_stand_time = 0.0
-		_fountain_stabilize_time = 0.0
 		_update_event_atmosphere()
 		_update_debug()
 		return
@@ -138,19 +135,9 @@ func _process(delta: float) -> void:
 		if _fountain_stand_time >= fountain_pressure_tick_seconds:
 			_fountain_stand_time = 0.0
 			event_state.add_silence_pressure(fountain_pressure_per_tick, &"standing_in_dry_fountain")
-
-		if event_state.has_thread_knot \
-				and not event_state.ritualant_hostile \
-				and event_state.fountain_state == AshBellEventState.FountainState.CRACKED_ANCHORED:
-			_fountain_stabilize_time += delta
-			if _fountain_stabilize_time >= fountain_stabilize_seconds:
-				stabilize_site()
-		else:
-			_fountain_stabilize_time = 0.0
 	else:
 		_fountain_stand_time = 0.0
 		_fountain_total_stand_time = 0.0
-		_fountain_stabilize_time = 0.0
 
 	_update_event_atmosphere()
 	_update_debug()

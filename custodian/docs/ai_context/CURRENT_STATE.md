@@ -2,6 +2,10 @@
 
 - **Procgen startup spawn residency regression (2026-10-07):** direct user playtest on current main no longer shows the Operator over void, but instead loads with the Operator invisible and immobile. This is the reviewed void-spawn failsafe firing: `ContractWorldLoader._on_contract_generation_failed()` calls `_disable_operator_until_safe_placement()` (`visible=false`, `process_mode=DISABLED`). Vehicle auto-possession is ruled out by production code: `PlayerController` only enters a vehicle on the `interact` action. The deeper defect is an authority mismatch: `ProcGenTilemap.get_main_playable_component()` intentionally uses canonical gameplay state and never painted-tile visibility, while `ContractWorldLoader._is_safe_operator_spawn_tile()` additionally requires `_is_walkable_floor_tile()`, which checks currently painted `floor_tilemap` state. The parent packet's own closeout recorded a generated fixture with 72 accepted-component tiles and 0 loader-safe tiles. `contract-world-operator-spawn-residency-correction` is now P0/ready: select from canonical-safe cells first, then explicitly realize only the chosen spawn presentation through a narrow ProcGenTilemap seam before restoring Operator control. Genuine no-canonical-safe-cell failure remains fail-closed.
 
+## Ritualant Runtime Truth Closeout (2026-10-07)
+
+Standing in the anchored Dry Fountain no longer stabilizes the Forlorn-Ritualant; dwell warnings and silence pressure remain active. The peaceful path still requires the upstream Knot and explicit `SET STILLING PIN` sequence, while hostile three-anchor resolution remains unchanged. `idle` and `kneel_idle` share the same eight-frame 128×128 strip at 5 FPS with looping enabled. The pipeline source identity is now `__8f__128`; the original strip bytes are preserved, and the generated SpriteFrames resource is rebuilt by its existing owner.
+
 ## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
 
 `PilotableVehicle` is the sole production vehicle lifecycle owner. Ordinary exits

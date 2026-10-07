@@ -126,6 +126,31 @@ func _validate_encounter_runtime() -> void:
 	var before := int(ledger.call("get_amount", "white_thread_knot"))
 	site.touch_thread()
 	_check(int(ledger.call("get_amount", "white_thread_knot")) == before, "touch_thread granted duplicate Knot")
+	var passive_stand_site := SITE_SCENE.instantiate() as ForlornRitualantSite
+	root.add_child(passive_stand_site)
+	await process_frame
+	_check(passive_stand_site.event_state.has_thread_knot, "passive-stand regression did not have the upstream Knot")
+	passive_stand_site.event_state.set_fountain_state(AshBellEventState.FountainState.CRACKED_ANCHORED)
+	passive_stand_site.set_player_inside_fountain(true)
+	var passive_resolution := passive_stand_site.event_state.resolution
+	var passive_pressure := passive_stand_site.event_state.silence_pressure
+	# A single synthetic process tick beyond the retired 4.5s threshold makes
+	# the negative control deterministic while preserving ordinary warning and
+	# pressure processing.
+	passive_stand_site._process(5.0)
+	_check(
+		passive_stand_site.event_state.resolution == passive_resolution,
+		"standing in an anchored Fountain passively resolved the Ritualant site"
+	)
+	_check(
+		passive_stand_site.event_state.silence_pressure > passive_pressure,
+		"Fountain dwell stopped applying its pressure while passive stabilization was removed"
+	)
+	_check(
+		passive_stand_site.dialogue_presenter.get_active_node() == &"fountain_zone_warning",
+		"Fountain dwell no longer emits its warning dialogue"
+	)
+	passive_stand_site.queue_free()
 	_check(site.dialogue_presenter != null and site.dialogue_presenter.get_current_text().find("Forlorn-Ritualant waits beneath no bell") < 0, "obsolete no-bell production text remains")
 	_check(
 		site.dialogue_presenter.get_parent() is CanvasLayer,
@@ -236,6 +261,20 @@ func _validate_encounter_runtime() -> void:
 
 	var npc := site.get_node("NPCs/ForlornRitualant") as ForlornRitualantNPC
 	var frames := npc.animated_sprite.sprite_frames
+	for animation_name in [&"idle", &"kneel_idle"]:
+		_check(frames.get_frame_count(animation_name) == 8, "%s must contain eight frames" % animation_name)
+		_check(is_equal_approx(frames.get_animation_speed(animation_name), 5.0), "%s must play at 5 FPS" % animation_name)
+		_check(frames.get_animation_loop(animation_name), "%s must loop" % animation_name)
+	var idle_frame := frames.get_frame_texture(&"idle", 0) as AtlasTexture
+	var kneel_frame := frames.get_frame_texture(&"kneel_idle", 0) as AtlasTexture
+	_check(
+		idle_frame != null and kneel_frame != null and idle_frame.atlas.resource_path == kneel_frame.atlas.resource_path,
+		"idle and kneel_idle must share the exact same eight-frame artwork"
+	)
+	_check(
+		idle_frame != null and idle_frame.atlas.resource_path.ends_with("enemy_forlorn_ritualant__body__idle__s__8f__128.png"),
+		"idle/kneel artwork path does not carry its eight-frame identity"
+	)
 	for animation_name in [&"ninth_answer", &"orra_late", &"dissolve", &"death_violent"]:
 		_check(frames.has_animation(animation_name), "Ritualant lacks %s animation" % animation_name)
 		if frames.has_animation(animation_name):
