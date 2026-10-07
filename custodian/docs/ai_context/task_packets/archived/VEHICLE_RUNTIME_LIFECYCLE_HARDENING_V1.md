@@ -46,6 +46,12 @@
 
 ## Completion Truth
 
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `removed`
+- Evidence: `vehicle_runtime_lifecycle` and `vehicle_exit_clearance` passed; registry validation passed; the changed-file closeout passed with 13/13 selected checks and complete coverage; `git diff --check` and `bash -n scripts/repomix-elevation.sh` passed. The focused lifecycle smoke verifies disabled/destroyed/teardown release, blocked ordinary exit preservation and recovery, pilot property restoration, one camera/controller release, and group de-duplication.
 - Outcome: `complete`
 - Landed behavior: `PilotableVehicle` owns entry/exit, damage-to-zero, disabled/destroyed release, and teardown release; a single snapshot restoration path restores actor visibility, collision, and processing state. Blocked ordinary exit retains occupancy. PlayerController owns one canonical typed vehicle reference, listens for release to restore camera/control once, and deduplicates overlapping groups.
 - Legacy disposition: Removed unused `VehicleBase`, `VehicleInteraction`, their UID sidecars, and the unreferenced text LightBuggy template after live runtime search found no consumers. Updated current design/context references; historical specs are clearly marked as superseded/history.
