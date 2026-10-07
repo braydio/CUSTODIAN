@@ -33,13 +33,6 @@
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
-- Refresh instruction: If review materially changes the pounce service/config seam or exposes shared-service drift, bring the evidence back to this chat before NPA-3 is promoted.
-
-## Refresh Planning Authority
-
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: After this review passes, bring the landed pounce ability/config API, review receipt, current Savage chain ownership, and any correction-cycle changes back to this chat before promoting NPA-3. If review finds a material pounce/service-boundary change, keep NPA-3 blocked/manual.
 
 ## Handoff
