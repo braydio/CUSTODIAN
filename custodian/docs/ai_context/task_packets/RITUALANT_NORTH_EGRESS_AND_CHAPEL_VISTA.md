@@ -5,7 +5,7 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `bridged-falls-generated-region-lifecycle, ash-bell-highlands-generated-destination`
+- Depends on: `review-ash-bell-highlands-generated-destination`
 - Locks: `ritualant-underground-route, ritualant-camera-presentation`
 - Kind: `implementation`
 - Review: `auto`
