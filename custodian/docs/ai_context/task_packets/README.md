@@ -196,7 +196,7 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 
 ### Active Local Asset Intake
 
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — ready/manual closeout for the supplied Awakening `service_basin_b` Asset V2 handoff plus a bounded inventory of CUSTODIAN-relevant asset packs still in `~/Downloads`. It must reuse existing packet/family/library ownership and may not ingest unrelated personal downloads.
+- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — ready/auto Dropbox intake closeout for the three currently actionable unimplemented Awakening handoffs: Basin B plus the Attestation/Reliquary and Dust Lung/Undergate required-fixture bundles (21 required states across five existing Asset V2 families). It skips already-landed Operator/Alpine handoffs, transport smoke, and the explicitly partial Alpine-cliff 4/26 handoff; scene binding remains fail-closed behind the existing fixture-consumption classification rules.
 
 ## Active Reusable Source-Material Intake
 
