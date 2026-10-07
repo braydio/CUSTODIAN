@@ -41,7 +41,10 @@ func prepare_generated_region(request: Dictionary) -> Dictionary:
 		await map.ready
 	if not map.has_signal("level_data_ready"):
 		return _discard_map("generated-region map has no level_data_ready signal")
-	var level_data: Dictionary = await _await_level_data(map)
+	var dependency_failure := _generation_dependency_failure(map)
+	if not dependency_failure.is_empty():
+		return _discard_map(dependency_failure)
+	var level_data: Dictionary = await _await_generation(map)
 	if level_data.is_empty():
 		return _discard_map("generated-region generation returned empty level data")
 	var spawn_ids: Array = request.get("spawns", [])
@@ -108,13 +111,22 @@ func restore_route_state(state: Dictionary) -> bool:
 	return can_restore_route_state(state)
 
 
-func _await_level_data(map: Node) -> Dictionary:
-	var result: Array[Dictionary] = []
-	map.connect("level_data_ready", func(data: Dictionary) -> void: result.append(data), CONNECT_ONE_SHOT)
-	map.call("generate")
-	while result.is_empty():
-		await get_tree().process_frame
-	return result[0]
+func _generation_dependency_failure(map: Node) -> String:
+	if not bool(map.get("generation_output_enabled")):
+		return "generated-region map has generation output disabled"
+	if map.get("procgen_node") == null:
+		return "generated-region map has no ProcGen owner"
+	if map.call("get_floor_tilemap") == null:
+		return "generated-region map has no floor TileMapLayer"
+	if map.call("get_walls_tilemap") == null:
+		return "generated-region map has no wall TileMapLayer"
+	return ""
+
+
+func _await_generation(map: Node) -> Dictionary:
+	map.call_deferred("generate")
+	var level_data: Dictionary = await Signal(map, "level_data_ready")
+	return level_data
 
 
 func _discard_map(reason: String) -> Dictionary:

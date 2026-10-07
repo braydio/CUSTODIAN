@@ -4,6 +4,10 @@
     {"id": "known_exit_object_leak", "pattern": "ObjectDB instances were leaked at exit"},
     {"id": "known_exit_resource_leak", "pattern": "resources still in use at exit"},
     {"id": "known_chunk_lifecycle_illegal_transition_test", "pattern": "ProcGenChunkLifecycle: (note_prepared|note_committed) on unrequested chunk"},
-    {"id": "known_chunk_lifecycle_force_unload_illegal_test", "pattern": "ProcGenChunkLifecycle: force_unload on non-resident chunk"}
+    {"id": "known_chunk_lifecycle_force_unload_illegal_test", "pattern": "ProcGenChunkLifecycle: force_unload on non-resident chunk"},
+    {"id": "expected_generated_region_missing_spawn_rollback", "pattern": "ERROR: \\[LevelLoader\\] unable to enter generated_route_procgen_fixture: target spawn could not be resolved: MissingSpawn"},
+    {"id": "expected_generated_region_missing_spawn_rollback_manager", "pattern": "ERROR: \\[RouteTraversalManager\\] generated_region_lifecycle_smoke/enter_generated failed: target spawn could not be resolved: MissingSpawn"},
+    {"id": "expected_generated_region_missing_procgen_rollback", "pattern": "ERROR: \\[LevelLoader\\] unable to enter generated_route_procgen_fixture: generated-region map has no ProcGen owner"},
+    {"id": "expected_generated_region_missing_procgen_rollback_manager", "pattern": "ERROR: \\[RouteTraversalManager\\] generated_region_lifecycle_smoke/enter_generated failed: generated-region map has no ProcGen owner"}
   ]
 }

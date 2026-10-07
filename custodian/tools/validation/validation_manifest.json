@@ -5303,6 +5303,28 @@
       ],
       "timeout_sec": 30,
       "needs_import": true
+    },
+    {
+      "id": "generated_region_route_lifecycle",
+      "type": "godot_script",
+      "script": "res://tools/validation/generated_region_route_lifecycle_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "routes",
+        "generated_region",
+        "rollback",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/world/levels/generated_region_level.gd",
+        "custodian/tools/validation/generated_region_route_lifecycle_smoke.gd",
+        "custodian/tools/validation/fixtures/generated_region_missing_procgen_map.gd",
+        "custodian/tools/validation/fixtures/generated_region_missing_procgen_map.tscn",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/tools/validation/known_headless_warnings.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
     }
   ]
 }
