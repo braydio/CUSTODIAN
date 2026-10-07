@@ -2,22 +2,23 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vehicle-field-scout-buggy-class-v1`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-vehicle-runtime-lifecycle-hardening-v1`
 - Locks: `vehicle-content, vehicle-runtime-scene`
 - Kind: `implementation`
-- Review: `auto`
+- Review: `none`
 - Review stage: `post-land`
 - Review modes: `code, architecture, runtime`
-- Paired review workstream: `review-vehicle-field-scout-buggy-class-v1`
+- Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `new production vehicle class/data/scene integration`
-- Reviewed main: `ad2868d66a`
-- Authoring chat: `not-recorded`
+- Review rationale: `superseded before implementation by the wreck-restoration design change; canonical work continues in vehicle-field-scout-buggy-class-v1-recovery-1`
+- Reviewed main: `5020df4b88a2`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`
+- Supersession note: The remote claim `agent/vehicle-field-scout-buggy-class-v1` was inspected at this refresh and was `ahead_by=0`, with no committed implementation. Do not continue that pre-restoration contract; recover/abandon the empty claim and use the recovery packet after wreck-restoration review.
 - Goal: Turn the existing first vehicle registry entry into the concrete Custodian Field Scout Buggy Mk I class with semantic scene identity and data-owned durability while preserving established handling and pilotability.
 - Completion boundary: Done when registry ID `custodian_ground_buggy_scout_light` resolves to a semantically named Field Scout scene, movement/durability/seat/footprint/hardpoint contracts are data-driven and validator-covered, the live game scene uses that class, no unnecessary class-specific GDScript behavior duplicates `PilotableVehicle`, and compatibility naming has an explicit disposition.
 - Current measured state: The registry classifies the first vehicle as CUSTODIAN/GROUND/BUGGY/SCOUT/LIGHT/MK1 with WHEELED mobility, `ground_wheeled_light`, `utility_light`, one driver, 2x1 footprint, and runtime scene `res://game/actors/vehicles/light_buggy.tscn`. Max/current health are generic exports in `PilotableVehicle`, no durability profile is registry-owned, the scene carries an unbound constant HealthBar, and its visual kit is still `custodian_hover_buggy_light`.
@@ -36,17 +37,17 @@
 
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `not-recorded`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Refresh instruction: At claim time, re-read reviewed predecessor lifecycle public APIs and reconcile only mechanical names. If review materially changes the ownership/class boundary, stop rather than broadening this packet.
 
 ## Handoff
 
-- Next workstream: `review-vehicle-field-scout-buggy-class-v1`
-- Next packet state: `dependency-gated`
+- Next workstream: `vehicle-wreck-restoration-foundation-v1`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
-- Summary backlink: `n/a`
-- Refresh reason: `none`
-- Next action: Finish normally so paired review can prove the first concrete class.
-- Blockers or open questions: `none`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Refresh reason: `User changed the acquisition contract: world-spawned vehicles must begin as wreckage and require restoration.`
+- Next action: Recover the empty legacy class claim, then execute wreck restoration before claiming the class recovery.
+- Blockers or open questions: `The existing empty remote class claim must be recovered so its vehicle-content / vehicle-runtime-scene locks cannot conflict with the new canonical series.`
