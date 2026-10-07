@@ -117,7 +117,8 @@ def fixture(root: Path, seed: int, *, existing_fx: bool = False) -> tuple[Path, 
 
 def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = False, dirty_metadata: bool = False,
              adopt_fx: bool = False, existing_fx: bool = False, create_collision: bool = False,
-             replace_collision: bool = False) -> None:
+             replace_collision: bool = False, replace_interleaving: bool = False,
+             external_after_swap: bool = False) -> None:
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
         manifest_path, east, west = fixture(root, 20,existing_fx=existing_fx)
@@ -141,6 +142,7 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
             "resolve": workbench.resolve_aseprite, "commands": workbench._validation_commands,
             "import": workbench._godot_import, "catalog": workbench._catalog_build,
             "consistency": workbench._operator_scene_consistency, "subprocess": workbench.subprocess.run,
+            "save": workbench.save,
         }
         calls = 0
         def source_index(*_args, **_kwargs):
@@ -175,6 +177,8 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
             calls += 1
             if calls == 1:
                 canonical_frames.write_bytes(b"canonical frames regenerated")
+                if external_after_swap:
+                    east["fx"].write_bytes(b"external FX edit after transaction swap")
             if fail_downstream and calls == 1: raise subprocess.CalledProcessError(91, "injected-runtime-build")
             return subprocess.CompletedProcess([], 0)
         try:
@@ -201,6 +205,26 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
                 assert adopted["operation"]==("REPLACE" if existing_fx else "CREATE")
                 binding=next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")
                 assert binding["aseprite_layer_name"]=="vfx" and binding["workspace_contract"]["frames"]==FRAMES
+            if replace_interleaving:
+                external=b"external FX edit after freshness check"
+                real_save=workbench.save; changed=False
+                def save_then_change_source(path,data):
+                    nonlocal changed
+                    real_save(path,data)
+                    if not changed and Path(path).name=="transaction.json" and data.get("state")=="PREPARED":
+                        east["fx"].write_bytes(external); changed=True
+                workbench.save=save_then_change_source
+                try: workbench.publish(manifest_path,mirror_counterpart=mirror)
+                except model.WorkbenchError as error: assert "REPLACE source changed after adoption" in str(error)
+                else: raise AssertionError("REPLACE source changed after freshness validation was overwritten")
+                assert changed and east["fx"].read_bytes()==external
+                assert all(path.read_bytes()==originals[path] for layer,path in east.items() if layer!="fx")
+                journal=json.loads(sorted((manifest_path.parent/"transactions").glob("*/transaction.json"))[-1].read_text())
+                fx_record=next(row for row in journal["sources"] if row["binding_id"]=="fx" and not row["mirror"])
+                assert journal["state"]=="RECOVERY_REQUIRED"
+                assert fx_record["swapped_by_transaction"] is False
+                assert fx_record["old_path"] in journal["unresolved_paths"]
+                return
             if create_collision:
                 target=root/next(item for item in json.loads(manifest_path.read_text())["layers"] if item["layer"]=="fx")["publish_contract"]["path"]
                 target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(b"external concurrent FX")
@@ -240,6 +264,15 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
                 except model.WorkbenchError as error:
                     assert "injected-runtime-build" in str(error)
                 else: raise AssertionError("injected downstream failure did not escape publish")
+                if external_after_swap:
+                    assert east["fx"].read_bytes()==b"external FX edit after transaction swap"
+                    assert all(path.read_bytes()==content for path,content in originals.items() if path!=east["fx"])
+                    journal=json.loads(sorted((manifest_path.parent/"transactions").glob("*/transaction.json"))[-1].read_text())
+                    fx_record=next(row for row in journal["sources"] if row["binding_id"]=="fx" and not row["mirror"])
+                    assert journal["state"]=="RECOVERY_REQUIRED"
+                    assert fx_record["swapped_by_transaction"] is True
+                    assert fx_record["old_path"] in journal["unresolved_paths"]
+                    return
                 assert all(path.read_bytes() == content for path, content in originals.items())
                 assert all(path.read_bytes() == content for path, content in original_timing.items())
                 assert all(path.read_bytes() == content for path, content in original_resources.items())
@@ -291,6 +324,7 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
             workbench.resolve_aseprite=saved["resolve"]; workbench._validation_commands=saved["commands"]
             workbench._godot_import=saved["import"]; workbench._catalog_build=saved["catalog"]
             workbench._operator_scene_consistency=saved["consistency"]; workbench.subprocess.run=saved["subprocess"]
+            workbench.save=saved["save"]
 
 
 def main() -> None:
@@ -307,6 +341,8 @@ def main() -> None:
     run_case(mirror=True, fail_downstream=False, adopt_fx=True)
     run_case(mirror=True, fail_downstream=True, adopt_fx=True)
     run_case(mirror=False, fail_downstream=True, adopt_fx=True, existing_fx=True)
+    run_case(mirror=False, fail_downstream=False, adopt_fx=True, existing_fx=True, replace_interleaving=True)
+    run_case(mirror=False, fail_downstream=True, adopt_fx=True, existing_fx=True, external_after_swap=True)
     run_case(mirror=True, fail_downstream=False, adopt_fx=True, existing_fx=True)
     run_case(mirror=False, fail_downstream=False, adopt_fx=True, create_collision=True)
     run_case(mirror=False, fail_downstream=False, adopt_fx=True, existing_fx=True, replace_collision=True)
