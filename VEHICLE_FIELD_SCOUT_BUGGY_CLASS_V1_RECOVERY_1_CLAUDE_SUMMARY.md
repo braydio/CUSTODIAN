@@ -22,9 +22,9 @@ No weapon, scanner behavior, production art, fuel, cargo, passenger capacity, or
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: changed-file sweep failed on the unrelated `review_pairing_contract` check for `visual-review-question-answer-capture-v1`; standalone world-origin smoke reported unrelated existing child classification errors.
-- Root cause / contributing factors: unrelated review packet metadata is inconsistent; world-origin fixture has unclassified direct children.
-- Prevention / pipeline improvement: reconcile the unrelated review packet metadata and classify the direct children in the owning world-origin task.
+- What went wrong: changed-file sweep failed on the unrelated `review_pairing_contract` check for `visual-review-question-answer-capture-v1`; standalone world-origin smoke reported unrelated existing child classification errors; first finish attempt found a malformed completion schema value, which was corrected.
+- Root cause / contributing factors: unrelated review packet metadata is inconsistent; world-origin fixture has unclassified direct children; the completion receipt used a noncanonical schema name.
+- Prevention / pipeline improvement: reconcile the unrelated review packet metadata, classify the direct children in the owning world-origin task, and use the canonical completion schema constant.
 - Tooling / docs drift discovered: none
 - Follow-up: none
 - What worked: focused Scout and required vehicle lifecycle validations passed.
