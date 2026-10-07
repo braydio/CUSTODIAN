@@ -23,7 +23,7 @@ func _init() -> void:
 	await physics_frame
 	await process_frame
 
-	_check_console(awakening)
+	await _check_console(awakening)
 	_check_gate_presentation(awakening)
 	await _check_locker(awakening)
 	await _check_lift(awakening)
@@ -86,6 +86,35 @@ func _check_console(awakening: Node) -> void:
 		_fail("Crèche console drifted from (112, 144): %s" % str(console.position))
 	if bool(awakening.get("opening_console_acknowledged")):
 		_fail("console reads as acknowledged before any interaction")
+	var activation := awakening.get_node_or_null(
+		"World/AwakeningZones/Zone01_Creche/SetPieces/CrecheConsoleActivation"
+	) as AnimatedSprite2D
+	if activation == null:
+		_fail("Crèche console activation effect is missing")
+	else:
+		if activation.visible or activation.is_playing():
+			_fail("console activation effect is visible or playing before acknowledgement")
+		if activation.position != Vector2(112, 144) or activation.z_index != Layout.Z_WORLD_PROPS:
+			_fail("console activation effect drifted from the marker or world-prop layer")
+		if activation.sprite_frames == null or activation.sprite_frames.get_frame_count(&"activate") != 8:
+			_fail("console activation effect does not have exactly eight frames")
+		elif activation.sprite_frames.get_animation_speed(&"activate") != 8.0 or activation.sprite_frames.get_animation_loop(&"activate"):
+			_fail("console activation effect speed/loop contract drifted")
+	var operator := awakening.get_node("World/Operator")
+	operator.set("interaction_target", console)
+	awakening.call("_update_interaction_prompt")
+	var hud: CustodianHUD = awakening.get("hud") as CustodianHUD
+	var prompt: Control = hud.get_node("Root/BottomLeftPrompt/BlackReliquaryPrompt") as Control
+	if not prompt.visible:
+		_fail("valid Crèche interaction target did not show its prompt")
+	for i in 120:
+		await process_frame
+		operator.set("interaction_target", console)
+		awakening.call("_update_interaction_prompt")
+	if not prompt.visible:
+		_fail("valid Crèche interaction prompt expired during continuous presentation")
+	operator.set("global_position", console.global_position)
+	await physics_frame
 	console.interact(awakening.get_node("World/Operator"))
 	if not bool(awakening.get("opening_console_acknowledged")):
 		_fail("console interaction did not advance progression")
@@ -93,6 +122,43 @@ func _check_console(awakening: Node) -> void:
 		_fail("console readout does not carry the locked opening state")
 	if alcove != null and alcove.animation != &"wake":
 		_fail("console acknowledgement did not start the recovery wake animation")
+	if activation != null and (not activation.visible or not activation.is_playing()):
+		_fail("first console acknowledgement did not start the activation effect")
+	if activation != null:
+		var body_label := hud.get_node("Root/BottomLeftPrompt/BlackReliquaryPrompt/Stack/BodyPlaque/BodyRow/Body") as Label
+		var acknowledged_readout := body_label.text
+		var observed_frames := {}
+		observed_frames[activation.frame] = true
+		for i in 34:
+			await create_timer(0.04).timeout
+			if activation.visible:
+				observed_frames[activation.frame] = true
+		await create_timer(2.4).timeout
+		if not prompt.visible or body_label.text != acknowledged_readout:
+			_fail("proximity refresh replaced or expired the latched console readout")
+		if float(hud.get("_latched_readout_remaining")) <= 0.0:
+			_fail("console readout did not retain its four-second minimum dwell")
+		for frame_index in 8:
+			if not observed_frames.has(frame_index):
+				_fail("console activation playback did not render frame %d" % frame_index)
+		hud.call("set_context_active", false)
+		if prompt.visible:
+			_fail("context suppression left the latched console readout visible")
+		hud.call("set_context_active", true)
+		await create_timer(0.45).timeout
+		if not prompt.visible or body_label.text == acknowledged_readout:
+			_fail("expired readout did not return to the valid proximity prompt")
+		operator.set("interaction_target", null)
+		awakening.call("_update_interaction_prompt")
+		if prompt.visible:
+			_fail("lost interaction target left a stale proximity prompt visible")
+		if activation.visible or activation.is_playing():
+			_fail("console activation effect did not stop and hide after its full animation (visible=%s playing=%s frame=%d remaining=%.3f)" % [activation.visible, activation.is_playing(), activation.frame, float(awakening.get("_console_activation_remaining"))])
+		var finished_frame := activation.frame
+		console.interact(operator)
+		await process_frame
+		if activation.visible or activation.is_playing() or activation.frame != finished_frame:
+			_fail("re-reading the console replayed its one-shot activation effect")
 
 
 # --- P-9 recovery ------------------------------------------------------------
@@ -242,6 +308,12 @@ func _check_reveal_lifecycle_and_reset(awakening: Node) -> void:
 	awakening.call("reset_progression")
 	if not bool(awakening.get("p9_recovered")):
 		_fail("debug reset falsely rewound the persistent P-9 grant")
+	var console := awakening.get_node("World/AwakeningZones/Zone01_Creche/Interactables/CrecheConsole")
+	var activation := awakening.get_node("World/AwakeningZones/Zone01_Creche/SetPieces/CrecheConsoleActivation") as AnimatedSprite2D
+	if bool(console.get("is_acknowledged")) or bool(awakening.get("opening_console_acknowledged")):
+		_fail("debug reset did not rearm the Crèche console acknowledgement")
+	if activation != null and (activation.visible or activation.is_playing() or activation.frame != 0):
+		_fail("debug reset did not restore the console activation effect to hidden frame zero")
 	if bool(camera.call("has_presentation_framing")) or bool(awakening.get("_reveal_release_pending")):
 		_fail("debug reset left camera reveal state active")
 	if lift != null and (bool(lift.call("is_busy")) or lift.current_station != 0):

@@ -16,6 +16,7 @@ const Plaque := preload("res://game/world/awakening/awakening_plaque_interactabl
 const TransitLift := preload("res://game/world/awakening/awakening_transit_lift.gd")
 const RECOVERY_ALCOVE_IDLE := preload("res://content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__state__idle__omni__1f__192x256.png")
 const RECOVERY_ALCOVE_WAKE := preload("res://content/sprites/environment/props/awakening/awakening_creche_recovery_alcove/runtime/body/awakening_creche_recovery_alcove__body__interaction__wake__omni__8f__192x256.png")
+const CRECHE_CONSOLE_ACTIVATION := preload("res://content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png")
 const GATE_BODY_IDLE_SEALED := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__state__idle_sealed__omni__1f__768x512.png")
 const GATE_WEST_PYLON := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__west_pylon__omni__1f__256x512.png")
 const GATE_EAST_PYLON := preload("res://content/sprites/environment/props/awakening/gate_of_dust/runtime/body/gate_of_dust__body__component__east_pylon__omni__1f__256x512.png")
@@ -67,6 +68,8 @@ var _fired_reveals := {}
 var _occupied_zones := {}
 var _transit_lift: Node = null
 var _recovery_alcove: AnimatedSprite2D = null
+var _console_activation_fx: AnimatedSprite2D = null
+var _console_activation_remaining := 0.0
 var _reveal_release_pending := false
 var _reveal_generation := 0
 var current_objective_text := ""
@@ -94,6 +97,11 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_update_zone_art_visibility()
+	_update_interaction_prompt()
+	if _console_activation_remaining > 0.0:
+		_console_activation_remaining = maxf(0.0, _console_activation_remaining - _delta)
+		if _console_activation_remaining <= 0.0:
+			_on_console_activation_finished()
 
 
 func _place_operator() -> void:
@@ -470,6 +478,7 @@ func _build_detail_presentation() -> void:
 	_add_detail_sprite(&"zone07_gate_of_dust", "RuinRubbleMedium", RUIN_RUBBLE_MEDIUM, Vector2(-448, -5200))
 	_add_detail_sprite(&"zone07_gate_of_dust", "RuinDustScour", RUIN_DUST_SCOUR, Vector2(448, -5200))
 	_add_detail_sprite(&"zone06_undergate", "AuthorityRouteCircle", AUTHORITY_ROUTE_CIRCLE, Vector2(-560, -4288))
+	_build_console_activation_presentation()
 
 	var dust_zone := _zone_child(&"zone05_dust_lung", "SetPieces") as Node2D
 	if dust_zone != null:
@@ -532,6 +541,61 @@ func _build_recovery_alcove_presentation() -> void:
 	_recovery_alcove.play(&"idle")
 	set_pieces.add_child(_recovery_alcove)
 	_hide_blockout_set_piece(&"zone01_creche", "active_alcove")
+
+
+func _build_console_activation_presentation() -> void:
+	var set_pieces := _zone_child(&"zone01_creche", "SetPieces")
+	if set_pieces == null or set_pieces.get_node_or_null("CrecheConsoleActivation") != null:
+		return
+	_console_activation_fx = AnimatedSprite2D.new()
+	_console_activation_fx.name = "CrecheConsoleActivation"
+	_console_activation_fx.position = _marker_position(&"zone01_creche", "creche_console")
+	_console_activation_fx.z_index = Layout.Z_WORLD_PROPS
+	_console_activation_fx.sprite_frames = _build_console_activation_frames()
+	_console_activation_fx.visible = false
+	_console_activation_fx.animation_finished.connect(_on_console_activation_finished)
+	set_pieces.add_child(_console_activation_fx)
+
+
+func _build_console_activation_frames() -> SpriteFrames:
+	var frames := SpriteFrames.new()
+	frames.remove_animation(&"default")
+	frames.add_animation(&"activate")
+	frames.set_animation_loop(&"activate", false)
+	frames.set_animation_speed(&"activate", 8.0)
+	for frame_index in 8:
+		var frame := AtlasTexture.new()
+		frame.atlas = CRECHE_CONSOLE_ACTIVATION
+		frame.region = Rect2(frame_index * 128, 0, 128, 128)
+		frames.add_frame(&"activate", frame)
+	return frames
+
+
+func _play_console_activation() -> void:
+	if _console_activation_fx == null:
+		return
+	_console_activation_remaining = 1.0
+	_console_activation_fx.stop()
+	_console_activation_fx.frame = 0
+	_console_activation_fx.visible = true
+	_console_activation_fx.play(&"activate")
+
+
+func _on_console_activation_finished() -> void:
+	_console_activation_remaining = 0.0
+	if _console_activation_fx == null:
+		return
+	_console_activation_fx.stop()
+	_console_activation_fx.visible = false
+
+
+func _reset_console_activation() -> void:
+	_console_activation_remaining = 0.0
+	if _console_activation_fx == null:
+		return
+	_console_activation_fx.stop()
+	_console_activation_fx.frame = 0
+	_console_activation_fx.visible = false
 
 
 func _build_recovery_alcove_frames() -> SpriteFrames:
@@ -616,6 +680,7 @@ func _build_interactables() -> void:
 		console.name = "CrecheConsole"
 		console.position = _marker_position(&"zone01_creche", "creche_console")
 		console.title = "CRÈCHE CONSOLE"
+		console.prompt_body = "Read the opening message"
 		console.readout = CRECHE_READOUT
 		console.acknowledged_readout = CRECHE_READOUT_AGAIN
 		creche.add_child(console)
@@ -627,6 +692,7 @@ func _build_interactables() -> void:
 		plaque.name = "PortStatusPlaque"
 		plaque.position = _marker_position(&"zone06_undergate", "port_status_plaque")
 		plaque.title = "DAMAGED PORT CONSOLE"
+		plaque.prompt_body = "Read port status"
 		plaque.readout = PORT_READOUT
 		undergate.add_child(plaque)
 
@@ -748,6 +814,7 @@ func _resolve_occupied_zone() -> void:
 func _on_console_acknowledged(_actor: Node) -> void:
 	if opening_console_acknowledged: return
 	opening_console_acknowledged = true
+	_play_console_activation()
 	if _recovery_alcove != null:
 		_recovery_alcove.play(&"wake")
 	_set_objective(OBJECTIVE_RETURN_TO_POST)
@@ -947,9 +1014,38 @@ func reset_progression() -> void:
 	_occupied_zones.clear()
 	completed = false
 	opening_console_acknowledged = false
+	var interactables := _zone_child(&"zone01_creche", "Interactables")
+	var console := interactables.get_node_or_null("CrecheConsole") if interactables != null else null
+	if console != null and "is_acknowledged" in console:
+		console.set("is_acknowledged", false)
+	_reset_console_activation()
 	# Keep the one-time grant state aligned with the persistent locker/inventory.
 	if _recovery_alcove != null:
 		_recovery_alcove.play(&"idle")
 	_place_operator()
 	_configure_hud()
 	_enter_zone(&"zone01_creche")
+
+
+func _update_interaction_prompt() -> void:
+	if hud == null or not is_instance_valid(hud):
+		return
+	if not hud.visible or (hud.has_method("is_context_active") and not bool(hud.call("is_context_active"))):
+		hud.call("hide_interaction")
+		return
+	if operator_ref == null or not is_instance_valid(operator_ref) or not ("interaction_target" in operator_ref):
+		hud.call("hide_interaction")
+		return
+	var target := operator_ref.get("interaction_target") as Node
+	if target == null or not is_instance_valid(target) or not target.has_method("get_interaction_prompt"):
+		hud.call("hide_interaction")
+		return
+	var title := String(target.call("get_interaction_prompt"))
+	if title.is_empty():
+		hud.call("hide_interaction")
+		return
+	var body := String(target.call("get_interaction_prompt_body")) if target.has_method("get_interaction_prompt_body") else "Interact"
+	if hud.has_method("show_proximity_interaction"):
+		hud.call("show_proximity_interaction", title, body, &"interact", target, Catalog.ICON_OBJECTIVE)
+	else:
+		hud.call("show_action_interaction", title, body, &"interact", Catalog.ICON_OBJECTIVE)

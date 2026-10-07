@@ -22,6 +22,10 @@ func get_interaction_prompt() -> String:
 	return title
 
 
+func get_interaction_prompt_body() -> String:
+	return "Read"
+
+
 func get_interaction_position() -> Vector2:
 	return global_position
 
@@ -40,7 +44,10 @@ func interact(actor: Node) -> void:
 	var hud := get_node_or_null("/root/GameRoot/CustodianHUD")
 	if hud != null:
 		var body := readout if first_time or acknowledged_readout.is_empty() else acknowledged_readout
-		hud.call("show_interaction", title, body, _interact_key(), Catalog.ICON_OBJECTIVE)
+		if hud.has_method("show_latched_interaction"):
+			hud.call("show_latched_interaction", title, body, _interact_key(), Catalog.ICON_OBJECTIVE, self, 4.0)
+		else:
+			hud.call("show_interaction", title, body, _interact_key(), Catalog.ICON_OBJECTIVE)
 	if first_time:
 		acknowledged.emit(actor)
 

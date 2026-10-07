@@ -4190,11 +4190,32 @@
       "owners": [
         "custodian/game/world/awakening/**",
         "custodian/scenes/awakening_first_return.tscn",
+        "custodian/game/world/interactions/world_readout_interactable.gd",
         "custodian/game/world/home/sidearm_locker_interactable.gd",
         "custodian/game/actors/props/sidearm_locker.tscn",
         "custodian/game/world/camera.gd"
       ],
       "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
+      "id": "hud_interaction_prompt_lease",
+      "type": "godot_script",
+      "script": "res://tools/validation/hud_interaction_prompt_lease_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hud",
+        "interaction",
+        "prompt",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/ui/hud/custodian_hud.gd",
+        "custodian/game/ui/hud/custodian_hud.tscn",
+        "custodian/tools/validation/hud_interaction_prompt_lease_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     },
     {

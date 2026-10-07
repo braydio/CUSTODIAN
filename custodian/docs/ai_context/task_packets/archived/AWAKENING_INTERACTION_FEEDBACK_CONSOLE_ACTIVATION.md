@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interaction-feedback-console-activation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-awakening-room-connectors-polish`
@@ -18,7 +18,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Goal: Restore readable interaction feedback in Awakening by making proximity prompts persist for the full time an interaction target is valid, making one-shot/readout feedback remain legible instead of disappearing after a few process frames, and wiring the already-ingested 8-frame Crèche console activation FX so the opening console visibly responds on first acknowledgement.
 - Completion boundary: Done when Awakening continuously presents the current valid interaction target, clears the prompt promptly when the target becomes invalid/out of range or the HUD context is suppressed, preserves a readable long-form readout/confirmation dwell without proximity refresh overwriting it, and the existing `awakening_creche_console_activation_fx/activate` 8-frame Asset V2 state visibly plays once at the Layout-owned Crèche console marker on first acknowledgement. No new art is created.
-- Current measured state: The user reports Awakening interaction prompts flash so briefly they barely register and the Crèche console activation animation is not visible. Live code confirms both defects. `CustodianHUD._process()` hides any interaction prompt when `Engine.get_process_frames() - _last_prompt_frame > 2`; this only works when a scene refreshes the prompt every frame. Sundered Keep does exactly that through `_process() -> _update_hud_prompt()`, but `AwakeningFirstReturn._process()` only updates zone-art visibility and never renews its current Operator interaction target. `WorldReadoutInteractable.interact()` calls `hud.show_interaction(...)` once, so its multi-line readout inherits the same two-frame expiry. Separately, Asset V2 has a healthy required `awakening_creche_console_activation_fx` `activate` state, 8 frames on a 128×128 canvas at 8 FPS, runtime sheet 1024×128, but no live scene/controller code references that runtime texture. `_on_console_acknowledged()` currently plays only the recovery-alcove wake animation and updates objective/status state, so the console FX family is cataloged but orphaned from presentation.
+- Current measured state: The implementation now continuously presents the Operator's current actionable Awakening target and clears it when target/context validity is lost. The HUD's ordinary two-frame stale-prompt lease remains intact. `WorldReadoutInteractable` requests a HUD-owned minimum 4.0-second dwell; progression smoke observes the Crèche readout still visible after 3.76 seconds, verifies context suppression clears it, and verifies the current target prompt returns after the dwell. A focused HUD smoke confirms ordinary lease expiry, 120-frame target refresh, latch protection against both ordinary/action prompts, dwell completion, overlay suppression, and owner release. The live Awakening progression smoke verifies all eight activation frames were observed, configured at 8 FPS, stopped/hidden after playback, and not replayed on re-interaction; it also verifies reset rearms both console acknowledgement and effect. Twin Solaria runtime, changed-file validation (20 selected, all passed, complete coverage), Asset V2 doctor, and `git diff --check` passed. Asset V2 status reports the activation PNG imported and 1/1 required; its static consumer binding remains unverified because runtime SpriteFrames are assembled by code.
 - Evidence: `custodian/game/ui/hud/custodian_hud.gd`; `custodian/game/ui/components/black_reliquary_prompt.gd`; `custodian/game/actors/operator/operator.gd` interaction-target selection; `custodian/game/world/interactions/world_readout_interactable.gd`; `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/content/metadata/assets/families/awakening_creche_console_activation_fx.asset.json`; runtime activation sheet; Sundered Keep's working per-frame prompt refresh as compatibility evidence.
 - Task-specific authority: Operator `interaction_target`/interactable contract owns which target is actionable; gameplay HUD owns presentation only; `awakening_layout.gd` owns the console marker; Asset V2 family `awakening_creche_console_activation_fx` owns activation pixels/frame contract.
 - Work surface: primarily `custodian/game/world/awakening/awakening_first_return.gd`, `custodian/game/world/interactions/world_readout_interactable.gd`, and the smallest necessary `custodian_hud.gd` API/lease change. Add focused Awakening/HUD validation; touch the activation Asset V2 family only to verify, not regenerate, its existing runtime state.
@@ -46,3 +46,20 @@
 - Validation: focused HUD prompt lease/latch smoke; Awakening progression smoke extended with console-FX frame/state assertions; one renderer-backed Crèche activation capture only if structural frame playback cannot prove visibility; generic WorldReadout/Twin consumer smoke if touched; Asset V2 status/doctor for the activation family; changed-file validation; `git diff --check`.
 - Task overrides: `none`
 - Deferred: broader HUD hierarchy/aesthetic redesign and generalized interaction presentation extraction remain separate work.
+
+## Completion Truth
+- Result: complete
+- Evidence: focused HUD interaction lease/latch smoke; Awakening first-return progression smoke; Twin Solaria runtime smoke; changed-file validation with 20/20 selected checks passing and complete file coverage; Asset V2 doctor healthy; activation family status imported 1/1; `git diff --check` clean.
+- Remaining acceptance gaps: none
+- Visual review: not required; structured runtime checks observe all eight atlas frames and exact 8 FPS playback, plus visibility/stop/one-shot/reset state.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: the first new progression test assigned a target only once, but Operator simulation correctly replaced that synthetic target; the first changed-file run also exposed a missing manifest owner for the generic readout source.
+- Root cause / contributing factors: the test initially modeled the HUD input rather than maintaining Operator target authority, and the validation manifest did not associate the touched generic readout with its progression regression.
+- Prevention / pipeline improvement: the focused test now maintains a valid target or places the Operator within the real console range; the progression manifest explicitly owns `world_readout_interactable.gd` so changed-file coverage closes.
+- Tooling / docs drift discovered: Asset V2 static status cannot recognize the code-built sprite as a verified consumer binding; the live progression regression now supplies runtime consumption evidence and the ingest status doc states this limitation.
+- Follow-up: none
+- What worked: focused runtime assertions exercised the readout, prompt, activation strip, acknowledgement, and debug-reset lifecycle without renderer captures.

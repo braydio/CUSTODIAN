@@ -202,25 +202,21 @@ completion signal fire. The existing RETURN TO POST objective remains in place.
 | 05 | Transit lift, lower `(384, -3008)` ⇄ upper `(384, -3424)` | Locks input, dims, relocates, restores. Not a Z-axis system; art can replace the dim with a cage without changing the contract |
 | 06 | Damaged port console `(128, -4016)` | PORT AUTHORITY: SUSPENDED / ROUTE INDEX: UNAVAILABLE / POST STATUS: UNMANNED. Interaction plus HUD plaque, no menu, no system |
 
-### Interaction feedback correction in progress
+### Interaction feedback and console activation
 
-The interaction gameplay contract above is live, but its current presentation is
-not accepted as production-ready. `CustodianHUD` treats ordinary interaction
-prompts as a frame-refreshed lease and hides them after more than two process
-frames. Sundered Keep refreshes that lease every frame; Awakening currently does
-not, so proximity prompts and one-shot console/readout text flash too briefly to
-read. The P0 `awakening-interaction-feedback-console-activation` slice keeps the
-Operator's existing `interaction_target` as authority, continuously presents a
-valid target in Awakening, and adds an explicit long-readout dwell instead of
-turning the stale-frame safety lease into a large global timeout.
+Awakening's per-frame presenter reads the Operator's existing
+`interaction_target` and refreshes the HUD prompt while that target remains
+valid. The HUD retains its two-frame stale-prompt safety lease for ordinary
+callers. `WorldReadoutInteractable` uses a separate HUD-owned, minimum four-
+second readout dwell; target loss and context/overlay suppression clear it, and
+a still-valid target returns to its proximity prompt after the dwell.
 
-The same slice wires the already-published
-`awakening_creche_console_activation_fx` state. Its production contract is one
-horizontal 8-frame strip, 128×128 per frame at 8 FPS. The runtime asset exists,
-but current Awakening code does not consume it. On the first Crèche console
-acknowledgement it must play once at the Layout-owned console marker
-`(112,144)`, then stop/hide; repeated reads do not replay it. This is a runtime
-wiring correction, not a request for new art.
+The existing `awakening_creche_console_activation_fx` state is consumed as one
+non-looping horizontal 8-frame strip, 128×128 per frame at 8 FPS. It plays once
+on the first Crèche console acknowledgement at the Layout-owned marker
+`(112,144)`, then stops and hides. Re-reading does not replay it, and the debug
+reset re-arms both the console acknowledgement and effect. No new art or baked
+console body was added.
 
 ### Camera reveals
 

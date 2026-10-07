@@ -42,6 +42,9 @@ var _feedback_operator: Node = null
 var _last_primary_loadout_text := ""
 var _last_secondary_loadout_text := ""
 var _last_prompt_frame := -1
+var _latched_readout_remaining := 0.0
+var _latched_readout_owner_ref: WeakRef = null
+var _latched_readout_has_owner := false
 var _context_active := true
 var _externally_suppressed := false
 var _inventory_manager: Node = null
@@ -73,7 +76,17 @@ func _process(delta: float) -> void:
 		if _critical_pulse_timer <= 0.0:
 			_critical_pulse_timer = 0.55
 			_pulse_weapon_icon(0.18, Palette.DANGER)
-	if prompt != null and visible and _last_prompt_frame >= 0 and Engine.get_process_frames() - _last_prompt_frame > 2:
+	if _latched_readout_remaining > 0.0:
+		if _latched_readout_has_owner:
+			var owner: Node = _latched_readout_owner_ref.get_ref() as Node if _latched_readout_owner_ref != null else null
+			if not is_instance_valid(owner):
+				_clear_latched_readout()
+				hide_interaction()
+			else:
+				_latched_readout_remaining = maxf(0.0, _latched_readout_remaining - delta)
+		else:
+			_latched_readout_remaining = maxf(0.0, _latched_readout_remaining - delta)
+	if prompt != null and visible and _latched_readout_remaining <= 0.0 and _last_prompt_frame >= 0 and Engine.get_process_frames() - _last_prompt_frame > 2:
 		hide_interaction()
 
 
@@ -372,21 +385,85 @@ func set_objective(text: String) -> void:
 
 
 func show_interaction(title: String, body: String, input_hint: String = "G", icon_path: String = "") -> void:
+	if _latched_readout_remaining > 0.0:
+		return
 	_last_prompt_frame = Engine.get_process_frames()
 	if prompt != null:
 		prompt.call("show_prompt", title, body, input_hint, icon_path)
 
 
 func show_action_interaction(title: String, body: String, action_name: StringName = &"interact", icon_path: String = "") -> void:
+	if _latched_readout_remaining > 0.0:
+		return
+	_present_action_interaction(title, body, action_name, icon_path)
+
+
+## Frame-refreshed interaction target presentation. A readout remains higher
+## priority while its owner is still the current actionable target.
+func show_proximity_interaction(
+	title: String,
+	body: String,
+	action_name: StringName,
+	owner: Node,
+	icon_path: String = ""
+) -> void:
+	if not _context_active or _externally_suppressed or not visible:
+		hide_interaction()
+		return
+	if _latched_readout_remaining > 0.0:
+		var latched_owner: Node = _latched_readout_owner_ref.get_ref() as Node if _latched_readout_ref_is_live() else null
+		if _latched_readout_has_owner and latched_owner == owner:
+			return
+		if not _latched_readout_has_owner:
+			return
+		_clear_latched_readout()
+	_present_action_interaction(title, body, action_name, icon_path)
+
+
+## One-shot readout/confirmation with an explicit minimum dwell. The HUD owns
+## the timer; an optional source owner lets target loss release the priority.
+func show_latched_interaction(
+	title: String,
+	body: String,
+	input_hint: String = "G",
+	icon_path: String = "",
+	owner: Node = null,
+	duration_seconds: float = 4.0
+) -> void:
+	if not _context_active or _externally_suppressed or not visible:
+		hide_interaction()
+		return
+	_latched_readout_remaining = maxf(4.0, duration_seconds)
+	_latched_readout_has_owner = is_instance_valid(owner)
+	_latched_readout_owner_ref = weakref(owner) if _latched_readout_has_owner else null
+	_last_prompt_frame = Engine.get_process_frames()
+	if prompt != null:
+		prompt.call("show_prompt", title, body, input_hint, icon_path)
+
+
+func _present_action_interaction(title: String, body: String, action_name: StringName, icon_path: String) -> void:
 	_last_prompt_frame = Engine.get_process_frames()
 	if prompt != null:
 		prompt.call("show_action_prompt", title, body, action_name, icon_path)
 
 
 func hide_interaction() -> void:
+	_clear_latched_readout()
 	_last_prompt_frame = -1
 	if prompt != null:
 		prompt.call("hide_prompt")
+
+
+func _latched_readout_ref_is_live() -> bool:
+	if _latched_readout_owner_ref == null:
+		return false
+	return is_instance_valid(_latched_readout_owner_ref.get_ref())
+
+
+func _clear_latched_readout() -> void:
+	_latched_readout_remaining = 0.0
+	_latched_readout_owner_ref = null
+	_latched_readout_has_owner = false
 
 
 func set_key_item_status(has_key: bool, item_name: String = "Sundered Gate Key") -> void:
@@ -420,6 +497,8 @@ func set_context_active(active: bool) -> void:
 
 func set_external_overlay_hidden(hidden: bool) -> void:
 	_externally_suppressed = hidden
+	if hidden:
+		hide_interaction()
 	_apply_effective_visibility()
 
 

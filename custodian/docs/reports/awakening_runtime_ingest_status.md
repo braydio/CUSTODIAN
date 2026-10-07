@@ -7,13 +7,13 @@ not imply a separate scene binding.
 ## Completed
 
 Crèche console and console activation FX both have verified Asset V2 runtime
-outputs, but publication is not the same as live scene consumption. The current
-Awakening creates its Crèche readout interaction from
-`WorldReadoutInteractable`/the room presentation and does **not** reference the
-activation-FX runtime sheet, so the 8-frame activation effect is currently
-cataloged/imported but not visible in play. Active P0
-`awakening-interaction-feedback-console-activation` owns that binding. Recovery
-alcove idle/wake, Custodian Approach, Designation Locker, Dust Lung lift, Gate
+outputs. Awakening now builds the existing 8-frame activation sheet into one
+non-looping runtime presentation at the Layout-owned Crèche console marker; the
+first acknowledgement plays it once, then stops and hides it. The progression
+smoke verifies the frame strip, playback, one-shot behavior, and reset state.
+Asset V2 status still reports the runtime PNG as imported while its static
+consumer binding remains unverified because the sprite is assembled from code.
+Recovery alcove idle/wake, Custodian Approach, Designation Locker, Dust Lung lift, Gate
 Plaza, Undergate, Gate of Dust components, and Late Service
 underlay/foreground remain present in the Asset V2 catalog/runtime path. Late
 Service uses the canonical 704×768 pair under
@@ -66,6 +66,7 @@ source master, the tracked prior source was preserved at
 ## Runtime verification
 
 Asset V2 status reports Ambulatory 6/6, Attestation 7/7, Reliquary 3/3,
-Dust Lung 4/4, and Undergate 6/6. Asset V2 doctor reports healthy
-with no issues. All 21 newly published runtime PNGs have Godot import
-sidecars. No room geometry, interaction, collision, or scene binding changed.
+Dust Lung 4/4, Undergate 6/6, and Crèche console activation 1/1. Asset V2 doctor
+reports healthy with no issues. All 21 newly published runtime PNGs have Godot
+import sidecars. The console activation runtime presentation is consumed in
+code; no room geometry or collision changed.
