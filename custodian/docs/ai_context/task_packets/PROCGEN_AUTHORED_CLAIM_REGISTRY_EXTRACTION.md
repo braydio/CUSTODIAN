@@ -2,64 +2,90 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-authored-claim-registry-extraction`
-- Status: `ready`
+- Status: `dependency-gated`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `procgen-candidate-runtime-path-demolition, review-procgen-distant-chunk-unload-review-corrections-1`
+- Depends on: `procgen-candidate-runtime-path-demolition, review-procgen-distant-chunk-unload-review-corrections-1, review-procgen-road-authority-extraction`
 - Locks: `procgen-runtime`
 - Kind: `implementation`
-- Review: `none`
-- Reviewed main: `cdf5a2d4a1259df11d27605208a01401a7d80627`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-procgen-authored-claim-registry-extraction`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial single-owner extraction inside ProcGenTilemap; claim persistence must remain correct across runtime mutation, M6 unload/reload, authored ingress placement, and D1 road-authority delegation`
+- Reviewed main: `72afe8ee6de3324b92f4e96fe17cea6eaa4a35bf`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
-- Goal: Extract authored floor/overlook/ingress-clearance/reservation ownership from ProcGenTilemap into one canonical claim registry.
-- Completion boundary: REFRESH-GATED on reviewed M6 / cycle-1 re-review. Re-audit post-cycle-1 M6 review claim/reservation state before execution. The eventual slice closes when authored-scene floor claims, overlook-pocket plans/commits, ingress dressing-clearance claims, worldgen/terrain reservations that are genuinely the same claim concept, and claim/conflict queries mutate/query one canonical registry under the existing `custodian/game/world/procgen/authored_claims/` package, while runtime prop blockers and unrelated playability state remain with their current owners.
-- Current measured state: `custodian/game/world/procgen/authored_claims/README.md` is scaffold-only and still points to `ProcGenTilemap`. Live claim APIs include `claim_procgen_floor_rect_for_authored_scene_world`, `claim_procgen_floor_rect_for_authored_scene_tiles`, `claim_world_overlook_pocket`, `plan_world_overlook_pocket`, `commit_world_overlook_pocket_plan`, `_claim_isolated_world_overlook_pocket`, `claim_world_ingress_dressing_clearance`, `is_inside_world_ingress_dressing_clearance`, and `clear_world_ingress_dressing_clearances`, alongside several reservation dictionaries/terrain-required-cell adapters. Runtime prop blockers are a separate mutation concern and must not be swept into the claim registry by name similarity.
-- Evidence: `custodian/game/world/procgen/authored_claims/README.md`; current claim/reservation functions/state in `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/game/world/procgen/diagnostics/procgen_required_cell_classifier.gd`; `custodian/tools/validation/ash_bell_threadway_generation_contract_smoke.gd`; `custodian/tools/validation/sundered_keep_procgen_frontage_smoke.gd`; `custodian/tools/validation/sundered_keep_ingress_smoke.gd`; `custodian/tools/validation/procgen_terrain_required_cells_smoke.gd`; eventual reviewed M6/MR6 state.
-- Task-specific authority: PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md; authored-scene procgen authority reservation API; current terrain/ingress clearance contracts.
-- Work surface: Intentionally refresh-gated. Expected canonical package is the existing `custodian/game/world/procgen/authored_claims/` scaffold, with narrow compatibility methods retained on `ProcGenTilemap` only where live callers need them. `custodian/game/world/procgen/diagnostics/procgen_required_cell_classifier.gd` remains diagnostics/classification unless the post-cycle-1 M6 review audit proves ownership belongs elsewhere.
-- Change: None while blocked. After M6, classify every claim/reservation dictionary and API by semantic ownership first, then extract only the unified authored/worldgen claim concept. Preserve existing public claim APIs as façade delegates where callers depend on them; do not absorb runtime blockers, authored-level gameplay state, or presentation.
-- Preserve: All claim extents, conflict/clearance behavior, ingress frontage, terrain required cells, encounter clearances and fixed-seed results.
-- Non-goals: No authored-level redesign, no new claim kinds unless required to faithfully represent current state, no generation export extraction.
-- Acceptance: Not implementation-ready until refreshed post-cycle-1 M6 review. Final acceptance must enumerate every migrated and intentionally-unmigrated claim/reservation store, leave no duplicate authoritative claim dictionaries, preserve exact claim extents/conflicts/required-cell effects, and expose a deterministic registry snapshot.
-- Validation: Refresh after the cycle-1 M6 re-review. Expected focused suite includes `res://tools/validation/ash_bell_threadway_generation_contract_smoke.gd`, `res://tools/validation/sundered_keep_procgen_frontage_smoke.gd`, `res://tools/validation/sundered_keep_ingress_smoke.gd`, `res://tools/validation/procgen_terrain_required_cells_smoke.gd`, stuck-pocket/connector regressions selected by the manifest, and changed-file closeout.
+- Summary backlink: Every durable implementation/review/recovery/correction/closeout summary for this packet must include `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
+- Goal: Extract durable authored-world claim metadata and membership from `ProcGenTilemap` into one canonical registry under `custodian/game/world/procgen/authored_claims/`, while leaving physical floor/wall/elevation realization, road authority, runtime blockers, worldgen intent reservations, route/encounter clearances, terrain diagnostics, and presentation-derived masks with their existing owners.
+- Completion boundary: Done when one `ProcgenAuthoredClaimRegistry`-equivalent owner canonically stores authored floor-footprint claims, committed world-overlook claims, and world-ingress dressing-clearance claims; all public façade claim/query APIs delegate their durable claim state to that owner; `ProcGenTilemap` applies the existing floor/wall/elevation/foliage/prop/navigation realization effects from registry-produced claim geometry without keeping duplicate claim stores; M6 unloaded-tile mutation/reload semantics remain exact; and a deterministic registry snapshot proves single-owner state while intentionally excluded reservation/clearance families remain unchanged.
+- Current measured state: The old M6 refresh gate is satisfied. MR6R1 is complete/passed on reviewed main with all R0-01..R0-05 fixed, 0 blocking defects, 0 material evidence gaps, and S7 closed; its remaining N1 items are evidence-hardening only and do not change claim ownership. Archive Resolve AR1-AR3 are complete/reviewed and AR4 is presentation-only; claim extraction must preserve request/commit/unload/reacquisition observation rather than absorb it. D1 road-authority extraction has landed and `ProcGenTilemap` now delegates canonical road/parking/path state to `ProcgenRoadAuthority`; its paired review is still `ready`, so this packet is execution-gated on that review. Live durable authored-claim state is narrower than the old packet implied: authored floor claims are currently applied by `claim_procgen_floor_rect_for_authored_scene_{world,tiles}` but are not retained in a dedicated canonical claim store; committed overlook pockets reuse those APIs plus topology realization; world-ingress dressing clearances are retained directly in `_world_ingress_dressing_clearance_rects`. In contrast, `_worldgen_reserved_regions` comes from `RegionFootprintReserver` and is worldgen-intent planning authority, `_encounter_reserved_cells` is encounter planning, route hard-clearance belongs to route playability, `_macro_presentation_dressing_clearance_cells` is presentation-only, `_surface_claim_cells` is a derived nonwalkable-surface classification mask, and runtime prop blockers are mutable collision/placement state. None of those belong in the authored-claim registry.
+- Evidence: passed MR6R1 receipt and `REVIEW_PROCGEN_DISTANT_CHUNK_UNLOAD_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`; landed D1 packet/summary and live `procgen_road_authority.gd`; `custodian/game/world/procgen/authored_claims/README.md`; live `proc_gen_tilemap.gd` claim APIs/state; `intent/region_footprint_reserver.gd`; `diagnostics/procgen_required_cell_classifier.gd`; `special_rooms/special_room_runtime_inserter.gd`; story/faction geometry stampers; `world_ingress_spawner.gd`; M5/M6 claim mutation coverage; authored-scene/Threadway/Sundered Keep/terrain-required validation.
+- Task-specific authority: `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; reviewed M6 residency contract; landed D1 road-authority contract; current authored-scene/overlook/ingress APIs; Archive Resolve remains a presentation-only observer.
+- Work surface: Primary new owner: `custodian/game/world/procgen/authored_claims/procgen_authored_claim_registry.gd` (or equivalently focused name). Integration: narrow registry initialization/reset/delegation in `proc_gen_tilemap.gd`; update `authored_claims/README.md`; focused validation/manifest ownership; only directly stale docs/indexes. Existing callers keep using the current `ProcGenTilemap` façade APIs unless a direct in-package caller benefits from the owner without bypassing physical realization.
+- Change: Add one stateful authored-claim registry with no scene-tree dependency and no broad `ProcGenTilemap` reference. It owns normalized durable records for: (a) authored floor-footprint claims, including footprint/claim rect, region type, zone, margin and base-floor-visual intent; (b) committed world-overlook footprint identity/metadata; and (c) world-ingress dressing-clearance tile rects. It exposes reset, claim insertion, category clear where current behavior requires it, cell/rect membership queries, deterministic ordered snapshots, and claim-cell projection. Preserve duplicate-call behavior exactly; do not silently deduplicate calls if live behavior currently applies them more than once.
+- Change: Keep the public façade names `claim_procgen_floor_rect_for_authored_scene_world`, `claim_procgen_floor_rect_for_authored_scene_tiles`, `claim_world_overlook_pocket`, `plan_world_overlook_pocket`, `commit_world_overlook_pocket_plan`, `claim_world_ingress_dressing_clearance`, `is_inside_world_ingress_dressing_clearance`, and `clear_world_ingress_dressing_clearances`. Their durable claim metadata/membership must delegate to the registry. Existing external callers such as Ash Bell, special rooms, story rooms, faction sites and world ingress placement must not be forced onto a second API.
+- Change: Separate **claim ownership** from **world realization**. The registry computes/returns deterministic claim geometry and records durable claim state; `ProcGenTilemap` remains responsible for applying generated floor/wall/elevation/region mutations, chunk-payload invalidation, road-authority clearing, foliage/prop clearing, runtime wall collision, shadows and navigation through the existing helpers. The registry must never paint TileMap cells, rebuild navigation/collision, clear roads, or know streaming visibility.
+- Change: Preserve overlook-pocket behavior without broadening registry authority. Durable committed overlook footprint metadata belongs in the registry. Topology-dependent planning/realization that reads generated floor/wall state, terrain-required cells, Sundered Keep protection, virtual connector floor/wall maps, moat erasure, RuntimeWalkableBoundary rebuilds, and navigation remains in the façade/current owners unless a small pure geometry helper can move without importing those authorities. Do not move generated floor/wall dictionaries into the registry just to make `plan_world_overlook_pocket()` look “fully extracted.”
+- Change: Move `_world_ingress_dressing_clearance_rects` out of `ProcGenTilemap` completely. `claim_world_ingress_dressing_clearance()` converts the world rect through the canonical spatial seam, records the resulting tile rect in the registry, then keeps the current foliage/prop-clearing side effects in the façade. `is_inside_world_ingress_dressing_clearance()`, clear, M6 protected-chunk calculation, macro-presentation protected/ingress inputs, spawn exclusion, and any other consumers must read registry state/snapshots rather than a façade mirror.
+- Change: Route authored floor claim registration through the registry before realization. The existing physical mutation loop remains semantically identical: clear canonical road authority through the D1 owner/facade seam, force authored floor authority, invalidate M5 chunk payload state, preserve M6 “canonical mutation while UNLOADED, no premature repaint” behavior, update elevation/region state, and perform the same bounded collision/overlay/shadow/navigation refresh after the batch. Registry state must not become a replacement for `_generated_floor_cells`/`_generated_wall_cells`.
+- Change: Keep worldgen-intent reservations outside D2. `RegionFootprintReserver.build_reservations()` remains owner of `floor_cells` + `reserved_regions`; `_worldgen_reserved_regions` remains generation-planning state for D3/GenerationGrid work. Do not copy it into the registry. Story/faction stampers may consume those reservations and then create authored floor claims through the façade, at which point the resulting authored claim is registered normally.
+- Change: Keep all other look-alike stores outside D2: `_encounter_reserved_cells`, route-playability hard clearance, macro-presentation dressing clearance, derived `_surface_claim_cells`, nonwalkable-surface `surface_claims`, runtime prop blockers, portal/compound-ingress locations, terrain-required classifier entries, and D1 road state. They may be consumers/conflict inputs but must not be migrated or mirrored.
+- Change: Add a deterministic read-only debug snapshot on the façade delegating to the registry. At minimum report schema/version, ordered claim records by category, category counts, ingress-clearance rects, and a stable claim fingerprint derived only from registry-owned state. The snapshot is validation/diagnostic only; gameplay must not branch on it.
+- Change: Update `authored_claims/README.md` from scaffold-only to the precise ownership boundary above. Update validation ownership so changes to the registry select its focused smoke plus the authored-scene, ingress/Threadway and M6 claim-mutation regressions.
+- Preserve: Exact authored floor/overlook extents; region/zone metadata; D1 road clearing semantics; ingress dressing-clearance dimensions and clearing effects; required-ingress placement; Threadway isolation/connector behavior; Sundered Keep frontage/protection; special/story/faction room geometry; terrain required-cell sets; route playability; runtime blockers; M5 payload invalidation; M6 unload/reload; AR request/commit/unload/reacquisition presentation observation; fixed-seed floor/wall/elevation/level-data output; S1 determinism.
+- Non-goals: No worldgen-intent reservation extraction; no generation-state/export extraction; no runtime blocker migration; no encounter/route clearance migration; no presentation claim migration; no new claim kinds merely to unify names; no road redesign; no topology repair; no claim-based gameplay redesign; no GenerationGrid work; no façade contraction beyond direct claim delegation.
+- Acceptance: (1) one registry is the only durable owner of authored floor-claim records, committed overlook-claim records, and world-ingress dressing-clearance rects; `ProcGenTilemap` has no duplicate backing claim/clearance store. (2) Existing public façade claim/query methods and all current external callers remain behavior-compatible. (3) Registry has no scene-tree/TileMap/navigation/collision/road-authority dependency and receives only data needed to normalize/store/query claims. (4) Authored floor claims preserve exact floor/wall/elevation/region output and D1 road-authority clearing; no stale road state remains after a claim. (5) A claim against an M6-UNLOADED tile updates canonical generated state and registry state without painting the tile; reload paints the updated canonical payload and registry fingerprint/state does not change merely because residency changed. (6) World-ingress dressing clearance preserves exact membership, foliage/prop clearing, spawn exclusion, macro-presentation exclusion and protected-streaming-chunk behavior through registry delegation. (7) Overlook pocket planning/commit preserves existing isolated/non-isolated geometry, moat conflict rules, connector preflight, required-cell/Sundered Keep protection and immediate physical boundary behavior; committed footprints appear in the registry without moving generated topology ownership there. (8) Story/faction/special-room/Ash-Bell callers all produce the same claimed extents and deterministic registry records. (9) `_worldgen_reserved_regions`, encounter reservations, route hard clearances, macro dressing clearance, derived surface-claim masks, runtime blockers, terrain required-cell classifier and D1 road state remain with their existing owners and are not mirrored into the registry. (10) Registry reset/clear semantics prevent claims leaking between map generations or ingress-placement reruns. (11) Deterministic registry snapshot/fingerprint is stable across repeated identical fixed-seed runs and invariant under M6 unload/reload presentation churn. (12) Archive Resolve code/state and its observation seams are untouched by this extraction. (13) S1 quick remains `determinism_ok=true` at the accepted fingerprint unless an independently justified mainline baseline change lands first.
+- Validation: Create/register a focused authored-claim-registry smoke first. It must directly exercise reset/record/membership/snapshot determinism without a map, then exercise façade delegation on a real `ProcGenTilemap`. Run `procgen_authored_scene_authority_smoke.gd`, `ash_bell_threadway_generation_contract_smoke.gd`, `ash_bell_threadway_causeway_smoke.gd`, `sundered_keep_ingress_smoke.gd`, `world_ingress_spawner` validation, `procgen_terrain_required_cells_smoke.gd`, `procgen_runtime_health_smoke.gd`, `procgen_chunk_payload_cache_smoke.gd`, M6 `procgen_distant_chunk_unload`, D1 road-authority/road-semantics regressions, candidate materializer parity via its manifest id, and S1 quick. Add a focused assertion that an authored claim applied to an unloaded tile does not repaint until re-request/reload while registry state remains stable. Run changed-file validation, packet/review-pairing checks and `git diff --check`.
 - Task overrides: `none`
-- Deferred: Generation state/export extraction and façade contraction.
+- Deferred: D3 generation-state extraction remains the sibling owner of accepted-world snapshot/export. X1 Generation Data Model Audit starts only after D1+D2+D3 are reviewed/landed. Any future desire to unify worldgen reservations with authored claims must be justified by the post-D audit rather than by naming similarity.
 
+## D1 Review Gate
 
-## Temporary Archive Resolve Refresh Guard — REMOVE DURING THIS PACKET'S REQUIRED REFRESH
+D2 has now been fully refreshed against passed MR6R1, landed D1 implementation, and the live post-M6 claim surface. The obsolete M6/Archive Resolve manual-refresh guard is removed.
 
-Archive Resolve is now a locked presentation program under
-`design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`, with pre-authored
-AR1/AR2/AR3 packets under this task-packet directory.
+Execution remains dependency-gated on `review-procgen-road-authority-extraction` because authored floor realization clears canonical road authority. If that review passes cleanly or with non-blocking-only findings that do not change the road-clear façade contract, no further ChatGPT/user refresh is required and D2 becomes claimable automatically. If D1 review produces a correction that changes road clearing/state ownership, keep D2 blocked until that correction/re-review lands, then recheck only the affected road-clear seam before claim.
 
-Before implementing this procgen rewrite slice, the agent must confirm that the
-Archive Resolve packet set has been refreshed against the reviewed post-cycle-1 M6 review live
-streaming surface. If Archive Resolve has already landed, re-audit and preserve
-its request/commit/unload/reacquisition observation seams as presentation-only
-consumers; do not absorb its state into road, claim, generation, or façade
-authority. If the AR packets are still pre-refresh or the ordering is unclear,
-stop and leave this packet blocked rather than moving the seam out from under
-them.
+## Recommended Implementation Order
 
-When this packet is refreshed from live main and made implementation-ready,
-replace this temporary guidance with the exact live preservation/ownership
-contract and **delete this entire Temporary Archive Resolve Refresh Guard
-section**. Its continued presence means this packet is not ready to implement.
+1. Add the registry owner, README contract and owner-level deterministic smoke; migrate only registry reset/state/query APIs first.
+2. Move ingress-clearance backing state/query/clear into the registry and convert all façade consumers.
+3. Register authored floor claims and committed overlook claims while keeping physical realization in `ProcGenTilemap`; remove duplicate façade claim stores.
+4. Validate M5/M6 unloaded claim mutation and D1 road-clearing parity.
+5. Convert remaining claim consumers/debug probes, add deterministic snapshot/fingerprint, update validation ownership/docs, and run the full focused/changed-file closeout.
 
-## Series Contract
+## Agent Search Budget
 
-This packet belongs to the pre-authored `procgen-runtime-optimization-v1` dependency DAG. Do not author its ordinary V1 successor during implementation: downstream packets already exist on `main` with `Dispatch: auto`. Update the detailed procgen roadmap and matching master-roadmap row at closeout, record landed evidence, then finish normally so declared dependents can become eligible. If live evidence invalidates a downstream contract, record the contradiction and leave that dependent blocked rather than silently broadening this workstream.
+Start with: `proc_gen_tilemap.gd` claim methods at the authored-floor/overlook/ingress blocks; `_world_ingress_dressing_clearance_rects` and every direct consumer; `_force_authored_scene_floor_authority`; D1 `ProcgenRoadAuthority` clearing seam; `authored_claims/README.md`; `world_ingress_spawner.gd`; story/faction/special-room callers; M5/M6 claim mutation tests; authored-scene/Threadway/Sundered Keep focused tests. Expand only from a direct caller or failing test. Do not survey unrelated combat, biome, generation-grid, Operator, or presentation implementation.
 
+## Completion Truth
 
-## Refresh Planning Authority
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `<fill at closeout>`
+- Completion boundary satisfied: `<fill at closeout>`
+- Acceptance satisfied: `<fill at closeout>`
+- Superseded/legacy production path disposition: `<fill at closeout>`
+- Evidence: `<fill at closeout>`
 
-- Refresh owner: `execution-agent`
-- ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
-- Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success | partial | blocked`
+- Friction severity: `none | low | medium | high`
+- What went wrong: `none`
+- Root cause / contributing factors: `none`
+- Prevention / pipeline improvement: `none`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none | fixed-in-scope | manual-follow-up`
 
 ## Handoff
 
-- Next action: Finish normally. Once D1+D2+D3 are all complete, `procgen-generation-data-model-audit` becomes eligible. D4 no longer follows these siblings directly; it is blocked behind the measured GenerationGrid migration initiative.
-- Best starting files: ProcGenTilemap claim/reservation methods; authored_claims scaffold; terrain/ingress tests.
-- Blockers or open questions: None known at authoring time.
+- Next workstream: `review-procgen-authored-claim-registry-extraction`
+- Next packet state: `dependency-gated until D2 lands`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Refresh reason: `none after D1 review passes without a road-clear ownership correction`
+- Next action: Complete the D1 paired review. If it passes without changing the authored-scene road-clear contract, D2 may auto-claim directly from this refreshed packet.
+- Blockers or open questions: D1 paired review is still ready/unrun on current main.
