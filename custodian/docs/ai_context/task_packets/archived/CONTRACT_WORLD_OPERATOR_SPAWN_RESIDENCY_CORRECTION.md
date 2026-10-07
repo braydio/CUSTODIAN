@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `contract-world-operator-spawn-residency-correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-contract-world-operator-void-spawn-failsafe-correction`
@@ -42,19 +42,30 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `<fill at closeout>`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes — canonical spawn choice is independent of paint residency and the selected spawn is realized before activation.`
+- Completion boundary satisfied: `yes — the selected valid/runtime-walkable/main-component tile is synchronously painted through the existing chunk lifecycle/payload/commit path before Operator control is restored.`
+- Acceptance satisfied: `yes — the new real generated streaming smoke proves readiness, stable selection, camera/Archive Resolve ordering, and idempotence; mutation restoring the painted-floor filter fails; catastrophic no-safe behavior remains fail-closed and vehicle possession remains null.`
+- Superseded/legacy production path disposition: `the ProcGen painted-floor candidate filter is removed; non-ProcGen fallback maps retain their existing painted-floor requirement.`
+- Evidence: `all 14 focused packet regressions including S1 quick pass; the residency mutation fails as expected; task_packet_index and git diff checks pass. The changed-file sweep selected 50 tests: 16 passed, the repository-wide review_pairing_contract unit failed on two unrelated visual-review-question-answer-capture-v1 packets, and 33 higher tiers were skipped. This task's review pair was not reported by the pairing guard.`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `the exact Archive Resolve install-phase assertion and trace-index reads needed adjustment for the new readiness phase; the original fail-closed fixture requires a fully painted setup, so residency coverage was separated into a generated streaming smoke. The broad changed-file sweep is blocked by unrelated repository-wide review-pairing drift.`
+- Root cause / contributing factors: `one test encoded fixed trace positions; the existing fail-closed fixture intentionally disables streaming; unrelated active visual-review packets contain pairing metadata drift.`
+- Prevention / pipeline improvement: `keep phase-order checks synchronized with named install phases; isolate streamed presentation preconditions from fully painted ingress fixtures; repair the unrelated review-pairing drift in its owning workstream.`
+- Tooling / docs drift discovered: `changed-file validation reaches an unrelated failing review_pairing_contract unit and skips higher tiers after that unit failure.`
+- Follow-up: `manual-follow-up`
+- What worked: `a deterministic generated seed provided an initially unpainted canonical tile in an UNSEEN/UNLOADED chunk.`
 
 ## Handoff
 
 - Next workstream: `review-contract-world-operator-spawn-residency-correction`
-- Next packet state: `dependency-gated until implementation lands`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: `none`
-- Next action: Implement this P0 before resuming subjective AR4 playtest. Re-test a normal production boot manually after landing.
+- Next action: Claim and perform the paired fresh-context code/runtime review; then resume AR4 playtest only after review disposition.
 - Blockers or open questions: none.

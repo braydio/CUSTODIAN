@@ -190,11 +190,15 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	if reposition_operator_from_contract:
 		if not _position_operator(level_data, map_instance):
 			var spawn_failure_detail := "no candidate passed canonical spawn validity and main playable component membership"
+			var failure_reason := "no_canonical_safe_spawn"
 			if not _install_trace.is_empty():
-				spawn_failure_detail += "; trace=%s" % str(_install_trace[-1])
+				var last_spawn_trace: Dictionary = _install_trace[-1]
+				spawn_failure_detail += "; trace=%s" % str(last_spawn_trace)
+				if last_spawn_trace.get("phase") == &"spawn_presentation_realization_failed":
+					failure_reason = "spawn_presentation_realization_failed"
 			_on_contract_generation_failed({
 				"generation_failed": true,
-				"failure_reason": "no_safe_operator_spawn_after_world_ingress_placement",
+				"failure_reason": failure_reason,
 				"detail": spawn_failure_detail,
 			})
 			return
@@ -755,11 +759,33 @@ func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 			):
 				safe_component_tile_count += 1
 		_trace_install(&"operator_spawn_unavailable", {
+			"reason": "no_canonical_safe_spawn",
 			"main_component_tile_count": main_component.size(),
 			"safe_component_tile_count": safe_component_tile_count,
 		})
 		return false
 	var selected_tile: Vector2i = selection["tile"]
+	if map_instance is ProcGenTilemap:
+		var pg := map_instance as ProcGenTilemap
+		var realized := pg.ensure_spawn_presentation_ready(selected_tile)
+		if not realized or not _is_walkable_floor_tile(map_instance, selected_tile):
+			var chunk_size := maxi(1, pg.streaming_chunk_size_tiles)
+			var chunk := Vector2i(
+				int(floor(float(selected_tile.x) / float(chunk_size))),
+				int(floor(float(selected_tile.y) / float(chunk_size)))
+			)
+			_trace_install(&"spawn_presentation_realization_failed", {
+				"tile": selected_tile,
+				"chunk": chunk,
+				"lifecycle_state": pg.debug_get_chunk_lifecycle_state(chunk),
+				"floor_source_id": pg.floor_tilemap.get_cell_source_id(selected_tile) if pg.floor_tilemap != null else -1,
+				"wall_source_id": pg.walls_tilemap.get_cell_source_id(selected_tile) if pg.walls_tilemap != null else -1,
+				"reason": "readiness_seam_failed_or_tile_not_painted_floor",
+			})
+			return false
+		_trace_install(&"spawn_presentation_ready", {"tile": selected_tile, "source": selection["source"]})
+	elif not _is_walkable_floor_tile(map_instance, selected_tile):
+		return false
 	var selected_world_position := _tile_to_world(map_instance, selected_tile)
 	operator.global_position = selected_world_position
 	var round_trip_tile := _world_to_tile(map_instance, operator.global_position)
@@ -857,8 +883,6 @@ func _is_safe_operator_spawn_tile(
 	tile: Vector2i,
 	main_component: Dictionary = {}
 ) -> bool:
-	if not _is_walkable_floor_tile(map_instance, tile):
-		return false
 	if _is_inside_ingress_clearance(map_instance, tile):
 		return false
 	if map_instance is ProcGenTilemap:
@@ -868,7 +892,7 @@ func _is_safe_operator_spawn_tile(
 			and pg.is_runtime_navigation_walkable(tile)
 			and main_component.has(tile)
 		)
-	return true
+	return _is_walkable_floor_tile(map_instance, tile)
 
 
 func _get_main_playable_component(map_instance: Node) -> Dictionary:

@@ -10,6 +10,7 @@ const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const WORLD_LOADER_SCRIPT := preload(
 	"res://game/systems/core/systems/contract_world_loader.gd"
 )
+const PLAYER_CONTROLLER_SCRIPT := preload("res://game/systems/core/player_controller.gd")
 const LEGACY_OPERATOR_POSITION := Vector2(717.45905, -485.33954)
 const TEST_SEED := 424242
 
@@ -60,6 +61,10 @@ func _run() -> void:
 	operator.visible = true
 	operator.process_mode = Node.PROCESS_MODE_INHERIT
 	game_root.add_child(operator)
+	var player_controller := PLAYER_CONTROLLER_SCRIPT.new()
+	player_controller.name = "PlayerController"
+	player_controller.operator_path = NodePath("../Operator")
+	game_root.add_child(player_controller)
 	var loader := WORLD_LOADER_SCRIPT.new()
 	loader.name = "ContractWorldLoader"
 	loader.set("world_path", NodePath("../World"))
@@ -156,6 +161,8 @@ func _run() -> void:
 	var landed_tile := map.global_to_minimap_tile(operator.global_position)
 	_expect(not loader.is_contract_activation_aborted(), "forced fallback install must reach ready")
 	_expect(spawn_detail.get("source") == "main_component_fallback", "install trace must identify main_component_fallback")
+	_expect(map.debug_get_spawn_presentation_ready_count() == 1, "production install must use the narrow spawn readiness seam")
+	_expect(_trace_has_phase(trace, &"spawn_presentation_ready"), "install trace must prove selected spawn presentation became ready")
 	_expect(selected_tile == landed_tile, "Operator round-trip tile must equal selected tile")
 	_expect(world_position.is_equal_approx(operator.global_position), "trace world position must equal final Operator position")
 	_expect(
@@ -177,6 +184,11 @@ func _run() -> void:
 		"one accepted component snapshot must serve final Operator selection"
 	)
 	_expect(_trace_has_phase(trace, &"contract_ready"), "successful fallback must mark the contract ready")
+	_expect(
+		_trace_index(trace, &"spawn_presentation_ready") < _trace_index(trace, &"archive_resolve_ingress")
+			and _trace_index(trace, &"spawn_presentation_ready") < _trace_index(trace, &"camera_refresh"),
+		"camera and Archive Resolve ingress must follow successful spawn realization"
+	)
 	var actual_ingress := world.get_node_or_null("WorldIngressSpawner")
 	var placements: Dictionary = actual_ingress.call("get_last_placements") if actual_ingress != null else {}
 	_expect(placements.has("forlorn_ritualant_underground"), "real registered Ritualant ingress must be installed")
@@ -218,9 +230,11 @@ func _run() -> void:
 	_expect(camera.snap_count == ready_camera_snaps, "catastrophic failure must not run a successful camera snap")
 	_expect(not _trace_has_phase(failure_trace, &"contract_ready"), "catastrophic failure must not mark contract ready")
 	_expect(not _trace_has_phase(failure_trace, &"operator_placed"), "catastrophic failure must not trace successful placement")
+	_expect(_trace_detail(failure_trace, &"operator_spawn_unavailable").get("reason") == "no_canonical_safe_spawn", "catastrophic failure must diagnose no_canonical_safe_spawn")
+	_expect(player_controller.current_vehicle == null, "catastrophic contract failure must not report vehicle possession")
 	_expect(
-		loader.get_last_failure_result().get("failure_reason") == "no_safe_operator_spawn_after_world_ingress_placement",
-		"catastrophic failure must retain the existing failed-contract reason"
+		loader.get_last_failure_result().get("failure_reason") == "no_canonical_safe_spawn",
+		"catastrophic failure must retain the canonical spawn diagnostic"
 	)
 
 	# Visibility and processing return only after a later safe placement.
@@ -270,6 +284,13 @@ func _trace_has_phase(trace: Array[Dictionary], phase: StringName) -> bool:
 		if entry.get("phase") == phase:
 			return true
 	return false
+
+
+func _trace_index(trace: Array[Dictionary], phase: StringName) -> int:
+	for index in range(trace.size()):
+		if trace[index].get("phase") == phase:
+			return index
+	return -1
 
 
 func _generate_map() -> ProcGenTilemap:

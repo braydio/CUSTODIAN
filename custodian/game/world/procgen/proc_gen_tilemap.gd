@@ -537,6 +537,7 @@ var _streaming_visual_rebuild_accum: float = 0.0
 var _streaming_reveal_flush_owed: bool = false
 ## Count of completed full visual-rebuild flushes; test/telemetry only.
 var _streaming_visual_flush_count: int = 0
+var _spawn_presentation_ready_count: int = 0
 var shadow_system: Node = null
 
 
@@ -5762,6 +5763,43 @@ func debug_get_road_semantics_summary() -> Dictionary:
 
 func debug_get_chunk_lifecycle_state(chunk_pos: Vector2i) -> int:
 	return _chunk_lifecycle.get_state(chunk_pos)
+
+
+## Makes one already-generated spawn tile's owning chunk presentation-resident.
+## This deliberately reuses the existing M4/M5/M6 lifecycle and reveal commit
+## path; it is not a general-purpose chunk reveal API.
+func ensure_spawn_presentation_ready(tile: Vector2i) -> bool:
+	_spawn_presentation_ready_count += 1
+	if not _generated_floor_cells.has(tile) or _generated_wall_cells.has(tile):
+		return false
+	if _is_spawn_tile_painted_floor(tile):
+		return true
+	if get_tree() != null and get_tree().paused:
+		return false
+	if _chunk_lifecycle == null or floor_tilemap == null or walls_tilemap == null:
+		return false
+	var chunk := _tile_to_chunk(tile)
+	if _chunk_lifecycle.is_requested(chunk):
+		return false
+	_reveal_chunk_immediately(chunk)
+	if not _is_spawn_tile_painted_floor(tile):
+		return false
+	_streaming_visual_rebuild_pending = true
+	_flush_streaming_visual_rebuilds()
+	return true
+
+
+func debug_get_spawn_presentation_ready_count() -> int:
+	return _spawn_presentation_ready_count
+
+
+func _is_spawn_tile_painted_floor(tile: Vector2i) -> bool:
+	return (
+		floor_tilemap != null
+		and walls_tilemap != null
+		and floor_tilemap.get_cell_source_id(tile) >= 0
+		and walls_tilemap.get_cell_source_id(tile) < 0
+	)
 
 
 ## Count of chunks whose presentation is currently resident (VISIBLE or

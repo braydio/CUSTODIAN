@@ -3629,6 +3629,25 @@
       "needs_import": true
     },
     {
+      "id": "contract_world_operator_spawn_residency",
+      "type": "godot_script",
+      "script": "res://tools/validation/contract_world_operator_spawn_residency_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "contract_world",
+        "operator_spawn",
+        "streaming_residency",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/contract_world_operator_spawn_residency_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "contract_world_ingress_spawn_clearance",
       "type": "godot_script",
       "script": "res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd",
