@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-contract-world-operator-spawn-residency-correction`
 - Kind: `review`
-- Status: `dependency-gated`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `contract-world-operator-spawn-residency-correction`
@@ -26,7 +26,7 @@
 - Review focus: Trace selection and realization as two separate phases. Canonical selection must use valid-spawn + runtime-walkable + accepted-component + ingress-clearance authority only. Presentation realization must occur after one tile is selected and through one narrow map-owned seam. Verify the readiness seam is idempotent, uses existing lifecycle/payload/commit machinery, and does not become a generic discovery API. Confirm Operator visibility/process and camera/Archive ingress happen only after successful realization.
 - Acceptance: Findings-first fresh-context review. Zero blocking defects/material gaps closes the correction. Blocking/material findings create `contract-world-operator-spawn-residency-correction-review-corrections-1` plus paired re-review.
 - Non-goals: No vehicle redesign, map rescue/regeneration, Archive Resolve tuning, ingress relocation, or failure UX redesign.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, review packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not edit reviewed runtime code or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
