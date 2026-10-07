@@ -41,9 +41,9 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes — safe accepted-component fallback closes the production void-start path, and no-safe-cell failure is non-playable.`
-- Completion boundary satisfied: `yes — real loader integration proves fallback, exact round-trip, camera handoff, catastrophic abort and later recovery.`
-- Acceptance satisfied: `yes — preferred order, deterministic fallback, shared component snapshot, trace observability, zero-tile result representation and fail-closed presentation are covered.`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
 - Evidence: `Focused validation report /tmp/custodian-contract-void-focused.json passed; contract_world_operator_void_spawn_failsafe; contract_world_playable_region_spawn_validity; contract_world_ingress_spawn_clearance; contract_world_archive_resolve_ingress; world_ingress_spawner; procgen_spatial_normalization; procgen_walkable_boundary; navigation_elevation_smoke; procgen_performance_baseline_quick (determinism_ok=true, fingerprint 1773840677); mutation-disabled fallback fails as expected. Changed-file sweep /tmp/custodian-contract-void-changed.json also selected procgen_ambient_enemy_real_world_spawn (fails closed as expected for its generated map: accepted component 72 tiles, safe component tiles 0) and two unrelated Vaultwing checks (missing production spawner assertion and missing authored PNG assets); those failures are not caused by the fallback when a safe cell exists.`
 
