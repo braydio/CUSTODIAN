@@ -72,6 +72,7 @@
 
 ## Independent Review
 
+- Status: `passed`
 - Outcome: `passed`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
