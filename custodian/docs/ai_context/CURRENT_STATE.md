@@ -2085,16 +2085,22 @@ under each family's `pre_handoff_1254x1254/` folder; the handoff sources remain
 at the package-declared source paths, and Asset V2 retains normalized inputs
 in the ingest archives.
 
-Plate binding is distinct from finished visual QA. The live Awakening now hides
-production traversal blockout visuals, uses a dark void plane and local camera
-framing, fades neighboring room canvases at transitions, seats the P-9 locker
-into its east wall, and raises only the Undergate's existing ambient profiles.
-The 04→05 dogleg now uses one normalized, V2-ingested 832×384 `full_plate`
-presentation sprite centered on the union of unchanged `04_05_A/B/C` rectangles;
-its fade envelope is derived from those Layout rectangles. Traversal and
-collision remain Layout-owned. The first five Road modular presentation
-families require new native-size art. The sealed central Gate
-body's passage composition remains an authored-state decision.
+Plate binding is distinct from finished visual QA. The live Awakening currently
+still binds the legacy crop-derived 04→05 connector runtime plate at
+`Connector04_05_Underlay`; that result is not accepted as final because the
+user-approved direct `~/Downloads/connector.png` has not yet replaced it and the
+live sprite is missing an authored connector chunk / is misregistered. The active
+P0 `awakening-room-connectors-polish` packet now treats the exact source pixels
+as authority, forbids cropping nontransparent pixels, and re-derives the runtime
+canvas/transform instead of preserving historical 1024×576 / `(352,-2464)`
+assumptions. Traversal/collision remain Layout-owned. Separately, the lower and
+later halves are logically joined today by `05_06` (128×32) plus
+`z06_south_door` (128×64); their exact 128×96 union matches the 96px overlap of
+the Dust Lung and Undergate room plates. The P0
+`awakening-lower-upper-spine-connection` packet will consolidate that as one
+semantic passage and prove real-Operator continuity into Zones06–10. The Road
+modular presentation families are already live; the sealed central Gate body's
+passage composition remains an authored-state decision.
 
 The traversal connector/inlay blockout layer now yields to the production
 plates while Layout retains collision authority. Console and lift stations use
