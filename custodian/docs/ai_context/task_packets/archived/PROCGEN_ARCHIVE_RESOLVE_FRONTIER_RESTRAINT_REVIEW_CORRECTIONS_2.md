@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-frontier-restraint-review-corrections-2`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-archive-resolve-frontier-restraint-review-corrections-1`
@@ -43,10 +43,30 @@
 ## Next Handoff
 
 - Next workstream: `review-procgen-archive-resolve-frontier-restraint-review-corrections-2`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Refresh reason: `none`
-- Next action: After correction 2 lands, claim its paired fresh-context review. This is the final allowed automatic correction cycle.
-- Blockers or open questions: Correction 2 must close R1-02 and R1-03; no design decision is missing.
+- Next action: Claim the paired post-land review from a fresh, different-agent reviewer context. This is the final allowed automatic correction cycle.
+- Blockers or open questions: none.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: The AR4 restraint regression covers COMMIT/unload/reacquisition identity, hidden existing READY and later COMMIT cells with missing visibility center, center restoration behind an opaque wall, visibility opening, and frontier-disabled fallback. `procgen_archive_resolve_frontier_restraint`, `contract_world_archive_resolve_ingress`, `procgen_reveal_presentation`, `procgen_archive_resolve_semantic_echo`, `procgen_pause_aware_streaming`, and `procgen_performance_baseline_quick` all passed. Changed-file validation selected 4 tests, all passed with complete coverage; `git diff --check` passed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: An initial broad fallback guard suppressed unrelated READY presentation when no ingress pocket was pending. Narrowing the guard restored compatibility. Final diff review also found that occluded READY pocket entries must remain guarded after a visibility center returns; this was fixed and the full required validation was rerun.
+- Root cause / contributing factors: The existing queue serves both ingress pocket and generic READY work, while missing-center updates use the legacy fallback path.
+- Prevention / pipeline improvement: Keep pending hidden ingress identity in the guard until it becomes visible or leaves READY; exercise restoration and occlusion transitions in the focused owner regression.
+- Tooling / docs drift discovered: none.
+- Follow-up: `review-procgen-archive-resolve-frontier-restraint-review-corrections-2`
+- What worked: Focused owner regressions caught both identity reuse and fallback admission behavior; final changed-file coverage was complete.
