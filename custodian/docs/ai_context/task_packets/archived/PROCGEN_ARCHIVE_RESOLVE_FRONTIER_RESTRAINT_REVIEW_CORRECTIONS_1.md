@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-frontier-restraint-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-archive-resolve-frontier-restraint`
