@@ -72,12 +72,25 @@
 
 ## Handoff
 
-- Next workstream: `review-procgen-archive-resolve-frontier-restraint`
+- Next workstream: `procgen-archive-resolve-frontier-restraint-review-corrections-1`
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Refresh reason: `none`
-- Next action: AR4 landed with tuning unchanged; fresh-context paired review may claim automatically. Playtest AR4 and report whether the frontier trails movement obstructively or clears too aggressively.
-- Blockers or open questions: none; temporal game-feel verdict deferred to playtest.
+- Next action: Implement the bounded correction for R1-01, then run its fresh-context paired re-review. The previously accepted visual tuning remains the playtest baseline.
+- Blockers or open questions: R1-01; see the archived paired review packet and correction packet. Temporal game-feel verdict remains deferred to playtest.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-procgen-archive-resolve-frontier-restraint`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `57e546c55e64d3af48bef5c0b6a551952b10235a`
+- Findings: `R1-01: existing committed and later-COMMITted cells inside the four-tile AR3 ingress pocket settle without checking AR4 occlusion eligibility; the deterministic wall-and-pocket probe reproduced a through-wall settlement.`
+- Evidence: `procgen_archive_resolve_frontier_restraint passed; 16 packet-directed AR1-AR4/streaming/runtime regressions and navigation_elevation_smoke passed; disabling the frontier made the AR4 smoke fail; temporary R1-01 assertion failed as expected.`
+- Correction workstream: `procgen-archive-resolve-frontier-restraint-review-corrections-1`
+- Review summary: `REVIEW_PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT_CLAUDE_SUMMARY.md`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
