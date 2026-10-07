@@ -74,12 +74,16 @@ func _run() -> void:
 	_expect(map.is_valid_spawn_cell(island) and map.is_runtime_navigation_walkable(island), "island is canonically valid but disconnected (isolates the component rule)")
 	_expect(not map.is_valid_spawn_cell(exterior), "exterior tile must fail canonical spawn validity")
 
-	# Compound selection: only a bad tile -> fails closed, Operator unmoved.
+	# If only a bad tile is available in the preferred compound or exported
+	# player-spawn slot, placement recovers to a safe tile from the main component.
 	for bad: Vector2i in [exterior, island]:
 		var bad_only := {"compound_rect": Rect2i(bad, Vector2i.ONE), "player_spawn": Vector2i.ZERO}
 		operator.global_position = FAR
-		_expect(not loader.call("_position_operator", bad_only, map), "bad-only compound must fail closed (%s)" % bad)
-		_expect(operator.global_position == FAR, "failed placement must not move the Operator (%s)" % bad)
+		_expect(loader.call("_position_operator", bad_only, map), "bad-only compound must recover through the main component (%s)" % bad)
+		var fallback_tile := map.global_to_minimap_tile(operator.global_position)
+		_expect(fallback_tile != bad, "main-component fallback must not select the bad compound tile (%s)" % bad)
+		_expect(component.has(fallback_tile), "main-component fallback must remain in the accepted component (%s)" % bad)
+		_expect(loader.call("_is_safe_operator_spawn_tile", map, fallback_tile, component), "main-component fallback must pass the final safe predicate (%s)" % bad)
 
 	# Bad tile preferred by rect centre + good tile available: lands on good, deterministically.
 	var span := Rect2i(Vector2i(mini(good.x, exterior.x), mini(good.y, exterior.y)), Vector2i.ONE)
@@ -96,12 +100,15 @@ func _run() -> void:
 	loader.call("_position_operator", mixed, map)
 	_expect(operator.global_position.is_equal_approx(first), "repeated selection must be identical")
 
-	# player_spawn fallback obeys the same invariant.
+	# An unsafe exported player_spawn also recovers within the accepted component.
 	for bad: Vector2i in [exterior, island]:
 		var fallback_bad := {"compound_rect": Rect2i(Vector2i.ZERO, Vector2i.ZERO), "player_spawn": bad}
 		operator.global_position = FAR
-		_expect(not loader.call("_position_operator", fallback_bad, map), "bad player_spawn fallback must fail closed (%s)" % bad)
-		_expect(operator.global_position == FAR, "failed fallback must not move the Operator (%s)" % bad)
+		_expect(loader.call("_position_operator", fallback_bad, map), "bad player_spawn fallback must recover through the main component (%s)" % bad)
+		var fallback_landed := map.global_to_minimap_tile(operator.global_position)
+		_expect(fallback_landed != bad, "main-component fallback must not select bad player_spawn (%s)" % bad)
+		_expect(component.has(fallback_landed), "player_spawn fallback must remain in the accepted component (%s)" % bad)
+		_expect(loader.call("_is_safe_operator_spawn_tile", map, fallback_landed, component), "player_spawn fallback must pass final safety (%s)" % bad)
 	var fallback_good := {"compound_rect": Rect2i(Vector2i.ZERO, Vector2i.ZERO), "player_spawn": good}
 	_expect(loader.call("_position_operator", fallback_good, map), "valid player_spawn fallback must place the Operator")
 	_expect(

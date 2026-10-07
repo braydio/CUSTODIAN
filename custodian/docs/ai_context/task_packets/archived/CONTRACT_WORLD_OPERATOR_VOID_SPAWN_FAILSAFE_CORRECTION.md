@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `contract-world-operator-void-spawn-failsafe-correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-contract-world-playable-region-spawn-validity-fix`
@@ -41,30 +41,30 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes — safe accepted-component fallback closes the production void-start path, and no-safe-cell failure is non-playable.`
+- Completion boundary satisfied: `yes — real loader integration proves fallback, exact round-trip, camera handoff, catastrophic abort and later recovery.`
+- Acceptance satisfied: `yes — preferred order, deterministic fallback, shared component snapshot, trace observability, zero-tile result representation and fail-closed presentation are covered.`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `<fill at closeout>`
+- Evidence: `Focused validation report /tmp/custodian-contract-void-focused.json passed; contract_world_operator_void_spawn_failsafe; contract_world_playable_region_spawn_validity; contract_world_ingress_spawn_clearance; contract_world_archive_resolve_ingress; world_ingress_spawner; procgen_spatial_normalization; procgen_walkable_boundary; navigation_elevation_smoke; procgen_performance_baseline_quick (determinism_ok=true, fingerprint 1773840677); mutation-disabled fallback fails as expected. Changed-file sweep /tmp/custodian-contract-void-changed.json also selected procgen_ambient_enemy_real_world_spawn (fails closed as expected for its generated map: accepted component 72 tiles, safe component tiles 0) and two unrelated Vaultwing checks (missing production spawner assertion and missing authored PNG assets); those failures are not caused by the fallback when a safe cell exists.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none`
-- Root cause / contributing factors: `none`
-- Prevention / pipeline improvement: `none`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The existing spawn-validity and ingress-clearance smokes expected no movement after rejecting preferred candidates; those assertions were updated to require safe main-component recovery. The changed-file suite exposed a generated ambient-world fixture with no safe cell in its 72-tile accepted component, which correctly fails closed under this packet, plus Vaultwing scene/asset failures unrelated to this workstream.`
+- Root cause / contributing factors: `The P0 contract supersedes old no-fallback expectations. One generated contract has no tile satisfying the existing canonical safety predicate; separately, the Vaultwing integration environment lacks expected production scene/assets.`
+- Prevention / pipeline improvement: `Keep forced-fallback and no-safe-cell behavior paired in the registered real-loader regression; retain changed-suite failures and their concrete classifications in the closeout evidence.`
 - Tooling / docs drift discovered: `none`
-- Follow-up: `none | fixed-in-scope | manual-follow-up`
+- Follow-up: `review-contract-world-operator-void-spawn-failsafe-correction`
 
 ## Handoff
 
 - Next workstream: `review-contract-world-operator-void-spawn-failsafe-correction`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Refresh reason: `none`
-- Next action: Implement the narrow final-spawn fallback/failure-state correction from current main, then land and run the paired fresh-context review.
+- Next action: Land this implementation through the workstream lifecycle, then claim the paired fresh-context review.
 - Blockers or open questions: none.

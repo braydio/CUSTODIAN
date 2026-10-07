@@ -88,6 +88,7 @@ var _last_failure_result: Dictionary = {}
 ## seam only; nothing in gameplay reads it.
 var _install_trace: Array[Dictionary] = []
 var _last_archive_resolve_ingress: Dictionary = {}
+var _operator_failure_state: Dictionary = {}
 
 
 func _ready() -> void:
@@ -188,10 +189,13 @@ func _on_contract_generated(contract: Dictionary) -> void:
 
 	if reposition_operator_from_contract:
 		if not _position_operator(level_data, map_instance):
+			var spawn_failure_detail := "no candidate passed canonical spawn validity and main playable component membership"
+			if not _install_trace.is_empty():
+				spawn_failure_detail += "; trace=%s" % str(_install_trace[-1])
 			_on_contract_generation_failed({
 				"generation_failed": true,
 				"failure_reason": "no_safe_operator_spawn_after_world_ingress_placement",
-				"detail": "no candidate passed canonical spawn validity and main playable component membership",
+				"detail": spawn_failure_detail,
 			})
 			return
 		_trace_install(&"operator_placed", {"component_queries": _component_query_count(map_instance)})
@@ -458,6 +462,7 @@ func _on_contract_generation_failed(result: Dictionary) -> void:
 	_contract_generation_failed = true
 	_last_failure_result = result.duplicate(true)
 	_active_procgen_map = null
+	_disable_operator_until_safe_placement()
 	print("[ContractWorldLoader] Contract generation failed; runtime world activation aborted %s" % str(result))
 	_mark_contract_failed(result)
 	_stop_combat_activation()
@@ -729,22 +734,117 @@ func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 	if operator == null:
 		return true
 	var main_component := _get_main_playable_component(map_instance)
-	var compound_spawn := _pick_compound_spawn_tile(level_data, map_instance)
-	if compound_spawn == Vector2i.ZERO:
+	var selection := _pick_compound_spawn_result(level_data, map_instance, main_component)
+	if selection.is_empty():
 		var player_spawn: Variant = level_data.get("player_spawn")
-		if (
-			player_spawn is Vector2i
-			and _is_safe_operator_spawn_tile(
-				map_instance,
-				player_spawn as Vector2i,
-				main_component
-			)
+		if player_spawn is Vector2i and _is_safe_operator_spawn_tile(
+			map_instance, player_spawn as Vector2i, main_component
 		):
-			compound_spawn = player_spawn as Vector2i
-	if compound_spawn == Vector2i.ZERO:
+			selection = {"tile": player_spawn as Vector2i, "source": "player_spawn"}
+	if selection.is_empty():
+		var fallback_tile: Variant = _pick_main_component_fallback_tile(
+			level_data, map_instance, main_component
+		)
+		if fallback_tile != null:
+			selection = {"tile": fallback_tile as Vector2i, "source": "main_component_fallback"}
+	if selection.is_empty():
+		var safe_component_tile_count := 0
+		for key: Variant in main_component.keys():
+			if key is Vector2i and _is_safe_operator_spawn_tile(
+				map_instance, key as Vector2i, main_component
+			):
+				safe_component_tile_count += 1
+		_trace_install(&"operator_spawn_unavailable", {
+			"main_component_tile_count": main_component.size(),
+			"safe_component_tile_count": safe_component_tile_count,
+		})
 		return false
-	operator.global_position = _tile_to_world(map_instance, compound_spawn)
+	var selected_tile: Vector2i = selection["tile"]
+	var selected_world_position := _tile_to_world(map_instance, selected_tile)
+	operator.global_position = selected_world_position
+	var round_trip_tile := _world_to_tile(map_instance, operator.global_position)
+	if round_trip_tile != selected_tile or not _is_safe_operator_spawn_tile(
+		map_instance, round_trip_tile, main_component
+	):
+		push_warning(
+			"[ContractWorldLoader] Final Operator spawn round-trip failed "
+			+ "selected=%s round_trip=%s" % [selected_tile, round_trip_tile]
+		)
+		return false
+	_trace_install(&"operator_spawn_selected", {
+		"source": selection["source"],
+		"tile": selected_tile,
+		"world_position": operator.global_position,
+	})
+	_restore_operator_after_safe_placement(operator)
 	return true
+
+
+func _pick_main_component_fallback_tile(
+	level_data: Dictionary,
+	map_instance: Node,
+	main_component: Dictionary
+) -> Variant:
+	var candidates: Array[Vector2i] = []
+	for key: Variant in main_component.keys():
+		if key is Vector2i and _is_safe_operator_spawn_tile(
+			map_instance, key as Vector2i, main_component
+		):
+			candidates.append(key as Vector2i)
+	if candidates.is_empty():
+		return null
+	var open_candidates := _filter_open_tiles(candidates, map_instance)
+	var ranked_candidates := open_candidates if not open_candidates.is_empty() else candidates
+	var anchor := _operator_spawn_anchor(level_data, map_instance)
+	ranked_candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var a_distance := a.distance_squared_to(anchor)
+		var b_distance := b.distance_squared_to(anchor)
+		if a_distance != b_distance:
+			return a_distance < b_distance
+		if a.y != b.y:
+			return a.y < b.y
+		return a.x < b.x
+	)
+	return ranked_candidates[0]
+
+
+func _operator_spawn_anchor(level_data: Dictionary, map_instance: Node) -> Vector2i:
+	var compound_rect: Variant = level_data.get("compound_rect")
+	if compound_rect is Rect2i and (compound_rect as Rect2i).has_area():
+		return Vector2i((compound_rect as Rect2i).get_center())
+	var player_spawn: Variant = level_data.get("player_spawn")
+	if player_spawn is Vector2i:
+		return player_spawn as Vector2i
+	if map_instance is ProcGenTilemap:
+		return (map_instance as ProcGenTilemap).get_player_spawn()
+	return Vector2i.ZERO
+
+
+func _disable_operator_until_safe_placement() -> void:
+	var operator := get_node_or_null(operator_path) as Node2D
+	if operator == null:
+		return
+	if _operator_failure_state.is_empty():
+		_operator_failure_state = {
+			"instance_id": operator.get_instance_id(),
+			"visible": operator.visible,
+			"process_mode": operator.process_mode,
+		}
+	operator.visible = false
+	operator.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _restore_operator_after_safe_placement(operator: Node2D) -> void:
+	if _operator_failure_state.is_empty():
+		return
+	if int(_operator_failure_state.get("instance_id", -1)) != operator.get_instance_id():
+		_operator_failure_state.clear()
+		return
+	operator.visible = bool(_operator_failure_state.get("visible", true))
+	operator.process_mode = int(
+		_operator_failure_state.get("process_mode", Node.PROCESS_MODE_INHERIT)
+	)
+	_operator_failure_state.clear()
 
 
 ## A final Operator spawn must be painted walkable floor outside ingress
@@ -775,6 +875,14 @@ func _get_main_playable_component(map_instance: Node) -> Dictionary:
 	if map_instance is ProcGenTilemap:
 		return (map_instance as ProcGenTilemap).get_main_playable_component()
 	return {}
+
+
+func _world_to_tile(map_instance: Node, world_position: Vector2) -> Vector2i:
+	if map_instance is ProcGenTilemap:
+		return (map_instance as ProcGenTilemap).global_to_minimap_tile(world_position)
+	if map_instance is Node2D:
+		return Vector2i(((map_instance as Node2D).to_local(world_position) / fallback_tile_size).floor())
+	return Vector2i((world_position / fallback_tile_size).floor())
 
 
 func _position_spawn_nodes(level_data: Dictionary, map_instance: Node) -> void:
@@ -861,7 +969,10 @@ func _position_command_terminal(level_data: Dictionary, map_instance: Node) -> v
 
 	var compound_rect: Variant = level_data.get("compound_rect")
 	var compound_tiles := _get_compound_walkable_tiles(level_data, map_instance)
-	var player_spawn_tile := _pick_compound_spawn_tile(level_data, map_instance)
+	var main_component := _get_main_playable_component(map_instance)
+	var player_spawn_tile := _pick_compound_spawn_tile(
+		level_data, map_instance, main_component
+	)
 	var player_spawn: Variant = level_data.get("player_spawn")
 	if player_spawn_tile == Vector2i.ZERO and player_spawn is Vector2i:
 		player_spawn_tile = player_spawn as Vector2i
@@ -1775,7 +1886,10 @@ func _position_vehicles(level_data: Dictionary, map_instance: Node) -> void:
 	if compound_tiles.is_empty():
 		return
 
-	var anchor_tile := _pick_compound_spawn_tile(level_data, map_instance)
+	var main_component := _get_main_playable_component(map_instance)
+	var anchor_tile := _pick_compound_spawn_tile(
+		level_data, map_instance, main_component
+	)
 	var player_spawn: Variant = level_data.get("player_spawn")
 	if anchor_tile == Vector2i.ZERO and player_spawn is Vector2i:
 		anchor_tile = player_spawn as Vector2i
@@ -1903,14 +2017,30 @@ func _is_inside_ingress_clearance(map_instance: Node, tile: Vector2i) -> bool:
 	)
 
 
-func _pick_compound_spawn_tile(level_data: Dictionary, map_instance: Node) -> Vector2i:
+func _pick_compound_spawn_tile(
+	level_data: Dictionary,
+	map_instance: Node,
+	main_component: Dictionary
+) -> Vector2i:
+	var selection := _pick_compound_spawn_result(
+		level_data, map_instance, main_component
+	)
+	if selection.is_empty():
+		return Vector2i.ZERO
+	return selection["tile"] as Vector2i
+
+
+func _pick_compound_spawn_result(
+	level_data: Dictionary,
+	map_instance: Node,
+	main_component: Dictionary
+) -> Dictionary:
 	var walkable_tiles: Array[Vector2i] = []
-	var main_component := _get_main_playable_component(map_instance)
 	for tile in _get_compound_walkable_tiles(level_data, map_instance):
 		if _is_safe_operator_spawn_tile(map_instance, tile, main_component):
 			walkable_tiles.append(tile)
 	if walkable_tiles.is_empty():
-		return Vector2i.ZERO
+		return {}
 	var open_tiles := _filter_open_compound_tiles(walkable_tiles, map_instance)
 	var preferred_tiles := open_tiles if not open_tiles.is_empty() else walkable_tiles
 
@@ -1923,12 +2053,59 @@ func _pick_compound_spawn_tile(level_data: Dictionary, map_instance: Node) -> Ve
 	if compound_rect_variant is Rect2i:
 		var compound_rect := compound_rect_variant as Rect2i
 		for ingress in ingress_tiles:
-			var picked := _pick_ingress_adjacent_spawn_tile(ingress, compound_rect, preferred_tiles, map_instance)
-			if picked != Vector2i.ZERO:
-				return picked
-		return _pick_closest_tile(preferred_tiles, Vector2i(compound_rect.get_center()))
+			var picked := _pick_ingress_adjacent_spawn_result(
+				ingress, compound_rect, preferred_tiles, map_instance
+			)
+			if not picked.is_empty():
+				return {"tile": picked["tile"], "source": "compound"}
+		var closest := _closest_spawn_selection(
+			preferred_tiles, Vector2i(compound_rect.get_center())
+		)
+		return {"tile": closest["tile"], "source": "compound"} if not closest.is_empty() else {}
 
-	return preferred_tiles[0]
+	return {"tile": preferred_tiles[0], "source": "compound"}
+
+
+func _closest_spawn_selection(
+	tiles: Array[Vector2i], target_tile: Vector2i
+) -> Dictionary:
+	if tiles.is_empty():
+		return {}
+	var best_tile: Vector2i = tiles[0]
+	var best_distance := best_tile.distance_squared_to(target_tile)
+	for tile in tiles:
+		var distance := tile.distance_squared_to(target_tile)
+		if distance < best_distance or (
+			distance == best_distance
+			and (tile.y < best_tile.y or (tile.y == best_tile.y and tile.x < best_tile.x))
+		):
+			best_distance = distance
+			best_tile = tile
+	return {"tile": best_tile}
+
+
+func _pick_ingress_adjacent_spawn_result(
+	ingress: Vector2i,
+	compound_rect: Rect2i,
+	candidate_tiles: Array[Vector2i],
+	map_instance: Node
+) -> Dictionary:
+	if candidate_tiles.is_empty():
+		return {}
+	var ingress_dir := _get_compound_ingress_direction(ingress, compound_rect)
+	for depth in range(2, 7):
+		var probe := ingress + ingress_dir * depth
+		if candidate_tiles.has(probe):
+			return {"tile": probe}
+		if _is_walkable_floor_tile(map_instance, probe):
+			var nearby := _closest_spawn_selection(candidate_tiles, probe)
+			if (
+				not nearby.is_empty()
+				and (nearby["tile"] as Vector2i).distance_squared_to(probe) <= 4
+			):
+				return nearby
+	var target := _get_compound_interior_tile(ingress, compound_rect)
+	return _closest_spawn_selection(candidate_tiles, target)
 
 
 func _get_compound_walkable_tiles(level_data: Dictionary, map_instance: Node) -> Array[Vector2i]:

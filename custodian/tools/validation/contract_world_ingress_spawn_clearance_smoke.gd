@@ -43,8 +43,9 @@ func _run() -> void:
 
 	var map := await _generate_map()
 	var level_data := (map.get_level_data() as Dictionary).duplicate(true)
+	var main_component := map.get_main_playable_component()
 	var preferred_before_clearance: Vector2i = loader.call(
-		"_pick_compound_spawn_tile", level_data, map
+		"_pick_compound_spawn_tile", level_data, map, main_component
 	)
 	_expect(
 		preferred_before_clearance != Vector2i.ZERO,
@@ -88,7 +89,7 @@ func _run() -> void:
 		if not _has_authored_collision_at(collision_body, target_world):
 			continue
 		safe_spawn = loader.call(
-			"_pick_compound_spawn_tile", level_data, map
+			"_pick_compound_spawn_tile", level_data, map, main_component
 		) as Vector2i
 		if safe_spawn != Vector2i.ZERO and safe_spawn != preferred_before_clearance:
 			clearance_claimed = true
@@ -162,10 +163,16 @@ func _run() -> void:
 	var fallback_result: bool = loader.call(
 		"_position_operator", fallback_data, map
 	)
-	_expect(not fallback_result, "unsafe player_spawn fallback must fail closed")
 	_expect(
-		operator.global_position == Vector2(-9999.0, -9999.0),
-		"failed unsafe fallback must not move the Operator into authored collision"
+		fallback_result,
+		"unsafe player_spawn must recover to a safe main-component tile"
+	)
+	var fallback_tile := map.global_to_minimap_tile(operator.global_position)
+	_expect(
+		main_component.has(fallback_tile)
+			and not map.is_inside_world_ingress_dressing_clearance(fallback_tile)
+			and loader.call("_is_safe_operator_spawn_tile", map, fallback_tile, main_component),
+		"unsafe player_spawn recovery must remain canonically safe and outside ingress clearance"
 	)
 
 	map.clear_world_ingress_dressing_clearances()

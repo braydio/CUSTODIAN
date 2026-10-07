@@ -3604,6 +3604,26 @@
       "needs_import": true
     },
     {
+      "id": "contract_world_operator_void_spawn_failsafe",
+      "type": "godot_script",
+      "script": "res://tools/validation/contract_world_operator_void_spawn_failsafe_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "contract_world",
+        "operator_spawn",
+        "failure_state",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/levels/world_ingress_spawner.gd",
+        "custodian/tools/validation/contract_world_operator_void_spawn_failsafe_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "contract_world_ingress_spawn_clearance",
       "type": "godot_script",
       "script": "res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd",
