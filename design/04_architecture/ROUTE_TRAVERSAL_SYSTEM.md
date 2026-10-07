@@ -3,7 +3,7 @@
 **Project:** CUSTODIAN
 **Status:** complete-v1
 **Runtime target:** Godot 4.x (`custodian/`)
-**Last updated:** 2026-07-31
+**Last updated:** 2026-10-07
 
 ## Purpose
 
@@ -29,6 +29,13 @@ A `custodian.route_definition.v1` document owns a route ID, display name, campai
 ### Node
 
 A node contains a unique `node_id` and registered `level_id`. Presentation, cache, and state policy remain authoritative in the referenced `LevelDefinition`. `@world_origin` is reserved and cannot be declared as a normal node.
+
+`LevelDefinition.runtime_kind` defaults to `authored_scene`. A `generated_region`
+definition carries a serialization-safe request with a registered scene path,
+explicit profile ID, integer seed, map dimensions, and named route spawns. It does
+not carry a live node or another route/session owner. Generated-region requests
+are validated with the level registry and staged through the same
+`LevelLoader` transaction as authored scenes.
 
 ### Edge
 
@@ -81,7 +88,17 @@ Failure enters rollback: synchronously clear loader authority when a post-commit
 
 ## LevelLoader Boundary
 
-`LevelLoader` provides low-level staging and activation APIs. Staging loads, instantiates, parents, configures, disables, and validates a requested spawn without moving the actor or changing active identity. Commit verifies expected active identity, disables the source, activates and places the actor, and only then changes active identity. It retains the direct entry/return bridge for legacy debug scenes and focused lifecycle tests.
+`LevelLoader` provides low-level staging and activation APIs. Authored staging
+loads, instantiates, parents, configures, disables, and validates a requested
+spawn without moving the actor or changing active identity. Generated-region
+staging is asynchronous: its adapter creates a fresh disabled host, configures
+the existing `ProcGenTilemap` owner from the explicit request, awaits generation,
+and validates the named spawn against the canonical main playable component
+before returning a stage result. The source remains the sole active gameplay
+authority until commit. Commit verifies expected active identity, disables the
+source, activates and places the actor, and only then changes active identity.
+The loader retains the direct entry/return bridge for legacy debug scenes and
+focused lifecycle tests.
 
 ## Level Contract
 
@@ -165,6 +182,20 @@ Production ingress for a level-only destination calls `start_single_level_route`
 ## Save Boundary
 
 RouteSession and node/route state have serialization-safe dictionaries. Campaign save-file integration is deferred. `persistent` means current-runtime persistence through `RouteStateStore`, not disk persistence.
+
+## Generated Region Runtime
+
+`GeneratedRegionLevel` is a route-node adapter only. It owns the staged
+`ProcGenTilemap` instance and named spawn positions for that node; generation,
+walkability, navigation, collision, streaming, and presentation remain owned by
+the existing map and procgen systems. The adapter resolves its named spawn from
+the generated map's canonical player-spawn cell and rejects generation unless
+that cell is valid, runtime-walkable, and in the main playable component.
+Activation moves the persistent actor to the requested named spawn and binds the
+shared camera to the generated map. Its route snapshot stores only the explicit
+profile/seed/settings identity. Under `destroy_on_exit`, revisiting stages a new
+map with the same request and therefore reproduces the same generated layout;
+live nodes are never serialized into route state.
 
 ## Validation Requirements
 

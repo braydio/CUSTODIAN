@@ -446,6 +446,18 @@ bash tools/validation/run_route_pipeline_suite.sh
 
 The runner covers registry failures and disconnected enabled topology, forward/back authority, profile resolution, node and post-commit initial-entry rollback, world exfil, the single-level wrapper, all cache/state policies, physics-driven exit binding, the real Sundered graph/nested-state/authored-exit/no-direct-authority contracts, and route-aware scaffold create/append with full pre-write validation and failure immutability. For lifecycle changes also run the authored ingress/re-entry/rollback/single-authority smokes and `sundered_keep_ingress_smoke.gd`. Runtime `persistent` route state is process-local; save serialization is not claimed.
 
+For generated-region route staging and activation, run the focused deterministic
+lifecycle fixture before the existing route graph and procgen intent smokes:
+
+```bash
+godot --headless --path . --script res://tools/validation/generated_region_route_lifecycle_smoke.gd
+```
+
+It proves authored-to-generated-to-authored traversal, same-seed regeneration,
+single route authority, persistent actor/shared-camera identity, and rollback on
+a late missing generated spawn. Then run the route graph, authored Lower Quarter
+route, and procgen intent graph smokes selected by the task packet.
+
 Prefer RTK subcommands for compact output when they support the command shape. RTK is not a blind prefix: use `rtk git status`, `rtk grep ...`, `rtk find ...`, etc. For unsupported commands where token tracking still helps, use `rtk proxy <command> ...`. Use the raw command when RTK changes argument ordering or hides information needed for debugging.
 
 ## Selection Rules

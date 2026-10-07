@@ -1,0 +1,9 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "generated_route_authored_fixture",
+  "display_name": "Generated Route Authored Fixture",
+  "route_scene_path": "res://tools/validation/fixtures/generated_route_authored_level.tscn",
+  "world_context": "test_campaign",
+  "spawns": ["Spawn_Start", "Spawn_Return"],
+  "lifecycle": {"cache_policy": "destroy_on_exit", "state_policy": "session"}
+}
