@@ -33,6 +33,7 @@ func _run() -> void:
 	_test_operator_on_opaque_tile_fails_open()
 	_test_echo_and_reacquisition_gate()
 	_test_ingress_eligibility()
+	_test_ingress_pocket_occlusion()
 	await _test_tilemap_wiring()
 	if _errors.is_empty():
 		print("[ProcgenArchiveResolveFrontierRestraintSmoke] PASS")
@@ -302,6 +303,57 @@ func _test_ingress_eligibility() -> void:
 	_run_for(o, 1.0, 0.016, Vector2i(OP.x + 8, OP.y))
 	_check(not o.has_veil(ring_far), "deferred ingress cell never resolved after becoming eligible")
 	o.queue_free()
+
+
+func _test_ingress_pocket_occlusion() -> void:
+	var target := OP + Vector2i(2, 1)
+	var wall := OP + Vector2i(1, 1)
+	var existing := _make()
+	_walls.clear()
+	_walls[wall] = true
+	var uncommitted := target + Vector2i(0, 1)
+	var uncommitted_chunk := Vector2i(int(floor(float(uncommitted.x) / CHUNK)), int(floor(float(uncommitted.y) / CHUNK)))
+	existing.note_tiles_requested(uncommitted_chunk, [uncommitted], false)
+	_commit(existing, [target])
+	existing.begin_ingress_resolve(OP, [target], CHUNK)
+	_check(existing.has_veil(target), "ingress settled an existing occluded pocket cell")
+	_check(existing.has_veil(uncommitted), "ingress settled an uncommitted pocket cell")
+	_walls.erase(wall)
+	_run_for(existing, 0.6, 0.016)
+	_check(not existing.has_veil(target), "existing pocket cell did not settle after visibility opened")
+	existing.queue_free()
+
+	var resolving := _make()
+	resolving.safety_halo_tiles = 0
+	_walls.clear()
+	_commit(resolving, [target])
+	resolving.advance(0.016, OP, CHUNK)
+	_walls[wall] = true
+	resolving.begin_ingress_resolve(OP, [target], CHUNK)
+	_check(resolving.has_veil(target), "ingress canceled an already-resolving pocket cell")
+	_run_for(resolving, resolving.resolve_duration_sec + 0.2, 0.016)
+	_check(not resolving.has_veil(target), "already-resolving pocket cell did not finish monotonically")
+	resolving.queue_free()
+
+	var visible := _make()
+	_walls.clear()
+	_commit(visible, [target])
+	visible.begin_ingress_resolve(OP, [target], CHUNK)
+	_check(not visible.has_veil(target), "visible committed pocket cell did not settle immediately")
+	visible.queue_free()
+
+	var later_commit := _make()
+	_walls.clear()
+	_walls[wall] = true
+	later_commit.begin_ingress_resolve(OP, [], CHUNK)
+	_commit(later_commit, [target])
+	_check(later_commit.has_veil(target), "later occluded pocket commit settled synchronously")
+	later_commit.advance(0.016, OP, CHUNK)
+	_check(later_commit.has_veil(target), "later occluded pocket commit settled before visibility opened")
+	_walls.erase(wall)
+	_run_for(later_commit, 0.6, 0.016)
+	_check(not later_commit.has_veil(target), "later pocket commit did not settle after visibility opened")
+	later_commit.queue_free()
 
 
 func _test_tilemap_wiring() -> void:

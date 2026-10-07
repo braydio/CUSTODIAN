@@ -160,6 +160,7 @@ var _ingress_t0: float = 0.0
 var _ingress_chunk_size: int = 16
 var _ingress_start: Dictionary = {}
 var _ingress_queue: Array[Vector2i] = []
+var _ingress_pocket_commits_pending: Dictionary = {}
 var _reacq_tiles: Dictionary = {}
 var _echo_lead: Dictionary = {}
 var _presentation_time: float = 0.0
@@ -217,6 +218,7 @@ func reset() -> void:
 	_ingress_active = false
 	_ingress_start.clear()
 	_ingress_queue.clear()
+	_ingress_pocket_commits_pending.clear()
 	_reacq_tiles.clear()
 	_echo_lead.clear()
 	frontier_start_tokens = 0.0
@@ -279,7 +281,12 @@ func note_tile_committed(tile: Vector2i) -> void:
 	if int(_states.get(tile, 0)) == TileState.REQUESTED:
 		if _ingress_active and not _reacq_tiles.has(tile):
 			if _in_ingress_pocket(tile):
-				_settle_tile(tile, _ingress_chunk_size)
+				if not frontier_enabled:
+					_settle_tile(tile, _ingress_chunk_size)
+					return
+				_states[tile] = TileState.READY
+				_ready_queue.append(tile)
+				_ingress_pocket_commits_pending[tile] = true
 				return
 			if _in_ingress_ring(tile):
 				_enqueue_ingress(tile, ingress_start_time(tile))
@@ -319,19 +326,8 @@ func advance(delta: float, operator_tile: Vector2i, chunk_size_tiles: int) -> vo
 		return
 	_presentation_time += maxf(0.0, delta)
 	_sync_material_time()
-	var gated := frontier_enabled and operator_tile != NO_OPERATOR_TILE
-	if gated:
-		_frontier.radius_tiles = visual_resolve_radius_tiles
-		_frontier.fringe_tiles = visual_resolve_fringe_tiles
-		_frontier.camera_margin_tiles = camera_margin_tiles
-		var cam := Rect2i()
-		if camera_rect_provider.is_valid():
-			cam = camera_rect_provider.call() as Rect2i
-			if cam.has_area():
-				cam = cam.grow(camera_margin_tiles)
-		_frontier.update(operator_tile, cam, _presentation_time)
-	else:
-		_frontier.update(NO_OPERATOR_TILE, Rect2i(), _presentation_time)
+	var gated := _update_frontier(operator_tile)
+	_settle_visible_ingress_pocket_commits(chunk_size_tiles)
 	_apply_safety_halo(operator_tile, chunk_size_tiles)
 	if _ingress_active:
 		_advance_ingress(gated)
@@ -360,6 +356,36 @@ func advance(delta: float, operator_tile: Vector2i, chunk_size_tiles: int) -> vo
 		_record_settle_age(tile, _presentation_time - float(_resolve_start[tile]))
 		_settle_tile(tile, chunk_size_tiles)
 	_resolving_queue = still_resolving
+
+
+func _update_frontier(operator_tile: Vector2i) -> bool:
+	var gated := frontier_enabled and operator_tile != NO_OPERATOR_TILE
+	if gated:
+		_frontier.radius_tiles = visual_resolve_radius_tiles
+		_frontier.fringe_tiles = visual_resolve_fringe_tiles
+		_frontier.camera_margin_tiles = camera_margin_tiles
+		var cam := Rect2i()
+		if camera_rect_provider.is_valid():
+			cam = camera_rect_provider.call() as Rect2i
+			if cam.has_area():
+				cam = cam.grow(camera_margin_tiles)
+		_frontier.update(operator_tile, cam, _presentation_time)
+	else:
+		_frontier.update(NO_OPERATOR_TILE, Rect2i(), _presentation_time)
+	return gated
+
+
+func _settle_visible_ingress_pocket_commits(chunk_size_tiles: int) -> void:
+	if _ingress_pocket_commits_pending.is_empty() or not _frontier.has_center():
+		return
+	var settled := false
+	for tile in _ingress_pocket_commits_pending.keys():
+		_ingress_pocket_commits_pending.erase(tile)
+		if _states.has(tile) and _frontier.is_visible_from_center(tile):
+			_settle_tile(tile, chunk_size_tiles)
+			settled = true
+	if settled:
+		_filter_queues_to_live_tiles()
 
 
 ## AR4 ordinary start: token-bucket pacing in presentation time (frame-rate
@@ -411,6 +437,9 @@ func begin_ingress_resolve(center_tile: Vector2i, committed_tiles: Array[Vector2
 	_ingress_t0 = _presentation_time
 	_ingress_chunk_size = chunk_size_tiles
 	ingress_begin_count += 1
+	if frontier_enabled:
+		_frontier.set_occluder(occluder)
+		_update_frontier(center_tile)
 	var owned := 0
 	# The committed safety pocket is visible immediately: settle anything already
 	# committed there. Requested-but-uncommitted pocket cover is never touched.
@@ -421,6 +450,8 @@ func begin_ingress_resolve(center_tile: Vector2i, committed_tiles: Array[Vector2
 			var pocket_tile := Vector2i(x, y)
 			var state := int(_states.get(pocket_tile, 0))
 			if state == TileState.READY or state == TileState.RESOLVING or state == TileState.INGRESS:
+				if frontier_enabled and (not _frontier.has_center() or not _frontier.is_visible_from_center(pocket_tile)):
+					continue
 				_settle_tile(pocket_tile, chunk_size_tiles)
 				settled_in_pocket = true
 	if settled_in_pocket:

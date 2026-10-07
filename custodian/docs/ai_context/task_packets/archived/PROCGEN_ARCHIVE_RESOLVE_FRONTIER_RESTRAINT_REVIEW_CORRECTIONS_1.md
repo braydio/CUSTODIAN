@@ -40,13 +40,33 @@
 - Task overrides: `none`
 - Deferred: none.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `procgen_archive_resolve_frontier_restraint` exercises existing and later-committed occluded pocket cells, immediate visible-pocket settlement, visibility opening, uncommitted cover, and RESOLVING monotonicity; required ingress, reveal, semantic echo, pause, and S1 quick checks passed. Changed-file validation passed with complete coverage.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first expanded smoke run found a test fixture call missing the reacquisition argument; a later assertion initially selected a tile already settled by the safety halo.
+- Root cause / contributing factors: The presentation API requires an explicit reacquisition flag, and the default safety halo settled the fixture before it could enter RESOLVING.
+- Prevention / pipeline improvement: Keep direct presentation fixtures explicit about optional lifecycle arguments and disable the safety halo when testing resolve completion independently.
+- Tooling / docs drift discovered: `check_ai_context.py --json` reports 15 repository findings outside this correction packet, including legacy metadata and an unrelated archived review still indexed as active.
+- Follow-up: `review-procgen-archive-resolve-frontier-restraint-review-corrections-1`
+- What worked: Existing workstream handoff provided the exact ready correction packet and paired review successor.
+
 ## Next Handoff
 
 - Next workstream: `review-procgen-archive-resolve-frontier-restraint-review-corrections-1`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Refresh reason: `none`
-- Next action: Implement R1-01 and run the paired fresh-context review after landing.
+- Next action: Claim the paired post-land review from a fresh, different-agent reviewer context.
 - Blockers or open questions: none.
