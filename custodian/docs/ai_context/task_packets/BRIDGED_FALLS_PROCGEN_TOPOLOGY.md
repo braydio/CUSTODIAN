@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `bridged-falls-procgen-topology`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-ash-bell-highlands-generated-destination`
 - Locks: `bridged-falls-generation, ash-bell-highlands-intent`
