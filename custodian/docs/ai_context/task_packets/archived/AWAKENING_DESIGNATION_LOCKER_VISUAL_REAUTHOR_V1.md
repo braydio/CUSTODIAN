@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-designation-locker-visual-reauthor-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `asset-downloads-intake-sweep`
@@ -19,7 +19,7 @@
 - Branch: `agent/awakening-designation-locker-visual-reauthor-v1`
 - Goal: `Replace the live P-9 Designation Locker art with the approved reauthored four-state family while preserving the existing P0 Asset V2 contract, one-shot opening animation, wall-integrated placement, collision footprint, interaction flow, P-9 grant semantics, and Awakening progression.`
 - Completion boundary: `The approved Dropbox handoff is hash-verified, prior canonical source/runtime provenance is preserved, all four states are published through the existing awakening_designation_locker family, the 8-frame authorization strip remains 128×160 per frame at 10 FPS and one-shot, the live locker still transitions closed → authorize_open → open_loaded → empty and grants P-9 exactly once, and focused runtime plus in-scene visual evidence confirms the replacement remains correctly registered in Zone04 without gameplay/geometry drift.`
-- Current measured state: `The existing awakening_designation_locker family is complete and live at P0, but its older art now reads substantially flatter than the newer Reliquary / Dust Lung / Undergate production family. A complete replacement handoff is staged in Dropbox with source masters, exact normalized inbox inputs, manifest, packing notes, validation, and Codex instructions. The predecessor asset-downloads-intake-sweep is currently active but only partially checkpointed at origin/agent/asset-downloads-intake-sweep@10e9ed5d; its A2 Attestation/Reliquary authority has now been refreshed on main, but the intake must resume and land before this P0 locker reauthor may claim the shared asset-pipeline / awakening-art-registration surface. The runtime consumer SidearmLockerInteractable already owns all four state transitions and must remain the sole behavior authority.`
+- Current measured state: `The predecessor asset-downloads-intake-sweep is complete and landed. This slice consumed Dropbox revision 65d3b9b7c35cd915cdd61 at the packet canonical path, verified outer SHA-256 ff188d3d43a49a970126b7e9740cec3f464c60238bbb167ea38378b9bc17a768, preserved prior source masters, and published all four replacement states through the existing P0 awakening_designation_locker family. SidearmLockerInteractable remains the sole runtime state/P-9 authority; focused smoke and five-state Zone04 capture pass with the existing (88, -24) visual offset and unchanged gameplay geometry.`
 - Evidence: `custodian/content/metadata/assets/families/awakening_designation_locker.asset.json; custodian/game/world/home/sidearm_locker_interactable.gd; custodian/tools/validation/awakening_designation_locker_presentation_smoke.gd; design/04_architecture/AWAKENING_ASSET_MANIFEST.md; Dropbox /CUSTODIAN/implementation_inputs/awakening_designation_locker_reauthor_handoff_v1.zip.`
 - Task-specific authority: `awakening_designation_locker.asset.json owns semantic state/frame contract; SidearmLockerInteractable owns runtime state transitions and P-9 grant; awakening_layout.gd plus the existing scene own anchor/footprint; Asset Pipeline V2 owns normalization publication/runtime naming.`
 - Work surface: `custodian/asset_drop/source_work/awakening/awakening_designation_locker/; custodian/asset_drop/inbox/awakening_designation_locker/; canonical awakening_designation_locker runtime/catalog/archive outputs; sidearm_locker_interactable.gd only if an objective visual-registration correction requires a sprite-only offset adjustment; focused designation-locker smoke and visual evidence.`
@@ -214,25 +214,50 @@ The active `AWAKENING_ASSET_MANIFEST.md` should continue to describe the Designa
 
 ## Completion Report
 
-Report only:
+- Dropbox ZIP: `/CUSTODIAN/implementation_inputs/awakening_designation_locker_reauthor_handoff_v1.zip`, file ID `id:8NXqdXuW6GUAAAAAAAACdw`, revision `65d3b9b7c35cd915cdd61`, SHA-256 `ff188d3d43a49a970126b7e9740cec3f464c60238bbb167ea38378b9bc17a768`.
+- Previous source provenance preserved at `custodian/asset_drop/source_work/awakening/awakening_designation_locker/pre_handoff_20261007/source/`.
+- Asset V2 job: `job_20261007T205424Z_80b02bf4`.
+- Runtime outputs and SHA-256:
+  - `custodian/content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__closed__omni__1f__128x160.png` — `c4899a5ea165eb000ae8aa7b7f6dcfe4ed542f1191a1f60957e88ab01e4c1eae`.
+  - `custodian/content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__interaction__authorize_open__omni__8f__128x160.png` — `84675b649b8cf3b477e2b87ecd2a7ad405dfab1babb20d9146b4872e59b04156`.
+  - `custodian/content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__open_loaded__omni__1f__128x160.png` — `4d79cd27bf1c9091a4636b0c54131c2bf51524b8fd9a739f6c85076ab143a04d`.
+  - `custodian/content/sprites/environment/props/awakening/awakening_designation_locker/runtime/body/awakening_designation_locker__body__state__empty__omni__1f__128x160.png` — `a81ef45060d0b0f4ac44bcc91073c59e91ce1c3aafb9c8f4a873d7918b208b10`.
+- Contract: three independent 128×160 stills; `authorize_open` is 8 horizontal 128×160 frames at 10 FPS, one-shot. Family contract and runtime state IDs were unchanged.
+- Sprite offset remained `(88, -24)`; the five-state Zone04 capture shows stable placement through closed, early opening, final opening, open_loaded, and empty. Evidence: `reports/awakening_designation_locker_reauthor_contact_sheet.png`.
+- Focused `awakening_designation_locker_presentation` smoke: passed; P-9 remains withheld until the take interaction and is granted exactly once.
+- Asset V2 status: 4/4 required states ready; doctor healthy. Changed-file validation: passed (Asset Pipeline V2, review-pairing contract, visual-review handoff, and designation-locker presentation, 4/4).
+- Documentation drift corrected: packet measured state and active task index had stale predecessor dependency wording; current-state docs and design authority required no change.
 
-- Dropbox ZIP consumed + verified hash;
-- previous source provenance preserved at;
-- Asset V2 job ID;
-- four final runtime paths + SHA-256;
-- final frame/dimension/FPS contract;
-- whether sprite offset remained `(88,-24)` or changed, with evidence;
-- focused smoke result;
-- visual evidence paths;
-- changed-file validation result;
-- any doc drift corrected.
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `Dropbox revision and outer hash are recorded above; all source and normalized inputs matched MANIFEST.json; prior masters remain under pre_handoff_20261007/source; Asset V2 job_20261007T205424Z_80b02bf4 published four paths; family status is 4/4 and doctor healthy; focused presentation smoke and changed-file validation passed; the in-scene five-state contact sheet confirms stable placement and unchanged gameplay registration.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The packet Current measured state and task index still said the predecessor was only partially landed after its completion; both were corrected in this slice.`
+- Root cause / contributing factors: `Predecessor closeout updated dependency authority but did not refresh this packet's descriptive state and manual README note.`
+- Prevention / pipeline improvement: `Refresh dependent packet measured-state prose and task index notes in the same closeout that archives the predecessor.`
+- Tooling / docs drift discovered: `Stale predecessor status in this packet and the Active Awakening Hero-Art Reauthor task index note; dispatcher dependency status was accurate.`
+- Follow-up: `fixed-in-scope`
+- What worked: `The Asset V2 transaction and focused in-scene smoke provided direct provenance and behavior proof.`
 
 ## Next Handoff
 
-After this lands, return to the Awakening art-convergence review and compare only independently visible hero systems against the new art bar:
+After this lands, return to the Awakening art-convergence review and compare only independently visible hero systems against the new art bar: Crèche Recovery Alcove, Crèche Console, and Dust Lung Lift. Do not automatically reauthor BAKED_ONLY fixture libraries.
 
-- Crèche Recovery Alcove
-- Crèche Console
-- Dust Lung Lift
-
-Do not automatically reauthor BAKED_ONLY fixture libraries.
+- Next workstream: `awakening-handoff-readiness-art-convergence-v1-r1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Refresh reason: `none`
+- Next action: `After the declared Awakening paired reviews complete, claim the art-convergence packet and compare only the Recovery Alcove, Console, and Dust Lung Lift against this locker.`
+- Blockers or open questions: `The art-convergence packet remains gated on review-awakening-room-connectors-polish, review-awakening-interaction-feedback-console-activation, and review-awakening-lower-upper-spine-connection.`
