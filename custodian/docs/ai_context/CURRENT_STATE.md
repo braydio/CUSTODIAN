@@ -2087,13 +2087,20 @@ in the ingest archives.
 
 Plate binding is distinct from finished visual QA. The live Awakening currently
 still binds the legacy crop-derived 04→05 connector runtime plate at
-`Connector04_05_Underlay`; that result is not accepted as final because the
-user-approved direct `~/Downloads/connector.png` has not yet replaced it and the
-live sprite is missing an authored connector chunk / is misregistered. The active
-P0 `awakening-room-connectors-polish` packet now treats the exact source pixels
-as authority, forbids cropping nontransparent pixels, and re-derives the runtime
-canvas/transform instead of preserving historical 1024×576 / `(352,-2464)`
-assumptions. Traversal/collision remain Layout-owned. Separately, the lower and
+`Connector04_05_Underlay`; that result is not accepted as final. The authoritative
+production source set is now stored in Dropbox under
+`/CUSTODIAN/implementation_inputs/`: Dust Lung underlay
+`awakening_dust_lung_underlay_source_v1.png` (SHA-256
+`fa017e6d...47f111`), direct connector
+`awakening_04_05_direct_connector_source_v1.png` (SHA-256
+`eb1dd930...ffe721`), and Locker Reliquary underlay
+`awakening_locker_reliquary_underlay_source_v1.png` (SHA-256
+`75e253f7...d71a6c`). Active P0 `awakening-room-connectors-polish` now owns all
+three replacements: exact Dust publication, crop-free Locker normalization with
+foreground truth reconciliation, and full-silhouette connector publication with
+registration re-derived instead of preserving historical 1024×576 /
+`(352,-2464)` assumptions. Traversal/collision remain Layout-owned and the
+separately reauthored Designation Locker remains the active P-9 interaction prop. Separately, the lower and
 later halves are logically joined today by `05_06` (128×32) plus
 `z06_south_door` (128×64); their exact 128×96 union matches the 96px overlap of
 the Dust Lung and Undergate room plates. The P0
@@ -2115,14 +2122,14 @@ at the original centers, with the central route still open. The central sealed
 body remains visually opaque across part of the mandatory route and needs an
 authored composition decision before its collision can match the image.
 
-Fixture consumption audit (A5) classifies all seven currently published Crèche
-fixture states and all five currently published Ambulatory fixture states as
-`BAKED_ONLY`; they remain unbound as separate sprites to avoid double-rendering.
-Unpublished states in those families and all states in Attestation, Reliquary,
-Dust Lung Structures, Undergate Machinery, and Late Service Relay Lamp are
-`NOT_READY`. No generic fixture asset was bound. The recovery alcove, P-9
-Designation Locker, transit lift, and Gate components remain owned by their
-existing specialized stateful systems.
+Fixture publication has advanced beyond the original A5 audit: the required
+Ambulatory, Attestation, Reliquary, Dust Lung Structures, and Undergate Machinery
+states are now published/imported through Asset V2, while consumption remains
+governed by existing BAKED_ONLY / NOT_READY classifications so publication does
+not imply duplicate scene binding. No generic fixture asset is auto-bound merely
+because its runtime PNG exists. The recovery alcove, P-9 Designation Locker,
+transit lift, and Gate components remain owned by their existing specialized
+stateful systems.
 
 The one-image Home beginning is retired. The project now boots into
 `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked
