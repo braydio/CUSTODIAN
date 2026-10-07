@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-generation-grid-foundation`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-procgen-generation-data-model-audit`
 - Locks: `procgen-generation`
@@ -14,11 +14,11 @@
 - Paired review workstream: `review-procgen-generation-grid-foundation`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `bff2d89496c68f73072fb69caa7eb3d68abf6aca`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Goal: Introduce the neutral generation-cell storage seam proven by the audited post-D1/D2/D3 call graph, with a TileMap-backed compatibility backend that preserves current behavior and a plain-data-capable contract that later migration slices can target without inventing another storage API.
 - Completion boundary: REFRESH-GATED on the passed `review-procgen-generation-data-model-audit`. Do not implement a GenerationGrid API from this pre-audit packet. After XR1, rewrite this same packet in place to the exact minimum capabilities, exact owner paths, parity contract, and smallest canary proven by the reviewed post-D audit.
-- Current measured state: The prerequisite post-D1/D2/D3 audit has not run yet, so there is no reviewed helper inventory, cell-operation count, semantic-vs-presentation split, or minimum GenerationGrid interface to implement. Current live generation still uses `custodian/game/world/procgen/proc_gen_tilemap.gd` as TileMap-backed working memory; existing generation package files are `candidate_evaluator.gd`, `candidate_semantic_adapter.gd`, and `procgen_candidate_materializer.gd`. Any concrete `generation_grid.gd` API authored now would be speculative.
+- Current measured state: D1 is landed/reviewed, D3 is landed, and D2 is now ready/auto but not yet landed/reviewed. X1 therefore has not yet produced the reviewed post-D helper inventory, operation counts, semantic-vs-presentation split, or minimum GenerationGrid capability set. This packet remains intentionally blocked/manual even after its dependency metadata becomes satisfiable; it must be refreshed from the passed XR1 evidence before implementation.
 - Evidence: blocked/ready X1 audit packet and paired review; current `custodian/game/world/procgen/proc_gen_tilemap.gd`; `custodian/game/world/procgen/procgen.gd`; existing `custodian/game/world/procgen/generation/README.md` and candidate owner files; D1/D2/D3 refresh-gated packets.
 - Task-specific authority: The **reviewed** X1 audit once it exists; `design/02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md`; current generation/fingerprint contracts.
 - Work surface: Intentionally not frozen while blocked. The eventual seam belongs in the existing `custodian/game/world/procgen/generation/` package, but exact filenames/classes/API/canary must be taken from the reviewed X1 inventory. Do not pre-create a parallel storage abstraction before that review.
@@ -53,9 +53,9 @@
 
 ## Refresh Planning Authority
 
-- Refresh owner: `execution-agent`
-- ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
