@@ -12,6 +12,20 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
+- `BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE.md` — Ready P1 foundation for staging a fresh procgen region as a normal route node without changing @world_origin semantics or creating a second transition manager.
+- `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE.md` — Paired fresh-context review of the generated-route-node lifecycle and rollback contract.
+- `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Draft BF2 consumer that registers the distinct generated Ash-Bell Highlands destination after the reviewed BF1 lifecycle lands.
+- `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Dependency-gated paired review for BF2.
+- `RITUALANT_NORTH_EGRESS_AND_CHAPEL_VISTA.md` — Draft BF3 slice fixing real distant-chapel arrival visibility and converting the resolved north seal into the Highlands route seam.
+- `REVIEW_RITUALANT_NORTH_EGRESS_AND_CHAPEL_VISTA.md` — Dependency-gated paired review for BF3.
+- `BRIDGED_FALLS_PROCGEN_TOPOLOGY.md` — Draft BF4 generator: a fresh convoluted multi-span bridge network per seed with required reveal/commit/Lower-Quarter terminal beats.
+- `REVIEW_BRIDGED_FALLS_PROCGEN_TOPOLOGY.md` — Dependency-gated paired review proving Bridged Falls is genuinely generated rather than a fixed authored corridor.
+- `BRIDGED_FALLS_BRIDGE_GRAMMAR_AND_ASSET_V2.md` — Draft BF5 Asset V2/presentation pass for monumental Meridian civic bridge grammar over BF4 semantic gameplay authority.
+- `REVIEW_BRIDGED_FALLS_BRIDGE_GRAMMAR_AND_ASSET_V2.md` — Dependency-gated BF5 asset/presentation review.
+- `BRIDGED_FALLS_VISTA_AND_WATERFALL_PRESENTATION.md` — Draft BF6 region-frame, waterfall, mist, sunset, Lower Quarter basin and Station IX skyline presentation pass.
+- `REVIEW_BRIDGED_FALLS_VISTA_AND_WATERFALL_PRESENTATION.md` — Dependency-gated BF6 technical/visual review.
+- `BRIDGED_FALLS_LOWER_QUARTER_HANDOFF.md` — Draft BF7 production cutover; deliberately refresh-gated to preserve one canonical Lower Quarter state identity.
+- `REVIEW_BRIDGED_FALLS_LOWER_QUARTER_HANDOFF.md` — Final paired route/state-authority review for the Bridged Falls → Lower Quarter handoff.
 - `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — Replace the live P-9 Designation Locker art with the approved reauthored four-state family while preserving the existing P0 Asset V2 contract, one-shot openi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
 - `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — Consume every currently actionable, unimplemented production asset handoff under /CUSTODIAN/implementation_inputs without treating the Dropbox folder itself...
