@@ -34,6 +34,8 @@ func _run() -> void:
 	_test_echo_and_reacquisition_gate()
 	_test_ingress_eligibility()
 	_test_ingress_pocket_occlusion()
+	_test_ingress_pending_commit_identity()
+	_test_ingress_missing_visibility_center()
 	await _test_tilemap_wiring()
 	if _errors.is_empty():
 		print("[ProcgenArchiveResolveFrontierRestraintSmoke] PASS")
@@ -354,6 +356,62 @@ func _test_ingress_pocket_occlusion() -> void:
 	_run_for(later_commit, 0.6, 0.016)
 	_check(not later_commit.has_veil(target), "later pocket commit did not settle after visibility opened")
 	later_commit.queue_free()
+
+
+func _test_ingress_pending_commit_identity() -> void:
+	var o := _make()
+	_walls.clear()
+	var tile := OP + Vector2i(2, 1)
+	var chunk := Vector2i(int(floor(float(tile.x) / CHUNK)), int(floor(float(tile.y) / CHUNK)))
+	o.begin_ingress_resolve(OP, [], CHUNK)
+	_commit(o, [tile])
+	_check(o.get_tile_state(tile) == ProcGenRevealPresentation.TileState.READY, "precondition: pocket COMMIT did not enter READY")
+	o.note_chunk_unloaded(chunk, CHUNK)
+	o.note_tiles_requested(chunk, [tile], true)
+	_check(o.get_tile_state(tile) == ProcGenRevealPresentation.TileState.REQUESTED and o.has_veil(tile), "reacquisition did not restore REQUESTED veil")
+	o.advance(0.016, OP, CHUNK)
+	_check(o.get_tile_state(tile) == ProcGenRevealPresentation.TileState.REQUESTED and o.has_veil(tile), "stale ingress COMMIT settled reacquired REQUESTED cover before COMMIT")
+	o.queue_free()
+
+
+func _test_ingress_missing_visibility_center() -> void:
+	var target := OP + Vector2i(2, 1)
+	var wall := OP + Vector2i(1, 1)
+	var existing := _make()
+	_walls.clear()
+	_walls[wall] = true
+	_commit(existing, [target])
+	existing.begin_ingress_resolve(OP, [target], CHUNK)
+	existing.advance(0.6, ProcGenRevealPresentation.NO_OPERATOR_TILE, CHUNK)
+	_check(existing.get_tile_state(target) == ProcGenRevealPresentation.TileState.READY and existing.has_veil(target), "existing hidden READY pocket cell resolved without a visibility center")
+	existing.advance(0.016, OP, CHUNK)
+	_check(existing.has_veil(target), "restoring center resolved an existing pocket cell through an opaque wall")
+	_walls.erase(wall)
+	_run_for(existing, 0.6, 0.016)
+	_check(not existing.has_veil(target), "existing pocket cell did not resolve after center and LOS were restored")
+	existing.queue_free()
+
+	var later_commit := _make()
+	_walls.clear()
+	_walls[wall] = true
+	later_commit.begin_ingress_resolve(OP, [], CHUNK)
+	_commit(later_commit, [target])
+	later_commit.advance(0.6, ProcGenRevealPresentation.NO_OPERATOR_TILE, CHUNK)
+	_check(later_commit.get_tile_state(target) == ProcGenRevealPresentation.TileState.READY and later_commit.has_veil(target), "later hidden pocket COMMIT resolved without a visibility center")
+	later_commit.advance(0.016, OP, CHUNK)
+	_check(later_commit.has_veil(target), "restoring center resolved a later pocket COMMIT through an opaque wall")
+	_walls.erase(wall)
+	_run_for(later_commit, 0.6, 0.016)
+	_check(not later_commit.has_veil(target), "later pocket COMMIT did not resolve after center and LOS were restored")
+	later_commit.queue_free()
+
+	var legacy := _make()
+	legacy.frontier_enabled = false
+	_walls.clear()
+	_commit(legacy, [target])
+	_run_for(legacy, legacy.resolve_duration_sec + 0.1, 0.016, ProcGenRevealPresentation.NO_OPERATOR_TILE)
+	_check(not legacy.has_veil(target), "frontier-disabled legacy fallback no longer resolves without an Operator center")
+	legacy.queue_free()
 
 
 func _test_tilemap_wiring() -> void:
