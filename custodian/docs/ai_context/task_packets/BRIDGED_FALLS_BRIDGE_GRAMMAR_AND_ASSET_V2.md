@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `bridged-falls-bridge-grammar-asset-v2`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `review-bridged-falls-procgen-topology`
 - Locks: `bridged-falls-bridge-art, asset-pipeline`
