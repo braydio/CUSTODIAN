@@ -158,26 +158,33 @@ Seven implementation slices are pre-authored with paired reviews. H1 `hub-first-
 
 Do not create v2 duplicates merely because a predecessor chose different private helpers; the downstream agent must reconcile those private seams at claim time while preserving the packet's public behavioral contract.
 
-### Active Isometric 2.5D Presentation Realization Series
+### Active Isometric 2.5D Presentation Realization + Operator Production Series
 
-Design authority: `../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`.
-Program tracker: `../../../design/01_systems/ISOMETRIC_2_5D_REALIZATION_ROADMAP.md`.
+Design authority: ../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md.  
+Operator production tracker: ../../../design/02_features/animation/OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md.  
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
 
-The project has pivoted away from planned live-3D presentation experiments. The fixed-isometric 2.5D doctrine will be realized inside the existing 2D runtime.
+The project has pivoted away from planned live-3D presentation experiments. The fixed-isometric 2.5D doctrine is realized inside the existing 2D runtime.
 
 - K3D-1 remains complete/reviewed precursor evidence.
-- K3D-1P `kenney-isometric-blockout-playtest` is **complete/landed** as the final walkable Kenney reference.
-- `isometric-2-5d-presentation-foundation` is **complete**; the paired fresh-context review is next.
-- `review-isometric-2-5d-presentation-foundation` is the new paired fresh-context review and gates downstream showcase consumers.
-- `operator-2-5d-animation-viability-audit` is **ready/auto** and is the required human visual/art gate before the Operator-heavy Forum showcase. It is read-only and quantifies exactly how much existing Operator art can survive the 2.5D pivot.
-- `isometric-2-5d-forum-vertical-slice` is now **draft/refresh-required** behind both the reviewed foundation and the completed Operator audit human decision.
-- `sundered-keep-overlook-alternate-vertical-slice` is an independent reviewed-foundation consumer tracked by the new Sundered overlook roadmap.
-- The old planned `kenney-orthographic-3d-feasibility` and `kenney-3d-to-2d-production-feasibility` workstreams are canceled and must not be authored.
-- Human approval after the Forum vertical slice gates any production rollout or asset-authoring standard.
+- K3D-1P kenney-isometric-blockout-playtest is complete/landed as the final walkable Kenney reference.
+- isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
+- operator-2-5d-animation-viability-audit has implementation evidence on agent/operator-2-5d-animation-viability-audit at 0fd497c43 but remains paused/unmerged for human closeout; main's active packet therefore overstates it as merely ready.
+- operator-2-5d-canonical-visual-contract has corrected provisional implementation on agent/operator-2-5d-canonical-visual-contract at 914d9d2d9. Before landing/review it must consume the human decisions recorded in the authoring chat: 128 body canvas, shared scale 0.225, neutral support presentation around y106, and separate semantic projected_world_root/shadow_origin.
+- Human approval of the Operator 2.5D authoring pipeline has now occurred. Forum remains an important in-world presentation proof, but it no longer gates building the Workbench production tooling.
 
-- `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — **ready/manual after the active audit releases the Operator-art lock**; preserves the approved turnaround, creates dual legacy-96/canonical-128 profiles, measures all directions, and wires canonical ghost/QA support into the existing Operator authoring stack.
-- `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — paired fresh-context source/profile/measurement/guide review.
+Operator Workbench implementation series, all pre-authored with refresh gates:
+
+1. OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md + paired review — generation namespace, plan v2, target-first tree/matrix.
+2. OPERATOR_2_5D_WORKBENCH_INGRESS.md + paired review — guided NEW/IMPORT and resumable direction packages.
+3. OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md + paired review — profile-guided Aseprite polish, registration and temporal diagnostics.
+4. OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md + paired review — canonical/family/sequence review plus debug Godot sandbox.
+5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
+6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
+
+No WB25 implementation packet is claimable from stale assumptions. WB25-1 must first be refreshed after the audit and canonical-contract review land; every later implementation remains draft until its predecessor + paired review return to the authoring chat.
+
+The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
 ### Active Sundered Keep Overlook Alternate Program
 
