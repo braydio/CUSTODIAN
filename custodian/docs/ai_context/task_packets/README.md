@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-06
+Last updated: 2026-10-07
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -278,6 +278,14 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 ready/auto, dependency-gated on NPA-2; it self-refreshes from the landed NPA-2 implementation/review seam at claim time.
   - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review, ready/auto and dependency-gated on NPA-3.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
+
+### Ash-Bell / Ritualant Scene Closeout
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
+
+- `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — ready/auto P1 repair for the surviving passive Fountain stabilization path plus the Ritualant idle/kneel 7f-vs-8f semantic contract drift.
+- `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — dependency-gated fresh-context post-land review of that runtime/asset truth repair.
+- `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — remains draft and now depends on the reviewed runtime-truth slice; return here after review to lock/generate the remaining art and audio rather than guessing source/cadence contracts.
 
 ### Ash-Bell / Forlorn-Ritualant Production Art Closeout
 
