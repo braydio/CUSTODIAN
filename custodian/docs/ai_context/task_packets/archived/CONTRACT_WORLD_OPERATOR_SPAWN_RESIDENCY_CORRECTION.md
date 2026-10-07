@@ -42,10 +42,10 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes — canonical spawn choice is independent of paint residency and the selected spawn is realized before activation.`
-- Completion boundary satisfied: `yes — the selected valid/runtime-walkable/main-component tile is synchronously painted through the existing chunk lifecycle/payload/commit path before Operator control is restored.`
-- Acceptance satisfied: `yes — the new real generated streaming smoke proves readiness, stable selection, camera/Archive Resolve ordering, and idempotence; mutation restoring the painted-floor filter fails; catastrophic no-safe behavior remains fail-closed and vehicle possession remains null.`
-- Superseded/legacy production path disposition: `the ProcGen painted-floor candidate filter is removed; non-ProcGen fallback maps retain their existing painted-floor requirement.`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
 - Evidence: `all 14 focused packet regressions including S1 quick pass; the residency mutation fails as expected; task_packet_index and git diff checks pass. The changed-file sweep selected 50 tests: 16 passed, the repository-wide review_pairing_contract unit failed on two unrelated visual-review-question-answer-capture-v1 packets, and 33 higher tiers were skipped. This task's review pair was not reported by the pairing guard.`
 
 ## Execution Feedback
