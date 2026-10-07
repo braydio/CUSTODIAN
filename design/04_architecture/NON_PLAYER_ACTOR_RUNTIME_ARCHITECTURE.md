@@ -103,8 +103,8 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 | Slice | Workstream | Scope | Status |
 | --- | --- | --- | --- |
-| NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **implemented and validated; paired review pending** |
-| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the landed ability seam | **blocked/manual / ChatGPT refresh after passed NPA-1 review** |
+| NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **complete / paired review passed** |
+| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the reviewed ability seam | **ready/auto after ChatGPT planning refresh** |
 | NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **blocked/manual / ChatGPT refresh after passed NPA-2 review** |
 | NPA-4 | TBD after NPA-3 | Extract ordinary standard-enemy melee execution/cadence authority | planned |
 | NPA-5 | TBD | Extract shared enemy reaction/posture/parry-critical authority where a coherent boundary exists | planned |
@@ -117,7 +117,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete.
 
-NPA-1 implementation evidence: `MarineDash` + typed `MarineDashConfig` own the full Marine lifecycle and tuning; `request_marine_dash` is the public request seam; all 26 defaults and 26 Marine scene values match; focused Marine, spatial telemetry, and production ambush gates pass; `enemy.gd` is 343 lines smaller. The changed-file closeout passes all 23 selected checks. The Falcon smoke verifies the 96×96 ordinary-critical contract against the published frame texture, and the packet pairing validator supports planning-gated blocked/manual review pairs.
+NPA-1 implementation + paired-review evidence: `MarineDash` + typed `MarineDashConfig` are the sole Marine lifecycle/tuning authority; `request_marine_dash` is the public request seam; all 26 defaults and 26 Marine scene values match; current-main Marine, spatial telemetry, Sundered Keep ambush, and Falcon reversal gates pass; the implementation recorded a 23/23 changed-file closeout; and `enemy.gd` remains 343 lines below the 4,958-line recorded baseline. The paired review passed with 0 blockers and 0 material gaps. NPA-2 was then remeasured against that reviewed seam: Savage pounce remains actor-owned as 13 numeric tuning values plus six mutable runtime fields, cleanly separable from the two-hit chain.
 
 Cross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. NPA-8 must reuse it if available rather than inventing Vaultwing-only hearing or importing Enemy behavior policy.
 
@@ -136,8 +136,9 @@ Reviewed `main@02ca0025b8`:
 - `vaultwing.gd`: ~252 lines with species-local behavior controller, presentation, allegiance, and bond state.
 - `forlorn_ritualant_npc.gd`: ~385 lines with encounter-local phases and combat.
 - `turret.gd`: ~441 lines, extends `Damageable`, uses `ActorRelationshipResolver`, and has no locomotion requirement.
-- Marine/Savage phase machines still live in `enemy.gd`.
-- Falcon Punch is already extracted and is the reference actor-local ability seam.
+- Marine Dash is extracted and reviewed under `abilities/marine_dash.gd` + typed `MarineDashConfig`; `enemy.gd` retains only the enable/config binding, fixed-step integration, public request/diagnostic seam, and shared actor/combat services.
+- Savage pounce and Savage two-hit chain phase machines still live in `enemy.gd`; NPA-2 is the next executable extraction.
+- Falcon Punch and reviewed Marine Dash are the concrete actor-local ability seams; neither justifies a generic universal ability base.
 - The active relationship architecture explicitly says it is **not** a universal NPC base class.
 
 ## Closure Criteria
