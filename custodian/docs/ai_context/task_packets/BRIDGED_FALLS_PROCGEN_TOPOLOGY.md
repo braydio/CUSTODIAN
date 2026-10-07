@@ -5,7 +5,7 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `ash-bell-highlands-generated-destination`
+- Depends on: `review-ash-bell-highlands-generated-destination`
 - Locks: `bridged-falls-generation, ash-bell-highlands-intent`
 - Kind: `implementation`
 - Review: `auto`
