@@ -70,3 +70,22 @@
 - Refresh reason: Wait for BF1 to archive complete on main so its paired review can claim.
 - Next action: Run the paired review from its required fresh reviewer context; after review, mechanically refresh BF2 against the reviewed live contract.
 - Blockers or open questions: The Sundered Keep route graph smoke has the documented baseline arrival-guard failure at implementation base 911e8871e.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-bridged-falls-generated-region-lifecycle`
+- Reviewed on main: `520af6d832a4a79fe2fee110e3424ae1f1083dcd`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `bridged-falls-generated-region-lifecycle-review-corrections-1`
+- Reviewer independence: `The reviewer claimed a fresh paired-review workstream and reconstructed the target from archived packet/summary evidence, active route architecture, live source, and fresh runtime traces. No reviewed runtime files were changed.`
