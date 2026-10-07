@@ -32,13 +32,6 @@
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
-- Refresh instruction: If review materially changes the chain/service boundary, bring the evidence back to this chat before NPA-4 is authored.
-
-## Refresh Planning Authority
-
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: NPA-3 stays blocked/manual until NPA-2 implementation and paired review pass, then the NPA-3 implementation packet and this review pair are refreshed together from the reviewed pounce seam.
 
 ## Handoff
