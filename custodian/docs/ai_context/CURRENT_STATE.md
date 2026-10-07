@@ -2155,10 +2155,21 @@ camera gained `set_authored_map_bounds`, because its deferred procgen rebuild
 would otherwise clear an authored level's clamp half a second after the level set
 it.
 
-Implemented interactions: the Crèche console (locks the opening state and sets the
+Implemented gameplay interactions include the Crèche console (locks the opening state and sets the
 persistent RETURN TO POST objective), the existing locker (grants `p9_sidearm`),
 the Dust Lung bidirectional transit lift `(384, -3008)` ⇄ `(384, -3424)`, and the
-Undergate damaged port readout. No combat: the Attestation Sentinels, Approach
+Undergate damaged port readout. Their current feedback presentation has a confirmed
+P0 defect: `CustodianHUD` expires a `show_interaction()` presentation after more
+than two process frames unless a scene refreshes it continuously; Sundered Keep
+does this, but `AwakeningFirstReturn._process()` currently does not. The Crèche
+and port readout bodies therefore disappear almost immediately after one-shot
+display calls. In addition, Asset V2 has a verified
+`awakening_creche_console_activation_fx/activate` 8-frame 128×128-at-8-FPS
+runtime state, but live Awakening code/scene does not reference or play that
+sheet. Active P0 `awakening-interaction-feedback-console-activation` owns the
+correction: target-valid prompts persist, long readouts gain an explicit readable
+dwell without weakening stale-prompt protection, and the existing activation FX
+plays once on first console acknowledgement. No new art is required. No combat: the Attestation Sentinels, Approach
 Sentinel, scavenger nest, and route-leech are disabled `encounter` markers and
 `World/Enemies` is empty. No Forum, Continuity Port, Contract, or campaign
 transition, and no first-campaign prewarming from the prologue — those belong to
