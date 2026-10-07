@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-enemy-savage-pounce-ability-extraction`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `enemy-savage-pounce-ability-extraction`
 - Locks: `enemy-runtime`
@@ -36,5 +36,5 @@
 
 ## Handoff
 
-- Next action: This review becomes ready/auto only when the refreshed NPA-2 implementation is ready/auto and later lands.
-- Blockers or open questions: reviewed NPA-1 must first unlock and refresh NPA-2.
+- Next action: Keep this paired review blocked/manual until the passed NPA-1 review is brought to the authoring chat and NPA-2 is remeasured and refreshed to ready/auto.
+- Blockers or open questions: NPA-1 paired review and NPA-2 planning refresh are pending.
