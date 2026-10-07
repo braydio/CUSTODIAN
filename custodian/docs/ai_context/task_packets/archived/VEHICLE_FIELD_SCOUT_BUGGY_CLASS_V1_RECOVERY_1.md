@@ -72,3 +72,53 @@
 - Refresh reason: `none`
 - Next action: Finish normally so paired review gates Asset V2 presentation.
 - Blockers or open questions: `none after predecessor review and stale-claim recovery`
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-vehicle-field-scout-buggy-class-v1-recovery-1`
+- Reviewed on main: `993633bb8d8d517cb608e7756a15a5f61d9751e6`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `1`
+- Material evidence gaps: `1 (included in R0-01)`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `R0-02`
+- Human-decision finding IDs: `none`
+- Detailed review packet: `custodian/docs/ai_context/task_packets/archived/REVIEW_VEHICLE_FIELD_SCOUT_BUGGY_CLASS_V1_RECOVERY_1.md`
+- Detailed review summary: `REVIEW_VEHICLE_FIELD_SCOUT_BUGGY_CLASS_V1_RECOVERY_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `vehicle-field-scout-buggy-class-v1-recovery-1-review-corrections-1`
+
+### Findings
+
+#### R0-01 — P1, R1 Scout restoration still accepts raw-resource payment
+
+- Class: `blocking_defect`
+- Domain: `runtime, architecture`
+- Affected acceptance: The profile requires one each of `field_drive_coupler_mk1`, `custodian_control_relay_mk1`, and `structural_brace_kit_mk1`; raw-resource-only restoration fails; successful installation consumes the assemblies and restores the same Scout at 40 HP.
+- Evidence: `custodian/content/vehicles/vehicle_restoration_profiles.json` declares only `cost: { ruin_scrap: 12, structural_alloy: 6, power_components: 1 }`. `custodian/game/vehicles/vehicle_restoration_interaction.gd` pays that `ResourceLedger` cost before calling `restore_from_wreck()`. The three component IDs are absent from live runtime/content, despite the active R1 recovery design requiring component IDs.
+- Proof gap: `vehicle_field_scout_class_smoke.gd` asserts the raw-resource cost and directly invokes `restore_from_wreck(0.4)`, bypassing the production interaction and component requirement.
+- Disposition: `correction`
+- Rationale: The raw-resource path is a production payment-authority bypass that contradicts the archived acceptance and active design. Correction 1 must consume the reviewed component-recovery API and is dependency-gated on its pending paired review.
+
+#### R0-02 — P2, CURRENT_STATE retains a superseded LightBuggy scene claim
+
+- Class: `non_blocking_issue`
+- Domain: `documentation`
+- Affected acceptance: The semantic Scout scene replaces the old production path and no live `light_buggy.tscn` alias remains.
+- Evidence: The top-level Scout section and active class spec identify `field_scout_buggy_mk1.tscn`, while the later Vehicle Registry V1 paragraph still claims the production ID uses `LightBuggy`. Live runtime/scenes/content search found no `light_buggy.tscn` reference, and the old scene file is deleted.
+- Disposition: `next_slice`
+- Rationale: Stale documentation does not create a runtime alias; reconcile it during the vehicle Asset V2/current-state pass.
+
+### Review Evidence
+
+- `vehicle_field_scout_class`: PASS (1/1; known ObjectDB/resource shutdown warnings).
+- `vehicle_wreck_restoration`: PASS (1/1; known ObjectDB/resource shutdown warnings).
+- `vehicle_runtime_lifecycle`: PASS (1/1; expected blocked-exit warning).
+- `vehicle_exit_clearance`: PASS (1/1; expected pathological-blockage warning).
+- `vehicle_registry_contract`: PASS.
+- `review_pairing_contract`: FAIL only for unrelated `visual-review-question-answer-capture-v1` malformed override/target metadata; this review's correction/re-review pair was not listed as a failure.
+- The reviewed runtime/profile/scene/validation files were not modified.
