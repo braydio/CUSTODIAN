@@ -15,6 +15,9 @@ Workstream `procgen-generation-state-extraction` (D3). Agent: claude.
 - Passing: candidate promotion, candidate semantic model, spatial normalization, world contract prewarm, macro presentation, ash-bell generation contract, S1 quick (`determinism_ok=true`), new export smoke.
 - Negative control: flipping `intent_zones_enabled` to false made the parity smoke fail with a hash drift; reverted.
 
+## Unrelated baseline failures (not D3 gates)
+`run_validation.py --changed` is red on two checks that fail identically on untouched `origin/main` and are not modified here: `review_pairing_contract` (malformed bounded TASK OVERRIDE in other packets' review packets) and `procgen_ambient_enemy_real_world_spawn` (`no_safe_operator_spawn_after_world_ingress_placement`, matching the open spawn-residency correction). The finish gate is D3's focused `procgen_accepted_world_export_parity` report. The other 24 changed-file tests passed individually; the Archive Resolve AR4 open review is not a D3 blocker.
+
 ## Awkward parts / limits (said plainly)
 - **Overlay separation is not done.** The packet asked for runtime mutation overlays "represented separately". `_generated_floor_cells`/`_generated_wall_cells` are mutated at ~60 runtime sites (terrain commits, connector dry-runs), so they stay hosted by `ProcGenTilemap`; only capture and export moved, and exports are always detached copies. Real base-vs-overlay storage separation belongs to the GenerationGrid initiative (X1+) and is deferred there.
 - The packet was marked refresh-gated in prose though its dependencies had archived and it named the execution agent as refresh owner with no user refresh required; I treated the re-audit as mine, recorded it in the packet, and removed the guard. Archive Resolve AR1-AR3 are landed; only the AR4 frontier-restraint review is open. None of its seams were touched.

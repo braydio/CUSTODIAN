@@ -59,7 +59,7 @@ This packet belongs to the pre-authored `procgen-runtime-optimization-v1` depend
 - What went wrong: `The first claim attempt hit LOCAL DISPATCH BUSY from a live Codex claim; retried after it released. A fresh worktree had no .godot import cache, so the first smoke runs failed to parse until godot --import ran. level data is not byte-stable across runs (random_floor_tiles is RNG-sampled, fingerprint health is timing counters), so the first baseline hashes disagreed.`
 - Root cause / contributing factors: `Packet said refresh-gated though its Refresh Planning Authority already named the execution agent as owner and set no user refresh; the dispatcher correctly treated it as ready/auto.`
 - Prevention / pipeline improvement: `Parity smoke hashes exclude the nondeterministic keys and asserts them structurally.`
-- Tooling / docs drift discovered: `Packet prose still described itself as refresh-gated after its deps archived; refresh guard section was removed in this slice. The validation recipes do not mention running godot --import in a fresh worktree before a --script smoke.`
+- Tooling / docs drift discovered: `Unrelated baseline failures present on origin/main and not touched here: review_pairing_contract (malformed review TASK OVERRIDE text in other packets) and procgen_ambient_enemy_real_world_spawn (no_safe_operator_spawn_after_world_ingress_placement). Packet prose still described itself as refresh-gated after its deps archived; refresh guard section was removed in this slice. The validation recipes do not mention running godot --import in a fresh worktree before a --script smoke.`
 - Follow-up: `fixed-in-scope`
 
 ## Handoff
