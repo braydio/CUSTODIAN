@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-modular-directional-coverage-closeout`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `operator-melee-domain-extraction, operator-ranged-domain-extraction, operator-guard-parry-composition-polish, operator-recovery-domain-extraction`
 - Locks: `operator-assets`
