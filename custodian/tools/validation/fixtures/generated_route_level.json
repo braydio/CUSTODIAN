@@ -1,0 +1,16 @@
+{
+  "schema": "custodian.level_definition.v1",
+  "level_id": "generated_route_procgen_fixture",
+  "display_name": "Generated Route ProcGen Fixture",
+  "runtime_kind": "generated_region",
+  "world_context": "test_campaign",
+  "spawns": ["EntrySpawn"],
+  "generated_region": {
+    "scene_path": "res://game/world/procgen/proc_gen_map.tscn",
+    "profile_id": "lifecycle_smoke_small",
+    "seed": 420777,
+    "map_size": [48, 48],
+    "room_count": 7
+  },
+  "lifecycle": {"cache_policy": "destroy_on_exit", "state_policy": "session"}
+}

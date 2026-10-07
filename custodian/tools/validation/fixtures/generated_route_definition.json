@@ -1,0 +1,19 @@
+{
+  "schema": "custodian.route_definition.v1",
+  "route_id": "generated_region_lifecycle_smoke",
+  "display_name": "Generated Region Lifecycle Smoke",
+  "world_context": "test_campaign",
+  "default_profile": "smoke",
+  "nodes": [
+    {"node_id": "authored", "level_id": "generated_route_authored_fixture"},
+    {"node_id": "generated", "level_id": "generated_route_procgen_fixture"}
+  ],
+  "edges": [
+    {"edge_id": "enter_authored", "from_node_id": "@world_origin", "exit_id": "enter", "to_node_id": "authored", "target_spawn_id": "Spawn_Start", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "enter_generated", "from_node_id": "authored", "exit_id": "continue", "to_node_id": "generated", "target_spawn_id": "EntrySpawn", "direction": "forward", "transition_style": "fade"},
+    {"edge_id": "return_authored", "from_node_id": "generated", "exit_id": "backtrack", "to_node_id": "authored", "target_spawn_id": "Spawn_Return", "direction": "back", "transition_style": "fade"}
+  ],
+  "profiles": [
+    {"profile_id": "smoke", "entry_edge_id": "enter_authored", "enabled_edge_ids": ["enter_authored", "enter_generated", "return_authored"], "allow_no_exfil": true}
+  ]
+}

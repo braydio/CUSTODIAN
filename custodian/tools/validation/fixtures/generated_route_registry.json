@@ -1,0 +1,4 @@
+{
+  "schema": "custodian.route_registry.v1",
+  "definitions": ["res://tools/validation/fixtures/generated_route_definition.json"]
+}

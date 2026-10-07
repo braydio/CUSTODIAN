@@ -3,7 +3,7 @@
 **Status:** locked continuation manifest  
 **Date:** 2026-10-06  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d  
-**Reviewed base:** `braydio/CUSTODIAN` `main@b086e552de00cea8551d62884c996558d33f12e6`  
+**Reviewed base:** `braydio/CUSTODIAN` `main@78bb7b865948a2a342017993f5b98c4b795d1f6e`  
 **Scope:** believable production presentation for the first generated `ALPINE_PLATEAU` Region Frame  
 **Asset authority:** Asset Pipeline V2 family contracts remain canonical for runtime routing and naming.
 
@@ -315,6 +315,60 @@ and register them in:
 
 ---
 
+## Alpine Surface-Plate Source-Master Pipeline
+
+The AP3 image-art requirement is now complete as two approved durable Dropbox source-master batches.
+
+### Rocky Upland 10
+
+```text
+batch_id: rocky-upland-10-source-family-v1
+CUSTODIAN/asset_batches/procgen-alpine-presentation/rocky-upland-10-source-family-v1/
+custodian_rocky_upland_10_asset_handoff_v1.zip
+SHA-256 c47718b7f1e94eb67cbb647fdc3c38f81b20fa5a0b44e33de89137b9d62bbfdf
+```
+
+### Meridian Hardstand 6
+
+```text
+batch_id: meridian-hardstand-6-source-family-v1
+CUSTODIAN/asset_batches/procgen-alpine-presentation/meridian-hardstand-6-source-family-v1/
+custodian_meridian_hardstand_6_asset_handoff_v1.zip
+SHA-256 ac3af79bb216d6abf678482149301410071a3d583b2917938ebf5885b6212e2d
+```
+
+Registry/discovery authority:
+
+```text
+CUSTODIAN/asset_batches/_registry/
+custodian/docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md
+```
+
+Together the batches provide all 16 approved high-resolution AP3 source masters: 10 Rocky Upland states and 6 Meridian Hardstand states. The source art is complete. AP3 remains dependency-gated behind AP2 until the cliff presentation slice lands.
+
+These are source masters rather than final Asset V2 runtime canvases. Runtime dimensions listed in Families E/F remain exact output contracts.
+
+### Derivation rule
+
+```text
+approved source master
+  -> preserve into asset_drop/source_work
+  -> project normalization/resizer to exact manifest canvas
+  -> alpha cleanup
+  -> Asset V2 inbox ingest/bind/verify
+  -> explicit TerrainStampProfile masks + eligibility
+  -> existing terrain stamp catalog
+  -> deterministic placement / streaming / materializer validation
+  -> human gameplay-scale review
+  -> Gate C closeout handoff
+```
+
+Do not nonuniformly stretch the approved masters. Do not infer floor membership, walkability, collision, road semantics, biome or elevation from PNG alpha or apparent painted geometry.
+
+The corrected `meridian_hardstand_service_apron_alpine_01` in the Meridian batch is the production source authority; earlier helipad-like generation is superseded and must not be used.
+
+---
+
 ## Family E — `procgen_surface_rocky_upland`
 
 **Action:** extend the existing family and preserve all current states.
@@ -556,7 +610,18 @@ CUSTODIAN/implementation_inputs/
 
 Exactly 26 final PNGs. This Gate B handoff is the verified AP2 closeout artifact and downstream contract, not the source-master input.
 
-### Gate C — playable surface plates
+### AP3 source-master inputs and Gate C closeout
+
+AP3 source art is supplied by the two registered batches documented above:
+
+```text
+CUSTODIAN/asset_batches/procgen-alpine-presentation/rocky-upland-10-source-family-v1/
+CUSTODIAN/asset_batches/procgen-alpine-presentation/meridian-hardstand-6-source-family-v1/
+```
+
+Together they provide all 16 approved source masters.
+
+After AP3 normalization, Asset V2 publication, profile/catalog wiring and validation, AP3 publishes/verifies:
 
 ```text
 CUSTODIAN/implementation_inputs/
@@ -564,15 +629,15 @@ CUSTODIAN/implementation_inputs/
     alpine-surface-plates-v1/
       HANDOFF_MANIFEST.json
       payload/
-        procgen_surface_rocky_upland/         # 10 PNGs
-        procgen_surface_meridian_hardstand/   # 6 PNGs
+        procgen_surface_rocky_upland/         # 10 final PNGs
+        procgen_surface_meridian_hardstand/   # 6 final PNGs
 ```
 
-Exactly 16 PNGs.
+Exactly 16 final PNGs. Gate C is the AP3 closeout/downstream receipt, not the prerequisite source-art handoff.
 
 ### Gate policy
 
-Gate A and Gate C remain traditional immutable-input gates. AP2 is the explicit exception documented above: its reviewed source-master batch under `asset_batches/` is sufficient to begin derivation, and its final Gate B is produced/verified at closeout.
+Gate A remains the traditional immutable-input gate for AP1. AP2 and AP3 now both use reviewed source-master batches under `asset_batches/` as their approved derivation inputs; their final Gate B/Gate C handoffs are produced/verified at closeout.
 
 For every lane:
 
