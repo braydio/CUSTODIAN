@@ -227,7 +227,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | P6 | `contract-world-ingress-placement-extraction` | queued | PR1 |
 | P7 | `contract-world-loader-contraction` | **blocked / manual refresh gate** | P2+P3+P4+P5+P6 |
 | D1 | `procgen-road-authority-extraction` | **implementation complete; paired post-land review next** | G5+MR6R1 |
-| D2 | `procgen-authored-claim-registry-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
+| D2 | `procgen-authored-claim-registry-extraction` | **dependency-gated / refreshed — claim after D1 paired review passes without changing authored-scene road-clear ownership** | G5+MR6R1+D1 review |
 | D3 | `procgen-generation-state-extraction` | **blocked / manual refresh gate** | G5+MR6R1 |
 | X1 | `procgen-generation-data-model-audit` | queued | D1+D2+D3 |
 | XR1 | `review-procgen-generation-data-model-audit` | queued | X1 |
