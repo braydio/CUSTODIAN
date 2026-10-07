@@ -209,11 +209,11 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 
 ### Active Awakening Hero-Art Reauthor
 
-- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement for the live P-9 Designation Locker, still dependency-gated on the active `asset-downloads-intake-sweep`. The predecessor is partially checkpointed at `10e9ed5d` and must finish A2 + land before this packet can claim the shared Asset V2/Awakening registration surface.
+- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement, still dependency-gated on `asset-downloads-intake-sweep`. The predecessor remains active at checkpoint `4159753f4`; A2 now has a bounded authoritative correction path but must finish and land before this packet may claim the shared Asset V2/Awakening registration surface.
 
 ## Active Local Asset Intake
 
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — active partial intake. Checkpoint `10e9ed5d` has published 11/21 states (Ambulatory 6/6, Dust Lung 4/4, Undergate 6/6). A2 Attestation/Reliquary remains 0/10 on the branch; main now refreshes the outer ZIP authority to the sole current Dropbox revision SHA-256 `82012a4f…f757c9a4`, with strict manifest/per-file/state-set validation still fail-closed. Resume the same workstream; do not reclaim or start the locker reauthor yet.
+- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — active partial intake at checkpoint `4159753f4`: 11/21 published (Ambulatory 6/6, Dust Lung 4/4, Undergate 6/6), A2 package + exact ten-state contents fully verified, Attestation/Reliquary still 0/10. Planning has now authorized an exact one-revision `attestation_dais` satellite-alpha cleanup ceiling of 848 source pixels and 204 normalized pixels with topology/bounding-box/principal-byte proof. Resume the same workstream; no replacement art is required unless those exact checks fail.
 
 ## Active Reusable Source-Material Intake
 
