@@ -206,7 +206,11 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 - `REVIEW_SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3R paired fresh-context architecture/workflow review; every production packet authored by SKO-3 must remain gated behind this review.
 - No production integration implementation packet is pre-authored yet.
 
-### Active Local Asset Intake
+### Active Awakening Hero-Art Reauthor
+
+- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement for the live P-9 Designation Locker. Consumes the approved Dropbox handoff, preserves the existing four-state Asset V2/runtime/gameplay contract, and validates wall registration + exactly-once P-9 flow in Zone04. Dependency-gated on `asset-downloads-intake-sweep` to avoid Asset V2 contention.
+
+## Active Local Asset Intake
 
 - `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — ready/auto Dropbox intake closeout for the three currently actionable unimplemented Awakening handoffs: Basin B plus the Attestation/Reliquary and Dust Lung/Undergate required-fixture bundles (21 required states across five existing Asset V2 families). It skips already-landed Operator/Alpine handoffs, transport smoke, and the explicitly partial Alpine-cliff 4/26 handoff; scene binding remains fail-closed behind the existing fixture-consumption classification rules.
 
