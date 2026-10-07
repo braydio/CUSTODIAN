@@ -129,25 +129,37 @@ ERROR: R1-03 hidden pocket COMMIT settled while visibility center was unknown
 
 The archived correction 1 packet has an Independent Review receipt with two blocking defects and zero material evidence gaps. This review packet is complete and archived with findings. Correction `procgen-archive-resolve-frontier-restraint-review-corrections-2` and its paired fresh-context review are ready/auto with dependency ordering. This is the final permitted automatic correction cycle; its review must return to user/ChatGPT if blocking findings remain rather than creating correction 3.
 
+## Recovery State
+
+- Finish outcome: `blocked before push/landing`; reviewed runtime and target identity remain untouched.
+- Workstream: `review-procgen-archive-resolve-frontier-restraint-review-corrections-1`
+- Recovery branch: `agent/review-procgen-archive-resolve-frontier-restraint-review-corrections-1`
+- Worktree: `/home/braydenchaffee/Projects/.custodian-worktrees/review-procgen-archive-resolve-frontier-restraint-review-corrections-1-20261007T105637Z-eff7df9071ba`
+- Green artifact validation report: `/tmp/frontier-correction-review-closeout.json`
+- Finish/checkpoint run: `20261007T105637Z-eff7df9071ba`
+- Trace ref: `refs/heads/agent-diagnostics/review-procgen-archive-resolve-frontier-restraint-review-corrections-1/20261007T105637Z-eff7df9071ba`
+- Next correction: canonical `procgen-archive-resolve-frontier-restraint-review-corrections-2`, locally ready/auto and dependency-gated until this review lands. Preserve the branch/worktree for recovery; do not change packet target identity or substitute misleading nested filenames.
+
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `partial`
-- Friction severity: `low`
-- What went wrong: The registered smoke omits pending-commit identity reuse and unavailable-center ingress admission; both fresh owner probes fail. One attempted multi-test command selected only its final --test argument.
-- Root cause / contributing factors: Pending entries are not invalidated by release and accept REQUESTED records; the ordinary ungated fallback defeats ingress's absent-center guard. The runner accepts one --test filter rather than an accumulating list.
+- Friction severity: `medium`
+- What went wrong: The registered smoke omits pending-commit identity reuse and unavailable-center ingress admission; both fresh owner probes fail. One attempted multi-test command selected only its final --test argument. workstream.py paired-review artifact gate permits correction names derived from the reviewed correction-1 target, while the authoritative review packet requires the canonical original-lineage correction-2 name. Finish rejects PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT_REVIEW_CORRECTIONS_2.md as unauthorized before push/landing. Fix the lifecycle naming rule in a separately authorized pipeline workstream; preserve this review branch/worktree for recovery.
+- Root cause / contributing factors: Pending entries are not invalidated by release and accept REQUESTED records; the ordinary ungated fallback defeats ingress's absent-center guard. The runner accepts one --test filter rather than an accumulating list. The finish artifact whitelist uses the current reviewed correction ID as its prefix instead of the canonical parent lineage, contradicting the packet's explicit second-cycle successor.
 - Prevention / pipeline improvement: Add the two bounded lifecycle/unknown-center regressions with negative controls in correction 2; run one explicit --test command per required test and inspect each selected list.
 - Tooling / docs drift discovered: The ephemeral worktree's graph is empty, so graph-first discovery required targeted source fallback. This review packet inherited the original AR4 main SHA instead of the correction target; its own Reviewed main metadata is now the actual claimed main. `check_ai_context.py --json` reports the same 15 out-of-scope grammar/index findings recorded by correction 1; no new finding points to this review or its successor packets. No unrelated metadata was changed.
 - Follow-up: `procgen-archive-resolve-frontier-restraint-review-corrections-2`
+- Pipeline follow-up: `manual-follow-up` — correction-lineage normalization in paired_review_artifact_scope_error; the bounded review override does not authorize editing lifecycle tooling.
 - What worked: The fresh owner probe separated valid R1-01 behavior from missing edge coverage without modifying reviewed implementation.
 
 ## Next Handoff
 
 - Next workstream: `procgen-archive-resolve-frontier-restraint-review-corrections-2`
-- Next packet state: `ready`
+- Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73
 - Refresh reason: `none`
-- Next action: Claim correction 2, implement only R1-02/R1-03, and run its paired fresh-context review after landing. Cycle 2 is the final allowed automatic correction cycle.
-- Blockers or open questions: R1-02 and R1-03 prevent acceptance closure; no missing design decision blocks the correction.
+- Next action: Resolve the mechanical finish artifact-gate mismatch in a separately authorized pipeline workstream, resume/finish this preserved review branch, then claim canonical correction 2 and its paired fresh-context review. Cycle 2 is the final allowed automatic correction cycle.
+- Blockers or open questions: workstream.py paired-review artifact gate permits correction names derived from the reviewed correction-1 target, while the authoritative review packet requires the canonical original-lineage correction-2 name. Finish rejects PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT_REVIEW_CORRECTIONS_2.md as unauthorized before push/landing. Fix the lifecycle naming rule in a separately authorized pipeline workstream; preserve this review branch/worktree for recovery. R1-02 and R1-03 remain the implementation acceptance blockers; no design/art decision is missing.
