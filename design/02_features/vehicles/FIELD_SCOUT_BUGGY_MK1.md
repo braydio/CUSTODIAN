@@ -1,6 +1,6 @@
 # Custodian Field Scout Buggy Mk I
 
-**Status:** active implementation design  
+**Status:** class V1 complete; Asset V2 family follow-up active
 **Parent authority:** `design/02_features/vehicles/VEHICLES.md`  
 **Implementation series:** lifecycle hardening -> class implementation -> Asset V2 vehicle-family foundation  
 **Reviewed main:** `ad2868d66a`
@@ -73,7 +73,7 @@ custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn
 
 The scene uses `PilotableVehicle` as the shared runtime authority and retains one `VehicleSeat` driver seat, authoritative collision geometry, an exit marker used as the first safe-exit candidate, `Hardpoints/FrontLight`, `Hardpoints/RearUtility`, and one presentation node consuming the selected visual kit.
 
-`custodian/game/actors/vehicles/light_buggy.tscn` is a migration name, not the permanent class identity. Remove it after live consumers move, or retain it only as an explicit compatibility alias with an exit condition.
+`custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn` is the production class scene. The former `light_buggy.tscn` had no remaining live consumer after `game.tscn` and the world-origin contract moved to the semantic name, so it was removed. Current hover frames are explicitly temporary compatibility presentation in visual kit `custodian_field_scout_buggy_mk1_compat_hover`; the Asset V2 successor replaces that presentation.
 
 A stale constant in-world health bar is not acceptable. Bind it to authoritative vehicle health through an existing presentation seam if one exists; otherwise remove the orphan presentation rather than creating a second health authority.
 

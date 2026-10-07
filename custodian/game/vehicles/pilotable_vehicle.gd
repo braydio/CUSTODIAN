@@ -12,6 +12,7 @@ enum ControlState { UNOCCUPIED, ENTERING, PILOTED, EXITING, DISABLED }
 
 @export var fallback_vehicle_id: String = "custodian_ground_buggy_scout_light"
 @export var movement_profile_path: String = "res://content/vehicles/vehicle_movement_profiles.json"
+@export var durability_profiles_path: String = "res://content/vehicles/vehicle_durability_profiles.json"
 @export var visual_kits_path: String = "res://content/vehicles/vehicle_visual_kits.json"
 @export var interaction_range: float = 64.0
 @export var parked_animation: StringName = &"idle"
@@ -71,6 +72,11 @@ func apply_vehicle_definition(definition) -> void:
 	name = vehicle_definition.id
 	interaction_range = float(vehicle_definition.seat_profile.get("entry_radius", interaction_range))
 	movement_profile = _load_profile(movement_profile_path, "profiles", vehicle_definition.movement_profile)
+	var durability_profile := _load_profile(
+		durability_profiles_path, "profiles", vehicle_definition.durability_profile
+	)
+	max_health = maxf(1.0, float(durability_profile.get("max_health", max_health)))
+	current_health = clampf(current_health, 0.0, max_health)
 	_apply_visual_kit(vehicle_definition.visual_kit)
 
 

@@ -11,6 +11,7 @@
     "interaction_mode",
     "mobility",
     "movement_profile",
+    "durability_profile",
     "hardpoint_profile",
     "loadout",
     "visual_kit",

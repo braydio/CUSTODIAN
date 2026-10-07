@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b2nvudqe2mljd"]
+[gd_scene format=3]
 
 [ext_resource type="Script" uid="uid://bbashm32vudln" path="res://game/vehicles/pilotable_vehicle.gd" id="1_vehicle"]
 [ext_resource type="SpriteFrames" uid="uid://dpnh0apa41g7g" path="res://game/actors/vehicles/hover_buggy_idle_frames.tres" id="2_frames"]
@@ -11,7 +11,7 @@ height = 64.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_entry"]
 radius = 64.0
 
-[node name="LightBuggy" type="CharacterBody2D" unique_id=1517962398]
+[node name="FieldScoutBuggyMk1" type="CharacterBody2D"]
 script = ExtResource("1_vehicle")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1024933905]
@@ -44,11 +44,3 @@ position = Vector2(0, -34)
 
 [node name="RearUtility" type="Marker2D" parent="Hardpoints" unique_id=1774816720]
 position = Vector2(0, 28)
-
-[node name="HealthBar" type="ProgressBar" parent="." unique_id=216754701]
-offset_left = -36.0
-offset_top = -52.0
-offset_right = 36.0
-offset_bottom = -40.0
-value = 100.0
-show_percentage = false

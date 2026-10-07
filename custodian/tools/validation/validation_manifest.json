@@ -1,24 +1,25 @@
 {
   "schema_version": 1,
   "coverage_excludes": [
-    ".gitignore",
-    "*.md",
-    "**/*.md",
-    "AGENTS.md",
-    "custodian/AGENTS.md",
-    "design/**",
-    "custodian/docs/**",
-    "reports/**",
-    ".ai/**",
-    "tmp/**",
-    "custodian/.godot/**",
     "**/*.import",
+    "**/*.md",
     "**/*.uid",
+    "*.md",
+    ".ai/**",
+    ".gitignore",
+    "AGENTS.md",
+    "custodian/.godot/**",
+    "custodian/AGENTS.md",
+    "custodian/docs/**",
     "custodian/game/actors/base/controllable_actor.gd",
     "custodian/game/actors/base/light_buggy.tscn.txt",
     "custodian/game/actors/base/vehicle_base.gd",
     "custodian/game/actors/base/vehicle_interaction.gd",
-    "scripts/repomix-elevation.sh"
+    "custodian/game/actors/vehicles/light_buggy.tscn",
+    "design/**",
+    "reports/**",
+    "scripts/repomix-elevation.sh",
+    "tmp/**"
   ],
   "tests": [
     {
@@ -3727,6 +3728,33 @@
       "needs_import": false
     },
     {
+      "id": "vehicle_field_scout_class",
+      "type": "godot_script",
+      "script": "res://tools/validation/vehicle_field_scout_class_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "vehicle",
+        "registry",
+        "scene",
+        "durability"
+      ],
+      "owners": [
+        "custodian/content/vehicles/vehicle_archetypes.json",
+        "custodian/content/vehicles/vehicle_durability_profiles.json",
+        "custodian/game/vehicles/vehicle_definition.gd",
+        "custodian/game/vehicles/pilotable_vehicle.gd",
+        "custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn",
+        "custodian/scenes/game.tscn",
+        "custodian/tools/validation/vehicle_field_scout_class_smoke.gd",
+        "custodian/content/vehicles/vehicle_registry_schema.json",
+        "custodian/content/vehicles/vehicle_visual_kits.json",
+        "custodian/tools/validation/validate_vehicle_registry.gd",
+        "custodian/tools/validation/world_origin_branch_contract_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "vehicle_exit_clearance",
       "type": "godot_script",
       "script": "res://tools/validation/vehicle_exit_clearance_smoke.gd",
@@ -3738,7 +3766,7 @@
       ],
       "owners": [
         "custodian/game/vehicles/pilotable_vehicle.gd",
-        "custodian/game/actors/vehicles/light_buggy.tscn",
+        "custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn",
         "custodian/tools/validation/vehicle_exit_clearance_smoke.gd"
       ],
       "timeout_sec": 30,
@@ -3758,7 +3786,8 @@
       "owners": [
         "custodian/game/vehicles/pilotable_vehicle.gd",
         "custodian/game/systems/core/player_controller.gd",
-        "custodian/tools/validation/vehicle_runtime_lifecycle_smoke.gd"
+        "custodian/tools/validation/vehicle_runtime_lifecycle_smoke.gd",
+        "custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn"
       ],
       "timeout_sec": 60,
       "needs_import": true
@@ -5169,6 +5198,23 @@
         "custodian/game/world/presentation/isometric_2_5d/isometric_visual_anchor_2d.gd",
         "custodian/tools/validation/isometric_2_5d_presentation_foundation_smoke.gd",
         "custodian/tools/validation/fixtures/isometric_2_5d_presentation_foundation.tscn"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
+      "id": "world_origin_branch_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_origin_branch_contract_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "world",
+        "scene",
+        "structure"
+      ],
+      "owners": [
+        "custodian/scenes/game.tscn",
+        "custodian/tools/validation/world_origin_branch_contract_smoke.gd"
       ],
       "timeout_sec": 30,
       "needs_import": true

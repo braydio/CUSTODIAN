@@ -890,7 +890,9 @@ Last updated: 2026-10-02
 ## Active Interaction/UI Files
 
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
-- `custodian/game/actors/vehicles/light_buggy.tscn` — first production vehicle scene, now backed by `PilotableVehicle` and registry ID `custodian_ground_buggy_scout_light`
+- `custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn` — semantic Field Scout Buggy Mk I scene backed by `PilotableVehicle` and registry ID `custodian_ground_buggy_scout_light`
+- `custodian/content/vehicles/vehicle_durability_profiles.json` — vehicle max-health profiles consumed by the shared runtime health authority
+- `custodian/tools/validation/vehicle_field_scout_class_smoke.gd` — class/data/scene/live-game integration contract
 - `custodian/game/systems/core/player_controller.gd` — input router with one canonical pilotable-vehicle reference, deduplicated group discovery, and signal-owned camera handoff
 - `custodian/game/world/camera.gd` — world camera controller with `set_follow_target(target)` for Operator/vehicle follow switching, map-bound clamping, manual middle-mouse panning, movement-input recovery, and optional final post-bounds presentation-subject safe-frame containment
 - `custodian/tools/validation/camera_presentation_subject_constraint_smoke.gd` — focused rendered-viewport smoke for generic presentation-subject containment, telemetry, and clear behavior

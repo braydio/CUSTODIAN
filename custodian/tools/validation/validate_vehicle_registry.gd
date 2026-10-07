@@ -5,6 +5,7 @@ const VehicleDefinitionScript = preload("res://game/vehicles/vehicle_definition.
 const TAXONOMY_PATH := "res://content/vehicles/vehicle_taxonomy.json"
 const ARCHETYPES_PATH := "res://content/vehicles/vehicle_archetypes.json"
 const MOVEMENT_PROFILES_PATH := "res://content/vehicles/vehicle_movement_profiles.json"
+const DURABILITY_PROFILES_PATH := "res://content/vehicles/vehicle_durability_profiles.json"
 const HARDPOINT_PROFILES_PATH := "res://content/vehicles/vehicle_hardpoint_profiles.json"
 const LOADOUTS_PATH := "res://content/vehicles/vehicle_loadouts.json"
 const VISUAL_KITS_PATH := "res://content/vehicles/vehicle_visual_kits.json"
@@ -16,10 +17,11 @@ func _init() -> void:
 	var taxonomy := _read_json(TAXONOMY_PATH)
 	var archetypes := _read_json(ARCHETYPES_PATH)
 	var movement_profiles := Dictionary(_read_json(MOVEMENT_PROFILES_PATH).get("profiles", {}))
+	var durability_profiles := Dictionary(_read_json(DURABILITY_PROFILES_PATH).get("profiles", {}))
 	var hardpoint_profiles := Dictionary(_read_json(HARDPOINT_PROFILES_PATH).get("profiles", {}))
 	var loadouts := Dictionary(_read_json(LOADOUTS_PATH).get("loadouts", {}))
 	var visual_kits := Dictionary(_read_json(VISUAL_KITS_PATH).get("visual_kits", {}))
-	_validate_registry(taxonomy, archetypes, movement_profiles, hardpoint_profiles, loadouts, visual_kits)
+	_validate_registry(taxonomy, archetypes, movement_profiles, durability_profiles, hardpoint_profiles, loadouts, visual_kits)
 	if errors.is_empty():
 		print("Vehicle registry validation passed.")
 		quit(0)
@@ -30,7 +32,7 @@ func _init() -> void:
 		quit(1)
 
 
-func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_profiles: Dictionary, hardpoint_profiles: Dictionary, loadouts: Dictionary, visual_kits: Dictionary) -> void:
+func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_profiles: Dictionary, durability_profiles: Dictionary, hardpoint_profiles: Dictionary, loadouts: Dictionary, visual_kits: Dictionary) -> void:
 	var vehicles := Dictionary(archetypes.get("vehicles", {}))
 	if vehicles.is_empty():
 		errors.append("No vehicles defined in %s" % ARCHETYPES_PATH)
@@ -55,6 +57,10 @@ func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_p
 			_validate_taxonomy_value(id, "mobility", mobility_tag, taxonomy, "mobility")
 		if definition.movement_profile.is_empty() or not movement_profiles.has(definition.movement_profile):
 			errors.append("%s references missing movement_profile '%s'" % [id, definition.movement_profile])
+		if definition.durability_profile.is_empty() or not durability_profiles.has(definition.durability_profile):
+			errors.append("%s references missing durability_profile '%s'" % [id, definition.durability_profile])
+		elif float(Dictionary(durability_profiles[definition.durability_profile]).get("max_health", 0.0)) <= 0.0:
+			errors.append("%s durability_profile must define positive max_health" % id)
 		if definition.hardpoint_profile.is_empty() or not hardpoint_profiles.has(definition.hardpoint_profile):
 			errors.append("%s references missing hardpoint_profile '%s'" % [id, definition.hardpoint_profile])
 		if definition.loadout.is_empty() or not loadouts.has(definition.loadout):
@@ -69,6 +75,41 @@ func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_p
 			errors.append("%s is pilotable but has no movement_profile" % id)
 		if definition.is_pilotable() and definition.seat_profile.is_empty():
 			errors.append("%s is pilotable but has no seat_profile" % id)
+		if id == "custodian_ground_buggy_scout_light":
+			_validate_field_scout_class(definition, movement_profiles, durability_profiles)
+
+
+func _validate_field_scout_class(definition, movement_profiles: Dictionary, durability_profiles: Dictionary) -> void:
+	if definition.get_display_name() != "Custodian Field Scout Buggy Mk I":
+		errors.append("Field Scout display name is not semantic")
+	if definition.runtime_scene != "res://game/actors/vehicles/field_scout_buggy_mk1.tscn":
+		errors.append("Field Scout does not resolve to its semantic runtime scene")
+	var movement := Dictionary(movement_profiles.get(definition.movement_profile, {}))
+	var expected_movement := {
+		"max_speed": 175.0,
+		"acceleration": 420.0,
+		"deceleration": 520.0,
+		"turn_response": 10.0,
+		"reverse_multiplier": 0.45,
+		"road_speed_multiplier_enabled": true,
+		"offroad_speed_multiplier": 0.78,
+	}
+	for key in expected_movement:
+		if movement.get(key) != expected_movement[key]:
+			errors.append("Field Scout movement %s changed: %s" % [key, movement.get(key)])
+	var durability := Dictionary(durability_profiles.get(definition.durability_profile, {}))
+	if float(durability.get("max_health", 0.0)) != 100.0:
+		errors.append("Field Scout durability profile must own 100 max health")
+	var scene := load(definition.runtime_scene) as PackedScene
+	if scene == null:
+		return
+	var instance := scene.instantiate()
+	for node_path in ["DriverSeat", "ExitMarker", "Hardpoints/FrontLight", "Hardpoints/RearUtility", "CollisionShape2D"]:
+		if instance.get_node_or_null(node_path) == null:
+			errors.append("Field Scout scene is missing %s" % node_path)
+	if instance.get_node_or_null("HealthBar") != null:
+		errors.append("Field Scout scene retains unbound constant HealthBar")
+	instance.free()
 
 
 func _validate_taxonomy_value(vehicle_id: String, field_name: String, value: String, taxonomy: Dictionary, taxonomy_key: String) -> void:

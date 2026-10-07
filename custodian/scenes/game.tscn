@@ -40,7 +40,7 @@
 [ext_resource type="Script" uid="uid://bg78eihw40m6g" path="res://game/systems/core/systems/navigation_system.gd" id="40_navigation"]
 [ext_resource type="Script" uid="uid://din0buhray3ph" path="res://content/tiles/debug/navigation_debug.gd" id="41_nav_debug"]
 [ext_resource type="Script" uid="uid://bqt6lkdd6nniw" path="res://game/systems/core/player_controller.gd" id="42_player_controller"]
-[ext_resource type="PackedScene" uid="uid://b2nvudqe2mljd" path="res://game/actors/vehicles/light_buggy.tscn" id="43_light_buggy"]
+[ext_resource type="PackedScene" path="res://game/actors/vehicles/field_scout_buggy_mk1.tscn" id="43_field_scout_buggy"]
 [ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_build_system.tscn" id="99_wall_build_system"]
 [ext_resource type="PackedScene" path="res://game/systems/core/systems/wall_placer.tscn" id="99_wall_placer"]
 [ext_resource type="Script" uid="uid://cm60nou56jgt7" path="res://game/systems/core/systems/weapon_definition_factory.gd" id="99_weapon_factory"]
@@ -299,7 +299,7 @@ placeholder_healthbar_bottom = -48.0
 script = ExtResource("42_player_controller")
 operator_path = NodePath("../Operator")
 
-[node name="LightBuggy" parent="World" unique_id=2047803986 groups=["world_origin_branch"] instance=ExtResource("43_light_buggy")]
+[node name="FieldScoutBuggyMk1" parent="World" unique_id=2047803986 groups=["world_origin_branch"] instance=ExtResource("43_field_scout_buggy")]
 position = Vector2(872, -486)
 
 [node name="WallPlacer" parent="World" unique_id=1022301411 groups=["world_origin_branch"] instance=ExtResource("99_wall_placer")]
