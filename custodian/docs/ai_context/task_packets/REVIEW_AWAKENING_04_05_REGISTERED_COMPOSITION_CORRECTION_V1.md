@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `awakening-04-05-registered-composition-correction-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1.md`
-- Reviewed main: `1ad7b48267cd7fd2b2e72968e42eb9a019cecbf2`
+- Reviewed main: `60c258e88478b7e8b6b8bf7c08e59332763a5cbe`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
@@ -20,7 +20,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Goal: Independently prove the runtime now preserves the user's exact axis-aligned 1502×2048 Dust→connector→Locker composition rather than the previously reviewed anchor-fit/rotated connector solution.
 - Reviewed implementation acceptance: Reuse every Acceptance clause from archived `AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1.md`.
-- Review evidence: exact runtime art rectangles; effective transforms; layer z-order; overlap pixel/rect metrics; renderer capture spanning all three pieces; bidirectional traversal; Asset V2/source receipts; Designation Locker regression proof.
+- Review evidence: `custodian/docs/ai_context/reports/assets/awakening_04_05_registered_composition_v1.json`;  exact runtime art rectangles; effective transforms; layer z-order; overlap pixel/rect metrics; renderer capture spanning all three pieces; bidirectional traversal; Asset V2/source receipts; Designation Locker regression proof.
 - Correction threshold: Any nonzero per-piece rotation, independent rescale/recenter, >1px registered-bound drift, wrong overlap/order, connector missing chunk, raw overlap leakage, Designation Locker regression, or route falling off visible floor is blocking.
 - Focused validation: re-run the dedicated registration smoke, three-layer capture, Asset V2 status/doctor where touched, Designation Locker smoke, Awakening geometry/progression, and bidirectional traversal.
 - Review focus: Do not re-approve the old `-11.391598°` connector simply because its source contacts hit gameplay anchors. The user's registered composition is now placement authority.
