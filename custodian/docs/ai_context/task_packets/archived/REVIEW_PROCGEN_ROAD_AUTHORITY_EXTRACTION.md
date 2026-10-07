@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-road-authority-extraction`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-road-authority-extraction`
@@ -14,7 +14,7 @@
 - Reviewed main: `ab7394ba27353d0a5ebcc4185fad656f65a7623c`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Reviewer context: `fresh`
-- Reviewer provenance: `different-agent | same-agent-fresh-context`
+- Reviewer provenance: `different-agent`
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -37,13 +37,33 @@
 5. Mutation-check at least one single-owner claim when practical: deliberately bypass or restore one old-style façade road-state path in a throwaway checkout/probe and verify focused tests detect divergence.
 6. Never edit D1 runtime code in this review. Route confirmed defects through bounded correction work.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `not-applicable`
+- Evidence: `Findings-first review passed on main 57e546c55: 0 blocking, 0 material gaps, 2 non-blocking next-slice findings (R0-01 façade prune-application untested per mutation probe, R0-02 owner state publicly readable by reference). Receipt recorded on the archived D1 packet. Focused suite, S1 quick, M6 unload and materializer parity green; fixed-seed 420777 equals D1 baseline.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `This packet's Handoff said D2 was refresh-required by the user, contradicting D2's own refreshed packet.`
+- Root cause / contributing factors: `Review packet authored before D2 was refreshed; never reconciled.`
+- Prevention / pipeline improvement: `Handoff corrected below; reconcile review handoffs against the successor packet.`
+- Tooling / docs drift discovered: `Stale refresh-required handoff; fresh worktrees need godot --import before --script smokes.`
+- Follow-up: `manual-follow-up`
+
 ## Handoff
 
 - Next workstream: `procgen-authored-claim-registry-extraction`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
-- Refresh reason: D2 must be re-inventoried against post-D1 live main so authored-claim, reservation, region, and ProcGenTilemap ownership boundaries are reconciled with the reviewed D1 extraction.
-- Next action: After D1 review passes, bring the D1 implementation/review summary and current-main evidence to the recorded ChatGPT planning chat, then refresh D2 in place with the user before execution.
-- Blockers or open questions: D2 must not be claimed until the ChatGPT/user refresh is complete.
+- Refresh reason: `none`
+- Next action: D2 auto-claims from its already-refreshed packet now that D1 is reviewed-complete.
+- Blockers or open questions: none

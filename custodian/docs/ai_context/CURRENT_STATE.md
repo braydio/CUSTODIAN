@@ -1,5 +1,11 @@
 # CURRENT STATE — CUSTODIAN
 
+## Ash-Bell Bridged Falls / Lower Quarter Approach Program (2026-10-07)
+
+The geographic design is now locked at `design/05_levels/ASH_BELL_BRIDGED_FALLS_APPROACH.md`: after the authored Forlorn-Ritualant resolves, its future north egress leads to a **distinct generated Ash-Bell Alpine Highlands region**, which in turn contains a **generated Bridged Falls subregion**. Bridged Falls is not a fixed authored corridor: each accepted seed must compose a new large-scale, connected network of monumental ruined Meridian civic bridge spans, branches/overlooks, cliff descent and Lower Quarter terminal while preserving the first-basin reveal and bridge-commit beats. Waterfalls/mist remain presentation over real CHASM/exterior semantics; Lower Quarter / Station IX stay far visual attractors until the final approach.
+
+This is **planned program state, not yet live runtime**. The existing independent `ash_bell_lower_quarter` campaign ingress remains production authority and the Ritualant northern boundary remains blocked after its current presentation-only seal fade. `BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE.md` is the first ready/auto implementation packet; BF2–BF7 are dependency/review-gated drafts in `ASH_BELL_BRIDGED_FALLS_IMPLEMENTATION_ROADMAP.md`. BF3 also owns the currently observed distant-chapel integration defect: live arrival must activate LANDING_VISTA through the real camera-zone/director path rather than relying on a direct test handler call.
+
 - **Procgen startup spawn residency correction (2026-10-07):** contract spawn eligibility now uses canonical valid-spawn, runtime-navigation, accepted-component, and ingress-clearance checks without requiring current TileMap paint. `ContractWorldLoader` selects first, calls `ProcGenTilemap.ensure_spawn_presentation_ready()` for the chosen cell, and restores Operator visibility/control only after exact-tile floor realization. Real generated streaming coverage proves an initially unpainted accepted-component spawn reaches contract ready; the true no-canonical-safe path remains hidden/disabled and reports `no_canonical_safe_spawn`. The independent paired review is the next gate.
 
 ## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
@@ -929,9 +935,12 @@ not mark production seen, completed Bell/Thread/Orra beats close to gameplay,
 and repeat topics use short recaps. Completed first contact plus all three core
 topics unlocks the Stilling Pin; taking it disables basin INSPECT and leaves
 `SET STILLING PIN` as the sole basin action. That action requires the upstream
-White Thread Knot and directly runs apparition/procession, final three-beat
-stabilization, and dissolution without the prior hidden stand timer. Unseen
-departure produces no Ritualant speech.
+White Thread Knot and is intended to directly run apparition/procession, final three-beat
+stabilization, and dissolution with no hidden stand timer. **Live runtime drift remains:**
+`forlorn_ritualant_site.gd` still carries the legacy `fountain_stabilize_seconds = 4.5`
+passive stabilization path; `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` is the
+ready correction that removes it and adds the negative regression. Unseen departure
+produces no Ritualant speech.
 
 ## Ritualant Mapper-Backed Arena Re-authoring (2026-08-29)
 
