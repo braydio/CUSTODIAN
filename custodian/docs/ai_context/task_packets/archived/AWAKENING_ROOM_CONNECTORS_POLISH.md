@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-room-connectors-polish`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -18,7 +18,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Goal: Replace the live Dust Lung underlay, 04→05 connector, and Locker Reliquary underlay with the exact three user-approved production source files now stored in Dropbox; preserve the complete connector silhouette; and register the connector correctly between the fixed Dust Lung and Locker Reliquary gameplay anchors.
 - Completion boundary: Done when all three Dropbox inputs are hash-verified and preserved as source masters, each existing Asset V2 family publishes the intended runtime underlay state, the scene binds the resulting Dust/connector/Locker production art, the connector's final canvas/scale/position are derived from its complete source plus live room-contact geometry rather than the legacy 1024×576 plate, the old crop/reconstruction/feather path is no longer production authority, Locker foreground truth is reconciled rather than blindly overlaid on different composition, and forward/reverse traversal remains on the unchanged one-dogleg 04→05 gameplay footprint.
-- Current measured state: Current main still binds the old crop-derived connector runtime plate and its historical registration. The user has now supplied the authoritative three-image production set directly in this chat and those exact bytes are uploaded to Dropbox. Dust Lung and Locker Reliquary room art are also part of this correction, not optional context. The P-9 Designation Locker itself has separately landed as a four-state specialized live prop on main and must remain gameplay/presentation authority for the active locker interaction rather than being baked/replaced by this room-underlay pass.
+- Current measured state: All three exact Dropbox sources are preserved and published through Asset V2. The connector is bound at full 1374×1076 with measured uniform scale 0.715951 and rotation -0.198826 rad, registered against the unchanged `(704,-2272)` Locker exit and `(0,-2656)` Dust Lung entry. Asset V2 doctor is healthy for all three families. Locker foreground support is 91.646% by opaque-pixel backing measurement, so it is unbound and explicitly deferred/not-ready pending parity-restoring source art. The separately landed four-state P-9 Designation Locker and gameplay interaction remain intact.
 - Evidence: live `custodian/scenes/awakening_first_return.tscn`; `custodian/game/world/awakening/awakening_layout.gd`; current Asset V2 family contracts; Designation Locker reauthor landed at `81797b5a1`; Dropbox production inputs below; historical connector compositor `custodian/tools/assets/compose_awakening_connector_full_plate.py`.
 - Task-specific authority: the exact Dropbox source bytes below own environment/connector pixels; `awakening_layout.gd` owns gameplay route anchors/footprint; the live specialized Designation Locker owns P-9 interaction state/presentation; Asset Pipeline V2 owns publication/catalog/runtime naming.
 - Work surface: `custodian/content/metadata/assets/families/awakening_dust_lung_environment.asset.json`; `awakening_reliquary_dust_lung_connector.asset.json`; `awakening_locker_reliquary_environment.asset.json`; their source_work/inbox/runtime surfaces; `awakening_first_return.tscn`; narrow 04→05 visibility/z-order logic in `awakening_first_return.gd`; focused Asset V2 and Awakening validation.
@@ -59,3 +59,32 @@
 - Validation: Inspect live `asset.py --help`; plan/ingest-or-replace/status/doctor all three families; source-hash receipts; connector source-vs-runtime full-silhouette assertion; Locker crop-free normalization/foreground-parity assertion; Designation Locker focused smoke; Awakening scene/geometry/progression; bidirectional 04→05 scenario; changed-file validation; `git diff --check`.
 - Task overrides: `none`
 - Deferred: new Locker foreground art if mechanically incompatible; 05→06 lower→upper spine; interaction-feedback/console activation; full 01→10 convergence.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `removed`
+- Evidence: Dropbox receipts and exact hashes are recorded in `custodian/asset_drop/source_work/awakening/DROPBOX_SOURCE_RECEIPT.md`; Asset V2 job IDs are `job_20261007T221504Z_0cb23e5f`, `job_20261007T221504Z_22bfa5d0`, and `job_20261007T221504Z_6e8fec32`. The contract smoke proves byte-identical Dust/connector publication, connector full-canvas source preservation, exact Locker scale-to-fit normalization, and 0.9164638 opaque-foreground backing ratio with explicit unbinding/deferment. `asset.py doctor --json` reports healthy with no issues. The scene binds the three canonical outputs, obsolete connector plates/import sidecars are removed, and bidirectional A/B/C traversal geometry passes. Focused Awakening checks pass; Moment Forge `traversal/awakening_underlays_zones_01_05` passed with evidence run `20261007T182520-0400`; changed-file validation passed all 25 selected checks, including both Awakening Moment scenarios; `git diff --check` passed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: Initial smoke and Moment runs exposed stale production-foreground assumptions, an incomplete Moment command allow-list, a fixture readiness-order bug, and a contact sheet with seven ticks where the runner requires six.
+- Root cause / contributing factors: Validation fixtures and scenario metadata did not encode the new explicit Locker foreground deferral and were not cross-checked against Moment Forge's command/tick contracts before the first run.
+- Prevention / pipeline improvement: Updated both Awakening readiness fixtures, the connector command allow-list, the scene smoke, and contact sheet ticks; the complete changed-file suite now exercises these contracts.
+- Tooling / docs drift discovered: Existing zone 01–09 foreground readiness incorrectly required the now-deferred Zone04 foreground; fixed in-scope. Moment Forge's exact six-contact-tick constraint was only surfaced at execution. `check_ai_context.py --json` still reports 16 findings in unrelated existing packets/index sections, and `validate_review_pairing.py` reports two unrelated game-scene startup packet pairing errors; both sets reproduce on the clean root checkout at `origin/main`.
+- Follow-up: fixed-in-scope
+- What worked: The measured source hash, transform, and foreground parity checks kept the asset changes grounded in reproducible data.
+
+## Next Handoff
+- Next workstream: `review-awakening-room-connectors-polish`
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Refresh reason: none
+- Next action: Claim the paired review from a fresh reviewer context, then continue the interaction-feedback/console activation successor after the review archives complete.
+- Blockers or open questions: Paired post-land review pending; Locker foreground source art remains deferred until underlay parity can be restored.

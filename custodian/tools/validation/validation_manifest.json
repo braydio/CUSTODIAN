@@ -22,6 +22,30 @@
   ],
   "tests": [
     {
+      "id": "awakening_connector_asset_contract",
+      "type": "python",
+      "script": "custodian/tools/validation/awakening_connector_asset_contract_smoke.py",
+      "tier": "unit",
+      "tags": ["awakening", "asset_v2", "connector", "source_hash"],
+      "owners": [
+        "custodian/asset_drop/source_work/awakening/awakening_dust_lung_environment/**",
+        "custodian/asset_drop/source_work/awakening/awakening_reliquary_dust_lung_connector/**",
+        "custodian/asset_drop/source_work/awakening/awakening_locker_reliquary_environment/**",
+        "custodian/content/metadata/assets/families/awakening_dust_lung_environment.asset.json",
+        "custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json",
+        "custodian/content/metadata/assets/families/awakening_locker_reliquary_environment.asset.json",
+        "custodian/content/metadata/assets/generated/asset_catalog.generated.json",
+        "custodian/content/metadata/assets/required_assets.registry.json",
+        "custodian/content/levels/awakening/04_05_connector/**",
+        "custodian/content/levels/awakening/04_locker_reliquary/**",
+        "custodian/content/levels/awakening/05_dust_lung/**",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_connector_asset_contract_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "python_sim_remap2",
       "type": "godot_script",
       "script": "res://tools/validation/python_sim_remap2_smoke.gd",
@@ -4277,7 +4301,7 @@
         "custodian/scenes/awakening_first_return.tscn",
         "custodian/scenes/twin_solaria_playtest.tscn",
         "custodian/scenes/game.tscn",
-        "custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png.import",
+        "custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png.import",
         "custodian/game/world/procgen/world_contract_bootstrap.gd",
         "custodian/game/world/procgen/world_contract_proxy.gd",
         "custodian/game/systems/core/systems/contract_world_loader.gd",

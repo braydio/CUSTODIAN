@@ -36,6 +36,7 @@ func _init() -> void:
 		_fail("no traversable route from %s to %s" % [str(START), str(GOAL)])
 	else:
 		_check_route_visits_mandatory_zones(route)
+		_check_bidirectional_04_05_passage(route)
 	_check_zone_anchors()
 	_check_production_footprints()
 	_report(build_ms, route.size())
@@ -224,6 +225,37 @@ func _check_route_visits_mandatory_zones(route: PackedInt32Array) -> void:
 			continue
 		if not visited.has(zone_id):
 			_fail("critical route never enters %s" % zone_id)
+
+
+func _check_bidirectional_04_05_passage(route: PackedInt32Array) -> void:
+	var forward_indices: Array[int] = []
+	for connector_id in ["04_05_A", "04_05_B", "04_05_C"]:
+		var found := -1
+		var rect: Rect2 = Layout.CONNECTORS[connector_id]
+		for route_index in route.size():
+			if rect.has_point(_world_of(route[route_index])):
+				found = route_index
+				break
+		if found < 0:
+			_fail("forward route never traverses connector %s" % connector_id)
+		forward_indices.append(found)
+	if forward_indices.size() == 3 and not (forward_indices[0] < forward_indices[1] and forward_indices[1] < forward_indices[2]):
+		_fail("forward traversal must cross the 04→05 dogleg in A/B/C order")
+	var reverse_route := route.duplicate()
+	reverse_route.reverse()
+	var reverse_indices: Array[int] = []
+	for connector_id in ["04_05_C", "04_05_B", "04_05_A"]:
+		var found := -1
+		var rect: Rect2 = Layout.CONNECTORS[connector_id]
+		for route_index in reverse_route.size():
+			if rect.has_point(_world_of(reverse_route[route_index])):
+				found = route_index
+				break
+		if found < 0:
+			_fail("reverse route never traverses connector %s" % connector_id)
+		reverse_indices.append(found)
+	if reverse_indices.size() == 3 and not (reverse_indices[0] < reverse_indices[1] and reverse_indices[1] < reverse_indices[2]):
+		_fail("reverse traversal must cross the same 04→05 dogleg in C/B/A order")
 
 
 ## Each zone's authored entry and exit must be standable, and the optional

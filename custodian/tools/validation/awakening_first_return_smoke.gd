@@ -172,7 +172,11 @@ func _check_scene_skeleton(instance: Node) -> void:
 		var foreground_layer := instance.get_node_or_null(NodePath("World/AwakeningZones/%s/Occlusion" % zone_name))
 		if underlay_layer == null or underlay_layer.get_child_count() != 1:
 			_fail("%s must have exactly one production underlay" % zone_name)
-		if foreground_layer == null or foreground_layer.get_child_count() != 1:
+		var locker_foreground_deferred: bool = zone_name == "Zone04_LockerReliquary"
+		if locker_foreground_deferred:
+			if foreground_layer != null and foreground_layer.get_child_count() != 0:
+				_fail("Locker foreground must remain unbound until underlay parity is restored")
+		elif foreground_layer == null or foreground_layer.get_child_count() != 1:
 			_fail("%s must have exactly one production foreground" % zone_name)
 		var underlay_path := "World/AwakeningZones/%s/ArtUnderlay/Underlay" % zone_name
 		var underlay := instance.get_node_or_null(NodePath(underlay_path)) as Sprite2D
@@ -189,6 +193,8 @@ func _check_scene_skeleton(instance: Node) -> void:
 			_fail("%s underlay texture did not load" % zone_name)
 		elif underlay.texture.get_size() != spec["size"]:
 			_fail("%s texture size drifted: %s" % [zone_name, str(underlay.texture.get_size())])
+		if locker_foreground_deferred:
+			continue
 		var foreground_path := "World/AwakeningZones/%s/Occlusion/Foreground" % zone_name
 		var foreground := instance.get_node_or_null(NodePath(foreground_path)) as Sprite2D
 		if foreground == null:
@@ -339,47 +345,42 @@ func _check_zone_art_fade(instance: Node) -> void:
 	if connector == null:
 		_fail("04→05 underlay is missing from the scene")
 		return
-	var foreground := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionOcclusion/Connector04_05_Foreground") as CanvasItem
+	var dust_lung := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay") as CanvasItem
+	if dust_lung == null:
+		_fail("Dust Lung room art is missing from the direct connector join")
+		return
 	for connector_id in ["04_05_A", "04_05_B", "04_05_C"]:
 		operator.global_position = Layout.CONNECTORS[connector_id].get_center()
 		instance.call("_update_zone_art_visibility")
 		if connector.modulate.a != 1.0:
 			_fail("connector underlay must be fully revealed inside %s" % connector_id)
-		if foreground != null and foreground.modulate.a != 1.0:
-			_fail("connector foreground must fade with the underlay inside %s" % connector_id)
+		if reliquary.modulate.a != 1.0 or dust_lung.modulate.a != 1.0:
+			_fail("both room underlays must remain opaque through connector %s" % connector_id)
 	operator.global_position = Layout.OPERATOR_WAKE_POSITION
 	instance.call("_update_zone_art_visibility")
 	if connector.modulate.a != 0.0:
 		_fail("04→05 connector art must fade out away from the dogleg")
-	if foreground != null and foreground.modulate.a != 0.0:
-		_fail("04→05 foreground must fade out with the underlay away from the dogleg")
-	var dust_lung := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay") as CanvasItem
-	if dust_lung == null:
-		_fail("Dust Lung room art is missing from the connector crossfade")
-		return
 	var transition_points := [
-		{"name": "Reliquary end", "position": Layout.CONNECTORS["04_05_A"].get_center(), "reliquary_alpha": 0.0, "dust_alpha": 0.0},
-		{"name": "dogleg", "position": Layout.CONNECTORS["04_05_B"].get_center(), "reliquary_alpha": 0.0, "dust_alpha": 0.0},
-		{"name": "Dust Lung end", "position": Layout.CONNECTORS["04_05_C"].get_center(), "reliquary_alpha": 0.0, "dust_alpha": 0.0},
+		{"name": "Reliquary end", "position": Layout.CONNECTORS["04_05_A"].get_center(), "reliquary_alpha": 1.0, "dust_alpha": 1.0},
+		{"name": "dogleg", "position": Layout.CONNECTORS["04_05_B"].get_center(), "reliquary_alpha": 1.0, "dust_alpha": 1.0},
+		{"name": "Dust Lung end", "position": Layout.CONNECTORS["04_05_C"].get_center(), "reliquary_alpha": 1.0, "dust_alpha": 1.0},
 	]
 	for transition in transition_points:
 		operator.global_position = transition["position"]
 		instance.call("_update_zone_art_visibility")
 		if not is_equal_approx(reliquary.modulate.a, float(transition["reliquary_alpha"])):
-			_fail("%s Reliquary art should use the distance fade inside the connector (expected %s, got %s)" % [transition["name"], transition["reliquary_alpha"], reliquary.modulate.a])
+			_fail("%s Reliquary art must remain opaque through the connector (expected %s, got %s)" % [transition["name"], transition["reliquary_alpha"], reliquary.modulate.a])
 		if not is_equal_approx(dust_lung.modulate.a, float(transition["dust_alpha"])):
-			_fail("%s Dust Lung art should use the distance fade inside the connector (expected %s, got %s)" % [transition["name"], transition["dust_alpha"], dust_lung.modulate.a])
+			_fail("%s Dust Lung art must remain opaque through the connector (expected %s, got %s)" % [transition["name"], transition["dust_alpha"], dust_lung.modulate.a])
 		if not is_equal_approx(connector.modulate.a, 1.0):
-			_fail("connector art must remain visible underneath the %s room fade" % transition["name"])
+			_fail("connector art must remain visible below both opaque room underlays at %s" % transition["name"])
 	var edge_samples := [
 		{"name": "Reliquary interior", "position": Vector2(704, -2144), "room": reliquary, "alpha": 1.0},
-		{"name": "Reliquary blend midpoint", "position": Vector2(704, -2208), "room": reliquary, "alpha": 0.5},
-		{"name": "Reliquary threshold", "position": Vector2(704, -2272), "room": reliquary, "alpha": 0.0},
-		{"name": "Reliquary connector", "position": Vector2(704, -2336), "room": reliquary, "alpha": 0.0},
+		{"name": "Reliquary threshold", "position": Vector2(704, -2272), "room": reliquary, "alpha": 1.0},
+		{"name": "Reliquary connector", "position": Vector2(704, -2336), "room": reliquary, "alpha": 1.0},
 		{"name": "Dust Lung interior", "position": Vector2(0, -2784), "room": dust_lung, "alpha": 1.0},
-		{"name": "Dust Lung blend midpoint", "position": Vector2(0, -2720), "room": dust_lung, "alpha": 0.5},
-		{"name": "Dust Lung threshold", "position": Vector2(0, -2656), "room": dust_lung, "alpha": 0.0},
-		{"name": "Dust Lung connector", "position": Vector2(0, -2592), "room": dust_lung, "alpha": 0.0},
+		{"name": "Dust Lung threshold", "position": Vector2(0, -2656), "room": dust_lung, "alpha": 1.0},
+		{"name": "Dust Lung connector", "position": Vector2(0, -2592), "room": dust_lung, "alpha": 1.0},
 	]
 	for sample in edge_samples:
 		operator.global_position = sample["position"]
@@ -387,8 +388,7 @@ func _check_zone_art_fade(instance: Node) -> void:
 		var room := sample["room"] as CanvasItem
 		if not is_equal_approx(room.modulate.a, float(sample["alpha"])):
 			_fail("%s opacity should be %s at the 128px connector crossfade sample, got %s" % [sample["name"], sample["alpha"], room.modulate.a])
-	# Traverse back through the same checkpoints to assert a reversible fade and
-	# room restoration, with no connector-local opacity override on either end.
+	# Backtracking leaves the room underlays and the connector fully readable.
 	var backtracking_points := transition_points.duplicate()
 	backtracking_points.reverse()
 	for transition in backtracking_points:
@@ -413,28 +413,24 @@ func _check_connector_art(instance: Node) -> void:
 	if sprite == null:
 		_fail("production underlay sprite missing")
 		return
-	if sprite.position != Vector2(352, -2464):
-		_fail("underlay position drifted: %s" % str(sprite.position))
-	if sprite.texture == null or sprite.texture.get_size() != Vector2(1024, 576):
-		_fail("underlay texture missing or not normalized to 1024x576")
+	if not sprite.position.is_equal_approx(Vector2(351.821, -2392.391)):
+		_fail("underlay position drifted from source-contact registration: %s" % str(sprite.position))
+	if sprite.texture == null or sprite.texture.get_size() != Vector2(1374, 1076):
+		_fail("underlay texture missing or not at the full source canvas 1374x1076")
+	if not is_equal_approx(sprite.scale.x, sprite.scale.y) or not is_equal_approx(sprite.scale.x, 0.715951):
+		_fail("underlay must use the measured uniform source-contact scale")
+	if not is_equal_approx(sprite.rotation, -0.198826):
+		_fail("underlay rotation drifted from measured source-contact registration")
 	if not sprite.centered:
 		_fail("underlay sprite must be centered")
 	var production_art := sprite.get_parent() as CanvasItem
 	var effective_z := sprite.z_index + (production_art.z_index if production_art != null else 0)
-	if effective_z >= 0:
-		_fail("connector underlay must remain behind the Operator and room plates")
+	if effective_z >= -1:
+		_fail("connector underlay must remain below the room underlays")
 	if sprite.get_child_count() > 0:
 		_fail("underlay unexpectedly owns child gameplay nodes")
-	var foreground := instance.get_node_or_null(
-		"World/AwakeningZones/Traversal/ProductionOcclusion/Connector04_05_Foreground"
-	) as Sprite2D
-	if foreground != null:
-		if foreground.position != Vector2(352, -2464) or not foreground.centered:
-			_fail("foreground registration differs from underlay")
-		if foreground.texture == null or foreground.texture.get_size() != Vector2(1024, 576):
-			_fail("foreground must be 1024x576")
-		if foreground.get_child_count() > 0:
-			_fail("foreground unexpectedly owns child gameplay nodes")
+	if instance.get_node_or_null("World/AwakeningZones/Zone04_LockerReliquary/Occlusion/Foreground") != null:
+		_fail("Locker foreground must remain unbound until underlay parity is restored")
 	for retired in ["Connector04_05_A", "Connector04_05_B", "Connector04_05_C"]:
 		if instance.get_node_or_null(NodePath("World/AwakeningZones/Traversal/ProductionArt/" + retired)) != null:
 			_fail("retired connector sprite remains live: %s" % retired)
@@ -445,7 +441,7 @@ func _check_connector_art(instance: Node) -> void:
 		_fail("derived 04→05 traversal envelope drifted: %s" % str(merged))
 	if sprite.texture != null:
 		var image := sprite.texture.get_image()
-		for region in [Rect2i(96, 96, 128, 96), Rect2i(160, 192, 704, 128), Rect2i(800, 320, 128, 160)]:
+		for region in [Rect2i(200, 100, 150, 180), Rect2i(480, 470, 520, 160), Rect2i(1070, 650, 150, 150)]:
 			var visible_pixels := 0
 			for y in range(region.position.y, region.end.y, 8):
 				for x in range(region.position.x, region.end.x, 8):

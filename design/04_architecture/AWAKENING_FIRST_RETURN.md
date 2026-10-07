@@ -127,23 +127,21 @@ uses an Awakening-local camera scale. Ordinary zone art still uses distance-base
 visibility management, but two transition areas now have explicit correction
 contracts because the current presentation truth is not acceptable as final.
 
-For 04→05, the live scene still binds the legacy crop-derived Asset V2
-`full_plate_underlay` at 1024×576 / `(352,-2464)`; that is **current runtime,
-not current design authority**. The production correction now has three exact
-Dropbox source authorities under `/CUSTODIAN/implementation_inputs/`: Dust Lung
-underlay (1216×1216), the complete direct connector (1374×1076), and Locker
-Reliquary underlay (1200×1211). Their exact SHA-256 receipts live in
-`AWAKENING_ROOM_CONNECTORS_POLISH.md`. Active P0 work must publish Dust directly,
-normalize Locker crop-free through its existing Asset V2 family while reconciling
-foreground truth, preserve the connector's entire nontransparent silhouette, and
-re-derive connector uniform scale/world translation against Locker exit
-`(704,-2272)`, Dust Lung entry `(0,-2656)`, and the unchanged dogleg gameplay
-footprint. Cropping an authored connector chunk, rebuilding it from room strips,
-or preserving the old 1024×576/`(352,-2464)` transform by inertia is explicitly
-disallowed. The specialized Designation Locker remains the interactive P-9 prop;
-the room-underlay replacement does not replace its four-state presentation. The
-04→05 room/connector join should read opaque and stable while visible rather than
-depending on a whole-room partial-alpha crossfade.
+For 04→05, the live scene now binds the exact Dropbox Dust Lung, direct connector,
+and Locker Reliquary sources through their existing Asset V2 families. The
+1374×1076 connector preserves its complete source silhouette and uses a uniform
+scale, rotation, and translation derived from its measured corridor contacts at
+`(278,80)` / `(1136,800)` and the locked room anchors `(0,-2656)` /
+`(704,-2272)`. The resulting sprite transform is scale `0.715951`, rotation
+`-11.391598°`, and center `(351.821,-2392.391)`. Locker normalization is uniform,
+crop-free, and centered to the 704×704 family canvas. The old Locker foreground
+is deliberately unbound because opaque backing parity failed; its deferred state
+is recorded in Asset V2 requirements. The old crop/strip/feather compositor and
+1024×576 runtime output are retired. Layout's dogleg and collision remain
+unchanged, the connector sits below both room underlays and world props, and the
+room underlays stay fully opaque through the visible 04→05 join. The specialized
+Designation Locker remains the interactive P-9 prop with its existing four-state
+presentation.
 
 For 05→06, the lower and later halves already share a precise geometric/art
 overlap but the authority is split: `05_06 = Rect2(-64,-3776,128,32)` plus

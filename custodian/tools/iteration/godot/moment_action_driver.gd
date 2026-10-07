@@ -213,6 +213,8 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"show_ambulatory",
 			"show_attestation",
 			"show_locker_reliquary",
+			"show_connector_locker_contact",
+			"show_connector_dust_contact",
 			"show_dust_lung",
 		],
 		"awakening_production_environments_zones_01_09": [

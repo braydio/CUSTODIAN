@@ -6,7 +6,7 @@
   "seed": 1701,
   "duration_ticks": 300,
   "simulation": {"physics_hz": 60, "warmup_ticks": 8, "max_wall_seconds": 45, "pause_during_setup": true},
-  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 299, "contact_sheet_ticks": [30, 85, 140, 195, 250, 285], "required_keyframes": true, "background": "opaque"},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 299, "contact_sheet_ticks": [30, 85, 140, 195, 220, 245], "required_keyframes": true, "background": "opaque"},
   "setup": {
     "remove_nodes": [],
     "roles": {
@@ -23,11 +23,13 @@
     {"tick": 60, "action": "fixture_command", "name": "show_ambulatory"},
     {"tick": 115, "action": "fixture_command", "name": "show_attestation"},
     {"tick": 170, "action": "fixture_command", "name": "show_locker_reliquary"},
-    {"tick": 225, "action": "fixture_command", "name": "show_dust_lung"},
+    {"tick": 195, "action": "fixture_command", "name": "show_connector_locker_contact"},
+    {"tick": 220, "action": "fixture_command", "name": "show_connector_dust_contact"},
+    {"tick": 245, "action": "fixture_command", "name": "show_dust_lung"},
     {"tick": 295, "action": "finish"}
   ],
   "probes": [
-    {"id": "fixture_state", "role": "fixture", "fields": ["checkpoint", "production_underlays_ready", "production_foregrounds_ready", "remaining_blockouts_ready"], "ticks": [30, 85, 140, 195, 250], "required": true},
+    {"id": "fixture_state", "role": "fixture", "fields": ["checkpoint", "production_underlays_ready", "production_foregrounds_ready", "locker_foreground_deferred", "remaining_blockouts_ready"], "ticks": [30, 85, 140, 195, 220, 245], "required": true},
     {"id": "operator_position", "role": "operator", "fields": ["global_position"], "ticks": [30, 85, 140, 195, 250], "required": true}
   ],
   "assertions": [
@@ -35,6 +37,7 @@
     {"type": "probe_compare", "probe": "fixture_state", "tick": 30, "field": "production_underlays_ready", "op": "eq", "value": true, "severity": "error"},
     {"type": "probe_compare", "probe": "fixture_state", "tick": 30, "field": "production_foregrounds_ready", "op": "eq", "value": true, "severity": "error"},
     {"type": "probe_compare", "probe": "fixture_state", "tick": 30, "field": "remaining_blockouts_ready", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "fixture_state", "tick": 195, "field": "locker_foreground_deferred", "op": "eq", "value": true, "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
   ],

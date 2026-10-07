@@ -149,18 +149,15 @@ func _cache_zone_art_visibility_targets() -> void:
 		}
 		match String(zone["node"]):
 			"Zone04_LockerReliquary":
-				entry["connector_edge"] = Layout.CONNECTORS["04_05_A"]
-				entry["connector_edge_side"] = "north"
+				entry["hold_opaque_through_connector"] = true
 			"Zone05_DustLung":
-				entry["connector_edge"] = Layout.CONNECTORS["04_05_C"]
-				entry["connector_edge_side"] = "south"
+				entry["hold_opaque_through_connector"] = true
 		_zone_fade_entries.append(entry)
 	_connector_envelope = Layout.CONNECTORS["04_05_A"].merge(
 		Layout.CONNECTORS["04_05_B"]
 	).merge(Layout.CONNECTORS["04_05_C"])
 	for visual_path in [
 		"Traversal/ProductionArt/Connector04_05_Underlay",
-		"Traversal/ProductionOcclusion/Connector04_05_Foreground",
 	]:
 		var visual := zones_root.get_node_or_null(visual_path) as CanvasItem
 		if visual != null:
@@ -181,17 +178,9 @@ func _update_zone_art_visibility() -> void:
 			clampf(point.y, rect.position.y, rect.end.y)
 		)
 		var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
-		if entry.has("connector_edge"):
-			var edge: Rect2 = entry["connector_edge"]
-			var horizontal_range := Rect2(
-				edge.position.x - ZONE_ART_FADE_DISTANCE,
-				edge.position.y,
-				edge.size.x + 2.0 * ZONE_ART_FADE_DISTANCE,
-				edge.size.y
-			)
-			if horizontal_range.position.x <= point.x and point.x <= horizontal_range.end.x:
-				var signed_distance := point.y - edge.position.y if entry["connector_edge_side"] == "south" else edge.end.y - point.y
-				alpha = clampf(-signed_distance / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
+		if entry.get("hold_opaque_through_connector", false):
+			if _connector_envelope.grow(ZONE_ART_FADE_DISTANCE).has_point(point):
+				alpha = 1.0
 		_apply_art_alpha(entry["targets"], alpha)
 	var nearest := Vector2(
 		clampf(point.x, _connector_envelope.position.x, _connector_envelope.end.x),

@@ -45,7 +45,7 @@ func _show_zone(zone_name: String) -> void:
 func _check_production(relative_path: String) -> bool:
 	for zone_name in [
 		"Zone01_Creche", "Zone02_Ambulatory", "Zone03_Attestation",
-		"Zone04_LockerReliquary", "Zone05_DustLung", "Zone06_Undergate",
+		"Zone05_DustLung", "Zone06_Undergate",
 		"Zone07_GateOfDust", "Zone08_CustodianApproach", "Zone09_ChapelLateService",
 	]:
 		var node := awakening.get_node_or_null("World/AwakeningZones/%s/%s" % [zone_name, relative_path]) as Sprite2D
@@ -53,4 +53,6 @@ func _check_production(relative_path: String) -> bool:
 			return false
 		if relative_path == "Occlusion/Foreground" and node.z_index != 10:
 			return false
+	if relative_path == "Occlusion/Foreground":
+		return awakening.get_node_or_null("World/AwakeningZones/Zone04_LockerReliquary/Occlusion/Foreground") == null
 	return true

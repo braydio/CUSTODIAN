@@ -4205,7 +4205,7 @@
             704,
             704
           ],
-          "sha256": "d3e76199fd80616fd7da630493ddf05e3ef26804d375d1f1d4d7cd121bcdcf6f",
+          "sha256": "16674b618fc405838709f670007f0b277e9c6baa7bcef0610a8010c9a3b095a2",
           "provenance": "authored",
           "source_asset": null
         },
@@ -4252,7 +4252,7 @@
             1216,
             1216
           ],
-          "sha256": "df0825600d5f74aea0a41b6ca514951e66dc51d1e5b9dd26817d18a0989eedfa",
+          "sha256": "fa017e6daa218d9a0713be760f19acdb285ae0c5e01854c3fe43126ca547f111",
           "provenance": "authored",
           "source_asset": null
         },
@@ -10885,13 +10885,13 @@
             "full_plate_underlay",
             "omni"
           ],
-          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png",
+          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png",
           "frames": 1,
           "frame_size": [
-            1024,
-            576
+            1374,
+            1076
           ],
-          "sha256": "3b04a45be07fba627dfbe4a67c56336fc608b2a851072a8cf7ef90de137e0643",
+          "sha256": "eb1dd930c6c084a3a9dce59ed57c5b0716730698daf88edbb197cceb08ffe721",
           "provenance": "authored",
           "source_asset": null
         }

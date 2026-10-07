@@ -2111,22 +2111,22 @@ under each family's `pre_handoff_1254x1254/` folder; the handoff sources remain
 at the package-declared source paths, and Asset V2 retains normalized inputs
 in the ingest archives.
 
-Plate binding is distinct from finished visual QA. The live Awakening currently
-still binds the legacy crop-derived 04→05 connector runtime plate at
-`Connector04_05_Underlay`; that result is not accepted as final. The authoritative
-production source set is now stored in Dropbox under
-`/CUSTODIAN/implementation_inputs/`: Dust Lung underlay
-`awakening_dust_lung_underlay_source_v1.png` (SHA-256
-`fa017e6d...47f111`), direct connector
-`awakening_04_05_direct_connector_source_v1.png` (SHA-256
-`eb1dd930...ffe721`), and Locker Reliquary underlay
-`awakening_locker_reliquary_underlay_source_v1.png` (SHA-256
-`75e253f7...d71a6c`). Active P0 `awakening-room-connectors-polish` now owns all
-three replacements: exact Dust publication, crop-free Locker normalization with
-foreground truth reconciliation, and full-silhouette connector publication with
-registration re-derived instead of preserving historical 1024×576 /
-`(352,-2464)` assumptions. Traversal/collision remain Layout-owned and the
-separately reauthored Designation Locker remains the active P-9 interaction prop. Separately, the lower and
+The 04→05 production connector correction is now live. The exact Dropbox Dust
+Lung and Locker underlays and the full 1374×1076 direct connector are preserved
+under `asset_drop/source_work/awakening/` with SHA-256 receipts in
+`DROPBOX_SOURCE_RECEIPT.md`; Asset V2 job IDs are `job_20261007T221504Z_0cb23e5f`
+(Dust), `job_20261007T221504Z_22bfa5d0` (connector), and
+`job_20261007T221504Z_6e8fec32` (Locker). The connector's exact source silhouette
+is published without crop or reconstruction. Its scene transform is derived
+from source contact points `(278,80)` / `(1136,800)` to Layout anchors
+`(0,-2656)` / `(704,-2272)`: uniform scale `0.715951`, rotation `-11.391598°`,
+center `(351.821,-2392.391)`. Locker normalization is crop-free into 704×704;
+the old Locker foreground remains preserved but unbound because only 91.6% of
+its opaque footprint has opaque support from the new underlay. The Asset V2
+requirement records that foreground as deferred. The crop/strip/32px-feather
+compositor, old 1024×576 runtime plate, and its import sidecar are retired.
+Room underlays stay opaque through the connector; Layout traversal/collision and
+the four-state interactive Designation Locker remain unchanged. Separately, the lower and
 later halves are logically joined today by `05_06` (128×32) plus
 `z06_south_door` (128×64); their exact 128×96 union matches the 96px overlap of
 the Dust Lung and Undergate room plates. The P0

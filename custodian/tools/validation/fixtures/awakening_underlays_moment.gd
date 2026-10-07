@@ -6,6 +6,8 @@ const REVIEW_POINTS := {
 	"attestation": Vector2(0, -1744),
 	"locker_reliquary": Vector2(704, -1984),
 	"dust_lung": Vector2(0, -3200),
+	"connector_locker_contact": Vector2(704, -2336),
+	"connector_dust_contact": Vector2(0, -2608),
 }
 
 @onready var awakening: Node2D = $AwakeningFirstReturn
@@ -15,12 +17,14 @@ const REVIEW_POINTS := {
 var checkpoint := "ready"
 var production_underlays_ready := false
 var production_foregrounds_ready := false
+var locker_foreground_deferred := false
 var remaining_blockouts_ready := false
 
 
 func _ready() -> void:
 	operator.set_process(false)
 	operator.set_physics_process(false)
+	locker_foreground_deferred = awakening.get_node_or_null("World/AwakeningZones/Zone04_LockerReliquary/Occlusion/Foreground") == null
 	production_underlays_ready = _check_production_underlays()
 	production_foregrounds_ready = _check_production_foregrounds()
 	remaining_blockouts_ready = _check_remaining_blockouts()
@@ -45,7 +49,7 @@ func _show_zone(zone_name: String) -> void:
 
 
 func _check_production_underlays() -> bool:
-	for zone_name in ["Zone01_Creche", "Zone02_Ambulatory", "Zone03_Attestation", "Zone04_LockerReliquary", "Zone05_DustLung"]:
+	for zone_name in ["Zone01_Creche", "Zone02_Ambulatory", "Zone03_Attestation", "Zone05_DustLung"]:
 		var base := "World/AwakeningZones/%s" % zone_name
 		var underlay := awakening.get_node_or_null("%s/ArtUnderlay/Underlay" % base) as Sprite2D
 		var blockout := awakening.get_node_or_null("%s/BlockoutPresentation" % base) as Node2D
@@ -65,8 +69,8 @@ func _check_remaining_blockouts() -> bool:
 
 
 func _check_production_foregrounds() -> bool:
-	for zone_name in ["Zone01_Creche", "Zone02_Ambulatory", "Zone03_Attestation", "Zone04_LockerReliquary", "Zone05_DustLung"]:
+	for zone_name in ["Zone01_Creche", "Zone02_Ambulatory", "Zone03_Attestation", "Zone05_DustLung"]:
 		var foreground := awakening.get_node_or_null("World/AwakeningZones/%s/Occlusion/Foreground" % zone_name) as Sprite2D
 		if foreground == null or foreground.texture == null or foreground.scale != Vector2.ONE or not foreground.centered or foreground.z_index != 10:
 			return false
-	return true
+	return locker_foreground_deferred
