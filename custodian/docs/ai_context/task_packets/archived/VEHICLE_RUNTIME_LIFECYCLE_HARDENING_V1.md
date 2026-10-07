@@ -93,6 +93,6 @@
 - Blocking defects: `0`
 - Material evidence gaps: `0`
 - Non-blocking issues: `2` (`R0-01`, `R0-02`), deferred to Field Scout lifecycle work.
-- Review receipt: `custodian/docs/ai_context/reports/reviews/vehicle_runtime_lifecycle_hardening_v1_review.json`
+- Review receipt: `this Independent Review section`
 - Review summary: `REVIEW_VEHICLE_RUNTIME_LIFECYCLE_HARDENING_V1_CLAUDE_SUMMARY.md`
 - Conclusion: `All archived acceptance clauses are independently proven. The two deferred runtime hardening observations do not block lifecycle acceptance.`

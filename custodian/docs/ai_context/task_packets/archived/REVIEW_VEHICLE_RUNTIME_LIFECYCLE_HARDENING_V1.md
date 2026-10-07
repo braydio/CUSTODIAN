@@ -44,7 +44,7 @@
 - Correction finding IDs: `none`
 - Next-slice finding IDs: `R0-01, R0-02`
 - Human-decision finding IDs: `none`
-- Detailed review receipt: `custodian/docs/ai_context/reports/reviews/vehicle_runtime_lifecycle_hardening_v1_review.json`
+- Detailed review receipt: `Independent Review section in the archived implementation packet and this review packet`
 - Detailed review summary: `REVIEW_VEHICLE_RUNTIME_LIFECYCLE_HARDENING_V1_CLAUDE_SUMMARY.md`
 - Follow-up workstream: `vehicle-field-scout-buggy-class-v1`
 

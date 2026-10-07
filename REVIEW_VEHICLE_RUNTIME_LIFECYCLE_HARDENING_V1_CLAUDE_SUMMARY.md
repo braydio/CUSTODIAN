@@ -21,7 +21,7 @@ Two non-blocking findings are deferred to the Field Scout lifecycle/class work:
 - `godot --headless --path custodian --script res://tools/validation/validate_vehicle_registry.gd`: PASS.
 - `godot --headless --path custodian --script res://tools/validation/vehicle_runtime_lifecycle_smoke.gd`: PASS.
 - Fresh hostile probe `/tmp/vehicle_runtime_hostile_review_v2.gd`: PASS; five enter/exit cycles, 10 camera handoffs, zero residual release connections, blocked-entry disable/lethal release restores actor and controller/camera state.
-- Durable findings and acceptance matrix: `custodian/docs/ai_context/reports/reviews/vehicle_runtime_lifecycle_hardening_v1_review.json`.
+- The archived implementation packet and this review packet carry the durable findings and acceptance matrix.
 
 Initial direct script attempts lacked the claimed worktree's import/class cache and were not used as evidence. The repository runner prepared imports, after which focused tests passed. The code-review graph was empty, so targeted source inspection followed its documented fallback. No reviewed implementation files were modified.
 
