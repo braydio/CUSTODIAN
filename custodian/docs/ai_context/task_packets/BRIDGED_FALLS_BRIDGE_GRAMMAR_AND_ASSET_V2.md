@@ -5,7 +5,7 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `bridged-falls-procgen-topology`
+- Depends on: `review-bridged-falls-procgen-topology`
 - Locks: `bridged-falls-bridge-art, asset-pipeline`
 - Kind: `implementation`
 - Review: `auto`
