@@ -16,6 +16,7 @@
 - Max automatic review cycles: `2`
 - Parent implementation: `procgen-archive-resolve-frontier-restraint`
 - Parent review: `review-procgen-archive-resolve-frontier-restraint`
+- Findings addressed: `R1-01`
 - Reviewed main: `57e546c55e64d3af48bef5c0b6a551952b10235a`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
 - Goal: Keep committed terrain behind an opaque wall unresolved during AR3 arrival ingress, including cells inside the arrival pocket, until the AR4 visibility frontier admits them.
