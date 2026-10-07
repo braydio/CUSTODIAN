@@ -16,11 +16,12 @@
 - Max automatic review cycles: `0`
 - Reviewed main: `c4c56d175d4e66528b450b6872d888d3ced7eab6`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Branch: `agent/asset-downloads-intake-sweep`
 - Goal: `Consume every currently actionable, unimplemented production asset handoff under /CUSTODIAN/implementation_inputs without treating the Dropbox folder itself as runtime authority, publish all valid supplied states through their existing Asset V2 families, preserve source provenance, and leave already-landed, partial, superseded, smoke-test, or design-ambiguous payloads with their existing owners.`
 - Completion boundary: `Twenty-one supplied required Awakening states across five existing families are hash-verified, source-preserved, ingested through Asset V2, imported, and reflected in current status/catalog truth; any objectively contaminated PNG is corrected only by the bounded alpha-island rule below or fails closed; the Dropbox audit receipt truthfully classifies every current implementation_inputs entry; no duplicate Operator/Alpine work or speculative scene binding is introduced.`
-- Current measured state: `Live main does not contain service_basin_b and has no runtime/body directories for awakening_attestation_fixtures, awakening_reliquary_fixtures, awakening_dust_lung_structures, or awakening_undergate_machinery. Dropbox currently contains three complete actionable Awakening ZIP handoffs totaling 21 required states. Operator North VFX and North/South body handoffs are already landed/reviewed; Alpine underlay final-six is landed; Alpine cliff payload is explicitly partial 4/26 and remains owned by procgen-alpine-cliff-presentation-v1; bidirectional smoke payloads are non-production.`
-- Evidence: `Dropbox /CUSTODIAN/implementation_inputs audit; live main c4c56d175d4e66528b450b6872d888d3ced7eab6; existing Asset V2 family contracts; archived Operator/Alpine implementation summaries; current runtime directory absence for the four later Awakening fixture families.`
+- Current measured state: `The retained implementation workstream is active on origin/agent/asset-downloads-intake-sweep at checkpoint 10e9ed5d96f387657db2e7faa67097e8d460e632, not yet landed on main. That checkpoint has successfully published 11/21 required states through Asset V2: Ambulatory 6/6, Dust Lung structures 4/4, and Undergate machinery 6/6; Attestation remains 0/7 and Reliquary 0/3. A1 and A3 package/per-file hashes, dimensions, RGBA/alpha, imports, Asset V2 status/doctor, focused status/requirements smokes, and git diff --check pass. A2 was correctly withheld because the packet's author-time outer ZIP hash predated the sole current Dropbox revision. This packet now refreshes A2 outer-archive authority to that sole current revision while retaining strict manifest/per-file/state-set validation before any extraction or publication.`
+- Evidence: `origin/agent/asset-downloads-intake-sweep checkpoint 10e9ed5d and ASSET_DOWNLOADS_INTAKE_SWEEP_CLAUDE_SUMMARY.md; Dropbox /CUSTODIAN/implementation_inputs/awakening_next10_required_fixtures_handoff_v1.zip file id id:8NXqdXuW6GUAAAAAAAABWQ, sole revision 65d22e7369f4c915cdd61, server modified 2026-10-06T02:39:09Z, size 4337769, Dropbox content hash e82d597365062adbde48b7ef4f62e34b07bfd55c1cc55efcea6142d8110fce90; current ZIP SHA-256 82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4; original packet commit 3cbf59bbe74109691eb55565fff27c262c4a761d authored 2026-10-05 before that Dropbox revision existed; existing Asset V2 family contracts and live asset CLI.`
 - Task-specific authority: `custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json; awakening_attestation_fixtures.asset.json; awakening_reliquary_fixtures.asset.json; awakening_dust_lung_structures.asset.json; awakening_undergate_machinery.asset.json; design/04_architecture/AWAKENING_ASSET_MANIFEST.md; live custodian/tools/assets/asset.py CLI.`
 - Work surface: `custodian/asset_drop/source_work/awakening/{awakening_ambulatory_fixtures,awakening_attestation_fixtures,awakening_reliquary_fixtures,awakening_dust_lung_structures,awakening_undergate_machinery}/; matching Asset V2 inbox/runtime/catalog/archive surfaces; current generated required-asset/status views; custodian/docs/ai_context/reports/assets/dropbox_unstaged_asset_intake.json.`
 - Change: `Fetch and verify the three immutable Awakening handoffs below, preserve any prior canonical source before replacement, stage the supplied normalized PNGs unchanged except for the single bounded art-integrity correction rule, ingest each existing family with the live Asset V2 pipeline, then classify post-ingest scene consumption conservatively without inventing placement authority.`
@@ -57,11 +58,31 @@ Preserve the currently tracked pre-handoff `service_basin_b_source.png` before r
 Remote:
 `/CUSTODIAN/implementation_inputs/awakening_next10_required_fixtures_handoff_v1.zip`
 
-ZIP SHA-256:
+ZIP SHA-256 (refreshed current Dropbox authority):
+`82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4`
+
+Superseded author-time outer ZIP SHA-256:
 `7192a7e2a2c291d5db11c70e5027fbeea9d5597e24d32a8033b428b6c3a9c4b3`
 
 Handoff:
 `awakening-next10-required-fixtures-handoff-v1`
+
+Authority refresh (2026-10-07):
+- this packet was first authored on 2026-10-05, while the Dropbox object currently at the canonical A2 path has one and only one revision, server-modified 2026-10-06T02:39:09Z;
+- current Dropbox file id: `id:8NXqdXuW6GUAAAAAAAABWQ`;
+- current Dropbox revision: `65d22e7369f4c915cdd61`;
+- current Dropbox size: `4337769` bytes;
+- current Dropbox content hash: `e82d597365062adbde48b7ef4f62e34b07bfd55c1cc55efcea6142d8110fce90`;
+- the retained execution branch independently downloaded those current bytes and measured SHA-256 `82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4`.
+The older outer hash is therefore historical author-time evidence, not the current canonical remote object.
+
+This refresh authorizes the **current sole Dropbox revision only**, and does not waive inner-package verification. Before extracting or consuming any A2 file, require all of the following:
+1. outer ZIP SHA-256 exactly matches `82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4`;
+2. packaged `MANIFEST.json` identifies the intended A2 handoff and maps only the expected Attestation 7 required states + Reliquary 3 required states listed below;
+3. every packaged source/normalized file matches the manifest SHA-256, dimensions, mode, alpha contract, and canonical target paths before any Asset V2 staging;
+4. no unexpected required/runtime state, family, or target is silently accepted from the refreshed archive;
+5. `attestation_dais` still passes the bounded connected-component rule below before correction/staging.
+If any of these checks fail, stop and return the exact package discrepancy to this planning chat; do not reinterpret the refresh as blanket approval of changed contents.
 
 Publishes all required states:
 - `awakening_attestation_fixtures` — 7/7
@@ -222,4 +243,4 @@ Report:
 
 ## Next Handoff
 
-After this packet lands, refresh the active Awakening scene/art-convergence work from current main. The next planning question is **visual reauthoring**, not more blind intake: compare older live/baked fixture and hero-prop art against the new Dust Lung/Undergate family language, preserve already-strong room plates/inlays/decals, and author replacement art only where the visual gain is real.
+Resume this same retained workstream from checkpoint `10e9ed5d96f387657db2e7faa67097e8d460e632`, re-fetch/verify only A2 against the refreshed authority above, complete Attestation/Reliquary ingest + the bounded dais integrity check, rerun focused/changed-file closeout, then finish/land normally. After this packet lands, refresh the active Awakening scene/art-convergence work from current main. The next planning question is **visual reauthoring**, not more blind intake: compare older live/baked fixture and hero-prop art against the new Dust Lung/Undergate family language, preserve already-strong room plates/inlays/decals, and author replacement art only where the visual gain is real.
