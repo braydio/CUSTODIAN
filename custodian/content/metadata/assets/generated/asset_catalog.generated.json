@@ -14036,6 +14036,226 @@
           "source_asset": null
         }
       }
+    },
+    "awakening_attestation_fixtures": {
+      "kind": "world_prop",
+      "assets": {
+        "attestation_dais::omni": {
+          "state_id": "attestation_dais",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "attestation_dais",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__attestation_dais__omni__1f__256x192.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            192
+          ],
+          "sha256": "d1e5ac84b344046d64b14aeb4ba37423f74108998a0c04baae9c243a0dd3c9ae",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "designation_sigil_fragment::omni": {
+          "state_id": "designation_sigil_fragment",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "designation_sigil_fragment",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__designation_sigil_fragment__omni__1f__64.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            64
+          ],
+          "sha256": "8a00d7556588551bca8fb9cf39496601fe5cf730c87107e924458756bd919de0",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stele_empty::omni": {
+          "state_id": "stele_empty",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "stele_empty",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_empty__omni__1f__96x160.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            160
+          ],
+          "sha256": "17efcf8487eef8515fd3e50aefd776e6d4821558b612f880a99e31bac16d6d3c",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stele_intact::omni": {
+          "state_id": "stele_intact",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "stele_intact",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_intact__omni__1f__96x160.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            160
+          ],
+          "sha256": "f2aac3a39c8bdcc0011644799319f6b45fd39eefa4629a1f1ed5df7e5818c690",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stele_scorched::omni": {
+          "state_id": "stele_scorched",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "stele_scorched",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_scorched__omni__1f__96x160.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            160
+          ],
+          "sha256": "618bc068d854dd87df011dcfac2350efe1ceced49c586bae9a68bd3cf549cd57",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "stele_shattered::omni": {
+          "state_id": "stele_shattered",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "stele_shattered",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_shattered__omni__1f__96x160.png",
+          "frames": 1,
+          "frame_size": [
+            96,
+            160
+          ],
+          "sha256": "537c7b7c1c18784de7a94e1fef944f0723291a74de84efad0bdbb652403a9a4a",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "torn_civic_banner::omni": {
+          "state_id": "torn_civic_banner",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_attestation_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "torn_civic_banner",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__torn_civic_banner__omni__1f__128x256.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            256
+          ],
+          "sha256": "f9e29e0d19b26b6996293132c6ba3db517e71216a217bfd1a8086cf9cadd81b4",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_reliquary_fixtures": {
+      "kind": "world_prop",
+      "assets": {
+        "central_dry_basin::omni": {
+          "state_id": "central_dry_basin",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_reliquary_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "central_dry_basin",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_reliquary_fixtures/runtime/body/awakening_reliquary_fixtures__body__fixture__central_dry_basin__omni__1f__192.png",
+          "frames": 1,
+          "frame_size": [
+            192,
+            192
+          ],
+          "sha256": "6fa0e1e598b004fca3d32b826bcb751ee1fa1d5f1cd90b5f3bb5918d3bb6e4f2",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "recalled_not_verified_locker::omni": {
+          "state_id": "recalled_not_verified_locker",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_reliquary_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "recalled_not_verified_locker",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_reliquary_fixtures/runtime/body/awakening_reliquary_fixtures__body__fixture__recalled_not_verified_locker__omni__1f__128x160.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "a5da6dd81e5086231319d1038abf7398e23ee37405863ba75214600cf7d777f3",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "welded_locker::omni": {
+          "state_id": "welded_locker",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_reliquary_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "welded_locker",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_reliquary_fixtures/runtime/body/awakening_reliquary_fixtures__body__fixture__welded_locker__omni__1f__128x160.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            160
+          ],
+          "sha256": "a1879767ff76c94de1ed8f57a25df6bd96ac9aafb947ceaafbfcf846c6918915",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }

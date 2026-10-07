@@ -534,3 +534,15 @@ production status.
 13. shared FX families
 
 The point of this order is to make every early batch visibly improve the live beginning while preserving stable semantic contracts for the full production pass.
+
+### Required fixture intake — 2026-10-07
+
+The active required fixture intake is complete at 21/21 published and imported:
+Ambulatory 6/6, Attestation 7/7, Reliquary 3/3, Dust Lung structures 4/4, and
+Undergate machinery 6/6. Asset V2 owns the runtime paths and import sidecars.
+These fixture families remain **NOT_READY** as standalone scene consumers unless
+an existing Layout/scene contract provides a truthful independent role. No
+scene bindings, collision, or interaction authority were added by the intake.
+The exact A2 `attestation_dais` alpha cleanup is limited to Dropbox revision
+`65d22e7369f4c915cdd61` and is documented in
+`custodian/docs/ai_context/reports/assets/attestation_dais_a2_correction_receipt.json`.

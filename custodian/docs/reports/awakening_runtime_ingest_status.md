@@ -22,19 +22,30 @@ including `service_basin_b` (Asset V2 job
 `job_20261007T140503Z_b6135b78`). All eleven new runtime PNGs were imported by
 Godot. No new scene bindings were introduced.
 
-## Partial / blocked
+## Completed required fixture intake
 
-`awakening_attestation_fixtures` remains 0/7 and
-`awakening_reliquary_fixtures` remains 0/3. The current Dropbox
-`awakening_next10_required_fixtures_handoff_v1.zip` hashes to
-`82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4`, while
-the active intake packet requires
-`7192a7e2a2c291d5db11c70e5027fbeea9d5597e24d32a8033b428b6c3a9c4b3`. It was
-not extracted or consumed. `attestation_dais` received no preflight or
-correction because its containing archive failed the immutable ZIP gate.
+The currently actionable 21-state Dropbox intake is published and imported:
+Ambulatory 6/6 (`job_20261007T140317Z_c027e86a`), Attestation 7/7
+(`job_20261007T193241Z_c557cbae`), Reliquary 3/3
+(`job_20261007T193254Z_0f45bf23`), Dust Lung structures 4/4
+(`job_20261007T140446Z_1d47c503`), and Undergate machinery 6/6
+(`job_20261007T140503Z_b6135b78`). All 21 runtime PNGs have Godot import
+sidecars. No new scene bindings were introduced; the fixtures retain their
+`BAKED_ONLY` or `NOT_READY` consumption classifications under existing layout
+and placement authority.
 
-The current required-asset projection reflects completed Ambulatory, Dust Lung,
-and Undergate families while keeping Attestation and Reliquary open.
+A2 was consumed from Dropbox revision `65d22e7369f4c915cdd61`, outer SHA-256
+`82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4`. Its
+manifest and all ten source/normalized contracts passed. `attestation_dais`
+received the packet-authorized exact one-revision alpha-island cleanup; only
+848 source and 204 normalized satellite alpha pixels were cleared. The
+revision-specific provenance originals and full before/after/topology/principal
+byte-identity receipt are retained at
+`custodian/docs/ai_context/reports/assets/attestation_dais_a2_correction_receipt.json`.
+
+The current required-asset projection reports all five families complete for
+these required states. No room geometry, interaction, collision, or scene
+binding changed.
 
 ## Tooling and housekeeping
 
@@ -47,7 +58,7 @@ source master, the tracked prior source was preserved at
 
 ## Runtime verification
 
-Asset V2 status reports Ambulatory 6/6, Dust Lung 4/4, and Undergate 6/6;
-Attestation and Reliquary remain 0/7 and 0/3. Asset V2 doctor reports healthy
-with no issues. All eleven newly published runtime PNGs have Godot import
+Asset V2 status reports Ambulatory 6/6, Attestation 7/7, Reliquary 3/3,
+Dust Lung 4/4, and Undergate 6/6. Asset V2 doctor reports healthy
+with no issues. All 21 newly published runtime PNGs have Godot import
 sidecars. No room geometry, interaction, collision, or scene binding changed.

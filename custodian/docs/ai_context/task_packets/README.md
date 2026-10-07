@@ -14,7 +14,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 <!-- task_packet_index:managed:start -->
 - `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — Replace the live P-9 Designation Locker art with the approved reauthored four-state family while preserving the existing P0 Asset V2 contract, one-shot openi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — Consume every currently actionable, unimplemented production asset handoff under /CUSTODIAN/implementation_inputs without treating the Dropbox folder itself...
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
 - `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
@@ -207,11 +206,8 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 
 ### Active Awakening Hero-Art Reauthor
 
-- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement, still dependency-gated on `asset-downloads-intake-sweep`. The predecessor remains active at checkpoint `4159753f4`; A2 now has a bounded authoritative correction path but must finish and land before this packet may claim the shared Asset V2/Awakening registration surface.
+- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement, still dependency-gated on `asset-downloads-intake-sweep`. This packet becomes eligible after `asset-downloads-intake-sweep` archives complete on main; the predecessor published all 21 required states and landed its bounded dais correction.
 
-## Active Local Asset Intake
-
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — active partial intake at checkpoint `4159753f4`: 11/21 published (Ambulatory 6/6, Dust Lung 4/4, Undergate 6/6), A2 package + exact ten-state contents fully verified, Attestation/Reliquary still 0/10. Planning has now authorized an exact one-revision `attestation_dais` satellite-alpha cleanup ceiling of 848 source pixels and 204 normalized pixels with topology/bounding-box/principal-byte proof. Resume the same workstream; no replacement art is required unless those exact checks fail.
 
 ## Active Reusable Source-Material Intake
 

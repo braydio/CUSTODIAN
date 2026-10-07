@@ -1921,7 +1921,9 @@
         "custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md",
         "custodian/content/README.md",
         "tools/custodian_aliases.sh",
-        "custodian/content/tiles/awakening/**"
+        "custodian/content/tiles/awakening/**",
+        "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/**",
+        "custodian/content/sprites/environment/props/awakening/awakening_reliquary_fixtures/**"
       ],
       "timeout_sec": 30,
       "needs_import": false

@@ -1,0 +1,114 @@
+{
+  "schema": "custodian.asset_alpha_correction_receipt.v1",
+  "handoff_id": "awakening-next10-required-fixtures-handoff-v1",
+  "dropbox_path": "/CUSTODIAN/implementation_inputs/awakening_next10_required_fixtures_handoff_v1.zip",
+  "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAABWQ",
+  "dropbox_revision": "65d22e7369f4c915cdd61",
+  "zip_sha256": "82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4",
+  "rule": "Exact one-revision attestation_dais component ceiling authorized by task packet on main; remove only topology-matched disconnected satellite alpha. No global threshold change.",
+  "connectivity": "8-connected nontransparent alpha pixels",
+  "images": {
+    "source": {
+      "package_member": "awakening_next10_required_fixtures_handoff_v1/source_work/awakening_attestation_fixtures/attestation_dais_source.png",
+      "repo_target": "custodian/asset_drop/source_work/awakening/awakening_attestation_fixtures/attestation_dais_source.png",
+      "dimensions": [
+        566,
+        282
+      ],
+      "before_sha256": "34613917fb5b765b0b6d6d53470be5c4fdd9cd28e71e09efff7f55b1fb00c92c",
+      "after_sha256": "924dfb7745a24ff1a832311e37ddf5f4f8b902def46c755fa7666bf69ce52b4d",
+      "component_count_before": 2,
+      "components_before": [
+        {
+          "area": 78658,
+          "bbox_xyxy": [
+            88,
+            3,
+            562,
+            278
+          ]
+        },
+        {
+          "area": 848,
+          "bbox_xyxy": [
+            3,
+            208,
+            27,
+            278
+          ]
+        }
+      ],
+      "component_count_after": 1,
+      "principal_area_after": 78658,
+      "removed_alpha_pixels": 848,
+      "nontransparent_pixels_before": 79506,
+      "removed_ratio": 0.01066586169597263,
+      "principal_rgba_sha256_before": "7ca4a8ea39df64ec20a4a5426a7d594023acd0b0e53affebf234ffa820dab282",
+      "principal_rgba_sha256_after": "7ca4a8ea39df64ec20a4a5426a7d594023acd0b0e53affebf234ffa820dab282",
+      "principal_rgba_identical": true,
+      "rgb_bytes_unchanged_all_pixels": true,
+      "alpha_changed_only_on_satellites": true
+    },
+    "normalized": {
+      "package_member": "awakening_next10_required_fixtures_handoff_v1/inbox/awakening_attestation_fixtures/attestation_dais.png",
+      "repo_target": "custodian/asset_drop/inbox/awakening_attestation_fixtures/attestation_dais.png",
+      "dimensions": [
+        256,
+        192
+      ],
+      "before_sha256": "1279e514cc1b33baeb9a1ae1ec37f2b3bcb1b34281a5f1bad58e7e1a0570efbb",
+      "after_sha256": "d1e5ac84b344046d64b14aeb4ba37423f74108998a0c04baae9c243a0dd3c9ae",
+      "component_count_before": 3,
+      "components_before": [
+        {
+          "area": 14398,
+          "bbox_xyxy": [
+            45,
+            72,
+            243,
+            186
+          ]
+        },
+        {
+          "area": 202,
+          "bbox_xyxy": [
+            11,
+            157,
+            23,
+            186
+          ]
+        },
+        {
+          "area": 2,
+          "bbox_xyxy": [
+            11,
+            155,
+            12,
+            155
+          ]
+        }
+      ],
+      "component_count_after": 1,
+      "principal_area_after": 14398,
+      "removed_alpha_pixels": 204,
+      "nontransparent_pixels_before": 14602,
+      "removed_ratio": 0.013970688946719628,
+      "principal_rgba_sha256_before": "8a6e41178b960005d8f23c7fdfcaca1e2f054d9293b87a093e6cb55d275a30ec",
+      "principal_rgba_sha256_after": "8a6e41178b960005d8f23c7fdfcaca1e2f054d9293b87a093e6cb55d275a30ec",
+      "principal_rgba_identical": true,
+      "rgb_bytes_unchanged_all_pixels": true,
+      "alpha_changed_only_on_satellites": true
+    }
+  },
+  "provenance": {
+    "source_original": {
+      "repo_path": "custodian/asset_drop/source_work/awakening/awakening_attestation_fixtures/provenance/a2_65d22e7369f4c915cdd61/attestation_dais_source_original.png",
+      "sha256": "34613917fb5b765b0b6d6d53470be5c4fdd9cd28e71e09efff7f55b1fb00c92c"
+    },
+    "normalized_original": {
+      "repo_path": "custodian/asset_drop/source_work/awakening/awakening_attestation_fixtures/provenance/a2_65d22e7369f4c915cdd61/attestation_dais_normalized_original.png",
+      "sha256": "1279e514cc1b33baeb9a1ae1ec37f2b3bcb1b34281a5f1bad58e7e1a0570efbb"
+    }
+  },
+  "method": "Set alpha to zero only for exactly measured satellite component pixels; preserve all RGB bytes and all principal RGBA bytes. No redraw, inpainting, resampling, or generated pixels."
+}
