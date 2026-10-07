@@ -129,13 +129,19 @@ contracts because the current presentation truth is not acceptable as final.
 
 For 04→05, the live scene still binds the legacy crop-derived Asset V2
 `full_plate_underlay` at 1024×576 / `(352,-2464)`; that is **current runtime,
-not current design authority**. The user-approved direct `connector.png` is the
-new source authority. Active P0 work must preserve its entire nontransparent
-silhouette, may update the existing family canvas, and must re-derive uniform
-scale/world translation against Locker exit `(704,-2272)`, Dust Lung entry
-`(0,-2656)`, and the unchanged dogleg gameplay footprint. Cropping an authored
-connector chunk, rebuilding it from room strips, or preserving the old
-1024×576/`(352,-2464)` transform by inertia is explicitly disallowed. The
+not current design authority**. The production correction now has three exact
+Dropbox source authorities under `/CUSTODIAN/implementation_inputs/`: Dust Lung
+underlay (1216×1216), the complete direct connector (1374×1076), and Locker
+Reliquary underlay (1200×1211). Their exact SHA-256 receipts live in
+`AWAKENING_ROOM_CONNECTORS_POLISH.md`. Active P0 work must publish Dust directly,
+normalize Locker crop-free through its existing Asset V2 family while reconciling
+foreground truth, preserve the connector's entire nontransparent silhouette, and
+re-derive connector uniform scale/world translation against Locker exit
+`(704,-2272)`, Dust Lung entry `(0,-2656)`, and the unchanged dogleg gameplay
+footprint. Cropping an authored connector chunk, rebuilding it from room strips,
+or preserving the old 1024×576/`(352,-2464)` transform by inertia is explicitly
+disallowed. The specialized Designation Locker remains the interactive P-9 prop;
+the room-underlay replacement does not replace its four-state presentation. The
 04→05 room/connector join should read opaque and stable while visible rather than
 depending on a whole-room partial-alpha crossfade.
 
