@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-generation-grid-migration-series-authoring`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `review-procgen-generation-grid-foundation`
 - Locks: `procgen-generation-roadmap`
@@ -14,11 +14,11 @@
 - Paired review workstream: `review-procgen-generation-grid-migration-series-authoring`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `7913903704aee8fdd2c645891df441fa31fb6cca`
+- Reviewed main: `bff2d89496c68f73072fb69caa7eb3d68abf6aca`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
 - Goal: Convert the reviewed post-D audit and reviewed GenerationGrid seam into the complete, dependency-correct implementation packet series needed to migrate the remaining generation pipeline to storage-agnostic semantics, add a pure-data backend, cut rejected candidate evaluation over to it, and retire the live-TileMap rejected-candidate path before D4.
 - Completion boundary: REFRESH-GATED on the passed `review-procgen-generation-grid-foundation`. The exact migration cluster graph and even the canonical GenerationGrid API do not exist yet, so this packet must not author implementation work from stale pre-foundation assumptions. After XR2, rewrite this same packet in place from the reviewed X1 inventory + reviewed X2 seam, then publish only the migration DAG that live evidence supports.
-- Current measured state: X1/X2 have not landed, so there is currently no reviewed post-D helper inventory, no canonical GenerationGrid seam, no pure-data backend, and no evidence-backed migration cluster dependency graph. `ProcGenTilemap` remains the live TileMap-backed generation working-state host. The previous packet text described reviewed predecessors as if they already existed.
+- Current measured state: D1 is landed/reviewed, D3 is landed, and D2 is now the only unfinished D-lane extraction. X1/XR1 and X2/XR2 have not yet completed, so there is still no reviewed post-D helper inventory, canonical GenerationGrid seam, pure-data backend, or evidence-backed migration-cluster dependency graph. Keep X3 blocked/manual until XR2 passes and this packet is refreshed from the actual reviewed X1/X2 contracts.
 - Evidence: current X1/XR1 and blocked X2/XR2 packet contracts; live `custodian/game/world/procgen/generation/` package; current `proc_gen_tilemap.gd`; current D4 blocked packet; S1/G1-G5 historical evidence.
 - Task-specific authority: Reviewed X1 audit + reviewed X2 foundation once they exist; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; procgen roadmap and task-packet/review lifecycle.
 - Work surface: Intentionally not locked while blocked. After XR2, this remains a docs/coordination-only workstream over the procgen roadmap, master roadmap, active task-packet directory/index, D4 dependency metadata, FILE_INDEX, and exact reviewed X1/X2 artifacts. No runtime `.gd` changes.
@@ -53,9 +53,9 @@
 
 ## Refresh Planning Authority
 
-- Refresh owner: `execution-agent`
-- ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Refresh instruction: Bring the landed predecessor implementation/review summary and any new live-state evidence back to this ChatGPT conversation. Re-derive this packet here with the user against current `main` before changing it to `ready/auto`. Do not let the execution agent silently reinterpret architecture, scope, sequencing, visual direction, or acceptance during the refresh.
 
 ## Handoff
