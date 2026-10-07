@@ -1,4 +1,4 @@
-# ASSET DOWNLOADS INTAKE SWEEP
+# DROPBOX UNSTAGED ASSET INTAKE SWEEP
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `asset-downloads-intake-sweep`
@@ -6,233 +6,220 @@
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
-- Locks: `asset-pipeline`
+- Locks: `asset-pipeline, awakening-art-registration`
 - Kind: `implementation`
 - Review: `none`
 - Review stage: `post-land`
-- Review modes: `asset-pipeline, workflow`
+- Review modes: `asset-pipeline, runtime, workflow`
 - Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `0`
-- Reviewed main: `7a8ad89c84263043d2fb127576ba0aba47789f06`
+- Reviewed main: `c4c56d175d4e66528b450b6872d888d3ced7eab6`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Branch: `agent/asset-downloads-intake-sweep`
-- Goal: `Close the bounded CUSTODIAN Downloads intake backlog by publishing the supplied Recovery Ambulatory service_basin_b through its existing Asset V2 family and inventorying only clearly CUSTODIAN-owned/relevant downloaded packs without making Downloads a production authority.`
-- Completion boundary: `The verified Basin B handoff is preserved and ingested through the existing family to 6/6 required states, a compact relevant-downloads inventory receipt is committed, existing packet/library ownership is respected, and no unrelated or design-ambiguous download is promoted.`
-- Current measured state: `The authoritative awakening_service_basin_b_handoff_v1.zip has been fetched to ~/Downloads and its packaged PNG hashes and dimensions were verified by the execution agent; agent/asset-downloads-intake-sweep remains the retained implementation workstream, while the active main packet still needs V2-structural closeout metadata to pass repository-wide AI-context validation.`
-- Evidence: `Dropbox handoff /CUSTODIAN/implementation_inputs/awakening_service_basin_b_handoff_v1.zip; normalized SHA-256 b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924; source SHA-256 506f36de93096f32b37991fc7a4a5b27d0bb476c00afe7d47d3b608f010efc15; existing awakening_ambulatory_fixtures Asset V2 family; retained agent/asset-downloads-intake-sweep branch.`
-- Task-specific authority: `custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json and the live Asset Pipeline V2 CLI own Basin B publication; KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md and any other existing active packet/library contract retain ownership of their own downloaded packs.`
-- Work surface: `custodian/asset_drop/source_work/awakening/awakening_ambulatory_fixtures/, custodian/asset_drop/inbox/awakening_ambulatory_fixtures/, the existing awakening_ambulatory_fixtures runtime/catalog/receipt surfaces, and custodian/docs/ai_context/reports/assets/asset_downloads_intake_sweep.json.`
-- Change: `Install only the verified Basin B source/intake through the current Asset V2 replace/ingest path, preserve the prior canonical source as history, then inventory only bounded CUSTODIAN-relevant Downloads and delegate or preserve them according to existing repository ownership rather than inventing runtime contracts.`
-- Preserve: `Existing Asset V2 family/runtime identities, prior Basin B source history, local Downloads/source archives, Kenney and other existing packet ownership, Awakening scene composition, and BAKED_ONLY doctrine for the Ambulatory fixture states.`
-- Non-goals: `No new gameplay/runtime architecture, no Recovery Ambulatory redesign, no Basin B scene binding, no broad Downloads cleanup, no deletion of user files, no new Asset V2 family without an existing authority, and no generated or subjective replacement art.`
-- Acceptance: `The handoff hashes match before installation; Basin B is 128x128 RGBA with real alpha and reaches 6/6 required family states via Asset V2; runtime/import/catalog/receipt agree; prior source history is preserved; the relevant-downloads receipt is bounded and truthful; focused asset validation plus changed-file closeout are green.`
-- Validation: `Verify handoff hashes/dimensions/alpha, run the live custodian/tools/assets/asset.py plan/ingest/status/doctor flow for awakening_ambulatory_fixtures, run any focused validation owned by an existing asset packet actually executed here, then git diff --check and current changed-file validation.`
-- Deferred: `Any downloaded asset requiring a new family, new scene placement, subjective selection, or new art-direction decision remains source/reference-only or delegated to its existing packet for a later independently owned slice.`
+- Goal: `Consume every currently actionable, unimplemented production asset handoff under /CUSTODIAN/implementation_inputs without treating the Dropbox folder itself as runtime authority, publish all valid supplied states through their existing Asset V2 families, preserve source provenance, and leave already-landed, partial, superseded, smoke-test, or design-ambiguous payloads with their existing owners.`
+- Completion boundary: `Twenty-one supplied required Awakening states across five existing families are hash-verified, source-preserved, ingested through Asset V2, imported, and reflected in current status/catalog truth; any objectively contaminated PNG is corrected only by the bounded alpha-island rule below or fails closed; the Dropbox audit receipt truthfully classifies every current implementation_inputs entry; no duplicate Operator/Alpine work or speculative scene binding is introduced.`
+- Current measured state: `Live main does not contain service_basin_b and has no runtime/body directories for awakening_attestation_fixtures, awakening_reliquary_fixtures, awakening_dust_lung_structures, or awakening_undergate_machinery. Dropbox currently contains three complete actionable Awakening ZIP handoffs totaling 21 required states. Operator North VFX and North/South body handoffs are already landed/reviewed; Alpine underlay final-six is landed; Alpine cliff payload is explicitly partial 4/26 and remains owned by procgen-alpine-cliff-presentation-v1; bidirectional smoke payloads are non-production.`
+- Evidence: `Dropbox /CUSTODIAN/implementation_inputs audit; live main c4c56d175d4e66528b450b6872d888d3ced7eab6; existing Asset V2 family contracts; archived Operator/Alpine implementation summaries; current runtime directory absence for the four later Awakening fixture families.`
+- Task-specific authority: `custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json; awakening_attestation_fixtures.asset.json; awakening_reliquary_fixtures.asset.json; awakening_dust_lung_structures.asset.json; awakening_undergate_machinery.asset.json; design/04_architecture/AWAKENING_ASSET_MANIFEST.md; live custodian/tools/assets/asset.py CLI.`
+- Work surface: `custodian/asset_drop/source_work/awakening/{awakening_ambulatory_fixtures,awakening_attestation_fixtures,awakening_reliquary_fixtures,awakening_dust_lung_structures,awakening_undergate_machinery}/; matching Asset V2 inbox/runtime/catalog/archive surfaces; current generated required-asset/status views; custodian/docs/ai_context/reports/assets/dropbox_unstaged_asset_intake.json.`
+- Change: `Fetch and verify the three immutable Awakening handoffs below, preserve any prior canonical source before replacement, stage the supplied normalized PNGs unchanged except for the single bounded art-integrity correction rule, ingest each existing family with the live Asset V2 pipeline, then classify post-ingest scene consumption conservatively without inventing placement authority.`
+- Preserve: `Existing family IDs/runtime naming; prior source history; current zone plates; BAKED_ONLY doctrine; specialized Crèche/P-9/Dust Lung lift/Gate systems; already-landed Operator and Alpine work; partial Alpine-cliff ownership; all Dropbox originals.`
+- Non-goals: `No new Asset V2 family; no broad Dropbox cleanup; no deletion of remote files; no art redesign; no speculative placement database; no blind scene instancing; no duplicate execution of already-complete Operator/Alpine work; no consumption of the 4/26 Alpine cliff partial as if Gate B were complete.`
+- Acceptance: `All three handoff ZIP hashes match; all supplied per-file hashes/dimensions/alpha match after extraction; Basin B publishes and awakening_ambulatory_fixtures reaches 6/6 required; Attestation reaches 7/7 required; Reliquary 3/3; Dust Lung structures 4/4; Undergate machinery 6/6; runtime/import/catalog/archive/receipt truth agree; current required-asset/status views no longer report these required states missing; fixture-consumption classifications are recorded; focused validation plus changed-file closeout pass.`
+- Validation: `Verify package + manifest SHA-256 first; inspect PNG dimensions/mode/alpha and disconnected alpha components; run live plan/ingest/status/doctor per family; verify Godot imports; run Awakening focused asset/runtime smokes only where changed consumption requires them; regenerate current required-assets/status views through their tooling; run git diff --check and current changed-file validation.`
+- Deferred: `Subjective reauthoring of older Awakening art against the new Dust Lung/Undergate family language; optional/recommended family states; actual fixture placement where Layout/scene authority does not already establish a truthful independent prop; procgen-alpine-cliff-presentation-v1 completion.`
 
-## Goal
+## Immutable Dropbox Inputs
 
-Close the known local asset-intake backlog without turning `~/Downloads` into a production authority.
+### A1 — Recovery Ambulatory Basin B
 
-This slice has two responsibilities only:
-
-1. publish the supplied missing Awakening Recovery Ambulatory `service_basin_b` through its existing Asset Pipeline V2 family; and
-2. inventory CUSTODIAN-relevant asset packs still present in `~/Downloads`, processing only packs that already have an active repository authority or that can be preserved safely as reference/source material without inventing runtime ownership.
-
-## Mandatory Basin B Handoff
-
-The authoritative handoff ZIP was uploaded to Dropbox at:
-
+Remote:
 `/CUSTODIAN/implementation_inputs/awakening_service_basin_b_handoff_v1.zip`
 
-Prefer a local copy at:
+ZIP SHA-256:
+`749cba1851e5bae8e5c68cbb0293b1b0b58ac447204b024fadc911b7665e189c`
 
-`~/Downloads/awakening_service_basin_b_handoff_v1.zip`
+Handoff:
+`awakening-service-basin-b-handoff-v1`
 
-If the local file is absent and this agent environment can access the Dropbox connector/mount, retrieve that exact Dropbox file. If neither route is available, report the basin handoff as blocked by source-file availability and continue only the Downloads inventory portion. Do not reconstruct the supplied art from screenshots or prose.
+Publishes:
+- `awakening_ambulatory_fixtures/service_basin_b` — 128×128
 
-The ZIP contains:
+Expected supplied hashes:
+- source: `506f36de93096f32b37991fc7a4a5b27d0bb476c00afe7d47d3b608f010efc15`
+- normalized: `b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924`
 
-- `MANIFEST.json`
-- `README.md`
-- `CODEX_IMPLEMENTATION.md`
-- `VALIDATION.txt`
-- source master:
-  `source_work/awakening_ambulatory_fixtures/service_basin_b_source.png`
-- normalized intake:
-  `inbox/awakening_ambulatory_fixtures/service_basin_b.png`
+Preserve the currently tracked pre-handoff `service_basin_b_source.png` before replacing it.
 
-Expected supplied normalized SHA-256:
+### A2 — Attestation + Reliquary Required Fixtures
 
-`b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924`
+Remote:
+`/CUSTODIAN/implementation_inputs/awakening_next10_required_fixtures_handoff_v1.zip`
 
-Expected source-master SHA-256:
+ZIP SHA-256:
+`7192a7e2a2c291d5db11c70e5027fbeea9d5597e24d32a8033b428b6c3a9c4b3`
 
-`506f36de93096f32b37991fc7a4a5b27d0bb476c00afe7d47d3b608f010efc15`
+Handoff:
+`awakening-next10-required-fixtures-handoff-v1`
 
-### Basin B Contract
+Publishes all required states:
+- `awakening_attestation_fixtures` — 7/7
+  - `stele_intact` 96×160
+  - `stele_scorched` 96×160
+  - `stele_empty` 96×160
+  - `stele_shattered` 96×160
+  - `attestation_dais` 256×192
+  - `torn_civic_banner` 128×256
+  - `designation_sigil_fragment` 64×64
+- `awakening_reliquary_fixtures` — 3/3
+  - `central_dry_basin` 192×192
+  - `welded_locker` 128×160
+  - `recalled_not_verified_locker` 128×160
 
-Existing family authority:
+Use the package `MANIFEST.json` as exact source/inbox/hash authority.
 
-`custodian/content/metadata/assets/families/awakening_ambulatory_fixtures.asset.json`
+#### Bounded art-integrity correction: attestation_dais
 
-State:
+Visual preflight found a small disconnected edge fragment in the current supplied `attestation_dais` extraction.
 
-`service_basin_b`
+Before staging that state:
+1. compute connected components on the normalized PNG alpha mask;
+2. identify the principal authored component by alpha-pixel area;
+3. an automatic correction is allowed **only** when every satellite component is disconnected from the principal component, touches an outer image edge or sits wholly outside the principal component's expanded bounding region, and all satellites together are <1% of nontransparent alpha pixels;
+4. remove only those satellite alpha components, preserving RGB/alpha bytes of the principal component exactly;
+5. preserve the original supplied PNG as provenance and write a tiny correction receipt with before/after SHA-256 and component areas;
+6. apply the same objective island removal to the canonical source master only if its alpha segmentation proves the same condition.
 
-Contract:
+If those conditions do not hold, fail closed on `attestation_dais` and report the art blocker. Do not redraw or generatively repair it inside this workstream.
 
-- required: true
-- priority: P1
-- kind: world_prop
-- layer: body
-- action group: fixture
-- variant: service_basin_b
-- direction: omni
-- layout: copy
-- frames: 1
-- frame size: 128×128
-- PNG RGBA with real alpha
+No other A2 state may be artistically modified by this packet.
 
-Canonical source target:
+### A3 — Dust Lung + Undergate Required Fixtures
 
-`custodian/asset_drop/source_work/awakening/awakening_ambulatory_fixtures/service_basin_b_source.png`
+Remote:
+`/CUSTODIAN/implementation_inputs/awakening_dustlung_undergate_next10_handoff_v1.zip`
 
-Canonical inbox target:
+ZIP SHA-256:
+`7bceeb24022613515ec65d05da5a6b6f2acee31c9920edb552c7a48936eda612`
 
-`custodian/asset_drop/inbox/awakening_ambulatory_fixtures/service_basin_b.png`
+Handoff:
+`awakening-dustlung-undergate-next10-handoff-v1`
 
-Expected runtime identity:
+Publishes all required states:
+- `awakening_dust_lung_structures` — 4/4
+  - `broken_bridge_a` 256×160
+  - `broken_bridge_b` 256×160
+  - `giant_duct` 256×256
+  - `lift_lever` 128×128
+- `awakening_undergate_machinery` — 6/6
+  - `transit_drum` 256×192
+  - `route_coil` 192×192
+  - `mechanism_plinth` 160×160
+  - `blind_route_housing` 160×160
+  - `register_shelving` 256×192
+  - `register_route_map` 384×256
 
-`custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_b__omni__1f__128.png`
+Use its `MANIFEST.json`, `CODEX_IMPLEMENTATION.md`, and per-file hashes directly. Do not recompress or reinterpret supplied normalized inputs unless live family validation proves a contract mismatch.
 
-The repository already contains an older un-ingested `service_basin_b_source.png`. Preserve that prior source in a clearly named pre-handoff history folder before replacing the canonical source master.
+## Dropbox Audit Classification
 
-Use the current live Asset Pipeline V2 CLI discovered through:
+The execution receipt must classify current `/CUSTODIAN/implementation_inputs` entries.
 
-`python3 custodian/tools/assets/asset.py --help`
+Known authoring-time dispositions:
 
-Run the live equivalent of plan, ingest, status, and one doctor check for `awakening_ambulatory_fixtures`.
+- `awakening_service_basin_b_handoff_v1.zip` — **implement**
+- `awakening_next10_required_fixtures_handoff_v1.zip` — **implement**, subject to the bounded dais integrity gate
+- `awakening_dustlung_undergate_next10_handoff_v1.zip` — **implement**
+- `custodian_operator_unarmed_fast_chain_ns_body_asset_handoff_v1.zip` — **already implemented/reviewed**, do not repeat
+- `operator-unarmed-fast-chain-north-vfx/north-vfx-20261006-a1` — **already implemented/reviewed**, do not repeat
+- `procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3` — **already implemented/reviewed**
+- `procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2` — **superseded by final-six-v3**
+- `procgen-alpine-plateau-underlay-assets/alpine_underlay_last3_generations_review_bundle.zip` — **reference/donor review bundle**, not runtime intake
+- `procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1` — **owned by existing packet; partial 4/26 only; do not publish as Gate B**
+- `bidirectional-dropbox-handoff/*smoke*` — **transport smoke only**, never production content
 
-Acceptance for Basin B:
+If Dropbox changed after this packet was authored, classify new entries by repository ownership and fail closed on anything without an existing authority.
 
-- package hashes match before installation;
-- source master is preserved and replaced intentionally;
-- normalized input is exactly 128×128 RGBA with real alpha;
-- Asset V2 performs the runtime publish;
-- family reaches 6/6 required states ready;
-- runtime/import/catalog/receipt agree;
-- focused Asset V2 validation and changed-file closeout pass.
+## Asset V2 Execution
 
-Do not add a separate scene sprite merely to make the state visible. The active Awakening manifest currently classifies the published Ambulatory fixture states as `BAKED_ONLY`; this slice closes the asset-family gap, not room composition.
+For each actionable handoff:
 
-## Downloads Asset-Pack Sweep
+1. fetch/copy the immutable ZIP without mutating the Dropbox original;
+2. verify ZIP SHA-256 and packaged manifest before extraction;
+3. verify every source/inbox file against the package manifest;
+4. preserve any currently tracked source target under a clearly named `pre_handoff_*` history folder before replacement;
+5. copy source masters to the manifest's canonical source-work targets;
+6. copy normalized PNGs to the manifest's canonical inbox targets;
+7. discover the **current** CLI via:
+   `python3 custodian/tools/assets/asset.py --help`
+8. run the live equivalent of plan → ingest/replace → status → doctor for each family;
+9. verify runtime PNG dimensions, RGBA/real alpha, imports, catalog and receipt;
+10. consume/clear inbox according to the pipeline's normal archive behavior.
 
-After Basin B, inspect only the immediate contents and obvious asset-pack descendants of `~/Downloads`.
+Do not hand-author runtime filenames when Asset V2 can publish them.
 
-Do not recursively ingest arbitrary personal downloads.
+## Post-Ingest Fixture Consumption
 
-Eligible candidates are limited to:
+Publishing an asset does not prove that it should become a new scene node.
 
-- files/folders clearly named for CUSTODIAN handoffs;
-- Kenney asset packs already discussed or already referenced by active repository packets/docs;
-- ZIPs/folders containing an explicit CUSTODIAN manifest/readme/task handoff;
-- source packs whose license/provenance is bundled and whose intended repository role can be resolved from an existing family, packet, or source-library contract.
+For every newly published state, classify it using the existing Awakening vocabulary:
 
-### Known outstanding pack
+- `BAKED_ONLY`
+- `INDEPENDENT_WORLD_PROP`
+- `FOREGROUND_OCCLUDER`
+- `INTERACTABLE`
+- `STATEFUL_PROP`
+- `NOT_READY`
 
-The existing packet:
+Rules:
+- inspect the current zone plate before binding anything;
+- do not double-render architecture already baked into the underlay/foreground;
+- only place an independent asset when current Layout/scene authority already provides a truthful location and role;
+- do not invent markers, collision, interaction, or gameplay just to consume a newly available PNG;
+- specialized existing systems remain authoritative.
 
-`custodian/docs/ai_context/task_packets/KENNEY_PATTERN_LINES_SOURCE_LIBRARY.md`
+Record classifications in:
+`custodian/docs/ai_context/reports/assets/dropbox_unstaged_asset_intake.json`
 
-owns the four downloaded Kenney Pattern Pack Lines variants.
+If no newly published state is truthfully bindable, successful Asset V2 publication plus an honest `BAKED_ONLY`/`NOT_READY` classification satisfies this packet's runtime-wiring boundary.
 
-If that packet is still active on rebased main and all four expected local variants are present, implement it according to its own contract instead of duplicating its library logic here.
+## Documentation Drift
 
-Once implemented, archive/update that packet according to current task lifecycle policy and record its landed evidence in this workstream closeout.
-
-### Other downloaded packs
-
-For each additional relevant pack discovered:
-
-1. record filename/folder, detected pack/product name, file count, dimensions where practical, license/provenance, and why it is CUSTODIAN-relevant;
-2. search current repository authority before copying anything;
-3. if an active existing packet already owns it, do not duplicate that work. Report the owning packet and leave the source untouched unless this workstream can safely execute that existing packet under current dispatch rules;
-4. if it is useful only as reusable source/reference material, preserve it under the surviving general third-party/reference source-library convention. Do not create a parallel library root;
-5. if production promotion would require a new family, new scene placement, subjective selection, or art-direction decision, do not invent that contract. Preserve/index the source and report it as deferred;
-6. never copy unrelated downloads into the repository.
-
-## Inventory Receipt
-
-Create one compact receipt under:
-
-`custodian/docs/ai_context/reports/assets/asset_downloads_intake_sweep.json`
-
-Use an existing reports/assets convention if live main has a more specific surviving location.
-
-For each inspected CUSTODIAN-relevant item record:
-
-- local basename/path relative to `~/Downloads`
-- classification: `implemented`, `reference_preserved`, `owned_by_existing_packet`, `deferred_needs_design`, or `ignored_unrelated`
-- owning family/packet/library when known
-- license/provenance status
-- hashes for copied source files
-- final repository paths for any preserved/implemented content
-
-Do not enumerate unrelated personal files in committed repository docs. The `ignored_unrelated` classification should be aggregated as a count only.
-
-## Preserve
-
-- existing Asset V2 identities and runtime naming;
-- prior Basin B source history;
-- existing Kenney K3D experimental sources;
-- active third-party/reference library conventions;
-- local source archives/downloads;
-- current Awakening scene composition and BAKED_ONLY doctrine.
-
-## Non-goals
-
-- no new gameplay/runtime architecture;
-- no redesign of Recovery Ambulatory;
-- no scene binding for Basin B;
-- no automatic promotion of every downloaded pack into runtime;
-- no new Asset V2 family unless one already exists and clearly owns the supplied asset;
-- no broad cleanup of `~/Downloads`;
-- no deletion of user downloads;
-- no image generation or subjective art replacement.
-
-## Documentation Drift Check
-
-Reconcile current generated/active asset status after Basin B lands.
-
-The old `custodian/asset_drop/inbox/awakening_ingest_manifest.json` and historical bundle manifests must not override the live Asset V2 family/catalog truth if they disagree. Update only active/generated authorities through their current generator/tooling.
-
-If `REQUIRED_ASSETS.md` still claims `service_basin_b` is missing after a successful ingest, regenerate the owning required-assets view rather than hand-editing the generated file.
+After ingest:
+- regenerate current required-assets/status outputs through their owning tooling;
+- `custodian/docs/reports/awakening_runtime_ingest_status.md` currently still says Basin B is missing and must be reconciled if that file remains active current-truth documentation;
+- do not treat `custodian/asset_drop/inbox/awakening_ingest_manifest.json` or historical `next10_*` bundle manifests as current authority;
+- preserve historical packet/summary evidence.
 
 ## Validation
 
-Run, in this order:
+Run focused checks first:
+- package/hash/dimension/alpha verification;
+- Asset V2 plan/ingest/status/doctor for all five families;
+- Godot import/parse for newly published runtime PNGs;
+- any focused Awakening smoke required by actual new scene bindings;
+- generated required-assets/status consistency.
 
-1. handoff hash/dimension/alpha checks;
-2. focused Asset V2 plan/ingest/status/doctor for `awakening_ambulatory_fixtures`;
-3. the validation required by any existing asset-pack packet actually executed during this sweep;
-4. `git diff --check`;
-5. current changed-file validation closeout.
+Then:
+- `git diff --check`
+- current `run_validation.py --changed --json`
 
-Do not start with a full-project test sweep.
+Do not start with a full-project sweep.
 
 ## Completion Report
 
-Report only:
-
-- Basin B ingest job ID, runtime path, SHA-256, and final family completeness;
-- which Downloads packs were found relevant;
-- which were implemented, reference-preserved, delegated to an existing packet, or deferred;
-- repository paths created/changed;
-- focused validation results;
-- any documentation drift fixed;
-- anything still requiring human art/design choice.
+Report:
+- exact Dropbox handoffs consumed and ZIP hashes;
+- Asset V2 job IDs per family;
+- final runtime paths + SHA-256 for all 21 states;
+- final required completeness for all five families;
+- any `attestation_dais` correction receipt or blocker;
+- post-ingest consumption classifications and any actual bindings;
+- Dropbox entries deliberately skipped and why;
+- documentation drift corrected;
+- focused validation results.
 
 ## Next Handoff
 
-After this closes, return to the active Awakening presentation sequence. The remaining scene-level work should not be silently absorbed here.
+After this packet lands, refresh the active Awakening scene/art-convergence work from current main. The next planning question is **visual reauthoring**, not more blind intake: compare older live/baked fixture and hero-prop art against the new Dust Lung/Undergate family language, preserve already-strong room plates/inlays/decals, and author replacement art only where the visual gain is real.
