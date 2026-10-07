@@ -5,9 +5,12 @@ const VehicleDefinitionScript = preload("res://game/vehicles/vehicle_definition.
 const TAXONOMY_PATH := "res://content/vehicles/vehicle_taxonomy.json"
 const ARCHETYPES_PATH := "res://content/vehicles/vehicle_archetypes.json"
 const MOVEMENT_PROFILES_PATH := "res://content/vehicles/vehicle_movement_profiles.json"
+const DURABILITY_PROFILES_PATH := "res://content/vehicles/vehicle_durability_profiles.json"
 const HARDPOINT_PROFILES_PATH := "res://content/vehicles/vehicle_hardpoint_profiles.json"
 const LOADOUTS_PATH := "res://content/vehicles/vehicle_loadouts.json"
 const VISUAL_KITS_PATH := "res://content/vehicles/vehicle_visual_kits.json"
+const RESTORATION_PROFILES_PATH := "res://content/vehicles/vehicle_restoration_profiles.json"
+const VEHICLE_SCHEMA_PATH := "res://content/vehicles/vehicle_registry_schema.json"
 
 var errors: PackedStringArray = PackedStringArray()
 
@@ -16,10 +19,17 @@ func _init() -> void:
 	var taxonomy := _read_json(TAXONOMY_PATH)
 	var archetypes := _read_json(ARCHETYPES_PATH)
 	var movement_profiles := Dictionary(_read_json(MOVEMENT_PROFILES_PATH).get("profiles", {}))
+	var durability_profiles := Dictionary(_read_json(DURABILITY_PROFILES_PATH).get("profiles", {}))
 	var hardpoint_profiles := Dictionary(_read_json(HARDPOINT_PROFILES_PATH).get("profiles", {}))
 	var loadouts := Dictionary(_read_json(LOADOUTS_PATH).get("loadouts", {}))
 	var visual_kits := Dictionary(_read_json(VISUAL_KITS_PATH).get("visual_kits", {}))
-	_validate_registry(taxonomy, archetypes, movement_profiles, hardpoint_profiles, loadouts, visual_kits)
+	var restoration_profiles := Dictionary(_read_json(RESTORATION_PROFILES_PATH).get("profiles", {}))
+	var vehicle_schema := _read_json(VEHICLE_SCHEMA_PATH)
+	var required_fields := Array(vehicle_schema.get("required_vehicle_fields", []))
+	for required_identity in ["restoration_profile", "durability_profile"]:
+		if not required_fields.has(required_identity):
+			errors.append("Vehicle registry schema must require %s identity" % required_identity)
+	_validate_registry(taxonomy, archetypes, movement_profiles, durability_profiles, hardpoint_profiles, loadouts, visual_kits, restoration_profiles)
 	if errors.is_empty():
 		print("Vehicle registry validation passed.")
 		quit(0)
@@ -30,7 +40,7 @@ func _init() -> void:
 		quit(1)
 
 
-func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_profiles: Dictionary, hardpoint_profiles: Dictionary, loadouts: Dictionary, visual_kits: Dictionary) -> void:
+func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_profiles: Dictionary, durability_profiles: Dictionary, hardpoint_profiles: Dictionary, loadouts: Dictionary, visual_kits: Dictionary, restoration_profiles: Dictionary) -> void:
 	var vehicles := Dictionary(archetypes.get("vehicles", {}))
 	if vehicles.is_empty():
 		errors.append("No vehicles defined in %s" % ARCHETYPES_PATH)
@@ -45,6 +55,10 @@ func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_p
 		if id != String(registry_key):
 			errors.append("Vehicle key '%s' does not match id '%s'" % [registry_key, id])
 		var definition = VehicleDefinitionScript.from_dict(data)
+		if not definition.restoration_profile.is_empty():
+			definition.restoration_profile_data = Dictionary(restoration_profiles.get(definition.restoration_profile, {})).duplicate(true)
+		if not definition.durability_profile.is_empty():
+			definition.durability_profile_data = Dictionary(durability_profiles.get(definition.durability_profile, {})).duplicate(true)
 		errors.append_array(definition.validate())
 		_validate_taxonomy_value(id, "domain", definition.domain, taxonomy, "domains")
 		_validate_taxonomy_value(id, "chassis", definition.chassis, taxonomy, "chassis")
@@ -55,6 +69,10 @@ func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_p
 			_validate_taxonomy_value(id, "mobility", mobility_tag, taxonomy, "mobility")
 		if definition.movement_profile.is_empty() or not movement_profiles.has(definition.movement_profile):
 			errors.append("%s references missing movement_profile '%s'" % [id, definition.movement_profile])
+		if definition.durability_profile.is_empty() or not durability_profiles.has(definition.durability_profile):
+			errors.append("%s references missing durability_profile '%s'" % [id, definition.durability_profile])
+		elif float(Dictionary(durability_profiles[definition.durability_profile]).get("max_health", 0.0)) <= 0.0:
+			errors.append("%s durability_profile must define positive max_health" % id)
 		if definition.hardpoint_profile.is_empty() or not hardpoint_profiles.has(definition.hardpoint_profile):
 			errors.append("%s references missing hardpoint_profile '%s'" % [id, definition.hardpoint_profile])
 		if definition.loadout.is_empty() or not loadouts.has(definition.loadout):

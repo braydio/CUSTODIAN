@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "visual_kits": {
-    "custodian_hover_buggy_light": {
+    "custodian_field_scout_buggy_mk1_compat_hover": {
       "sprite_frames": "res://game/actors/vehicles/hover_buggy_idle_frames.tres",
       "default_animation": "idle",
       "movement_animation": "move"

@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-authored-claim-registry-extraction`
 - Kind: `review`
-- Status: `dependency-gated`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-authored-claim-registry-extraction`
@@ -26,7 +26,7 @@
 - Review focus: Verify one-owner convergence; verify ProcGenTilemap still owns physical floor/wall/elevation/region realization; verify an authored claim on an UNLOADED tile changes canonical state without premature paint and reload realizes it; verify ingress-clearance delegation still protects streaming chunks and excludes spawn/macro dressing exactly as before.
 - Acceptance: A findings-first independent review with zero blocking defects/material evidence gaps closes D2. Blocking/material findings create `procgen-authored-claim-registry-extraction-review-corrections-1` plus paired re-review. Non-blocking-only findings may close D2 if single-owner and residency correctness are fully proven.
 - Non-goals: No redesign of claim semantics, road generation, ingress placement, worldgen intent, Archive Resolve, GenerationGrid, or D3. Do not edit reviewed D2 runtime code during review.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, review packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 

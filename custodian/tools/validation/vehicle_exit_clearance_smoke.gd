@@ -19,6 +19,7 @@ func _run() -> void:
 
 func _make_vehicle() -> PilotableVehicle:
 	var vehicle := VEHICLE.new() as PilotableVehicle
+	vehicle.fallback_vehicle_id = ""
 	root.add_child(vehicle)
 	vehicle.movement_profile = {"max_speed": 100.0, "acceleration": 1000.0, "turn_response": 1.0, "reverse_multiplier": 0.45}
 	return vehicle

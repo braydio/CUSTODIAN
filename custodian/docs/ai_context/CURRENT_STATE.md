@@ -1,5 +1,7 @@
 # CURRENT STATE — CUSTODIAN
 
+- **Procgen startup spawn residency correction (2026-10-07):** contract spawn eligibility now uses canonical valid-spawn, runtime-navigation, accepted-component, and ingress-clearance checks without requiring current TileMap paint. `ContractWorldLoader` selects first, calls `ProcGenTilemap.ensure_spawn_presentation_ready()` for the chosen cell, and restores Operator visibility/control only after exact-tile floor realization. Real generated streaming coverage proves an initially unpainted accepted-component spawn reaches contract ready; the true no-canonical-safe path remains hidden/disabled and reports `no_canonical_safe_spawn`. The independent paired review is the next gate.
+
 ## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
 
 `PilotableVehicle` is the sole production vehicle lifecycle owner. Ordinary exits
@@ -12,6 +14,23 @@ restore camera follow, and deduplicates overlapping vehicle groups. The unused
 `VehicleBase`/`VehicleInteraction` scripts and text scene template were removed.
 Focused coverage is registered as `vehicle_runtime_lifecycle`; see
 `VALIDATION_RECIPES.md` for commands.
+
+## Field Scout Buggy Mk I Class Recovery (2026-10-07)
+
+The stable `custodian_ground_buggy_scout_light` registry identity now resolves to
+`field_scout_buggy_mk1.tscn` and the semantic display name Custodian Field Scout
+Buggy Mk I. Movement remains on the exact `ground_wheeled_light` tuning; a named
+`light_scout_utility` durability profile owns its 100 HP maximum. The scene keeps
+one driver seat, 64 px entry range, 2x1 bottom-center footprint, and front-light /
+rear-utility hardpoints, with no weapon loadout. Both the authored game scene and
+registry resolver enter WRECKAGE and leave the vehicle outside operational groups
+until the reviewed restoration interaction succeeds. The existing
+`FieldRepairInteraction` becomes available after restoration and can raise the
+same vehicle above its 40 HP recovered state. The obsolete `light_buggy.tscn`
+scene name has no live runtime consumer and was removed. Existing hover art is
+explicit compatibility presentation until the Asset V2 vehicle-family slice.
+The `vehicle_field_scout_class` smoke covers the semantic class, both spawn paths,
+restoration/repair integration, and restored entry.
 
 ## Operator Dependency Injection F0 (2026-10-05)
 
@@ -1670,7 +1689,7 @@ Documentation updates this session:
 - Terminal usability includes keyboard page/action navigation, transcript link jumps, command echo fallback, auto-following text panes, and a scrollable center content column.
 - The in-world command terminal prop family is now named `command_terminal`, with compatibility fallback to the older `computer_terminal` sheets until the art rename lands.
 - Interaction prompts for turret pickup and vehicle exit now reflect the actual `interact` input binding instead of stale hardcoded keys.
-- Vehicle Registry V1 is live. Vehicle archetypes, taxonomy, movement profiles, hardpoints, loadouts, and visual kits live under `res://content/vehicles/`; runtime registry, spawn resolver, input adapter, seat bridge, and `PilotableVehicle` live under `res://game/vehicles/`. The first production ID is `custodian_ground_buggy_scout_light`, backed by the existing `LightBuggy` scene and hover buggy runtime frames. `PlayerController` routes vehicle intent, the camera can switch follow targets, and `res://tools/validate_vehicle_registry.gd` validates registry references.
+- Vehicle Registry V1 is live. Vehicle archetypes, taxonomy, movement profiles, hardpoints, loadouts, and visual kits live under `res://content/vehicles/`; runtime registry, spawn resolver, input adapter, seat bridge, and `PilotableVehicle` live under `res://game/vehicles/`. The first production ID is `custodian_ground_buggy_scout_light`, backed by the semantic `field_scout_buggy_mk1.tscn` scene; hover-buggy runtime frames remain temporary compatibility presentation until the Scout Asset V2 family lands. `PlayerController` routes vehicle intent, the camera can switch follow targets, and `res://tools/validate_vehicle_registry.gd` validates registry references.
 - `PilotableVehicle` applies the authored `turn_response` profile value without changing the Light Buggy speed/acceleration balance. Exit selection tests deterministic adjacent candidates with the Operator collision shape and navigation traversability; blocked exits leave pilot state intact.
 - Allied combat drones now have V3 anchor orders with terrain containment. On procgen maps, requested spawns and ground guard orders project onto final runtime-walkable floor before squad registration/state mutation. Follow, close/far, free-roam, intercept, guard, and recall positions feed the existing `NavigationSystem`; an authoritative empty path stops movement rather than direct-steering through void. Authored maps without procgen/navigation authority retain compatibility locomotion. `DroneManager` remains the sole squad input authority, and drones retain independent HP with no respawn/repair or independent objective-solving authority.
 - Ambient shrumbs now participate in runtime world interaction: the buggy can launch or squish passive critters on collision depending on speed, and active enemies can attack nearby shrumbs as fallback targets.
@@ -1848,7 +1867,7 @@ Slice D; the small net increase is the new shared FX-resolution helper.
 - Agent task packets are now risk-based, optional planning/handoff artifacts: skip narrow low-risk work, use the compact default when durable context helps, and expand it for high-risk or multi-session work.
 - Required production needs are tracked in `custodian/content/metadata/assets/required_assets.registry.json`; root `REQUIRED_ASSETS.md` is its generated view, and `design/00_meta/REQUIRED_ASSETS.md` is a forwarding notice.
 - The command terminal now has a licensed two-font runtime hierarchy under `res://content/ui/fonts/`: IBM Plex Sans Condensed drives the 22px title plus 11/12px section/navigation/action labels, while IBM Plex Mono Regular/Bold drives 10-13px status, body, log, Fabrication, and 16px command-input text. `ui.gd` loads all three defensively, applies semantic label/button/rich-text helpers in both terminal theme passes, ellipsizes bounded buttons/labels, and keeps Fabrication horizontal scrolling disabled. Opening the terminal forces a visible mouse pointer, restores the prior mode on close, and orders the modal scrim before the panel for reliable button/link hit testing while still blocking gameplay input. Missing font assets use the default Godot font and emit a `DevObservatory.mark_warning` entry with the missing paths so the issue appears in the game-time log/session export. `terminal_typography_smoke.gd` verifies imported font ownership, hierarchy sizes, Fabrication row/detail/filter density, flat-row labels, ellipsis, and scroll policy.
-- The Ash-Bell / Forlorn-Ritualant authored-route migration and Encounter Completion V2 record is archived at `custodian/docs/ai_context/task_packets/archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md`; its historical procgen-footprint lane remains superseded by `design/05_levels/FORLORN_RITUALANT_UNDERGROUND_MIGRATION.md`. The live chapel uses ambient captions, two-beat manual opening, optional topic menus, neutral site z inheritance, a visible lower-lift ascent before blackout, and canonical Asset V2 Ninth Answer / Orra Comes Late / dissolve / violent-death strips. Remaining production art is tracked by `required_assets.registry.json` and the blocked/manual `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md`; follow-up must preserve authored-route ownership and must not restore generic special-room insertion.
+- The Ash-Bell / Forlorn-Ritualant authored-route migration and Encounter Completion V2 record is archived at `custodian/docs/ai_context/task_packets/archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md`; its historical procgen-footprint lane remains superseded by `design/05_levels/FORLORN_RITUALANT_UNDERGROUND_MIGRATION.md`. The live chapel uses ambient captions, two-beat manual opening, optional topic menus, neutral site z inheritance, a visible lower-lift ascent before blackout, and canonical Asset V2 Ninth Answer / Orra Comes Late / dissolve / violent-death strips. `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` is the ready/auto correctness slice that removes the surviving passive Fountain stabilization path and reconciles the idle/kneel 7f-vs-8f semantic identity before further art intake; its paired review is dependency-gated. Remaining production art is tracked by `required_assets.registry.json` and the draft/auto `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md`, which now depends on the reviewed runtime-truth slice and returns to the recorded authoring chat before promotion; follow-up must preserve authored-route ownership and must not restore generic special-room insertion.
 - Autonomous combat drone runtime authority lives in `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` and implementation notes live in `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES_CODE.md`; the older task packet is archived under `custodian/docs/ai_context/task_packets/archived/`. Runtime V3 is implemented with animated allied droids, Operator/order-point anchors, and deferred production acknowledgement audio/art expansion, repair/redeploy, and terminal command UI.
 - Task packet template: `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`.
 - Active packet directory: `custodian/docs/ai_context/task_packets/`.

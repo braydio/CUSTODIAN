@@ -11,9 +11,11 @@
     "interaction_mode",
     "mobility",
     "movement_profile",
+    "durability_profile",
     "hardpoint_profile",
     "loadout",
     "visual_kit",
+    "restoration_profile",
     "runtime"
   ],
   "required_runtime_fields": ["scene", "spawnable", "pilotable"]

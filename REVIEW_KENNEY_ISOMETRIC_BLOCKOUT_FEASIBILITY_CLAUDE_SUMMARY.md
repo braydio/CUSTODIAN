@@ -16,7 +16,7 @@ The implementation run previously reported a post-sync changed-file sweep failur
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
 - Refresh reason: K3D-2 architecture and acceptance must reflect landed K3D-1 evidence plus the user's A/B judgment.
 - Next action: Return the report and comparison to the authoring chat for the user's A/B judgment, then re-author K3D-2 against current main.
 - Blockers or open questions: user A/B judgment and planning refresh are required before K3D-2.

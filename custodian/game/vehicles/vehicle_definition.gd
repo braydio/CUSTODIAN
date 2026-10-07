@@ -15,9 +15,13 @@ var interaction_mode: String = ""
 var mobility: Array[String] = []
 var tags: Array[String] = []
 var movement_profile: String = ""
+var durability_profile: String = ""
+var durability_profile_data: Dictionary = {}
 var hardpoint_profile: String = ""
 var loadout: String = ""
 var visual_kit: String = ""
+var restoration_profile: String = ""
+var restoration_profile_data: Dictionary = {}
 var runtime_scene: String = ""
 var spawnable: bool = false
 var pilotable: bool = false
@@ -43,9 +47,13 @@ static func from_dict(data: Dictionary):
 	definition.mobility = _string_array(data.get("mobility", []))
 	definition.tags = _string_array(data.get("tags", []))
 	definition.movement_profile = String(data.get("movement_profile", ""))
+	definition.durability_profile = String(data.get("durability_profile", ""))
+	definition.durability_profile_data = Dictionary(data.get("durability_profile_data", {})).duplicate(true)
 	definition.hardpoint_profile = String(data.get("hardpoint_profile", ""))
 	definition.loadout = String(data.get("loadout", ""))
 	definition.visual_kit = String(data.get("visual_kit", ""))
+	definition.restoration_profile = String(data.get("restoration_profile", ""))
+	definition.restoration_profile_data = Dictionary(data.get("restoration_profile_data", {})).duplicate(true)
 	definition.footprint = Dictionary(data.get("footprint", {})).duplicate(true)
 	definition.seat_profile = Dictionary(data.get("seat_profile", {})).duplicate(true)
 	definition.runtime = Dictionary(data.get("runtime", {})).duplicate(true)
@@ -65,6 +73,12 @@ func validate() -> PackedStringArray:
 		errors.append("%s must define at least one mobility tag" % id_or_placeholder())
 	if movement_profile.is_empty():
 		errors.append("%s missing movement_profile" % id_or_placeholder())
+	if durability_profile.is_empty():
+		errors.append("%s missing durability_profile" % id_or_placeholder())
+	elif durability_profile_data.is_empty():
+		errors.append("%s references missing durability_profile '%s'" % [id_or_placeholder(), durability_profile])
+	elif float(durability_profile_data.get("max_health", 0.0)) <= 0.0:
+		errors.append("%s durability_profile '%s' must define positive max_health" % [id_or_placeholder(), durability_profile])
 	if hardpoint_profile.is_empty():
 		errors.append("%s missing hardpoint_profile" % id_or_placeholder())
 	if loadout.is_empty():
@@ -75,6 +89,20 @@ func validate() -> PackedStringArray:
 		errors.append("%s is spawnable but has no runtime.scene" % id_or_placeholder())
 	if is_pilotable() and seat_profile.is_empty():
 		errors.append("%s is pilotable but has no seat_profile" % id_or_placeholder())
+	if spawnable and is_pilotable() and restoration_profile.is_empty():
+		errors.append("%s is spawnable and pilotable but has no restoration_profile" % id_or_placeholder())
+	if not restoration_profile.is_empty() and restoration_profile_data.is_empty():
+		errors.append("%s references missing restoration_profile '%s'" % [id_or_placeholder(), restoration_profile])
+	if not restoration_profile_data.is_empty():
+		if String(restoration_profile_data.get("initial_state", "")) != "WRECKAGE":
+			errors.append("%s restoration profile '%s' must begin in WRECKAGE" % [id_or_placeholder(), restoration_profile])
+		if float(restoration_profile_data.get("hold_duration", 0.0)) <= 0.0:
+			errors.append("%s restoration profile '%s' must have a positive hold_duration" % [id_or_placeholder(), restoration_profile])
+		var restored_fraction := float(restoration_profile_data.get("restored_health_fraction", 0.0))
+		if restored_fraction <= 0.0 or restored_fraction > 1.0:
+			errors.append("%s restoration profile '%s' must have restored_health_fraction in (0, 1]" % [id_or_placeholder(), restoration_profile])
+		if Dictionary(restoration_profile_data.get("cost", {})).is_empty():
+			errors.append("%s restoration profile '%s' must define a non-empty cost" % [id_or_placeholder(), restoration_profile])
 	if spawnable and not is_runtime_supported() and not allow_placeholder_spawn:
 		errors.append("%s uses unsupported runtime domain '%s' without allow_placeholder_spawn" % [id_or_placeholder(), domain])
 	return errors

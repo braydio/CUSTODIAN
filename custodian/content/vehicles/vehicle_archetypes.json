@@ -3,7 +3,7 @@
   "vehicles": {
     "custodian_ground_buggy_scout_light": {
       "id": "custodian_ground_buggy_scout_light",
-      "display_name_template": "{faction} {tier} {role} {chassis}",
+      "display_name_template": "Custodian Field Scout Buggy Mk I",
       "faction": "CUSTODIAN",
       "domain": "GROUND",
       "chassis": "BUGGY",
@@ -14,9 +14,11 @@
       "mobility": ["WHEELED"],
       "tags": ["INDUSTRIAL", "FIELD_REPAIRED", "MILSPEC"],
       "movement_profile": "ground_wheeled_light",
+      "durability_profile": "light_scout_utility",
       "hardpoint_profile": "utility_light",
       "loadout": "none",
-      "visual_kit": "custodian_hover_buggy_light",
+      "visual_kit": "custodian_field_scout_buggy_mk1_compat_hover",
+      "restoration_profile": "field_scout_recovery_light",
       "seat_profile": {
         "driver_seats": 1,
         "passenger_seats": 0,
@@ -32,7 +34,7 @@
         "cover_profile": "LIGHT"
       },
       "runtime": {
-        "scene": "res://game/actors/vehicles/light_buggy.tscn",
+        "scene": "res://game/actors/vehicles/field_scout_buggy_mk1.tscn",
         "spawnable": true,
         "pilotable": true,
         "requires_runtime_support": ["GROUND", "WHEELED"]

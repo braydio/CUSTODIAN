@@ -1,67 +1,100 @@
-# OPERATOR 2.5D WORKBENCH PRODUCTION QUEUE
+# OPERATOR 2.5D WORKBENCH PRODUCTION QUEUE + GENERATION BRIEFS
 
-> **PRE-AUTHORED / REFRESH REQUIRED BEFORE IMPLEMENTATION**
->
-> Refresh after WB25-3 + paired review land. Consume landed state; do not invent
-> another progress database.
+> PRE-AUTHORED / REFRESH REQUIRED BEFORE IMPLEMENTATION  
+> Refresh after WB25-4 + paired review land. Consume the landed target/review state; do not invent another progress database.
 
-- Packet schema: `custodian.task_packet.v2`
-- Workstream: `operator-2-5d-workbench-production-queue`
-- Status: `draft`
-- Dispatch: `auto`
-- Priority: `P1`
-- Depends on: `review-operator-2-5d-workbench-review-automation`
-- Locks: `operator-workbench-ui, operator-animation-plan`
-- Kind: `implementation`
-- Review: `auto`
-- Review stage: `post-land`
-- Review modes: `code, architecture, workflow`
-- Paired review workstream: `review-operator-2-5d-workbench-production-queue`
-- Review cycle: `0`
-- Max automatic review cycles: `2`
-- Review rationale: `substantial engineering default`
-- Reviewed main: `f8ef4c84adf8f332713d4284a4c3aaa89ef51fb0`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
-- Visual review: `none`
-- Goal: Turn the landed 2.5D target state into an honest production queue/dashboard with next-action guidance and deterministic generation-brief export while preserving the human-authored plan as priority authority.
-- Completion boundary: Migration-aware queue over target/ingress/review state; progress/family closure; filters; next-action explanation; generation-brief bundles; close roadmap. No production runtime cutover.
-- Current measured state: pre-authored; exact target counts/state await WB25-1..3.
-- Evidence: refresh with live target plan, state projection, review receipts, old UX4.
-- Task-specific authority: implementation plan for rank/priority; target projection for coverage/workflow; review receipts for verified state; canonical reference for generation brief.
-- Work surface: Queue/Plan UI; service/state projection; Operator generation-brief exporter; roadmap/docs; focused UI/export tests.
+- Packet schema: custodian.task_packet.v2
+- Workstream: operator-2-5d-workbench-production-queue
+- Status: draft
+- Dispatch: auto
+- Priority: P1
+- Depends on: review-operator-2-5d-workbench-review-automation
+- Locks: operator-workbench-ui, operator-animation-plan
+- Kind: implementation
+- Review: auto
+- Review stage: post-land
+- Review modes: code, architecture, workflow
+- Paired review workstream: review-operator-2-5d-workbench-production-queue
+- Review cycle: 0
+- Max automatic review cycles: 2
+- Review rationale: substantial engineering default
+- Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Visual review: none
+- Goal: Turn the landed 2.5D target/workflow/review state into an honest production queue and deterministic generation-brief exporter so the next animation to author is obvious and returned source-work can re-associate with the exact target.
+- Completion boundary: Add queue/dashboard projections, progress/family closure, NEXT explanation, filters, and local generation-brief bundles. Preserve human plan rank/priority. No network generation and no production runtime cutover.
+- Current measured state: PlanTable exists and OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json owns rank/priority; Workbench has browser/session/review state but no generation-aware family queue or source-generation brief bundle; exact final target counts await WB25-1..4.
+- Evidence: custodian/tools/operator/ui/widgets/plan_table.py; custodian/tools/operator/ui/service.py; design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json; landed target/review receipts after dependency.
+- Task-specific authority: v2 implementation plan for rank/priority; target projection for coverage/workflow; review receipts for PUBLISHED/RUNTIME_VERIFIED; canonical reference/profile for brief input.
+- Work surface: recommended custodian/tools/operator/operator_generation_brief.py; ui/service.py; app.py; plan_table.py or recommended queue_table.py; target/review owner modules from predecessors; roadmap/current-state docs where live behavior changes.
 - Change:
-  1. Filters at least `NEXT, MISSING, INTAKE, EDITING, REVIEW, STALE, FALLBACK/PROJECTED, PUBLISHED, VERIFIED, ALL`.
-  2. Preserve authored rank/priority/state. NEXT may skip blocked work only with explanation and may not rewrite the plan.
-  3. Show family completion by canonical required directions/layers; fallback/projected never counts.
-  4. Family-close tie-break may operate only inside equal authored priority/rank semantics and must expose its reason.
-  5. Show stage/priority totals and truthful remaining-work count.
-  6. Queue cell selects same identity as tree/matrix.
-  7. `Export Generation Brief` bundles canonical direction reference, landmarks/guide overlay, semantic/generation/profile/reference SHA, required layer/frame/timing contract, adjacent reviewed poses/sequence context, relevant presentation event metadata, and concise `PROMPT.txt`/structured brief.
-  8. Export is local only: no network/image-generation call and no auto-ingest.
-  9. Brief hashes/identity allow returned art to re-associate with exact target leaf.
-  10. Stale/blocked packages are separate from missing-art counts.
-  11. Supersede `OPERATOR_WORKBENCH_UX_WORK_QUEUE.md` as queue/coverage authority.
-  12. Update roadmap with live remaining counts and recommend first production art tranche; do not author runtime cutover.
-- Preserve: plan order authority, target/ingress/review state ownership, publication safety, legacy browser.
-- Non-goals: autonomous plan mutation, background workers, network generation, runtime cutover, legacy deletion, broad UX polish.
-- Acceptance: queue totals exactly reconcile to target projection; no contradictory terminal states; fallback remains incomplete; NEXT explanation reproducible; generation brief correct and stale-safe; tree/matrix/queue identity equivalent; old UX4 cannot claim as competing queue.
-- Validation: refresh exact tests; minimum reconciliation/count invariants, blocked NEXT, fallback negative control, brief hash/idempotency, stale-export refusal, identity equivalence, `git diff --check`.
-- Task overrides: `none`
-- Deferred: production runtime cutover, actual art production packets, later UX polish.
+  1. Filters at least NEXT, MISSING, INTAKE, EDITING, REVIEW, STALE, FALLBACK/PROJECTED, PUBLISHED, VERIFIED, ALL.
+  2. Preserve authored rank/priority/state. Computed workflow never rewrites plan order.
+  3. NEXT may skip a blocked item only with a deterministic visible reason.
+  4. Show family completion by required canonical directions/layers. Legacy/fallback/projected never count.
+  5. Equal-priority family-close tie-break may prefer finishing a nearly complete family, but must expose the reason and may not jump a higher authored priority/rank.
+  6. Queue totals reconcile exactly to target projection and review receipts. No independent stored progress counters.
+  7. Queue/tree/matrix select the same authoring identity.
+  8. Export Generation Brief creates a local immutable bundle under .ai/operator_animation_workbench/generation_briefs/<brief-id>/.
+  9. Bundle minimum:
+     - manifest.json;
+     - PROMPT.txt;
+     - exact canonical direction reference;
+     - adjacent direction references when useful;
+     - profile/registration guide overlay;
+     - semantic/art-generation/profile/reference SHA;
+     - required frame/layer/timing contract;
+     - accepted motion donor/sequence context when available;
+     - relevant presentation event metadata;
+     - target identity/hash for re-association.
+  10. Export is deterministic for identical target authority/hashes and fails stale if profile/reference/plan changes.
+  11. No network/image-generation API call. The user/agent may take PROMPT + refs to an external generator manually.
+  12. When returned art is imported, WB25-2 uses brief identity/hash to associate it; filename alone is never authority.
+  13. Supersede OPERATOR_WORKBENCH_UX_WORK_QUEUE.md as migration queue authority without deleting unrelated historical UX guidance.
+- Preserve: plan human priority authority; target/review state ownership; legacy browser; Workbench publication; local-only generated briefs.
+- Non-goals: no autonomous generation; no plan mutation; no background workers; no runtime cutover; no legacy deletion; no broad UX restyle.
+- Acceptance: queue totals equal target projection exactly; NEXT is reproducible; fallback remains incomplete; family completion agrees with matrix; a generation brief for a test idle target contains correct reference/profile/frame hashes and is byte-stable on repeated export; stale authority refuses export; imported source can resolve back to the same target using manifest identity.
+- Validation: focused reconciliation/count invariants, blocked NEXT, fallback negative control, family completion, brief idempotency/hash, stale export, target re-association, queue/tree/matrix identity; operator_workbench_ui_smoke.py as needed; changed validation + git diff --check.
+- Task overrides: none
+- Deferred: runtime cohort promotion; actual art-production automation/network generation.
+
+## Recommended brief manifest
+
+~~~json
+{
+  "schema": "custodian.operator_generation_brief.v1",
+  "brief_id": "...",
+  "target": {
+    "art_generation": "operator_2_5d_128",
+    "profile": "unarmed",
+    "group": "posture",
+    "action": "idle_relaxed_01",
+    "direction": "ne",
+    "layer": "full_body"
+  },
+  "frame_contract": {"frames": 15, "frame_size": [128,128]},
+  "canonical_profile_sha256": "...",
+  "canonical_reference_sha256": "...",
+  "plan_fingerprint": "...",
+  "motion_donor": {"identity": "...", "sha256": "..."}
+}
+~~~
 
 ## Refresh Planning Authority
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
-- Refresh instruction: `Bring WB25-3 + review evidence and current target counts. Re-derive queue fields, completion math, NEXT tie-breaks, generation-brief inputs, UX4 disposition and validation before ready.`
+
+- Refresh owner: chatgpt-user
+- ChatGPT/user planning refresh required: yes
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Refresh instruction: Bring WB25-4 + review receipts and live target/review counts to this chat. Re-derive final queue fields/counts, NEXT tie-break, brief inputs, old UX4 disposition and tests before ready.
 
 ## Handoff
-- Next workstream: `review-operator-2-5d-workbench-production-queue`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+
+- Next workstream: review-operator-2-5d-workbench-production-queue
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
 - Summary backlink: include exact Authoring chat URL
-- Refresh reason: `none after refresh`
-- Next action: `paired review, then return to this chat for art-production/runtime planning`
-- Blockers or open questions: `packet must be refreshed before claim`
+- Refresh reason: none after refresh/implementation
+- Next action: paired review
+- Blockers or open questions: packet must be refreshed before claim

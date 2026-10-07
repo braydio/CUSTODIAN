@@ -51,8 +51,6 @@ func spawn_definition(definition: VehicleDefinition, parent: Node, global_positi
 	parent.add_child(vehicle)
 	vehicle.add_to_group("vehicle")
 	vehicle.add_to_group("vehicles")
-	if definition.is_pilotable():
-		vehicle.add_to_group("pilotable_vehicles")
 	return vehicle
 
 

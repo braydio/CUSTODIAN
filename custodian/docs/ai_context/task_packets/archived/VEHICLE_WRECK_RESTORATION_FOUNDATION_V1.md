@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vehicle-wreck-restoration-foundation-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-vehicle-runtime-lifecycle-hardening-v1`
@@ -50,4 +50,69 @@
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Refresh reason: `none`
 - Next action: Finish normally so fresh-context review can prove the recovery lifecycle before the Scout class recovery runs.
-- Blockers or open questions: `Superseded agent/vehicle-field-scout-buggy-class-v1 contains donor commit b3b40921 and must be preserved then released before overlapping vehicle-content locks can be claimed.`
+- Blockers or open questions: `none`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `vehicle_registry_contract`, `vehicle_runtime_lifecycle`, `vehicle_exit_clearance`, and `vehicle_wreck_restoration` passed; focused implementation changed-file closeout passed with 8/8 checks and complete coverage before packet archival. Final post-archive `--changed` selected 15 checks (10 passed, 1 failed, 4 skipped) with complete coverage; its sole failure is `review_pairing_contract`, which reproduces on clean `origin/main` with the same six unrelated packet-metadata failures. Registry validation and `git diff --check` passed.
+- Outcome: `complete`
+- Landed behavior: `Spawnable pilotable definitions resolve a restoration profile. The Field Scout starts at zero-health WRECKAGE with no destruction event, no pilotable/parent-interaction exposure, and one child restoration interaction. Completed holds pay 12 ruin_scrap, 6 structural_alloy, and 1 power_components through ResourceLedger, then restore the same vehicle at 40 HP and emit vehicle_restored. Lethal damage removes operational groups and reactivates the same interaction for repeat recovery. Resolver and direct scene fallback agree.`
+- Focused coverage: `custodian/tools/validation/vehicle_wreck_restoration_smoke.gd`, registered as `vehicle_wreck_restoration`; `vehicle_registry_contract` covers the restoration identity schema and validator.
+- Validation: `vehicle_registry_contract` PASS; `vehicle_runtime_lifecycle` PASS; `vehicle_exit_clearance` PASS; `vehicle_wreck_restoration` PASS; focused changed-file closeout PASS (8 selected, 8 passed, complete coverage); final post-archive changed-file sweep has one baseline-confirmed unrelated review-pairing failure; `git diff --check` PASS.
+- Deferred: `Save/load persistence across world reconstruction, class-specific restoration presentation, and economy tuning remain deferred. The prior Field Scout class donor is archived at b3b40921 and its recovery packet remains gated on this paired review.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `A fresh isolated worktree required a full Godot editor import before headless scripts could resolve global classes and imported resources. The final post-archive changed-file sweep selected a repository-wide review-pairing test that fails on six unrelated packet-metadata defects; the same failures reproduce on clean origin/main. The implementation-focused checks remain green.`
+- Root cause / contributing factors: `The worktree had no .godot import cache; schema/validator coverage needed a dedicated manifest test; current main contains unrelated paired-review metadata drift.`
+- Prevention / pipeline improvement: `Initialize Godot imports in cold worktrees, give schema/registry validator changes a dedicated manifest owner, and route existing packet-pairing drift to its owning workstreams.`
+- Tooling / docs drift discovered: `review_pairing_contract reports six existing packet metadata errors on unchanged origin/main; check_ai_context also reports ten unrelated packet grammar/required-field findings.`
+- Follow-up: `manual-follow-up`
+- What worked: `A single focused runtime smoke exercised resolver and direct-scene parity, resource refusal, interruption and range cancellation, exact payment, same-instance restoration, vehicle entry, lethal re-wreck, and repeated restoration.`
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-vehicle-wreck-restoration-foundation-v1`
+- Reviewed on main: `ebf737b5111b7efa6db5e6ceaa6f50da44f0fee4`
+- Review modes: `code, architecture, runtime`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_VEHICLE_WRECK_RESTORATION_FOUNDATION_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `vehicle-wreck-restoration-foundation-v1-review-corrections-1`
+
+### Findings
+
+- **R0-01** (`blocking_defect`, domain `runtime`, affected acceptance: the four-second hold must be an actual hold and interrupted restoration must cancel without payment): `VehicleRestorationInteraction.interact()` starts `_hold_elapsed` on one invocation, then `_physics_process()` completes after four seconds without checking whether the Operator still holds the Interact action. The production Operator routes only `_input_frame.just_pressed(&"interact")` to `interaction_target.interact(self)` and has no release/cancel dispatch. Therefore a tap starts a full restoration, releasing Interact does not cancel it, and the smoke's direct `cancel_restoration()` call does not prove real input cancellation. Evidence: `custodian/game/vehicles/vehicle_restoration_interaction.gd` (`interact`, `_physics_process`); `custodian/game/actors/operator/operator.gd` (`_handle_interact_input`); `custodian/tools/validation/vehicle_wreck_restoration_smoke.gd` (`_check_full_recovery_loop`). Disposition: `correction_required` — correction packet `vehicle-wreck-restoration-foundation-v1-review-corrections-1` plus its paired review.
+
+### Verification Performed
+
+- **Code/architecture:** reviewed exact landed commit `ebf737b5111b7efa6db5e6ceaa6f50da44f0fee4` and its parent `97262b6e8`; inspected active `VEHICLES.md`, archived acceptance, spawn resolver, registry/profile loading, lifecycle transitions, interaction component, Operator interaction dispatch, and restoration smoke. The review packet's `Reviewed main: 5020df4b88a2` field was stale relative to the actual landed commit; the commit under review was established from `origin/main` and scoped directly.
+- **Runtime:** fresh runs via `python3 custodian/tools/validation/run_validation.py --test <id> --json`: `vehicle_wreck_restoration` PASS; `vehicle_registry_contract` PASS; `vehicle_runtime_lifecycle` PASS; `vehicle_exit_clearance` PASS. Existing exit-blockage tests emit their expected blocked-exit warning. Restoration smoke emits the recorded SceneTree shutdown leak warning while its assertions pass.
+- `git diff --check ebf737b51^ ebf737b51`: PASS.
+- **Acceptance result:** initial wreck state, no fake destruction, group separation, exact configured payment, same-instance restoration, lethal re-wreck, and repeat recovery are covered and pass. The actual physical-hold/release contract is not implemented or exercised, so the foundation does not pass review until R0-01 is corrected and re-reviewed.
+
+## Next Handoff
+
+- Next workstream: `review-vehicle-wreck-restoration-foundation-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Refresh reason: `none`
+- Next action: `Finish this implementation and claim the fresh-context paired review after it becomes eligible.`
+- Blockers or open questions: `none`
