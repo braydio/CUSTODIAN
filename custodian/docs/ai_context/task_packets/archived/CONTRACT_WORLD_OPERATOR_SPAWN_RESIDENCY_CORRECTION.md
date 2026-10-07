@@ -52,8 +52,8 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: `the exact Archive Resolve install-phase assertion and trace-index reads needed adjustment for the new readiness phase; the original fail-closed fixture requires a fully painted setup, so residency coverage was separated into a generated streaming smoke. The broad changed-file sweep is blocked by unrelated repository-wide review-pairing drift.`
-- Root cause / contributing factors: `one test encoded fixed trace positions; the existing fail-closed fixture intentionally disables streaming; unrelated active visual-review packets contain pairing metadata drift.`
+- What went wrong: `the exact Archive Resolve install-phase assertion and trace-index reads needed adjustment for the new readiness phase; the original fail-closed fixture requires a fully painted setup, so residency coverage was separated into a generated streaming smoke. The broad changed-file sweep is blocked by unrelated repository-wide review-pairing drift. Main synchronization also conflicted in the task-packet README because main added packet-index entries in the same area; the resolution preserved those main entries and regenerated the managed index for this archived packet.`
+- Root cause / contributing factors: `one test encoded fixed trace positions; the existing fail-closed fixture intentionally disables streaming; unrelated active visual-review packets contain pairing metadata drift; main advanced the same packet README during this run.`
 - Prevention / pipeline improvement: `keep phase-order checks synchronized with named install phases; isolate streamed presentation preconditions from fully painted ingress fixtures; repair the unrelated review-pairing drift in its owning workstream.`
 - Tooling / docs drift discovered: `changed-file validation reaches an unrelated failing review_pairing_contract unit and skips higher tiers after that unit failure.`
 - Follow-up: `manual-follow-up`
