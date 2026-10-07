@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-vehicle-wreck-restoration-foundation-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `vehicle-wreck-restoration-foundation-v1`
@@ -31,11 +31,17 @@
 
 ## Handoff
 
-- Next workstream: `vehicle-field-scout-buggy-class-v1-recovery-1 if passed`
+- Next workstream: `vehicle-wreck-restoration-foundation-v1-review-corrections-1`
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
-- Refresh reason: `Only landed API/path reconciliation unless review findings invalidate the class contract.`
-- Next action: Review restoration independently, then release the Scout class recovery on pass.
-- Blockers or open questions: `none`
+- Refresh reason: `R0-01 confirms restoration currently completes after a tap without requiring a continuous Interact hold; the class recovery remains gated until correction and paired re-review pass.`
+- Next action: Implement the held-input correction and run its paired fresh-context review before claiming Scout class recovery.
+- Blockers or open questions: `R0-01: restoration must cancel free when Interact is released before completion.`
+
+## Completion
+
+- Completion: Review found one blocking runtime defect (`R0-01`) and created the bounded correction/re-review pair. The vehicle class recovery remains dependency-gated.
+- Archived target receipt: `custodian/docs/ai_context/task_packets/archived/VEHICLE_WRECK_RESTORATION_FOUNDATION_V1.md` → `## Independent Review`.
+- Detailed review: `REVIEW_VEHICLE_WRECK_RESTORATION_FOUNDATION_V1_CLAUDE_SUMMARY.md`.
