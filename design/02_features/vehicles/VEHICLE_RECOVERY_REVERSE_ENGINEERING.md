@@ -70,18 +70,22 @@ A vehicle-component fabrication recipe may specify:
 
 ```json
 {
-  "requires_vehicle_knowledge": {
-    "domain": "MOBILITY",
-    "level": 2
-  },
-  "requires_pattern": {
-    "pattern_id": "electrohydraulic_steering_rack",
-    "evidence": 2
-  }
+  "requires_vehicle_knowledge": [
+    {
+      "domain": "MOBILITY",
+      "level": 2
+    }
+  ],
+  "requires_vehicle_patterns": [
+    {
+      "pattern_id": "electrohydraulic_steering_rack",
+      "evidence": 2
+    }
+  ]
 }
 ```
 
-Both requirements must be satisfied before `FabPipeline` exposes the recipe as fabricable.
+Both requirements must be satisfied before `FabPipeline` exposes the recipe as fabricable. Arrays are the canonical schema so one recipe can require multiple domains or patterns. A compatibility reader may normalize an older singular object at the boundary, but content should not author two permanent forms.
 
 Knowledge unlocks the **recipe**. It never creates the physical part.
 
@@ -129,6 +133,20 @@ Steering actuator:
 ```
 
 The wreck itself becomes a long-lived objective until the player understands and fabricates what it needs.
+
+## Starter Scout component recipes
+
+The three first-service recipes intentionally preserve the original raw material bill while moving those materials behind real fabrication:
+
+| Component | Raw fabrication inputs | Build time |
+| --- | --- | ---: |
+| `field_drive_coupler_mk1` | 5 ruin scrap + 2 structural alloy | 4.5 s |
+| `custodian_control_relay_mk1` | 2 ruin scrap + 1 power component | 3.5 s |
+| `structural_brace_kit_mk1` | 5 ruin scrap + 4 structural alloy | 4.0 s |
+
+Combined: 12 ruin scrap + 6 structural alloy + 1 power component, matching the old direct-restoration material bill. This is a mechanics migration, not a hidden first-vehicle cost increase.
+
+Completed component outputs belong to `InventoryManager`. `BuildInventory` remains reserved for Ready Build / placement tokens and must not become a vehicle-parts ledger.
 
 ## Field Scout onboarding
 

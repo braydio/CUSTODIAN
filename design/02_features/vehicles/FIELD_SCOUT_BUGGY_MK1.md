@@ -238,8 +238,10 @@ Lifecycle V1 closes the occupied-disable/destruction/teardown stranding path, ce
 2. `vehicle-wreck-restoration-foundation-v1` + correction/re-review - generic world-spawn wreckage and held restoration lifecycle.
 3. `vehicle-diagnosis-knowledge-v1` - vehicle scanning, domain knowledge, and pattern evidence.
 4. `vehicle-part-fabrication-recovery-v1` - R0 direct-material exception plus R1+ fabricated assembly recovery.
-5. `vehicle-field-scout-buggy-class-v1-recovery-1` - concrete semantic Scout class over the reviewed service-recovery loop.
-6. `vehicle-field-scout-buggy-asset-v2` - Asset V2 family plus wreck/restoration presentation and family-driven vehicle post-processing.
+5. `vehicle-field-scout-buggy-class-v1-recovery-1` - semantic Scout class is landed/reviewed; review R0-01 requires the existing component-recovery correction after slice 4 review.
+6. `vehicle-field-scout-buggy-class-v1-recovery-1-review-corrections-1` - migrate the landed Scout profile/smoke to reviewed R1 component recovery.
+7. `vehicle-field-scout-buggy-asset-v2` - Asset V2 family plus wreck/restoration presentation and family-driven vehicle post-processing.
+8. `vehicle-recovery-presentation-manifests-v1` - shared diagnostic/install FX and replacement-component UI/prop family contracts.
 
 Each implementation slice receives paired fresh-context review before its successor is eligible.
 
