@@ -1,0 +1,52 @@
+# PROCGEN ARCHIVE RESOLVE FRONTIER RESTRAINT REVIEW CORRECTIONS 2
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `procgen-archive-resolve-frontier-restraint-review-corrections-2`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `review-procgen-archive-resolve-frontier-restraint-review-corrections-1`
+- Locks: `procgen-presentation`
+- Kind: `correction`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, runtime`
+- Paired review workstream: `review-procgen-archive-resolve-frontier-restraint-review-corrections-2`
+- Review cycle: `2`
+- Max automatic review cycles: `2`
+- Reviewed main: `911e8871e77c7505a574334d5ab714b5458c7b94`
+- Parent implementation: `procgen-archive-resolve-frontier-restraint`; archived `PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT.md`
+- Parent review: `review-procgen-archive-resolve-frontier-restraint-review-corrections-1`; archived `REVIEW_PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT_REVIEW_CORRECTIONS_1.md`
+- Findings addressed: `R1-02, R1-03`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
+- Affected acceptance: Correction 1 acceptance 3/5 (hidden later COMMIT stays veiled; uncommitted cover remains veiled), its explicit unknown-mask deferral requirement, and AR4 committed-only/frontier-admitted starts.
+- Current defect/evidence: R1-02: `_ingress_pocket_commits_pending` survives `_release_tile()`/unload, while `_settle_visible_ingress_pocket_commits()` accepts any `_states.has(tile)`. After COMMIT -> unload -> reacquisition REQUEST with no COMMIT -> advance, state REQUESTED(1) becomes absent/settled(0), veil true becomes false. R1-03: after hidden pocket COMMIT, `advance(..., NO_OPERATOR_TILE, ...)` skips pending settlement but starts its READY record through the ungated ordinary fallback; after 0.6 presentation seconds veil is false with `has_center=false`.
+- Goal: Pending ingress pocket commits remain bound to committed tile identity, and hidden ingress cells cannot start resolving while their visibility mask has no center.
+- Completion boundary: Close R1-02 and R1-03 within the presentation owner, preserving the now-passing canonical R1-01 hidden-pocket fixtures and visible pocket readability.
+- Current measured state: The correction 1 AR4 smoke and its original existing-cell/COMMIT-time regressions pass. Fresh bounded owner probes reproduce both defects; a clean REQUESTED negative control remains veiled and a visible later COMMIT settles on the next update.
+- Evidence: `REVIEW_PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md` contains exact executable probe and traces; `procgen_reveal_presentation.gd::note_tile_committed/_settle_visible_ingress_pocket_commits/_release_tile/advance`; correction 1 archived packet and independent review receipt.
+- Task-specific authority: Parent AR4 packet and `design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`; correction 1's committed-only and unknown-visibility deferral requirements. `ProcGenVisualFrontier` and canonical wall authority remain read-only inputs.
+- Work surface: `custodian/game/world/procgen/streaming/procgen_reveal_presentation.gd`; bounded regressions in `custodian/tools/validation/procgen_archive_resolve_frontier_restraint_smoke.gd`; validation manifest only if needed.
+- Required correction: R1-02: invalidate pending entries when their veil identity is released and guard immediate settlement by a committed state; REQUESTED cover must never inherit an earlier identity's COMMIT. R1-03: preserve visibility deferral for ingress pocket cells when the Operator center is unavailable, including the ordinary READY fallback; do not let that fallback defeat the explicit unknown-mask guard. Already-RESOLVING cells continue finishing monotonically.
+- Preserve: Immediate visible existing-pocket settlement and visible later-COMMIT settlement on the next initialized frontier update; original hidden-pocket tests; frontier-disabled compatibility; 84 starts/s and burst cap; AR3 ingress identity/timing; settled memory; request-before-COMMIT; streaming, lifecycle, cache, generation, collision/navigation, shader, semantic echo and pause behavior.
+- Non-goals: No distance/camera/time-budget redesign, shader/art tuning, Operator placement change, FoW/discovery, re-unresolve, or gameplay/streaming authority change. Do not change generic unavailable-camera behavior.
+- Acceptance:
+  1. R1-02: COMMIT -> unload -> reacquisition REQUEST -> advance without COMMIT preserves REQUESTED state and veil; no stale pending settlement survives released identity. Ordinary uncommitted cover still stays veiled.
+  2. R1-03: an existing hidden READY pocket cell and a hidden cell COMMITted during ingress stay veiled while no visibility center exists; restoring a valid center still preserves occlusion, and opening the blocker admits them through the existing frontier path.
+  3. R1-02/R1-03: visible committed pocket cells retain prompt settlement; already-RESOLVING cells finish monotonically; all canonical R1-01 regressions stay green.
+  4. R1-02/R1-03: frontier-disabled compatibility and streaming/COMMIT/collision/navigation authority remain unchanged; configured start/mask work stays bounded.
+- Validation: Add/run the two owner regressions first, with clean REQUESTED and visible later-COMMIT controls. Then run `procgen_archive_resolve_frontier_restraint`, `contract_world_archive_resolve_ingress`, `procgen_reveal_presentation`, `procgen_archive_resolve_semantic_echo`, `procgen_pause_aware_streaming`, and `procgen_performance_baseline_quick`; changed-file validation and `git diff --check` at closeout.
+- Visual review: `none`
+- Task overrides: `none`
+- Deferred: Subjective AR4 temporal game feel remains the previously accepted playtest decision; these are deterministic correctness fixes.
+
+## Next Handoff
+
+- Next workstream: `review-procgen-archive-resolve-frontier-restraint-review-corrections-2`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73`
+- Refresh reason: `none`
+- Next action: After correction 2 lands, claim its paired fresh-context review. This is the final allowed automatic correction cycle.
+- Blockers or open questions: Correction 2 must close R1-02 and R1-03; no design decision is missing.
