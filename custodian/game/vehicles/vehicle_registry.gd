@@ -3,9 +3,11 @@ extends Node
 
 const VehicleDefinitionScript = preload("res://game/vehicles/vehicle_definition.gd")
 const DEFAULT_ARCHETYPES_PATH := "res://content/vehicles/vehicle_archetypes.json"
+const DEFAULT_RESTORATION_PROFILES_PATH := "res://content/vehicles/vehicle_restoration_profiles.json"
 
 var vehicles: Dictionary = {}
 var load_errors: PackedStringArray = PackedStringArray()
+var restoration_profiles_path := DEFAULT_RESTORATION_PROFILES_PATH
 
 
 func _ready() -> void:
@@ -20,12 +22,16 @@ func load_registry(path := DEFAULT_ARCHETYPES_PATH) -> void:
 	if root.is_empty():
 		load_errors.append("Vehicle registry is empty or unreadable: %s" % path)
 		return
+	var restoration_root := _read_json_dictionary(restoration_profiles_path)
+	var restoration_profiles := Dictionary(restoration_root.get("profiles", {}))
 	var vehicle_data := Dictionary(root.get("vehicles", {}))
 	for vehicle_id in vehicle_data.keys():
 		var data := Dictionary(vehicle_data[vehicle_id])
 		if not data.has("id"):
 			data["id"] = String(vehicle_id)
 		var definition = VehicleDefinitionScript.from_dict(data)
+		if not definition.restoration_profile.is_empty():
+			definition.restoration_profile_data = Dictionary(restoration_profiles.get(definition.restoration_profile, {})).duplicate(true)
 		var errors: PackedStringArray = definition.validate()
 		if not errors.is_empty():
 			load_errors.append_array(errors)

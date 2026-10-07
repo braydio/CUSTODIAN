@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "field_scout_recovery_light": {
+      "initial_state": "WRECKAGE",
+      "cost": {
+        "ruin_scrap": 12,
+        "structural_alloy": 6,
+        "power_components": 1
+      },
+      "hold_duration": 4.0,
+      "restored_health_fraction": 0.4
+    }
+  }
+}

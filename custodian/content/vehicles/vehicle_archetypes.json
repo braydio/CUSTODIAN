@@ -17,6 +17,7 @@
       "hardpoint_profile": "utility_light",
       "loadout": "none",
       "visual_kit": "custodian_hover_buggy_light",
+      "restoration_profile": "field_scout_recovery_light",
       "seat_profile": {
         "driver_seats": 1,
         "passenger_seats": 0,

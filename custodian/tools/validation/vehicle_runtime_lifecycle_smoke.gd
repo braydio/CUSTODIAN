@@ -64,6 +64,7 @@ func _make_fixture(label: String) -> Dictionary:
 	world.add_child(camera)
 	var vehicle := VEHICLE_SCRIPT.new() as PilotableVehicle
 	vehicle.name = "LifecycleVehicle"
+	vehicle.fallback_vehicle_id = ""
 	vehicle.position = Vector2.ZERO
 	vehicle.exit_search_radii_px = PackedFloat32Array([48.0, 72.0])
 	vehicle.exit_search_direction_count = 8

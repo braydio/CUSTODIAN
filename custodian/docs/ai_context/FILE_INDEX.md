@@ -646,16 +646,19 @@ Last updated: 2026-10-02
 - `custodian/game/world/placement/world_placement_context.gd` — accepted-map read handle, defensive level-data snapshots, typed anchor/compound queries, region/intensity/floor/transform reads, deterministic seed primitive, and explicit observability callback for placement services
 - `custodian/game/world/placement/README.md` — placement-context API, immutability boundary, and staged ownership plan; ContractWorldLoader remains lifecycle and placement-order authority
 - `custodian/tools/validation/world_placement_context_smoke.gd` — deterministic/read-only context fixture covering snapshots, spawn/compound queries, map reads, seed parity, observability, and expired-map behavior
-- `custodian/game/vehicles/vehicle_definition.gd` — vehicle archetype data loader, display-name generator, tag/mobility helpers, and core definition validation for registry-backed vehicles
-- `custodian/game/vehicles/vehicle_registry.gd` — registry store for `res://content/vehicles/vehicle_archetypes.json`, including ID lookup and faction/domain/chassis/role/tier/pilotable queries
-- `custodian/game/vehicles/vehicle_spawn_resolver.gd` — registry ID to live scene resolver; validates runtime support, instantiates scenes, applies definitions, and assigns vehicle groups
-- `custodian/game/vehicles/pilotable_vehicle.gd` — sole pilotable vehicle lifecycle authority for movement, damage/destruction, disable/teardown release, pilot property restoration, terrain multipliers, and interaction prompts
+- `custodian/game/vehicles/vehicle_definition.gd` — vehicle archetype loader and validator for runtime identity, restoration-profile identity/data, class queries, and spawn contracts
+- `custodian/game/vehicles/vehicle_registry.gd` — registry store for archetypes and restoration profiles, including ID lookup and faction/domain/chassis/role/tier/pilotable queries
+- `custodian/game/vehicles/vehicle_spawn_resolver.gd` — registry ID to live scene resolver; validates runtime support and profiles, applies definitions, and leaves pilotable-group ownership to vehicle lifecycle state
+- `custodian/game/vehicles/pilotable_vehicle.gd` — sole vehicle lifecycle authority for movement, disable/destruction, wreck initialization/restoration, pilot release, group eligibility, and interaction prompts
+- `custodian/game/vehicles/vehicle_restoration_interaction.gd` — wreck-owned hold interaction that checks ResourceLedger availability, cancels without spending, and charges only after completion validation
 - `custodian/tools/validation/vehicle_runtime_lifecycle_smoke.gd` — focused occupied disable/destruction/teardown and blocked-exit smoke, including pilot restoration, controller/camera handoff, and duplicate group discovery
+- `custodian/tools/validation/vehicle_wreck_restoration_smoke.gd` — resolver/direct-scene wreck parity, group and prompt truth, free cancellation, exact ledger payment, actual entry, lethal re-wreck, and repeat restoration
+- `custodian/content/vehicles/vehicle_restoration_profiles.json` — registered wreck initialization and material/hold/health restoration contracts
 - `custodian/game/vehicles/vehicle_input_adapter.gd` — guarded InputMap reader used by `PlayerController` for vehicle movement/action intent
 - `custodian/game/vehicles/vehicle_seat.gd` — small seat/entry bridge used by pilotable vehicle scenes
 - `custodian/game/vehicles/scenes/pilotable_vehicle_base.tscn` — reusable base scene layout for registry-backed pilotable vehicles
-- `custodian/content/vehicles/*.json` — vehicle taxonomy, archetypes, movement profiles, hardpoint profiles, loadouts, visual kits, and registry schema data
-- `custodian/tools/validate_vehicle_registry.gd` — headless registry validator for taxonomy values, required fields, referenced profiles/loadouts/kits, runtime scenes, pilotable seat/profile requirements, and unsupported spawnable domains
+- `custodian/content/vehicles/*.json` — vehicle taxonomy, archetypes, restoration/movement/hardpoint profiles, loadouts, visual kits, and registry schema data
+- `custodian/tools/validation/validate_vehicle_registry.gd` — headless registry validator for taxonomy values, profile references, required fields, runtime scenes, pilotable seat contracts, and unsupported spawnable domains
 - `custodian/game/actors/relay/relay.tscn` — placeholder in-world relay entity scene used by procgen contract handoff
 - `custodian/game/actors/relay/relay.gd` — interactable relay entity that mirrors ARRN state, shows scan/stabilization prompts, and starts stabilization through `ARRNManager`
 - `custodian/game/actors/relay/signal_indicator.gd` — primitive signal-strength visual for relay placeholder scenes

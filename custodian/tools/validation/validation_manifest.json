@@ -3764,6 +3764,47 @@
       "needs_import": true
     },
     {
+      "id": "vehicle_wreck_restoration",
+      "type": "godot_script",
+      "script": "res://tools/validation/vehicle_wreck_restoration_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "vehicle",
+        "lifecycle",
+        "restoration",
+        "resource-ledger"
+      ],
+      "owners": [
+        "custodian/content/vehicles/vehicle_restoration_profiles.json",
+        "custodian/content/vehicles/vehicle_archetypes.json",
+        "custodian/game/vehicles/pilotable_vehicle.gd",
+        "custodian/game/vehicles/vehicle_definition.gd",
+        "custodian/game/vehicles/vehicle_registry.gd",
+        "custodian/game/vehicles/vehicle_spawn_resolver.gd",
+        "custodian/game/vehicles/vehicle_restoration_interaction.gd",
+        "custodian/tools/validation/vehicle_wreck_restoration_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
+      "id": "vehicle_registry_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/validate_vehicle_registry.gd",
+      "tier": "actor",
+      "tags": [
+        "vehicle",
+        "registry",
+        "schema"
+      ],
+      "owners": [
+        "custodian/content/vehicles/vehicle_registry_schema.json",
+        "custodian/tools/validation/validate_vehicle_registry.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
       "id": "wave_manager_debug_grunt_spawn_gate",
       "type": "godot_script",
       "script": "res://tools/validation/wave_manager_debug_grunt_spawn_gate_smoke.gd",

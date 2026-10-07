@@ -4,6 +4,7 @@ extends CharacterBody2D
 signal pilot_released(vehicle: PilotableVehicle, actor: Node, reason: StringName)
 signal vehicle_disabled(reason: String)
 signal vehicle_destroyed
+signal vehicle_restored
 signal health_changed(current: float, maximum: float)
 
 const VehicleDefinitionScript = preload("res://game/vehicles/vehicle_definition.gd")
@@ -42,6 +43,8 @@ var current_speed := 0.0
 var facing_direction := Vector2.DOWN
 var disabled_reason: String = ""
 var is_destroyed := false
+var restoration_profile: Dictionary = {}
+var restoration_interaction: Node = null
 
 @onready var animated_sprite: AnimatedSprite2D = get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 @onready var exit_marker: Node2D = get_node_or_null("ExitMarker") as Node2D
@@ -57,10 +60,26 @@ var _last_exit_used_emergency_fallback := false
 func _ready() -> void:
 	add_to_group("vehicle")
 	add_to_group("vehicles")
-	add_to_group("interactable")
-	add_to_group("pilotable_vehicles")
 	if vehicle_definition == null and not fallback_vehicle_id.is_empty():
 		_apply_definition_from_registry(fallback_vehicle_id)
+	if vehicle_definition == null:
+		if fallback_vehicle_id.is_empty():
+			_set_operational_groups(true)
+		else:
+			current_health = 0.0
+			is_destroyed = true
+			disabled_reason = "missing_vehicle_definition"
+			control_state = ControlState.DISABLED
+	elif vehicle_definition.is_pilotable():
+		if not vehicle_definition.restoration_profile_data.is_empty():
+			restoration_profile = vehicle_definition.restoration_profile_data.duplicate(true)
+			_initialize_as_wreckage()
+		else:
+			_set_operational_groups(true)
+	var health_bar := get_node_or_null("HealthBar") as Range
+	if health_bar != null:
+		health_bar.max_value = max_health
+		health_bar.value = current_health
 	_update_movement_animation()
 
 
@@ -191,11 +210,72 @@ func destroy_vehicle() -> void:
 	is_destroyed = true
 	current_health = 0.0
 	_transition_to_disabled("destroyed", true)
+	_set_restoration_interaction_available(true)
+
+
+func is_wreckage() -> bool:
+	return not restoration_profile.is_empty() and is_destroyed and current_health <= 0.0 and control_state == ControlState.DISABLED
+
+
+func restore_from_wreck(health_fraction: float) -> bool:
+	if not is_wreckage() or pilot != null:
+		return false
+	var fraction := clampf(health_fraction, 0.0, 1.0)
+	if fraction <= 0.0:
+		return false
+	current_health = max_health * fraction
+	is_destroyed = false
+	disabled_reason = ""
+	control_state = ControlState.UNOCCUPIED
+	velocity = Vector2.ZERO
+	current_speed = 0.0
+	_set_operational_groups(true)
+	_set_restoration_interaction_available(false)
+	health_changed.emit(current_health, max_health)
+	vehicle_restored.emit()
+	return true
+
+
+func _initialize_as_wreckage() -> void:
+	current_health = 0.0
+	is_destroyed = true
+	disabled_reason = "wreckage"
+	control_state = ControlState.DISABLED
+	velocity = Vector2.ZERO
+	current_speed = 0.0
+	_set_operational_groups(false)
+	var interaction_script := load("res://game/vehicles/vehicle_restoration_interaction.gd")
+	if interaction_script == null:
+		push_error("PilotableVehicle: restoration interaction script is unavailable")
+		return
+	restoration_interaction = interaction_script.new()
+	restoration_interaction.name = "VehicleRestorationInteraction"
+	add_child(restoration_interaction)
+	restoration_interaction.call("configure", self, restoration_profile)
+	_set_restoration_interaction_available(true)
+
+
+func _set_operational_groups(enabled: bool) -> void:
+	if enabled:
+		if vehicle_definition == null or vehicle_definition.is_pilotable():
+			add_to_group("pilotable_vehicles")
+		add_to_group("interactable")
+	else:
+		remove_from_group("pilotable_vehicles")
+		remove_from_group("interactable")
+
+
+func _set_restoration_interaction_available(enabled: bool) -> void:
+	if not is_instance_valid(restoration_interaction):
+		return
+	restoration_interaction.call("set_available", enabled)
 
 
 func _transition_to_disabled(reason: String, destroyed: bool) -> void:
 	if control_state == ControlState.DISABLED:
 		return
+	if destroyed:
+		_set_operational_groups(false)
 	disabled_reason = reason
 	if pilot != null:
 		var release_position := _find_exit_position()
@@ -308,6 +388,8 @@ func get_display_name() -> String:
 
 
 func get_interaction_prompt() -> String:
+	if is_wreckage():
+		return "WRECKAGE // RESTORE VIA HOLD INTERACTION"
 	var key := _get_action_prompt_key(&"interact", "INTERACT")
 	if is_piloted():
 		return "PRESS %s TO EXIT %s" % [key, get_display_name().to_upper()]
