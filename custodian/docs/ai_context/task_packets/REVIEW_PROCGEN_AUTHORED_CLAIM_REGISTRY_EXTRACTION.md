@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `procgen-authored-claim-registry-extraction`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md`
-- Reviewed main: `72afe8ee6de3324b92f4e96fe17cea6eaa4a35bf`
+- Reviewed main: `bff2d89496c68f73072fb69caa7eb3d68abf6aca`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
 - Review modes: `code, architecture, runtime`
@@ -30,11 +30,11 @@
 
 ## Handoff
 
-- Next workstream: `procgen-generation-state-extraction`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next workstream: `procgen-generation-data-model-audit`
+- Next packet state: `ready after this review passes`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4`
-- Refresh reason: D3 remains independently refresh-gated and must be re-derived against reviewed D1+D2 ownership before execution.
-- Next action: After D2 review passes, refresh D3 in the recorded planning chat.
-- Blockers or open questions: D2 implementation must land first.
+- Refresh reason: `none; D3 is already complete and X1 is pre-authored to re-measure the post-D1/D2/D3 core`
+- Next action: After D2 review passes, `procgen-generation-data-model-audit` becomes the next procgen-generation workstream. D3 is already landed and requires no refresh.
+- Blockers or open questions: D2 implementation must land first; no additional planning gate remains.
