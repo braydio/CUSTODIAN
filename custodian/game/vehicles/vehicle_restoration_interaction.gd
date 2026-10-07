@@ -11,6 +11,7 @@ var restored_health_fraction := 0.0
 var _active_actor: Node2D
 var _hold_elapsed := 0.0
 var _available := false
+var _interact_held := false
 
 
 func _ready() -> void:
@@ -74,16 +75,30 @@ func interact(actor: Node) -> void:
 		return
 	_active_actor = actor_2d
 	_hold_elapsed = 0.0
+	_interact_held = true
+
+
+func update_interaction_hold(actor: Node, is_held: bool, target_is_current: bool) -> void:
+	if _active_actor == null or actor != _active_actor:
+		return
+	if not is_held:
+		cancel_restoration(&"INPUT_RELEASED")
+	elif not target_is_current:
+		cancel_restoration(&"TARGET_LOST")
 
 
 func cancel_restoration(reason: StringName = &"INTERRUPTED") -> void:
 	_active_actor = null
 	_hold_elapsed = 0.0
+	_interact_held = false
 	restoration_cancelled.emit(reason)
 
 
 func _physics_process(delta: float) -> void:
 	if _active_actor == null:
+		return
+	if not _interact_held:
+		cancel_restoration(&"INPUT_RELEASED")
 		return
 	if not is_instance_valid(_active_actor) or get_interaction_position().distance_to(_active_actor.global_position) > get_interaction_distance():
 		cancel_restoration(&"OUT_OF_RANGE")
@@ -104,6 +119,7 @@ func _complete_restoration() -> void:
 	var restored := target.restore_from_wreck(restored_health_fraction)
 	_active_actor = null
 	_hold_elapsed = 0.0
+	_interact_held = false
 	if not restored:
 		push_error("VehicleRestorationInteraction: target rejected a validated restoration")
 		return

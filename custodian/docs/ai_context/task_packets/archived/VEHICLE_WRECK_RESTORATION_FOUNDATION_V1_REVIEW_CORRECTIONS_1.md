@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vehicle-wreck-restoration-foundation-v1-review-corrections-1`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-vehicle-wreck-restoration-foundation-v1`
@@ -34,13 +34,34 @@
 - Task overrides: `none`
 - Deferred: Broader interaction architecture work beyond the narrow held-input seam.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Production `Operator._handle_interact_input()` now starts the restoration through its existing interaction target, and `_update_held_restoration_input()` sends current held state and target continuity to `VehicleRestorationInteraction` every simulation tick. The interaction cancels on release, target loss, range exit, and interruption; completion still validates and spends once before restoring the same vehicle. The `vehicle_wreck_restoration` smoke exercises the Operator press/release path, target loss, range refusal, uninterrupted hold, exact resource spend, same-instance restore, and reentrant completion refusal. `vehicle_registry_contract`, `vehicle_runtime_lifecycle`, and `vehicle_exit_clearance` also pass.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first claim command returned no receipt; `last-claim --json` recovered the verified claim. The cold worktree required a Godot import before validation.
+- Root cause / contributing factors: The dispatcher response was lost at the tool boundary, and this fresh worktree had no imported `.godot` cache.
+- Prevention / pipeline improvement: Use the documented read-only `last-claim` recovery when claim output is missing; initialize imports once in cold worktrees.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: `--tag vehicle` produced one green report covering all four packet validation IDs.
+
 ## Handoff
 
 - Next workstream: `review-vehicle-wreck-restoration-foundation-v1-review-corrections-1`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Refresh reason: `none`
-- Next action: Implement the held-input correction and claim its paired review after the correction lands.
+- Next action: After this correction lands, start a fresh reviewer context and claim the paired review.
 - Blockers or open questions: `none`

@@ -373,6 +373,7 @@ var last_fire_cooldown := 0.0
 @export var fake_elevation_z_scale: float = 0.08
 
 var interaction_target: Node = null
+var _held_restoration_interaction: Node = null
 var repair_target: Damageable = null
 var build_target: Node = null  # WallBlueprint we're building
 var movement_direction := Vector2.DOWN  # Direction player is moving (for walk animations)
@@ -1258,6 +1259,14 @@ func _advance_simulation(delta: float) -> void:
 	_update_operator_actions(delta)
 	_update_combat_target()
 	_update_interaction_target()
+	_update_held_restoration_input(
+		not _is_dead
+		and _enemy_impact_lock_timer <= 0.0
+		and not _portal_transition_locked
+		and not _portal_arrival_animation_active
+		and not _is_terminal_open()
+		and not _is_non_terminal_ui_open()
+	)
 	if _is_dead:
 		_reset_unstuck_detector()
 		_parry_neutral_lock_active = false
@@ -14371,12 +14380,36 @@ func _is_terminal_carry_active() -> bool:
 
 
 func _handle_interact_input():
-	if not _input_frame.just_pressed(&"interact"):
+	if _portal_transition_locked \
+	or _portal_arrival_animation_active \
+	or _is_terminal_open() \
+	or _is_non_terminal_ui_open():
 		return
-	if _is_terminal_open():
+	_dispatch_interact_input()
+
+
+func _dispatch_interact_input() -> void:
+	if not _input_frame.just_pressed(&"interact"):
 		return
 	if interaction_target and interaction_target.has_method("interact"):
 		interaction_target.interact(self)
+		if interaction_target.has_method("is_restoration_active") \
+		and bool(interaction_target.call("is_restoration_active")):
+			_held_restoration_interaction = interaction_target
+
+
+func _update_held_restoration_input(may_continue: bool = true) -> void:
+	if not is_instance_valid(_held_restoration_interaction):
+		_held_restoration_interaction = null
+		return
+	_held_restoration_interaction.call(
+		"update_interaction_hold",
+		self,
+		_input_frame.pressed(&"interact") and may_continue,
+		interaction_target == _held_restoration_interaction
+	)
+	if not bool(_held_restoration_interaction.call("is_restoration_active")):
+		_held_restoration_interaction = null
 
 
 func _update_interaction_target():

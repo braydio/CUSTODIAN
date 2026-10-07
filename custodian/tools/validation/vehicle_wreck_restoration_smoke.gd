@@ -3,6 +3,8 @@ extends SceneTree
 const VehicleRegistryScript := preload("res://game/vehicles/vehicle_registry.gd")
 const VehicleResolverScript := preload("res://game/vehicles/vehicle_spawn_resolver.gd")
 const VehicleScript := preload("res://game/vehicles/pilotable_vehicle.gd")
+const OperatorScript := preload("res://game/actors/operator/operator.gd")
+const InputFrameScript := preload("res://game/actors/operator/input/operator_input_frame.gd")
 const ARCHETYPES_PATH := "res://content/vehicles/vehicle_archetypes.json"
 const PROFILE_ID := "field_scout_recovery_light"
 const COST := {"ruin_scrap": 12, "structural_alloy": 6, "power_components": 1}
@@ -95,19 +97,38 @@ func _check_full_recovery_loop(vehicle: PilotableVehicle, ledger: Node) -> void:
 	ledger.call("debug_grant", COST)
 	var initial_snapshot: Dictionary = ledger.call("get_snapshot")
 	interaction.set_physics_process(false)
-	interaction.interact(actor)
-	_expect(interaction.is_restoration_active(), "funded in-range hold must start")
-	interaction.cancel_restoration(&"INTERRUPTED")
-	_expect(not interaction.is_restoration_active() and ledger.call("get_snapshot") == initial_snapshot, "interrupted hold must cancel without spending")
-	interaction.interact(actor)
+	var operator := OperatorScript.new() as Node2D
+	operator.global_position = vehicle.global_position
+	operator.set("interaction_target", interaction)
+	_set_operator_interact_frame(operator, true, true)
+	operator.call("_dispatch_interact_input")
+	_expect(interaction.is_restoration_active(), "production Operator press must start a funded in-range hold")
+	_expect(operator.get("_held_restoration_interaction") == interaction, "Operator must retain the active restoration target")
+	_set_operator_interact_frame(operator, false)
+	operator.call("_update_held_restoration_input", true)
+	_expect(not interaction.is_restoration_active() and ledger.call("get_snapshot") == initial_snapshot, "production Operator release must cancel without spending")
+	_set_operator_interact_frame(operator, true, true)
+	operator.call("_dispatch_interact_input")
+	operator.set("interaction_target", null)
+	_set_operator_interact_frame(operator, true)
+	operator.call("_update_held_restoration_input", true)
+	_expect(not interaction.is_restoration_active() and ledger.call("get_snapshot") == initial_snapshot, "losing the active target must cancel without spending")
+	operator.set("interaction_target", interaction)
 	actor.global_position = vehicle.global_position + Vector2(1000.0, 0.0)
+	interaction.interact(actor)
 	interaction._physics_process(0.1)
 	_expect(not interaction.is_restoration_active() and ledger.call("get_snapshot") == initial_snapshot, "out-of-range cancellation must spend nothing")
 	actor.global_position = vehicle.global_position
-	interaction.interact(actor)
+	_set_operator_interact_frame(operator, true, true)
+	operator.call("_dispatch_interact_input")
 	_expect(interaction.is_restoration_active(), "restoration can restart after cancellation")
+	_set_operator_interact_frame(operator, true)
+	operator.call("_update_held_restoration_input", true)
 	interaction._physics_process(float(vehicle.restoration_profile.get("hold_duration", 4.0)) + 0.01)
 	_expect(vehicle.current_health == 40.0 and not vehicle.is_destroyed and vehicle.control_state == PilotableVehicle.ControlState.UNOCCUPIED, "successful restore must return the same instance at 40 HP")
+	var paid_snapshot: Dictionary = ledger.call("get_snapshot")
+	interaction.call("_complete_restoration")
+	_expect(ledger.call("get_snapshot") == paid_snapshot and _restoration_events[0] == 1, "reentrant completion after restore must not double-charge or emit twice")
 	_expect(vehicle.can_enter(actor) and vehicle.enter_vehicle(actor), "restored vehicle must permit actual entry")
 	_expect(vehicle.exit_vehicle(), "restored vehicle must allow exit after entry")
 	_expect(ledger.call("get_amount", "ruin_scrap") == 0 and ledger.call("get_amount", "structural_alloy") == 0 and ledger.call("get_amount", "power_components") == 0, "successful restore must spend the exact configured cost once")
@@ -121,8 +142,27 @@ func _check_full_recovery_loop(vehicle: PilotableVehicle, ledger: Node) -> void:
 	interaction._physics_process(float(vehicle.restoration_profile.get("hold_duration", 4.0)) + 0.01)
 	_expect(vehicle.current_health == 40.0 and not vehicle.is_destroyed, "wreck must support repeat restoration")
 	_expect(_restoration_events[0] == 2, "repeat restoration must emit one event per successful transition")
+	operator.free()
 	actor.queue_free()
 	await process_frame
+
+
+func _set_operator_interact_frame(operator: Node, held: bool, just_pressed: bool = false) -> void:
+	var pressed := {&"interact": true} if held else {}
+	var just_pressed_actions := {&"interact": true} if just_pressed else {}
+	operator.set(
+		"_input_frame",
+		InputFrameScript.build(
+			pressed,
+			just_pressed_actions,
+			{},
+			Vector2.ZERO,
+			Vector2.ZERO,
+			Vector2.ZERO,
+			false,
+			false
+		)
+	)
 
 
 func _expect(condition: bool, message: String) -> void:
