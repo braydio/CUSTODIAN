@@ -16,7 +16,9 @@ Scalable **Vehicle Registry System** supporting `Faction -> Domain -> Chassis ->
 - Registry loads without errors
 - First production vehicle exists in `vehicle_archetypes.json`
 - Vehicle spawnable from registry ID
-- Operator can enter/exit with Interact
+- World-spawned pilotable vehicles enter runtime as `WRECKAGE` and must be restored before entry
+- Restoration payment is atomic through `ResourceLedger`; wreckage cannot be driven or exposed as a pilotable interaction
+- Operator can enter/exit with Interact after restoration
 - While piloted, movement input controls vehicle; while unpiloted, controls Operator
 - Vehicle uses `actor_kind = "vehicle"` for terrain movement multiplier
 - Missing optional InputMap actions don't crash
@@ -118,7 +120,20 @@ NONE, COVER_ONLY, HAZARD, OBJECTIVE, ENTERABLE, PILOTABLE, SUMMONED,
 DEPLOYABLE, WRECKAGE, ENEMY_PLATFORM
 ```
 
-First production vehicle uses `interaction_mode: PILOTABLE`.
+First production vehicle uses `interaction_mode: PILOTABLE`, which describes eventual capability rather than its initial world state.
+
+### World-spawn recovery rule
+
+All **world-spawned pilotable vehicles** begin as recoverable `WRECKAGE`. The registry classification remains `PILOTABLE`; a separate restoration profile owns initial runtime condition, recovery cost, hold duration, and restored-health fraction.
+
+- Wreckage remains in generic vehicle/world-placement identity but is not in the live `pilotable_vehicles` interaction surface.
+- A wreck cannot be entered, driven, or treated as operational.
+- Recovery is a proximity/hold interaction that checks `ResourceLedger.can_pay()`, spends only on successful completion with `ResourceLedger.pay()`, then asks vehicle lifecycle authority to restore the same instance.
+- Destruction of an already-restored field vehicle returns it to the same recoverable wreck state unless a class explicitly defines non-recoverable terminal failure.
+- Future fabricated, summoned, or mission-issued vehicles may define a different origin rule; ordinary world spawning never produces a pristine drivable vehicle.
+- Restoration and ordinary repair are distinct: restoration raises a zero-health wreck into an operational damaged state; field repair may then restore more health.
+
+The first Scout restores to 40% health for 12 `ruin_scrap`, 6 `structural_alloy`, and 1 `power_components` after a 4-second hold.
 
 ---
 
@@ -143,6 +158,7 @@ First production vehicle uses `interaction_mode: PILOTABLE`.
 ├── vehicle_taxonomy.json          # Valid enum values
 ├── vehicle_archetypes.json        # Vehicle definitions
 ├── vehicle_movement_profiles.json # Movement configs
+├── vehicle_restoration_profiles.json # Wreck spawn/recovery costs + restored-health contract
 ├── vehicle_hardpoint_profiles.json
 ├── vehicle_loadouts.json
 ├── vehicle_visual_kits.json
@@ -177,6 +193,7 @@ custodian/tools/validate_vehicle_registry.gd
       "mobility": ["WHEELED"],
       "tags": ["INDUSTRIAL", "FIELD_REPAIRED", "MILSPEC"],
       "movement_profile": "ground_wheeled_light",
+      "restoration_profile": "field_scout_recovery_light",
       "hardpoint_profile": "utility_light",
       "loadout": "none",
       "visual_kit": "custodian_industrial_light",
@@ -274,6 +291,29 @@ Hardpoints exist in data now. Mounted equipment can be no-op placeholders. Do no
 ---
 
 ## 6. Core Classes
+
+### vehicle_restoration_profiles.json
+
+```json
+{
+  "schema_version": 1,
+  "profiles": {
+    "field_scout_recovery_light": {
+      "initial_state": "WRECKAGE",
+      "resource_cost": {
+        "ruin_scrap": 12,
+        "structural_alloy": 6,
+        "power_components": 1
+      },
+      "hold_duration": 4.0,
+      "restored_health_fraction": 0.40,
+      "repeatable_after_destruction": true
+    }
+  }
+}
+```
+
+Restoration profiles own recovery economics only. `PilotableVehicle` remains health/lifecycle authority and `ResourceLedger` remains material-mutation authority.
 
 ### VehicleDefinition.gd
 
