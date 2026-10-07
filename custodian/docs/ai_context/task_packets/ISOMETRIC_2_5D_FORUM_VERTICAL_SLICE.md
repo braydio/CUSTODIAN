@@ -8,7 +8,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `isometric-2-5d-forum-vertical-slice`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `review-isometric-2-5d-presentation-foundation, operator-2-5d-animation-viability-audit, review-operator-2-5d-canonical-visual-contract`
 - Locks: `world-presentation, presentation-experiments, asset-pipeline`
