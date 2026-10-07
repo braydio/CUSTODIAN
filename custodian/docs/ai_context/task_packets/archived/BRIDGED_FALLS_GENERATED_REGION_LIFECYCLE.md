@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `bridged-falls-generated-region-lifecycle`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default`
-- Reviewed main: `435c422d6cb5`
+- Reviewed main: `911e8871e77c7505a574334d5ab714b5458c7b94`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
 - Visual review: `none`
 - Goal: Let a normal CUSTODIAN route node host a separately generated procgen region while preserving the existing persistent-Operator, camera, rollback, state, and single-active-authority guarantees.
@@ -42,31 +42,50 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Evidence: `generated_region_route_lifecycle_smoke.gd PASS; ash_bell_lower_quarter_route_smoke.gd PASS; procgen_intent_graph_smoke.gd PASS; route_forward_backtrack_smoke.gd PASS; route_transition_rollback_smoke.gd PASS; route_registry_contract_smoke.gd PASS; route_single_level_wrapper_smoke.gd PASS; level_registry_contract_smoke.gd PASS; contract_world_playable_region_spawn_validity_smoke.gd PASS. Sundered Keep route graph arrival-guard assertion reproduced on unmodified main@911e8871e; no authored Sundered runtime or exit contract was changed.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: `partial`
+- Friction severity: `low`
+- What went wrong: `The required Sundered Keep route graph smoke reports Front Gate backtrack arrival guard not armed. The same assertion fails on the unmodified root checkout at the implementation base.`
+- Root cause / contributing factors: `The failure predates this diff; the exact test/runtime disagreement is outside this generated-region slice and remains unisolated.`
+- Prevention / pipeline improvement: `Keep the baseline reproduction in the review receipt so this authored-route failure is not attributed to generated-region staging.`
+- Tooling / docs drift discovered: `The graph database was empty and graph initialization timed out; source exploration continued with the repository-prescribed rg fallback.`
+- Follow-up: `manual-follow-up`
 
 ## Handoff
 
-- Next workstream: `ash-bell-highlands-generated-destination`
-- Next packet state: `refresh-required`
-- Refresh owner: `execution-agent`
+- Next workstream: `review-bridged-falls-generated-region-lifecycle`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
 - Summary backlink: Include this exact Authoring chat URL in every durable implementation/review/correction/recovery/closeout summary and final Next Handoff.
-- Refresh reason: Reconcile BF2's draft runtime-kind/profile assumptions against the exact generated-region adapter/data contract landed by BF1 without changing the locked geography.
-- Next action: Refresh BF2 mechanically from landed BF1 evidence, then promote it when its implementation contract matches live main.
-- Blockers or open questions: None for BF1.
+- Refresh reason: Wait for BF1 to archive complete on main so its paired review can claim.
+- Next action: Run the paired review from its required fresh reviewer context; after review, mechanically refresh BF2 against the reviewed live contract.
+- Blockers or open questions: The Sundered Keep route graph smoke has the documented baseline arrival-guard failure at implementation base 911e8871e.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-bridged-falls-generated-region-lifecycle`
+- Reviewed on main: `520af6d832a4a79fe2fee110e3424ae1f1083dcd`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `bridged-falls-generated-region-lifecycle-review-corrections-1`
+- Reviewer independence: `The reviewer claimed a fresh paired-review workstream and reconstructed the target from archived packet/summary evidence, active route architecture, live source, and fresh runtime traces. No reviewed runtime files were changed.`

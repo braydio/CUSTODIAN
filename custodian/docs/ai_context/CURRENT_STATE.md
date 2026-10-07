@@ -6,6 +6,8 @@ The geographic design is now locked at `design/05_levels/ASH_BELL_BRIDGED_FALLS_
 
 This is **planned program state, not yet live runtime**. The existing independent `ash_bell_lower_quarter` campaign ingress remains production authority and the Ritualant northern boundary remains blocked after its current presentation-only seal fade. `BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE.md` is the first ready/auto implementation packet; BF2–BF7 are dependency/review-gated drafts in `ASH_BELL_BRIDGED_FALLS_IMPLEMENTATION_ROADMAP.md`. BF3 also owns the currently observed distant-chapel integration defect: live arrival must activate LANDING_VISTA through the real camera-zone/director path rather than relying on a direct test handler call.
 
+- **Generated route-node foundation (2026-10-07):** `LevelDefinition` now supports an explicit `generated_region` runtime request alongside the default authored-scene kind. `LevelLoader` asynchronously stages a disabled generated-region adapter, which configures the existing `ProcGenTilemap` generator from a named profile/seed/settings request and validates its named spawn against the canonical main playable component before the existing route transaction commits. This is reusable route infrastructure only; it does not create Ash-Bell destination content or alter procgen ownership.
+
 - **Procgen startup spawn residency correction (2026-10-07):** contract spawn eligibility now uses canonical valid-spawn, runtime-navigation, accepted-component, and ingress-clearance checks without requiring current TileMap paint. `ContractWorldLoader` selects first, calls `ProcGenTilemap.ensure_spawn_presentation_ready()` for the chosen cell, and restores Operator visibility/control only after exact-tile floor realization. Real generated streaming coverage proves an initially unpainted accepted-component spawn reaches contract ready; the true no-canonical-safe path remains hidden/disabled and reports `no_canonical_safe_spawn`. The fresh paired review passed with no blocking defects or material evidence gaps; both readiness-seam and painted-floor-filter negative controls failed as expected.
 
 ## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
@@ -112,19 +114,28 @@ roadmap. The planned live-3D K3D-2/K3D-3 workstreams are canceled.
 
 `lords_of_pain_test_gallery` is registered as a dev `world_ingress` destination. Its generated production scene uses the persistent Operator lifecycle and owns no Operator, camera, or controller. The walkable blockout presents Asset V2 Ground Stone, the real Meridian hardened-floor base, Gold Drop/Glint, Highlight/Loot Indicator UI samples, and Warrior/Skeleton animations with all 16 authored directions selectable. A DEMO-scoped manifest records seven available semantic entries, five animation entries, pack/license provenance, and user-approved exclusions for Cursor Gauntlet, Rocks, and Mushrooms. District Transfer Frame art presents both procgen ingress and the normal `return_world` exit. Asset V2 doctor is healthy; gallery, registry, ingress, return, re-entry, and camera smokes pass.
 
-## Alpine Region Frame And Underlay AP1 (2026-10-06)
+## Alpine Region Frame And Underlay AP1 / Surface-Art Readiness (2026-10-07)
 
 RF1 still separates permanent map-edge presentation from local biome and Archive
 Resolve. `NonwalkableSurfaceClassifier` derives exterior/internal CHASM masks while
-structural surface kinds remain unchanged. AP1 is now complete/landed: the
+structural surface kinds remain unchanged. AP1 is complete/landed: the
 `procgen_underlay_alpine_plateau` Asset V2 family publishes the reviewed six-state
 FAR/MIDDLE/NEAR Alpine underlay and `region_frames/alpine_plateau.tres` consumes the
 real family rather than the old Endless Forest visual fallback. Frame identity remains
 explicit through `CustodianContractMap.region_frame_profile_id`; the global
-`ProcgenDepthBackdrop` still follows exterior CHASM only. AP2 cliff presentation is
-now ready from the registered Dropbox source-master batch
-`alpine-cliff-source-family-v1`; its final Gate B is produced only after Codex derives
-and validates the exact fascia/contact/depth runtime states.
+`ProcgenDepthBackdrop` still follows exterior CHASM only.
+
+AP2 cliff presentation is ready from the registered
+`alpine-cliff-source-family-v1` source-master batch; its final Gate B is produced only
+after Codex derives and validates the exact fascia/contact/depth runtime states.
+
+AP3 surface image art is also complete at the source-master layer. The registered
+`rocky-upland-10-source-family-v1` and `meridian-hardstand-6-source-family-v1`
+batches together provide all 16 approved Rocky Upland / Meridian Hardstand states.
+AP3 remains blocked only behind AP2; once released it owns exact-canvas normalization,
+Asset V2 ingest/bind/verify, explicit `TerrainStampProfile` authoring, catalog
+registration, deterministic/runtime validation, human gameplay-scale review, and the
+final immutable Gate C closeout handoff.
 
 ## Archive Resolve Presentation Spine (AR1, 2026-10-03)
 

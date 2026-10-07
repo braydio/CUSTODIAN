@@ -331,8 +331,30 @@ def paired_review_artifact_scope_error(
         "custodian/docs/ai_context/task_packets/README.md",
         summary,
     }
-    correction_id = re.compile(rf"^{re.escape(target_workstream)}-review-corrections-[1-9][0-9]*$")
-    paired_review_id = re.compile(rf"^review-{re.escape(target_workstream)}-review-corrections-[1-9][0-9]*$")
+    if target_workstream.count("-review-corrections-") > 1:
+        return f"paired review artifact gate rejects nested target lineage for {workstream_id}"
+    target_cycle_match = re.fullmatch(r"(.+)-review-corrections-([1-9][0-9]*)", target_workstream)
+    lineage_root = target_cycle_match.group(1) if target_cycle_match else target_workstream
+    target_cycle = int(target_cycle_match.group(2)) if target_cycle_match else 0
+    review_cycle_raw = _packet_header_value(packet_text, "Review cycle")
+    max_cycles_raw = _packet_header_value(packet_text, "Max automatic review cycles")
+    try:
+        review_cycle = int(review_cycle_raw) if review_cycle_raw is not None else target_cycle
+        max_cycles = int(max_cycles_raw) if max_cycles_raw is not None else 2
+    except ValueError:
+        return f"paired review artifact gate requires valid review cycle metadata for {workstream_id}"
+    if review_cycle != target_cycle:
+        return f"paired review artifact gate review cycle does not match target lineage for {workstream_id}"
+    if review_cycle >= max_cycles:
+        for path in changed_paths:
+            normalized = path.replace("\\", "/")
+            if normalized in allowed:
+                continue
+            return f"paired review artifact gate exceeds maximum correction cycle for {workstream_id}: {normalized}"
+        return None
+    next_correction = f"{lineage_root}-review-corrections-{review_cycle + 1}"
+    correction_id = re.compile(rf"^{re.escape(next_correction)}$")
+    paired_review_id = re.compile(rf"^review-{re.escape(next_correction)}$")
     correction_workstreams: set[str] = set()
     paired_review_workstreams: set[str] = set()
     artifact_contents = artifact_contents or {}

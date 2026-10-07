@@ -2,6 +2,7 @@ class_name LevelLoader
 extends Node
 
 const LEVEL_REGISTRY_SCRIPT := preload("res://game/world/levels/level_registry.gd")
+const GENERATED_REGION_LEVEL_SCRIPT := preload("res://game/world/levels/generated_region_level.gd")
 
 signal level_entered(level_id: StringName, instance: Node)
 signal level_entry_failed(level_id: StringName, reason: String)
@@ -63,6 +64,8 @@ func stage_level(level_id: StringName, parent: Node, context: Dictionary = {}) -
 		return _stage_failure(level_id, "level is not registered")
 	if parent == null:
 		return _stage_failure(level_id, "no parent is available for the level entry scene")
+	if definition.call("get_runtime_kind") == &"generated_region":
+		return _stage_failure(level_id, "generated-region levels require asynchronous staging")
 	var entry_path: String = definition.call("get_entry_scene_path")
 	var entry_scene := load(entry_path) as PackedScene
 	if entry_scene == null:
@@ -97,6 +100,48 @@ func stage_level(level_id: StringName, parent: Node, context: Dictionary = {}) -
 		"definition": definition,
 		"instance": instance,
 		"context": runtime_context,
+	}
+
+
+func stage_level_async(level_id: StringName, parent: Node, context: Dictionary = {}) -> Dictionary:
+	var definition := get_definition(level_id)
+	if definition == null:
+		return _stage_failure(level_id, "level is not registered")
+	if parent == null:
+		return _stage_failure(level_id, "no parent is available for the level runtime")
+	if definition.call("get_runtime_kind") != &"generated_region":
+		return stage_level(level_id, parent, context)
+	var instance: Node = GENERATED_REGION_LEVEL_SCRIPT.new()
+	instance.name = "GeneratedRegion_%s" % level_id
+	parent.add_child(instance)
+	deactivate_instance_immediately(instance)
+	var runtime_context := context.duplicate(false)
+	runtime_context["level_id"] = level_id
+	runtime_context["level_loader"] = self
+	runtime_context["presentation_profile"] = definition.call("get_presentation_profile")
+	runtime_context["lifecycle"] = definition.call("get_lifecycle")
+	var generation_request: Dictionary = definition.call("get_generated_region_request")
+	generation_request["spawns"] = definition.spawns.duplicate()
+	runtime_context["generated_region"] = generation_request.duplicate(true)
+	var result: Variant = await instance.call("prepare_generated_region", generation_request)
+	if not (result is Dictionary) or not bool((result as Dictionary).get("succeeded", false)):
+		var reason := str((result as Dictionary).get("reason", "generated-region staging failed")) if result is Dictionary else "generated-region staging returned no result"
+		if is_instance_valid(instance):
+			instance.queue_free()
+		return _stage_failure(level_id, reason)
+	deactivate_instance_immediately(instance)
+	var requested_spawn := StringName(str(context.get("target_spawn_id", "")))
+	if not requested_spawn.is_empty() and not _instance_has_spawn(instance, requested_spawn):
+		instance.queue_free()
+		return _stage_failure(level_id, "target spawn could not be resolved: %s" % requested_spawn)
+	return {
+		"succeeded": true,
+		"reason": "",
+		"level_id": level_id,
+		"definition": definition,
+		"instance": instance,
+		"context": runtime_context,
+		"generation": (result as Dictionary).duplicate(true),
 	}
 
 

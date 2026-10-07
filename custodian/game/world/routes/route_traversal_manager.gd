@@ -273,6 +273,9 @@ func _transition_to_node(
 	prelocked_actor_mode: int = -1,
 	defer_actor_unlock := false
 ) -> bool:
+	if _requires_async_region_stage(edge):
+		call_deferred("_transition_to_generated_node_async", edge, actor, prelocked_actor_mode, defer_actor_unlock)
+		return true
 	var context: RefCounted = TRANSITION_CONTEXT_SCRIPT.new()
 	context.route_id = _active_session.route_id
 	context.profile_id = _active_session.profile_id
@@ -327,8 +330,85 @@ func _transition_to_node(
 		stage = _level_loader.call("stage_level", target_node.level_id, _active_session.parent, target_runtime_context)
 	if not bool(stage.get("succeeded", false)):
 		return _rollback(context, stage.get("instance") as Node, false, source_level_id, source_loader_context, str(stage.get("reason", "target staging failed")))
+	return _activate_staged_node(context, edge, actor, target_node, source, source_level_id, source_loader_context, stage, reused, target_runtime_context, defer_actor_unlock)
+
+
+func _requires_async_region_stage(edge: RefCounted) -> bool:
+	if edge == null or _active_session == null:
+		return false
+	var cached := _active_session.cached_instances.get(edge.to_node_id) as Node
+	if cached != null and is_instance_valid(cached):
+		return false
+	_active_session.cached_instances.erase(edge.to_node_id)
+	var target_node := _active_route.call("get_node_definition", edge.to_node_id) as RefCounted
+	if target_node == null:
+		return false
+	var definition: RefCounted = _level_loader.call("get_definition", target_node.level_id) as RefCounted
+	return definition != null and definition.call("get_runtime_kind") == &"generated_region"
+
+
+func _transition_to_generated_node_async(
+	edge: RefCounted,
+	actor: Node,
+	prelocked_actor_mode: int = -1,
+	defer_actor_unlock := false
+) -> bool:
+	var context: RefCounted = TRANSITION_CONTEXT_SCRIPT.new()
+	context.route_id = _active_session.route_id
+	context.profile_id = _active_session.profile_id
+	context.edge_id = edge.edge_id
+	context.source_node_id = _active_session.current_node_id
+	context.target_node_id = edge.to_node_id
+	context.direction = edge.direction
+	context.actor_position = (actor as Node2D).global_position if actor is Node2D else Vector2.ZERO
+	context.actor_process_mode = actor.process_mode if prelocked_actor_mode < 0 else prelocked_actor_mode
+	var source: Node = _active_session.current_instance
+	var source_level_id: StringName = _active_session.current_level_id
+	var source_loader_context: Dictionary = _level_loader.call("get_active_level_context") if source != null else {}
+	if source != null:
+		context.source_activation_state = _level_loader.call("capture_instance_activation_state", source)
+		context.source_state = _capture_node_state(context.source_node_id, source)
+	_set_phase(TransitionPhase.FREEZING_SOURCE)
+	if prelocked_actor_mode < 0:
+		_lock_actor(actor)
+	if source != null and source.has_method("prepare_route_deactivation"):
+		source.call("prepare_route_deactivation", context.call("to_dictionary"))
+	_disconnect_exits(source)
+	var target_node := _active_route.call("get_node_definition", edge.to_node_id) as RefCounted
+	if target_node == null:
+		return _rollback(context, null, false, source_level_id, source_loader_context, "target node is unavailable")
+	var target_runtime_context := {
+		"parent": _active_session.parent,
+		"origin_ingress": _active_session.origin_ingress,
+		"source_state": _active_session.origin_snapshot,
+		"target_spawn_id": edge.target_spawn_id,
+		"route_id": _active_session.route_id,
+		"route_node_id": edge.to_node_id,
+		"route_profile": _active_session.profile_id,
+		"compatibility_connection": false,
+	}
+	_set_phase(TransitionPhase.STAGING_TARGET)
+	var stage: Dictionary = await _level_loader.call("stage_level_async", target_node.level_id, _active_session.parent, target_runtime_context)
+	if not bool(stage.get("succeeded", false)):
+		return _rollback(context, stage.get("instance") as Node, false, source_level_id, source_loader_context, str(stage.get("reason", "generated target staging failed")))
+	return _activate_staged_node(context, edge, actor, target_node, source, source_level_id, source_loader_context, stage, false, target_runtime_context, defer_actor_unlock)
+
+
+func _activate_staged_node(
+	context: RefCounted,
+	edge: RefCounted,
+	actor: Node,
+	target_node: RefCounted,
+	source: Node,
+	source_level_id: StringName,
+	source_loader_context: Dictionary,
+	stage: Dictionary,
+	reused: bool,
+	target_runtime_context: Dictionary,
+	defer_actor_unlock: bool
+) -> bool:
 	context.target_stage = stage
-	target = stage.get("instance") as Node
+	var target: Node = stage.get("instance") as Node
 	_set_phase(TransitionPhase.VALIDATING_TARGET)
 	if target == null or not is_instance_valid(target):
 		return _rollback(context, target, not reused, source_level_id, source_loader_context, "target instance is unavailable")
@@ -522,6 +602,10 @@ func _rollback(
 	if source != null and is_instance_valid(source):
 		_level_loader.call("reactivate_instance", source, context.source_activation_state)
 		_level_loader.call("restore_active_level_identity", source_level_id, source, source_loader_context)
+		if source.has_method("complete_route_activation"):
+			var reactivation: Variant = source.call("complete_route_activation", {"rollback": true, "edge_id": context.edge_id})
+			if reactivation is bool and not bool(reactivation):
+				push_error("[RouteTraversalManager] rollback source activation hook rejected restoration")
 		if source.has_method("refresh_route_camera"):
 			source.call("refresh_route_camera", _active_session.actor)
 		var bind_result := _bind_exits(source, _active_session.current_node_id)
@@ -530,10 +614,19 @@ func _rollback(
 				"[RouteTraversalManager] rollback source exit rebind failed: %s"
 				% bind_result.get("reason", "unknown failure")
 			)
-	if _active_session.actor is Node2D:
-		(_active_session.actor as Node2D).global_position = context.actor_position
-	_unlock_actor(_active_session.actor, context.actor_process_mode)
-	return _transition_failure(context.edge_id, reason)
+	var failed_route_id: StringName = _active_session.route_id
+	var failed_actor: Node = _active_session.actor
+	var failed_at_entry: bool = source == null and _active_session.current_node_id.is_empty()
+	if failed_actor is Node2D:
+		(failed_actor as Node2D).global_position = context.actor_position
+	_unlock_actor(failed_actor, context.actor_process_mode)
+	var failure := _transition_failure(context.edge_id, reason)
+	if failed_at_entry:
+		_active_session.started = false
+		_active_session = null
+		_active_route = null
+		route_start_failed.emit(failed_route_id, "entry transition failed")
+	return failure
 
 
 func _bind_exits(
@@ -633,6 +726,8 @@ func _run_faded_transition(
 				actor,
 				actor_mode
 			)
+		elif _requires_async_region_stage(edge):
+			succeeded = await _transition_to_generated_node_async(edge, actor, actor_mode)
 		else:
 			succeeded = _transition_to_node(
 				edge,
@@ -688,12 +783,10 @@ func _run_playable_blackout_transition(
 				headless_actor_mode
 			)
 		else:
-			headless_succeeded = _transition_to_node(
-				edge,
-				actor,
-				headless_actor_mode,
-				true
-			)
+			if _requires_async_region_stage(edge):
+				headless_succeeded = await _transition_to_generated_node_async(edge, actor, headless_actor_mode, true)
+			else:
+				headless_succeeded = _transition_to_node(edge, actor, headless_actor_mode, true)
 		if headless_succeeded and _validate_playable_blackout_completion(
 			edge,
 			actor,
@@ -719,7 +812,7 @@ func _run_playable_blackout_transition(
 		and ingress.has_method("complete_deferred_origin_isolation")
 	):
 		ingress.call("complete_deferred_origin_isolation", actor)
-	if not _prestage_playable_blackout_target(edge):
+	if not await _prestage_playable_blackout_target(edge):
 		controller.call("finish_blackout")
 		controller.queue_free()
 		_visual_transition_active = false
@@ -727,7 +820,11 @@ func _run_playable_blackout_transition(
 	await controller.call("wait_for_bridge_run")
 	var actor_mode := actor.process_mode
 	_lock_actor_preserving_velocity(actor)
-	var succeeded := _transition_to_node(edge, actor, actor_mode, true)
+	var succeeded := (
+		await _transition_to_generated_node_async(edge, actor, actor_mode, true)
+		if _requires_async_region_stage(edge)
+		else _transition_to_node(edge, actor, actor_mode, true)
+	)
 	var target: Node = (
 		_active_session.current_instance
 		if succeeded else null
@@ -834,8 +931,8 @@ func _prestage_playable_blackout_target(edge: RefCounted) -> bool:
 			edge.edge_id,
 			"playable blackout target node is unavailable"
 		)
-	var stage: Dictionary = _level_loader.call(
-		"stage_level",
+	var stage: Dictionary = await _level_loader.call(
+		"stage_level_async",
 		target_node.level_id,
 		_active_session.parent,
 		{
@@ -874,6 +971,8 @@ func _run_occluded_handoff(
 		var headless_actor_mode := actor.process_mode
 		if edge.to_node_id == WORLD_ORIGIN:
 			_transition_to_world(edge, actor, headless_actor_mode)
+		elif _requires_async_region_stage(edge):
+			await _transition_to_generated_node_async(edge, actor, headless_actor_mode)
 		else:
 			_transition_to_node(edge, actor, headless_actor_mode)
 		return
@@ -884,11 +983,13 @@ func _run_occluded_handoff(
 	controller.call("begin_occluded_handoff")
 	await controller.call("fade_handoff_to", 1.0, 0.22)
 	var actor_mode := actor.process_mode
-	var succeeded := (
-		_transition_to_world(edge, actor, actor_mode)
-		if edge.to_node_id == WORLD_ORIGIN
-		else _transition_to_node(edge, actor, actor_mode)
-	)
+	var succeeded := false
+	if edge.to_node_id == WORLD_ORIGIN:
+		succeeded = _transition_to_world(edge, actor, actor_mode)
+	elif _requires_async_region_stage(edge):
+		succeeded = await _transition_to_generated_node_async(edge, actor, actor_mode)
+	else:
+		succeeded = _transition_to_node(edge, actor, actor_mode)
 	if succeeded:
 		await controller.call("fade_handoff_to", 0.0, 0.28)
 	controller.call("finish_handoff")

@@ -70,3 +70,26 @@
 - Refresh reason: `none`
 - Next action: Claim the paired post-land review from a fresh, different-agent reviewer context.
 - Blockers or open questions: none.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-procgen-archive-resolve-frontier-restraint-review-corrections-1`
+- Reviewed on main: `911e8871e77c7505a574334d5ab714b5458c7b94`
+- Reviewed implementation commit: `f66722ca9c5d3bfa1bec969716b8851ab203e088`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, runtime`
+- Blocking defects: `2`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Addressed finding disposition: `R1-01 fixed for its existing-cell/COMMIT-time occlusion reproductions; overall correction acceptance remains open because of R1-02/R1-03.`
+- Correction finding IDs: `R1-02, R1-03`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Findings: R1-02: released ingress pending-COMMIT identity can settle reacquired REQUESTED cover before COMMIT. R1-03: unavailable visibility center admits hidden ingress-pocket READY cells through the ordinary fallback.
+- Evidence: All six required registered runtime checks pass. A fresh review-only owner probe fails both edge assertions; clean REQUESTED and visible later-COMMIT controls pass. Exact source/probe/trace is retained in the closing summary. These are owner API interleavings, not a claim of observing the complete production scheduler execute the same sequence.
+- Detailed review summary: `REVIEW_PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `procgen-archive-resolve-frontier-restraint-review-corrections-2`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac323e0-c600-83ea-bb5c-c706c785cf73

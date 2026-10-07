@@ -160,7 +160,7 @@ var _ingress_t0: float = 0.0
 var _ingress_chunk_size: int = 16
 var _ingress_start: Dictionary = {}
 var _ingress_queue: Array[Vector2i] = []
-var _ingress_pocket_commits_pending: Dictionary = {}
+var _ingress_pocket_waiting: Dictionary = {}
 var _reacq_tiles: Dictionary = {}
 var _echo_lead: Dictionary = {}
 var _presentation_time: float = 0.0
@@ -218,7 +218,7 @@ func reset() -> void:
 	_ingress_active = false
 	_ingress_start.clear()
 	_ingress_queue.clear()
-	_ingress_pocket_commits_pending.clear()
+	_ingress_pocket_waiting.clear()
 	_reacq_tiles.clear()
 	_echo_lead.clear()
 	frontier_start_tokens = 0.0
@@ -286,7 +286,7 @@ func note_tile_committed(tile: Vector2i) -> void:
 					return
 				_states[tile] = TileState.READY
 				_ready_queue.append(tile)
-				_ingress_pocket_commits_pending[tile] = true
+				_ingress_pocket_waiting[tile] = true
 				return
 			if _in_ingress_ring(tile):
 				_enqueue_ingress(tile, ingress_start_time(tile))
@@ -333,7 +333,7 @@ func advance(delta: float, operator_tile: Vector2i, chunk_size_tiles: int) -> vo
 		_advance_ingress(gated)
 	if gated:
 		_start_ready_tiles_paced(delta)
-	else:
+	elif not frontier_enabled or _ingress_pocket_waiting.is_empty():
 		var starts := mini(resolve_starts_per_frame, _ready_queue.size())
 		for i in range(starts):
 			_begin_resolving(_ready_queue[i], _presentation_time)
@@ -376,12 +376,15 @@ func _update_frontier(operator_tile: Vector2i) -> bool:
 
 
 func _settle_visible_ingress_pocket_commits(chunk_size_tiles: int) -> void:
-	if _ingress_pocket_commits_pending.is_empty() or not _frontier.has_center():
+	if _ingress_pocket_waiting.is_empty() or not _frontier.has_center():
 		return
 	var settled := false
-	for tile in _ingress_pocket_commits_pending.keys():
-		_ingress_pocket_commits_pending.erase(tile)
-		if _states.has(tile) and _frontier.is_visible_from_center(tile):
+	for tile in _ingress_pocket_waiting.keys():
+		if int(_states.get(tile, 0)) != TileState.READY:
+			_ingress_pocket_waiting.erase(tile)
+			continue
+		if _frontier.is_visible_from_center(tile):
+			_ingress_pocket_waiting.erase(tile)
 			_settle_tile(tile, chunk_size_tiles)
 			settled = true
 	if settled:
@@ -451,6 +454,8 @@ func begin_ingress_resolve(center_tile: Vector2i, committed_tiles: Array[Vector2
 			var state := int(_states.get(pocket_tile, 0))
 			if state == TileState.READY or state == TileState.RESOLVING or state == TileState.INGRESS:
 				if frontier_enabled and (not _frontier.has_center() or not _frontier.is_visible_from_center(pocket_tile)):
+					if state == TileState.READY:
+						_ingress_pocket_waiting[pocket_tile] = true
 					continue
 				_settle_tile(pocket_tile, chunk_size_tiles)
 				settled_in_pocket = true
@@ -520,6 +525,8 @@ func _enqueue_ingress(tile: Vector2i, start_time: float) -> void:
 
 func _advance_ingress(gated: bool = false) -> void:
 	if _ingress_queue.is_empty():
+		if not _ingress_pocket_waiting.is_empty():
+			return
 		if _presentation_time > _ingress_t0 + ingress_wave_sec + 0.1:
 			_ingress_active = false
 		return
@@ -528,7 +535,8 @@ func _advance_ingress(gated: bool = false) -> void:
 		if not _states.has(tile) or int(_states[tile]) != TileState.INGRESS:
 			continue
 		var start := float(_ingress_start[tile])
-		if start <= _presentation_time and (not gated or _frontier.check(tile)):
+		var visibility_admitted := not frontier_enabled or (gated and _frontier.check(tile))
+		if start <= _presentation_time and visibility_admitted:
 			_ingress_start.erase(tile)
 			_begin_resolving(tile, start)
 		else:
@@ -718,6 +726,7 @@ func _settle_all_immediately() -> void:
 
 
 func _release_tile(tile: Vector2i) -> void:
+	_ingress_pocket_waiting.erase(tile)
 	var slot := int(_slot_of.get(tile, -1))
 	if slot >= 0:
 		_hide_slot(slot)
