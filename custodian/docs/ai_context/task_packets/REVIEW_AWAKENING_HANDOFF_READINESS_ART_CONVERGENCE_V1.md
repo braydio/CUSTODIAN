@@ -27,15 +27,15 @@
 2. Prove the 04→05 runtime state is the reviewed exact-source `full_plate_underlay`, with canvas and world transform matching the archived direct-connector correction evidence. Prove all nontransparent `connector.png` silhouette survives and neither the rejected 832×384 plate nor legacy crop-derived 1024×576 registration remains live.
 3. Reuse the implementation's committed registration report, runtime presentation probes, seam-metrics JSON, ordered capture manifest, and generated late-seam ROI images. Verify that the implementation recorded completion of the required human kitty/xdg-open review sequence. Do not perform a second subjective model-vision acceptance pass; only inspect/regenerate imagery if evidence is missing, stale, contradictory, or changed after human approval.
 4. Verify the reviewed Awakening interaction prompt contract still holds: actionable targets remain continuously visible, readout/confirmation text retains its >=4.0s dwell, context/modal suppression clears it, and the exact existing 8-frame/8 FPS Crèche activation FX remains consumed and once-only.
-14. Verify the reviewed 05→06 semantic passage remains one continuous 128×96 route from Dust Lung into Undergate and that a real Operator can continue through the mandatory later-half route without teleport/loading or presentation occlusion.
-14. Verify the Approach/Road seam uses the existing Road offset, y=-6144 anchor, 192 px south gap, and presentation-only correction if any correction was needed.
-14. Verify Gate west/east pylon blockers remain 240×496 and the central visual-route mismatch was not “fixed” by blocking the route.
-14. Exercise South Reach before console acknowledgment, after console but before P-9, and after both. Only the final case may complete.
-14. Prove the production-named completion event emits once and any retained `blockout_completed` compatibility emission comes from the same authority.
-14. Prove no scene change, Hub transition, Twin transition, or Contract generation is added.
-14. Reconcile the live generated asset catalog with the documented BAKED_ONLY / specialized / partial / unpublished classifications.
-14. Confirm CURRENT_STATE and related docs no longer describe rejected connector registrations or missing Road art as current truth.
-14. Confirm existing Awakening geometry/progression, Road production, asset-pipeline, and changed-file validation remain green.
+5. Verify the reviewed 05→06 semantic passage remains one continuous 128×96 route from Dust Lung into Undergate and that a real Operator can continue through the mandatory later-half route without teleport/loading or presentation occlusion.
+6. Verify the Approach/Road seam uses the existing Road offset, y=-6144 anchor, 192 px south gap, and presentation-only correction if any correction was needed.
+7. Verify Gate west/east pylon blockers remain 240×496 and the central visual-route mismatch was not “fixed” by blocking the route.
+8. Exercise South Reach before console acknowledgment, after console but before P-9, and after both. Only the final case may complete.
+9. Prove the production-named completion event emits once and any retained `blockout_completed` compatibility emission comes from the same authority.
+10. Prove no scene change, Hub transition, Twin transition, or Contract generation is added.
+11. Reconcile the live generated asset catalog with the documented BAKED_ONLY / specialized / partial / unpublished classifications.
+12. Confirm CURRENT_STATE and related docs no longer describe rejected connector registrations or missing Road art as current truth.
+13. Confirm existing Awakening geometry/progression, Road production, asset-pipeline, and changed-file validation remain green.
 14. Verify the coding agent, not the user, launched the ordered kitty/xdg-open sequence and blocked final closeout until it completed. If relevant art/registration changed after that gate, require regenerated captures and a new human sequence. Escalate only genuinely subjective Gate/art-composition questions.
 
 ## Human Decision Gate
