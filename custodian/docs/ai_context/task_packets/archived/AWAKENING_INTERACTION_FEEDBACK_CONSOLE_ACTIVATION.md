@@ -48,8 +48,13 @@
 - Deferred: broader HUD hierarchy/aesthetic redesign and generalized interaction presentation extraction remain separate work.
 
 ## Completion Truth
-- Result: complete
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
 - Evidence: focused HUD interaction lease/latch smoke; Awakening first-return progression smoke; Twin Solaria runtime smoke; changed-file validation with 20/20 selected checks passing and complete file coverage; Asset V2 doctor healthy; activation family status imported 1/1; `git diff --check` clean.
+- Result: complete
 - Remaining acceptance gaps: none
 - Visual review: not required; structured runtime checks observe all eight atlas frames and exact 8 FPS playback, plus visibility/stop/one-shot/reset state.
 
