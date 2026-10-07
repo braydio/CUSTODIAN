@@ -138,6 +138,48 @@ approved large source master
 
 Do not infer collision, navigation, terrain masks, walkability or claim ownership from source-image alpha.
 
+## Current AP3 Surface Source Batches
+
+The AP3 image-art requirement is complete as two active registered source-master batches.
+
+### Rocky Upland 10
+
+```text
+batch_id: rocky-upland-10-source-family-v1
+workstream: procgen-alpine-surface-plates-v1
+status: active
+
+CUSTODIAN/asset_batches/procgen-alpine-presentation/rocky-upland-10-source-family-v1/
+custodian_rocky_upland_10_asset_handoff_v1.zip
+
+SHA-256:
+c47718b7f1e94eb67cbb647fdc3c38f81b20fa5a0b44e33de89137b9d62bbfdf
+```
+
+### Meridian Hardstand 6
+
+```text
+batch_id: meridian-hardstand-6-source-family-v1
+workstream: procgen-alpine-surface-plates-v1
+status: active
+
+CUSTODIAN/asset_batches/procgen-alpine-presentation/meridian-hardstand-6-source-family-v1/
+custodian_meridian_hardstand_6_asset_handoff_v1.zip
+
+SHA-256:
+ac3af79bb216d6abf678482149301410071a3d583b2917938ebf5885b6212e2d
+```
+
+Registry receipt:
+
+```text
+CUSTODIAN/asset_batches/_registry/meridian-hardstand-6-source-family-v1.json
+```
+
+The Meridian package contains the corrected `meridian_hardstand_service_apron_alpine_01`; earlier helipad-like generation is superseded by that source master.
+
+Together the Rocky and Meridian batches supply all 16 approved high-resolution AP3 source masters. They are sufficient art inputs once AP2 clears. They do not themselves satisfy Gate C: AP3 still owns exact-canvas normalization, Asset V2 publication, `TerrainStampProfile` authoring, catalog registration, deterministic/runtime validation and the final immutable Gate C closeout handoff.
+
 ## Tracking Rule For Future Asset Uploads
 
 Every future durable asset upload should receive:
