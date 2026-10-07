@@ -27,6 +27,28 @@ requests.
 West Gate Works and Station IX intentionally have no direct exfil. Both return
 physically through the Lower Quarter.
 
+
+## Planned Bridged Falls Upstream Approach — Not Current Runtime
+
+The current `@world_origin -> lower_quarter` campaign ingress above remains
+production truth.
+
+A locked future geography is tracked separately at
+`design/05_levels/ASH_BELL_BRIDGED_FALLS_APPROACH.md`: the resolved Ritualant
+north route will lead through a distinct generated Alpine Highlands region and a
+**seed-generated Bridged Falls subregion** before reaching a new Lower Quarter
+approach threshold. Bridged Falls composes a new convoluted network of colossal
+ruined Meridian civic bridges for each accepted seed over a waterfall/mist
+basin; Lower Quarter and Station IX serve as distant attractors during that
+approach.
+
+Do not implement this by cloning Lower Quarter under a second route-state
+identity. `RouteStateStore` currently keys persistent state by route and node,
+so the final BF7 handoff is intentionally refresh-gated to preserve one
+canonical Lower Quarter state authority. The existing direct campaign ingress
+stays live during construction and receives an explicit keep/repurpose/retire
+decision only at that cutover.
+
 ## Canon Lock
 
 Before the Protocol, unexplained still humanoid figures recurred near and within
