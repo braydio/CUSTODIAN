@@ -35,7 +35,8 @@ class AnimationRecord:
         names = "+".join(layer.replace("_body", "") for layer in self.layers)
         marker = {"COMPLETE": "●", "PARTIAL": "◐", "REFERENCE/LEGACY": "◇"}.get(self.completeness, "⚠")
         detail = self.completeness_detail or names
-        return f"{self.selection.direction}   {self.frames}f   {marker} {detail}"
+        runtime = " · DORMANT/unwired" if self.reachability_status == "DORMANT" else ""
+        return f"{self.selection.direction}   {self.frames}f   {marker} {detail}{runtime}"
 
 
 @dataclass(frozen=True)

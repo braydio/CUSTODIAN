@@ -29,13 +29,15 @@ if mode=="assemble" then
   while #s.frames<p.timeline.document_frames do s:newEmptyFrame() end
   for _,frame in ipairs(s.frames) do frame.duration=1/p.timeline.preview_fps end
   s.layers[1].name=p.layers[1].aseprite_layer_name
-  copy_strip(s,s.layers[1],p.layers[1],p.layers[1].input_path)
-  for i=2,#p.layers do local b=p.layers[i]; local layer=s:newLayer(); layer.name=b.aseprite_layer_name; copy_strip(s,layer,b,b.input_path) end
+  if not p.creation then copy_strip(s,s.layers[1],p.layers[1],p.layers[1].input_path) end
+  for i=2,#p.layers do local b=p.layers[i]; local layer=s:newLayer(); layer.name=b.aseprite_layer_name; if not p.creation then copy_strip(s,layer,b,b.input_path) end end
   for _,r in ipairs(p.references or {}) do local layer=s:newLayer(); layer.name=r.aseprite_layer_name; layer.isVisible=false; layer.isEditable=false; copy_strip(s,layer,r,r.input_path) end
-  local baseline=s:newLayer(); baseline.name="__REFERENCE_SESSION_BASELINE"; baseline.isVisible=false; baseline.isEditable=false
-  local ref={frames=p.timeline.document_frames,frame_size={p.canvas.width,p.canvas.height},placement={0,0},timeline_slots={}}
-  for i=1,p.timeline.document_frames do ref.timeline_slots[i]=i end
-  copy_strip(s,baseline,ref,app.fs.joinPath(root,"baseline","reference_composite.png"))
+  if not p.creation then
+    local baseline=s:newLayer(); baseline.name="__REFERENCE_SESSION_BASELINE"; baseline.isVisible=false; baseline.isEditable=false
+    local ref={frames=p.timeline.document_frames,frame_size={p.canvas.width,p.canvas.height},placement={0,0},timeline_slots={}}
+    for i=1,p.timeline.document_frames do ref.timeline_slots[i]=i end
+    copy_strip(s,baseline,ref,app.fs.joinPath(root,"baseline","reference_composite.png"))
+  end
   local tag=s:newTag(1,p.timeline.document_frames); tag.name=p.identity.profile.."/"..p.identity.group.."/"..p.identity.action.."/"..p.identity.direction
   s:saveAs(wb); s:close()
 elseif mode=="export" then

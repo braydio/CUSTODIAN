@@ -176,19 +176,24 @@ live layers cannot be adopted, and CREATE/REPLACE publication uses the normal
 schema-derived transaction and rollback. No general semantic animation
 creation or Art Agent autonomous layer-creation authority is implied.
 
-## Planned V3: new semantic animation creation
+## V3: new semantic animation creation
 
 Tracked by `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`.
 
-The planned **New Animation** flow extends the same Workbench/publisher rather
-than creating a second asset authority. A native Workbench creation starts from
-a validated semantic identity and proposed publish contract, creates only an
-ignored/disposable Aseprite session, and writes no canonical PNG until explicit
-Publish. Publication then derives source/runtime paths from
-`operator_asset_schema.py`, performs transactional CREATE, runs the existing
-Operator runtime sync, Godot import preflight/import, SpriteFrames/catalog
-rebuild, focused validation, and guarded landing. Failure deletes the newly
-created outputs and restores generated state exactly.
+**New Animation** extends the same Workbench/publisher rather than creating a
+second asset authority. OPUI and `operator anim create` accept a validated
+semantic identity, timing contract, and either full-body or synchronized
+lower+upper template. They show schema-derived source/runtime CREATE targets,
+collision state, and deterministic canonical reference guides before creating
+an ignored Aseprite session. No canonical PNG is written until explicit
+Publish. Saved-workbench Preview supports review before publication. The
+publisher uses the existing guarded transaction, strict Operator runtime sync,
+Godot import preflight/import, SpriteFrames/catalog rebuild, focused validation,
+and isolated art checkout landing. Failure rolls back newly created outputs;
+success normalizes the session into the ordinary existing-source contract.
+Horizontal counterpart creation is explicit and defaults OFF. A created action
+with no registered consumer appears DORMANT/unwired until a separate gameplay
+or presentation change owns it.
 
 This native-authoring path deliberately does **not** round-trip its own saved
 Workbench pixels through `asset_drop/inbox`. Asset Pipeline V2 already delegates

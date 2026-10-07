@@ -18,7 +18,128 @@ def key(owner,layer,profile="melee_1h",n=4):return m.SCHEMA.OperatorAssetKey(own
 def source(root,k):
  p=root/m.SCHEMA.canonical_source_path(k);strip(p,k.frames);return p
 
+def creation_smoke():
+ if not shutil.which("aseprite"):
+  print("SKIP NEW ANIMATION ASEPRITE INTEGRATION: aseprite executable unavailable")
+  return
+ with tempfile.TemporaryDirectory(prefix="operator_animation_create_") as temporary:
+  root=Path(temporary);repo=root/"repo";custodian=repo/"custodian"
+  source_root=custodian/"content/sprites/operator/source/animations";weapon_root=custodian/"content/sprites/weapons"
+  workspace_root=root/"workbench";source_root.mkdir(parents=True);weapon_root.mkdir(parents=True)
+  old=(m.REPO_ROOT,m.CUSTODIAN_ROOT,m.SOURCE_ROOT,m.WEAPON_ROOT)
+  m.REPO_ROOT=repo;m.CUSTODIAN_ROOT=custodian;m.SOURCE_ROOT=source_root;m.WEAPON_ROOT=weapon_root
+  try:
+   valid=("unarmed","cosmetic","create_validation_01","e",6,(96,96),8.0,True,"full_body")
+   for options in (("bad_profile",*valid[1:]),(valid[0],"bad_group",*valid[2:]),
+       (valid[0],valid[1],"Bad_Action",*valid[3:]),(valid[0],valid[1],valid[2],"bad_direction",*valid[4:]),
+       (valid[0],valid[1],valid[2],valid[3],0,*valid[5:]),
+       (valid[0],valid[1],valid[2],valid[3],valid[4],(0,96),*valid[6:]),
+       (valid[0],valid[1],valid[2],valid[3],valid[4],valid[5],0.0,*valid[7:]),
+       (valid[0],valid[1],valid[2],valid[3],valid[4],valid[5],valid[6],"yes",valid[8]),
+       (*valid[:-1],"head_only")):
+    try:m.build_creation_plan(*options,repo_root=repo,source_root=source_root,weapon_root=weapon_root);raise AssertionError(f"invalid creation plan accepted: {options}")
+    except m.WorkbenchError:pass
+   data,ws=w.create_animation("unarmed","create_fixture_01","e",group="cosmetic",frames=6,
+      frame_size=(96,96),fps=8,loop=True,template="full_body",root=workspace_root,
+      source_root=source_root,weapon_root=weapon_root,repo_root=repo)
+   manifest=ws/"workbench.json";document=ws/"workbench.aseprite"
+   target=repo/data["layers"][0]["source_path"]
+   assert not target.exists() and w.state(data,document)=="NEW / UNSAVED"
+   author=root/"author.lua"
+   author.write_text('local p=app.params["document"]; local s=app.open(p); local l=s.layers[1]; for i=1,6 do local im=Image(s.width,s.height,ColorMode.RGB); im:putPixel(i+2,12,Color{r=20+i,g=40,b=60,a=255}); s:newCel(l,i,im,Point(0,0)); end; s:saveAs(p); s:close()\n')
+   subprocess.run(["aseprite","-b","--script-param",f"document={document}","--script",str(author)],check=True,capture_output=True,text=True)
+   data=w.load(manifest);assert w.state(data,document)=="NEW / READY TO PUBLISH"
+   normalized=w.export_preview(manifest)
+   with Image.open(normalized/"full_body.png") as image:
+    assert image.size==(6*96,96)
+    for frame in range(6):assert image.getpixel((frame*96+frame+3,12))==(21+frame,40,60,255)
+   targets=w.publish(manifest,dry_run=True,requested=data)
+   assert targets==[str(target)] and not target.exists()
+   resource=custodian/"content/sprites/operator/runtime/operator_runtime_frames.tres"
+   resource.parent.mkdir(parents=True,exist_ok=True);resource.write_bytes(b"generated resource preimage\\n")
+   document_preimage=m.file_sha256(document);old_resources=w.GENERATED_OPERATOR_RESOURCES;old_rel=m.rel
+   old_commands=w._validation_commands;old_run=w.subprocess.run;sync_calls=[0]
+   def fixture_rel(path,repo_root=None):
+    try:return Path(path).resolve().relative_to(repo.resolve()).as_posix()
+    except ValueError:return str(Path(path).resolve())
+   m.rel=fixture_rel
+   w.GENERATED_OPERATOR_RESOURCES=[resource];w._validation_commands=lambda *_args:[]
+   def injected_pipeline(command,*args,**kwargs):
+    if Path(str(command[0])).name=="aseprite":return old_run(command,*args,**kwargs)
+    if any("sync_operator_runtime_assets.py" in str(part) for part in command):
+     sync_calls[0]+=1
+     if sync_calls[0]==1:raise subprocess.CalledProcessError(1,command,stderr="injected after source CREATE")
+    return subprocess.CompletedProcess(command,0,stdout="",stderr="")
+   w.subprocess.run=injected_pipeline
+   try:
+    try:w.publish(manifest,aseprite="/usr/bin/aseprite",requested=data)
+    except m.WorkbenchError as error:assert "WORKBENCH PUBLISH FAILED" in str(error)
+    else:raise AssertionError("injected source CREATE failure did not stop publication")
+   finally:
+    w.subprocess.run=old_run;w._validation_commands=old_commands;w.GENERATED_OPERATOR_RESOURCES=old_resources;m.rel=old_rel
+   assert not target.exists() and not Path(str(target)+".import").exists()
+   assert not m.BUILDER.timing_sidecar_path(target).exists()
+   assert resource.read_bytes()==b"generated resource preimage\\n" and m.file_sha256(document)==document_preimage
+   journal=json.loads(sorted((ws/"transactions").glob("*/transaction.json"))[-1].read_text())
+   assert journal["state"]=="ROLLED_BACK" and journal["primary_failure"] and not journal["recovery_failure"]
+   # The ordinary transaction normalizes a successful CREATE to the same
+   # source-backed Workbench contract used by later edits.
+   old_run=w.subprocess.run;old_commands=w._validation_commands;old_rel=m.rel
+   w._validation_commands=lambda *_args:[];m.rel=fixture_rel
+   def successful_pipeline(command,*args,**kwargs):
+    if any("sync_operator_runtime_assets.py" in str(part) for part in command):
+     for source_file in source_root.rglob("*.png"):
+      key=m.SCHEMA.parse_filename(source_file.name)
+      runtime=custodian/m.SCHEMA.canonical_runtime_path(key);runtime.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source_file,runtime)
+      source_timing=m.BUILDER.timing_sidecar_path(source_file)
+      if source_timing.exists():shutil.copy2(source_timing,m.BUILDER.timing_sidecar_path(runtime))
+    if Path(str(command[0])).name=="aseprite":return old_run(command,*args,**kwargs)
+    return subprocess.CompletedProcess(command,0,stdout="",stderr="")
+   w.subprocess.run=successful_pipeline
+   try:published=w.publish(manifest,aseprite="/usr/bin/aseprite",requested=data)
+   finally:w.subprocess.run=old_run;w._validation_commands=old_commands;m.rel=old_rel
+   runtime=custodian/m.SCHEMA.canonical_runtime_path(m.SCHEMA.parse_filename(target.name))
+   data=w.load(manifest)
+   assert published==[str(target)] and "creation" not in data and w.state(data,document)=="CLEAN"
+   assert data["layers"][0]["source_contract"].get("operation") is None
+   assert m.pixel_sha256(target)==m.pixel_sha256(runtime)==m.pixel_sha256(normalized/"full_body.png")
+   timing=json.loads(m.BUILDER.timing_sidecar_path(target).read_text())
+   assert timing["fps"]==8.0 and timing["loop"] is True and timing["durations"]==[1.0]*6
+   # A canonical collision that appears after the plan is reviewed fails before
+   # the ignored creation session is assembled or altered.
+   race_action="create_race_01"
+   plan=m.build_creation_plan("unarmed","cosmetic",race_action,"e",6,(96,96),8,True,"full_body",
+       repo_root=repo,source_root=source_root,weapon_root=weapon_root)
+   assert plan.status=="READY"
+   race_target=repo/plan.layers[0]["source_path"];race_target.parent.mkdir(parents=True,exist_ok=True)
+   strip(race_target,6,96,96)
+   raced=m.build_creation_plan("unarmed","cosmetic",race_action,"e",6,(96,96),8,True,"full_body",
+       repo_root=repo,source_root=source_root,weapon_root=weapon_root)
+   assert raced.status=="COLLISION" and raced.collisions
+   try:
+    w.create_animation("unarmed",race_action,"e",group="cosmetic",frames=6,frame_size=(96,96),
+       root=workspace_root,source_root=source_root,weapon_root=weapon_root,repo_root=repo)
+    raise AssertionError("target-appeared creation race was accepted")
+   except m.WorkbenchError as error:assert "COLLISION" in str(error)
+   assert not (workspace_root/"unarmed/cosmetic"/race_action/"e").exists()
+   # Modular template exports both synchronized body clocks from the saved
+   # document, before either layer has canonical source authority.
+   modular,modular_ws=w.create_animation("unarmed","create_modular_01","e",group="cosmetic",frames=6,
+      frame_size=(96,96),fps=8,loop=False,template="modular_body",root=workspace_root,
+      source_root=source_root,weapon_root=weapon_root,repo_root=repo)
+   modular_doc=modular_ws/"workbench.aseprite";modular_author=root/"modular.lua"
+   modular_author.write_text('local p=app.params["document"]; local s=app.open(p); for _,name in ipairs({"lower_body","upper_body"}) do local l=nil; for _,candidate in ipairs(s.layers) do if candidate.name==name then l=candidate end end; for i=1,6 do local im=Image(s.width,s.height,ColorMode.RGB); im:putPixel(i+1,name=="lower_body" and 40 or 20,Color{r=name=="lower_body" and 200 or 30,g=50,b=70,a=255}); s:newCel(l,i,im,Point(0,0)); end end; s:saveAs(p); s:close()\n')
+   subprocess.run(["aseprite","-b","--script-param",f"document={modular_doc}","--script",str(modular_author)],check=True,capture_output=True,text=True)
+   modular_exports=w.export_preview(modular_ws/"workbench.json")
+   assert {row["layer"] for row in modular["layers"]}=={"lower_body","upper_body"}
+   assert modular["timeline"]["source_clock_frames"]==modular["timeline"]["workspace_clock_frames"]==6
+   for layer in ("lower_body","upper_body"):
+    with Image.open(modular_exports/f"{layer}.png") as image:assert image.size==(6*96,96) and image.getchannel("A").getbbox() is not None
+  finally:
+   m.REPO_ROOT,m.CUSTODIAN_ROOT,m.SOURCE_ROOT,m.WEAPON_ROOT=old
+
 def main():
+ creation_smoke()
  with tempfile.TemporaryDirectory() as td:
   root=Path(td); src=root/"4.png"; add=root/"5.png"; back=root/"back.png";strip(src,4); old=pixels(src,4)
   directional=root/"directional.png"; mirrored=root/"mirrored.png"
@@ -224,5 +345,5 @@ def main():
    exported=subprocess.run(["aseprite","-b",str(Path(td)/"unarmed/attack/fast_02/e/workbench.aseprite"),"--sheet",str(Path(td)/"assembled.png"),"--sheet-type","horizontal"],check=True,capture_output=True,text=True)
    with Image.open(Path(td)/"assembled.png") as assembled:assert assembled.size==(6*target_width,target_height),exported.stdout+exported.stderr
  else: print("SKIP ASEPRITE CANVAS INTEGRATION: aseprite executable unavailable")
- print("PASS operator_animation_workbench_smoke: frame and centered canvas migrations, RGBA preservation, crop guard, scopes, Fast 02 Aseprite assembly and contracts, ownership and compatibility")
+ print("PASS operator_animation_workbench_smoke: new full-body/modular creation, saved Aseprite preview, schema validation, collision race, frame/canvas migrations, RGBA preservation, ownership and compatibility")
 if __name__=="__main__":main()
