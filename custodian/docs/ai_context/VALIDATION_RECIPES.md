@@ -1796,6 +1796,7 @@ Run the focused lifecycle and safe-exit contracts, plus registry validation:
 python3 custodian/tools/validation/run_validation.py --test vehicle_runtime_lifecycle --json
 python3 custodian/tools/validation/run_validation.py --test vehicle_exit_clearance --json
 godot --headless --path custodian --script res://tools/validation/validate_vehicle_registry.gd
+python3 custodian/tools/validation/run_validation.py --test vehicle_field_scout_class --json
 ```
 
 The lifecycle smoke covers occupied disable, lethal damage/destruction, tree teardown,

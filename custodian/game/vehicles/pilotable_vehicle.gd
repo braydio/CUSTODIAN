@@ -76,6 +76,7 @@ func _ready() -> void:
 			_initialize_as_wreckage()
 		else:
 			_set_operational_groups(true)
+	_set_field_repair_interaction_available(not is_destroyed and current_health > 0.0)
 	var health_bar := get_node_or_null("HealthBar") as Range
 	if health_bar != null:
 		health_bar.max_value = max_health
@@ -90,6 +91,11 @@ func apply_vehicle_definition(definition) -> void:
 	name = vehicle_definition.id
 	interaction_range = float(vehicle_definition.seat_profile.get("entry_radius", interaction_range))
 	movement_profile = _load_profile(movement_profile_path, "profiles", vehicle_definition.movement_profile)
+	var durability: Dictionary = vehicle_definition.durability_profile_data
+	if not durability.is_empty():
+		max_health = maxf(1.0, float(durability.get("max_health", max_health)))
+		current_health = clampf(current_health, 0.0, max_health)
+	restoration_profile = vehicle_definition.restoration_profile_data.duplicate(true)
 	_apply_visual_kit(vehicle_definition.visual_kit)
 
 
@@ -200,6 +206,21 @@ func take_damage(amount: float, _hit_strength: int = 0) -> void:
 		destroy_vehicle()
 
 
+func repair(amount: float) -> float:
+	if amount <= 0.0 or is_destroyed or current_health <= 0.0 or max_health <= current_health:
+		return 0.0
+	var applied := minf(amount, max_health - current_health)
+	if applied <= 0.0:
+		return 0.0
+	current_health += applied
+	health_changed.emit(current_health, max_health)
+	var health_bar := get_node_or_null("HealthBar") as Range
+	if health_bar != null:
+		health_bar.max_value = max_health
+		health_bar.value = current_health
+	return applied
+
+
 func disable_vehicle(reason: String = "") -> void:
 	_transition_to_disabled(reason, false)
 
@@ -211,6 +232,7 @@ func destroy_vehicle() -> void:
 	current_health = 0.0
 	_transition_to_disabled("destroyed", true)
 	_set_restoration_interaction_available(true)
+	_set_field_repair_interaction_available(false)
 
 
 func is_wreckage() -> bool:
@@ -231,6 +253,7 @@ func restore_from_wreck(health_fraction: float) -> bool:
 	current_speed = 0.0
 	_set_operational_groups(true)
 	_set_restoration_interaction_available(false)
+	_set_field_repair_interaction_available(true)
 	health_changed.emit(current_health, max_health)
 	vehicle_restored.emit()
 	return true
@@ -244,6 +267,7 @@ func _initialize_as_wreckage() -> void:
 	velocity = Vector2.ZERO
 	current_speed = 0.0
 	_set_operational_groups(false)
+	_set_field_repair_interaction_available(false)
 	var interaction_script := load("res://game/vehicles/vehicle_restoration_interaction.gd")
 	if interaction_script == null:
 		push_error("PilotableVehicle: restoration interaction script is unavailable")
@@ -269,6 +293,16 @@ func _set_restoration_interaction_available(enabled: bool) -> void:
 	if not is_instance_valid(restoration_interaction):
 		return
 	restoration_interaction.call("set_available", enabled)
+
+
+func _set_field_repair_interaction_available(enabled: bool) -> void:
+	var interaction := get_node_or_null("FieldRepairInteraction")
+	if interaction == null:
+		return
+	if enabled:
+		interaction.add_to_group("interactable")
+	else:
+		interaction.remove_from_group("interactable")
 
 
 func _transition_to_disabled(reason: String, destroyed: bool) -> void:

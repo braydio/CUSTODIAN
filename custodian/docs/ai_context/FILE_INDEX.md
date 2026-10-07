@@ -651,8 +651,10 @@ Last updated: 2026-10-02
 - `custodian/game/vehicles/vehicle_spawn_resolver.gd` — registry ID to live scene resolver; validates runtime support and profiles, applies definitions, and leaves pilotable-group ownership to vehicle lifecycle state
 - `custodian/game/vehicles/pilotable_vehicle.gd` — sole vehicle lifecycle authority for movement, disable/destruction, wreck initialization/restoration, pilot release, group eligibility, and interaction prompts
 - `custodian/game/vehicles/vehicle_restoration_interaction.gd` — wreck-owned hold interaction that checks ResourceLedger availability, cancels without spending, and charges only after completion validation
+- `custodian/content/vehicles/vehicle_durability_profiles.json` — data-owned vehicle maximum-health profiles, including the Scout's 100 HP contract
 - `custodian/tools/validation/vehicle_runtime_lifecycle_smoke.gd` — focused occupied disable/destruction/teardown and blocked-exit smoke, including pilot restoration, controller/camera handoff, and duplicate group discovery
 - `custodian/tools/validation/vehicle_wreck_restoration_smoke.gd` — resolver/direct-scene wreck parity, group and prompt truth, free cancellation, exact ledger payment, actual entry, lethal re-wreck, and repeat restoration
+- `custodian/tools/validation/vehicle_field_scout_class_smoke.gd` — semantic Scout class, exact data contracts, wreck-first spawn parity, restoration, entry, and field repair compatibility
 - `custodian/content/vehicles/vehicle_restoration_profiles.json` — registered wreck initialization and material/hold/health restoration contracts
 - `custodian/game/vehicles/vehicle_input_adapter.gd` — guarded InputMap reader used by `PlayerController` for vehicle movement/action intent
 - `custodian/game/vehicles/vehicle_seat.gd` — small seat/entry bridge used by pilotable vehicle scenes
@@ -896,7 +898,7 @@ Last updated: 2026-10-02
 ## Active Interaction/UI Files
 
 - `custodian/game/actors/defense/turret.gd` — turret interaction prompt reads actual interact binding
-- `custodian/game/actors/vehicles/light_buggy.tscn` — first production vehicle scene, now backed by `PilotableVehicle` and registry ID `custodian_ground_buggy_scout_light`
+- `custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn` — semantic Field Scout scene, backed by `PilotableVehicle`, wreck-first restoration, one driver, two utility hardpoints, and compatibility hover art
 - `custodian/game/systems/core/player_controller.gd` — input router with one canonical pilotable-vehicle reference, deduplicated group discovery, and signal-owned camera handoff
 - `custodian/game/world/camera.gd` — world camera controller with `set_follow_target(target)` for Operator/vehicle follow switching, map-bound clamping, manual middle-mouse panning, movement-input recovery, and optional final post-bounds presentation-subject safe-frame containment
 - `custodian/tools/validation/camera_presentation_subject_constraint_smoke.gd` — focused rendered-viewport smoke for generic presentation-subject containment, telemetry, and clear behavior

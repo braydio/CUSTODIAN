@@ -1,6 +1,6 @@
 # Vehicle System
 
-**Status:** active — registry/lifecycle live; wreck restoration and first concrete Scout class queued
+**Status:** active — registry, lifecycle, wreck restoration, and Field Scout class live; Asset V2 vehicle presentation remains queued
 **Priority:** high — first pilotable vehicle moving into production
 **Requires:** Godot 4.x, existing player controller, terrain surface multiplier for `actor_kind == "vehicle"`
 **Supersedes:** `design/02_features/vehicles/VEHICLE_REGISTRY_AND_PILOTING_SYSTEM.md` (consolidated from former `design/20_features/in_progress/`), `design/02_features/vehicles/implementation.md`, `design/VEHICLES_REVIEW.md`
@@ -158,6 +158,7 @@ The first Scout restores to 40% health for 12 `ruin_scrap`, 6 `structural_alloy`
 ├── vehicle_taxonomy.json          # Valid enum values
 ├── vehicle_archetypes.json        # Vehicle definitions
 ├── vehicle_movement_profiles.json # Movement configs
+├── vehicle_durability_profiles.json # Data-owned durability/max-health configs
 ├── vehicle_restoration_profiles.json # Wreck spawn/recovery costs + restored-health contract
 ├── vehicle_hardpoint_profiles.json
 ├── vehicle_loadouts.json
@@ -193,6 +194,7 @@ custodian/tools/validate_vehicle_registry.gd
       "mobility": ["WHEELED"],
       "tags": ["INDUSTRIAL", "FIELD_REPAIRED", "MILSPEC"],
       "movement_profile": "ground_wheeled_light",
+      "durability_profile": "light_scout_utility",
       "restoration_profile": "field_scout_recovery_light",
       "hardpoint_profile": "utility_light",
       "loadout": "none",

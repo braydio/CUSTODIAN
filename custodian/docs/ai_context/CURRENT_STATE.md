@@ -15,6 +15,23 @@ restore camera follow, and deduplicates overlapping vehicle groups. The unused
 Focused coverage is registered as `vehicle_runtime_lifecycle`; see
 `VALIDATION_RECIPES.md` for commands.
 
+## Field Scout Buggy Mk I Class Recovery (2026-10-07)
+
+The stable `custodian_ground_buggy_scout_light` registry identity now resolves to
+`field_scout_buggy_mk1.tscn` and the semantic display name Custodian Field Scout
+Buggy Mk I. Movement remains on the exact `ground_wheeled_light` tuning; a named
+`light_scout_utility` durability profile owns its 100 HP maximum. The scene keeps
+one driver seat, 64 px entry range, 2x1 bottom-center footprint, and front-light /
+rear-utility hardpoints, with no weapon loadout. Both the authored game scene and
+registry resolver enter WRECKAGE and leave the vehicle outside operational groups
+until the reviewed restoration interaction succeeds. The existing
+`FieldRepairInteraction` becomes available after restoration and can raise the
+same vehicle above its 40 HP recovered state. The obsolete `light_buggy.tscn`
+scene name has no live runtime consumer and was removed. Existing hover art is
+explicit compatibility presentation until the Asset V2 vehicle-family slice.
+The `vehicle_field_scout_class` smoke covers the semantic class, both spawn paths,
+restoration/repair integration, and restored entry.
+
 ## Operator Dependency Injection F0 (2026-10-05)
 
 `OperatorRuntimeDependencies` is now the facade's explicit typed reference bundle.

@@ -13,7 +13,7 @@ const REQUIRED_ORIGIN_BRANCHES := [
 	"Allies",
 	"Items",
 	"ContractMap",
-	"LightBuggy",
+	"FieldScoutBuggyMk1",
 	"WallPlacer",
 	"WallBuildSystem",
 	"TurretPlacement",

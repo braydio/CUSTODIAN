@@ -3738,7 +3738,7 @@
       ],
       "owners": [
         "custodian/game/vehicles/pilotable_vehicle.gd",
-        "custodian/game/actors/vehicles/light_buggy.tscn",
+        "custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn",
         "custodian/tools/validation/vehicle_exit_clearance_smoke.gd"
       ],
       "timeout_sec": 30,
@@ -3777,6 +3777,7 @@
       "owners": [
         "custodian/content/vehicles/vehicle_restoration_profiles.json",
         "custodian/content/vehicles/vehicle_archetypes.json",
+        "custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn",
         "custodian/game/vehicles/pilotable_vehicle.gd",
         "custodian/game/vehicles/vehicle_definition.gd",
         "custodian/game/vehicles/vehicle_registry.gd",
@@ -3798,10 +3799,61 @@
         "schema"
       ],
       "owners": [
+        "custodian/content/vehicles/vehicle_archetypes.json",
+        "custodian/content/vehicles/vehicle_durability_profiles.json",
+        "custodian/content/vehicles/vehicle_hardpoint_profiles.json",
+        "custodian/content/vehicles/vehicle_loadouts.json",
+        "custodian/content/vehicles/vehicle_movement_profiles.json",
         "custodian/content/vehicles/vehicle_registry_schema.json",
-        "custodian/tools/validation/validate_vehicle_registry.gd"
+        "custodian/content/vehicles/vehicle_restoration_profiles.json",
+        "custodian/content/vehicles/vehicle_visual_kits.json",
+        "custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn",
+        "custodian/game/infrastructure/repair/field_repair_interaction.gd",
+        "custodian/game/vehicles/pilotable_vehicle.gd",
+        "custodian/game/vehicles/vehicle_definition.gd",
+        "custodian/game/vehicles/vehicle_registry.gd",
+        "custodian/game/vehicles/vehicle_spawn_resolver.gd",
+        "custodian/scenes/game.tscn",
+        "custodian/tools/validation/validate_vehicle_registry.gd",
+        "custodian/tools/validation/vehicle_field_scout_class_smoke.gd",
+        "custodian/tools/validation/world_origin_branch_contract_smoke.gd"
       ],
       "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
+      "id": "vehicle_field_scout_class",
+      "type": "godot_script",
+      "script": "res://tools/validation/vehicle_field_scout_class_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "vehicle",
+        "class",
+        "restoration",
+        "repair"
+      ],
+      "owners": [
+        "custodian/content/vehicles/vehicle_archetypes.json",
+        "custodian/content/vehicles/vehicle_durability_profiles.json",
+        "custodian/content/vehicles/vehicle_hardpoint_profiles.json",
+        "custodian/content/vehicles/vehicle_loadouts.json",
+        "custodian/content/vehicles/vehicle_movement_profiles.json",
+        "custodian/content/vehicles/vehicle_registry_schema.json",
+        "custodian/content/vehicles/vehicle_restoration_profiles.json",
+        "custodian/content/vehicles/vehicle_visual_kits.json",
+        "custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn",
+        "custodian/game/infrastructure/repair/field_repair_interaction.gd",
+        "custodian/game/vehicles/pilotable_vehicle.gd",
+        "custodian/game/vehicles/vehicle_definition.gd",
+        "custodian/game/vehicles/vehicle_registry.gd",
+        "custodian/game/vehicles/vehicle_spawn_resolver.gd",
+        "custodian/scenes/game.tscn",
+        "custodian/tools/validation/validate_vehicle_registry.gd",
+        "custodian/tools/validation/vehicle_field_scout_class_smoke.gd",
+        "custodian/tools/validation/vehicle_wreck_restoration_smoke.gd",
+        "custodian/tools/validation/world_origin_branch_contract_smoke.gd"
+      ],
+      "timeout_sec": 45,
       "needs_import": true
     },
     {

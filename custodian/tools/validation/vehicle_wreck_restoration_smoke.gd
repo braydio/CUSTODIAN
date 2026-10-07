@@ -36,7 +36,7 @@ func _run() -> void:
 		await process_frame
 		await _check_initial_wreck(resolved_vehicle, ledger, "resolver")
 		await _check_full_recovery_loop(resolved_vehicle, ledger)
-	var direct_scene := load("res://game/actors/vehicles/light_buggy.tscn") as PackedScene
+	var direct_scene := load("res://game/actors/vehicles/field_scout_buggy_mk1.tscn") as PackedScene
 	var direct_vehicle := direct_scene.instantiate() as PilotableVehicle if direct_scene != null else null
 	_expect(direct_vehicle != null, "direct fallback scene must instantiate")
 	if direct_vehicle != null:

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bbashm32vudln" path="res://game/vehicles/pilotable_vehicle.gd" id="1_vehicle"]
 [ext_resource type="SpriteFrames" uid="uid://dpnh0apa41g7g" path="res://game/actors/vehicles/hover_buggy_idle_frames.tres" id="2_frames"]
 [ext_resource type="Script" uid="uid://ck3wib5ngvr01" path="res://game/vehicles/vehicle_seat.gd" id="3_seat"]
+[ext_resource type="Script" path="res://game/infrastructure/repair/field_repair_interaction.gd" id="4_field_repair"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_buggy"]
 radius = 28.0
@@ -11,8 +12,9 @@ height = 64.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_entry"]
 radius = 64.0
 
-[node name="LightBuggy" type="CharacterBody2D" unique_id=1517962398]
+[node name="FieldScoutBuggyMk1" type="CharacterBody2D" unique_id=1517962398]
 script = ExtResource("1_vehicle")
+fallback_vehicle_id = "custodian_ground_buggy_scout_light"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1024933905]
 position = Vector2(0, 10)
@@ -45,10 +47,11 @@ position = Vector2(0, -34)
 [node name="RearUtility" type="Marker2D" parent="Hardpoints" unique_id=1774816720]
 position = Vector2(0, 28)
 
-[node name="HealthBar" type="ProgressBar" parent="." unique_id=216754701]
-offset_left = -36.0
-offset_top = -52.0
-offset_right = 36.0
-offset_bottom = -40.0
-value = 100.0
-show_percentage = false
+[node name="FieldRepairInteraction" type="Area2D" parent="." unique_id=216754701]
+script = ExtResource("4_field_repair")
+target_path = NodePath("..")
+interaction_range = 84.0
+hold_duration = 3.0
+resource_cost = {"ruin_scrap": 4}
+repair_amount = 30.0
+prompt_label = "FIELD REPAIR SCOUT"

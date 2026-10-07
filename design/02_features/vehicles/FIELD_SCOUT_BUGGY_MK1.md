@@ -1,6 +1,6 @@
 # Custodian Field Scout Buggy Mk I
 
-**Status:** active implementation design  
+**Status:** runtime class implemented; compatibility presentation pending Asset V2
 **Parent authority:** `design/02_features/vehicles/VEHICLES.md`  
 **Implementation series:** lifecycle hardening -> wreck restoration -> class recovery -> Asset V2 vehicle-family foundation  
 **Reviewed main:** `5020df4b88a2`
@@ -94,7 +94,7 @@ custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn
 
 The scene uses `PilotableVehicle` as the shared runtime authority and retains one `VehicleSeat` driver seat, authoritative collision geometry, an exit marker used as the first safe-exit candidate, `Hardpoints/FrontLight`, `Hardpoints/RearUtility`, and one presentation node consuming the selected visual kit.
 
-`custodian/game/actors/vehicles/light_buggy.tscn` is a migration name, not the permanent class identity. Remove it after live consumers move, or retain it only as an explicit compatibility alias with an exit condition.
+The old `light_buggy.tscn` scene has been removed after moving its live consumers to `field_scout_buggy_mk1.tscn`; no scene compatibility alias remains. Current hover SpriteFrames are explicitly named compatibility presentation until the Asset V2 vehicle-family slice replaces them.
 
 A stale constant in-world health bar is not acceptable. Bind it to authoritative vehicle health through an existing presentation seam if one exists; otherwise remove the orphan presentation rather than creating a second health authority.
 
@@ -215,13 +215,13 @@ Current `hover_buggy_idle_frames.tres` proves these legacy cadences:
 
 This is migration evidence, not the wheeled class art contract.
 
-## Known live defects this series closes
+## Known live defects and deferred presentation work
 
-Lifecycle V1 closes the occupied-disable/destruction/teardown stranding path, centralizes the production damage-to-zero transition in `PilotableVehicle`, consolidates PlayerController ownership and group discovery, and removes the unused parallel `VehicleBase` behavior. The following Field Scout series defects remain live:
+Lifecycle V1 closes the occupied-disable/destruction/teardown stranding path, centralizes the production damage-to-zero transition in `PilotableVehicle`, consolidates PlayerController ownership and group discovery, and removes the unused parallel `VehicleBase` behavior. The class recovery now supplies semantic Scout identity, data-owned durability, and wreck-first world spawning. Remaining presentation/pipeline work is deferred to the Asset V2 vehicle-family slice:
 
-- WHEELED/Scout taxonomy points at hover-buggy presentation.
+- The Field Scout scene still consumes explicitly named compatibility hover-buggy art.
 - `update_vehicle_runtime_resources.gd` is hard-coded to `hover_buggy`.
-- Required-assets entries target nonexistent `light_buggy/runtime` paths while live compatibility art is under `hover_buggy/runtime`.
+- Required-assets entries still target nonexistent `light_buggy/runtime` paths while compatibility art is under `hover_buggy/runtime`.
 - Older vehicle docs contain superseded paths/claims.
 
 ## Implementation series

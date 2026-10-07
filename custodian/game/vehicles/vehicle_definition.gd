@@ -15,6 +15,8 @@ var interaction_mode: String = ""
 var mobility: Array[String] = []
 var tags: Array[String] = []
 var movement_profile: String = ""
+var durability_profile: String = ""
+var durability_profile_data: Dictionary = {}
 var hardpoint_profile: String = ""
 var loadout: String = ""
 var visual_kit: String = ""
@@ -45,6 +47,8 @@ static func from_dict(data: Dictionary):
 	definition.mobility = _string_array(data.get("mobility", []))
 	definition.tags = _string_array(data.get("tags", []))
 	definition.movement_profile = String(data.get("movement_profile", ""))
+	definition.durability_profile = String(data.get("durability_profile", ""))
+	definition.durability_profile_data = Dictionary(data.get("durability_profile_data", {})).duplicate(true)
 	definition.hardpoint_profile = String(data.get("hardpoint_profile", ""))
 	definition.loadout = String(data.get("loadout", ""))
 	definition.visual_kit = String(data.get("visual_kit", ""))
@@ -69,6 +73,12 @@ func validate() -> PackedStringArray:
 		errors.append("%s must define at least one mobility tag" % id_or_placeholder())
 	if movement_profile.is_empty():
 		errors.append("%s missing movement_profile" % id_or_placeholder())
+	if durability_profile.is_empty():
+		errors.append("%s missing durability_profile" % id_or_placeholder())
+	elif durability_profile_data.is_empty():
+		errors.append("%s references missing durability_profile '%s'" % [id_or_placeholder(), durability_profile])
+	elif float(durability_profile_data.get("max_health", 0.0)) <= 0.0:
+		errors.append("%s durability_profile '%s' must define positive max_health" % [id_or_placeholder(), durability_profile])
 	if hardpoint_profile.is_empty():
 		errors.append("%s missing hardpoint_profile" % id_or_placeholder())
 	if loadout.is_empty():
