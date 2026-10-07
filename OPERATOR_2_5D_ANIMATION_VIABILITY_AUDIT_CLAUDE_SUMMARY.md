@@ -1,6 +1,6 @@
 # Operator 2.5D Animation Viability Audit
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
 
 Workstream: `operator-2-5d-animation-viability-audit` · **Paused at the human visual-review boundary; not complete.**
 
@@ -50,5 +50,5 @@ Other in-progress work exists: `agent/awakening-04-05-connector-transition-regre
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
 - Refresh reason: Forum slice must incorporate the approved Operator viability verdict, the actual art backlog, and any required short-term projection/registration constraints rather than assuming the current Operator art is production-ready.
