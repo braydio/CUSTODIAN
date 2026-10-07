@@ -5,12 +5,12 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `none`
+- Depends on: `review-ash-bell-ritualant-runtime-truth-closeout`
 - Locks: `asset-pipeline, ash-bell-art`
 - Kind: `implementation`
 - Review: `manual`
-- Reviewed main: `5adb659e05f3008d517230f3ecfc84f67a6b204a`
-- Authoring chat: `not-recorded`
+- Reviewed main: `1362ba9569e1`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
 - Goal: Close the genuinely remaining production-art gaps for the already-landed authored Ash-Bell / Forlorn-Ritualant encounter through Asset Pipeline V2, without reopening completed route, dialogue, encounter, or combat authority.
 - Completion boundary: Done when the current required-assets registry no longer reports an Ash-Bell / Forlorn-Ritualant production-art need that this packet explicitly accepts; every accepted source is reviewed, staged through `custodian/asset_drop/inbox/...`, published by Asset Pipeline V2 with provenance, wired only where a current consumer contract exists, and validated at native gameplay scale. Unknown animation cadence/directional contracts are resolved before source generation rather than guessed. Runtime encounter behavior and authored-route ownership remain unchanged.
 - Current measured state: The authored route, Threadway/lift/travel spine, data dialogue, four-action Ritualant encounter, and canonical 128×128 Asset V2 strips for Ninth Answer, Orra Comes Late, dissolve, and violent death are live. The legacy active packet was archived as `task_packets/archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md`. Current required-assets truth still reports: (a) Forlorn-Ritualant locomotion/reaction coverage partial, including directional walk/drag, turning, reactions, and an eight-frame rise; (b) Unarrived Saint apparition polish/directional variants partial; (c) Unarrived procession silhouettes needed; (d) ritual prop sprites needed; and additional chamber dressing/fountain/audio needs tracked separately in the registry. Repository search found no matching reviewed `asset_drop/source_work` source set for these remaining items on the reviewed main, so this packet is blocked on production source/art decisions rather than code.
@@ -53,6 +53,7 @@ Known source targets must enter Asset Pipeline V2, never legacy direct runtime p
 
 ## Handoff
 
+- Scene-closeout predecessor: `ash-bell-ritualant-runtime-truth-closeout` plus its paired review must land first; return that evidence to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c before promoting this draft.
 - Next action: Human/art-direction pass locks unresolved direction/frame contracts and supplies or approves production source; then change this packet to `ready/auto` and execute the corresponding Asset V2 families. Do not claim while source/cadence contracts remain unresolved.
 - Best starting files: `required_assets.registry.json`; `enemy_forlorn_ritualant.asset.json`; detailed encounter spec; `build_forlorn_ritualant_spriteframes.py`; current encounter scene.
 - Blockers or open questions: Exact walk/drag/turn/reaction direction/frame/FPS contracts; procession layout/frame count; apparition static-versus-directional production treatment; production source art itself.
