@@ -5,7 +5,7 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P2`
-- Depends on: `bridged-falls-procgen-topology, bridged-falls-bridge-grammar-asset-v2`
+- Depends on: `review-bridged-falls-bridge-grammar-asset-v2`
 - Locks: `bridged-falls-vista, bridged-falls-waterfall-art, procgen-region-frame`
 - Kind: `implementation`
 - Review: `auto`
