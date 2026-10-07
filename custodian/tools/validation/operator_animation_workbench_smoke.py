@@ -7,6 +7,9 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"operator"))
 import animation_workbench_model as m
 import animation_frame_contract as fc
 import animation_workbench as w
+import ui.service as service_module
+from ui.service import WorkbenchService
+from ui.state import AnimationSelection
 
 def strip(path,n,w=8,h=8):
  im=Image.new("RGBA",(n*w,h))
@@ -82,10 +85,12 @@ def creation_smoke():
    assert resource.read_bytes()==b"generated resource preimage\\n" and m.file_sha256(document)==document_preimage
    journal=json.loads(sorted((ws/"transactions").glob("*/transaction.json"))[-1].read_text())
    assert journal["state"]=="ROLLED_BACK" and journal["primary_failure"] and not journal["recovery_failure"]
-   # The ordinary transaction normalizes a successful CREATE to the same
-   # source-backed Workbench contract used by later edits.
+   # Route successful creation through the same service boundary used by OPUI
+   # and the CLI. The guarded art publisher is intercepted only at its checkout
+   # boundary; the real Workbench transaction, source export, rollback journal,
+   # timing, and manifest normalization still run against this disposable repo.
    old_run=w.subprocess.run;old_commands=w._validation_commands;old_rel=m.rel
-   w._validation_commands=lambda *_args:[];m.rel=fixture_rel
+   w._validation_commands=lambda *_args:[];w.GENERATED_OPERATOR_RESOURCES=[resource];m.rel=fixture_rel
    def successful_pipeline(command,*args,**kwargs):
     if any("sync_operator_runtime_assets.py" in str(part) for part in command):
      for source_file in source_root.rglob("*.png"):
@@ -95,16 +100,66 @@ def creation_smoke():
       if source_timing.exists():shutil.copy2(source_timing,m.BUILDER.timing_sidecar_path(runtime))
     if Path(str(command[0])).name=="aseprite":return old_run(command,*args,**kwargs)
     return subprocess.CompletedProcess(command,0,stdout="",stderr="")
+   repo_plan=repo/"design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
+   repo_plan.parent.mkdir(parents=True,exist_ok=True);repo_plan.write_text(json.dumps({"items":[]}))
+   catalog=custodian/"content/data/operator/generated/operator_animation_catalog.generated.json"
+   catalog.parent.mkdir(parents=True,exist_ok=True);catalog.write_text(json.dumps({"animations":{},"weapons":{}}))
+   service=WorkbenchService(repo_root=repo,source_root=source_root,weapon_root=weapon_root,
+      catalog_path=catalog,workspace_root=workspace_root,aseprite=Path("/usr/bin/aseprite"))
+   service.coordination_root=repo;service.coordination_root_configured=False
+   service.checkout_identity=lambda:__import__("types").SimpleNamespace(publish_allowed=True,kind="ART BRANCH")
+   old_prepare=service_module.operator_art_worktree.prepare_publish_checkout
+   old_publisher=service_module.operator_art_worktree.publish_to_main
+   service_module.operator_art_worktree.prepare_publish_checkout=lambda *_a,**_k:__import__("types").SimpleNamespace(status="ready",blockers=(),preparations=())
+   publisher_calls=[]
+   def guarded_publisher(**kwargs):
+    publisher_calls.append((set(kwargs["canonical_paths"]),set(kwargs["allowlist"])))
+    return {"status":"fixture_published","published":kwargs["publish_once"]()}
+   service_module.operator_art_worktree.publish_to_main=guarded_publisher
    w.subprocess.run=successful_pipeline
-   try:published=w.publish(manifest,aseprite="/usr/bin/aseprite",requested=data)
-   finally:w.subprocess.run=old_run;w._validation_commands=old_commands;m.rel=old_rel
+   try:
+    selection=AnimationSelection("unarmed","cosmetic","create_fixture_01","e")
+    review=service.publish_preview(selection)
+    assert review.publish_enabled and review.readiness_status=="ready"
+    reviewed_manifest=manifest.read_bytes();saved_document_hash=m.file_sha256(document)
+    original_manifest=json.loads(reviewed_manifest)
+    corruptions=(
+     lambda value:value["layers"][0].update(owner="enemy"),
+     lambda value:value["layers"][0].update(layer="head"),
+     lambda value:value["layers"][0]["semantic_identity"].update(action="forged_action"),
+     lambda value:value["layers"][0].update(source_path="custodian/content/forged.png"),
+     lambda value:value["layers"][0]["source_contract"].update(path="custodian/content/forged.png"),
+    )
+    for corrupt in corruptions:
+     candidate=json.loads(reviewed_manifest);corrupt(candidate);w.save(manifest,candidate)
+     try:service.publish(selection)
+     except (m.WorkbenchError,service_module.operator_art_worktree.ArtWorktreeError):pass
+     else:raise AssertionError("invalid creation publication contract passed service guard")
+     assert not publisher_calls and m.file_sha256(document)==saved_document_hash and not target.exists()
+    w.save(manifest,original_manifest)
+    target.write_bytes(b"raced target must survive")
+    try:service.publish(selection)
+    except m.WorkbenchError as error:assert "NOT READY TO PUBLISH" in str(error) or "changed after preview" in str(error) or "already exists" in str(error)
+    else:raise AssertionError("service publish overwrote a target created after preview")
+    assert target.read_bytes()==b"raced target must survive" and m.file_sha256(document)==saved_document_hash
+    target.unlink()
+    published=service.publish(selection)
+    assert len(publisher_calls)==2 and any(path.endswith(target.name) for path in publisher_calls[-1][0]), publisher_calls
+    assert target.as_posix() in published["published"]
+   finally:
+    w.subprocess.run=old_run;w._validation_commands=old_commands;m.rel=old_rel
+    service_module.operator_art_worktree.prepare_publish_checkout=old_prepare
+    service_module.operator_art_worktree.publish_to_main=old_publisher
    runtime=custodian/m.SCHEMA.canonical_runtime_path(m.SCHEMA.parse_filename(target.name))
    data=w.load(manifest)
-   assert published==[str(target)] and "creation" not in data and w.state(data,document)=="CLEAN"
+   assert published["published"]==[str(target)] and "creation" not in data and w.state(data,document)=="CLEAN"
    assert data["layers"][0]["source_contract"].get("operation") is None
    assert m.pixel_sha256(target)==m.pixel_sha256(runtime)==m.pixel_sha256(normalized/"full_body.png")
    timing=json.loads(m.BUILDER.timing_sidecar_path(target).read_text())
    assert timing["fps"]==8.0 and timing["loop"] is True and timing["durations"]==[1.0]*6
+   records=service.discover_browser_records()
+   record=next(row for row in records if row.selection==selection)
+   assert record.reachability_status=="DORMANT"
    # A canonical collision that appears after the plan is reviewed fails before
    # the ignored creation session is assembled or altered.
    race_action="create_race_01"
@@ -135,6 +190,34 @@ def creation_smoke():
    assert modular["timeline"]["source_clock_frames"]==modular["timeline"]["workspace_clock_frames"]==6
    for layer in ("lower_body","upper_body"):
     with Image.open(modular_exports/f"{layer}.png") as image:assert image.size==(6*96,96) and image.getchannel("A").getbbox() is not None
+   # The synchronized modular creation also crosses WorkbenchService.publish;
+   # verify both source/runtime strips retain the authored layer pixels.
+   modular_selection=AnimationSelection("unarmed","cosmetic","create_modular_01","e")
+   old_run=w.subprocess.run;old_commands=w._validation_commands;old_resources=w.GENERATED_OPERATOR_RESOURCES;old_rel=m.rel
+   old_prepare=service_module.operator_art_worktree.prepare_publish_checkout
+   old_publisher=service_module.operator_art_worktree.publish_to_main
+   w._validation_commands=lambda *_args:[];w.GENERATED_OPERATOR_RESOURCES=[resource];m.rel=fixture_rel
+   w.subprocess.run=successful_pipeline
+   service_module.operator_art_worktree.prepare_publish_checkout=lambda *_a,**_k:__import__("types").SimpleNamespace(status="ready",blockers=(),preparations=())
+   service_module.operator_art_worktree.publish_to_main=guarded_publisher
+   try:
+    modular_view=service.publish_preview(modular_selection)
+    assert modular_view.publish_enabled and modular_view.readiness_status=="ready"
+    modular_published=service.publish(modular_selection)
+   finally:
+    w.subprocess.run=old_run;w._validation_commands=old_commands;w.GENERATED_OPERATOR_RESOURCES=old_resources;m.rel=old_rel
+    service_module.operator_art_worktree.prepare_publish_checkout=old_prepare
+    service_module.operator_art_worktree.publish_to_main=old_publisher
+   assert len(modular_published["published"])==2
+   modular_data=w.load(modular_ws/"workbench.json")
+   assert "creation" not in modular_data
+   for layer in ("lower_body","upper_body"):
+    row=next(binding for binding in modular_data["layers"] if binding["layer"]==layer)
+    src=repo/row["source_path"];runtime=repo/row["runtime_path"]
+    assert m.pixel_sha256(src)==m.pixel_sha256(runtime)==m.pixel_sha256(modular_exports/f"{layer}.png")
+   modular_records=service.discover_browser_records()
+   modular_record=next(row for row in modular_records if row.selection==modular_selection)
+   assert modular_record.reachability_status=="DORMANT"
   finally:
    m.REPO_ROOT,m.CUSTODIAN_ROOT,m.SOURCE_ROOT,m.WEAPON_ROOT=old
 

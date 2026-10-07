@@ -872,6 +872,10 @@ class WorkbenchService:
                 raise operator_art_worktree.ArtWorktreeError("NEW ANIMATION TEMPLATE LAYERS CHANGED")
             for binding in bindings:
                 contract = binding.get("publish_contract", {})
+                identity = {
+                    "owner": "operator", "layer": binding.get("layer", ""),
+                    **expected_identity,
+                }
                 try:
                     key = self.model.SCHEMA.OperatorAssetKey(
                         "operator", binding["layer"], selection.profile, selection.group,

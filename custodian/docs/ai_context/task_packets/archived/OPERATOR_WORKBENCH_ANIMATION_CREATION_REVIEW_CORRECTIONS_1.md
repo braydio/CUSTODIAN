@@ -14,7 +14,7 @@
 - Paired review workstream: `review-operator-workbench-animation-creation-review-corrections-1`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
-- Reviewed main: `180bcec63`
+- Reviewed main: `c5ba129967e0428702af95da476b8271f178efbe`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Visual review: `none`
 - Parent implementation: `operator-workbench-animation-creation`; `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_ANIMATION_CREATION.md`
@@ -46,5 +46,37 @@
 
 ## Handoff
 
-- Next action: Claim after the cycle-0 review lands; then auto-dispatch cycle-1 re-review.
+- Next action: Auto-dispatch the paired cycle-1 re-review after this correction packet archives.
 - Blockers or open questions: none for the bounded correction.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `OPERATOR_WORKBENCH_ANIMATION_CREATION_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`; real WorkbenchService publication passed for full-body and modular sessions, with schema/owner/layer/path guards, post-preview collision refusal, exact source/runtime pixels, manifest normalization, DORMANT discovery, and an 8-check changed-file sweep.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first modular Godot smoke ran before this fresh worktree had a generated script-class cache and emitted parse/load failures.
+- Root cause / contributing factors: The worktree was newly created and had not yet run the changed-file validation warm-up.
+- Prevention / pipeline improvement: Run the task's changed-file validation before standalone Godot scripts that depend on the generated class cache.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Saved-Aseprite full-body and modular sessions crossed the real UI/CLI service and guarded publisher callback in the same fixture.
+
+## Next Handoff
+
+- Next workstream: review-operator-workbench-animation-creation-review-corrections-1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Refresh reason: none
+- Next action: Auto-dispatch the paired cycle-1 re-review; resume downstream cockpit/UX planning only after it passes.
+- Blockers or open questions: The optional Textual interactive pilot remains unrun because its dependency is absent; service-level UI/CLI publication was exercised.
