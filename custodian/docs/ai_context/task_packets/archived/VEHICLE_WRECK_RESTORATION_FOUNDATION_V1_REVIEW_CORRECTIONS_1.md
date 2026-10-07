@@ -34,6 +34,18 @@
 - Task overrides: `none`
 - Deferred: Broader interaction architecture work beyond the narrow held-input seam.
 
+## Independent Review
+
+- Status: `passed`
+- Reviewed main: `e56a75cfb`
+- Reviewed implementation commit: `a5df0bb65` (`vehicle restoration, held input`).
+- Findings: none; `R0-01` is fixed. No correction-2 created.
+- Evidence: production Operator dispatch/update path tracks the real held-state contract; release, target loss, range exit, and interruptions cancel before payment. The interaction validates and pays once, then makes the vehicle operational and disables restoration before synchronous restoration signals can reenter. The focused smoke covers press/release, target loss, range refusal, uninterrupted hold, exact cost, same-instance restoration at 40 HP, and duplicate completion.
+- Focused validation: `vehicle_wreck_restoration`, `vehicle_registry_contract`, `vehicle_runtime_lifecycle`, and `vehicle_exit_clearance` all passed (4 selected / 4 passed).
+- Diagnostics: known restoration ObjectDB/resource shutdown leaks and deliberate blocked-exit warnings remained; all assertions passed.
+- Diff check: `git diff --check a5df0bb65^ a5df0bb65` passed.
+- Review-pairing guard: this vehicle pair was not reported; the repository-wide guard failed on unrelated metadata for three other active workstreams, recorded in the paired review packet and summary.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -57,11 +69,31 @@
 
 ## Handoff
 
-- Next workstream: `review-vehicle-wreck-restoration-foundation-v1-review-corrections-1`
-- Next packet state: `ready`
-- Refresh owner: `none`
+- Next workstream: `vehicle-field-scout-buggy-class-v1-recovery-1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
-- Refresh reason: `none`
-- Next action: After this correction lands, start a fresh reviewer context and claim the paired review.
+- Refresh reason: `Only landed API/path reconciliation unless the held-input correction changes the reviewed class seam.`
+- Next action: Claim the Scout class recovery and reconcile its packet against current main.
 - Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-vehicle-wreck-restoration-foundation-v1-review-corrections-1`
+- Reviewed on main: `e56a75cfb`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01 (fixed)`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_VEHICLE_WRECK_RESTORATION_FOUNDATION_V1_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+R0-01 is fixed. The production Operator dispatch/update path observes press, held state, release, target loss, range exit, and interruption before completion. Cancellation leaves ResourceLedger unchanged. An uninterrupted hold pays the configured cost once and restores the same vehicle at 40% health; reentrant completion does not pay or emit a second restoration. The focused smoke, registry contract, lifecycle, and exit-clearance validations passed. The existing blocked-exit warnings and known restoration-shutdown leak warnings remain non-failing diagnostics.
