@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-workbench-fx-layer-adoption-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-workbench-fx-layer-adoption`
@@ -40,14 +40,29 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `<concrete correction execution friction or none>`
-- Root cause / contributing factors: `<cause or none>`
-- Prevention / pipeline improvement: `<small repeatable improvement or none>`
-- Tooling / docs drift discovered: `<exact drift or none>`
-- Follow-up: `<none | fixed-in-scope | workstream-id | manual-follow-up>`
-- What worked: `<optional, concise>`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first two claim attempts encountered another agent's active local dispatcher lock; bounded retry succeeded without disturbing that claim.
+- Root cause / contributing factors: Dispatcher assignment-critical operations share one local lock.
+- Prevention / pipeline improvement: Used the documented bounded lock wait; no workflow change needed.
+- Tooling / docs drift discovered: none.
+- Follow-up: `review-operator-workbench-fx-layer-adoption-review-corrections-1`
+- What worked: The transaction journal now records expected source hashes and swap ownership; deterministic interleavings cover both conflict detection and rollback preservation.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The publisher rechecks each REPLACE source against the adopted baseline and backup immediately before source mutation; rollback removes only bytes still matching the transaction output and restores source backups without overwriting occupied paths. `operator_workbench_mirror_publish_smoke.py` injects a source change after transaction preparation and another after source swap, verifies external bytes survive, verifies other swapped sources restore, and requires explicit `RECOVERY_REQUIRED` journal evidence. Existing CREATE/REPLACE/mirror cases pass. Changed-file validation selected 6 checks and passed all 6 with 0 failures, timeouts, skips, or infrastructure errors; the task-packet contract suite passed 23 tests.
+
+## Handoff
+
+- Next action: Run the paired fresh-context review of correction `R0-01`.
+- Best starting files: this archived correction packet, `custodian/tools/operator/animation_workbench.py`, and `custodian/tools/validation/operator_workbench_mirror_publish_smoke.py`.
+- Blockers or open questions: none.
 
 ## Next Handoff
 
@@ -57,5 +72,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh reason: `none`
-- Next action: `Implement only finding R0-01, then run its paired fresh-context review.`
-- Blockers or open questions: `validate_review_pairing.py` currently fails on unrelated main packet `contract-world-operator-void-spawn-failsafe-correction` (paired review is not ready and has a malformed bounded override); do not edit that unrelated packet here. Recheck dispatch eligibility after this review lands.
+- Next action: `Run the paired fresh-context review and report R0-01 as fixed or unresolved.`
+- Blockers or open questions: `none`

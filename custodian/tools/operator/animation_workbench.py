@@ -225,6 +225,13 @@ def _verify_rollback_preimages(journal, repo_root, document_path, document_sha25
     if changed: unresolved.extend(sorted(changed))
     return sorted(set(unresolved))
 
+def _restore_source_backup_without_overwrite(saved, target):
+    """Restore a transaction preimage only if its original path is still vacant."""
+    try:
+        os.link(saved,target)
+    except FileExistsError as error:
+        raise m.WorkbenchError(f"rollback target was recreated externally; preserving it: {target}") from error
+
 def _baseline(plan, ws):
     base=ws/"baseline"; base.mkdir(parents=True,exist_ok=True); cw,ch=plan["canvas"].values(); frames=plan["timeline"]["document_frames"]
     composite=Image.new("RGBA",(cw*frames,ch))
@@ -479,7 +486,8 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             if operation=="REPLACE" and not contract.get("file_sha256"):
                 raise m.WorkbenchError("REPLACE source contract is missing its baseline hash")
         existed=operation!="CREATE"
-        candidates.append({"binding":b,"candidate":out,"target":target,"old":old,"mirror":False,"existed":existed})
+        candidates.append({"binding":b,"candidate":out,"target":target,"old":old,"mirror":False,"existed":existed,
+                           "expected_old_sha256":contract.get("file_sha256") if existed else None})
         if mirror_counterpart:
             mirrored=normalized/f"mirror__{b['binding_id']}.png"
             mirror_strip_frames(out,mirrored,b["workspace_contract"]["frames"],b["frame_size"])
@@ -487,7 +495,8 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             sid=(b["owner"],b["layer"],b["profile"],b["group"],b["action"],counterpart)
             existing=counterpart_index.get(sid)
             old=existing[0] if existing else target
-            candidates.append({"binding":b,"candidate":mirrored,"target":target,"old":old,"mirror":True,"existed":existing is not None})
+            candidates.append({"binding":b,"candidate":mirrored,"target":target,"old":old,"mirror":True,"existed":existing is not None,
+                               "expected_old_sha256":m.file_sha256(old) if existing is not None else None})
     if dry_run: return [str(x["target"]) for x in candidates]
     review=data.get("publish_review")
     if review:
@@ -522,7 +531,8 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         if sidecar.exists(): shutil.copy2(sidecar,saved_sidecar)
         timing=m.BUILDER.timing_sidecar_path(old); saved_timing=source_backup/f"{prefix}{b['binding_id']}.animation.json"
         if timing.exists(): shutil.copy2(timing,saved_timing)
-        journal["sources"].append({"binding_id":b["binding_id"],"mirror":item["mirror"],"operation":"REPLACE" if item["existed"] else "CREATE","old_path":m.rel(old),"old_sha256":m.file_sha256(old) if item["existed"] else None,"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved) if saved.exists() else "","import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else "","timing_backup_path":m.rel(saved_timing) if saved_timing.exists() else "","created_by_transaction":False})
+        source_record={"binding_id":b["binding_id"],"mirror":item["mirror"],"operation":"REPLACE" if item["existed"] else "CREATE","old_path":m.rel(old),"old_sha256":m.file_sha256(old) if item["existed"] else None,"expected_old_sha256":item.get("expected_old_sha256"),"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved) if saved.exists() else "","import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else "","timing_backup_path":m.rel(saved_timing) if saved_timing.exists() else "","created_by_transaction":False,"swapped_by_transaction":False}
+        journal["sources"].append(source_record); item["journal_source"]=source_record
     for resource in GENERATED_OPERATOR_RESOURCES:
         saved=resource_backup/m.rel(resource); saved.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(resource,saved)
         journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":m.rel(saved)})
@@ -539,22 +549,28 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
     try:
         for item in candidates:
             b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
+            dst.parent.mkdir(parents=True,exist_ok=True); tmp=dst.with_suffix(".png.workbench.tmp"); shutil.copy2(c,tmp)
+            if item["existed"]:
+                expected=item.get("expected_old_sha256")
+                backup_path=source_backup/f"{('mirror__' if item['mirror'] else '')}{b['binding_id']}.png"
+                current=m.file_sha256(old) if old.is_file() else None
+                backup_hash=m.file_sha256(backup_path) if backup_path.is_file() else None
+                if not expected or current!=expected or backup_hash!=expected:
+                    tmp.unlink(missing_ok=True)
+                    raise m.WorkbenchError(f"REPLACE source changed after adoption; refusing overwrite: {old}")
             if dst!=old:
                 old.unlink()
                 item["old_removed"]=True
                 old.with_suffix(old.suffix+".import").unlink(missing_ok=True)
                 m.BUILDER.timing_sidecar_path(old).unlink(missing_ok=True)
-            dst.parent.mkdir(parents=True,exist_ok=True); tmp=dst.with_suffix(".png.workbench.tmp"); shutil.copy2(c,tmp)
             if not item["existed"]:
                 try: os.link(tmp,dst)
                 except FileExistsError as error: raise m.WorkbenchError(f"CREATE target appeared during publish; refusing overwrite: {dst}") from error
                 finally: tmp.unlink(missing_ok=True)
             else: os.replace(tmp,dst)
             item["swapped"]=True
-            for source_record in journal["sources"]:
-                if source_record["target_path"]==m.rel(dst) and source_record["mirror"]==item["mirror"]:
-                    if source_record["operation"]=="CREATE": source_record["created_by_transaction"]=True
-                    break
+            item["journal_source"]["swapped_by_transaction"]=True
+            if item["journal_source"]["operation"]=="CREATE": item["journal_source"]["created_by_transaction"]=True
             save(journal_path,journal)
         timing_payload=m.timing_payload_from_timeline(data["timeline"])
         if timing_payload is not None:
@@ -608,16 +624,28 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         try:
             for item in candidates:
                 b,dst,old=item["binding"],item["target"],item["old"]
-                if item.get("swapped") and dst.exists(): dst.unlink()
-                if item.get("swapped"):
+                target_removed=False
+                source_record=item.get("journal_source",{})
+                if item.get("swapped") and dst.exists():
+                    if m.file_sha256(dst)==source_record.get("target_sha256"):
+                        dst.unlink(); target_removed=True
+                    else:
+                        journal["unresolved_paths"].append(m.rel(dst))
+                if target_removed:
                     dst.with_suffix(dst.suffix+".import").unlink(missing_ok=True)
                     m.BUILDER.timing_sidecar_path(dst).unlink(missing_ok=True)
                 prefix="mirror__" if item["mirror"] else ""
                 saved=source_backup/f"{prefix}{b['binding_id']}.png"
-                if saved.exists(): shutil.copy2(saved,old)
+                restore_old=item.get("old_removed") or (target_removed and dst==old)
+                restored_old=False
+                if restore_old and saved.exists():
+                    try:
+                        _restore_source_backup_without_overwrite(saved,old); restored_old=True
+                    except m.WorkbenchError:
+                        journal["unresolved_paths"].append(m.rel(old))
                 side=source_backup/f"{prefix}{b['binding_id']}.png.import"
-                if side.exists(): shutil.copy2(side,old.with_suffix(old.suffix+".import"))
-                if item.get("old_removed") or item.get("swapped"):
+                if restored_old and side.exists(): shutil.copy2(side,old.with_suffix(old.suffix+".import"))
+                if restored_old:
                     old_timing=m.BUILDER.timing_sidecar_path(old); old_timing.unlink(missing_ok=True)
                     timing=source_backup/f"{prefix}{b['binding_id']}.animation.json"
                     if timing.exists(): shutil.copy2(timing,old_timing)
