@@ -23,6 +23,7 @@ const CHUNK_PAYLOAD_CACHE_SCRIPT := preload("res://game/world/procgen/streaming/
 const CHUNK_RESIDENCY_POLICY_SCRIPT := preload("res://game/world/procgen/streaming/procgen_chunk_residency_policy.gd")
 const ELEVATION_MAP_SCRIPT := preload("res://game/world/elevation/elevation_map.gd")
 const TERRAIN_BUILDER_SCRIPT := preload("res://game/world/procgen/terrain/terrain_builder.gd")
+const ACCEPTED_WORLD_EXPORT_SCRIPT := preload("res://game/world/procgen/generation/accepted_world_export.gd")
 const BIOME_FIELD_SCRIPT := preload("res://game/world/procgen/biomes/biome_field.gd")
 const SURFACE_MATERIAL_RESOLVER_SCRIPT := preload("res://game/world/procgen/surfaces/surface_material_resolver.gd")
 const SURFACE_MATERIAL_IDS := preload("res://game/world/procgen/surfaces/surface_material_ids.gd")
@@ -5856,27 +5857,27 @@ func debug_has_runtime_wall_collision_body(tile: Vector2i) -> bool:
 
 
 func debug_get_generated_floor_cells() -> Dictionary:
-	return _generated_floor_cells.duplicate(true)
+	return ACCEPTED_WORLD_EXPORT_SCRIPT.duplicate_cells(_generated_floor_cells)
 
 
 func debug_get_generated_wall_cells() -> Dictionary:
-	return _generated_wall_cells.duplicate(true)
+	return ACCEPTED_WORLD_EXPORT_SCRIPT.duplicate_cells(_generated_wall_cells)
 
 
 func debug_get_runtime_authoring_fingerprint() -> Dictionary:
-	return {
-		"floor": _generated_floor_cells.duplicate(true),
-		"walls": _generated_wall_cells.duplicate(true),
-		"regions": _region_tiles.duplicate(true),
-		"roads": _road_authority.main_road_tiles.duplicate(true),
-		"road_centerline": _road_authority.road_centerline_tiles.duplicate(true),
-		"ruined_road": _road_authority.ruined_road_cells.duplicate(true),
-		"service_hardstand": _road_authority.service_hardstand_cells.duplicate(true),
-		"foliage": _foliage_nodes.duplicate(true),
-		"surface": _surface_kind_by_cell.duplicate(true),
-		"surface_material": _surface_material_by_cell.duplicate(true),
+	return ACCEPTED_WORLD_EXPORT_SCRIPT.build_runtime_authoring_fingerprint({
+		"floor": _generated_floor_cells,
+		"walls": _generated_wall_cells,
+		"regions": _region_tiles,
+		"roads": _road_authority.main_road_tiles,
+		"road_centerline": _road_authority.road_centerline_tiles,
+		"ruined_road": _road_authority.ruined_road_cells,
+		"service_hardstand": _road_authority.service_hardstand_cells,
+		"foliage": _foliage_nodes,
+		"surface": _surface_kind_by_cell,
+		"surface_material": _surface_material_by_cell,
 		"health": get_runtime_health_snapshot(),
-	}
+	})
 
 
 func get_nonwalkable_surface_kind_at_tile(cell: Vector2i) -> StringName:
@@ -7230,30 +7231,14 @@ func _flush_navigation_rebuild() -> void:
 
 
 func _capture_generated_tile_state(map_size: Vector2i) -> void:
-	if not enable_streaming_reveal:
-		_generated_floor_cells.clear()
-		_generated_wall_cells.clear()
-	# Streaming reveal keeps undiscovered authoritative cells unpainted, so merge
-	# visible TileMap cells without clearing the dictionaries in that mode.
-	for x in range(map_size.x):
-		for y in range(map_size.y):
-			var pos := Vector2i(x, y)
-			var floor_source := floor_tilemap.get_cell_source_id(pos)
-			if floor_source >= 0:
-				_generated_floor_cells[pos] = {
-					"source_id": floor_source,
-					"atlas": floor_tilemap.get_cell_atlas_coords(pos),
-					"alternative": floor_tilemap.get_cell_alternative_tile(pos),
-				}
-				_generated_wall_cells.erase(pos)
-			var wall_source := walls_tilemap.get_cell_source_id(pos)
-			if wall_source >= 0:
-				_generated_wall_cells[pos] = {
-					"source_id": wall_source,
-					"atlas": walls_tilemap.get_cell_atlas_coords(pos),
-					"alternative": walls_tilemap.get_cell_alternative_tile(pos),
-				}
-				_generated_floor_cells.erase(pos)
+	ACCEPTED_WORLD_EXPORT_SCRIPT.capture_tile_state(
+		floor_tilemap,
+		walls_tilemap,
+		map_size,
+		_generated_floor_cells,
+		_generated_wall_cells,
+		enable_streaming_reveal
+	)
 
 
 func _ensure_elevation_map() -> void:
@@ -11881,11 +11866,7 @@ func get_corridor_spawn_points(count: int = 5) -> Array[Vector2i]:
 
 ## Returns all data as a dict (for debugging or passing to game)
 func _dict_keys_as_vector2i_array(source: Dictionary) -> Array[Vector2i]:
-	var result: Array[Vector2i] = []
-	for key in source.keys():
-		if key is Vector2i:
-			result.append(key)
-	return result
+	return ACCEPTED_WORLD_EXPORT_SCRIPT.dict_keys_as_vector2i_array(source)
 
 
 func _world_shape_mode_name() -> String:
@@ -11897,7 +11878,7 @@ func _world_shape_mode_name() -> String:
 
 
 func get_level_data() -> Dictionary:
-	return {
+	return ACCEPTED_WORLD_EXPORT_SCRIPT.build_level_data({
 		"generation_id": _debug_generation_id,
 		"map_size": procgen_node.map_size,
 		"tile_size": get_runtime_tile_size(),
@@ -11909,16 +11890,15 @@ func get_level_data() -> Dictionary:
 		"compound_rect": _last_compound_rect,
 		"compound_ingress": _last_compound_ingress,
 		"compound_buildings": _last_compound_buildings,
-		"compound_layout_version": 1 if not _last_compound_rooms.is_empty() else 0,
-		"compound_rooms": _last_compound_rooms.duplicate(true),
-		"compound_connections": _last_compound_connections.duplicate(true),
-		"compound_corridor_cells": _last_compound_corridor_cells.duplicate(),
-		"compound_courtyard_cells": _last_compound_courtyard_cells.duplicate(),
+		"compound_rooms": _last_compound_rooms,
+		"compound_connections": _last_compound_connections,
+		"compound_corridor_cells": _last_compound_corridor_cells,
+		"compound_courtyard_cells": _last_compound_courtyard_cells,
 		"compound_primary_anchor": _last_compound_primary_anchor,
 		"compound_terminal_anchor": _last_compound_terminal_anchor,
 		"compound_fabricator_anchor": _last_compound_fabricator_anchor,
 		"compound_construction_zone_anchor": _last_compound_construction_zone_anchor,
-		"compound_diagnostics": _last_compound_diagnostics.duplicate(true),
+		"compound_diagnostics": _last_compound_diagnostics,
 		"main_road_tiles": get_main_road_tiles(),
 		"ruined_road_tiles": get_ruined_road_tiles(),
 		"service_hardstand_tiles": get_service_hardstand_tiles(),
@@ -11929,49 +11909,45 @@ func get_level_data() -> Dictionary:
 		"interior_region_rect": _last_interior_region_rect,
 		"interior_rooms": _last_interior_rooms,
 		"interior_thresholds": _last_interior_thresholds,
-		"region_tiles": _region_tiles.duplicate(true),
+		"region_tiles": _region_tiles,
 		"elevation_cells": elevation_map.get_serialized_cells() if elevation_map != null else [],
-		"pre_terrain_connectivity": _last_pre_terrain_connectivity.duplicate(true),
-		"terrain_builder": _get_terrain_builder_level_data(),
-		"biome_id_by_cell": _biome_id_by_cell.duplicate(true),
-		"biome_summary": _biome_summary.duplicate(true),
-		"surface_material_by_cell": _surface_material_by_cell.duplicate(true),
-		"surface_materials": _surface_material_summary.duplicate(true),
-		"macro_presentation": _macro_presentation_summary.duplicate(true),
-		"dressing_clusters": _dressing_cluster_summary.duplicate(true),
-		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
-		"wall_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
-		"ocean_cells": _dict_keys_as_vector2i_array(_ocean_cells),
-		"chasm_cells": _dict_keys_as_vector2i_array(_chasm_cells),
+		"pre_terrain_connectivity": _last_pre_terrain_connectivity,
+		"last_terrain_result": _last_terrain_result,
+		"last_pre_terrain_connectivity": _last_pre_terrain_connectivity,
+		"biome_id_by_cell": _biome_id_by_cell,
+		"biome_summary": _biome_summary,
+		"surface_material_by_cell": _surface_material_by_cell,
+		"surface_materials": _surface_material_summary,
+		"macro_presentation": _macro_presentation_summary,
+		"dressing_clusters": _dressing_cluster_summary,
+		"generated_floor_cells": _generated_floor_cells,
+		"generated_wall_cells": _generated_wall_cells,
+		"ocean_cells": _ocean_cells,
+		"chasm_cells": _chasm_cells,
 		"region_frame": get_region_frame_debug_snapshot(),
-		"nonwalkable_surface_summary": (
-			_nonwalkable_surface_summary.duplicate(true)
-		),
-		"runtime_prop_blocker_cells": _dict_keys_as_vector2i_array(_runtime_prop_blocker_cells),
-		"runtime_prop_blocker_source_count": _runtime_prop_blocker_sources.size(),
+		"nonwalkable_surface_summary": _nonwalkable_surface_summary,
+		"runtime_prop_blocker_cells": _runtime_prop_blocker_cells,
+		"runtime_prop_blocker_sources": _runtime_prop_blocker_sources,
 		"world_profile": get_planet_world_profile(),
 		"world_shape_mode": _world_shape_mode_name(),
 		"world_progression_enabled": world_progression_enabled,
-		"world_progress_profile_id": _world_progress_profile.profile_id if _world_progress_profile != null else "",
-		"world_progress_samples": _world_progress_samples.duplicate(true),
+		"world_progress_profile": _world_progress_profile,
+		"world_progress_samples": _world_progress_samples,
 		"worldgen_intent_enabled": worldgen_intent_enabled,
-		"worldgen_intent_graph": _worldgen_intent_graph.to_dictionary() if _worldgen_intent_graph != null else {},
-		"ascent_field_summary": _ascent_field_summary.duplicate(true),
-		"main_route_cells": _ascent_field_main_route_cells.duplicate(),
-		"main_route_centerline_cells": (
-			_ascent_field_main_route_centerline_cells.duplicate()
-		),
-		"route_playability": _route_playability_result.duplicate(true),
-		"route_playability_audit": _route_playability_audit.duplicate(true),
-		"encounter_plan": _encounter_plan.duplicate(true),
-		"vista_cells": _ascent_field_vista_cells.duplicate(),
-		"sundered_keep_frontage": _sundered_keep_frontage.duplicate(true),
-		"worldgen_reserved_regions": _worldgen_reserved_regions.duplicate(true),
-		"faction_activity_sites": _faction_activity_sites.duplicate(true),
-		"story_room_sites": _story_room_sites.duplicate(true),
-		"special_room_sites": _special_room_sites.duplicate(true),
-		"intent_zones_enabled": true,
-	}
+		"worldgen_intent_graph": _worldgen_intent_graph,
+		"ascent_field_summary": _ascent_field_summary,
+		"main_route_cells": _ascent_field_main_route_cells,
+		"main_route_centerline_cells": _ascent_field_main_route_centerline_cells,
+		"route_playability": _route_playability_result,
+		"route_playability_audit": _route_playability_audit,
+		"encounter_plan": _encounter_plan,
+		"vista_cells": _ascent_field_vista_cells,
+		"sundered_keep_frontage": _sundered_keep_frontage,
+		"worldgen_reserved_regions": _worldgen_reserved_regions,
+		"faction_activity_sites": _faction_activity_sites,
+		"story_room_sites": _story_room_sites,
+		"special_room_sites": _special_room_sites,
+	})
 
 
 func _get_dev_observatory() -> Node:
@@ -12000,24 +11976,3 @@ func _obs_warning(message: String, data: Dictionary = {}) -> void:
 	var observatory := _get_dev_observatory()
 	if observatory != null and observatory.has_method("mark_warning"):
 		observatory.call("mark_warning", message, data)
-
-
-func _get_terrain_builder_level_data() -> Dictionary:
-	if _last_terrain_result.is_empty():
-		return {
-			"connectivity_ok": true,
-			"fallback_used": false,
-			"pre_terrain_connectivity": _last_pre_terrain_connectivity.duplicate(true),
-		}
-	var connectivity: Dictionary = _last_terrain_result.get("connectivity", {})
-	var summary: Dictionary = _last_terrain_result.get("debug_summary", {})
-	return {
-		"connectivity_ok": bool(connectivity.get("ok", summary.get("connectivity_ok", true))),
-		"fallback_used": bool(_last_terrain_result.get("fallback_used", summary.get("fallback_used", false))),
-		"rescue_carved_cells": int(_last_terrain_result.get("rescue_carved_cells", summary.get("rescue_carved_cells", 0))),
-		"baseline_rescue_carved_cells": int(_last_terrain_result.get("baseline_rescue_carved_cells", summary.get("baseline_rescue_carved_cells", 0))),
-		"reachable_count": int(connectivity.get("reachable_count", 0)),
-		"missing_required": connectivity.get("missing_required", []).duplicate(),
-		"pre_terrain_connectivity": _last_pre_terrain_connectivity.duplicate(true),
-		"summary": summary.duplicate(true),
-	}
