@@ -5,7 +5,7 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `bridged-falls-generated-region-lifecycle`
+- Depends on: `review-bridged-falls-generated-region-lifecycle`
 - Locks: `ash-bell-highlands, procgen-region-profile`
 - Kind: `implementation`
 - Review: `auto`
