@@ -92,6 +92,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1 implementation is complete/landed and awaits its auto paired review. Awakening room-connectors polish is ready/auto; its review, handoff-readiness implementation/review, and H2-H7 are all pre-authored dependency-gated auto work.
-**Next:** HR1 and `awakening-room-connectors-polish` may proceed without manual assignment. Their paired reviews and the Awakening handoff-readiness slice unblock automatically through declared dependencies; H2 becomes claimable once HR1 and the reviewed Awakening handoff are archived complete.
+**Current:** H1 implementation is complete/landed. The Awakening side now has two explicit P0 prerequisites before handoff readiness: `awakening-room-connectors-polish` must replace the wrong/missing-chunk 04→05 legacy plate with the exact approved direct connector source, then `awakening-lower-upper-spine-connection` must make the Dust Lung→Undergate 05→06 handoff one explicit continuous passage. Their paired reviews gate the existing full Awakening handoff-readiness slice; H2-H7 remain dependency-gated behind the reviewed Awakening handoff.
+**Next:** Explicitly claim `awakening-room-connectors-polish`. Its paired review releases `awakening-lower-upper-spine-connection`; that review then releases `awakening-handoff-readiness-art-convergence-v1-r1`. H2 becomes claimable only after the reviewed Awakening handoff is archived complete.
 **Finish:** HR7 passes the complete first-campaign-loop proof.
