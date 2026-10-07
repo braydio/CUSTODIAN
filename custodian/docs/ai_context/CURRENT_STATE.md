@@ -167,6 +167,17 @@ compile and aesthetics were proven on a real Vulkan renderer by
 visual pass was approved by the user on 2026-10-05. ARR1 R0-03/R0-04 are covered by the AR2 and
 distant-unload smokes.
 
+## Archive Resolve V1 Closeout / Deferred Live Playtest (2026-10-07)
+
+AR3 semantic echo/ingress/reacquisition and AR4 frontier restraint have completed
+implementation, correction and paired-review lineage. AR4's current production baseline
+remains an 11-tile local frontier, fringe 2, 84 resolve starts/sec, burst cap 8 and
+0.22 s resolve duration. Human disposition is `waive-to-playtest`: code/evidence closeout
+is complete, but ordinary game-feel confirmation is still deferred because the literal
+production `game.tscn` startup can leave the live player at the scene-authored legacy
+Operator coordinates instead of the generated spawn. Do not reopen or retune Archive
+Resolve to solve that blocker; `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md` owns the P0.
+
 ## Contract World Placement Foundation (2026-10-02)
 
 `WorldPlacementContext` is the accepted-world read seam for focused placement
@@ -203,6 +214,21 @@ fallback; selection order is unchanged, and no safe tile still fails contract
 activation before the Operator moves or the camera snaps.
 `contract_world_playable_region_spawn_validity_smoke.gd` owns the regression
 (exterior-painted and severed-island candidates).
+
+## Production Game Scene Operator Startup Integrity P0 (2026-10-07)
+
+A direct Dev Observatory export from the literal `res://scenes/game.tscn` showed an
+active generated ProcGenMap (192x160, 8205 floor cells, registered world ingresses and
+completed navigation) while the sampled live player remained at approximately
+`(717,-485)`, matching the scene-authored `World/Operator` placeholder
+`Vector2(717.45905, -485.33954)`. Existing spawn-validity, void-failsafe and
+presentation-residency smokes therefore proved their narrow authorities but did not prove
+the final literal production boot contract. The ready/auto P0 packet
+`GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md` adds a real `game.tscn` startup regression,
+canonical player-identity proof, a bounded ContractWorldLoader placement receipt,
+pre-`contract_ready` placement consistency guard, mutation coverage and startup-phase
+Dev Observatory attribution. It must diagnose whether placement was skipped, later
+clobbered, or obscured by competing player identity before changing behavior.
 
 ## Operator Art Registration Profile (2026-10-02)
 
