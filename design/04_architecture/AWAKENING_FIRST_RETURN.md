@@ -123,25 +123,33 @@ and are hidden when those plates are present; Layout still owns traversal and
 collision carving.
 
 The live scene places a dark, collision-free void plane beneath the plates and
-uses an Awakening-local camera scale. Zone art fades by distance to the
-Operator's current Layout envelope so neighboring complete canvases do not
-intrude at room edges; the 128px blend supports crossing and backtracking.
-Zone fade targets are cached after scene assembly, stationary frames perform no
-fade work, and art at zero alpha is hidden while preserving the existing blend
-distance/curve. Production art remains at native scale and registration. The
-04→05 dogleg uses
-an Asset V2 `full_plate_underlay` presentation sprite (1024×576), centered at
-`(352,-2464)`. Its 96px architectural bleed surrounds the exact union of the
-locked `04_05_A/B/C` Layout rectangles; the fade envelope is still derived by
-merging those rectangles, and the plate does not own traversal or collision.
-The neighboring Reliquary and Dust Lung underlay pixels are registered into
-the connector's room-end bleed. At their 04→05 facing edges, the room plates
-fade down across the existing 128px band inside their Layout envelopes while
-the connector plate fades up across the matching connector envelope. The shared
-registered pixels keep the crossfade reversible without a straight canvas join.
-The source master is a flattened RGB image, so a separate foreground occlusion
-state is intentionally unbound rather than cut from baked lighting/shadows. The
-first five Road modular plate pairs remain pending native-size replacement.
+uses an Awakening-local camera scale. Ordinary zone art still uses distance-based
+visibility management, but two transition areas now have explicit correction
+contracts because the current presentation truth is not acceptable as final.
+
+For 04→05, the live scene still binds the legacy crop-derived Asset V2
+`full_plate_underlay` at 1024×576 / `(352,-2464)`; that is **current runtime,
+not current design authority**. The user-approved direct `connector.png` is the
+new source authority. Active P0 work must preserve its entire nontransparent
+silhouette, may update the existing family canvas, and must re-derive uniform
+scale/world translation against Locker exit `(704,-2272)`, Dust Lung entry
+`(0,-2656)`, and the unchanged dogleg gameplay footprint. Cropping an authored
+connector chunk, rebuilding it from room strips, or preserving the old
+1024×576/`(352,-2464)` transform by inertia is explicitly disallowed. The
+04→05 room/connector join should read opaque and stable while visible rather than
+depending on a whole-room partial-alpha crossfade.
+
+For 05→06, the lower and later halves already share a precise geometric/art
+overlap but the authority is split: `05_06 = Rect2(-64,-3776,128,32)` plus
+`z06_south_door = Rect2(-64,-3840,128,64)`. Their union is one
+`Rect2(-64,-3840,128,96)` passage, exactly matching the 96px overlap between
+the Dust Lung and Undergate production canvases. Active P0 work consolidates
+that into one semantic lower→upper passage and proves real-Operator traversal
+through the same scene into Zones06–10 without teleport/loading or a visual
+void stripe. No new art is required unless the registered room sources
+themselves prove to contain an actual hole.
+
+The Road of Witnesses modular production plate pairs are already live.
 
 `AwakeningFirstReturn` owns progression and HUD state, and assembles geometry and
 presentation from `AwakeningLayout`. It caches its zone-art fade targets and does
