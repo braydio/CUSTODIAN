@@ -74,11 +74,25 @@
 
 ## Next Handoff
 
-- Next workstream: `review-vehicle-runtime-lifecycle-hardening-v1`
+- Next workstream: `vehicle-field-scout-buggy-class-v1`
 - Next packet state: `dependency-gated`
-- Refresh owner: `none`
+- Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `not-recorded`
-- Refresh reason: `none`
-- Next action: `After landing, claim the paired review packet and independently verify the lifecycle and runtime evidence from a fresh context.`
+- Refresh reason: `Only live API/path reconciliation unless findings invalidate the class boundary.`
+- Next action: `Claim the Field Scout class packet after the paired lifecycle review passes.`
 - Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-vehicle-runtime-lifecycle-hardening-v1`
+- Reviewed main: `b4759b996397227be19cee0f2e8d31ee7ad80688`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `2` (`R0-01`, `R0-02`), deferred to Field Scout lifecycle work.
+- Review receipt: `custodian/docs/ai_context/reports/reviews/vehicle_runtime_lifecycle_hardening_v1_review.json`
+- Review summary: `REVIEW_VEHICLE_RUNTIME_LIFECYCLE_HARDENING_V1_CLAUDE_SUMMARY.md`
+- Conclusion: `All archived acceptance clauses are independently proven. The two deferred runtime hardening observations do not block lifecycle acceptance.`
