@@ -70,3 +70,27 @@
 - Tooling / docs drift discovered: none.
 - Follow-up: `review-procgen-archive-resolve-frontier-restraint-review-corrections-2`
 - What worked: Focused owner regressions caught both identity reuse and fallback admission behavior; final changed-file coverage was complete.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-procgen-archive-resolve-frontier-restraint-review-corrections-2`
+- Reviewed on main: `5d820da54e2f97fd1768681031b9fb2a4a99fc8a`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- R1-01: `fixed` — existing and later-COMMIT hidden-pocket cases preserve occlusion; visible pocket settlement, visibility opening, uncommitted cover, and monotonic RESOLVING behavior remain covered by the owner smoke.
+- R1-02: `fixed` — COMMIT/unload/reacquisition REQUEST remains REQUESTED and veiled after advance; `_release_tile()` clears the pending ingress identity, and settlement requires READY.
+- R1-03: `fixed` — existing and later-COMMIT hidden ingress cells remain veiled with no visibility center and after center restoration behind an opaque wall; opening visibility admits normal resolution. Frontier-disabled fallback passes.
+- Focused validation: `procgen_archive_resolve_frontier_restraint`, `contract_world_archive_resolve_ingress`, `procgen_reveal_presentation`, `procgen_archive_resolve_semantic_echo`, `procgen_pause_aware_streaming`, and `procgen_performance_baseline_quick` all passed. S1 reports `determinism_ok=true` with matching generation fingerprints `1773840677`. `git diff --check` passed. Changed-file validation selected zero tests because no runtime files differ from main; its result is green with complete (empty) coverage.
+- Evidence limits: The owner regressions exercise the presentation API lifecycle deterministically; they do not claim the production scheduler currently emits the exact unload/reacquisition interleaving. No subjective visual review was required.
+- Detailed review summary: `REVIEW_PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT_REVIEW_CORRECTIONS_2_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Reviewer independence: The paired review was claimed in a fresh workstream by a different agent family and reconstructed from the archived target packet/summary, prior independent review receipt, live code, owner regressions, and focused runtime checks. Reviewed implementation files were not modified.
