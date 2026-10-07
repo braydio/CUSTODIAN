@@ -2116,17 +2116,20 @@ Lung and Locker underlays and the full 1374×1076 direct connector are preserved
 under `asset_drop/source_work/awakening/` with SHA-256 receipts in
 `DROPBOX_SOURCE_RECEIPT.md`; Asset V2 job IDs are `job_20261007T221504Z_0cb23e5f`
 (Dust), `job_20261007T221504Z_22bfa5d0` (connector), and
-`job_20261007T221504Z_6e8fec32` (Locker). The connector's exact source silhouette
-is published without crop or reconstruction. Its scene transform is derived
-from source contact points `(278,80)` / `(1136,800)` to Layout anchors
-`(0,-2656)` / `(704,-2272)`: uniform scale `0.715951`, rotation `-11.391598°`,
-center `(351.821,-2392.391)`. Locker normalization is crop-free into 704×704;
-the old Locker foreground remains preserved but unbound because only 91.6% of
-its opaque footprint has opaque support from the new underlay. The Asset V2
-requirement records that foreground as deferred. The crop/strip/32px-feather
-compositor, old 1024×576 runtime plate, and its import sidecar are retired.
-Room underlays stay opaque through the connector; Layout traversal/collision and
-the four-state interactive Designation Locker remain unchanged. Separately, the lower and
+`job_20261007T221504Z_6e8fec32` (Locker). The exact Dropbox source masters are published without destructive crop, but
+the first post-source registration is now superseded by later direct user
+composition evidence. That reviewed implementation independently fitted the
+connector to gameplay anchors at scale `0.715951`, rotation `-11.391598°`,
+center `(351.821,-2392.391)`, while keeping Dust and Locker on separate room
+normalization paths. The supplied registration exports prove the art was authored
+as one axis-aligned 1502×2048 composition instead: Dust visible bounds
+`[0,870)×[0,838)`, connector `[258,1300)×[672,1256)`, Locker
+`[644,1502)×[1182,2048)`, bottom-to-top Dust→connector→Locker, with zero
+per-piece rotation. Active P0 `awakening-04-05-registered-composition-correction-v1`
+owns restoring that exact shared registration after the already-claimed
+interaction-feedback pair completes. The old Locker foreground remains preserved
+but unbound; Layout traversal/collision and the four-state interactive Designation
+Locker remain unchanged. Separately, the lower and
 later halves are logically joined today by `05_06` (128×32) plus
 `z06_south_door` (128×64); their exact 128×96 union matches the 96px overlap of
 the Dust Lung and Undergate room plates. The P0
