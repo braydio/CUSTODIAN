@@ -8429,6 +8429,27 @@
           "sha256": "7258a942cb7b0203eb3588297135057f467410c1158fe6d7928ad173c94819f7",
           "provenance": "authored",
           "source_asset": null
+        },
+        "service_basin_b::omni": {
+          "state_id": "service_basin_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_ambulatory_fixtures",
+            "world_prop",
+            "body",
+            "fixture",
+            "service_basin_b",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_b__omni__1f__128.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924",
+          "provenance": "authored",
+          "source_asset": null
         }
       }
     },
@@ -13791,6 +13812,226 @@
             1024
           ],
           "sha256": "521ab841904b4696b009f8fdbfdace7ff40d7b2a643d3b6efc91d2eb34da8316",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_dust_lung_structures": {
+      "kind": "world_prop",
+      "assets": {
+        "broken_bridge_a::omni": {
+          "state_id": "broken_bridge_a",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_lung_structures",
+            "world_prop",
+            "body",
+            "fixture",
+            "broken_bridge_a",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__broken_bridge_a__omni__1f__256x160.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            160
+          ],
+          "sha256": "891244f7fd8df1a3d10c7ffb01a8342d7902d838295c3d19bf36a45b7e292c54",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "broken_bridge_b::omni": {
+          "state_id": "broken_bridge_b",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_lung_structures",
+            "world_prop",
+            "body",
+            "fixture",
+            "broken_bridge_b",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__broken_bridge_b__omni__1f__256x160.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            160
+          ],
+          "sha256": "c18446e231ace1d91a26c531bc3fcb0f66412abd1165cca2b2d010fc7f58b2b5",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "giant_duct::omni": {
+          "state_id": "giant_duct",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_lung_structures",
+            "world_prop",
+            "body",
+            "fixture",
+            "giant_duct",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__giant_duct__omni__1f__256.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            256
+          ],
+          "sha256": "97797f99f29ef5d29b0d0a721b971c8f2128c8f655e0890ec51a36e873423ade",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "lift_lever::omni": {
+          "state_id": "lift_lever",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_dust_lung_structures",
+            "world_prop",
+            "body",
+            "fixture",
+            "lift_lever",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__lift_lever__omni__1f__128.png",
+          "frames": 1,
+          "frame_size": [
+            128,
+            128
+          ],
+          "sha256": "7bb6721ecd740242b848f3bf6e3356bb7d47391940816c576c1c7df2b3f7b09e",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "awakening_undergate_machinery": {
+      "kind": "world_prop",
+      "assets": {
+        "blind_route_housing::omni": {
+          "state_id": "blind_route_housing",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate_machinery",
+            "world_prop",
+            "body",
+            "fixture",
+            "blind_route_housing",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__blind_route_housing__omni__1f__160.png",
+          "frames": 1,
+          "frame_size": [
+            160,
+            160
+          ],
+          "sha256": "2ef738370e2f38c44530bdd1f34e52f8d40fce118dbbfb4952bf3d686b280012",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "mechanism_plinth::omni": {
+          "state_id": "mechanism_plinth",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate_machinery",
+            "world_prop",
+            "body",
+            "fixture",
+            "mechanism_plinth",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__mechanism_plinth__omni__1f__160.png",
+          "frames": 1,
+          "frame_size": [
+            160,
+            160
+          ],
+          "sha256": "7ad22efe029c1384f1e3986dc9ec814e31d04595bc415f343fecfb052c094232",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "register_route_map::omni": {
+          "state_id": "register_route_map",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate_machinery",
+            "world_prop",
+            "body",
+            "fixture",
+            "register_route_map",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__register_route_map__omni__1f__384x256.png",
+          "frames": 1,
+          "frame_size": [
+            384,
+            256
+          ],
+          "sha256": "b8e13f0f63f3d044f09cf1d770e5b3f62b5bbf32bafaa8952f3103df62779247",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "register_shelving::omni": {
+          "state_id": "register_shelving",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate_machinery",
+            "world_prop",
+            "body",
+            "fixture",
+            "register_shelving",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__register_shelving__omni__1f__256x192.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            192
+          ],
+          "sha256": "34d47d370ce3f7d3aee76845d3281adaa4d75d47bb4bfe11b24f779329ca8750",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "route_coil::omni": {
+          "state_id": "route_coil",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate_machinery",
+            "world_prop",
+            "body",
+            "fixture",
+            "route_coil",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__route_coil__omni__1f__192.png",
+          "frames": 1,
+          "frame_size": [
+            192,
+            192
+          ],
+          "sha256": "721db2b219b51a788e9aff4ea4e88bc4f148031c8f656fead7fee85a191b87f8",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "transit_drum::omni": {
+          "state_id": "transit_drum",
+          "direction": "omni",
+          "semantic_identity": [
+            "awakening_undergate_machinery",
+            "world_prop",
+            "body",
+            "fixture",
+            "transit_drum",
+            "omni"
+          ],
+          "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__transit_drum__omni__1f__256x192.png",
+          "frames": 1,
+          "frame_size": [
+            256,
+            192
+          ],
+          "sha256": "298225462916a47bb3b73808a75f61d389fda9ba56a7c5606b6d7a02075aa995",
           "provenance": "authored",
           "source_asset": null
         }
