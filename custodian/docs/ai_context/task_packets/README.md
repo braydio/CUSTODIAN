@@ -12,7 +12,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
-- `REVIEW_CONTRACT_WORLD_OPERATOR_VOID_SPAWN_FAILSAFE_CORRECTION.md` — Independently prove that the current-main “spawn over void” reproduction is closed at the full contract-install boundary rather than only at the tile predica...
 - `REVIEW_VEHICLE_RUNTIME_LIFECYCLE_HARDENING_V1.md` — Independently prove that vehicle disable/destruction/exit lifecycle cannot strand the Operator and that ownership truth is singular after the hardening lands.
 - `VEHICLE_RUNTIME_LIFECYCLE_HARDENING_V1.md` — Make the production pilotable-vehicle lifecycle fail-safe so entering, ordinary exit, disable, destruction, and teardown cannot strand the Operator or leave...
 - `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — (no Goal recorded)
@@ -242,7 +241,7 @@ The Archive Resolve implementation series is evidence-gated. AR1/ARR1, AR2 and A
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SHADER.md` — AR2 paired review complete/passed.
 - `archived/CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` + `archived/REVIEW_CONTRACT_WORLD_PLAYABLE_REGION_SPAWN_VALIDITY_FIX.md` — P0 implementation/review complete-passed: final Operator spawn must be canonically valid, runtime-walkable, outside ingress clearance, and in `ProcGenTilemap.get_main_playable_component()`; 0 blocking defects / 0 material evidence gaps. Review R0-03's missing full `_on_contract_generated()` real-compound/registered-ingress proof is intentionally carried into AR3's integration validation rather than a correction packet.
 - `archived/CONTRACT_WORLD_OPERATOR_VOID_SPAWN_FAILSAFE_CORRECTION.md` — P0 implementation complete: one accepted-component snapshot, deterministic safe fallback, final position round-trip guard, install-trace source/tile evidence, and hidden/disabled catastrophic failure; focused loader regressions and S1 quick passed. Paired fresh-context review is next.
-- `REVIEW_CONTRACT_WORLD_OPERATOR_VOID_SPAWN_FAILSAFE_CORRECTION.md` — ready/auto paired fresh-context review of the P0 correction; its dependency keeps it unclaimable until the implementation lands.
+- `archived/REVIEW_CONTRACT_WORLD_OPERATOR_VOID_SPAWN_FAILSAFE_CORRECTION.md` — paired fresh-context review passed with no findings; the real-loader fallback and catastrophic failure paths passed focused checks and fallback mutation control.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 complete: bounded semantic echo, one-time ingress resolve, lighter reacquisition; landed and subsequently human-approved from the gameplay-scale contact sheet with no presentation tuning required. Paired review `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` is next; retain the review-manifest dirty-tree commit mismatch as evidence-hygiene context only.
 - `archived/PROCGEN_ARCHIVE_RESOLVE_FRONTIER_RESTRAINT.md` — AR4 complete: distance + LOS + camera frontier with time-based pacing; landed at current tuning, visual verdict waived to playtest.
 - `archived/REVIEW_PROCGEN_ARCHIVE_RESOLVE_SEMANTIC_ECHO.md` — AR3 paired review complete: passed, 0 blocking defects, 3 non-blocking; AR4 frontier restraint is next.
