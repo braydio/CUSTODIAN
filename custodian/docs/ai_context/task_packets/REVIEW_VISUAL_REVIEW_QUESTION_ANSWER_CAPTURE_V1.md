@@ -8,7 +8,7 @@
 - Depends on: `visual-review-question-answer-capture-v1`
 - Locks: `agent-workflow, visual-review-handoff`
 - Kind: `review`
-- Review: `manual`
+- Review: `none`
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`
 - Paired review workstream: `none`
@@ -52,7 +52,7 @@
   - `python3 custodian/tools/agent/check_ai_context.py --json`
   - affected changed-file validation as appropriate
   - `git diff --check`
-- Task overrides: `TASK OVERRIDE: review only; do not edit the reviewed implementation. Commits are limited to the durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets required by confirmed findings.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: Optional broader human-decision persistence across non-visual workflows.
 
 ## Review Receipt
