@@ -17,6 +17,7 @@ Paired post-land review of D1 (`procgen-road-authority-extraction`), reviewed on
 ## Awkward parts
 - The owner smoke's single-owner proof is largely source-text (`contains`) checks on the façade; behavior is covered by the owner-level and surface-role smokes, but a refactor that keeps the strings and changes semantics would pass.
 - This review packet's Handoff said D2 was refresh-required by the user. D2's own packet (refreshed, `Refresh owner: none`, auto-claim after this review) and the roadmap row say otherwise; I treated D2's packet as authoritative and corrected the stale handoff in this packet. The review confirmed the authored-scene road clear still routes through the owner, which is D2's stated condition.
+- The roadmap D1 row still reads "paired post-land review next" and the D2 row still reads dependency-gated. The paired-review override does not allow roadmap edits (finish rejected my first attempt), so I reverted them; they need a reconcile by the next implementation slice (D2).
 - D3 had already landed on main before this review; it touched none of the road files.
 
 ## Process Feedback
