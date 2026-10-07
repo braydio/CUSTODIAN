@@ -211,11 +211,11 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 
 ### Active Awakening Hero-Art Reauthor
 
-- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement for the live P-9 Designation Locker. Consumes the approved Dropbox handoff, preserves the existing four-state Asset V2/runtime/gameplay contract, and validates wall registration + exactly-once P-9 flow in Zone04. Dependency-gated on `asset-downloads-intake-sweep` to avoid Asset V2 contention.
+- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement for the live P-9 Designation Locker, still dependency-gated on the active `asset-downloads-intake-sweep`. The predecessor is partially checkpointed at `10e9ed5d` and must finish A2 + land before this packet can claim the shared Asset V2/Awakening registration surface.
 
 ## Active Local Asset Intake
 
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — ready/auto Dropbox intake closeout for the three currently actionable unimplemented Awakening handoffs: Basin B plus the Attestation/Reliquary and Dust Lung/Undergate required-fixture bundles (21 required states across five existing Asset V2 families). It skips already-landed Operator/Alpine handoffs, transport smoke, and the explicitly partial Alpine-cliff 4/26 handoff; scene binding remains fail-closed behind the existing fixture-consumption classification rules.
+- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — active partial intake. Checkpoint `10e9ed5d` has published 11/21 states (Ambulatory 6/6, Dust Lung 4/4, Undergate 6/6). A2 Attestation/Reliquary remains 0/10 on the branch; main now refreshes the outer ZIP authority to the sole current Dropbox revision SHA-256 `82012a4f…f757c9a4`, with strict manifest/per-file/state-set validation still fail-closed. Resume the same workstream; do not reclaim or start the locker reauthor yet.
 
 ## Active Reusable Source-Material Intake
 
