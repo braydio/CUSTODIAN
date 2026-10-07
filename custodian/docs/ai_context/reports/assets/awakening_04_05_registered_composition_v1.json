@@ -1,0 +1,76 @@
+{
+  "schema": "custodian.awakening_registered_composition.v1",
+  "workstream": "awakening-04-05-registered-composition-correction-v1",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9",
+  "measured_from_authoring_attachments": true,
+  "reference_canvas": {
+    "width": 1502,
+    "height": 2048,
+    "mode": "RGBA",
+    "top_left_origin": [0, 0],
+    "center": [751, 1024]
+  },
+  "composed_reference": {
+    "sha256": "521beec078b9c3dfb3d694d134258c6a77d0db64e3ce4cc8a71491efff8c9383",
+    "alpha_bounds_xyxy_exclusive": [0, 0, 1502, 2048]
+  },
+  "layers_bottom_to_top": [
+    {
+      "id": "dust_lung",
+      "sha256": "fa8637992bfc0b1ff1b0d009fbe463e098a4adbfe97031c67d2276d2fe94172e",
+      "alpha_bounds_xyxy_exclusive": [0, 0, 870, 838],
+      "trimmed_size": [870, 838],
+      "trimmed_center_in_shared_canvas": [435, 419],
+      "trimmed_center_offset_from_canvas_center": [-316, -605],
+      "runtime_rotation_required": 0.0
+    },
+    {
+      "id": "connector_04_05",
+      "sha256": "489b49615ba53b0073519d5a261f736321ba69b95019bb54ec02ff408a9ffd76",
+      "alpha_bounds_xyxy_exclusive": [258, 672, 1300, 1256],
+      "trimmed_size": [1042, 584],
+      "trimmed_center_in_shared_canvas": [779, 964],
+      "trimmed_center_offset_from_canvas_center": [28, -60],
+      "runtime_rotation_required": 0.0
+    },
+    {
+      "id": "locker_reliquary",
+      "sha256": "76cc103eda059974f8f279e8e4e10fdb1b388030ea26f2a7b659075c45ceb48d",
+      "alpha_bounds_xyxy_exclusive": [644, 1182, 1502, 2048],
+      "trimmed_size": [858, 866],
+      "trimmed_center_in_shared_canvas": [1073, 1615],
+      "trimmed_center_offset_from_canvas_center": [322, 591],
+      "runtime_rotation_required": 0.0
+    }
+  ],
+  "alpha_overlaps": [
+    {
+      "layers": ["dust_lung", "connector_04_05"],
+      "pixel_count": 17979,
+      "bounds_xyxy_exclusive": [261, 672, 598, 838]
+    },
+    {
+      "layers": ["connector_04_05", "locker_reliquary"],
+      "pixel_count": 10979,
+      "bounds_xyxy_exclusive": [837, 1182, 1300, 1256]
+    },
+    {
+      "layers": ["dust_lung", "locker_reliquary"],
+      "pixel_count": 0,
+      "bounds_xyxy_exclusive": null
+    }
+  ],
+  "composition_check": {
+    "order": ["dust_lung", "connector_04_05", "locker_reliquary"],
+    "differing_pixels_vs_composed_reference": 1267,
+    "mean_absolute_channel_error": 0.0017935884,
+    "interpretation": "edge-antialias/export noise only; not placement freedom"
+  },
+  "superseded_live_transform": {
+    "connector_position": [351.821, -2392.391],
+    "connector_scale": [0.715951, 0.715951],
+    "connector_rotation_radians": -0.198826,
+    "connector_rotation_degrees": -11.391598,
+    "status": "historical only; disproven by direct registered-composition evidence"
+  }
+}
