@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `review-awakening-interaction-feedback-console-activation`
+- Depends on: `review-awakening-04-05-registered-composition-correction-v1`
 - Locks: `awakening-runtime, awakening-art-registration, awakening-05-06-spine`
 - Kind: `implementation`
 - Review: `auto`
