@@ -2,8 +2,9 @@
 
 **Status:** active implementation design  
 **Parent authority:** `design/02_features/vehicles/VEHICLES.md`  
-**Implementation series:** lifecycle hardening -> class implementation -> Asset V2 vehicle-family foundation  
-**Reviewed main:** `ad2868d66a`
+**Implementation series:** lifecycle hardening -> wreck restoration -> class recovery -> Asset V2 vehicle-family foundation  
+**Reviewed main:** `5020df4b88a2`
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
 
 ## Purpose
 
@@ -23,7 +24,12 @@ This is a gameplay class, not a gratuitous GDScript subclass. Shared vehicle lif
 | Role | SCOUT |
 | Tier | LIGHT |
 | Variant | MK1 |
-| Interaction | PILOTABLE |
+| Interaction | PILOTABLE after restoration |
+| Initial world state | WRECKAGE |
+| Restoration profile | `field_scout_recovery_light` |
+| Restoration cost | 12 ruin scrap + 6 structural alloy + 1 power component |
+| Restoration hold | 4.0 s |
+| Restored health | 40 / 100 HP |
 | Mobility | WHEELED |
 | Seats | 1 driver, 0 passenger |
 | Entry radius | 64 px |
@@ -34,9 +40,24 @@ This is a gameplay class, not a gratuitous GDScript subclass. Shared vehicle lif
 | Weapons | none baked into the chassis |
 | Terrain contract | existing `actor_kind = "vehicle"` surface multiplier |
 | Collision damage | disabled for V1 |
-| Repair/fuel | deferred |
+| Repair/fuel | wreck restoration + existing field repair / fuel deferred |
 
 The existing registry ID is preserved to avoid identity churn. The production scene should become semantically named for this class. Compatibility aliases may exist only while a live consumer still needs them.
+
+## Recovery loop
+
+The Scout is **found, not issued**. Every ordinary world-spawned instance begins as a zero-health wreck.
+
+1. Spawn as `WRECKAGE`: 0 HP, disabled, immobile, not enterable, not exposed through `pilotable_vehicles`.
+2. The wreck exposes one restoration interaction identifying the vehicle, material requirement, and hold behavior.
+3. Starting restoration verifies range and `ResourceLedger.can_pay()` but spends nothing.
+4. Leaving range/interruption cancels with zero cost.
+5. Successful 4.0-second completion atomically pays 12 `ruin_scrap`, 6 `structural_alloy`, and 1 `power_components`.
+6. Vehicle lifecycle authority restores the same instance at 40 HP, clears destroyed/disabled state, restores operational interaction groups, and emits a bounded restoration event.
+7. Existing field repair can then top off the chassis; restoration itself is not a full repair.
+8. Later lethal damage returns the vehicle to recoverable wreckage and re-enables restoration. Initial wreck spawn must **not** emit a fake destruction event.
+
+Registry `interaction_mode: PILOTABLE` remains correct because it describes eventual capability. Runtime wreck state decides whether it can currently be entered.
 
 ## Movement and durability
 
@@ -84,8 +105,10 @@ A stale constant in-world health bar is not acceptable. Bind it to authoritative
 3. Disable/destruction while occupied uses the same pilot-release authority as an ordinary exit, with safe placement semantics and a fail-safe fallback that cannot strand the Operator.
 4. Vehicle destruction cannot leave PlayerController targeting a dead/disabled vehicle.
 5. Nearby discovery returns each vehicle once even if compatibility groups overlap.
-6. A zero-health vehicle cannot be entered or driven.
-7. Current safe-exit collision/navigation behavior remains intact.
+6. A zero-health/wrecked vehicle cannot be entered or driven and is not advertised as a live pilotable interaction.
+7. Initial wreck spawn does not emit `vehicle_destroyed`; actual lethal damage does.
+8. `restore_from_wreck()` is the only transition from zero-health wreckage back to operational state; economy code never mutates lifecycle fields directly.
+9. Current safe-exit collision/navigation behavior remains intact.
 
 ## Visual identity
 
@@ -134,6 +157,8 @@ Asset Pipeline V2 generates W/NW/SW from E/NE/SE. Do not hand-author mirrored du
 | `disabled_01` | required | 1 | 256x256 | n/a | no | reaction |
 | `destroy_01` | recommended | 8 | 2048x256 | 10 | no | death |
 | `wreck_01` | required | 1 | 256x256 | n/a | no | death |
+| `restore_01` | recommended | 8 | 2048x256 | 8 | no | transition |
+| `restore_fx_01` | recommended | 8 | 2048x256 | 8 | no | fx |
 
 All animations use `layout: horizontal_strip`, `layer: body`, 256x256 cells, true alpha, stable bottom-center registration, consistent wheel-ground contact, and no painted floor shadow.
 
@@ -201,12 +226,13 @@ Lifecycle V1 closes the occupied-disable/destruction/teardown stranding path, ce
 
 ## Implementation series
 
-1. `vehicle-runtime-lifecycle-hardening-v1` - shared lifecycle correctness and legacy-path disposition.
-2. `vehicle-field-scout-buggy-class-v1` - concrete class data, durability, semantic scene, live integration.
-3. `vehicle-field-scout-buggy-asset-v2` - Asset V2 family plus family-driven vehicle post-processing and tracker repair.
+1. `vehicle-runtime-lifecycle-hardening-v1` - complete/reviewed shared lifecycle correctness and legacy-path disposition.
+2. `vehicle-wreck-restoration-foundation-v1` - generic world-spawn wreckage and ResourceLedger-backed restoration lifecycle.
+3. `vehicle-field-scout-buggy-class-v1-recovery-1` - concrete Scout data/durability/semantic scene on the reviewed restoration foundation.
+4. `vehicle-field-scout-buggy-asset-v2` - Asset V2 family plus wreck/restoration presentation and family-driven vehicle post-processing.
 
 Each implementation slice receives paired fresh-context review before its successor is eligible.
 
 ## Deferred
 
-Actual `light_scanner` gameplay, weapons, passengers, cargo, fuel, repair economy, collision damage, boost, multiplayer authority, production PNG creation, human art-direction approval, and additional chassis classes.
+Actual `light_scanner` gameplay, weapons, passengers, cargo, fuel, broader repair economy/balance, collision damage, boost, multiplayer authority, save/load persistence across world reconstruction, production PNG creation, human art-direction approval, and additional chassis classes.
