@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `vehicle-field-scout-buggy-asset-v2`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/VEHICLE_FIELD_SCOUT_BUGGY_ASSET_V2.md`
-- Reviewed main: `5020df4b88a2`
+- Reviewed main: `ff5fc4056217e004901ea342f0de4422b8162775`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`
 - Reviewer context: `fresh`
