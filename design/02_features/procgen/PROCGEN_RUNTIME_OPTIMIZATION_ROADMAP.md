@@ -5,10 +5,10 @@
 **Roadmap:** Cross-cutting Procgen Runtime Optimization  
 **Status:** in_progress  
 **Priority:** P1  
-**Reviewed main:** `efce0c069a5b0fd2ce07013b9a248cde08d26e56`  
-**Last Updated:** 2026-10-03  
+**Reviewed main:** `5537b1022a17f805db87ccf9e66c40d1f3c0ca66`  
+**Last Updated:** 2026-10-07  
 **Depends on:** none for measurement; slice dependencies below
-**Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac01db9-8928-83ea-815e-6e223042b6d7
+**Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
 
 ## Purpose
 
@@ -218,7 +218,7 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | HOTFIX | `contract-world-ingress-spawn-clearance-fix` | **complete / reviewed passed — Operator/Ash-Bell spawn collision fixed** | independent |
 | HOTFIX | `contract-world-playable-region-spawn-validity-fix` | **complete / reviewed passed — final Operator spawn must belong to canonical accepted playable component** | prerequisite satisfied; R0-03 full-path proof carried into AR3 validation |
 | HOTFIX | `contract-world-operator-void-spawn-failsafe-correction` | **complete / reviewed passed — deterministic accepted-component fallback and catastrophic no-safe-cell failure can no longer present stale void coordinates as a playable spawn** | reviewed playable-region fix; independent of AR4 presentation |
-| HOTFIX | `contract-world-operator-spawn-residency-correction` | **ready / P0 — normal startup can hit invisible/frozen fail-state when canonical-safe component cells are unpainted** | reviewed void-spawn failsafe; blocks further subjective AR4 playtest |
+| HOTFIX | `contract-world-operator-spawn-residency-correction` | **complete / reviewed passed — canonical spawn selection is presentation-independent and the chosen tile is realized through `ensure_spawn_presentation_ready()` before Operator restore** | reviewed void-spawn failsafe |
 | P1 | `contract-world-placement-foundation` | **complete — accepted-world read context landed** | S1 |
 | PR1 | `review-contract-world-placement-foundation-r1` | **ready / auto post-land review** | P1 |
 | P2 | `contract-world-resource-placement-extraction` | queued | PR1 |
@@ -227,10 +227,10 @@ This contract does not create a worker daemon. It makes the packet series self-c
 | P5 | `contract-world-encounter-placement-extraction` | queued | PR1 |
 | P6 | `contract-world-ingress-placement-extraction` | queued | PR1 |
 | P7 | `contract-world-loader-contraction` | **blocked / manual refresh gate** | P2+P3+P4+P5+P6 |
-| D1 | `procgen-road-authority-extraction` | **implementation complete; paired post-land review next** | G5+MR6R1 |
-| D2 | `procgen-authored-claim-registry-extraction` | **dependency-gated / refreshed — claim after D1 paired review passes without changing authored-scene road-clear ownership** | G5+MR6R1+D1 review |
+| D1 | `procgen-road-authority-extraction` | **complete / reviewed passed — 0 blocking / 0 material gaps; R0-01/R0-02 remain non-blocking proof/encapsulation follow-up** | G5+MR6R1 |
+| D2 | `procgen-authored-claim-registry-extraction` | **ready / auto — D1 review gate satisfied; all declared prerequisites complete** | G5+MR6R1+D1 review |
 | D3 | `procgen-generation-state-extraction` | **implementation complete (`ProcgenAcceptedWorldExport` owns capture/level-data/fingerprint export; fixed-seed level-data hash 2068075335, 69 keys unchanged)** | G5+MR6R1 |
-| X1 | `procgen-generation-data-model-audit` | queued | D1+D2+D3 |
+| X1 | `procgen-generation-data-model-audit` | **ready / auto; dependency-gated only on reviewed D2** | reviewed D1 + reviewed D2 + D3 |
 | XR1 | `review-procgen-generation-data-model-audit` | queued | X1 |
 | X2 | `procgen-generation-grid-foundation` | **blocked / manual refresh gate** | XR1 |
 | XR2 | `review-procgen-generation-grid-foundation` | queued | X2 |
@@ -275,10 +275,10 @@ If an independent review creates a correction packet, keep the original slice `c
 
 ## Current Program Position
 
-**Current packet:** RF1/RFR1, AP1, AR1/ARR1, AR2/recovery/review, playable-region spawn validity/review, and AR3 implementation are complete/landed. AR3 paired review is ready. Alpine AP2 is ready/auto from the registered `alpine-cliff-source-family-v1` Dropbox source-master batch; AP3 remains blocked behind AP2 + Gate C; AP4 remains dependency-gated behind AP1-AP3. The user's AR3 playtest approves the core Archive Resolve language but shows the ordinary frontier resolving too far/fast and through visual occlusion. AR4 frontier restraint is ready/auto behind the AR3 review. Placement and decomplexification remain independent lanes.
-**State:** S1, G1-G5, M1-M6, MR4, MR5, MR6, M6C1, MR6R1, RF1/RFR1, AP1, AR1/ARR1, AR2/recovery/review, playable-region spawn validity/review, and AR3 implementation are complete. Alpine Region Frame and underlay are stable. AR4 owns a smaller visual frontier inside unchanged gameplay readiness: distance cap, LOS/occlusion, camera relevance, time-based pacing, occlusion-safe safety halo, AR3 echo/ingress/reacquisition gating, and monotonic settled memory. D1 and D3 implementations are complete; D2 remains dependency-gated on the D1 paired review.
-**Next gate:** Run `review-procgen-archive-resolve-semantic-echo`; a clean/non-blocking pass automatically releases `procgen-archive-resolve-frontier-restraint`. Alpine may proceed independently.
-**After G5:** the original generation lane (S2-S4) is closed only for the narrower scope G3 actually delivered. S3's full semantics-first Exit condition is now owned by the packetized post-D1/D2/D3 GenerationGrid initiative above. G5+MR6R1 dependencies are satisfied for D1-D3; D1 and D3 implementations are complete (D1 paired review follows landing); D2 remains gated on that review. Once all three are reviewed/landed, X1→XR1→X2→XR2→X3→XR3 runs. D4 is explicitly blocked/manual until X3's measured migration DAG reaches reviewed convergence.
+**Current packet:** The spawn-residency P0 implementation and fresh paired review are complete/passed. D1 road-authority extraction is complete/reviewed-passed, D3 generation-state extraction is complete, and D2 authored-claim extraction is now the active generation-lane packet: ready/auto with its former D1 review gate satisfied. AR4 presentation review/correction work remains an independent presentation lane and does not gate D2.
+**State:** The live generation decomposition now has reviewed D1 road ownership and landed D3 accepted-world export ownership (`ProcgenAcceptedWorldExport`, 69-key level-data contract with fixed-seed parity). D2 is the only unfinished D-lane extraction. X1 is structurally ready/auto but intentionally depends on the completed D2 paired review so its inventory is measured from the final post-D1/D2/D3 state. X2 and X3 are blocked/manual refresh gates and cannot auto-claim stale pre-audit/pre-foundation assumptions.
+**Next gate:** Claim `procgen-authored-claim-registry-extraction`, then run `review-procgen-authored-claim-registry-extraction`. A clean/non-blocking D2 review releases X1 automatically.
+**After G5:** D1 is reviewed complete, D3 is complete, and D2 is ready. After D2 + its paired review, run X1→XR1. X2 must then be refreshed in planning context from reviewed X1 evidence before implementation; X3 likewise remains blocked until reviewed X2 exists. D4 stays blocked/manual until X3 authors and reviews the actual migration-convergence DAG.
 
 ---
 
