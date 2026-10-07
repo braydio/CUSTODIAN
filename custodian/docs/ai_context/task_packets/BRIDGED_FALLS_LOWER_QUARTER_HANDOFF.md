@@ -5,7 +5,7 @@
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `ritualant-north-egress-and-chapel-vista, bridged-falls-procgen-topology, bridged-falls-bridge-grammar-asset-v2, bridged-falls-vista-waterfall-presentation`
+- Depends on: `review-ritualant-north-egress-and-chapel-vista, review-bridged-falls-vista-waterfall-presentation`
 - Locks: `ash-bell-route-cutover, lower-quarter-entry`
 - Kind: `implementation`
 - Review: `auto`
