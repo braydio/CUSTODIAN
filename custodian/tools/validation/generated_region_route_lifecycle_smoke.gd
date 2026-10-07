@@ -177,6 +177,34 @@ func _exercise_route_lifecycle(_levels: RefCounted, errors: Array[String]) -> vo
 		errors.append("failed generated staging changed Operator identity or position")
 	if authored.process_mode == Node.PROCESS_MODE_DISABLED or camera.get("runtime_map") != authored:
 		errors.append("failed generated staging did not restore source processing and camera binding")
+	# Replace only the generated scene request after registry validation. This fixture
+	# is a ProcGenTilemap with no ProcGen owner, so generation must fail explicitly
+	# and let the real route rollback transaction restore the authored source.
+	edge.target_spawn_id = &"EntrySpawn"
+	var generated_definition: RefCounted = loader.call("get_definition", &"generated_route_procgen_fixture")
+	var generation_request: Dictionary = generated_definition.get("generated_region")
+	generation_request["scene_path"] = "res://tools/validation/fixtures/generated_region_missing_procgen_map.tscn"
+	generated_definition.set("generated_region", generation_request)
+	var generation_failure: Array[String] = []
+	manager.connect("route_transition_failed", func(_route: StringName, _edge: StringName, reason: String) -> void:
+		generation_failure.append(reason)
+	, CONNECT_ONE_SHOT)
+	var generation_origin_position := actor.global_position
+	manager.call("transition_via_edge", &"enter_generated", actor)
+	var generation_wait_frames := 0
+	while generation_failure.is_empty() and generation_wait_frames < 30:
+		await process_frame
+		generation_wait_frames += 1
+	if generation_failure.is_empty():
+		errors.append("invalid ProcGen dependency did not resolve generated staging promptly")
+	elif not generation_failure.back().contains("no ProcGen owner"):
+		errors.append("invalid ProcGen dependency returned an unhelpful failure: %s" % generation_failure.back())
+	if manager.call("get_current_node_id") != &"authored" or loader.call("get_active_level_instance") != authored:
+		errors.append("generation failure did not roll back to the authored source")
+	if actor.get_instance_id() != actor_id or actor.global_position != generation_origin_position:
+		errors.append("generation failure changed Operator identity or position")
+	if not authored.visible or authored.process_mode == Node.PROCESS_MODE_DISABLED or camera.get("runtime_map") != authored:
+		errors.append("generation failure did not restore source visibility, processing, and camera binding")
 	game_root.queue_free()
 	await process_frame
 

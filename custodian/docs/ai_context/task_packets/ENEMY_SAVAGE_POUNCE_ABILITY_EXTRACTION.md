@@ -2,10 +2,10 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `enemy-savage-pounce-ability-extraction`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `enemy-marine-dash-ability-extraction-recovery-1`
+- Depends on: `enemy-marine-dash-ability-extraction-recovery-1, review-enemy-marine-dash-ability-extraction-recovery-1`
 - Locks: `enemy-runtime`
 - Kind: `implementation`
 - Review: `auto`
@@ -20,7 +20,9 @@
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Move the Savage pounce phase machine out of `enemy.gd` into one actor-local ability authority, reusing the landed Marine/Falcon host-service pattern without changing Savage rushdown behavior.
 - Completion boundary: This slice owns Savage pounce state/tuning extraction, the narrow host-service seam required by it, focused pounce diagnostics/tests, validation ownership, and docs made false by the extraction. It does not own the Savage two-hit chain.
-- Current measured state: NPA-1 is not landed yet. Recovery checkpoint `9af2adf59` proves a concrete candidate host-service seam: actor-local `MarineDash` + typed `MarineDashConfig`, public `request_marine_dash`, exact 26-default/26-scene tuning parity, focused Marine/spatial/production-ambush gates green, and `enemy.gd` reduced by 343 lines in that branch. That workstream is currently blocked only because the required changed-file closeout selects a pre-existing `grunt_falcon_reversal` ordinary-critical assertion failure that reproduces on clean main. Until NPA-1 lands and its paired review passes, this packet must not freeze the provisional Marine seam as final architecture. On current production main, Savage pounce authority remains in `enemy.gd`.
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Current measured state: NPA-1 implementation is landed and complete. Its paired review workstream `review-enemy-marine-dash-ability-extraction-recovery-1` is ready and pending. The landed implementation provides actor-local `MarineDash` + typed `MarineDashConfig`, public `request_marine_dash`, exact 26-default/26-scene tuning parity, and reduces `enemy.gd` by 343 lines. Do not begin NPA-2 until the paired review passes and the authoring conversation refreshes this packet against the reviewed seam. On current production main, Savage pounce authority remains in `enemy.gd`.
 - Evidence: `custodian/game/actors/enemies/enemy.gd`; `custodian/game/actors/enemies/enemy_savage.tscn`; `custodian/game/actors/enemies/abilities/README.md`; `custodian/docs/ai_context/CURRENT_STATE.md`; `design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`; the landed result of `enemy-marine-dash-ability-extraction-recovery-1` is a dependency and becomes the immediate structural reference.
 - Task-specific authority: `design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`; current Savage runtime/scene tuning; live combat hit/engagement contracts; the landed actor-local ability service seam after NPA-1.
 - Work surface: `custodian/game/actors/enemies/abilities/`, focused typed config if warranted, `enemy.gd`, `enemy_savage.tscn`, Savage-relevant validation and validation-manifest ownership, active ownership/current-state docs.
@@ -34,12 +36,12 @@
 
 ## Handoff
 
-- Next action: after NPA-1 lands **and its paired review passes**, return to this planning chat, remeasure live Savage pounce ownership/callers/tuning against the reviewed Marine host-service seam, then rewrite this packet in place to `ready/auto` before implementation.
+- Next action: After NPA-1's paired review passes, return to this planning chat, remeasure live Savage pounce ownership/callers/tuning against the reviewed Marine host-service seam, then rewrite this packet in place to `ready/auto` before implementation.
 - Best starting files: `enemy.gd`, `enemy_savage.tscn`, `abilities/README.md`, validation manifest, and NPA-1's landed ability/config pattern.
-- Blockers or open questions: reviewed NPA-1 is required. The current Marine checkpoint is strong implementation evidence but is not yet production authority.
+- Blockers or open questions: NPA-1's paired review is pending; its result and planning refresh are required before implementation.
 ## Refresh Planning Authority
 
-- Refresh owner: `execution-agent`
-- ChatGPT/user planning refresh required: `no`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: Bring the landed NPA-1 implementation summary, paired-review receipt, final ability/config API, final `enemy.gd` diff, and any correction-cycle changes back to this chat. Re-derive NPA-2 against that reviewed live seam before promoting it to `ready/auto`.

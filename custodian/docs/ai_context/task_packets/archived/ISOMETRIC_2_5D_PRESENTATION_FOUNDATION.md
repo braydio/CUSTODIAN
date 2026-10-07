@@ -16,7 +16,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `09ebb90e78e4568f81f4a7fc270da0a3d158d445`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Coordination chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4
 - Supplemental summary backlink: Every durable implementation/closeout summary for this packet must also include `Coordination chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4` exactly.
 - Goal: Make CUSTODIAN's 2.5D doctrine an explicit reusable 2D runtime presentation contract by separating ground XY from visual elevation and converging existing depth-sort, roof-occlusion and contact-shadow precedents without creating a 3D gameplay path.

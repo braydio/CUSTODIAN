@@ -19,7 +19,7 @@
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
 - Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: conditional
 - Goal: Make canonical anti-drift checks, 8-direction family review, transition/sequence review, and a bounded real-Godot sandbox one guided acceptance path so 2.5D art can become RUNTIME_VERIFIED without touching production generation selection.
 - Completion boundary: Project canonical + temporal QA into Workbench, add family/sequence presets, structured review receipts, and a debug sandbox consuming selected 2.5D pixels. No production selector/catalog policy change.
@@ -84,7 +84,7 @@ A request record should be hash-bound:
 
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh instruction: Bring WB25-3 + review evidence and live QA/polish APIs back to this chat. Re-derive receipt shape, family-review projection, sequence integration, sandbox seam, exact Godot files and focused tests before ready.
 
 ## Handoff
@@ -93,7 +93,7 @@ A request record should be hash-bound:
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: none after refresh/implementation
 - Next action: paired review

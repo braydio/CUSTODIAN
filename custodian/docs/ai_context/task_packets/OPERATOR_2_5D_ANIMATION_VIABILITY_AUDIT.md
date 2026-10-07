@@ -12,7 +12,7 @@
 - Review rationale: `low-risk exemption: read-only evidence/report task; the required human visual review is the acceptance gate`
 - Visual review: `required`
 - Reviewed main: `df80ee151473724aa524a1d24c36cd7d32389bd2`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Goal: Determine whether the current production-reachable Operator animation art is viable for CUSTODIAN's fixed-isometric 2.5D contract, quantify exactly where directional/viewpoint/registration/composition gaps exist, and produce a ranked art backlog before the Forum 2.5D vertical slice treats the Operator as an approved visual benchmark.
 - Completion boundary: Produce a structural coverage inventory, runtime-pixel visual matrices, a reference comparison against the Lords of Pain 16-angle goalpost and the repository Playable Knight, and a final viability report that classifies each production-reachable animation family as keep / cleanup / directional completion / redraw / consciously projected. Do not modify, publish, ingest, regenerate, normalize, or replace any Operator art.
 - Current measured state: the Operator runtime architecture is compatible with 2.5D presentation, but the art set is uneven. The generated semantic catalog contains broad 8-sector unarmed locomotion coverage, while many combat/posture/armed actions are E/W, partial, S-only, omni, or caller-projected. `operator.gd` already has presentation-only `set_fake_elevation()` behavior that lifts visual layers while leaving authoritative XY/shadow grounding separate. The Playable Knight reference exists in-repo at `custodian/dev/test_sprites/Knight/`. The user-selected Lords of Pain reference is expected locally in Downloads and must remain reference-only.
@@ -373,7 +373,7 @@ Publish the bounded evidence through the repository visual-review workflow:
 
 Use exactly this authoring chat:
 
-https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 
 Publish only the three matrices plus the concise viability report, not the complete raw Operator art tree.
 
@@ -403,7 +403,7 @@ Before handoff/closeout:
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: `Forum slice must incorporate the approved Operator viability verdict, the actual art backlog, and any required short-term projection/registration constraints rather than assuming the current Operator art is production-ready.`
 - Next action: return the audit report/matrices to this chat, lock the first Operator art-production tranche, then refresh the Forum packet against current main.
 - Blockers or open questions: `human visual decision required before Forum implementation`.
