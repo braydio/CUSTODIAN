@@ -75,7 +75,7 @@
 
 ## Independent Review
 
-- Status: `needs_correction`
+- Status: `findings`
 - Review workstream: `review-vehicle-field-scout-buggy-class-v1-recovery-1`
 - Reviewed on main: `993633bb8d8d517cb608e7756a15a5f61d9751e6`
 - Reviewer context: `fresh`
