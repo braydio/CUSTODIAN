@@ -114,19 +114,28 @@ roadmap. The planned live-3D K3D-2/K3D-3 workstreams are canceled.
 
 `lords_of_pain_test_gallery` is registered as a dev `world_ingress` destination. Its generated production scene uses the persistent Operator lifecycle and owns no Operator, camera, or controller. The walkable blockout presents Asset V2 Ground Stone, the real Meridian hardened-floor base, Gold Drop/Glint, Highlight/Loot Indicator UI samples, and Warrior/Skeleton animations with all 16 authored directions selectable. A DEMO-scoped manifest records seven available semantic entries, five animation entries, pack/license provenance, and user-approved exclusions for Cursor Gauntlet, Rocks, and Mushrooms. District Transfer Frame art presents both procgen ingress and the normal `return_world` exit. Asset V2 doctor is healthy; gallery, registry, ingress, return, re-entry, and camera smokes pass.
 
-## Alpine Region Frame And Underlay AP1 (2026-10-06)
+## Alpine Region Frame And Underlay AP1 / Surface-Art Readiness (2026-10-07)
 
 RF1 still separates permanent map-edge presentation from local biome and Archive
 Resolve. `NonwalkableSurfaceClassifier` derives exterior/internal CHASM masks while
-structural surface kinds remain unchanged. AP1 is now complete/landed: the
+structural surface kinds remain unchanged. AP1 is complete/landed: the
 `procgen_underlay_alpine_plateau` Asset V2 family publishes the reviewed six-state
 FAR/MIDDLE/NEAR Alpine underlay and `region_frames/alpine_plateau.tres` consumes the
 real family rather than the old Endless Forest visual fallback. Frame identity remains
 explicit through `CustodianContractMap.region_frame_profile_id`; the global
-`ProcgenDepthBackdrop` still follows exterior CHASM only. AP2 cliff presentation is
-now ready from the registered Dropbox source-master batch
-`alpine-cliff-source-family-v1`; its final Gate B is produced only after Codex derives
-and validates the exact fascia/contact/depth runtime states.
+`ProcgenDepthBackdrop` still follows exterior CHASM only.
+
+AP2 cliff presentation is ready from the registered
+`alpine-cliff-source-family-v1` source-master batch; its final Gate B is produced only
+after Codex derives and validates the exact fascia/contact/depth runtime states.
+
+AP3 surface image art is also complete at the source-master layer. The registered
+`rocky-upland-10-source-family-v1` and `meridian-hardstand-6-source-family-v1`
+batches together provide all 16 approved Rocky Upland / Meridian Hardstand states.
+AP3 remains blocked only behind AP2; once released it owns exact-canvas normalization,
+Asset V2 ingest/bind/verify, explicit `TerrainStampProfile` authoring, catalog
+registration, deterministic/runtime validation, human gameplay-scale review, and the
+final immutable Gate C closeout handoff.
 
 ## Archive Resolve Presentation Spine (AR1, 2026-10-03)
 
