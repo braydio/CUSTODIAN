@@ -6,7 +6,7 @@
 **Priority:** P2
 **Reviewed main:** `ca5e7d2acc5282f304a8d969343db127462326f1`
 **Last Updated:** 2026-10-04
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
 **Design authority:** `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`
 
 ## Pivot

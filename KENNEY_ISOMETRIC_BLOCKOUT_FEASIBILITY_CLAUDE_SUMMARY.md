@@ -37,7 +37,7 @@ Validation passed: focused Kenney smoke; 13-test changed-file sweep; both family
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
 - Refresh reason: none before paired review; K3D-2 requires the user's A/B judgment and planning refresh after review.
 - Next action: land K3D-1 and run its paired technical review, then return the report and comparison to the authoring chat before K3D-2.
 - Blockers or open questions: review is gated on K3D-1 landing.

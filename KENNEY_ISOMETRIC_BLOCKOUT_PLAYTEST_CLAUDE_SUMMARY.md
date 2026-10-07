@@ -39,7 +39,7 @@ Human-owned A/B judgment remains open as tuning input for the later Forum vertic
 - Next packet state: ready / dependency satisfied after this packet completes
 - Refresh owner: execution-agent
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
 - Refresh reason: none; current main has the fixed-isometric 2.5D direction and successor packets.
 - Next action: After K3D-1P lands, execute isometric-2-5d-presentation-foundation. Preserve user walkaround notes as tuning input for the later Forum vertical slice.
 - Blockers or open questions: none; the live-3D K3D-2/K3D-3 workstreams are canceled.
