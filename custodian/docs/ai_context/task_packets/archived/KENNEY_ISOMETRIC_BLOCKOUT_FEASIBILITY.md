@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default: Asset V2 writes plus objective presentation/runtime validation`
 - Reviewed main: `cf3ba2eb219e`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Goal: Build a deterministic A/B test of CUSTODIAN-native 2D versus Kenney Isometric Miniature presentation over one shared Hub-approach sample, without moving production spatial/gameplay authority.
 - Completion boundary: Inventory seven local Kenney packs; ingest 12–20 selected PNGs (hard cap 24) from Isometric Miniature Prototype/Bases through Asset V2; build one debug A/B scene; prove parity/isolation; record equivalent metrics; emit two 1280x720 captures plus one 2560x720 composite; update the roadmap.
 - Current measured state: On `main@cf3ba2eb219e`, H1 is still `in_progress`; `game/world/hub/first_set/hub_first_set_layout.gd` is absent. Use `HUB_FIRST_SET_BLOCKOUT.md` for Forum geometry and `RoadOfWitnessesPrototype.MODULES` for Road visual geometry. Asset V2 is image/PNG-oriented. Reuse existing capture/perf patterns.
@@ -245,7 +245,7 @@ Before `complete`, add required completion/feedback receipts and update the road
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: `K3D-2 architecture and acceptance must reflect landed K3D-1 evidence plus the user's A/B judgment.`
 - Next action: `Return the report and comparison to the authoring chat for the user's A/B judgment, then re-author K3D-2 against current main.`
 - Blockers or open questions: `user A/B judgment and planning refresh are required before K3D-2.`

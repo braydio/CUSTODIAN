@@ -10,7 +10,7 @@
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `144ad871cb17a9abdd566abd4ee49f59509d481a`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Goal: Add the missing playable human-validation layer for reviewed K3D-1 so the user can walk the same A/B spatial sample with the real Operator, real gameplay controller stack, and real gameplay Camera2D while switching instantly between native and Kenney presentation.
 - Completion boundary: Preserve the reviewed deterministic K3D-1 capture/metrics rig, extract only its reusable presentation construction, add one Lords-of-Pain-style authored dev level plus standalone playtest wrapper, add a live 1/2/Tab A/B switch that never changes Operator position/camera/collision, keep Kenney geometry presentation-only, and leave the scene ready as the final Kenney walkaround precursor before the active 2.5D realization work.
 - Current measured state: K3D-1 is complete and independently reviewed with 0 blocking defects. `kenney_isometric_blockout_feasibility.tscn` renders the sample inside a fixed 1280x720 SubViewport and intentionally owns no Operator/controller/collision. That makes it a valid deterministic comparison rig but a poor human-feel artifact. `lords_of_pain_test_gallery_playtest.tscn` already establishes the desired standalone wrapper pattern with `GameRoot/World/Operator`, `PlayerController`, gameplay `Camera2D`, `LevelPlaytestBootstrap`, and the normal lightweight gameplay support systems. The 16 selected Kenney runtime PNGs are already imported through Asset Pipeline V2. No local ZIP/source filenames are needed.
@@ -580,7 +580,7 @@ Do not run `--changed`, broad Godot validation, full Asset V2 ingest, or unrelat
 - Next packet state: `ready / dependency satisfied after this packet completes`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: `none; the active fixed-isometric 2.5D direction and successor packets are authored on current main.`
 - Next action: `After K3D-1P lands, execute isometric-2-5d-presentation-foundation. Preserve user walkaround notes as tuning input for the later Forum vertical slice.`
 - Blockers or open questions: `none; the canceled live-3D K3D-2/K3D-3 workstreams must not be authored.`

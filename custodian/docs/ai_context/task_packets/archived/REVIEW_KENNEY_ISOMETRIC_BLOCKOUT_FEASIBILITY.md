@@ -18,7 +18,7 @@
 - Landed implementation: `main@be3285c16ada` (K3D-1 archived complete; implemented from `main@9093c9ff1613`)
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Goal: Independently verify that K3D-1 produced a truthful, reproducible A/B presentation experiment with bounded Kenney source intake and no production-authority leakage.
 - Review focus: seven-pack source inventory truth; bounded Isometric Miniature selection; Asset V2 source_work/archive-receipt/runtime/family/catalog health; exact shared-anchor/camera/route parity; debug-only ownership; production isolation; equivalent metrics; deterministic 1280x720 + 1280x720 → 2560x720 evidence; truthful roadmap/report handoff.
 - Acceptance: Pass only if the landed experiment satisfies the archived K3D-1 acceptance contract, the two experimental Asset V2 families are healthy, A/B structural parity is independently reproducible, the comparison image is technically valid, and no production Hub/gameplay authority moved into the experiment. Do not pass or fail based on whether the reviewer personally prefers A or B.
@@ -76,7 +76,7 @@ Those remain user/ChatGPT design decisions in the next planning refresh.
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac17c6f-1dd8-83ea-b296-6e7a8726c7ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: `K3D-2 architecture and acceptance must reflect landed K3D-1 evidence plus the user's A/B judgment.`
 - Next action: `Return the reviewed K3D-1 report/comparison to the authoring chat and re-author K3D-2 against current main.`
 - Blockers or open questions: `user A/B judgment and planning refresh are required before K3D-2.`

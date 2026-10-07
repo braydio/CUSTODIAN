@@ -166,7 +166,7 @@ Do not create v2 duplicates merely because a predecessor chose different private
 
 Design authority: ../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md.  
 Operator production tracker: ../../../design/02_features/animation/OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md.  
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 
 The project has pivoted away from planned live-3D presentation experiments. The fixed-isometric 2.5D doctrine is realized inside the existing 2D runtime.
 

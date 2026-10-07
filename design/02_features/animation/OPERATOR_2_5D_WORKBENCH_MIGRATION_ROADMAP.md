@@ -4,7 +4,7 @@
 **Status:** active planning / all implementation slices pre-authored and refresh-gated  
 **Priority:** P1  
 **Reviewed main:** e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e  
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff  
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
 **Last updated:** 2026-10-07
 
 ## Goal
