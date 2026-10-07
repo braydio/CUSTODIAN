@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `review-awakening-room-connectors-polish`
+- Depends on: `review-awakening-interaction-feedback-console-activation`
 - Locks: `awakening-runtime, awakening-art-registration, awakening-05-06-spine`
 - Kind: `implementation`
 - Review: `auto`
@@ -43,4 +43,4 @@
   - Existing geometry/progression and late-seam tests use Layout authority and remain green.
 - Validation: Run Awakening geometry/progression smokes; add/update a focused 05→06 real-Operator traversal smoke; run `awakening_late_seams_v1` in no-capture mode; use compact 05→06 ROI only if pixel coverage cannot be settled structurally; changed-file validation and `git diff --check`.
 - Task overrides: `none`
-- Deferred: full Awakening art/handoff convergence and actual Awakening→Hub world-context transition remain downstream.
+- Deferred: full Awakening art/handoff convergence and actual Awakening→Hub world-context transition remain downstream. The reviewed interaction-feedback/console-activation predecessor is presentation authority and must not regress while proving the spine.
