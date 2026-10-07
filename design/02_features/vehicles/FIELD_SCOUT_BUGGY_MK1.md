@@ -2,7 +2,7 @@
 
 **Status:** active implementation design  
 **Parent authority:** `design/02_features/vehicles/VEHICLES.md`  
-**Implementation series:** lifecycle hardening -> wreck restoration -> class recovery -> Asset V2 vehicle-family foundation  
+**Implementation series:** lifecycle hardening -> wreck restoration -> diagnosis/knowledge -> component fabrication -> class recovery -> Asset V2 vehicle-family foundation  
 **Reviewed main:** `5020df4b88a2`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
 
@@ -27,7 +27,9 @@ This is a gameplay class, not a gratuitous GDScript subclass. Shared vehicle lif
 | Interaction | PILOTABLE after restoration |
 | Initial world state | WRECKAGE |
 | Restoration profile | `field_scout_recovery_light` |
-| Restoration cost | 12 ruin scrap + 6 structural alloy + 1 power component |
+| Recovery grade | R1 SERVICE |
+| Restoration requirements | field drive coupler Mk I + Custodian control relay Mk I + structural brace kit Mk I |
+| Raw-resource direct repair | forbidden for this class |
 | Restoration hold | 4.0 s |
 | Restored health | 40 / 100 HP |
 | Mobility | WHEELED |
@@ -46,18 +48,24 @@ The existing registry ID is preserved to avoid identity churn. The production sc
 
 ## Recovery loop
 
-The Scout is **found, not issued**. Every ordinary world-spawned instance begins as a zero-health wreck.
+The Scout is **found, diagnosed, rebuilt, and recommissioned**.
 
-1. Spawn as `WRECKAGE`: 0 HP, disabled, immobile, not enterable, not exposed through `pilotable_vehicles`.
-2. The wreck exposes one restoration interaction identifying the vehicle, material requirement, and hold behavior.
-3. Starting restoration verifies range and `ResourceLedger.can_pay()` but spends nothing.
-4. Leaving range/interruption cancels with zero cost.
-5. Successful 4.0-second completion atomically pays 12 `ruin_scrap`, 6 `structural_alloy`, and 1 `power_components`.
-6. Vehicle lifecycle authority restores the same instance at 40 HP, clears destroyed/disabled state, restores operational interaction groups, and emits a bounded restoration event.
-7. Existing field repair can then top off the chassis; restoration itself is not a full repair.
-8. Later lethal damage returns the vehicle to recoverable wreckage and re-enables restoration. Initial wreck spawn must **not** emit a fake destruction event.
+1. Spawn as `WRECKAGE`: 0 HP, disabled, immobile, not enterable.
+2. Diagnose the chassis. The Scout reports three failed standard service assemblies:
+   - `field_drive_coupler_mk1`
+   - `custodian_control_relay_mk1`
+   - `structural_brace_kit_mk1`
+3. These three R1 service patterns are starter-known. The first Scout teaches fabrication/install flow without demanding a research grind.
+4. Fabricate each part through the existing Field Fabricator. `ResourceLedger` materials are recipe inputs only; the wreck never consumes raw scrap/alloy/power directly.
+5. `InventoryManager` receives the completed replacement assemblies.
+6. Return to the wreck. The restoration interaction shows which required assemblies are present/missing.
+7. Hold the installation/bootstrap interaction for 4.0 seconds. Release, target loss, range exit, death/impact, portal transitions, or open UI cancel for free.
+8. On successful completion, consume the three assemblies exactly once and restore the same Scout at 40/100 HP.
+9. Existing field repair can then improve HP. Later lethal damage returns the Scout to recoverable wreckage.
 
-Registry `interaction_mode: PILOTABLE` remains correct because it describes eventual capability. Runtime wreck state decides whether it can currently be entered.
+Advanced R2+ wrecks use the same flow, but some missing assemblies are recipe-locked until scanning enough compatible vehicles/parts supplies the required mechanical-domain knowledge and pattern evidence.
+
+See `VEHICLE_RECOVERY_REVERSE_ENGINEERING.md` for R0-R4 progression and authority boundaries.
 
 ## Movement and durability
 
@@ -227,9 +235,11 @@ Lifecycle V1 closes the occupied-disable/destruction/teardown stranding path, ce
 ## Implementation series
 
 1. `vehicle-runtime-lifecycle-hardening-v1` - complete/reviewed shared lifecycle correctness and legacy-path disposition.
-2. `vehicle-wreck-restoration-foundation-v1` - generic world-spawn wreckage and ResourceLedger-backed restoration lifecycle.
-3. `vehicle-field-scout-buggy-class-v1-recovery-1` - concrete Scout data/durability/semantic scene on the reviewed restoration foundation.
-4. `vehicle-field-scout-buggy-asset-v2` - Asset V2 family plus wreck/restoration presentation and family-driven vehicle post-processing.
+2. `vehicle-wreck-restoration-foundation-v1` + correction/re-review - generic world-spawn wreckage and held restoration lifecycle.
+3. `vehicle-diagnosis-knowledge-v1` - vehicle scanning, domain knowledge, and pattern evidence.
+4. `vehicle-part-fabrication-recovery-v1` - R0 direct-material exception plus R1+ fabricated assembly recovery.
+5. `vehicle-field-scout-buggy-class-v1-recovery-1` - concrete semantic Scout class over the reviewed service-recovery loop.
+6. `vehicle-field-scout-buggy-asset-v2` - Asset V2 family plus wreck/restoration presentation and family-driven vehicle post-processing.
 
 Each implementation slice receives paired fresh-context review before its successor is eligible.
 
