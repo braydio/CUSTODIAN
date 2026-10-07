@@ -189,7 +189,7 @@ Every future durable asset upload should receive:
 - source-chat backlink;
 - asset count;
 - package checksum;
-- `HANDOFF_MANIFEST.json`;
+- one machine-readable package manifest: `MANIFEST.json` or `HANDOFF_MANIFEST.json`;
 - `CHECKSUMS.sha256`;
 - `README.md`;
 - one registry receipt under `CUSTODIAN/asset_batches/_registry/<batch-id>.json`;
