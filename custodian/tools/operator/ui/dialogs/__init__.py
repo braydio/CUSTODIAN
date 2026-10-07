@@ -8,5 +8,6 @@ from .publish import PublishDialog
 from .refresh import RefreshDialog
 from .validation import ValidationDialog
 from .weapon_context import WeaponContextDialog
+from .animation_creation import AnimationCreationDialog, AnimationCreationPlanDialog
 
-__all__ = ["CanvasMigrationDialog", "CanvasResizeDialog", "ContextMismatchDialog", "ErrorDialog", "FrameAddDialog", "FrameRemoveDialog", "PublishDialog", "RefreshDialog", "ValidationDialog", "WeaponContextDialog"]
+__all__ = ["AnimationCreationDialog", "AnimationCreationPlanDialog", "CanvasMigrationDialog", "CanvasResizeDialog", "ContextMismatchDialog", "ErrorDialog", "FrameAddDialog", "FrameRemoveDialog", "PublishDialog", "RefreshDialog", "ValidationDialog", "WeaponContextDialog"]

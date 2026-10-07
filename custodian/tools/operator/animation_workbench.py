@@ -2,6 +2,7 @@
 """Controller for disposable semantic Operator Aseprite workbenches."""
 from __future__ import annotations
 import json, os, shutil, subprocess
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from PIL import Image
@@ -52,6 +53,18 @@ def load(path,upgrade=True):
     return data
 def save(path,data): path.write_text(json.dumps(data,indent=2)+"\n")
 def state(manifest, wb):
+    if manifest.get("creation"):
+        for binding in manifest.get("layers", ()):
+            source = m.REPO_ROOT / binding.get("source_path", "")
+            runtime = m.REPO_ROOT / binding.get("runtime_path", "")
+            collision = (source.exists() or Path(str(source)+".import").exists()
+                or m.BUILDER.timing_sidecar_path(source).exists() or runtime.exists()
+                or Path(str(runtime)+".import").exists() or m.BUILDER.timing_sidecar_path(runtime).exists())
+            if collision: return "NEW / COLLISION"
+        if not wb.exists(): return "NEW / UNSAVED"
+        baseline = manifest.get("aseprite", {}).get("last_synced_sha256")
+        if baseline and m.file_sha256(wb) == baseline: return "NEW / UNSAVED"
+        return "NEW / READY TO PUBLISH"
     edited=bool(manifest.get("pending_migration")) or (wb.exists() and manifest["aseprite"].get("last_synced_sha256") not in (None,m.file_sha256(wb)))
     stale=any(
         (m.REPO_ROOT/x["source_contract"]["path"]).exists()
@@ -60,6 +73,105 @@ def state(manifest, wb):
         for x in manifest["layers"]
     )
     return "EDITED+STALE" if edited and stale else "EDITED" if edited else "STALE" if stale else "CLEAN"
+
+def create_animation(profile, action, direction, *, group, frames, frame_size=m.DEFAULT_FRAME_SIZE,
+                     fps=8.0, loop=True, template="full_body", root=DEFAULT_ROOT,
+                     aseprite=None, dry_run=False, source_root=None, weapon_root=None,
+                     repo_root=None):
+    """Create an ignored authoring session for a new semantic animation."""
+    repo = Path(repo_root or m.REPO_ROOT)
+    plan = m.build_creation_plan(profile, group, action, direction, frames, frame_size,
+        fps, loop, template, repo_root=repo,
+        source_root=Path(source_root or m.SOURCE_ROOT), weapon_root=Path(weapon_root or m.WEAPON_ROOT))
+    identity = asdict(plan.identity)
+    ws = workspace(root, identity)
+    manifest = ws / "workbench.json"
+    document = ws / "workbench.aseprite"
+    targets = [row["source_path"] for row in plan.layers]
+    if dry_run:
+        return {"identity": identity, "template": template, "frames": frames,
+                "frame_size": list(plan.frame_size), "fps": fps, "loop": bool(loop),
+                "layers": [{"layer": row["layer"], "source": row["source_path"], "runtime": row["runtime_path"], "operation": "CREATE"} for row in plan.layers],
+                "references": list(plan.references),
+                "collisions": list(plan.collisions), "status": plan.status,
+                "already_present": False, "workspace": str(ws)}
+    if plan.status != "READY":
+        raise m.WorkbenchError("ANIMATION CREATE COLLISION\n" + "\n".join(plan.collisions))
+    binary = resolve_aseprite(aseprite, True)
+    if manifest.exists() or document.exists():
+        if manifest.is_file() and not document.exists():
+            existing = load(manifest)
+            expected = {"profile": profile, "group": group, "action": action, "direction": direction}
+            timeline=existing.get("timeline",{}); canvas=existing.get("canvas",{})
+            requested_size=list(plan.frame_size)
+            if (existing.get("creation", {}).get("template") != template or existing.get("identity") != expected
+                    or int(timeline.get("workspace_clock_frames",0))!=int(frames)
+                    or [int(canvas.get("width",0)),int(canvas.get("height",0))]!=requested_size
+                    or float(timeline.get("fps",0))!=float(fps) or bool(timeline.get("loop"))!=bool(loop)):
+                raise m.WorkbenchError(f"creation workspace exists with a different contract: {ws}")
+            aseprite_run(binary, manifest, "assemble")
+            existing["aseprite"]["last_synced_sha256"] = m.file_sha256(document)
+            save(manifest, existing)
+            return existing, ws
+        raise m.WorkbenchError(f"creation workspace already exists; refusing to replace it: {ws}")
+    if ws.exists() and any(child.name != "baseline" for child in ws.iterdir()):
+        raise m.WorkbenchError(f"creation workspace contains unrecognized files; preserving them: {ws}")
+    # Revalidate immediately before creating any files, including collisions introduced
+    # after the read-only plan was shown.
+    confirmed = m.build_creation_plan(profile, group, action, direction, frames, frame_size,
+        fps, loop, template, repo_root=repo,
+        source_root=Path(source_root or m.SOURCE_ROOT), weapon_root=Path(weapon_root or m.WEAPON_ROOT))
+    if confirmed.status != "READY":
+        raise m.WorkbenchError("ANIMATION CREATE COLLISION\n" + "\n".join(confirmed.collisions))
+    ws.mkdir(parents=True, exist_ok=True)
+    width, height = plan.frame_size
+    layer_rows = []
+    for row in plan.layers:
+        key = row["key"]
+        layer = row["layer"]
+        layer_rows.append({
+            "binding_id": layer, "aseprite_layer_name": layer, "role": "editable",
+            "editable": True, "owner": "operator", "profile": profile,
+            "group": group, "action": action, "direction": direction, "layer": layer,
+            "source_path": row["source_path"], "runtime_path": row["runtime_path"],
+            "source_file_sha256": "", "source_pixel_sha256": "", "frames": int(frames),
+            "frame_size": [width, height], "placement": [0, 0], "timeline_mapping": "exact",
+            "semantic_identity": {"owner": "operator", "layer": layer, "profile": profile, "group": group, "action": action, "direction": direction},
+            "source_contract": {"path": row["source_path"], "frames": int(frames), "frame_size": [width, height], "operation": "CREATE"},
+            "workspace_contract": {"frames": int(frames), "frame_size": [width, height], "placement": [0, 0], "timeline_slots": list(range(1, int(frames) + 1))},
+            "publish_contract": {"path": row["source_path"], "frames": int(frames), "frame_size": [width, height]},
+            "input_path": "",
+        })
+    reference_rows=[]
+    baseline=ws/"baseline"; baseline.mkdir(parents=True,exist_ok=True)
+    for reference in plan.references:
+        item=dict(reference)
+        source=Path(item["source_path"])
+        if not source.is_absolute(): source=repo/source
+        target=baseline/f"{item['binding_id']}.png"
+        shutil.copy2(source,target)
+        item["input_path"]=str(target.resolve())
+        reference_rows.append(item)
+    timing = {"fps": float(fps), "loop": bool(loop), "durations": [1.0] * int(frames)}
+    ident = identity
+    context = {"weapon_id": "", "linked_profile": "", "presentation_mode": ""}
+    context["fingerprint"] = m.context_fingerprint(ident, None)
+    data = {"schema": m.SCHEMA_NAME, "identity": ident, "context": context,
+        "weapon_context": None, "creation": {"state": "NEW / UNSAVED", "template": template, "plan": {"layers": targets}},
+        "timeline": {"frames": int(frames), "source_clock_frames": int(frames),
+            "workspace_clock_frames": int(frames), "document_frames": int(frames),
+            "preview_fps": float(fps), "fps": float(fps), "loop": bool(loop),
+            "durations": timing["durations"], "frame_durations_ms": [1000.0 / float(fps)] * int(frames),
+            "timing_authority": True, "clock_owner": layer_rows[0]["layer"]},
+        "canvas": {"width": width, "height": height},
+        "aseprite": {"path": str(document.resolve()), "last_synced_sha256": None},
+        "layers": layer_rows, "references": reference_rows, "pending_migration": None,
+        "last_publish": {"timestamp": None, "validation_status": None}}
+    save(manifest, data)
+    aseprite_run(binary, manifest, "assemble")
+    data["aseprite"]["last_synced_sha256"] = m.file_sha256(document)
+    save(manifest, data)
+    return data, ws
 
 def source_contract_freshness(manifest, repo_root=None):
     """Return per-binding drift from the exact canonical source contract."""
@@ -70,7 +182,7 @@ def source_contract_freshness(manifest, repo_root=None):
         label=f"{label}/{binding.get('layer',binding.get('binding_id','layer'))} ({relative or 'missing path'})"
         path=root/relative
         if contract.get("operation")=="CREATE":
-            if path.exists(): problems[label]="CREATE target appeared after FX adoption; refusing collision"
+            if path.exists(): problems[label]="CREATE target appeared after creation planning; refusing collision"
             continue
         if not relative or not path.is_file():
             problems[label]="canonical source is missing"
@@ -447,6 +559,8 @@ def _operator_scene_consistency():
 def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None,mirror_counterpart=False):
     ws=manifest.parent; data=load(manifest); data=reconcile_saved_document_contract(data,manifest,aseprite); st=state(data,ws/"workbench.aseprite")
     if requested: m.assert_context(data,requested)
+    if data.get("creation") and st != "NEW / READY TO PUBLISH":
+        raise m.WorkbenchError("NEW ANIMATION IS NOT READY TO PUBLISH\nSave authored pixels in Aseprite, then retry.")
     pending=[path for path in sorted((ws/"transactions").glob("*/transaction.json")) if path.is_file()]
     for journal_path in reversed(pending):
         try: previous=json.loads(journal_path.read_text(encoding="utf-8"))
@@ -465,7 +579,21 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
     counterpart_index=m.source_index() if mirror_counterpart else {}
     migration=data.get("pending_migration"); normalized=ws/"exports"/stamp/"normalized"; candidates=[]
     for b in data["layers"]:
+        if data.get("creation"):
+            identity=data["identity"]
+            key=m.SCHEMA.OperatorAssetKey("operator",b["layer"],identity["profile"],identity["group"],identity["action"],identity["direction"],int(b["publish_contract"]["frames"]),*map(int,b["publish_contract"]["frame_size"]))
+            canonical=(Path("custodian")/m.SCHEMA.canonical_source_path(key)).as_posix()
+            runtime=(Path("custodian")/m.SCHEMA.canonical_runtime_path(key)).as_posix()
+            contract=b.get("source_contract",{})
+            if (b.get("source_path")!=canonical or contract.get("path")!=canonical
+                    or b.get("runtime_path")!=runtime or b.get("publish_contract",{}).get("path")!=canonical
+                    or contract.get("operation")!="CREATE" or contract.get("file_sha256") or contract.get("pixel_sha256")):
+                raise m.WorkbenchError(f"NEW ANIMATION CREATE CONTRACT IS INVALID: {b.get('binding_id')}")
         out=normalized/f"{b['binding_id']}.png"; m.extract_binding(ws/"exports"/stamp/"raw"/f"{b['binding_id']}.png",b,data["canvas"],out)
+        if data.get("creation"):
+            with Image.open(out) as authored:
+                if authored.getchannel("A").getbbox() is None:
+                    raise m.WorkbenchError(f"new animation layer has no authored pixels: {b['binding_id']}")
         contract=b.get("source_contract",{}); operation=contract.get("operation")
         target=m.REPO_ROOT/b["publish_contract"]["path"]; old=m.REPO_ROOT/contract.get("path",b["source_path"])
         if b.get("adopted_from_saved_layer"):
@@ -500,8 +628,6 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
     if dry_run: return [str(x["target"]) for x in candidates]
     review=data.get("publish_review")
     if review:
-        if bool(review.get("mirror_counterpart"))!=bool(mirror_counterpart):
-            raise m.WorkbenchError("publish review mirror choice changed; reopen the publish review")
         expected=review.get("target_hashes",{})
         for item in candidates:
             relative=m.rel(item["target"]); actual=m.file_sha256(item["target"]) if item["target"].is_file() else None
@@ -515,6 +641,17 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
             raise m.WorkbenchError(f"{migration.get('kind','frame_count').upper()} MIGRATION BLOCKED BY {authority} AUTHORITY\n"+json.dumps(current_audit,indent=2))
     for item in candidates:
         b,c,dst,old=item["binding"],item["candidate"],item["target"],item["old"]
+        if data.get("creation"):
+            if item["mirror"]:
+                mirrored_key=m.SCHEMA.parse_filename(dst.name)
+                runtime=Path(m.REPO_ROOT)/"custodian"/m.SCHEMA.canonical_runtime_path(mirrored_key)
+            else:
+                runtime=Path(m.REPO_ROOT)/b["runtime_path"]
+            runtime_import=Path(str(runtime)+".import")
+            runtime_timing=m.BUILDER.timing_sidecar_path(runtime)
+            source_timing=m.BUILDER.timing_sidecar_path(dst)
+            if not item["existed"] and (runtime.exists() or runtime_import.exists() or runtime_timing.exists() or source_timing.exists()):
+                raise m.WorkbenchError(f"new animation runtime CREATE target appeared after preview: {runtime}")
         if (not item["existed"] and dst.exists()) or (dst!=old and dst.exists()):
             raise m.WorkbenchError(f"target frame contract already exists or changed after preview: {dst}")
         if item["existed"] and not old.is_file(): raise m.WorkbenchError(f"REPLACE source disappeared before publish: {old}")
@@ -533,9 +670,10 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         if timing.exists(): shutil.copy2(timing,saved_timing)
         source_record={"binding_id":b["binding_id"],"mirror":item["mirror"],"operation":"REPLACE" if item["existed"] else "CREATE","old_path":m.rel(old),"old_sha256":m.file_sha256(old) if item["existed"] else None,"expected_old_sha256":item.get("expected_old_sha256"),"target_path":m.rel(dst),"target_sha256":m.file_sha256(c),"backup_path":m.rel(saved) if saved.exists() else "","import_backup_path":m.rel(saved_sidecar) if saved_sidecar.exists() else "","timing_backup_path":m.rel(saved_timing) if saved_timing.exists() else "","created_by_transaction":False,"swapped_by_transaction":False}
         journal["sources"].append(source_record); item["journal_source"]=source_record
-    for resource in GENERATED_OPERATOR_RESOURCES:
-        saved=resource_backup/m.rel(resource); saved.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(resource,saved)
-        journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":m.rel(saved)})
+    for resource_index,resource in enumerate(GENERATED_OPERATOR_RESOURCES):
+        saved=resource_backup/f"{resource_index:03d}_{resource.name}"
+        shutil.copy2(resource,saved)
+        journal["resources"].append({"path":m.rel(resource),"old_sha256":m.file_sha256(resource),"target_sha256":None,"backup_path":str(saved)})
     saved_document=ws/"workbench.aseprite"
     document_preimage=m.file_sha256(saved_document) if saved_document.is_file() else None
     journal["saved_document_path"]=str(saved_document)
@@ -649,7 +787,8 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
                     old_timing=m.BUILDER.timing_sidecar_path(old); old_timing.unlink(missing_ok=True)
                     timing=source_backup/f"{prefix}{b['binding_id']}.animation.json"
                     if timing.exists(): shutil.copy2(timing,old_timing)
-            for resource in GENERATED_OPERATOR_RESOURCES: shutil.copy2(resource_backup/m.rel(resource),resource)
+            for resource_index,resource in enumerate(GENERATED_OPERATOR_RESOURCES):
+                shutil.copy2(resource_backup/f"{resource_index:03d}_{resource.name}",resource)
             subprocess.run(["python3",str(m.PIPELINES/"sync_operator_runtime_assets.py"),"--strict","--remove-superseded"],check=True,cwd=m.REPO_ROOT)
             _godot_import(); _catalog_build(); _operator_scene_consistency()
             recovery_errors=_restore_import_metadata(journal,m.REPO_ROOT)
@@ -680,4 +819,4 @@ def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_valid
         if item["mirror"]: continue
         b,dst=item["binding"],item["target"]
         b["source_path"]=m.rel(dst); b["source_file_sha256"]=m.file_sha256(dst); b["source_pixel_sha256"]=m.pixel_sha256(dst); b["source_contract"]={"path":m.rel(dst),"frames":b["workspace_contract"]["frames"],"frame_size":b["frame_size"],"file_sha256":b["source_file_sha256"],"pixel_sha256":b["source_pixel_sha256"]}; b["publish_contract"]={"path":m.rel(dst),"frames":b["frames"],"frame_size":b["frame_size"]}; b.pop("adopted_from_saved_layer",None)
-    data.pop("publish_review",None); data["timeline"]["source_clock_frames"]=data["timeline"]["workspace_clock_frames"]; data["pending_migration"]=None; _baseline(data,ws); data["aseprite"]["last_synced_sha256"]=m.file_sha256(ws/"workbench.aseprite"); data["last_publish"]={"timestamp":datetime.now(timezone.utc).isoformat(),"validation_status":"passed"}; _journal_stage(journal_path,journal,"COMMITTED","manifest_sync"); save(manifest,data); return [str(x["target"]) for x in candidates]
+    data.pop("publish_review",None); data.pop("creation",None); data["timeline"]["source_clock_frames"]=data["timeline"]["workspace_clock_frames"]; data["pending_migration"]=None; _baseline(data,ws); data["aseprite"]["last_synced_sha256"]=m.file_sha256(ws/"workbench.aseprite"); data["last_publish"]={"timestamp":datetime.now(timezone.utc).isoformat(),"validation_status":"passed"}; _journal_stage(journal_path,journal,"COMMITTED","manifest_sync"); save(manifest,data); return [str(x["target"]) for x in candidates]

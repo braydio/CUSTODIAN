@@ -141,7 +141,7 @@ class WorkbenchService:
                 upper = next(key.frames for key in visible_keys if key.layer == "upper_body")
                 if lower != upper:
                     completeness, detail = "PARTIAL", f"contract mismatch · lower {lower}f / upper {upper}f"
-            status = reachability.get((profile, group, action))
+            status = reachability.get((profile, group, action), "DORMANT")
             if status == "SUPERSEDED":
                 detail = f"SUPERSEDED · {detail}"
             records.append(AnimationRecord(selection, frames, layers, completeness, detail, status))
@@ -396,6 +396,14 @@ class WorkbenchService:
         )).casefold()]
 
     def _plan(self, selection: AnimationSelection) -> dict[str, Any]:
+        manifest = self.workspace(selection) / "workbench.json"
+        if manifest.is_file():
+            data = self.workbench.load(manifest)
+            if data.get("creation"):
+                if data.get("identity") != {"profile": selection.profile, "group": selection.group,
+                        "action": selection.action, "direction": selection.direction}:
+                    raise self.model.WorkbenchError("CREATION WORKBENCH IDENTITY MISMATCH")
+                return data
         return self.model.build_plan(
             selection.profile, selection.action, selection.direction, selection.group,
             selection.weapon_id, selection.linked_profile, repo_root=self.repo_root,
@@ -408,6 +416,45 @@ class WorkbenchService:
             "profile": selection.profile, "group": selection.group,
             "action": selection.action, "direction": selection.direction,
         })
+
+    def create_animation(self, *, profile: str, group: str, action: str, direction: str,
+                         frames: int, frame_size: tuple[int, int], fps: float,
+                         loop: bool, template: str):
+        _data, ws = self.workbench.create_animation(
+            profile, action, direction, group=group, frames=frames,
+            frame_size=frame_size, fps=fps, loop=loop, template=template,
+            root=self.workspace_root, aseprite=self.aseprite,
+            source_root=self.source_root, weapon_root=self.weapon_root,
+            repo_root=self.repo_root,
+        )
+        binary = self.workbench.resolve_aseprite(self.aseprite, True)
+        return self._popen([str(binary), str(ws / "workbench.aseprite")])
+
+    def animation_creation_plan(self, **options) -> dict[str, Any]:
+        plan = self.model.build_creation_plan(
+            options["profile"], options["group"], options["action"], options["direction"],
+            options["frames"], options["frame_size"], options["fps"], options["loop"],
+            options["template"], repo_root=self.repo_root,
+            source_root=self.source_root, weapon_root=self.weapon_root,
+        )
+        identity = {"profile": options["profile"], "group": options["group"],
+                    "action": options["action"], "direction": options["direction"]}
+        impl = json.loads(self.plan_path.read_text())
+        planned = any(all(row.get(key) == identity[value] for key, value in
+                          (("profile", "profile"), ("group", "group"), ("action", "action")))
+                      and options["direction"] in row.get("directions", ())
+                      for row in impl.get("items", ()))
+        catalog = json.loads(self.catalog_path.read_text()) if self.catalog_path.exists() else {}
+        catalog_present = f"{identity['profile']}/{identity['group']}/{identity['action']}/{identity['direction']}" in catalog.get("animations", {})
+        reachable = self._reachability_statuses().get((identity["profile"], identity["group"], identity["action"]))
+        return {"identity": identity, "template": plan.template, "frames": plan.frames,
+            "frame_size": list(plan.frame_size), "fps": plan.fps, "loop": plan.loop,
+            "layers": [{"layer": row["layer"], "source": row["source_path"], "runtime": row["runtime_path"], "operation": "CREATE"} for row in plan.layers],
+            "references": [{"layer": row["layer"], "source": row["source_path"], "direction": row["direction"]} for row in plan.references],
+            "mirror": "OFF by default", "collision": "clear" if not plan.collisions else "COLLISION: " + ", ".join(plan.collisions),
+            "collisions": list(plan.collisions), "status": plan.status, "implementation_plan_present": planned,
+            "reachability": reachable or "unwired", "runtime_catalog_present": catalog_present,
+            "workspace": str(self.workspace_root / identity["profile"] / identity["group"] / identity["action"] / identity["direction"])}
 
     @staticmethod
     def _context_view(context: dict[str, Any]) -> ExistingContextView:
@@ -447,11 +494,20 @@ class WorkbenchService:
         )
 
     def session(self, selection: AnimationSelection) -> SessionView:
-        plan = self._plan(selection)
         ws = self.workspace(selection)
         manifest_path, document_path = ws / "workbench.json", ws / "workbench.aseprite"
-        data, state = plan, "ABSENT"
-        if manifest_path.exists():
+        data = self.workbench.load(manifest_path) if manifest_path.exists() else None
+        if data and data.get("creation"):
+            expected = {"profile": selection.profile, "group": selection.group,
+                        "action": selection.action, "direction": selection.direction}
+            if data.get("identity") != expected:
+                raise self.model.WorkbenchError("CREATION WORKBENCH IDENTITY MISMATCH")
+            state = self.workbench.state(data, document_path)
+            plan = data
+        else:
+            plan = self._plan(selection)
+            data, state = plan, "ABSENT"
+        if manifest_path.exists() and not data.get("creation"):
             data = self.workbench.load(manifest_path)
             self.model.assert_context(data, plan)
             state = self.workbench.state(data, document_path)
@@ -516,10 +572,14 @@ class WorkbenchService:
         return stamp(ws / "workbench.json"), stamp(ws / "workbench.aseprite")
 
     def edit(self, selection: AnimationSelection):
-        _manifest, ws = self.workbench.ensure(
-            selection.profile, selection.action, selection.direction, selection.group,
-            selection.weapon_id, selection.linked_profile, self.workspace_root, self.aseprite,
-        )
+        manifest = self.workspace(selection) / "workbench.json"
+        if manifest.is_file() and self.workbench.load(manifest).get("creation"):
+            ws = manifest.parent
+        else:
+            _manifest, ws = self.workbench.ensure(
+                selection.profile, selection.action, selection.direction, selection.group,
+                selection.weapon_id, selection.linked_profile, self.workspace_root, self.aseprite,
+            )
         binary = self.workbench.resolve_aseprite(self.aseprite, True)
         return self._popen([str(binary), str(ws / "workbench.aseprite")])
 
@@ -805,6 +865,32 @@ class WorkbenchService:
         if not isinstance(bindings, (list, tuple)) or any(not isinstance(row, dict) for row in bindings):
             raise operator_art_worktree.ArtWorktreeError("WORKBENCH MANIFEST HAS INVALID PUBLICATION BINDINGS")
         adopted = [binding for binding in bindings if binding.get("adopted_from_saved_layer")]
+        if data.get("creation"):
+            creation = data.get("creation", {})
+            expected_layers = ("full_body",) if creation.get("template") == "full_body" else ("lower_body", "upper_body") if creation.get("template") == "modular_body" else ()
+            if tuple(binding.get("layer") for binding in bindings) != expected_layers:
+                raise operator_art_worktree.ArtWorktreeError("NEW ANIMATION TEMPLATE LAYERS CHANGED")
+            for binding in bindings:
+                contract = binding.get("publish_contract", {})
+                try:
+                    key = self.model.SCHEMA.OperatorAssetKey(
+                        "operator", binding["layer"], selection.profile, selection.group,
+                        selection.action, selection.direction, int(contract["frames"]),
+                        *map(int, contract["frame_size"]),
+                    )
+                    source = (Path("custodian") / self.model.SCHEMA.canonical_source_path(key)).as_posix()
+                    runtime = (Path("custodian") / self.model.SCHEMA.canonical_runtime_path(key)).as_posix()
+                except (KeyError, TypeError, ValueError) as error:
+                    raise operator_art_worktree.ArtWorktreeError(f"NEW ANIMATION CONTRACT INVALID: {error}") from error
+                if (binding.get("source_path") != source or binding.get("runtime_path") != runtime
+                        or binding.get("owner") != "operator"
+                        or binding.get("semantic_identity", {}).get("owner") != "operator"
+                        or any(binding.get(field) != identity.get(field) for field in ("profile", "group", "action", "direction"))
+                        or any(binding.get("semantic_identity", {}).get(field) != value for field, value in identity.items())
+                        or binding.get("source_contract", {}).get("path") != source
+                        or binding.get("source_contract", {}).get("operation") != "CREATE"
+                        or binding.get("publish_contract", {}).get("path") != source):
+                    raise operator_art_worktree.ArtWorktreeError("NEW ANIMATION TARGET IS NOT SCHEMA-DERIVED")
         manifest_ids={str(binding.get("binding_id", "")) for binding in bindings}
         permitted_ids=set(planned)
         if len(adopted)>1:
@@ -952,9 +1038,13 @@ class WorkbenchService:
         journals = sorted(tx_root.glob("*/transaction.json")) if tx_root.exists() else []
         if not journals: return None
         path = journals[-1]
-        try: state = str(json.loads(path.read_text()).get("state", ""))
+        try:
+            journal = json.loads(path.read_text())
+            state = str(journal.get("state", ""))
+            stages = journal.get("validation_stages_completed", ())
+            stage = str(stages[-1]) if stages else "prepared"
         except (OSError, json.JSONDecodeError): return None
-        return state, str(path.parent)
+        return state, stage
 
     @staticmethod
     def project_error(error: Exception) -> ErrorView:

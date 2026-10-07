@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib, importlib.util, json, sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
+import re
 from PIL import Image
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -13,6 +14,11 @@ PIPELINES = CUSTODIAN_ROOT / "tools/pipelines"
 SOURCE_ROOT = CUSTODIAN_ROOT / "content/sprites/operator/source/animations"
 WEAPON_ROOT = CUSTODIAN_ROOT / "content/sprites/weapons"
 CATALOG = CUSTODIAN_ROOT / "content/data/operator/generated/operator_animation_catalog.generated.json"
+AUTHORING_PROFILE = CUSTODIAN_ROOT / "content/data/operator/authoring/operator_art_profile.json"
+try:
+    DEFAULT_FRAME_SIZE = tuple(int(value) for value in json.loads(AUTHORING_PROFILE.read_text())["registration"]["frame_size"])
+except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+    DEFAULT_FRAME_SIZE = (96, 96)
 SCHEMA_NAME = "custodian.operator_animation_workbench.v2"
 PRESENTATION_ORDER = ("cape", "lower_body", "upper_body", "head", "weapon", "fx")
 
@@ -39,6 +45,108 @@ class LayerBinding:
     owner: str; profile: str; group: str; action: str; direction: str; layer: str
     source_path: str; runtime_path: str; source_file_sha256: str; source_pixel_sha256: str
     frames: int; frame_size: list[int]; placement: list[int]; timeline_mapping: str
+
+@dataclass(frozen=True)
+class AnimationCreationPlan:
+    identity: ActionIdentity
+    frames: int
+    frame_size: tuple[int, int]
+    fps: float
+    loop: bool
+    template: str
+    layers: tuple[dict, ...]
+    references: tuple[dict, ...]
+    status: str
+    collisions: tuple[str, ...] = ()
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+def build_creation_plan(profile: str, group: str, action: str, direction: str,
+                        frames: int, frame_size: tuple[int, int] = DEFAULT_FRAME_SIZE,
+                        fps: float = 8.0, loop: bool = True,
+                        template: str = "full_body", *, repo_root=REPO_ROOT,
+                        source_root=SOURCE_ROOT, weapon_root=WEAPON_ROOT) -> AnimationCreationPlan:
+    """Validate a new semantic identity and derive every target from schema authority."""
+    if any(not isinstance(value, str) or not value for value in (profile, group, action, direction)):
+        raise WorkbenchError("profile, action group, action name, and direction are required strings")
+    if profile not in SCHEMA.PROFILES:
+        raise WorkbenchError(f"invalid Operator animation profile: {profile}")
+    if group not in SCHEMA.ACTION_GROUPS:
+        raise WorkbenchError(f"invalid Operator action group: {group}")
+    if direction not in SCHEMA.DIRECTIONS:
+        raise WorkbenchError(f"invalid Operator direction: {direction}")
+    if not re.fullmatch(r"[a-z][a-z0-9_]*", action) or SCHEMA.is_legacy_action(action):
+        raise WorkbenchError(f"invalid canonical Operator action name: {action}")
+    if template not in {"full_body", "modular_body"}:
+        raise WorkbenchError(f"unsupported creation template: {template}")
+    if isinstance(frames, bool) or isinstance(fps, bool) or not isinstance(loop, bool):
+        raise WorkbenchError("frame count and FPS must be numeric, and loop must be a boolean")
+    if not isinstance(frame_size, (tuple, list)) or len(frame_size) != 2 or any(isinstance(value, bool) for value in frame_size):
+        raise WorkbenchError("frame canvas must contain exactly two integer dimensions")
+    if any(isinstance(value, float) and not value.is_integer() for value in frame_size):
+        raise WorkbenchError("frame canvas dimensions must be whole numbers")
+    try:
+        width, height = (int(frame_size[0]), int(frame_size[1]))
+        count, rate = int(frames), float(fps)
+    except (TypeError, ValueError, IndexError) as error:
+        raise WorkbenchError("frame count, canvas, and FPS must be numeric") from error
+    if count < 1 or count > 120:
+        raise WorkbenchError("frame count must be between 1 and 120")
+    if width < 1 or height < 1 or width > 1024 or height > 1024:
+        raise WorkbenchError("frame canvas must be between 1 and 1024 pixels per axis")
+    if not 0.1 <= rate <= 120.0:
+        raise WorkbenchError("FPS must be between 0.1 and 120")
+    layers = ("full_body",) if template == "full_body" else ("lower_body", "upper_body")
+    identity = ActionIdentity(profile, group, action, direction)
+    index = source_index(Path(source_root), Path(weapon_root))
+    entries = []
+    collisions = []
+    for layer in layers:
+        key = SCHEMA.OperatorAssetKey("operator", layer, profile, group, action, direction, count, width, height)
+        try:
+            source = Path("custodian") / SCHEMA.canonical_source_path(key)
+            runtime = Path("custodian") / SCHEMA.canonical_runtime_path(key)
+        except ValueError as error:
+            raise WorkbenchError(f"invalid animation creation contract: {error}") from error
+        relative = source.as_posix()
+        runtime_relative = runtime.as_posix()
+        existing = index.get(("operator", layer, profile, group, action, direction))
+        if existing:
+            collisions.append(rel(Path(existing[0]), Path(repo_root)))
+        timing_relative = SCHEMA.canonical_source_path(key).with_suffix(".animation.json")
+        for candidate in (relative, relative + ".import", (Path("custodian") / timing_relative).as_posix(),
+                          runtime_relative, runtime_relative + ".import"):
+            if (Path(repo_root) / candidate).exists(): collisions.append(candidate)
+        entries.append({"layer": layer, "key": key, "source_path": relative,
+                        "runtime_path": runtime_relative})
+    preferred = ("s", "e", "w", "n", "se", "ne", "sw", "nw", "omni")
+    ref_layers = ("full_body",) if template == "full_body" else ("lower_body", "upper_body")
+    reference_direction = next((candidate for candidate in preferred if candidate != direction and
+        all(("operator", layer, profile, group, action, candidate) in index for layer in ref_layers)), None)
+    references = []
+    if reference_direction:
+        rows = []
+        for layer in ref_layers:
+            item = index.get(("operator", layer, profile, group, action, reference_direction))
+            if item is None:
+                rows = []
+                break
+            path, key = item
+            if key.frames != count or key.frame_width > width or key.frame_height > height:
+                rows = []
+                break
+            rows.append({"binding_id": f"reference_{layer}", "aseprite_layer_name": f"__REFERENCE_{layer.upper()}",
+                "role": "reference", "editable": False, "owner": "operator", "profile": profile,
+                "group": group, "action": action, "direction": reference_direction, "layer": layer,
+                "source_path": rel(Path(path), Path(repo_root)), "frames": count,
+                "frame_size": [key.frame_width, key.frame_height],
+                "placement": [(width-key.frame_width)//2, (height-key.frame_height)//2],
+                "timeline_slots": list(range(1, count+1))})
+        references = rows
+    collisions = tuple(sorted(set(collisions)))
+    return AnimationCreationPlan(identity, count, (width, height), rate, bool(loop), template,
+                                 tuple(entries), tuple(references), "COLLISION" if collisions else "READY", collisions)
 
 def file_sha256(path: Path) -> str:
     h=hashlib.sha256()

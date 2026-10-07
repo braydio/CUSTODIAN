@@ -289,7 +289,7 @@ def run_case(*, mirror: bool, fail_downstream: bool, ambiguous_import: bool = Fa
                 assert journal["primary_failure"]["return_code"] == 91
                 assert journal["recovery_failure"] is None
                 resource_backups = {item["backup_path"] for item in journal["resources"]}
-                assert any(path.endswith("custodian/content/sprites/operator/runtime/operator_runtime_frames.tres") for path in resource_backups)
+                assert any(Path(path).name.endswith("operator_runtime_frames.tres") and Path(path).is_file() for path in resource_backups)
                 assert len(resource_backups) == len(journal["resources"]), "resource backups must not collide by basename"
             else:
                 workbench.publish(manifest_path, mirror_counterpart=mirror)

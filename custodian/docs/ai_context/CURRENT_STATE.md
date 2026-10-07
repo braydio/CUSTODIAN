@@ -540,6 +540,20 @@ contract, includes all publishing layers, and rolls both directions back on a
 downstream failure. `n`, `s`, and `omni` have no counterpart operation; the
 flow remains canonical Workbench publication and does not use asset-drop inbox.
 
+## Operator Workbench New Animation Creation (2026-10-07)
+
+OPUI and the `operator anim create` CLI can start a new semantic Operator
+animation in an ignored Aseprite Workbench using a full-body or synchronized
+lower/upper body template. The creation plan validates through
+`operator_asset_schema.py`, previews exact CREATE targets and collision state,
+and uses deterministic canonical references where a matching frame contract
+exists. Authored pixels preview from the saved Workbench before publication.
+Publish reuses the guarded Workbench transaction and isolated Operator art
+checkout flow; the session becomes an ordinary source-backed Workbench after a
+successful landing. Counterpart promotion remains explicit/default-OFF. Newly
+published art with no consumer is shown as DORMANT/unwired. This does not wire
+gameplay or grant Art Agent autonomous creation authority.
+
 ## Operator Flashlight V1 (2026-09-12)
 
 The production Operator now instances one focused flashlight component as
