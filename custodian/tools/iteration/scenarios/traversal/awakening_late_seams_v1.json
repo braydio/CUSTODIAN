@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "traversal/awakening_late_seams_v1",
-  "description": "Structured registration/alpha/order evidence for the five late Awakening seams (05-10) via generic presentation probes.",
+  "description": "Structured registration/alpha/order evidence for the late Awakening seams (04-10), including the shared registered 04-05 composition.",
   "scene": "res://tools/validation/fixtures/awakening_late_seams_moment.tscn",
   "seed": 1901,
   "duration_ticks": 400,
@@ -12,7 +12,9 @@
     "roles": {
       "fixture": {"node_path": "."},
       "operator": {"node_path": "AwakeningFirstReturn/World/Operator"},
-      "z05_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone05_DustLung/ArtUnderlay/Underlay"},
+      "z05_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/DustLung"},
+      "z05_connector": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/Connector"},
+      "z05_locker": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/LockerReliquary"},
       "z05_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone05_DustLung/Occlusion/Foreground"},
       "z06_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone06_Undergate/ArtUnderlay/Underlay"},
       "z06_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone06_Undergate/Occlusion/Foreground"},
@@ -43,6 +45,8 @@
     {"id": "fixture_state", "role": "fixture", "snapshot": "debug", "fields": ["checkpoint"], "ticks": [30, 95, 160, 225, 290, 355], "required": true},
     {"id": "operator_position", "role": "operator", "fields": ["global_position"], "ticks": [30, 95, 160, 225, 290, 355], "required": true},
     {"id": "z05_underlay_facts", "role": "z05_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
+    {"id": "z05_connector_facts", "role": "z05_connector", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
+    {"id": "z05_locker_facts", "role": "z05_locker", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
     {"id": "z05_foreground_facts", "role": "z05_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
     {"id": "z06_underlay_facts", "role": "z06_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [95], "required": true},
     {"id": "z06_foreground_facts", "role": "z06_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [95], "required": true},
@@ -61,7 +65,8 @@
     {"type": "role_exists", "role": "road_underlay", "severity": "error"},
     {"type": "no_unreleased_inputs", "severity": "error"},
     {"type": "output_exists", "path": "telemetry.json", "severity": "error"},
-    {"type": "probe_field_equal", "probe_a": "z05_underlay_facts", "tick_a": 30, "probe_b": "z05_foreground_facts", "tick_b": 30, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone05 underlay/foreground registration must match"},
+    {"type": "probe_field_equal", "probe_a": "z05_underlay_facts", "tick_a": 30, "probe_b": "z05_connector_facts", "tick_b": 30, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "registered 04-05 layers must use one shared canvas and transform"},
+    {"type": "probe_field_equal", "probe_a": "z05_underlay_facts", "tick_a": 30, "probe_b": "z05_locker_facts", "tick_b": 30, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "registered 04-05 layers must use one shared canvas and transform"},
     {"type": "probe_field_equal", "probe_a": "z06_underlay_facts", "tick_a": 95, "probe_b": "z06_foreground_facts", "tick_b": 95, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone06 underlay/foreground registration must match"},
     {"type": "probe_field_equal", "probe_a": "z07_underlay_facts", "tick_a": 160, "probe_b": "z07_foreground_facts", "tick_b": 160, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone07 underlay/foreground registration must match"},
     {"type": "probe_field_equal", "probe_a": "z08_underlay_facts", "tick_a": 225, "probe_b": "z08_foreground_facts", "tick_b": 225, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone08 underlay/foreground registration must match"},
@@ -76,6 +81,6 @@
     {"type": "probe_compare", "probe": "z09_underlay_facts", "tick": 290, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"},
     {"type": "probe_compare", "probe": "road_underlay_facts", "tick": 225, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"}
   ],
-  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["fixture_state", "z05_underlay_facts", "z06_underlay_facts", "z07_underlay_facts", "z08_underlay_facts", "z09_underlay_facts", "road_underlay_facts"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["fixture_state", "z05_underlay_facts", "z05_connector_facts", "z05_locker_facts", "z06_underlay_facts", "z07_underlay_facts", "z08_underlay_facts", "z09_underlay_facts", "road_underlay_facts"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
   "tags": ["traversal", "awakening", "visual_review", "seam_evidence"]
 }

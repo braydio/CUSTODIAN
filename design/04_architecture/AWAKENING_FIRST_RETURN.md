@@ -127,23 +127,23 @@ uses an Awakening-local camera scale. Ordinary zone art still uses distance-base
 visibility management, but two transition areas now have explicit correction
 contracts because the current presentation truth is not acceptable as final.
 
-For 04→05, the exact Dropbox Dust Lung, connector, and Locker sources are
-published through their existing Asset V2 families, but the first post-source
-scene registration is **not final design authority**. A later direct user
-registration reference proves the three pieces were already authored to fit
-together on one axis-aligned RGBA 1502×2048 canvas. Its exact visible bounds are
-Dust `[0,870)×[0,838)`, connector `[258,1300)×[672,1256)`, and Locker
+For 04→05, the exact Dropbox registered Dust Lung, connector, and Locker layers
+are published through their existing Asset V2 families as one axis-aligned RGBA
+1502×2048 composition. Their exact visible bounds are Dust
+`[0,870)×[0,838)`, connector `[258,1300)×[672,1256)`, and Locker
 `[644,1502)×[1182,2048)`, with bottom-to-top draw order
-Dust→connector→Locker. The connector/room overlaps are authored in that shared
-canvas; per-piece rotation is zero. The previously reviewed connector transform
-(scale `0.715951`, rotation `-11.391598°`, center
-`(351.821,-2392.391)`) is preserved only as historical implementation evidence
-and is explicitly superseded by
-`awakening-04-05-registered-composition-correction-v1`. That correction must
-preserve the shared relative layout and may use only one common root transform
-for world placement. Layout's gameplay dogleg/collision remain separate authority,
-the Locker foreground remains deferred unless parity is proven, and the
-specialized Designation Locker remains the interactive P-9 prop.
+Dust→connector→Locker. Their authored overlaps and pixel registration are
+preserved. The runtime uses one shared root at `(349,-2585)`, zero rotation, and
+native 1:1 scale. The translation is the joint fit of the registered Dust and
+Locker visible-bounds centers to the existing room-art centers; opposite
+residuals are 33×10 world units. The previously reviewed connector transform
+(scale `0.715951`, rotation `-11.391598°`, center `(351.821,-2392.391)`) is
+historical evidence only. Layout's gameplay dogleg/collision remain separate
+authority and are unchanged; the shared composition stays opaque through the
+connector visibility envelope. The Locker foreground remains deferred unless
+parity is proven, and the specialized Designation Locker remains the interactive
+P-9 prop. Paired review for
+`awakening-04-05-registered-composition-correction-v1` is pending.
 
 For 05→06, the lower and later halves already share a precise geometric/art
 overlap but the authority is split: `05_06 = Rect2(-64,-3776,128,32)` plus

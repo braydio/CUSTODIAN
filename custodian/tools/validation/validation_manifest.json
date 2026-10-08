@@ -4315,6 +4315,49 @@
       "needs_import": false
     },
     {
+      "id": "awakening_registered_composition_traversal",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_registered_composition_traversal_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "traversal",
+        "registered_composition"
+      ],
+      "owners": [
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/tools/validation/awakening_registered_composition_traversal_smoke.gd",
+        "custodian/content/levels/awakening/04_05_connector/**",
+        "custodian/content/levels/awakening/04_locker_reliquary/**",
+        "custodian/content/levels/awakening/05_dust_lung/**"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "awakening_registered_composition_render",
+      "type": "python",
+      "script": "custodian/tools/validation/awakening_registered_composition_render_smoke.py",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "visual",
+        "registered_composition"
+      ],
+      "owners": [
+        "custodian/tools/validation/awakening_registered_composition_render_smoke.py",
+        "custodian/tools/validation/awakening_registered_composition_render_smoke.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/content/levels/awakening/04_05_connector/**",
+        "custodian/content/levels/awakening/04_locker_reliquary/**",
+        "custodian/content/levels/awakening/05_dust_lung/**"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "awakening_undergate_lighting",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_undergate_lighting_smoke.gd",
@@ -4398,7 +4441,7 @@
         "custodian/scenes/awakening_first_return.tscn",
         "custodian/scenes/twin_solaria_playtest.tscn",
         "custodian/scenes/game.tscn",
-        "custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png.import",
+        "custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1502x2048.png.import",
         "custodian/game/world/procgen/world_contract_bootstrap.gd",
         "custodian/game/world/procgen/world_contract_proxy.gd",
         "custodian/game/systems/core/systems/contract_world_loader.gd",

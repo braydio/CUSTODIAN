@@ -2142,25 +2142,23 @@ under each family's `pre_handoff_1254x1254/` folder; the handoff sources remain
 at the package-declared source paths, and Asset V2 retains normalized inputs
 in the ingest archives.
 
-The 04→05 production connector correction is now live. The exact Dropbox Dust
-Lung and Locker underlays and the full 1374×1076 direct connector are preserved
-under `asset_drop/source_work/awakening/` with SHA-256 receipts in
-`DROPBOX_SOURCE_RECEIPT.md`; Asset V2 job IDs are `job_20261007T221504Z_0cb23e5f`
-(Dust), `job_20261007T221504Z_22bfa5d0` (connector), and
-`job_20261007T221504Z_6e8fec32` (Locker). The exact Dropbox source masters are published without destructive crop, but
-the first post-source registration is now superseded by later direct user
-composition evidence. That reviewed implementation independently fitted the
-connector to gameplay anchors at scale `0.715951`, rotation `-11.391598°`,
-center `(351.821,-2392.391)`, while keeping Dust and Locker on separate room
-normalization paths. The supplied registration exports prove the art was authored
-as one axis-aligned 1502×2048 composition instead: Dust visible bounds
-`[0,870)×[0,838)`, connector `[258,1300)×[672,1256)`, Locker
-`[644,1502)×[1182,2048)`, bottom-to-top Dust→connector→Locker, with zero
-per-piece rotation. Active P0 `awakening-04-05-registered-composition-correction-v1`
-owns restoring that exact shared registration after the already-claimed
-interaction-feedback pair completes. The old Locker foreground remains preserved
-but unbound; Layout traversal/collision and the four-state interactive Designation
-Locker remain unchanged. Separately, the lower and
+The 04→05 registered composition correction now binds the exact Dropbox
+1502×2048 registered Dust Lung, connector, and Locker layers through their
+existing Asset V2 families. Layer hashes, RGBA dimensions, alpha bounds, draw
+order, 17,979-pixel Dust/connector overlap, 10,979-pixel connector/Locker
+overlap, and the 1,267-pixel export-edge composite difference are machine
+checked. Their shared root is centered at `(349,-2585)`, with zero rotation and
+native 1:1 scale. This is the least-squares common translation from aligning the
+registered Dust and Locker visible-bounds centers to the existing room-art
+centers; each residual is 33×10 world units in opposite directions. The old
+independent connector transform `(0.715951,-11.391598°)` is retired. A real
+Operator validation traverses the existing A→B→C dogleg in both directions;
+all 1,025 sampled positions remained on Layout walkable floor with registered
+floor pixels beneath the Operator. The shared composition stays opaque through
+the connector fade envelope. The old Locker foreground remains preserved but
+unbound; Layout traversal/collision and the four-state interactive Designation
+Locker remain unchanged. Implementation is complete pending its paired review.
+Separately, the lower and
 later halves are logically joined today by `05_06` (128×32) plus
 `z06_south_door` (128×64); their exact 128×96 union matches the 96px overlap of
 the Dust Lung and Undergate room plates. The P0

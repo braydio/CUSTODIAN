@@ -207,19 +207,26 @@ Semantics:
    checkout, continue that workstream rather than claiming another packet.
 2. Otherwise prefer the exact immediate successor recorded by the most recently
    completed packet/review's durable `Next Handoff`, including its paired review.
-3. When that successor requires **no ChatGPT/user planning refresh or human
+3. If the requested successor is dependency-blocked, automatically work the
+   same dependency chain toward that requested packet: dispatch-claim and
+   complete each immediate predecessor that is `ready`/`auto`, including its
+   required paired review, then re-check the dispatcher and continue until the
+   requested packet is claimable or a real blocker is reached. Do not jump to
+   unrelated lanes or edit packet metadata to manufacture eligibility. A
+   blocked packet's `ready` status alone does not override its dependency gate.
+4. When the successor requires **no ChatGPT/user planning refresh or human
    decision** and the dispatcher says it is eligible, claim it and continue
-   autonomously. Finishing one packet is not a routine reason to hand control
-   back to the user. `Refresh owner: execution-agent` is likewise an autonomous
+   autonomously. `Refresh owner: execution-agent` is likewise an autonomous
    bounded refresh unless live evidence exposes a new human-owned choice.
-4. Paired review still requires a fresh reviewer context. The automation should
-   transition to a fresh context and claim the review itself; it should not ask
-   the user to carry the implementation recap into a new session.
-5. Stop only on a real human/ChatGPT refresh gate, human visual/design gate,
-   explicit manual-dispatch hold, unresolved safety/validation blocker, or
-   ineligible named successor. Surface the exact recorded Authoring/Refresh chat
+5. Paired review still requires a fresh reviewer context. Transition to a fresh
+   reviewer context and claim the review itself; do not ask the user to carry the
+   implementation recap into a new session.
+6. Stop only on a real human/ChatGPT refresh gate, human visual/design gate,
+   explicit manual-dispatch hold, unresolved safety/validation blocker, failed
+   prerequisite, or successor that remains ineligible after its eligible
+   dependency chain completes. Surface the exact recorded Authoring/Refresh chat
    URL when the stop is human-owned. Do not silently jump lanes.
-6. Only when there is no same-series successor and the invocation was for general
+7. Only when there is no same-series successor and the invocation was for general
    next-task execution, fall back to `dispatch.py claim-next --agent codex`.
 
 The dispatcher receipt remains assignment authority; the shortcut never edits
@@ -243,6 +250,13 @@ ask the user to re-explain it, and do not work from the chat message alone.
 2. **If the user says a packet is "ready" but your tree shows `blocked`,** the
    claim reads fetched `origin/main`; run `dispatch.py claim` and let it verify
    rather than editing status by hand. Re-read the packet in the claimed worktree.
+   If the explicitly requested packet is dependency-blocked, recursively work
+   its incomplete dependency chain in DAG order: dispatch-claim each immediate
+   `ready`/`auto` predecessor, complete it through its required review and normal
+   lifecycle, then re-check and continue until the requested packet is claimable
+   or a real blocker is reached. Do not jump lanes or change packet metadata to
+   manufacture eligibility. Stop at manual-dispatch, refresh, human-decision,
+   planning-return, failed-prerequisite, or other unresolved execution gates.
 3. **Claim, then read the packet in the worktree.** Its fields are the
    instructions: `Goal`, `Completion boundary`, `Work surface`, `Change`,
    `Preserve`, `Non-goals`, `Acceptance`, `Validation`, `Visual review`,

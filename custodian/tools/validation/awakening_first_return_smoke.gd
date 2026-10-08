@@ -22,8 +22,8 @@ const PRODUCTION_UNDERLAYS := {
 	"Zone01_Creche": {"position": Vector2(0, -32), "size": Vector2(960, 704)},
 	"Zone02_Ambulatory": {"position": Vector2(0, -864), "size": Vector2(1152, 960)},
 	"Zone03_Attestation": {"position": Vector2(0, -1744), "size": Vector2(832, 928)},
-	"Zone04_LockerReliquary": {"position": Vector2(704, -1984), "size": Vector2(704, 704)},
-	"Zone05_DustLung": {"position": Vector2(0, -3200), "size": Vector2(1216, 1216)},
+	"Zone04_LockerReliquary": {"position": Vector2(704, -1984), "size": Vector2(1502, 2048)},
+	"Zone05_DustLung": {"position": Vector2(0, -3200), "size": Vector2(1502, 2048)},
 	"Zone06_Undergate": {"position": Vector2(0, -4320), "size": Vector2(1536, 1216)},
 	"Zone07_GateOfDust": {"position": Vector2(0, -5184), "size": Vector2(1536, 768)},
 	"Zone08_CustodianApproach": {"position": Vector2(0, -5872), "size": Vector2(1024, 864)},
@@ -189,6 +189,8 @@ func _check_scene_skeleton(instance: Node) -> void:
 			_fail("%s underlay must remain at scale 1,1" % zone_name)
 		if not underlay.centered:
 			_fail("%s underlay must remain centered" % zone_name)
+		if zone_name in ["Zone04_LockerReliquary", "Zone05_DustLung"] and underlay.visible:
+			_fail("%s legacy underlay must stay hidden beneath the shared registered composition" % zone_name)
 		if underlay.texture == null:
 			_fail("%s underlay texture did not load" % zone_name)
 		elif underlay.texture.get_size() != spec["size"]:
@@ -210,7 +212,7 @@ func _check_scene_skeleton(instance: Node) -> void:
 			_fail("%s foreground z_index drifted: %d" % [zone_name, foreground.z_index])
 		if foreground.texture == null:
 			_fail("%s foreground texture did not load" % zone_name)
-		elif foreground.texture.get_size() != spec["size"]:
+		elif foreground.texture.get_size() != (Vector2(1216, 1216) if zone_name == "Zone05_DustLung" else spec["size"]):
 			_fail("%s foreground texture size drifted: %s" % [zone_name, str(foreground.texture.get_size())])
 	for zone in Layout.ZONES:
 		if StringName(zone["id"]) == &"zone10_road_south_reach":
@@ -341,9 +343,9 @@ func _check_zone_art_fade(instance: Node) -> void:
 		_fail("backtracking must restore Crèche art and hide the Reliquary")
 	if not creche.visible or reliquary.visible:
 		_fail("fully faded distant room art was not hidden or backtracked art was not restored")
-	var connector := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/Connector04_05_Underlay") as CanvasItem
-	if connector == null:
-		_fail("04→05 underlay is missing from the scene")
+	var composition := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05") as CanvasItem
+	if composition == null:
+		_fail("04→05 registered composition is missing from the scene")
 		return
 	var dust_lung := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay") as CanvasItem
 	if dust_lung == null:
@@ -352,14 +354,14 @@ func _check_zone_art_fade(instance: Node) -> void:
 	for connector_id in ["04_05_A", "04_05_B", "04_05_C"]:
 		operator.global_position = Layout.CONNECTORS[connector_id].get_center()
 		instance.call("_update_zone_art_visibility")
-		if connector.modulate.a != 1.0:
-			_fail("connector underlay must be fully revealed inside %s" % connector_id)
+		if composition.modulate.a != 1.0:
+			_fail("registered composition must be fully revealed inside %s" % connector_id)
 		if reliquary.modulate.a != 1.0 or dust_lung.modulate.a != 1.0:
 			_fail("both room underlays must remain opaque through connector %s" % connector_id)
 	operator.global_position = Layout.OPERATOR_WAKE_POSITION
 	instance.call("_update_zone_art_visibility")
-	if connector.modulate.a != 0.0:
-		_fail("04→05 connector art must fade out away from the dogleg")
+	if composition.modulate.a != 0.0:
+		_fail("04→05 registered composition must fade out away from the dogleg")
 	var transition_points := [
 		{"name": "Reliquary end", "position": Layout.CONNECTORS["04_05_A"].get_center(), "reliquary_alpha": 1.0, "dust_alpha": 1.0},
 		{"name": "dogleg", "position": Layout.CONNECTORS["04_05_B"].get_center(), "reliquary_alpha": 1.0, "dust_alpha": 1.0},
@@ -372,8 +374,8 @@ func _check_zone_art_fade(instance: Node) -> void:
 			_fail("%s Reliquary art must remain opaque through the connector (expected %s, got %s)" % [transition["name"], transition["reliquary_alpha"], reliquary.modulate.a])
 		if not is_equal_approx(dust_lung.modulate.a, float(transition["dust_alpha"])):
 			_fail("%s Dust Lung art must remain opaque through the connector (expected %s, got %s)" % [transition["name"], transition["dust_alpha"], dust_lung.modulate.a])
-		if not is_equal_approx(connector.modulate.a, 1.0):
-			_fail("connector art must remain visible below both opaque room underlays at %s" % transition["name"])
+		if not is_equal_approx(composition.modulate.a, 1.0):
+			_fail("registered composition must remain visible through %s" % transition["name"])
 	var edge_samples := [
 		{"name": "Reliquary interior", "position": Vector2(704, -2144), "room": reliquary, "alpha": 1.0},
 		{"name": "Reliquary threshold", "position": Vector2(704, -2272), "room": reliquary, "alpha": 1.0},
@@ -407,28 +409,52 @@ func _check_zone_art_fade(instance: Node) -> void:
 
 
 func _check_connector_art(instance: Node) -> void:
-	var sprite := instance.get_node_or_null(
-		"World/AwakeningZones/Traversal/ProductionArt/Connector04_05_Underlay"
-	) as Sprite2D
-	if sprite == null:
-		_fail("production underlay sprite missing")
+	var composition := instance.get_node_or_null(
+		"World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05"
+	) as Node2D
+	if composition == null:
+		_fail("production composition root missing")
 		return
-	if not sprite.position.is_equal_approx(Vector2(351.821, -2392.391)):
-		_fail("underlay position drifted from source-contact registration: %s" % str(sprite.position))
-	if sprite.texture == null or sprite.texture.get_size() != Vector2(1374, 1076):
-		_fail("underlay texture missing or not at the full source canvas 1374x1076")
-	if not is_equal_approx(sprite.scale.x, sprite.scale.y) or not is_equal_approx(sprite.scale.x, 0.715951):
-		_fail("underlay must use the measured uniform source-contact scale")
-	if not is_equal_approx(sprite.rotation, -0.198826):
-		_fail("underlay rotation drifted from measured source-contact registration")
-	if not sprite.centered:
-		_fail("underlay sprite must be centered")
-	var production_art := sprite.get_parent() as CanvasItem
-	var effective_z := sprite.z_index + (production_art.z_index if production_art != null else 0)
-	if effective_z >= -1:
-		_fail("connector underlay must remain below the room underlays")
-	if sprite.get_child_count() > 0:
-		_fail("underlay unexpectedly owns child gameplay nodes")
+	if not composition.position.is_equal_approx(Vector2(349, -2585)):
+		_fail("shared composition center drifted from the joint Dust/Locker anchor fit")
+	if not is_equal_approx(composition.rotation, 0.0):
+		_fail("shared composition root must be axis-aligned")
+	if not composition.scale.is_equal_approx(Vector2.ONE):
+		_fail("shared registered art must retain native 1:1 world scale")
+	var layer_names := ["DustLung", "Connector", "LockerReliquary"]
+	var expected_bounds := [
+		Rect2i(0, 0, 870, 838),
+		Rect2i(258, 672, 1042, 584),
+		Rect2i(644, 1182, 858, 866),
+	]
+	for layer_name in layer_names:
+		var layer := composition.get_node_or_null(layer_name) as Sprite2D
+		if layer == null or layer.texture == null or layer.texture.get_size() != Vector2(1502, 2048):
+			_fail("registered %s layer must use the shared 1502x2048 canvas" % layer_name)
+			continue
+		if not layer.centered or not layer.position.is_zero_approx() or not is_equal_approx(layer.rotation, 0.0) or not layer.scale.is_equal_approx(Vector2.ONE):
+			_fail("registered %s layer must retain the exact common canvas transform" % layer_name)
+	for index in range(layer_names.size()):
+		var layer := composition.get_node(layer_names[index]) as Sprite2D
+		if layer.z_index != index:
+			_fail("registered layer ordering must be Dust→connector→Locker")
+		if layer.texture != null:
+			var alpha_bounds := layer.texture.get_image().get_used_rect()
+			if alpha_bounds != expected_bounds[index]:
+				_fail("%s registered alpha bounds drifted: %s" % [layer_names[index], str(alpha_bounds)])
+			var local_center := Vector2(expected_bounds[index].get_center()) - Vector2(751, 1024)
+			var world_center := composition.to_global(local_center)
+			var expected_world_center := Vector2(349, -2585) + local_center
+			if not world_center.is_equal_approx(expected_world_center):
+				_fail("%s effective world registration drifted" % layer_names[index])
+	var production_art := composition.get_parent() as CanvasItem
+	var locker := composition.get_node("LockerReliquary") as CanvasItem
+	var effective_z := production_art.z_index + composition.z_index + locker.z_index
+	if effective_z >= 0:
+		_fail("composition must remain below the separately interactive P-9 prop")
+	for retired in ["Connector04_05_Underlay", "Connector04_05_A", "Connector04_05_B", "Connector04_05_C"]:
+		if instance.get_node_or_null(NodePath("World/AwakeningZones/Traversal/ProductionArt/" + retired)) != null:
+			_fail("retired connector sprite remains live: %s" % retired)
 	if instance.get_node_or_null("World/AwakeningZones/Zone04_LockerReliquary/Occlusion/Foreground") != null:
 		_fail("Locker foreground must remain unbound until underlay parity is restored")
 	for retired in ["Connector04_05_A", "Connector04_05_B", "Connector04_05_C"]:
@@ -439,16 +465,6 @@ func _check_connector_art(instance: Node) -> void:
 	).merge(Layout.CONNECTORS["04_05_C"])
 	if merged != LOCKED_CONNECTOR_ENVELOPE:
 		_fail("derived 04→05 traversal envelope drifted: %s" % str(merged))
-	if sprite.texture != null:
-		var image := sprite.texture.get_image()
-		for region in [Rect2i(200, 100, 150, 180), Rect2i(480, 470, 520, 160), Rect2i(1070, 650, 150, 150)]:
-			var visible_pixels := 0
-			for y in range(region.position.y, region.end.y, 8):
-				for x in range(region.position.x, region.end.x, 8):
-					if image.get_pixel(x, y).a > 0.1:
-						visible_pixels += 1
-			if visible_pixels == 0:
-				_fail("underlay is transparent throughout locked traversal region %s" % str(region))
 
 
 func _check_marker_placements(instance: Node) -> void:
