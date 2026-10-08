@@ -56,3 +56,25 @@
 - Tooling / docs drift discovered: `The registered quick validation timeout (120 seconds) is shorter than the observed 151-second documented direct quick profile on this host. The post-sync full changed-file sweep includes documented unrelated ambient-spawn and Vaultwing baseline failures.`
 - Follow-up: `none`
 - What worked: `The terminal overlap adjustment and post-physics literal-scene assertion proved the receipt/live-position invariant.`
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-game-tscn-operator-startup-integrity-v1-review-corrections-1`
+- Reviewed on main: `d7e4145f7`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- R0-01: `fixed` — production terminal placement avoids the selected Operator tile; pre-ready validation rejects shape overlap, and the literal-scene smoke now checks the live position after physics against both the selected receipt tile and world position.
+- Focused validation: `game_scene_operator_startup_integrity` passed (167468 ms); the isolated legacy-position mutation failed (exit 1), withholding `contract_ready` and failing the receipt/live-state assertions; `contract_world_operator_spawn_residency`, `contract_world_operator_void_spawn_failsafe`, `contract_world_playable_region_spawn_validity`, `contract_world_ingress_spawn_clearance`, `contract_world_archive_resolve_ingress`, `procgen_archive_resolve_semantic_echo`, and `procgen_archive_resolve_frontier_restraint` passed. S1 quick passed with `determinism_ok=true` and matching 48x48 seed-420777 fingerprints `1773840677`. `git diff --check` passed. The code-review graph was unavailable in this checkout; review used the archived contract, commit diff, focused source, and runtime evidence.
+- Evidence limits: `The mutation was run in a separate disposable worktree and changed no reviewed files. The spawn-residency fixture emitted a NavigationSystem-not-found warning but passed its explicit smoke assertions. The validator reports known Godot exit leaks for the production scene; no subjective visual review was required.`
+- Detailed review summary: `REVIEW_GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Reviewer independence: `Fresh reviewer workstream reconstructed the correction from the archived target packet, prior independent finding, implementation summary, landed correction diff, live code, and focused runtime checks. The reviewed implementation and smoke files were not modified in the review worktree.`
