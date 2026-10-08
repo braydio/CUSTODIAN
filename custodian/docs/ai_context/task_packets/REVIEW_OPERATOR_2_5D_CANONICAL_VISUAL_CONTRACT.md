@@ -25,6 +25,19 @@
 - Acceptance: zero blocking source-integrity/profile-migration/guide-leak defects; exact supplied bytes remain unchanged; the design sheet is the accepted lock; the relaxed idle is the first canonical family rather than a synthetic target or legacy fallback; no runtime cutover is smuggled into this slice. Subjective redesign is forbidden because the user already locked the visual authority.
 - Validation: focused canonical visual-contract + registration-profile tests + `git diff --check` only.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Agent Handoff / Planning Decisions — 2026-10-08
+
+The implementation's human review gate is already resolved in the authoring chat. **Do not reopen these decisions during paired review unless the landed implementation contradicts them or cannot encode them safely.**
+
+- Accepted registration: frame 128x128, center_x 64, projected_world_root `[64,106]`, shadow_origin/ground `[64,107]`, common across all eight directions. Lowest alpha is not semantic-root authority.
+- Legacy east `fast_02` overflow is non-authoritative proxy evidence and does not require a larger global canvas, root shift, or scale reduction. The accepted 128 profile is a body/reference registration frame with universal action-envelope fit explicitly unasserted. Future true canonical overflow may use root-preserving action-specific envelopes/modular presentation.
+- Normalized reference SHA `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9` is accepted unchanged; no cleanup pixels are authorized.
+- `operator_2_5d_128` may be accepted/canonical once the implementation records the above semantics.
+- Relaxed-idle FPS/timing remains unknown/null and is not a visual-contract blocker; do not infer it from the PNG.
+- Ranged aim, wide block-hit and all-direction extreme-envelope proof are future per-action evidence, not grounds to fail this review by themselves.
+- Reviewer focus: verify the implementation encoded these decisions exactly, preserved source/reference hashes, preserved legacy-96 compatibility, did not smuggle in runtime cutover, and cleaned/closed the reviewed human-handoff state.
+
 ## Handoff
 
 - Next workstream: `operator-2-5d-workbench-cockpit-foundation`
