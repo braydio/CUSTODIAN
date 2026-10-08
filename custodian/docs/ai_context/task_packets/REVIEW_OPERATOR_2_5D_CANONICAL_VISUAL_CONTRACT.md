@@ -2,14 +2,23 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-2-5d-canonical-visual-contract`
+- Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-2-5d-canonical-visual-contract`
 - Locks: `operator-art-agent, operator-source-normalization, operator-aseprite-tooling`
-- Kind: `review`
-- Reviewed main: `da820304c62fa81b87accfc64485b76742e487dc`
+- Review: `none`
+- Review target workstream: `operator-2-5d-canonical-visual-contract`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md`
+- Reviewed main: `90e2ac01e3b91809bd5e1b52fe6ada13e388c808`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, visual, asset-pipeline, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
 - Goal: Independently verify that the exact user-supplied design lock was hardened as the accepted visual authority and the exact relaxed-idle sheet was hardened as the first canonical `operator_2_5d_128` animation family, while preserving deterministic dual-profile migration, direction-specific registration truth, and non-leaking anti-drift guides/QA.
 - Review modes: `code, architecture, asset-pipeline, workflow, visual-contract`
 - Non-goals: no art regeneration, no runtime animation replacement, no subjective redesign.

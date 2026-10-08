@@ -175,9 +175,9 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - K3D-1P kenney-isometric-blockout-playtest is complete/landed as the final walkable Kenney reference.
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
 - `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
-- `operator-2-5d-animation-viability-audit` has preserved donor evidence at archived head `8d66c42e4`, including the report/coverage/matrices, but the donor summary explicitly pauses at the human visual-review boundary. It is not a completed main dependency and needs current-main recovery/closeout.
-- `operator-2-5d-canonical-visual-contract` has preserved provisional donor implementation at archived head `1624fe638d`, but it is hundreds of commits behind current main and has not landed or passed its paired review. Its 128 body canvas, shared scale 0.225, neutral support presentation around y106, and separate projected_world_root/shadow_origin decisions remain planning authority for recovery, not proof of landed completion.
-- Human approval of the Operator 2.5D authoring direction remains valid. Forum remains an important in-world presentation proof, but it no longer gates Workbench tooling; WB25-1 is blocked specifically on the two art-authority prerequisite recoveries above.
+- `operator-2-5d-animation-viability-audit` is `ready/auto` for a read-only current-main closeout. The human visual decision is already recorded: pre-migration live art is not the target, the 2048x256 8-direction design sheet is locked authority, and the supplied 15x8 relaxed idle is the first canonical `operator_2_5d_128` family. Do not stop for another subjective review.
+- `operator-2-5d-canonical-visual-contract` is `ready/auto` behind that audit. It owns exact-byte source-work preservation, accepted dual-profile/reference authority, and hardening the relaxed idle as the first canonical family; its paired review is `ready/auto` behind it.
+- WB25-1 remains intentionally blocked/manual only until those prerequisite receipts land. The next executable node is the viability closeout, not another planning refresh.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 

@@ -11,9 +11,9 @@
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
-- Review modes: `code, architecture, asset-pipeline, workflow, visual-contract`
+- Review modes: `code, architecture, visual, asset-pipeline, workflow`
 - Paired review workstream: `review-operator-2-5d-canonical-visual-contract`
-- Reviewed main: `da820304c62fa81b87accfc64485b76742e487dc`
+- Reviewed main: `90e2ac01e3b91809bd5e1b52fe6ada13e388c808`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Goal: Harden the user's exact 8-direction Operator design lock as the single deterministic visual authority and harden the supplied 8-direction relaxed idle as the first canonical `operator_2_5d_128` production animation; preserve both source byte streams, reconcile their 256px design-to-128px production relationship into the accepted registration/profile authority, make Aseprite/Workbench/Art Agent consume the lock, and prevent future animation authoring from drifting in anatomy, projection, palette, scale, registration, or directional identity.
 - Completion boundary: Consume the two exact Dropbox implementation inputs through the current specialized Operator authoring pipeline; preserve immutable source-work copies; register the 2048x256 design sheet as the accepted directional design lock; register the 1920x1024 relaxed idle as the first canonical 8-direction x 15-frame full-body animation family; emit reference/profile/measurement provenance with exact hashes; migrate the art-profile authority so legacy 96 and canonical 128 coexist; make Aseprite/Workbench consume the canonical lock; add deterministic anti-drift QA; update active art/design docs. Do not cut production runtime selectors over to the new generation in this slice.

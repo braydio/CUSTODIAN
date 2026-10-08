@@ -9,10 +9,10 @@
 - Locks: `operator-art-agent, presentation-experiments`
 - Kind: `implementation`
 - Review: `none`
-- Review rationale: `low-risk exemption: read-only evidence/report task; the required human visual review is the acceptance gate`
-- Visual review: `required`
+- Review rationale: `low-risk exemption: read-only current-main closeout; the human visual decision is already recorded in the authoring chat and must not be reopened`
+- Visual review: `none`
 - Human visual decision: `recorded in the authoring chat on 2026-10-07; Codex must consume it as authority rather than reopening the legacy-art viability question`
-- Reviewed main: `da820304c62fa81b87accfc64485b76742e487dc`
+- Reviewed main: `90e2ac01e3b91809bd5e1b52fe6ada13e388c808`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Goal: Determine whether the current production-reachable Operator animation art is viable for CUSTODIAN's fixed-isometric 2.5D contract, quantify exactly where directional/viewpoint/registration/composition gaps exist, and produce a ranked art backlog before the Forum 2.5D vertical slice treats the Operator as an approved visual benchmark.
 - Completion boundary: Recover and close the existing audit against current main using the user's recorded art-direction decision and the two exact locked inputs below. Preserve the structural/runtime evidence, but rewrite the final classification so pre-migration live art is legacy/misaligned unless it independently satisfies the new lock; treat the supplied relaxed idle as the first canonical `operator_2_5d_128` production family; update the ranked backlog around that truth. Do not modify, publish, ingest, regenerate, normalize, or replace Operator art in this audit.

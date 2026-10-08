@@ -15,7 +15,7 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
-- Reviewed main: da820304c62fa81b87accfc64485b76742e487dc
+- Reviewed main: 90e2ac01e3b91809bd5e1b52fe6ada13e388c808
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Goal: Make OPUI target-driven for the canonical 2.5D migration: legacy and 2.5D art can coexist without path/session collisions, every required 2.5D leaf exists before pixels do, and one structured projection truthfully reports coverage and workflow state.
@@ -108,19 +108,19 @@ Recommended v2 plan row:
 
 ## Refresh Planning Authority
 
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: yes
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh instruction: This refresh records the exact locked design input and first authored canonical family. Keep WB25-1 blocked/manual only until the viability audit closes on the recorded decision and the refreshed canonical visual contract hardens both inputs, lands, and passes its paired review. Then bring the final viability counts plus accepted `operator_2_5d_128` profile/reference hashes back here and flip this packet to ready/auto without changing the already-locked first-family identity.
 
 ## Handoff
 
 - Next workstream: operator-2-5d-animation-viability-audit
-- Next packet state: recovery/closeout-required
+- Next packet state: ready/auto
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include the exact Authoring chat URL in every durable summary and final Next Handoff
-- Refresh reason: New Animation is reviewed complete and the human visual authority is now explicit; remaining gates are deterministic viability closeout plus canonical lock/first-family hardening and paired review.
-- Next action: Auto-dispatch the viability closeout; then auto-dispatch the canonical lock/first-family hardening + paired review; return the accepted hashes/counts here for the final WB25-1 ready/auto refresh.
+- Refresh reason: The user/ChatGPT planning refresh is already complete. Exact design-lock and first-animation inputs plus the human visual decision are recorded; do not ask the planning chat for them again.
+- Next action: Claim `operator-2-5d-animation-viability-audit` now; after it completes, claim `operator-2-5d-canonical-visual-contract`, then its paired review. Return only after those receipts land for WB25-1's final ready/auto flip.
 - Blockers or open questions: No remaining art-direction ambiguity. Blocking only if audit closeout or exact-input canonical hardening/review discovers a real byte/provenance/profile conflict. The optional Textual pilot remains irrelevant.
