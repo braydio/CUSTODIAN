@@ -63,7 +63,7 @@
 - Follow-up: none
 - What worked: Pixel-alpha sampling and continuous physics-driven traversal established the visual and collision contracts without renderer capture.
 
-## Independent Review Receipt
+## Independent Review
 
 - Status: `passed`
 - Review workstream: `review-awakening-lower-upper-spine-connection`

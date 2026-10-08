@@ -18,17 +18,17 @@ The live-scene traversal independently crossed the single `lower_upper_spine_05_
 
 No renderer capture was needed: the acceptance question is established by live physics movement, authored collision geometry, source-pixel alpha probes, and deterministic presentation assertions. The graph database in this fresh worktree was empty, so source and diff inspection supplied the structural fallback.
 
-The first smoke launch began before fresh-worktree texture imports completed and produced misleading load/parse errors; the smoke passed after Godot finished importing. No source defect reproduced. The worktree import left nine untracked `.import` sidecars under `custodian/content/sprites/operator/reference/operator_2_5d/`; these are disposable generated cache metadata and were removed before closeout.
+The first smoke launch began before fresh-worktree texture imports completed and produced misleading load/parse errors; the smoke passed after Godot finished importing. No source defect reproduced. The worktree import left nine untracked `.import` sidecars under `custodian/content/sprites/operator/reference/operator_2_5d/`; these are disposable generated cache metadata and were removed before closeout. The first `finish` attempt showed that the lifecycle parser requires the target receipt heading to be exactly `Independent Review`.
 
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: First resource-dependent test launch raced incomplete Godot texture imports.
+- What went wrong: First resource-dependent test launch raced incomplete Godot texture imports; the first finish attempt rejected the target receipt's alternate heading.
 - Root cause / contributing factors: Fresh worktree generated import data was not yet complete at first launch.
-- Prevention / pipeline improvement: Wait for Godot project import completion before starting resource-dependent headless validation in a fresh worktree.
-- Tooling / docs drift discovered: The fresh worktree's code-review graph database was empty; targeted source and diff review provided fallback coverage.
+- Prevention / pipeline improvement: Wait for Godot project import completion before starting resource-dependent headless validation in a fresh worktree; match exact lifecycle parser headings.
+- Tooling / docs drift discovered: The fresh worktree's code-review graph database was empty; targeted source and diff review provided fallback coverage. Lifecycle documentation does not state the parser's exact `Independent Review` heading requirement.
 - Follow-up: none
 - What worked: Physics traversal plus structural pixel-alpha probes provided independent passage, collision, and presentation proof without renderer capture.
 

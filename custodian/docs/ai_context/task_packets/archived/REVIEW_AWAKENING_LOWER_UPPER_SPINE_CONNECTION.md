@@ -67,9 +67,9 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: `The first fresh-worktree traversal launch ran before texture imports completed and produced misleading load/parse failures; the smoke passed after Godot finished its project import.`
+- What went wrong: `The first fresh-worktree traversal launch ran before texture imports completed and produced misleading load/parse failures; the smoke passed after Godot finished its project import. The first finish attempt also exposed that the paired-review gate requires the target receipt heading to be exactly Independent Review.`
 - Root cause / contributing factors: `A new worktree had generated .godot import data but incomplete texture import outputs when the first validation process started.`
-- Prevention / pipeline improvement: `Wait for the Godot import process to finish before launching resource-dependent headless validation in a new worktree.`
-- Tooling / docs drift discovered: `The worktree's code-review graph database was empty; targeted source and diff review provided the required fallback evidence.`
+- Prevention / pipeline improvement: `Wait for the Godot import process to finish before launching resource-dependent headless validation in a new worktree; use the exact Independent Review heading expected by the lifecycle parser.`
+- Tooling / docs drift discovered: `The worktree's code-review graph database was empty; targeted source and diff review provided the required fallback evidence. The lifecycle packet's use of “Independent Review receipt” does not state the parser's exact required heading.`
 - Follow-up: `none`
 - What worked: `Structural alpha probes and physics-driven movement settled visual and collision acceptance without renderer capture.`
