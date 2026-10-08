@@ -11,18 +11,19 @@
 - Review: `none`
 - Review rationale: `low-risk exemption: read-only evidence/report task; the required human visual review is the acceptance gate`
 - Visual review: `required`
-- Reviewed main: `df80ee151473724aa524a1d24c36cd7d32389bd2`
+- Human visual decision: `recorded in the authoring chat on 2026-10-07; Codex must consume it as authority rather than reopening the legacy-art viability question`
+- Reviewed main: `da820304c62fa81b87accfc64485b76742e487dc`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Goal: Determine whether the current production-reachable Operator animation art is viable for CUSTODIAN's fixed-isometric 2.5D contract, quantify exactly where directional/viewpoint/registration/composition gaps exist, and produce a ranked art backlog before the Forum 2.5D vertical slice treats the Operator as an approved visual benchmark.
-- Completion boundary: Produce a structural coverage inventory, runtime-pixel visual matrices, a reference comparison against the Lords of Pain 16-angle goalpost and the repository Playable Knight, and a final viability report that classifies each production-reachable animation family as keep / cleanup / directional completion / redraw / consciously projected. Do not modify, publish, ingest, regenerate, normalize, or replace any Operator art.
-- Current measured state: the Operator runtime architecture is compatible with 2.5D presentation, but the art set is uneven. The generated semantic catalog contains broad 8-sector unarmed locomotion coverage, while many combat/posture/armed actions are E/W, partial, S-only, omni, or caller-projected. `operator.gd` already has presentation-only `set_fake_elevation()` behavior that lifts visual layers while leaving authoritative XY/shadow grounding separate. The Playable Knight reference exists in-repo at `custodian/dev/test_sprites/Knight/`. The user-selected Lords of Pain reference is expected locally in Downloads and must remain reference-only.
-- Evidence: `custodian/content/data/operator/generated/operator_animation_catalog.generated.json`; `custodian/game/actors/operator/animations/operator_animation_selector.gd`; `custodian/game/actors/operator/operator.gd`; `custodian/game/actors/operator/presentation/`; `custodian/tools/operator/`; `custodian/content/data/operator/authoring/operator_art_profile.json`; `custodian/dev/test_sprites/Knight/`; `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`.
-- Task-specific authority: live runtime/catalog truth on claim-time main; the 2.5D presentation contract; the accepted Operator registration profile; existing Operator Workbench/preview/motion APIs.
+- Completion boundary: Recover and close the existing audit against current main using the user's recorded art-direction decision and the two exact locked inputs below. Preserve the structural/runtime evidence, but rewrite the final classification so pre-migration live art is legacy/misaligned unless it independently satisfies the new lock; treat the supplied relaxed idle as the first canonical `operator_2_5d_128` production family; update the ranked backlog around that truth. Do not modify, publish, ingest, regenerate, normalize, or replace Operator art in this audit.
+- Current measured state: The user has resolved the audit's central art-direction ambiguity. Existing production-reachable Operator art predating the migration is not the planned volumetric realistic top-down 2.5D target and must not be counted as canonical completion merely because it is live or directionally broad. The locked design authority is the user-supplied 2048x256 RGBA 8-direction sheet at `/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png` (8x1 256px cells, order N/NE/E/SE/S/SW/W/NW, SHA-256 `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`). The first and currently only fully authored target-aligned production animation is `unarmed/posture/idle_relaxed_01/full_body`, supplied at `/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png` (1920x1024 RGBA, 15 columns x 8 direction rows, 128x128 cells, SHA-256 `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`). All future 2.5D Operator animation authoring is based on the locked design sheet. Legacy/projection art may remain runtime fallback during migration, but it does not satisfy canonical 2.5D coverage.
+- Evidence: exact locked Dropbox inputs `/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png` and `/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png` with hashes above; the user's decision in this authoring chat; `custodian/content/data/operator/generated/operator_animation_catalog.generated.json`; `custodian/game/actors/operator/animations/operator_animation_selector.gd`; `custodian/game/actors/operator/operator.gd`; `custodian/game/actors/operator/presentation/`; `custodian/tools/operator/`; `custodian/content/data/operator/authoring/operator_art_profile.json`; `custodian/dev/test_sprites/Knight/`; `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`.
+- Task-specific authority: the user's 2026-10-07 decision; exact locked design-reference bytes/hash; exact authored relaxed-idle bytes/hash; live runtime/catalog truth on claim-time main for legacy/fallback reachability only; the 2.5D presentation contract; current Operator Workbench/preview/motion APIs.
 - Work surface: read-only analysis of Operator canonical/runtime art plus durable reports under `reports/operator_presentation/`; bounded roadmap/index updates only.
 - Change: evidence and planning truth only. No production art/runtime mutation.
 - Preserve: all canonical/runtime Operator PNGs, manifests, SpriteFrames, sockets, frame timings, gameplay animation selection, Operator runtime behavior, Asset Pipeline V2 families, source-work/inbox state, and both external visual references.
 - Non-goals: no new Operator art; no 16-direction Operator mandate; no frame-count retuning; no combat balance changes; no runtime fallback rewrite; no Workbench feature work; no Asset V2 ingest; no copying LoP/Playable Knight pixels into CUSTODIAN production art; no Forum vertical-slice implementation.
-- Acceptance: every production-reachable Operator action is separated from legacy/catalog-only residue; high-frequency animation families receive actual runtime-pixel visual review; directional/layer gaps are counted; current projection/fallback policy is recorded; required art work is ranked and counted; the human review packet contains enough visual evidence to decide what survives unchanged; source/runtime art hashes remain untouched.
+- Acceptance: the final durable report records the locked design reference and authored relaxed idle with exact hashes/geometry; `unarmed/posture/idle_relaxed_01/full_body` is classified as the first canonical `operator_2_5d_128` family rather than a legacy viability candidate; pre-migration live/projection art is explicitly separated from canonical completion; 8-direction is the production directional contract unless a later gameplay-specific packet proves a need for more; the remaining required art work is ranked around the already-complete idle family; no Operator art bytes or runtime selectors change in this audit.
 - Validation: no broad gameplay suite. Verify report artifacts exist and are internally consistent, run the existing Operator catalog/status command(s) needed to prove identities, run `git diff --check`, and prove no Operator source/runtime PNG or asset-family content changed.
 - Task overrides: `none`
 - Deferred: any actual art repair/regeneration and the exact production packet series are authored only after user/ChatGPT review of this audit.
@@ -363,30 +364,17 @@ semantic conflict requiring a separate correction packet
 
 Do not modify either system in this audit.
 
-## 9. Visual review handoff
+## 9. Human decision already recorded
 
-Because the final classification is partly art-direction judgment, this packet cannot close before human review.
+The bounded visual-review evidence was produced previously. Do not republish it merely to ask the same questions again. The authoring-chat decision is now:
 
-Publish the bounded evidence through the repository visual-review workflow:
+1. The pre-migration live Operator art is not the planned migration target.
+2. The supplied 8-direction, 15-frame relaxed idle is the first real production animation that matches the volumetric realistic top-down 2.5D target.
+3. The supplied 8-direction single-frame design sheet is the locked design reference for all future Operator animation authoring.
+4. Legacy/projected art may remain transitional runtime fallback, but cannot close canonical 2.5D coverage.
+5. The production plan should begin from the already-authored relaxed idle and build the remaining coherent families from the locked reference.
 
-`custodian/tools/iteration/publish_review_artifacts.py`
-
-Use exactly this authoring chat:
-
-https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-
-Publish only the three matrices plus the concise viability report, not the complete raw Operator art tree.
-
-Reviewer questions:
-
-1. Does current unarmed locomotion already meet the spatial/volumetric target?
-2. Which current projections are visually acceptable versus obvious cheats?
-3. Is 8-direction Operator art sufficient when LoP 16-angle continuity is used as a quality reference?
-4. Which action families should be regenerated rather than patched?
-5. Is the proposed ranked art backlog the right production order?
-
-Pause the workstream at that boundary. Record the user's decision before completion.
-
+The audit closeout may preserve the old matrices as legacy evidence, but must not let them override this decision.
 ## Lean validation / no art mutation
 
 Before handoff/closeout:
@@ -397,13 +385,13 @@ Before handoff/closeout:
 - run `git diff --check`;
 - do not run broad Godot/runtime suites unless the audit unexpectedly touches runtime code, which it should not.
 
-## Handoff after human decision
+## Handoff after recorded decision
 
-- Next workstream: `isometric-2-5d-forum-vertical-slice`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next workstream: `operator-2-5d-canonical-visual-contract`
+- Next packet state: `dependency-gated / ready-auto after this audit closes`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh reason: `Forum slice must incorporate the approved Operator viability verdict, the actual art backlog, and any required short-term projection/registration constraints rather than assuming the current Operator art is production-ready.`
-- Next action: return the audit report/matrices to this chat, lock the first Operator art-production tranche, then refresh the Forum packet against current main.
-- Blockers or open questions: `human visual decision required before Forum implementation`.
+- Refresh reason: `the human art-direction decision is now recorded; the canonical-contract packet owns hardening the exact design lock and first authored animation`
+- Next action: `close this read-only audit on current main with the revised canonical-vs-legacy classification, release operator-art-agent, then allow the canonical visual-contract workstream to claim`
+- Blockers or open questions: `none beyond deterministic audit closeout; do not reopen the already-recorded visual decision`

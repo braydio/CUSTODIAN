@@ -3,7 +3,7 @@
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
 **Status:** active planning / all implementation slices pre-authored and refresh-gated  
 **Priority:** P1  
-**Reviewed main:** b0bc0956c4ce0510199b098d74691a39672df69a
+**Reviewed main:** `da820304c62fa81b87accfc64485b76742e487dc`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
 **Last updated:** 2026-10-07
 
@@ -41,6 +41,15 @@ RUNTIME ART
 
 No source-work file becomes runtime truth merely because its dimensions happen to look correct.
 
+## Locked authority inputs
+
+The migration is no longer starting from an empty target set.
+
+- **Design lock:** `/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png` — 2048x256 RGBA, 8x1 directions at 256x256, N/NE/E/SE/S/SW/W/NW, SHA-256 `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`. This owns visual identity, anatomy, armor/cloak topology, fixed top-down 2.5D projection, palette/material language and directional identity for all future Operator animation authoring.
+- **First canonical production family:** `/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png` — 1920x1024 RGBA, 15 columns x 8 direction rows, 128x128 cells, semantic identity `unarmed/posture/idle_relaxed_01/full_body`, SHA-256 `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`. This is the first and currently only fully authored animation the user considers aligned with the migration target.
+- Existing pre-migration runtime art remains legacy/fallback/donor material until migrated. Runtime reachability alone does not make it canonical 2.5D art.
+
+The canonical visual-contract workstream owns hardening both inputs through the specialized Operator pipeline. WB25-1 consumes the resulting accepted profile/reference hashes and must seed this already-authored idle as canonical rather than pretending every 2.5D target is missing.
 ## Canonical 2.5D body contract
 
 The human decision from this authoring chat is:
@@ -61,7 +70,7 @@ The canonical visual-contract workstream must incorporate these human decisions 
 
 A target family owns required directions/layers and completion.
 
-Example first family:
+First family is already authored and is the production seed:
 
 ~~~json
 {
@@ -73,7 +82,10 @@ Example first family:
   "required_layers": ["full_body"],
   "frame_count": 15,
   "frame_size": [128,128],
-  "loop": true
+  "loop": true,
+  "source_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
+  "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+  "status": "authored"
 }
 ~~~
 
@@ -193,6 +205,14 @@ operator_2_5d_128__unarmed__posture__idle_relaxed_01__ne__full_body__15f.png
 
 The filename is convenience only. Package/session metadata owns semantic identity, generation, canonical profile/reference SHA, source hash, frame contract, timing contract, and donor/reference provenance. Canonical destinations always come from operator_asset_schema.py.
 
+### Durable Dropbox implementation inputs
+
+```text
+/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png
+/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png
+```
+
+These are immutable handoff inputs, not runtime paths. The canonical-contract packet must preserve exact source bytes under Operator source-work and use live specialized schema/tooling for canonical destinations.
 ## Implementation series
 
 | Slice | Workstream | Initial state | Primary closure |
@@ -216,7 +236,7 @@ Expected implementation packets: **6**.
 
 Every substantial dependent is intentionally pre-authored but cannot be claimed from stale predecessor assumptions.
 
-- WB25-1: this planning refresh has consumed the reviewed New Animation backend. Keep it blocked/manual until the viability audit is formally completed/landed and the canonical visual contract is recovered against current main, landed, and paired-reviewed; then do the final target-count/profile-hash refresh to ready/auto.
+- WB25-1: this planning refresh has consumed the reviewed New Animation backend plus the exact design lock and first canonical animation. Keep it blocked/manual only until the viability closeout and canonical lock/first-family hardening + paired review land; then do the final target-count/profile/reference-hash refresh to ready/auto.
 - WB25-2: refresh after WB25-1 + review.
 - WB25-3: refresh after WB25-2 + review.
 - WB25-4: refresh after WB25-3 + review.
@@ -227,16 +247,15 @@ Each refresh re-derives current public APIs, exact files, locks, profile/referen
 
 ## Current repository drift / prerequisites
 
-Current live-main remeasurement (2026-10-07):
-- The New Animation backend is now a completed prerequisite. The service-publication correction landed at `a26982b8d` and its cycle-1 paired re-review artifacts landed at `0ebea7b6`; full-body/modular creation, exact-pixel publication, source-backed normalization, invalid-contract refusal, target-race refusal, and DORMANT unwired truth are proven through `WorkbenchService`.
-- `operator-2-5d-animation-viability-audit` is **not complete on main**. Its preserved donor head is `8d66c42e4`, only four donor commits ahead of its old base and now 409 commits behind current main. The donor includes the viability report/coverage/matrices, but its own closing summary says the workstream paused at the human visual-review boundary. Treat it as donor evidence for recovery/closeout, not a completed dependency.
-- `operator-2-5d-canonical-visual-contract` is also **not complete on main**. Its preserved donor head is `1624fe638d`, four donor commits ahead of its old base and now 333 commits behind current main. It contains the provisional dual-profile/reference/measurement/guide implementation, but the active packet remains ready/manual and the paired review is uncompleted. Recover/reconcile it only after the audit dependency is truthfully closed.
-- `OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json` is still v1 and not generation-aware; WB25-1 remains the owner of the v2 migration once the final target/profile authorities actually exist.
-- Workbench browser discovery still begins from existing source for ordinary browsing, while the newly reviewed New Animation backend can now create genuinely absent semantic identities. WB25-1 must build the separate **target-first** 2.5D projection from authoritative target rows rather than conflating creation capability with target planning.
-- operator_asset_schema.py has no art_generation dimension and current operator canonical source paths would collide if legacy and 2.5D authoring generations coexist.
-- OPERATOR_ART_AGENT_SYSTEM.md still describes the legacy accepted 96px registration path as its concrete profile-mode example. Preserve that legacy behavior, but new 2.5D work must consume the accepted generation-specific profile rather than retyping 96px assumptions.
-- OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md remains correct that one generated runtime database + OperatorAnimationSelector own production selection; WB25-6 changes which authoring generation feeds that runtime identity, not the runtime database architecture.
-
+Current live-main refresh (2026-10-07):
+- New Animation backend is reviewed complete (`a26982b8d` correction; `0ebea7b6` cycle-1 re-review).
+- Human art-direction ambiguity is resolved: the design lock and first authored relaxed-idle family are the exact Dropbox inputs/hashes above. Do not reopen whether legacy live art is the migration target.
+- `operator-2-5d-animation-viability-audit` still needs a current-main **read-only closeout**, but no new subjective visual decision. Its report must classify pre-migration art as legacy/misaligned and the supplied relaxed idle as the first canonical family.
+- `operator-2-5d-canonical-visual-contract` is refreshed to consume/harden the exact two inputs after the audit releases the shared lock. It must emit accepted canonical profile/reference hashes and then pass its paired review.
+- WB25-1 remains blocked/manual until those two receipts land. Its final refresh must seed `unarmed/posture/idle_relaxed_01/full_body` as authored canonical 2.5D, not as a synthetic/missing row.
+- `OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json` remains v1 and not generation-aware; WB25-1 owns the v2 migration after the accepted authority hashes exist.
+- `operator_asset_schema.py` still lacks an `art_generation` dimension; WB25-1 must add a non-colliding 2.5D authoring namespace without changing legacy path behavior.
+- Production runtime remains one generated database + `OperatorAnimationSelector`; WB25-6 changes which authoring generation feeds that identity, not the runtime authority architecture.
 ## Exit condition
 
 The program is complete when a missing 2.5D target can be selected, briefed, imported/authored, normalized, polished, objectively reviewed, human-approved, sandbox-verified, published, tracked in the queue, and safely promoted as part of a coherent runtime cohort without overwriting legacy source or creating a second runtime animation authority.

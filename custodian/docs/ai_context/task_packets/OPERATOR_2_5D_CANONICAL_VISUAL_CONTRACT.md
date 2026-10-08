@@ -3,34 +3,33 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-2-5d-canonical-visual-contract`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `none`
-- Claim gate: `do not claim while operator-2-5d-animation-viability-audit still owns operator-art-agent; after that workstream releases the shared lock, implementation may begin but the canonical 128 anchor/floor/profile must still pause at the PRE-LOCK CALIBRATION GATE for human approval before acceptance`
+- Depends on: `operator-2-5d-animation-viability-audit`
+- Claim gate: `claim automatically only after the viability audit closes and releases operator-art-agent; visual identity/directional design are already user-locked and must not be reopened; stop only for byte mismatch, unresolved semantic-root contradiction, or a real specialized-pipeline conflict`
 - Locks: `operator-art-agent, operator-source-normalization, operator-aseprite-tooling`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, asset-pipeline, workflow, visual-contract`
 - Paired review workstream: `review-operator-2-5d-canonical-visual-contract`
-- Reviewed main: `2e375923edf450a64b4b9fb4b41ce02ca3fa1ff1`
+- Reviewed main: `da820304c62fa81b87accfc64485b76742e487dc`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Goal: Turn the user's approved 8-direction Operator design reference into the single deterministic visual/registration authority for all future 2.5D Operator animation authoring: preserve the approved source bytes, measure and landmark every direction, define the new 128x128 authoring/runtime frame contract without breaking existing 96x96 assets, make Aseprite/Workbench/Art Agent show the canonical directional reference, and add structural/color/brightness/silhouette QA that prevents body/camera/material drift while preserving intentional pose motion.
-- Completion boundary: Preserve the exact source under source_work; emit a canonical per-direction measurement/landmark record; migrate the art-profile authority so legacy 96 and canonical 128 profiles coexist; make Aseprite/Workbench consume the canonical reference and profile; add deterministic geometry/material/alpha QA; update active art/design docs; do not replace runtime animations in this slice.
+- Goal: Harden the user's exact 8-direction Operator design lock as the single deterministic visual authority and harden the supplied 8-direction relaxed idle as the first canonical `operator_2_5d_128` production animation; preserve both source byte streams, reconcile their 256px design-to-128px production relationship into the accepted registration/profile authority, make Aseprite/Workbench/Art Agent consume the lock, and prevent future animation authoring from drifting in anatomy, projection, palette, scale, registration, or directional identity.
+- Completion boundary: Consume the two exact Dropbox implementation inputs through the current specialized Operator authoring pipeline; preserve immutable source-work copies; register the 2048x256 design sheet as the accepted directional design lock; register the 1920x1024 relaxed idle as the first canonical 8-direction x 15-frame full-body animation family; emit reference/profile/measurement provenance with exact hashes; migrate the art-profile authority so legacy 96 and canonical 128 coexist; make Aseprite/Workbench consume the canonical lock; add deterministic anti-drift QA; update active art/design docs. Do not cut production runtime selectors over to the new generation in this slice.
 - Current measured state:
-  - The user has explicitly locked the attached 8-direction design and will save it as `OPERATOR_DESIGN_REFERENCE_480.png`.
-  - The reviewed chat attachment is exactly 2048x256 RGBA: eight horizontal 256x256 cells ordered `N, NE, E, SE, S, SW, W, NW`. The filename token `480` is user naming, not measured geometry.
-  - The reviewed attachment SHA-256 is `2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323`.
-  - Live `operator_art_profile.json` is schema v2 with one accepted 96x96 registration ruler at anchor `[48,84]` and ground `y=85`.
-  - Live `registration_profile.py` supports v1/v2 and hard-requires accepted 96x96 geometry.
-  - The style bible still says no canonical sample/pitch authority exists; that is now documentation drift.
-  - The existing landmark vocabulary already covers hood/head, near/far shoulders/elbows/hands/hips/knees/ankles/toes, cloak tips, weapon grip and weapon tip.
-- Evidence: `custodian/content/data/operator/authoring/operator_art_profile.json`; `operator_landmark_schema.json`; `custodian/tools/operator/art_agent/registration_profile.py`; `custodian/tools/aseprite/operator_anchor_guides.lua`; `custodian/tools/operator/README.md`; `design/02_features/animation/OPERATOR_ART_STYLE_BIBLE.md`; archived `OPERATOR_ART_REGISTRATION_PROFILE.md`; the approved source identity above.
-- Task-specific authority: the exact approved source hash and user decision in this chat; current Operator registration/profile tooling; current specialized Operator authoring pipeline. This is an Operator-authoring reference asset, not a generic runtime prop. Do not create a parallel generic Asset V2 family if the live specialized Operator pipeline remains authoritative.
-- Work surface: `custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/`; Operator authoring profile/reference metadata; registration profile/QA/overlay services; Aseprite guide integration; style bible; focused validation; task index/roadmap.
-- Preserve: existing canonical/runtime Operator PNGs and SpriteFrames; all current 96x96 production assets; animation timings; gameplay selectors; weapon sockets; old Source Sessions; existing v1/v2 normalization plans; the exact approved design-reference bytes.
-- Non-goals: no new animation art; no runtime Operator replacement; no automatic limb warping; no per-frame scale correction; no 16-direction production requirement; no fabricated numeric camera angle; no melee/ranged behavior changes; no operator.gd decomposition work; no Forum implementation.
-- Acceptance: source archive hash/dimensions/order are proven; all 8 directions have canonical landmark records and reproducible geometry/color/silhouette metrics; future 128-profile authoring can show direction-specific ghost/floor/body guides; legacy 96 stays usable; intentional scale/anchor/palette drift fixtures are caught; active docs reflect the approved sample; no production runtime art changes.
+  - The user has explicitly locked the supplied design sheet as the permanent visual source for future Operator animation authoring.
+  - Dropbox design-lock input: `/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png`; 2048x256 RGBA; eight horizontal 256x256 cells; direction order `N, NE, E, SE, S, SW, W, NW`; true alpha; SHA-256 `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`.
+  - Dropbox first-animation input: `/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png`; 1920x1024 RGBA; 15 frame columns x 8 direction rows; 128x128 cells; row order `N, NE, E, SE, S, SW, W, NW`; true alpha; SHA-256 `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`.
+  - Semantic identity of that animation is `operator_2_5d_128 / unarmed / posture / idle_relaxed_01 / full_body`. It is the first and currently only fully authored production animation the user considers aligned with the locked volumetric realistic top-down 2.5D target.
+  - Existing pre-migration live art is legacy/migration donor material unless separately proven against this lock; it must not become canonical merely because it is runtime-reachable.
+  - Live `operator_art_profile.json` still preserves legacy 96 authoring. Active documentation and donor artifacts contain stale references to older design-reference geometry/hashes and must be reconciled to these exact inputs.
+- Evidence: exact Dropbox inputs `/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png` and `/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png`; user decision in this authoring chat; `custodian/content/data/operator/authoring/operator_art_profile.json`; `operator_landmark_schema.json`; `custodian/tools/operator/art_agent/registration_profile.py`; `custodian/tools/aseprite/operator_anchor_guides.lua`; `custodian/tools/operator/README.md`; `design/02_features/animation/OPERATOR_ART_STYLE_BIBLE.md`; archived `OPERATOR_ART_REGISTRATION_PROFILE.md` and donor canonical-contract artifacts only as historical evidence.
+- Task-specific authority: the exact two hashes/Dropbox inputs above plus the user's explicit lock decision; current Operator registration/profile tooling; current specialized Operator authoring pipeline. The design sheet is a specialized Operator reference authority and the idle sheet is a specialized Operator animation family. Do not create a parallel generic Asset V2 authority when the live specialized Operator pipeline owns the concept.
+- Work surface: `custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/`; `custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/`; current specialized Operator inbox/source-session path resolved from live `operator_asset_schema.py`; Operator authoring profile/reference metadata; registration profile/QA/overlay services; Aseprite guide integration; style bible; focused validation; task index/roadmap.
+- Preserve: existing canonical/runtime Operator PNGs and SpriteFrames; all current 96x96 production assets; animation timings; gameplay selectors; weapon sockets; old Source Sessions; existing normalization plans; the exact design-lock bytes `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`; the exact first-animation bytes `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`. Never resize, repaint, re-render, background-remove, or otherwise mutate either supplied source master in place.
+- Non-goals: no new animation generation; no redesign of the supplied idle; no production runtime cutover; no automatic limb warping; no per-frame scale correction; no 16-direction production requirement; no fabricated camera angle; no melee/ranged behavior changes; no `operator.gd` decomposition; no Forum implementation.
+- Acceptance: the two Dropbox inputs are copied into immutable Operator source-work with hashes unchanged; the 2048x256 sheet is recorded as the accepted 8-direction design lock; the 1920x1024 sheet is recorded as the first canonical `unarmed/posture/idle_relaxed_01/full_body` family with 8 directions x 15 frames x 128x128 cells; exact direction order is proven; timing is preserved from authoritative metadata if available and never invented from pixels; accepted profile/reference hashes are emitted; Aseprite/Workbench guides consume the lock; legacy 96 remains usable; drift fixtures are caught; active docs no longer cite donor geometry/hashes as current authority; no production runtime selector is changed.
 - Validation: new focused canonical-visual-contract smoke + existing registration-profile focused coverage + Aseprite clean-render guide-leak check + `git diff --check`. No broad gameplay/Godot suites unless runtime files are unexpectedly touched.
 - Task overrides: `none`
 - Deferred: actual animation regeneration, production rollout packets, and Forum refresh.
@@ -43,6 +42,46 @@ branch: agent/operator-2-5d-canonical-visual-contract
 closing summary: OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT_CLAUDE_SUMMARY.md
 ```
 
+## LOCKED INPUT AUTHORITY — 2026-10-07 REFRESH
+
+These inputs supersede older donor/reference geometry or attachment hashes as **active** authority. Historical reports may retain old values as history, but active tooling/docs must not treat them as current truth.
+
+### Design lock
+
+```text
+Dropbox: /CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png
+Repository source-work target: custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/operator_2_5d_design_lock_v1_source.png
+Specialized family / authority id: operator_2_5d_design_reference
+Sheet: 2048x256 RGBA
+Layout: 8x1
+Cell: 256x256
+Direction order: N, NE, E, SE, S, SW, W, NW
+SHA-256: 41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b
+Role: immutable design / anatomy / projection / material / directional source of truth
+```
+
+### First canonical animation
+
+```text
+Dropbox: /CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png
+Repository source-work target: custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png
+Specialized family id: operator_2_5d_unarmed_posture_idle_relaxed_01
+Art generation: operator_2_5d_128
+Semantic identity: unarmed/posture/idle_relaxed_01/full_body
+Sheet: 1920x1024 RGBA
+Layout: 15 columns x 8 direction rows
+Cell: 128x128
+Frames per direction: 15
+Direction order: N, NE, E, SE, S, SW, W, NW
+Loop: true
+FPS/timing: resolve from authoritative authored metadata/session if present; do not infer from the PNG
+SHA-256: d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3
+Role: immutable first target-aligned production animation and registration/temporal proof
+```
+
+### Specialized Operator intake contract
+
+Use the current live specialized Operator schema/tooling first. Raw supplied files remain immutable source masters. If live tooling expects inbox staging, use semantic filenames under the existing Operator 2.5D inbox namespace and let `operator_asset_schema.py` derive canonical authoring/runtime destinations. Do **not** hand-author a competing runtime filename or generic Asset V2 family. The design lock is reference authority; the relaxed idle is animation-family authority.
 ## PRE-LOCK CALIBRATION GATE
 
 Do **not** freeze the canonical 128 registration merely from the 2048x256 design-reference cell bounds. Two distinct artifacts exist and have different jobs:
@@ -55,37 +94,25 @@ The user-approved final design sheet supplied in the authoring chat measures:
 2048 x 256 RGBA
 8 x 256x256 cells
 order: N, NE, E, SE, S, SW, W, NW
-sha256: 2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323
+sha256: 41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b
 ```
 
 This file owns anatomy, armor/cloak topology, projection, palette/material language and directional identity. It is **not** itself proof of runtime centering/floor registration.
 
-### Runtime-registration candidate
+### First canonical production-animation proof
 
-The user's earlier crisp resize/canvas pass in this same chat measures:
+The old single-frame 128 resize candidate is no longer the strongest production-scale evidence. The user has supplied a fully authored 8-direction, 15-frame relaxed-idle sheet and explicitly identified it as the actual target-aligned production animation.
 
 ```text
-1024 x 128 RGBA
-8 x 128x128 cells
-sha256: 31bfc4fc40cbb1d2738037070b962d8e68b1f3ca87414b8f8c5f2ae1e60493c7
-alpha: binary only (0/255)
+1920 x 1024 RGBA
+15 columns x 8 direction rows
+128 x 128 cells
+semantic identity: unarmed/posture/idle_relaxed_01/full_body
+order: N, NE, E, SE, S, SW, W, NW
+sha256: d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3
 ```
 
-Measured alpha bounds:
-
-| Dir | bbox width | bbox height | bbox center x | top y | bottom y |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| N | 49 | 87 | 63.0 | 20 | 106 |
-| NE | 42 | 86 | 62.5 | 20 | 105 |
-| E | 32 | 88 | 60.5 | 20 | 107 |
-| SE | 43 | 87 | 63.0 | 20 | 106 |
-| S | 49 | 85 | 64.0 | 20 | 104 |
-| SW | 39 | 86 | 64.0 | 20 | 105 |
-| W | 31 | 87 | 65.0 | 20 | 106 |
-| NW | 42 | 84 | 64.5 | 20 | 103 |
-
-The body is therefore already correctly sized for the intended "roughly old 96px body inside a 128px action canvas" strategy: apparent height is 84-88px with all directions beginning at y=20. Do not enlarge the body simply to fill the 128px cell.
-
+Use this animation to validate the accepted 128 profile's real body scale, center/root semantics, temporal registration, loop stability and directional continuity. Do not independently scale directions or frames. Do not derive FPS from image pixels. Any older 1024x128 single-frame resize may remain donor/calibration evidence only and cannot override this authored family.
 ### Candidate canonical root/floor
 
 The accepted legacy profile uses `anchor_y=84`, `ground_y=85`; the viability audit found normal legacy sprite baselines at roughly y=84. Preserve that semantic relationship in the new profile.
@@ -298,7 +325,7 @@ dimensions: 2048x256
 layout: 8x1
 cell: 256x256
 order: N, NE, E, SE, S, SW, W, NW
-sha256: 2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323
+sha256: 41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b
 ```
 
 If absent, stop. If hash/dimensions differ, report actual values and stop for user confirmation. Do not fetch/regenerate/substitute.
