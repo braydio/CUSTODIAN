@@ -730,7 +730,7 @@ After reviewed landing:
 - Complete: exact source masters and manifests, byte-exact cell reconstruction, shared-scale crisp 128px reference, deterministic per-direction measurements/palette summary, v3 backward-readable profile registry with stable legacy hash, 128px default for new Workbench animation-creation plans, explicit Art Agent profile selection, Aseprite registration/reference guides, design authority, and focused anti-drift coverage.
 - Not complete: semantic root/floor approval; universal body action-envelope proof; reviewed pixel cleanup; specialized canonical-family intake/timing registration; paired post-land review.
 - Action-envelope evidence: the deterministic scan contains 446 category-assigned pre-migration full-body proxy frame observations (categories can overlap). Under the explicit +16,+22 legacy-root translation, 46/180 fast-chain frames and 16/47 long one-handed-reach frames exceed the 128px canvas; 71 and 24 frames respectively exceed the 8px safety margin. The largest fast-chain proxy is east `fast_02` frame 4, source alpha bbox `[35,11,136,85]`, translated bbox `[51,33,152,107]`. This legacy material is not canonical 2.5D evidence and does not alone reject 128px. It does keep universal fit unproven. Ranged aim modular union, wide block-hit, and all-direction locked-projection coverage are unmeasured. Human review must decide whether the fast02 frame is a valid maximum-body proxy and whether canvas/pose-root policy needs revision.
-- Human review: fresh manifest will be published after this evidence commit; default retention `delete-after-review`.
+- Human review: `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json`, default retention `delete-after-review`.
 - Validation: canonical visual-contract smoke passed with proxy-scan assertions; rerun the remaining focused set and `git diff --check` before checkpoint.
 
 ## Execution Feedback
@@ -754,6 +754,6 @@ After reviewed landing:
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include the exact Authoring chat URL in the closing summary and final Next Handoff
-- Refresh reason: `human semantic root/floor decision, action-envelope proof, and normalized-reference cleanup review are required before the canonical profile can be accepted`
-- Next action: `review the Dropbox handoff in the authoring chat, record the exact root/floor decision, then resume this workstream to close the remaining gates before paired review`
-- Blockers or open questions: `action-envelope evidence and palette-cleanup decision; animation FPS/timing metadata remains unavailable`
+- Refresh reason: `human semantic root/floor decision, action-envelope proxy validity/canvas decision, and normalized-reference cleanup review are required before the canonical profile can be accepted`
+- Next action: `review the latest Dropbox handoff in the authoring chat, record exact root/floor and action-envelope decisions, then resume this workstream before paired review`
+- Blockers or open questions: `human review of registration, fast02 proxy/canvas implication, and palette cleanup; ranged aim/block-hit/all-direction envelope proof and animation FPS/timing metadata remain unavailable`

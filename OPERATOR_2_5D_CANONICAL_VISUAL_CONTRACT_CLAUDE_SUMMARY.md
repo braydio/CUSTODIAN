@@ -14,7 +14,7 @@ New Workbench animation-creation plans now default to the active 128px profile. 
 
 The 128px profile is not accepted. Human semantic root/floor approval, universal action-envelope proof, and review of any normalized-reference pixel cleanup remain required. The supplied idle is preserved in source-work but is not yet registered as a canonical production family with timing metadata. WB25-1 stays dependency-gated until this workstream and its paired review close.
 
-The initial Dropbox review handoff at `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T182511Z/REVIEW_MANIFEST.json` is superseded by a fresh action-envelope handoff to be published from this evidence update (default `delete-after-review`). Questions now include whether the pre-migration east `fast_02` frame 4 is a valid maximum-body proxy and whether the 128px canvas or pose-root policy needs revision, while preserving the locked projection and design.
+The current Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json` (default `delete-after-review`). Questions include semantic root/floor approval, whether pre-migration east `fast_02` frame 4 is a valid maximum-body proxy and whether the 128px canvas or pose-root policy needs revision, and specific normalized-reference cleanup pixels, while preserving the locked projection and design.
 
 ## Action-envelope proxy update
 
