@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-lower-upper-spine-connection`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-awakening-04-05-registered-composition-correction-v1`
@@ -14,11 +14,11 @@
 - Paired review workstream: `review-awakening-lower-upper-spine-connection`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `801558935299b9662484cdcb2b07356d95f3684a`
+- Reviewed main: `b3352e0860930861efc8dda839a3e078321585c6`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Goal: Make the lower Awakening and the later/upper Awakening read and behave as one continuous authored route by turning the Dust Lung→Undergate seam into one explicit 05→06 passage authority and proving uninterrupted real-Operator traversal from Zone05 into Zones06–10 without loading, teleporting, invisible floor gaps, or presentation occlusion.
 - Completion boundary: Done when the current split 05→06 route primitives are represented as one semantic passage, the exact existing walkable union remains continuous, the 96px Dust/Undergate art overlap covers that passage without a transparent/opaque break, collision cannot seal it, and a real Operator can walk from Dust Lung through Undergate and continue through Gate of Dust, Custodian Approach, and Road South Reach in one scene.
-- Current measured state: Live Layout already contains the ingredients of a connection but splits them across two unrelated primitives: `CONNECTORS["05_06"] = Rect2(-64,-3776,128,32)` and `THRESHOLDS["z06_south_door"] = Rect2(-64,-3840,128,64)`. Their exact union is one `Rect2(-64,-3840,128,96)` passage. Dust Lung's 1216×1216 plate centered at `(0,-3200)` ends at y=-3808; Undergate's 1536×1216 plate centered at `(0,-4320)` begins its south visual coverage at y=-3712. The room plates therefore overlap by exactly 96px, matching the full logical passage depth. Geometry tests can currently see a route because both primitives are carved walkable, but the authority/presentation split is fragile and can still present as two disconnected halves. The user now requires an explicit lower→upper connection.
+- Current measured state: `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` is the only 05→06 route authority and equals `Rect2(-64,-3840,128,96)`, preserving the exact union of the retired connector and south-door threshold. It is included exactly once in `traversal_rects()` and therefore in runtime wall carving and walkability. Source-pixel inspection and 12 centerline samples found both Dust Lung and Undergate underlays opaque across the passage, with no opaque foreground centerline; runtime holds both room layers at full alpha through the passage neighborhood. A live Operator moved from south of the daylight split through Zones05, 06, 07, 08, and 10 to South Reach in 1,153 physics samples, including 38 samples inside the passage. No teleport, reload, or optional Zone09 entry occurred.
 - Evidence: `custodian/game/world/awakening/awakening_layout.gd`; `custodian/scenes/awakening_first_return.tscn`; `awakening_first_return_geometry_smoke.gd`; `awakening_late_seams_v1.json`; `awakening_late_seams_moment.gd`; current Zone05/Zone06 plate centers/canvases.
 - Task-specific authority: `awakening_layout.gd` for route geometry; live scene art registration for the 96px visual overlap; real Operator collision/clearance for traversability; no new art authority.
 - Work surface: `awakening_layout.gd`; `awakening_first_return.gd` only if visibility/zone presentation actually breaks the seam; scene only if z/alpha registration requires correction; focused geometry/progression/late-seam validation and docs.
@@ -44,3 +44,21 @@
 - Validation: Run Awakening geometry/progression smokes; add/update a focused 05→06 real-Operator traversal smoke; run `awakening_late_seams_v1` in no-capture mode; use compact 05→06 ROI only if pixel coverage cannot be settled structurally; changed-file validation and `git diff --check`.
 - Task overrides: `none`
 - Deferred: full Awakening art/handoff convergence and actual Awakening→Hub world-context transition remain downstream. The reviewed interaction-feedback/console-activation predecessor is presentation authority and must not regress while proving the spine.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: Geometry, first-return boot, progression, and live real-Operator traversal smokes passed. Changed-file validation passed all 22 selected checks with complete implementation coverage. `awakening_late_seams_v1` passed with `--capture-mode none`; `git diff --check` passed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first new geometry run exposed an overstrict clearance assertion sampling the 16px erosion boundary; the assertion was narrowed to the actual eroded interior core. A fresh checkout required Godot import initialization before runtime checks.
+- Root cause / contributing factors: The fixture's safe-grid proof erodes occupancy by one full cell to model Operator clearance; samples on the authored passage boundary are outside that safe core. New worktrees also start without Godot's generated import cache.
+- Prevention / pipeline improvement: Keep clearance assertions aligned with the grid erosion model and initialize project imports before runtime smokes in fresh worktrees.
+- Tooling / docs drift discovered: The late-seams fixture duplicated the 05→06 checkpoint coordinate; it now derives that position from Layout passage authority.
+- Follow-up: none
+- What worked: Pixel-alpha sampling and continuous physics-driven traversal established the visual and collision contracts without renderer capture.
