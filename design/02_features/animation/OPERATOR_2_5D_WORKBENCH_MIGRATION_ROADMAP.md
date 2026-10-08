@@ -250,9 +250,9 @@ Each refresh re-derives current public APIs, exact files, locks, profile/referen
 Current live-main refresh (2026-10-07):
 - New Animation backend is reviewed complete (`a26982b8d` correction; `0ebea7b6` cycle-1 re-review).
 - Human art-direction ambiguity is resolved: the design lock and first authored relaxed-idle family are the exact Dropbox inputs/hashes above. Do not reopen whether legacy live art is the migration target.
-- `operator-2-5d-animation-viability-audit` still needs a current-main **read-only closeout**, but no new subjective visual decision. Its report must classify pre-migration art as legacy/misaligned and the supplied relaxed idle as the first canonical family.
+- `operator-2-5d-animation-viability-audit` completed its current-main read-only closeout: 69 production-reachable families are legacy fallback, one supplied relaxed-idle source is canonical but not runtime-published, and 68 semantic families remain in the baseline atlas estimate. No new subjective visual decision was needed.
 - `operator-2-5d-canonical-visual-contract` is refreshed to consume/harden the exact two inputs after the audit releases the shared lock. It must emit accepted canonical profile/reference hashes and then pass its paired review.
-- WB25-1 remains blocked/manual until those two receipts land. Its final refresh must seed `unarmed/posture/idle_relaxed_01/full_body` as authored canonical 2.5D, not as a synthetic/missing row.
+- WB25-1 remains blocked/manual until the canonical visual-contract receipt and paired review land. Its final refresh must seed `unarmed/posture/idle_relaxed_01/full_body` as authored canonical 2.5D, not as a synthetic/missing row, and use the audit count of 69 legacy semantic targets plus the 1 canonical source / 68-family baseline distinction.
 - `OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json` remains v1 and not generation-aware; WB25-1 owns the v2 migration after the accepted authority hashes exist.
 - `operator_asset_schema.py` still lacks an `art_generation` dimension; WB25-1 must add a non-colliding 2.5D authoring namespace without changing legacy path behavior.
 - Production runtime remains one generated database + `OperatorAnimationSelector`; WB25-6 changes which authoring generation feeds that identity, not the runtime authority architecture.

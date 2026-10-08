@@ -132,7 +132,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__lower_body__melee_1h__attack__fast_01__w__10f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__e__10f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_01/operator__upper_body__melee_1h__attack__fast_01__w__10f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -248,7 +251,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__lower_body__melee_1h__attack__fast_02__w__8f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__upper_body__melee_1h__attack__fast_02__e__8f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_02/operator__upper_body__melee_1h__attack__fast_02__w__8f__156x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -364,7 +370,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__lower_body__melee_1h__attack__fast_03__w__10f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__upper_body__melee_1h__attack__fast_03__e__10f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/attack/fast_03/operator__upper_body__melee_1h__attack__fast_03__w__10f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -440,7 +449,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_enter_01/operator__lower_body__melee_1h__defense__block_enter_01__w__4f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_enter_01/operator__upper_body__melee_1h__defense__block_enter_01__e__4f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_enter_01/operator__upper_body__melee_1h__defense__block_enter_01__w__4f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -516,7 +528,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__lower_body__melee_1h__defense__block_hit_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_hit_01/operator__upper_body__melee_1h__defense__block_hit_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -592,7 +607,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__lower_body__melee_1h__defense__block_loop_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/defense/block_loop_01/operator__upper_body__melee_1h__defense__block_loop_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -716,7 +734,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__n__6f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__s__12f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/run_01/operator__upper_body__melee_1h__locomotion__run_01__w__6f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -816,7 +837,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__e__8f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__s__8f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/locomotion/walk_01/operator__upper_body__melee_1h__locomotion__walk_01__w__8f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -892,7 +916,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/draw_01/operator__lower_body__melee_1h__posture__draw_01__w__4f__128x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__e__4f__128x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/draw_01/operator__upper_body__melee_1h__posture__draw_01__w__4f__128x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -968,7 +995,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__lower_body__melee_1h__posture__idle_ready_01__w__4f__128x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__e__5f__128x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_ready_01/operator__upper_body__melee_1h__posture__idle_ready_01__w__4f__128x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -1044,7 +1074,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__lower_body__melee_1h__posture__idle_relaxed_01__w__4f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__upper_body__melee_1h__posture__idle_relaxed_01__e__4f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/idle_relaxed_01/operator__upper_body__melee_1h__posture__idle_relaxed_01__w__4f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -1120,7 +1153,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__lower_body__melee_1h__posture__sheathe_01__w__4f__128x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__upper_body__melee_1h__posture__sheathe_01__e__4f__128x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/posture/sheathe_01/operator__upper_body__melee_1h__posture__sheathe_01__w__4f__128x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -1196,7 +1232,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__lower_body__melee_1h__transition__idle_fast_transition_01__w__3f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__upper_body__melee_1h__transition__idle_fast_transition_01__e__3f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/idle_fast_transition_01/operator__upper_body__melee_1h__transition__idle_fast_transition_01__w__3f__156x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -1272,7 +1311,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__lower_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__e__8f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/ready_to_relaxed_01/operator__upper_body__melee_1h__transition__ready_to_relaxed_01__w__8f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h",
@@ -1348,7 +1390,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/relaxed_to_ready_01/operator__lower_body__melee_1h__transition__relaxed_to_ready_01__w__3f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/relaxed_to_ready_01/operator__upper_body__melee_1h__transition__relaxed_to_ready_01__e__3f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h/transition/relaxed_to_ready_01/operator__upper_body__melee_1h__transition__relaxed_to_ready_01__w__3f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h_heavy",
@@ -1424,7 +1469,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_01/operator__full_body__melee_1h_heavy__attack__fast_01__w__10f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_01/operator__fx__melee_1h_heavy__attack__fast_01__e__10f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_01/operator__fx__melee_1h_heavy__attack__fast_01__w__10f__156x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h_heavy",
@@ -1500,7 +1548,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_02/operator__full_body__melee_1h_heavy__attack__fast_02__w__10f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_02/operator__fx__melee_1h_heavy__attack__fast_02__e__10f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_02/operator__fx__melee_1h_heavy__attack__fast_02__w__10f__156x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h_heavy",
@@ -1576,7 +1627,10 @@
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_03/operator__full_body__melee_1h_heavy__attack__fast_03__w__10f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_03/operator__fx__melee_1h_heavy__attack__fast_03__e__10f__156x96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/fast_03/operator__fx__melee_1h_heavy__attack__fast_03__w__10f__156x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "melee_1h_heavy",
@@ -1628,7 +1682,10 @@
       "paths": [
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/heavy_windup_01/operator__full_body__melee_1h_heavy__attack__heavy_windup_01__s__5f__96.png",
         "res://content/sprites/operator/runtime/animations/melee_1h_heavy/attack/heavy_windup_01/operator__weapon__melee_1h_heavy__attack__heavy_windup_01__s__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "ranged_2h",
@@ -1792,7 +1849,10 @@
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__sw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/aim_01/operator__weapon__ranged_2h__cosmetic__aim_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "ranged_2h",
@@ -2030,7 +2090,10 @@
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__sw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/fire_01/operator__weapon__ranged_2h__cosmetic__fire_01__w__6f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "ranged_2h",
@@ -2072,7 +2135,10 @@
       "projection_policy": "intentional OMNI identity",
       "paths": [
         "res://content/sprites/operator/runtime/animations/ranged_2h/cosmetic/reload_01/operator__full_body__ranged_2h__cosmetic__reload_01__omni__4f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "ranged_2h",
@@ -2148,7 +2214,10 @@
         "res://content/sprites/operator/runtime/animations/ranged_2h/locomotion/run_01/operator__full_body__ranged_2h__locomotion__run_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/locomotion/run_01/operator__weapon__ranged_2h__locomotion__run_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/locomotion/run_01/operator__weapon__ranged_2h__locomotion__run_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "ranged_2h",
@@ -2244,7 +2313,10 @@
         "res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__upper_body__ranged_2h__posture__relaxed_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__weapon__ranged_2h__posture__relaxed_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__weapon__ranged_2h__posture__relaxed_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "ranged_2h",
@@ -2497,7 +2569,10 @@
         "res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__sw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/ranged_2h/posture/stance_01/operator__weapon__ranged_2h__posture__stance_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "shared",
@@ -2637,7 +2712,10 @@
         "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__sw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/attack/dodge_charge_windup_01/operator__full_body__shared__attack__dodge_charge_windup_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "shared",
@@ -2697,7 +2775,10 @@
       "paths": [
         "res://content/sprites/operator/runtime/animations/shared/locomotion/idle_01/operator__head__shared__locomotion__idle_01__s__5f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/locomotion/idle_01/operator__head__shared__locomotion__idle_01__se__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "shared",
@@ -2757,7 +2838,10 @@
       "paths": [
         "res://content/sprites/operator/runtime/animations/shared/locomotion/idle_hitreact_01/operator__head__shared__locomotion__idle_hitreact_01__n__5f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/locomotion/idle_hitreact_01/operator__head__shared__locomotion__idle_hitreact_01__s__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "shared",
@@ -2801,7 +2885,10 @@
       "projection_policy": "partial authored sectors; caller-specific projection must be verified per consumer; missing identities are not authored",
       "paths": [
         "res://content/sprites/operator/runtime/animations/shared/locomotion/run_01/operator__head__shared__locomotion__run_01__n__8f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "shared",
@@ -2877,7 +2964,10 @@
         "res://content/sprites/operator/runtime/animations/shared/locomotion/walk_01/operator__head__shared__locomotion__walk_01__s__5f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/locomotion/walk_01/operator__head__shared__locomotion__walk_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/locomotion/walk_01/operator__head__shared__locomotion__walk_01__sw__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "shared",
@@ -2953,7 +3043,10 @@
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__full_body__shared__transition__dodge_01__s__9f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__n__9f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_01/operator__fx__shared__transition__dodge_01__s__9f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "shared",
@@ -3093,7 +3186,10 @@
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__se__4f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__sw__4f__96.png",
         "res://content/sprites/operator/runtime/animations/shared/transition/dodge_chain_link_01/operator__full_body__shared__transition__dodge_chain_link_01__w__4f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "sidearm",
@@ -3330,7 +3426,10 @@
         "res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__nw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/sidearm/cosmetic/fire_sidearm_01/operator__weapon__sidearm__cosmetic__fire_sidearm_01__sw__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "sidearm",
@@ -3534,7 +3633,10 @@
         "res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__nw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/sidearm/posture/draw_sidearm_01/operator__weapon__sidearm__posture__draw_sidearm_01__sw__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -3620,7 +3722,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__w__11f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__fx__unarmed__attack__dodge_fast_attack_01__e__11f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/dodge_fast_attack_01/operator__fx__unarmed__attack__dodge_fast_attack_01__w__11f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -3824,7 +3929,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__upper_body__unarmed__attack__fast_01__n__6f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__upper_body__unarmed__attack__fast_01__s__6f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_01/operator__upper_body__unarmed__attack__fast_01__w__6f__128.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -4008,7 +4116,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__n__6f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__s__6f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_02/operator__upper_body__unarmed__attack__fast_02__w__6f__128.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -4192,7 +4303,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__n__7f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__s__7f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_03/operator__upper_body__unarmed__attack__fast_03__w__7f__128.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -4376,7 +4490,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__n__8f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__s__8f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_04/operator__upper_body__unarmed__attack__fast_04__w__8f__128.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -4696,7 +4813,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__upper_body__unarmed__attack__fast_recovery_01__se__3f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__upper_body__unarmed__attack__fast_recovery_01__sw__3f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_recovery_01/operator__upper_body__unarmed__attack__fast_recovery_01__w__3f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5086,7 +5206,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__upper_body__unarmed__attack__fast_strike_01__se__3f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__upper_body__unarmed__attack__fast_strike_01__sw__3f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_strike_01/operator__upper_body__unarmed__attack__fast_strike_01__w__3f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5386,7 +5509,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__upper_body__unarmed__attack__fast_windup_01__se__3f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__upper_body__unarmed__attack__fast_windup_01__sw__3f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/fast_windup_01/operator__upper_body__unarmed__attack__fast_windup_01__w__3f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5530,7 +5656,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__fx__unarmed__attack__heavy_01__w__7f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__lower_body__unarmed__attack__heavy_01__s__7f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/heavy_01/operator__upper_body__unarmed__attack__heavy_01__s__7f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5626,7 +5755,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/attack/parry_recovery_01/operator__lower_body__unarmed__attack__parry_recovery_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/parry_recovery_01/operator__upper_body__unarmed__attack__parry_recovery_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/attack/parry_recovery_01/operator__upper_body__unarmed__attack__parry_recovery_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5726,7 +5858,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__e__12f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__s__8f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_execution_01/operator__fx__unarmed__cosmetic__critical_execution_01__w__12f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5786,7 +5921,10 @@
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_hitspark_01/operator__fx__unarmed__cosmetic__critical_hitspark_01__e__8f__156x96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/critical_hitspark_01/operator__fx__unarmed__cosmetic__critical_hitspark_01__w__8f__156x96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5862,7 +6000,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__full_body__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__e__8f__156.png",
         "res://content/sprites/operator/runtime/animations/unarmed/cosmetic/falcon_reversal_01/operator__fx__unarmed__cosmetic__falcon_reversal_01__w__8f__156.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -5938,7 +6079,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_01/operator__lower_body__unarmed__defense__block_enter_01__w__4f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_01/operator__upper_body__unarmed__defense__block_enter_01__e__4f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_enter_01/operator__upper_body__unarmed__defense__block_enter_01__w__4f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6014,7 +6158,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__lower_body__unarmed__defense__block_hit_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__upper_body__unarmed__defense__block_hit_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hit_01/operator__upper_body__unarmed__defense__block_hit_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6110,7 +6257,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__lower_body__unarmed__defense__block_hold_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__upper_body__unarmed__defense__block_hold_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/block_hold_01/operator__upper_body__unarmed__defense__block_hold_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6240,7 +6390,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__n__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_01/operator__upper_body__unarmed__defense__parry_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6296,7 +6449,10 @@
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__e__8f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_miss_01/operator__full_body__unarmed__defense__parry_miss_01__w__8f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6356,7 +6512,10 @@
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_success_01/operator__fx__unarmed__defense__parry_success_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/defense/parry_success_01/operator__fx__unarmed__defense__parry_success_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6469,7 +6628,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/interaction/field_patch_use_01/operator__lower_body__unarmed__interaction__field_patch_use_01__w__14f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/interaction/field_patch_use_01/operator__upper_body__unarmed__interaction__field_patch_use_01__e__14f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/interaction/field_patch_use_01/operator__upper_body__unarmed__interaction__field_patch_use_01__w__14f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6722,7 +6884,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__sw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -6798,7 +6963,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_hitreact_01/operator__lower_body__unarmed__locomotion__idle_hitreact_01__s__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_hitreact_01/operator__upper_body__unarmed__locomotion__idle_hitreact_01__n__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/idle_hitreact_01/operator__upper_body__unarmed__locomotion__idle_hitreact_01__s__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7108,7 +7276,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__sw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__w__6f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7353,7 +7524,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__se__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__sw__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7397,7 +7571,10 @@
       "projection_policy": "intentional OMNI identity",
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/posture/dodge_charge_ready_01/operator__fx__unarmed__posture__dodge_charge_ready_01__omni__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7473,7 +7650,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__lower_body__unarmed__posture__idle_ready_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__upper_body__unarmed__posture__idle_ready_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__upper_body__unarmed__posture__idle_ready_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7549,7 +7729,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7625,7 +7808,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/reaction/bodyslam_knockdown_01/operator__full_body__unarmed__reaction__bodyslam_knockdown_01__w__12f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/reaction/bodyslam_knockdown_01/operator__fx__unarmed__reaction__bodyslam_knockdown_01__e__12f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/reaction/bodyslam_knockdown_01/operator__fx__unarmed__reaction__bodyslam_knockdown_01__w__12f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7667,7 +7853,10 @@
       "projection_policy": "intentional OMNI identity",
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/reaction/death_01/operator__full_body__unarmed__reaction__death_01__omni__8f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7719,7 +7908,10 @@
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/reaction/light_hitreact_01/operator__full_body__unarmed__reaction__light_hitreact_01__s__3f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/reaction/light_hitreact_01/operator__fx__unarmed__reaction__light_hitreact_01__s__3f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7763,7 +7955,10 @@
       "projection_policy": "intentional OMNI identity",
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/transition/dodge_chain_release_01/operator__fx__unarmed__transition__dodge_chain_release_01__omni__6f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7807,7 +8002,10 @@
       "projection_policy": "intentional OMNI identity",
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/transition/dodge_charge_meter_01/operator__fx__unarmed__transition__dodge_charge_meter_01__omni__8f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7851,7 +8049,10 @@
       "projection_policy": "intentional OMNI identity",
       "paths": [
         "res://content/sprites/operator/runtime/animations/unarmed/transition/dodge_charge_release_01/operator__fx__unarmed__transition__dodge_charge_release_01__omni__6f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -7927,7 +8128,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__lower_body__unarmed__transition__ready_to_relaxed_01__w__1f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__upper_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__upper_body__unarmed__transition__ready_to_relaxed_01__w__1f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     },
     {
       "profile": "unarmed",
@@ -8003,7 +8207,10 @@
         "res://content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__w__1f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png",
         "res://content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__w__1f__96.png"
-      ]
+      ],
+      "art_generation": "legacy_96",
+      "canonical_2_5d_status": "legacy_fallback_only",
+      "canonical_2_5d_completion": false
     }
   ],
   "legacy_or_non_live_actions": [
@@ -8053,5 +8260,82 @@
     ],
     "policy": "not fetched; visual evidence unavailable"
   },
-  "classification_method": "Structural live/non-live separation from reachability ledger; missing requested sectors counted against 8-sector audit target, with action-specific projections called out as projections. No rendered visual verdict is asserted by machine inventory."
+  "classification_method": "Structural live/non-live separation from the current reachability ledger. All pre-migration production rows are explicitly art_generation=legacy_96 and fallback-only for canonical 2.5D completion. The user-locked operator_2_5d_128 design sheet and first authored idle are recorded separately by exact hashes. Runtime-pixel matrices document legacy fallback evidence, not canonical approval. No visual verdict is asserted by machine inventory.",
+  "migration_authority": {
+    "decision_source": "user art-direction decision recorded in the authoring chat; current-main packet refresh 91e8ba079",
+    "design_reference": {
+      "source": "/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png",
+      "sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "sheet_size_px": [
+        2048,
+        256
+      ],
+      "layout": [
+        8,
+        1
+      ],
+      "cell_size_px": [
+        256,
+        256
+      ],
+      "directions": [
+        "N",
+        "NE",
+        "E",
+        "SE",
+        "S",
+        "SW",
+        "W",
+        "NW"
+      ],
+      "role": "immutable design, anatomy, projection, material, and direction authority",
+      "specialized_family_id": "operator_2_5d_design_reference"
+    },
+    "canonical_targets": [
+      {
+        "art_generation": "operator_2_5d_128",
+        "canonical_profile_id": "operator_2_5d_128",
+        "profile": "unarmed",
+        "group": "posture",
+        "action": "idle_relaxed_01",
+        "layer": "full_body",
+        "directions": [
+          "N",
+          "NE",
+          "E",
+          "SE",
+          "S",
+          "SW",
+          "W",
+          "NW"
+        ],
+        "frames_per_direction": 15,
+        "frame_size_px": [
+          128,
+          128
+        ],
+        "sheet_size_px": [
+          1920,
+          1024
+        ],
+        "source": "/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png",
+        "source_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
+        "status": "accepted_canonical_source_not_yet_intaken_or_runtime_published",
+        "legacy_same_semantic_identity": "unarmed/posture/idle_relaxed_01; remains a separate legacy_96 authoring/runtime identity",
+        "specialized_family_id": "operator_2_5d_unarmed_posture_idle_relaxed_01"
+      }
+    ],
+    "runtime_migration_summary": {
+      "legacy_96_production_reachable_action_families": 69,
+      "canonical_operator_2_5d_128_authored_families": 1,
+      "canonical_operator_2_5d_128_runtime_published_families": 0,
+      "production_reachable_families_without_canonical_2_5d_counterpart": 68,
+      "canonical_full_body_family_sheets_not_yet_authored": 68,
+      "baseline_direction_animation_strips_not_yet_authored": 544,
+      "sheet_estimate_limit": "One 8-direction full_body atlas per remaining semantic family is a planning baseline; additional modular, weapon, or FX layers and frame contracts are not counted until the canonical target plan assigns them.",
+      "approved_legacy_projection_or_omni_as_canonical_completion": 0,
+      "legacy_omni_action_families_for_future_target_decision": 6,
+      "legacy_catalog_only_action_families_excluded": 24
+    }
+  }
 }

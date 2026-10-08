@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-2-5d-animation-viability-audit`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -395,3 +395,31 @@ Before handoff/closeout:
 - Refresh reason: `the human art-direction decision is now recorded; the canonical-contract packet owns hardening the exact design lock and first authored animation`
 - Next action: `close this read-only audit on current main with the revised canonical-vs-legacy classification, release operator-art-agent, then allow the canonical visual-contract workstream to claim`
 - Blockers or open questions: `none beyond deterministic audit closeout; do not reopen the already-recorded visual decision`
+
+
+## Completion Truth
+- Goal satisfied: yes — migration viability evidence now distinguishes all live legacy art from the locked canonical generation and records the first accepted canonical family.
+- Completion boundary satisfied: yes — report and machine inventory were refreshed; no Operator art/runtime assets were mutated.
+- Acceptance satisfied: yes — exact design/animation hashes and geometry are recorded; the first canonical idle is separate from legacy runtime identity; 68 remaining production families and the atlas baseline are ranked; non-live families remain excluded.
+- Evidence: `reports/operator_presentation/OPERATOR_2_5D_ANIMATION_VIABILITY.md`; `reports/operator_presentation/operator_2_5d_coverage.json`; three existing evidence matrices; `operator anim list unarmed --json`; structural consistency check; clean `git diff --check`; only report Markdown/JSON changed against `origin/main`.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: dispatch found an existing clean audit worktree from the prior run; the claim was resumed after inspecting its remote branch and current-main merge.
+- Root cause / contributing factors: the packet was refreshed on main while a clean prior audit claim and branch remained active.
+- Prevention / pipeline improvement: inspect dispatcher and workstream recovery state, then resume the existing clean branch and reread the packet before editing.
+- Tooling / docs drift discovered: none
+- Follow-up: operator-2-5d-canonical-visual-contract
+- What worked: existing coverage JSON and pixel matrices preserved useful legacy evidence while exact user-locked generation metadata made canonical scope explicit.
+
+## Next Handoff
+- Next workstream: operator-2-5d-canonical-visual-contract
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Refresh reason: none
+- Next action: claim the canonical visual-contract packet after this audit archives and releases `operator-art-agent`.
+- Blockers or open questions: none

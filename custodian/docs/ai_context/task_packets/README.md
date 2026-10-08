@@ -50,7 +50,7 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
-- `OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md` — Determine whether the current production-reachable Operator animation art is viable for CUSTODIAN's fixed-isometric 2.5D contract, quantify exactly where dir...
+- `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Harden the user's exact 8-direction Operator design lock as the single deterministic visual authority and harden the supplied 8-direction relaxed idle as the...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -194,9 +194,9 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - K3D-1P kenney-isometric-blockout-playtest is complete/landed as the final walkable Kenney reference.
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
 - `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
-- `operator-2-5d-animation-viability-audit` is `ready/auto` for a read-only current-main closeout. The human visual decision is already recorded: pre-migration live art is not the target, the 2048x256 8-direction design sheet is locked authority, and the supplied 15x8 relaxed idle is the first canonical `operator_2_5d_128` family. Do not stop for another subjective review.
-- `operator-2-5d-canonical-visual-contract` is `ready/auto` behind that audit. It owns exact-byte source-work preservation, accepted dual-profile/reference authority, and hardening the relaxed idle as the first canonical family; its paired review is `ready/auto` behind it.
-- WB25-1 remains intentionally blocked/manual only until those prerequisite receipts land. The next executable node is the viability closeout, not another planning refresh.
+- `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
+- `operator-2-5d-canonical-visual-contract` is now the immediate `ready/auto` successor. It owns exact-byte source-work preservation, accepted dual-profile/reference authority, and hardening the relaxed idle as the first canonical family; its paired review follows.
+- WB25-1 remains blocked/manual until the canonical-contract receipt and paired review land; then return the final profile/reference hashes and target counts to the planning chat for its ready/auto refresh.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -207,7 +207,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-No WB25 implementation packet is claimable from stale assumptions. WB25-1 has now been remeasured after the reviewed New Animation correction and is explicitly `blocked/manual`; complete/recover the viability audit first, then recover/land/review the canonical visual contract, then perform the final WB25-1 target-count/profile-hash refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
+No WB25 implementation packet is claimable from stale assumptions. The viability closeout is complete; WB25-1 remains explicitly `blocked/manual` while the canonical visual contract is recovered, landed, and independently reviewed. Then return the final target-count/profile-hash evidence to the planning chat for the WB25-1 ready/auto refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
