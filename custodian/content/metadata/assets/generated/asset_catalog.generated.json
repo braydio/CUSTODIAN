@@ -4199,13 +4199,13 @@
             "underlay",
             "omni"
           ],
-          "path": "content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_704x704.png",
+          "path": "content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_1502x2048.png",
           "frames": 1,
           "frame_size": [
-            704,
-            704
+            1502,
+            2048
           ],
-          "sha256": "16674b618fc405838709f670007f0b277e9c6baa7bcef0610a8010c9a3b095a2",
+          "sha256": "76cc103eda059974f8f279e8e4e10fdb1b388030ea26f2a7b659075c45ceb48d",
           "provenance": "authored",
           "source_asset": null
         },
@@ -4246,13 +4246,13 @@
             "underlay",
             "omni"
           ],
-          "path": "content/levels/awakening/05_dust_lung/awakening_dust_lung_underlay_1216x1216.png",
+          "path": "content/levels/awakening/05_dust_lung/awakening_dust_lung_underlay_1502x2048.png",
           "frames": 1,
           "frame_size": [
-            1216,
-            1216
+            1502,
+            2048
           ],
-          "sha256": "fa017e6daa218d9a0713be760f19acdb285ae0c5e01854c3fe43126ca547f111",
+          "sha256": "fa8637992bfc0b1ff1b0d009fbe463e098a4adbfe97031c67d2276d2fe94172e",
           "provenance": "authored",
           "source_asset": null
         },
@@ -10885,13 +10885,13 @@
             "full_plate_underlay",
             "omni"
           ],
-          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png",
+          "path": "content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1502x2048.png",
           "frames": 1,
           "frame_size": [
-            1374,
-            1076
+            1502,
+            2048
           ],
-          "sha256": "eb1dd930c6c084a3a9dce59ed57c5b0716730698daf88edbb197cceb08ffe721",
+          "sha256": "489b49615ba53b0073519d5a261f736321ba69b95019bb54ec02ff408a9ffd76",
           "provenance": "authored",
           "source_asset": null
         }

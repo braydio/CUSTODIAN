@@ -18,7 +18,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Goal: Replace the independently fitted/rotated Dust Lung ↔ connector ↔ Locker Reliquary presentation with the user's exact precomposed three-layer registration. Preserve the supplied relative layout exactly; do not solve the connector as a separate anchor-fitting problem.
 - Completion boundary: Done when the three production layers reproduce the supplied 1502×2048 composition with one shared coordinate basis, zero per-piece rotation, exact layer bounds/overlaps/order, and no independent Dust/Locker/connector normalization that changes their relative registration. Gameplay geometry and the specialized Designation Locker remain unchanged.
-- Current measured state: The reviewed implementation at `bb4478fbca7181b4a8e0f5ce4e583e7e2b214a03` is technically self-consistent but visually wrong against newer direct authoring evidence. It binds Dust at its independent 1216×1216 room registration, Locker independently normalized to 704×704, and the connector at `position=(351.821,-2392.391)`, `scale=0.715951`, `rotation=-0.198826 rad` (-11.391598°). The user-provided registration exports prove those independent transforms are unnecessary and incorrect: Dust, connector, and Locker were authored to fit together already on one axis-aligned 1502×2048 canvas.
+- Current measured state: The runtime now publishes and binds the exact registered RGBA 1502×2048 images through the three existing Asset V2 families. One shared root at `(349,-2585)`, native 1:1 scale, and zero rotation aligns the visible-bounds centers of Dust and Locker to their existing room-art centers with symmetric 33×10 world-unit residuals. Layer bounds, draw order, overlaps, and composition export-edge difference are asserted. The separate Designation Locker remains interactive; Layout and collision remain unchanged. Paired review is the remaining lifecycle step.
 - Evidence: machine-readable registration authority `custodian/docs/ai_context/reports/assets/awakening_04_05_registered_composition_v1.json`;  authoring-chat reference images supplied 2026-10-07; current runtime screenshots showing the rotated/misaligned join; archived `AWAKENING_ROOM_CONNECTORS_POLISH.md` and review receipt; live `awakening_first_return.tscn`; existing three Asset V2 families and exact Dropbox raw source receipts.
 - Task-specific authority: the 1502×2048 registered composition geometry below owns relative art placement; existing Dropbox source masters own source pixels; `awakening_layout.gd` remains gameplay geometry authority; the specialized `awakening_designation_locker` remains P-9 interaction/presentation authority.
 - Work surface: `custodian/scenes/awakening_first_return.tscn`; the three existing environment/connector Asset V2 families only if their runtime representation must change; narrow Awakening presentation visibility/z-order code; focused registration validation; active docs describing the now-superseded rotated connector transform.
@@ -69,6 +69,41 @@
   6. The specialized Designation Locker remains correct and independently interactive.
   7. Bidirectional traversal remains physically valid and visually covered.
   8. Asset V2 status/doctor and changed-file validation are green.
-- Validation: registration/bounds smoke; compact three-layer render evidence; Asset V2 status/doctor for the three families if touched; Designation Locker smoke; Awakening scene/geometry/progression; bidirectional connector traversal; changed-file validation; `git diff --check`.
+- Validation: registration/bounds smoke; compact three-layer render evidence; Asset V2 status/doctor for the three families if touched; Designation Locker smoke; Awakening scene/geometry/progression; bidirectional connector traversal; changed-file validation; `git diff --check`; changed-file validation passed 26/26 checks after the Moment Forge late-seams scenario was updated to assert the new shared composition bounds.
 - Task overrides: `none`
 - Deferred: any genuine gameplay-geometry mismatch exposed after exact art composition is restored; Locker foreground replacement art; full Awakening convergence.
+
+## Completion Truth
+
+- State: complete
+- Registered source checks: all four Dropbox references match exact SHA-256, RGBA mode, and 1502×2048 dimensions.
+- Asset V2: Dust, connector, and Locker runtime outputs use the registered bytes; all three family statuses are complete and `asset.py doctor --json` is healthy.
+- Composition: alpha bounds match exactly; order is Dust→connector→Locker; overlaps are 17,979 / 10,979 / 0 pixels; ordered composite differs from the supplied composite at exactly 1,267 edge pixels.
+- Runtime: shared root `(349,-2585)`, scale `(1,1)`, rotation `0`; Designation Locker smoke passes; unchanged Layout geometry smoke reports a safe route and A→B→C/C→B→A order.
+- Real traversal: 1,025 Operator samples in the live scene remained on Layout walkable floor with registered layer alpha beneath the Operator, from Locker through Dust Lung and back.
+- Renderer: compact 640×720 GL compatibility capture passes with visible bounds `[65,12,575,708]`; artifact `/tmp/custodian_awakening_registered_composition.png`.
+- Focused checks: Awakening scene, progression, geometry, startup routing, Designation Locker, registered pixels, and Asset V2 doctor pass. Changed-file validation report is recorded in the implementation summary.
+- Deferred: Locker foreground parity and any later gameplay geometry redesign remain out of scope.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: the first registered render probe used Godot's headless dummy renderer, which cannot return viewport pixels; the chained Asset V2 invocation completed Dust before interruption, so connector and Locker were checked and ingested separately; changed-file validation exposed a stale Moment Forge assertion equating the retired Zone 05 underlay bounds with foreground bounds.
+- Root cause / contributing factors: headless CI rendering has no pixel backend; `asset.py --godot-import` imports the project for each requested family; the late-seams scenario still encoded the pre-registration room-local underlay contract.
+- Prevention / pipeline improvement: ingest all family outputs first, run one project import, and use `xvfb-run` with the GL compatibility renderer for viewport captures. The render helper now exits clearly when no rendered image is available. The late-seams scenario now probes Dust, connector, and Locker runtime layers and asserts their shared world bounds.
+- Tooling / docs drift discovered: the registered-canvas migration left one stale Zone 05 underlay/foreground bounds equality in `awakening_late_seams_v1`; corrected in-scope.
+- Follow-up: fixed-in-scope
+- What worked: pixel hash/alpha checks and real Operator sampling closed the registration and traversal questions without changing Layout.
+
+## Next Handoff
+
+- Next workstream: `review-awakening-04-05-registered-composition-correction-v1`
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Refresh reason: none
+- Next action: land this validated implementation, then claim its paired review from a fresh reviewer context.
+- Blockers or open questions: none

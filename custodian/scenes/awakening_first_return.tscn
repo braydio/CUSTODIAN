@@ -10,8 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://d3d4a6t868a3g" path="res://content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png" id="10_creche_underlay"]
 [ext_resource type="Texture2D" uid="uid://b8vd8462ar56b" path="res://content/levels/awakening/02_ambulatory/awakening_ambulatory_underlay_1152x960.png" id="11_ambulatory_underlay"]
 [ext_resource type="Texture2D" uid="uid://cii1it3q2sx6g" path="res://content/levels/awakening/03_attestation/awakening_attestation_underlay_832x928.png" id="12_attestation_underlay"]
-[ext_resource type="Texture2D" uid="uid://bkas3mmri55yh" path="res://content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_704x704.png" id="13_reliquary_underlay"]
-[ext_resource type="Texture2D" uid="uid://b66yjpw0sgajk" path="res://content/levels/awakening/05_dust_lung/awakening_dust_lung_underlay_1216x1216.png" id="14_dust_lung_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_underlay_1502x2048.png" id="13_reliquary_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/05_dust_lung/awakening_dust_lung_underlay_1502x2048.png" id="14_dust_lung_underlay"]
 [ext_resource type="Script" uid="uid://b4nd4yrjdaflb" path="res://game/world/lighting/world_lighting_director.gd" id="15_lighting_director"]
 [ext_resource type="Resource" path="res://content/lighting/profiles/awakening/awakening_baseline.tres" id="16_awakening_baseline"]
 [ext_resource type="PackedScene" path="res://game/world/awakening/awakening_undergate_lighting.tscn" id="17_undergate_lighting"]
@@ -27,7 +27,7 @@
 [ext_resource type="Texture2D" uid="uid://cda72d0gp0nqh" path="res://content/levels/awakening/07_gate_of_dust/awakening_gate_plaza_foreground_1536x768.png" id="28_gate_plaza_foreground"]
 [ext_resource type="Texture2D" uid="uid://b867x124s1xpi" path="res://content/levels/awakening/08_approach/awakening_custodian_approach_underlay_1024x864.png" id="29_approach_underlay"]
 [ext_resource type="Texture2D" uid="uid://cxracalij1jt3" path="res://content/levels/awakening/08_approach/awakening_custodian_approach_foreground_1024x864.png" id="30_approach_foreground"]
-[ext_resource type="Texture2D" path="res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png" id="32_connector_underlay"]
+[ext_resource type="Texture2D" path="res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1502x2048.png" id="32_connector_underlay"]
 
 [node name="GameRoot" type="Node2D" unique_id=935710687]
 script = ExtResource("1_awakening")
@@ -100,6 +100,7 @@ texture = ExtResource("24_attestation_foreground")
 
 [node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone04_LockerReliquary/ArtUnderlay" unique_id=1057892349]
 position = Vector2(704, -1984)
+visible = false
 texture = ExtResource("13_reliquary_underlay")
 
 [node name="Occlusion" type="Node2D" parent="World/AwakeningZones/Zone04_LockerReliquary" unique_id=1223575301]
@@ -113,12 +114,14 @@ position = Vector2(832, -1952)
 
 [node name="Underlay" type="Sprite2D" parent="World/AwakeningZones/Zone05_DustLung/ArtUnderlay" unique_id=73145972]
 position = Vector2(0, -3200)
+visible = false
 texture = ExtResource("14_dust_lung_underlay")
 
 [node name="Occlusion" type="Node2D" parent="World/AwakeningZones/Zone05_DustLung" unique_id=1161030699]
 
 [node name="Foreground" type="Sprite2D" parent="World/AwakeningZones/Zone05_DustLung/Occlusion" unique_id=2135271504]
 z_index = 10
+visible = false
 position = Vector2(0, -3200)
 texture = ExtResource("26_dust_lung_foreground")
 
@@ -201,13 +204,21 @@ south_gate_gap_width = 192.0
 [node name="ProductionArt" type="Node2D" parent="World/AwakeningZones/Traversal" unique_id=1856361752]
 z_index = 1
 
-[node name="Connector04_05_Underlay" type="Sprite2D" parent="World/AwakeningZones/Traversal/ProductionArt"]
-z_index = -3
-position = Vector2(351.821, -2392.391)
-rotation = -0.198826
-scale = Vector2(0.715951, 0.715951)
-centered = true
+[node name="RegisteredComposition04_05" type="Node2D" parent="World/AwakeningZones/Traversal/ProductionArt"]
+z_index = -4
+position = Vector2(349, -2585)
+
+[node name="DustLung" type="Sprite2D" parent="World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05"]
+z_index = 0
+texture = ExtResource("14_dust_lung_underlay")
+
+[node name="Connector" type="Sprite2D" parent="World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05"]
+z_index = 1
 texture = ExtResource("32_connector_underlay")
+
+[node name="LockerReliquary" type="Sprite2D" parent="World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05"]
+z_index = 2
+texture = ExtResource("13_reliquary_underlay")
 
 [node name="Projectiles" type="Node2D" parent="World" unique_id=1303418528]
 

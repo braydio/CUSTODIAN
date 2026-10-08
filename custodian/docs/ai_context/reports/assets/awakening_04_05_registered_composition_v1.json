@@ -72,5 +72,25 @@
     "connector_rotation_radians": -0.198826,
     "connector_rotation_degrees": -11.391598,
     "status": "historical only; disproven by direct registered-composition evidence"
+  },
+  "runtime_registration": {
+    "shared_root_position": [349, -2585],
+    "shared_root_scale": [1.0, 1.0],
+    "shared_root_rotation_radians": 0.0,
+    "mapping": "shared_canvas_center (751,1024) maps to the root position; pixels map 1:1 to world units",
+    "anchor_fit": {
+      "registered_dust_bounds_center": [435, 419],
+      "existing_dust_art_center_world": [0, -3200],
+      "registered_locker_bounds_center": [1073, 1615],
+      "existing_locker_art_center_world": [704, -1984],
+      "translation_method": "arithmetic mean of the Dust and Locker root translations required to align their visible-bounds centers",
+      "symmetric_world_residual_per_anchor": [33, 10]
+    },
+    "validation": {
+      "operator_bidirectional_samples": 1025,
+      "layout_walkable_samples": 1025,
+      "registered_floor_pixel_samples": 1025,
+      "shared_composition_opaque_through_connector_envelope": true
+    }
   }
 }

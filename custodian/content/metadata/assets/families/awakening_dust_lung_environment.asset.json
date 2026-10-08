@@ -11,8 +11,8 @@
     "filename_template": "{owner}_{variant}_{frame_size}.png"
   },
   "canvas": {
-    "width": 1216,
-    "height": 1216
+    "width": 1502,
+    "height": 2048
   },
   "direction_policy": "omni",
   "auto_mirror": false,
@@ -23,8 +23,8 @@
       "action_group": "display",
       "variant": "underlay",
       "layout": "copy",
-      "frame_width": 1216,
-      "frame_height": 1216
+      "frame_width": 1502,
+      "frame_height": 2048
     },
     "foreground": {
       "required": true,

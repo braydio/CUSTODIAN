@@ -5,7 +5,7 @@ const STARTUP_MODE_SCRIPT := preload("res://game/app/boot/startup_mode.gd")
 const PENDING_GENERATOR_SCRIPT := preload(
 	"res://tools/validation/fixtures/pending_world_contract_map.gd"
 )
-const AWAKENING_CONNECTOR_IMPORT := "res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png.import"
+const AWAKENING_CONNECTOR_IMPORT := "res://content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1502x2048.png.import"
 
 var failures: Array[String] = []
 

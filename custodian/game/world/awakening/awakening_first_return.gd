@@ -165,7 +165,7 @@ func _cache_zone_art_visibility_targets() -> void:
 		Layout.CONNECTORS["04_05_B"]
 	).merge(Layout.CONNECTORS["04_05_C"])
 	for visual_path in [
-		"Traversal/ProductionArt/Connector04_05_Underlay",
+		"Traversal/ProductionArt/RegisteredComposition04_05",
 	]:
 		var visual := zones_root.get_node_or_null(visual_path) as CanvasItem
 		if visual != null:
@@ -195,6 +195,8 @@ func _update_zone_art_visibility() -> void:
 		clampf(point.y, _connector_envelope.position.y, _connector_envelope.end.y)
 	)
 	var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
+	if _connector_envelope.grow(ZONE_ART_FADE_DISTANCE).has_point(point):
+		alpha = 1.0
 	_apply_art_alpha(_connector_fade_entries, alpha)
 
 

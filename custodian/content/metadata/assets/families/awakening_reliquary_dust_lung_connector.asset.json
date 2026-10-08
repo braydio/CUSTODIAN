@@ -11,8 +11,8 @@
     "filename_template": "{owner}_{variant}_{frame_size}.png"
   },
   "canvas": {
-    "width": 1374,
-    "height": 1076
+    "width": 1502,
+    "height": 2048
   },
   "direction_policy": "omni",
   "auto_mirror": false,
@@ -23,8 +23,8 @@
       "action_group": "connector",
       "variant": "full_plate_underlay",
       "layout": "copy",
-      "frame_width": 1374,
-      "frame_height": 1076,
+      "frame_width": 1502,
+      "frame_height": 2048,
       "frames": 1,
       "fps": 0
     },
