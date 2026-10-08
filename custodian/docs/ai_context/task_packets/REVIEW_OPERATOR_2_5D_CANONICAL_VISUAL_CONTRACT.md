@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-2-5d-canonical-visual-contract`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md`
-- Reviewed main: `90e2ac01e3b91809bd5e1b52fe6ada13e388c808`
+- Reviewed main: `91e8ba079681fbf5e8ce2b2a4263e451f106ffa2`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: `conditional`
 - Reviewer context: `fresh`
@@ -20,7 +20,6 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently verify that the exact user-supplied design lock was hardened as the accepted visual authority and the exact relaxed-idle sheet was hardened as the first canonical `operator_2_5d_128` animation family, while preserving deterministic dual-profile migration, direction-specific registration truth, and non-leaking anti-drift guides/QA.
-- Review modes: `code, architecture, asset-pipeline, workflow, visual-contract`
 - Non-goals: no art regeneration, no runtime animation replacement, no subjective redesign.
 - Required evidence: design lock source hash `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`, 2048x256 geometry and N/NE/E/SE/S/SW/W/NW order; first-animation source hash `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`, 1920x1024 geometry, 15x8 layout and 128x128 cells; immutable source-work copies; specialized Operator schema ownership; semantic identity `unarmed/posture/idle_relaxed_01/full_body`; exact-pixel preservation through intake; profile v1/v2 backward compatibility; accepted canonical-128 profile/reference hashes; reproducible landmarks/measurements; deterministic palette/brightness/silhouette reports; Aseprite guide exclusion; intentional drift fixtures caught.
 - Acceptance: zero blocking source-integrity/profile-migration/guide-leak defects; exact supplied bytes remain unchanged; the design sheet is the accepted lock; the relaxed idle is the first canonical family rather than a synthetic target or legacy fallback; no runtime cutover is smuggled into this slice. Subjective redesign is forbidden because the user already locked the visual authority.
