@@ -727,10 +727,10 @@ After reviewed landing:
 ## Completion Truth
 
 - Outcome: partial; implementation remains active and the 128px profile is provisional.
-- Complete: exact source masters and manifests, byte-exact cell reconstruction, shared-scale crisp 128px reference, deterministic per-direction measurements/palette summary, v3 backward-readable profile registry with stable legacy hash, explicit Art Agent profile selection, Aseprite registration/reference guides, design authority, and focused anti-drift coverage.
+- Complete: exact source masters and manifests, byte-exact cell reconstruction, shared-scale crisp 128px reference, deterministic per-direction measurements/palette summary, v3 backward-readable profile registry with stable legacy hash, 128px default for new Workbench animation-creation plans, explicit Art Agent profile selection, Aseprite registration/reference guides, design authority, and focused anti-drift coverage.
 - Not complete: semantic root/floor approval; universal body action-envelope proof; reviewed pixel cleanup; specialized canonical-family intake/timing registration; paired post-land review.
 - Human review: `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T182220Z/REVIEW_MANIFEST.json`, default retention `delete-after-review`.
-- Validation: canonical visual-contract smoke, registration-profile smoke, Aseprite clean-render guide-leak smoke, and `git diff --check` passed.
+- Validation: canonical visual-contract smoke, Workbench creation/migration smoke, registration-profile smoke, Art Agent MCP smoke, Aseprite clean-render guide-leak smoke, and `git diff --check` passed.
 
 ## Execution Feedback
 

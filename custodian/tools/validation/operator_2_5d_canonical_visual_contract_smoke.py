@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "custodian/tools/operator"))
 
 from art_agent.registration_profile import load_active_authoring_profile, load_profile
 from art_agent.service import ArtAgentService
+import animation_workbench_model as workbench_model
 from canonical_visual_contract import DIRECTIONS, REFERENCE, build, sha256
 
 
@@ -37,6 +38,8 @@ def main() -> int:
     assert active["profile_id"] == "operator_2_5d_128"
     assert active["registration"]["frame_size"] == [128, 128]
     assert active["registration"]["status"] == "provisional"
+    assert workbench_model.DEFAULT_PROFILE_ID == "operator_2_5d_128"
+    assert workbench_model.DEFAULT_FRAME_SIZE == (128, 128)
     assert ArtAgentService().registration_profile(profile_id="operator_2_5d_128")["profile_id"] == "operator_2_5d_128"
     assert {"left_foot_contact", "right_foot_contact", "projected_world_root", "shadow_origin"}.issubset(
         set(json.loads((ROOT / "custodian/content/data/operator/authoring/operator_landmark_schema.json").read_text())["names"])

@@ -171,8 +171,9 @@ plan-hash-verified crisp output from `pixelart --choose 1
 
 The profile file is now a backward-readable v3 registry. Existing Source
 Sessions and plans continue to resolve the byte-stable `legacy_96` profile;
-new authoring surfaces can explicitly resolve `operator_2_5d_128` through
-`load_active_authoring_profile()`. That 128px profile is provisional: the
+new animation-creation plans default to the active `operator_2_5d_128` 128px
+canvas, and Art Agent profile/report tooling can resolve it through
+`load_active_authoring_profile()` or an explicit profile ID. That profile is provisional: the
 semantic root/floor, universal action envelope, and normalized-reference pixel
 cleanup gates must pass before it is accepted. Its immutable input manifests,
 directional reference, and measurements are documented in

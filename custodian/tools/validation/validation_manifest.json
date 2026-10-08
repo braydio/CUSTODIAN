@@ -1391,7 +1391,8 @@
         "custodian/tools/operator/art_agent/service.py",
         "custodian/tools/operator/art_agent/cli.py",
         "custodian/tools/operator/art_agent/mcp_server.py",
-        "custodian/tools/art/custodian_pixelart_converter.py"
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/operator/animation_workbench_model.py"
       ],
       "timeout_sec": 60,
       "needs_import": false

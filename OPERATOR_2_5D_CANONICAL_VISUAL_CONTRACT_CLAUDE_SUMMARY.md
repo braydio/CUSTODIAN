@@ -8,7 +8,7 @@ Preserved the exact Dropbox design master (2048x256 RGBA, SHA-256 `41782240f4b59
 
 Used the required `pixelart --choose 1` alias path to produce one shared-scale 1024x128 rotation reference (SHA-256 `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`). Added deterministic measurements, a compact palette summary, an eight-direction F01 calibration overlay, a turnaround, and a visual-contract report. The v3 profile registry keeps `legacy_96` hash-stable (`3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5`) and exposes `operator_2_5d_128` as provisional (profile hash `c2fa7472a8d97079da65a7635757449850e87b2d1dd0818f37237ab79d1220fd`).
 
-Added explicit Art Agent profile selection and new semantic landmarks for projected root, shadow origin, and left/right foot contact. Aseprite guide layers now support profile-sized grids and direction-matched canonical reference ghosts; clean-render exclusion is covered by the existing Aseprite smoke.
+New Workbench animation-creation plans now default to the active 128px profile. Added explicit Art Agent profile selection and new semantic landmarks for projected root, shadow origin, and left/right foot contact. Aseprite guide layers now support profile-sized grids and direction-matched canonical reference ghosts; clean-render exclusion is covered by the existing Aseprite smoke.
 
 ## Gates Still Open
 
@@ -19,6 +19,7 @@ The compact Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-ca
 ## Validation
 
 - `operator_2_5d_canonical_visual_contract_smoke.py` — passed, including deterministic evidence generation, exact source hashes, profile backward-read, stable legacy hash, and explicit 128 profile selection.
+- `operator_animation_workbench_smoke.py` — passed, including new full-body/modular creation and existing 96px migration contracts.
 - `operator_art_registration_profile_smoke.py` — passed; v1 compatibility and trusted legacy normalization-plan replay remain valid.
 - `operator_art_agent_aseprite_smoke.py` — passed; visible guide layers do not leak into clean renders.
 - `operator_art_agent_mcp_smoke.py` — passed after adding optional profile selection.
