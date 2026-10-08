@@ -27,7 +27,7 @@ def load_profile(path: Path = PROFILE_PATH, profile_id: str | None = None) -> di
         if not isinstance(profiles, dict):
             raise ValueError("Operator v3 profile registry is missing profiles")
         # Legacy callers remain pinned to 96 until they explicitly opt into the
-        # provisional profile. New authoring surfaces read active_authoring_profile.
+        # canonical 128 profile. New authoring surfaces read active_authoring_profile.
         selected_id = selected_id or "legacy_96"
         if selected_id not in profiles:
             raise ValueError(f"unknown Operator art profile: {selected_id}")

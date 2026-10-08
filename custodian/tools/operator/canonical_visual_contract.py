@@ -142,9 +142,9 @@ def action_envelope_proxy() -> dict[str, Any]:
         }
     return {
         "status": "proxy_overflow_found" if any_overflow else "proxy_measurements_only",
-        "translation_assumption": {"legacy_anchor": [48, 84], "candidate_root": [64, 106], "whole_sprite_translation": [16, 22], "note": "This maps the current legacy anchor to the provisional root. It does not normalize alpha bounds or prove canonical 2.5D poses."},
+        "translation_assumption": {"legacy_anchor": [48, 84], "accepted_root": [64, 106], "whole_sprite_translation": [16, 22], "note": "This maps the legacy anchor to the accepted root. It does not normalize alpha bounds or prove canonical 2.5D poses."},
         "safety_margin_px": 8,
-        "not_proven_categories": ["ranged aim is modular and not unioned into a full-body sample", "wide block-hit pose", "all-direction action envelope in the locked projection"],
+        "deferred_per_action_validation": ["ranged aim is modular and not unioned into a full-body sample", "wide block-hit pose", "future extreme poses in the locked projection"],
         "categories": summary,
     }
 
@@ -157,6 +157,8 @@ def build() -> dict[str, Any]:
     assert reference.size == (1024, 128)
 
     source_root = DESIGN_PATH.parent
+    profile_doc = json.loads((ROOT / "custodian/content/data/operator/authoring/operator_art_profile.json").read_text())
+    profile_128 = profile_doc["profiles"]["operator_2_5d_128"]
     cell_dir = source_root / "source_cells"
     cell_dir.mkdir(parents=True, exist_ok=True)
     design_cells = {}
@@ -184,12 +186,17 @@ def build() -> dict[str, Any]:
     (animation_root / "unarmed_posture_idle_relaxed_01_full_body_v1_manifest.json").write_text(json.dumps({
         "schema": "custodian.operator_source_work_manifest.v1",
         "authority_id": "operator_2_5d_unarmed_posture_idle_relaxed_01",
+        "authority_status": "accepted_first_canonical_animation_source",
+        "semantic_identity": {"owner": "operator", "animation_profile": "unarmed", "action_group": "posture", "action": "idle_relaxed_01", "layer": "full_body"},
         "source_file": ANIMATION_PATH.name,
         "dropbox_path": "/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png",
         "sha256": sha256(ANIMATION_PATH), "bytes": ANIMATION_PATH.stat().st_size,
         "dimensions": [1920, 1024], "mode": "RGBA", "grid": [15, 8], "cell_size": [128, 128],
         "direction_order": list(DIRECTIONS), "frames_per_direction": 15, "loop": True,
-        "fps": None, "timing_note": "No authoritative timing metadata is embedded in the PNG; FPS is unresolved and was not inferred.",
+        "fps": None, "timing_status": "unknown_non_blocking", "timing_note": "No authoritative timing metadata is embedded in the PNG; FPS is unknown/null, was not inferred, and is not a visual-contract acceptance blocker.",
+        "generation": "operator_2_5d_128", "registration_profile_id": "operator_2_5d_128",
+        "registration_profile_sha256": profile_128["profile_sha256"],
+        "canonical_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
         "provenance": "user_supplied_canonical_animation",
         "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb",
     }, indent=2) + "\n")
@@ -230,23 +237,20 @@ def build() -> dict[str, Any]:
             "cool_hue_candidates_review_only": cool_candidates,
         }
 
-    profile_doc = json.loads((ROOT / "custodian/content/data/operator/authoring/operator_art_profile.json").read_text())
-    profile_128 = profile_doc["profiles"]["operator_2_5d_128"]
-
     report = {
         "schema": "custodian.operator_2_5d_visual_contract_measurements.v1",
         "sources": {
             "design": {"path": str(DESIGN_PATH.relative_to(ROOT)), "sha256": sha256(DESIGN_PATH), "bytes": DESIGN_PATH.stat().st_size, "size": list(design.size), "mode": "RGBA", "directions": list(DIRECTIONS), "cells": design_cells},
-            "first_animation": {"path": str(ANIMATION_PATH.relative_to(ROOT)), "sha256": sha256(ANIMATION_PATH), "bytes": ANIMATION_PATH.stat().st_size, "size": list(animation.size), "mode": "RGBA", "cell_size": [128, 128], "columns": 15, "rows": 8, "frames_per_direction": 15, "direction_order": list(DIRECTIONS), "loop": True, "fps": None, "timing_note": "No authoritative FPS/timing metadata is embedded in the supplied PNG; not inferred."},
+            "first_animation": {"path": str(ANIMATION_PATH.relative_to(ROOT)), "sha256": sha256(ANIMATION_PATH), "bytes": ANIMATION_PATH.stat().st_size, "size": list(animation.size), "mode": "RGBA", "cell_size": [128, 128], "columns": 15, "rows": 8, "frames_per_direction": 15, "direction_order": list(DIRECTIONS), "loop": True, "authority_status": "accepted_first_canonical_animation_source", "semantic_identity": {"owner": "operator", "animation_profile": "unarmed", "action_group": "posture", "action": "idle_relaxed_01", "layer": "full_body"}, "fps": None, "timing_status": "unknown_non_blocking", "timing_note": "No authoritative FPS/timing metadata is embedded in the supplied PNG; unknown/null and non-blocking."},
         },
         "normalized_reference": {"path": str(REFERENCE.relative_to(ROOT)), "sha256": sha256(REFERENCE), "size": list(reference.size), "method": "pixelart alias --choose 1, shared sheet scale, center anchor, nearest preparation", "directions": design_ref_metrics},
         "profile": {"id": "operator_2_5d_128", "status": profile_128["status"], "sha256": profile_128["profile_sha256"]},
         "first_animation_f01": idle_metrics,
         "calibration_candidates": {direction: candidate_landmarks(animation.crop((0, index * 128, 128, (index + 1) * 128))) for index, direction in enumerate(DIRECTIONS)},
-        "palette": {"method": "compact per-direction RGBA/luminance summary; HSV 90..250 degree pixels are review candidates, not automatic cleanup targets", "directions": palette, "cleanup_applied": False},
-        "registration": {"status": "provisional", "frame_size": [128, 128], "center_x": 64, "candidate_anchor": [64, 106], "candidate_ground_y": 107, "semantic_landmarks": ["hip_center", "left_foot_contact", "right_foot_contact", "projected_world_root", "shadow_origin"], "accepted_by_human": False},
-        "action_envelope": {"status": "not_proven", "required_pose_classes": ["deep_dodge_or_crouch", "fast_chain_extension", "wide_block_reaction", "overhead_melee", "long_1h_reach", "ranged_aim", "hit_reaction_recoil", "downed_or_death"], "legacy_proxy_scan": action_envelope_proxy()},
-        "pixel_cleanup": {"status": "pending_human_review", "normalized_reference_mutated": False},
+        "palette": {"method": "compact per-direction RGBA/luminance summary; HSV 90..250 degree pixels are measurement candidates only", "directions": palette, "cleanup_applied": False, "cleanup_status": "accepted_no_cleanup"},
+        "registration": {"status": "accepted", "frame_size": [128, 128], "center_x": 64, "anchor": [64, 106], "shadow_origin": [64, 107], "ground_y": 107, "direction_policy": "fixed_across_all_eight_directions", "semantic_landmarks": ["hip_center", "left_foot_contact", "right_foot_contact", "projected_world_root", "shadow_origin"], "accepted_by_human": True},
+        "action_envelope": {"status": "not_asserted", "universal_action_envelope": "not_asserted", "per_action_validation": "required_for_future_extreme_actions", "required_pose_classes": ["deep_dodge_or_crouch", "fast_chain_extension", "wide_block_reaction", "overhead_melee", "long_1h_reach", "ranged_aim", "hit_reaction_recoil", "downed_or_death"], "legacy_proxy_scan": action_envelope_proxy()},
+        "pixel_cleanup": {"status": "accepted_no_cleanup", "normalized_reference_mutated": False, "accepted_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9"},
     }
     EVIDENCE.mkdir(parents=True, exist_ok=True)
     (EVIDENCE / "operator_2_5d_measurement_summary.json").write_text(json.dumps(report, indent=2) + "\n")
@@ -313,17 +317,17 @@ def build() -> dict[str, Any]:
         f"Design source SHA-256: `{report['sources']['design']['sha256']}`.\n\n"
         f"First animation source SHA-256: `{report['sources']['first_animation']['sha256']}`.\n\n"
         f"Normalized reference SHA-256: `{report['normalized_reference']['sha256']}`.\n\n"
-        f"Provisional 128px profile SHA-256: `{report['profile']['sha256']}`.\n\n"
-        "The design-derived 128px reference uses one sheet-wide crisp scale and is measurement evidence only. "
-        "Root/floor remains provisional: the candidate guide is x=64, root y=106, ground y=107. "
-        "The supplied PNG has no authoritative timing metadata, so FPS is unresolved.\n\n"
+        f"Accepted 128px profile SHA-256: `{report['profile']['sha256']}`.\n\n"
+        "The design-derived 128px reference uses one sheet-wide crisp scale and is accepted unchanged as the comparison reference. "
+        "Accepted registration is fixed across all directions: center x=64, projected root [64,106], shadow origin/ground [64,107]. "
+        "The first animation is registered as the accepted `unarmed/posture/idle_relaxed_01/full_body` source family (8 directions x 15 frames); timing is unknown/null and non-blocking.\n\n"
         "## Action-envelope proxy evidence\n\n"
-        "Pre-migration `full_body` source frames were translated by +16,+22 (legacy anchor [48,84] to candidate root [64,106]); alpha bounds were not equalized. "
+        "Pre-migration `full_body` source frames were translated by +16,+22 (legacy anchor [48,84] to accepted root [64,106]); alpha bounds were not equalized. "
         "This is a proxy scan, not proof that legacy art is canonical 2.5D. Eight pixels of safety margin are used.\n\n"
         + "\n".join(envelope_table) + "\n\n"
         f"Fast-chain maximum: `{fast['path']}` frame {fast['frame']} has source alpha bbox `{fast['alpha_bbox']}` and candidate translated bbox `{fast['candidate_root_translated_bbox']}`. "
-        "This exceeds the 128px canvas under the stated root mapping; do not claim a universal 128px action envelope from the neutral idle. Ranged aim, a wide block-hit pose, and locked-projection coverage remain unproven.\n\n"
-        "Pixel cleanup review remains open.\n"
+        "This legacy proxy does not redefine the canonical body/reference frame. Universal action-envelope fit is explicitly not asserted; future genuine canonical overflow is handled with a root-preserving action-specific envelope or modular presentation.\n\n"
+        "Normalized-reference disposition: accepted unchanged, no cleanup pixels authorized.\n"
     )
     return report
 

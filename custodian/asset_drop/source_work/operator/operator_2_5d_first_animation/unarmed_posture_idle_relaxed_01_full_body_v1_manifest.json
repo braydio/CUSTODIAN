@@ -1,6 +1,14 @@
 {
   "schema": "custodian.operator_source_work_manifest.v1",
   "authority_id": "operator_2_5d_unarmed_posture_idle_relaxed_01",
+  "authority_status": "accepted_first_canonical_animation_source",
+  "semantic_identity": {
+    "owner": "operator",
+    "animation_profile": "unarmed",
+    "action_group": "posture",
+    "action": "idle_relaxed_01",
+    "layer": "full_body"
+  },
   "source_file": "unarmed_posture_idle_relaxed_01_full_body_v1_source.png",
   "dropbox_path": "/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png",
   "sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
@@ -31,7 +39,12 @@
   "frames_per_direction": 15,
   "loop": true,
   "fps": null,
-  "timing_note": "No authoritative timing metadata is embedded in the PNG; FPS is unresolved and was not inferred.",
+  "timing_status": "unknown_non_blocking",
+  "timing_note": "No authoritative timing metadata is embedded in the PNG; FPS is unknown/null, was not inferred, and is not a visual-contract acceptance blocker.",
+  "generation": "operator_2_5d_128",
+  "registration_profile_id": "operator_2_5d_128",
+  "registration_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+  "canonical_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
   "provenance": "user_supplied_canonical_animation",
   "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb"
 }

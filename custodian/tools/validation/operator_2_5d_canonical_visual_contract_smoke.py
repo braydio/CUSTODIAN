@@ -24,8 +24,15 @@ def main() -> int:
     assert first["sources"]["design"]["size"] == [2048, 256]
     assert first["sources"]["first_animation"]["size"] == [1920, 1024]
     assert first["sources"]["first_animation"]["fps"] is None
-    assert first["registration"]["status"] == "provisional"
-    assert first["action_envelope"]["status"] == "not_proven"
+    assert first["registration"]["status"] == "accepted"
+    assert first["registration"]["anchor"] == [64, 106]
+    assert first["registration"]["shadow_origin"] == [64, 107]
+    assert first["registration"]["ground_y"] == 107
+    assert first["action_envelope"]["status"] == "not_asserted"
+    assert first["action_envelope"]["universal_action_envelope"] == "not_asserted"
+    assert first["pixel_cleanup"]["status"] == "accepted_no_cleanup"
+    assert first["pixel_cleanup"]["normalized_reference_mutated"] is False
+    assert first["palette"]["cleanup_status"] == "accepted_no_cleanup"
     proxy_scan = first["action_envelope"]["legacy_proxy_scan"]
     assert proxy_scan["status"] == "proxy_overflow_found"
     fast_chain = proxy_scan["categories"]["fast_chain_extension"]
@@ -43,7 +50,10 @@ def main() -> int:
     active = load_active_authoring_profile()
     assert active["profile_id"] == "operator_2_5d_128"
     assert active["registration"]["frame_size"] == [128, 128]
-    assert active["registration"]["status"] == "provisional"
+    assert active["registration"]["status"] == "accepted"
+    assert active["profile"]["status"] == "accepted"
+    assert active["profile"]["universal_action_envelope"] == "not_asserted"
+    assert active["sha256"] == first["profile"]["sha256"]
     assert workbench_model.DEFAULT_PROFILE_ID == "operator_2_5d_128"
     assert workbench_model.DEFAULT_FRAME_SIZE == (128, 128)
     assert ArtAgentService().registration_profile(profile_id="operator_2_5d_128")["profile_id"] == "operator_2_5d_128"
@@ -51,12 +61,20 @@ def main() -> int:
         set(json.loads((ROOT / "custodian/content/data/operator/authoring/operator_landmark_schema.json").read_text())["names"])
     )
     assert set(first["calibration_candidates"]) == set(DIRECTIONS)
+    family_manifest = json.loads((ROOT / "custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_manifest.json").read_text())
+    assert family_manifest["authority_status"] == "accepted_first_canonical_animation_source"
+    assert family_manifest["semantic_identity"] == {"owner": "operator", "animation_profile": "unarmed", "action_group": "posture", "action": "idle_relaxed_01", "layer": "full_body"}
+    assert family_manifest["fps"] is None and family_manifest["timing_status"] == "unknown_non_blocking"
+    assert family_manifest["canonical_reference_sha256"] == sha256(REFERENCE)
+    assert family_manifest["registration_profile_sha256"] == active["sha256"]
 
     profile_path = ROOT / "custodian/content/data/operator/authoring/operator_art_profile.json"
     registry = json.loads(profile_path.read_text())
     assert registry["schema"] == "custodian.operator_art_profile.v3"
     assert registry["profiles"]["legacy_96"]["registration"] == legacy["registration"]
     assert registry["canonical_visual_reference"]["sha256"] == sha256(REFERENCE)
+    assert registry["canonical_visual_reference"]["status"] == "accepted"
+    assert registry["canonical_visual_reference"]["profile_sha256"] == active["sha256"]
     guide_script = (ROOT / "custodian/tools/aseprite/operator_anchor_guides.lua").read_text()
     assert "profile.active_authoring_profile" in guide_script
     assert "cell_width, cell_height = registration.frame_size" in guide_script

@@ -1045,10 +1045,16 @@ The exact user-supplied 2048x256 design lock and 1920x1024 relaxed-idle source
 are preserved byte-for-byte beneath Operator source-work with Dropbox
 provenance manifests. A crisp shared-scale 1024x128 directional reference and
 per-direction measurements are stored under the Operator reference and
-presentation-report paths. `operator_art_profile.json` is now a v3 registry;
-legacy 96 authoring remains byte-hash selectable, while the new 128 profile is
-explicitly provisional. Root/floor semantics, universal action envelope, and
-reference-pixel cleanup remain human-review gates. The design authority is
+presentation-report paths. The human-approved registration is x=64, root
+[64,106], and shadow/ground [64,107], fixed across all directions. The
+normalized reference is accepted unchanged at SHA-256
+`e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`; no pixel
+cleanup was authorized. `operator_art_profile.json` is a v3 registry; legacy
+96 authoring remains byte-hash selectable, and `operator_2_5d_128` is the
+accepted canonical body/reference profile. Universal action-envelope fit is
+not asserted; future extreme actions require per-action validation and may
+use root-preserving expanded envelopes. The accepted relaxed-idle source
+family has FPS/timing unknown/null, which is non-blocking. The design authority is
 `design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`.
 
 ## Operator Animation Workbench V2 (2026-08-28)

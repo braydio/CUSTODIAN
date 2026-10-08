@@ -125,10 +125,10 @@
     },
     "operator_2_5d_128": {
       "id": "operator_2_5d_128",
-      "status": "provisional",
+      "status": "accepted",
       "generation": "operator_2_5d_128",
       "registration": {
-        "status": "provisional",
+        "status": "accepted",
         "frame_size": [
           128,
           128
@@ -139,9 +139,10 @@
         ],
         "ground_y": 107,
         "provenance": {
-          "kind": "provisional_shared_scale_reference_candidate",
-          "accepted_date": null,
-          "human_approval_required": true
+          "kind": "human_approved_visual_contract",
+          "accepted_date": "2026-10-08",
+          "human_approval_required": false,
+          "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb"
         },
         "guide": {
           "horizontal": {
@@ -176,24 +177,26 @@
           "auto_frame_translation": false,
           "scale_segments": []
         },
-        "candidate_note": "All 128px semantic coordinates are provisional candidates for human calibration; do not use as accepted registration."
+        "accepted_note": "Root [64,106], shadow/ground [64,107], and center x=64 are fixed across all eight directions. Alpha bounds are not semantic registration authority."
       },
       "canonical_reference": {
         "path": "custodian/content/sprites/operator/reference/operator_2_5d/operator_2_5d_rotation_lock_128.png",
         "directions_path": "custodian/content/sprites/operator/reference/operator_2_5d/directions",
         "measurement_path": "reports/operator_presentation/canonical_visual_contract/operator_2_5d_measurement_summary.json",
-        "status": "provisional",
+        "status": "accepted",
         "sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9"
       },
-      "profile_sha256": "c2fa7472a8d97079da65a7635757449850e87b2d1dd0818f37237ab79d1220fd"
+      "universal_action_envelope": "not_asserted",
+      "profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761"
     }
   },
   "canonical_visual_reference": {
     "path": "custodian/content/sprites/operator/reference/operator_2_5d/operator_2_5d_rotation_lock_128.png",
     "sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
     "measurements_path": "reports/operator_presentation/canonical_visual_contract/operator_2_5d_measurement_summary.json",
-    "status": "provisional",
-    "source_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b"
+    "status": "accepted",
+    "source_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+    "profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761"
   },
   "enforcement": {
     "structural": true,

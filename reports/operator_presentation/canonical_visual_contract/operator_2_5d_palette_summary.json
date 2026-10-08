@@ -1,5 +1,5 @@
 {
-  "method": "compact per-direction RGBA/luminance summary; HSV 90..250 degree pixels are review candidates, not automatic cleanup targets",
+  "method": "compact per-direction RGBA/luminance summary; HSV 90..250 degree pixels are measurement candidates only",
   "directions": {
     "n": {
       "unique_opaque_rgba": 2714,
@@ -1313,5 +1313,6 @@
       "cool_hue_candidates_review_only": []
     }
   },
-  "cleanup_applied": false
+  "cleanup_applied": false,
+  "cleanup_status": "accepted_no_cleanup"
 }

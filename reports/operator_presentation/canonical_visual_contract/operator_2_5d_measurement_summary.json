@@ -2143,8 +2143,17 @@
         "nw"
       ],
       "loop": true,
+      "authority_status": "accepted_first_canonical_animation_source",
+      "semantic_identity": {
+        "owner": "operator",
+        "animation_profile": "unarmed",
+        "action_group": "posture",
+        "action": "idle_relaxed_01",
+        "layer": "full_body"
+      },
       "fps": null,
-      "timing_note": "No authoritative FPS/timing metadata is embedded in the supplied PNG; not inferred."
+      "timing_status": "unknown_non_blocking",
+      "timing_note": "No authoritative FPS/timing metadata is embedded in the supplied PNG; unknown/null and non-blocking."
     }
   },
   "normalized_reference": {
@@ -2288,8 +2297,8 @@
   },
   "profile": {
     "id": "operator_2_5d_128",
-    "status": "provisional",
-    "sha256": "c2fa7472a8d97079da65a7635757449850e87b2d1dd0818f37237ab79d1220fd"
+    "status": "accepted",
+    "sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761"
   },
   "first_animation_f01": {
     "n": {
@@ -2624,7 +2633,7 @@
     }
   },
   "palette": {
-    "method": "compact per-direction RGBA/luminance summary; HSV 90..250 degree pixels are review candidates, not automatic cleanup targets",
+    "method": "compact per-direction RGBA/luminance summary; HSV 90..250 degree pixels are measurement candidates only",
     "directions": {
       "n": {
         "unique_opaque_rgba": 2714,
@@ -3938,20 +3947,26 @@
         "cool_hue_candidates_review_only": []
       }
     },
-    "cleanup_applied": false
+    "cleanup_applied": false,
+    "cleanup_status": "accepted_no_cleanup"
   },
   "registration": {
-    "status": "provisional",
+    "status": "accepted",
     "frame_size": [
       128,
       128
     ],
     "center_x": 64,
-    "candidate_anchor": [
+    "anchor": [
       64,
       106
     ],
-    "candidate_ground_y": 107,
+    "shadow_origin": [
+      64,
+      107
+    ],
+    "ground_y": 107,
+    "direction_policy": "fixed_across_all_eight_directions",
     "semantic_landmarks": [
       "hip_center",
       "left_foot_contact",
@@ -3959,10 +3974,12 @@
       "projected_world_root",
       "shadow_origin"
     ],
-    "accepted_by_human": false
+    "accepted_by_human": true
   },
   "action_envelope": {
-    "status": "not_proven",
+    "status": "not_asserted",
+    "universal_action_envelope": "not_asserted",
+    "per_action_validation": "required_for_future_extreme_actions",
     "required_pose_classes": [
       "deep_dodge_or_crouch",
       "fast_chain_extension",
@@ -3980,7 +3997,7 @@
           48,
           84
         ],
-        "candidate_root": [
+        "accepted_root": [
           64,
           106
         ],
@@ -3988,13 +4005,13 @@
           16,
           22
         ],
-        "note": "This maps the current legacy anchor to the provisional root. It does not normalize alpha bounds or prove canonical 2.5D poses."
+        "note": "This maps the legacy anchor to the accepted root. It does not normalize alpha bounds or prove canonical 2.5D poses."
       },
       "safety_margin_px": 8,
-      "not_proven_categories": [
+      "deferred_per_action_validation": [
         "ranged aim is modular and not unioned into a full-body sample",
         "wide block-hit pose",
-        "all-direction action envelope in the locked projection"
+        "future extreme poses in the locked projection"
       ],
       "categories": {
         "deep_dodge_crouch": {
@@ -4239,7 +4256,8 @@
     }
   },
   "pixel_cleanup": {
-    "status": "pending_human_review",
-    "normalized_reference_mutated": false
+    "status": "accepted_no_cleanup",
+    "normalized_reference_mutated": false,
+    "accepted_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9"
   }
 }

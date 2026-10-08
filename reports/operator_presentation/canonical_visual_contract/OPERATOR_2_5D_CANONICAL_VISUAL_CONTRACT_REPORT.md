@@ -6,13 +6,13 @@ First animation source SHA-256: `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c5
 
 Normalized reference SHA-256: `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`.
 
-Provisional 128px profile SHA-256: `c2fa7472a8d97079da65a7635757449850e87b2d1dd0818f37237ab79d1220fd`.
+Accepted 128px profile SHA-256: `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`.
 
-The design-derived 128px reference uses one sheet-wide crisp scale and is measurement evidence only. Root/floor remains provisional: the candidate guide is x=64, root y=106, ground y=107. The supplied PNG has no authoritative timing metadata, so FPS is unresolved.
+The design-derived 128px reference uses one sheet-wide crisp scale and is accepted unchanged as the comparison reference. Accepted registration is fixed across all directions: center x=64, projected root [64,106], shadow origin/ground [64,107]. The first animation is registered as the accepted `unarmed/posture/idle_relaxed_01/full_body` source family (8 directions x 15 frames); timing is unknown/null and non-blocking.
 
 ## Action-envelope proxy evidence
 
-Pre-migration `full_body` source frames were translated by +16,+22 (legacy anchor [48,84] to candidate root [64,106]); alpha bounds were not equalized. This is a proxy scan, not proof that legacy art is canonical 2.5D. Eight pixels of safety margin are used.
+Pre-migration `full_body` source frames were translated by +16,+22 (legacy anchor [48,84] to accepted root [64,106]); alpha bounds were not equalized. This is a proxy scan, not proof that legacy art is canonical 2.5D. Eight pixels of safety margin are used.
 
 | Action class | Proxy frames | Safety-margin overflow | Canvas overflow | Status |
 | --- | ---: | ---: | ---: | --- |
@@ -24,6 +24,6 @@ Pre-migration `full_body` source frames were translated by +16,+22 (legacy ancho
 | hit_recoil | 27 | 0 | 0 | proxy_within_margin |
 | downed_death | 32 | 0 | 0 | proxy_within_margin |
 
-Fast-chain maximum: `custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__e__8f__156x96.png` frame 4 has source alpha bbox `[35, 11, 136, 85]` and candidate translated bbox `[51, 33, 152, 107]`. This exceeds the 128px canvas under the stated root mapping; do not claim a universal 128px action envelope from the neutral idle. Ranged aim, a wide block-hit pose, and locked-projection coverage remain unproven.
+Fast-chain maximum: `custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__e__8f__156x96.png` frame 4 has source alpha bbox `[35, 11, 136, 85]` and candidate translated bbox `[51, 33, 152, 107]`. This legacy proxy does not redefine the canonical body/reference frame. Universal action-envelope fit is explicitly not asserted; future genuine canonical overflow is handled with a root-preserving action-specific envelope or modular presentation.
 
-Pixel cleanup review remains open.
+Normalized-reference disposition: accepted unchanged, no cleanup pixels authorized.

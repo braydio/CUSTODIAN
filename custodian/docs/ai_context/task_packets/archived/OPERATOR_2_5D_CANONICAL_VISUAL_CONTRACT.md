@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-2-5d-canonical-visual-contract`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-2-5d-animation-viability-audit`
@@ -63,19 +63,19 @@
    - Do not recolor, repaint, anti-alias-clean, anatomy-correct, or alter isolated heuristic hue candidates.
 
 4. **Profile disposition.**
-   - Promote `operator_2_5d_128` from provisional to accepted/canonical registration authority once these decisions are encoded.
-   - Explicitly record that universal action-envelope fit is **not asserted** (use `universal_action_envelope: not_asserted` or the closest existing schema representation).
-   - The accepted profile means: 128x128 body/reference frame, root `[64,106]`, shadow/ground `[64,107]`, locked 8-direction projection, locked design identity, accepted normalized comparison reference.
+   - `operator_2_5d_128` is accepted/canonical registration authority (profile SHA-256 `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`).
+   - Universal action-envelope fit is explicitly `not_asserted`.
+   - The accepted profile means: 128x128 body/reference frame, root `[64,106]`, shadow/ground `[64,107]`, locked 8-direction projection, locked design identity, and accepted unchanged normalized comparison reference.
 
 5. **Animation timing remains unknown and is not a blocker here.**
    - For `unarmed/posture/idle_relaxed_01/full_body`: 8 directions, 15 frames/direction, 128x128 cells, loop topology accepted.
    - FPS/timing: `unknown/null` until an authoritative timing source exists. Do not infer timing from PNG pixels.
 
 6. **Resume/closeout instruction.**
-   - Encode the decisions above into durable profile/report/tooling authority.
-   - Consume and clean the reviewed handoff using the manifest's emitted cleanup command for `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json`.
-   - Rerun the focused validation already used by this workstream plus any checks directly affected by the decision encoding.
-   - Land this implementation when its packet acceptance is satisfied; then allow `review-operator-2-5d-canonical-visual-contract` to claim automatically.
+   - The decisions are encoded in profile, report, source-family manifest, validation, and active design authority.
+   - The reviewed handoff `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json` was cleaned with its emitted command; publisher returned `status: deleted` under `delete-after-review`.
+   - Focused validation passed after encoding the decisions.
+   - Land this implementation; then allow `review-operator-2-5d-canonical-visual-contract` to claim in a fresh reviewer context.
 
 ## Identity
 
@@ -769,34 +769,35 @@ After reviewed landing:
 
 ## Completion Truth
 
-- Outcome: partial; implementation remains active, but the human approval gate is resolved and the 128px profile may now be finalized as accepted/canonical registration authority.
-- Complete: exact source masters and manifests, byte-exact cell reconstruction, shared-scale crisp 128px reference, deterministic per-direction measurements/palette summary, v3 backward-readable profile registry with stable legacy hash, 128px default for new Workbench animation-creation plans, explicit Art Agent profile selection, Aseprite registration/reference guides, design authority, and focused anti-drift coverage.
-- Not complete: encode the recorded root/floor/reference decisions; promote the canonical profile with universal action-envelope fit explicitly unasserted; finish specialized canonical-family intake/provenance and unknown/null timing disposition; clean the reviewed handoff; then land for paired post-land review.
+- Outcome: success; implementation acceptance is complete. The human approval gate is resolved and `operator_2_5d_128` is accepted as the canonical body/reference registration profile.
+- Complete: both exact source masters and provenance manifests; byte-exact design-cell reconstruction; accepted unchanged shared-scale 128px reference; fixed center/root/shadow/ground semantics; accepted first relaxed-idle family identity/provenance; explicit unknown/null non-blocking timing; v3 backward-readable profile registry with stable `legacy_96`; 128px default for new Workbench animation-creation plans; explicit Art Agent profile selection; Aseprite guides; design authority; focused anti-drift coverage; reviewed handoff cleanup.
+- Deferred by approved decision: universal action-envelope fit is not asserted. Future extreme actions require per-action validation and may use root-preserving expanded envelopes or modular presentation. Ranged aim, wide block-hit, and systemic all-direction extremes are not acceptance blockers. Production runtime selectors remain unchanged by scope. Animation FPS/timing is unknown/null and non-blocking.
 - Action-envelope evidence: the deterministic scan contains 446 category-assigned pre-migration full-body proxy frame observations (categories can overlap). Under the explicit +16,+22 legacy-root translation, 46/180 fast-chain frames and 16/47 long one-handed-reach frames exceed the 128px canvas; 71 and 24 frames respectively exceed the 8px safety margin. The largest fast-chain proxy is east `fast_02` frame 4, source alpha bbox `[35,11,136,85]`, translated bbox `[51,33,152,107]`. Human decision: this legacy proxy does **not** redefine the canonical canvas/root. Universal action-envelope fit is intentionally unasserted; future canonical overflow is handled by root-preserving action-specific envelopes or modular presentation unless later systemic evidence justifies a global change.
-- Human review: resolved in the authoring chat on 2026-10-08; exact decisions are recorded in `## Agent Handoff / Planning Decisions — 2026-10-08` above. The reviewed manifest `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json` is now eligible for its prescribed delete-after-review cleanup after the agent consumes the decisions.
-- Validation: canonical visual-contract smoke, Workbench creation/migration smoke, registration-profile smoke, Art Agent MCP smoke, Aseprite clean-render guide-leak smoke, Python compilation, and `git diff --check` all passed with the proxy evidence update.
+- Human review: resolved in the authoring chat on 2026-10-08; exact decisions are recorded in `## Agent Handoff / Planning Decisions — 2026-10-08`. The reviewed manifest `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json` was processed with its emitted cleanup command; publisher returned `status: deleted`, retention `delete-after-review`.
+- Accepted profile/reference SHA-256: profile `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`; normalized reference `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`.
+- Validation: canonical visual-contract smoke, Workbench creation/migration smoke, registration-profile smoke, Art Agent MCP smoke, Aseprite clean-render guide-leak smoke, Python compilation, and `git diff --check` all passed after encoding the approval.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: partial
+- Outcome: success
 - Friction severity: medium
-- What went wrong: initial registry migration made the legacy plan replay guard reject the new registry file hash; separately, the neutral idle did not prove the universal action envelope, so a source-proxy scan was added and it found fast-chain and long-reach overflow candidates late in implementation.
-- Root cause / contributing factors: the converter compared a selected profile hash to the entire v3 registry hash; the packet's neutral-idle evidence did not represent extreme actions; Dropbox review runs are immutable by design.
-- Prevention / pipeline improvement: compare explicit profile hashes from the v3 registry while retaining v1/v2 file-hash compatibility; scan representative action classes before treating a neutral animation as canvas proof; publish changed review evidence under a fresh run ID.
-- Tooling / docs drift discovered: packet omits the required `Change` field; record retained here for packet-authoring repair before archive. The user-supplied animation PNG has no authoritative FPS/timing metadata.
-- Follow-up: `operator-2-5d-canonical-visual-contract`
-- What worked: source hashes, geometry, direction order, exact legacy profile hash, and proxy extents are deterministic checks.
+- What went wrong: initial registry migration made legacy plan replay reject the v3 registry hash. The neutral idle also could not prove a universal action envelope, so a later proxy scan exposed legacy fast-chain and reach overflow candidates. Two immutable Dropbox handoffs were superseded before the final review was recorded.
+- Root cause / contributing factors: converter validation originally compared a selected profile hash with the entire v3 file hash; the neutral idle does not represent extreme actions; review manifests cannot be overwritten.
+- Prevention / pipeline improvement: validate explicit profile hashes while preserving v1/v2 compatibility; distinguish body/reference registration from future per-action envelopes; publish updated visual evidence under a fresh run ID and keep the packet pointed at the latest manifest.
+- Tooling / docs drift discovered: the planning refresh supplied the missing `Change` field and reviewed decision block. The repo-wide `check_ai_context.py` reports 13 unrelated pre-existing packet grammar/index findings (vehicle packet review-mode metadata, Sundered Keep/ProcGen visual-review metadata, one archived review indexed as active, and incomplete ProcGen Alpine / Scout correction packet fields); none names this packet or any changed task file. Source timing remains unavailable and is explicitly represented as unknown/null, non-blocking.
+- Follow-up: `review-operator-2-5d-canonical-visual-contract`
+- What worked: source hashes, geometry, direction order, stable legacy profile hash, proxy extents, and human decisions are now explicit machine-checkable or durable.
 
 
 ## Handoff
 
 - Next workstream: `review-operator-2-5d-canonical-visual-contract`
-- Next packet state: `dependency-gated / ready-auto after this implementation lands`
+- Next packet state: `ready after this implementation lands`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include the exact Authoring chat URL in the closing summary and final Next Handoff
-- Refresh reason: `human decisions are now recorded in this packet; the current implementation must encode them, clean the reviewed handoff, validate, and land before paired review`
-- Next action: `resume this active workstream now; encode the Agent Handoff / Planning Decisions above, clean the reviewed manifest, rerun focused validation, land the implementation, then allow the paired review to claim`
+- Refresh reason: `none; accepted implementation is ready for paired post-land review`
+- Next action: `land this implementation, then claim the paired review in a fresh reviewer context; after that review passes, refresh WB25-1 using its packet and this accepted profile/family provenance`
 - Blockers or open questions: `none for this workstream. Ranged aim/wide block-hit/all-direction extreme-envelope proof is deferred per-action evidence; FPS/timing remains unknown/null and is explicitly non-blocking here.`

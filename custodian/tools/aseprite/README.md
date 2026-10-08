@@ -35,13 +35,14 @@ a pilot-only Aseprite path or gain publication authority.
 visible, locked `__ART_GUIDE_OPERATOR_REGISTRATION_*` group. For the v3
 registry, the active authoring profile is selected by default; pass
 `--script-param profile_id=legacy_96` to inspect legacy registration or
-`profile_id=operator_2_5d_128` for the provisional 128px guides. The 128px mode
+`profile_id=operator_2_5d_128` for the accepted canonical 128px guides. The 128px mode
 also adds a direction-selected canonical-reference ghost; use
 `--script-param direction=ne` (one of `n, ne, e, se, s, sw, w, nw`). Supply
 `--script-param profile=<path>` and optionally `repo=<root>` for headless use.
 An unmatched canvas grid falls back to legacy 96 when possible. Clean Art Agent
 rendering excludes guide and reference layers, which never create publishing
-bindings. The 128px root/floor values remain provisional until human review.
+bindings. The accepted 128px root/floor values are x=64, root y=106, and
+ground/shadow y=107 across all eight directions.
 
 ## Humanoid rigid-cutout source
 
