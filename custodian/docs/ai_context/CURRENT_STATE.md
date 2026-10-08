@@ -10,6 +10,8 @@ This is **planned program state, not yet live runtime**. The existing independen
 
 - **Procgen startup spawn residency correction (2026-10-07):** contract spawn eligibility now uses canonical valid-spawn, runtime-navigation, accepted-component, and ingress-clearance checks without requiring current TileMap paint. `ContractWorldLoader` selects first, calls `ProcGenTilemap.ensure_spawn_presentation_ready()` for the chosen cell, and restores Operator visibility/control only after exact-tile floor realization. Real generated streaming coverage proves an initially unpainted accepted-component spawn reaches contract ready; the true no-canonical-safe path remains hidden/disabled and reports `no_canonical_safe_spawn`. The fresh paired review passed with no blocking defects or material evidence gaps; both readiness-seam and painted-floor-filter negative controls failed as expected.
 
+- **Literal production startup integrity (2026-10-08):** the actual `res://scenes/game.tscn` boot now keeps the canonical `/root/GameRoot/World/Operator` hidden and disabled until ProcGen placement, floor realization, camera refresh and navigation rebuild complete. A generation-scoped placement receipt is checked immediately before `contract_ready`; the literal-scene smoke proves one player identity, exact tile round-trip and the expected install ordering. The pre-fix seed `1773840677` reproduced `no_canonical_safe_spawn`: Forlorn's large ingress dressing clearance covered every cell in the 72-cell main component. Its edge placement now keeps 16 tiles from the live ProcGen spawn. Genuine unsafe generations remain fail-closed.
+
 ## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
 
 `PilotableVehicle` is the sole production vehicle lifecycle owner. Ordinary exits
@@ -167,16 +169,16 @@ compile and aesthetics were proven on a real Vulkan renderer by
 visual pass was approved by the user on 2026-10-05. ARR1 R0-03/R0-04 are covered by the AR2 and
 distant-unload smokes.
 
-## Archive Resolve V1 Closeout / Deferred Live Playtest (2026-10-07)
+## Archive Resolve V1 Closeout / Live Playtest Unblocked (2026-10-08)
 
 AR3 semantic echo/ingress/reacquisition and AR4 frontier restraint have completed
 implementation, correction and paired-review lineage. AR4's current production baseline
 remains an 11-tile local frontier, fringe 2, 84 resolve starts/sec, burst cap 8 and
 0.22 s resolve duration. Human disposition is `waive-to-playtest`: code/evidence closeout
-is complete, but ordinary game-feel confirmation is still deferred because the literal
-production `game.tscn` startup can leave the live player at the scene-authored legacy
-Operator coordinates instead of the generated spawn. Do not reopen or retune Archive
-Resolve to solve that blocker; `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md` owns the P0.
+is complete. The literal-scene startup regression now proves relocation, receipt
+consistency and fail-closed behavior, so ordinary game-feel confirmation is unblocked.
+Do not reopen or retune Archive Resolve as part of startup integrity; its visual
+disposition remains the human playtest decision.
 
 ## Contract World Placement Foundation (2026-10-02)
 

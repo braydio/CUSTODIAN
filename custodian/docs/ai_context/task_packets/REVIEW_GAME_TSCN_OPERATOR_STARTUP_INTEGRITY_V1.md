@@ -8,7 +8,9 @@
 - Depends on: `game-tscn-operator-startup-integrity-v1`
 - Locks: `contract-world-loader, game-scene-startup, procgen-spawn-integrity`
 - Kind: `review`
-- Review: `manual`
+- Review: `none`
+- Review target workstream: `game-tscn-operator-startup-integrity-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md`
 - Review stage: `post-land`
 - Review modes: `code, runtime, architecture`
 - Paired review workstream: `none`
@@ -65,14 +67,12 @@
   - implementation mutation proof;
   - `python3 custodian/tools/validation/run_validation.py --changed --json`;
   - `git diff --check`.
-- Task overrides: `TASK OVERRIDE: review only; do not edit the reviewed implementation. Commits are limited to the durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets required by confirmed findings.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: Resume the user's Archive Resolve live playtest after this review passes.
 
 ## Review Receipt
 
 - Status: `pending`
-- Review target workstream: `game-tscn-operator-startup-integrity-v1`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md`
 - Reviewed main: `<fill at review>`
 - Reviewer context: `fresh`
 - Reviewer provenance: `<fill>`

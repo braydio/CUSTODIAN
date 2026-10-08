@@ -3674,6 +3674,32 @@
       "needs_import": true
     },
     {
+      "id": "game_scene_operator_startup_integrity",
+      "type": "godot_script",
+      "script": "res://tools/validation/game_scene_operator_startup_integrity_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "game_scene",
+        "operator_spawn",
+        "startup_integrity",
+        "regression"
+      ],
+      "owners": [
+        "custodian/scenes/game.tscn",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/levels/world_ingress_placement_resolver.gd",
+        "custodian/content/routes/ash_bell/forlorn_ritualant_underground_route.json",
+        "custodian/content/routes/ash_bell/lower_quarter_route.json",
+        "custodian/game/world/procgen/world_contract_bootstrap.gd",
+        "custodian/game/world/procgen/world_contract_proxy.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/systems/debug/dev_observatory.gd",
+        "custodian/tools/validation/game_scene_operator_startup_integrity_smoke.gd"
+      ],
+      "timeout_sec": 360,
+      "needs_import": true
+    },
+    {
       "id": "contract_world_ingress_spawn_clearance",
       "type": "godot_script",
       "script": "res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd",
