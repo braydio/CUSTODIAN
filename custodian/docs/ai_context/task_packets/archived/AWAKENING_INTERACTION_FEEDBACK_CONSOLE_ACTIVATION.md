@@ -61,7 +61,7 @@
 
 ## Independent Review
 
-- Status: `pass`
+- Status: `passed`
 - Review workstream: `review-awakening-interaction-feedback-console-activation`
 - Reviewed on main: `b0bc0956c4ce0510199b098d74691a39672df69a`
 - Reviewed implementation commit: `81004eb98571d209b72cdbe0128d9042dc2dd752`
