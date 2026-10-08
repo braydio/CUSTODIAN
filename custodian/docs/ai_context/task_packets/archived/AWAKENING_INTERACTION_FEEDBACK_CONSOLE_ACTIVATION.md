@@ -15,6 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `218df82e2e5d8241cb349c21c05f0439570948a4`
+- Visual review: `none`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Goal: Restore readable interaction feedback in Awakening by making proximity prompts persist for the full time an interaction target is valid, making one-shot/readout feedback remain legible instead of disappearing after a few process frames, and wiring the already-ingested 8-frame Crèche console activation FX so the opening console visibly responds on first acknowledgement.
 - Completion boundary: Done when Awakening continuously presents the current valid interaction target, clears the prompt promptly when the target becomes invalid/out of range or the HUD context is suppressed, preserves a readable long-form readout/confirmation dwell without proximity refresh overwriting it, and the existing `awakening_creche_console_activation_fx/activate` 8-frame Asset V2 state visibly plays once at the Layout-owned Crèche console marker on first acknowledgement. No new art is created.
@@ -56,7 +57,7 @@
 - Evidence: focused HUD interaction lease/latch smoke; Awakening first-return progression smoke; Twin Solaria runtime smoke; changed-file validation with 20/20 selected checks passing and complete file coverage; Asset V2 doctor healthy; activation family status imported 1/1; `git diff --check` clean.
 - Result: complete
 - Remaining acceptance gaps: none
-- Visual review: not required; structured runtime checks observe all eight atlas frames and exact 8 FPS playback, plus visibility/stop/one-shot/reset state.
+- Visual review evidence: not required; structured runtime checks observe all eight atlas frames and exact 8 FPS playback, plus visibility/stop/one-shot/reset state.
 
 ## Execution Feedback
 - Feedback schema: custodian.task_feedback.v1
