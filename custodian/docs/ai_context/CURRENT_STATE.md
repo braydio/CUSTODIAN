@@ -404,10 +404,17 @@ that is accepted only on `workbench/operator-art` targeting `origin/main`; it
 still passes through the same serialized, race-safe `land_main.py` algorithm.
 The lander accepts the branch's own upstream while still rejecting publication
 on unrelated remote refs. Successful finish verifies ancestry from
-`origin/main` before removing completed branch/worktree state. Branch archive
-hygiene is ancestry-based and report-only by default. Paired post-land reviews
-now use stable cycle-scoped findings, explicit correction thresholds, and
-delta-only correction packets. Their bounded packet override permits commits
+`origin/main` before removing completed branch/worktree state. A successful
+finish is no longer a routine human handback boundary: when the durable
+`Next Handoff` names an eligible same-series successor and
+`ChatGPT/user planning refresh required: no`, the agent/worker persists the
+completed `<TASK>_CLAUDE_SUMMARY.md`, claims the successor itself, and continues
+autonomously. Human/ChatGPT refresh gates stop with a compact Authoring Chat +
+Workstream + persistent-summary card so the user only has to open the recorded
+conversation and paste the workstream ID. Branch archive hygiene is
+ancestry-based and report-only by default. Paired post-land reviews now use
+stable cycle-scoped findings, explicit correction thresholds, and delta-only
+correction packets. Their bounded packet override permits commits
 only for the archived review receipt, required summary, review-packet lifecycle
 metadata, and correction/re-review packets; reviewed implementation and
 unrelated files remain prohibited. Dispatch rejects auto review packets with a
@@ -1042,6 +1049,24 @@ evacuation-road material and an explicit west-turn line. Civic and catastrophe
 props were remapped off the reserved axis. The requested facade-frame source
 IDs remain blocked because current semantic IDs 62, 64, 129, and 140 resolve to
 different emergency/salvage assets, not the facade semantics named by V1.
+
+## Operator 2.5D Visual Authority (2026-10-08)
+
+The exact user-supplied 2048x256 design lock and 1920x1024 relaxed-idle source
+are preserved byte-for-byte beneath Operator source-work with Dropbox
+provenance manifests. A crisp shared-scale 1024x128 directional reference and
+per-direction measurements are stored under the Operator reference and
+presentation-report paths. The human-approved registration is x=64, root
+[64,106], and shadow/ground [64,107], fixed across all directions. The
+normalized reference is accepted unchanged at SHA-256
+`e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`; no pixel
+cleanup was authorized. `operator_art_profile.json` is a v3 registry; legacy
+96 authoring remains byte-hash selectable, and `operator_2_5d_128` is the
+accepted canonical body/reference profile. Universal action-envelope fit is
+not asserted; future extreme actions require per-action validation and may
+use root-preserving expanded envelopes. The accepted relaxed-idle source
+family has FPS/timing unknown/null, which is non-blocking. The design authority is
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`.
 
 ## Operator Animation Workbench V2 (2026-08-28)
 

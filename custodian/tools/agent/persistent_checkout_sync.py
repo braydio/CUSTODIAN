@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import fcntl
-import hashlib
 import json
 import os
 import subprocess
@@ -105,30 +104,78 @@ def _status_paths(records: Iterable[str]) -> list[str]:
     return sorted({record.partition("\t")[2] for record in records if "\t" in record})
 
 
-def _ignored_manifest(root: Path) -> dict[str, str]:
-    raw = subprocess.run(
-        ["git", "ls-files", "--others", "--ignored", "--exclude-standard", "-z"],
+def _candidate_paths(paths: Iterable[str]) -> list[str]:
+    candidates: set[str] = set()
+    for relative in paths:
+        normalized = Path(relative)
+        candidates.add(normalized.as_posix())
+        parent = normalized.parent
+        while parent != Path("."):
+            candidates.add(parent.as_posix())
+            parent = parent.parent
+    return sorted(candidates)
+
+
+def _candidate_state(root: Path, incoming: Iterable[str]) -> tuple[dict[str, str], list[str]]:
+    """Inspect only paths that an upcoming fast-forward could touch.
+
+    Ignored siblings are outside Git's mutation set and need no inventory. Exact
+    incoming paths and their ancestors are enough to reject overwrite collisions
+    and to detect a path appearing during the inspect/apply window.
+    """
+    incoming_paths = sorted(set(incoming))
+    candidates = _candidate_paths(incoming_paths)
+    if not candidates:
+        return {}, []
+
+    tracked_raw = subprocess.run(
+        ["git", "--literal-pathspecs", "ls-files", "-t", "-z", "--", *candidates],
         cwd=root, capture_output=True, check=True,
     ).stdout
-    manifest: dict[str, str] = {}
-    for encoded in raw.split(b"\0"):
-        if not encoded:
+    tracked: set[str] = set()
+    skip_worktree: set[str] = set()
+    for record in tracked_raw.split(b"\0"):
+        if len(record) < 3 or record[1:2] != b" ":
             continue
-        relative = encoded.decode("utf-8", "surrogateescape")
+        path = record[2:].decode("utf-8", "surrogateescape")
+        tracked.add(path)
+        if record[:1] == b"S":
+            skip_worktree.add(path)
+
+    state: dict[str, str] = {}
+    collisions: list[str] = []
+    incoming_set = set(incoming_paths)
+    for relative in candidates:
         path = root / relative
         try:
-            if path.is_symlink():
-                value = "symlink:" + os.readlink(path)
-            elif path.is_file():
-                value = "file:" + hashlib.sha256(path.read_bytes()).hexdigest()
+            if not os.path.lexists(path):
+                kind = "missing"
+            elif path.is_symlink():
+                kind = "symlink:" + os.readlink(path)
             elif path.is_dir():
-                value = "directory"
+                kind = "directory"
+            elif path.is_file():
+                kind = "file"
             else:
-                value = "missing"
+                kind = "other"
         except OSError as error:
-            value = "unreadable:" + str(error)
-        manifest[relative] = value
-    return manifest
+            kind = "unreadable:" + str(error)
+        state[relative] = f"{kind}|tracked={relative in tracked}|skip={relative in skip_worktree}"
+
+        if kind == "missing":
+            continue
+        if relative in incoming_set and (
+            kind in {"directory", "other"} or kind.startswith("unreadable")
+            or relative not in tracked or relative in skip_worktree
+        ):
+            collisions.append(f"{relative} (local path {relative})")
+            continue
+        if relative not in incoming_set and kind != "directory":
+            # A non-directory ancestor prevents Git from materializing the
+            # incoming descendant. Blocking is safe even when Git could later
+            # resolve a tracked file-to-directory transition.
+            collisions.append(f"{relative} (local ancestor of incoming path)")
+    return state, sorted(set(collisions))
 
 
 def _relation(root: Path) -> tuple[int | None, int | None, str | None]:
@@ -200,8 +247,11 @@ def _snapshot(profile: str, coordination_root: Path, art_root: Path | None = Non
             state = "CURRENT"
         result = SyncResult(profile, str(root), state, branch or "detached", not records,
                             ahead, behind, remote or None, blockers, _status_paths(records), "none")
+        incoming = _changed_paths(root, _git(root, "rev-parse", "HEAD"), remote) if behind and remote else []
+        candidate_state, _collisions = _candidate_state(root, incoming)
         signature = {"root": str(root), "branch": branch, "records": records, "ahead": ahead,
-                     "behind": behind, "remote": remote, "ignored": _ignored_manifest(root)}
+                     "behind": behind, "remote": remote, "incoming": incoming,
+                     "candidate_state": candidate_state}
         return result, signature
 
     if profile != ART_PROFILE:
@@ -265,13 +315,15 @@ def _snapshot(profile: str, coordination_root: Path, art_root: Path | None = Non
         blockers.append("Aseprite is open; synchronization is blocked to protect Workbench documents: " + "; ".join(processes))
         if state in {"BEHIND", "SPARSE PROFILE REPAIR", "CURRENT"}:
             state = "ASEPRITE OPEN"
-    ignored = _ignored_manifest(root)
+    incoming = _changed_paths(root, _git(root, "rev-parse", "HEAD"), remote) if behind and remote else []
+    candidate_state, _collisions = _candidate_state(root, incoming)
     result = SyncResult(profile, str(root), state, branch or "detached", not records,
                         ahead, behind, remote or None, blockers, _status_paths(records), "none")
     signature = {"root": str(root), "branch": branch, "records": records, "ahead": ahead,
                  "behind": behind, "remote": remote, "pending": pending.exists(),
                  "transaction": transaction, "processes": processes,
-                 "sparse_healthy": sparse_healthy, "ignored": ignored}
+                 "sparse_healthy": sparse_healthy, "incoming": incoming,
+                 "candidate_state": candidate_state}
     return result, signature
 
 
@@ -319,19 +371,7 @@ def _changed_paths(root: Path, old: str, new: str) -> list[str]:
 
 
 def _incoming_collision_paths(root: Path, changed: list[str]) -> list[str]:
-    untracked = subprocess.run(
-        ["git", "ls-files", "--others", "--exclude-standard", "-z"],
-        cwd=root, capture_output=True, check=True,
-    ).stdout.decode("utf-8", "surrogateescape").split("\0")
-    ignored = _ignored_manifest(root)
-    local_paths = sorted((set(untracked) | set(ignored)) - {""})
-    collisions = []
-    for incoming in changed:
-        for local in local_paths:
-            if (incoming == local or incoming.startswith(local + "/")
-                    or local.startswith(incoming + "/")):
-                collisions.append(f"{incoming} (local path {local})")
-    return sorted(collisions)
+    return _candidate_state(root, changed)[1]
 
 
 def _apply_one(profile: str, coordination_root: Path, art_root: Path | None) -> SyncResult:
@@ -402,7 +442,6 @@ def _apply_one(profile: str, coordination_root: Path, art_root: Path | None) -> 
         before.action = "blocked"
         return before
 
-    ignored_before = signature.get("ignored", {})
     if before.behind:
         merged = subprocess.run(
             ["git", "-c", "core.hooksPath=/dev/null", "merge", "--ff-only", "origin/main"],
@@ -422,16 +461,6 @@ def _apply_one(profile: str, coordination_root: Path, art_root: Path | None) -> 
             before.blockers.append(str(error))
             before.action = "blocked"
             return before
-    ignored_after = _ignored_manifest(root)
-    if ignored_after != ignored_before:
-        changed_ignored = sorted(
-            key for key in set(ignored_before) | set(ignored_after)
-            if ignored_before.get(key) != ignored_after.get(key)
-        )
-        before.state = "IGNORED STATE CHANGED"
-        before.blockers.extend(f"ignored local state changed during synchronization: {path}" for path in changed_ignored)
-        before.action = "blocked"
-        return before
     after, _after_signature = _snapshot(profile, coordination_root, art_root)
     after.changed_paths = changed
     after.action = f"synced {len(changed)} path(s)" if changed else "sparse profile repaired"

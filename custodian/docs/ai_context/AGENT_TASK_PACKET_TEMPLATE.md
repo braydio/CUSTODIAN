@@ -184,6 +184,7 @@ Before setting `Status: ready`:
 [ ] Visual evidence is minimized and justified; non-visual alternatives are named first when presentation is in scope.
 [ ] `Visual review` is explicitly `none`, `conditional`, or `required`; when not `none`, the packet routes one compact handoff through publish_review_artifacts.py, records the exact authoring chat and `/CUSTODIAN/visual_review/<workstream>/` root, gives the external reviewer specific questions, and defaults reviewed cloud evidence to programmatic deletion unless explicit retention is required.
 [ ] Dependencies and Locks reflect actual ordering/contention.
+[ ] Next Handoff names the immediate same-series successor and marks ChatGPT/user refresh truthfully; ordinary ready/no-refresh successors are intended for autonomous agent continuation, while human-owned refreshes carry the exact Authoring/Refresh chat URL.
 [ ] Review intent is explicit; substantial/risky work defaults to paired `auto` review.
 [ ] `Review: none` carries a concrete `Review rationale: low-risk exemption: ...` rather than convenience/queue avoidance.
 [ ] Deferred work is intentional and visible.
@@ -367,9 +368,31 @@ When `Refresh owner: chatgpt-user` and an authoring-chat URL is recorded in the 
 
 Use `Refresh owner: execution-agent` for normal dependency-driven refreshes where predecessor behavior is already bounded by design/packet authority and the claiming agent only needs to reconcile landed public APIs, private helper names, measured state, exact file names/SHAs, or validation paths before mutation. If current evidence introduces a genuinely new material judgment about scope, ownership, sequencing, visuals, lore, or acceptance, stop and escalate to `chatgpt-user`.
 
-The required closing summary **and user-facing completion reply** must mirror
-these fields under `## Next Handoff`. If refresh is required, do not imply the
-next packet is safe to claim.
+The required closing summary must mirror these fields under
+`## Next Handoff`. That durable summary is the handoff authority.
+
+If `ChatGPT/user planning refresh required: no` and the exact named successor is
+eligible, the execution agent/worker must claim that successor and continue
+autonomously. Do not require the user to copy the completed summary back into
+ChatGPT between ordinary implementation/review/correction packets.
+`Refresh owner: execution-agent` is also autonomous unless the live refresh
+uncovers a genuinely new human-owned choice.
+
+If `ChatGPT/user planning refresh required: yes`, stop before claiming the
+successor and use the lifecycle's compact human-unblock card in the user-facing
+reply:
+
+```text
+PLANNING REFRESH REQUIRED
+Authoring Chat: <exact recorded URL>
+Workstream: <workstream-id>
+Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+```
+
+The user should only need to open that URL and paste the workstream ID. The
+authoring conversation is expected to recover the packet, durable summary,
+predecessor evidence, and live-main state itself. If refresh is required, do not
+imply the next packet is safe to claim.
 
 ## Optional Full-Packet Expansion
 

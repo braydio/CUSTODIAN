@@ -16,8 +16,17 @@ WEAPON_ROOT = CUSTODIAN_ROOT / "content/sprites/weapons"
 CATALOG = CUSTODIAN_ROOT / "content/data/operator/generated/operator_animation_catalog.generated.json"
 AUTHORING_PROFILE = CUSTODIAN_ROOT / "content/data/operator/authoring/operator_art_profile.json"
 try:
-    DEFAULT_FRAME_SIZE = tuple(int(value) for value in json.loads(AUTHORING_PROFILE.read_text())["registration"]["frame_size"])
+    _profile_document = json.loads(AUTHORING_PROFILE.read_text())
+    if _profile_document.get("schema") == "custodian.operator_art_profile.v3":
+        _active_profile_id = _profile_document["active_authoring_profile"]
+        _active_profile = _profile_document["profiles"][_active_profile_id]
+    else:
+        _active_profile_id = "legacy_96"
+        _active_profile = _profile_document
+    DEFAULT_PROFILE_ID = _active_profile_id
+    DEFAULT_FRAME_SIZE = tuple(int(value) for value in _active_profile["registration"]["frame_size"])
 except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+    DEFAULT_PROFILE_ID = "legacy_96"
     DEFAULT_FRAME_SIZE = (96, 96)
 SCHEMA_NAME = "custodian.operator_animation_workbench.v2"
 PRESENTATION_ORDER = ("cape", "lower_body", "upper_body", "head", "weapon", "fx")

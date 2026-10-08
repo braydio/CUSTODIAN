@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-2-5d-canonical-visual-contract`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-2-5d-canonical-visual-contract`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `operator-2-5d-canonical-visual-contract`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md`
-- Reviewed main: `91e8ba079681fbf5e8ce2b2a4263e451f106ffa2`
+- Reviewed main: `8574dfff5d6153e9638886729e1d34be5cc3bca1`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: `conditional`
 - Reviewer context: `fresh`
@@ -25,13 +25,26 @@
 - Acceptance: zero blocking source-integrity/profile-migration/guide-leak defects; exact supplied bytes remain unchanged; the design sheet is the accepted lock; the relaxed idle is the first canonical family rather than a synthetic target or legacy fallback; no runtime cutover is smuggled into this slice. Subjective redesign is forbidden because the user already locked the visual authority.
 - Validation: focused canonical visual-contract + registration-profile tests + `git diff --check` only.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Agent Handoff / Planning Decisions — 2026-10-08
+
+The implementation's human review gate is already resolved in the authoring chat. **Do not reopen these decisions during paired review unless the landed implementation contradicts them or cannot encode them safely.**
+
+- Accepted registration: frame 128x128, center_x 64, projected_world_root `[64,106]`, shadow_origin/ground `[64,107]`, common across all eight directions. Lowest alpha is not semantic-root authority.
+- Legacy east `fast_02` overflow is non-authoritative proxy evidence and does not require a larger global canvas, root shift, or scale reduction. The accepted 128 profile is a body/reference registration frame with universal action-envelope fit explicitly unasserted. Future true canonical overflow may use root-preserving action-specific envelopes/modular presentation.
+- Normalized reference SHA `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9` is accepted unchanged; no cleanup pixels are authorized.
+- `operator_2_5d_128` may be accepted/canonical once the implementation records the above semantics.
+- Relaxed-idle FPS/timing remains unknown/null and is not a visual-contract blocker; do not infer it from the PNG.
+- Ranged aim, wide block-hit and all-direction extreme-envelope proof are future per-action evidence, not grounds to fail this review by themselves.
+- Reviewer focus: verify the implementation encoded these decisions exactly, preserved source/reference hashes, preserved legacy-96 compatibility, did not smuggle in runtime cutover, and cleaned/closed the reviewed human-handoff state.
+
 ## Handoff
 
 - Next workstream: `operator-2-5d-workbench-cockpit-foundation`
 - Next packet state: `refresh-required`
-- Refresh owner: `none`
+- Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh reason: `after this review passes, all WB25-1 prerequisites are satisfied; return accepted profile/reference hashes and first-family provenance to the planning chat for the final ready/auto refresh`
-- Next action: `return the passed review receipt plus accepted design-reference/profile hashes and first-family source hash to the authoring chat; refresh WB25-1 in place to ready/auto before claim`
-- Blockers or open questions: `none if the exact-input hardening and profile acceptance pass; any byte mismatch or unresolved semantic-root contradiction is blocking`
+- Refresh reason: `the paired review passed; WB25-1 needs the accepted profile/reference hashes and first-family source hash in the authoring chat before it is refreshed to ready/auto`
+- Next action: `return this passed review receipt, profile hash 05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761, reference hash e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9, and first-family source hash d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3 to the authoring chat; refresh WB25-1 in place to ready/auto before claim`
+- Blockers or open questions: `none`

@@ -149,13 +149,14 @@ def configure_art_parser(parser: argparse.ArgumentParser) -> None:
     for name in ("source-render", "source-get-landmarks", "source-validate-landmarks", "source-registration-report", "source-production-command", "source-verify-production", "registration-profile"):
         command = commands.add_parser(name)
         if name != "registration-profile": command.add_argument("session", type=Path)
+        if name == "registration-profile": command.add_argument("--profile-id", choices=("legacy_96", "operator_2_5d_128"))
         command.add_argument("--json", action="store_true")
     source_landmarks = commands.add_parser("source-set-landmarks")
     source_landmarks.add_argument("session", type=Path); source_landmarks.add_argument("landmarks", type=Path); source_landmarks.add_argument("--json", action="store_true")
     registration_report = commands.add_parser("registration-report")
-    registration_report.add_argument("session", type=Path); registration_report.add_argument("--json", action="store_true")
+    registration_report.add_argument("session", type=Path); registration_report.add_argument("--profile-id", choices=("legacy_96", "operator_2_5d_128")); registration_report.add_argument("--json", action="store_true")
     registration_overlay = commands.add_parser("registration-overlay")
-    registration_overlay.add_argument("session", type=Path); registration_overlay.add_argument("--json", action="store_true")
+    registration_overlay.add_argument("session", type=Path); registration_overlay.add_argument("--profile-id", choices=("legacy_96", "operator_2_5d_128")); registration_overlay.add_argument("--json", action="store_true")
     source_recolor_plan=commands.add_parser("source-recolor-plan");source_recolor_plan.add_argument("session",type=Path);source_recolor_plan.add_argument("profile");source_recolor_plan.add_argument("action");source_recolor_plan.add_argument("direction");source_recolor_plan.add_argument("--group",required=True);source_recolor_plan.add_argument("--layer",required=True);source_recolor_plan.add_argument("--json",action="store_true")
     source_recolor_set=commands.add_parser("source-recolor-set");source_recolor_set.add_argument("session",type=Path);source_recolor_set.add_argument("plan_id");source_recolor_set.add_argument("mapping_id");source_recolor_set.add_argument("--action",choices=("map","preserve"),required=True);source_recolor_set.add_argument("--destination");source_recolor_set.add_argument("--json",action="store_true")
     for name in ("source-recolor-preview","source-recolor-apply","source-recolor-review"):
@@ -266,13 +267,13 @@ def dispatch_art_command(args: argparse.Namespace) -> int:
             return 0
         if command == "registration-profile":
             from .registration_profile import load_profile
-            result = load_profile()
+            result = load_profile(profile_id=args.profile_id)
             print(json.dumps(result, indent=2)); return 0
         if command == "registration-report":
-            result = _service(args).registration_report(args.session)
+            result = _service(args).registration_report(args.session, profile_id=args.profile_id)
             print(json.dumps(result, indent=2)); return 0
         if command == "registration-overlay":
-            result = _service(args).registration_overlay(args.session)
+            result = _service(args).registration_overlay(args.session, profile_id=args.profile_id)
             print(json.dumps(result, indent=2)); return 0
         service = _service(args)
         if command == "start":

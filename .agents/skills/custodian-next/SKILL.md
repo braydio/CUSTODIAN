@@ -28,28 +28,32 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
 
 2. **Prefer the immediate continuation of the work the conversation just finished.**
    - Fetch current packet truth through the dispatcher/repository workflow.
-   - Resolve the most recently completed/reviewed workstream from the current
-     conversation and durable repo evidence.
+   - Resolve the most recently completed/reviewed workstream from durable repo evidence.
    - Read its archived packet/closing summary `## Next Handoff`.
-   - If `Next workstream` names an exact successor and that successor is eligible,
-     claim it explicitly:
-     ```bash
-     python3 custodian/tools/agent/dispatch.py claim <next-workstream> --agent codex
-     ```
-   - A paired review named by the completed implementation is a normal immediate
-     successor and should be preferred over unrelated global work.
+   - If an exact successor is eligible and `ChatGPT/user planning refresh required: no`,
+     claim it and continue without handing routine control back to the user.
+   - After that successor finishes, persist its `<TASK>_CLAUDE_SUMMARY.md` and
+     repeat this same routing step through the named same-series chain.
+   - A paired review is an immediate successor but must run in a fresh reviewer
+     context; that freshness requirement does not turn it into a user relay step.
 
-3. **Respect refresh and dependency gates.**
-   - If the handoff says ChatGPT/user planning refresh is required, the next packet
-     is blocked/manual, or the named successor is otherwise not eligible, stop.
-   - Report the exact blocker and recorded authoring/refresh chat URL.
+3. **Stop only at a real gate.**
+   - Stop before claiming when ChatGPT/user planning refresh is required, a
+     subjective human decision is pending, dispatch is explicitly user-held, or a
+     technical/safety blocker makes the named successor ineligible.
+   - For a planning refresh, return the exact Authoring Chat URL, copyable
+     Workstream ID, and persistent summary path.
+   - `Refresh owner: execution-agent` is an autonomous bounded refresh unless it
+     exposes a genuinely new human-owned decision.
    - Do not edit packet status, silently reinterpret scope, or skip to unrelated
      work just to keep the command moving.
 
-4. **Fall back to the global queue only when there is no same-series continuation.**
-   - If the durable handoff says `Next workstream: none`, the prior work has no
-     named successor, or no prior CUSTODIAN workstream can be resolved from this
-     session, run:
+4. **Use the global queue only for an explicitly general-next request.**
+   - If the durable handoff says `Next workstream: none`, treat the named
+     same-series chain as complete.
+   - Do not silently continue into unrelated work merely to stay busy.
+   - Only when the user/worker invocation explicitly asks for general next-task
+     execution, run:
      ```bash
      python3 custodian/tools/agent/dispatch.py claim-next --agent codex
      ```
@@ -62,15 +66,21 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
    - Enter the returned worktree.
    - Read root `AGENTS.md`, `custodian/AGENTS.md`, and the returned task packet.
    - Treat the task packet as the complete brief. Do not ask the user to restate it.
-   - Execute and finish through the normal workstream lifecycle.
+   - Execute and finish through the normal workstream lifecycle, then return to
+     step 2 and continue the same-series chain until a real stop boundary.
 
 ## Result
 
-Return one compact status:
-- `CONTINUING <workstream>` when already in the active claimed worktree;
-- `CLAIMED <workstream>` plus returned worktree when a claim succeeds;
-- `REFRESH REQUIRED <workstream>` plus the exact recorded chat URL when planning
-  is the gate;
-- `HUMAN REVIEW REQUIRED <workstream>` plus exact Authoring chat and Dropbox manifest when the active workstream is waiting on subjective review;
-- `BLOCKED <reason>` when a named continuation cannot proceed;
-- `NO ELIGIBLE AUTO TASK` when the global dispatcher has no eligible work.
+Do not emit a routine user-facing handoff between successfully chained packets.
+Persist the completed packet's `<TASK>_CLAUDE_SUMMARY.md` and keep going.
+
+When the automation actually stops, return one compact status:
+- `CHAIN COMPLETE <workstream>` when the named same-series chain has no successor;
+- `REFRESH REQUIRED` with exact `Authoring Chat`, copyable `Workstream`, and
+  persistent summary path when ChatGPT/user planning is the gate;
+- `HUMAN REVIEW REQUIRED <workstream>` with exact Authoring chat and Dropbox
+  manifest when subjective review is the gate;
+- `BLOCKED <reason>` with the persistent summary path when a technical/safety
+  condition prevents continuation;
+- `NO ELIGIBLE AUTO TASK` only for a general-next invocation whose global queue
+  has no eligible work.

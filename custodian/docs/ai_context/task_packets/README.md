@@ -49,7 +49,7 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
-- `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Harden the user's exact 8-direction Operator design lock as the single deterministic visual authority and harden the supplied 8-direction relaxed idle as the...
+- `OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md` — Make OPUI target-driven for the canonical 2.5D migration: legacy and 2.5D art can coexist without path/session collisions, every required 2.5D leaf exists be...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -60,7 +60,6 @@ normal closeout.
 - `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` — Finish the already-live Carbine hybrid socket architecture by making the static directional `WeaponSprite` the sole primary-ranged weapon renderer for author...
 - `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect...
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authoritie...
-- `PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — Remove the full ignored-tree hashing bottleneck from persistent checkout status and synchronization while retaining fail-closed protection against ignored lo...
 - `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic...
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Extract durable authored-world claim metadata and membership from `ProcGenTilemap` into one canonical registry under `custodian/game/world/procgen/authored_c...
 - `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Re-derive the post-D1/D2/D3 generation core from live code and produce the authoritative migration contract for replacing TileMapLayer-as-working-memory with...
@@ -87,8 +86,8 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Independently verify that the exact user-supplied design lock was hardened as the accepted visual authority and the exact relaxed-idle sheet was hardened as...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -96,7 +95,6 @@ normal closeout.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md` — Independently verify that correction `R0-01` closes the REPLACE source-conflict window without weakening successful publication, CREATE collision refusal, or...
-- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — Independently verify that correction R0-01 removes ignored-tree-wide hashing from ordinary persistent checkout status/sync while preserving path-collision an...
 - `REVIEW_PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Independently verify that D2 creates one durable authored-claim owner, preserves current authored floor/overlook/ingress behavior and M6 unload/reload semant...
 - `REVIEW_PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Independently verify that the post-D1/D2/D3 generation-data audit completely and truthfully maps the remaining TileMap-backed generation core before any abst...
 - `REVIEW_PROCGEN_GENERATION_GRID_FOUNDATION.md` — Independently verify that the GenerationGrid foundation is a minimal semantic storage seam with exact TileMap-backed parity, not an accidental second generat...
@@ -163,7 +161,9 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
 - `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — complete: one fail-closed persistent-checkout sync authority owns safe coordination-main and Operator-art updates, with `csync` / `opui-sync` helpers, OPUI pre-authoring synchronization, and 25/25 changed-file validations passed.
-- `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — completed paired fresh-context review found blocking R0-01: status/startup hashed all 134,037 ignored root files; correction cycle 1 is queued.
+- `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context review found blocking R0-01: status/startup hashed all 134,037 ignored root files; cycle 1 correction removes that scan and bounds checks to incoming paths.
+- `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — correction cycle 1 passed fresh paired review: R0-01 fixed; 2,048 unrelated ignored files synchronized in 0.09s, collision and sparse-overlay guards remain fail-closed.
+- `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — paired fresh-context review passed; R0-01 fixed, no cycle-2 correction required.
 
 ### Active Hub First-Set / First Campaign Loop Series
 
@@ -195,8 +195,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
 - `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
-- `operator-2-5d-canonical-visual-contract` is the immediate successor, but its current packet fails V2 authoring validation because the required `Change` field is missing. The paired-review metadata was corrected on current main at `350bf03f8`; no art-direction decision needs reopening.
-- WB25-1 remains blocked/manual until the canonical-contract packet is authoring-valid, its implementation lands, and its paired review completes; then return final profile/reference hashes and target counts to the planning chat for the ready/auto refresh.
+- `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified. WB25-1 has consumed that review plus the completed viability counts and is now `ready/auto` on profile `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`, reference `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`, first-family source `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`, and design lock `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -207,7 +206,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-No WB25 implementation packet is claimable from stale assumptions. The viability closeout is complete; the canonical visual-contract packet first needs its missing required `Change` field repaired, then it must land and pass independent review. Return the final target-count/profile-hash evidence to the planning chat for the WB25-1 ready/auto refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
+WB25-1 is `ready/auto` and may be claimed. Its paired review is `ready/auto` behind it. The final planning seed is 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. Every later implementation remains draft until its predecessor and paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
@@ -488,14 +487,25 @@ must never derive or invent ChatGPT conversation URLs.
 Every completed packet/review reports the immediate successor in its own
 program/DAG through the required `Next Handoff` fields: next workstream,
 packet state, refresh owner, whether ChatGPT/user planning refresh is required,
-authoring-chat URL, refresh reason, next action, and blockers.
+authoring-chat URL, refresh reason, next action, and blockers. The durable
+`<TASK>_CLAUDE_SUMMARY.md` is the persistent copy of that handoff.
 
-Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen at claim time from current main plus landed predecessor evidence. Use `Refresh owner: chatgpt-user` only when a genuine unresolved design choice requires the user's judgment before implementation can proceed.
-The execution/review agent supplies the live-state evidence and drift, but the
-user brings the recorded authoring chat back to ChatGPT so the packet can be
-re-derived against both original intent and current main. Mechanical refreshes
-that do not change scope, ownership, sequencing, acceptance, visual direction,
-or design interpretation may use `execution-agent`.
+A ready/eligible named successor with
+`ChatGPT/user planning refresh required: no` is an **autonomous continuation**,
+not a user relay point. The agent/worker claims that successor itself and
+continues through the same-series implementation/review/correction chain.
+Paired reviews still require a fresh reviewer context, but that context switch
+does not require the user to carry the prior summary.
+
+Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen
+at claim time from current main plus landed predecessor evidence. Use
+`Refresh owner: chatgpt-user` only when a genuine unresolved design choice
+requires the user's judgment before implementation can proceed. At that boundary
+the agent stops and surfaces only the exact recorded Authoring/Refresh chat URL,
+the copyable workstream ID, and the persistent summary path; the user opens the
+linked conversation and pastes the workstream ID. Mechanical refreshes that do
+not change scope, ownership, sequencing, acceptance, visual direction, or design
+interpretation remain execution-agent work.
 
 Historical packets without an authoring URL remain valid; surface
 `Authoring chat: not-recorded` and ask the user to provide the originating

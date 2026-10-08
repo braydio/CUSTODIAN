@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 from types import SimpleNamespace
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -40,7 +41,7 @@ def git(root: Path, *args: str, check: bool = True) -> str:
     return result.stdout.strip()
 
 
-def checkout_fingerprint(root: Path) -> tuple:
+def checkout_fingerprint(root: Path, protected_paths: tuple[str, ...] = ()) -> tuple:
     head = git(root, "rev-parse", "HEAD")
     branch = git(root, "branch", "--show-current")
     index = Path(git(root, "rev-parse", "--git-path", "index"))
@@ -60,7 +61,11 @@ def checkout_fingerprint(root: Path) -> tuple:
             files[relative] = "exists"
         else:
             files[relative] = "missing"
-    return head, branch, index_hash, files, sync._ignored_manifest(root)
+    protected = {
+        relative: hashlib.sha256((root / relative).read_bytes()).hexdigest()
+        for relative in protected_paths
+    }
+    return head, branch, index_hash, files, protected
 
 
 def advance_remote(base: Path, bare: Path, relative: str = "README.md", data: bytes = b"remote update\n") -> str:
@@ -347,8 +352,78 @@ def ignored_collision_smoke(base: Path) -> None:
     before_hash = hashlib.sha256(local.read_bytes()).hexdigest()
     advance_remote(base, bare, local.relative_to(coordination).as_posix(), b'{"remote":true}\n')
     state = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
-    assert state.state == "PATH COLLISION" and git(coordination, "rev-parse", "HEAD") != git(coordination, "rev-parse", "origin/main")
+    head = git(coordination, "rev-parse", "HEAD")
+    assert state.state == "PATH COLLISION" and head != git(coordination, "rev-parse", "origin/main")
     assert hashlib.sha256(local.read_bytes()).hexdigest() == before_hash
+    local.unlink()
+    local.mkdir()
+    nested = local / "nested-preserve.bin"
+    nested.write_bytes(b"ignored directory bytes\x00keep")
+    nested_hash = hashlib.sha256(nested.read_bytes()).hexdigest()
+    state = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
+    assert state.state == "PATH COLLISION" and git(coordination, "rev-parse", "HEAD") == head
+    assert hashlib.sha256(nested.read_bytes()).hexdigest() == nested_hash
+
+    skip_base = base / "skip-worktree"
+    skip_base.mkdir()
+    skip_bare, skip_coordination, _source = fixture(skip_base)
+    relative = ".ai/operator_animation_workbench/tracked-overlay.json"
+    overlay = skip_coordination / relative
+    overlay.parent.mkdir(parents=True)
+    overlay.write_text('{"baseline":true}\n')
+    git(skip_coordination, "add", "-f", relative)
+    git(skip_coordination, "commit", "-m", "force-track ignored fixture path")
+    git(skip_coordination, "push", "origin", "main")
+    git(skip_coordination, "fetch", "origin", "main")
+    git(skip_coordination, "update-index", "--skip-worktree", relative)
+    overlay.write_bytes(b"local ignored overlay\x00keep")
+    overlay_hash = hashlib.sha256(overlay.read_bytes()).hexdigest()
+    skip_head = git(skip_coordination, "rev-parse", "HEAD")
+    advance_remote(skip_base, skip_bare, relative, b'{"remote":true}\n')
+    state = sync.apply_profiles([sync.ROOT_PROFILE], skip_coordination)[0]
+    assert state.state == "PATH COLLISION", state
+    assert git(skip_coordination, "rev-parse", "HEAD") == skip_head
+    assert hashlib.sha256(overlay.read_bytes()).hexdigest() == overlay_hash
+
+
+def ignored_tree_performance_smoke(base: Path) -> None:
+    bare, coordination, _source = fixture(base)
+    ignored_tree = coordination / ".ai/unrelated-ignored-cache"
+    ignored_tree.mkdir(parents=True)
+    count = 2048
+    for index in range(count):
+        (ignored_tree / f"cache-{index:04d}.bin").write_bytes(b"ignored fixture bytes\n")
+    sample = ignored_tree / "cache-1024.bin"
+    sample_hash = hashlib.sha256(sample.read_bytes()).hexdigest()
+    advance_remote(base, bare, "README.md", b"performance fixture update\n")
+
+    real_run = sync.subprocess.run
+
+    def reject_full_ignored_listing(args, **kwargs):
+        if args and args[0] == "git" and "--ignored" in args:
+            raise AssertionError("persistent sync must not enumerate the ignored tree")
+        return real_run(args, **kwargs)
+
+    real_scandir = os.scandir
+
+    def reject_ignored_scandir(path):
+        if Path(path).resolve().is_relative_to(ignored_tree.resolve()):
+            raise AssertionError("persistent sync must not walk unrelated ignored directories")
+        return real_scandir(path)
+
+    started = time.monotonic()
+    with mock.patch.object(sync.subprocess, "run", side_effect=reject_full_ignored_listing), \
+            mock.patch.object(os, "scandir", side_effect=reject_ignored_scandir), \
+            mock.patch.object(Path, "read_bytes", side_effect=AssertionError("persistent sync must not read file contents")):
+        inspected = result(sync.ROOT_PROFILE, coordination)
+        assert inspected.state == "CURRENT", inspected
+        synced = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
+        assert synced.state == "SYNCED", synced
+    elapsed = time.monotonic() - started
+    assert elapsed < 10.0, f"status+sync took {elapsed:.2f}s with only one incoming path"
+    assert sum(1 for _ in ignored_tree.iterdir()) == count
+    assert hashlib.sha256(sample.read_bytes()).hexdigest() == sample_hash
+    print(f"ignored fixture: {count} unrelated files, status+sync {elapsed:.2f}s")
 
 
 def shell_routing_smoke(base: Path) -> None:
@@ -384,6 +459,7 @@ def main() -> None:
     cases = [
         root_sync_smoke, root_preservation_smoke, art_sync_smoke,
         art_blocker_smoke, lock_and_race_smoke, ignored_collision_smoke,
+        ignored_tree_performance_smoke,
         shell_routing_smoke,
     ]
     for case in cases:
