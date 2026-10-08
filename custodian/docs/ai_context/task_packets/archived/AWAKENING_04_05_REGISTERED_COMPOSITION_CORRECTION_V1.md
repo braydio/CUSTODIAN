@@ -75,6 +75,11 @@
 
 ## Completion Truth
 
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `All registered source hashes/dimensions/modes match; Asset V2 doctor is healthy; focused registration, renderer, traversal, P-9, geometry, progression, startup, and Moment Forge checks pass; changed-file validation passed 26/26; git diff --check passed.`
 - State: complete
 - Registered source checks: all four Dropbox references match exact SHA-256, RGBA mode, and 1502×2048 dimensions.
 - Asset V2: Dust, connector, and Locker runtime outputs use the registered bytes; all three family statuses are complete and `asset.py doctor --json` is healthy.
