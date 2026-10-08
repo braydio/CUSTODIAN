@@ -18,11 +18,11 @@ The first direct test invocation failed before execution because a new worktree 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: medium
-- What went wrong: the fresh worktree required a full graph build and Godot first import; the initial direct HUD smoke could not resolve `CustodianHUD` until import completed.
-- Root cause / contributing factors: generated graph and Godot class/import state are not present in a newly created worktree.
-- Prevention / pipeline improvement: initialize the code-review graph before source exploration and Godot imports/classes before focused runtime tests in fresh worktrees.
-- Tooling / docs drift discovered: Asset V2 static consumer verification does not recognize runtime `SpriteFrames` assembled in GDScript.
-- Follow-up: none
+- What went wrong: the fresh worktree required a full graph build and Godot first import; the initial direct HUD smoke could not resolve `CustodianHUD` until import completed; first finish preflight required receipt status `passed`, while an existing example says `pass`.
+- Root cause / contributing factors: generated graph and Godot class/import state are not present in a new worktree, and the review receipt example is stale against the current lifecycle parser.
+- Prevention / pipeline improvement: initialize the code-review graph before source exploration and Godot imports/classes before focused runtime tests; use `passed` in receipts consumed by `workstream.py`.
+- Tooling / docs drift discovered: Asset V2 static consumer verification does not recognize runtime `SpriteFrames` assembled in GDScript; an existing paired-review example's status token does not match the finish-time parser.
+- Follow-up: manual-follow-up
 - What worked: focused runtime tests plus source/Asset V2 contract inspection established the acceptance without renderer capture.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9

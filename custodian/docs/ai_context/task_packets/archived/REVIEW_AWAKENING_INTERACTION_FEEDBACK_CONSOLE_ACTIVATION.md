@@ -88,9 +88,9 @@ No blocking defects, material evidence gaps, non-blocking issues, or optional im
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: medium
-- What went wrong: the first direct smoke invocation failed before runtime because the fresh worktree had no Godot global-class registry; graph indexing also required a full initial build.
-- Root cause / contributing factors: the ephemeral worktree had not yet imported the Godot project, and its graph database had not been initialized.
-- Prevention / pipeline improvement: initialize Godot imports/classes before focused runtime tests in fresh worktrees; initialize the code-review graph before source exploration.
-- Tooling / docs drift discovered: Asset V2 static binding metadata does not identify SpriteFrames assembled dynamically by the Awakening controller; runtime smoke provides the consumer proof.
-- Follow-up: none
+- What went wrong: the first direct smoke invocation failed before runtime because the fresh worktree had no Godot global-class registry; graph indexing required a full initial build; first finish preflight rejected the receipt's `pass` status because its parser requires `passed`.
+- Root cause / contributing factors: the ephemeral worktree had not yet imported the Godot project, and the receipt example in an existing review packet does not match the current finish-time status vocabulary.
+- Prevention / pipeline improvement: initialize Godot imports/classes before focused runtime tests in fresh worktrees; initialize the code-review graph before source exploration; use `passed` in paired-review receipts checked by `workstream.py`.
+- Tooling / docs drift discovered: Asset V2 static binding metadata does not identify SpriteFrames assembled dynamically by the Awakening controller; an existing paired-review example uses `Status: pass` while `workstream.py` requires `Status: passed`.
+- Follow-up: manual-follow-up
 - What worked: focused runtime evidence established the prompt, readout, FX, recovery, and generic-consumer contracts without renderer capture.
