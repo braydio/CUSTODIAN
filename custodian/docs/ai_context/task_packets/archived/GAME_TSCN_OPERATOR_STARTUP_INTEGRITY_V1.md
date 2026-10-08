@@ -114,10 +114,10 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes — literal production game.tscn reaches ready with one canonical generated-world Operator placement, bounded startup diagnostics, and a fail-closed pre-ready receipt check`
-- Completion boundary satisfied: `yes — the production scene smoke proves exact receipt/tile identity, phase ordering, canonical player identity, painted floor, visibility, and enabled processing`
-- Acceptance satisfied: `yes — literal production startup and mutation proof, focused spawn/ingress/AR3/AR4/streaming/lifecycle/cache/runtime-health/vehicle checks, S1 quick baseline, and complete changed-file coverage are established; remaining changed-sweep failures are documented clean-main baseline failures in unrelated Vaultwing and ambient-spawn owners`
-- Superseded/legacy production path disposition: `scene-authored Operator coordinates remain editor/bootstrap placeholder only; never runtime fallback authority`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
 - Evidence: `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_CLAUDE_SUMMARY.md; literal scene seed 1773840677 selected tile (88,180), one player identity, generation receipt, ready validation valid=true; pre-ready legacy-position mutation failed activation with operator_placement_diverged_before_ready; focused acceptance owners and startup owner pass; changed sweep has complete coverage with unrelated clean-main baseline failures documented`
 
 ## Execution Feedback
