@@ -207,8 +207,16 @@ Semantics:
    checkout, continue that workstream rather than claiming another packet.
 2. Otherwise prefer the exact immediate successor recorded by the most recently
    completed packet/review's durable `Next Handoff`, including its paired review.
-3. If that successor is refresh-gated, blocked/manual, or dependency-blocked,
-   stop and surface the exact blocker/refresh chat. Do not silently jump lanes.
+3. If the requested successor is dependency-blocked, automatically work the
+   same dependency chain toward that requested packet: claim and complete each
+   immediate predecessor that is `ready`/`auto`, including its required paired
+   review, then re-check the dispatcher and continue until the requested packet
+   is claimable or a real blocker is reached. Do not jump to unrelated lanes or
+   edit packet metadata to manufacture eligibility. Stop and surface a refresh
+   gate, manual-dispatch hold, human decision, planning return, failed
+   prerequisite, or other execution blocker that cannot be resolved by the
+   authorized chain. A blocked packet's `ready` status alone does not override
+   its dependency gate.
 4. Only when there is no same-series successor, fall back to
    `dispatch.py claim-next --agent codex`.
 
@@ -233,6 +241,13 @@ ask the user to re-explain it, and do not work from the chat message alone.
 2. **If the user says a packet is "ready" but your tree shows `blocked`,** the
    claim reads fetched `origin/main`; run `dispatch.py claim` and let it verify
    rather than editing status by hand. Re-read the packet in the claimed worktree.
+   If the explicitly requested packet is dependency-blocked, recursively work
+   its incomplete dependency chain in DAG order: dispatch-claim each immediate
+   `ready`/`auto` predecessor, complete it through its required review and normal
+   lifecycle, then re-check and continue until the requested packet is claimable
+   or a real blocker is reached. Do not jump lanes or change packet metadata to
+   manufacture eligibility. Stop at manual-dispatch, refresh, human-decision,
+   planning-return, failed-prerequisite, or other unresolved execution gates.
 3. **Claim, then read the packet in the worktree.** Its fields are the
    instructions: `Goal`, `Completion boundary`, `Work surface`, `Change`,
    `Preserve`, `Non-goals`, `Acceptance`, `Validation`, `Visual review`,
