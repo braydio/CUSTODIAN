@@ -731,7 +731,7 @@ After reviewed landing:
 - Not complete: semantic root/floor approval; universal body action-envelope proof; reviewed pixel cleanup; specialized canonical-family intake/timing registration; paired post-land review.
 - Action-envelope evidence: the deterministic scan contains 446 category-assigned pre-migration full-body proxy frame observations (categories can overlap). Under the explicit +16,+22 legacy-root translation, 46/180 fast-chain frames and 16/47 long one-handed-reach frames exceed the 128px canvas; 71 and 24 frames respectively exceed the 8px safety margin. The largest fast-chain proxy is east `fast_02` frame 4, source alpha bbox `[35,11,136,85]`, translated bbox `[51,33,152,107]`. This legacy material is not canonical 2.5D evidence and does not alone reject 128px. It does keep universal fit unproven. Ranged aim modular union, wide block-hit, and all-direction locked-projection coverage are unmeasured. Human review must decide whether the fast02 frame is a valid maximum-body proxy and whether canvas/pose-root policy needs revision.
 - Human review: `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json`, default retention `delete-after-review`.
-- Validation: canonical visual-contract smoke passed with proxy-scan assertions; rerun the remaining focused set and `git diff --check` before checkpoint.
+- Validation: canonical visual-contract smoke, Workbench creation/migration smoke, registration-profile smoke, Art Agent MCP smoke, Aseprite clean-render guide-leak smoke, Python compilation, and `git diff --check` all passed with the proxy evidence update.
 
 ## Execution Feedback
 
