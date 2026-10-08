@@ -4,6 +4,9 @@
 
 V2 provisional authoring authority. Structural rules are enforceable; artistic
 tolerances remain advisory until canonical samples and provenance are reviewed.
+The approved Operator 2.5D visual identity is documented in
+`OPERATOR_2_5D_VISUAL_CONTRACT.md`; its 128px registration and pixel cleanup
+remain provisional pending the packet's human calibration gates.
 
 ## Projection
 
@@ -24,8 +27,10 @@ numeric camera angle is authoritative until calibrated against gameplay.
 
 Workbench V2 remains the only canonical publication gate.
 
-The accepted structural 96x96 registration ruler is stored in
-`custodian/content/data/operator/authoring/operator_art_profile.json`. Neutral
+The backward-readable profile registry is stored in
+`custodian/content/data/operator/authoring/operator_art_profile.json`. The
+accepted structural 96x96 registration remains `legacy_96`; the new 128x128
+profile is provisional and does not change runtime selectors. Neutral
 head/hip/knee guide coordinates are review references, not pose acceptance
 criteria. `enforcement.artistic` remains false; action-specific recoil,
 crouch, anticipation, and weight transfer remain authored motion.

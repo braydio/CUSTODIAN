@@ -1039,6 +1039,18 @@ props were remapped off the reserved axis. The requested facade-frame source
 IDs remain blocked because current semantic IDs 62, 64, 129, and 140 resolve to
 different emergency/salvage assets, not the facade semantics named by V1.
 
+## Operator 2.5D Visual Authority (2026-10-08)
+
+The exact user-supplied 2048x256 design lock and 1920x1024 relaxed-idle source
+are preserved byte-for-byte beneath Operator source-work with Dropbox
+provenance manifests. A crisp shared-scale 1024x128 directional reference and
+per-direction measurements are stored under the Operator reference and
+presentation-report paths. `operator_art_profile.json` is now a v3 registry;
+legacy 96 authoring remains byte-hash selectable, while the new 128 profile is
+explicitly provisional. Root/floor semantics, universal action envelope, and
+reference-pixel cleanup remain human-review gates. The design authority is
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`.
+
 ## Operator Animation Workbench V2 (2026-08-28)
 
 Human Workbench FX adoption is implemented for existing semantic animations:

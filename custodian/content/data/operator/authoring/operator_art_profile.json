@@ -1,33 +1,203 @@
 {
-  "schema": "custodian.operator_art_profile.v2",
-  "status": "provisional",
-  "enforcement": {"structural": true, "registration_geometry": true, "artistic": false},
-  "registration": {
-    "status": "accepted",
-    "frame_size": [96, 96],
-    "anchor": [48, 84],
-    "ground_y": 85,
-    "provenance": {"kind": "human_authored_guide", "accepted_date": "2026-10-01"},
-    "guide": {
-      "horizontal": {"head_top": 14, "head_center": 24, "neck": 33, "shoulders": 39, "chest": 45, "hips": 58, "knees": 72, "feet": 84, "ground": 85},
-      "vertical": {"center": 48, "shoulder_l": 34, "shoulder_r": 62, "hip_l": 40, "hip_r": 56},
-      "points": {
-        "head_center": [48, 24], "neck": [48, 33], "shoulder_l": [34, 39], "shoulder_r": [62, 39],
-        "chest": [48, 45], "hip_center": [48, 58], "hip_l": [40, 58], "hip_r": [56, 58],
-        "knee_l": [38, 72], "knee_r": [58, 72], "foot_anchor": [48, 84]
+  "schema": "custodian.operator_art_profile.v3",
+  "active_authoring_profile": "operator_2_5d_128",
+  "profiles": {
+    "legacy_96": {
+      "schema": "custodian.operator_art_profile.v2",
+      "status": "provisional",
+      "enforcement": {
+        "structural": true,
+        "registration_geometry": true,
+        "artistic": false
       },
-      "modular_split_reference_y": 58
+      "measurements": {},
+      "note": "Registration geometry is human-accepted structural guidance; artistic tolerances remain advisory until canonical sample provenance is reviewed.",
+      "registration": {
+        "status": "accepted",
+        "frame_size": [
+          96,
+          96
+        ],
+        "anchor": [
+          48,
+          84
+        ],
+        "ground_y": 85,
+        "provenance": {
+          "kind": "human_authored_guide",
+          "accepted_date": "2026-10-01"
+        },
+        "guide": {
+          "horizontal": {
+            "head_top": 14,
+            "head_center": 24,
+            "neck": 33,
+            "shoulders": 39,
+            "chest": 45,
+            "hips": 58,
+            "knees": 72,
+            "feet": 84,
+            "ground": 85
+          },
+          "vertical": {
+            "center": 48,
+            "shoulder_l": 34,
+            "shoulder_r": 62,
+            "hip_l": 40,
+            "hip_r": 56
+          },
+          "points": {
+            "head_center": [
+              48,
+              24
+            ],
+            "neck": [
+              48,
+              33
+            ],
+            "shoulder_l": [
+              34,
+              39
+            ],
+            "shoulder_r": [
+              62,
+              39
+            ],
+            "chest": [
+              48,
+              45
+            ],
+            "hip_center": [
+              48,
+              58
+            ],
+            "hip_l": [
+              40,
+              58
+            ],
+            "hip_r": [
+              56,
+              58
+            ],
+            "knee_l": [
+              38,
+              72
+            ],
+            "knee_r": [
+              58,
+              72
+            ],
+            "foot_anchor": [
+              48,
+              84
+            ]
+          },
+          "modular_split_reference_y": 58
+        },
+        "normalization": {
+          "mode": "shared_scale",
+          "source_landmark_min_confidence": 0.75,
+          "frame_translation_limit": 12,
+          "auto_frame_translation": false,
+          "scale_segments": [
+            {
+              "a": "head_center",
+              "b": "hip_center",
+              "target_length": 34.0,
+              "weight": 1.0
+            },
+            {
+              "a": "shoulder_far",
+              "b": "shoulder_near",
+              "target_length": 28.0,
+              "weight": 0.5
+            },
+            {
+              "a": "hip_far",
+              "b": "hip_near",
+              "target_length": 16.0,
+              "weight": 0.5
+            }
+          ]
+        }
+      },
+      "profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5"
     },
-    "normalization": {
-      "mode": "shared_scale", "source_landmark_min_confidence": 0.75,
-      "frame_translation_limit": 12, "auto_frame_translation": false,
-      "scale_segments": [
-        {"a": "head_center", "b": "hip_center", "target_length": 34.0, "weight": 1.0},
-        {"a": "shoulder_far", "b": "shoulder_near", "target_length": 28.0, "weight": 0.5},
-        {"a": "hip_far", "b": "hip_near", "target_length": 16.0, "weight": 0.5}
-      ]
+    "operator_2_5d_128": {
+      "id": "operator_2_5d_128",
+      "status": "provisional",
+      "generation": "operator_2_5d_128",
+      "registration": {
+        "status": "provisional",
+        "frame_size": [
+          128,
+          128
+        ],
+        "anchor": [
+          64,
+          106
+        ],
+        "ground_y": 107,
+        "provenance": {
+          "kind": "provisional_shared_scale_reference_candidate",
+          "accepted_date": null,
+          "human_approval_required": true
+        },
+        "guide": {
+          "horizontal": {
+            "ground": 107
+          },
+          "vertical": {
+            "center": 64
+          },
+          "points": {
+            "hip_center": [
+              64,
+              77
+            ],
+            "projected_world_root": [
+              64,
+              106
+            ],
+            "shadow_origin": [
+              64,
+              107
+            ],
+            "foot_anchor": [
+              64,
+              106
+            ]
+          }
+        },
+        "normalization": {
+          "mode": "shared_scale",
+          "source_landmark_min_confidence": 0.75,
+          "frame_translation_limit": 12,
+          "auto_frame_translation": false,
+          "scale_segments": []
+        },
+        "candidate_note": "All 128px semantic coordinates are provisional candidates for human calibration; do not use as accepted registration."
+      },
+      "canonical_reference": {
+        "path": "custodian/content/sprites/operator/reference/operator_2_5d/operator_2_5d_rotation_lock_128.png",
+        "directions_path": "custodian/content/sprites/operator/reference/operator_2_5d/directions",
+        "measurement_path": "reports/operator_presentation/canonical_visual_contract/operator_2_5d_measurement_summary.json",
+        "status": "provisional",
+        "sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9"
+      },
+      "profile_sha256": "c2fa7472a8d97079da65a7635757449850e87b2d1dd0818f37237ab79d1220fd"
     }
   },
-  "measurements": {},
-  "note": "Registration geometry is human-accepted structural guidance; artistic tolerances remain advisory until canonical sample provenance is reviewed."
+  "canonical_visual_reference": {
+    "path": "custodian/content/sprites/operator/reference/operator_2_5d/operator_2_5d_rotation_lock_128.png",
+    "sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+    "measurements_path": "reports/operator_presentation/canonical_visual_contract/operator_2_5d_measurement_summary.json",
+    "status": "provisional",
+    "source_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b"
+  },
+  "enforcement": {
+    "structural": true,
+    "registration_geometry": true,
+    "artistic": false
+  }
 }

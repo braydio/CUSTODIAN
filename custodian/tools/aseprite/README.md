@@ -31,11 +31,17 @@ the Lua bridge never infers clearing behavior on its own.
 The V2 pilot drives this same bridge through `ArtAgentService`; it does not use
 a pilot-only Aseprite path or gain publication authority.
 
-`operator_anchor_guides.lua` renders the approved registration profile into a
-visible, locked `__ART_GUIDE_OPERATOR_REGISTRATION` group. Supply
+`operator_anchor_guides.lua` renders the selected registration profile into a
+visible, locked `__ART_GUIDE_OPERATOR_REGISTRATION_*` group. For the v3
+registry, the active authoring profile is selected by default; pass
+`--script-param profile_id=legacy_96` to inspect legacy registration or
+`profile_id=operator_2_5d_128` for the provisional 128px guides. The 128px mode
+also adds a direction-selected canonical-reference ghost; use
+`--script-param direction=ne` (one of `n, ne, e, se, s, sw, w, nw`). Supply
 `--script-param profile=<path>` and optionally `repo=<root>` for headless use.
-Clean Art Agent rendering excludes this guide group, which never creates a
-publishing binding.
+An unmatched canvas grid falls back to legacy 96 when possible. Clean Art Agent
+rendering excludes guide and reference layers, which never create publishing
+bindings. The 128px root/floor values remain provisional until human review.
 
 ## Humanoid rigid-cutout source
 

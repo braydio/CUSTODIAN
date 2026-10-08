@@ -1,0 +1,37 @@
+{
+  "schema": "custodian.operator_source_work_manifest.v1",
+  "authority_id": "operator_2_5d_unarmed_posture_idle_relaxed_01",
+  "source_file": "unarmed_posture_idle_relaxed_01_full_body_v1_source.png",
+  "dropbox_path": "/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png",
+  "sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
+  "bytes": 541981,
+  "dimensions": [
+    1920,
+    1024
+  ],
+  "mode": "RGBA",
+  "grid": [
+    15,
+    8
+  ],
+  "cell_size": [
+    128,
+    128
+  ],
+  "direction_order": [
+    "n",
+    "ne",
+    "e",
+    "se",
+    "s",
+    "sw",
+    "w",
+    "nw"
+  ],
+  "frames_per_direction": 15,
+  "loop": true,
+  "fps": null,
+  "timing_note": "No authoritative timing metadata is embedded in the PNG; FPS is unresolved and was not inferred.",
+  "provenance": "user_supplied_canonical_animation",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb"
+}
