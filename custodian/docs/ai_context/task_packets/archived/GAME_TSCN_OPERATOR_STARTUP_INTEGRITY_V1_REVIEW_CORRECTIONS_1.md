@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `game-tscn-operator-startup-integrity-v1-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-game-tscn-operator-startup-integrity-v1`
@@ -34,3 +34,25 @@
 - Validation: `Rerun game_scene_operator_startup_integrity and its legacy-position mutation; contract_world_operator_spawn_residency; contract_world_operator_void_spawn_failsafe; contract_world_playable_region_spawn_validity; contract_world_ingress_spawn_clearance; contract_world_archive_resolve_ingress; procgen_archive_resolve_semantic_echo; procgen_archive_resolve_frontier_restraint; affected streaming/lifecycle/runtime-health and vehicle owners; procgen_performance_baseline_quick; git diff --check.`
 - Task overrides: `none`
 - Deferred: `The user's Archive Resolve live playtest remains deferred until this correction and its paired review pass.`
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `Final validation runner passed game_scene_operator_startup_integrity (236938 ms); literal production smoke sampled after physics and reported live position (2832,5776), tile (88,180), matching the receipt, with no slide collisions. The legacy-position mutation produced operator_placement_diverged_before_ready and a nonzero smoke result. Focused spawn, playable-region, ingress, Archive Resolve, streaming, lifecycle, runtime-health, and vehicle checks passed. procgen_performance_baseline_quick direct run passed with determinism_ok=true. git diff --check passed.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The initial asynchronous readiness experiment broke synchronous spawn fixtures; it was removed. The first terminal alternate-tile adjustment had no effect when the compound supplied no alternate tile; a bounded 32-pixel fallback resolved the actual overlap. The registered S1 runner timed out at 120 seconds, while the documented direct quick profile completed successfully in 151 seconds.`
+- Root cause / contributing factors: `The contract loader placed the static CommandTerminal body on the same tile as the Operator after choosing the spawn, and the first live move_and_slide depenetrated the Operator into the next tile. The original smoke sampled after that movement but checked only the ready-time receipt.`
+- Prevention / pipeline improvement: `Avoid positioning the terminal body on the selected Operator tile; synchronously reject a pre-ready physics-shape overlap, and retain a literal-scene post-physics receipt comparison.`
+- Tooling / docs drift discovered: `The registered quick validation timeout (120 seconds) is shorter than the observed 151-second documented direct quick profile on this host.`
+- Follow-up: `none`
+- What worked: `The terminal overlap adjustment and post-physics literal-scene assertion proved the receipt/live-position invariant.`
