@@ -169,6 +169,22 @@ keep observation inside the Source Session boundary. Only a source- and
 plan-hash-verified crisp output from `pixelart --choose 1
 --normalization-plan ...` can satisfy profile-mode handoff.
 
+The profile file is now a backward-readable v3 registry. Existing Source
+Sessions and plans continue to resolve the byte-stable `legacy_96` profile;
+new animation-creation plans default to the active `operator_2_5d_128` 128px
+canvas, and Art Agent profile/report tooling can resolve it through
+`load_active_authoring_profile()` or an explicit profile ID. That profile is provisional: the
+semantic root/floor, universal action envelope, and normalized-reference pixel
+cleanup gates must pass before it is accepted. Its immutable input manifests,
+directional reference, and measurements are documented in
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`.
+
+Art Agent profile/report tooling accepts an explicit profile ID, for example
+`operator art registration-profile --profile-id operator_2_5d_128` or
+`operator art registration-report SESSION --profile-id operator_2_5d_128`.
+Session-bound reports still require matching 128x128 canvases; this option
+does not migrate an existing 96px Source Session or normalization plan.
+
 Sessions live under
 `.ai/operator_art_agent/<profile>/<group>/<action>/<direction>/<session-id>/`.
 Every mutation takes a complete pre-operation `.aseprite` backup, uses a

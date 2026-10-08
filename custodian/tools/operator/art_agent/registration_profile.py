@@ -13,24 +13,46 @@ import animation_workbench_model as model
 from . import landmarks
 
 PROFILE_PATH = model.CUSTODIAN_ROOT / "content/data/operator/authoring/operator_art_profile.json"
-SUPPORTED_SCHEMAS = {"custodian.operator_art_profile.v1", "custodian.operator_art_profile.v2"}
+SUPPORTED_SCHEMAS = {"custodian.operator_art_profile.v1", "custodian.operator_art_profile.v2", "custodian.operator_art_profile.v3"}
 
 
-def load_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
+def load_profile(path: Path = PROFILE_PATH, profile_id: str | None = None) -> dict[str, Any]:
     raw = path.read_bytes()
     value = json.loads(raw)
     if value.get("schema") not in SUPPORTED_SCHEMAS:
         raise ValueError("unsupported Operator art profile schema")
-    registration = value.get("registration")
+    selected_id = profile_id
+    if value.get("schema") == "custodian.operator_art_profile.v3":
+        profiles = value.get("profiles")
+        if not isinstance(profiles, dict):
+            raise ValueError("Operator v3 profile registry is missing profiles")
+        # Legacy callers remain pinned to 96 until they explicitly opt into the
+        # canonical 128 profile. New authoring surfaces read active_authoring_profile.
+        selected_id = selected_id or "legacy_96"
+        if selected_id not in profiles:
+            raise ValueError(f"unknown Operator art profile: {selected_id}")
+        selected = profiles[selected_id]
+        registration = selected.get("registration")
+    else:
+        selected = value
+        registration = value.get("registration")
+    profile_hash = hashlib.sha256(raw).hexdigest()
+    if value.get("schema") == "custodian.operator_art_profile.v3":
+        profile_hash = selected.get("profile_sha256") or hashlib.sha256(
+            json.dumps({k: v for k, v in selected.items() if k != "profile_sha256"}, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
     if registration is None:
-        return {"profile": value, "sha256": hashlib.sha256(raw).hexdigest(), "registration": None}
-    if registration.get("status") != "accepted" or registration.get("frame_size") != [96, 96]:
-        raise ValueError("Operator registration profile must be accepted 96x96 geometry")
+        return {"profile": selected, "registry": value, "profile_id": selected_id, "selected": selected, "sha256": profile_hash, "registration": None}
+    if registration.get("status") not in {"accepted", "provisional"}:
+        raise ValueError("Operator registration profile must be accepted or provisional")
+    frame_size = registration.get("frame_size")
+    if not isinstance(frame_size, list) or len(frame_size) != 2 or any(not isinstance(v, int) or v <= 0 for v in frame_size):
+        raise ValueError("Operator registration profile has invalid frame geometry")
     guide = registration.get("guide", {})
     for group in ("horizontal", "vertical", "points"):
         if not isinstance(guide.get(group), dict):
             raise ValueError(f"registration guide is missing {group}")
-    width, height = registration["frame_size"]
+    width, height = frame_size
     for key, point in guide["points"].items():
         if not isinstance(point, list) or len(point) != 2 or not all(isinstance(v, int) for v in point):
             raise ValueError(f"invalid registration guide point: {key}")
@@ -59,7 +81,14 @@ def load_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
             raise ValueError("scale segment references unknown semantic landmark")
         if segment.get("target_length", 0) <= 0 or segment.get("weight", 0) <= 0:
             raise ValueError("scale segment lengths and weights must be positive")
-    return {"profile": value, "sha256": hashlib.sha256(raw).hexdigest(), "registration": registration}
+    return {"profile": selected, "registry": value, "profile_id": selected_id, "selected": selected, "sha256": profile_hash, "registration": registration}
+
+
+def load_active_authoring_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
+    value = json.loads(path.read_bytes())
+    if value.get("schema") != "custodian.operator_art_profile.v3":
+        return load_profile(path)
+    return load_profile(path, value.get("active_authoring_profile"))
 
 
 def weighted_median(observations: list[dict[str, Any]]) -> float:
