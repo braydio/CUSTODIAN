@@ -88,6 +88,7 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
+- `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Independently verify that the exact user-supplied design lock was hardened as the accepted visual authority and the exact relaxed-idle sheet was hardened as...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -195,8 +196,8 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
 - `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
-- `operator-2-5d-canonical-visual-contract` is now the immediate `ready/auto` successor. It owns exact-byte source-work preservation, accepted dual-profile/reference authority, and hardening the relaxed idle as the first canonical family; its paired review follows.
-- WB25-1 remains blocked/manual until the canonical-contract receipt and paired review land; then return the final profile/reference hashes and target counts to the planning chat for its ready/auto refresh.
+- `operator-2-5d-canonical-visual-contract` is the immediate successor, but its current packet fails V2 authoring validation because the required `Change` field is missing. The paired-review metadata was corrected on current main at `350bf03f8`; no art-direction decision needs reopening.
+- WB25-1 remains blocked/manual until the canonical-contract packet is authoring-valid, its implementation lands, and its paired review completes; then return final profile/reference hashes and target counts to the planning chat for the ready/auto refresh.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -207,7 +208,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-No WB25 implementation packet is claimable from stale assumptions. The viability closeout is complete; WB25-1 remains explicitly `blocked/manual` while the canonical visual contract is recovered, landed, and independently reviewed. Then return the final target-count/profile-hash evidence to the planning chat for the WB25-1 ready/auto refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
+No WB25 implementation packet is claimable from stale assumptions. The viability closeout is complete; the canonical visual-contract packet first needs its missing required `Change` field repaired, then it must land and pass independent review. Return the final target-count/profile-hash evidence to the planning chat for the WB25-1 ready/auto refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 

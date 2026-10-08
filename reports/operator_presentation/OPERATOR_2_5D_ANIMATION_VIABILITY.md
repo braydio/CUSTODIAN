@@ -150,8 +150,9 @@ First, complete canonical source intake/registration for the relaxed idle and es
 
 ## Handoff
 
-1. Complete the canonical visual-contract packet and its paired review.
-2. Return accepted profile/reference hashes and the 69 semantic target rows—one authored idle source plus the 68-family baseline—to the WB25-1 planning chat.
-3. Refresh WB25-1 from those receipts before claiming target-projection implementation.
+1. Repair the canonical-contract packet's missing required `Change` field in the authoring chat; the paired-review metadata defect was fixed on current main.
+2. Complete the canonical visual-contract packet and its paired review.
+3. Return accepted profile/reference hashes and the 69 semantic target rows—one authored idle source plus the 68-family baseline—to the WB25-1 planning chat.
+4. Refresh WB25-1 from those receipts before claiming target-projection implementation.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb

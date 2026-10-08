@@ -412,16 +412,16 @@ Before handoff/closeout:
 - What went wrong: dispatch found an existing clean audit worktree from the prior run; the claim was resumed after inspecting its remote branch and current-main merge.
 - Root cause / contributing factors: the packet was refreshed on main while a clean prior audit claim and branch remained active.
 - Prevention / pipeline improvement: inspect dispatcher and workstream recovery state, then resume the existing clean branch and reread the packet before editing.
-- Tooling / docs drift discovered: none
+- Tooling / docs drift discovered: after current-main sync, `check_ai_context.py` reports 14 repository-wide findings including missing required `Change` in the canonical-contract packet; its paired-review duplicate `Review modes` was corrected at `350bf03f8`. The Ready/Auto packet index was regenerated and passes.
 - Follow-up: operator-2-5d-canonical-visual-contract
 - What worked: existing coverage JSON and pixel matrices preserved useful legacy evidence while exact user-locked generation metadata made canonical scope explicit.
 
 ## Next Handoff
 - Next workstream: operator-2-5d-canonical-visual-contract
-- Next packet state: ready
-- Refresh owner: none
-- ChatGPT/user planning refresh required: no
+- Next packet state: refresh-required
+- Refresh owner: chatgpt-user
+- ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh reason: none
-- Next action: claim the canonical visual-contract packet after this audit archives and releases `operator-art-agent`.
-- Blockers or open questions: none
+- Refresh reason: current-main packet validation identifies a missing required `Change` field in the canonical-contract packet; its paired-review mode error was corrected.
+- Next action: add the packet's missing `Change` field through the authoring chat, then claim the canonical visual-contract implementation and complete its paired review before refreshing WB25-1.
+- Blockers or open questions: the canonical source masters still need exact-byte intake/registration; no art-direction questions remain open.
