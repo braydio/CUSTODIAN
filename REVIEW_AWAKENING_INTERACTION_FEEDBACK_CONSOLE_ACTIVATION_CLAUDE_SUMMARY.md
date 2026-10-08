@@ -18,10 +18,10 @@ The first direct test invocation failed before execution because a new worktree 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: medium
-- What went wrong: the fresh worktree required a full graph build and Godot first import; the initial direct HUD smoke could not resolve `CustodianHUD` until import completed; first finish preflight required receipt status `passed`, while an existing example says `pass`.
-- Root cause / contributing factors: generated graph and Godot class/import state are not present in a new worktree, and the review receipt example is stale against the current lifecycle parser.
-- Prevention / pipeline improvement: initialize the code-review graph before source exploration and Godot imports/classes before focused runtime tests; use `passed` in receipts consumed by `workstream.py`.
-- Tooling / docs drift discovered: Asset V2 static consumer verification does not recognize runtime `SpriteFrames` assembled in GDScript; an existing paired-review example's status token does not match the finish-time parser.
+- What went wrong: the fresh worktree required a full graph build and Godot first import; the initial direct HUD smoke could not resolve `CustodianHUD` until import completed; first finish preflight required receipt status `passed`, while an existing example says `pass`; post-sync task-index validation found the managed ready block stale after upstream WB25 status updates.
+- Root cause / contributing factors: generated graph and Godot class/import state are absent in a new worktree, the review receipt example is stale against the lifecycle parser, and upstream packet status changed without regenerating the managed README index.
+- Prevention / pipeline improvement: initialize the code-review graph before source exploration and Godot imports/classes before focused runtime tests; use `passed` in receipts consumed by `workstream.py`; regenerate the managed packet index after packet-status changes.
+- Tooling / docs drift discovered: Asset V2 static consumer verification does not recognize runtime `SpriteFrames` assembled in GDScript; an existing paired-review example's status token does not match the finish-time parser; upstream WB25 status refresh left the managed ready index stale.
 - Follow-up: manual-follow-up
 - What worked: focused runtime tests plus source/Asset V2 contract inspection established the acceptance without renderer capture.
 
