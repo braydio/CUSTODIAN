@@ -13,9 +13,11 @@ The literal-scene smoke waits through a physics step and checks that the live Op
 - `contract_world_operator_spawn_residency`, `contract_world_operator_void_spawn_failsafe`, `contract_world_playable_region_spawn_validity`, `contract_world_ingress_spawn_clearance`, and `contract_world_archive_resolve_ingress`: passed.
 - `procgen_archive_resolve_semantic_echo`, `procgen_archive_resolve_frontier_restraint`, `procgen_pause_aware_streaming`, `procgen_chunk_lifecycle`, `procgen_runtime_health`, `vehicle_exit_clearance`, `vehicle_runtime_lifecycle`, and `vehicle_wreck_restoration`: passed.
 - `procgen_performance_baseline_quick`: passed directly with `determinism_ok=true` in 151 seconds. Its registered 120-second timeout was insufficient on this host.
-- `git diff --check`: passed.
+- `git diff --check`: passed for the correction before main synchronization. The incoming origin/main roadmap has two pre-existing trailing-space lines.
+- Post-sync changed-file sweep: 15/18 passed. The three red tests are the documented `procgen_ambient_enemy_real_world_spawn` timeout and Vaultwing missing-bonding-asset/type failures; the focused startup report after synchronization passed (162087 ms).
+- `task_packet_index.py` and the active paired-review packet authoring preflight: passed. Repository-wide `check_ai_context.py` still reports 19 unrelated existing packet/index findings.
 
-The first asynchronous implementation experiment broke synchronous installer fixtures and was reverted. The first alternate-terminal selection did not resolve the collision when no alternate compound tile was available; the fallback was added and then confirmed by the literal smoke. A prior unrelated two-minute `--changed` validation was already running in another process; it was left untouched. The documented ambient-spawn and Sundered Keep baselines were not part of this correction's focused validation.
+The first asynchronous implementation experiment broke synchronous installer fixtures and was reverted. The first alternate-terminal selection did not resolve the collision when no alternate compound tile was available; the fallback was added and then confirmed by the literal smoke. A separate changed-file run was active in another worktree and was left untouched. Main advanced during closeout, producing one task-index merge conflict; it was resolved by regenerating the managed index against the merged packet tree. The correction-specific focused report passed after synchronization.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
