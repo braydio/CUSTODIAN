@@ -398,10 +398,12 @@ Before handoff/closeout:
 
 
 ## Completion Truth
-- Goal satisfied: yes — migration viability evidence now distinguishes all live legacy art from the locked canonical generation and records the first accepted canonical family.
-- Completion boundary satisfied: yes — report and machine inventory were refreshed; no Operator art/runtime assets were mutated.
-- Acceptance satisfied: yes — exact design/animation hashes and geometry are recorded; the first canonical idle is separate from legacy runtime identity; 68 remaining production families and the atlas baseline are ranked; non-live families remain excluded.
-- Evidence: `reports/operator_presentation/OPERATOR_2_5D_ANIMATION_VIABILITY.md`; `reports/operator_presentation/operator_2_5d_coverage.json`; three existing evidence matrices; `operator anim list unarmed --json`; structural consistency check; clean `git diff --check`; only report Markdown/JSON changed against `origin/main`.
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `reports/operator_presentation/OPERATOR_2_5D_ANIMATION_VIABILITY.md`; `reports/operator_presentation/operator_2_5d_coverage.json`; three existing evidence matrices; `operator anim list unarmed --json`; report consistency check; `git diff --check`; `task_packet_index.py`; only report/packet/index/roadmap files changed, with no Operator art/runtime asset mutation.
 
 ## Execution Feedback
 - Feedback schema: custodian.task_feedback.v1
