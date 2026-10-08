@@ -136,3 +136,27 @@ Required before completion.
 - Next action: Run the paired fresh-context review `review-persistent-checkout-sync-hardening` against the landed implementation.
 - Best starting files: `custodian/tools/agent/persistent_checkout_sync.py`, `custodian/tools/validation/persistent_checkout_sync_smoke.py`, and the archived implementation packet.
 - Blockers or open questions: None.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-persistent-checkout-sync-hardening`
+- Reviewed on main: `58bab17248d444315cd8fa7785fe295acf31eb14`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Reviewer independence: `A newly claimed review worktree reconstructed the landed implementation from the archived implementation packet, summary, current production code, and fresh focused validation. No reviewed implementation file was modified.`
+- Evidence: The persistent sync smoke, Operator-art worktree smoke, workstream tests (38), OPUI smoke, shell syntax, and diff checks passed. The root has 134,037 ignored file entries. A read-only `persistent_checkout_sync.py status root --coordination-root /home/braydenchaffee/Projects/CUSTODIAN --json` probe remained inside `_ignored_manifest()` hashing after more than 60 seconds and was interrupted; traceback identified `hashlib.sha256(path.read_bytes())` as the active operation. The implementation summary and reported root sync measure approximately eight minutes for the same broad ignored-tree hashing. The performance defect affects status, direct root sync, and OPUI startup's root sync attempt.
+- Review disposition: `findings`
+- Finding R0-01: **Blocking / workflow performance.** `_ignored_manifest()` reads and SHA-256 hashes every ignored file during every profile snapshot, before/after synchronization, and collision inspection; on the real coordination checkout this encompasses 134,037 ignored entries and prevents ordinary status/startup from completing promptly. Preserve fail-closed collision protection and ignored-byte invariants using candidate-path-scoped inspection and verification rather than scanning/hashing the entire ignored tree; add a large-ignored-tree regression fixture proving path-count-bounded work while retaining byte-preservation coverage.
+- Correction workstream: `persistent-checkout-sync-hardening-review-corrections-1`
+- Correction packet: `custodian/docs/ai_context/task_packets/PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md`
+- Paired re-review: `review-persistent-checkout-sync-hardening-review-corrections-1`
+- Follow-up rationale: The current implementation is safety-conservative but the actual root profile makes normal user-facing commands take minutes. This exceeds an acceptable user-facing latency and is observable in a live read-only probe; it must be corrected before the shared sync authority is accepted.
