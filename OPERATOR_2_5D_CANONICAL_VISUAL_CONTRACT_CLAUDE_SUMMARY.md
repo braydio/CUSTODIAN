@@ -21,6 +21,7 @@ The deterministic pre-migration proxy scan records 446 category-assigned frame o
 - `operator_art_registration_profile_smoke.py` — passed; v1 compatibility and trusted legacy plan replay remain valid.
 - `operator_art_agent_mcp_smoke.py` — passed.
 - `operator_art_agent_aseprite_smoke.py` — passed; internal guide layers do not leak into clean renders.
+- `task_packet_index.py` and `validate_review_pairing.py` — passed after regenerating the managed index against current `origin/main`.
 - `python3 -m py_compile` on changed Python files — passed.
 - `git diff --check` — passed.
 - Dropbox reviewed evidence cleanup — completed; publisher returned `status: deleted` for `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json` under `delete-after-review`.
@@ -34,10 +35,10 @@ No production runtime selector cutover is included. Universal action-envelope fi
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: medium
-- What went wrong: the first profile-registry migration made legacy plan replay compare against the v3 registry hash; later, the neutral idle could not prove a universal action envelope, and the proxy scan found legacy overflow candidates after initial review handoffs. Immutable Dropbox runs required fresh IDs when evidence changed.
+- What went wrong: the first profile-registry migration made legacy plan replay compare against the v3 registry hash; later, the neutral idle could not prove a universal action envelope, and the proxy scan found legacy overflow candidates after initial review handoffs. Immutable Dropbox runs required fresh IDs when evidence changed. Merging latest main made the generated ready/auto index stale, so it was regenerated and rechecked. The optional pre-commit graph refresh warned when a dependency fetch failed; commit checks continued.
 - Root cause / contributing factors: the legacy validator assumed one selected profile hash equaled the entire profile-file hash; neutral-idle poses do not cover extreme actions; published Dropbox manifests cannot be overwritten.
 - Prevention / pipeline improvement: validate explicit profile hashes while preserving v1/v2 compatibility; distinguish canonical body registration from per-action envelopes; update the handoff under a fresh run ID when evidence changes.
-- Tooling / docs drift discovered: the planning refresh repaired the packet's missing `Change` field. Repo-wide `check_ai_context.py` still reports 13 unrelated pre-existing findings in vehicle/Sundered Keep/ProcGen packet metadata and one archived review index entry; none touches this workstream's files. Missing FPS is preserved as unknown/null and non-blocking.
+- Tooling / docs drift discovered: the planning refresh repaired the packet's missing `Change` field. Repo-wide `check_ai_context.py` still reports 13 unrelated pre-existing findings in vehicle/Sundered Keep/ProcGen packet metadata and one archived review index entry; none touches this workstream's files. The optional graph cache refresh is stale because the hook's dependency fetch failed. Missing FPS is preserved as unknown/null and non-blocking.
 - Follow-up: review-operator-2-5d-canonical-visual-contract
 - What worked: byte-exact masters, stable legacy hash, deterministic geometry/proxy checks, and a durable human decision block kept acceptance evidence explicit.
 
