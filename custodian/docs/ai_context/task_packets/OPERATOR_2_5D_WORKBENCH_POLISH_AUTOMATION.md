@@ -6,7 +6,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-polish-automation
 - Status: draft
-- Dispatch: auto
+- Dispatch: manual
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-ingress
 - Locks: operator-art-agent, operator-aseprite-tooling, operator-workbench-ui

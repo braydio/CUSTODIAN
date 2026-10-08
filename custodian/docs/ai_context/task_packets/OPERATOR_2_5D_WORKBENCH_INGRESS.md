@@ -6,7 +6,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-ingress
 - Status: draft
-- Dispatch: auto
+- Dispatch: manual
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-cockpit-foundation
 - Locks: operator-workbench-ui, operator-workbench-publish, operator-source-normalization, operator-art-generation-schema
