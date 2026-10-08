@@ -2,10 +2,10 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-cockpit-foundation
-- Status: draft
-- Dispatch: auto
+- Status: blocked
+- Dispatch: manual
 - Priority: P1
-- Depends on: operator-2-5d-animation-viability-audit, review-operator-2-5d-canonical-visual-contract, review-operator-workbench-animation-creation
+- Depends on: operator-2-5d-animation-viability-audit, review-operator-2-5d-canonical-visual-contract, review-operator-workbench-animation-creation-review-corrections-1
 - Locks: operator-workbench-ui, operator-art-generation-schema, operator-animation-plan
 - Kind: implementation
 - Review: auto
@@ -15,14 +15,14 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
-- Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
+- Reviewed main: b0bc0956c4ce0510199b098d74691a39672df69a
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Goal: Make OPUI target-driven for the canonical 2.5D migration: legacy and 2.5D art can coexist without path/session collisions, every required 2.5D leaf exists before pixels do, and one structured projection truthfully reports coverage and workflow state.
 - Completion boundary: Add art_generation to authoring identity, a collision-free 2.5D source namespace, backward-readable implementation-plan v2, target-first 2.5D projection, separate legacy/2.5D browser roots, and an action×direction matrix from the same projection. Do not add import orchestration, art mutation, QA automation, or production runtime cutover.
-- Current measured state: AnimationSelection has profile/group/action/direction only; discover_browser_records() starts from source_index() so absent art is invisible; operator_asset_schema.py canonical operator source paths have no generation dimension; OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json is v1 and generation-blind; canonical 2.5D profile/landmarks are still landing through the prerequisite visual-contract workstream.
-- Evidence: custodian/tools/operator/ui/state.py; custodian/tools/operator/ui/service.py::discover_browser_records; custodian/tools/operator/ui/widgets/animation_tree.py; custodian/tools/operator/animation_workbench_model.py; custodian/tools/pipelines/operator_asset_schema.py; design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json; design/02_features/animation/OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md.
-- Task-specific authority: the reviewed canonical visual contract for generation geometry/reference; completed viability audit for production-reachable target scope; OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json for human rank/priority; operator_asset_schema.py for semantic/path validation; Workbench source/workspace/publication state for workflow truth.
+- Current measured state: The New Animation backend prerequisite is now complete after bounded correction `operator-workbench-animation-creation-review-corrections-1` landed at `a26982b8d` and its cycle-1 paired re-review artifacts landed at `0ebea7b6` with 0 blockers, 0 material evidence gaps, and no new findings. Full-body and modular creation now publish through the shared `WorkbenchService`, preserve authored pixels, normalize to source-backed sessions, reject invalid contracts/post-preview target races, and surface unwired published identities as DORMANT. Two Operator-2.5D prerequisites remain unresolved on production main: (1) the viability-audit donor `8d66c42e4` is archived unique history, 409 commits behind current main, and its own durable summary says the workstream paused at the human visual-review boundary rather than completed; (2) the canonical visual-contract donor `1624fe638d` is archived unique history, 333 commits behind current main, while the active implementation packet is still ready/manual and its paired review has not completed. WB25-1 therefore cannot truthfully seed final target counts/profile/reference SHAs or become claimable yet.
+- Evidence: archived `REVIEW_OPERATOR_WORKBENCH_ANIMATION_CREATION_REVIEW_CORRECTIONS_1.md` + its durable summary; `operator-workbench-animation-creation-review-corrections-1` landed at `a26982b8d`, review artifacts at `0ebea7b6`; archived viability donor `8d66c42e41296396747fbdeb0fcfbc57f289dad1` with `OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT_CLAUDE_SUMMARY.md` and report artifacts; archived canonical-contract donor `1624fe638db78bf1c30eec66541b739c280d8cac`; live `OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md`, `OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md`, paired canonical review packet, `operator_art_profile.json`, `operator_asset_schema.py`, Workbench service/state/widgets, implementation plan v1, and this roadmap.
+- Task-specific authority: the **reviewed/landed** canonical visual contract for generation geometry/reference; the **completed** viability audit for production-reachable target scope; `OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json` for human rank/priority; `operator_asset_schema.py` for semantic/path validation; the corrected New Animation `WorkbenchService` path for absent-target creation/publication truth; Workbench source/workspace/publication state for workflow truth.
 - Work surface: custodian/tools/operator/ui/state.py; custodian/tools/operator/ui/service.py; custodian/tools/operator/ui/widgets/animation_tree.py; custodian/tools/operator/ui/widgets/plan_table.py; recommended new pure owner custodian/tools/operator/operator_animation_targets.py; custodian/tools/pipelines/operator_asset_schema.py; design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json; focused Operator Workbench UI/model validation.
 - Change:
   1. Add explicit authoring art_generation values legacy_96 and operator_2_5d_128. Keep art_generation separate from gameplay profile.
@@ -109,16 +109,16 @@ Recommended v2 plan row:
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh instruction: After the viability audit is formally completed and the corrected canonical visual contract + paired review land, bring their closing summaries/profile/reference SHAs and live main back to this chat. Re-derive final target counts, accepted 128 registration/profile fields, exact source namespace API, and plan-v2 seed rows before setting this packet ready.
+- Refresh instruction: This refresh consumed the completed New Animation correction/re-review and remeasured both remaining prerequisites. Keep WB25-1 blocked/manual until the viability audit is actually completed/landed from current-main evidence and the canonical visual contract is recovered, corrected for current main, landed, and independently reviewed. At that point bring the final viability counts/verdicts plus accepted `operator_2_5d_128` profile/reference hashes back to the planning chat; then rewrite this packet in place to ready/auto with exact target counts and plan-v2 seed rows.
 
 ## Handoff
 
-- Next workstream: review-operator-2-5d-workbench-cockpit-foundation
-- Next packet state: dependency-gated
-- Refresh owner: none
-- ChatGPT/user planning refresh required: no
+- Next workstream: operator-2-5d-animation-viability-audit
+- Next packet state: recovery/closeout-required
+- Refresh owner: chatgpt-user
+- ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include the exact Authoring chat URL in every durable summary and final Next Handoff
-- Refresh reason: none after this packet is refreshed and implemented
-- Next action: paired fresh-context review
-- Blockers or open questions: prerequisite human/profile decisions must land before this packet becomes ready
+- Refresh reason: New Animation is reviewed complete, but the viability audit and canonical visual contract are not completed dependencies on current main; both existing implementations survive only as archived donor evidence.
+- Next action: Recover/close the viability audit first, then recover/land/review the canonical visual contract; return their final counts/profile/reference SHAs here before promoting WB25-1.
+- Blockers or open questions: The viability audit donor was paused at human visual review and lacks current-main closeout; the canonical visual-contract donor is hundreds of commits behind current main and must be reconciled before landing/review. The optional Textual pilot remains irrelevant to this gate.
