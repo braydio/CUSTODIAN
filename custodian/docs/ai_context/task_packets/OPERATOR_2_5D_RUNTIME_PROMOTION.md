@@ -6,7 +6,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-runtime-promotion
 - Status: draft
-- Dispatch: auto
+- Dispatch: manual
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-production-queue
 - Locks: operator-runtime-animation, operator-art-generation-schema, operator-workbench-publish

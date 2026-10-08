@@ -325,6 +325,15 @@ Normal implementation work is autonomous through the lifecycle documented in
 there, push a recovery branch, and land through `custodian/tools/agent/land_main.py`.
 Completed remote task branches are deleted only after reachability from
 `origin/main` is verified. No PR or routine human approval is required.
+After landing, agents must also keep the persistent project-root `CUSTODIAN/`
+checkout synchronized with `origin/main` without requiring user approval for
+this routine step. Fast-forward only when the root is on `main`, clean, and
+strictly behind; preserve dirty files, untracked files, local commits, and
+diverged history exactly as found. Never reset, clean, stash, rebase, switch
+branches, or overwrite local work to make synchronization succeed. If the root
+cannot safely fast-forward, report the concrete blocker and pending sync, then
+continue closeout without an approval prompt. Retry automatically once the
+checkout is safe. See the repository-root `AGENTS.md` for the exact sync steps.
 Ad hoc review-only work must explicitly say
 `TASK OVERRIDE: review only; do not stage, commit, or push.` A paired post-land
 review may commit only its durable review receipt, required closing summary,
