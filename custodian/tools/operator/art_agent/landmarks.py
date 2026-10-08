@@ -9,6 +9,7 @@ LANDMARK_NAMES = {
     "head_center", "hood_top", "shoulder_near", "shoulder_far", "elbow_near",
     "elbow_far", "hand_near", "hand_far", "hip_center", "hip_near", "hip_far",
     "knee_near", "knee_far", "ankle_near", "ankle_far", "toe_near", "toe_far",
+    "left_foot_contact", "right_foot_contact", "projected_world_root", "shadow_origin",
     "cloak_tip_near", "cloak_tip_far", "weapon_grip", "weapon_tip",
 }
 

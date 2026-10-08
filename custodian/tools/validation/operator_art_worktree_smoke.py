@@ -237,19 +237,28 @@ def launcher_smoke(base: Path) -> None:
     python = coordination / ".ai/operator-ui-venv/bin/python"
     python.parent.mkdir(parents=True)
     capture = base / "opui-capture.json"
+    events = base / "opui-events.jsonl"
     python.write_text(
         "#!/usr/bin/env python3\n"
         "import json, os, pathlib, sys\n"
-        "if sys.argv[1].endswith('operator_art_worktree.py'):\n"
+        "script = sys.argv[1]\n"
+        "if script.endswith('persistent_checkout_sync.py'):\n"
+        "    target = sys.argv[3]\n"
+        "    with open(os.environ['OPUI_EVENTS'], 'a') as f: f.write('sync-' + target + '\\n')\n"
+        "    blocked = os.environ.get('OPUI_BLOCKED') == '1'\n"
+        "    print(('coordination-main: DIRTY · preserve root' if target == 'root' else 'operator-art: ASEPRITE OPEN · close Aseprite') if blocked else ('coordination-main: SYNCED 1' if target == 'root' else 'operator-art: SYNCED 1'))\n"
+        "elif script.endswith('operator_art_worktree.py'):\n"
+        "    with open(os.environ['OPUI_EVENTS'], 'a') as f: f.write('ensure-art\\n')\n"
         "    root = pathlib.Path(sys.argv[-1])\n"
         "    print(root.parent / (root.name + '-operator-art'))\n"
         "else:\n"
-        "    pathlib.Path(os.environ['OPUI_CAPTURE']).write_text(json.dumps({'args': sys.argv[1:], 'coordination': os.environ.get('CUSTODIAN_COORDINATION_ROOT')}))\n"
+        "    with open(os.environ['OPUI_EVENTS'], 'a') as f: f.write('ui\\n')\n"
+        "    pathlib.Path(os.environ['OPUI_CAPTURE']).write_text(json.dumps({'args': sys.argv[1:], 'coordination': os.environ.get('CUSTODIAN_COORDINATION_ROOT'), 'sync': os.environ.get('CUSTODIAN_SYNC_STATUS')}))\n"
     )
     python.chmod(0o755)
     result = subprocess.run(
         ["bash", "-c", f"source {REPO_ROOT / 'tools/custodian_aliases.sh'}; opui --profile fixture"],
-        env={**os.environ, "HOME": str(home), "OPUI_CAPTURE": str(capture)},
+        env={**os.environ, "HOME": str(home), "OPUI_CAPTURE": str(capture), "OPUI_EVENTS": str(events)},
         text=True, capture_output=True, check=False,
     )
     assert result.returncode == 0, result.stderr
@@ -257,6 +266,20 @@ def launcher_smoke(base: Path) -> None:
     expected_cli = home / "Projects/CUSTODIAN-operator-art/custodian/tools/operator/operator_cli.py"
     assert invocation["args"] == [str(expected_cli), "ui", "--profile", "fixture"]
     assert invocation["coordination"] == str(coordination)
+    assert events.read_text().splitlines() == ["sync-root", "ensure-art", "sync-art", "ui"]
+    assert "coordination-main: SYNCED" in invocation["sync"] and "operator-art: SYNCED" in invocation["sync"]
+
+    events.unlink()
+    blocked = subprocess.run(
+        ["bash", "-c", f"source {REPO_ROOT / 'tools/custodian_aliases.sh'}; opui --profile fixture"],
+        env={**os.environ, "HOME": str(home), "OPUI_CAPTURE": str(capture), "OPUI_EVENTS": str(events), "OPUI_BLOCKED": "1"},
+        text=True, capture_output=True, check=False,
+    )
+    assert blocked.returncode == 0, blocked.stderr
+    invocation = json.loads(capture.read_text())
+    assert "coordination-main: DIRTY" in invocation["sync"]
+    assert "operator-art: ASEPRITE OPEN" in invocation["sync"]
+    assert events.read_text().splitlines() == ["sync-root", "ensure-art", "sync-art", "ui"]
 
 
 def lfs_scope_smoke(base: Path) -> None:
@@ -611,4 +634,9 @@ def smoke() -> None:
 
 
 if __name__ == "__main__":
-    smoke()
+    live_probe = art._running_aseprite_processes
+    art._running_aseprite_processes = lambda: []
+    try:
+        smoke()
+    finally:
+        art._running_aseprite_processes = live_probe

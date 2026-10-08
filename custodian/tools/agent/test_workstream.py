@@ -15,6 +15,7 @@ SCRIPT = Path(__file__).with_name("workstream.py")
 SPEC = importlib.util.spec_from_file_location("workstream", SCRIPT)
 workstream = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(workstream)
+import persistent_checkout_sync as persistent_sync
 
 
 def git(cwd: Path, *args: str) -> str:
@@ -240,7 +241,9 @@ class WorkstreamTests(unittest.TestCase):
         report.write_text('{"schema":"custodian.validation.result.v1","passed":true,"tests":[{"status":"passed"}]}')
         # Invoke from the task worktree itself, as the normal CLI does. Teardown
         # must continue through a surviving coordination worktree.
-        workstream.finish("finish-me", report, repo=path)
+        with mock.patch.object(workstream, "apply_profiles", wraps=workstream.apply_profiles) as sync_apply:
+            workstream.finish("finish-me", report, repo=path)
+        sync_apply.assert_called_once_with([workstream.ROOT_PROFILE], self.repo)
         self.assertFalse(path.exists())
         self.assertNotIn("agent/finish-me", git(self.repo, "branch", "--list"))
         self.assertEqual(git(self.repo, "ls-remote", "--heads", "origin", "agent/finish-me"), "")
@@ -380,6 +383,22 @@ class WorkstreamTests(unittest.TestCase):
         workstream.finish("dirty-root-finish", self._green_report(), repo=path)
         self.assertTrue((self.repo / "uncommitted-root-file").exists())
         self.assertNotEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+
+    def test_finish_leaves_diverged_persistent_root_history_untouched(self):
+        path = workstream.start("diverged-root-finish", self.repo)
+        self._commit_task_work(path, "diverged-root-finish")
+        local_file = self.repo / "persistent-root-commit.txt"
+        local_file.write_text("keep local root commit\n")
+        git(self.repo, "add", "persistent-root-commit.txt")
+        git(self.repo, "commit", "-m", "local root commit")
+        root_head = git(self.repo, "rev-parse", "HEAD")
+
+        workstream.finish("diverged-root-finish", self._green_report(), repo=path)
+
+        state = persistent_sync.inspect_profile(persistent_sync.ROOT_PROFILE, self.repo)
+        self.assertEqual(state.state, "DIVERGED")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), root_head)
+        self.assertEqual(local_file.read_text(), "keep local root commit\n")
 
     # --- Completion Truth finish-gate ---
 

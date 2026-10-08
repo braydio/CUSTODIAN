@@ -123,7 +123,7 @@ func _run() -> void:
 	var install_start := source.find("func _on_contract_generated(")
 	var ingress_call := source.find("if place_registered_level_connections:", install_start)
 	var sectors_call := source.find("var sectors_positioned :=", install_start)
-	var operator_call := source.find("if reposition_operator_from_contract:", install_start)
+	var operator_call := source.find("if not _position_operator(level_data, map_instance):", install_start)
 	_expect(
 		install_start >= 0
 			and ingress_call > install_start

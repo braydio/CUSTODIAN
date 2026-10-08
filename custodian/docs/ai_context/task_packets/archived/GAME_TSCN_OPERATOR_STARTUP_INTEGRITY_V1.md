@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `game-tscn-operator-startup-integrity-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -114,25 +114,25 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `scene-authored Operator coordinates remain editor/bootstrap placeholder only; never runtime fallback authority`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_CLAUDE_SUMMARY.md; literal scene seed 1773840677 selected tile (88,180), one player identity, generation receipt, ready validation valid=true; pre-ready legacy-position mutation failed activation with operator_placement_diverged_before_ready; focused acceptance owners and startup owner pass; changed sweep has complete coverage with unrelated clean-main baseline failures documented`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `focused production-shaped spawn tests passed while literal game.tscn startup still exposed the authored legacy Operator position`
-- Root cause / contributing factors: `<fill after literal-scene reproduction>`
-- Prevention / pipeline improvement: `literal production-scene startup regression + pre-ready placement receipt invariant + bounded startup observability`
-- Tooling / docs drift discovered: `active spawn documentation overstated production startup proof; Archive Resolve playtest remained blocked despite technical closeout`
-- Follow-up: `paired fresh-context review`
-- What worked: `existing spawn validity/residency/failsafe authorities provide narrow reusable predicates and diagnostics rather than requiring a spawn redesign`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `focused spawn fixtures passed while the literal production startup left the Operator at its authored placeholder because a registered ingress clearance covered every safe cell in the accepted 72-cell component; optional Vaultwing population also emitted unrelated missing-asset errors in the startup proof and was isolated at the fixture boundary`
+- Root cause / contributing factors: `Forlorn edge placement had no minimum distance from the live ProcGen spawn; its 27x19-tile dressing clearance overlapped the canonical spawn. level_data.player_spawn used a different coordinate and was not the live map authority. An unnecessary generation guard initially suppressed intentional same-instance failure/recovery coverage and was removed.`
+- Prevention / pipeline improvement: `live-map spawn clearance constraints for world ingress placement; literal production-scene startup owner; generation-scoped placement receipt, transition-level diagnostics, phase timings, and a cheap pre-ready consistency gate`
+- Tooling / docs drift discovered: `the paired-review packet had parser-invisible target fields, Review: manual, and a noncanonical override; corrected to the dispatcher contract`
+- Follow-up: `fixed-in-scope`
+- What worked: `existing spawn validity/residency/failsafe authorities provided narrow reusable predicates without a spawn redesign`
 
-## Handoff
+## Next Handoff
 
 - Next workstream: `review-game-tscn-operator-startup-integrity-v1`
 - Next packet state: `ready`
@@ -141,4 +141,24 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `none`
 - Next action: `Run the fresh-context paired review after the implementation lands; if passed, unblock the user's deferred Archive Resolve playtest.`
-- Blockers or open questions: `none at claim time; the task begins by reproducing and classifying the literal game.tscn startup defect`
+- Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-game-tscn-operator-startup-integrity-v1`
+- Reviewed on main: `579121331d74f754daf86cc1009617a2934f89b4`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, runtime, architecture`
+- Blocking defects: `0`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `game-tscn-operator-startup-integrity-v1-review-corrections-1`
+- Reviewer independence: `The review started in a fresh paired workstream and reconstructed the contract from archived packet/summary, live source, targeted runtime evidence, and an independent pre-ready mutation.`
+- Blockers or open questions: `The terminal live Operator settled on tile (88,181) while the placement receipt records tile (88,180); bounded correction R0-01 is ready.`

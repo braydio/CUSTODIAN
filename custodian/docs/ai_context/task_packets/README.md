@@ -1,8 +1,27 @@
 # Agent Task Packets
 
-Last updated: 2026-10-07
+Last updated: 2026-10-08
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
+
+### Authoring preflight
+
+Before a newly authored or materially refreshed packet is changed to `Status: ready`,
+validate that packet and its paired review (when applicable) with:
+
+```bash
+python3 custodian/tools/agent/validate_task_packet_authoring.py \
+  custodian/docs/ai_context/task_packets/<PACKET>.md \
+  custodian/docs/ai_context/task_packets/REVIEW_<PACKET>.md
+```
+
+`Review modes` are schema values, not free-form labels. The current shared contract
+accepts only `code`, `architecture`, `runtime`, `visual`, `asset-pipeline`, and
+`workflow`. The targeted preflight imports that enum directly from
+`task_packet_contract.py`, validates pair bindings/override metadata, and is scoped
+to the packet(s) being authored so unrelated queue drift cannot become an excuse to
+skip local validation. Repo-wide AI-context/review-pairing validation still runs at
+normal closeout.
 
 
 ## Active Packets
@@ -14,10 +33,10 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 <!-- task_packet_index:managed:start -->
 - `AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1.md` — Replace the independently fitted/rotated Dust Lung ↔ connector ↔ Locker Reliquary presentation with the user's exact precomposed three-layer registration. Pr...
 - `AWAKENING_LOWER_UPPER_SPINE_CONNECTION.md` — Make the lower Awakening and the later/upper Awakening read and behave as one continuous authored route by turning the Dust Lung→Undergate seam into one expl...
-- `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md` — Make the literal production `res://scenes/game.tscn` boot finish with the canonical `/root/GameRoot/World/Operator` on the generated contract world's selecte...
+- `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_REVIEW_CORRECTIONS_1.md` — Keep the canonical Operator's settled production-start position consistent with its accepted safe placement receipt, or fail contract activation when that co...
 - `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1.md` — Independently prove the runtime now preserves the user's exact axis-aligned 1502×2048 Dust→connector→Locker composition rather than the previously reviewed a...
 - `REVIEW_AWAKENING_LOWER_UPPER_SPINE_CONNECTION.md` — Independently prove that the lower and upper/later Awakening are one continuous playable route across a single 05→06 passage, with no hidden collision seam o...
-- `REVIEW_GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md` — Independently prove that ordinary production `game.tscn` boot can no longer publish a ready world with the canonical Operator left at the authored legacy coo...
+- `REVIEW_GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_REVIEW_CORRECTIONS_1.md` — Independently verify the bounded R0-01 correction against the literal production game.tscn boot and settled Operator position.
 - `REVIEW_TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Independently verify that the dispatcher cannot silently strand active V2 work and that the new queue-state invariant does not accidentally make parked/manua...
 - `TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Eliminate ambiguous task-packet queue states that can make real work disappear from autonomous claiming, and make intentional parking versus dependency gatin...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
@@ -31,7 +50,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
-- `OPERATOR_2_5D_ANIMATION_VIABILITY_AUDIT.md` — Determine whether the current production-reachable Operator animation art is viable for CUSTODIAN's fixed-isometric 2.5D contract, quantify exactly where dir...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -42,7 +60,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` — Finish the already-live Carbine hybrid socket architecture by making the static directional `WeaponSprite` the sole primary-ranged weapon renderer for author...
 - `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect...
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authoritie...
-- `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Give the user one safe, repeatable way to keep the persistent coordination checkout at `~/Projects/CUSTODIAN/` and the persistent OPUI `workbench/operator-ar...
+- `PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — Remove the full ignored-tree hashing bottleneck from persistent checkout status and synchronization while retaining fail-closed protection against ignored lo...
 - `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic...
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Extract durable authored-world claim metadata and membership from `ProcGenTilemap` into one canonical registry under `custodian/game/world/procgen/authored_c...
 - `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Re-derive the post-D1/D2/D3 generation core from live code and produce the authoritative migration contract for replacing TileMapLayer-as-working-memory with...
@@ -69,6 +87,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
+- `REVIEW_OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT.md` — Independently verify that the exact user-supplied design lock was hardened as the accepted visual authority and the exact relaxed-idle sheet was hardened as...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -77,7 +96,7 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md` — Independently verify that correction `R0-01` closes the REPLACE source-conflict window without weakening successful publication, CREATE collision refusal, or...
-- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Independently verify that the shared persistent-checkout sync implementation keeps the coordination root and OPUI art checkout current only when synchronizat...
+- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — Independently verify that correction R0-01 removes ignored-tree-wide hashing from ordinary persistent checkout status/sync while preserving path-collision an...
 - `REVIEW_PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Independently verify that D2 creates one durable authored-claim owner, preserves current authored floor/overlook/ingress behavior and M6 unload/reload semant...
 - `REVIEW_PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Independently verify that the post-D1/D2/D3 generation-data audit completely and truthfully maps the remaining TileMap-backed generation core before any abst...
 - `REVIEW_PROCGEN_GENERATION_GRID_FOUNDATION.md` — Independently verify that the GenerationGrid foundation is a minimal semantic storage seam with exact TileMap-backed parity, not an accidental second generat...
@@ -139,12 +158,12 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `archived/VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — completed P0 control-plane/tooling slice: claim receipts expose authoring/visual-review routing, finish enforces exact summary backlinks, Dropbox review manifests default to delete-after-review and carry a path-confined cleanup command, and `$custodian-next` keeps human review inside the active workstream.
 - `archived/REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — complete: paired review passed (0 blocking, 5 non-blocking deferred findings R0-01..R0-05).
 
-### Active Persistent Checkout Sync Hardening
+### Completed Persistent Checkout Sync Hardening
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
-- `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — P1 ready/auto workflow hardening that creates one fail-closed persistent-checkout sync authority for the user's coordination `~/Projects/CUSTODIAN/` main checkout and the sparse `workbench/operator-art` OPUI checkout, with `csync` / `opui-sync` helpers and safe OPUI pre-authoring synchronization.
-- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context code/architecture/workflow review; dependency-gated on the implementation and focused on dirty/diverged preservation, ignored Workbench byte safety, locking/races, and absence of destructive Git recovery.
+- `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — complete: one fail-closed persistent-checkout sync authority owns safe coordination-main and Operator-art updates, with `csync` / `opui-sync` helpers, OPUI pre-authoring synchronization, and 25/25 changed-file validations passed.
+- `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — completed paired fresh-context review found blocking R0-01: status/startup hashed all 134,037 ignored root files; correction cycle 1 is queued.
 
 ### Active Hub First-Set / First Campaign Loop Series
 
@@ -175,9 +194,9 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - K3D-1P kenney-isometric-blockout-playtest is complete/landed as the final walkable Kenney reference.
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
 - `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
-- `operator-2-5d-animation-viability-audit` has preserved donor evidence at archived head `8d66c42e4`, including the report/coverage/matrices, but the donor summary explicitly pauses at the human visual-review boundary. It is not a completed main dependency and needs current-main recovery/closeout.
-- `operator-2-5d-canonical-visual-contract` has preserved provisional donor implementation at archived head `1624fe638d`, but it is hundreds of commits behind current main and has not landed or passed its paired review. Its 128 body canvas, shared scale 0.225, neutral support presentation around y106, and separate projected_world_root/shadow_origin decisions remain planning authority for recovery, not proof of landed completion.
-- Human approval of the Operator 2.5D authoring direction remains valid. Forum remains an important in-world presentation proof, but it no longer gates Workbench tooling; WB25-1 is blocked specifically on the two art-authority prerequisite recoveries above.
+- `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
+- `operator-2-5d-canonical-visual-contract` is the immediate successor, but its current packet fails V2 authoring validation because the required `Change` field is missing. The paired-review metadata was corrected on current main at `350bf03f8`; no art-direction decision needs reopening.
+- WB25-1 remains blocked/manual until the canonical-contract packet is authoring-valid, its implementation lands, and its paired review completes; then return final profile/reference hashes and target counts to the planning chat for the ready/auto refresh.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -188,7 +207,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-No WB25 implementation packet is claimable from stale assumptions. WB25-1 has now been remeasured after the reviewed New Animation correction and is explicitly `blocked/manual`; complete/recover the viability audit first, then recover/land/review the canonical visual contract, then perform the final WB25-1 target-count/profile-hash refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
+No WB25 implementation packet is claimable from stale assumptions. The viability closeout is complete; the canonical visual-contract packet first needs its missing required `Change` field repaired, then it must land and pass independent review. Return the final target-count/profile-hash evidence to the planning chat for the WB25-1 ready/auto refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
@@ -469,14 +488,25 @@ must never derive or invent ChatGPT conversation URLs.
 Every completed packet/review reports the immediate successor in its own
 program/DAG through the required `Next Handoff` fields: next workstream,
 packet state, refresh owner, whether ChatGPT/user planning refresh is required,
-authoring-chat URL, refresh reason, next action, and blockers.
+authoring-chat URL, refresh reason, next action, and blockers. The durable
+`<TASK>_CLAUDE_SUMMARY.md` is the persistent copy of that handoff.
 
-Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen at claim time from current main plus landed predecessor evidence. Use `Refresh owner: chatgpt-user` only when a genuine unresolved design choice requires the user's judgment before implementation can proceed.
-The execution/review agent supplies the live-state evidence and drift, but the
-user brings the recorded authoring chat back to ChatGPT so the packet can be
-re-derived against both original intent and current main. Mechanical refreshes
-that do not change scope, ownership, sequencing, acceptance, visual direction,
-or design interpretation may use `execution-agent`.
+A ready/eligible named successor with
+`ChatGPT/user planning refresh required: no` is an **autonomous continuation**,
+not a user relay point. The agent/worker claims that successor itself and
+continues through the same-series implementation/review/correction chain.
+Paired reviews still require a fresh reviewer context, but that context switch
+does not require the user to carry the prior summary.
+
+Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen
+at claim time from current main plus landed predecessor evidence. Use
+`Refresh owner: chatgpt-user` only when a genuine unresolved design choice
+requires the user's judgment before implementation can proceed. At that boundary
+the agent stops and surfaces only the exact recorded Authoring/Refresh chat URL,
+the copyable workstream ID, and the persistent summary path; the user opens the
+linked conversation and pastes the workstream ID. Mechanical refreshes that do
+not change scope, ownership, sequencing, acceptance, visual direction, or design
+interpretation remain execution-agent work.
 
 Historical packets without an authoring URL remain valid; surface
 `Authoring chat: not-recorded` and ask the user to provide the originating

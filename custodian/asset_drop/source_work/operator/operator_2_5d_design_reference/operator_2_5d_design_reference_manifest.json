@@ -1,0 +1,33 @@
+{
+  "schema": "custodian.operator_source_work_manifest.v1",
+  "authority_id": "operator_2_5d_design_reference",
+  "source_file": "operator_2_5d_design_lock_v1_source.png",
+  "dropbox_path": "/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png",
+  "sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+  "bytes": 312707,
+  "dimensions": [
+    2048,
+    256
+  ],
+  "mode": "RGBA",
+  "grid": [
+    8,
+    1
+  ],
+  "cell_size": [
+    256,
+    256
+  ],
+  "direction_order": [
+    "n",
+    "ne",
+    "e",
+    "se",
+    "s",
+    "sw",
+    "w",
+    "nw"
+  ],
+  "provenance": "user_approved_visual_lock",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb"
+}

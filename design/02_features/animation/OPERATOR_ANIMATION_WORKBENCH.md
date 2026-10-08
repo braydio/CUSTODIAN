@@ -70,6 +70,16 @@ pointer. It never fetches LFS, stashes, rebases, resets, cleans, or erases user
 changes. Final confirmation rechecks readiness immediately before canonical
 mutation.
 
+Before normal OPUI authoring starts, the launcher attempts a bounded safe sync
+of the persistent coordination `main` checkout and the identified Operator art
+checkout through the shared persistent-checkout sync authority. Clean,
+behind-only checkouts fast-forward automatically. Dirty, ahead, diverged,
+wrong-branch, pending/recovery, or Aseprite-open states are left byte-for-byte
+intact; OPUI still mounts and the exact blocker is shown in its checkout status.
+The `csync`, `csync root`, `csync art`, `csync status`, and `opui-sync` shell
+commands route through the same authority. Its inspect mode does not fetch or
+mutate Git state.
+
 The persistent art worktree uses the worktree-local `operator-authoring-v1`
 sparse profile. It includes repository Git hooks and their required
 `tools/validate_filenames.py` pre-commit dependency so Operator art commits
@@ -77,9 +87,9 @@ execute the cross-platform filename gate inside the art checkout. It keeps Opera
 validation dependencies, canonical Operator art/data, Operator-owned weapon
 art, and the Workbench plan while leaving reports, asset-drop material, and
 unrelated large art trees out of the checkout. Ordinary coordination worktrees
-remain full-tree. On reuse, OPUI does not synchronize the art branch; explicit
-Publish preparation fetches `origin/main` and fast-forwards only a clean art
-branch with no pending landing and no local commits ahead. Dirty,
+remain full-tree. Startup synchronization and explicit Publish preparation
+both fast-forward only a clean art branch with no pending landing and no local
+commits ahead. Dirty,
 ahead, diverged, and `LAND PENDING` states are preserved and shown in the
 status line. Safe synchronization reapplies the profile and retains ignored
 `.ai/operator_animation_workbench` files byte-for-byte. A dirty full-tree

@@ -16,6 +16,7 @@
       "required_for_contract": true,
       "priority": 140,
       "minimum_spacing_tiles": 14,
+      "minimum_distance_from_player_spawn_tiles": 16,
       "max_edge_distance_tiles": 8,
       "approach_depth_tiles": 10,
       "lateral_search_tiles": 32,

@@ -10,6 +10,8 @@ This is **planned program state, not yet live runtime**. The existing independen
 
 - **Procgen startup spawn residency correction (2026-10-07):** contract spawn eligibility now uses canonical valid-spawn, runtime-navigation, accepted-component, and ingress-clearance checks without requiring current TileMap paint. `ContractWorldLoader` selects first, calls `ProcGenTilemap.ensure_spawn_presentation_ready()` for the chosen cell, and restores Operator visibility/control only after exact-tile floor realization. Real generated streaming coverage proves an initially unpainted accepted-component spawn reaches contract ready; the true no-canonical-safe path remains hidden/disabled and reports `no_canonical_safe_spawn`. The fresh paired review passed with no blocking defects or material evidence gaps; both readiness-seam and painted-floor-filter negative controls failed as expected.
 
+- **Literal production startup integrity (2026-10-08):** the actual `res://scenes/game.tscn` boot now keeps the canonical `/root/GameRoot/World/Operator` hidden and disabled until ProcGen placement, floor realization, camera refresh and navigation rebuild complete. A generation-scoped placement receipt is checked immediately before `contract_ready`; the literal-scene smoke proves one player identity, exact tile round-trip and the expected install ordering. The pre-fix seed `1773840677` reproduced `no_canonical_safe_spawn`: Forlorn's large ingress dressing clearance covered every cell in the 72-cell main component. Its edge placement now keeps 16 tiles from the live ProcGen spawn. Genuine unsafe generations remain fail-closed.
+
 ## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
 
 `PilotableVehicle` is the sole production vehicle lifecycle owner. Ordinary exits
@@ -167,16 +169,16 @@ compile and aesthetics were proven on a real Vulkan renderer by
 visual pass was approved by the user on 2026-10-05. ARR1 R0-03/R0-04 are covered by the AR2 and
 distant-unload smokes.
 
-## Archive Resolve V1 Closeout / Deferred Live Playtest (2026-10-07)
+## Archive Resolve V1 Closeout / Live Playtest Unblocked (2026-10-08)
 
 AR3 semantic echo/ingress/reacquisition and AR4 frontier restraint have completed
 implementation, correction and paired-review lineage. AR4's current production baseline
 remains an 11-tile local frontier, fringe 2, 84 resolve starts/sec, burst cap 8 and
 0.22 s resolve duration. Human disposition is `waive-to-playtest`: code/evidence closeout
-is complete, but ordinary game-feel confirmation is still deferred because the literal
-production `game.tscn` startup can leave the live player at the scene-authored legacy
-Operator coordinates instead of the generated spawn. Do not reopen or retune Archive
-Resolve to solve that blocker; `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md` owns the P0.
+is complete. The literal-scene startup regression now proves relocation, receipt
+consistency and fail-closed behavior, so ordinary game-feel confirmation is unblocked.
+Do not reopen or retune Archive Resolve as part of startup integrity; its visual
+disposition remains the human playtest decision.
 
 ## Contract World Placement Foundation (2026-10-02)
 
@@ -303,8 +305,12 @@ with an ignored `LAND PENDING` receipt; retrying the same animation resumes
 landing without exporting pixels again. A successful land refreshes OPUI and
 best-effort fast-forwards a clean coordination checkout. Coordination edits
 remain preserved and are reported as a pending sync.
-On reuse, OPUI startup is read-only and still mounts when publication is
-blocked. The Publish review projects checkout identity/relation, dirty path
+Before OPUI enters authoring, the shared persistent-checkout authority makes a
+bounded FF-only attempt for clean, behind-only coordination-main and Operator
+art checkouts. Dirty, ahead, diverged, `LAND PENDING`, recovery, wrong-branch,
+and Aseprite-open states remain untouched; OPUI still mounts and reports the
+blocker in checkout status. `csync` and `opui-sync` use the same authority.
+The Publish review projects checkout identity/relation, dirty path
 categories, sparse health, required LFS/missing dependencies, transaction
 receipts, and selected source freshness. Explicit Publish preparation fetches
 `origin/main` and fast-forwards only a clean idle branch with zero local
@@ -398,10 +404,17 @@ that is accepted only on `workbench/operator-art` targeting `origin/main`; it
 still passes through the same serialized, race-safe `land_main.py` algorithm.
 The lander accepts the branch's own upstream while still rejecting publication
 on unrelated remote refs. Successful finish verifies ancestry from
-`origin/main` before removing completed branch/worktree state. Branch archive
-hygiene is ancestry-based and report-only by default. Paired post-land reviews
-now use stable cycle-scoped findings, explicit correction thresholds, and
-delta-only correction packets. Their bounded packet override permits commits
+`origin/main` before removing completed branch/worktree state. A successful
+finish is no longer a routine human handback boundary: when the durable
+`Next Handoff` names an eligible same-series successor and
+`ChatGPT/user planning refresh required: no`, the agent/worker persists the
+completed `<TASK>_CLAUDE_SUMMARY.md`, claims the successor itself, and continues
+autonomously. Human/ChatGPT refresh gates stop with a compact Authoring Chat +
+Workstream + persistent-summary card so the user only has to open the recorded
+conversation and paste the workstream ID. Branch archive hygiene is
+ancestry-based and report-only by default. Paired post-land reviews now use
+stable cycle-scoped findings, explicit correction thresholds, and delta-only
+correction packets. Their bounded packet override permits commits
 only for the archived review receipt, required summary, review-packet lifecycle
 metadata, and correction/re-review packets; reviewed implementation and
 unrelated files remain prohibited. Dispatch rejects auto review packets with a
@@ -1036,6 +1049,24 @@ evacuation-road material and an explicit west-turn line. Civic and catastrophe
 props were remapped off the reserved axis. The requested facade-frame source
 IDs remain blocked because current semantic IDs 62, 64, 129, and 140 resolve to
 different emergency/salvage assets, not the facade semantics named by V1.
+
+## Operator 2.5D Visual Authority (2026-10-08)
+
+The exact user-supplied 2048x256 design lock and 1920x1024 relaxed-idle source
+are preserved byte-for-byte beneath Operator source-work with Dropbox
+provenance manifests. A crisp shared-scale 1024x128 directional reference and
+per-direction measurements are stored under the Operator reference and
+presentation-report paths. The human-approved registration is x=64, root
+[64,106], and shadow/ground [64,107], fixed across all directions. The
+normalized reference is accepted unchanged at SHA-256
+`e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`; no pixel
+cleanup was authorized. `operator_art_profile.json` is a v3 registry; legacy
+96 authoring remains byte-hash selectable, and `operator_2_5d_128` is the
+accepted canonical body/reference profile. Universal action-envelope fit is
+not asserted; future extreme actions require per-action validation and may
+use root-preserving expanded envelopes. The accepted relaxed-idle source
+family has FPS/timing unknown/null, which is non-blocking. The design authority is
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md`.
 
 ## Operator Animation Workbench V2 (2026-08-28)
 

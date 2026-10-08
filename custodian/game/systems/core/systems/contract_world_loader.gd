@@ -65,6 +65,7 @@ const SUNDERED_KEEP_LEVEL_ID := &"sundered_keep_front_gate"
 const WORLD_ORIGIN_BRANCH_GROUP := &"world_origin_branch"
 const AMBIENT_ENEMY_MARKER_GROUP := &"ambient_enemy_camp_marker"
 const GENERATED_AMBIENT_ENEMY_MARKER_GROUP := &"generated_procgen_ambient_enemy_marker"
+const LEGACY_OPERATOR_PLACEHOLDER_POSITION := Vector2(717.45905, -485.33954)
 const SECTOR_TILE_PX := 24.0
 const LEGACY_PROCGEN_SECTOR_LAYOUT := {
 	"ARCHIVE": 0,
@@ -89,6 +90,10 @@ var _last_failure_result: Dictionary = {}
 var _install_trace: Array[Dictionary] = []
 var _last_archive_resolve_ingress: Dictionary = {}
 var _operator_failure_state: Dictionary = {}
+var _operator_placement_receipt: Dictionary = {}
+var _active_generation_identity: String = ""
+var _install_started_usec: int = 0
+var _last_install_phase_usec: int = 0
 
 
 func _ready() -> void:
@@ -96,6 +101,9 @@ func _ready() -> void:
 	var game_root := get_node_or_null("/root/GameRoot")
 	if game_root != null and bool(game_root.get_meta("command_pressure_scenario_active", false)):
 		return
+	if reposition_operator_from_contract:
+		_disable_operator_until_safe_placement()
+		_observe_startup_transition(&"operator_held_for_generated_spawn", _operator_identity_snapshot())
 	call_deferred("_bind_contract_map")
 
 
@@ -126,14 +134,27 @@ func _bind_contract_map() -> void:
 	_contract_map_node = get_node_or_null(contract_map_path)
 	if _contract_map_node == null:
 		push_warning("[ContractWorldLoader] ContractMap not found at %s" % String(contract_map_path))
+		_observe_startup_transition(&"contract_map_unbound", {"path": str(contract_map_path)})
+		_on_contract_generation_failed({
+			"generation_failed": true,
+			"failure_reason": "contract_map_missing",
+			"detail": {"path": str(contract_map_path)},
+		})
 		return
 	if not _contract_map_node.has_signal("contract_generated"):
 		push_warning("[ContractWorldLoader] ContractMap missing signal: contract_generated")
+		_observe_startup_transition(&"contract_map_unbound", {"path": str(contract_map_path), "reason": "contract_generated_signal_missing"})
+		_on_contract_generation_failed({
+			"generation_failed": true,
+			"failure_reason": "contract_map_signal_missing",
+			"detail": {"path": str(contract_map_path)},
+		})
 		return
 
 	var callback := Callable(self, "_on_contract_generated")
 	if not _contract_map_node.is_connected("contract_generated", callback):
 		_contract_map_node.connect("contract_generated", callback)
+	_observe_startup_transition(&"contract_map_bound", {"path": str(_contract_map_node.get_path())})
 	if _contract_map_node.has_signal("contract_generation_failed"):
 		var failure_callback := Callable(self, "_on_contract_generation_failed")
 		if not _contract_map_node.is_connected("contract_generation_failed", failure_callback):
@@ -150,27 +171,45 @@ func _bind_contract_map() -> void:
 
 
 func _on_contract_generated(contract: Dictionary) -> void:
-	_contract_generation_failed = false
-	_last_failure_result = {}
-	_install_trace.clear()
-	_last_archive_resolve_ingress = {}
 	var map_block: Dictionary = contract.get("map", {}) as Dictionary
-	var world_profile: Dictionary = contract.get("world_profile", {}) as Dictionary
-	_apply_contract_lighting_profile(world_profile)
-	var level_data: Dictionary = map_block.get("level_data", {}) as Dictionary
-	if bool(level_data.get("generation_failed", false)):
-		_on_contract_generation_failed(level_data)
-		return
 	var map_instance_variant: Variant = map_block.get("instance")
 	if (
 		map_instance_variant == null
 		or not is_instance_valid(map_instance_variant)
 		or not (map_instance_variant is Node)
 	):
-		push_warning("[ContractWorldLoader] Contract map instance missing or invalid")
+		_on_contract_generation_failed({
+			"generation_failed": true,
+			"failure_reason": "contract_map_instance_missing",
+			"detail": "ContractWorldLoader received a generated contract without a live map instance.",
+		})
 		return
-
-	var map_instance: Node = map_instance_variant as Node
+	var map_instance := map_instance_variant as Node
+	var generation_identity := _contract_generation_identity(contract, map_instance)
+	_active_generation_identity = generation_identity
+	_contract_generation_failed = false
+	_last_failure_result = {}
+	if reposition_operator_from_contract:
+		_disable_operator_until_safe_placement()
+	_install_trace.clear()
+	_last_archive_resolve_ingress = {}
+	_operator_placement_receipt.clear()
+	_install_started_usec = Time.get_ticks_usec()
+	_last_install_phase_usec = _install_started_usec
+	var bootstrap := get_node_or_null("/root/WorldContractBootstrap")
+	var bootstrap_metrics: Dictionary = bootstrap.call("get_metrics") if bootstrap != null and bootstrap.has_method("get_metrics") else {}
+	_trace_install(&"contract_generation_received", {
+		"generation_identity": generation_identity,
+		"contract_seed": contract.get("contract_seed", -1),
+		"map_seed": map_block.get("map_seed", -1),
+		"bootstrap": bootstrap_metrics,
+	})
+	var world_profile: Dictionary = contract.get("world_profile", {}) as Dictionary
+	_apply_contract_lighting_profile(world_profile)
+	var level_data: Dictionary = map_block.get("level_data", {}) as Dictionary
+	if bool(level_data.get("generation_failed", false)):
+		_on_contract_generation_failed(level_data)
+		return
 	var placement_context := _build_placement_context(map_instance, level_data)
 	_attach_procgen_map(map_instance)
 	_apply_contract_environment(contract, map_instance)
@@ -229,10 +268,37 @@ func _on_contract_generated(contract: Dictionary) -> void:
 	if reposition_operator_from_contract:
 		_begin_archive_resolve_ingress(map_instance)
 	if reposition_camera_from_contract:
-		_trace_install(&"camera_refresh")
 		_refresh_camera(map_instance)
+		_trace_install(&"camera_refresh")
 	_rebuild_navigation(map_instance)
-	_trace_install(&"contract_ready")
+	_trace_install(&"navigation_rebuilt")
+	if reposition_operator_from_contract:
+		var operator := get_node_or_null(operator_path) as Node2D
+		if operator != null:
+			_restore_operator_after_safe_placement(operator)
+			_operator_placement_receipt["visible_after_restore"] = operator.visible
+			_operator_placement_receipt["process_mode_after_restore"] = operator.process_mode
+			var player_nodes := get_tree().get_nodes_in_group("player") if get_tree() != null else []
+			_operator_placement_receipt["player_group_count"] = player_nodes.size()
+			_operator_placement_receipt["player_group_identity_matches"] = (
+				operator.get_path() != NodePath("/root/GameRoot/World/Operator")
+				or (player_nodes.size() == 1 and player_nodes[0] == operator)
+			)
+		_trace_install(&"operator_placement_receipt", _operator_placement_receipt)
+	var placement_validation := _validate_operator_placement_before_ready(map_instance)
+	if not bool(placement_validation.get("valid", false)):
+		_trace_install(&"operator_placement_diverged_before_ready", placement_validation)
+		_disable_operator_until_safe_placement()
+		_on_contract_generation_failed({
+			"generation_failed": true,
+			"failure_reason": "operator_placement_diverged_before_ready",
+			"detail": placement_validation,
+		})
+		return
+	_trace_install(&"contract_ready", {
+		"placement_validation": placement_validation,
+		"placement_receipt": get_operator_placement_receipt(),
+	})
 	_mark_contract_ready()
 
 
@@ -259,7 +325,18 @@ func _component_query_count(map_instance: Node) -> int:
 
 
 func _trace_install(phase: StringName, detail: Dictionary = {}) -> void:
-	_install_trace.append({"phase": phase, "detail": detail})
+	var now_usec := Time.get_ticks_usec()
+	var timing := {
+		"phase_elapsed_ms": maxf(0.0, float(now_usec - _last_install_phase_usec) / 1000.0),
+		"install_elapsed_ms": maxf(0.0, float(now_usec - _install_started_usec) / 1000.0),
+	}
+	_last_install_phase_usec = now_usec
+	_install_trace.append({"phase": phase, "detail": detail.duplicate(true), "timing": timing})
+	_observe_startup_transition(phase, {
+		"generation_identity": _active_generation_identity,
+		"detail": detail.duplicate(true),
+		"timing": timing,
+	})
 
 
 func get_install_trace() -> Array[Dictionary]:
@@ -268,6 +345,72 @@ func get_install_trace() -> Array[Dictionary]:
 
 func get_last_archive_resolve_ingress() -> Dictionary:
 	return _last_archive_resolve_ingress.duplicate(true)
+
+
+func get_operator_placement_receipt() -> Dictionary:
+	return _operator_placement_receipt.duplicate(true)
+
+
+func get_startup_diagnostics() -> Dictionary:
+	var contract_map := get_node_or_null(contract_map_path)
+	var player_nodes := get_tree().get_nodes_in_group("player") if get_tree() != null else []
+	return {
+		"loader_bound": contract_map != null and _contract_map_node == contract_map,
+		"generation_identity": _active_generation_identity,
+		"terminal_state": "failed" if _contract_generation_failed else ("ready" if not _install_trace.is_empty() and _install_trace[-1].get("phase") == &"contract_ready" else "pending"),
+		"placement_receipt": get_operator_placement_receipt(),
+		"failure": get_last_failure_result(),
+		"player_group_count": player_nodes.size(),
+		"player_group_paths": player_nodes.map(func(node: Node) -> String: return str(node.get_path())),
+		"install_trace": get_install_trace(),
+	}
+
+
+func _contract_generation_identity(contract: Dictionary, map_instance: Node) -> String:
+	var map_block: Dictionary = contract.get("map", {}) as Dictionary
+	return "%s:%s:%s" % [
+		str(contract.get("contract_seed", "unknown")),
+		str(map_block.get("map_seed", "unknown")),
+		str(map_instance.get_instance_id()),
+	]
+
+
+func _operator_identity_snapshot() -> Dictionary:
+	var operator := get_node_or_null(operator_path)
+	var players := get_tree().get_nodes_in_group("player") if get_tree() != null else []
+	return {
+		"canonical_path": str(operator.get_path()) if operator != null else "missing",
+		"canonical_instance_id": operator.get_instance_id() if operator != null else -1,
+		"canonical_position": (operator as Node2D).global_position if operator is Node2D else Vector2.INF,
+		"player_group_count": players.size(),
+		"player_group_paths": players.map(func(node: Node) -> String: return str(node.get_path())),
+	}
+
+
+func _observe_startup_transition(phase: StringName, detail: Dictionary = {}) -> void:
+	if not is_inside_tree():
+		return
+	var observatory := get_node_or_null("/root/DevObservatory")
+	if observatory == null:
+		return
+	var snapshot := _operator_identity_snapshot()
+	var terminal_state := "failed" if _contract_generation_failed else "pending"
+	if phase == &"contract_ready":
+		terminal_state = "ready"
+	elif phase == &"contract_failed":
+		terminal_state = "failed"
+	snapshot.merge({
+		"phase": String(phase),
+		"generation_identity": _active_generation_identity,
+		"loader_bound": _contract_map_node != null and is_instance_valid(_contract_map_node),
+		"terminal_state": terminal_state,
+		"receipt": get_operator_placement_receipt(),
+		"detail": detail.duplicate(true),
+	}, true)
+	if observatory.has_method("set_gauge"):
+		observatory.call("set_gauge", &"contract_world_startup", snapshot)
+	if observatory.has_method("log_event"):
+		observatory.call("log_event", &"contract_world_startup_transition", snapshot)
 
 
 func _place_ambient_enemy_camps(level_data: Dictionary, map_instance: Node) -> void:
@@ -466,9 +609,12 @@ func _on_contract_generation_failed(result: Dictionary) -> void:
 	_contract_generation_failed = true
 	_last_failure_result = result.duplicate(true)
 	_active_procgen_map = null
-	_disable_operator_until_safe_placement()
+	if is_inside_tree():
+		_disable_operator_until_safe_placement()
 	print("[ContractWorldLoader] Contract generation failed; runtime world activation aborted %s" % str(result))
-	_mark_contract_failed(result)
+	if is_inside_tree():
+		_mark_contract_failed(result)
+	_observe_startup_transition(&"contract_failed", {"failure": result.duplicate(true)})
 	_stop_combat_activation()
 
 
@@ -491,6 +637,7 @@ func _mark_contract_ready() -> void:
 	var game_state := get_node_or_null("/root/GameState")
 	if game_state != null and game_state.has_method("mark_contract_ready"):
 		game_state.call("mark_contract_ready")
+	_observe_startup_transition(&"contract_ready", {"placement_receipt": get_operator_placement_receipt()})
 
 
 func _mark_contract_failed(result: Dictionary) -> void:
@@ -500,6 +647,8 @@ func _mark_contract_failed(result: Dictionary) -> void:
 
 
 func _stop_combat_activation() -> void:
+	if not is_inside_tree():
+		return
 	var node_added_callback := Callable(self, "_on_failed_runtime_node_added")
 	if get_tree() != null and not get_tree().is_connected("node_added", node_added_callback):
 		get_tree().connect("node_added", node_added_callback)
@@ -557,10 +706,11 @@ func _on_failed_enemy_child_entered(node: Node) -> void:
 func _on_failed_runtime_node_added(node: Node) -> void:
 	if not _contract_generation_failed or node == null:
 		return
-	call_deferred("_disable_failed_runtime_node_if_needed", node)
+	call_deferred("_disable_failed_runtime_node_if_needed", node.get_instance_id())
 
 
-func _disable_failed_runtime_node_if_needed(node: Node) -> void:
+func _disable_failed_runtime_node_if_needed(instance_id: int) -> void:
+	var node := instance_from_id(instance_id) as Node
 	if not _contract_generation_failed or node == null or not is_instance_valid(node):
 		return
 	if node.is_in_group("enemy"):
@@ -736,7 +886,8 @@ func _attach_procgen_map(map_instance: Node) -> void:
 func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 	var operator := get_node_or_null(operator_path) as Node2D
 	if operator == null:
-		return true
+		_trace_install(&"operator_identity_missing", {"operator_path": str(operator_path)})
+		return false
 	var main_component := _get_main_playable_component(map_instance)
 	var selection := _pick_compound_spawn_result(level_data, map_instance, main_component)
 	if selection.is_empty():
@@ -753,15 +904,20 @@ func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 			selection = {"tile": fallback_tile as Vector2i, "source": "main_component_fallback"}
 	if selection.is_empty():
 		var safe_component_tile_count := 0
+		var ingress_clearance_excluded_tile_count := 0
 		for key: Variant in main_component.keys():
-			if key is Vector2i and _is_safe_operator_spawn_tile(
-				map_instance, key as Vector2i, main_component
-			):
-				safe_component_tile_count += 1
+			if key is Vector2i:
+				var candidate := key as Vector2i
+				if _is_safe_operator_spawn_tile(map_instance, candidate, main_component):
+					safe_component_tile_count += 1
+				elif _is_inside_ingress_clearance(map_instance, candidate):
+					ingress_clearance_excluded_tile_count += 1
 		_trace_install(&"operator_spawn_unavailable", {
 			"reason": "no_canonical_safe_spawn",
+			"player_spawn": _operator_spawn_anchor(level_data, map_instance),
 			"main_component_tile_count": main_component.size(),
 			"safe_component_tile_count": safe_component_tile_count,
+			"ingress_clearance_excluded_tile_count": ingress_clearance_excluded_tile_count,
 		})
 		return false
 	var selected_tile: Vector2i = selection["tile"]
@@ -802,8 +958,84 @@ func _position_operator(level_data: Dictionary, map_instance: Node) -> bool:
 		"tile": selected_tile,
 		"world_position": operator.global_position,
 	})
-	_restore_operator_after_safe_placement(operator)
+	var player_nodes := get_tree().get_nodes_in_group("player") if get_tree() != null else []
+	var canonical_identity_required := operator.get_path() == NodePath("/root/GameRoot/World/Operator")
+	_operator_placement_receipt = {
+		"schema": "custodian.operator_placement_receipt.v1",
+		"generation_identity": _active_generation_identity,
+		"operator_instance_id": operator.get_instance_id(),
+		"operator_path": str(operator.get_path()),
+		"source": String(selection["source"]),
+		"tile": selected_tile,
+		"world_position": operator.global_position,
+		"presentation_ready": true,
+		"component_query_count": _component_query_count(map_instance),
+		"accepted_main_component": main_component.has(selected_tile),
+		"canonical_spawn_valid": map_instance is ProcGenTilemap and (map_instance as ProcGenTilemap).is_valid_spawn_cell(selected_tile),
+		"runtime_navigation_walkable": map_instance is ProcGenTilemap and (map_instance as ProcGenTilemap).is_runtime_navigation_walkable(selected_tile),
+		"outside_ingress_clearance": not _is_inside_ingress_clearance(map_instance, selected_tile),
+		"painted_floor": _is_walkable_floor_tile(map_instance, selected_tile),
+		"visible_after_restore": bool(_operator_failure_state.get("visible", operator.visible)),
+		"process_mode_after_restore": int(_operator_failure_state.get("process_mode", operator.process_mode)),
+		"player_group_count": player_nodes.size(),
+		"player_group_identity_matches": not canonical_identity_required or (player_nodes.size() == 1 and player_nodes[0] == operator),
+	}
 	return true
+
+
+func _validate_operator_placement_before_ready(map_instance: Node) -> Dictionary:
+	if not reposition_operator_from_contract:
+		return {"valid": true, "skipped": true}
+	var operator := get_node_or_null(operator_path) as Node2D
+	var players := get_tree().get_nodes_in_group("player") if get_tree() != null else []
+	var reasons: Array[String] = []
+	if operator == null:
+		reasons.append("canonical_operator_missing")
+	if _operator_placement_receipt.is_empty():
+		reasons.append("placement_receipt_missing")
+	if operator != null:
+		if operator.global_position.is_equal_approx(LEGACY_OPERATOR_PLACEHOLDER_POSITION):
+			reasons.append("operator_at_legacy_scene_placeholder")
+		if int(_operator_placement_receipt.get("operator_instance_id", -1)) != operator.get_instance_id():
+			reasons.append("operator_instance_diverged")
+		if String(_operator_placement_receipt.get("operator_path", "")) != str(operator.get_path()):
+			reasons.append("operator_path_diverged")
+		if not operator.global_position.is_equal_approx(_operator_placement_receipt.get("world_position", Vector2.INF) as Vector2):
+			reasons.append("operator_position_diverged")
+		var selected_tile := _operator_placement_receipt.get("tile", Vector2i.ZERO) as Vector2i
+		var current_tile := _world_to_tile(map_instance, operator.global_position)
+		if current_tile != selected_tile:
+			reasons.append("operator_tile_diverged")
+		if not _is_walkable_floor_tile(map_instance, current_tile):
+			reasons.append("operator_tile_not_painted_floor")
+		if _is_inside_ingress_clearance(map_instance, current_tile):
+			reasons.append("operator_tile_inside_ingress_clearance")
+		if map_instance is ProcGenTilemap:
+			var pg := map_instance as ProcGenTilemap
+			if not pg.is_valid_spawn_cell(current_tile):
+				reasons.append("operator_tile_not_canonical_spawn_valid")
+			if not pg.is_runtime_navigation_walkable(current_tile):
+				reasons.append("operator_tile_not_runtime_walkable")
+		if not operator.visible:
+			reasons.append("operator_not_visible_after_restore")
+		if operator.process_mode == Node.PROCESS_MODE_DISABLED:
+			reasons.append("operator_processing_disabled_after_restore")
+	if operator != null and operator.get_path() == NodePath("/root/GameRoot/World/Operator"):
+		if players.size() != 1 or players[0] != operator:
+			reasons.append("player_group_identity_mismatch")
+	if not bool(_operator_placement_receipt.get("accepted_main_component", false)):
+		reasons.append("selected_tile_not_recorded_in_accepted_component")
+	if not bool(_operator_placement_receipt.get("presentation_ready", false)):
+		reasons.append("spawn_presentation_not_ready")
+	if not bool(_operator_placement_receipt.get("player_group_identity_matches", false)):
+		reasons.append("player_identity_did_not_match_at_placement")
+	return {
+		"valid": reasons.is_empty(),
+		"reasons": reasons,
+		"generation_identity": _active_generation_identity,
+		"receipt": get_operator_placement_receipt(),
+		"operator": _operator_identity_snapshot(),
+	}
 
 
 func _pick_main_component_fallback_tile(

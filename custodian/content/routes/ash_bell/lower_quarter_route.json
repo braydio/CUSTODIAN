@@ -15,6 +15,7 @@
       "strategy": "near_compound_ingress",
       "priority": 120,
       "minimum_spacing_tiles": 18,
+      "minimum_distance_from_player_spawn_tiles": 16,
       "search_radius_tiles": 22,
       "offset_candidates_tiles": [[18, -12], [-18, -12], [24, 4], [-24, 4]]
     }

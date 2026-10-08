@@ -322,9 +322,14 @@ cannot override higher repository or design authority.
 Normal implementation work is autonomous through the lifecycle documented in
 `docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`: start/resume a stable
 `agent/<workstream-id>` branch in an ephemeral worktree, implement and validate
-there, push a recovery branch, and land through `custodian/tools/agent/land_main.py`.
+there, push a recovery branch, and land through the normal finish/landing path.
 Completed remote task branches are deleted only after reachability from
 `origin/main` is verified. No PR or routine human approval is required.
+After a successful finish, an eligible named same-series successor with
+`ChatGPT/user planning refresh required: no` is claimed and executed by the
+agent/worker automatically; the user is not a relay between ordinary packets.
+Stop and emit the lifecycle's compact Authoring Chat + Workstream handoff only
+when a genuine human/ChatGPT refresh or decision is required.
 After landing, agents must also keep the persistent project-root `CUSTODIAN/`
 checkout synchronized with `origin/main` without requiring user approval for
 this routine step. Fast-forward only when the root is on `main`, clean, and

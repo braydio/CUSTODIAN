@@ -588,8 +588,8 @@ class ArtAgentService:
     def get_metrics(self, session_path: Path) -> dict[str, Any]:
         _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); values=animation_metrics([Path(x) for x in artifacts["frames"]],self.get_landmarks(session_path),masks=self.get_masks(session_path)); write_json(root/"metrics.json",values); return values
 
-    def registration_profile(self, session_path: Path | None = None) -> dict[str, Any]:
-        value = load_profile()
+    def registration_profile(self, session_path: Path | None = None, *, profile_id: str | None = None) -> dict[str, Any]:
+        value = load_profile(profile_id=profile_id)
         if session_path is not None:
             _session, manifest, _root = self._checked_session(session_path)
             canvas = manifest["canvas"]
@@ -597,19 +597,19 @@ class ArtAgentService:
             value["matches_profile_frame_size"] = value.get("registration") is not None and value["registration"]["frame_size"] == value["session_frame_size"]
         return value
 
-    def registration_report(self, session_path: Path) -> dict[str, Any]:
+    def registration_report(self, session_path: Path, *, profile_id: str | None = None) -> dict[str, Any]:
         _session, manifest, root = self._checked_session(session_path)
         metrics = self.get_metrics(session_path)
         canvas = manifest["canvas"]
         frame_size = [int(canvas["width"]), int(canvas["height"])]
         report = profile_report(landmarks=self.get_landmarks(session_path), frames=metrics.get("frames", []),
-                                profile=load_profile(), registered_canvas=True, frame_size=frame_size)
+                                profile=load_profile(profile_id=profile_id), registered_canvas=True, frame_size=frame_size)
         output = root / "previews/registration_report.json"
         write_json(output, report)
         report["report"] = str(output.resolve())
         return report
 
-    def registration_overlay(self, session_path: Path) -> dict[str, Any]:
+    def registration_overlay(self, session_path: Path, *, profile_id: str | None = None) -> dict[str, Any]:
         _session, manifest, root = self._checked_session(session_path)
         canvas = manifest["canvas"]
         artifacts = self.render(session_path)
@@ -619,8 +619,8 @@ class ArtAgentService:
             frame_landmarks = [item for item in landmarks if item["frame"] == index + 1]
             output = root / f"previews/registration_overlay_{index + 1:02d}.png"
             paths.append(render_overlay(output=output, frame_size=(int(canvas["width"]), int(canvas["height"])),
-                                        profile=load_profile(), landmarks=frame_landmarks))
-        loaded = load_profile()
+                                        profile=load_profile(profile_id=profile_id), landmarks=frame_landmarks))
+        loaded = load_profile(profile_id=profile_id)
         return {"overlays": paths, "profile_sha256": loaded["sha256"], "read_only": True}
 
     def plan(self, session_path: Path, recipe: str) -> dict[str, Any]:

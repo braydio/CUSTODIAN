@@ -2,20 +2,24 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-game-tscn-operator-startup-integrity-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `game-tscn-operator-startup-integrity-v1`
 - Locks: `contract-world-loader, game-scene-startup, procgen-spawn-integrity`
 - Kind: `review`
-- Review: `manual`
+- Review: `none`
+- Review target workstream: `game-tscn-operator-startup-integrity-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md`
 - Review stage: `post-land`
 - Review modes: `code, runtime, architecture`
 - Paired review workstream: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `fresh-context verification that the literal production game.tscn startup, not only production-shaped fixtures, now proves canonical Operator relocation and fail-closed startup integrity`
-- Reviewed main: `<fill at claim>`
+- Reviewed main: `579121331`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Visual review: `none`
 - Summary backlink: Include the exact Authoring chat URL above in every durable review/correction/closeout summary and final `## Next Handoff`.
@@ -65,34 +69,61 @@
   - implementation mutation proof;
   - `python3 custodian/tools/validation/run_validation.py --changed --json`;
   - `git diff --check`.
-- Task overrides: `TASK OVERRIDE: review only; do not edit the reviewed implementation. Commits are limited to the durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets required by confirmed findings.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: Resume the user's Archive Resolve live playtest after this review passes.
 
 ## Review Receipt
 
-- Status: `pending`
-- Review target workstream: `game-tscn-operator-startup-integrity-v1`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md`
-- Reviewed main: `<fill at review>`
+- Status: `findings`
+- Reviewed main: `579121331`
 - Reviewer context: `fresh`
-- Reviewer provenance: `<fill>`
-- Blocking defects: `<fill>`
-- Material evidence gaps: `<fill>`
-- Non-blocking issues: `<fill>`
-- Optional improvements: `<fill>`
-- Correction finding IDs: `<fill>`
-- Next-slice finding IDs: `<fill>`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `0`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
 - Detailed review summary: `REVIEW_GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_CLAUDE_SUMMARY.md`
-- Follow-up workstream: `<fill>`
+- Follow-up workstream: `game-tscn-operator-startup-integrity-v1-review-corrections-1`
+
+### Finding R0-01
+
+- Class: `evidence_gap`
+- Domain: `implementation`
+- Affected acceptance: `Final Operator position must match the recorded selected tile/world position after canonical round-trip.`
+- Evidence: `The independent literal-scene smoke passed, but its terminal evidence reports the live Operator at (2832,5793.039), tile (88,181), while the placement receipt and contract_ready snapshot record (2832,5776), tile (88,180). The smoke validates the receipt round-trip and pre-ready snapshot, but does not compare the later live position against the receipt.`
+- Disposition: `correction`
+- Rationale: `The observed post-ready displacement may still land on a safe tile, but the required final-position/receipt correspondence is false in the sampled runtime state and the current regression does not prove or guard it.`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `Fresh-context live-main review completed; literal game.tscn startup passed; legacy-position mutation failed as expected; R0-01 and bounded correction/re-review packets are recorded.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `low`
+- What went wrong: `The terminal smoke snapshot differed from the receipt and ready-time snapshot by 17.039 pixels and one tile.`
+- Root cause / contributing factors: `The live Operator can move after the pre-ready consistency gate; the smoke reads a later live state but does not compare it with the receipt.`
+- Prevention / pipeline improvement: `Require the literal startup regression to assert the settled live position against safe placement evidence.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `game-tscn-operator-startup-integrity-v1-review-corrections-1`
+- What worked: `The production-scene boot and pre-ready mutation exercised the real startup path.`
 
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `game-tscn-operator-startup-integrity-v1-review-corrections-1`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `none`
-- Next action: `If passed, close the P0 startup blocker and resume the deferred Archive Resolve playtest. If findings exist, author only bounded corrections tied to those findings.`
-- Blockers or open questions: `implementation dependency only`
+- Next action: `Implement the bounded R0-01 correction, then run its paired fresh-context re-review.`
+- Blockers or open questions: `The live Operator moves from receipt tile (88,180) to tile (88,181) by the smoke's terminal snapshot; correction must establish the settled position and keep it consistent with safe placement evidence.`

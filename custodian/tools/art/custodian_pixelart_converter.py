@@ -1929,8 +1929,15 @@ def main() -> int:
                 raise SystemExit("normalization plan has unsupported schema")
             if plan.get("mode", "contain") == "operator_profile":
                 profile_path = Path(__file__).resolve().parents[2] / "content/data/operator/authoring/operator_art_profile.json"
-                profile_sha = hashlib.sha256(profile_path.read_bytes()).hexdigest()
-                if plan.get("profile_sha256") != profile_sha:
+                profile_bytes = profile_path.read_bytes()
+                profile_value = json.loads(profile_bytes)
+                allowed_profile_shas = {hashlib.sha256(profile_bytes).hexdigest()}
+                if profile_value.get("schema") == "custodian.operator_art_profile.v3":
+                    allowed_profile_shas.update(
+                        item["profile_sha256"] for item in profile_value.get("profiles", {}).values()
+                        if isinstance(item, dict) and isinstance(item.get("profile_sha256"), str)
+                    )
+                if plan.get("profile_sha256") not in allowed_profile_shas:
                     raise SystemExit("normalization plan registration profile hash is stale")
             if hashlib.sha256(source_path.read_bytes()).hexdigest() != plan.get("source_sha256"):
                 raise SystemExit("normalization plan source SHA-256 does not match input")

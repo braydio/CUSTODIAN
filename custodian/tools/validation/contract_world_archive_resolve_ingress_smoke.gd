@@ -102,6 +102,7 @@ func _run() -> void:
 	for entry: Dictionary in trace:
 		phases.append(entry["phase"])
 	var expected: Array[StringName] = [
+		&"contract_generation_received",
 		&"registered_ingress_placed",
 		&"spawn_presentation_ready",
 		&"operator_spawn_selected",
@@ -109,6 +110,8 @@ func _run() -> void:
 		&"compound_connection_placed",
 		&"archive_resolve_ingress",
 		&"camera_refresh",
+		&"navigation_rebuilt",
+		&"operator_placement_receipt",
 		&"contract_ready",
 	]
 	_expect(phases == expected, "install phase order %s != %s" % [phases, expected])
@@ -146,8 +149,8 @@ func _run() -> void:
 	_expect((map.get("_generated_floor_cells") as Dictionary).has(final_tile), "arrival centre must be canonical generated floor (not exterior/underlevel)")
 
 	# R0-01 observability: AR3 adds zero main-component queries.
-	var at_operator: int = int((trace[3]["detail"] as Dictionary).get("component_queries", -1))
-	var at_compound: int = int((trace[4]["detail"] as Dictionary).get("component_queries", -1))
+	var at_operator: int = int((trace[4]["detail"] as Dictionary).get("component_queries", -1))
+	var at_compound: int = int((trace[5]["detail"] as Dictionary).get("component_queries", -1))
 	var at_ingress: int = int(ingress.get("component_queries", -2))
 	_expect(at_operator - queries_before >= 1, "the existing reviewed spawn selection must still query the component")
 	_expect(at_ingress == at_compound, "AR3 added main-component queries (%d -> %d)" % [at_compound, at_ingress])

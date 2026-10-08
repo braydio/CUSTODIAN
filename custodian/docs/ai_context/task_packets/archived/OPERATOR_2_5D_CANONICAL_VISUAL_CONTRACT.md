@@ -2,38 +2,80 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-2-5d-canonical-visual-contract`
-- Status: `ready`
-- Dispatch: `manual`
+- Status: `complete`
+- Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `none`
-- Claim gate: `do not claim while operator-2-5d-animation-viability-audit still owns operator-art-agent; after that workstream releases the shared lock, implementation may begin but the canonical 128 anchor/floor/profile must still pause at the PRE-LOCK CALIBRATION GATE for human approval before acceptance`
+- Depends on: `operator-2-5d-animation-viability-audit`
+- Claim gate: `claim automatically only after the viability audit closes and releases operator-art-agent; visual identity/directional design are already user-locked and must not be reopened; stop only for byte mismatch, unresolved semantic-root contradiction, or a real specialized-pipeline conflict`
 - Locks: `operator-art-agent, operator-source-normalization, operator-aseprite-tooling`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
-- Review modes: `code, architecture, asset-pipeline, workflow, visual-contract`
+- Review modes: `code, architecture, visual, asset-pipeline, workflow`
 - Paired review workstream: `review-operator-2-5d-canonical-visual-contract`
-- Reviewed main: `2e375923edf450a64b4b9fb4b41ce02ca3fa1ff1`
+- Reviewed main: `90e2ac01e3b91809bd5e1b52fe6ada13e388c808`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Goal: Turn the user's approved 8-direction Operator design reference into the single deterministic visual/registration authority for all future 2.5D Operator animation authoring: preserve the approved source bytes, measure and landmark every direction, define the new 128x128 authoring/runtime frame contract without breaking existing 96x96 assets, make Aseprite/Workbench/Art Agent show the canonical directional reference, and add structural/color/brightness/silhouette QA that prevents body/camera/material drift while preserving intentional pose motion.
-- Completion boundary: Preserve the exact source under source_work; emit a canonical per-direction measurement/landmark record; migrate the art-profile authority so legacy 96 and canonical 128 profiles coexist; make Aseprite/Workbench consume the canonical reference and profile; add deterministic geometry/material/alpha QA; update active art/design docs; do not replace runtime animations in this slice.
+- Visual review: `none`
+- Goal: Harden the user's exact 8-direction Operator design lock as the single deterministic visual authority and harden the supplied 8-direction relaxed idle as the first canonical `operator_2_5d_128` production animation; preserve both source byte streams, reconcile their 256px design-to-128px production relationship into the accepted registration/profile authority, make Aseprite/Workbench/Art Agent consume the lock, and prevent future animation authoring from drifting in anatomy, projection, palette, scale, registration, or directional identity.
+- Completion boundary: Consume the two exact Dropbox implementation inputs through the current specialized Operator authoring pipeline; preserve immutable source-work copies; register the 2048x256 design sheet as the accepted directional design lock; register the 1920x1024 relaxed idle as the first canonical 8-direction x 15-frame full-body animation family; emit reference/profile/measurement provenance with exact hashes; migrate the art-profile authority so legacy 96 and canonical 128 coexist; make Aseprite/Workbench consume the canonical lock; add deterministic anti-drift QA; update active art/design docs. Do not cut production runtime selectors over to the new generation in this slice.
 - Current measured state:
-  - The user has explicitly locked the attached 8-direction design and will save it as `OPERATOR_DESIGN_REFERENCE_480.png`.
-  - The reviewed chat attachment is exactly 2048x256 RGBA: eight horizontal 256x256 cells ordered `N, NE, E, SE, S, SW, W, NW`. The filename token `480` is user naming, not measured geometry.
-  - The reviewed attachment SHA-256 is `2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323`.
-  - Live `operator_art_profile.json` is schema v2 with one accepted 96x96 registration ruler at anchor `[48,84]` and ground `y=85`.
-  - Live `registration_profile.py` supports v1/v2 and hard-requires accepted 96x96 geometry.
-  - The style bible still says no canonical sample/pitch authority exists; that is now documentation drift.
-  - The existing landmark vocabulary already covers hood/head, near/far shoulders/elbows/hands/hips/knees/ankles/toes, cloak tips, weapon grip and weapon tip.
-- Evidence: `custodian/content/data/operator/authoring/operator_art_profile.json`; `operator_landmark_schema.json`; `custodian/tools/operator/art_agent/registration_profile.py`; `custodian/tools/aseprite/operator_anchor_guides.lua`; `custodian/tools/operator/README.md`; `design/02_features/animation/OPERATOR_ART_STYLE_BIBLE.md`; archived `OPERATOR_ART_REGISTRATION_PROFILE.md`; the approved source identity above.
-- Task-specific authority: the exact approved source hash and user decision in this chat; current Operator registration/profile tooling; current specialized Operator authoring pipeline. This is an Operator-authoring reference asset, not a generic runtime prop. Do not create a parallel generic Asset V2 family if the live specialized Operator pipeline remains authoritative.
-- Work surface: `custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/`; Operator authoring profile/reference metadata; registration profile/QA/overlay services; Aseprite guide integration; style bible; focused validation; task index/roadmap.
-- Preserve: existing canonical/runtime Operator PNGs and SpriteFrames; all current 96x96 production assets; animation timings; gameplay selectors; weapon sockets; old Source Sessions; existing v1/v2 normalization plans; the exact approved design-reference bytes.
-- Non-goals: no new animation art; no runtime Operator replacement; no automatic limb warping; no per-frame scale correction; no 16-direction production requirement; no fabricated numeric camera angle; no melee/ranged behavior changes; no operator.gd decomposition work; no Forum implementation.
-- Acceptance: source archive hash/dimensions/order are proven; all 8 directions have canonical landmark records and reproducible geometry/color/silhouette metrics; future 128-profile authoring can show direction-specific ghost/floor/body guides; legacy 96 stays usable; intentional scale/anchor/palette drift fixtures are caught; active docs reflect the approved sample; no production runtime art changes.
+  - The user has explicitly locked the supplied design sheet as the permanent visual source for future Operator animation authoring.
+  - Dropbox design-lock input: `/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png`; 2048x256 RGBA; eight horizontal 256x256 cells; direction order `N, NE, E, SE, S, SW, W, NW`; true alpha; SHA-256 `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`.
+  - Dropbox first-animation input: `/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png`; 1920x1024 RGBA; 15 frame columns x 8 direction rows; 128x128 cells; row order `N, NE, E, SE, S, SW, W, NW`; true alpha; SHA-256 `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`.
+  - Semantic identity of that animation is `operator_2_5d_128 / unarmed / posture / idle_relaxed_01 / full_body`. It is the first and currently only fully authored production animation the user considers aligned with the locked volumetric realistic top-down 2.5D target.
+  - Existing pre-migration live art is legacy/migration donor material unless separately proven against this lock; it must not become canonical merely because it is runtime-reachable.
+  - Live `operator_art_profile.json` still preserves legacy 96 authoring. Active documentation and donor artifacts contain stale references to older design-reference geometry/hashes and must be reconciled to these exact inputs.
+- Evidence: exact Dropbox inputs `/CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png` and `/CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png`; user decision in this authoring chat; `custodian/content/data/operator/authoring/operator_art_profile.json`; `operator_landmark_schema.json`; `custodian/tools/operator/art_agent/registration_profile.py`; `custodian/tools/aseprite/operator_anchor_guides.lua`; `custodian/tools/operator/README.md`; `design/02_features/animation/OPERATOR_ART_STYLE_BIBLE.md`; archived `OPERATOR_ART_REGISTRATION_PROFILE.md` and donor canonical-contract artifacts only as historical evidence.
+- Task-specific authority: the exact two hashes/Dropbox inputs above plus the user's explicit lock decision; current Operator registration/profile tooling; current specialized Operator authoring pipeline. The design sheet is a specialized Operator reference authority and the idle sheet is a specialized Operator animation family. Do not create a parallel generic Asset V2 authority when the live specialized Operator pipeline owns the concept.
+- Work surface: `custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/`; `custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/`; current specialized Operator inbox/source-session path resolved from live `operator_asset_schema.py`; Operator authoring profile/reference metadata; registration profile/QA/overlay services; Aseprite guide integration; style bible; focused validation; task index/roadmap.
+- Change: finalize the canonical 128 registration/profile from the already-landed implementation evidence and the recorded human decisions below; preserve the exact design/idle source bytes; encode accepted root/floor/reference semantics; classify legacy overflow as non-authoritative proxy evidence rather than a global-canvas blocker; finalize the first canonical relaxed-idle family provenance; clean the reviewed Dropbox handoff; rerun focused validation; land for paired review.
+- Preserve: existing canonical/runtime Operator PNGs and SpriteFrames; all current 96x96 production assets; animation timings; gameplay selectors; weapon sockets; old Source Sessions; existing normalization plans; the exact design-lock bytes `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`; the exact first-animation bytes `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`. Never resize, repaint, re-render, background-remove, or otherwise mutate either supplied source master in place.
+- Non-goals: no new animation generation; no redesign of the supplied idle; no production runtime cutover; no automatic limb warping; no per-frame scale correction; no 16-direction production requirement; no fabricated camera angle; no melee/ranged behavior changes; no `operator.gd` decomposition; no Forum implementation.
+- Acceptance: the two Dropbox inputs are copied into immutable Operator source-work with hashes unchanged; the 2048x256 sheet is recorded as the accepted 8-direction design lock; the 1920x1024 sheet is recorded as the first canonical `unarmed/posture/idle_relaxed_01/full_body` family with 8 directions x 15 frames x 128x128 cells; exact direction order is proven; timing is preserved from authoritative metadata if available and never invented from pixels; accepted profile/reference hashes are emitted; Aseprite/Workbench guides consume the lock; legacy 96 remains usable; drift fixtures are caught; active docs no longer cite donor geometry/hashes as current authority; no production runtime selector is changed.
 - Validation: new focused canonical-visual-contract smoke + existing registration-profile focused coverage + Aseprite clean-render guide-leak check + `git diff --check`. No broad gameplay/Godot suites unless runtime files are unexpectedly touched.
 - Task overrides: `none`
 - Deferred: actual animation regeneration, production rollout packets, and Forum refresh.
+
+## Agent Handoff / Planning Decisions — 2026-10-08
+
+**This block is current authoring authority. Resume the active workstream from these decisions. Do not reopen the three questions from the 20261008T183010Z review manifest unless new contradictory evidence proves one of these exact decisions impossible.**
+
+1. **Canonical registration is approved.**
+   - frame: `128 x 128`
+   - center_x: `64`
+   - projected_world_root: `[64,106]`
+   - shadow_origin: `[64,107]`
+   - ground_y: `107`
+   - use the same semantic root/floor policy across N/NE/E/SE/S/SW/W/NW.
+   - Lowest visible alpha is silhouette/perspective evidence, not semantic registration authority. Do not vertically bob/re-anchor frames from per-frame lowest-alpha measurements.
+
+2. **Legacy `fast_02` overflow does not redefine the canonical canvas or root.**
+   - The pre-migration east `fast_02` frame 4 proxy is not a valid maximum-body proxy for the locked 2.5D generation.
+   - Do not enlarge the global canonical body/reference frame, shift the semantic root, or shrink the Operator merely to fit legacy extents.
+   - `operator_2_5d_128` means the canonical **body/reference registration frame**, not a claim that every future weapon/limb/FX/action presentation must fit inside 128x128.
+   - If a genuinely canonical future action cannot fit without clipping/distortion/scale reduction, allow a **root-preserving action-specific expanded authoring envelope** and/or modular weapon/FX presentation. Only systemic locked-projection evidence may justify a future global-canvas change.
+   - Ranged aim, wide block-hit, and all-direction extreme-envelope coverage remain future per-action validation, **not blockers** to this visual-contract closure.
+
+3. **Normalized reference is accepted unchanged.**
+   - accepted SHA-256: `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`
+   - no cleanup pixels are authorized.
+   - set cleanup disposition to equivalent of `accepted_no_cleanup`; `normalized_reference_mutated=false`.
+   - Do not recolor, repaint, anti-alias-clean, anatomy-correct, or alter isolated heuristic hue candidates.
+
+4. **Profile disposition.**
+   - `operator_2_5d_128` is accepted/canonical registration authority (profile SHA-256 `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`).
+   - Universal action-envelope fit is explicitly `not_asserted`.
+   - The accepted profile means: 128x128 body/reference frame, root `[64,106]`, shadow/ground `[64,107]`, locked 8-direction projection, locked design identity, and accepted unchanged normalized comparison reference.
+
+5. **Animation timing remains unknown and is not a blocker here.**
+   - For `unarmed/posture/idle_relaxed_01/full_body`: 8 directions, 15 frames/direction, 128x128 cells, loop topology accepted.
+   - FPS/timing: `unknown/null` until an authoritative timing source exists. Do not infer timing from PNG pixels.
+
+6. **Resume/closeout instruction.**
+   - The decisions are encoded in profile, report, source-family manifest, validation, and active design authority.
+   - The reviewed handoff `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json` was cleaned with its emitted command; publisher returned `status: deleted` under `delete-after-review`.
+   - Focused validation passed after encoding the decisions.
+   - Land this implementation; then allow `review-operator-2-5d-canonical-visual-contract` to claim in a fresh reviewer context.
 
 ## Identity
 
@@ -43,6 +85,46 @@ branch: agent/operator-2-5d-canonical-visual-contract
 closing summary: OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT_CLAUDE_SUMMARY.md
 ```
 
+## LOCKED INPUT AUTHORITY — 2026-10-07 REFRESH
+
+These inputs supersede older donor/reference geometry or attachment hashes as **active** authority. Historical reports may retain old values as history, but active tooling/docs must not treat them as current truth.
+
+### Design lock
+
+```text
+Dropbox: /CUSTODIAN/implementation_inputs/operator_2_5d_design_lock_v1_8dir_1f_256.png
+Repository source-work target: custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/operator_2_5d_design_lock_v1_source.png
+Specialized family / authority id: operator_2_5d_design_reference
+Sheet: 2048x256 RGBA
+Layout: 8x1
+Cell: 256x256
+Direction order: N, NE, E, SE, S, SW, W, NW
+SHA-256: 41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b
+Role: immutable design / anatomy / projection / material / directional source of truth
+```
+
+### First canonical animation
+
+```text
+Dropbox: /CUSTODIAN/implementation_inputs/operator_2_5d_unarmed_posture_idle_relaxed_01_full_body_v1_8dir_15f_128.png
+Repository source-work target: custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png
+Specialized family id: operator_2_5d_unarmed_posture_idle_relaxed_01
+Art generation: operator_2_5d_128
+Semantic identity: unarmed/posture/idle_relaxed_01/full_body
+Sheet: 1920x1024 RGBA
+Layout: 15 columns x 8 direction rows
+Cell: 128x128
+Frames per direction: 15
+Direction order: N, NE, E, SE, S, SW, W, NW
+Loop: true
+FPS/timing: resolve from authoritative authored metadata/session if present; do not infer from the PNG
+SHA-256: d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3
+Role: immutable first target-aligned production animation and registration/temporal proof
+```
+
+### Specialized Operator intake contract
+
+Use the current live specialized Operator schema/tooling first. Raw supplied files remain immutable source masters. If live tooling expects inbox staging, use semantic filenames under the existing Operator 2.5D inbox namespace and let `operator_asset_schema.py` derive canonical authoring/runtime destinations. Do **not** hand-author a competing runtime filename or generic Asset V2 family. The design lock is reference authority; the relaxed idle is animation-family authority.
 ## PRE-LOCK CALIBRATION GATE
 
 Do **not** freeze the canonical 128 registration merely from the 2048x256 design-reference cell bounds. Two distinct artifacts exist and have different jobs:
@@ -55,37 +137,25 @@ The user-approved final design sheet supplied in the authoring chat measures:
 2048 x 256 RGBA
 8 x 256x256 cells
 order: N, NE, E, SE, S, SW, W, NW
-sha256: 2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323
+sha256: 41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b
 ```
 
 This file owns anatomy, armor/cloak topology, projection, palette/material language and directional identity. It is **not** itself proof of runtime centering/floor registration.
 
-### Runtime-registration candidate
+### First canonical production-animation proof
 
-The user's earlier crisp resize/canvas pass in this same chat measures:
+The old single-frame 128 resize candidate is no longer the strongest production-scale evidence. The user has supplied a fully authored 8-direction, 15-frame relaxed-idle sheet and explicitly identified it as the actual target-aligned production animation.
 
 ```text
-1024 x 128 RGBA
-8 x 128x128 cells
-sha256: 31bfc4fc40cbb1d2738037070b962d8e68b1f3ca87414b8f8c5f2ae1e60493c7
-alpha: binary only (0/255)
+1920 x 1024 RGBA
+15 columns x 8 direction rows
+128 x 128 cells
+semantic identity: unarmed/posture/idle_relaxed_01/full_body
+order: N, NE, E, SE, S, SW, W, NW
+sha256: d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3
 ```
 
-Measured alpha bounds:
-
-| Dir | bbox width | bbox height | bbox center x | top y | bottom y |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| N | 49 | 87 | 63.0 | 20 | 106 |
-| NE | 42 | 86 | 62.5 | 20 | 105 |
-| E | 32 | 88 | 60.5 | 20 | 107 |
-| SE | 43 | 87 | 63.0 | 20 | 106 |
-| S | 49 | 85 | 64.0 | 20 | 104 |
-| SW | 39 | 86 | 64.0 | 20 | 105 |
-| W | 31 | 87 | 65.0 | 20 | 106 |
-| NW | 42 | 84 | 64.5 | 20 | 103 |
-
-The body is therefore already correctly sized for the intended "roughly old 96px body inside a 128px action canvas" strategy: apparent height is 84-88px with all directions beginning at y=20. Do not enlarge the body simply to fill the 128px cell.
-
+Use this animation to validate the accepted 128 profile's real body scale, center/root semantics, temporal registration, loop stability and directional continuity. Do not independently scale directions or frames. Do not derive FPS from image pixels. Any older 1024x128 single-frame resize may remain donor/calibration evidence only and cannot override this authored family.
 ### Candidate canonical root/floor
 
 The accepted legacy profile uses `anchor_y=84`, `ground_y=85`; the viability audit found normal legacy sprite baselines at roughly y=84. Preserve that semantic relationship in the new profile.
@@ -298,7 +368,7 @@ dimensions: 2048x256
 layout: 8x1
 cell: 256x256
 order: N, NE, E, SE, S, SW, W, NW
-sha256: 2d5de16d5d2eb3cde5ab36586a33414a613f214441c8b2ec2430e37d1af25323
+sha256: 41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b
 ```
 
 If absent, stop. If hash/dimensions differ, report actual values and stop for user confirmation. Do not fetch/regenerate/substitute.
@@ -697,15 +767,42 @@ After reviewed landing:
 2. author canonical unarmed locomotion/posture as the first production art tranche;
 3. refresh the Forum 2.5D packet only after that art plan is accepted.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `operator_2_5d_canonical_visual_contract_smoke.py`, Workbench/registration/MCP/Aseprite focused smokes, task-packet index and review-pair validation, py_compile, diff check, accepted profile/reference hashes, family source manifest, and completed visual-review cleanup are recorded above and in the implementation summary.
+- Outcome: success; implementation acceptance is complete. The human approval gate is resolved and `operator_2_5d_128` is accepted as the canonical body/reference registration profile.
+- Complete: both exact source masters and provenance manifests; byte-exact design-cell reconstruction; accepted unchanged shared-scale 128px reference; fixed center/root/shadow/ground semantics; accepted first relaxed-idle family identity/provenance; explicit unknown/null non-blocking timing; v3 backward-readable profile registry with stable `legacy_96`; 128px default for new Workbench animation-creation plans; explicit Art Agent profile selection; Aseprite guides; design authority; focused anti-drift coverage; reviewed handoff cleanup.
+- Deferred by approved decision: universal action-envelope fit is not asserted. Future extreme actions require per-action validation and may use root-preserving expanded envelopes or modular presentation. Ranged aim, wide block-hit, and systemic all-direction extremes are not acceptance blockers. Production runtime selectors remain unchanged by scope. Animation FPS/timing is unknown/null and non-blocking.
+- Action-envelope evidence: the deterministic scan contains 446 category-assigned pre-migration full-body proxy frame observations (categories can overlap). Under the explicit +16,+22 legacy-root translation, 46/180 fast-chain frames and 16/47 long one-handed-reach frames exceed the 128px canvas; 71 and 24 frames respectively exceed the 8px safety margin. The largest fast-chain proxy is east `fast_02` frame 4, source alpha bbox `[35,11,136,85]`, translated bbox `[51,33,152,107]`. Human decision: this legacy proxy does **not** redefine the canonical canvas/root. Universal action-envelope fit is intentionally unasserted; future canonical overflow is handled by root-preserving action-specific envelopes or modular presentation unless later systemic evidence justifies a global change.
+- Human review: resolved in the authoring chat on 2026-10-08; exact decisions are recorded in `## Agent Handoff / Planning Decisions — 2026-10-08`. The reviewed manifest `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T183010Z/REVIEW_MANIFEST.json` was processed with its emitted cleanup command; publisher returned `status: deleted`, retention `delete-after-review`.
+- Accepted profile/reference SHA-256: profile `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`; normalized reference `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`.
+- Validation: canonical visual-contract smoke, Workbench creation/migration smoke, registration-profile smoke, Art Agent MCP smoke, Aseprite clean-render guide-leak smoke, Python compilation, and `git diff --check` all passed after encoding the approval.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: initial registry migration made legacy plan replay reject the v3 registry hash. The neutral idle also could not prove a universal action envelope, so a later proxy scan exposed legacy fast-chain and reach overflow candidates. Two immutable Dropbox handoffs were superseded before the final review was recorded. Merging current `origin/main` exposed a stale generated ready/auto packet index; it was regenerated and rechecked. The first optional pre-commit graph refresh warned after a dependency fetch failed; the following closeout commit refreshed the graph successfully. Initial finish was blocked because the Completion Truth narrative lacked the newly required machine-readable yes/no receipt fields; the receipt was added.
+- Root cause / contributing factors: converter validation originally compared a selected profile hash with the entire v3 file hash; the neutral idle does not represent extreme actions; review manifests cannot be overwritten; the packet's completion narrative predated the required `custodian.task_completion.v1` fields.
+- Prevention / pipeline improvement: validate explicit profile hashes while preserving v1/v2 compatibility; distinguish body/reference registration from future per-action envelopes; publish updated visual evidence under a fresh run ID and keep the packet pointed at the latest manifest; author the exact completion receipt before setting a V2 implementation packet complete.
+- Tooling / docs drift discovered: the planning refresh supplied the missing `Change` field and reviewed decision block. The repo-wide `check_ai_context.py` reports 18 unrelated packet grammar/index/V2-field findings after syncing current main (vehicle and Sundered Keep/ProcGen metadata, one archived review indexed as active, current-main persistent-sync correction packet fields, and ProcGen Alpine / Scout correction fields); none names this packet or any changed task file. The optional code-review graph dependency fetch failed once, then refreshed successfully in the following closeout commit. Source timing remains unavailable and is explicitly represented as unknown/null, non-blocking.
+- Follow-up: `review-operator-2-5d-canonical-visual-contract`
+- What worked: source hashes, geometry, direction order, stable legacy profile hash, proxy extents, and human decisions are now explicit machine-checkable or durable.
+
 
 ## Handoff
 
 - Next workstream: `review-operator-2-5d-canonical-visual-contract`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready after this implementation lands`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include the exact Authoring chat URL in the closing summary and final Next Handoff
-- Refresh reason: `none`
-- Next action: `paired fresh-context review, then WB25-1 may proceed when its other dependencies are complete`
-- Blockers or open questions: `none beyond declared dependencies`
+- Refresh reason: `none; accepted implementation is ready for paired post-land review`
+- Next action: `land this implementation, then claim the paired review in a fresh reviewer context; after that review passes, refresh WB25-1 using its packet and this accepted profile/family provenance`
+- Blockers or open questions: `none for this workstream. Ranged aim/wide block-hit/all-direction extreme-envelope proof is deferred per-action evidence; FPS/timing remains unknown/null and is explicitly non-blocking here.`
