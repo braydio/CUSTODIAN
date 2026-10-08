@@ -48,10 +48,12 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
    - Do not edit packet status, silently reinterpret scope, or skip to unrelated
      work just to keep the command moving.
 
-4. **Fall back to the global queue only when there is no same-series continuation.**
-   - If the durable handoff says `Next workstream: none`, the prior work has no
-     named successor, or no prior CUSTODIAN workstream can be resolved from this
-     session, run:
+4. **Use the global queue only for an explicitly general-next request.**
+   - If the durable handoff says `Next workstream: none`, treat the named
+     same-series chain as complete.
+   - Do not silently continue into unrelated work merely to stay busy.
+   - Only when the user/worker invocation explicitly asks for general next-task
+     execution, run:
      ```bash
      python3 custodian/tools/agent/dispatch.py claim-next --agent codex
      ```
@@ -64,7 +66,8 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
    - Enter the returned worktree.
    - Read root `AGENTS.md`, `custodian/AGENTS.md`, and the returned task packet.
    - Treat the task packet as the complete brief. Do not ask the user to restate it.
-   - Execute and finish through the normal workstream lifecycle.
+   - Execute and finish through the normal workstream lifecycle, then return to
+     step 2 and continue the same-series chain until a real stop boundary.
 
 ## Result
 
