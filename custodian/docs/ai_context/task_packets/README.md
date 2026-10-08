@@ -489,14 +489,25 @@ must never derive or invent ChatGPT conversation URLs.
 Every completed packet/review reports the immediate successor in its own
 program/DAG through the required `Next Handoff` fields: next workstream,
 packet state, refresh owner, whether ChatGPT/user planning refresh is required,
-authoring-chat URL, refresh reason, next action, and blockers.
+authoring-chat URL, refresh reason, next action, and blockers. The durable
+`<TASK>_CLAUDE_SUMMARY.md` is the persistent copy of that handoff.
 
-Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen at claim time from current main plus landed predecessor evidence. Use `Refresh owner: chatgpt-user` only when a genuine unresolved design choice requires the user's judgment before implementation can proceed.
-The execution/review agent supplies the live-state evidence and drift, but the
-user brings the recorded authoring chat back to ChatGPT so the packet can be
-re-derived against both original intent and current main. Mechanical refreshes
-that do not change scope, ownership, sequencing, acceptance, visual direction,
-or design interpretation may use `execution-agent`.
+A ready/eligible named successor with
+`ChatGPT/user planning refresh required: no` is an **autonomous continuation**,
+not a user relay point. The agent/worker claims that successor itself and
+continues through the same-series implementation/review/correction chain.
+Paired reviews still require a fresh reviewer context, but that context switch
+does not require the user to carry the prior summary.
+
+Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen
+at claim time from current main plus landed predecessor evidence. Use
+`Refresh owner: chatgpt-user` only when a genuine unresolved design choice
+requires the user's judgment before implementation can proceed. At that boundary
+the agent stops and surfaces only the exact recorded Authoring/Refresh chat URL,
+the copyable workstream ID, and the persistent summary path; the user opens the
+linked conversation and pastes the workstream ID. Mechanical refreshes that do
+not change scope, ownership, sequencing, acceptance, visual direction, or design
+interpretation remain execution-agent work.
 
 Historical packets without an authoring URL remain valid; surface
 `Authoring chat: not-recorded` and ask the user to provide the originating
