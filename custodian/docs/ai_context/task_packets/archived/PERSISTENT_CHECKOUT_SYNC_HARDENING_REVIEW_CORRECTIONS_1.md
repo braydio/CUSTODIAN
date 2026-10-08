@@ -73,3 +73,32 @@ Required before completion.
 - Refresh reason: none
 - Next action: Run the paired fresh-context review of correction cycle 1.
 - Blockers or open questions: none
+
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-persistent-checkout-sync-hardening-review-corrections-1`
+- Reviewed on main: `6cdbad156de9d0cc24a4bebe334575b0975c4b8b`
+- Review modes: `code, architecture, workflow`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Retained finding dispositions: `R0-01 fixed`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+
+### Review Notes
+
+- R0-01 is fixed: `_candidate_state` inspects only the incoming changed paths and their ancestors, recording path kind, tracked status, and skip-worktree state. Ordinary status and apply no longer enumerate or hash unrelated ignored files.
+- The focused smoke passed all eight fixture groups. Its 2,048-file ignored-tree guard traps ignored listings, `os.scandir` under that tree, and any `Path.read_bytes` while status plus safe sync ran; measured duration was 0.09s.
+- Exact ignored-file, ignored-directory, and tracked sparse skip-worktree overlay collisions all returned `PATH COLLISION` without advancing HEAD or changing protected bytes. Existing dirty/ahead/diverged, pending/recovery/Aseprite, lock/race, shell routing, and FF-only behavior remained covered by focused real temporary-repository fixtures.
+- Operator-art worktree smoke passed. Workstream suite passed 38 tests. OPUI smoke passed service projections, dry-run safety, and discovery checks; its optional Textual pilot was skipped because UI requirements are not installed. Live persistent-root read-only status returned CURRENT in 0.252s; prior correction evidence records 134,037 ignored entries and 0.226s. No broad ignored-tree scan was run.
+- Reviewed implementation preserves `GIT_LFS_SKIP_SMUDGE=1` for the FF-only merge and adds no LFS acquisition, reset, stash, rebase, branch switch, or cleanup path. No cycle-2 correction is needed.
