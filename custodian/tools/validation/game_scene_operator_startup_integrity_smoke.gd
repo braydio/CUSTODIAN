@@ -21,6 +21,12 @@ func _run() -> void:
 		return
 	var game_root := packed.instantiate()
 	game_root.name = "GameRoot"
+	# This proof owns Operator startup, not ambient population. Suppress optional
+	# Vaultwing creation before entering the production tree so unrelated missing
+	# bonding art cannot mask the startup contract result.
+	var vaultwing_spawner := game_root.get_node_or_null("VaultwingSpawner")
+	if vaultwing_spawner != null:
+		vaultwing_spawner.set("vaultwing_scene", null)
 	root.add_child(game_root)
 	current_scene = game_root
 	if bootstrap != null and bootstrap.has_method("ensure_started"):

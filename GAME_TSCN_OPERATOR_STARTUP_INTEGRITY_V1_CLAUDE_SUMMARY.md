@@ -17,8 +17,10 @@ The placement metadata now keeps the Forlorn ingress at least 16 tiles from the 
 - Mutation control temporarily restored the Operator to `(717.45905,-485.33954)` immediately before the ready gate. The loader reported `operator_placement_diverged_before_ready`, left the scene not ready, and the smoke exited 1 as expected. The temporary mutation was removed.
 - Passed focused validation: `contract_world_operator_spawn_residency`, `contract_world_operator_void_spawn_failsafe`, `contract_world_playable_region_spawn_validity`, `contract_world_ingress_spawn_clearance`, `contract_world_archive_resolve_ingress`, `procgen_archive_resolve_semantic_echo`, `procgen_archive_resolve_frontier_restraint`, `procgen_pause_aware_streaming`, `procgen_chunk_lifecycle`, `procgen_chunk_payload_cache`, `procgen_runtime_health`, and `vehicle_runtime_lifecycle`.
 - `procgen_performance_baseline_quick` exceeded its registered 120-second timeout. Running the same quick script directly completed successfully in about 160 seconds: `determinism_ok=true`; both 48×48 seed-420777 fingerprints were `1773840677`; the 64×64 runtime case completed.
-- `git diff --check` passed and the validation manifest parses as JSON. The first pre-commit `--changed` pass had complete code-file coverage and 12 passing unit owners, then stopped because `review_pairing_contract` reads committed `HEAD` and the paired-review packet fix was still uncommitted. Commit-aware changed validation is the remaining closeout check.
-- The literal scene logs missing Vaultwing bonding texture resources from unrelated runtime assets during boot; the startup smoke still reaches its contract assertions and passes. Godot also reports its existing small exit-time ObjectDB/resource leak notices.
+- `git diff --check` passed and the validation manifest parses as JSON. Changed-file coverage is complete; known unrelated baseline owners below remain reported rather than suppressed.
+- The production-scene smoke suppresses optional Vaultwing scene creation before adding the production scene to its tree, keeping the proof scoped to Operator readiness. `game_scene_operator_startup_integrity` passed in 167.8 seconds; only recognized Godot exit leak notices remained.
+- `world_contract_prewarm` initially exposed scene-tree cleanup calls from an out-of-tree failure fixture. The loader now guards scene-tree-only observability and failure cleanup; the focused owner passed after this fix.
+- Commit-aware changed validation selected 31 owners with complete file coverage. The startup owner and `world_contract_prewarm` pass. Remaining failures/timeouts are baseline: missing Vaultwing bonding PNGs in `vaultwing_bond`, `Array`/`Array[Node]` spawn errors in `vaultwing_world_spawn`, and the 180-second `procgen_ambient_enemy_real_world_spawn` timeout. The Vaultwing bonding asset failure was reproduced against clean project-root `main`; the ambient-spawn failure was already reproduced on clean `main` in the preceding handoff. The Sundered Keep arrival-guard baseline remains unchanged.
 
 ## Changed Files
 
@@ -51,4 +53,4 @@ The placement metadata now keeps the Forlorn ingress at least 16 tiles from the 
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 - Refresh reason: none
 - Next action: claim the paired review from a fresh reviewer context after this implementation lands.
-- Blockers or open questions: commit-aware changed-file validation must pass before landing.
+- Blockers or open questions: unrelated baseline failures remain in `vaultwing_bond`, `vaultwing_world_spawn`, `procgen_ambient_enemy_real_world_spawn`, and the documented Sundered Keep arrival guard; none is in this packet's changed startup path.

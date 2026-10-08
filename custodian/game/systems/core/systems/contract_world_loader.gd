@@ -388,6 +388,8 @@ func _operator_identity_snapshot() -> Dictionary:
 
 
 func _observe_startup_transition(phase: StringName, detail: Dictionary = {}) -> void:
+	if not is_inside_tree():
+		return
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory == null:
 		return
@@ -607,9 +609,11 @@ func _on_contract_generation_failed(result: Dictionary) -> void:
 	_contract_generation_failed = true
 	_last_failure_result = result.duplicate(true)
 	_active_procgen_map = null
-	_disable_operator_until_safe_placement()
+	if is_inside_tree():
+		_disable_operator_until_safe_placement()
 	print("[ContractWorldLoader] Contract generation failed; runtime world activation aborted %s" % str(result))
-	_mark_contract_failed(result)
+	if is_inside_tree():
+		_mark_contract_failed(result)
 	_observe_startup_transition(&"contract_failed", {"failure": result.duplicate(true)})
 	_stop_combat_activation()
 
@@ -643,6 +647,8 @@ func _mark_contract_failed(result: Dictionary) -> void:
 
 
 func _stop_combat_activation() -> void:
+	if not is_inside_tree():
+		return
 	var node_added_callback := Callable(self, "_on_failed_runtime_node_added")
 	if get_tree() != null and not get_tree().is_connected("node_added", node_added_callback):
 		get_tree().connect("node_added", node_added_callback)

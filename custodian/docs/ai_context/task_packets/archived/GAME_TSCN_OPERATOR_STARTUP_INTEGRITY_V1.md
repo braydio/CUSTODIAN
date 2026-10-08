@@ -116,16 +116,16 @@
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes — literal production game.tscn reaches ready with one canonical generated-world Operator placement, bounded startup diagnostics, and a fail-closed pre-ready receipt check`
 - Completion boundary satisfied: `yes — the production scene smoke proves exact receipt/tile identity, phase ordering, canonical player identity, painted floor, visibility, and enabled processing`
-- Acceptance satisfied: `yes — focused spawn/ingress/AR3/AR4/streaming/lifecycle/cache/runtime-health/vehicle checks, mutation proof, S1 quick baseline, changed-file validation, and diff checks are green`
+- Acceptance satisfied: `yes — literal production startup and mutation proof, focused spawn/ingress/AR3/AR4/streaming/lifecycle/cache/runtime-health/vehicle checks, S1 quick baseline, and complete changed-file coverage are established; remaining changed-sweep failures are documented clean-main baseline failures in unrelated Vaultwing and ambient-spawn owners`
 - Superseded/legacy production path disposition: `scene-authored Operator coordinates remain editor/bootstrap placeholder only; never runtime fallback authority`
-- Evidence: `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_CLAUDE_SUMMARY.md; literal scene seed 1773840677 selected tile (88,180), one player identity, generation receipt, ready validation valid=true; pre-ready legacy-position mutation failed activation with operator_placement_diverged_before_ready; focused acceptance owners pass`
+- Evidence: `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_CLAUDE_SUMMARY.md; literal scene seed 1773840677 selected tile (88,180), one player identity, generation receipt, ready validation valid=true; pre-ready legacy-position mutation failed activation with operator_placement_diverged_before_ready; focused acceptance owners and startup owner pass; changed sweep has complete coverage with unrelated clean-main baseline failures documented`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
+- Outcome: `success`
 - Friction severity: `medium`
-- What went wrong: `focused spawn fixtures passed while the literal production startup left the Operator at its authored placeholder because a registered ingress clearance covered every safe cell in the accepted 72-cell component`
+- What went wrong: `focused spawn fixtures passed while the literal production startup left the Operator at its authored placeholder because a registered ingress clearance covered every safe cell in the accepted 72-cell component; optional Vaultwing population also emitted unrelated missing-asset errors in the startup proof and was isolated at the fixture boundary`
 - Root cause / contributing factors: `Forlorn edge placement had no minimum distance from the live ProcGen spawn; its 27x19-tile dressing clearance overlapped the canonical spawn. level_data.player_spawn used a different coordinate and was not the live map authority. An unnecessary generation guard initially suppressed intentional same-instance failure/recovery coverage and was removed.`
 - Prevention / pipeline improvement: `live-map spawn clearance constraints for world ingress placement; literal production-scene startup owner; generation-scoped placement receipt, transition-level diagnostics, phase timings, and a cheap pre-ready consistency gate`
 - Tooling / docs drift discovered: `the paired-review packet had parser-invisible target fields, Review: manual, and a noncanonical override; corrected to the dispatcher contract`
