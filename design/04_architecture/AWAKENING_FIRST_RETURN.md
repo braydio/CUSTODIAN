@@ -145,15 +145,16 @@ parity is proven, and the specialized Designation Locker remains the interactive
 P-9 prop. Paired review for
 `awakening-04-05-registered-composition-correction-v1` is pending.
 
-For 05→06, the lower and later halves already share a precise geometric/art
-overlap but the authority is split: `05_06 = Rect2(-64,-3776,128,32)` plus
-`z06_south_door = Rect2(-64,-3840,128,64)`. Their union is one
-`Rect2(-64,-3840,128,96)` passage, exactly matching the 96px overlap between
-the Dust Lung and Undergate production canvases. Active P0 work consolidates
-that into one semantic lower→upper passage and proves real-Operator traversal
-through the same scene into Zones06–10 without teleport/loading or a visual
-void stripe. No new art is required unless the registered room sources
-themselves prove to contain an actual hole.
+For 05→06, `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` is the single
+passage authority: `Rect2(-64,-3840,128,96)`. It replaces the former
+`CONNECTORS["05_06"]` plus `THRESHOLDS["z06_south_door"]` split while preserving
+their exact union and the 96px overlap between the Dust Lung and Undergate
+production canvases. Layout uses the passage for walkability and wall carving;
+both room underlays stay fully readable through the passage neighborhood. The
+real-Operator traversal smoke proves uninterrupted movement through the same
+scene into Zones06–10 without teleport/loading, an underlay gap, or opaque
+foreground mask. No new seam art was required: measured source pixels cover the
+walkable centerline and the foregrounds remain transparent there.
 
 The Road of Witnesses modular production plate pairs are already live.
 

@@ -1,7 +1,9 @@
 extends Node2D
 
+const Layout := preload("res://game/world/awakening/awakening_layout.gd")
+const LOWER_UPPER_PASSAGE_ID := "lower_upper_spine_05_06"
+
 const SEAM_POINTS := {
-	"05_06": Vector2(0, -3760),
 	"06_07": Vector2(0, -4752),
 	"07_08": Vector2(0, -5528),
 	"08_10": Vector2(0, -6224),
@@ -22,14 +24,14 @@ func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant
 	if not command.begins_with("show_seam_"):
 		return false
 	var seam_name := command.trim_prefix("show_seam_")
-	if not SEAM_POINTS.has(seam_name):
+	if seam_name != "05_06" and not SEAM_POINTS.has(seam_name):
 		return false
 	_show_seam(seam_name)
 	return true
 
 func _show_seam(seam_name: String) -> void:
 	checkpoint = seam_name
-	var point: Vector2 = SEAM_POINTS[seam_name]
+	var point: Vector2 = Layout.PASSAGES[LOWER_UPPER_PASSAGE_ID].get_center() if seam_name == "05_06" else SEAM_POINTS[seam_name]
 	operator.global_position = point
 	camera.global_position = point
 

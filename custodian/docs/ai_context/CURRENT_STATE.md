@@ -2158,14 +2158,14 @@ floor pixels beneath the Operator. The shared composition stays opaque through
 the connector fade envelope. The old Locker foreground remains preserved but
 unbound; Layout traversal/collision and the four-state interactive Designation
 Locker remain unchanged. Implementation is complete pending its paired review.
-Separately, the lower and
-later halves are logically joined today by `05_06` (128×32) plus
-`z06_south_door` (128×64); their exact 128×96 union matches the 96px overlap of
-the Dust Lung and Undergate room plates. The P0
-`awakening-lower-upper-spine-connection` packet will consolidate that as one
-semantic passage and prove real-Operator continuity into Zones06–10. The Road
-modular presentation families are already live; the sealed central Gate body's
-passage composition remains an authored-state decision.
+Separately, the lower and later halves connect through the single
+`AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` authority at
+`Rect2(-64,-3840,128,96)`. It preserves the former connector/door union and the
+96px overlap of the Dust Lung and Undergate room plates. Both underlays remain
+fully opaque through the passage neighborhood, and the continuous real-Operator
+traversal proof covers Zones05–08 and Road South Reach without entering optional
+Zone09. The Road modular presentation families are already live; the sealed
+central Gate body's passage composition remains an authored-state decision.
 
 The traversal connector/inlay blockout layer now yields to the production
 plates while Layout retains collision authority. Console and lift stations use

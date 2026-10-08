@@ -59,8 +59,10 @@ const LOCKED_CONNECTORS := {
 	"04_05_A": Rect2(640, -2432, 128, 160),
 	"04_05_B": Rect2(0, -2560, 704, 128),
 	"04_05_C": Rect2(-64, -2656, 128, 96),
-	"05_06": Rect2(-64, -3776, 128, 32),
 	"09_BRANCH": Rect2(-448, -5824, 288, 128),
+}
+const LOCKED_PASSAGES := {
+	"lower_upper_spine_05_06": Rect2(-64, -3840, 128, 96),
 }
 const LOCKED_CONNECTOR_ENVELOPE := Rect2(-64, -2656, 832, 384)
 
@@ -78,6 +80,7 @@ func _init() -> void:
 		_check_scene_skeleton(instance)
 		_check_detail_presentation(instance)
 		_check_zone_art_fade(instance)
+		_check_lower_upper_passage_art(instance)
 		_check_road_instance(instance)
 		_check_retired_home_logic()
 		instance.free()
@@ -139,6 +142,13 @@ func _check_locked_layout() -> void:
 		var rect: Rect2 = Layout.CONNECTORS[key]
 		if maxf(rect.size.x, rect.size.y) < 128.0:
 			_fail("connector %s is narrower than the 128px minimum: %s" % [key, str(rect.size)])
+	for key in LOCKED_PASSAGES:
+		if not Layout.PASSAGES.has(key):
+			_fail("semantic passage %s missing" % key)
+		elif Layout.PASSAGES[key] != LOCKED_PASSAGES[key]:
+			_fail("semantic passage %s drifted: %s" % [key, str(Layout.PASSAGES[key])])
+	if Layout.CONNECTORS.has("05_06") or Layout.THRESHOLDS.has("z06_south_door"):
+		_fail("retired split 05→06 connector/door authority is still present")
 
 
 func _instantiate_scene() -> Node:
@@ -406,6 +416,62 @@ func _check_zone_art_fade(instance: Node) -> void:
 	instance.call("_update_zone_art_visibility")
 	if not is_equal_approx(reliquary.modulate.a, 1.0):
 		_fail("Reliquary room art must restore fully after connector backtracking")
+
+
+func _check_lower_upper_passage_art(instance: Node) -> void:
+	var operator := instance.get_node_or_null("World/Operator") as Node2D
+	var dust_layer := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay") as CanvasItem
+	var gate_layer := instance.get_node_or_null("World/AwakeningZones/Zone06_Undergate/ArtUnderlay") as CanvasItem
+	var dust_underlay := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay/Underlay") as Sprite2D
+	var gate_underlay := instance.get_node_or_null("World/AwakeningZones/Zone06_Undergate/ArtUnderlay/Underlay") as Sprite2D
+	var dust_foreground_layer := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/Occlusion") as CanvasItem
+	var gate_foreground_layer := instance.get_node_or_null("World/AwakeningZones/Zone06_Undergate/Occlusion") as CanvasItem
+	var dust_foreground := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/Occlusion/Foreground") as Sprite2D
+	var gate_foreground := instance.get_node_or_null("World/AwakeningZones/Zone06_Undergate/Occlusion/Foreground") as Sprite2D
+	if operator == null or dust_layer == null or gate_layer == null or dust_underlay == null or gate_underlay == null:
+		_fail("lower→upper passage room-art nodes are incomplete")
+		return
+	if dust_foreground_layer == null or gate_foreground_layer == null or dust_foreground == null or gate_foreground == null:
+		_fail("lower→upper passage foreground nodes are incomplete")
+		return
+	var passage: Rect2 = Layout.PASSAGES["lower_upper_spine_05_06"]
+	var samples := 0
+	for y in range(int(passage.position.y), int(passage.end.y), 8):
+		var point := Vector2(0, y + 4)
+		operator.global_position = point
+		instance.call("_update_zone_art_visibility")
+		samples += 1
+		if not Layout.is_point_walkable(point):
+			_fail("passage centerline is not walkable at %s" % str(point))
+		if dust_layer.modulate.a < 0.999 or gate_layer.modulate.a < 0.999:
+			_fail("both room underlays must stay fully readable through the passage at %s (dust=%0.3f undergate=%0.3f)" % [str(point), dust_layer.modulate.a, gate_layer.modulate.a])
+		if not dust_layer.visible or not gate_layer.visible:
+			_fail("both room underlays must remain visible through the passage at %s" % str(point))
+		var underlay_alpha := maxf(_sprite_alpha_at(dust_underlay, point), _sprite_alpha_at(gate_underlay, point))
+		if underlay_alpha < 0.99:
+			_fail("neither room underlay covers the passage centerline at %s (alpha=%0.3f)" % [str(point), underlay_alpha])
+		var foreground_alpha := maxf(
+			_sprite_alpha_at(dust_foreground, point) * dust_foreground_layer.modulate.a,
+			_sprite_alpha_at(gate_foreground, point) * gate_foreground_layer.modulate.a
+		)
+		if foreground_alpha >= 0.99:
+			_fail("a foreground opaque-masks the Operator centerline at %s (alpha=%0.3f)" % [str(point), foreground_alpha])
+	if samples != 12:
+		_fail("expected 12 eight-pixel passage art samples, got %d" % samples)
+
+
+func _sprite_alpha_at(sprite: Sprite2D, world_point: Vector2) -> float:
+	if sprite.texture == null:
+		return 0.0
+	var image := sprite.texture.get_image()
+	var local := sprite.to_local(world_point)
+	var pixel := Vector2i(
+		floori(local.x + image.get_width() * 0.5),
+		floori(local.y + image.get_height() * 0.5)
+	)
+	if pixel.x < 0 or pixel.y < 0 or pixel.x >= image.get_width() or pixel.y >= image.get_height():
+		return 0.0
+	return image.get_pixelv(pixel).a
 
 
 func _check_connector_art(instance: Node) -> void:

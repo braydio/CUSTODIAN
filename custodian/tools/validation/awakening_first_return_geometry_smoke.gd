@@ -37,8 +37,10 @@ func _init() -> void:
 	else:
 		_check_route_visits_mandatory_zones(route)
 		_check_bidirectional_04_05_passage(route)
+		_check_bidirectional_lower_upper_passage(route)
 	_check_zone_anchors()
 	_check_production_footprints()
+	_check_lower_upper_passage_clearance()
 	_report(build_ms, route.size())
 
 
@@ -256,6 +258,68 @@ func _check_bidirectional_04_05_passage(route: PackedInt32Array) -> void:
 		reverse_indices.append(found)
 	if reverse_indices.size() == 3 and not (reverse_indices[0] < reverse_indices[1] and reverse_indices[1] < reverse_indices[2]):
 		_fail("reverse traversal must cross the same 04→05 dogleg in C/B/A order")
+
+
+func _check_bidirectional_lower_upper_passage(route: PackedInt32Array) -> void:
+	const PASSAGE_ID := "lower_upper_spine_05_06"
+	if not Layout.PASSAGES.has(PASSAGE_ID):
+		_fail("Layout is missing the semantic lower→upper 05→06 passage")
+		return
+	var passage: Rect2 = Layout.PASSAGES[PASSAGE_ID]
+	if Layout.PASSAGES.size() != 1:
+		_fail("the lower→upper connection must have one passage authority")
+	if Layout.CONNECTORS.has("05_06") or Layout.THRESHOLDS.has("z06_south_door"):
+		_fail("retired split 05→06 connector/door authority is still present")
+	var passage_rect_count := 0
+	for rect in Layout.traversal_rects():
+		if rect == passage:
+			passage_rect_count += 1
+	if passage_rect_count != 1:
+		_fail("the 05→06 passage must be carved into traversal geometry exactly once")
+
+	var first := -1
+	var last := -1
+	for route_index in route.size():
+		if passage.has_point(_world_of(route[route_index])):
+			if first < 0:
+				first = route_index
+			last = route_index
+	if first < 0 or last < first:
+		_fail("mandatory route never traverses the lower→upper passage")
+		return
+	for route_index in range(first, last + 1):
+		if not passage.has_point(_world_of(route[route_index])):
+			_fail("route leaves and re-enters the semantic 05→06 passage")
+			break
+	if _world_of(route[first]).y < _world_of(route[last]).y:
+		_fail("forward lower→upper passage traversal must move north through the passage")
+	var reverse_route := route.duplicate()
+	reverse_route.reverse()
+	var reverse_first := -1
+	var reverse_last := -1
+	for route_index in reverse_route.size():
+		if passage.has_point(_world_of(reverse_route[route_index])):
+			if reverse_first < 0:
+				reverse_first = route_index
+			reverse_last = route_index
+	if reverse_first < 0 or _world_of(reverse_route[reverse_first]).y > _world_of(reverse_route[reverse_last]).y:
+		_fail("backtrack must cross the same semantic 05→06 passage southbound")
+
+
+func _check_lower_upper_passage_clearance() -> void:
+	const PASSAGE_ID := "lower_upper_spine_05_06"
+	if not Layout.PASSAGES.has(PASSAGE_ID):
+		return
+	var passage: Rect2 = Layout.PASSAGES[PASSAGE_ID]
+	if passage.size != Vector2(128, 96):
+		_fail("lower→upper passage must preserve the exact 128×96 union: %s" % str(passage))
+	# The occupancy search erodes by one 16px cell in each direction. Check its
+	# full interior core, leaving those rasterization margins at the rect edges.
+	for y in range(int(passage.position.y + CELL * 1.5), int(passage.end.y - CELL * 0.5), int(CELL)):
+		for x in range(int(passage.position.x + CELL * 1.5), int(passage.end.x - CELL * 0.5), int(CELL)):
+			var cell := _cell_of(Vector2(x, y))
+			if _safe[cell.y * _cols + cell.x] == 0:
+				_fail("Operator-clear passage cell is blocked at %s" % str(Vector2(x, y)))
 
 
 ## Each zone's authored entry and exit must be standable, and the optional

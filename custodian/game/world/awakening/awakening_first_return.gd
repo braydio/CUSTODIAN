@@ -43,6 +43,7 @@ const PORT_READOUT := "PORT AUTHORITY: SUSPENDED\nROUTE INDEX: UNAVAILABLE\nPOST
 const CAMERA_ZOOM_SCALE := 2.25
 const BACKDROP_MARGIN := 1024.0
 const ZONE_ART_FADE_DISTANCE := 128.0
+const LOWER_UPPER_PASSAGE_ID := "lower_upper_spine_05_06"
 
 signal zone_entered(zone_id: StringName, index: int)
 signal console_acknowledged()
@@ -76,6 +77,7 @@ var current_objective_text := ""
 var _zone_fade_entries: Array[Dictionary] = []
 var _connector_fade_entries: Array[CanvasItem] = []
 var _connector_envelope := Rect2()
+var _lower_upper_passage: Rect2
 var _last_art_visibility_position := Vector2.INF
 
 
@@ -160,10 +162,14 @@ func _cache_zone_art_visibility_targets() -> void:
 				entry["hold_opaque_through_connector"] = true
 			"Zone05_DustLung":
 				entry["hold_opaque_through_connector"] = true
+				entry["hold_opaque_through_lower_upper_passage"] = true
+			"Zone06_Undergate":
+				entry["hold_opaque_through_lower_upper_passage"] = true
 		_zone_fade_entries.append(entry)
 	_connector_envelope = Layout.CONNECTORS["04_05_A"].merge(
 		Layout.CONNECTORS["04_05_B"]
 	).merge(Layout.CONNECTORS["04_05_C"])
+	_lower_upper_passage = Layout.PASSAGES[LOWER_UPPER_PASSAGE_ID]
 	for visual_path in [
 		"Traversal/ProductionArt/RegisteredComposition04_05",
 	]:
@@ -188,6 +194,9 @@ func _update_zone_art_visibility() -> void:
 		var alpha := 1.0 - clampf(point.distance_to(nearest) / ZONE_ART_FADE_DISTANCE, 0.0, 1.0)
 		if entry.get("hold_opaque_through_connector", false):
 			if _connector_envelope.grow(ZONE_ART_FADE_DISTANCE).has_point(point):
+				alpha = 1.0
+		if entry.get("hold_opaque_through_lower_upper_passage", false):
+			if _lower_upper_passage.grow(ZONE_ART_FADE_DISTANCE).has_point(point):
 				alpha = 1.0
 		_apply_art_alpha(entry["targets"], alpha)
 	var nearest := Vector2(

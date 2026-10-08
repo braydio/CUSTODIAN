@@ -1448,7 +1448,12 @@
       "type": "python",
       "script": "custodian/tools/validation/persistent_checkout_sync_smoke.py",
       "tier": "unit",
-      "tags": ["tooling", "worktree", "git", "sync"],
+      "tags": [
+        "tooling",
+        "worktree",
+        "git",
+        "sync"
+      ],
       "owners": [
         "custodian/tools/agent/persistent_checkout_sync.py",
         "custodian/tools/validation/persistent_checkout_sync_smoke.py"
@@ -4225,7 +4230,9 @@
         "custodian/content/tiles/awakening/ruin_decals/awakening_ruin_decal_soot_bloom_64.png",
         "custodian/content/sprites/effects/awakening/runtime/awakening_dust_motes/awakening_dust_motes__fx__effect__loop__omni__8f__64.png",
         "custodian/content/sprites/effects/awakening/runtime/awakening_falling_ash/awakening_falling_ash__fx__effect__loop__omni__8f__64.png",
-        "custodian/content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png"
+        "custodian/content/sprites/effects/awakening/runtime/awakening_gate_wind_dust/awakening_gate_wind_dust__fx__effect__loop__omni__8f__128.png",
+        "custodian/tools/validation/awakening_first_return_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 45,
       "needs_import": false
@@ -4309,9 +4316,31 @@
         "custodian/game/world/awakening/awakening_layout.gd",
         "custodian/game/world/awakening/awakening_first_return.gd",
         "custodian/game/world/hub/road_of_witnesses_prototype.gd",
-        "custodian/scenes/awakening_first_return.tscn"
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_first_return_geometry_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
+      "id": "awakening_lower_upper_spine_traversal",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_lower_upper_spine_traversal_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "traversal",
+        "passage",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_lower_upper_spine_traversal_smoke.gd"
+      ],
+      "timeout_sec": 150,
       "needs_import": false
     },
     {
@@ -5176,7 +5205,9 @@
         "custodian/tools/validation/test_awakening_late_seams_evidence.py",
         "custodian/scenes/awakening_first_return.tscn",
         "custodian/game/world/awakening/awakening_first_return.gd",
-        "custodian/game/world/hub/road_of_witnesses_prototype.gd"
+        "custodian/game/world/hub/road_of_witnesses_prototype.gd",
+        "custodian/tools/validation/awakening_late_seams_moment.gd",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 60,
       "needs_import": true

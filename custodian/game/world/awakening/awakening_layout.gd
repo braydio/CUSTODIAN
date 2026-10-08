@@ -114,8 +114,13 @@ const CONNECTORS := {
 	"04_05_A": Rect2(640, -2432, 128, 160),
 	"04_05_B": Rect2(0, -2560, 704, 128),
 	"04_05_C": Rect2(-64, -2656, 128, 96),
-	"05_06": Rect2(-64, -3776, 128, 32),
 	"09_BRANCH": Rect2(-448, -5824, 288, 128),
+}
+
+## The lower and upper Awakening share one semantic passage. This rectangle is
+## the exact union of the former 05_06 connector and Zone06 south doorway.
+const PASSAGES := {
+	"lower_upper_spine_05_06": Rect2(-64, -3840, 128, 96),
 }
 
 ## Doorways derived from the locked room skeleton: each one bridges a zone's
@@ -125,7 +130,6 @@ const THRESHOLDS := {
 	"z01_north_door": Rect2(-64, -320, 128, 64),
 	"z03_south_door": Rect2(-64, -1376, 128, 32),
 	"z03_east_door": Rect2(256, -2048, 96, 128),
-	"z06_south_door": Rect2(-64, -3840, 128, 64),
 	"z06_north_door": Rect2(-64, -4864, 128, 64),
 	"z06_register_corridor": Rect2(-416, -4368, 192, 96),
 	"z09_chapel_corridor": Rect2(-544, -5824, 96, 128),
@@ -423,6 +427,7 @@ static func markers_for(zone_id: StringName) -> Array:
 static func traversal_rects() -> Array[Rect2]:
 	var result: Array[Rect2] = []
 	for key in CONNECTORS: result.append(CONNECTORS[key])
+	for key in PASSAGES: result.append(PASSAGES[key])
 	for key in THRESHOLDS: result.append(THRESHOLDS[key])
 	return result
 
