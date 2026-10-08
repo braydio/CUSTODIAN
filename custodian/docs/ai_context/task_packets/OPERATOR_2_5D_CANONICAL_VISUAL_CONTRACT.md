@@ -729,7 +729,7 @@ After reviewed landing:
 - Outcome: partial; implementation remains active and the 128px profile is provisional.
 - Complete: exact source masters and manifests, byte-exact cell reconstruction, shared-scale crisp 128px reference, deterministic per-direction measurements/palette summary, v3 backward-readable profile registry with stable legacy hash, explicit Art Agent profile selection, Aseprite registration/reference guides, design authority, and focused anti-drift coverage.
 - Not complete: semantic root/floor approval; universal body action-envelope proof; reviewed pixel cleanup; specialized canonical-family intake/timing registration; paired post-land review.
-- Human review: `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T181559Z/REVIEW_MANIFEST.json`, default retention `delete-after-review`.
+- Human review: `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T182220Z/REVIEW_MANIFEST.json`, default retention `delete-after-review`.
 - Validation: canonical visual-contract smoke, registration-profile smoke, Aseprite clean-render guide-leak smoke, and `git diff --check` passed.
 
 ## Execution Feedback
@@ -738,8 +738,8 @@ After reviewed landing:
 - Outcome: partial
 - Friction severity: low
 - What went wrong: initial registry migration made the legacy plan replay guard reject the new registry file hash; it now accepts only hashes registered by the profile authority, and legacy plan replay passes.
-- Root cause / contributing factors: the converter compared a selected profile hash to the entire v3 registry hash.
-- Prevention / pipeline improvement: compare explicit profile hashes from the v3 registry while retaining v1/v2 file-hash compatibility.
+- Root cause / contributing factors: the converter compared a selected profile hash to the entire v3 registry hash; Dropbox review runs are immutable by design.
+- Prevention / pipeline improvement: compare explicit profile hashes from the v3 registry while retaining v1/v2 file-hash compatibility; publish corrected review evidence under a fresh run ID.
 - Tooling / docs drift discovered: packet omits the required `Change` field; record retained here for packet-authoring repair before archive. The user-supplied animation PNG has no authoritative FPS/timing metadata.
 - Follow-up: `operator-2-5d-canonical-visual-contract`
 - What worked: source hashes, geometry, direction order, and exact legacy profile hash are deterministic checks.

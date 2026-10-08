@@ -14,7 +14,7 @@ Added explicit Art Agent profile selection and new semantic landmarks for projec
 
 The 128px profile is not accepted. Human semantic root/floor approval, universal action-envelope proof, and review of any normalized-reference pixel cleanup remain required. The supplied idle is preserved in source-work but is not yet registered as a canonical production family with timing metadata. WB25-1 stays dependency-gated until this workstream and its paired review close.
 
-The compact Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T181559Z/REVIEW_MANIFEST.json` (default `delete-after-review`). Questions: approve/revise the candidate x=64, root y=106, ground y=107 registration across all eight directions, and identify only specific palette pixels requiring cleanup.
+The compact Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T182220Z/REVIEW_MANIFEST.json` (default `delete-after-review`). Questions: approve/revise the candidate x=64, root y=106, ground y=107 registration across all eight directions, and identify only specific palette pixels requiring cleanup.
 
 ## Validation
 
@@ -29,9 +29,9 @@ The compact Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-ca
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: low
-- What went wrong: the first registry migration caused the legacy normalization-plan replay guard to compare against the v3 file hash; updated it to accept registered profile hashes and reran the focused replay successfully.
-- Root cause / contributing factors: legacy validation assumed one profile hash equaled the entire profile file hash.
-- Prevention / pipeline improvement: v3 plans validate against explicit profile hashes while v1/v2 profile file-hash compatibility remains.
+- What went wrong: the first registry migration caused the legacy normalization-plan replay guard to compare against the v3 file hash; updated it to accept registered profile hashes and reran the focused replay successfully. Dropbox review manifests are immutable, so the final profile-hash refresh required a fresh run ID after a same-run update was rejected.
+- Root cause / contributing factors: legacy validation assumed one profile hash equaled the entire profile file hash; published review runs cannot be overwritten.
+- Prevention / pipeline improvement: v3 plans validate against explicit profile hashes while v1/v2 profile file-hash compatibility remains; publish corrected evidence in a new review run.
 - Tooling / docs drift discovered: the active packet omits the required `Change` field; this is recorded in its Execution Feedback for repair before archive. The supplied animation PNG has no authoritative FPS/timing metadata.
 - Follow-up: operator-2-5d-canonical-visual-contract
 - What worked: byte-exact source hashes and source-cell reconstruction made provenance verifiable without visual guesswork.
