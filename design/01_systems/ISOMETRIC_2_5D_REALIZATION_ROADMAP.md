@@ -2,9 +2,9 @@
 # CUSTODIAN ISOMETRIC 2.5D REALIZATION ROADMAP
 
 **Program ID:** `isometric-2-5d-realization`
-**Status:** active / foundation implemented / Operator authority closeout chain active before Forum
+**Status:** active / foundation implemented / Operator authority accepted / WB25-1 ready before Forum
 **Priority:** P2
-**Reviewed main:** `90e2ac01e3b91809bd5e1b52fe6ada13e388c808`
+**Reviewed main:** `e3815b018afe4e765cacd4804911b9610d0c2f19`
 **Last Updated:** 2026-10-08
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 **Design authority:** `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`
@@ -127,6 +127,6 @@ If yes, the next work is production rollout and asset standards, not a return to
 
 ## Current position
 
-K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is implemented and awaits its fresh-context review. The Operator viability audit has completed its deterministic current-main closeout: all 69 live families remain legacy fallback, the supplied relaxed idle is the first canonical source, and 68 families remain in the baseline target backlog. The canonical visual-contract packet is the immediate successor and owns hardening the exact design lock plus first authored relaxed-idle family. Its current V2 packet is missing the required `Change` field, so planning metadata must be repaired before claim; its paired-review mode metadata was corrected at `350bf03f8`. WB25-1 remains blocked until that receipt and review land, then returns to the planning chat for its final target-count/profile-hash ready/auto refresh. After foundation review passes, the Sundered Keep overlook may proceed independently; the Forum vertical slice still waits for the Operator art authorities and its own ChatGPT/user refresh. Retain the user's A/B walkaround notes as tuning input for the Forum slice and use the Sundered-specific authoring chat/roadmap for the overlook program.
+K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is implemented and awaits its fresh-context review. The Operator viability audit is complete: 69 live semantic families are legacy fallback, one authored relaxed-idle family is canonical, and 68 baseline canonical families remain (544 baseline direction-animation strips before extra modular/weapon/FX layers). The canonical visual contract and its paired review are complete/passed with accepted profile SHA `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761` and normalized-reference SHA `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`. WB25-1 has consumed those receipts and is now `ready/auto`; its paired review is `ready/auto` behind it. After foundation review passes, the Sundered Keep overlook may proceed independently; the Forum vertical slice still waits for its remaining declared dependencies/refresh. Retain the user's A/B walkaround notes as tuning input for the Forum slice and use the Sundered-specific authoring chat/roadmap for the overlook program.
 
 H1 remains separate. At 2.5D-2 claim time, use landed H1 layout constants if available; otherwise use locked Forum coordinates read-only.
