@@ -28,21 +28,23 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
 
 2. **Prefer the immediate continuation of the work the conversation just finished.**
    - Fetch current packet truth through the dispatcher/repository workflow.
-   - Resolve the most recently completed/reviewed workstream from the current
-     conversation and durable repo evidence.
+   - Resolve the most recently completed/reviewed workstream from durable repo evidence.
    - Read its archived packet/closing summary `## Next Handoff`.
-   - If `Next workstream` names an exact successor and that successor is eligible,
-     claim it explicitly:
-     ```bash
-     python3 custodian/tools/agent/dispatch.py claim <next-workstream> --agent codex
-     ```
-   - A paired review named by the completed implementation is a normal immediate
-     successor and should be preferred over unrelated global work.
+   - If an exact successor is eligible and `ChatGPT/user planning refresh required: no`,
+     claim it and continue without handing routine control back to the user.
+   - After that successor finishes, persist its `<TASK>_CLAUDE_SUMMARY.md` and
+     repeat this same routing step through the named same-series chain.
+   - A paired review is an immediate successor but must run in a fresh reviewer
+     context; that freshness requirement does not turn it into a user relay step.
 
-3. **Respect refresh and dependency gates.**
-   - If the handoff says ChatGPT/user planning refresh is required, the next packet
-     is blocked/manual, or the named successor is otherwise not eligible, stop.
-   - Report the exact blocker and recorded authoring/refresh chat URL.
+3. **Stop only at a real gate.**
+   - Stop before claiming when ChatGPT/user planning refresh is required, a
+     subjective human decision is pending, dispatch is explicitly user-held, or a
+     technical/safety blocker makes the named successor ineligible.
+   - For a planning refresh, return the exact Authoring Chat URL, copyable
+     Workstream ID, and persistent summary path.
+   - `Refresh owner: execution-agent` is an autonomous bounded refresh unless it
+     exposes a genuinely new human-owned decision.
    - Do not edit packet status, silently reinterpret scope, or skip to unrelated
      work just to keep the command moving.
 
