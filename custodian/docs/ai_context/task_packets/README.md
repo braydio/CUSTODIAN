@@ -60,7 +60,6 @@ normal closeout.
 - `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` — Finish the already-live Carbine hybrid socket architecture by making the static directional `WeaponSprite` the sole primary-ranged weapon renderer for author...
 - `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect...
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authoritie...
-- `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Give the user one safe, repeatable way to keep the persistent coordination checkout at `~/Projects/CUSTODIAN/` and the persistent OPUI `workbench/operator-ar...
 - `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic...
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Extract durable authored-world claim metadata and membership from `ProcGenTilemap` into one canonical registry under `custodian/game/world/procgen/authored_c...
 - `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Re-derive the post-D1/D2/D3 generation core from live code and produce the authoritative migration contract for replacing TileMapLayer-as-working-memory with...
@@ -96,7 +95,8 @@ normal closeout.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md` — Independently verify that correction `R0-01` closes the REPLACE source-conflict window without weakening successful publication, CREATE collision refusal, or...
-- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Independently verify that the shared persistent-checkout sync implementation keeps the coordination root and OPUI art checkout current only when synchronizat...
+- `PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — Remove ignored-tree-wide hashing from persistent checkout status/sync while preserving candidate-path collision and ignored-byte safety (R0-01).
+- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — Independently verify bounded ignored-path checks, large-tree performance, and preserved sync safety after correction cycle 1.
 - `REVIEW_PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Independently verify that D2 creates one durable authored-claim owner, preserves current authored floor/overlook/ingress behavior and M6 unload/reload semant...
 - `REVIEW_PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Independently verify that the post-D1/D2/D3 generation-data audit completely and truthfully maps the remaining TileMap-backed generation core before any abst...
 - `REVIEW_PROCGEN_GENERATION_GRID_FOUNDATION.md` — Independently verify that the GenerationGrid foundation is a minimal semantic storage seam with exact TileMap-backed parity, not an accidental second generat...
@@ -158,12 +158,12 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `archived/VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — completed P0 control-plane/tooling slice: claim receipts expose authoring/visual-review routing, finish enforces exact summary backlinks, Dropbox review manifests default to delete-after-review and carry a path-confined cleanup command, and `$custodian-next` keeps human review inside the active workstream.
 - `archived/REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — complete: paired review passed (0 blocking, 5 non-blocking deferred findings R0-01..R0-05).
 
-### Active Persistent Checkout Sync Hardening
+### Completed Persistent Checkout Sync Hardening
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
-- `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — P1 ready/auto workflow hardening that creates one fail-closed persistent-checkout sync authority for the user's coordination `~/Projects/CUSTODIAN/` main checkout and the sparse `workbench/operator-art` OPUI checkout, with `csync` / `opui-sync` helpers and safe OPUI pre-authoring synchronization.
-- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context code/architecture/workflow review; dependency-gated on the implementation and focused on dirty/diverged preservation, ignored Workbench byte safety, locking/races, and absence of destructive Git recovery.
+- `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — complete: one fail-closed persistent-checkout sync authority owns safe coordination-main and Operator-art updates, with `csync` / `opui-sync` helpers, OPUI pre-authoring synchronization, and 25/25 changed-file validations passed.
+- `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — completed paired fresh-context review found blocking R0-01: status/startup hashed all 134,037 ignored root files; correction cycle 1 is queued.
 
 ### Active Hub First-Set / First Campaign Loop Series
 
@@ -488,14 +488,25 @@ must never derive or invent ChatGPT conversation URLs.
 Every completed packet/review reports the immediate successor in its own
 program/DAG through the required `Next Handoff` fields: next workstream,
 packet state, refresh owner, whether ChatGPT/user planning refresh is required,
-authoring-chat URL, refresh reason, next action, and blockers.
+authoring-chat URL, refresh reason, next action, and blockers. The durable
+`<TASK>_CLAUDE_SUMMARY.md` is the persistent copy of that handoff.
 
-Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen at claim time from current main plus landed predecessor evidence. Use `Refresh owner: chatgpt-user` only when a genuine unresolved design choice requires the user's judgment before implementation can proceed.
-The execution/review agent supplies the live-state evidence and drift, but the
-user brings the recorded authoring chat back to ChatGPT so the packet can be
-re-derived against both original intent and current main. Mechanical refreshes
-that do not change scope, ownership, sequencing, acceptance, visual direction,
-or design interpretation may use `execution-agent`.
+A ready/eligible named successor with
+`ChatGPT/user planning refresh required: no` is an **autonomous continuation**,
+not a user relay point. The agent/worker claims that successor itself and
+continues through the same-series implementation/review/correction chain.
+Paired reviews still require a fresh reviewer context, but that context switch
+does not require the user to carry the prior summary.
+
+Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen
+at claim time from current main plus landed predecessor evidence. Use
+`Refresh owner: chatgpt-user` only when a genuine unresolved design choice
+requires the user's judgment before implementation can proceed. At that boundary
+the agent stops and surfaces only the exact recorded Authoring/Refresh chat URL,
+the copyable workstream ID, and the persistent summary path; the user opens the
+linked conversation and pastes the workstream ID. Mechanical refreshes that do
+not change scope, ownership, sequencing, acceptance, visual direction, or design
+interpretation remain execution-agent work.
 
 Historical packets without an authoring URL remain valid; surface
 `Authoring chat: not-recorded` and ask the user to provide the originating

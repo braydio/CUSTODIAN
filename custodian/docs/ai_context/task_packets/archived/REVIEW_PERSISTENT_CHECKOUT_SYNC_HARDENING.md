@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-persistent-checkout-sync-hardening`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `persistent-checkout-sync-hardening`
@@ -51,3 +51,47 @@
 
 - Next action: Auto-dispatch after `persistent-checkout-sync-hardening` lands and archives.
 - Blockers or open questions: Dependency only.
+
+## Review Result
+
+- Disposition: `findings`
+- Reviewed live main: `58bab17248d444315cd8fa7785fe295acf31eb14`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Findings: `R0-01`
+- Correction workstream: `persistent-checkout-sync-hardening-review-corrections-1`
+- Focused validation: persistent sync smoke PASS; Operator-art worktree smoke PASS; workstream tests 38/38 PASS; OPUI smoke PASS; shell syntax and diff checks PASS.
+- Review conclusion: `R0-01` blocks acceptance because the live root contains 134,037 ignored file entries and the ordinary read-only root status probe remained inside full-file SHA-256 hashing for more than 60 seconds before interruption. The same scan is in apply and OPUI startup paths, with the implementation run recording approximately eight minutes. The correction must bound ignored-state checks to incoming candidate paths.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `The live root status probe required an unbounded ignored-file hash scan; it was interrupted after more than 60 seconds.`
+- Root cause / contributing factors: `Each profile snapshot hashes every ignored file even when the operation only needs to establish safety for incoming tracked paths.`
+- Prevention / pipeline improvement: `Correction cycle 1 scopes collision and byte checks to incoming candidate paths and adds a large ignored-tree fixture.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `persistent-checkout-sync-hardening-review-corrections-1`
+- What worked: `Temporary real Git fixtures directly exercised FF-only behavior, safety blockers, locks, and races.`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `no`
+- Completion boundary satisfied: `no`
+- Acceptance satisfied: `no`
+- Review disposition: `findings`
+
+## Next Handoff
+
+- Next workstream: `persistent-checkout-sync-hardening-review-corrections-1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Refresh reason: `none`
+- Next action: `Claim correction cycle 1, remove ignored-tree-wide hashing while retaining path-scoped collision and byte-preservation checks, then run the paired fresh-context re-review.`
+- Blockers or open questions: `none`

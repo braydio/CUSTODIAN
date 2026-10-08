@@ -59,6 +59,34 @@ operator() {
   "${operator_python}" "${CUSTODIAN_GODOT}/tools/operator/operator_cli.py" "$@"
 }
 
+# -- Safely inspect/apply synchronization for persistent CUSTODIAN checkouts
+csync() {
+  _update_usage "csync"
+  local target="both" action="apply" python="python3"
+  if [[ -x "${CUSTODIAN_REPO}/.ai/operator-ui-venv/bin/python" ]]; then
+    python="${CUSTODIAN_REPO}/.ai/operator-ui-venv/bin/python"
+  fi
+  if [[ "${1:-}" == "status" ]]; then
+    action="status"
+    shift
+  fi
+  if [[ $# -gt 0 ]]; then
+    target="$1"
+    shift
+  fi
+  if [[ $# -gt 0 || ! "$target" =~ ^(both|root|art)$ ]]; then
+    echo "Usage: csync [status|root|art]" >&2
+    return 2
+  fi
+  "${python}" "${CUSTODIAN_GODOT}/tools/agent/persistent_checkout_sync.py" \
+    "${action}" "${target}" --coordination-root "${CUSTODIAN_REPO}"
+}
+
+opui-sync() {
+  _update_usage "opui-sync"
+  csync art
+}
+
 # -- Install/update the optional Textual Operator UI environment
 opui-install() {
   _update_usage "opui-install"
@@ -78,10 +106,19 @@ opui() {
     echo "Operator UI environment missing. Run 'opui-install' first." >&2
     return 2
   fi
+  local sync_root sync_art
+  if ! sync_root=$("${ui_python}" "${CUSTODIAN_GODOT}/tools/agent/persistent_checkout_sync.py" \
+    apply root --coordination-root "${CUSTODIAN_REPO}" 2>&1); then
+    sync_root="${sync_root:-coordination-main: sync attempt failed}"
+  fi
   local art_root
   art_root=$("${ui_python}" "${CUSTODIAN_GODOT}/tools/operator/operator_art_worktree.py" ensure \
     --coordination-root "${CUSTODIAN_REPO}") || return
-  CUSTODIAN_COORDINATION_ROOT="${CUSTODIAN_REPO}" \
+  if ! sync_art=$("${ui_python}" "${CUSTODIAN_GODOT}/tools/agent/persistent_checkout_sync.py" \
+    apply art --coordination-root "${CUSTODIAN_REPO}" --art-root "${art_root}" 2>&1); then
+    sync_art="${sync_art:-operator-art: sync attempt failed}"
+  fi
+  CUSTODIAN_SYNC_STATUS="${sync_root}; ${sync_art}" CUSTODIAN_COORDINATION_ROOT="${CUSTODIAN_REPO}" \
     "${ui_python}" "${art_root}/custodian/tools/operator/operator_cli.py" ui "$@"
 }
 
@@ -236,6 +273,8 @@ clisting() {
   echo "  Operator Animation"
   echo "    opui           open the Textual Operator Workbench"
   echo "    opui-install   install/update its isolated Textual environment"
+  echo "    opui-sync      safely synchronize the persistent Operator art checkout"
+  echo "    csync          safely synchronize both persistent checkouts (root/art/status)"
   echo "    opcombo        check upper/lower modular combo fit & alignment"
   echo "    opcontract     report animation completeness vs production contract"
   echo "    opaudit        audit modular sprite sources for missing/extra assets"
@@ -263,7 +302,7 @@ alias_usage() {
     return
   fi
   echo "Custodian alias usage counts:"
-  for cmd in dryjson runjson runsprite operator opui opui-install opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
+  for cmd in dryjson runjson runsprite operator opui opui-install opui-sync csync opingest obsreport listbox pixelart matchpal batchstrike opcolor promptmenu opcombo opcontract opaudit opnext oprepair oprepair-report oprepair-smoke opvalidate clisting; do
     local count
     count=$(grep -c "$cmd" "$usage_file" 2>/dev/null || echo 0)
     printf "  %-12s %d\n" "${cmd}:" "${count}"
@@ -272,7 +311,7 @@ alias_usage() {
   echo "Total: $(wc -l <"${usage_file}") invocations"
 }
 
-echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opui, opui-install, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
+echo "  Custodian commands ready: croot, cgodot, cpack, opcolor, dryjson, runjson, runsprite, operator, opui, opui-install, opui-sync, csync, opingest, obsreport, listbox, pixelart, matchpal, batchstrike, promptmenu, opcombo, opcontract, opaudit, opnext, oprepair, oprepair-report, oprepair-smoke, opvalidate, clisting"
 echo "  Type 'clisting' for all commands with descriptions, 'alias_usage' for usage counts."
 
 # Optional ignored local commands; keep personal helpers out of shared authority.

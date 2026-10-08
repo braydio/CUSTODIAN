@@ -14,7 +14,7 @@
 - Paired review workstream: `review-awakening-04-05-registered-composition-correction-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `60c258e88478b7e8b6b8bf7c08e59332763a5cbe`
+- Reviewed main: `ff1c3788409747dd0f74f70d100862acd6af139e`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
 - Goal: Replace the independently fitted/rotated Dust Lung ↔ connector ↔ Locker Reliquary presentation with the user's exact precomposed three-layer registration. Preserve the supplied relative layout exactly; do not solve the connector as a separate anchor-fitting problem.
 - Completion boundary: Done when the three production layers reproduce the supplied 1502×2048 composition with one shared coordinate basis, zero per-piece rotation, exact layer bounds/overlaps/order, and no independent Dust/Locker/connector normalization that changes their relative registration. Gameplay geometry and the specialized Designation Locker remain unchanged.
@@ -24,7 +24,12 @@
 - Work surface: `custodian/scenes/awakening_first_return.tscn`; the three existing environment/connector Asset V2 families only if their runtime representation must change; narrow Awakening presentation visibility/z-order code; focused registration validation; active docs describing the now-superseded rotated connector transform.
 - Change:
   1. **Treat the supplied composition as placement authority, not inspiration.** Do not independently fit any of the three art pieces to room/connector gameplay anchors.
-  2. **Exact shared reference canvas:** every reference export is RGBA `1502×2048` with the same top-left origin `(0,0)`.
+  2. **Exact shared reference canvas:** every reference export is RGBA `1502×2048` with the same top-left origin `(0,0)`. **The four exact registered reference PNGs are now durable Dropbox inputs and are required execution inputs; the authoring-chat link is no longer needed to obtain them.**
+     - composed reference: `/CUSTODIAN/implementation_inputs/awakening_04_05_registered_composition_v1/composite_reference_1502x2048.png`; Dropbox id `id:8NXqdXuW6GUAAAAAAAACuA`; rev `65d59438bcb75915cdd61`; SHA-256 `521beec078b9c3dfb3d694d134258c6a77d0db64e3ce4cc8a71491efff8c9383`.
+     - Dust registered layer: `/CUSTODIAN/implementation_inputs/awakening_04_05_registered_composition_v1/dust_registered_1502x2048.png`; Dropbox id `id:8NXqdXuW6GUAAAAAAAACuQ`; rev `65d5943d2805a915cdd61`; SHA-256 `fa8637992bfc0b1ff1b0d009fbe463e098a4adbfe97031c67d2276d2fe94172e`.
+     - connector registered layer: `/CUSTODIAN/implementation_inputs/awakening_04_05_registered_composition_v1/connector_registered_1502x2048.png`; Dropbox id `id:8NXqdXuW6GUAAAAAAAACug`; rev `65d5943ff9a84915cdd61`; SHA-256 `489b49615ba53b0073519d5a261f736321ba69b95019bb54ec02ff408a9ffd76`.
+     - Locker registered layer: `/CUSTODIAN/implementation_inputs/awakening_04_05_registered_composition_v1/locker_registered_1502x2048.png`; Dropbox id `id:8NXqdXuW6GUAAAAAAAACuw`; rev `65d59441dc32c915cdd61`; SHA-256 `76cc103eda059974f8f279e8e4e10fdb1b388030ea26f2a7b659075c45ceb48d`.
+     - Fetch these four files first and fail closed on any revision/hash/dimension/mode mismatch. Do not reconstruct the reference pixels from hashes/bounds alone and do not substitute the three raw masters for these registered-layer files.
      - composed reference SHA-256: `521beec078b9c3dfb3d694d134258c6a77d0db64e3ce4cc8a71491efff8c9383`
      - Dust-only reference SHA-256: `fa8637992bfc0b1ff1b0d009fbe463e098a4adbfe97031c67d2276d2fe94172e`
      - connector-only reference SHA-256: `489b49615ba53b0073519d5a261f736321ba69b95019bb54ec02ff408a9ffd76`

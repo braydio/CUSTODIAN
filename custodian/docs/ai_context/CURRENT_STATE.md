@@ -305,8 +305,12 @@ with an ignored `LAND PENDING` receipt; retrying the same animation resumes
 landing without exporting pixels again. A successful land refreshes OPUI and
 best-effort fast-forwards a clean coordination checkout. Coordination edits
 remain preserved and are reported as a pending sync.
-On reuse, OPUI startup is read-only and still mounts when publication is
-blocked. The Publish review projects checkout identity/relation, dirty path
+Before OPUI enters authoring, the shared persistent-checkout authority makes a
+bounded FF-only attempt for clean, behind-only coordination-main and Operator
+art checkouts. Dirty, ahead, diverged, `LAND PENDING`, recovery, wrong-branch,
+and Aseprite-open states remain untouched; OPUI still mounts and reports the
+blocker in checkout status. `csync` and `opui-sync` use the same authority.
+The Publish review projects checkout identity/relation, dirty path
 categories, sparse health, required LFS/missing dependencies, transaction
 receipts, and selected source freshness. Explicit Publish preparation fetches
 `origin/main` and fast-forwards only a clean idle branch with zero local
@@ -400,10 +404,17 @@ that is accepted only on `workbench/operator-art` targeting `origin/main`; it
 still passes through the same serialized, race-safe `land_main.py` algorithm.
 The lander accepts the branch's own upstream while still rejecting publication
 on unrelated remote refs. Successful finish verifies ancestry from
-`origin/main` before removing completed branch/worktree state. Branch archive
-hygiene is ancestry-based and report-only by default. Paired post-land reviews
-now use stable cycle-scoped findings, explicit correction thresholds, and
-delta-only correction packets. Their bounded packet override permits commits
+`origin/main` before removing completed branch/worktree state. A successful
+finish is no longer a routine human handback boundary: when the durable
+`Next Handoff` names an eligible same-series successor and
+`ChatGPT/user planning refresh required: no`, the agent/worker persists the
+completed `<TASK>_CLAUDE_SUMMARY.md`, claims the successor itself, and continues
+autonomously. Human/ChatGPT refresh gates stop with a compact Authoring Chat +
+Workstream + persistent-summary card so the user only has to open the recorded
+conversation and paste the workstream ID. Branch archive hygiene is
+ancestry-based and report-only by default. Paired post-land reviews now use
+stable cycle-scoped findings, explicit correction thresholds, and delta-only
+correction packets. Their bounded packet override permits commits
 only for the archived review receipt, required summary, review-packet lifecycle
 metadata, and correction/re-review packets; reviewed implementation and
 unrelated files remain prohibited. Dispatch rejects auto review packets with a

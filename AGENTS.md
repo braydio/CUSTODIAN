@@ -207,10 +207,20 @@ Semantics:
    checkout, continue that workstream rather than claiming another packet.
 2. Otherwise prefer the exact immediate successor recorded by the most recently
    completed packet/review's durable `Next Handoff`, including its paired review.
-3. If that successor is refresh-gated, blocked/manual, or dependency-blocked,
-   stop and surface the exact blocker/refresh chat. Do not silently jump lanes.
-4. Only when there is no same-series successor, fall back to
-   `dispatch.py claim-next --agent codex`.
+3. When that successor requires **no ChatGPT/user planning refresh or human
+   decision** and the dispatcher says it is eligible, claim it and continue
+   autonomously. Finishing one packet is not a routine reason to hand control
+   back to the user. `Refresh owner: execution-agent` is likewise an autonomous
+   bounded refresh unless live evidence exposes a new human-owned choice.
+4. Paired review still requires a fresh reviewer context. The automation should
+   transition to a fresh context and claim the review itself; it should not ask
+   the user to carry the implementation recap into a new session.
+5. Stop only on a real human/ChatGPT refresh gate, human visual/design gate,
+   explicit manual-dispatch hold, unresolved safety/validation blocker, or
+   ineligible named successor. Surface the exact recorded Authoring/Refresh chat
+   URL when the stop is human-owned. Do not silently jump lanes.
+6. Only when there is no same-series successor and the invocation was for general
+   next-task execution, fall back to `dispatch.py claim-next --agent codex`.
 
 The dispatcher receipt remains assignment authority; the shortcut never edits
 packet status to manufacture eligibility.
@@ -260,8 +270,13 @@ Every agent writes the summary that normally closes a message to
   never append, never create a second file for the same slice.
 - **Stage it in the same commit as the work it describes.** If the work has
   already landed, a follow-up commit is the fallback, not the intent.
-- **Keep writing the summary in the reply as well.** The file is in addition to
-  the reply, not instead of it.
+- **The durable file is the canonical handoff record.** Keep the substantive
+  completion/handoff summary in the file. During autonomous successor execution,
+  do not stop merely to paste that full summary into terminal/chat; claim the
+  eligible named successor and continue. When a human/ChatGPT gate is reached,
+  the user-facing message may be the compact lifecycle unblock card instead of
+  duplicating the entire summary. At final chain completion, a concise ordinary
+  completion reply is still appropriate.
 - **It is not a substitute for the authority docs, and they are not a substitute
   for it.** Updating `CURRENT_STATE.md`, a task packet, `FILE_INDEX.md`, an
   architecture contract or an ownership map does not discharge this. Those record
@@ -293,7 +308,7 @@ receipt:
 - What worked: optional
 ```
 
-Every packeted closing summary and final user-facing reply also ends with:
+Every packeted closing summary ends with:
 
 ```text
 ## Next Handoff
@@ -306,6 +321,22 @@ Every packeted closing summary and final user-facing reply also ends with:
 - Next action: ...
 - Blockers or open questions: none | ...
 ```
+
+This durable `Next Handoff` drives autonomous continuation. When
+`ChatGPT/user planning refresh required: no` and the exact successor is
+eligible, the execution agent claims it itself and continues rather than
+handing the packet name to the user. When that field is `yes`, the user-facing
+terminal/chat handoff should normally collapse to:
+
+```text
+PLANNING REFRESH REQUIRED
+Authoring Chat: <exact recorded URL>
+Workstream: <workstream-id>
+Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+```
+
+The user should only need to open the linked conversation and paste the
+workstream ID; the durable summary/packet carries the recap.
 
 This is the immediate successor in the current packet's own program/DAG, not a
 random globally eligible task. Architecture/design-sensitive refreshes belong to

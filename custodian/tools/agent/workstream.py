@@ -19,6 +19,7 @@ from workflow_control import (
     RemoteClaim, RunTrace, WorkflowControlError, acquire_remote_claim,
     release_remote_claim, resolve_agent_id, workstream_mutex,
 )
+from persistent_checkout_sync import ROOT_PROFILE, apply_profiles, format_result
 from task_packet_contract import (
     completion_truth_required, parse_completion_truth, parse_packet,
 )
@@ -662,19 +663,24 @@ def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path
     git("worktree", "prune", cwd=admin_repo)
     git("fetch", "--prune", "origin", cwd=admin_repo)
 
-    # Root checkout sync is subordinate and never alters user state.
-    for item in worktree_records(admin_repo):
-        root_path = Path(item["worktree"]).resolve()
-        if root_path == path:
-            continue
-        if git("branch", "--show-current", cwd=root_path, check=False) != "main":
-            continue
-        if status_clean(root_path):
-            git("pull", "--ff-only", "origin", "main", cwd=root_path)
-            print(f"persistent main checkout synchronized: {root_path}")
-        else:
-            print(f"persistent root synchronization pending (dirty): {root_path}")
-        break
+    # Root checkout sync is subordinate and never alters user state. Resolve
+    # the persistent main identity from live worktree metadata, then use the
+    # shared inspect/apply policy used by OPUI and the user-facing CLI.
+    main_root = next(
+        (Path(item["worktree"]).resolve() for item in worktree_records(admin_repo)
+         if item.get("branch") == "refs/heads/main"),
+        None,
+    )
+    if main_root is None:
+        print("persistent root synchronization pending: no attached main checkout")
+    else:
+        try:
+            result = apply_profiles([ROOT_PROFILE], main_root)[0]
+            print("persistent main checkout: " + format_result(result))
+        except Exception as error:
+            # Task landing is complete; root sync is best-effort and remains
+            # pending with an actionable reason if the safe helper cannot run.
+            print(f"persistent root synchronization pending: {error}")
     print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
 
 

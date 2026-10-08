@@ -1444,6 +1444,19 @@
       "needs_import": false
     },
     {
+      "id": "persistent_checkout_sync",
+      "type": "python",
+      "script": "custodian/tools/validation/persistent_checkout_sync_smoke.py",
+      "tier": "unit",
+      "tags": ["tooling", "worktree", "git", "sync"],
+      "owners": [
+        "custodian/tools/agent/persistent_checkout_sync.py",
+        "custodian/tools/validation/persistent_checkout_sync_smoke.py"
+      ],
+      "timeout_sec": 180,
+      "needs_import": false
+    },
+    {
       "id": "operator_cli_publish_boundary",
       "type": "python",
       "script": "custodian/tools/validation/operator_cli_publish_boundary_smoke.py",

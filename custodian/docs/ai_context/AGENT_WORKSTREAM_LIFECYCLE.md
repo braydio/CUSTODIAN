@@ -173,6 +173,76 @@ disposable candidate, or unclassified. The agent must explicitly commit durable
 material or remove disposable material; ambiguous files are never silently
 removed.
 
+## Autonomous Successor Continuation
+
+A successful packet finish is **not** a routine handback boundary. After landing
+and the safe persistent-root sync attempt, the execution automation must read the
+durable `## Next Handoff` from the completed packet/closing summary and continue
+the same program/DAG without waiting for the user when the successor is executable.
+
+The default continuation rule is:
+
+1. The completed workstream writes and commits its root
+   `<TASK>_CLAUDE_SUMMARY.md` before finish. That file is the persistent handoff
+   record and must contain the same substantive completion/handoff information
+   that would otherwise be pasted into chat.
+2. Resolve the **exact named immediate successor** from `Next workstream`. Do not
+   substitute a globally convenient packet.
+3. When all of the following are true, the agent/worker claims the successor
+   itself and continues autonomously:
+   - `ChatGPT/user planning refresh required: no`;
+   - there is no unresolved human visual/design/canon decision;
+   - the successor is not explicitly user-held via `Dispatch: manual`;
+   - the dispatcher reports the named successor eligible after fresh
+     `origin/main` evaluation.
+4. `Refresh owner: execution-agent` is also autonomous. Perform the bounded
+   live-main reconciliation described by the packet, update the packet if
+   authorized, then claim/continue without involving the user unless the evidence
+   exposes a genuinely new human-owned decision.
+5. A paired post-land review remains a **fresh-context** workstream. Autonomous
+   continuation does not waive that rule: the worker/orchestrator must start a
+   fresh reviewer context before claiming the review, rather than asking the user
+   to relay the packet or continuing the implementation context as its reviewer.
+6. Repeat this loop through ready implementation, review, correction, and
+   re-review successors until a real stop condition is reached.
+
+Stop autonomous continuation only for a real boundary:
+
+- `ChatGPT/user planning refresh required: yes`;
+- a required human visual/art-direction/design/canon decision;
+- an explicit user-held manual-dispatch gate;
+- failed required validation, safety ambiguity, or another unresolved blocker;
+- the named same-series successor is not eligible and no authorized mechanical
+  refresh can make it eligible;
+- `Next workstream: none` / the current program chain is complete.
+
+Do **not** automatically jump to an unrelated global queue item merely because a
+same-series chain ends. Global `claim-next` remains appropriate only when the
+user/worker explicitly asked for general next-task execution rather than
+continuation of a named program.
+
+### Human unblock card
+
+When the stop condition is a ChatGPT/user planning refresh, the full execution
+summary already lives in the committed `<TASK>_CLAUDE_SUMMARY.md`. Do not make
+the user shuttle that whole recap between tools. End with a compact card:
+
+```text
+PLANNING REFRESH REQUIRED
+Authoring Chat: <exact recorded URL>
+Workstream: <workstream-id>
+Persistent Summary: <repo-relative *_CLAUDE_SUMMARY.md path>
+```
+
+The intended user action is only: open **Authoring Chat**, paste the exact
+`Workstream` value, and let that conversation recover the durable packet,
+summary, predecessor evidence, and live-main state needed to unblock it.
+
+For a subjective visual gate, use the same compact pattern plus the exact
+Dropbox `REVIEW_MANIFEST.json` path and reviewer question. For a non-human
+technical blocker, report `BLOCKED` with the exact reason and persistent
+summary path; do not mislabel it as a planning refresh.
+
 ## Human / ChatGPT Visual Review Pause
 
 A required subjective visual decision is a pause inside the **current**
@@ -307,8 +377,14 @@ Operator art publisher has a separately scoped explicit argument accepted only
 for `workbench/operator-art` to `origin/main`. `--dry-run` remains available
 for inspection. Before that proof, every failure retains
 the recovery branch and worktree. Root checkout synchronization is attempted
-only from a clean `main` checkout using fast-forward-only; otherwise it remains
-pending without reset, stash, or branch switching.
+through `custodian/tools/agent/persistent_checkout_sync.py` after landing. The
+shared helper fetches fresh `origin/main` and fast-forwards only the attached,
+clean `main` checkout when it is strictly behind. Dirty, untracked, ahead,
+diverged, detached, and wrong-branch states remain untouched and are reported
+as pending without reset, stash, rebase, clean, or branch switching. The same
+authority serves `csync`, OPUI startup, and Operator-art coordination sync. Run
+`csync status` for read-only inspection, `csync root` or `csync art` for one
+checkout, or bare `csync` for both.
 
 ### Already-landed closeout
 

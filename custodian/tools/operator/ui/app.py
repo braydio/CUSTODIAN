@@ -1905,7 +1905,10 @@ class OperatorWorkbenchApp(App):
                 if result.get("status") == "landed":
                     self._activity(f"published to origin/main: {result.get('commit', '')[:12]}", "OK")
                     sync = result.get("coordination_sync")
-                    if sync and sync not in ("synced", "not-configured"):
+                    sync_ok = sync == "not-configured" or (isinstance(sync, str) and any(
+                        marker in sync for marker in ("coordination-main: CURRENT", "coordination-main: SYNCED")
+                    ))
+                    if sync and not sync_ok:
                         self._activity(f"coordination main sync {sync}", "WARN")
                 elif result.get("status") == "unchanged":
                     self._activity("canonical Operator art already matches this Workbench", "INFO")
