@@ -154,7 +154,14 @@ def _git(root: Path, *args: str, check: bool = True) -> str:
 
 def _git_without_hooks(root: Path, *args: str) -> str:
     """Run a checkout-only synchronization command without mutating repository hooks."""
-    return _git(root, "-c", "core.hooksPath=/dev/null", *args)
+    result = subprocess.run(
+        ["git", "-c", "core.hooksPath=/dev/null", *args], cwd=root,
+        text=True, capture_output=True, check=False,
+        env={**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"},
+    )
+    if result.returncode:
+        raise ArtWorktreeError(f"git {' '.join(args)} failed: {(result.stderr or result.stdout).strip()}")
+    return result.stdout.strip()
 
 
 def _sparse_paths(root: Path) -> list[str]:
@@ -226,40 +233,6 @@ def _main_counts(root: Path) -> tuple[int, int]:
     if len(counts) != 2:
         raise ArtWorktreeError("cannot determine Operator art checkout relation to origin/main")
     return int(counts[0]), int(counts[1])
-
-
-def _ensure_sparse_and_current(root: Path) -> str:
-    """Fast-forward only a clean, idle art branch, then enforce its local profile."""
-    if _git(root, "branch", "--show-current") != ART_BRANCH:
-        raise ArtWorktreeError(f"Operator art checkout has unexpected branch: {_git(root, 'branch', '--show-current')}")
-    pending = root / PENDING_RELATIVE
-    dirty = _status_paths(root)
-    ahead, behind = _main_counts(root)
-    relation = "current" if ahead == behind == 0 else f"ahead {ahead} / behind {behind}"
-    safe = not dirty and not pending.exists() and ahead == 0
-    if not safe:
-        if _sparse_profile_healthy(root):
-            return f"preserved · origin/main {relation} · sparse {SPARSE_PROFILE}"
-        details = []
-        if dirty:
-            details.append("local changes:\n" + "\n".join(f"  {path}" for path in sorted(dirty)))
-        if pending.exists():
-            details.append("LAND PENDING")
-        if ahead:
-            details.append(f"{ahead} local commit(s) ahead")
-        raise ArtWorktreeError(
-            "Operator sparse migration paused; existing checkout was preserved:\n"
-            + "\n".join(details or [relation])
-            + f"; current profile health is full-tree, origin/main {relation}"
-        )
-    if behind:
-        _git_without_hooks(root, "merge", "--ff-only", "origin/main")
-        relation = "current"
-    if not _sparse_profile_healthy(root):
-        if _status_paths(root):
-            raise ArtWorktreeError("Operator sparse migration produced local changes; checkout preserved for inspection")
-        _apply_sparse_profile(root)
-    return f"sparse {SPARSE_PROFILE} · origin/main {relation}"
 
 
 def _top(root: Path) -> Path:
@@ -557,21 +530,26 @@ def prepare_publish_checkout(
         return before
     if before.source_freshness:
         return before
-    _git(root, "fetch", "origin", "main")
-    ahead, behind = _main_counts(root)
-    if ahead:
-        return inspect_publish_readiness(root, coordination_root, workspace_root,
-                                         selected_paths=selected_paths,
-                                         source_freshness={"checkout": f"local branch is {ahead} commit(s) ahead of origin/main"})
     performed=[]
-    if behind:
-        _git_without_hooks(root, "merge", "--ff-only", "origin/main")
-        performed.append("fast-forwarded clean Operator art checkout to origin/main")
+    if coordination_root is None:
+        return replace(before, status="blocked", blockers=before.blockers + (
+            "persistent coordination checkout is not configured; shared synchronization is unavailable",
+        ))
+    sync = _persistent_sync_module().apply_profiles(["operator-art"], Path(coordination_root).resolve(), root)[0]
+    if sync.state not in {"CURRENT", "SYNCED"}:
+        return replace(before, status="blocked", blockers=before.blockers + (
+            _persistent_sync_module().format_result(sync),
+        ))
+    if sync.state == "SYNCED":
+        performed.append(f"fast-forwarded clean Operator art checkout to origin/main ({len(sync.changed_paths)} path(s))")
+    elif sync.action == "sparse profile repaired":
+        performed.append(f"applied sparse profile {SPARSE_PROFILE}")
     if _status_paths(root):
         raise ArtWorktreeError("safe preparation produced Git-visible changes; checkout preserved for inspection")
     if not _sparse_profile_healthy(root):
-        _apply_sparse_profile(root)
-        performed.append(f"applied sparse profile {SPARSE_PROFILE}")
+        return replace(before, status="blocked", blockers=before.blockers + (
+            f"shared synchronization did not establish sparse profile {SPARSE_PROFILE}",
+        ))
     present, missing = _tracked_checkout_paths(root)
     expected_pointers = []
     ordinary_missing = []
@@ -596,10 +574,15 @@ def prepare_publish_checkout(
 
 
 def _running_aseprite_processes() -> list[str]:
-    result = subprocess.run(["ps", "-eo", "args="], text=True, capture_output=True, check=False)
+    result = subprocess.run(["ps", "-eo", "comm=,args="], text=True, capture_output=True, check=False)
     if result.returncode:
         raise ArtWorktreeError("cannot verify whether Aseprite has an open Workbench document")
-    return [line.strip() for line in result.stdout.splitlines() if "aseprite" in line.lower()]
+    processes = []
+    for line in result.stdout.splitlines():
+        command, _, arguments = line.strip().partition(" ")
+        if Path(command).name.lower() == "aseprite":
+            processes.append(arguments.strip() or command.strip())
+    return processes
 
 
 def _rewrite_checkout_paths(value, old_root: str, new_root: str):
@@ -679,8 +662,9 @@ def ensure_art_worktree(coordination_root: Path, *, art_path: Path | None = None
         if by_path is not None:
             if by_path != ART_BRANCH:
                 raise ArtWorktreeError(f"art checkout path is attached to unexpected branch {by_path}: {target}")
-            # Startup is an inspection boundary. Safe fast-forward, sparse repair,
-            # and LFS hydration are reserved for the explicit Publish preparation.
+            # Existing checkouts are identified here; the launcher performs a
+            # bounded safe sync through the shared authority after this creation
+            # lock is released.
             try:
                 migrate_legacy_workbench(root, target)
             except ArtWorktreeError:
@@ -689,8 +673,9 @@ def ensure_art_worktree(coordination_root: Path, *, art_path: Path | None = None
             return target
         if by_branch:
             raise ArtWorktreeError(f"{ART_BRANCH} is already attached at {by_branch[0]}")
-        # Only an initial checkout creation fetches. Reopening OPUI with an
-        # existing art worktree is read-only; Publish owns synchronization.
+        # Creation may fetch its starting point, but synchronization and sparse
+        # repair run only after this creation lock is released through the
+        # shared persistent-checkout authority.
         _git(root, "fetch", "origin", "main")
         if target.exists():
             if any(target.iterdir()):
@@ -706,7 +691,6 @@ def ensure_art_worktree(coordination_root: Path, *, art_path: Path | None = None
             raise ArtWorktreeError(f"created checkout failed identity verification: {target}")
         _apply_sparse_profile(target)
         _git_without_hooks(target, "checkout", ART_BRANCH)
-        _ensure_sparse_and_current(target)
         migrate_legacy_workbench(root, target)
         return target
 
@@ -951,15 +935,22 @@ def publish_to_main(
 def best_effort_coordination_sync(coordination_root: Path | None) -> str:
     if not coordination_root:
         return "not-configured"
-    root = _top(Path(coordination_root).resolve())
-    if _git(root, "branch", "--show-current") != "main":
-        return "pending: coordination checkout is not on main"
-    if _status_paths(root):
-        return "pending: coordination checkout has local changes"
-    result = subprocess.run(["git", "pull", "--ff-only", "origin", "main"], cwd=root, text=True, capture_output=True)
-    if result.returncode:
-        return "pending: " + (result.stderr or result.stdout).strip()
-    return "synced"
+    try:
+        sync_module = _persistent_sync_module()
+        result = sync_module.apply_profiles(
+            [sync_module.ROOT_PROFILE], Path(coordination_root).resolve(),
+        )[0]
+        return sync_module.format_result(result)
+    except Exception as error:
+        return f"coordination-main: pending · {error}"
+
+
+def _persistent_sync_module():
+    agent_dir = Path(__file__).resolve().parents[1] / "agent"
+    if str(agent_dir) not in sys.path:
+        sys.path.insert(0, str(agent_dir))
+    import persistent_checkout_sync
+    return persistent_checkout_sync
 
 
 def _main() -> int:

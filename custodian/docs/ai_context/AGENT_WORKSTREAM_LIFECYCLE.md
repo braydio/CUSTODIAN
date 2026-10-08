@@ -307,8 +307,14 @@ Operator art publisher has a separately scoped explicit argument accepted only
 for `workbench/operator-art` to `origin/main`. `--dry-run` remains available
 for inspection. Before that proof, every failure retains
 the recovery branch and worktree. Root checkout synchronization is attempted
-only from a clean `main` checkout using fast-forward-only; otherwise it remains
-pending without reset, stash, or branch switching.
+through `custodian/tools/agent/persistent_checkout_sync.py` after landing. The
+shared helper fetches fresh `origin/main` and fast-forwards only the attached,
+clean `main` checkout when it is strictly behind. Dirty, untracked, ahead,
+diverged, detached, and wrong-branch states remain untouched and are reported
+as pending without reset, stash, rebase, clean, or branch switching. The same
+authority serves `csync`, OPUI startup, and Operator-art coordination sync. Run
+`csync status` for read-only inspection, `csync root` or `csync art` for one
+checkout, or bare `csync` for both.
 
 ### Already-landed closeout
 

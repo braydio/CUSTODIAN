@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `persistent-checkout-sync-hardening`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -86,7 +86,7 @@
   - Existing Operator publish-readiness, `LAND PENDING`, sparse-worktree, and Workbench UI fixture suites remain green.
   - Documentation states that OPUI launch now performs a bounded safe sync attempt when the art checkout is clean/idle, replacing the old read-only-startup rule.
 - Validation:
-  - Add one focused temporary-repository persistent-checkout sync smoke under `custodian/tools/validation/`; before closeout, update this packet with its exact live path. It must cover root current/behind/dirty/ahead/diverged/wrong-branch, art current/behind/dirty/ahead/diverged/pending/recovery/Aseprite-open, ignored-byte preservation, lock contention, and inspect/apply race rejection.
+  - `python3 custodian/tools/validation/persistent_checkout_sync_smoke.py` — temporary-repository coverage for root current/behind/dirty/ahead/diverged/wrong-branch, art current/behind/dirty/ahead/diverged/pending/recovery/Aseprite-open, ignored-byte preservation, lock contention, and inspect/apply race rejection; registered as `persistent_checkout_sync` in `validation_manifest.json`.
   - Extend `python3 custodian/tools/agent/test_workstream.py` only for the integration assertion that finish delegates root sync without changing preservation semantics.
   - Extend/run `python3 custodian/tools/validation/operator_art_worktree_smoke.py` for OPUI startup-safe sync and blocked-startup preservation.
   - Run the existing focused OPUI service/UI smoke if launch/status projection changes.
@@ -111,28 +111,28 @@
 Required before completion.
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `pending`
-- Completion boundary satisfied: `pending`
-- Acceptance satisfied: `pending`
-- Superseded/legacy production path disposition: `pending`
-- Evidence: `pending`
+- Goal satisfied: `true`
+- Completion boundary satisfied: `true`
+- Acceptance satisfied: `true`
+- Superseded/legacy production path disposition: `not applicable; no legacy production path introduced`
+- Evidence: `custodian/tools/validation/persistent_checkout_sync_smoke.py` passed all seven fixture groups; `custodian/tools/validation/operator_art_worktree_smoke.py` passed; `custodian/tools/validation/operator_workbench_ui_smoke.py` passed (optional Textual pilot skipped because its UI requirements are not installed); `custodian/tools/agent/test_workstream.py` passed 38 tests; `python3 custodian/tools/validation/run_validation.py --changed --json` — passed, 25/25 selected tests, complete changed-file coverage.
 
 ## Execution Feedback
 
 Required before completion.
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `pending`
-- What went wrong: `pending`
-- Root cause / contributing factors: `pending`
-- Prevention / pipeline improvement: `pending`
-- Tooling / docs drift discovered: `pending`
-- Follow-up: `pending`
-- What worked: `pending`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Initial changed-file validation correctly rejected the new fixture smoke as uncovered; its first registered run exposed a fixture branch setup bug (bare remote HEAD did not select `main`).
+- Root cause / contributing factors: Validation ownership was not registered for the new script, and the fixture relied on the bare repository default branch.
+- Prevention / pipeline improvement: Registered the smoke with explicit owners in `validation_manifest.json` and made the fixture explicitly checkout `main` before committing.
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: Shared inspect/apply policy, safety gates, fixture isolation, and lifecycle delegation passed focused coverage.
 
 ## Handoff
 
-- Next action: Claim `persistent-checkout-sync-hardening`, implement the shared persistent-checkout sync authority plus root/OPUI helpers, validate, land, then run the paired fresh-context review.
-- Best starting files: `custodian/tools/agent/workstream.py`, `custodian/tools/operator/operator_art_worktree.py`, `tools/custodian_aliases.sh`, `custodian/tools/validation/operator_art_worktree_smoke.py`.
+- Next action: Run the paired fresh-context review `review-persistent-checkout-sync-hardening` against the landed implementation.
+- Best starting files: `custodian/tools/agent/persistent_checkout_sync.py`, `custodian/tools/validation/persistent_checkout_sync_smoke.py`, and the archived implementation packet.
 - Blockers or open questions: None.

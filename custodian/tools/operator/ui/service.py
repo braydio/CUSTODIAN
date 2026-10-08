@@ -107,6 +107,9 @@ class WorkbenchService:
             suffix += " · LAND PENDING"
         if identity.kind == "COORDINATION MAIN" and operator_art_worktree.coordination_operator_changes(self.coordination_root):
             suffix += " · coordination Operator edits preserved"
+        startup_sync = os.environ.get("CUSTODIAN_SYNC_STATUS", "").strip()
+        if startup_sync:
+            suffix += " · startup sync " + startup_sync.replace("\n", " · ")
         return f"{identity.kind} · {identity.sparse_profile} · {identity.branch} · origin/main {identity.main_relation} · readiness {readiness.status.upper()}{suffix}"
 
     def require_saved_live_document_for_migration(self, active_path: str | None, expected_path: Path, modified: bool | None) -> None:

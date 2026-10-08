@@ -305,8 +305,12 @@ with an ignored `LAND PENDING` receipt; retrying the same animation resumes
 landing without exporting pixels again. A successful land refreshes OPUI and
 best-effort fast-forwards a clean coordination checkout. Coordination edits
 remain preserved and are reported as a pending sync.
-On reuse, OPUI startup is read-only and still mounts when publication is
-blocked. The Publish review projects checkout identity/relation, dirty path
+Before OPUI enters authoring, the shared persistent-checkout authority makes a
+bounded FF-only attempt for clean, behind-only coordination-main and Operator
+art checkouts. Dirty, ahead, diverged, `LAND PENDING`, recovery, wrong-branch,
+and Aseprite-open states remain untouched; OPUI still mounts and reports the
+blocker in checkout status. `csync` and `opui-sync` use the same authority.
+The Publish review projects checkout identity/relation, dirty path
 categories, sparse health, required LFS/missing dependencies, transaction
 receipts, and selected source freshness. Explicit Publish preparation fetches
 `origin/main` and fast-forwards only a clean idle branch with zero local

@@ -61,7 +61,6 @@ normal closeout.
 - `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` — Finish the already-live Carbine hybrid socket architecture by making the static directional `WeaponSprite` the sole primary-ranged weapon renderer for author...
 - `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect...
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authoritie...
-- `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Give the user one safe, repeatable way to keep the persistent coordination checkout at `~/Projects/CUSTODIAN/` and the persistent OPUI `workbench/operator-ar...
 - `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic...
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Extract durable authored-world claim metadata and membership from `ProcGenTilemap` into one canonical registry under `custodian/game/world/procgen/authored_c...
 - `PROCGEN_GENERATION_DATA_MODEL_AUDIT.md` — Re-derive the post-D1/D2/D3 generation core from live code and produce the authoritative migration contract for replacing TileMapLayer-as-working-memory with...
@@ -159,12 +158,12 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `archived/VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — completed P0 control-plane/tooling slice: claim receipts expose authoring/visual-review routing, finish enforces exact summary backlinks, Dropbox review manifests default to delete-after-review and carry a path-confined cleanup command, and `$custodian-next` keeps human review inside the active workstream.
 - `archived/REVIEW_VISUAL_REVIEW_HANDOFF_LIFECYCLE_HARDENING.md` — complete: paired review passed (0 blocking, 5 non-blocking deferred findings R0-01..R0-05).
 
-### Active Persistent Checkout Sync Hardening
+### Completed Persistent Checkout Sync Hardening
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
-- `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — P1 ready/auto workflow hardening that creates one fail-closed persistent-checkout sync authority for the user's coordination `~/Projects/CUSTODIAN/` main checkout and the sparse `workbench/operator-art` OPUI checkout, with `csync` / `opui-sync` helpers and safe OPUI pre-authoring synchronization.
-- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context code/architecture/workflow review; dependency-gated on the implementation and focused on dirty/diverged preservation, ignored Workbench byte safety, locking/races, and absence of destructive Git recovery.
+- `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — complete: one fail-closed persistent-checkout sync authority owns safe coordination-main and Operator-art updates, with `csync` / `opui-sync` helpers, OPUI pre-authoring synchronization, and 25/25 changed-file validations passed.
+- `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context code/architecture/workflow review; now eligible and focused on dirty/diverged preservation, ignored Workbench byte safety, locking/races, and absence of destructive Git recovery.
 
 ### Active Hub First-Set / First Campaign Loop Series
 
