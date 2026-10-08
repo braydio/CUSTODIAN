@@ -3,7 +3,7 @@
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
 **Status:** active planning / all implementation slices pre-authored and refresh-gated  
 **Priority:** P1  
-**Reviewed main:** e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e  
+**Reviewed main:** b0bc0956c4ce0510199b098d74691a39672df69a
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
 **Last updated:** 2026-10-07
 
@@ -197,8 +197,8 @@ The filename is convenience only. Package/session metadata owns semantic identit
 
 | Slice | Workstream | Initial state | Primary closure |
 | --- | --- | --- | --- |
-| WB25-1 | operator-2-5d-workbench-cockpit-foundation | draft / prerequisite refresh | generation namespace, plan v2, target-first tree/matrix |
-| WB25-1R | review-operator-2-5d-workbench-cockpit-foundation | dependency-gated | independent target/namespace truth review |
+| WB25-1 | operator-2-5d-workbench-cockpit-foundation | **blocked / manual; 2 prerequisite recoveries remain** | generation namespace, plan v2, target-first tree/matrix |
+| WB25-1R | review-operator-2-5d-workbench-cockpit-foundation | **blocked / manual behind WB25-1** | independent target/namespace truth review |
 | WB25-2 | operator-2-5d-workbench-ingress | draft / refresh-required | guided New/Import + directional package intake |
 | WB25-2R | review-operator-2-5d-workbench-ingress | dependency-gated | provenance/rollback/import review |
 | WB25-3 | operator-2-5d-workbench-polish-automation | draft / refresh-required | profile-guided Aseprite polish + temporal diagnostics |
@@ -216,7 +216,7 @@ Expected implementation packets: **6**.
 
 Every substantial dependent is intentionally pre-authored but cannot be claimed from stale predecessor assumptions.
 
-- WB25-1: refresh after the viability audit is formally completed and the corrected canonical visual contract + paired review land.
+- WB25-1: this planning refresh has consumed the reviewed New Animation backend. Keep it blocked/manual until the viability audit is formally completed/landed and the canonical visual contract is recovered against current main, landed, and paired-reviewed; then do the final target-count/profile-hash refresh to ready/auto.
 - WB25-2: refresh after WB25-1 + review.
 - WB25-3: refresh after WB25-2 + review.
 - WB25-4: refresh after WB25-3 + review.
@@ -227,11 +227,12 @@ Each refresh re-derives current public APIs, exact files, locks, profile/referen
 
 ## Current repository drift / prerequisites
 
-At authoring time:
-- operator-2-5d-animation-viability-audit is implemented on agent/operator-2-5d-animation-viability-audit at 0fd497c43 but remains unmerged/paused for human completion; main still advertises its packet as ready.
-- operator-2-5d-canonical-visual-contract is implemented/corrected on agent/operator-2-5d-canonical-visual-contract at 914d9d2d9 but remains unmerged/provisional and still needs the human scale/root decisions above incorporated, then paired review.
-- OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json is v1 and not generation-aware.
-- Workbench browser discovery begins from existing source, so truly missing target art is invisible.
+Current live-main remeasurement (2026-10-07):
+- The New Animation backend is now a completed prerequisite. The service-publication correction landed at `a26982b8d` and its cycle-1 paired re-review artifacts landed at `0ebea7b6`; full-body/modular creation, exact-pixel publication, source-backed normalization, invalid-contract refusal, target-race refusal, and DORMANT unwired truth are proven through `WorkbenchService`.
+- `operator-2-5d-animation-viability-audit` is **not complete on main**. Its preserved donor head is `8d66c42e4`, only four donor commits ahead of its old base and now 409 commits behind current main. The donor includes the viability report/coverage/matrices, but its own closing summary says the workstream paused at the human visual-review boundary. Treat it as donor evidence for recovery/closeout, not a completed dependency.
+- `operator-2-5d-canonical-visual-contract` is also **not complete on main**. Its preserved donor head is `1624fe638d`, four donor commits ahead of its old base and now 333 commits behind current main. It contains the provisional dual-profile/reference/measurement/guide implementation, but the active packet remains ready/manual and the paired review is uncompleted. Recover/reconcile it only after the audit dependency is truthfully closed.
+- `OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json` is still v1 and not generation-aware; WB25-1 remains the owner of the v2 migration once the final target/profile authorities actually exist.
+- Workbench browser discovery still begins from existing source for ordinary browsing, while the newly reviewed New Animation backend can now create genuinely absent semantic identities. WB25-1 must build the separate **target-first** 2.5D projection from authoritative target rows rather than conflating creation capability with target planning.
 - operator_asset_schema.py has no art_generation dimension and current operator canonical source paths would collide if legacy and 2.5D authoring generations coexist.
 - OPERATOR_ART_AGENT_SYSTEM.md still describes the legacy accepted 96px registration path as its concrete profile-mode example. Preserve that legacy behavior, but new 2.5D work must consume the accepted generation-specific profile rather than retyping 96px assumptions.
 - OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md remains correct that one generated runtime database + OperatorAnimationSelector own production selection; WB25-6 changes which authoring generation feeds that runtime identity, not the runtime database architecture.
