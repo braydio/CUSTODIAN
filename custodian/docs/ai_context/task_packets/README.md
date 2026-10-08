@@ -4,6 +4,25 @@ Last updated: 2026-10-08
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
+### Authoring preflight
+
+Before a newly authored or materially refreshed packet is changed to `Status: ready`,
+validate that packet and its paired review (when applicable) with:
+
+```bash
+python3 custodian/tools/agent/validate_task_packet_authoring.py \
+  custodian/docs/ai_context/task_packets/<PACKET>.md \
+  custodian/docs/ai_context/task_packets/REVIEW_<PACKET>.md
+```
+
+`Review modes` are schema values, not free-form labels. The current shared contract
+accepts only `code`, `architecture`, `runtime`, `visual`, `asset-pipeline`, and
+`workflow`. The targeted preflight imports that enum directly from
+`task_packet_contract.py`, validates pair bindings/override metadata, and is scoped
+to the packet(s) being authored so unrelated queue drift cannot become an excuse to
+skip local validation. Repo-wide AI-context/review-pairing validation still runs at
+normal closeout.
+
 
 ## Active Packets
 
