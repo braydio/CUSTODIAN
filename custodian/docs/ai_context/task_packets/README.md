@@ -175,9 +175,10 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - K3D-1 remains complete/reviewed precursor evidence.
 - K3D-1P kenney-isometric-blockout-playtest is complete/landed as the final walkable Kenney reference.
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
-- operator-2-5d-animation-viability-audit has implementation evidence on agent/operator-2-5d-animation-viability-audit at 0fd497c43 but remains paused/unmerged for human closeout; main's active packet therefore overstates it as merely ready.
-- operator-2-5d-canonical-visual-contract has corrected provisional implementation on agent/operator-2-5d-canonical-visual-contract at 914d9d2d9. Before landing/review it must consume the human decisions recorded in the authoring chat: 128 body canvas, shared scale 0.225, neutral support presentation around y106, and separate semantic projected_world_root/shadow_origin.
-- Human approval of the Operator 2.5D authoring pipeline has now occurred. Forum remains an important in-world presentation proof, but it no longer gates building the Workbench production tooling.
+- `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
+- `operator-2-5d-animation-viability-audit` has preserved donor evidence at archived head `8d66c42e4`, including the report/coverage/matrices, but the donor summary explicitly pauses at the human visual-review boundary. It is not a completed main dependency and needs current-main recovery/closeout.
+- `operator-2-5d-canonical-visual-contract` has preserved provisional donor implementation at archived head `1624fe638d`, but it is hundreds of commits behind current main and has not landed or passed its paired review. Its 128 body canvas, shared scale 0.225, neutral support presentation around y106, and separate projected_world_root/shadow_origin decisions remain planning authority for recovery, not proof of landed completion.
+- Human approval of the Operator 2.5D authoring direction remains valid. Forum remains an important in-world presentation proof, but it no longer gates Workbench tooling; WB25-1 is blocked specifically on the two art-authority prerequisite recoveries above.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -188,7 +189,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-No WB25 implementation packet is claimable from stale assumptions. WB25-1 must first be refreshed after the audit and canonical-contract review land; every later implementation remains draft until its predecessor + paired review return to the authoring chat.
+No WB25 implementation packet is claimable from stale assumptions. WB25-1 has now been remeasured after the reviewed New Animation correction and is explicitly `blocked/manual`; complete/recover the viability audit first, then recover/land/review the canonical visual contract, then perform the final WB25-1 target-count/profile-hash refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 

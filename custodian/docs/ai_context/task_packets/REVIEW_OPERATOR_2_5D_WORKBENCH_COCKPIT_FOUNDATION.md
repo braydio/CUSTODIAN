@@ -3,15 +3,15 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-2-5d-workbench-cockpit-foundation
 - Kind: review
-- Status: ready
-- Dispatch: auto
+- Status: blocked
+- Dispatch: manual
 - Priority: P1
 - Depends on: operator-2-5d-workbench-cockpit-foundation
 - Locks: operator-workbench-ui, operator-art-generation-schema, operator-animation-plan
 - Review: none
 - Review target workstream: operator-2-5d-workbench-cockpit-foundation
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md
-- Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
+- Reviewed main: b0bc0956c4ce0510199b098d74691a39672df69a
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Reviewer context: fresh
@@ -35,12 +35,12 @@ Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh cont
 
 ## Handoff
 
-- Next workstream: operator-2-5d-workbench-ingress
-- Next packet state: refresh-required
+- Next workstream: operator-2-5d-workbench-cockpit-foundation
+- Next packet state: blocked/manual
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include exact Authoring chat URL
-- Refresh reason: User requires WB25-2 to be reconciled against the landed generation/target APIs before implementation.
-- Next action: Return implementation/review evidence to the authoring chat and refresh the successor before claim.
-- Blockers or open questions: successor intentionally draft until refresh
+- Refresh reason: the implementation cannot become executable until the viability audit is completed and the canonical visual contract is landed + reviewed on current main.
+- Next action: keep this review blocked/manual; after WB25-1 is finally refreshed to ready/auto and lands, this review may return to dependency-gated auto dispatch.
+- Blockers or open questions: same two prerequisite gates as WB25-1.
