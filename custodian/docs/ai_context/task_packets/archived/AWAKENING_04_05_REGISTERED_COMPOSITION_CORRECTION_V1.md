@@ -69,7 +69,7 @@
   6. The specialized Designation Locker remains correct and independently interactive.
   7. Bidirectional traversal remains physically valid and visually covered.
   8. Asset V2 status/doctor and changed-file validation are green.
-- Validation: registration/bounds smoke; compact three-layer render evidence; Asset V2 status/doctor for the three families if touched; Designation Locker smoke; Awakening scene/geometry/progression; bidirectional connector traversal; changed-file validation; `git diff --check`; changed-file validation passed 26/26 checks after the Moment Forge late-seams scenario was updated to assert the new shared composition bounds.
+- Validation: registration/bounds smoke; compact three-layer render evidence; Asset V2 status/doctor for the three families if touched; Designation Locker smoke; Awakening scene/geometry/progression; bidirectional connector traversal; changed-file validation; `git diff --check`; changed-file validation passed all 28 selected checks with complete coverage and no failures or timeouts after the Moment Forge late-seams scenario was updated to assert the new shared composition bounds.
 - Task overrides: `none`
 - Deferred: any genuine gameplay-geometry mismatch exposed after exact art composition is restored; Locker foreground replacement art; full Awakening convergence.
 
@@ -79,7 +79,7 @@
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Evidence: `All registered source hashes/dimensions/modes match; Asset V2 doctor is healthy; focused registration, renderer, traversal, P-9, geometry, progression, startup, and Moment Forge checks pass; changed-file validation passed 26/26; git diff --check passed.`
+- Evidence: `All registered source hashes/dimensions/modes match; Asset V2 doctor is healthy; focused registration, renderer, traversal, P-9, geometry, progression, startup, and Moment Forge checks pass; changed-file validation passed 28/28 with complete coverage; git diff --check passed.`
 - State: complete
 - Registered source checks: all four Dropbox references match exact SHA-256, RGBA mode, and 1502×2048 dimensions.
 - Asset V2: Dust, connector, and Locker runtime outputs use the registered bytes; all three family statuses are complete and `asset.py doctor --json` is healthy.
@@ -95,10 +95,10 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: success
 - Friction severity: low
-- What went wrong: the first registered render probe used Godot's headless dummy renderer, which cannot return viewport pixels; the chained Asset V2 invocation completed Dust before interruption, so connector and Locker were checked and ingested separately; changed-file validation exposed a stale Moment Forge assertion equating the retired Zone 05 underlay bounds with foreground bounds.
-- Root cause / contributing factors: headless CI rendering has no pixel backend; `asset.py --godot-import` imports the project for each requested family; the late-seams scenario still encoded the pre-registration room-local underlay contract.
-- Prevention / pipeline improvement: ingest all family outputs first, run one project import, and use `xvfb-run` with the GL compatibility renderer for viewport captures. The render helper now exits clearly when no rendered image is available. The late-seams scenario now probes Dust, connector, and Locker runtime layers and asserts their shared world bounds.
-- Tooling / docs drift discovered: the registered-canvas migration left one stale Zone 05 underlay/foreground bounds equality in `awakening_late_seams_v1`; corrected in-scope.
+- What went wrong: the first registered render probe used Godot's headless dummy renderer, which cannot return viewport pixels; the chained Asset V2 invocation completed Dust before interruption, so connector and Locker were checked and ingested separately; changed-file validation exposed a stale Moment Forge assertion equating the retired Zone 05 underlay bounds with foreground bounds; the finish coverage gate also showed that the manually-run renderer smoke lacked a manifest entry.
+- Root cause / contributing factors: headless CI rendering has no pixel backend; `asset.py --godot-import` imports the project for each requested family; the late-seams scenario still encoded the pre-registration room-local underlay contract, and the renderer smoke was not declared in validation coverage.
+- Prevention / pipeline improvement: ingest all family outputs first, run one project import, and use `xvfb-run` with the GL compatibility renderer for viewport captures. The render helper now exits clearly when no rendered image is available. The late-seams scenario now probes Dust, connector, and Locker runtime layers and asserts their shared world bounds. The compact renderer smoke is now an Xvfb-backed manifest integration test, so changed-file coverage includes both its wrapper and Godot script.
+- Tooling / docs drift discovered: the registered-canvas migration left one stale Zone 05 underlay/foreground bounds equality in `awakening_late_seams_v1`, and the compact renderer smoke lacked a manifest owner; both corrected in-scope.
 - Follow-up: fixed-in-scope
 - What worked: pixel hash/alpha checks and real Operator sampling closed the registration and traversal questions without changing Layout.
 

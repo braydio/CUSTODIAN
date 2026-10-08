@@ -4337,6 +4337,27 @@
       "needs_import": false
     },
     {
+      "id": "awakening_registered_composition_render",
+      "type": "python",
+      "script": "custodian/tools/validation/awakening_registered_composition_render_smoke.py",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "visual",
+        "registered_composition"
+      ],
+      "owners": [
+        "custodian/tools/validation/awakening_registered_composition_render_smoke.py",
+        "custodian/tools/validation/awakening_registered_composition_render_smoke.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/content/levels/awakening/04_05_connector/**",
+        "custodian/content/levels/awakening/04_locker_reliquary/**",
+        "custodian/content/levels/awakening/05_dust_lung/**"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "awakening_undergate_lighting",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_undergate_lighting_smoke.gd",
