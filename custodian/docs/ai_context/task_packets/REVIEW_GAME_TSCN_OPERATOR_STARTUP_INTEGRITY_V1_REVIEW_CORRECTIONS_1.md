@@ -15,6 +15,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Visual review: `none`
 - Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
 - Review modes: `code, runtime`
 - Review cycle: `1`
 - Max automatic review cycles: `2`

@@ -51,6 +51,8 @@ func _run() -> void:
 	if not terminal:
 		_finish()
 		return
+	# Sample a live physics-settled Operator, not only the synchronous ready edge.
+	await physics_frame
 
 	var world := game_root.get_node_or_null("World")
 	var operator := world.get_node_or_null("Operator") as Node2D if world != null else null
@@ -82,6 +84,20 @@ func _run() -> void:
 		root_cause = "startup_failed_before_placement_acceptance"
 	var final_tile := Vector2i.ZERO
 	var receipt_round_trip_tile := Vector2i.ZERO
+	var operator_velocity := Vector2.INF
+	var operator_slide_collisions: Array[Dictionary] = []
+	if operator != null and operator is CharacterBody2D:
+		var character := operator as CharacterBody2D
+		operator_velocity = character.velocity
+		for collision_index in range(character.get_slide_collision_count()):
+			var collision := character.get_slide_collision(collision_index)
+			var collider := collision.get_collider() if collision != null else null
+			operator_slide_collisions.append({
+				"collider_path": str(collider.get_path()) if collider is Node else "unknown",
+				"collider_class": collider.get_class() if collider is Object else "unknown",
+				"normal": collision.get_normal() if collision != null else Vector2.ZERO,
+				"position": collision.get_position() if collision != null else Vector2.ZERO,
+			})
 	var ready_detail := _trace_detail(trace, &"contract_ready")
 	var placement_validation: Dictionary = ready_detail.get("placement_validation", {}) as Dictionary
 	var ready_operator: Dictionary = placement_validation.get("operator", {}) as Dictionary
@@ -111,6 +127,8 @@ func _run() -> void:
 		"canonical_operator_path": str(operator.get_path()) if operator != null else "missing",
 		"canonical_operator_id": operator.get_instance_id() if operator != null else -1,
 		"operator_position": operator.global_position if operator != null else Vector2.INF,
+		"operator_velocity": operator_velocity,
+		"operator_slide_collisions": operator_slide_collisions,
 		"operator_visible": operator.visible if operator != null else false,
 		"operator_process_mode": operator.process_mode if operator != null else Node.PROCESS_MODE_DISABLED,
 		"legacy_position_match": legacy_match,
@@ -141,6 +159,8 @@ func _run() -> void:
 	_expect(not selected_receipt.is_empty(), "successful production boot must expose a placement receipt")
 	_expect(bool(placement_validation.get("valid", false)), "loader must prove placement consistency immediately before contract_ready")
 	_expect(map != null and selected_receipt.get("tile") == receipt_round_trip_tile, "receipt world position must round-trip to its selected canonical tile")
+	_expect(map != null and selected_receipt.get("tile") == final_tile, "live Operator position after a physics step must remain on the receipt's selected tile")
+	_expect(operator != null and operator.global_position.is_equal_approx(selected_receipt.get("world_position", Vector2.INF)), "live Operator position after a physics step must match the placement receipt")
 	_expect(ready_operator.get("canonical_position") == selected_receipt.get("world_position"), "contract_ready snapshot must retain the exact selected Operator position")
 	_expect(operator != null and operator.visible and operator.process_mode != Node.PROCESS_MODE_DISABLED, "successful production boot must restore Operator visibility and processing")
 	_expect(_ordered_phases(trace, [

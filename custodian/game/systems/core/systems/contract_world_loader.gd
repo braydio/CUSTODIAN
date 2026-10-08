@@ -1004,6 +1004,8 @@ func _validate_operator_placement_before_ready(map_instance: Node) -> Dictionary
 			reasons.append("operator_position_diverged")
 		var selected_tile := _operator_placement_receipt.get("tile", Vector2i.ZERO) as Vector2i
 		var current_tile := _world_to_tile(map_instance, operator.global_position)
+		if _operator_has_physics_overlap(operator):
+			reasons.append("operator_spawn_physics_overlap")
 		if current_tile != selected_tile:
 			reasons.append("operator_tile_diverged")
 		if not _is_walkable_floor_tile(map_instance, current_tile):
@@ -1036,6 +1038,20 @@ func _validate_operator_placement_before_ready(map_instance: Node) -> Dictionary
 		"receipt": get_operator_placement_receipt(),
 		"operator": _operator_identity_snapshot(),
 	}
+
+
+func _operator_has_physics_overlap(operator: Node2D) -> bool:
+	if not operator is CharacterBody2D:
+		return false
+	var collision_shape := operator.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision_shape == null or collision_shape.shape == null or operator.get_world_2d() == null:
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = collision_shape.shape
+	query.transform = collision_shape.global_transform
+	query.collision_mask = (operator as CharacterBody2D).collision_mask
+	query.exclude = [operator.get_rid()]
+	return not operator.get_world_2d().direct_space_state.intersect_shape(query, 8).is_empty()
 
 
 func _pick_main_component_fallback_tile(
@@ -1246,7 +1262,21 @@ func _position_command_terminal(level_data: Dictionary, map_instance: Node) -> v
 	var chosen_tile := _pick_closest_tile(compound_tiles, target_tile)
 	if chosen_tile == Vector2i.ZERO:
 		chosen_tile = player_spawn_tile
+	var operator := get_node_or_null(operator_path) as Node2D
+	if operator != null:
+		var operator_tile := _world_to_tile(map_instance, operator.global_position)
+		if chosen_tile == operator_tile:
+			var non_overlapping_tiles: Array[Vector2i] = []
+			for tile in compound_tiles:
+				if tile != operator_tile:
+					non_overlapping_tiles.append(tile)
+			if not non_overlapping_tiles.is_empty():
+				chosen_tile = _pick_closest_tile(non_overlapping_tiles, target_tile)
 	terminal.global_position = _tile_to_world(map_instance, chosen_tile)
+	if operator != null and chosen_tile == _world_to_tile(map_instance, operator.global_position):
+		# A compound with only its spawn tile still needs a walkable terminal
+		# offset; its static body must not depenetrate the player during startup.
+		terminal.global_position = operator.global_position + Vector2(32.0, 0.0)
 
 
 func _position_construction_population(level_data: Dictionary, map_instance: Node) -> void:
