@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import colorsys
+import re
 from pathlib import Path
 from typing import Any
 
@@ -74,6 +75,77 @@ def candidate_landmarks(image: Image.Image) -> dict[str, Any]:
         "hip_center_heuristic": [64, hip_y] if hip_y is not None else None,
         "left_right_lowest_alpha_candidates": supports,
         "interpretation": "heuristic image coordinates for human calibration only; lowest alpha is not semantic registration evidence",
+    }
+
+
+def action_envelope_proxy() -> dict[str, Any]:
+    """Measure pre-migration full-body proxies at the candidate shared root."""
+    source_root = ROOT / "custodian/content/sprites/operator/source/animations"
+    categories = {
+        "deep_dodge_crouch": lambda path: "dodge" in str(path).lower(),
+        "fast_chain_extension": lambda path: "attack" in str(path).lower() and re.search(r"fast_0[1-4]", str(path).lower()) is not None,
+        "block_enter_hold_exit": lambda path: "defense" in str(path).lower() and "block_" in str(path).lower(),
+        "overhead_melee": lambda path: "attack" in str(path).lower() and any(key in str(path).lower() for key in ("heavy_01", "heavy_windup_01")),
+        "long_one_handed_reach": lambda path: "melee_1h" in str(path).lower() and "attack" in str(path).lower() and ("fast_03" in str(path).lower() or "heavy_01" in str(path).lower()),
+        "hit_recoil": lambda path: "reaction" in str(path).lower() and any(key in str(path).lower() for key in ("hitreact", "bodyslam")),
+        "downed_death": lambda path: "reaction" in str(path).lower() and any(key in str(path).lower() for key in ("death", "knockdown")),
+    }
+    measured: dict[str, list[dict[str, Any]]] = {key: [] for key in categories}
+    frame_pattern = re.compile(r"__(\d+)f__(\d+)(?:x(\d+))?\.png$")
+    for path in sorted(source_root.rglob("*.png")):
+        name, lower = path.name.lower(), str(path).lower()
+        if "full_body" not in name or "legacy" in lower:
+            continue
+        match = frame_pattern.search(name)
+        if not match:
+            continue
+        frame_count, cell_w, cell_h = int(match.group(1)), int(match.group(2)), int(match.group(3) or match.group(2))
+        try:
+            sheet = Image.open(path).convert("RGBA")
+        except OSError:
+            continue
+        if sheet.size != (frame_count * cell_w, cell_h):
+            continue
+        for category, predicate in categories.items():
+            if not predicate(path):
+                continue
+            for frame in range(frame_count):
+                bbox = sheet.crop((frame * cell_w, 0, (frame + 1) * cell_w, cell_h)).getchannel("A").getbbox()
+                if not bbox:
+                    continue
+                translated = [bbox[0] + 16, bbox[1] + 22, bbox[2] + 16, bbox[3] + 22]
+                width, height = bbox[2] - bbox[0], bbox[3] - bbox[1]
+                measured[category].append({
+                    "path": str(path.relative_to(ROOT)), "sha256": sha256(path), "frame": frame + 1,
+                    "source_cell": [cell_w, cell_h], "alpha_bbox": list(bbox),
+                    "candidate_root_translated_bbox": translated, "opaque_bbox_size": [width, height],
+                    "inside_candidate_8px_safety_margin": translated[0] >= 8 and translated[1] >= 8 and translated[2] <= 120 and translated[3] <= 120,
+                })
+    summary: dict[str, Any] = {}
+    any_overflow = False
+    for category, frames in measured.items():
+        families = sorted({item["path"] for item in frames})
+        if not frames:
+            summary[category] = {"source_kind": "pre-migration full-body proxy", "sample_files": 0, "sample_frames": 0, "status": "missing"}
+            continue
+        largest = max(frames, key=lambda item: item["opaque_bbox_size"][0] * item["opaque_bbox_size"][1])
+        overflows = [item for item in frames if not item["inside_candidate_8px_safety_margin"]]
+        canvas_overflows = [item for item in frames if item["candidate_root_translated_bbox"][0] < 0 or item["candidate_root_translated_bbox"][1] < 0 or item["candidate_root_translated_bbox"][2] > 128 or item["candidate_root_translated_bbox"][3] > 128]
+        any_overflow = any_overflow or bool(overflows)
+        summary[category] = {
+            "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+            "sample_files": len(families), "sample_frames": len(frames),
+            "largest_alpha_bbox": largest,
+            "candidate_8px_margin_overflow_frames": len(overflows),
+            "candidate_canvas_overflow_frames": len(canvas_overflows),
+            "status": "proxy_canvas_overflow" if canvas_overflows else ("proxy_margin_overflow" if overflows else "proxy_within_margin"),
+        }
+    return {
+        "status": "proxy_overflow_found" if any_overflow else "proxy_measurements_only",
+        "translation_assumption": {"legacy_anchor": [48, 84], "candidate_root": [64, 106], "whole_sprite_translation": [16, 22], "note": "This maps the current legacy anchor to the provisional root. It does not normalize alpha bounds or prove canonical 2.5D poses."},
+        "safety_margin_px": 8,
+        "not_proven_categories": ["ranged aim is modular and not unioned into a full-body sample", "wide block-hit pose", "all-direction action envelope in the locked projection"],
+        "categories": summary,
     }
 
 
@@ -173,7 +245,7 @@ def build() -> dict[str, Any]:
         "calibration_candidates": {direction: candidate_landmarks(animation.crop((0, index * 128, 128, (index + 1) * 128))) for index, direction in enumerate(DIRECTIONS)},
         "palette": {"method": "compact per-direction RGBA/luminance summary; HSV 90..250 degree pixels are review candidates, not automatic cleanup targets", "directions": palette, "cleanup_applied": False},
         "registration": {"status": "provisional", "frame_size": [128, 128], "center_x": 64, "candidate_anchor": [64, 106], "candidate_ground_y": 107, "semantic_landmarks": ["hip_center", "left_foot_contact", "right_foot_contact", "projected_world_root", "shadow_origin"], "accepted_by_human": False},
-        "action_envelope": {"status": "not_proven", "required_pose_classes": ["deep_dodge_or_crouch", "fast_chain_extension", "wide_block_reaction", "overhead_melee", "long_1h_reach", "ranged_aim", "hit_reaction_recoil", "downed_or_death"]},
+        "action_envelope": {"status": "not_proven", "required_pose_classes": ["deep_dodge_or_crouch", "fast_chain_extension", "wide_block_reaction", "overhead_melee", "long_1h_reach", "ranged_aim", "hit_reaction_recoil", "downed_or_death"], "legacy_proxy_scan": action_envelope_proxy()},
         "pixel_cleanup": {"status": "pending_human_review", "normalized_reference_mutated": False},
     }
     EVIDENCE.mkdir(parents=True, exist_ok=True)
@@ -225,6 +297,17 @@ def build() -> dict[str, Any]:
         tdraw.line((x0, 118, x0 + 127, 118), fill=(220, 190, 80, 170))
         tdraw.text((x0 + 4, 1), direction.upper(), fill=(255, 255, 255, 255), font=ImageFont.load_default())
     turnaround.save(EVIDENCE / "operator_2_5d_reference_turnaround.png")
+    envelope = report["action_envelope"]["legacy_proxy_scan"]
+    envelope_table = [
+        "| Action class | Proxy frames | Safety-margin overflow | Canvas overflow | Status |",
+        "| --- | ---: | ---: | ---: | --- |",
+    ]
+    for action, details in envelope["categories"].items():
+        envelope_table.append(
+            f"| {action} | {details['sample_frames']} | {details.get('candidate_8px_margin_overflow_frames', 0)} | "
+            f"{details.get('candidate_canvas_overflow_frames', 0)} | {details['status']} |"
+        )
+    fast = envelope["categories"]["fast_chain_extension"]["largest_alpha_bbox"]
     (EVIDENCE / "OPERATOR_2_5D_CANONICAL_VISUAL_CONTRACT_REPORT.md").write_text(
         "# Operator 2.5D canonical visual contract evidence\n\n"
         f"Design source SHA-256: `{report['sources']['design']['sha256']}`.\n\n"
@@ -233,7 +316,14 @@ def build() -> dict[str, Any]:
         f"Provisional 128px profile SHA-256: `{report['profile']['sha256']}`.\n\n"
         "The design-derived 128px reference uses one sheet-wide crisp scale and is measurement evidence only. "
         "Root/floor remains provisional: the candidate guide is x=64, root y=106, ground y=107. "
-        "The supplied PNG has no authoritative timing metadata, so FPS is unresolved. Universal action envelope and pixel cleanup review remain open.\n"
+        "The supplied PNG has no authoritative timing metadata, so FPS is unresolved.\n\n"
+        "## Action-envelope proxy evidence\n\n"
+        "Pre-migration `full_body` source frames were translated by +16,+22 (legacy anchor [48,84] to candidate root [64,106]); alpha bounds were not equalized. "
+        "This is a proxy scan, not proof that legacy art is canonical 2.5D. Eight pixels of safety margin are used.\n\n"
+        + "\n".join(envelope_table) + "\n\n"
+        f"Fast-chain maximum: `{fast['path']}` frame {fast['frame']} has source alpha bbox `{fast['alpha_bbox']}` and candidate translated bbox `{fast['candidate_root_translated_bbox']}`. "
+        "This exceeds the 128px canvas under the stated root mapping; do not claim a universal 128px action envelope from the neutral idle. Ranged aim, a wide block-hit pose, and locked-projection coverage remain unproven.\n\n"
+        "Pixel cleanup review remains open.\n"
     )
     return report
 

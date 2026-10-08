@@ -26,6 +26,12 @@ def main() -> int:
     assert first["sources"]["first_animation"]["fps"] is None
     assert first["registration"]["status"] == "provisional"
     assert first["action_envelope"]["status"] == "not_proven"
+    proxy_scan = first["action_envelope"]["legacy_proxy_scan"]
+    assert proxy_scan["status"] == "proxy_overflow_found"
+    fast_chain = proxy_scan["categories"]["fast_chain_extension"]
+    assert fast_chain["candidate_8px_margin_overflow_frames"] > 0
+    assert fast_chain["candidate_canvas_overflow_frames"] > 0
+    assert fast_chain["largest_alpha_bbox"]["candidate_root_translated_bbox"][2] > 120
     assert list(first["normalized_reference"]["directions"]) == list(DIRECTIONS)
     for direction in DIRECTIONS:
         ref = REFERENCE.parent / "directions" / f"{direction}.png"

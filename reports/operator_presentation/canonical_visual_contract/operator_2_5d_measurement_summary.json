@@ -3972,7 +3972,271 @@
       "ranged_aim",
       "hit_reaction_recoil",
       "downed_or_death"
-    ]
+    ],
+    "legacy_proxy_scan": {
+      "status": "proxy_overflow_found",
+      "translation_assumption": {
+        "legacy_anchor": [
+          48,
+          84
+        ],
+        "candidate_root": [
+          64,
+          106
+        ],
+        "whole_sprite_translation": [
+          16,
+          22
+        ],
+        "note": "This maps the current legacy anchor to the provisional root. It does not normalize alpha bounds or prove canonical 2.5D poses."
+      },
+      "safety_margin_px": 8,
+      "not_proven_categories": [
+        "ranged aim is modular and not unioned into a full-body sample",
+        "wide block-hit pose",
+        "all-direction action envelope in the locked projection"
+      ],
+      "categories": {
+        "deep_dodge_crouch": {
+          "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+          "sample_files": 20,
+          "sample_frames": 112,
+          "largest_alpha_bbox": {
+            "path": "custodian/content/sprites/operator/source/animations/unarmed/attack/dodge_fast_attack_01/operator__full_body__unarmed__attack__dodge_fast_attack_01__e__11f__96.png",
+            "sha256": "c2b81e5868fed8adcac7472dc3ced477af848651433b60ec6a8780af7b87611b",
+            "frame": 8,
+            "source_cell": [
+              96,
+              96
+            ],
+            "alpha_bbox": [
+              15,
+              19,
+              96,
+              85
+            ],
+            "candidate_root_translated_bbox": [
+              31,
+              41,
+              112,
+              107
+            ],
+            "opaque_bbox_size": [
+              81,
+              66
+            ],
+            "inside_candidate_8px_safety_margin": true
+          },
+          "candidate_8px_margin_overflow_frames": 0,
+          "candidate_canvas_overflow_frames": 0,
+          "status": "proxy_within_margin"
+        },
+        "fast_chain_extension": {
+          "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+          "sample_files": 22,
+          "sample_frames": 180,
+          "largest_alpha_bbox": {
+            "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_02/operator__full_body__melee_1h__attack__fast_02__e__8f__156x96.png",
+            "sha256": "c032822550b0c27f58779f6990bcca8101d76a76a25531ad29bb18a162acf715",
+            "frame": 4,
+            "source_cell": [
+              156,
+              96
+            ],
+            "alpha_bbox": [
+              35,
+              11,
+              136,
+              85
+            ],
+            "candidate_root_translated_bbox": [
+              51,
+              33,
+              152,
+              107
+            ],
+            "opaque_bbox_size": [
+              101,
+              74
+            ],
+            "inside_candidate_8px_safety_margin": false
+          },
+          "candidate_8px_margin_overflow_frames": 71,
+          "candidate_canvas_overflow_frames": 46,
+          "status": "proxy_canvas_overflow"
+        },
+        "block_enter_hold_exit": {
+          "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+          "sample_files": 3,
+          "sample_frames": 7,
+          "largest_alpha_bbox": {
+            "path": "custodian/content/sprites/operator/source/animations/melee_1h_heavy/defense/block_exit_01/operator__full_body__melee_1h_heavy__defense__block_exit_01__s__2f__96.png",
+            "sha256": "275bc5cb1fd1d25306d1df8824e2eeb6ed6cfc0a63ab9874780bfde3559d4344",
+            "frame": 1,
+            "source_cell": [
+              96,
+              96
+            ],
+            "alpha_bbox": [
+              29,
+              18,
+              66,
+              85
+            ],
+            "candidate_root_translated_bbox": [
+              45,
+              40,
+              82,
+              107
+            ],
+            "opaque_bbox_size": [
+              37,
+              67
+            ],
+            "inside_candidate_8px_safety_margin": true
+          },
+          "candidate_8px_margin_overflow_frames": 0,
+          "candidate_canvas_overflow_frames": 0,
+          "status": "proxy_within_margin"
+        },
+        "overhead_melee": {
+          "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+          "sample_files": 6,
+          "sample_frames": 41,
+          "largest_alpha_bbox": {
+            "path": "custodian/content/sprites/operator/source/animations/melee_1h_heavy/attack/heavy_windup_01/operator__full_body__melee_1h_heavy__attack__heavy_windup_01__s__5f__96.png",
+            "sha256": "add0be45ec915b2cec88dd68ec730e843ee90f5b03e142bc2c0dce39d3bc3c7e",
+            "frame": 3,
+            "source_cell": [
+              96,
+              96
+            ],
+            "alpha_bbox": [
+              23,
+              19,
+              95,
+              93
+            ],
+            "candidate_root_translated_bbox": [
+              39,
+              41,
+              111,
+              115
+            ],
+            "opaque_bbox_size": [
+              72,
+              74
+            ],
+            "inside_candidate_8px_safety_margin": true
+          },
+          "candidate_8px_margin_overflow_frames": 0,
+          "candidate_canvas_overflow_frames": 0,
+          "status": "proxy_within_margin"
+        },
+        "long_one_handed_reach": {
+          "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+          "sample_files": 5,
+          "sample_frames": 47,
+          "largest_alpha_bbox": {
+            "path": "custodian/content/sprites/operator/source/animations/melee_1h/attack/fast_03/operator__full_body__melee_1h__attack__fast_03__e__10f__156x96.png",
+            "sha256": "7f22eadf623486ae91c9f8a8995165ccafdc833532d337103319521bc4332eb6",
+            "frame": 8,
+            "source_cell": [
+              156,
+              96
+            ],
+            "alpha_bbox": [
+              28,
+              19,
+              116,
+              85
+            ],
+            "candidate_root_translated_bbox": [
+              44,
+              41,
+              132,
+              107
+            ],
+            "opaque_bbox_size": [
+              88,
+              66
+            ],
+            "inside_candidate_8px_safety_margin": false
+          },
+          "candidate_8px_margin_overflow_frames": 24,
+          "candidate_canvas_overflow_frames": 16,
+          "status": "proxy_canvas_overflow"
+        },
+        "hit_recoil": {
+          "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+          "sample_files": 3,
+          "sample_frames": 27,
+          "largest_alpha_bbox": {
+            "path": "custodian/content/sprites/operator/source/animations/unarmed/reaction/bodyslam_knockdown_01/operator__full_body__unarmed__reaction__bodyslam_knockdown_01__e__12f__96.png",
+            "sha256": "34b515aa2f66155b333c2c0256a8912b45b88adad1fb243cfa3408117b9a2ab5",
+            "frame": 2,
+            "source_cell": [
+              96,
+              96
+            ],
+            "alpha_bbox": [
+              11,
+              20,
+              85,
+              79
+            ],
+            "candidate_root_translated_bbox": [
+              27,
+              42,
+              101,
+              101
+            ],
+            "opaque_bbox_size": [
+              74,
+              59
+            ],
+            "inside_candidate_8px_safety_margin": true
+          },
+          "candidate_8px_margin_overflow_frames": 0,
+          "candidate_canvas_overflow_frames": 0,
+          "status": "proxy_within_margin"
+        },
+        "downed_death": {
+          "source_kind": "pre-migration fallback full-body proxy; not canonical 2.5D art",
+          "sample_files": 3,
+          "sample_frames": 32,
+          "largest_alpha_bbox": {
+            "path": "custodian/content/sprites/operator/source/animations/unarmed/reaction/bodyslam_knockdown_01/operator__full_body__unarmed__reaction__bodyslam_knockdown_01__e__12f__96.png",
+            "sha256": "34b515aa2f66155b333c2c0256a8912b45b88adad1fb243cfa3408117b9a2ab5",
+            "frame": 2,
+            "source_cell": [
+              96,
+              96
+            ],
+            "alpha_bbox": [
+              11,
+              20,
+              85,
+              79
+            ],
+            "candidate_root_translated_bbox": [
+              27,
+              42,
+              101,
+              101
+            ],
+            "opaque_bbox_size": [
+              74,
+              59
+            ],
+            "inside_candidate_8px_safety_margin": true
+          },
+          "candidate_8px_margin_overflow_frames": 0,
+          "candidate_canvas_overflow_frames": 0,
+          "status": "proxy_within_margin"
+        }
+      }
+    }
   },
   "pixel_cleanup": {
     "status": "pending_human_review",

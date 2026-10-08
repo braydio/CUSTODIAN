@@ -14,11 +14,15 @@ New Workbench animation-creation plans now default to the active 128px profile. 
 
 The 128px profile is not accepted. Human semantic root/floor approval, universal action-envelope proof, and review of any normalized-reference pixel cleanup remain required. The supplied idle is preserved in source-work but is not yet registered as a canonical production family with timing metadata. WB25-1 stays dependency-gated until this workstream and its paired review close.
 
-The compact Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T182511Z/REVIEW_MANIFEST.json` (default `delete-after-review`). Questions: approve/revise the candidate x=64, root y=106, ground y=107 registration across all eight directions, and identify only specific palette pixels requiring cleanup.
+The initial Dropbox review handoff at `/CUSTODIAN/visual_review/operator-2-5d-canonical-visual-contract/20261008T182511Z/REVIEW_MANIFEST.json` is superseded by a fresh action-envelope handoff to be published from this evidence update (default `delete-after-review`). Questions now include whether the pre-migration east `fast_02` frame 4 is a valid maximum-body proxy and whether the 128px canvas or pose-root policy needs revision, while preserving the locked projection and design.
+
+## Action-envelope proxy update
+
+Added a deterministic scan of 446 category-assigned observations from existing pre-migration full-body sheets; action categories can overlap. The scan translates legacy anchor `[48,84]` to provisional root `[64,106]` by +16,+22 without alpha normalization. It finds 46/180 fast-chain and 16/47 one-handed-reach frames outside the 128px canvas; 71 and 24 respectively also exceed the deliberate 8px safety margin. The largest fast-chain proxy is east `fast_02` frame 4: source alpha bbox `[35,11,136,85]`, translated candidate bbox `[51,33,152,107]`. This is proxy evidence, not a canonical 2.5D failure verdict. Ranged modular aim, wide block-hit, and complete locked-projection coverage remain unproven. The profile stays provisional pending human review.
 
 ## Validation
 
-- `operator_2_5d_canonical_visual_contract_smoke.py` — passed, including deterministic evidence generation, exact source hashes, profile backward-read, stable legacy hash, and explicit 128 profile selection.
+- `operator_2_5d_canonical_visual_contract_smoke.py` — passed, including deterministic evidence generation, exact source hashes, profile backward-read, stable legacy hash, explicit 128 profile selection, and proxy-overflow assertions.
 - `operator_animation_workbench_smoke.py` — passed, including new full-body/modular creation and existing 96px migration contracts.
 - `operator_art_registration_profile_smoke.py` — passed; v1 compatibility and trusted legacy normalization-plan replay remain valid.
 - `operator_art_agent_aseprite_smoke.py` — passed; visible guide layers do not leak into clean renders.
@@ -29,13 +33,13 @@ The compact Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-ca
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
-- Friction severity: low
-- What went wrong: the first registry migration caused the legacy normalization-plan replay guard to compare against the v3 file hash; updated it to accept registered profile hashes and reran the focused replay successfully. Dropbox review manifests are immutable. Profile metadata and then Workbench-default changes each required a new run ID; earlier Dropbox handoffs are superseded by the latest manifest.
-- Root cause / contributing factors: legacy validation assumed one profile hash equaled the entire profile file hash; published review runs cannot be overwritten.
-- Prevention / pipeline improvement: v3 plans validate against explicit profile hashes while v1/v2 profile file-hash compatibility remains; finish implementation before publishing; if evidence changes afterward, create a fresh run ID and direct reviewers to the latest manifest.
+- Friction severity: medium
+- What went wrong: the first registry migration caused the legacy normalization-plan replay guard to compare against the v3 file hash; later, the neutral idle's inability to prove universal action fit required a proxy scan, which found fast-chain and long-reach overflow candidates after the first visual handoffs. Dropbox review manifests are immutable, so each evidence change needs a new run ID.
+- Root cause / contributing factors: legacy validation assumed one profile hash equaled the entire profile file hash; the neutral idle does not exercise extreme actions; published review runs cannot be overwritten.
+- Prevention / pipeline improvement: v3 plans validate against explicit profile hashes while v1/v2 profile file-hash compatibility remains; scan representative action classes before treating neutral animation as canvas proof; publish changed evidence under a fresh run ID and identify the latest handoff.
 - Tooling / docs drift discovered: the active packet omits the required `Change` field; this is recorded in its Execution Feedback for repair before archive. The supplied animation PNG has no authoritative FPS/timing metadata.
 - Follow-up: operator-2-5d-canonical-visual-contract
-- What worked: byte-exact source hashes and source-cell reconstruction made provenance verifiable without visual guesswork.
+- What worked: byte-exact source hashes, source-cell reconstruction, and deterministic proxy extents made provenance and overflow candidates verifiable without visual guesswork.
 
 ## Next Handoff
 
@@ -44,6 +48,6 @@ The compact Dropbox review handoff is `/CUSTODIAN/visual_review/operator-2-5d-ca
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh reason: semantic root/floor decision, universal action-envelope proof, and normalized-reference cleanup review are required before profile acceptance.
-- Next action: review the Dropbox handoff in the authoring chat, record the exact semantic decision, then resume this implementation workstream before paired review.
-- Blockers or open questions: action-envelope evidence and palette-cleanup decision; animation FPS/timing metadata is unavailable.
+- Refresh reason: semantic root/floor decision, action-envelope proxy validity/canvas decision, and normalized-reference cleanup review are required before profile acceptance.
+- Next action: review the latest Dropbox handoff in the authoring chat, record exact root/floor and action-envelope decisions, then resume this implementation workstream before paired review.
+- Blockers or open questions: human review of registration, fast02 proxy/canvas implication, and palette cleanup; ranged aim/block-hit/all-direction envelope proof and animation FPS/timing metadata remain unavailable.
