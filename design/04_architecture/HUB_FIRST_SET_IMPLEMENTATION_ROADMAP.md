@@ -92,6 +92,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1 implementation is complete/landed and awaits its auto paired review. Awakening room-connectors polish is ready/auto; its review, handoff-readiness implementation/review, and H2-H7 are all pre-authored dependency-gated auto work.
-**Next:** HR1 and `awakening-room-connectors-polish` may proceed without manual assignment. Their paired reviews and the Awakening handoff-readiness slice unblock automatically through declared dependencies; H2 becomes claimable once HR1 and the reviewed Awakening handoff are archived complete.
+**Current:** H1 implementation is complete/landed. The original 04→05 source-set packet and review landed, but later direct user registration evidence proved its `-11.391598°` independently fitted connector transform was the wrong visual solution. The interaction-feedback/Crèche activation P0 is already in flight. After its paired review, `awakening-04-05-registered-composition-correction-v1` restores the exact axis-aligned 1502×2048 Dust→connector→Locker composition; its review then releases `awakening-lower-upper-spine-connection`. Those reviewed P0s gate the existing full Awakening handoff-readiness slice; H2-H7 remain dependency-gated behind the reviewed Awakening handoff.
+**Next:** Finish the already-claimed `awakening-interaction-feedback-console-activation` pair, then auto-claim `awakening-04-05-registered-composition-correction-v1`, then its review, then the lower→upper spine pair. H2 becomes claimable only after the reviewed Awakening handoff is archived complete.
 **Finish:** HR7 passes the complete first-campaign-loop proof.

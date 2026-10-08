@@ -19,11 +19,14 @@ class AnimationDetail(Static):
         completeness = session.completeness
         if session.completeness_detail:
             completeness += f" — {session.completeness_detail}"
+        source = "not published" if session.workbench_state.startswith("NEW /") else f"{session.source_frames}f"
+        runtime = "DORMANT/unwired until a consumer is added" if session.workbench_state.startswith("NEW /") else "canonical/runtime"
         self.update(
             f"[b]SELECTED ANIMATION[/b]\n\n{session.selection.identity}\n\n"
             f"Presentation: {completeness}\n"
             f"Workbench:   {session.workbench_state}\n"
-            f"Source:      {session.source_frames}f\n"
+            f"Source:      {source}\n"
+            f"Runtime:     {runtime}\n"
             f"Workspace:   {session.workspace_frames}f\n"
             f"Document:    {session.document_frames}f\n"
             f"Migration:   {session.contract_state}\n"

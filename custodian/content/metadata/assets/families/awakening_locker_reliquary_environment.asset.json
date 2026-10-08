@@ -27,7 +27,8 @@
       "frame_height": 704
     },
     "foreground": {
-      "required": true,
+      "required": false,
+      "recommended": false,
       "layer": "foreground",
       "action_group": "display",
       "variant": "foreground",

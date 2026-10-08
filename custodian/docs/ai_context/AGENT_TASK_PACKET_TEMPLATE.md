@@ -152,9 +152,25 @@ Reference the authority and state the closure condition.
 
 ### Authoring Quality Gate
 
+Before setting `Status: ready`, run the targeted packet-authoring preflight on
+the packet being authored and its paired review when one exists:
+
+```bash
+python3 custodian/tools/agent/validate_task_packet_authoring.py \
+  custodian/docs/ai_context/task_packets/<PACKET>.md \
+  custodian/docs/ai_context/task_packets/REVIEW_<PACKET>.md
+```
+
+This preflight reuses `task_packet_contract.py` for the actual grammar/enums
+and paired-review rules. It intentionally reports only the packet(s) being
+authored plus their pair, so unrelated active-packet drift cannot hide or
+block a local authoring decision. It supplements, rather than replaces, the
+repo-wide `check_ai_context.py` / `validate_review_pairing.py` closeout gates.
+
 Before setting `Status: ready`:
 
 ```text
+[ ] Targeted task-packet authoring preflight passes for this packet and its pair.
 [ ] Latest main was reviewed and Reviewed main is populated.
 [ ] Authoring chat is recorded when the user supplied a durable conversation URL.
 [ ] When an Authoring chat URL is supplied, Summary backlink requires that exact URL in every durable implementation/review/correction/recovery/closeout summary and final Next Handoff; finish-time tooling enforces the committed closing summary.

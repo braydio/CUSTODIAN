@@ -1,0 +1,903 @@
+{
+  "schema": "custodian.dropbox_asset_intake_audit.v1",
+  "workstream": "asset-downloads-intake-sweep",
+  "audited_at_utc": "2026-10-07T19:34:12Z",
+  "root": "/CUSTODIAN/implementation_inputs",
+  "entry_count": 52,
+  "entries": [
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1/payload",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1/payload/procgen_alpine_cliff_fascia",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1/payload/procgen_alpine_cliff_fascia/top_snow_01.png",
+      "object_type": "file",
+      "size_bytes": 452,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1/payload/procgen_alpine_cliff_fascia/top_clean_01.png",
+      "object_type": "file",
+      "size_bytes": 409,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1/payload/procgen_alpine_cliff_fascia/top_broken_01.png",
+      "object_type": "file",
+      "size_bytes": 454,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1/payload/procgen_alpine_cliff_fascia/top_retained_01.png",
+      "object_type": "file",
+      "size_bytes": 438,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1-partial-first4-20261005-a1/HANDOFF_MANIFEST.json",
+      "object_type": "file",
+      "size_bytes": 1570,
+      "disposition": "partial-existing-owner",
+      "owner": "procgen-alpine-cliff-presentation-v1",
+      "reason": "Handoff is partial (4/26); do not publish as Gate B."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/awakening_designation_locker_reauthor_handoff_v1.zip",
+      "object_type": "file",
+      "size_bytes": 7664486,
+      "disposition": "successor-owned",
+      "owner": "awakening-designation-locker-visual-reauthor-v1",
+      "reason": "Named by ready dependent packet; leave for its owning workstream."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/operator-unarmed-fast-chain-north-vfx",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "already-implemented-reviewed",
+      "owner": "operator-unarmed-fast-chain-north-vfx",
+      "reason": "Already landed and reviewed; do not repeat."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/operator-unarmed-fast-chain-north-vfx/north-vfx-20261006-a1",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "already-implemented-reviewed",
+      "owner": "operator-unarmed-fast-chain-north-vfx",
+      "reason": "Already landed and reviewed; do not repeat."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/operator-unarmed-fast-chain-north-vfx/north-vfx-20261006-a1/payload",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "already-implemented-reviewed",
+      "owner": "operator-unarmed-fast-chain-north-vfx",
+      "reason": "Already landed and reviewed; do not repeat."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/operator-unarmed-fast-chain-north-vfx/north-vfx-20261006-a1/payload/CUSTODIAN_operator_unarmed_fast_north_vfx_handoff_20261006.zip",
+      "object_type": "file",
+      "size_bytes": 1768949,
+      "disposition": "already-implemented-reviewed",
+      "owner": "operator-unarmed-fast-chain-north-vfx",
+      "reason": "Already landed and reviewed; do not repeat."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/operator-unarmed-fast-chain-north-vfx/north-vfx-20261006-a1/HANDOFF_MANIFEST.json",
+      "object_type": "file",
+      "size_bytes": 753,
+      "disposition": "already-implemented-reviewed",
+      "owner": "operator-unarmed-fast-chain-north-vfx",
+      "reason": "Already landed and reviewed; do not repeat."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/smoke-20261005t041034z",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/smoke-20261005t041034z/HANDOFF_MANIFEST.json",
+      "object_type": "file",
+      "size_bytes": 770,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/smoke-20261005t041034z/payload",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/smoke-20261005t041034z/payload/smoke.png",
+      "object_type": "file",
+      "size_bytes": 79,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/smoke-20261005t041034z/payload/smoke.zip",
+      "object_type": "file",
+      "size_bytes": 162,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/connector-smoke-20261005t041437z",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/connector-smoke-20261005t041437z/payload",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/connector-smoke-20261005t041437z/payload/smoke.zip",
+      "object_type": "file",
+      "size_bytes": 162,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/connector-smoke-20261005t041437z/payload/smoke.png",
+      "object_type": "file",
+      "size_bytes": 79,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/bidirectional-dropbox-handoff/connector-smoke-20261005t041437z/HANDOFF_MANIFEST.json",
+      "object_type": "file",
+      "size_bytes": 819,
+      "disposition": "transport-smoke-only",
+      "owner": "bidirectional-dropbox-handoff",
+      "reason": "Transport smoke artifacts, not production content."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/awakening_dustlung_undergate_next10_handoff_v1.zip",
+      "object_type": "file",
+      "size_bytes": 20801841,
+      "disposition": "implemented",
+      "owner": "asset-downloads-intake-sweep",
+      "reason": "Packet ZIP hash matched; ten verified states published through Asset V2."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/awakening_service_basin_b_handoff_v1.zip",
+      "object_type": "file",
+      "size_bytes": 1323958,
+      "disposition": "implemented",
+      "owner": "asset-downloads-intake-sweep",
+      "reason": "Packet ZIP hash matched; one verified state published through Asset V2."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/custodian_operator_unarmed_fast_chain_ns_body_asset_handoff_v1.zip",
+      "object_type": "file",
+      "size_bytes": 5598120,
+      "disposition": "already-implemented-reviewed",
+      "owner": "operator-unarmed-fast-chain-ns-body",
+      "reason": "North/South body handoff already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "container",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Contains the individually classified Alpine handoffs."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload/procgen_underlay_alpine_plateau",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload/procgen_underlay_alpine_plateau/depth_fog_b.png",
+      "object_type": "file",
+      "size_bytes": 2195045,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload/procgen_underlay_alpine_plateau/depth_fog_a.png",
+      "object_type": "file",
+      "size_bytes": 2249382,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload/procgen_underlay_alpine_plateau/far_world_b.png",
+      "object_type": "file",
+      "size_bytes": 2654336,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload/procgen_underlay_alpine_plateau/near_cliff_mist_a.png",
+      "object_type": "file",
+      "size_bytes": 2970049,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload/procgen_underlay_alpine_plateau/far_world_a.png",
+      "object_type": "file",
+      "size_bytes": 2067378,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/payload/procgen_underlay_alpine_plateau/near_cliff_mist_b.png",
+      "object_type": "file",
+      "size_bytes": 2853362,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-final-six-v3/HANDOFF_MANIFEST.json",
+      "object_type": "file",
+      "size_bytes": 2575,
+      "disposition": "already-implemented-reviewed",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Final-six Alpine underlay already landed and reviewed."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine_underlay_last3_generations_review_bundle.zip",
+      "object_type": "file",
+      "size_bytes": 76814735,
+      "disposition": "reference-donor-review-only",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Review bundle, not runtime intake."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/HANDOFF_MANIFEST.json",
+      "object_type": "file",
+      "size_bytes": 1955,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload/procgen_underlay_alpine_plateau",
+      "object_type": "folder",
+      "size_bytes": null,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload/procgen_underlay_alpine_plateau/near_cliff_mist_a.png",
+      "object_type": "file",
+      "size_bytes": 1217811,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload/procgen_underlay_alpine_plateau/depth_fog_b.png",
+      "object_type": "file",
+      "size_bytes": 977202,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload/procgen_underlay_alpine_plateau/near_cliff_mist_b.png",
+      "object_type": "file",
+      "size_bytes": 1157348,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload/procgen_underlay_alpine_plateau/depth_fog_a.png",
+      "object_type": "file",
+      "size_bytes": 906534,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload/procgen_underlay_alpine_plateau/far_world_b.png",
+      "object_type": "file",
+      "size_bytes": 1373861,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/procgen-alpine-plateau-underlay-assets/alpine-underlay-omnidirectional-v2/payload/procgen_underlay_alpine_plateau/far_world_a.png",
+      "object_type": "file",
+      "size_bytes": 1414172,
+      "disposition": "superseded",
+      "owner": "procgen-alpine-plateau-underlay-ap1",
+      "reason": "Superseded by alpine-underlay-final-six-v3."
+    },
+    {
+      "path": "/CUSTODIAN/implementation_inputs/awakening_next10_required_fixtures_handoff_v1.zip",
+      "object_type": "file",
+      "size_bytes": 4337769,
+      "disposition": "implemented",
+      "owner": "asset-downloads-intake-sweep",
+      "reason": "Dropbox revision 65d22e7369f4c915cdd61 and ZIP SHA-256 82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4 verified; exact ten states published through Asset V2 with bounded attestation_dais correction."
+    }
+  ],
+  "consumption_summary": {
+    "expected_production_states": 21,
+    "published_verified_states": 21,
+    "blocked_states": 0,
+    "actual_bindings": 0,
+    "zip_hashes": {
+      "awakening_service_basin_b_handoff_v1": {
+        "expected": "749cba1851e5bae8e5c68cbb0293b1b0b58ac447204b024fadc911b7665e189c",
+        "actual": "749cba1851e5bae8e5c68cbb0293b1b0b58ac447204b024fadc911b7665e189c"
+      },
+      "awakening_next10_required_fixtures_handoff_v1": {
+        "expected": "82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4",
+        "actual": "82012a4f2b0285b8833eb3daa2878e49e7798e123970ab17fd304c9af757c9a4"
+      },
+      "awakening_dustlung_undergate_next10_handoff_v1": {
+        "expected": "7bceeb24022613515ec65d05da5a6b6f2acee31c9920edb552c7a48936eda612",
+        "actual": "7bceeb24022613515ec65d05da5a6b6f2acee31c9920edb552c7a48936eda612"
+      }
+    },
+    "attestation_dais_correction": {
+      "status": "applied under exact one-revision authority",
+      "receipt": "custodian/docs/ai_context/reports/assets/attestation_dais_a2_correction_receipt.json",
+      "source_removed_alpha_pixels": 848,
+      "source_removed_ratio": 0.010665861695972632,
+      "normalized_removed_alpha_pixels": 204,
+      "normalized_removed_ratio": 0.013970688946719627,
+      "principal_rgba_bytes_identical": true
+    },
+    "published_runtime_outputs": [
+      {
+        "family": "awakening_ambulatory_fixtures",
+        "state_id": "service_basin_b",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_ambulatory_fixtures/runtime/body/awakening_ambulatory_fixtures__body__fixture__service_basin_b__omni__1f__128.png",
+        "sha256": "b8e068ced61b6a7416b8b5be6ed2da881e5d7861e48faf7e4ea46a2e7cba6924",
+        "imported": true
+      },
+      {
+        "family": "awakening_attestation_fixtures",
+        "state_id": "attestation_dais",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__attestation_dais__omni__1f__256x192.png",
+        "sha256": "d1e5ac84b344046d64b14aeb4ba37423f74108998a0c04baae9c243a0dd3c9ae",
+        "imported": true
+      },
+      {
+        "family": "awakening_attestation_fixtures",
+        "state_id": "designation_sigil_fragment",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__designation_sigil_fragment__omni__1f__64.png",
+        "sha256": "8a00d7556588551bca8fb9cf39496601fe5cf730c87107e924458756bd919de0",
+        "imported": true
+      },
+      {
+        "family": "awakening_attestation_fixtures",
+        "state_id": "stele_empty",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_empty__omni__1f__96x160.png",
+        "sha256": "17efcf8487eef8515fd3e50aefd776e6d4821558b612f880a99e31bac16d6d3c",
+        "imported": true
+      },
+      {
+        "family": "awakening_attestation_fixtures",
+        "state_id": "stele_intact",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_intact__omni__1f__96x160.png",
+        "sha256": "f2aac3a39c8bdcc0011644799319f6b45fd39eefa4629a1f1ed5df7e5818c690",
+        "imported": true
+      },
+      {
+        "family": "awakening_attestation_fixtures",
+        "state_id": "stele_scorched",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_scorched__omni__1f__96x160.png",
+        "sha256": "618bc068d854dd87df011dcfac2350efe1ceced49c586bae9a68bd3cf549cd57",
+        "imported": true
+      },
+      {
+        "family": "awakening_attestation_fixtures",
+        "state_id": "stele_shattered",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__stele_shattered__omni__1f__96x160.png",
+        "sha256": "537c7b7c1c18784de7a94e1fef944f0723291a74de84efad0bdbb652403a9a4a",
+        "imported": true
+      },
+      {
+        "family": "awakening_attestation_fixtures",
+        "state_id": "torn_civic_banner",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/runtime/body/awakening_attestation_fixtures__body__fixture__torn_civic_banner__omni__1f__128x256.png",
+        "sha256": "f9e29e0d19b26b6996293132c6ba3db517e71216a217bfd1a8086cf9cadd81b4",
+        "imported": true
+      },
+      {
+        "family": "awakening_dust_lung_structures",
+        "state_id": "broken_bridge_a",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__broken_bridge_a__omni__1f__256x160.png",
+        "sha256": "891244f7fd8df1a3d10c7ffb01a8342d7902d838295c3d19bf36a45b7e292c54",
+        "imported": true
+      },
+      {
+        "family": "awakening_dust_lung_structures",
+        "state_id": "broken_bridge_b",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__broken_bridge_b__omni__1f__256x160.png",
+        "sha256": "c18446e231ace1d91a26c531bc3fcb0f66412abd1165cca2b2d010fc7f58b2b5",
+        "imported": true
+      },
+      {
+        "family": "awakening_dust_lung_structures",
+        "state_id": "giant_duct",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__giant_duct__omni__1f__256.png",
+        "sha256": "97797f99f29ef5d29b0d0a721b971c8f2128c8f655e0890ec51a36e873423ade",
+        "imported": true
+      },
+      {
+        "family": "awakening_dust_lung_structures",
+        "state_id": "lift_lever",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_dust_lung_structures/runtime/body/awakening_dust_lung_structures__body__fixture__lift_lever__omni__1f__128.png",
+        "sha256": "7bb6721ecd740242b848f3bf6e3356bb7d47391940816c576c1c7df2b3f7b09e",
+        "imported": true
+      },
+      {
+        "family": "awakening_reliquary_fixtures",
+        "state_id": "central_dry_basin",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_reliquary_fixtures/runtime/body/awakening_reliquary_fixtures__body__fixture__central_dry_basin__omni__1f__192.png",
+        "sha256": "6fa0e1e598b004fca3d32b826bcb751ee1fa1d5f1cd90b5f3bb5918d3bb6e4f2",
+        "imported": true
+      },
+      {
+        "family": "awakening_reliquary_fixtures",
+        "state_id": "recalled_not_verified_locker",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_reliquary_fixtures/runtime/body/awakening_reliquary_fixtures__body__fixture__recalled_not_verified_locker__omni__1f__128x160.png",
+        "sha256": "a5da6dd81e5086231319d1038abf7398e23ee37405863ba75214600cf7d777f3",
+        "imported": true
+      },
+      {
+        "family": "awakening_reliquary_fixtures",
+        "state_id": "welded_locker",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_reliquary_fixtures/runtime/body/awakening_reliquary_fixtures__body__fixture__welded_locker__omni__1f__128x160.png",
+        "sha256": "a1879767ff76c94de1ed8f57a25df6bd96ac9aafb947ceaafbfcf846c6918915",
+        "imported": true
+      },
+      {
+        "family": "awakening_undergate_machinery",
+        "state_id": "blind_route_housing",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__blind_route_housing__omni__1f__160.png",
+        "sha256": "2ef738370e2f38c44530bdd1f34e52f8d40fce118dbbfb4952bf3d686b280012",
+        "imported": true
+      },
+      {
+        "family": "awakening_undergate_machinery",
+        "state_id": "mechanism_plinth",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__mechanism_plinth__omni__1f__160.png",
+        "sha256": "7ad22efe029c1384f1e3986dc9ec814e31d04595bc415f343fecfb052c094232",
+        "imported": true
+      },
+      {
+        "family": "awakening_undergate_machinery",
+        "state_id": "register_route_map",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__register_route_map__omni__1f__384x256.png",
+        "sha256": "b8e13f0f63f3d044f09cf1d770e5b3f62b5bbf32bafaa8952f3103df62779247",
+        "imported": true
+      },
+      {
+        "family": "awakening_undergate_machinery",
+        "state_id": "register_shelving",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__register_shelving__omni__1f__256x192.png",
+        "sha256": "34d47d370ce3f7d3aee76845d3281adaa4d75d47bb4bfe11b24f779329ca8750",
+        "imported": true
+      },
+      {
+        "family": "awakening_undergate_machinery",
+        "state_id": "route_coil",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__route_coil__omni__1f__192.png",
+        "sha256": "721db2b219b51a788e9aff4ea4e88bc4f148031c8f656fead7fee85a191b87f8",
+        "imported": true
+      },
+      {
+        "family": "awakening_undergate_machinery",
+        "state_id": "transit_drum",
+        "runtime_path": "custodian/content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__transit_drum__omni__1f__256x192.png",
+        "sha256": "298225462916a47bb3b73808a75f61d389fda9ba56a7c5606b6d7a02075aa995",
+        "imported": true
+      }
+    ]
+  },
+  "fixture_classifications": [
+    {
+      "family": "awakening_ambulatory_fixtures",
+      "state_id": "service_basin_b",
+      "publication": "published",
+      "consumption": "BAKED_ONLY",
+      "scene_binding_added": false,
+      "note": "Family is complete at 6/6; packet preserves BAKED_ONLY consumption doctrine."
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "state_id": "stele_intact",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "state_id": "stele_scorched",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "state_id": "stele_empty",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "state_id": "stele_shattered",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "state_id": "attestation_dais",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "state_id": "torn_civic_banner",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_attestation_fixtures",
+      "state_id": "designation_sigil_fragment",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_reliquary_fixtures",
+      "state_id": "central_dry_basin",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_reliquary_fixtures",
+      "state_id": "welded_locker",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_reliquary_fixtures",
+      "state_id": "recalled_not_verified_locker",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Published and imported through Asset V2; remains NOT_READY as a standalone scene prop because current Layout/scene authority provides no binding. No scene binding added."
+    },
+    {
+      "family": "awakening_dust_lung_structures",
+      "state_id": "broken_bridge_a",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_dust_lung_structures",
+      "state_id": "broken_bridge_b",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_dust_lung_structures",
+      "state_id": "giant_duct",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_dust_lung_structures",
+      "state_id": "lift_lever",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_undergate_machinery",
+      "state_id": "transit_drum",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_undergate_machinery",
+      "state_id": "route_coil",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_undergate_machinery",
+      "state_id": "mechanism_plinth",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_undergate_machinery",
+      "state_id": "blind_route_housing",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_undergate_machinery",
+      "state_id": "register_shelving",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    },
+    {
+      "family": "awakening_undergate_machinery",
+      "state_id": "register_route_map",
+      "publication": "published",
+      "consumption": "NOT_READY",
+      "scene_binding_added": false,
+      "note": "Standalone runtime assets published/imported; packet policy forbids speculative scene binding."
+    }
+  ],
+  "alpha_component_checks": [
+    {
+      "state": "service_basin_b",
+      "family": "awakening_ambulatory_fixtures",
+      "components": 1,
+      "largest_area": 6797,
+      "satellite_alpha_pixels": 0
+    },
+    {
+      "state": "broken_bridge_a",
+      "family": "awakening_dust_lung_structures",
+      "components": 15,
+      "largest_area": 12930,
+      "satellite_alpha_pixels": 22
+    },
+    {
+      "state": "broken_bridge_b",
+      "family": "awakening_dust_lung_structures",
+      "components": 27,
+      "largest_area": 13405,
+      "satellite_alpha_pixels": 54
+    },
+    {
+      "state": "giant_duct",
+      "family": "awakening_dust_lung_structures",
+      "components": 19,
+      "largest_area": 30560,
+      "satellite_alpha_pixels": 116
+    },
+    {
+      "state": "lift_lever",
+      "family": "awakening_dust_lung_structures",
+      "components": 3,
+      "largest_area": 5443,
+      "satellite_alpha_pixels": 2
+    },
+    {
+      "state": "blind_route_housing",
+      "family": "awakening_undergate_machinery",
+      "components": 2,
+      "largest_area": 13435,
+      "satellite_alpha_pixels": 3
+    },
+    {
+      "state": "mechanism_plinth",
+      "family": "awakening_undergate_machinery",
+      "components": 3,
+      "largest_area": 11880,
+      "satellite_alpha_pixels": 8
+    },
+    {
+      "state": "register_route_map",
+      "family": "awakening_undergate_machinery",
+      "components": 7,
+      "largest_area": 60042,
+      "satellite_alpha_pixels": 18
+    },
+    {
+      "state": "register_shelving",
+      "family": "awakening_undergate_machinery",
+      "components": 8,
+      "largest_area": 33538,
+      "satellite_alpha_pixels": 10
+    },
+    {
+      "state": "route_coil",
+      "family": "awakening_undergate_machinery",
+      "components": 6,
+      "largest_area": 19995,
+      "satellite_alpha_pixels": 7
+    },
+    {
+      "state": "transit_drum",
+      "family": "awakening_undergate_machinery",
+      "components": 8,
+      "largest_area": 31130,
+      "satellite_alpha_pixels": 79
+    },
+    {
+      "state": "attestation_dais",
+      "family": "awakening_attestation_fixtures",
+      "components": 2,
+      "largest_area": 78658,
+      "satellite_alpha_pixels": 848,
+      "source_component_areas": [
+        78658,
+        848
+      ],
+      "source_component_bboxes_xyxy": [
+        [
+          88,
+          3,
+          562,
+          278
+        ],
+        [
+          3,
+          208,
+          27,
+          278
+        ]
+      ],
+      "normalized_component_areas": [
+        14398,
+        202,
+        2
+      ],
+      "normalized_component_bboxes_xyxy": [
+        [
+          45,
+          72,
+          243,
+          186
+        ],
+        [
+          11,
+          157,
+          23,
+          186
+        ],
+        [
+          11,
+          155,
+          12,
+          155
+        ]
+      ],
+      "correction_receipt": "custodian/docs/ai_context/reports/assets/attestation_dais_a2_correction_receipt.json"
+    }
+  ]
+}

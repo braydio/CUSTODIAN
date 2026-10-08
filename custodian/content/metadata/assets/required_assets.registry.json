@@ -533,9 +533,9 @@
       "id": "reliquary-dust-lung-architectural-connector-underlay",
       "section": "Awakening / The First Return (sections 01-10)",
       "title": "Reliquary → Dust Lung architectural connector underlay",
-      "target": "`custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png`",
+      "target": "`custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png`",
       "purpose": "Present the locked 04→05 dogleg with surrounding corridor architecture.",
-      "notes": "Asset V2 family `awakening_reliquary_dust_lung_connector`; centered at `(352,-2464)`; 96px visual bleed beyond the unchanged Layout A/B/C traversal union. Flattened source cannot be safely separated into a foreground occlusion layer; that optional state remains unbound.",
+      "notes": "Asset V2 family `awakening_reliquary_dust_lung_connector`; publishes the exact 1374×1076 Dropbox source with the complete alpha silhouette. Uniform scene scale/rotation/translation are derived from the source's Dust Lung and Locker contact centers against the unchanged Layout anchors and A/B/C traversal rectangles. The historical crop/strip compositor is retired.",
       "fulfillment": {
         "type": "asset_v2",
         "targets": [
@@ -552,7 +552,7 @@
       "title": "P0/P1 zone plates — nine `awakening_*_environment` families",
       "target": "`custodian/content/levels/awakening/<zone>/<owner>_{underlay,foreground}_<WxH>.png`",
       "purpose": "Replace each section's blockout presentation without changing spatial authority.",
-      "notes": "Zones 01–09 now have underlay + foreground ingested and bound in `awakening_first_return.tscn`; production art preserves the locked spatial authority.",
+      "notes": "Zones 01–09 have ingested and bound production underlays. Compatible foregrounds are bound except the Locker Reliquary foreground, which is deliberately unbound because the new underlay has transparent support gaps beneath 8.35% of its opaque footprint; see deferred requirement `p1-awakening-locker-foreground-parity`.",
       "fulfillment": {
         "type": "asset_v2",
         "targets": [
@@ -596,6 +596,18 @@
       }
     },
     {
+      "id": "p1-awakening-locker-foreground-parity",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Locker Reliquary foreground parity with production underlay",
+      "target": "`custodian/content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_foreground_704x704.png`",
+      "purpose": "Restore a foreground occlusion layer only after its registration and opaque backing are compatible with the Dropbox Locker underlay.",
+      "notes": "Deferred. Existing foreground is preserved but unbound: only 91.6% of its alpha≥128 pixels have opaque underlay support after the new crop-free normalization. Do not overlay it or fabricate replacement pixels in the connector polish packet.",
+      "fulfillment": {
+        "type": "manual",
+        "status": "deferred"
+      }
+    },
+    {
       "id": "p1-awakening-late-service-relay-lamp",
       "section": "Awakening / The First Return (sections 01-10)",
       "title": "P1 `awakening_late_service_relay_lamp`",
@@ -618,7 +630,7 @@
       "title": "P1 zone fixture families",
       "target": "`custodian/content/sprites/environment/props/awakening/<family>/runtime/body/<family>__body__fixture__*__omni__1f__<WxH>.png`",
       "purpose": "Room-specific required set pieces and recommended dressing.",
-      "notes": "`awakening_creche_fixtures` required set is complete (7/7). `awakening_ambulatory_fixtures` has 5/6 required states published; `service_basin_b` remains. Other listed fixture families remain governed by their live contracts.",
+      "notes": "`awakening_creche_fixtures` is complete (7/7). `awakening_ambulatory_fixtures` is complete (6/6), including `service_basin_b`. `awakening_dust_lung_structures` is complete (4/4) and `awakening_undergate_machinery` is complete (6/6). `awakening_attestation_fixtures` remains 0/7 and `awakening_reliquary_fixtures` 0/3 because the current Dropbox package does not match the immutable handoff hash in the intake packet; do not consume until reconciled. Other listed fixture families remain governed by their live contracts.",
       "fulfillment": {
         "type": "asset_v2",
         "targets": [
@@ -1614,7 +1626,7 @@
     }
   ],
   "section_notes": {
-    "Awakening / The First Return (sections 01-10)": "The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is registered by the Asset V2 families below; drop human-named state files into `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in `custodian/game/world/awakening/awakening_layout.gd`. Targets below are the V2-resolved runtime identities; `*` denotes state names listed in each family contract.",
+    "Awakening / The First Return (sections 01-10)": "The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is registered by the Asset V2 families below; drop human-named state files into `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in `custodian/game/world/awakening/awakening_layout.gd`. The 04→05 connector correction binds the exact source set without crop/strip reconstruction; see `asset_drop/source_work/awakening/DROPBOX_SOURCE_RECEIPT.md`. The Locker foreground remains unbound/deferred until it is compatible with the replacement underlay.",
     "Common Vaultwing Bonding Presentation": "Family contract: `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`. Author source masters under `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`; Asset V2 publishes to `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/`.",
     "Baby Opossum Ambient Creature": "Runtime body strips are published; the entries below are approved source renders whose poses sit on a non-uniform grid (or, for the barrel, disagree on canvas framing between hide states), so they cannot be sliced onto 96x96 cells without cutting poses in half. The failed staging is preserved in `custodian/asset_drop/unresolved/ambient_baby_opossum/` and raw renders in `custodian/asset_drop/source_work/baby_opossum/`. Each needs an artist re-export onto a uniform pose grid, not a pipeline change. Family contract: `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`. Publish with `python tools/assets/asset.py ingest ambient_baby_opossum`; verify with `python tools/validation/baby_opossum_asset_contract_smoke.py`.",
     "Combat Resource Feedback (Milestone A)": "The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-verified, and wired. The P-9 reuses those cues until bespoke replacements arrive.",

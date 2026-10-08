@@ -2,10 +2,10 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ash-bell-highlands-generated-destination`
-- Status: `draft`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-bridged-falls-generated-region-lifecycle`
+- Depends on: `review-bridged-falls-generated-region-lifecycle-review-corrections-1`
 - Locks: `ash-bell-highlands, procgen-region-profile`
 - Kind: `implementation`
 - Review: `auto`
@@ -59,7 +59,7 @@
 
 ## Handoff
 - Next workstream: `ritualant-north-egress-and-chapel-vista`
-- Next packet state: `refresh-required`
+- Next packet state: `dependency-gated`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c

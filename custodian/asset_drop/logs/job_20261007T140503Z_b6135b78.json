@@ -1,0 +1,161 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261007T140503Z_b6135b78",
+  "timestamp": "2026-10-07T14:05:03.413645+00:00",
+  "family": "awakening_undergate_machinery",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/awakening_undergate_machinery/blind_route_housing.png",
+      "sha256": "2ef738370e2f38c44530bdd1f34e52f8d40fce118dbbfb4952bf3d686b280012"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_undergate_machinery/mechanism_plinth.png",
+      "sha256": "7ad22efe029c1384f1e3986dc9ec814e31d04595bc415f343fecfb052c094232"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_undergate_machinery/register_route_map.png",
+      "sha256": "b8e13f0f63f3d044f09cf1d770e5b3f62b5bbf32bafaa8952f3103df62779247"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_undergate_machinery/register_shelving.png",
+      "sha256": "34d47d370ce3f7d3aee76845d3281adaa4d75d47bb4bfe11b24f779329ca8750"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_undergate_machinery/route_coil.png",
+      "sha256": "721db2b219b51a788e9aff4ea4e88bc4f148031c8f656fead7fee85a191b87f8"
+    },
+    {
+      "path": "asset_drop/inbox/awakening_undergate_machinery/transit_drum.png",
+      "sha256": "298225462916a47bb3b73808a75f61d389fda9ba56a7c5606b6d7a02075aa995"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "blind_route_housing",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate_machinery",
+        "world_prop",
+        "body",
+        "fixture",
+        "blind_route_housing",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__blind_route_housing__omni__1f__160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2ef738370e2f38c44530bdd1f34e52f8d40fce118dbbfb4952bf3d686b280012",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "mechanism_plinth",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate_machinery",
+        "world_prop",
+        "body",
+        "fixture",
+        "mechanism_plinth",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__mechanism_plinth__omni__1f__160.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7ad22efe029c1384f1e3986dc9ec814e31d04595bc415f343fecfb052c094232",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "register_route_map",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate_machinery",
+        "world_prop",
+        "body",
+        "fixture",
+        "register_route_map",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__register_route_map__omni__1f__384x256.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "b8e13f0f63f3d044f09cf1d770e5b3f62b5bbf32bafaa8952f3103df62779247",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "register_shelving",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate_machinery",
+        "world_prop",
+        "body",
+        "fixture",
+        "register_shelving",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__register_shelving__omni__1f__256x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "34d47d370ce3f7d3aee76845d3281adaa4d75d47bb4bfe11b24f779329ca8750",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "route_coil",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate_machinery",
+        "world_prop",
+        "body",
+        "fixture",
+        "route_coil",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__route_coil__omni__1f__192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "721db2b219b51a788e9aff4ea4e88bc4f148031c8f656fead7fee85a191b87f8",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "transit_drum",
+      "direction": "omni",
+      "semantic_identity": [
+        "awakening_undergate_machinery",
+        "world_prop",
+        "body",
+        "fixture",
+        "transit_drum",
+        "omni"
+      ],
+      "path": "content/sprites/environment/props/awakening/awakening_undergate_machinery/runtime/body/awakening_undergate_machinery__body__fixture__transit_drum__omni__1f__256x192.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "298225462916a47bb3b73808a75f61d389fda9ba56a7c5606b6d7a02075aa995",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

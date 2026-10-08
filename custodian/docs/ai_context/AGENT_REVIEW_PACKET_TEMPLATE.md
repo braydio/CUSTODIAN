@@ -16,6 +16,19 @@ Naming convention:
 REVIEW_<IMPLEMENTATION_NAME>.md     workstream: review-<implementation-id>
 ```
 
+Before either side of a newly authored/materially refreshed pair is marked
+`Status: ready`, run the targeted authoring preflight against both files:
+
+```bash
+python3 custodian/tools/agent/validate_task_packet_authoring.py \
+  custodian/docs/ai_context/task_packets/<IMPLEMENTATION_NAME>.md \
+  custodian/docs/ai_context/task_packets/REVIEW_<IMPLEMENTATION_NAME>.md
+```
+
+The command uses the shared packet contract and catches invalid review-mode
+enums, missing/incorrect pair bindings, missing bounded review override, and
+required fresh-review metadata without being blocked by unrelated packet drift.
+
 # REVIEW: [IMPLEMENTATION TASK NAME]
 
 - Packet schema: `custodian.task_packet.v2`

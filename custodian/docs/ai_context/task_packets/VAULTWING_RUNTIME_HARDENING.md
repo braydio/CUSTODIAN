@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vaultwing-runtime-hardening`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `stealth-perception-foundation`
 - Locks: `vaultwing-runtime`

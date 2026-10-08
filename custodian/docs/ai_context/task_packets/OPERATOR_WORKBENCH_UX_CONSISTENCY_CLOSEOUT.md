@@ -11,7 +11,7 @@
 - Series: `operator-workbench-ux-hierarchy-v1`
 - Workstream: `operator-workbench-ux-consistency-closeout`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `operator-workbench-ux-work-queue`
 - Locks: `operator-workbench-ui`

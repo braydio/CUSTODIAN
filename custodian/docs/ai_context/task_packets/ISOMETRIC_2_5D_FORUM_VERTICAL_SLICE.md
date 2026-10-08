@@ -8,14 +8,14 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `isometric-2-5d-forum-vertical-slice`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `review-isometric-2-5d-presentation-foundation, operator-2-5d-animation-viability-audit, review-operator-2-5d-canonical-visual-contract`
 - Locks: `world-presentation, presentation-experiments, asset-pipeline`
 - Kind: `implementation`
 - Review: `none`
 - Reviewed main: `09ebb90e78e4568f81f4a7fc270da0a3d158d445`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Coordination chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac3be53-1d4c-83e9-9d63-d48ab4035de4
 - Goal: Prove CUSTODIAN's realized 2.5D language in one normal playable Forum approach with the real Operator/controller/Camera2D, ground-rooted depth, raised/overhead architecture, tactical occlusion fade, contact grounding and the existing 16-direction Lords skeleton.
 - Completion boundary: Build one standalone authored/dev scene around Forum South → Adjudication Dais using the landed foundation and existing assets; include a raised mass/stair cue, sortable tall structure, overhead occluder, moving 16-direction skeleton and flat-vs-realized toggle; keep collision/navigation/gameplay completely 2D.

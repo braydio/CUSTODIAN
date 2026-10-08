@@ -14,7 +14,7 @@ from textual.widget import Widget
 from textual.widgets import DataTable, Input, Static, TextArea
 
 from .dialogs import (
-    CanvasMigrationDialog, CanvasResizeDialog, ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog,
+    AnimationCreationDialog, AnimationCreationPlanDialog, CanvasMigrationDialog, CanvasResizeDialog, ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog,
     PublishDialog, RefreshDialog, ValidationDialog, WeaponContextDialog,
 )
 from .features import AnimationFeature
@@ -91,6 +91,7 @@ class OperatorWorkbenchApp(App):
     # live in ContextKeyBar instead (see widgets/context_key_bar.py).
     BINDINGS = [
         Binding("q", "quit", "Quit", show=False), Binding("slash", "search", "Search", priority=True, show=False),
+        Binding("n", "new_animation", "New Animation", show=False),
         Binding("f5", "full_refresh", "Reload", show=False),
         Binding("question_mark", "help", "Help", show=False), Binding("e", "edit", "Edit", show=False),
         Binding("a", "add_frame", "Add Frame", show=False),
@@ -1877,9 +1878,9 @@ class OperatorWorkbenchApp(App):
             self.state.aseprite_process = None; self._activity("Aseprite closed")
         if self.state.active_operation:
             tx = self.service.transaction_state(selection)
-            if tx and getattr(self, "_last_tx_state", "") != tx[0]:
-                self._last_tx_state = tx[0]; severity = "ERROR" if tx[0] in ("ROLLED_BACK", "RECOVERY_REQUIRED") else "OK"
-                self._activity(tx[0].replace("_", " "), severity)
+            if tx and getattr(self, "_last_tx_state", None) != tx:
+                self._last_tx_state = tx; severity = "ERROR" if tx[0] in ("ROLLED_BACK", "RECOVERY_REQUIRED") else "OK"
+                self._activity(f"publish stage: {tx[1]} · {tx[0].replace('_', ' ')}", severity)
                 if tx[0] == "RECOVERY_REQUIRED": self.push_screen(ErrorDialog("RECOVERY_REQUIRED", f"RECOVERY_REQUIRED\n{tx[1]}"))
 
     def _require_selection(self) -> AnimationSelection | None:
@@ -1898,7 +1899,7 @@ class OperatorWorkbenchApp(App):
         self._activity(f"{operation.lower()} started")
         try:
             result = await self._thread(function, *args)
-            if operation == "EDIT": self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
+            if operation in ("EDIT", "CREATE"): self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
             else: self._activity(f"{operation.lower()} complete", "OK")
             if operation == "PUBLISH" and isinstance(result, dict):
                 if result.get("status") == "landed":
@@ -1912,7 +1913,8 @@ class OperatorWorkbenchApp(App):
                 transaction = self.service.transaction_state(selection)
                 if transaction:
                     severity = "ERROR" if transaction[0] in ("ROLLED_BACK", "RECOVERY_REQUIRED") else "OK"
-                    self._activity(transaction[0].replace("_", " "), severity)
+                    self._activity(f"publication {transaction[0].replace('_', ' ')} · last stage {transaction[1]}", severity)
+                self._last_tx_state = None
             if selection and operation != "PUBLISH":
                 await self._load_session(selection)
         except Exception as error: self._error(error)
@@ -1925,6 +1927,36 @@ class OperatorWorkbenchApp(App):
     def action_edit(self) -> None:
         selection=self._require_selection()
         if selection:self.run_worker(self._mutate("EDIT",self.service.edit,selection),group="mutation")
+
+    def action_new_animation(self) -> None:
+        if self.state.mode != "workbench" or not self._guard_preview():
+            return
+        self.push_screen(AnimationCreationDialog(self.service.model.DEFAULT_FRAME_SIZE), self._accept_creation_request)
+
+    def _accept_creation_request(self, options: dict | None) -> None:
+        if options is None:
+            return
+        if options.get("error"):
+            self._error(ValueError(options["error"]))
+            return
+        try:
+            plan = self.service.animation_creation_plan(**options)
+        except Exception as error:
+            self._error(error)
+            return
+        self.push_screen(AnimationCreationPlanDialog(plan), lambda accepted: self._confirm_creation(accepted, options))
+
+    def _confirm_creation(self, accepted: bool, options: dict) -> None:
+        if not accepted:
+            return
+        selection = AnimationSelection(options["profile"], options["group"], options["action"], options["direction"])
+        self.state.selection = selection
+        self.state.preview_source = "workbench"
+        self.state.preview_playing = False
+        self.run_worker(
+            self._mutate("CREATE", partial(self.service.create_animation, **options)),
+            group="mutation", exclusive=True,
+        )
 
     def action_adopt_fx_layer(self) -> None:
         if self.state.mode!="workbench" or not self._guard_preview(): return

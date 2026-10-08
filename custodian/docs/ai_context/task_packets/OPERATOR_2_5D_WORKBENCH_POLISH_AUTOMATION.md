@@ -6,7 +6,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-polish-automation
 - Status: draft
-- Dispatch: auto
+- Dispatch: manual
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-ingress
 - Locks: operator-art-agent, operator-aseprite-tooling, operator-workbench-ui
@@ -19,7 +19,7 @@
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
 - Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: conditional
 - Goal: Turn the useful one-off Aseprite cleanup/registration tricks proven while authoring idle_relaxed_01 into safe Workbench/Art-Agent operations so a 2.5D strip can be aligned, inspected and polished without hand-running bespoke scripts or destroying intentional motion.
 - Completion boundary: Add objective temporal/pixel diagnostics plus bounded preview/apply operations for planted-foot registration, detached islands and outline/highlight coherence, using existing ArtAgent/Aseprite mutation authority. Do not add autonomous anatomy redraw, image generation, publication, review sequencing or runtime cutover.
@@ -91,7 +91,7 @@ The apply path then translates that proposal into existing journaled ArtAgent op
 
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh instruction: Bring WB25-2 implementation/review evidence and the live Source Session→Workbench handoff shape back to this chat. Re-derive exact session metadata, accepted profile/root API, ArtAgent operation names, UI surface and validation ownership before ready.
 
 ## Handoff
@@ -100,7 +100,7 @@ The apply path then translates that proposal into existing journaled ArtAgent op
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: none after refresh/implementation
 - Next action: paired review

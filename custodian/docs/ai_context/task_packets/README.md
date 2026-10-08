@@ -1,8 +1,27 @@
 # Agent Task Packets
 
-Last updated: 2026-10-07
+Last updated: 2026-10-08
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
+
+### Authoring preflight
+
+Before a newly authored or materially refreshed packet is changed to `Status: ready`,
+validate that packet and its paired review (when applicable) with:
+
+```bash
+python3 custodian/tools/agent/validate_task_packet_authoring.py \
+  custodian/docs/ai_context/task_packets/<PACKET>.md \
+  custodian/docs/ai_context/task_packets/REVIEW_<PACKET>.md
+```
+
+`Review modes` are schema values, not free-form labels. The current shared contract
+accepts only `code`, `architecture`, `runtime`, `visual`, `asset-pipeline`, and
+`workflow`. The targeted preflight imports that enum directly from
+`task_packet_contract.py`, validates pair bindings/override metadata, and is scoped
+to the packet(s) being authored so unrelated queue drift cannot become an excuse to
+skip local validation. Repo-wide AI-context/review-pairing validation still runs at
+normal closeout.
 
 
 ## Active Packets
@@ -12,13 +31,18 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 
 
 <!-- task_packet_index:managed:start -->
-- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — Replace the live P-9 Designation Locker art with the approved reauthored four-state family while preserving the existing P0 Asset V2 contract, one-shot openi...
+- `AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1.md` — Replace the independently fitted/rotated Dust Lung ↔ connector ↔ Locker Reliquary presentation with the user's exact precomposed three-layer registration. Pr...
+- `AWAKENING_LOWER_UPPER_SPINE_CONNECTION.md` — Make the lower Awakening and the later/upper Awakening read and behave as one continuous authored route by turning the Dust Lung→Undergate seam into one expl...
+- `GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_REVIEW_CORRECTIONS_1.md` — Keep the canonical Operator's settled production-start position consistent with its accepted safe placement receipt, or fail contract activation when that co...
+- `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1.md` — Independently prove the runtime now preserves the user's exact axis-aligned 1502×2048 Dust→connector→Locker composition rather than the previously reviewed a...
+- `REVIEW_AWAKENING_LOWER_UPPER_SPINE_CONNECTION.md` — Independently prove that the lower and upper/later Awakening are one continuous playable route across a single 05→06 passage, with no hidden collision seam o...
+- `REVIEW_GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1_REVIEW_CORRECTIONS_1.md` — Independently verify the bounded R0-01 correction against the literal production game.tscn boot and settled Operator position.
+- `REVIEW_TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Independently verify that the dispatcher cannot silently strand active V2 work and that the new queue-state invariant does not accidentally make parked/manua...
+- `TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Eliminate ambiguous task-packet queue states that can make real work disappear from autonomous claiming, and make intentional parking versus dependency gatin...
+- `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — Consume every currently actionable, unimplemented production asset handoff under /CUSTODIAN/implementation_inputs without treating the Dropbox folder itself...
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
-- `AWAKENING_ROOM_CONNECTORS_POLISH.md` — Replace the current Dust Lung ↔ 04→05 connector ↔ Locker Reliquary presentation with the three user-approved Aseprite-layer sources, make the joins read as c...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
-- `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — Move the Savage two-hit chain lifecycle out of `enemy.gd` into one actor-local ability authority while preserving the existing rushdown cadence and guard-pre...
 - `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — Move the Savage pounce phase machine out of `enemy.gd` into one actor-local ability authority, reusing the landed Marine/Falcon host-service pattern without...
 - `HUB_AWAKENING_CONTEXT_HANDOFF.md` — Consume the reviewed one-shot Awakening completion seam and enter the reviewed persistent Hub first-set runtime at `Spawn_SouthReach` through one major-conte...
 - `HUB_CAMPAIGN_RETURN.md` — Close the first CampaignRegion → persistent Hub return: apply one valid CampaignOutcome to persistent Hub state exactly once, release the disposable Campaign...
@@ -37,7 +61,6 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` — Finish the already-live Carbine hybrid socket architecture by making the static directional `WeaponSprite` the sole primary-ranged weapon renderer for author...
 - `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect...
 - `OPERATOR_RUNTIME_SHELL_COLLAPSE.md` — Finish the Operator strangler migration by collapsing `operator.gd` and `operator.tscn` into a thin deterministic actor chassis over the extracted authoritie...
-- `OPERATOR_WORKBENCH_ANIMATION_CREATION.md` — Let an artist create an entirely new semantic Operator animation from OPUI, open a blank/reference-backed Aseprite Workbench, author and preview it, then pub...
 - `PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Give the user one safe, repeatable way to keep the persistent coordination checkout at `~/Projects/CUSTODIAN/` and the persistent OPUI `workbench/operator-ar...
 - `PROCGEN_ALPINE_CLIFF_PRESENTATION_V1.md` — Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic...
 - `PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Extract durable authored-world claim metadata and membership from `ProcGenTilemap` into one canonical registry under `custodian/game/world/procgen/authored_c...
@@ -52,15 +75,12 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
 - `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Independently verify the landed Ritualant runtime-truth repair against its packet and current authored-encounter authority.
 - `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Independently verify the landed Awakening convergence slice against its registration, seam, progression, asset-consumption, and South Reach handoff-readiness...
-- `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH.md` — Independently verify that the landed user-approved Dust Lung/connector/Locker refresh is provenance-correct, Asset V2-correct, spatially registered, bidirect...
 - `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — Independently verify the landed bidirectional Dropbox handoff against its own packet contract, especially fail-closed external-input handling, credential bou...
 - `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 without redesigning the generated-region lifecycle.
 - `REVIEW_BRIDGED_FALLS_LOWER_QUARTER_HANDOFF.md` — Independently verify the final Bridged Falls -> Lower Quarter production cutover and single-state-authority claim.
 - `REVIEW_BRIDGED_FALLS_PROCGEN_TOPOLOGY.md` — Independently verify that Bridged Falls is genuinely seed-generated and structurally valid, not a fixed authored corridor with cosmetic variation.
 - `REVIEW_CUSTODIAN_DEATH_HANDOFF_FOUNDATION_RECOVERY_1.md` — Independently verify that the recovered R1 death handoff lands the intended campaign-level exactly-once death consequence on current main without importing s...
 - `REVIEW_CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Independently verify that R2 removes the R1 Game Over fallback only for a genuinely accepted death return, layers recovery on the reviewed H6 authority witho...
-- `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — Independently verify the landed recovery implementation represented by checkpoint `9af2adf5914ed799f4c7ee7606202b03ea5a95f1`: Marine Dash must preserve exact...
-- `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — Independently verify that Savage's two-hit chain has one actor-local lifecycle/tuning authority, preserves existing two-hit cadence and guard pressure, and l...
 - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — Independently verify that Savage pounce has one actor-local lifecycle/tuning authority, preserves current rushdown behavior, and reuses the reviewed Marine/F...
 - `REVIEW_HUB_AWAKENING_CONTEXT_HANDOFF.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
@@ -69,14 +89,12 @@ Task packets are optional, task-scoped risk-control and handoff files for CUSTOD
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
-- `REVIEW_OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
-- `REVIEW_OPERATOR_WORKBENCH_ANIMATION_CREATION.md` — Independently verify that OPUI can create a genuinely absent Operator semantic animation and publish it through the existing specialized Operator production...
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md` — Independently verify that correction `R0-01` closes the REPLACE source-conflict window without weakening successful publication, CREATE collision refusal, or...
 - `REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — Independently verify that the shared persistent-checkout sync implementation keeps the coordination root and OPUI art checkout current only when synchronizat...
 - `REVIEW_PROCGEN_AUTHORED_CLAIM_REGISTRY_EXTRACTION.md` — Independently verify that D2 creates one durable authored-claim owner, preserves current authored floor/overlook/ingress behavior and M6 unload/reload semant...
@@ -168,16 +186,17 @@ Do not create v2 duplicates merely because a predecessor chose different private
 
 Design authority: ../../../design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md.  
 Operator production tracker: ../../../design/02_features/animation/OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md.  
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 
 The project has pivoted away from planned live-3D presentation experiments. The fixed-isometric 2.5D doctrine is realized inside the existing 2D runtime.
 
 - K3D-1 remains complete/reviewed precursor evidence.
 - K3D-1P kenney-isometric-blockout-playtest is complete/landed as the final walkable Kenney reference.
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
-- operator-2-5d-animation-viability-audit has implementation evidence on agent/operator-2-5d-animation-viability-audit at 0fd497c43 but remains paused/unmerged for human closeout; main's active packet therefore overstates it as merely ready.
-- operator-2-5d-canonical-visual-contract has corrected provisional implementation on agent/operator-2-5d-canonical-visual-contract at 914d9d2d9. Before landing/review it must consume the human decisions recorded in the authoring chat: 128 body canvas, shared scale 0.225, neutral support presentation around y106, and separate semantic projected_world_root/shadow_origin.
-- Human approval of the Operator 2.5D authoring pipeline has now occurred. Forum remains an important in-world presentation proof, but it no longer gates building the Workbench production tooling.
+- `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
+- `operator-2-5d-animation-viability-audit` is `ready/auto` for a read-only current-main closeout. The human visual decision is already recorded: pre-migration live art is not the target, the 2048x256 8-direction design sheet is locked authority, and the supplied 15x8 relaxed idle is the first canonical `operator_2_5d_128` family. Do not stop for another subjective review.
+- `operator-2-5d-canonical-visual-contract` is `ready/auto` behind that audit. It owns exact-byte source-work preservation, accepted dual-profile/reference authority, and hardening the relaxed idle as the first canonical family; its paired review is `ready/auto` behind it.
+- WB25-1 remains intentionally blocked/manual only until those prerequisite receipts land. The next executable node is the viability closeout, not another planning refresh.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -188,7 +207,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-No WB25 implementation packet is claimable from stale assumptions. WB25-1 must first be refreshed after the audit and canonical-contract review land; every later implementation remains draft until its predecessor + paired review return to the authoring chat.
+No WB25 implementation packet is claimable from stale assumptions. WB25-1 has now been remeasured after the reviewed New Animation correction and is explicitly `blocked/manual`; complete/recover the viability audit first, then recover/land/review the canonical visual contract, then perform the final WB25-1 target-count/profile-hash refresh. Every later implementation remains draft until its predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
@@ -207,13 +226,7 @@ The goal is a standalone playable fixed-oblique 2.5D alternate: a small foregrou
 - `REVIEW_SUNDERED_KEEP_OVERLOOK_RUNTIME_INTEGRATION_PLAN.md` — SKO-3R paired fresh-context architecture/workflow review; every production packet authored by SKO-3 must remain gated behind this review.
 - No production integration implementation packet is pre-authored yet.
 
-### Active Awakening Hero-Art Reauthor
 
-- `AWAKENING_DESIGNATION_LOCKER_VISUAL_REAUTHOR_V1.md` — ready/auto P0 visual replacement for the live P-9 Designation Locker, still dependency-gated on the active `asset-downloads-intake-sweep`. The predecessor is partially checkpointed at `10e9ed5d` and must finish A2 + land before this packet can claim the shared Asset V2/Awakening registration surface.
-
-## Active Local Asset Intake
-
-- `ASSET_DOWNLOADS_INTAKE_SWEEP.md` — active partial intake. Checkpoint `10e9ed5d` has published 11/21 states (Ambulatory 6/6, Dust Lung 4/4, Undergate 6/6). A2 Attestation/Reliquary remains 0/10 on the branch; main now refreshes the outer ZIP authority to the sole current Dropbox revision SHA-256 `82012a4f…f757c9a4`, with strict manifest/per-file/state-set validation still fail-closed. Resume the same workstream; do not reclaim or start the locker reauthor yet.
 
 ## Active Reusable Source-Material Intake
 
@@ -242,8 +255,6 @@ Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
 
-- `AWAKENING_ROOM_CONNECTORS_POLISH.md` — P1 ready/auto implementation packet. It consumes the user's local `~/Downloads/dust.png`, `connector.png`, and `locker.png` into the existing Dust Lung, 04→05 connector, and Locker Reliquary Asset V2 families; replaces the visible room-crossfade/room-strip seam machinery with direct registered art; reconciles the new Locker archive obstacles/P-9 bay; and keeps any still-missing Locker foreground honest rather than fabricating art.
-- `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH.md` — paired P1 post-land code/runtime/visual/asset-pipeline review.
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is ready/auto and dependency-gated on the paired review of room-connectors polish. On claim it must self-refresh from the landed implementation + paired-review evidence and must not restore the retired Zone04/05 feather/fade contract.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is ready/auto and dependency-gated on the paired polish review; on claim it first checks whether the new committed bidirectional regression fully supersedes it, closing as superseded when no residual gap remains.
 

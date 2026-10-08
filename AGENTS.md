@@ -143,13 +143,18 @@ commit, or push.` Paired post-land review packets may authorize commits only for
   Do not invoke `land_main.py` directly for destructive landing; it is an internal
   race-safe landing primitive used by `workstream.py finish`. Direct dry-run
   inspection remains allowed.
-- After landing a scoped task branch on `origin/main`, synchronize the user's
-  project-root checkout by running `git -C <project-root> pull --ff-only origin main`.
-  This is a required post-push step; updating only the scoped worktree is not
-  sufficient. Check the project-root worktree first. If unrelated dirty or
-  divergent work prevents the fast-forward, preserve it, do not reset or stash
-  it automatically, and report that synchronization is pending until the root
-  checkout can safely pull the latest `main`.
+- After landing a scoped task branch on `origin/main`, keep the user's persistent
+  project-root checkout synchronized as a required post-push step; updating only
+  the scoped worktree is not sufficient. This safe synchronization is routine
+  repository maintenance and requires no user approval. Fetch/check the latest
+  `origin/main`, then run `git -C <project-root> pull --ff-only origin main` when
+  the root checkout is on `main`, clean, and only behind. Never reset, clean,
+  stash, rebase, switch branches, or overwrite local files to force the sync. If
+  local changes, local commits, divergence, or another unsafe state prevents a
+  fast-forward, leave every byte and commit intact, report the exact blocker and
+  that synchronization is pending, and continue the task closeout without
+  asking for routine approval. Resume the safe sync automatically after the
+  blocker is independently resolved.
   Rebase conflicts and failed required validation are blockers; never force-push.
 - Do not amend or force-push unless explicitly asked.
 

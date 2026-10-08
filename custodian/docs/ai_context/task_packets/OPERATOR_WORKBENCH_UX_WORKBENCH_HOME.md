@@ -11,7 +11,7 @@
 - Series: `operator-workbench-ux-hierarchy-v1`
 - Workstream: `operator-workbench-ux-workbench-home`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `operator-workbench-ux-state-hierarchy`
 - Locks: `operator-workbench-ui`

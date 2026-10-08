@@ -41,6 +41,8 @@ func resolve(
 		seen[tile] = true
 		if not _is_walkable(tile, level_data, map_instance):
 			continue
+		if _violates_spawn_clearance(tile, placement, level_data, map_instance):
+			continue
 		if _is_reserved(tile, level_data):
 			continue
 		if not _has_spacing(tile, occupied_tiles, minimum_spacing):
@@ -52,6 +54,29 @@ func resolve(
 		"anchor": anchor,
 		"reason": "no valid tile within search radius",
 	}
+
+
+func _violates_spawn_clearance(
+	tile: Vector2i,
+	placement: Dictionary,
+	level_data: Dictionary,
+	map_instance: Node
+) -> bool:
+	var minimum_distance := maxi(
+		0,
+		int(placement.get("minimum_distance_from_player_spawn_tiles", 0))
+	)
+	var spawn: Variant = (
+		map_instance.call("get_player_spawn")
+		if map_instance != null and map_instance.has_method("get_player_spawn")
+		else level_data.get("player_spawn")
+	)
+	return (
+		minimum_distance > 0
+		and spawn is Vector2i
+		and tile.distance_squared_to(spawn as Vector2i)
+			< minimum_distance * minimum_distance
+	)
 
 
 func _resolve_procgen_landmark_terminal(
@@ -174,6 +199,8 @@ func _resolve_edge_overlook(
 			continue
 		if not _is_walkable(candidate, level_data, map_instance):
 			continue
+		if _violates_spawn_clearance(candidate, placement, level_data, map_instance):
+			continue
 		if _is_reserved(candidate, level_data):
 			continue
 		if not _has_spacing(
@@ -226,8 +253,12 @@ func _resolve_edge_overlook(
 			lateral_search,
 			candidate_attempt_limit,
 			level_data,
-			map_instance, edge_order, occupied_tiles, minimum_spacing,
-			rejected_tiles
+			map_instance,
+			edge_order,
+			occupied_tiles,
+			minimum_spacing,
+			rejected_tiles,
+			int(placement.get("minimum_distance_from_player_spawn_tiles", 0))
 		)
 		if authored.is_empty():
 			return {"ok": false, "reason": "all deterministic edge candidates rejected"}
@@ -301,7 +332,8 @@ func _best_edge_authoring_candidate(
 	edge_order: Array[Vector2i],
 	occupied_tiles: Array[Vector2i],
 	minimum_spacing: int,
-	rejected_tiles: Array[Vector2i] = []
+	rejected_tiles: Array[Vector2i] = [],
+	minimum_spawn_distance: int = 0
 ) -> Dictionary:
 	var best: Dictionary = {}
 	var best_score := -INF
@@ -311,6 +343,10 @@ func _best_edge_authoring_candidate(
 		var outward := entry.outward as Vector2i
 		var inward := -outward
 		if rejected_tiles.has(candidate):
+			continue
+		if _violates_spawn_clearance(candidate, {
+			"minimum_distance_from_player_spawn_tiles": minimum_spawn_distance,
+		}, level_data, map_instance):
 			continue
 		# The authored fallback creates floor, so the candidate itself need not
 		# already be walkable. Use the innermost allowed edge band to keep the

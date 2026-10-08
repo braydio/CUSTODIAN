@@ -17,6 +17,14 @@ def main():
     for name in ("profile","group","action","direction","weapon","linked_profile"):
         ui.add_argument(f"--{name.replace('_','-')}",default="")
     lp=anim.add_parser("list"); lp.add_argument("profile"); lp.add_argument("--group",default=""); lp.add_argument("--json",action="store_true")
+    create=anim.add_parser("create",help="create a new semantic Operator animation Workbench")
+    create.add_argument("profile"); create.add_argument("action"); create.add_argument("direction")
+    create.add_argument("--group",required=True); create.add_argument("--frames",type=int,required=True)
+    create.add_argument("--size",type=int,default=96); create.add_argument("--height",type=int)
+    create.add_argument("--template",choices=("full_body","modular_body"),default="full_body")
+    create.add_argument("--fps",type=float,default=8.0); create.add_argument("--loop",action="store_true",default=True)
+    create.add_argument("--no-loop",dest="loop",action="store_false"); create.add_argument("--dry-run",action="store_true")
+    create.add_argument("--aseprite",type=Path); create.add_argument("--workspace-root",type=Path,default=w.DEFAULT_ROOT); create.add_argument("--no-open",action="store_true"); create.add_argument("--json",action="store_true")
     for name in ("status","edit","refresh"): common(anim.add_parser(name))
     common(anim.add_parser("publish"),dry_run=True)
     layer=anim.add_parser("layer").add_subparsers(dest="layer_cmd",required=True)
@@ -44,6 +52,19 @@ def main():
             for sid,(p,k) in idx.items():
                 if sid[0]=="operator" and sid[2]==x.profile and (not x.group or sid[3]==x.group): rows.setdefault((sid[3],sid[4]),[]).append({"direction":sid[5],"layer":sid[1],"frames":k.frames,"frame_size":[k.frame_width,k.frame_height]})
             out=[{"group":k[0],"action":k[1],"assets":v} for k,v in sorted(rows.items())]
+        elif x.cmd=="create":
+            size=(x.size,x.height or x.size)
+            result=w.create_animation(x.profile,x.action,x.direction,group=x.group,frames=x.frames,
+                frame_size=size,fps=x.fps,loop=x.loop,template=x.template,
+                root=x.workspace_root,aseprite=x.aseprite,dry_run=x.dry_run)
+            if x.dry_run:
+                out=result
+            else:
+                data,ws=result
+                if not x.no_open:
+                    binary=w.resolve_aseprite(x.aseprite,True)
+                    subprocess.Popen([str(binary),str(ws/"workbench.aseprite")])
+                out={"identity":data["identity"],"workbench_state":w.state(data,ws/"workbench.aseprite"),"workspace":str(ws),"layers":data["layers"]}
         elif x.cmd=="frame":
             operation=x.frame_cmd; position=x.after if operation=="add" else x.frame
             out=w.frame_migrate(x.profile,x.action,x.direction,operation,position,getattr(x,"fill","duplicate-prev"),x.layers,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.dry_run)
@@ -55,12 +76,23 @@ def main():
             if x.semantic_layer!="fx": raise m.WorkbenchError("only semantic FX adoption is supported")
             out=w.adopt_fx_layer(mf,x.aseprite_layer,x.aseprite)
         else:
-            plan=m.build_plan(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile); ws=w.workspace(x.workspace_root,plan["identity"]); mf=ws/"workbench.json"; wb=ws/"workbench.aseprite"
+            candidate_identity={"profile":x.profile,"group":x.group,"action":x.action,"direction":x.direction}
+            candidate_ws=w.workspace(x.workspace_root,candidate_identity)
+            candidate_manifest=candidate_ws/"workbench.json"
+            if x.group and candidate_manifest.is_file() and w.load(candidate_manifest).get("creation"):
+                ws=candidate_ws;mf=candidate_manifest;plan=w.load(mf)
+            else:
+                plan=m.build_plan(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile)
+                ws=w.workspace(x.workspace_root,plan["identity"]);mf=ws/"workbench.json"
+            wb=ws/"workbench.aseprite"
             if x.cmd=="status":
                 if mf.exists(): data=w.load(mf); m.assert_context(data,plan); out={**data,"workbench_state":w.state(data,wb),"contract_state":"MIGRATION_PENDING" if data.get("pending_migration") else "NONE","aseprite":str(w.resolve_aseprite(x.aseprite) or "unavailable"),"workspace":str(ws)}
                 else: out={**plan,"workbench_state":"ABSENT","contract_state":"NONE","aseprite":str(w.resolve_aseprite(x.aseprite) or "unavailable"),"workspace":str(ws)}
             elif x.cmd=="edit":
-                out,ws=w.ensure(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite)
+                if plan.get("creation"):
+                    out=plan
+                else:
+                    out,ws=w.ensure(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite)
                 if not x.no_open: subprocess.run([str(w.resolve_aseprite(x.aseprite,True)),str(ws/"workbench.aseprite")],check=True)
             elif x.cmd=="refresh": out,ws=w.refresh(x.profile,x.action,x.direction,x.group,x.weapon,x.linked_profile,x.workspace_root,x.aseprite,x.discard_edits)
             elif x.dry_run: out={"changed_sources":w.publish(mf,x.aseprite,x.force_stale_source,True,x.full_validate,plan,x.mirror_counterpart)}

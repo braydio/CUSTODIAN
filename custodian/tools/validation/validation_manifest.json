@@ -22,6 +22,30 @@
   ],
   "tests": [
     {
+      "id": "awakening_connector_asset_contract",
+      "type": "python",
+      "script": "custodian/tools/validation/awakening_connector_asset_contract_smoke.py",
+      "tier": "unit",
+      "tags": ["awakening", "asset_v2", "connector", "source_hash"],
+      "owners": [
+        "custodian/asset_drop/source_work/awakening/awakening_dust_lung_environment/**",
+        "custodian/asset_drop/source_work/awakening/awakening_reliquary_dust_lung_connector/**",
+        "custodian/asset_drop/source_work/awakening/awakening_locker_reliquary_environment/**",
+        "custodian/content/metadata/assets/families/awakening_dust_lung_environment.asset.json",
+        "custodian/content/metadata/assets/families/awakening_reliquary_dust_lung_connector.asset.json",
+        "custodian/content/metadata/assets/families/awakening_locker_reliquary_environment.asset.json",
+        "custodian/content/metadata/assets/generated/asset_catalog.generated.json",
+        "custodian/content/metadata/assets/required_assets.registry.json",
+        "custodian/content/levels/awakening/04_05_connector/**",
+        "custodian/content/levels/awakening/04_locker_reliquary/**",
+        "custodian/content/levels/awakening/05_dust_lung/**",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_connector_asset_contract_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "python_sim_remap2",
       "type": "godot_script",
       "script": "res://tools/validation/python_sim_remap2_smoke.gd",
@@ -1921,7 +1945,9 @@
         "custodian/docs/SPRITE_PIPELINE_CHEATSHEET.md",
         "custodian/content/README.md",
         "tools/custodian_aliases.sh",
-        "custodian/content/tiles/awakening/**"
+        "custodian/content/tiles/awakening/**",
+        "custodian/content/sprites/environment/props/awakening/awakening_attestation_fixtures/**",
+        "custodian/content/sprites/environment/props/awakening/awakening_reliquary_fixtures/**"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -3648,6 +3674,32 @@
       "needs_import": true
     },
     {
+      "id": "game_scene_operator_startup_integrity",
+      "type": "godot_script",
+      "script": "res://tools/validation/game_scene_operator_startup_integrity_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "game_scene",
+        "operator_spawn",
+        "startup_integrity",
+        "regression"
+      ],
+      "owners": [
+        "custodian/scenes/game.tscn",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/world/levels/world_ingress_placement_resolver.gd",
+        "custodian/content/routes/ash_bell/forlorn_ritualant_underground_route.json",
+        "custodian/content/routes/ash_bell/lower_quarter_route.json",
+        "custodian/game/world/procgen/world_contract_bootstrap.gd",
+        "custodian/game/world/procgen/world_contract_proxy.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/systems/debug/dev_observatory.gd",
+        "custodian/tools/validation/game_scene_operator_startup_integrity_smoke.gd"
+      ],
+      "timeout_sec": 360,
+      "needs_import": true
+    },
+    {
       "id": "contract_world_ingress_spawn_clearance",
       "type": "godot_script",
       "script": "res://tools/validation/contract_world_ingress_spawn_clearance_smoke.gd",
@@ -4164,11 +4216,32 @@
       "owners": [
         "custodian/game/world/awakening/**",
         "custodian/scenes/awakening_first_return.tscn",
+        "custodian/game/world/interactions/world_readout_interactable.gd",
         "custodian/game/world/home/sidearm_locker_interactable.gd",
         "custodian/game/actors/props/sidearm_locker.tscn",
         "custodian/game/world/camera.gd"
       ],
       "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
+      "id": "hud_interaction_prompt_lease",
+      "type": "godot_script",
+      "script": "res://tools/validation/hud_interaction_prompt_lease_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hud",
+        "interaction",
+        "prompt",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/ui/hud/custodian_hud.gd",
+        "custodian/game/ui/hud/custodian_hud.tscn",
+        "custodian/tools/validation/hud_interaction_prompt_lease_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     },
     {
@@ -4275,7 +4348,7 @@
         "custodian/scenes/awakening_first_return.tscn",
         "custodian/scenes/twin_solaria_playtest.tscn",
         "custodian/scenes/game.tscn",
-        "custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1024x576.png.import",
+        "custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png.import",
         "custodian/game/world/procgen/world_contract_bootstrap.gd",
         "custodian/game/world/procgen/world_contract_proxy.gd",
         "custodian/game/systems/core/systems/contract_world_loader.gd",

@@ -10,6 +10,8 @@ This is **planned program state, not yet live runtime**. The existing independen
 
 - **Procgen startup spawn residency correction (2026-10-07):** contract spawn eligibility now uses canonical valid-spawn, runtime-navigation, accepted-component, and ingress-clearance checks without requiring current TileMap paint. `ContractWorldLoader` selects first, calls `ProcGenTilemap.ensure_spawn_presentation_ready()` for the chosen cell, and restores Operator visibility/control only after exact-tile floor realization. Real generated streaming coverage proves an initially unpainted accepted-component spawn reaches contract ready; the true no-canonical-safe path remains hidden/disabled and reports `no_canonical_safe_spawn`. The fresh paired review passed with no blocking defects or material evidence gaps; both readiness-seam and painted-floor-filter negative controls failed as expected.
 
+- **Literal production startup integrity (2026-10-08):** the actual `res://scenes/game.tscn` boot now keeps the canonical `/root/GameRoot/World/Operator` hidden and disabled until ProcGen placement, floor realization, camera refresh and navigation rebuild complete. A generation-scoped placement receipt is checked immediately before `contract_ready`; the literal-scene smoke proves one player identity, exact tile round-trip and the expected install ordering. The pre-fix seed `1773840677` reproduced `no_canonical_safe_spawn`: Forlorn's large ingress dressing clearance covered every cell in the 72-cell main component. Its edge placement now keeps 16 tiles from the live ProcGen spawn. Genuine unsafe generations remain fail-closed.
+
 ## Vehicle Runtime Lifecycle Hardening V1 (2026-10-07)
 
 `PilotableVehicle` is the sole production vehicle lifecycle owner. Ordinary exits
@@ -167,6 +169,17 @@ compile and aesthetics were proven on a real Vulkan renderer by
 visual pass was approved by the user on 2026-10-05. ARR1 R0-03/R0-04 are covered by the AR2 and
 distant-unload smokes.
 
+## Archive Resolve V1 Closeout / Live Playtest Unblocked (2026-10-08)
+
+AR3 semantic echo/ingress/reacquisition and AR4 frontier restraint have completed
+implementation, correction and paired-review lineage. AR4's current production baseline
+remains an 11-tile local frontier, fringe 2, 84 resolve starts/sec, burst cap 8 and
+0.22 s resolve duration. Human disposition is `waive-to-playtest`: code/evidence closeout
+is complete. The literal-scene startup regression now proves relocation, receipt
+consistency and fail-closed behavior, so ordinary game-feel confirmation is unblocked.
+Do not reopen or retune Archive Resolve as part of startup integrity; its visual
+disposition remains the human playtest decision.
+
 ## Contract World Placement Foundation (2026-10-02)
 
 `WorldPlacementContext` is the accepted-world read seam for focused placement
@@ -203,6 +216,21 @@ fallback; selection order is unchanged, and no safe tile still fails contract
 activation before the Operator moves or the camera snaps.
 `contract_world_playable_region_spawn_validity_smoke.gd` owns the regression
 (exterior-painted and severed-island candidates).
+
+## Production Game Scene Operator Startup Integrity P0 (2026-10-07)
+
+A direct Dev Observatory export from the literal `res://scenes/game.tscn` showed an
+active generated ProcGenMap (192x160, 8205 floor cells, registered world ingresses and
+completed navigation) while the sampled live player remained at approximately
+`(717,-485)`, matching the scene-authored `World/Operator` placeholder
+`Vector2(717.45905, -485.33954)`. Existing spawn-validity, void-failsafe and
+presentation-residency smokes therefore proved their narrow authorities but did not prove
+the final literal production boot contract. The ready/auto P0 packet
+`GAME_TSCN_OPERATOR_STARTUP_INTEGRITY_V1.md` adds a real `game.tscn` startup regression,
+canonical player-identity proof, a bounded ContractWorldLoader placement receipt,
+pre-`contract_ready` placement consistency guard, mutation coverage and startup-phase
+Dev Observatory attribution. It must diagnose whether placement was skipped, later
+clobbered, or obscured by competing player identity before changing behavior.
 
 ## Operator Art Registration Profile (2026-10-02)
 
@@ -539,6 +567,20 @@ each frame cell without reversing animation order, copies the authored timing
 contract, includes all publishing layers, and rolls both directions back on a
 downstream failure. `n`, `s`, and `omni` have no counterpart operation; the
 flow remains canonical Workbench publication and does not use asset-drop inbox.
+
+## Operator Workbench New Animation Creation (2026-10-07)
+
+OPUI and the `operator anim create` CLI can start a new semantic Operator
+animation in an ignored Aseprite Workbench using a full-body or synchronized
+lower/upper body template. The creation plan validates through
+`operator_asset_schema.py`, previews exact CREATE targets and collision state,
+and uses deterministic canonical references where a matching frame contract
+exists. Authored pixels preview from the saved Workbench before publication.
+Publish reuses the guarded Workbench transaction and isolated Operator art
+checkout flow; the session becomes an ordinary source-backed Workbench after a
+successful landing. Counterpart promotion remains explicit/default-OFF. Newly
+published art with no consumer is shown as DORMANT/unwired. This does not wire
+gameplay or grant Art Agent autonomous creation authority.
 
 ## Operator Flashlight V1 (2026-09-12)
 
@@ -1663,7 +1705,7 @@ Documentation updates this session:
 - Enemy behavior variables / vault theft V1 is now wired as an opt-in layer for human-style enemies. `EnemyGrunt` carries behavior components for profile data, blackboard memory, perception, objective scoring, loot carrying, and a compact finite state machine that can idle/patrol, investigate Operator noise, notice/engage the Operator, seek/open vault storage, steal resources, sabotage/damage storage, escape with loot, flee, and drop recoverable stolen-resource pickups on death/interruption. Behavior profiles now expose a close `operator_awareness_bubble_px`; if the Custodian enters that bubble while a grunt is choosing or executing a storage objective, the blackboard marks Operator awareness, runs the normal notice frame, and switches focus to engage instead of ignoring the player for the loot pile. `VaultManager` is an autoload authority for debug vault storage, resource theft/recovery/loss events, sabotage damage/destruction events, and fallback enemy exits. `VaultStorage` now tracks integrity, empty/stored/open/damaged visual state, and uses the permanent runtime asset home `res://content/sprites/environment/props/vault_storage/runtime/` instead of placeholder ColorRects or scattered source prop paths. Operator stealth now exposes a read-only snapshot for detection/noise; `sneak` is currently bound to `Ctrl` so `Z`/`C` can own item cycling. Terminal snapshots and minimap markers expose enemies searching storage or carrying stolen resources. Existing wave/debug grunt spawning remains compatible and can pass behavior profiles such as `raider_grunt`, `iconoclast_looter`, or `zealot_wanderer`.
 - Grunt death rewards use the lore-specced `practical_salvage_x_grunt` table documented in `design/02_features/enemy_objective/GRUNT_LOOT_TABLE.md`. Death rolls poor practical salvage and rare provenance clues once into a corpse payload; collection, not death, delivers the typed channel through `ResourceLedger`. Generic material fallback is likewise corpse-bound for enemies without a configured typed table.
 - Fabrication/resource balance now has an offline deterministic report pipeline at `custodian/tools/balance/fabrication_balance_pipeline.py`. It reads live recipe/resource JSON plus `custodian/content/balance/scenarios/default_fabrication_run.json`, simulates 30-minute runs across build priorities and drop-rate profiles, checks lore-aware drop-table rules, and writes proposal-only outputs under `reports/fabrication_balance/` instead of mutating runtime data.
-- `enemy_marine` has a first runtime scene at `res://game/actors/enemies/enemy_marine.tscn` and consumes the full 8-direction idle suite from `res://content/sprites/enemies/enemy_marine/runtime/body/` through `GruntAnimationLibrary`. Its dash attack is now a tuned tactical heavy commitment move in `res://game/actors/enemies/enemy.gd`: the marine seeks a launch band, chooses quick or charged commits deterministically from range/target motion/previous result, spends a bounded charge budget between extra distance and extra damage, performs one predictive target lock during the final windup third, then commits without steering. The latest tuning pass raised the base impact to 32 damage / 105 knockback, widened the active hit window and contact reach, and nudged prediction/reset timing so the dash connects more often without becoming homing. Hit contact remains limited to the middle travel frames and a body-contact lane; impact/recovery are followed by an alternating lateral reset, preventing immediate dash trampling. The Great Hall ambush now wakes and hands control to this shared tactical runtime instead of maintaining a separate dash-spam controller. The move applies chunky damage plus poise/knockback feel through victim hitstop, forced slide/stagger hooks on the Operator, attacker hitstop, and camera feedback instead of relying only on HP loss. An east-facing 8-frame dash attack body strip and matching FX strip now live under `res://content/sprites/enemies/enemy_marine/runtime/{body,fx}/` and are used by the Sundered Keep Great Hall ambush plus generic marine combat playback. Directional body/FX variants and the servo/armor/impact/recovery audio stack remain required production assets tracked in `REQUIRED_ASSETS.md`. `WaveManager`, `EnemyDirector`, `EnemyFactory`, and `scenes/game.tscn` expose `marine_scene` / `"marine"` as a late-unlock enemy type. Until full directional movement/combat/death sheets are supplied, marine movement still uses directional idle as a visual fallback outside scripted dash moments.
+- `enemy_marine` has a first runtime scene at `res://game/actors/enemies/enemy_marine.tscn` and consumes the full 8-direction idle suite from `res://content/sprites/enemies/enemy_marine/runtime/body/` through `GruntAnimationLibrary`. Its dash attack is now a tuned tactical heavy commitment move owned by `res://game/actors/enemies/abilities/marine_dash.gd`, with typed values in `marine_dash_config.gd` / `configs/marine_dash_default.tres`; `enemy.gd` supplies the shared actor/combat services and public request seam: the marine seeks a launch band, chooses quick or charged commits deterministically from range/target motion/previous result, spends a bounded charge budget between extra distance and extra damage, performs one predictive target lock during the final windup third, then commits without steering. The latest tuning pass raised the base impact to 32 damage / 105 knockback, widened the active hit window and contact reach, and nudged prediction/reset timing so the dash connects more often without becoming homing. Hit contact remains limited to the middle travel frames and a body-contact lane; impact/recovery are followed by an alternating lateral reset, preventing immediate dash trampling. The Great Hall ambush now wakes and hands control to this shared tactical runtime instead of maintaining a separate dash-spam controller. The move applies chunky damage plus poise/knockback feel through victim hitstop, forced slide/stagger hooks on the Operator, attacker hitstop, and camera feedback instead of relying only on HP loss. An east-facing 8-frame dash attack body strip and matching FX strip now live under `res://content/sprites/enemies/enemy_marine/runtime/{body,fx}/` and are used by the Sundered Keep Great Hall ambush plus generic marine combat playback. Directional body/FX variants and the servo/armor/impact/recovery audio stack remain required production assets tracked in `REQUIRED_ASSETS.md`. `WaveManager`, `EnemyDirector`, `EnemyFactory`, and `scenes/game.tscn` expose `marine_scene` / `"marine"` as a late-unlock enemy type. Until full directional movement/combat/death sheets are supplied, marine movement still uses directional idle as a visual fallback outside scripted dash moments.
 - The first game-over UX slice is implemented from `design/02_features/game_over/GAME_OVER_FLOW.md`. `GameState` remains the fail-state authority, pauses the tree, emits `game_over_triggered`, and mounts `res://game/ui/game_over/game_over_modal.tscn` when `trigger_game_over(...)` is called. `GameStats` tracks waves survived, enemies destroyed, power failures, and turrets lost; `WaveManager` records completed waves, and enemy death records destroyed enemies. The modal is now a full-screen loss overlay with stats, a clear Restart button that resets run state and reloads the current scene, and a Return-to-Menu fallback that uses the configured main scene until a production menu exists. Custodian death is immediate game over (`total_lives = 1`) with Custodian-facing defeat copy, and Sundered Keep siege objective collapse routes through the same global game-over modal. Direct smoke coverage lives at `res://tools/validation/game_over_flow_smoke.gd`, with Sundered Keep collapse coverage in `res://tools/validation/sundered_keep_large_layout_smoke.gd`.
 - Carrow Yard's connected-map runtime uses the retained gothic-compound blueprint generator under `res://game/world/procgen/gothic_compound/`: it reserves the yard, builds its perimeter and South Gate, carves service roads, places the Operations House/Yard Control Terminal/utility structures, and validates required walkable routes. Named structure-site output now anchors the accessible East Machine House. The former `AuthoredVaultRoom` and `VaultEnemyExit` prototype are retired; its resources survive as three service-storage caches in the off-map Machine House interior. Existing render/depth metadata, topology validation, service-path complexity, and Operator-relative occlusion remain unchanged.
 - The Sundered Keep phase-1 slice is live as a directed authored route. The
@@ -2071,16 +2113,32 @@ under each family's `pre_handoff_1254x1254/` folder; the handoff sources remain
 at the package-declared source paths, and Asset V2 retains normalized inputs
 in the ingest archives.
 
-Plate binding is distinct from finished visual QA. The live Awakening now hides
-production traversal blockout visuals, uses a dark void plane and local camera
-framing, fades neighboring room canvases at transitions, seats the P-9 locker
-into its east wall, and raises only the Undergate's existing ambient profiles.
-The 04→05 dogleg now uses one normalized, V2-ingested 832×384 `full_plate`
-presentation sprite centered on the union of unchanged `04_05_A/B/C` rectangles;
-its fade envelope is derived from those Layout rectangles. Traversal and
-collision remain Layout-owned. The first five Road modular presentation
-families require new native-size art. The sealed central Gate
-body's passage composition remains an authored-state decision.
+The 04→05 production connector correction is now live. The exact Dropbox Dust
+Lung and Locker underlays and the full 1374×1076 direct connector are preserved
+under `asset_drop/source_work/awakening/` with SHA-256 receipts in
+`DROPBOX_SOURCE_RECEIPT.md`; Asset V2 job IDs are `job_20261007T221504Z_0cb23e5f`
+(Dust), `job_20261007T221504Z_22bfa5d0` (connector), and
+`job_20261007T221504Z_6e8fec32` (Locker). The exact Dropbox source masters are published without destructive crop, but
+the first post-source registration is now superseded by later direct user
+composition evidence. That reviewed implementation independently fitted the
+connector to gameplay anchors at scale `0.715951`, rotation `-11.391598°`,
+center `(351.821,-2392.391)`, while keeping Dust and Locker on separate room
+normalization paths. The supplied registration exports prove the art was authored
+as one axis-aligned 1502×2048 composition instead: Dust visible bounds
+`[0,870)×[0,838)`, connector `[258,1300)×[672,1256)`, Locker
+`[644,1502)×[1182,2048)`, bottom-to-top Dust→connector→Locker, with zero
+per-piece rotation. Active P0 `awakening-04-05-registered-composition-correction-v1`
+owns restoring that exact shared registration after the already-claimed
+interaction-feedback pair completes. The old Locker foreground remains preserved
+but unbound; Layout traversal/collision and the four-state interactive Designation
+Locker remain unchanged. Separately, the lower and
+later halves are logically joined today by `05_06` (128×32) plus
+`z06_south_door` (128×64); their exact 128×96 union matches the 96px overlap of
+the Dust Lung and Undergate room plates. The P0
+`awakening-lower-upper-spine-connection` packet will consolidate that as one
+semantic passage and prove real-Operator continuity into Zones06–10. The Road
+modular presentation families are already live; the sealed central Gate body's
+passage composition remains an authored-state decision.
 
 The traversal connector/inlay blockout layer now yields to the production
 plates while Layout retains collision authority. Console and lift stations use
@@ -2095,14 +2153,14 @@ at the original centers, with the central route still open. The central sealed
 body remains visually opaque across part of the mandatory route and needs an
 authored composition decision before its collision can match the image.
 
-Fixture consumption audit (A5) classifies all seven currently published Crèche
-fixture states and all five currently published Ambulatory fixture states as
-`BAKED_ONLY`; they remain unbound as separate sprites to avoid double-rendering.
-Unpublished states in those families and all states in Attestation, Reliquary,
-Dust Lung Structures, Undergate Machinery, and Late Service Relay Lamp are
-`NOT_READY`. No generic fixture asset was bound. The recovery alcove, P-9
-Designation Locker, transit lift, and Gate components remain owned by their
-existing specialized stateful systems.
+Fixture publication has advanced beyond the original A5 audit: the required
+Ambulatory, Attestation, Reliquary, Dust Lung Structures, and Undergate Machinery
+states are now published/imported through Asset V2, while consumption remains
+governed by existing BAKED_ONLY / NOT_READY classifications so publication does
+not imply duplicate scene binding. No generic fixture asset is auto-bound merely
+because its runtime PNG exists. The recovery alcove, P-9 Designation Locker,
+transit lift, and Gate components remain owned by their existing specialized
+stateful systems.
 
 The one-image Home beginning is retired. The project now boots into
 `res://scenes/awakening_first_return.tscn`, a ten-section authored dungeon walked
@@ -2135,10 +2193,19 @@ camera gained `set_authored_map_bounds`, because its deferred procgen rebuild
 would otherwise clear an authored level's clamp half a second after the level set
 it.
 
-Implemented interactions: the Crèche console (locks the opening state and sets the
+Implemented gameplay interactions include the Crèche console (locks the opening state and sets the
 persistent RETURN TO POST objective), the existing locker (grants `p9_sidearm`),
 the Dust Lung bidirectional transit lift `(384, -3008)` ⇄ `(384, -3424)`, and the
-Undergate damaged port readout. No combat: the Attestation Sentinels, Approach
+Undergate damaged port readout. Awakening now refreshes its prompt from the
+Operator's authoritative `interaction_target`, while the HUD retains the
+two-frame stale-prompt lease for ordinary callers. World readouts use a
+HUD-owned minimum four-second dwell; target loss or context/overlay suppression
+clears them, and a still-valid target returns to its proximity prompt after the
+dwell. The existing `awakening_creche_console_activation_fx/activate` 8-frame
+128×128-at-8-FPS runtime state now plays once at the Layout-owned Crèche marker
+on first acknowledgement and is stopped/hidden at completion. Re-reading does
+not replay it, and debug reset re-arms the console and effect together. No new
+art is required. No combat: the Attestation Sentinels, Approach
 Sentinel, scavenger nest, and route-leech are disabled `encounter` markers and
 `World/Enemies` is empty. No Forum, Continuity Port, Contract, or campaign
 transition, and no first-campaign prewarming from the prologue — those belong to

@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `bridged-falls-vista-waterfall-presentation`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `review-bridged-falls-bridge-grammar-asset-v2`
 - Locks: `bridged-falls-vista, bridged-falls-waterfall-art, procgen-region-frame`

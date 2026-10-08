@@ -6,7 +6,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-runtime-promotion
 - Status: draft
-- Dispatch: auto
+- Dispatch: manual
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-production-queue
 - Locks: operator-runtime-animation, operator-art-generation-schema, operator-workbench-publish
@@ -19,7 +19,7 @@
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
 - Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: conditional
 - Goal: Add one fail-closed, rollbackable runtime generation policy so a fully verified 2.5D cohort can atomically replace the same legacy semantic runtime identities without mixing character generations or creating a second runtime animation database.
 - Completion boundary: Introduce cohort generation policy, make the existing source→runtime sync choose one authoring generation per promoted cohort, prove complete-family gating/rollback, and update runtime authority/docs. Keep OperatorAnimationSelector and the one generated operator_runtime_frames.tres as execution authority.
@@ -80,7 +80,7 @@ source_root = schema.authoring_source_root(generation)
 
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh instruction: Bring WB25-5 review + live VERIFIED family/cohort counts to this chat. Decide the first actual promotion cohort, re-check current runtime sync/selector/fallback debt and authoring source layout, then refresh exact policy fields and tests before ready.
 
 ## Handoff
@@ -89,7 +89,7 @@ source_root = schema.authoring_source_root(generation)
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac60342-02a4-83e9-b402-577faeed63ff
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: none after refresh/implementation
 - Next action: paired review

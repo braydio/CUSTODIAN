@@ -1,7 +1,7 @@
 # Awakening: The First Return
 
 **Status:** active opening, production plates in sections 01-09 and authored Road in section 10
-**Last Updated:** 2026-09-26
+**Last Updated:** 2026-10-07
 **Runtime Target:** Godot 4.x (`custodian/`)
 **Runtime Slice:** `res://scenes/awakening_first_return.tscn` (production default selected by App/Boot)
 **Spatial authority:** `res://game/world/awakening/awakening_layout.gd`
@@ -123,25 +123,39 @@ and are hidden when those plates are present; Layout still owns traversal and
 collision carving.
 
 The live scene places a dark, collision-free void plane beneath the plates and
-uses an Awakening-local camera scale. Zone art fades by distance to the
-Operator's current Layout envelope so neighboring complete canvases do not
-intrude at room edges; the 128px blend supports crossing and backtracking.
-Zone fade targets are cached after scene assembly, stationary frames perform no
-fade work, and art at zero alpha is hidden while preserving the existing blend
-distance/curve. Production art remains at native scale and registration. The
-04→05 dogleg uses
-an Asset V2 `full_plate_underlay` presentation sprite (1024×576), centered at
-`(352,-2464)`. Its 96px architectural bleed surrounds the exact union of the
-locked `04_05_A/B/C` Layout rectangles; the fade envelope is still derived by
-merging those rectangles, and the plate does not own traversal or collision.
-The neighboring Reliquary and Dust Lung underlay pixels are registered into
-the connector's room-end bleed. At their 04→05 facing edges, the room plates
-fade down across the existing 128px band inside their Layout envelopes while
-the connector plate fades up across the matching connector envelope. The shared
-registered pixels keep the crossfade reversible without a straight canvas join.
-The source master is a flattened RGB image, so a separate foreground occlusion
-state is intentionally unbound rather than cut from baked lighting/shadows. The
-first five Road modular plate pairs remain pending native-size replacement.
+uses an Awakening-local camera scale. Ordinary zone art still uses distance-based
+visibility management, but two transition areas now have explicit correction
+contracts because the current presentation truth is not acceptable as final.
+
+For 04→05, the exact Dropbox Dust Lung, connector, and Locker sources are
+published through their existing Asset V2 families, but the first post-source
+scene registration is **not final design authority**. A later direct user
+registration reference proves the three pieces were already authored to fit
+together on one axis-aligned RGBA 1502×2048 canvas. Its exact visible bounds are
+Dust `[0,870)×[0,838)`, connector `[258,1300)×[672,1256)`, and Locker
+`[644,1502)×[1182,2048)`, with bottom-to-top draw order
+Dust→connector→Locker. The connector/room overlaps are authored in that shared
+canvas; per-piece rotation is zero. The previously reviewed connector transform
+(scale `0.715951`, rotation `-11.391598°`, center
+`(351.821,-2392.391)`) is preserved only as historical implementation evidence
+and is explicitly superseded by
+`awakening-04-05-registered-composition-correction-v1`. That correction must
+preserve the shared relative layout and may use only one common root transform
+for world placement. Layout's gameplay dogleg/collision remain separate authority,
+the Locker foreground remains deferred unless parity is proven, and the
+specialized Designation Locker remains the interactive P-9 prop.
+
+For 05→06, the lower and later halves already share a precise geometric/art
+overlap but the authority is split: `05_06 = Rect2(-64,-3776,128,32)` plus
+`z06_south_door = Rect2(-64,-3840,128,64)`. Their union is one
+`Rect2(-64,-3840,128,96)` passage, exactly matching the 96px overlap between
+the Dust Lung and Undergate production canvases. Active P0 work consolidates
+that into one semantic lower→upper passage and proves real-Operator traversal
+through the same scene into Zones06–10 without teleport/loading or a visual
+void stripe. No new art is required unless the registered room sources
+themselves prove to contain an actual hole.
+
+The Road of Witnesses modular production plate pairs are already live.
 
 `AwakeningFirstReturn` owns progression and HUD state, and assembles geometry and
 presentation from `AwakeningLayout`. It caches its zone-art fade targets and does
@@ -189,6 +203,22 @@ completion signal fire. The existing RETURN TO POST objective remains in place.
 | 04 | Existing SidearmLocker `(832, -1952)` | Opens, then grants `p9_sidearm` through `InventoryManager` |
 | 05 | Transit lift, lower `(384, -3008)` ⇄ upper `(384, -3424)` | Locks input, dims, relocates, restores. Not a Z-axis system; art can replace the dim with a cage without changing the contract |
 | 06 | Damaged port console `(128, -4016)` | PORT AUTHORITY: SUSPENDED / ROUTE INDEX: UNAVAILABLE / POST STATUS: UNMANNED. Interaction plus HUD plaque, no menu, no system |
+
+### Interaction feedback and console activation
+
+Awakening's per-frame presenter reads the Operator's existing
+`interaction_target` and refreshes the HUD prompt while that target remains
+valid. The HUD retains its two-frame stale-prompt safety lease for ordinary
+callers. `WorldReadoutInteractable` uses a separate HUD-owned, minimum four-
+second readout dwell; target loss and context/overlay suppression clear it, and
+a still-valid target returns to its proximity prompt after the dwell.
+
+The existing `awakening_creche_console_activation_fx` state is consumed as one
+non-looping horizontal 8-frame strip, 128×128 per frame at 8 FPS. It plays once
+on the first Crèche console acknowledgement at the Layout-owned marker
+`(112,144)`, then stops and hides. Re-reading does not replay it, and the debug
+reset re-arms both the console acknowledgement and effect. No new art or baked
+console body was added.
 
 ### Camera reveals
 

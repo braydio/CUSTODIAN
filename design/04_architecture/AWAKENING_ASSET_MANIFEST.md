@@ -189,16 +189,16 @@ Consumer: `res://scenes/awakening_first_return.tscn`.
 
 These are coherent room-specific set-piece families. Per-state frame size overrides are intentional. They are not runtime atlas sheets.
 
-Current consumption audit (2026-09-20): the published Crèche states
+Current consumption audit (2026-10-07): the published Crèche states
 (`alcove_closed`, `alcove_broken`, `alcove_fused`, `alcove_empty`,
-`wall_of_seals`, `relic_table`, `authority_inscription`) and Ambulatory states
-(`service_basin_a`, `inspection_niche_medica`, `inspection_niche_vestment`,
-`broken_mirror_panel`, `hidden_reliquary_panel`) are **BAKED_ONLY** in the live
-production plates. No separate sprite binding is appropriate. Ambulatory
-`service_basin_b` and all states in the Attestation, Reliquary, Dust Lung
-structures, Undergate machinery, and Late Service relay-lamp families are
-**NOT_READY** as standalone runtime assets. Their production scenes may depict
-equivalent architecture; this classification concerns separate asset binding.
+`wall_of_seals`, `relic_table`, `authority_inscription`) and all published
+Ambulatory states, including `service_basin_b`, are **BAKED_ONLY** in the live
+production plates. No separate sprite binding is appropriate. Published Dust
+Lung structure and Undergate machinery states remain **NOT_READY** as standalone
+runtime assets; the production plates may already depict equivalent
+architecture. Attestation and Reliquary states remain unpublished pending
+reconciliation of the current Dropbox archive hash with the immutable intake
+packet. This classification concerns separate asset binding.
 
 ### `awakening_creche_fixtures` — P1
 
@@ -534,3 +534,15 @@ production status.
 13. shared FX families
 
 The point of this order is to make every early batch visibly improve the live beginning while preserving stable semantic contracts for the full production pass.
+
+### Required fixture intake — 2026-10-07
+
+The active required fixture intake is complete at 21/21 published and imported:
+Ambulatory 6/6, Attestation 7/7, Reliquary 3/3, Dust Lung structures 4/4, and
+Undergate machinery 6/6. Asset V2 owns the runtime paths and import sidecars.
+These fixture families remain **NOT_READY** as standalone scene consumers unless
+an existing Layout/scene contract provides a truthful independent role. No
+scene bindings, collision, or interaction authority were added by the intake.
+The exact A2 `attestation_dais` alpha cleanup is limited to Dropbox revision
+`65d22e7369f4c915cdd61` and is documented in
+`custodian/docs/ai_context/reports/assets/attestation_dais_a2_correction_receipt.json`.
