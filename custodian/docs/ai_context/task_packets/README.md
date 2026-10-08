@@ -194,7 +194,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
 - `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
-- `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified. WB25-1 now awaits the authoring-chat refresh with profile `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`, reference `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`, and first-family source `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`.
+- `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified. WB25-1 has consumed that review plus the completed viability counts and is now `ready/auto` on profile `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`, reference `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`, first-family source `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`, and design lock `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -205,7 +205,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 remains refresh-gated: return the passed canonical visual-contract review plus the accepted profile/reference hashes and first-family source hash to the authoring chat, then refresh WB25-1 in place to ready/auto before claim. Every later implementation remains draft until its predecessor and paired review return to the authoring chat.
+WB25-1 is `ready/auto` and may be claimed. Its paired review is `ready/auto` behind it. The final planning seed is 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. Every later implementation remains draft until its predecessor and paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
