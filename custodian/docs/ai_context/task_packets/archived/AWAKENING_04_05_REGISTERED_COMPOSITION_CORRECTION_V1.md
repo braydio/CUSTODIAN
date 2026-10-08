@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-04-05-registered-composition-correction-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-awakening-interaction-feedback-console-activation`
