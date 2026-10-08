@@ -68,11 +68,16 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
 
 ## Result
 
-Return one compact status:
-- `CONTINUING <workstream>` when already in the active claimed worktree;
-- `CLAIMED <workstream>` plus returned worktree when a claim succeeds;
-- `REFRESH REQUIRED <workstream>` plus the exact recorded chat URL when planning
-  is the gate;
-- `HUMAN REVIEW REQUIRED <workstream>` plus exact Authoring chat and Dropbox manifest when the active workstream is waiting on subjective review;
-- `BLOCKED <reason>` when a named continuation cannot proceed;
-- `NO ELIGIBLE AUTO TASK` when the global dispatcher has no eligible work.
+Do not emit a routine user-facing handoff between successfully chained packets.
+Persist the completed packet's `<TASK>_CLAUDE_SUMMARY.md` and keep going.
+
+When the automation actually stops, return one compact status:
+- `CHAIN COMPLETE <workstream>` when the named same-series chain has no successor;
+- `REFRESH REQUIRED` with exact `Authoring Chat`, copyable `Workstream`, and
+  persistent summary path when ChatGPT/user planning is the gate;
+- `HUMAN REVIEW REQUIRED <workstream>` with exact Authoring chat and Dropbox
+  manifest when subjective review is the gate;
+- `BLOCKED <reason>` with the persistent summary path when a technical/safety
+  condition prevents continuation;
+- `NO ELIGIBLE AUTO TASK` only for a general-next invocation whose global queue
+  has no eligible work.
