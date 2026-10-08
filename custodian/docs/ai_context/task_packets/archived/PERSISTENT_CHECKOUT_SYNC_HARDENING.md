@@ -111,10 +111,10 @@
 Required before completion.
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `true`
-- Completion boundary satisfied: `true`
-- Acceptance satisfied: `true`
-- Superseded/legacy production path disposition: `not applicable; no legacy production path introduced`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
 - Evidence: `custodian/tools/validation/persistent_checkout_sync_smoke.py` passed all seven fixture groups; `custodian/tools/validation/operator_art_worktree_smoke.py` passed; `custodian/tools/validation/operator_workbench_ui_smoke.py` passed (optional Textual pilot skipped because its UI requirements are not installed); `custodian/tools/agent/test_workstream.py` passed 38 tests; `python3 custodian/tools/validation/run_validation.py --changed --json` — passed, 25/25 selected tests, complete changed-file coverage.
 
 ## Execution Feedback
