@@ -50,11 +50,12 @@
 
 ## Completion Truth
 
-- Ordinary melee lifecycle state and transaction logic now live in `StandardEnemyMelee`; `enemy.gd` is the shared host and is 4,201 lines (266 fewer than the 4,467-line main baseline at claim).
-- Typed `StandardEnemyMeleeConfig` and base/Grunt/Marine/Savage/Pursuit resources preserve the reviewed defaults and authored scene values. `SavageChain` reads its first-hit windup through the public melee seam.
-- Shared damage, current target, hit resolver, engagement coordinator, reaction authority, presentation, special selection, and `damage_timer`/`damage_interval` remain host or existing ability concerns. No ordinary-melee private fields or transaction helpers remain in active callers; the historical drone archive remains unchanged.
-- Focused standard melee coverage passes for opening strong hit/whiff consumption, target-at-resolution, tracking lock, hit/blocked/parried/dodged outcomes, no-target resolution, contact sources and grace/arc, recovery/redecision, semantic commitment, and the variant cooldown negative control. The ambient Shrumb inherited scene also loads with its base melee config.
-- The required changed-file sweep passed 31/31 selected checks with complete ownership coverage. `git diff --check` passed.
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `/tmp/npa4-changed-validation-final.json` records 31/31 selected checks passed, complete changed-file ownership, zero failures and zero timeouts; focused standard melee and the named packet regressions also passed; `git diff --check` passed.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
@@ -72,17 +73,7 @@
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh reason: none
 - Next action: Start the paired post-land review in a fresh reviewer context after this implementation lands; do not continue this implementation context as reviewer.
 - Blockers or open questions: none
-
-
-- Next workstream: `review-npa-4-standard-enemy-melee-extraction`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
-- Refresh reason: `none`
-- Next action: After NPA-4 lands, launch its paired review in a fresh Codex context through the autonomous paired-review runner if that tooling is landed and reviewed; otherwise use the existing fresh-context review path.
-- Blockers or open questions: `none`
