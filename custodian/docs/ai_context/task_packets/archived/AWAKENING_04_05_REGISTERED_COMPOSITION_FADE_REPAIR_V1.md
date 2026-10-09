@@ -102,3 +102,22 @@ Use the persistent-root CRG only for baseline orientation; the claimed worktree 
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
 - Next action: Claim and complete the paired fresh-context review; inspect the supplied compact evidence and escalate only if it is materially ambiguous or contradicts the locked composition.
 - Blockers or open questions: none. The human-owned visual decision is already locked: preserve layout/order; repair fade only. Objective checks and the compact capture are sufficient to land the implementation. Only the paired reviewer may escalate a new human question if its fresh evidence is materially ambiguous or contradicts the locked composition.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-awakening-04-05-registered-composition-fade-repair-v1`
+- Reviewed on main: `aaa1236840884332b2759e029bb829bfa519fa97`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, runtime, visual, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `awakening-handoff-readiness-art-convergence-v1-r1`
+- Visual evidence decision: The supplied hash-verified five-ROI sheet is clear and consistent with the previously locked composition; live registered-child probes and fresh traversal checks show no wrong-location floor disappearance. The existing human art-direction lock remains valid; no new human decision is required.

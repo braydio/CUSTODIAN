@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-awakening-04-05-registered-composition-fade-repair-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `awakening-04-05-registered-composition-fade-repair-v1`
@@ -39,3 +39,35 @@
 - The user has already accepted layout and draw order. That decision is not pending and must not be re-requested. A reviewer finding that merely prefers a different position/composition is invalid unless the implementation actually changed the locked transform/pixels/order.
 - The defect under review is presentation-alpha ownership, including the stale/vacuous lower→upper hidden-underlay test.
 - The user playtest report is guardrail evidence only because it came from `game.tscn`, not the Awakening scene. Do not claim it reproduces the connector fade.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Fresh separately spawned reviewer reconstructed the target from durable packet/design/runtime evidence. Six focused runtime/asset/renderer checks pass; late-seams none-mode passes 68 assertions. Supplied five-ROI sheet hash matches its manifest and all five void checks pass. No blocking defect, material evidence gap, or new human visual decision. Final review-artifact validation passes 2/2 with complete coverage; git diff --check passes. The manifest-emitted delete-after-review cleanup completed with status=deleted and latest_pointer_removed=true. R0-01 tracks stale design/current-state prose for the explicitly responsible art-convergence successor.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: Initial artifact lookup used the run root; published files are under its artifacts subdirectory. Fresh-worktree import also produced nine unrelated reference-art .import sidecars. Concurrent main changes caused a generated README queue-block merge conflict during finish; regenerating the index from the merged packet tree preserved both lanes.
+- Root cause / contributing factors: Manifest lists artifact names/source paths without explicit remote child paths; Godot imports all referenced art in a fresh worktree.
+- Prevention / pipeline improvement: Resolve the artifacts subdirectory before fetching; classify and remove only generated untracked import sidecars before finish.
+- Tooling / docs drift discovered: R0-01 — stale Awakening design/current-state prose still calls the repaired fade/correction review pending.
+- Follow-up: awakening-handoff-readiness-art-convergence-v1-r1
+- What worked: Reusing the hash-verified compact sheet avoided duplicate renderer captures; focused reruns independently confirmed live coverage.
+
+## Next Handoff
+
+- Next workstream: awakening-handoff-readiness-art-convergence-v1-r1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Refresh reason: none
+- Next action: Re-check dispatcher after this review archives, claim the art-convergence successor, and reconcile R0-01 in its existing documentation scope.
+- Blockers or open questions: none for this review; successor owns its distinct seam/handoff contract and any human decision exposed there.
