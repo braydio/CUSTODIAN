@@ -184,9 +184,9 @@ Author NPA-4+ against landed live main so the program learns from the actual ext
 
 NPA-3 remains refresh-gated. Bring the passed NPA-2 implementation/review evidence back to the planning chat before promoting the chain packet; do not let an execution agent silently freeze provisional private APIs.
 
-## Measured Baseline
+## Program-Start Measured Baseline
 
-Reviewed `main@02ca0025b8`:
+Historical migration baseline reviewed at `main@02ca0025b8`:
 
 - `enemy.gd`: ~4,958 lines.
 - `combat_drone.gd`: ~656 lines and independent `CharacterBody2D` ally runtime.
