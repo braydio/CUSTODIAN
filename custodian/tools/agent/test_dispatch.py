@@ -1,6 +1,8 @@
 """Temporary-repository tests for task discovery, claims, and locking."""
 
+import contextlib
 import importlib.util
+import io
 import json
 import os
 import subprocess
@@ -341,12 +343,51 @@ class DispatchTests(unittest.TestCase):
         oid = self._claim_oid(self.repo, "interrupted claimant one")
         git(self.repo, "push", "origin", f"{oid}:refs/heads/dispatch-claims/interrupted")
         git(self.repo, "fetch", "origin")
+
+        first_audit = dispatch.audit(self.repo)
+        second_audit = dispatch.audit(self.repo)
+        self.assertEqual(first_audit, second_audit)
+        self.assertEqual(first_audit["raw_active_markdown_count"], 1)
+        self.assertEqual(first_audit["claimable_auto_count"], 0)
+        self.assertEqual(first_audit["class_counts"], {"invalid_recovery": 1})
+        self.assertEqual(first_audit["interrupted_dispatch_claim_count"], 1)
+        self.assertEqual(first_audit["claim_only_orphan_dispatch_claim_count"], 0)
+        row = first_audit["packets"][0]
+        self.assertEqual(row["workstream"], "interrupted")
+        self.assertEqual(row["actual_class"], "invalid_recovery")
+        self.assertFalse(row["eligible_now"])
+        self.assertFalse(row["claim_next_eligible"])
+        self.assertIn("remote dispatch claim interrupted; recovery required", row["reasons"])
+
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("interrupted — remote dispatch claim interrupted; recovery required", rendered)
-        self.assertIn("BLOCKED", rendered)
+        self.assertIn("INVALID/RECOVERY (1)", rendered)
         with self.assertRaisesRegex(dispatch.DispatchError, "recovery required"):
             dispatch.claim(self.repo, "interrupted", "codex", False)
+        with mock.patch.object(dispatch, "_load_workstream", side_effect=AssertionError("ineligible task started")):
+            self.assertEqual(dispatch.claim(self.repo, None, "codex", True), 0)
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/interrupted"))
         self.assertNotIn("refs/remotes/origin/agent/interrupted", git(self.repo, "for-each-ref", "--format=%(refname)", "refs/remotes/origin/agent"))
+
+    def test_claim_only_orphan_is_accounted_separately_from_packet_classes(self):
+        oid = self._claim_oid(self.repo, "orphaned claim without packet")
+        git(self.repo, "push", "origin", f"{oid}:refs/heads/dispatch-claims/orphan-only")
+        git(self.repo, "fetch", "origin")
+
+        first_audit = dispatch.audit(self.repo)
+        second_audit = dispatch.audit(self.repo)
+        self.assertEqual(first_audit, second_audit)
+        self.assertEqual(first_audit["raw_active_markdown_count"], 0)
+        self.assertEqual(first_audit["class_counts"], {})
+        self.assertEqual(first_audit["interrupted_dispatch_claim_count"], 1)
+        self.assertEqual(first_audit["claim_only_orphan_dispatch_claim_count"], 1)
+        self.assertEqual(
+            [item["workstream"] for item in first_audit["claim_only_orphan_dispatch_claims"]],
+            ["orphan-only"],
+        )
+        self.assertEqual(first_audit["claimable_auto_count"], 0)
+        self.assertIn("INVALID/RECOVERY (1)", dispatch.status(self.repo, output=False))
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", "refs/heads/dispatch-claims/orphan-only"))
 
     def test_remote_claim_with_agent_branch_is_claimed(self):
         self.add_packet("claimed-with-marker", dispatch_value="auto")
@@ -373,14 +414,21 @@ class DispatchTests(unittest.TestCase):
         def run(repo):
             try:
                 ready.wait()
-                with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=start)), mock.patch("builtins.print"):
+                # `builtins.print` is process-global; concurrently patching it
+                # from both threads can leave it replaced after this test and
+                # suppress output in a later test module in the same process.
+                with mock.patch.object(dispatch, "_load_workstream", return_value=mock.Mock(start=start)):
                     dispatch.claim(repo, "race-task", "codex", False)
                 outcomes.append("claimed")
             except (dispatch.DispatchError, dispatch.WorkflowControlError) as error:
                 outcomes.append(str(error))
         threads = [threading.Thread(target=run, args=(repo,)) for repo in (self.repo, second)]
-        for thread in threads: thread.start()
-        for thread in threads: thread.join()
+        # Capture the two expected claim receipts with one scoped stdout
+        # redirect. Concurrent mock.patch("builtins.print") contexts race on
+        # process-global state and can suppress output in later test modules.
+        with contextlib.redirect_stdout(io.StringIO()):
+            for thread in threads: thread.start()
+            for thread in threads: thread.join()
         self.assertEqual(len(calls), 1)
         self.assertEqual(sum(value == "claimed" for value in outcomes), 1)
         self.assertEqual(len(outcomes), 2)

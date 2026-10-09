@@ -8,7 +8,11 @@ Audit, index, and claim continue to share dispatcher eligibility. Ready V2 imple
 
 Validation passed: 168 focused tests across seven modules (run as isolated module processes); `validate_review_pairing.py` (48 pairs); packet index; `check_ai_context.py --json` (zero findings); targeted authoring preflight; and `git diff --check`. An earlier combined test process had capture-order failures in `test_run_trace`/authoring fixtures; both modules and all other focused modules passed separately. Upstream main advanced several times during the task, including NPA-4 completion; the final audit was rerun against merged `origin/main`.
 
-No claimed branch, worktree, dispatch lock, or uncertain completion record was deleted or released. Attached clean branches and the dirty Vehicle Field Scout branch with a unique commit remain protected; the ledger records each branch's ancestry, attachment, and disposition. The active packet is marked complete and will be archived by the normal workstream finish lifecycle.
+No claimed branch, worktree, dispatch lock, or uncertain completion record was deleted or released. Attached clean branches and the dirty Vehicle Field Scout branch with a unique commit remain protected; the ledger records each branch's ancestry, attachment, and disposition. The original implementation packet is archived complete. Correction 1 is being finalized through its own workstream lifecycle; its paired independent re-review remains the next gate.
+
+## Correction 1 status
+
+The bounded correction for original review findings R0-01, R0-02, and R0-03 is implemented in `task-packet-queue-reconciliation-v1-review-corrections-1`. The ledger now distinguishes unbound historical live counts from exact Git-tree inventories, records reproducible identity deltas, and refreshes the live dispatcher snapshot at `origin/main@1aaeba23d3ad1a758d53e1224045951ff543e227`. The correction candidate prevents interrupted temporary claims from appearing eligible, counts active interrupted packets once, and accounts for claim-only orphans separately. The exact committed CI command passed 122 tests. The original findings are not considered closed until the paired fresh-context re-review passes.
 
 ## Process Feedback
 

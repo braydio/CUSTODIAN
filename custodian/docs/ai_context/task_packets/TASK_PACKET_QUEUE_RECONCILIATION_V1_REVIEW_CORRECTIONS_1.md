@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: task-packet-queue-reconciliation-v1-review-corrections-1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P0
 - Depends on: review-task-packet-queue-reconciliation-v1
@@ -49,3 +49,36 @@ Address only R0-01, R0-02 and R0-03. Keep original review finding IDs and receip
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Next action: Land/archive this correction, then start the paired re-review in a fresh context.
 - Blockers or open questions: none; no human planning decision required.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: R0-01 adversarial active-packet and claim-only orphan fixtures pass; interrupted active packets are counted once, suppressed from named/next eligibility, and recovery refs remain. R0-02 exact committed CI command passed 122 tests. R0-03 exact Git-tree inventory script reproduced all listed counts and identity deltas: six additions and zero removals between the claim baseline and landed implementation. Full closeout gates and changed-file validation are recorded in the correction summary. Independent review remains required to close the original findings.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The exact combined CI command exposed concurrent mutation of process-global output capture; the initial live queue counts also lacked a bound Git/ref snapshot.
+- Root cause / contributing factors: Two threads patched the same global print function, and the implementation summary retained live counts without exact source/ref identity.
+- Prevention / pipeline improvement: Use one scoped stdout redirect around concurrent workers; bind source inventories to immutable Git trees and refresh live refs at a named main SHA.
+- Tooling / docs drift discovered: none
+- Follow-up: `review-task-packet-queue-reconciliation-v1-review-corrections-1`
+- What worked: Adversarial temporary-repository fixtures and reproducible tree inventory made each original finding falsifiable.
+
+## Next Handoff
+
+- Next workstream: `review-task-packet-queue-reconciliation-v1-review-corrections-1`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Refresh reason: none
+- Next action: After this correction archives complete, claim and independently re-review R0-01, R0-02, and R0-03 in a fresh reviewer context.
+- Blockers or open questions: Paired re-review is required before original findings can be closed.
