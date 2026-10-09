@@ -149,15 +149,15 @@ The requested **read-only local source/test audit has been returned** and is rec
 
 ## Conceptual task-packet roadmap
 
-All slots remain blocked pending this item's audit and lock, and existing REMAP, procgen and NPA program ownership checks.
+CS-F14-A read-only evidence is satisfied. **Only the narrow CS-F14-B abstract activity foundation is authorized** for packet authoring by the October 9 V1 behavioral decision; its new implementation/review pair remains **draft/manual pending local authoring preflight**. CS-F14-C/D/E are not yet authorized and still require evidence plus REMAP, procgen and NPA owner reconciliation.
 
 - [CS-F14-A: authority/interest/handoff parity and performance baseline](PACKET_ROADMAP.md#cs-f14-a) (proposed)
-- [CS-F14-B: deterministic sector-activity state and simulation rules](PACKET_ROADMAP.md#cs-f14-b) (proposed)
+- [CS-F14-B: deterministic abstract geographic-group activity](PACKET_ROADMAP.md#cs-f14-b) (design locked; [draft implementation packet](../../../custodian/docs/ai_context/task_packets/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) and [paired review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) awaiting authoring validator)
 - [CS-F14-C: entity identity, physical→abstract handoff and reification](PACKET_ROADMAP.md#cs-f14-c) (proposed)
 - [CS-F14-D: persistent history, save/restore and world consequence reconciliation](PACKET_ROADMAP.md#cs-f14-d) (proposed)
 - [CS-F14-E: two-sector playable proof, instrumentation, soak and integration closeout](PACKET_ROADMAP.md#cs-f14-e) (proposed)
 
-**A's read-only diagnostic purpose is now satisfied by the supplied local agent audit**; do not author a duplicate audit-only implementation packet. A may be re-scoped to newly required lifecycle tests **only after decision lock**. B and C may change sequence after F15 stable-location semantics are agreed; D must consume REMAP-3 rather than duplicate persistence. This is **not an executable packet sequence**.
+**A's read-only diagnostic purpose is satisfied. B is approved for the isolated synthetic-location state-only implementation after packet-pair authoring preflight.** C's real reification contract must be refreshed from reviewed B and F15's actual location/streaming owner; D must consume REMAP-3 rather than duplicate persistence. Do not mistake B design authorization for an implemented system, or authorize C–E automatically.
 
 ## Decision lock record
 
