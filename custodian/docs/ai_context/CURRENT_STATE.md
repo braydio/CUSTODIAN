@@ -1347,12 +1347,18 @@ Documentation updates this session:
   authored ambush requests the dash through an explicit ability seam. Quick and
   charged behavior, hit telemetry, and the scene's tuned values are preserved.
 - Savage pounce lives in the actor-local `SavagePounce` module with typed
-  `SavagePounceConfig` defaults bound by `enemy_savage.tscn`. Its fresh paired
-  review passed with zero findings and landed on main. NPA-3 now extracts the
-  two-hit lifecycle into `SavageChain` with typed `SavageChainConfig`; generic
-  cadence, first-hit damage/windup, and standard melee contact geometry remain
-  host-owned. Pounce-first attack selection and fixed-step priority are
-  preserved.
+  `SavagePounceConfig` defaults bound by `enemy_savage.tscn`. `SavageChain`
+  now owns the reviewed two-hit lifecycle and typed chain-only tuning. NPA-3's
+  implementation changed-file sweep passed 31/31 and its independent fresh
+  Codex review found zero defects, gaps, or other findings. NPA-4 is authored as
+  `npa-4-standard-enemy-melee-extraction`: ordinary melee commitment/windup,
+  committed contact context, hit-or-whiff/cancel, recovery/redecision and
+  semantic commitment state move behind one standard-combat-agent authority.
+  Actor damage, shared hit resolution, reactions, presentation and special
+  abilities remain separate. Live remeasurement shows `damage_timer` /
+  `damage_interval` are no longer baseline BSM melee cadence, so NPA-4
+  deliberately leaves that special/compatibility state outside ordinary melee.
+  Pounce-first attack selection and fixed-step priority remain preserved.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
