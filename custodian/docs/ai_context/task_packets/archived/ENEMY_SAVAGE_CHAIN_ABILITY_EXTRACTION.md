@@ -46,9 +46,9 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: yes; the Savage two-hit lifecycle and six chain-only tuning values have one actor-local `SavageChain` / `SavageChainConfig` authority.
-- Completion boundary satisfied: yes; generic cadence, first-hit damage/windup and shared melee contact remain host/shared authority, and Savage pounce behavior was preserved.
-- Acceptance satisfied: yes; phase state was removed from `Enemy`, timing/hit/guard-pressure behavior and pounce ordering passed focused regression coverage, and validation ownership includes the new modules.
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
 - Superseded/legacy production path disposition: n/a; the former actor-owned chain implementation was removed.
 - Evidence: `enemy_savage_pounce`, `savage_runtime`, `combat_exchange_commitment`, `enemy_hit_spatial_telemetry`, and `operator_guard_flow` focused validations passed; required changed-file sweep recorded at closeout; `git diff --check` passed.
 
