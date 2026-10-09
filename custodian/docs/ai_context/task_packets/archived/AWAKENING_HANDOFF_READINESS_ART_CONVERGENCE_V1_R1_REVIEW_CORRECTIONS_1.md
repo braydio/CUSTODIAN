@@ -57,7 +57,7 @@
 - Evidence: The registration smoke now derives exact grow-64 rectangles from all seven ordinary `AwakeningLayout.ZONES` entries and checks underlay/foreground canvas, global bounds, registration, and parity. It explicitly verifies the locked shared 04/05 composition root/layers, source identities and SHA-256 values, complete connector silhouette, hidden legacy plates, and absent Locker foreground. In-smoke negative controls reject Layout-envelope, sprite-transform, foreground-canvas, composition-child, and source-state mutations. All six correction-packet focused checks passed individually; `git diff --check` passed.
 
 
-## Independent Review Receipt
+## Independent Review
 
 - Status: `passed`
 - Review workstream: `review-awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
