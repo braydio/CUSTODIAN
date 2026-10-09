@@ -428,6 +428,18 @@ metadata, and correction/re-review packets; reviewed implementation and
 unrelated files remain prohibited. Dispatch rejects auto review packets with a
 missing/malformed override and ready packets with stale validation script
 paths. Ad hoc review-only tasks retain the explicit no-mutation override.
+Paired post-land reviews now launch through
+`custodian/tools/agent/paired_review_runner.py <review-workstream-id>` from the
+coordination checkout. The runner preflights the installed Codex CLI and exact
+review eligibility before claim, then uses the dispatcher's claim receipt to
+start `codex exec --ephemeral` in that review worktree. Sanitized JSONL/stderr,
+final-message capture, run metadata, and recovery cards live under the shared
+Git directory at `custodian-review-runs/`, outside disposable worktrees. The
+default local permission profile is `workspace-write` with automatic approval
+routing and an additional write grant only for that run's evidence directory.
+The runner never selects global work, changes `workstream.py finish`, or takes
+over review landing authority. A post-claim process failure preserves the
+claimed branch/worktree and reports its durable recovery evidence.
 
 ## Road Semantics V2 (2026-09-27)
 
