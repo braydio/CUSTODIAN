@@ -212,24 +212,25 @@
 
 **F14: [Living-world simulation, interest management and unloaded-sector continuity](F14_LIVING_WORLD_SIMULATION.md)**
 
-> **Status:** NEW P0 AUDIT FOCUS, NOT LOCKED. Live strategic kernel and actor throttling foundations exist; unloaded actor continuity is not established. These five slots are proposed architecture boundaries, not task packets. See [F14 evidence and proposed local audit](F14_LIVING_WORLD_SIMULATION.md). This lane is separate from HUD F03.
+> **Status:** P0 AUDIT FOCUS, NOT LOCKED. **Read-only local characterization received: six focused Godot runs reported passing; no unloaded actor continuity test exists in that set.** The first diagnostic purpose of CS-F14-A is fulfilled by this receipt and should not generate a duplicate agent packet. Remaining slots are conceptual and non-executable. See [F14 local evidence and gaps](F14_LIVING_WORLD_SIMULATION.md). F15 owns stable geographic location identity.
 
 ### CS-F14-A
 - **Intent:** Characterize interest tier, macro clock, actor serialization/identity, streaming, history, and current load/unload parity; profile baseline.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_WORLD_SIMULATION_HANDOFF_BASELINE.md` (**not created**).
-- **Gate:** F14 item-level decision lock; ideally a read-only local agent audit with focused existing tests first.
+- **Status:** READ-ONLY EVIDENCE FULFILLED by user-supplied local audit, 2026-10-08 (six reported passing runs). **Do not create a duplicate implementation packet.**
+- **Remaining optional scope:** New tests only for actual descendant/noise processing and real unload/re-entry identity behavior, if those tests are selected during F14 decision lock. No claimed runtime reification proof.
 - **Acceptance sketch:** exact current ownership map and falsifiable gap list, no new implementation or duplicate system.
 
 ### CS-F14-B
 - **Intent:** Create the smallest deterministic, sector-scoped abstract-activity model for unloaded areas only where existing macro owners cannot serve.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_SECTOR_ACTIVITY_FOUNDATION.md` (**not created**).
-- **Gate:** A; explicit state/schema/tick and abstraction lock; reuse current `WorldSimulationRuntime` and `SimulationKernel`.
+- **Gate:** A's baseline report accepted as evidence (not as implementation), explicit abstract state/schema/tick and **F15 geographic location-ID interface** lock; reuse current `WorldSimulationRuntime` and `SimulationKernel`. Initial synthetic two-location unit proof need not wait for full world art/procgen expansion.
 - **Acceptance sketch:** inactive sector changes reproducibly without loading scene; no autonomous second clock or parallel resource owner.
 
 ### CS-F14-C
 - **Intent:** Stable entity/group identity and active↔abstract representation handoff with no duplicate spawn or identity reset.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_ENTITY_REIFICATION_HANDOFF.md` (**not created**).
-- **Gate:** A/B + NPA and procgen streaming ownership; exact reentry contract.
+- **Gate:** accepted baseline report, B (if authorized), NPA/procgen scene lifecycle, **F15 stable geographic identity**, and exact reentry/state-ownership contract. Do not conflate presentation chunk unload with actor unload.
 - **Acceptance sketch:** deterministic loaded/unloaded crossings preserving consequences, goals and counts; no disabled physical actor still secretly doing loaded actions.
 
 ### CS-F14-D
@@ -239,7 +240,7 @@
 - **Acceptance sketch:** deterministic continuation and one outcome for each real event after restore, observability reasons.
 
 ### CS-F14-E
-- **Intent:** Two-sector living-world vertical slice with active/inactive return, failure cases, perf caps and docs closeout.
+- **Intent:** Two-geographic-location living-world vertical slice, with active/inactive return, causal history, failure cases, perf budgets and docs closeout. Facility macro sector IDs are not geographic regions.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_LIVING_WORLD_PROOF_CLOSEOUT.md` (**not created**).
 - **Gate:** all *actually approved* F14 predecessors; no hypothetical tasks treated as dependencies.
 - **Acceptance sketch:** observer can leave one sector, encounter a meaningful repeatable change on return, and inspect the event cause; no duplicate actors; focused Godot regression suite green.
