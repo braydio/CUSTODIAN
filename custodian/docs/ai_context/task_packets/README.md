@@ -83,7 +83,6 @@ normal closeout.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md` — Independently verify the newly landed F14-B group activity slice against its design lock and actual test evidence, with a clean fresh context; do not impleme...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
-- `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_2.md` — Independently verify R1-01 and remaining R0-02 physical saved-document proof without regressing accepted WB25-2 behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -194,7 +193,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
 - `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified.
 - WB25-1 is complete. Its first review found one blocking workflow-projection defect (R0-01); the bounded correction landed and its fresh re-review passed with no remaining findings. Generation-aware targets, 2.5D source paths, direction workspaces and backend-derived saved creation readiness are now accepted predecessor authority.
-- WB25-2 has consumed that landed state and is `ready/auto`. It owns guided NEW/IMPORT ingress, the narrow generation-aware New Animation adaptation, 128px SourceArtService production proof, target-bound Source Session provenance, resumable direction packages and a hard no-runtime-promotion boundary.
+- WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved the original Source Session, direction progress, collision, legacy-96, and publication boundaries. WB25-3 remains draft/refresh-required until the recorded authoring chat refreshes the accepted Source Session/Workbench handoff and Art Agent seams.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -205,7 +204,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is complete/reviewed after correction R0-01. WB25-2 is `ready/auto`; its paired review is `ready/auto` behind it. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-3 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction passed its fresh paired review. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-3 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
