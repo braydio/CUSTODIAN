@@ -222,8 +222,15 @@ ordinary edit/test loop.
   same Godot project. Stop, wait for, or reuse the in-flight result instead.
 - Avoid tight process polling. If a healthy validation or capture is making
   progress, wait a reasonable interval before checking it again.
-- If code-review-graph is unavailable, fall back to targeted symbol/file reads.
-  Do not compensate by dumping entire large files or broad repository searches.
+- In an ephemeral/linked worktree, make at most one cheap code-review-graph
+  attempt. If it reports `missing_graph`, `not_ready`, empty/unmapped or stale
+  coverage, fall back immediately to targeted symbol/file reads. Do not cold-build
+  a worktree-local graph merely to satisfy graph-first guidance. The persistent
+  coordination-root graph may be used for baseline architecture only; verify every
+  implementation/review fact against the current worktree.
+- When the current task packet contains a bounded `## Context Pack`, generate it
+  once from the claimed worktree with `scripts/ai/pack-context.sh task ...`.
+  Prefer that scoped Repomix dossier over broad file dumps.
 - If the user switches to another substantial task mid-implementation, checkpoint
   the current task cleanly before switching. Do not interleave two substantial
   implementation/validation loops in the same worktree unless explicitly required.
@@ -237,21 +244,24 @@ Before editing, run this retrieval pipeline:
 
 1. Define the work surface.
    Identify the exact runtime area, doc area, or asset area being changed.
-2. Pull the active authority.
+2. If the task packet supplies `## Context Pack`, generate that bounded Repomix
+   snapshot from the current checkout once. Do not substitute a whole-repository
+   pack and do not commit the generated `.ai/task-context/` file.
+3. Pull the active authority.
    Read the matching file in `../design/` first.
-3. Pull current state.
+4. Pull current state.
    Read `docs/ai_context/CURRENT_STATE.md` and `docs/ai_context/FILE_INDEX.md`.
-4. Decide whether a task packet adds value.
+5. Decide whether a task packet adds value.
    Skip it for narrow, low-risk, single-session work. Use the compact template when scope, acceptance, or deferred work needs a durable record. Expand it for high-risk, multi-session, architecture, ownership, migration, or substantial handoff work.
-5. Pull validation and prompt guidance.
+6. Pull validation and prompt guidance.
    Read `docs/ai_context/VALIDATION_RECIPES.md` and any matching prompt template in `docs/ai_context/prompts/`.
-6. Pull adjacent context.
+7. Pull adjacent context.
    Read neighboring docs, scene files, READMEs, and directly related scripts/assets.
-7. Do not consult historical pre-Godot material unless the task explicitly
+8. Do not consult historical pre-Godot material unless the task explicitly
    requires archaeology or an active document identifies a specific unresolved
    migration question. Historical material never overrides active design or
    runtime.
-8. Record any mismatch immediately.
+9. Record any mismatch immediately.
    If names, paths, behavior, or ownership disagree, treat that as drift and remediate before or alongside the main change.
 
 Minimum adjacency check:

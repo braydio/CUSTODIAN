@@ -54,6 +54,28 @@ coherent effort.
 - Task overrides: `none` or list each as `TASK OVERRIDE: ...`
 - Deferred:
 
+## Context Pack
+
+Optional. Use this only when the work surface spans enough files/directories that
+one bounded Repomix snapshot will reduce repeated discovery. Omit it for narrow
+tasks.
+
+- Repomix: `recommended | none`
+- Include: `<comma-separated repo-relative files/globs; keep this bounded>`
+- Purpose: `<what architectural/source context this pack should provide>`
+
+When `recommended`, the execution agent runs:
+
+```bash
+scripts/ai/pack-context.sh task "<Include value>" "<workstream-id>"
+```
+
+The command runs in the **claimed worktree** and writes ignored output under
+`.ai/task-context/`. Do not point task-specific Repomix at the persistent
+coordination checkout. Do not use broad patterns such as `custodian/**` when
+the packet can name the actual owners/consumers/tests. The pack is a convenience
+snapshot; exact live files and the current worktree diff remain authority.
+
 ## Refresh Planning Authority
 
 Include this block when a packet is dependency/refresh-gated or when landed
@@ -103,6 +125,10 @@ Required quality:
   this task. Do not paste the generic repository reading list.
 - **Work surface** names the primary owner plus expected consumers/tests. It is a
   starting boundary, not permission to ignore a proven dependency.
+- **Context Pack** is optional and should be used when a bounded set of source,
+  design and test paths would materially reduce repeated discovery. Prefer a
+  handful of specific files/directories/globs over a whole-repository pack.
+  Repomix output is ignored task context, not evidence or repository authority.
 - **Change** defines behavior/contract to implement. Be exact about externally
   observable behavior and ownership; let Codex choose local private helpers when
   the repository offers a cleaner seam.
@@ -222,6 +248,8 @@ Before setting `Status: ready`:
 [ ] Existing Workstream identity was reused when appropriate.
 [ ] Current measured state and Evidence are factual, not speculative.
 [ ] Task-specific authority and Work surface identify the real owners.
+[ ] If a Context Pack is present, its include globs are bounded to relevant
+    owners/consumers/tests and can be generated from the claimed worktree.
 [ ] Change, Preserve, and Non-goals bound the blast radius.
 [ ] Acceptance is measurable.
 [ ] Validation names focused checks before broad checks.
