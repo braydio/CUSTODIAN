@@ -83,10 +83,10 @@ func _test_standard_melee_range_isolation() -> void:
 	falcon.cooldown_timer = 0.0
 	falcon.recent_parry_timer = 0.0
 	_assert_true(is_equal_approx(float(grunt.call("_get_attack_range", target)), 184.0), "Falcon eligibility should still expose its 184px AI launch range")
-	grunt.call("_capture_pending_attack_context")
-	_assert_true(is_equal_approx(float(grunt.get("_pending_attack_range_px")), 40.0), "ordinary melee must capture the 40px player contact range")
-	_assert_true(String(grunt.get("_pending_attack_range_source")) == "standard_melee", "ordinary player melee should identify its contact-range source")
-	var spatial := grunt.call("_get_pending_attack_spatial_context", target) as Dictionary
+	var melee := grunt.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
+	var spatial := melee.get_contact_context(target, Vector2.RIGHT)
+	_assert_true(is_equal_approx(float(spatial.get("base_contact_range_px", 0.0)), 40.0), "ordinary melee must capture the 40px player contact range")
+	_assert_true(String(spatial.get("contact_range_source", "")) == "standard_melee", "ordinary player melee should identify its contact-range source")
 	_assert_true(not bool(spatial.get("spatial_valid", true)), "159.939px ordinary melee must be rejected")
 	_assert_true(is_equal_approx(float(spatial.get("allowed_range_px", 0.0)), 56.0), "ordinary melee grace should resolve to 56px")
 	_assert_true(is_equal_approx(float(spatial.get("base_contact_range_px", 0.0)), 40.0), "telemetry should retain base melee contact range")

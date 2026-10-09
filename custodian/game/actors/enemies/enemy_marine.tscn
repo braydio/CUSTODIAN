@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://enemy_marine_001"]
+[gd_scene load_steps=9 format=3 uid="uid://enemy_marine_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -9,12 +9,15 @@
 
 [ext_resource type="Resource" path="res://game/actors/enemies/abilities/configs/marine_dash_default.tres" id="7_dash"]
 
+[ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/standard_enemy_melee_marine.tres" id="8_melee_config"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_marine"]
 size = Vector2(28, 28)
 
 [node name="EnemyMarine" type="CharacterBody2D"]
 z_index = 2
 script = ExtResource("1_enemy")
+standard_enemy_melee_config = ExtResource("8_melee_config")
 enemy_name = "MARINE"
 speed = 76.0
 health = 96.0
@@ -22,7 +25,6 @@ max_health = 96.0
 damage = 15.0
 base_tint = Color(0.38, 0.48, 0.52, 1)
 melee_impact_audio_profile = &"robot_metal"
-attack_windup_duration = 0.45
 material_drop_min = 2
 material_drop_max = 4
 custom_enemy_animation_set = "enemy_marine"

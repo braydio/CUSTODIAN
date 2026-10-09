@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-4-standard-enemy-melee-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-enemy-savage-chain-ability-extraction`
@@ -47,7 +47,36 @@
 - Task overrides: `none`
 - Deferred: NPA-5 reaction/posture/parry-critical authority; NPA-6 death/corpse/loot; explicit procgen variant attack-cooldown design/correction; later shared-family convergence.
 
-## Handoff
+
+## Completion Truth
+
+- Ordinary melee lifecycle state and transaction logic now live in `StandardEnemyMelee`; `enemy.gd` is the shared host and is 4,201 lines (266 fewer than the 4,467-line main baseline at claim).
+- Typed `StandardEnemyMeleeConfig` and base/Grunt/Marine/Savage/Pursuit resources preserve the reviewed defaults and authored scene values. `SavageChain` reads its first-hit windup through the public melee seam.
+- Shared damage, current target, hit resolver, engagement coordinator, reaction authority, presentation, special selection, and `damage_timer`/`damage_interval` remain host or existing ability concerns. No ordinary-melee private fields or transaction helpers remain in active callers; the historical drone archive remains unchanged.
+- Focused standard melee coverage passes for opening strong hit/whiff consumption, target-at-resolution, tracking lock, hit/blocked/parried/dodged outcomes, no-target resolution, contact sources and grace/arc, recovery/redecision, semantic commitment, and the variant cooldown negative control. The ambient Shrumb inherited scene also loads with its base melee config.
+- The required changed-file sweep passed 31/31 selected checks with complete ownership coverage. `git diff --check` passed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: Initial focused validation caught a missing host release method, a malformed conditional, and an attempted call to a nonexistent facing API; these were corrected. The commitment regression fixture initially used a plain Node2D without a physics RID; it now uses CharacterBody2D. The first changed sweep exposed two changed callers without manifest ownership, which were registered. A procgen spawn integration check timed out at its 180-second cap when assigned the ambient scene; that scene is now loaded directly by the focused smoke, and the final changed sweep passes.
+- Root cause / contributing factors: Extraction removed a shared token helper together with the ordinary transaction; the new fixture did not initially satisfy the perception component's physics-query contract; ownership metadata for newly changed caller paths was incomplete.
+- Prevention / pipeline improvement: Keep shared engagement token release at the Enemy host boundary, use physics-body fixtures wherever perception queries can run, and register each changed scene/source against the narrowest relevant validation owner before the changed-file sweep. Fixed in scope.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Public semantic APIs kept reaction/commitment regressions independent of private transaction fields.
+
+## Next Handoff
+- Next workstream: `review-npa-4-standard-enemy-melee-extraction`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Refresh reason: none
+- Next action: Start the paired post-land review in a fresh reviewer context after this implementation lands; do not continue this implementation context as reviewer.
+- Blockers or open questions: none
+
 
 - Next workstream: `review-npa-4-standard-enemy-melee-extraction`
 - Next packet state: `dependency-gated`

@@ -191,8 +191,7 @@ func _test_debug_snapshot() -> void:
 func _reset_relaxed_patrol() -> void:
 	_grunt._recoil_timer = 0.0
 	_grunt._stagger_timer = 0.0
-	_grunt._attack_windup_timer = 0.0
-	_grunt._pending_attack_id = ""
+	(_grunt.get_standard_enemy_melee_ability() as StandardEnemyMelee).cancel(&"interrupted", &"test_reset")
 	_grunt._grunt_weapon_posture = Enemy.GruntWeaponPosture.RELAXED
 	_grunt._grunt_expression_action = &""
 	_grunt._grunt_expression_timer = 0.0

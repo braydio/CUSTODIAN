@@ -31,7 +31,7 @@ func start() -> bool:
 	if host == null or config == null or not host.savage_chain_enabled or is_active():
 		return false
 	phase = &"windup_1"
-	timer = maxf(0.01, host.attack_windup_duration)
+	timer = maxf(0.01, host.get_standard_enemy_melee_windup_duration())
 	direction = host.global_position.direction_to(
 		(host.target as Node2D).global_position
 	) if host.target is Node2D else host.get_ability_facing()

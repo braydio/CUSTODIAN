@@ -138,8 +138,11 @@ func _run() -> void:
 	grunt.target = operator
 	grunt.global_position = Vector2.ZERO
 	operator.global_position = Vector2(500.0, 0.0)
-	grunt.call("_start_attack_windup", 5.0, false)
-	grunt.call("_execute_queued_attack")
+	var standard_melee := grunt.get_standard_enemy_melee_ability() as StandardEnemyMelee
+	standard_melee.config.windup_duration = 0.01
+	if not standard_melee.try_start():
+		failures.append("standard melee owner did not begin audit whiff probe")
+	standard_melee.tick(0.02)
 	if int(observatory.counters.get("enemy_attack_whiffed_out_of_range", 0)) != 1:
 		failures.append("enemy range-whiff reason counter missing")
 	var whiffs: Array = observatory.get_recent_events(10, &"enemy_attack_whiff")
