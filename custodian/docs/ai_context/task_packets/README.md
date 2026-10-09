@@ -48,6 +48,7 @@ normal closeout.
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
 - `OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Turn the useful one-off Aseprite cleanup/registration tricks proven while authoring idle_relaxed_01 into safe Workbench/Art-Agent operations so a 2.5D strip...
+- `NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — Remove enemy reaction/posture and Grunt parry-critical victim state from `enemy.gd` without creating another god-object: one focused `EnemyReactionController`...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -85,6 +86,7 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
+- `REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — Independently prove NPA-5 removed reaction/posture and critical-opportunity mutable state from `enemy.gd` into two focused authorities without changing hit...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -319,9 +321,10 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — fresh NPA-2 review passed with zero findings on branch `eec8419f6`; landing remains pending because an unrelated `living-world-abstract-activity-foundation` pairing defect blocks the required repository-wide check.
   - `archived/ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 implementation landed with its selected focused and changed-file checks passing; `SavageChain` owns six chain-only config values and three runtime fields while generic cadence/first-hit/contact authority remains available for NPA-4.
   - `archived/REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 fresh-context review passed with zero findings; implementation closeout recorded 31/31 changed-file checks.
-  - `NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` — NPA-4 ready/auto; extracts ordinary-melee commitment/windup/contact/hit-or-whiff/recovery state while leaving actor damage, shared hit resolution, reactions, presentation and special abilities external. Live remeasurement explicitly excludes `damage_timer/damage_interval` from ordinary-melee ownership.
-  - `REVIEW_NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` — paired NPA-4 review ready/auto and dependency-gated on NPA-4; passed review stops at the NPA-5 planning refresh.
-- Author NPA-5+ against reviewed landed predecessor seams rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
+  - `archived/NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` / archived paired review — NPA-4 complete; fresh review landed at `8817908b1` with zero defects/gaps/findings and nine focused runtime checks green. `StandardEnemyMelee` is the sole ordinary-melee transaction authority.
+  - `NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — NPA-5 ready/auto; extracts reaction/posture into `EnemyReactionController` and keeps Grunt critical-open / paired-execution victim state in a separate `EnemyParryCritical` authority rather than creating a new reaction god-object.
+  - `REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — paired NPA-5 review ready/auto and dependency-gated on NPA-5; passed review stops at the NPA-6 planning refresh.
+- Author NPA-6+ against reviewed landed predecessor seams rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
 ### Ash-Bell / Ritualant Scene Closeout
 
