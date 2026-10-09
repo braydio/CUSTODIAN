@@ -71,7 +71,6 @@ normal closeout.
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
 - `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Independently verify the landed Ritualant runtime-truth repair against its packet and current authored-encounter authority.
 - `REVIEW_ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Independently prove the 12 approved static Ritualant assets were fetched from the exact reviewed source packages, published through Asset Pipeline V2, bound...
-- `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1_R1_REVIEW_CORRECTIONS_1.md` — Independently verify that correction `R0-01` makes Awakening registration acceptance complete without disturbing the reviewed composition.
 - `REVIEW_AWAKENING_PERIMETER_SUPPORT_FOUNDATION_V1.md` — Independently falsify perimeter support foundation completion, especially any false Asset V2 registration or gameplay/presentation authority breach.
 - `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — Independently verify the landed bidirectional Dropbox handoff against its own packet contract, especially fail-closed external-input handling, credential bou...
 - `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 without redesigning the generated-region lifecycle.
