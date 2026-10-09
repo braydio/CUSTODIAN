@@ -31,7 +31,6 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
-- `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_REVIEW_CORRECTIONS_1.md` — Independently verify R0-01/R0-02/R0-03 correction without weakening the real-Grunt C1 ownership or legacy snapshot contract.
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
 - `REVIEW_TASK_PACKET_QUEUE_RECONCILIATION_V1.md` — Independently falsify the assertion that task packet recovery and dispatcher organization are now safe, complete, and consistently enforced.
 - `STEALTH_PERCEPTION_FOUNDATION.md` — Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated...
