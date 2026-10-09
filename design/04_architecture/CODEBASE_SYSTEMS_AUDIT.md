@@ -69,7 +69,7 @@ F15 | [Campaign-world geography and Domain-scale traversal](codebase_systems_aud
 - [Item-level evidence and decision record](codebase_systems_audit/F03_HUD_TERMINAL_UI.md) traces command interpretation, world mutations, simulation-time buffering questions, screen-local mutable state and documented UI input dependencies.
 - [Eight **conceptual** F03 packet slots](codebase_systems_audit/PACKET_ROADMAP.md#cs-f03-a) replace the original two high-level placeholders. This is an **unapproved roadmap**, not eight executable packets.
 - Existing terminal [implementation spec](../02_features/terminal/COMMAND_TERMINAL_SPEC.md) supersedes the [archived concept](../01_systems/COMMAND_TERMINAL_UI.md). The July [audit verification](../02_features/terminal/TERMINAL_AUDIT_VERIFICATION.md) prevents duplicate work on already implemented terminal fidelity/Overview components.
-- F03 remains **NOT LOCKED** until command-case callsite coverage, fixed-tick vs UI-time decision, focused Godot regression evidence and any human-owned UX boundaries are resolved. Across the audit: **0/14 decision locks** and **0 new authorized task packets**.
+- F03 remains **NOT LOCKED** until command-case callsite coverage, fixed-tick vs UI-time decision, focused Godot regression evidence and any human-owned UX boundaries are resolved. **F03 itself remains unlocked**; its eight conceptual slots are not executable. Program-wide counts are recorded in the current header and focus index, not frozen in this historical F03 update.
 
 ## F11 reviewer automation decision update (2026-10-09)
 
@@ -113,4 +113,4 @@ F15 separates the geography of a single broad physically traversable campaign fr
 - **No runtime benchmarks or headless Godot tests were run for this overview.** Dedicated code-review graph was unavailable; live GitHub reads provided source and queue evidence.
 
 ## Packet registry and next review
-[**Packet roadmap / proposed slot registry**](codebase_systems_audit/PACKET_ROADMAP.md) records every item-to-existing-packet association and non-authorized future slot. **Next recommended deep audit: F03 HUD/terminal**, alongside light-touch reconciliation of F01/F02/F04 to avoid competing with their existing queued work.
+[**Packet roadmap / proposed slot registry**](codebase_systems_audit/PACKET_ROADMAP.md) records every item-to-existing-packet association and non-authorized future slot. **Next recommended cross-system audit:** F02/F15 procgen scale, physical geography and stable IDs, parallel to the already-identified F03 terminal timing/command-parity evidence gaps. First complete F14-B's active R0-01 fresh re-review before revisiting F14-C or activating any new reification packet. Avoid duplicating existing F01/F02/F04 packet programs.
