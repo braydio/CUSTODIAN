@@ -105,7 +105,7 @@ Never resolve offscreen attacks with the same physical combat mechanics or claim
 
 ## Desired first playable proof before committing to a broad program
 
-1. Seed a small two-sector scenario with one named patrol/group, a resource/repair consequence and a stable entity identity.
+1. Seed two **synthetic geographic location IDs** (A/B) in one campaign with one named patrol/group, a resource/repair consequence, and stable actor/group and location identity. Do **not** use a POWER/COMMS facility macro sector or painted presentation chunk as the geographic key.
 2. Start in A while B is absent from loaded physical gameplay. Advance **authoritative simulation time**, not wall-clock sleep.
 3. Observe B change in a reproducible, inspectable way, including a causal reason; persist or snapshot the state and verify deterministic continuation.
 4. Enter B: reconstruct **one** correct patrol/group state, with adjusted location/goal, no duplicate spawn, no reset to default health/resources and no immediate contradiction to loaded-world physics.
