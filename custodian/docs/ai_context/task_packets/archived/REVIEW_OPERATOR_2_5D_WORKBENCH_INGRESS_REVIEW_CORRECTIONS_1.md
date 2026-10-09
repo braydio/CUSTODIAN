@@ -40,6 +40,7 @@ Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh cont
 - Material evidence gaps: 0
 - Retained finding dispositions: R0-01 fixed; R0-02 unresolved; R0-03 fixed; R0-04 fixed
 - New findings: R1-01
+- Post-sync validation: /tmp/wb25-r1-artifact-validation-after-sync.json PASS 2/2; managed README conflict resolved through regeneration from both branches' packet metadata.
 - Artifact validation: /tmp/wb25-r1-artifact-validation.json PASS 2/2 (review_pairing_contract, visual_review_handoff); complete owned-path coverage; targeted draft/blocked and promoted ready/auto pair preflights PASS; managed queue index PASS; git diff --check PASS.
 - Durable summary: REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md
 - Focused validation: six official focused smokes PASS; enabled Textual pilot PASS; targets PASS; independent READY/proof/service/root-shape controls PASS; physical saved-document mismatch reproduces R1-01.
@@ -57,7 +58,7 @@ Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh cont
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: Green focused regressions changed only manifest contracts, leaving physical saved-document mismatch untested. Default Python skipped the optional Textual pilot; the enabled environment was required. Fresh worktree graph initialization took several minutes. The initial focused-report aggregation used results instead of the runner's tests key; no test outcome was lost. First finish rejected historical nested correction naming; current lifecycle requires the flat lineage root plus cycle 2.
+- What went wrong: Green focused regressions changed only manifest contracts, leaving physical saved-document mismatch untested. Default Python skipped the optional Textual pilot; the enabled environment was required. Fresh worktree graph initialization took several minutes. The initial focused-report aggregation used results instead of the runner's tests key; no test outcome was lost. First finish rejected historical nested correction naming; current lifecycle requires the flat lineage root plus cycle 2. Latest-main merge then conflicted only in the generated queue index; regeneration preserved both branches' packet truth.
 - Root cause / contributing factors: Ingress proof validates the manifest while the actual saved Aseprite is only checked for nonempty existence; the tests mirror the manifest proof. Optional UI dependencies are installed in /tmp/custodian-wb25-venv rather than default Python.
 - Prevention / pipeline improvement: Cycle 2 acceptance requires real readable wrong-frame/wrong-canvas documents and actual saved pixel edits, plus read-only refusal. Reused the installed UI environment and aggregated the unchanged official records with the correct schema.
 - Tooling / docs drift discovered: Historical browser review summary describes nested cycle-2 naming; current paired-review artifact gate explicitly rejects nested lineages and requires root-series cycle numbering. Packet IDs/paths were corrected in-scope.
