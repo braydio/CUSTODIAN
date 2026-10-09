@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-enemy-savage-chain-ability-extraction`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-savage-chain-ability-extraction`
@@ -15,7 +15,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Visual review: `none`
 - Reviewer context: `fresh`
-- Reviewer provenance: `different-agent | same-agent-fresh-context`
+- Reviewer provenance: `same-agent-fresh-context`
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -36,13 +36,28 @@
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh instruction: After this review passes (including any bounded correction/re-review), bring the reviewed final chain API, the remaining ordinary melee state/callers and current `enemy.gd` shape back to this conversation before authoring/promoting NPA-4.
 
-## Handoff
+## Review Result
+
+- Review schema: `custodian.paired_review.v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Nonblocking findings: `0`
+- Optional findings: `0`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed main: `d67cf70e050eca0b7fd193ca645b1ac7111214b3`
+- Findings: `none`
+- Focused validation: `enemy_savage_pounce`, `savage_runtime`, `combat_exchange_commitment`, `enemy_hit_spatial_telemetry`, and `operator_guard_flow` all passed independently in this fresh review worktree.
+- Review conclusion: `SavageChain and SavageChainConfig are the sole chain phase/timer/direction and chain-only tuning authority. Enemy retains generic cadence, first-hit damage/windup, shared radial-arc contact, and the archetype toggle. The six config defaults, first/second timing and damage/guard pressure, current target-at-hit-time behavior, pounce-first attack selection and tick ordering, interruption/commitment behavior, typed diagnostics, and public hit/contact services match the packet. No private hit-gateway reachback, duplicate chain state, generic ability base, or pounce regression was found.`
+- Validation friction: `The first smoke invocation preceded the fresh worktree's Godot import/class cache and could not load project resources; after one editor cache warm-up, all focused checks passed. The changed-file sweep passed with no changed files because this review does not modify implementation files.`
+
+## Next Handoff
 
 - Next workstream: `npa-4-standard-enemy-melee-extraction`
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
-- Refresh reason: `NPA-4 must be derived from the reviewed NPA-3 seam and the then-current ordinary melee ownership rather than frozen from today's actor layout`
-- Next action: Stop autonomous execution after passed NPA-3 review. Open the Authoring chat and paste `npa-4-standard-enemy-melee-extraction` for remeasurement and packet authoring.
-- Blockers or open questions: `NPA-4 intentionally has no active implementation packet yet`
+- Refresh reason: `NPA-4 must be derived from the reviewed final chain API, remaining ordinary melee state/callers, and current enemy.gd shape.`
+- Next action: `Return the reviewed chain API, remaining ordinary melee ownership/callers, and current enemy.gd shape to the Authoring chat before authoring/promoting NPA-4.`
+- Blockers or open questions: `none; NPA-4 has no active implementation packet until planning refresh.`
