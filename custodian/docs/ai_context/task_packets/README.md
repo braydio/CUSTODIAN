@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-08
+Last updated: 2026-10-09
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -31,6 +31,8 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
+- `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Dependency-gated ready/auto Asset V2 intake for the 12 approved Ritualant ritual-prop/chamber-dressing states; contains exact Dropbox paths/SHA-256, staging commands, family paths, live scene consumer nodes, requirement migration and validation.
+- `REVIEW_ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Paired fresh-context asset/runtime/visual review for the 12-state static Ritualant intake.
 - `AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1.md` — Repair the live 04→05 underlay fade ownership so the accepted 1502×2048 Dust→Connector→Locker composition stays visually stable in the correct room/connector...
 - `LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md` — Transfer one genuine live Grunt Enemy and its stable identity/condition/intent into deterministic F14 abstract simulation while physically absent, then recon...
 - `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1.md` — Independently verify that the 04→05 repair changes only fade ownership, preserves the accepted registered composition byte-for-byte and transform-for-transfo...
