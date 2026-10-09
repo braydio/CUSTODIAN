@@ -98,7 +98,7 @@
 
 ## Independent Review
 
-- Status: findings
+- Status: `findings`
 - Review workstream: review-task-packet-queue-reconciliation-v1
 - Reviewed on main: 105c2541fd1c4dd7bf3dab688b64c3da76a4310b
 - Reviewer context: fresh
