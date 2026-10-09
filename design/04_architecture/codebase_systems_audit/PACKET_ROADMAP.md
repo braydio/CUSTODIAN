@@ -2,7 +2,7 @@
 
 [← Overview / index](../CODEBASE_SYSTEMS_AUDIT.md)
 
-> **State:** conceptual packet registry only, **not an implementation queue**. Baseline `main@e089e8b8a099`, October 8, 2026. All new slot decisions **unlocked**; **zero task packets created** by this audit.
+> **State:** conceptual packet registry only, **not an implementation queue**. Baseline `main@e089e8b8a099`, October 8, 2026. All new slot decisions **unlocked**; **zero task packets created** by this audit. F03 expanded from 2 to 8 conceptual slices on October 8, 2026, without authorization.
 >
 > An item-level audit and locked decision are mandatory before authoring ANY new packet. Existing packets listed below already belong to their own separate authority/DAG and remain unaffected.
 
@@ -46,19 +46,57 @@
 
 **F03: [HUD, terminal and command UI](F03_HUD_TERMINAL_UI.md)**
 
+> **F03 diagnostic status:** source-level ownership audit captured on `main@ac87c8ad`; execution still unapproved. All eight slots below are CONCEPTUAL, not task-packet files. Source-of-truth and test gaps are in [F03](F03_HUD_TERMINAL_UI.md). The July [terminal design audit](../../02_features/terminal/TERMINAL_DESIGN_AUDIT.md) already contains an early registry-extraction proposal; preserve and reconcile that work.
+
 ### CS-F03-A
-- **Intent:** HUD/terminal command-ownership map and extraction contract.
-- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_HUD_TERMINAL_COMMAND_SEAM.md` (**not created**, not a link to a file).
-- **Authorization:** BLOCKED pending F03 item-level audit, evidence and explicit decision lock.
-- **Do not implement before:** Audit must precede packet creation; avoid conflicting with already-live terminal/view-model APIs.
+- **Intent:** Canonical command schema and behavior-parity inventory, including help/completion/validation/refresh/confirmation and negative cases.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_HUD_TERMINAL_COMMAND_SEAM.md` (**not created**).
+- **Gate:** F03 decision lock; current parser and July verified-audit corrections reconciled.
+- **Acceptance sketch:** stable command-action table and targeted tests that can fail independently of the CanvasLayer.
 
 ### CS-F03-B
-- **Intent:** Screen-state and projection consolidation, conditional on the mapped ownership findings.
-- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_HUD_VIEWMODEL_CONTRACTION.md` (**not created**, not a link to a file).
-- **Authorization:** BLOCKED pending F03 item-level audit, evidence and explicit decision lock.
-- **Do not implement before:** Audit must precede packet creation; avoid conflicting with already-live terminal/view-model APIs.
+- **Intent:** Extract navigation and read-only command handlers from the HUD legacy interpreter.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_TERMINAL_NAVIGATION_COMMANDS.md` (**not created**).
+- **Gate:** A passes; avoid creating a second page/navigation authority.
+- **Acceptance sketch:** exact existing page/fidelity/transcript behavior on both valid and invalid commands.
 
-**Existing related packets:** none assigned; check live queue on audit completion.
+### CS-F03-C
+- **Intent:** Migrate power, repair, assault, turret and other world-mutating command adapters onto existing simulation authority calls, with explicit result contracts.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_TERMINAL_WORLD_ACTIONS.md` (**not created**).
+- **Gate:** B and target authority inventory; never implement gameplay rules in HUD/router.
+- **Acceptance sketch:** one effect per command, preserved guards and errors, no direct gameplay writes in presenters.
+
+### CS-F03-D
+- **Intent:** Fabrication and ARRN domain-command parity, including clickable actions and placement follow-through.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_TERMINAL_DOMAIN_COMMANDS.md` (**not created**).
+- **Gate:** C and live FabPipeline/ARRN validation ownership.
+- **Acceptance sketch:** terminal buttons and text commands produce equivalent outcomes; no duplicate resources or extra privileges.
+
+### CS-F03-E
+- **Intent:** Conditional command-buffer scheduling correction and lifecycle hardening (not assumed necessary).
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_TERMINAL_COMMAND_SCHEDULING.md` (**not created**).
+- **Gate:** F03 explicit decision on UI-time vs simulation-tick admission; A's parity fixtures.
+- **Acceptance sketch:** determinism, ordering, pause/rate/close/reopen and replay behavior meet a locked contract.
+
+### CS-F03-F
+- **Intent:** Cohesive screen-state/projection consolidation, preserving existing snapshots, Overview/Fabrication/Sensors view models, fidelity and thirteen-page design.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_HUD_VIEWMODEL_CONTRACTION.md` (**not created**).
+- **Gate:** B–D and full caller matrix; F07 inventory remains separate.
+- **Acceptance sketch:** reduced state ownership in HUD and identical layout, links, selection, navigation, scroll and focus.
+
+### CS-F03-G
+- **Intent:** Debug/HUD shell ownership disentanglement, removal of proved-obsolete compatibility glue, and final CanvasLayer facade contraction.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_HUD_SHELL_CONTRACTION.md` (**not created**).
+- **Gate:** F; compare actual use of `custodian_hud.gd` and scene consumers before deleting anything.
+- **Acceptance sketch:** fewer mutable domains and external call paths in `ui.gd`; no lost HUD/console functionality.
+
+### CS-F03-H
+- **Intent:** Source/runtime parity, focused Godot validation, regression/performance measurement and documentation closeout.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_HUD_TERMINAL_CLOSEOUT.md` (**not created**).
+- **Gate:** all actually authorized predecessor slices complete; E only if approved.
+- **Acceptance sketch:** literal live-scene command, modal, focus, keyboard and representative controller checks; before/after measured debt, manifest/document reconciliation.
+
+**Existing related documentation / historical packets:** [COMMAND_TERMINAL_SPEC](../../02_features/terminal/COMMAND_TERMINAL_SPEC.md) (active authority), [TERMINAL_AUDIT_VERIFICATION](../../02_features/terminal/TERMINAL_AUDIT_VERIFICATION.md) (July corrections), [TERMINAL_INPUT_FOCUS_FIX](https://github.com/braydio/CUSTODIAN/blob/main/custodian/docs/ai_context/task_packets/TERMINAL_INPUT_FOCUS_FIX.md) (complete historical packet), [UI_GD_FIXES](https://github.com/braydio/CUSTODIAN/blob/main/custodian/docs/ai_context/task_packets/UI_GD_FIXES.md) (stale `in_progress` metadata needing triage). No new F03 implementation packet has been authorized.
 
 
 **F04: [Enemy and non-player actor runtime](F04_NON_PLAYER_ACTORS.md)**
