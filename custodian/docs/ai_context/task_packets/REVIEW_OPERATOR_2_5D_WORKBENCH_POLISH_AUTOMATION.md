@@ -11,7 +11,7 @@
 - Review: none
 - Review target workstream: operator-2-5d-workbench-polish-automation
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md
-- Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
+- Reviewed main: c447db62d5c6f434394d6c634e1e191952658cc5
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Reviewer context: fresh
@@ -23,11 +23,25 @@
 - Reviewed implementation acceptance: The archived implementation packet Acceptance section is the exact contract.
 - Review evidence: Reuse implementation receipts/fixtures first; gather fresh evidence only where acceptance is not established.
 - Correction threshold: Correct confirmed correctness/authority defects or material proof gaps through bounded correction + re-review; route polish to the next slice.
-- Focused validation: Rerun the smallest tests named by the archived packet plus git diff --check.
-- Review focus: Diagnostics must be objective and pure; mutations must be bounded/journaled/undoable; planted registration cannot erase intentional root motion; F01/reference/root semantics remain human/canonical authority; guide layers never publish.
+- Focused validation: Rerun `operator_2_5d_polish` plus the affected Art Agent service/Aseprite, registration-profile, ingress, Workbench and Textual UI checks named by the archived packet. Independently probe one existing-workbench attach, one wrong physical contract refusal, one legacy-96 profile selection, one planted/no-evidence/locomotion matrix, one protected island refusal, one scoped apply+undo, and one attempted 2.5D publish path. Finish with `git diff --check`.
+- Review focus: Diagnostics are objective/pure; existing-Workbench attachment preserves WB25-2 identity and physical document truth; profile selection follows bound generation; mutations are scoped/journaled/undoable; planted registration cannot manufacture motion semantics or erase intentional motion; baseline/reference/root semantics remain canonical/human authority; temporal color findings do not become automatic repaint; guides never publish; runtime/canonical source stay untouched.
 - Acceptance: Findings-first receipt with stable IDs; zero blocking defects/material proof gaps for pass; do not patch reviewed implementation.
 - Non-goals: No redesign, implementation fixes, production art mutation, or successor implementation.
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+
+## Agent Handoff / Planning Decisions — 2026-10-09
+
+Review WB25-3 against the refreshed contract and the **accepted WB25-2 cycle-2 handoff**, not the older pre-ingress assumptions.
+
+- The exact existing 2.5D Workbench must be attached, not recreated through the legacy generic Art Agent start path.
+- 2.5D Art Agent registration/QA must resolve the accepted `operator_2_5d_128` profile from bound Workbench generation; legacy-96 behavior must remain unchanged.
+- Physical saved-document frames/canvas/timing must be checked without reconciliation before polish and preserved after mutation.
+- Planted registration is explicit per-operation opt-in, not a new semantic taxonomy. Missing support evidence and locomotion/root-motion cases fail closed.
+- Lowest alpha/head-top equality never becomes semantic-root authority.
+- Frame-1 baseline/reference diagnostics must use the exact session baseline or explicit approved reference; the normalized design lock is not an arbitrary-action pose template.
+- Automated detached-island removal is tiny/exact/protected-mask aware; temporal outline/highlight findings are diagnostic only.
+- Every mutation is scoped, journaled, hash-bound and undoable through existing Art Agent authority.
+- No polish path may publish 2.5D art or mutate canonical source/runtime resources/selectors.
 
 ## Procedure
 

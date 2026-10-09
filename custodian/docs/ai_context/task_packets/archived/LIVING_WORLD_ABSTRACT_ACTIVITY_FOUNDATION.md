@@ -63,3 +63,30 @@ The user approved the bounded offscreen activity decision on October 9, 2026. Th
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh instruction: At claim time compare live `WorldSimulationState` serialization, `SimulationKernel` ordering and REMAP-3 current state. If source surfaces changed, preserve these explicit B behaviors without introducing another clock, save authority, or new global geography. Return architecture ambiguity to this chat rather than silently relaxing bounds.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-living-world-abstract-activity-foundation`
+- Reviewed on main: `c447db62d`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `living-world-abstract-activity-foundation-review-corrections-1`
+
+### Findings
+
+#### R0-01 · blocking_defect · implementation
+
+- Affected acceptance: Implementation acceptance (3) deterministic event sequence, (4) snapshot continuation/fingerprint, and (6) duplicate identity/consequence handling.
+- Evidence: `custodian/game/state/world/abstract_activity_simulation_state.gd:114-116` builds event IDs by period-joining domain ID, group ID and tick, while `_valid_id` permits periods. Legal pairs domain/group `a.b`/`c` and `a`/`b.c` both generated `a.b.c.60`. The fresh probe observed duplicate IDs and `SimulationSnapshot.restore(...) == null` because restore rejects duplicate causal event IDs at lines 196-203.
+- Disposition: `correction`
+- Rationale: This is a reproducible failure for accepted IDs that makes a valid state un-restorable, violating determinism and snapshot continuation. The bounded correction adds an unambiguous identity encoding and regression coverage; no implementation code was changed in this review.
