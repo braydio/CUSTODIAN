@@ -4,6 +4,8 @@
 
 > **State:** conceptual packet registry only, **not an implementation queue**. Baseline `main@e089e8b8a099`, October 8, 2026. All new slot decisions **unlocked**; **zero task packets created** by this audit. F03 expanded from 2 to 8 conceptual slices on October 8, 2026, without authorization.
 >
+> **F03 audit refresh:** source inspection on `main@ac87c8ad`; eight proposed F03 slots, none executable. Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+>
 > An item-level audit and locked decision are mandatory before authoring ANY new packet. Existing packets listed below already belong to their own separate authority/DAG and remain unaffected.
 
 ## Registry rules
