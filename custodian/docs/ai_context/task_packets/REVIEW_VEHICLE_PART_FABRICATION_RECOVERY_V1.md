@@ -16,7 +16,7 @@
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
-- Review modes: `code, architecture, runtime, persistence`
+- Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently prove that the reusable recovery spine is assembly-driven for R1+, knowledge-gates recipes rather than repairs, preserves explicit R0 direct-material recovery, and does not steal the downstream Scout correction.

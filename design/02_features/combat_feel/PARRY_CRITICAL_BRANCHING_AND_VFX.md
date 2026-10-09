@@ -3,7 +3,7 @@
 Status: active implementation authority  
 Owner: gameplay/combat feel  
 Runtime owners: `custodian/game/actors/operator/operator.gd`, `custodian/game/actors/enemies/enemy.gd`  
-Related task packet: `custodian/docs/ai_context/task_packets/PARRY_CRITICAL_BRANCHING_AND_VFX.md`
+Related task packet: `custodian/docs/ai_context/task_packets/archived/PARRY_CRITICAL_BRANCHING_AND_VFX.md`
 
 ## Purpose
 

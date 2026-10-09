@@ -125,7 +125,7 @@ Last updated: 2026-10-02
 - `game/ui/terminal/sensors_terminal_view_model.gd` — sole Sensors page semantics, EnemyDirector forecast separation, and compact ARRN network support.
 - `game/ui/terminal/terminal_snapshot.gd`, `game/ui/hud/ui.gd`, and `game/ui/minimap/` — projection integration, terminal rendering, and shared-map hostile truth suppression.
 - `tools/validation/terminal_sensors_{intelligence,layout}_smoke.gd` — stable ID/activity/forecast/leak and safe-layout coverage.
-- `docs/ai_context/task_packets/TERMINAL_SENSORS_INTELLIGENCE_V1.md` — compact implementation packet.
+- `docs/ai_context/task_packets/archived/TERMINAL_SENSORS_INTELLIGENCE_V1.md` — compact implementation packet.
 
 ## Instant Replay
 
@@ -254,12 +254,12 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/RESOURCE_ID_CANONICALIZATION.md` — completed packet for making CUSTODIAN-flavored resource IDs canonical across node drops, ledger storage, recipes, UI, and docs
 - `custodian/docs/ai_context/task_packets/archived/ENEMY_GRUNT_RUNTIME_WIRING.md` — archived completed packet for verifying `enemy_grunt` asset usage and wiring it as a live wave-spawned enemy type
 - `custodian/docs/ai_context/task_packets/archived/ENEMY_GRUNT_SPRITE_INGEST_2026_05_17.md` — archived completed packet for the earlier grunt sprite ingest
-- `custodian/docs/ai_context/task_packets/ENEMY_GRUNT_ASSET_V2_RUNTIME_MODULARIZATION.md` — active migration inventory, validation record, and deferred extraction boundary for the V2 grunt runtime pass
+- `custodian/docs/ai_context/task_packets/archived/ENEMY_GRUNT_ASSET_V2_RUNTIME_MODULARIZATION.md` — active migration inventory, validation record, and deferred extraction boundary for the V2 grunt runtime pass
 - `custodian/docs/ai_context/task_packets/OPERATOR_MODULAR_FAST_ACTION_RUNTIME.md` — completed packet for the dedicated operator action-runtime folder and modular-derived unarmed fast strike wiring
 - `custodian/docs/ai_context/task_packets/OPERATOR_RANGED_READY_INPUT.md` — completed packet for the held ranged-ready input contract where right mouse readies/aims and primary fires only while ready
-- `custodian/docs/ai_context/task_packets/OPERATOR_FRAME_AWARE_WEAPON_SOCKETS.md` — completed Carbine phase-1 frame-socket, asymmetric aim transition, camera lead/zoom, exporter, and validation packet
-- `custodian/docs/ai_context/task_packets/PARRY_CRITICAL_BRANCHING_AND_VFX.md` — active packet for explicit grunt critical-open phases and the reserved, synchronized Operator/enemy paired execution
-- `custodian/docs/ai_context/task_packets/OPERATOR_FIELD_PATCH_V1.md` — completed packet for limited, timed, interruptible Operator Field Patch healing, compact HUD readout, input binding, and smoke coverage
+- `custodian/docs/ai_context/task_packets/archived/OPERATOR_FRAME_AWARE_WEAPON_SOCKETS.md` — completed Carbine phase-1 frame-socket, asymmetric aim transition, camera lead/zoom, exporter, and validation packet
+- `custodian/docs/ai_context/task_packets/archived/PARRY_CRITICAL_BRANCHING_AND_VFX.md` — active packet for explicit grunt critical-open phases and the reserved, synchronized Operator/enemy paired execution
+- `custodian/docs/ai_context/task_packets/archived/OPERATOR_FIELD_PATCH_V1.md` — completed packet for limited, timed, interruptible Operator Field Patch healing, compact HUD readout, input binding, and smoke coverage
 - `custodian/docs/ai_context/task_packets/OPERATOR_TWIN_STICK_DODGE_INPUT.md` — completed packet for keyboard/mouse plus Xbox twin-stick movement/aim bindings, ranged-ready aliases, and movement-first dodge/backstep behavior
 - `custodian/docs/ai_context/task_packets/OPERATOR_MODULAR_LOWER_BODY_RUNTIME.md` — packet for the modular operator lower-body runtime module folder, builder, default Fists movement wiring, and missing source-art tracking
 - `custodian/docs/ai_context/task_packets/OPERATOR_MODULAR_IDLE_AND_INGEST.md` — completed packet for fixing Fists modular idle upper/lower layer precedence and routing modular Operator sprite inbox files into the live module rebuild path
@@ -269,7 +269,7 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/GOTHIC_COMPOUND_OCCLUSION_AND_SCALE.md` — completed packet for gothic compound player/building occlusion, larger map bounds, and service-path complexity
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_GAMEPLAY_ELEVATION_OCCLUSION.md` — completed packet for the `design/GAMEPLAY.md` Sundered Keep elevation/readability slice: authored underpass/shore/interior metadata, visual underpass shadows/supports, data-driven roof cutaway, and smoke coverage
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_CHEATSHEET_RELAYOUT.md` — completed packet for the non-destructive deterministic V1 front-gate cheat-sheet relayout, preservation copy, placeholder registration, validation, and documentation pass
-- `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_ROUTE_MASTER_APPROACH.md` — route-master Sundered Keep Approach implementation packet covering one authored approach scene, support-layer wiring, marker/controller behavior, segment-rail collision, asset audit, and smoke validation
+- `custodian/docs/ai_context/task_packets/archived/SUNDERED_KEEP_ROUTE_MASTER_APPROACH.md` — route-master Sundered Keep Approach implementation packet covering one authored approach scene, support-layer wiring, marker/controller behavior, segment-rail collision, asset audit, and smoke validation
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_APPROACH_AS_PLAYABLE_MAP.md` — historical completed packet for the earlier approach promotion; its gate/key/enemy-marker placement was later corrected because those semantics belong to the actual Keep entrance, not Vista Approach
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_PROCGEN_FRONTAGE.md` — historical implementation packet for the generated-frontage foundation
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_PARISH_ROUTE_CORRECTION.md` — active review packet for generated frontage, clipped distant reveal, authored Shore Parish, and Front Gate handoff
@@ -287,7 +287,7 @@ Last updated: 2026-10-02
 - `design/02_features/input/CONTROLLER_INPUT_SYSTEM.md` — active production keyboard/mouse and Xbox-layout action, analog, UI, prompt, and deferred-command authority.
 - `custodian/game/systems/input/input_prompt_service.gd` — presentation-only last-meaningful-device tracker and InputMap-to-keyboard/Xbox label resolver.
 - `custodian/tools/validation/controller_input_contract_smoke.gd` — focused production action/binding/deadzone/collision/raw-key/prompt/UI contract smoke.
-- `custodian/docs/ai_context/task_packets/CONTROLLER_INPUT_HARDENING.md` — implementation record for the post-twin-stick controller parity migration.
+- `custodian/docs/ai_context/task_packets/archived/CONTROLLER_INPUT_HARDENING.md` — implementation record for the post-twin-stick controller parity migration.
 - `custodian/scenes/game.tscn` — active game scene and terminal layout, including the authored `PageButtonsScroll` with pinned `MoreButton`/terminal actions; no longer auto-spawns the Forlorn-Ritualant dev encounter, and still includes scene-mounted `DroneManager` for allied combat drone V1 spawning plus a temporary grunt startup debug spawn gated by Operator distance from the initial spawn zone
 - `custodian/scenes/awakening_first_return.tscn` — Awakening / The First Return, the production default scene: sections 01-10 from the Crèche of Answerless Names to the Road of Witnesses South Reach as one continuous space.
 - `custodian/tools/iteration/scenarios/traversal/awakening_underlays_zones_01_05.json` and `custodian/tools/validation/fixtures/awakening_underlays_moment.*` — deterministic Moment Forge registration review for the first five production environment underlays and the art/blockout handoff.
@@ -962,7 +962,7 @@ Last updated: 2026-10-02
 - `custodian/tools/validation/procgen_render_isolation_smoke.gd` — focused proof that F2's five procgen CanvasItem branches hide and restore while navigation, collision, props, and foliage remain enabled
 - `custodian/tools/validation/operator_next_actions_report_smoke.py` — offline smoke proving grouped fast-attack recommendations, actionable paths/commands, generated-artifact metadata, Markdown output, and HTML embedding
 - `custodian/tools/validation/sprite_directional_mirror_pipeline_smoke.gd` — focused ingest smoke for canonical and simple-character direction pairing, authored-counterpart precedence, no-mirror opt-out, and per-frame horizontal pixel flipping across Operator, enemy, allied, and generic owner paths
-- `custodian/docs/ai_context/task_packets/MODULAR_NEXT_ACTIONS_AND_DEV_MODE.md` — completed implementation record for central runtime development eligibility and contract-aware modular review recommendations
+- `custodian/docs/ai_context/task_packets/archived/MODULAR_NEXT_ACTIONS_AND_DEV_MODE.md` — completed implementation record for central runtime development eligibility and contract-aware modular review recommendations
 - `custodian/content/sprites/operator/runtime/animations/` — canonical Operator V2 runtime home at `runtime/animations/<profile>/<group>/<action>/`; lower/upper locomotion strips feed the layered Fists idle/walk/run rig, and synchronized lower/upper/FX fast-attack modules feed the complete Fast 01–04 windup/strike/recovery chain
 - `design/02_features/animation/OPERATOR_MODULAR_HEAD_PIPELINE.md` — modular head naming, cosmetic-profile routing, runtime ownership, synchronization, fallback, and validation contract
 - `custodian/content/sprites/operator/source/legacy/c2b_runtime_retirement/` — source provenance for 34 superseded/orphaned Operator sheets removed from active runtime publication
@@ -974,7 +974,7 @@ Last updated: 2026-10-02
 - `custodian/tools/validation/operator_compatibility_resources_smoke.py` — proves all 11 actor-local compatibility SpriteFrames and the updater are retired, archived source remains, and removed runtime layers are absent
 - `custodian/tools/validation/operator_vigil_dagger_smoke.gd` — focused default-dagger smoke for three-link resource ownership, synchronized E/W body/weapon/FX playback, drive, collision, and cancellation
 - `custodian/tools/validation/operator_sword_cleaver_smoke.gd` — focused optional-cleaver smoke for loadout isolation, three per-link profiles, 10-frame synchronization, bounded finisher drive, retained dagger default, and Katana separation
-- `custodian/docs/ai_context/task_packets/VIGIL_PATTERN_DAGGER_ATTACK_DRIVE.md` — implementation/handoff packet for the dagger bootstrap, generic drive boundary, validation, drift repair, and deferred art/actions
+- `custodian/docs/ai_context/task_packets/archived/VIGIL_PATTERN_DAGGER_ATTACK_DRIVE.md` — implementation/handoff packet for the dagger bootstrap, generic drive boundary, validation, drift repair, and deferred art/actions
 - `design/02_features/animation/ENEMY_SAVAGE_RUNTIME_WIRING.md` — active first-slice Savage runtime authority and next art-wiring queue
 - `custodian/game/actors/enemies/enemy_savage.tscn` — active Savage actor scene using the shared Enemy simulation/behavior owner
 - `custodian/game/actors/enemies/components/enemy_behavior_profile.gd` — shared behavior-profile factory, including the high-aggression, no-theft `raider_savage` profile
@@ -1215,9 +1215,9 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/archived/HIT_TAXONOMY_AND_RIPOSTE.md` — archived legacy Milestone C umbrella; taxonomy/reaction/critical-open work was reconciled as already live, with only the semantic riposte remainder re-authored against current architecture
 - `custodian/docs/ai_context/task_packets/OPERATOR_PARRY_RIPOSTE_COMPLETION.md` / `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — dependency-gated ready/auto implementation + paired review for the remaining semantic post-parry riposte fallback after the current melee-domain extraction
 - `custodian/docs/ai_context/task_packets/PROCGEN_STUCK_POCKET_AUTHORITY.md` — completed implementation record for collision-owner blocker authority, escape remediation, navigation consumption, stuck diagnostics/rescue, and Observatory instrumentation.
-- `custodian/docs/ai_context/task_packets/RUNTIME_STUTTER_PERFORMANCE_PASS.md` — implementation record for hidden Observatory gating, rebuild coalescing, spatial/shared foliage work, distance-tier workload control, target-scan throttles, compact wall bodies, and reduced atmosphere FBM.
+- `custodian/docs/ai_context/task_packets/archived/RUNTIME_STUTTER_PERFORMANCE_PASS.md` — implementation record for hidden Observatory gating, rebuild coalescing, spatial/shared foliage work, distance-tier workload control, target-scan throttles, compact wall bodies, and reduced atmosphere FBM.
 - `custodian/tools/validation/field_patch_smoke.gd` — focused Field Patch health-restore validation for Operator commit timing, interruption, input binding, terminal restock, emergency-cache fallback, and restock cap helper
-- `custodian/docs/ai_context/task_packets/RANGED_COMBAT_BALANCE_AND_STEALTH.md` — completed high-risk implementation record for the ranged balance, stealth/noise, perception, and ambient-camp slice
+- `custodian/docs/ai_context/task_packets/archived/RANGED_COMBAT_BALANCE_AND_STEALTH.md` — completed high-risk implementation record for the ranged balance, stealth/noise, perception, and ambient-camp slice
 - `design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md` — in-progress cross-system authority that records completed combat-resource/readability slices by durable owner and queues manual feedback tuning, Field Patch production presentation, hit taxonomy/riposte, durability, traps, and drone logistics
 - `design/02_features/combat_feel/OPERATOR_INTEGRITY_RECLAIM.md` — completed V1 authority for temporary recoverable integrity, confirmed hostile-damage recovery, packet timing/eligibility, health-bar presentation, observability, and tuning
 - `custodian/docs/ai_context/task_packets/archived/COMBAT_RESOURCE_READABILITY_SPEC_NORMALIZATION.md` — completed migration record for retiring the root draft, routing completed V1 slices to permanent feature authorities, and establishing the current in-progress umbrella

@@ -54,6 +54,18 @@ jobs:
           cache: pip
           cache-dependency-path: requirements.txt
 
+      - name: Validate task packet queue authority
+        run: |
+          python3 custodian/tools/agent/check_ai_context.py --json
+          python3 custodian/tools/agent/validate_review_pairing.py
+          python3 custodian/tools/agent/task_packet_index.py
+          python3 -m unittest \
+            custodian.tools.agent.test_task_packet_contract \
+            custodian.tools.agent.test_task_packet_index \
+            custodian.tools.agent.test_dispatch \
+            custodian.tools.agent.test_task_packet_repair \
+            custodian.tools.agent.test_run_trace
+
       - name: Install Godot 4.7
         uses: chickensoft-games/setup-godot@v2
         with:

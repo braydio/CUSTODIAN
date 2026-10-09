@@ -305,6 +305,12 @@ owns exact schema/pairing checks. Existing auto/ready dependency-gated packets
 do not need redundant publication if the current `origin/main` already
 contains them.
 
+For queue drift or recovery, inspect `python3 tools/agent/dispatch.py audit`
+(`--json` for identity-level records) before changing packet or claim state.
+Pre-landing checks run the shared AI-context, review-pairing, README-index, and
+focused agent-tool tests; do not infer claimability from `Status: ready` or the
+README projection alone.
+
 ## Agent Task Packets
 
 For packet metadata, executable work defaults to `Dispatch: auto`. Dependency ordering belongs in `Depends on`; incomplete design belongs in `Status: draft`; runtime/input failures belong in fail-closed execution evidence. Do not use `Dispatch: manual` as a generic blocker or refresh gate. It is valid only when the user explicitly asks to decide when an otherwise ready packet may be claimed.

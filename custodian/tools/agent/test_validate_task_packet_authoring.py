@@ -36,6 +36,19 @@ def implementation(review_modes: str = "code, architecture, visual") -> str:
         "- Paired review workstream: `review-sample-work`\n"
         "- Review cycle: `0`\n"
         "- Max automatic review cycles: `2`\n"
+        "- Reviewed main: `0123456789abcdef0123456789abcdef01234567`\n"
+        "- Goal: Prove the scoped behavior.\n"
+        "- Completion boundary: The scoped behavior passes.\n"
+        "- Current measured state: No current defect.\n"
+        "- Evidence: Focused fixture and live source.\n"
+        "- Task-specific authority: The focused feature contract.\n"
+        "- Work surface: The owning source and test.\n"
+        "- Change: Implement the scoped behavior.\n"
+        "- Preserve: Existing compatibility.\n"
+        "- Non-goals: Unrelated behavior.\n"
+        "- Acceptance: The focused behavior passes.\n"
+        "- Validation: Run the focused smoke.\n"
+        "- Deferred: None.\n"
     )
 
 

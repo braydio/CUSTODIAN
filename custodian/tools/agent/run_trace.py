@@ -18,9 +18,11 @@ def list_traces(repo: Path, workstream: str | None) -> int:
     local = []
     if root.exists():
         for path in sorted(root.glob("*/**/*.jsonl")):
-            if workstream and path.parent.name != workstream:
+            parts = path.relative_to(root).parts
+            trace_workstream = parts[0] if len(parts) >= 2 else path.parent.name
+            if workstream and trace_workstream != workstream:
                 continue
-            local.append({"run_id": path.stem, "workstream": path.parent.name, "source": "local", "path": str(path)})
+            local.append({"run_id": path.stem, "workstream": trace_workstream, "source": "local", "path": str(path)})
     remote = git(repo, "ls-remote", "--heads", "origin", "refs/heads/agent-diagnostics/*", check=False)
     refs = []
     for line in remote.stdout.splitlines():
@@ -66,7 +68,7 @@ def main(argv=None) -> int:
     p = subs.add_parser("export"); p.add_argument("identity"); p.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     try:
-        repo = Path(git(Path.cwd(), "rev-parse", "--show-toplevel")).resolve()
+        repo = Path(git(Path.cwd(), "rev-parse", "--show-toplevel").stdout.strip()).resolve()
         if args.command == "list":
             return list_traces(repo, args.workstream)
         return export_trace(repo, args.identity)

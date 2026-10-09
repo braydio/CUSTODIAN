@@ -20,6 +20,12 @@ design/runtime authority, current tests, and any existing packet/workstream for
 the same semantic task. Reuse a stable Workstream ID when continuing the same
 coherent effort.
 
+When reconciling queue state, use `python3 custodian/tools/agent/dispatch.py audit`
+as the identity-level live inventory. It uses the dispatcher's shared
+claim decision and includes active packet classes plus local/remote agent-ref
+and attached-worktree evidence. `task_packet_index.py` remains a generated
+Ready/Auto view, never selection authority.
+
 # [TASK NAME]
 
 - Packet schema: `custodian.task_packet.v2`

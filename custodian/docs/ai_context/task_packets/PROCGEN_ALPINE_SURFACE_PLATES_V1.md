@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `large authored presentation plates require objective semantic checks plus final human gameplay-scale composition approval`
-- Reviewed base: `78bb7b865948a2a342017993f5b98c4b795d1f6e`
+- Reviewed main: `78bb7b865948a2a342017993f5b98c4b795d1f6e`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Goal: Use the existing Macro Presentation system to suppress the exposed 32 px “chessboard” read with large authored Rocky Upland and Meridian Hardstand compositions while leaving gameplay tiles, semantic masks, collision/navigation, biome, roads and elevation as the sole gameplay authorities.
 - Completion boundary: Done when the two registered approved source-master batches (`rocky-upland-10-source-family-v1` and `meridian-hardstand-6-source-family-v1`) are fetched and verified; the existing `procgen_surface_rocky_upland` family gains the 10 manifest states and `procgen_surface_meridian_hardstand` gains the six manifest states through Asset Pipeline V2; each state has a validated `TerrainStampProfile` with explicit semantic masks/eligibility; the existing catalog/composer deterministically places the new vocabulary without semantic mutation; streaming/materializer parity remains green; representative natural/hardstand gameplay views no longer read primarily as exposed tiled cells or rectangular presentation patches; and compact human review accepts the integration.

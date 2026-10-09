@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `frame-specific edge art and final gameplay-scale composition require human visual approval after objective technical checks`
-- Reviewed base: `b086e552de00cea8551d62884c996558d33f12e6`
+- Reviewed main: `b086e552de00cea8551d62884c996558d33f12e6`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Goal: Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic 32 px fascia strip, while retaining exterior CHASM, Region Frame selection and `ProcgenVoidCliffFace` as presentation/semantic authorities.
 - Completion boundary: Done when the approved `alpine-cliff-source-family-v1` source-master batch is fetched and verified; Codex derives and normalizes the exact 12-state `procgen_alpine_cliff_fascia` family, 10-state `procgen_alpine_cliff_contact` family and four new `procgen_depth_chunks` states through Asset Pipeline V2; the resulting exact 26-state Gate B handoff is published/verified as the AP2 closeout receipt; Alpine Region Frame data selects the frame-specific fascia vocabulary while the generic six-state `void_cliff_face` remains fallback; large contact compositions derive from the same exterior frontier/outward-direction evidence; directional visual depth is coherent; cliff bottoms disappear into the permanent fog stack; collision/navigation/topology remain unchanged; and compact fixed-seed multi-direction edge evidence receives human approval.

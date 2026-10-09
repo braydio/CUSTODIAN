@@ -52,6 +52,7 @@ rather than treating a local PASS as remote queue availability.
 
 2. **Prefer the immediate continuation of the work the conversation just finished.**
    - Fetch current packet truth through the dispatcher/repository workflow.
+   - For a full queue discrepancy, use `python3 custodian/tools/agent/dispatch.py audit --json` to inspect identities and actual eligibility; the README projection is not claim authority.
    - Resolve the most recently completed/reviewed workstream from durable repo evidence.
    - Read its archived packet/closing summary `## Next Handoff`.
    - If an exact successor is eligible and `ChatGPT/user planning refresh required: no`,

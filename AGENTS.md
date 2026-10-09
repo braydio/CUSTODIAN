@@ -221,6 +221,15 @@ without actual user authorization.
 
 Executable packet dispatch is automatic by default. Use `Status: ready` + `Dispatch: auto` even when declared dependencies are incomplete; the dispatcher keeps the packet blocked until those dependencies archive `complete`, then makes it claimable without a manual status flip. `Dispatch: manual` is reserved only for an explicit user instruction to hold an otherwise ready packet until the user chooses claim timing. Missing inputs, predecessor API drift, review ordering, and ordinary dependency waits are not manual-dispatch reasons; represent them with status/dependencies and fail-closed execution checks instead.
 
+For a full live queue and branch/worktree reconciliation, use
+`python3 custodian/tools/agent/dispatch.py audit` (or `--json` for stable
+machine-readable output). It shares the dispatcher's exact eligibility gate;
+the README Ready/Auto block is only a generated view. Use
+`dispatch.py repair --plan` to inspect the bounded metadata repair and add
+`--archive-completed` to preview only legacy records with explicit completion
+evidence. Repair apply never cleans branches or worktrees; preserve ambiguous
+ownership for explicit recovery.
+
 For “Take the next CUSTODIAN task,” run
 `python3 custodian/tools/agent/dispatch.py claim-next --agent <agent-id>`
 (for example `--agent claude` or `--agent codex`).

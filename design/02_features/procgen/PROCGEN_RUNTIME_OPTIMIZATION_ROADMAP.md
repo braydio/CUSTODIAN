@@ -904,7 +904,7 @@ Do not perform a broad prose rewrite in S1. Each implementation slice must corre
 
 ## Historical Work To Preserve
 
-`custodian/docs/ai_context/task_packets/RUNTIME_STUTTER_PERFORMANCE_PASS.md` is completed work, not a replacement for this roadmap. Preserve its successful contracts:
+`custodian/docs/ai_context/task_packets/archived/RUNTIME_STUTTER_PERFORMANCE_PASS.md` is completed work, not a replacement for this roadmap. Preserve its successful contracts:
 
 - no periodic global Observatory scans while hidden;
 - deferred streaming derived rebuilds;

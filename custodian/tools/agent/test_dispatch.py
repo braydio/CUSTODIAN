@@ -220,6 +220,51 @@ class DispatchTests(unittest.TestCase):
             dispatch.claim(self.repo, "manual-ready", "codex", False)
         self.assertEqual(fake.start.call_args.args[0], "manual-ready")
 
+    def test_full_audit_is_stable_and_uses_explicit_claim_decisions(self):
+        self.add_packet("audit-auto", dispatch_value="auto")
+        self.add_packet("audit-manual", dispatch_value="manual")
+        self.add_packet("audit-gated", dispatch_value="auto", depends="audit-auto")
+        first = dispatch.audit(self.repo)
+        second = dispatch.audit(self.repo)
+        self.assertEqual(first, second)
+        self.assertEqual(first["schema"], "custodian.task_packet_queue_audit.v1")
+        self.assertEqual(first["raw_active_markdown_count"], 3)
+        by_id = {row["workstream"]: row for row in first["packets"]}
+        self.assertEqual(by_id["audit-auto"]["actual_class"], "ready_auto")
+        self.assertTrue(by_id["audit-auto"]["eligible_now"])
+        self.assertTrue(by_id["audit-auto"]["claim_next_eligible"])
+        self.assertEqual(by_id["audit-manual"]["actual_class"], "manual_ready")
+        self.assertTrue(by_id["audit-manual"]["eligible_now"])
+        self.assertFalse(by_id["audit-manual"]["claim_next_eligible"])
+        self.assertEqual(by_id["audit-gated"]["actual_class"], "dependency_lock_blocked")
+        self.assertFalse(by_id["audit-gated"]["eligible_now"])
+        self.assertIn("dependency not archived complete: audit-auto", by_id["audit-gated"]["reasons"])
+        rendered = dispatch.status(self.repo, output=False)
+        import re
+        for status_label, audit_class in (
+            ("READY", "ready_auto"), ("CLAIMED", "claimed"),
+            ("DEPENDENCY/LOCK BLOCKED", "dependency_lock_blocked"),
+            ("MANUAL READY", "manual_ready"), ("PARKED DRAFT", "parked_draft"),
+            ("INVALID/RECOVERY", "invalid_recovery"),
+        ):
+            match = re.search(rf"(?m)^{re.escape(status_label)} \((\d+)\)", rendered)
+            self.assertIsNotNone(match, status_label)
+            self.assertEqual(int(match.group(1)), first["class_counts"].get(audit_class, 0), status_label)
+
+    def test_ready_v2_missing_required_metadata_is_not_claimable_or_indexable(self):
+        incomplete = packet("incomplete-v2", dispatch_value="auto").replace(
+            "# Packet\n\n", "# Packet\n\n- Packet schema: `custodian.task_packet.v2`\n", 1,
+        )
+        self.add_packet("incomplete-v2", text=incomplete)
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("missing required V2 metadata: Reviewed main", rendered)
+        with self.assertRaisesRegex(dispatch.DispatchError, "missing required V2 metadata"):
+            dispatch.claim(self.repo, "incomplete-v2", "codex", True)
+        result = dispatch.audit(self.repo)
+        row = next(item for item in result["packets"] if item["workstream"] == "incomplete-v2")
+        self.assertEqual(row["actual_class"], "invalid_recovery")
+        self.assertFalse(row["claim_next_eligible"])
+
     def test_manual_ready_status_matches_pairing_and_validation_claim_gates(self):
         self.add_packet(
             "manual-bad-pair", dispatch_value="manual", review="auto",

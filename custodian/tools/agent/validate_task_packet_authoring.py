@@ -22,6 +22,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from task_packet_contract import (
     PACKET_ROOT,
     REVIEW_MODES,
+    V2_CORRECTION_REQUIRED_FIELDS,
+    V2_REVIEW_REQUIRED_FIELDS,
+    V2_REQUIRED_FIELDS,
+    is_v2_packet,
     header_field,
     parse_packet,
     validate_review_pairing,
@@ -34,17 +38,7 @@ AUTO_IMPLEMENTATION_REQUIRED = (
     "Review cycle",
     "Max automatic review cycles",
 )
-REVIEW_PACKET_REQUIRED = (
-    "Review target workstream",
-    "Review target packet",
-    "Visual review",
-    "Reviewer context",
-    "Reviewer provenance",
-    "Review modes",
-    "Review cycle",
-    "Max automatic review cycles",
-    "Task overrides",
-)
+REVIEW_PACKET_REQUIRED = V2_REVIEW_REQUIRED_FIELDS
 REVIEWER_PROVENANCE = {"different-agent", "same-agent-fresh-context"}
 
 
@@ -147,6 +141,12 @@ def validate_authoring_paths(repo: Path, packet_paths: list[str | Path]) -> list
                     + ", ".join(sorted(REVIEW_MODES))
                 )
             findings.append(f"{rel}: {detail}")
+
+        if is_v2_packet(packet) and packet.status == "ready" and packet.kind != "review":
+            required = V2_CORRECTION_REQUIRED_FIELDS if packet.kind == "correction" else V2_REQUIRED_FIELDS
+            missing = _missing_headers(text, required)
+            if missing:
+                findings.append(f"{rel}: ready V2 packet missing explicit " + ", ".join(missing))
 
         if packet.review == "auto":
             missing = _missing_headers(text, AUTO_IMPLEMENTATION_REQUIRED)

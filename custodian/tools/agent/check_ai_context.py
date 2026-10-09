@@ -157,7 +157,7 @@ def check_packet_grammar(packets: list[DiscoveredPacket], report: Report) -> Non
     rather than flagging every historical document as broken.
     """
     for entry in packets:
-        if entry.packet.error and entry.packet.dispatch_declared:
+        if not entry.archived and entry.packet.error and entry.packet.dispatch_declared:
             report.add("packet-grammar", entry.rel_path, entry.packet.error)
 
 
@@ -195,6 +195,8 @@ def check_v2_contract(entry: DiscoveredPacket, report: Report) -> None:
         return
     if entry.packet.kind not in COMPLETION_TRUTH_REQUIRED_KINDS:
         return  # review packets use AGENT_REVIEW_PACKET_TEMPLATE.md's distinct field contract
+    if entry.packet.status not in {"ready", "in_progress", "complete"}:
+        return  # blocked/draft packets may remain incomplete until their gate clears
     required_fields = V2_CORRECTION_REQUIRED_FIELDS if entry.packet.kind == "correction" else V2_REQUIRED_FIELDS
     values = v2_required_field_values(entry.text, required_fields)
     for field_name in required_fields:

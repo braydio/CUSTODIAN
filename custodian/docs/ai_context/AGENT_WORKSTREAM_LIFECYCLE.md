@@ -124,6 +124,14 @@ git -C <returned-worktree> branch --show-current
 python3 custodian/tools/agent/dispatch.py status
 ```
 
+Use `python3 custodian/tools/agent/dispatch.py audit` when resolving a queue
+discrepancy. The JSON audit is ordered and includes the packet class, the same
+eligibility decision used by a named claim, dependency and pairing identity,
+remote claims, and local/remote branch ancestry plus attached-worktree dirtiness.
+`landed_unattached_candidate` is evidence for review, not a deletion command.
+Attached, dirty, unique, or ownership-uncertain work remains protected until
+the established lifecycle proves cleanup safe.
+
 The branch must equal `agent/<returned-workstream>`, and status must recognize
 that same ID as claimed.
 

@@ -10,7 +10,7 @@
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
-- Review modes: `code, architecture, runtime, persistence`
+- Review modes: `code, architecture, runtime`
 - Paired review workstream: `review-vehicle-diagnosis-knowledge-v1`
 - Review cycle: `0`
 - Max automatic review cycles: `2`

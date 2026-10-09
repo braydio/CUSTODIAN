@@ -55,6 +55,11 @@ V2_REQUIRED_FIELDS = (
 V2_CORRECTION_REQUIRED_FIELDS = tuple(
     "Required correction" if field == "Change" else field for field in V2_REQUIRED_FIELDS
 )
+V2_REVIEW_REQUIRED_FIELDS = (
+    "Review target workstream", "Review target packet", "Visual review",
+    "Reviewer context", "Reviewer provenance", "Review modes",
+    "Review cycle", "Max automatic review cycles", "Task overrides",
+)
 
 COMPLETION_TRUTH_SCHEMA = "custodian.task_completion.v1"
 # Kinds whose `Status: complete` must carry a truthful Completion Truth
@@ -378,6 +383,18 @@ def validate_queue_contract(
         if is_v2_packet(packet) and packet.status == "draft" and packet.dispatch == "auto":
             add(packet.workstream,
                 "invalid draft/auto queue state; use ready/auto for dependency-gated mechanical work or draft/manual for a genuine refresh/human gate")
+        if is_v2_packet(packet) and packet.status == "ready" and texts is not None:
+            if packet.kind == "correction":
+                required_fields = V2_CORRECTION_REQUIRED_FIELDS
+            elif packet.kind == "implementation":
+                required_fields = V2_REQUIRED_FIELDS
+            else:
+                required_fields = ()
+            if required_fields:
+                text = texts.get(packet.path, "")
+                missing = [field for field in required_fields if not _header_field_with_continuations(text, field)]
+                if missing:
+                    add(packet.workstream, "missing required V2 metadata: " + ", ".join(missing))
         if is_v2_packet(packet) and packet.status == "draft" and packet.dispatch == "manual" and texts is not None:
             body = texts.get(packet.path, "").lower()
             rationale = re.search(

@@ -16,7 +16,7 @@
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
-- Review modes: `code, architecture, runtime, persistence`
+- Review modes: `code, architecture, runtime`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently verify that vehicle scanning produces durable, bounded mechanical knowledge and pattern evidence without becoming a resource grant, repair action, duplicate ARRN tree, or raw-input side channel.
