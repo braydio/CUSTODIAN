@@ -40,9 +40,9 @@ The already recorded human visual lock remains valid. No ambiguous capture or co
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: Artifact lookup initially omitted the remote artifacts subdirectory; a fresh Godot import created nine unrelated reference-art .import sidecars.
+- What went wrong: Artifact lookup initially omitted the remote artifacts subdirectory; a fresh Godot import created nine unrelated reference-art .import sidecars. Finish encountered a conflict only in the generated README queue block after concurrent living-world review changes landed.
 - Root cause / contributing factors: Manifest records names/source paths without explicit remote child paths; fresh imports scan reference assets.
-- Prevention / pipeline improvement: Resolve the artifacts subdirectory first and remove only classified generated sidecars before finish.
+- Prevention / pipeline improvement: Resolve the artifacts subdirectory first and remove only classified generated sidecars before finish. Regenerate the managed index from the merged packet tree to preserve both lanes; validate the result after sync rather than resolving generated rows by hand.
 - Tooling / docs drift discovered: R0-01 as above.
 - Follow-up: awakening-handoff-readiness-art-convergence-v1-r1
 - What worked: Compact existing visual evidence plus fresh state/traversal checks gave independent proof without repeated full-frame capture.

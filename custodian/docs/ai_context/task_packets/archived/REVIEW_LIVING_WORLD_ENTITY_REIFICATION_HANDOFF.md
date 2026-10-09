@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-living-world-entity-reification-handoff`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `living-world-entity-reification-handoff`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `living-world-entity-reification-handoff`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md`
-- Reviewed main: `810fb93aa20209096e88a6422c832885f220b22c`
+- Reviewed main: `0728ec281`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -35,11 +35,59 @@ The implementation/review pair remains `draft/manual` until the official targete
 
 ## Next Handoff
 
-- Next workstream: `none` (F14-C2 and F15 production integration conceptual; author only after reviewed C1 + geographic contract)
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next workstream: `living-world-entity-reification-handoff-review-corrections-1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
-- Refresh reason: Review real Enemy handoff evidence, then lock F15 stable production geographic IDs, semantic region ownership, ambient spawn reconciliation and repeated physical site crossing before authorizing automatic production residency.
-- Next action: Return reviewed C1 source, tests, receipt and material integration observations to this authoring chat for C2/F15 planning.
-- Blockers or open questions: None for the independent C1 review after implementation lands; F14-C2/F15 production binding remains gated.
+- Refresh reason: none
+- Next action: Claim the bounded correction after this review lands and archives; resolve R0-01/R0-02/R0-03, then obtain its fresh paired re-review.
+- Blockers or open questions: Production F14-C2/F15 remains gated for the authoring chat after C1 correction acceptance.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-living-world-entity-reification-handoff`
+- Reviewed on main: `0728ec281` (implementation commit `3eeae806f3f897c9b467cd929a324aa13cfb7216`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `2`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02, R0-03`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `living-world-entity-reification-handoff-review-corrections-1`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+
+### Review Notes
+
+- R0-01: A live Node2D anchor at `Vector2(NAN, 0)` is accepted; reentry commits physical ownership and creates a Grunt with nonfinite global position. Validate finite safe placement before staging/commit and preserve abstract authority on failure.
+- R0-02: Schema-v5 snapshots whose abstract state is v1 bypass the incoming fingerprint check because migration captures/signs the migrated state first. A valid legacy snapshot changed only to `fingerprint = "corrupted"` still restores. Validate the original canonical payload fingerprint before upgrading it.
+- R0-03: The authored smoke still passes with physical-group abstract advancement enabled by an independent scratch subclass. The physical 60-tick hold does not cross an eligible activity interval at a macro boundary; a 120-tick hold exposes the mutation. Strengthen the ownership falsification proof.
+- Import preflight and all five required focused smokes passed after fresh-worktree editor import. Independent supported-goal full twice-crossing replay also produced equal fingerprint/events in two separate processes. Passing current tests does not resolve these findings.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first direct smoke could not resolve global classes in the fresh worktree; editor import generated nine unrelated reference-art import sidecars. Finish met one managed README index conflict after concurrent Awakening landing; regenerating the index resolved it while preserving incoming source and packet archives.
+- Root cause / contributing factors: The new worktree had no Godot class/import cache; LFS preflight checks pointers rather than initializing that cache.
+- Prevention / pipeline improvement: Initialize the Godot editor cache once before direct scripts in a fresh worktree; remove only the exact disposable generated sidecars after validation.
+- Tooling / docs drift discovered: The authored physical hold missed an eligible macro interval, so its passing suspension assertion was not the claimed ownership falsification.
+- Follow-up: living-world-entity-reification-handoff-review-corrections-1
+- What worked: Independent fault probes and a temporary ownership mutation exposed defects the current passing smoke did not detect.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Findings-first independent receipt with R0-01/R0-02/R0-03, five focused PASS smokes, fresh fault/mutation probes, changed-file contract validation 2/2 PASS, authoring/index/diff checks and bounded ready/auto correction/re-review pair. Review contract completed; reviewed implementation acceptance remains blocked by findings.
+- Deferred work: F14-C2/F15 production binding remains a human planning gate after correction acceptance.

@@ -54,7 +54,7 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: success
 - Friction severity: low
-- What went wrong: Initial artifact lookup used the run root; published files are under its artifacts subdirectory. Fresh-worktree import also produced nine unrelated reference-art .import sidecars.
+- What went wrong: Initial artifact lookup used the run root; published files are under its artifacts subdirectory. Fresh-worktree import also produced nine unrelated reference-art .import sidecars. Concurrent main changes caused a generated README queue-block merge conflict during finish; regenerating the index from the merged packet tree preserved both lanes.
 - Root cause / contributing factors: Manifest lists artifact names/source paths without explicit remote child paths; Godot imports all referenced art in a fresh worktree.
 - Prevention / pipeline improvement: Resolve the artifacts subdirectory before fetching; classify and remove only generated untracked import sidecars before finish.
 - Tooling / docs drift discovered: R0-01 — stale Awakening design/current-state prose still calls the repaired fade/correction review pending.
