@@ -158,6 +158,42 @@ the user explicitly wants to control claim timing.
 Do not encode duplicate technical truth already owned by a schema/resource.
 Reference the authority and state the closure condition.
 
+### Publication Handoff after the Authoring Quality Gate
+
+**Do not stop at a successful local authoring preflight.** When a pair was
+previously `draft/manual` and its design decision is now approved, its next
+action is **promote → revalidate → index → land to `origin/main` → claim**.
+The validation command reports structural correctness of the *local* files,
+not dispatcher visibility or eligibility.
+
+1. Confirm authoring authority and no duplicate/claimed workstream on fetched
+   `origin/main`; retain `draft/manual` if the design/human gate is unresolved.
+2. Run the targeted authoring validator on the implementation and paired review
+   in their existing statuses.
+3. Set both packet headers to `Status: ready` / `Dispatch: auto` only if
+   authorized; retain `ready/manual` where the user explicitly holds claim
+   timing. Re-run the same targeted validator after the edits.
+4. Regenerate `custodian/docs/ai_context/task_packets/README.md` through the
+   bounded indexer, never by hand:
+   ```bash
+   python3 custodian/tools/agent/task_packet_index.py --write
+   python3 custodian/tools/agent/task_packet_index.py
+   ```
+5. Commit only the authorized packet pair and managed index (plus necessary
+   scoped design authority), and land them on remote `origin/main` through
+   the existing safe landing process. **The dispatcher does not read**
+   the authoring branch or unpublished checkout.
+6. Fetch and verify both target packet files and the managed index on
+   `origin/main`, then `dispatch.py claim <implementation-workstream-id>`
+   subject to dependency, lock, and freshness gates. The paired review is
+   dependency-gated until the implementation archives complete.
+
+The authoring validator prints the precise publication/claim handoff on
+`PASS`; it does not itself update packet status, index, git, or dispatcher
+claims. For details see root `AGENTS.md` → Task-Packet Promotion Before
+Dispatch. **Never turn a local preflight success into a silent bypass of the
+review or human approval policy.**
+
 ### Authoring Quality Gate
 
 Before setting `Status: ready`, run the targeted packet-authoring preflight on
