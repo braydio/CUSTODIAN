@@ -77,7 +77,6 @@ normal closeout.
 - `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 without redesigning the generated-region lifecycle.
 - `REVIEW_BRIDGED_FALLS_LOWER_QUARTER_HANDOFF.md` — Independently verify the final Bridged Falls -> Lower Quarter production cutover and single-state-authority claim.
 - `REVIEW_BRIDGED_FALLS_PROCGEN_TOPOLOGY.md` — Independently verify that Bridged Falls is genuinely seed-generated and structurally valid, not a fixed authored corridor with cosmetic variation.
-- `REVIEW_CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER_REVIEW_CORRECTIONS_1.md` — Independently verify correction finding `R0-01` and confirm the runner can launch Codex with a supported option set.
 - `REVIEW_CUSTODIAN_DEATH_HANDOFF_FOUNDATION_RECOVERY_1.md` — Independently verify that the recovered R1 death handoff lands the intended campaign-level exactly-once death consequence on current main without importing s...
 - `REVIEW_CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Independently verify that R2 removes the R1 Game Over fallback only for a genuinely accepted death return, layers recovery on the reviewed H6 authority witho...
 - `REVIEW_HUB_AWAKENING_CONTEXT_HANDOFF.md` — Independently verify the landed implementation against its archived packet and live runtime.
