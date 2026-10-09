@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-task-packet-queue-stranding-hardening-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `task-packet-queue-stranding-hardening-review-corrections-1`
@@ -15,7 +15,7 @@
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
 - Visual review: `none`
 - Reviewer context: `fresh`
-- Reviewer provenance: `different-agent`
+- Reviewer provenance: `same-agent-fresh-context`
 - Review modes: `code, workflow`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
@@ -37,5 +37,12 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
 - Refresh reason: `none`
-- Next action: Return the correction review verdict to the authoring chat.
+- Next action: Return the landed correction review verdict to the authoring chat.
 - Blockers or open questions: none
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: R0-01 is fixed; the focused dispatcher, packet contract, and packet index suites pass, live status reports all six categories, and the dedicated fixture verifies valid manual eligibility plus pairing/validation rejection parity.

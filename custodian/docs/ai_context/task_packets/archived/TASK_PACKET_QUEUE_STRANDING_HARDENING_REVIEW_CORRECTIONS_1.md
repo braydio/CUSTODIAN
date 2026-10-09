@@ -64,3 +64,26 @@
 - Refresh reason: `none`
 - Next action: Land the bounded status/eligibility correction and run the paired fresh-context re-review.
 - Blockers or open questions: none
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-task-packet-queue-stranding-hardening-review-corrections-1`
+- Reviewed on main: `1d19ec8fae15c6eb23604457e3da2adef596c19d`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Resolved finding IDs: `R0-01`
+- R0-01 disposition: `fixed; no_action`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_TASK_PACKET_QUEUE_STRANDING_HARDENING_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Evidence: The targeted diff routes ready/manual packets through `_decision()` with the same pairing, validation-reference, and queue errors as explicit claims. The new fixture asserts valid manual status and rejects invalid pairing/validation cases from both MANUAL READY and explicit claim. `test_dispatch.py` passed 76 tests, `test_task_packet_contract.py` 26, `test_task_packet_index.py` 12; live `dispatch.py status` rendered READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY; `git diff --check` passed.
+- Evidence limits: Live status includes unrelated existing queue entries; the focused regression fixture supplies deterministic category/claim assertions for this correction. No reviewed implementation files were changed.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
