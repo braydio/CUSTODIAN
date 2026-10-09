@@ -82,3 +82,30 @@ Address only R0-01, R0-02 and R0-03. Keep original review finding IDs and receip
 - Refresh reason: none
 - Next action: After this correction archives complete, claim and independently re-review R0-01, R0-02, and R0-03 in a fresh reviewer context.
 - Blockers or open questions: Paired re-review is required before original findings can be closed.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: review-task-packet-queue-reconciliation-v1-review-corrections-1
+- Reviewed on main: b6ac90e426c1c0380f11da131e64931916fd9ff6
+- Reviewer context: fresh
+- Reviewer provenance: same-agent-fresh-context
+- Review modes: code, architecture, workflow
+- Blocking defects: 0
+- Material evidence gaps: 0
+- Non-blocking issues: 0
+- Optional improvements: 0
+- Correction finding IDs: none
+- Resolved finding IDs: R0-01, R0-02, R0-03
+- R0-01 disposition: fixed; no_action
+- R0-02 disposition: fixed; no_action
+- R0-03 disposition: fixed; no_action
+- Unresolved finding IDs: none
+- Regressed finding IDs: none
+- Next-slice finding IDs: none
+- Human-decision finding IDs: none
+- Detailed review summary: REVIEW_TASK_PACKET_QUEUE_RECONCILIATION_V1_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md
+- Follow-up workstream: none
+- Evidence: Exact YAML command passed 122 tests; lifecycle/authoring passed 47. Independent old-code mutation reproduces R0-01 while current real named/next claims reject and preserve the marker; orphan and repeat fixtures pass. Exact-tree ledger rows and six additions/zero removals reproduce; all 24 archives and 22 ambiguous records match baseline bytes. Live audit/status/named/next decisions agree at 218 raw/155 managed/24 eligible. Protected ownership remains intact.
+- Evidence limits: Historical live claims without recorded refs remain expressly unbound; current refs are volatile and are separately bound to the reviewed main SHA. No reviewed implementation was edited.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
