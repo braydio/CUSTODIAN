@@ -3,7 +3,8 @@
 **Status:** active roadmap  
 **Date:** 2026-10-07  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c  
-**Design authority:** `ASH_BELL_BRIDGED_FALLS_APPROACH.md`  
+**Design authority:** `ASH_BELL_BRIDGED_FALLS_APPROACH.md`
+**Asset manifest:** `ASH_BELL_BRIDGED_FALLS_ASSET_MANIFEST.md`  
 **Reviewed main:** `435c422d6cb5`
 
 ## Program Goal
@@ -24,8 +25,8 @@ Seven implementation packets follow.
 | Slice | Workstream | State at authoring | Dependency |
 | --- | --- | --- | --- |
 | BF0 | design lock / roadmap | landing now | none |
-| BF1 | `bridged-falls-generated-region-lifecycle` | ready | none |
-| BF2 | `ash-bell-highlands-generated-destination` | draft | BF1 review |
+| BF1 | `bridged-falls-generated-region-lifecycle` | implementation + R0-01 correction complete; correction re-review active | none |
+| BF2 | `ash-bell-highlands-generated-destination` | ready/auto, dependency-gated | BF1 correction re-review |
 | BF3 | `ritualant-north-egress-and-chapel-vista` | draft | BF2 review |
 | BF4 | `bridged-falls-procgen-topology` | draft | BF2 review |
 | BF5 | `bridged-falls-bridge-grammar-asset-v2` | draft | BF4 review |
