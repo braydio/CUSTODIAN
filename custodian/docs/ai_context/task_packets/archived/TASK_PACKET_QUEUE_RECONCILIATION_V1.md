@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: task-packet-queue-reconciliation-v1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P0
 - Depends on: none
@@ -31,6 +31,27 @@
 - Validation: First the packet-authoring preflight on each changed active packet/pair, then focused custodian/tools/agent/test_task_packet_contract.py, test_dispatch.py, test_task_packet_index.py, test_workstream.py and new recovery/audit fixtures. Follow with dispatch.py status, task_packet_index.py check/--write as needed, validate_review_pairing.py, check_ai_context.py, changed-file validation and git diff --check. Report pre-existing unrelated failures honestly. Moment Forge not applicable to control-plane/document changes.
 - Task overrides: none
 - Deferred: Continuous external queue dashboard, time-based notifications, multi-machine leasing redesign and speculative cleanup of evidence-incomplete historical artifacts.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `TASK_PACKET_QUEUE_RECONCILIATION_V1_LEDGER.md` records the before/after dispatcher identities/counts, five specified malformed packet repairs, additional evidence-backed latest-main metadata fixes, all 24 byte-preserving archives, 22 completion-ambiguous active records retained, branch/claim ownership dispositions, and protected blockers. `dispatch.py audit --json` and `status` agree on final live classes; second repair apply is idempotent; generated index, shared context validation and 48 review-pair checks pass; seven focused unittest modules pass (168 tests); changed-packet authoring preflight and git diff checks pass. No claimed branch, worktree, lock, or ambiguous legacy packet was removed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `origin/main advanced repeatedly during reconciliation and its NPA-4 landing changed packet paths while audits were running; an initial combined unittest run exposed order-sensitive stdout capture failures although each affected module passed in a fresh process.`
+- Root cause / contributing factors: `The reconciliation was operating across a live shared queue; candidate-tree and fetched-main state differed at multiple points. Some test modules share global process state when combined.`
+- Prevention / pipeline improvement: `Re-fetch/merge before final audit and lifecycle finish; run focused CLI test modules in isolated processes; audit uses dispatcher eligibility and explicit tree selection.`
+- Tooling / docs drift discovered: `Three newly landed packets had a stale validation script or incomplete paired-review metadata/override; fixed mechanically and recorded above. Existing historical invalid/recovery entries remain explicitly classified.`
+- Follow-up: `fixed-in-scope`
+- What worked: `Deterministic repair previews and dispatcher-backed audit made identity-preserving cleanup reproducible.`
 
 ## Implementation contract
 
@@ -72,5 +93,5 @@
 - Next workstream: review-task-packet-queue-reconciliation-v1
 - Next packet state: dependency-gated
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
-- Next action: Claim task-packet-queue-reconciliation-v1 explicitly via python3 custodian/tools/agent/dispatch.py claim task-packet-queue-reconciliation-v1 --agent codex, implement and safely land, then run its fresh-context review.
+- Next action: After this implementation lands and archives complete, claim review-task-packet-queue-reconciliation-v1 in a fresh reviewer context.
 - Blockers or open questions: No planning blocker to claiming. Ambiguous claim ownership is an item-specific safety stop, never permission to delete work.
