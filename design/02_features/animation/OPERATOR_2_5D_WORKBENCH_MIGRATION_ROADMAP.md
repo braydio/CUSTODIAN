@@ -1,9 +1,9 @@
 # OPERATOR 2.5D WORKBENCH MIGRATION + PRODUCTION PIPELINE
 
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
-**Status:** active implementation / WB25-1 reviewed complete / WB25-2 ready-auto  
+**Status:** active implementation / WB25-2 reviewed complete / WB25-3 ready-auto  
 **Priority:** P1  
-**Reviewed main:** `d6c94d38c99e58c96e5f5c7e46db8d290bfeb10f`  
+**Reviewed main:** `c447db62d5c6f434394d6c634e1e191952658cc5`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
 **Last updated:** 2026-10-08
 
@@ -219,10 +219,10 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | --- | --- | --- | --- |
 | WB25-1 | operator-2-5d-workbench-cockpit-foundation | **complete / reviewed after R0-01 correction** | generation namespace, plan v2, target-first tree/matrix |
 | WB25-1R | review-operator-2-5d-workbench-cockpit-foundation | **complete / correction re-review passed** | independent target/namespace truth review |
-| WB25-2 | operator-2-5d-workbench-ingress | **ready / auto** | guided New/Import + directional package intake |
-| WB25-2R | review-operator-2-5d-workbench-ingress | **ready / auto behind WB25-2** | provenance/rollback/import review |
-| WB25-3 | operator-2-5d-workbench-polish-automation | draft / refresh-required | profile-guided Aseprite polish + temporal diagnostics |
-| WB25-3R | review-operator-2-5d-workbench-polish-automation | dependency-gated | mutation/QA boundary review |
+| WB25-2 | operator-2-5d-workbench-ingress | **complete / reviewed through cycle-2 correction** | guided New/Import + directional package intake |
+| WB25-2R | review-operator-2-5d-workbench-ingress | **complete / final correction re-review passed** | provenance/rollback/import review |
+| WB25-3 | operator-2-5d-workbench-polish-automation | **ready / auto** | profile-guided Aseprite polish + temporal diagnostics |
+| WB25-3R | review-operator-2-5d-workbench-polish-automation | **ready / auto behind WB25-3** | mutation/QA boundary review |
 | WB25-4 | operator-2-5d-workbench-review-automation | draft / refresh-required | canonical QA, family/sequence review, sandbox runtime proof |
 | WB25-4R | review-operator-2-5d-workbench-review-automation | dependency-gated | anti-drift/sequence/sandbox review |
 | WB25-5 | operator-2-5d-workbench-production-queue | draft / refresh-required | queue/dashboard + deterministic generation briefs |
@@ -237,8 +237,8 @@ Expected implementation packets: **6**.
 Every substantial dependent is intentionally pre-authored but cannot be claimed from stale predecessor assumptions.
 
 - WB25-1: complete and independently reviewed after bounded correction R0-01. Direction workflow now reads the exact direction workspace and saved creation readiness uses the backend classifier. Final planning truth remains 69 live legacy semantic families, 1 authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips.
-- WB25-2: **final pre-claim refresh complete / ready-auto**. It consumes the landed generation-aware target/workspace model. The refresh explicitly owns the narrow gaps discovered after WB25-1: New Animation generation adaptation, SourceArtService 128px proof, target-bound Source Session metadata, generation-aware handoff collision scope, resumable direction packages and a fail-closed no-runtime-promotion boundary.
-- WB25-3: refresh after WB25-2 + review.
+- WB25-2: complete and independently reviewed through cycle-2 correction. The final accepted ingress validates exact target-bound Source Sessions, generation-scoped handoff/workspaces, independent direction progress, legacy compatibility, no-runtime-promotion, and the physical saved Aseprite frame/canvas/timing contract before recovery/completion while preserving legitimate artist edits.
+- WB25-3: **final pre-claim refresh complete / ready-auto**. It attaches Art Agent to the existing exact 2.5D Workbench, derives the accepted registration profile from bound generation, adds connected-component/temporal diagnostics and explicit-opt-in planted registration through existing scoped mutation/undo authority. It remains publication-free.
 - WB25-4: refresh after WB25-3 + review.
 - WB25-5: refresh after WB25-4 + review.
 - WB25-6: refresh after WB25-5 + review and real queue/verification counts exist.
@@ -255,7 +255,8 @@ Current live-main refresh (2026-10-08):
 - WB25-1 and bounded correction R0-01 are landed/re-reviewed clean. The live v2 plan projects all 69 production-reachable targets, one canonical family and 68 missing canonical counterparts; direction workspaces and saved creation readiness are truthful.
 - `OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json` is now backward-readable v2 and generation-aware through the WB25-1 target projection.
 - `operator_asset_schema.py` now owns additive generation-aware canonical source paths while preserving legacy behavior.
-- WB25-2 is ready/auto. Live predecessor inspection found two intended ingress adaptations: reviewed New Animation remains legacy-generation-shaped, and SourceArtService production verification still hard-codes 96px despite session target-size support. WB25-2 owns those narrow backward-compatible fixes plus target-bound Source Session provenance and generation-scoped handoff collision semantics; it must not mutate production runtime.
+- WB25-2 and its two bounded correction cycles are complete/reviewed. The final cycle-2 review passed with zero blocking defects/evidence gaps on exact saved-document proof, preserving target binding, independent direction progress, collision semantics, legacy-96 behavior and unconditional 2.5D publication refusal.
+- WB25-3 is ready/auto. Live refresh found that Art Agent `start_session()` still resolves through the legacy generic Workbench path and default registration/QA profile selection remains legacy-shaped. WB25-3 owns the narrow existing-Workbench attach + generation-derived profile adaptation before adding objective polish metrics and bounded mutations.
 - Production runtime remains one generated database + `OperatorAnimationSelector`; WB25-6 changes which authoring generation feeds that identity, not the runtime authority architecture.
 ## Exit condition
 
