@@ -3,9 +3,9 @@
 **Date:** October 8, 2026  
 **Workstream:** `codebase-systems-audit`  
 **Evidence baseline:** [`main@e089e8b8a099`](https://github.com/braydio/CUSTODIAN/commit/e089e8b8a0993a0276596797e3a95798e33eb422)  
-**Program phase:** initial overview + index published; item-level investigation next  
+**Program phase:** overview indexed; F03 source-level diagnostic completed, runtime/decision-lock gate outstanding; remaining focus audits pending  
 **Decisions locked:** 0 of 13 · **New packets authorized/authored by this audit:** 0  
-**Current authoring chat URL:** **not yet supplied**; insert exact non-archived link before any future packet is authored.
+**Current authoring chat URL:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31 (October 8, 2026 F03 continuation).
 
 ## Purpose and architecture
 Create a durable trail from system-level diagnosis through evidence-backed decisions to independently executable implementation contracts. This is **not** a mandate to rewrite major systems, and it does not override existing design, runtime, queue or review authorities.
@@ -22,7 +22,7 @@ CODEBASE_SYSTEMS_AUDIT.md         (overview, prioritization, index)
 ## Executive findings
 1. **Operator:** F0 dependency injection and F4 Dodge extraction documented complete. Existing F1/F2/F3/F5/F6/G packets should be finished before commissioning any competing generic extraction.
 2. **Procgen/world installation:** Many focused helpers already exist, while `ProcGenTilemap` and `ContractWorldLoader` remain major coordination authorities. Complete existing domain migration and measure real coupling/soak before new refactors.
-3. **HUD/terminal:** The approximately 319 KB `ui.gd` is a strong **candidate** for overlooked complexity despite existing command routers/view models; verify actual state and mutation owners before splitting.
+3. **HUD/terminal (F03 updated October 8):** Source-level audit confirms partial migration: the terminal router delegates execution into the HUD's ~700-line legacy command handler; game-state/placement mutations and modal/queue/UI state still converge in `ui.gd`. Existing snapshot, fidelity, Overview/Sensors/Fabrication models must be preserved. The 0.12-second `_process` command queue requires a determinism contract decision, not an assumed bug fix. [Evidence, drift and eight conditional packet slots](codebase_systems_audit/F03_HUD_TERMINAL_UI.md).
 4. **Enemy/non-player agents:** Marine Dash extracted; six-family composition roadmap exists; complete NPA slices without turning `Enemy` into a universal NPC superclass.
 5. **Campaign and continuity:** The first complete production campaign loop and R2 death/reintegration deserve integration priority over more detached features.
 6. **Game feel:** Motion-consistent upper/lower presentation, enemy telegraph readability, hit feedback, vehicle response, interaction acknowledgement and camera behavior have strong potential ROI, but require playtest/telemetry evidence.
@@ -48,7 +48,7 @@ These are tree metadata at the baseline SHA, **not** line-level debt measurement
 | --- | --- | --- | --- | --- |
 F01 | [Operator runtime and combat](codebase_systems_audit/F01_OPERATOR_COMBAT.md) | P0 | Initial evidence recorded; detailed audit pending | Not locked
 F02 | [Procedural generation and Contract-world installation](codebase_systems_audit/F02_PROCGEN_WORLD_INSTALLATION.md) | P0 | Initial evidence recorded; detailed audit pending | Not locked
-F03 | [HUD, terminal and command UI](codebase_systems_audit/F03_HUD_TERMINAL_UI.md) | P0 | Initial evidence recorded; detailed audit pending | Not locked
+F03 | [HUD, terminal and command UI](codebase_systems_audit/F03_HUD_TERMINAL_UI.md) | P0 | Source-level findings captured; runtime parity and final decision pending | Not locked
 F04 | [Enemy and non-player actor runtime](codebase_systems_audit/F04_NON_PLAYER_ACTORS.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F05 | [Authored level and encounter coordinators](codebase_systems_audit/F05_AUTHORED_LEVEL_RUNTIME.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F06 | [Campaign, Hub, continuity, death and recovery](codebase_systems_audit/F06_CAMPAIGN_DEATH_RECOVERY.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
@@ -59,6 +59,13 @@ F10 | [Camera, streaming and environmental presentation](codebase_systems_audit/
 F11 | [Agent execution, validation and paired review handoff](codebase_systems_audit/F11_AGENT_VALIDATION_AUTOMATION.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F12 | [Cross-system game-feel opportunities](codebase_systems_audit/F12_GAME_FEEL.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F13 | [New-feature return on investment](codebase_systems_audit/F13_FEATURE_ROI.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
+
+## F03 detailed-audit update (October 8, 2026)
+
+- [Item-level evidence and decision record](codebase_systems_audit/F03_HUD_TERMINAL_UI.md) traces command interpretation, world mutations, simulation-time buffering questions, screen-local mutable state and documented UI input dependencies.
+- [Eight **conceptual** F03 packet slots](codebase_systems_audit/PACKET_ROADMAP.md#cs-f03-a) replace the original two high-level placeholders. This is an **unapproved roadmap**, not eight executable packets.
+- Existing terminal [implementation spec](../02_features/terminal/COMMAND_TERMINAL_SPEC.md) supersedes the [archived concept](../01_systems/COMMAND_TERMINAL_UI.md). The July [audit verification](../02_features/terminal/TERMINAL_AUDIT_VERIFICATION.md) prevents duplicate work on already implemented terminal fidelity/Overview components.
+- F03 remains **NOT LOCKED** until command-case callsite coverage, fixed-tick vs UI-time decision, focused Godot regression evidence and any human-owned UX boundaries are resolved. Across the audit: **0/13 decision locks** and **0 new authorized task packets**.
 
 ## Proposed work ordering
 **Audit lane A: existing-program reconciliation.** F01, F02, F04 and F06 map to active Operator, Procgen, NPA and Hub/Recovery programs. Determine whether any gap survives existing packet ownership; don't add duplicate scope.
