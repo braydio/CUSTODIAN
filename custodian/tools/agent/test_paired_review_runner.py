@@ -7,6 +7,7 @@ import fcntl
 import io
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -52,10 +53,42 @@ class PairedReviewRunnerTests(unittest.TestCase):
     def test_fake_codex_fixture_advertises_required_ephemeral_interface(self):
         with tempfile.TemporaryDirectory() as temp:
             fixture = Path(temp) / "codex"
-            fixture.write_text("#!/bin/sh\nprintf '%s\\n' 'codex exec --ephemeral --json --output-last-message --sandbox --cd --add-dir --approve-for-me'\n")
+            capture = Path(temp) / "capture.json"
+            source = f'''#!{sys.executable}
+import json, os, sys
+from pathlib import Path
+args = sys.argv[1:]
+if args == ["exec", "--help"]:
+    print("codex exec --ephemeral --json --output-last-message --sandbox --cd --add-dir --approve-for-me")
+    raise SystemExit(0)
+if "--sandbox" in args and "--approve-for-me" in args:
+    print("incompatible approval flags", file=sys.stderr)
+    raise SystemExit(2)
+prompt = sys.stdin.read()
+Path(os.environ["FAKE_CODEX_CAPTURE_PATH"]).write_text(json.dumps({{"args": args, "cwd": os.getcwd(), "prompt": prompt}}))
+output = Path(args[args.index("--output-last-message") + 1])
+output.write_text("fake review finished\\n")
+print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
+'''
+            fixture.write_text(source)
             fixture.chmod(0o755)
-            with patch.dict(os.environ, {"PATH": temp}):
+            with patch.dict(os.environ, {"PATH": temp, "FAKE_CODEX_CAPTURE_PATH": str(capture)}):
                 self.assertEqual(runner.codex_preflight(), str(fixture))
+                rejected = subprocess.run([str(fixture), "exec", "--sandbox", "workspace-write", "--approve-for-me"],
+                                           text=True, capture_output=True)
+                self.assertEqual(rejected.returncode, 2)
+                run_dir = Path(temp) / "run-evidence"
+                run_dir.mkdir()
+                argv = [str(fixture), "exec", "--ephemeral", "--json", "--approve-for-me", "--cd", temp,
+                        "--add-dir", str(run_dir), "--output-last-message", str(run_dir / "last.txt"), "-"]
+                self.assertEqual(runner.launch_codex(argv, Path(temp), "review prompt", run_dir, None), 0)
+            observed = json.loads(capture.read_text())
+            self.assertEqual(observed["cwd"], temp)
+            self.assertIn("--ephemeral", observed["args"])
+            self.assertIn("--approve-for-me", observed["args"])
+            self.assertNotIn("--sandbox", observed["args"])
+            self.assertEqual(observed["prompt"], "review prompt")
+            self.assertNotIn("fixture-secret", (run_dir / "codex.jsonl").read_text())
 
     def test_human_gate_and_non_review_are_refused(self):
         packet = runner.parse_packet("review.md", review_packet(visual="required"))
@@ -261,7 +294,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
                     self_test.assertEqual(Path(self.cwd), worktree)
                     self_test.assertTrue(self.assert_ephemeral)
                     self_test.assertEqual(self.argv[self.argv.index("--cd") + 1], str(worktree))
-                    self_test.assertEqual(self.argv[self.argv.index("--sandbox") + 1], "workspace-write")
+                    self_test.assertIn("--approve-for-me", self.argv)
+                    self_test.assertNotIn("--sandbox", self.argv)
                     self_test.assertIn("Do not use, request, or infer the implementation-session transcript", self.prompt)
                     output_path = Path(self.argv[self.argv.index("--output-last-message") + 1])
                     output_path.write_text("review complete\n")

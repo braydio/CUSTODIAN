@@ -35,7 +35,7 @@ Godot validation created nine untracked `.import` sidecars for existing Operator
 
 ## Authoring chat
 
-https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Next Handoff
 
@@ -43,7 +43,7 @@ https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: After this implementation lands and archives complete, run `python3 custodian/tools/agent/paired_review_runner.py review-codebase-audit-autonomous-review-runner` from synchronized coordination main. The child review must be fresh and inspect durable repo evidence.
 - Blockers or open questions: none.

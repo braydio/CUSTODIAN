@@ -1,6 +1,6 @@
 # Task Packet Queue Reconciliation V1 Summary
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Implemented the dispatcher-backed queue audit and bounded deterministic repair path. Reconciled the four unsupported `persistence` Review modes and Sundered visual-review header, added three ready V2 metadata corrections, and repaired three mechanical contract defects introduced on latest main. Archived 24 legacy complete records only when explicit completion evidence existed, updating exact source references and preserving bytes. Left the 22 completion-ambiguous legacy records active. The full before/after inventory and protected ownership rows are in [the reconciliation ledger](custodian/docs/ai_context/TASK_PACKET_QUEUE_RECONCILIATION_V1_LEDGER.md).
 
@@ -32,7 +32,7 @@ The bounded correction for original review findings R0-01, R0-02, and R0-03 is i
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: After this branch lands and the implementation packet archives complete, a fresh reviewer context claims and independently audits the ledger, implementation, protected branch decisions, and validation evidence.
 - Blockers or open questions: Attached/dirty historical branches remain protected pending their owners; 22 legacy records remain active pending positive completion evidence. These do not block paired review.

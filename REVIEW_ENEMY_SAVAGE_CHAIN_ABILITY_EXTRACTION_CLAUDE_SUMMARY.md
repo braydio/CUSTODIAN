@@ -4,7 +4,7 @@
 - Outcome: passed; no blocking defects, material evidence gaps, or nonblocking findings.
 - Reviewed main: `d67cf70e050eca0b7fd193ca645b1ac7111214b3`
 - Reviewer provenance: `same-agent-fresh-context`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Review scope and conclusion
 
@@ -40,7 +40,7 @@ The first smoke attempt preceded the fresh worktree's generated Godot class/impo
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: NPA-4 must use the reviewed final chain API and the then-current ordinary melee ownership/callers and `enemy.gd` shape.
 - Next action: Return the reviewed chain API and current ordinary melee ownership/callers to the Authoring chat before authoring or promoting NPA-4.
 - Blockers or open questions: none; NPA-4 has no active implementation packet pending the planning refresh.

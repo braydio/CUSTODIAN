@@ -33,7 +33,7 @@ The empty Savage claim branch is retained only until this metadata change lands.
 - Next packet state: ready
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: NPA-1's independent paired review must pass before NPA-2 can be remeasured and refreshed.
 - Next action: Retire the empty Savage branch at its verified SHA, claim the NPA-1 paired review, and return its durable result to the authoring conversation.
 - Blockers or open questions: NPA-1 paired review is pending.

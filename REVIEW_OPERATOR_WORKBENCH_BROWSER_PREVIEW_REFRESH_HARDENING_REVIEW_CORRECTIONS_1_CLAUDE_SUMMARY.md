@@ -1,6 +1,6 @@
 # Independent review: Operator Workbench browser / PREVIEW correction cycle 1
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Disposition: `findings` — one blocking defect and one retained material evidence gap. Correction cycle 2 is the immediate successor. Reviewed live main and correction commit `18d5f1f7392dc44ba1b70e4465e615866b7837ca`. Reviewer context: `fresh`; reviewer provenance: `same-agent-fresh-context`. Reconstructed authority from archived correction/parent packets, parent review probes, correction summary, active Workbench design, live source, and fresh deterministic probes. No reviewed implementation was edited.
 
@@ -188,7 +188,7 @@ asyncio.run(synchronous_live_probe())
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: Claim correction cycle 2, close R1-01 and the remaining R0-04 proof gap, then run its fresh paired review. This is the final automatic correction cycle.
 - Blockers or open questions: FX adoption remains behind the browser correction/re-review lane; unresolved findings at review cycle 2 require human decision. Historic production crash traceback remains unavailable.

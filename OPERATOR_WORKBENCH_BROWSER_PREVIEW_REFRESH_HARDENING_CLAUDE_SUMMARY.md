@@ -1,6 +1,6 @@
 # Operator Workbench Browser / Preview Refresh Hardening
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Implemented the browser snapshot and PREVIEW generation contract in `custodian/tools/operator/ui/`. Discovery now returns immutable candidates; accepted browser rows live in `WorkbenchUIState`; Search and superseded filtering are pure projections. Destructive browser candidates use bounded semantic rescans, preserve the prior snapshot while unstable, and distinguish modular body clock mismatches from complete presentation. Refresh generations prevent older worker scans from replacing a newer accepted state.
 
@@ -32,7 +32,7 @@ No Operator art, gameplay data, animation timing, combat logic, or publication t
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: Claim the paired post-land review and independently verify browser/PREVIEW latest-request-wins behavior against the archived packet and validation evidence.
 - Blockers or open questions: The exact historic production crash traceback is unavailable; the confirmed stale-worker and stale-preview races now have deterministic regression coverage.

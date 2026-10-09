@@ -1,6 +1,6 @@
 # Queue Reconciliation Planning Link Sync
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Updated the original implementation summary and reconciliation ledger to use the exact current planning conversation URL. These two files were committed on the preserved paired-review branch but are outside that review's bounded landing allowance, so this small documentation-only workstream isolates their landing from the review receipt and correction artifacts.
 

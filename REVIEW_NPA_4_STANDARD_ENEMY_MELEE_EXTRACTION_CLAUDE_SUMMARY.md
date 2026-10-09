@@ -2,7 +2,7 @@
 
 Fresh-context paired code, architecture, and runtime review of implementation commit `453bb87dc`, landed on current main `810fb93aa20209096e88a6422c832885f220b22c`. Reviewer provenance: `same-agent-fresh-context`.
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Findings
 
@@ -34,7 +34,7 @@ No blocking defects, material evidence gaps, or non-blocking findings found. `St
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: NPA-5 must be derived from the reviewed ordinary-melee interruption seam and current reaction/posture/parry-critical ownership.
 - Next action: Stop at the planning gate; use the Authoring chat to remeasure current reaction/posture/parry-critical ownership and author NPA-5.
 - Blockers or open questions: NPA-5 intentionally has no active implementation packet yet.

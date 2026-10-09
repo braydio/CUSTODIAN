@@ -1,6 +1,6 @@
 # Operator Workbench browser / preview correction cycle 2
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Implemented and validated the final automatic correction for R1-01 and the remaining R0-04 ownership evidence gap.
 
@@ -40,7 +40,7 @@ No renderer or animation Workbench smoke was run: this correction changes UI res
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: Run the fresh paired review for cycle 2; if clean, identify the FX-adoption lane's exact live dependency and refresh gate.
 - Blockers or open questions: This is the final automatic correction cycle; any correction-worthy unresolved finding requires human decision. Historic production traceback remains unavailable.

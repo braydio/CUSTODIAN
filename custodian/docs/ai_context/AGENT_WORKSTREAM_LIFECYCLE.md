@@ -214,10 +214,12 @@ The default continuation rule is:
    from the coordination checkout. The runner preflights
    Codex before claim, claims only that named review through `dispatch.py`, and
    starts `codex exec --ephemeral` in the receipt's exact worktree. Its default
-   local permission profile is `--sandbox workspace-write --approve-for-me`,
-   with write access added only for its `.git/custodian-review-runs/...` evidence
-   directory. Do not directly claim the review in the implementation context or
-   ask the user to relay the packet. The runner returns the durable review summary
+   local permission profile uses `--approve-for-me` (which selects Codex's
+   workspace-write approval policy) without also passing the mutually exclusive
+   `--sandbox` flag. Write access is added only for its
+   `.git/custodian-review-runs/...` evidence directory. Do not directly claim
+   the review in the implementation context or ask the user to relay the packet.
+   The runner returns the durable review summary
    and its `Next Handoff`; continue from that exact handoff. A crash after claim
    preserves the branch/worktree and run evidence for recovery.
 6. Repeat this loop through ready implementation, review, correction, and

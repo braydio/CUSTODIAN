@@ -32,14 +32,14 @@ The first closeout sweep found a fixture-specific resource backup alias and an a
 - Follow-up: none
 - What worked: Aseprite-backed known-pixel fixtures proved both successful CREATE normalization and rollback.
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Next Handoff
 - Next workstream: review-operator-workbench-animation-creation
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: Auto-dispatch the paired post-land review after this implementation packet archives.
 - Blockers or open questions: Textual interactive pilot remains unrun because its optional dependency is absent; service/UI projection smoke passed.

@@ -1,6 +1,6 @@
 # Operator Workbench Animation Creation Correction — Independent Review
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Verdict
 
@@ -59,7 +59,7 @@ Code-review-graph detect/search was attempted first; the graph reported no index
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: WB25-1 is draft and requires the completed viability audit and corrected canonical visual contract plus paired review before planning reconciliation; the current UX roadmap places the migration cockpit before UX polish.
 - Next action: Bring this creation/correction review receipt, prerequisite summaries, profile/reference SHAs and live main to the recorded cockpit refresh chat. Reconcile WB25-1 there before setting it ready; do not claim UX1 from its stale draft.

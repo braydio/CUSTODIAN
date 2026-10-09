@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `validation infrastructure can silently become vacuous or overbroad; an independent pass should verify both drift detection and intentional historical-reference allowances`
 - Reviewed main: `2737eaacbd5e003518f4377ae425682056b83530`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery summary and in the final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silently return to provenance-as-metaphysics, the superseded Ash-Bell history, or retired runtime knowledge IDs.
 - Completion boundary: Done when one focused validation authority fails on the known retired ontology/history/runtime-ID regressions, allows intentional historical/negative references, is registered in changed-file validation ownership, and the existing lore-report helper no longer gives a false impression that report-only grep is an acceptance gate.
@@ -38,7 +38,7 @@
 
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh instruction: Re-read live main and the two canon authorities at claim time. Mechanical path/helper drift may be reconciled by the execution agent; any newly discovered material lore judgment must stop and return to this chat rather than being silently decided in validation code.
 
 ## Handoff

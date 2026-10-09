@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `codebase-audit-autonomous-review-runner-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-codebase-audit-autonomous-review-runner`
@@ -45,4 +45,46 @@
 
 ## Authoring chat
 
-https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The initial combined unittest command used package-style imports unsupported by this repository's test layout; rerunning from `custodian/tools/agent/` passed. No implementation blocker remained.
+- Root cause / contributing factors: The runner test imports its sibling module directly and expects the tools directory on `sys.path`.
+- Prevention / pipeline improvement: Run focused agent tests from `custodian/tools/agent/`, consistent with the validation recipes.
+- Tooling / docs drift discovered: none
+- Follow-up: `review-codebase-audit-autonomous-review-runner-review-corrections-1`
+- What worked: Fake Codex rejects the incompatible option pair and captures the actual supported invocation, cwd, prompt, output and redaction behavior.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Removed `--sandbox workspace-write` from preflight and runtime invocation while retaining `--approve-for-me`; updated lifecycle/current-state permission guidance; fake Codex explicitly rejects the incompatible pair and captures the corrected exact launch in the expected worktree. Runner tests passed 11/11; dispatch/workstream/review-contract/queue-context suites passed 140/140; changed-file validation passed all 11 selected checks with complete changed-file coverage and no failures; `git diff --check` passed.
+
+## Next Handoff
+
+- Next workstream: `review-codebase-audit-autonomous-review-runner-review-corrections-1`
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
+- Refresh reason: none
+- Next action: After this correction lands and archives complete, invoke `python3 custodian/tools/agent/paired_review_runner.py review-codebase-audit-autonomous-review-runner-review-corrections-1` from the synchronized coordination checkout.
+- Blockers or open questions: none
+
+## Independent Review
+
+- Status: `passed`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed landed main: `0235357952c06c0b5f489811cb35d48c949300a4`
+- Findings: `R0-01` fixed; no cycle-1 findings.
+- Evidence: `REVIEW_CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`; installed Codex CLI help; captured implementation run `20261009T211138Z-1115421a9515`; runner/dispatcher/workstream/review-contract/task-packet-contract/task-packet-index suites (171 passed); changed-file validation; `git diff --check`.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
