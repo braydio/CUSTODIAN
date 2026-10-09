@@ -10,7 +10,7 @@
 - Locks: `world-simulation-runtime, living-world-abstract-activity`
 - Review: `none`
 - Review target workstream: `living-world-abstract-activity-foundation-review-corrections-1`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ABSTRACT_ACTIVITY_REVIEW_CORRECTIONS_1.md`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_REVIEW_CORRECTIONS_1.md`
 - Review modes: `code, runtime`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
