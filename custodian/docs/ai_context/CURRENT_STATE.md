@@ -1360,10 +1360,14 @@ Documentation updates this session:
   deliberately leaves that special/compatibility state outside ordinary melee.
   `StandardEnemyMelee` + typed `StandardEnemyMeleeConfig` now own the ordinary
   transaction, commitment/context, and recovery/redecision; Grunt/Marine/Savage/
-  Pursuit scene overrides remain explicit. The focused smoke verifies target-at-
-  resolution, strong whiff consumption, contact provenance, tracking lock, and
-  the variant cooldown negative control. The implementation is landed pending
-  its fresh paired review. Pounce-first selection and fixed-step priority remain preserved.
+  Pursuit scene overrides remain explicit. NPA-4's fresh paired review landed at
+  `8817908b1` with zero defects, evidence gaps or other findings and all nine
+  focused runtime checks passing. NPA-5 is now authored: ordinary incoming
+  reaction/posture moves to `EnemyReactionController`, while Grunt
+  critical-open/reservation/execution-victim state moves separately to
+  `EnemyParryCritical`; hit classification, health/death, presentation and
+  special abilities remain outside those modules. Pounce-first selection and
+  fixed-step priority remain preserved.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
