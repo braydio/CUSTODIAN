@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `living-world-entity-reification-handoff-review-corrections-1`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-living-world-entity-reification-handoff`
@@ -39,6 +39,25 @@
 - Validation: Import preflight then focused handoff smoke with the new negatives; reproduce the R0-01/R0-02 cases and ownership-disabled negative control. Run existing abstract activity, kernel, macro-state and snapshot-roundtrip smokes, changed-file validation once and `git diff --check`. No broad actor/boot sweep is justified by these scoped owners.
 - Task overrides: `none`
 - Deferred: F14-C2/F15 production binding and all parent non-goals remain gated after independent correction acceptance.
+
+## Completion Truth
+- Outcome: Complete. R0-01, R0-02, and R0-03 are fixed within the synthetic one-Grunt boundary.
+- R0-01 evidence: NaN and Infinity anchors reject before staged actor creation; canonical group/projection and causal history remain unchanged, no actor leaks, and finite B reification succeeds.
+- R0-02 evidence: schema-v5/abstract-v1 input validates its original raw state fingerprint before migration. Valid dotted-ID legacy input restores; corrupted fingerprint and stale-hash payload tampering both return no restored state. Existing schema-v4 migration remains covered by snapshot-roundtrip smoke.
+- R0-03 evidence: physical hold is 120 ticks after non-aligned reentry. A temporary physical-owner bypass failed the focused smoke with `abstract movement advanced while the actor was physical`; the source was restored and no bypass was committed.
+- Validation: import preflight PASS; handoff, abstract-activity, kernel, macro-state, and snapshot-roundtrip smokes PASS; changed-file validation PASS (3/3 selected); `git diff --check` PASS.
+- Deferred: production geography/residency, multi-actor transfer, ambient-spawner integration, and F14-C2/F15 remain outside this correction.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first changed-file validation classified the expected corrupted-fingerprint `push_error` as a fatal test error even though the smoke assertions passed.
+- Root cause / contributing factors: Invalid snapshot rejection logged through Godot's fatal error channel.
+- Prevention / pipeline improvement: Reject the invalid legacy snapshot quietly by returning an empty migration result; rerun changed-file validation and require all selected checks green.
+- Tooling / docs drift discovered: Fresh Godot editor import generated unrelated untracked `.import` sidecars; they were classified as generated setup output and removed before final changed-file validation.
+- Follow-up: none
+- What worked: The focused smoke now covers invalid geometry, both fingerprint failure modes, and the physical cadence mutation control.
 
 ## Minimal reproduction and falsification
 

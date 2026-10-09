@@ -139,6 +139,9 @@ func _to_physical(request: Dictionary, fixed_tick: int) -> Dictionary:
 	var anchor: Variant = anchors.get(location_id)
 	if anchor == null or not is_instance_valid(anchor) or not anchor is Node2D or not anchor.is_inside_tree():
 		return {"ok": false, "reason": "target location has no live safe anchor"}
+	var anchor_position: Vector2 = anchor.global_position
+	if not is_finite(anchor_position.x) or not is_finite(anchor_position.y):
+		return {"ok": false, "reason": "target safe anchor position is nonfinite"}
 	if not _find_actors(domain_id, String(group.get("actor_id", ""))).is_empty():
 		return {"ok": false, "reason": "actor identity already has a physical instance"}
 	var projection: Dictionary = group.get("actor_projection", {})
@@ -152,7 +155,10 @@ func _to_physical(request: Dictionary, fixed_tick: int) -> Dictionary:
 	actor.set_process(false)
 	_apply_projection(actor, projection)
 	add_child(actor)
-	actor.global_position = anchor.global_position
+	actor.global_position = anchor_position
+	if not is_finite(actor.global_position.x) or not is_finite(actor.global_position.y):
+		actor.queue_free()
+		return {"ok": false, "reason": "staged Grunt position became nonfinite"}
 	if not actor.is_inside_tree() or actor.dead or actor.health <= 0.0:
 		actor.queue_free()
 		return {"ok": false, "reason": "staged Grunt failed validation"}

@@ -143,6 +143,19 @@ func _run() -> void:
 		_check(String(state.abstract_activity.get_group(DOMAIN, GROUP).representation) == "abstract", "failed staged restore changed simulation authority")
 		_check(coordinator._find_actors(DOMAIN, ACTOR).is_empty(), "failed staged restore left a physical Grunt")
 		stored_projection.health = 39.0
+	var finite_anchor_position := anchor_b.global_position
+	for invalid_x: float in [NAN, INF]:
+		anchor_b.global_position = Vector2(invalid_x, finite_anchor_position.y)
+		var before_invalid_anchor := state.abstract_activity.get_group(DOMAIN, GROUP).duplicate(true)
+		var before_invalid_anchor_events := SimulationCanonicalJson.encode(state.abstract_activity.causal_events)
+		var invalid_anchor_request := coordinator.request_physical(DOMAIN, GROUP, "B")
+		kernel.step_once()
+		_check(not bool(coordinator.take_result(invalid_anchor_request).get("ok", false)), "nonfinite physical anchor was accepted")
+		_check(SimulationCanonicalJson.encode(state.abstract_activity.get_group(DOMAIN, GROUP)) == SimulationCanonicalJson.encode(before_invalid_anchor), "nonfinite anchor rejection changed abstract authority")
+		_check(SimulationCanonicalJson.encode(state.abstract_activity.causal_events) == before_invalid_anchor_events, "nonfinite anchor rejection changed causal history")
+		await process_frame
+		_check(coordinator._find_actors(DOMAIN, ACTOR).is_empty(), "nonfinite anchor rejection leaked a physical Grunt")
+	anchor_b.global_position = finite_anchor_position
 	var reify_id := coordinator.request_physical(DOMAIN, GROUP, "B")
 	kernel.step_once()
 	var reify_result := coordinator.take_result(reify_id)
@@ -155,7 +168,7 @@ func _run() -> void:
 		_check(is_equal_approx(restored_actor.health, 39.0), "reified actor health changed")
 		_check(restored_actor.attack_objective == "defend_relay", "reified actor objective changed")
 		_check(restored_actor.global_position == anchor_b.global_position, "reified actor used the wrong anchor")
-		for index in 60:
+		for index in 120:
 			kernel.step_once()
 		var physical_record := state.abstract_activity.get_group(DOMAIN, GROUP)
 		_check(String(physical_record.location_id) == "B" and state.abstract_activity.causal_events.size() == 1, "abstract movement advanced while the actor was physical")
@@ -202,6 +215,12 @@ func _check_legacy_v5_snapshot() -> void:
 	_check(migrated != null, "schema-v5 snapshot with pre-correction event IDs did not migrate")
 	if migrated != null:
 		_check(migrated.abstract_activity.causal_events.size() == 1, "legacy migration lost the abstract activity event")
+	var corrupted_fingerprint := snapshot.duplicate(true)
+	corrupted_fingerprint.fingerprint = "corrupted"
+	_check(SimulationSnapshot.restore(corrupted_fingerprint) == null, "schema-v5 migration accepted a corrupted incoming fingerprint")
+	var stale_fingerprint := snapshot.duplicate(true)
+	stale_fingerprint.state.seed = int(stale_fingerprint.state.seed) + 1
+	_check(SimulationSnapshot.restore(stale_fingerprint) == null, "schema-v5 migration accepted payload tampering with a stale fingerprint")
 
 
 func _check(condition: bool, message: String) -> void:
