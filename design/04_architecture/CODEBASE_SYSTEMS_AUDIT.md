@@ -4,7 +4,7 @@
 **Workstream:** `codebase-systems-audit`  
 **Evidence baseline:** [`main@e089e8b8a099`](https://github.com/braydio/CUSTODIAN/commit/e089e8b8a0993a0276596797e3a95798e33eb422)  
 **Program phase:** overview indexed; F03 source-level diagnostic completed, runtime/decision-lock gate outstanding; remaining focus audits pending  
-**Decisions locked:** 0 of 13 · **New packets authorized/authored by this audit:** 0  
+**Decisions locked:** 0 of 14 · **New packets authorized/authored by this audit:** 0  
 **Current authoring chat URL:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31 (October 8, 2026 F03 continuation).
 
 ## Purpose and architecture
@@ -26,7 +26,8 @@ CODEBASE_SYSTEMS_AUDIT.md         (overview, prioritization, index)
 4. **Enemy/non-player agents:** Marine Dash extracted; six-family composition roadmap exists; complete NPA slices without turning `Enemy` into a universal NPC superclass.
 5. **Campaign and continuity:** The first complete production campaign loop and R2 death/reintegration deserve integration priority over more detached features.
 6. **Game feel:** Motion-consistent upper/lower presentation, enemy telegraph readability, hit feedback, vehicle response, interaction acknowledgement and camera behavior have strong potential ROI, but require playtest/telemetry evidence.
-7. **Agent orchestration:** Native dispatcher, isolated worktrees, automatic landing and paired reviews already exist; independently launched reviewer process/supervision remains to be proven before designing a single unattended loop.
+7. **Living world (F14 added October 8):** Strategic campaign systems and near/far actor-tier classification are already implemented, but unloaded-sector activity, actor identity handoff/reification and durable deterministic world history are not yet established as an end-to-end live capability. The old Sector Activity Simulator candidate is a design foundation, not a production subsystem. [Initial evidence and provisional roadmap](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md).
+8. **Agent orchestration:** Native dispatcher, isolated worktrees, automatic landing and paired reviews already exist; independently launched reviewer process/supervision remains to be proven before designing a single unattended loop.
 
 ## Source-size hotspots (non-generated; indicative only)
 | Runtime file | Approx. source bytes | Interpretation |
@@ -59,15 +60,22 @@ F10 | [Camera, streaming and environmental presentation](codebase_systems_audit/
 F11 | [Agent execution, validation and paired review handoff](codebase_systems_audit/F11_AGENT_VALIDATION_AUTOMATION.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F12 | [Cross-system game-feel opportunities](codebase_systems_audit/F12_GAME_FEEL.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F13 | [New-feature return on investment](codebase_systems_audit/F13_FEATURE_ROI.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
+F14 | [Living-world simulation / interest / unloaded sector continuity](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) | P0 | Source-level initial evidence; local runtime and decision lock pending | Not locked
 
 ## F03 detailed-audit update (October 8, 2026)
 
 - [Item-level evidence and decision record](codebase_systems_audit/F03_HUD_TERMINAL_UI.md) traces command interpretation, world mutations, simulation-time buffering questions, screen-local mutable state and documented UI input dependencies.
 - [Eight **conceptual** F03 packet slots](codebase_systems_audit/PACKET_ROADMAP.md#cs-f03-a) replace the original two high-level placeholders. This is an **unapproved roadmap**, not eight executable packets.
 - Existing terminal [implementation spec](../02_features/terminal/COMMAND_TERMINAL_SPEC.md) supersedes the [archived concept](../01_systems/COMMAND_TERMINAL_UI.md). The July [audit verification](../02_features/terminal/TERMINAL_AUDIT_VERIFICATION.md) prevents duplicate work on already implemented terminal fidelity/Overview components.
-- F03 remains **NOT LOCKED** until command-case callsite coverage, fixed-tick vs UI-time decision, focused Godot regression evidence and any human-owned UX boundaries are resolved. Across the audit: **0/13 decision locks** and **0 new authorized task packets**.
+- F03 remains **NOT LOCKED** until command-case callsite coverage, fixed-tick vs UI-time decision, focused Godot regression evidence and any human-owned UX boundaries are resolved. Across the audit: **0/14 decision locks** and **0 new authorized task packets**.
+
+## F14 living-world audit addition (October 8, 2026)
+
+[The F14 item-level record](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) corrects an omitted top-level architecture/feature program: deterministic macro campaign simulation is not the same capability as unloaded actors and sectors experiencing causal state changes and being correctly reconstructed upon return. It records observed near/nearby/background/dormant code, strategic macro state, WorldHistory limitations, the old Sector Activity Simulator proposal, drift and a [five-slot conceptual roadmap](codebase_systems_audit/PACKET_ROADMAP.md#cs-f14-a). **F14 is NOT LOCKED; no executable implementation packets have been authored.** The next appropriate action is a focused local evidence/characterization audit, not a whole-repository sweep.
 
 ## Proposed work ordering
+**Audit lane E: living-world continuity.** F14 is a distinct P0 audit of how campaign macro simulation, interest tiers, sector state, actor identity and unload/reload bridge. Run a focused characterization before deciding any simulation architecture changes, preserving existing REMAP, NPA and procgen owners.
+
 **Audit lane A: existing-program reconciliation.** F01, F02, F04 and F06 map to active Operator, Procgen, NPA and Hub/Recovery programs. Determine whether any gap survives existing packet ownership; don't add duplicate scope.
 
 **Audit lane B: likely overlooked architecture.** F03 HUD/terminal first, then F07 inventory and F05 authored levels. Trace actual source-level mutation seams, public APIs, validation ownership and player-facing correctness.
