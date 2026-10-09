@@ -15,10 +15,15 @@ class AnimationSelection:
     direction: str
     weapon_id: str = ""
     linked_profile: str = ""
+    art_generation: str = "legacy_96"
 
     @property
     def identity(self) -> str:
         return f"{self.profile}/{self.group}/{self.action}/{self.direction}"
+
+    @property
+    def authoring_identity(self) -> str:
+        return f"{self.art_generation}:{self.identity}"
 
 
 @dataclass(frozen=True)
@@ -29,6 +34,11 @@ class AnimationRecord:
     completeness: str = "COMPLETE"
     completeness_detail: str = ""
     reachability_status: str | None = None
+    coverage_status: str = "LEGACY_FALLBACK"
+    workflow_status: str = "NONE"
+    canonical_complete: bool = False
+    stale_reference: bool = False
+    plan_rank: int | None = None
 
     @property
     def summary(self) -> str:
@@ -36,7 +46,18 @@ class AnimationRecord:
         marker = {"COMPLETE": "●", "PARTIAL": "◐", "REFERENCE/LEGACY": "◇"}.get(self.completeness, "⚠")
         detail = self.completeness_detail or names
         runtime = " · DORMANT/unwired" if self.reachability_status == "DORMANT" else ""
-        return f"{self.selection.direction}   {self.frames}f   {marker} {detail}{runtime}"
+        if self.selection.art_generation == "operator_2_5d_128":
+            coverage_marker = {
+                "CANONICAL_2_5D": "✓", "PARTIAL": "◐", "LEGACY_FALLBACK": "◇",
+                "PROJECTED": "→", "MISSING": "·",
+            }.get(self.coverage_status, "!")
+            stale = " · STALE" if self.stale_reference else ""
+            return f"{self.selection.direction}   {coverage_marker} {self.coverage_status} · {self.workflow_status}{stale}"
+        return f"{self.selection.direction}   {frames_label(self.frames)}   {marker} {detail}{runtime}"
+
+
+def frames_label(frames: int) -> str:
+    return f"{frames}f" if frames else "?f"
 
 
 @dataclass(frozen=True)
@@ -137,6 +158,9 @@ class SessionView:
     completeness_detail: str = ""
     workspace_display: str = ""
     document_canvas: tuple[int, int] = (96, 96)
+    coverage_status: str = "LEGACY_FALLBACK"
+    workflow_status: str = "NONE"
+    stale_reference: bool = False
 
 
 @dataclass(frozen=True)
@@ -227,6 +251,7 @@ class WorkbenchUIState:
         return AnimationSelection(
             identity.profile, identity.group, identity.action, identity.direction,
             self.weapon_id, self.linked_profile,
+            identity.art_generation,
         )
 
     def adopt_context(self, weapon_id: str, linked_profile: str) -> None:

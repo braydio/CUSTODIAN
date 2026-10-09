@@ -5,6 +5,7 @@
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c  
 **Scope:** Ritualant north egress -> generated Alpine Highlands -> generated Bridged Falls -> Lower Quarter edge / Station IX vista  
 **Implementation roadmap:** `design/05_levels/ASH_BELL_BRIDGED_FALLS_IMPLEMENTATION_ROADMAP.md`
+**Asset manifest:** `design/05_levels/ASH_BELL_BRIDGED_FALLS_ASSET_MANIFEST.md`
 
 ## Design Lock
 

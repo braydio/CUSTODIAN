@@ -24,7 +24,7 @@ from live_bridge.state import ConnectionState, PreviewOwnership
 from .screens import MainScreen
 from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
-from .widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, LayerTable,
+from .widgets import (ActivityLog, AnimationDetail, AnimationTree, AnimationMatrix, ContextKeyBar, LayerTable,
                       MotionCanvas, MotionControls, MotionMetrics, PlanTable,
                       PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
 import animation_preview
@@ -177,7 +177,7 @@ class OperatorWorkbenchApp(App):
             generation == self.state.preview_generation
             and self.state.mode == "preview"
             and self.state.selection is not None
-            and self.state.selection.identity == selection.identity
+            and self.state.selection.authoring_identity == selection.authoring_identity
             and self.state.preview_source == source
         )
 
@@ -212,9 +212,10 @@ class OperatorWorkbenchApp(App):
     @staticmethod
     def _browser_signature(records) -> tuple:
         return tuple(sorted((
-            row.selection.profile, row.selection.group, row.selection.action,
+            row.selection.art_generation, row.selection.profile, row.selection.group, row.selection.action,
             row.selection.direction, tuple(sorted(row.layers)), row.frames,
             row.completeness, row.completeness_detail, row.reachability_status,
+            row.coverage_status, row.workflow_status, row.stale_reference,
         ) for row in records))
 
     @staticmethod
@@ -235,8 +236,8 @@ class OperatorWorkbenchApp(App):
 
     @staticmethod
     def _browser_candidate_is_destructive(previous, candidate) -> bool:
-        old = {row.selection.identity: row for row in previous}
-        new = {row.selection.identity: row for row in candidate}
+        old = {row.selection.authoring_identity: row for row in previous}
+        new = {row.selection.authoring_identity: row for row in candidate}
         for identity, before in old.items():
             after = new.get(identity)
             if after is None:
@@ -604,26 +605,27 @@ class OperatorWorkbenchApp(App):
                 show_superseded=self.state.show_superseded,
             )
             tree = self._main_widget("#animation-tree", AnimationTree)
+            matrix = self._main_widget("#animation-matrix", AnimationMatrix)
 
             selection = previous_selection
             if selection is not None and not selection.group:
                 matches = [row.selection for row in records if (
-                    row.selection.profile, row.selection.action, row.selection.direction
-                ) == (selection.profile, selection.action, selection.direction)]
+                    row.selection.art_generation, row.selection.profile,
+                    row.selection.action, row.selection.direction
+                ) == (selection.art_generation, selection.profile, selection.action, selection.direction)]
                 if len(matches) == 1:
                     resolved = matches[0]
                     selection = AnimationSelection(
                         resolved.profile, resolved.group, resolved.action, resolved.direction,
-                        selection.weapon_id, selection.linked_profile,
+                        selection.weapon_id, selection.linked_profile, resolved.art_generation,
                     )
             selected_row = next((row for row in records if selection and (
-                row.selection.profile, row.selection.group, row.selection.action, row.selection.direction
-            ) == (selection.profile, selection.group, selection.action, selection.direction)), None)
+                row.selection.authoring_identity == selection.authoring_identity)), None)
             if selected_row is not None:
                 selection = AnimationSelection(
                     selected_row.selection.profile, selected_row.selection.group,
                     selected_row.selection.action, selected_row.selection.direction,
-                    selection.weapon_id, selection.linked_profile,
+                    selection.weapon_id, selection.linked_profile, selected_row.selection.art_generation,
                 )
             elif previous_selection is not None and destructive:
                 # The candidate was already stabilized above; fall back only for a confirmed deletion.
@@ -650,10 +652,11 @@ class OperatorWorkbenchApp(App):
             self.state.browser_snapshot = tuple(records)
             self.state.browser_generation += 1
             tree.set_records(list(filtered))
+            matrix.set_records(filtered)
             if selection is not None:
                 tree.select_identity(selection)
             if previous_selection is not None and selection is not None and destructive and (
-                previous_selection.identity != selection.identity
+                previous_selection.authoring_identity != selection.authoring_identity
             ):
                 self._activity(
                     f"browser selection removed: {previous_selection.identity} → {selection.identity}",
@@ -756,7 +759,8 @@ class OperatorWorkbenchApp(App):
                 if self.live_bridge.server.state.active_layer:
                     layer_table.select_live_layer(str(self.live_bridge.server.state.active_layer))
             self._main_widget("#layer-detail", Static).update(layer_table.selected_detail(0))
-            if changed and load_mode_preview and self.state.mode == "motion":
+            if (changed and load_mode_preview and self.state.mode == "motion"
+                    and selection.art_generation == "legacy_96"):
                 await self._load_motion_preview()
             if changed and load_preview and self.state.mode == "preview":
                 await self._load_preview(generation=preview_generation)
@@ -827,8 +831,11 @@ class OperatorWorkbenchApp(App):
         item_id = str(event.row_key.value)
         item = next((row for row in self.service.animation_plan() if row["id"] == item_id), None)
         if item:
-            direction = (item.get("covered_directions") or item["directions"])[0]
-            self.state.selection = self.state.contextualize(AnimationSelection(item["profile"], item["group"], item["action"], direction))
+            direction = (item.get("covered_directions") or item.get("requested_directions") or item["directions"])[0]
+            self.state.selection = self.state.contextualize(AnimationSelection(
+                item["profile"], item["group"], item["action"], direction,
+                art_generation=item.get("art_generation", "legacy_96"),
+            ))
             self._set_mode("workbench")
             self.run_worker(self._load_session(self.state.selection), group="session", exclusive=True)
 
@@ -856,6 +863,19 @@ class OperatorWorkbenchApp(App):
         selection = self.state.contextualize(event.selection)
         if await self._load_session(selection):
             self._activity(f"selected {selection.identity}")
+
+    async def on_data_table_cell_selected(self, event: DataTable.CellSelected) -> None:
+        if event.data_table.id != "animation-matrix":
+            return
+        selection = self._main_widget("#animation-matrix", AnimationMatrix).selection_at(
+            event.coordinate.row, event.coordinate.column,
+        )
+        if selection is None:
+            return
+        selection = self.state.contextualize(selection)
+        if await self._load_session(selection):
+            self._set_mode("workbench")
+            self._activity(f"selected {selection.authoring_identity}")
 
     async def on_input_changed(self, event: Input.Changed) -> None:
         if event.input.id != "search": return
@@ -886,6 +906,7 @@ class OperatorWorkbenchApp(App):
         )
         tree = self._main_widget("#animation-tree", AnimationTree)
         tree.set_records(records)
+        self._main_widget("#animation-matrix", AnimationMatrix).set_records(records)
         if self.state.selection is not None:
             tree.select_identity(self.state.selection)
         self._main_widget("#context-key-bar", ContextKeyBar).set_mode(
@@ -1146,7 +1167,7 @@ class OperatorWorkbenchApp(App):
                 generation != self.state.preview_generation
                 or self.state.mode != "preview"
                 or self.state.selection is None
-                or self.state.selection.identity != selection.identity
+                or self.state.selection.authoring_identity != selection.authoring_identity
                 or self.state.preview_source != source_requested
                 or self.state.preview_examiner_mode != examiner_mode
                 or self.preview_view is not primary
@@ -1237,7 +1258,7 @@ class OperatorWorkbenchApp(App):
         direction = self.state.motion.heading or base.direction
         return AnimationSelection(
             base.profile, base.group, base.action, direction,
-            base.weapon_id, base.linked_profile,
+            base.weapon_id, base.linked_profile, base.art_generation,
         )
 
     async def _load_motion_preview(self) -> None:
@@ -1887,6 +1908,16 @@ class OperatorWorkbenchApp(App):
         if not self.state.selection: self._error(RuntimeError("Select an animation first")); return None
         return self.state.selection
 
+    def _guard_authoring_generation(self, operation: str) -> bool:
+        selection = self.state.selection
+        if selection and selection.art_generation != "legacy_96":
+            self._activity(
+                f"{operation} is unavailable for 2.5D targets in WB25-1; guided source intake is a later slice",
+                "WARN",
+            )
+            return False
+        return True
+
     def _guard(self, operation: str) -> bool:
         if self.state.active_operation:
             selection = self.state.selection.identity if self.state.selection else ""
@@ -1894,6 +1925,7 @@ class OperatorWorkbenchApp(App):
         self.state.active_operation = operation; return True
 
     async def _mutate(self, operation: str, function, *args) -> None:
+        if not self._guard_authoring_generation(operation): return
         if not self._guard(operation): return
         selection = self.state.selection
         self._activity(f"{operation.lower()} started")
@@ -1928,11 +1960,12 @@ class OperatorWorkbenchApp(App):
                 await self._reload_browser()
 
     def action_edit(self) -> None:
+        if not self._guard_authoring_generation("Edit"): return
         selection=self._require_selection()
         if selection:self.run_worker(self._mutate("EDIT",self.service.edit,selection),group="mutation")
 
     def action_new_animation(self) -> None:
-        if self.state.mode != "workbench" or not self._guard_preview():
+        if self.state.mode != "workbench" or not self._guard_authoring_generation("New Animation") or not self._guard_preview():
             return
         self.push_screen(AnimationCreationDialog(self.service.model.DEFAULT_FRAME_SIZE), self._accept_creation_request)
 
@@ -1962,7 +1995,7 @@ class OperatorWorkbenchApp(App):
         )
 
     def action_adopt_fx_layer(self) -> None:
-        if self.state.mode!="workbench" or not self._guard_preview(): return
+        if self.state.mode!="workbench" or not self._guard_authoring_generation("FX adoption") or not self._guard_preview(): return
         selection=self._require_selection(); table=self._main_widget("#layer-table",LayerTable)
         layer=table.selected_layer_name()
         if not selection or not layer or not table.selected_layer_adoptable(): return
@@ -1983,7 +2016,7 @@ class OperatorWorkbenchApp(App):
             self.push_screen(FrameAddDialog(preview),self._accept_frame)
         except Exception as error:self._error(error)
     def action_add_frame(self)->None:
-        if self._guard_preview(): self.run_worker(self._prepare_add(),group="preview",exclusive=True)
+        if self._guard_authoring_generation("Frame editing") and self._guard_preview(): self.run_worker(self._prepare_add(),group="preview",exclusive=True)
 
     async def _prepare_remove(self)->None:
         selection=self._require_selection()
@@ -1994,10 +2027,10 @@ class OperatorWorkbenchApp(App):
             self.push_screen(FrameRemoveDialog(preview),self._accept_frame)
         except Exception as error:self._error(error)
     def action_remove_frame(self)->None:
-        if self._guard_preview(): self.run_worker(self._prepare_remove(),group="preview",exclusive=True)
+        if self._guard_authoring_generation("Frame editing") and self._guard_preview(): self.run_worker(self._prepare_remove(),group="preview",exclusive=True)
 
     def action_resize_canvas(self) -> None:
-        if self.state.mode != "workbench" or not self._guard_preview(): return
+        if self.state.mode != "workbench" or not self._guard_authoring_generation("Canvas migration") or not self._guard_preview(): return
         selection=self._require_selection()
         if selection and self.session_view:
             self.push_screen(CanvasResizeDialog(self.session_view.document_canvas), self._accept_canvas_options)
@@ -2038,12 +2071,12 @@ class OperatorWorkbenchApp(App):
             self.push_screen(PublishDialog(preview,opened),self._accept_publish)
         except Exception as error:self._error(error)
     def action_publish(self)->None:
-        if self._guard_preview(): self.run_worker(self._prepare_publish(),group="preview",exclusive=True)
+        if self._guard_authoring_generation("Publish") and self._guard_preview(): self.run_worker(self._prepare_publish(),group="preview",exclusive=True)
     def _accept_publish(self,options:tuple[bool,bool]|None)->None:
         if options is not None and self.state.selection:self.run_worker(self._mutate("PUBLISH",self.service.publish,self.state.selection,*options),group="mutation")
 
     def action_refresh_workbench(self)->None:
-        if not self._guard_preview(): return
+        if not self._guard_authoring_generation("Refresh") or not self._guard_preview(): return
         selection=self._require_selection()
         if not selection:return
         if self.session_view and (self.session_view.workbench_state.startswith("EDITED") or self.session_view.migration):
@@ -2053,6 +2086,7 @@ class OperatorWorkbenchApp(App):
         if discard and self.state.selection:self.run_worker(self._mutate("REFRESH",self.service.refresh,self.state.selection,True),group="mutation")
 
     def action_weapon_context(self)->None:
+        if not self._guard_authoring_generation("Weapon context"): return
         selection=self._require_selection()
         if selection:self.push_screen(WeaponContextDialog(self.service.known_weapons(),selection.weapon_id),self._accept_weapon)
     def _accept_weapon(self,weapon_id:str|None)->None:
@@ -2064,7 +2098,7 @@ class OperatorWorkbenchApp(App):
         self.run_worker(self._load_session(self.state.selection),group="session",exclusive=True)
 
     def action_validate(self)->None:
-        if self._guard_preview() and self._require_selection():self.push_screen(ValidationDialog(),self._accept_validation)
+        if self._guard_authoring_generation("Validation") and self._guard_preview() and self._require_selection():self.push_screen(ValidationDialog(),self._accept_validation)
 
     def _guard_preview(self)->bool:
         if not self.state.active_operation:return True

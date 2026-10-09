@@ -400,6 +400,7 @@ async def textual_smoke() -> None:
     from ui.live_bridge_controller import LiveBridgeController, LiveBridgeUIStatus
     from ui.widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar,
                             LayerTable, MotionCanvas, MotionControls, PreviewCanvas, TimelineTable, WorkbenchStatusBar)
+    from ui.widgets import AnimationMatrix
     from textual.widgets import Button, DataTable, Footer, Input, Label, Static, TextArea
     from textual_image.widget import AutoImage
     from websockets.asyncio.client import connect
@@ -441,6 +442,26 @@ async def textual_smoke() -> None:
     async with app.run_test(size=(80, 35)) as pilot:
         assert await app._thread(lambda value, *, suffix: (value, suffix), 7, suffix="kw") == (7, "kw")
         await pilot.pause(0.5)
+        target = AnimationSelection(
+            "unarmed", "posture", "idle_relaxed_01", "n",
+            art_generation="operator_2_5d_128",
+        )
+        target_record = AnimationRecord(
+            target, 15, ("full_body",), coverage_status="CANONICAL_2_5D",
+            workflow_status="INTAKE", canonical_complete=True, plan_rank=1,
+        )
+        matrix = app.query_one("#animation-matrix", AnimationMatrix)
+        matrix.set_records([target_record])
+        tree = AnimationTree()
+        tree.set_records([target_record])
+        assert matrix.selection_at(0, 1).authoring_identity == target.authoring_identity
+        assert tree.select_identity(target)
+        await app.on_data_table_cell_selected(SimpleNamespace(
+            data_table=matrix, coordinate=SimpleNamespace(row=0, column=1),
+        ))
+        assert service.last_selection.authoring_identity == target.authoring_identity
+        assert service.last_selection.identity == target.identity
+        print("PASS 2.5D MATRIX: matrix and tree resolve the same generation-aware selection")
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
         status_bar = app.main_screen.query_one("#workbench-status", WorkbenchStatusBar)
         assert "LIVE ○ WAITING" in str(status_bar.render())
@@ -880,17 +901,20 @@ async def textual_smoke() -> None:
         app.action_mode_workbench(); await pilot.pause()
         tree = app.screen.query_one("#animation-tree", AnimationTree)
         branches = [node.data for node in tree._walk_nodes() if isinstance(node.data, tuple)]
-        assert branches.count(("unarmed",)) == 1
-        assert branches.count(("unarmed", "locomotion")) == 1
-        assert branches.count(("unarmed", "defense")) == 1
-        assert branches.count(("unarmed", "locomotion", "run_01")) == 1
-        assert branches.count(("unarmed", "locomotion", "walk_01")) == 1
-        run_node = next(node for node in tree._walk_nodes() if node.data == ("unarmed", "locomotion", "run_01"))
+        assert branches.count(("legacy_96",)) == 1
+        assert branches.count(("legacy_96", "unarmed")) == 1
+        assert branches.count(("legacy_96", "unarmed", "locomotion")) == 1
+        assert branches.count(("legacy_96", "unarmed", "defense")) == 1
+        assert branches.count(("legacy_96", "unarmed", "locomotion", "run_01")) == 1
+        assert branches.count(("legacy_96", "unarmed", "locomotion", "walk_01")) == 1
+        run_node = next(node for node in tree._walk_nodes() if node.data == ("legacy_96", "unarmed", "locomotion", "run_01"))
         assert len(run_node.children) == 2
-        selected_ancestry = [("unarmed",), ("unarmed", "locomotion"), ("unarmed", "locomotion", "run_01")]
+        selected_ancestry = [("legacy_96",), ("legacy_96", "unarmed"),
+                             ("legacy_96", "unarmed", "locomotion"),
+                             ("legacy_96", "unarmed", "locomotion", "run_01")]
         for key in selected_ancestry:
             assert next(node for node in tree._walk_nodes() if node.data == key).is_expanded
-        assert not next(node for node in tree._walk_nodes() if node.data == ("unarmed", "defense")).is_expanded
+        assert not next(node for node in tree._walk_nodes() if node.data == ("legacy_96", "unarmed", "defense")).is_expanded
         layer_table = app.screen.query_one("#layer-table")
         assert list(layer_table.columns.values())[0].label.plain == "LAYER"
         assert len(layer_table.columns) == 4

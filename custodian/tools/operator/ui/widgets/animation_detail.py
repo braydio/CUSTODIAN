@@ -19,10 +19,16 @@ class AnimationDetail(Static):
         completeness = session.completeness
         if session.completeness_detail:
             completeness += f" — {session.completeness_detail}"
-        source = "not published" if session.workbench_state.startswith("NEW /") else f"{session.source_frames}f"
-        runtime = "DORMANT/unwired until a consumer is added" if session.workbench_state.startswith("NEW /") else "canonical/runtime"
+        if session.selection.art_generation == "operator_2_5d_128":
+            source = f"{session.coverage_status} · {session.source_frames}f" if session.source_frames else session.coverage_status
+            runtime = "not published; production selectors unchanged"
+        else:
+            source = "not published" if session.workbench_state.startswith("NEW /") else f"{session.source_frames}f"
+            runtime = "DORMANT/unwired until a consumer is added" if session.workbench_state.startswith("NEW /") else "canonical/runtime"
         self.update(
-            f"[b]SELECTED ANIMATION[/b]\n\n{session.selection.identity}\n\n"
+            f"[b]SELECTED ANIMATION[/b]\n\n{session.selection.authoring_identity}\n\n"
+            f"Coverage:    {session.coverage_status}\n"
+            f"Workflow:    {session.workflow_status}{' · STALE' if session.stale_reference else ''}\n"
             f"Presentation: {completeness}\n"
             f"Workbench:   {session.workbench_state}\n"
             f"Source:      {source}\n"

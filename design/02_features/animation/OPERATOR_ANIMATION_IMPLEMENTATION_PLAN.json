@@ -1,23 +1,4412 @@
 {
-  "schema": "custodian.operator_animation_implementation_plan.v1",
+  "schema": "custodian.operator_animation_implementation_plan.v2",
+  "audit_summary": {
+    "source": "reports/operator_presentation/operator_2_5d_coverage.json",
+    "legacy_production_reachable_families": 69,
+    "authored_canonical_2_5d_families": 1,
+    "remaining_canonical_families": 68,
+    "remaining_baseline_direction_animation_strips": 544,
+    "excluded_legacy_catalog_only_families": 24
+  },
   "items": [
-    {"id":"melee_1h_walk","rank":10,"priority":"P0","profile":"melee_1h","group":"locomotion","action":"walk_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"active","reason":"Core equipped traversal presentation"},
-    {"id":"melee_1h_run","rank":20,"priority":"P0","profile":"melee_1h","group":"locomotion","action":"run_01","directions":["e","w"],"required_layers":["lower_body","upper_body"],"state":"active","reason":"Completes primary equipped locomotion"},
-    {"id":"melee_1h_idle_ready","rank":30,"priority":"P0","profile":"melee_1h","group":"posture","action":"idle_ready_01","directions":["e","w"],"required_layers":["lower_body","upper_body"],"state":"active","reason":"Makes movement to combat presentation coherent"},
-    {"id":"melee_1h_idle_relaxed","rank":40,"priority":"P1","profile":"melee_1h","group":"posture","action":"idle_relaxed_01","directions":["e","w"],"required_layers":["lower_body","upper_body"],"state":"active","reason":"Completes equipped resting presentation"},
-    {"id":"melee_1h_draw","rank":50,"priority":"P1","profile":"melee_1h","group":"posture","action":"draw_01","directions":["e","w"],"required_layers":["lower_body","upper_body"],"state":"active","reason":"Connects relaxed and ready presentation"},
-    {"id":"melee_1h_sheathe","rank":55,"priority":"P1","profile":"melee_1h","group":"posture","action":"sheathe_01","directions":["e","w"],"required_layers":["lower_body","upper_body"],"state":"active","reason":"Transactional weapon-switch presentation; old weapon stays authority until the final sheathe frame"},
-    {"id":"melee_1h_fast_chain","rank":60,"priority":"P1","profile":"melee_1h","group":"attack","action":"fast_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Core combat readability and directional parity"},
-    {"id":"melee_1h_heavy","rank":70,"priority":"P1","profile":"melee_1h","group":"attack","action":"heavy_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Secondary melee combat breadth"},
-    {"id":"sidearm_draw","rank":80,"priority":"P1","profile":"sidearm","group":"posture","action":"draw_sidearm_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body","weapon"],"state":"planned","reason":"Close the remaining cardinal-direction sidearm gap"},
-    {"id":"ranged_2h_locomotion","rank":90,"priority":"P1","profile":"ranged_2h","group":"locomotion","action":"walk_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Establish the ranged traversal baseline"},
-    {"id":"ranged_reload","rank":100,"priority":"P1","profile":"ranged_2h","group":"action","action":"reload_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Gameplay-relevant ranged handling"},
-    {"id":"ranged_recovery","rank":110,"priority":"P2","profile":"ranged_2h","group":"transition","action":"recovery_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Removes presentation snaps after firing"},
-    {"id":"interact","rank":120,"priority":"P2","profile":"unarmed","group":"action","action":"interact_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Frequent world action"},
-    {"id":"pickup","rank":130,"priority":"P2","profile":"unarmed","group":"action","action":"pickup_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Frequent physical-world action"},
-    {"id":"repair","rank":140,"priority":"P2","profile":"unarmed","group":"action","action":"repair_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Authored repair gameplay loop"},
-    {"id":"field_patch","rank":150,"priority":"P2","profile":"unarmed","group":"action","action":"field_patch_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"planned","reason":"Repeated healing presentation"},
-    {"id":"crouch","rank":160,"priority":"P3","profile":"unarmed","group":"locomotion","action":"crouch_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"deferred","reason":"Lower-priority traversal state"},
-    {"id":"victory","rank":170,"priority":"P3","profile":"unarmed","group":"action","action":"victory_01","directions":["s","se","e","ne","n","nw","w","sw"],"required_layers":["lower_body","upper_body"],"state":"deferred","reason":"Mission-completion polish"}
+    {
+      "id": "operator_2_5d_unarmed_posture_idle_relaxed_01",
+      "rank": 1,
+      "priority": "P0",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": 15,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": true,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "accepted_canonical_source_not_yet_intaken",
+      "state": "complete",
+      "reason": "Accepted authored 8-direction canonical source; intake is deferred to the ingress slice.",
+      "canonical_source_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ]
+    },
+    {
+      "id": "operator_2_5d_melee_1h_attack_fast_01",
+      "rank": 2,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_attack_fast_02",
+      "rank": 3,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_02",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_attack_fast_03",
+      "rank": 4,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_03",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_defense_block_enter_01",
+      "rank": 5,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_enter_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_defense_block_hit_01",
+      "rank": 6,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_hit_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_defense_block_loop_01",
+      "rank": 7,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "defense",
+      "action": "block_loop_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_locomotion_run_01",
+      "rank": 8,
+      "priority": "P0",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "active",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_locomotion_walk_01",
+      "rank": 9,
+      "priority": "P0",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "walk_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "active",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_posture_draw_01",
+      "rank": 10,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "draw_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "active",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_posture_idle_ready_01",
+      "rank": 11,
+      "priority": "P0",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "active",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_posture_idle_relaxed_01",
+      "rank": 12,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "active",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_posture_sheathe_01",
+      "rank": 13,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "sheathe_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "active",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_transition_idle_fast_transition_01",
+      "rank": 14,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "idle_fast_transition_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_transition_ready_to_relaxed_01",
+      "rank": 15,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_transition_relaxed_to_ready_01",
+      "rank": 16,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_heavy_attack_fast_01",
+      "rank": 17,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_heavy_attack_fast_02",
+      "rank": 18,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_02",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_heavy_attack_fast_03",
+      "rank": 19,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "fast_03",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_melee_1h_heavy_attack_heavy_windup_01",
+      "rank": 20,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "melee_1h_heavy",
+      "group": "attack",
+      "action": "heavy_windup_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_ranged_2h_cosmetic_aim_01",
+      "rank": 21,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "aim_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_ranged_2h_cosmetic_fire_01",
+      "rank": 22,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "fire_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_ranged_2h_cosmetic_reload_01",
+      "rank": 23,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "reload_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_ranged_2h_locomotion_run_01",
+      "rank": 24,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "ranged_2h",
+      "group": "locomotion",
+      "action": "run_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_ranged_2h_posture_relaxed_01",
+      "rank": 25,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "ranged_2h",
+      "group": "posture",
+      "action": "relaxed_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_ranged_2h_posture_stance_01",
+      "rank": 26,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "ranged_2h",
+      "group": "posture",
+      "action": "stance_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_shared_attack_dodge_charge_windup_01",
+      "rank": 27,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "shared",
+      "group": "attack",
+      "action": "dodge_charge_windup_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_shared_locomotion_idle_01",
+      "rank": 28,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "idle_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_shared_locomotion_idle_hitreact_01",
+      "rank": 29,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "idle_hitreact_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_shared_locomotion_run_01",
+      "rank": 30,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "run_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_shared_locomotion_walk_01",
+      "rank": 31,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "shared",
+      "group": "locomotion",
+      "action": "walk_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_shared_transition_dodge_01",
+      "rank": 32,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_shared_transition_dodge_chain_link_01",
+      "rank": 33,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "shared",
+      "group": "transition",
+      "action": "dodge_chain_link_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_sidearm_cosmetic_fire_sidearm_01",
+      "rank": 34,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "sidearm",
+      "group": "cosmetic",
+      "action": "fire_sidearm_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_sidearm_posture_draw_sidearm_01",
+      "rank": 35,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "sidearm",
+      "group": "posture",
+      "action": "draw_sidearm_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_dodge_fast_attack_01",
+      "rank": 36,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "dodge_fast_attack_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_fast_01",
+      "rank": 37,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_fast_02",
+      "rank": 38,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_02",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_fast_03",
+      "rank": 39,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_03",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_fast_04",
+      "rank": 40,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_04",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_fast_recovery_01",
+      "rank": 41,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_recovery_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_fast_strike_01",
+      "rank": 42,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_strike_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_fast_windup_01",
+      "rank": 43,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "fast_windup_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_heavy_01",
+      "rank": 44,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "heavy_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_attack_parry_recovery_01",
+      "rank": 45,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "attack",
+      "action": "parry_recovery_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_cosmetic_critical_execution_01",
+      "rank": 46,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "critical_execution_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_cosmetic_critical_hitspark_01",
+      "rank": 47,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "critical_hitspark_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_cosmetic_falcon_reversal_01",
+      "rank": 48,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "falcon_reversal_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_defense_block_enter_01",
+      "rank": 49,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_enter_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_defense_block_hit_01",
+      "rank": 50,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hit_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_defense_block_hold_01",
+      "rank": 51,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "block_hold_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_defense_parry_01",
+      "rank": 52,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "parry_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_defense_parry_miss_01",
+      "rank": 53,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "parry_miss_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_defense_parry_success_01",
+      "rank": 54,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "defense",
+      "action": "parry_success_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_interaction_field_patch_use_01",
+      "rank": 55,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "interaction",
+      "action": "field_patch_use_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_locomotion_idle_01",
+      "rank": 56,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "idle_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_locomotion_idle_hitreact_01",
+      "rank": 57,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "idle_hitreact_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_locomotion_run_01",
+      "rank": 58,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "run_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_locomotion_walk_01",
+      "rank": 59,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "walk_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_posture_dodge_charge_ready_01",
+      "rank": 60,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "dodge_charge_ready_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_posture_idle_ready_01",
+      "rank": 61,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_reaction_bodyslam_knockdown_01",
+      "rank": 62,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "reaction",
+      "action": "bodyslam_knockdown_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_reaction_death_01",
+      "rank": 63,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "reaction",
+      "action": "death_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_reaction_light_hitreact_01",
+      "rank": 64,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "reaction",
+      "action": "light_hitreact_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_transition_dodge_chain_release_01",
+      "rank": 65,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_chain_release_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_transition_dodge_charge_meter_01",
+      "rank": 66,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_charge_meter_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_transition_dodge_charge_release_01",
+      "rank": 67,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "dodge_charge_release_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: full-body-or-single-layer.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_transition_ready_to_relaxed_01",
+      "rank": 68,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "ready_to_relaxed_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "operator_2_5d_unarmed_transition_relaxed_to_ready_01",
+      "rank": 69,
+      "priority": "P1",
+      "art_generation": "operator_2_5d_128",
+      "canonical_profile_id": "operator_2_5d_128",
+      "profile": "unarmed",
+      "group": "transition",
+      "action": "relaxed_to_ready_01",
+      "directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "requested_directions": [
+        "n",
+        "ne",
+        "e",
+        "se",
+        "s",
+        "sw",
+        "w",
+        "nw"
+      ],
+      "required_layers": [
+        "full_body"
+      ],
+      "frame_contract": {
+        "frames": null,
+        "frame_size": [
+          128,
+          128
+        ],
+        "loop": null,
+        "fps": null,
+        "timing_status": "unknown_non_blocking"
+      },
+      "source_sha256": null,
+      "design_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+      "canonical_profile_sha256": "05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761",
+      "normalized_reference_sha256": "e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9",
+      "migration_verdict": "missing_canonical_2_5d",
+      "migration_source": "reports/operator_presentation/operator_2_5d_coverage.json#production_reachable_actions",
+      "source_status": "not_authored",
+      "state": "planned",
+      "reason": "Production-reachable legacy family; 2.5D target is planned. Legacy composition: modular.",
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_walk",
+      "rank": 10,
+      "priority": "P0",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "walk_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "active",
+      "reason": "Core equipped traversal presentation",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_run",
+      "rank": 20,
+      "priority": "P0",
+      "profile": "melee_1h",
+      "group": "locomotion",
+      "action": "run_01",
+      "directions": [
+        "e",
+        "w"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "active",
+      "reason": "Completes primary equipped locomotion",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "e",
+        "w"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_idle_ready",
+      "rank": 30,
+      "priority": "P0",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_ready_01",
+      "directions": [
+        "e",
+        "w"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "active",
+      "reason": "Makes movement to combat presentation coherent",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "e",
+        "w"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_idle_relaxed",
+      "rank": 40,
+      "priority": "P1",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "idle_relaxed_01",
+      "directions": [
+        "e",
+        "w"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "active",
+      "reason": "Completes equipped resting presentation",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "e",
+        "w"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_draw",
+      "rank": 50,
+      "priority": "P1",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "draw_01",
+      "directions": [
+        "e",
+        "w"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "active",
+      "reason": "Connects relaxed and ready presentation",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "e",
+        "w"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_sheathe",
+      "rank": 55,
+      "priority": "P1",
+      "profile": "melee_1h",
+      "group": "posture",
+      "action": "sheathe_01",
+      "directions": [
+        "e",
+        "w"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "active",
+      "reason": "Transactional weapon-switch presentation; old weapon stays authority until the final sheathe frame",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "e",
+        "w"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_fast_chain",
+      "rank": 60,
+      "priority": "P1",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "fast_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Core combat readability and directional parity",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "melee_1h_heavy",
+      "rank": 70,
+      "priority": "P1",
+      "profile": "melee_1h",
+      "group": "attack",
+      "action": "heavy_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Secondary melee combat breadth",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "sidearm_draw",
+      "rank": 80,
+      "priority": "P1",
+      "profile": "sidearm",
+      "group": "posture",
+      "action": "draw_sidearm_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body",
+        "weapon"
+      ],
+      "state": "planned",
+      "reason": "Close the remaining cardinal-direction sidearm gap",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "ranged_2h_locomotion",
+      "rank": 90,
+      "priority": "P1",
+      "profile": "ranged_2h",
+      "group": "locomotion",
+      "action": "walk_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Establish the ranged traversal baseline",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "ranged_reload",
+      "rank": 100,
+      "priority": "P1",
+      "profile": "ranged_2h",
+      "group": "cosmetic",
+      "action": "reload_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Gameplay-relevant ranged handling",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "ranged_recovery",
+      "rank": 110,
+      "priority": "P2",
+      "profile": "ranged_2h",
+      "group": "transition",
+      "action": "recovery_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Removes presentation snaps after firing",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "interact",
+      "rank": 120,
+      "priority": "P2",
+      "profile": "unarmed",
+      "group": "interaction",
+      "action": "interact_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Frequent world action",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "pickup",
+      "rank": 130,
+      "priority": "P2",
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "pickup_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Frequent physical-world action",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "repair",
+      "rank": 140,
+      "priority": "P2",
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "repair_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Authored repair gameplay loop",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "field_patch",
+      "rank": 150,
+      "priority": "P2",
+      "profile": "unarmed",
+      "group": "interaction",
+      "action": "field_patch_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "planned",
+      "reason": "Repeated healing presentation",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "crouch",
+      "rank": 160,
+      "priority": "P3",
+      "profile": "unarmed",
+      "group": "locomotion",
+      "action": "crouch_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "deferred",
+      "reason": "Lower-priority traversal state",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    },
+    {
+      "id": "victory",
+      "rank": 170,
+      "priority": "P3",
+      "profile": "unarmed",
+      "group": "cosmetic",
+      "action": "victory_01",
+      "directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "state": "deferred",
+      "reason": "Mission-completion polish",
+      "art_generation": "legacy_96",
+      "canonical_profile_id": "legacy_96",
+      "requested_directions": [
+        "s",
+        "se",
+        "e",
+        "ne",
+        "n",
+        "nw",
+        "w",
+        "sw"
+      ],
+      "migration_verdict": "legacy_plan",
+      "migration_source": "operator_animation_implementation_plan.v1",
+      "source_sha256": null,
+      "design_reference_sha256": null,
+      "canonical_profile_sha256": "3197bb8880acd1ded1ea09985905cf6a5c57568f8e899284ceb48759bc1ceeb5",
+      "normalized_reference_sha256": null,
+      "frame_contract": null,
+      "canonical_source_directions": []
+    }
   ]
 }

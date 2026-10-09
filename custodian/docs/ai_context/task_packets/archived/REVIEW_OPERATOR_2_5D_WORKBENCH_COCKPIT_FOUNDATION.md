@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-2-5d-workbench-cockpit-foundation
 - Kind: review
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: operator-2-5d-workbench-cockpit-foundation
@@ -11,7 +11,7 @@
 - Review: none
 - Review target workstream: operator-2-5d-workbench-cockpit-foundation
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md
-- Reviewed main: 4aac943751ce1fdefd75d4985b3752474eb23b73
+- Reviewed main: 3c23a493992cdf8c20724d7d9c25c3235211c263
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Reviewer context: fresh
@@ -47,13 +47,22 @@ The implementation prerequisite chain is complete. Review WB25-1 against the fin
 Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh context.
 
 ## Handoff
-
-- Next workstream: operator-2-5d-workbench-ingress
-- Next packet state: refresh-required
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: yes
+- Next workstream: operator-2-5d-workbench-cockpit-foundation-review-corrections-1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Summary backlink: include exact Authoring chat URL
-- Refresh reason: WB25-2 is pre-authored against predecessor assumptions and must consume the landed WB25-1 implementation + passed review before becoming claimable.
-- Next action: after this review passes, return its summary/accepted WB25-1 APIs and state model to the authoring chat; refresh WB25-2 in place, then claim it.
-- Blockers or open questions: none for WB25-1 review beyond evidence discovered during review.
+- Refresh reason: none
+- Next action: Claim the bounded R0-01 correction, validate it, and continue into its fresh paired re-review.
+- Blockers or open questions: none for the correction; persistent root sync remains pending because the coordination checkout has preserved local import changes.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: System Python omitted optional Textual checks on the first UI smoke run.
+- Root cause / contributing factors: Textual dependencies live in the existing Operator UI virtual environment.
+- Prevention / pipeline improvement: Reran the full UI smoke through the existing virtual environment; record the interpreter explicitly in future UI evidence.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: Temporary isolated workflow fixtures exposed a gap beyond the existing green model/UI checks.
