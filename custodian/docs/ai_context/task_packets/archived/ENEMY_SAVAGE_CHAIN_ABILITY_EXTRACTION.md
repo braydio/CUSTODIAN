@@ -49,7 +49,7 @@
 - Goal satisfied: yes
 - Completion boundary satisfied: yes
 - Acceptance satisfied: yes
-- Superseded/legacy production path disposition: n/a; the former actor-owned chain implementation was removed.
+- Superseded/legacy production path disposition: n/a
 - Evidence: `enemy_savage_pounce`, `savage_runtime`, `combat_exchange_commitment`, `enemy_hit_spatial_telemetry`, and `operator_guard_flow` focused validations passed; required changed-file sweep recorded at closeout; `git diff --check` passed.
 
 ## Execution Feedback
