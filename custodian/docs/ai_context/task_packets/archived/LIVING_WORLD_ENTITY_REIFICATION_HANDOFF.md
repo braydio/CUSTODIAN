@@ -64,3 +64,29 @@ The first C1 synthetic two-location real-Enemy handoff was design-authorized by 
 - Tooling / docs drift discovered: none
 - Follow-up: `review-living-world-entity-reification-handoff` — required fresh-context independent post-land review.
 - What worked: The focused smoke exercised real Grunt ownership transitions and old v5 event-ID migration without broadening the production integration surface.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-living-world-entity-reification-handoff`
+- Reviewed on main: `0728ec281` (implementation commit `3eeae806f3f897c9b467cd929a324aa13cfb7216`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `2`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02, R0-03`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `living-world-entity-reification-handoff-review-corrections-1`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+
+### Review Notes
+
+- R0-01: A live Node2D anchor at `Vector2(NAN, 0)` is accepted; reentry commits physical ownership and creates a Grunt with nonfinite global position. Validate finite safe placement before staging/commit and preserve abstract authority on failure.
+- R0-02: Schema-v5 snapshots whose abstract state is v1 bypass the incoming fingerprint check because migration captures/signs the migrated state first. A valid legacy snapshot changed only to `fingerprint = "corrupted"` still restores. Validate the original canonical payload fingerprint before upgrading it.
+- R0-03: The authored smoke still passes with physical-group abstract advancement enabled by an independent scratch subclass. The physical 60-tick hold does not cross an eligible activity interval at a macro boundary; a 120-tick hold exposes the mutation. Strengthen the ownership falsification proof.
+- Import preflight and all five required focused smokes passed after fresh-worktree editor import. Independent supported-goal full twice-crossing replay also produced equal fingerprint/events in two separate processes. Passing current tests does not resolve these findings.

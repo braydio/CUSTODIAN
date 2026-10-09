@@ -1,0 +1,71 @@
+# CORRECTION: F14-C1 Real Enemy Handoff Review Cycle 1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `living-world-entity-reification-handoff-review-corrections-1`
+- Kind: `correction`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `review-living-world-entity-reification-handoff`
+- Locks: `world-simulation-runtime, living-world-abstract-activity, world-actor-lifecycle`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime`
+- Paired review workstream: `review-living-world-entity-reification-handoff-review-corrections-1`
+- Review cycle: `1`
+- Max automatic review cycles: `2`
+- Reviewed main: `0728ec281`
+- Parent implementation: `living-world-entity-reification-handoff` — `custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md`
+- Parent review: `review-living-world-entity-reification-handoff` — `custodian/docs/ai_context/task_packets/archived/REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md`
+- Findings addressed: `R0-01, R0-02, R0-03`
+- Affected acceptance: Parent (4)/(6) safe placement and non-destructive invalid-anchor rejection; (7) legacy migration/fingerprints; (8) real ownership-disabled falsification.
+- Current defect/evidence: NaN Node2D safe anchor reentry returns ok and commits physical/nonfinite Grunt; old-v5 abstract-v1 snapshot restores with corrupted incoming fingerprint; scratch ownership-guard bypass still passes the authored smoke until its physical hold is extended to an eligible second macro boundary.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+- Visual review: `none`
+- Goal: Fail closed on invalid synthetic reentry geometry and corrupted legacy-v5 snapshots, and make the focused ownership regression discriminate physical abstract-advancement violations.
+- Completion boundary: Small placement/fingerprint guards in their existing owners plus focused regression strengthening, preserving the one-real-Grunt synthetic C1 scope.
+- Current measured state: Five parent focused smokes pass; independent review reproduces R0-01/R0-02 and an ownership-disabled PASS (R0-03). No production binding or new geographic contract is needed for these corrections.
+- Evidence: `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_CLAUDE_SUMMARY.md` and archived parent Independent Review receipt; exact scratch reproductions recorded below.
+- Task-specific authority: Parent F14-C1 exclusive ownership/placement/snapshot contract; existing canonical fingerprint restore guard; F15 synthetic-only boundary; NPA/Enemy ownership.
+- Work surface: `custodian/game/systems/simulation/actor_reification_coordinator.gd`; `custodian/game/state/world/simulation_snapshot_migration.gd`; `custodian/tools/validation/world_simulation_actor_reification_handoff_smoke.gd`; narrowly relevant snapshot/abstract smoke only if required to prove legacy migration. Manifest only if owner selection actually changes.
+- Required correction: R0-01 validate finite synthetic anchor geometry before staged scene activation/ownership commit; reject non-destructively with no leaked active Grunt. R0-02 compare original schema-v5 payload hash with its incoming fingerprint before converting abstract-v1 shape or legacy event IDs; retain valid migration. R0-03 ensure the committed physical hold crosses an eligible macro activity interval (including non-aligned transition ticks) and document a reproducible temporary ownership-disabled negative control that exits failure.
+- Preserve: Stable Domain/ActorId/GroupId, condition/health/intent, fixed-step and 60-tick cadence, one active owner, exact-once callbacks/causal events, v4/v5/legacy dotted event reads, repeated crossings and abstract snapshot continuation, existing Enemy death/corpse/loot and spawner owners.
+- Non-goals: No production safe-placement service, F15 topology, camp/procgen auto residency, multi-actor simulation, new Enemy family, disk-save/REMAP-3 integration, universal actor base or unrelated docs/runtime changes.
+- Acceptance:
+  1. R0-01: With a valid abstract D/G actor projection, reentry to an in-tree Node2D at NaN/Infinity is rejected before physical authority; group/projection/causal history remain unchanged and no active Grunt is leaked. Valid A/B anchors still reify once at finite deterministic positions.
+  2. R0-02: A canonical valid schema-v5 snapshot with abstract schema-v1 actor fields absent restores (including pre-correction dotted event IDs); changing only its original fingerprint rejects it. Also reject payload tampering without updating its original fingerprint; successful migration yields the canonical new fingerprint and deterministic continuation. Existing v4 compatibility stays green.
+  3. R0-03: Physical suspension assertions cross an actually eligible macro boundary after reentry at non-aligned ticks; a temporary bypass of the physical representation guard fails the focused smoke specifically on abstract movement/events while physical. Normal implementation passes.
+  4. Parent full twice-crossing seeded replay, stable health/intent/IDs, duplicate requests, non-destructive attack/death/pending/failure negatives and abstract restore remain proven; five parent focused regressions pass.
+- Validation: Import preflight then focused handoff smoke with the new negatives; reproduce the R0-01/R0-02 cases and ownership-disabled negative control. Run existing abstract activity, kernel, macro-state and snapshot-roundtrip smokes, changed-file validation once and `git diff --check`. No broad actor/boot sweep is justified by these scoped owners.
+- Task overrides: `none`
+- Deferred: F14-C2/F15 production binding and all parent non-goals remain gated after independent correction acceptance.
+
+## Minimal reproduction and falsification
+
+- R0-01: Register synthetic D/A and D/B plus G/ACTOR. Set a valid abstract projection (health 39, max 78, condition 0.5, supported goal/profile, finite carried position), bind A to a live Node2D whose global position contains NaN or Infinity, request physical A and step once. Expected rejection with unchanged abstract record; reviewed main returns physical/nonfinite actor.
+- R0-02: Capture a valid world snapshot v5, set abstract schema_version to 1 and remove actor_id/representation/actor_projection from its groups; use a legacy dotted event ID if present; compute original canonical hash. Valid restore must pass. Duplicate and change fingerprint only to `corrupted`, then separately tamper valid payload without changing that hash; both must reject before re-signing.
+- R0-03: In disposable scratch outside the worktree, subclass the current AbstractActivitySimulationState and override advance_to_fixed_tick: temporarily mark physical group dictionaries abstract, call super, restore physical marks. Inject into focused fixture both before setup and after abstract snapshot restore. Reviewed smoke passes this mutation. Extending its physical loop from 60 to 120 ticks currently makes it exit 1 with `abstract movement advanced while the actor was physical`. Do not commit a production ownership bypass.
+
+## Delta Rules
+
+- Resolve only R0-01/R0-02/R0-03 and preserve the approved C1 boundary.
+- Retain these IDs in re-review as fixed/unresolved/regressed; new cycle-1 findings use R1-NN.
+- Correction is authorized by the parent review's bounded override; no human architecture choice is needed. Promote pair only after targeted authoring preflight, and claim only after review archive/queue publication is on origin/main.
+
+## Refresh Planning Authority
+
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+- Refresh instruction: Reconcile live private owner names mechanically; do not introduce production geography or expand beyond these review findings.
+
+## Next Handoff
+
+- Next workstream: `review-living-world-entity-reification-handoff-review-corrections-1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+- Refresh reason: none
+- Next action: Claim paired correction review in a fresh independent context after correction lands and archives complete.
+- Blockers or open questions: none for bounded correction; production planning remains outside scope.
