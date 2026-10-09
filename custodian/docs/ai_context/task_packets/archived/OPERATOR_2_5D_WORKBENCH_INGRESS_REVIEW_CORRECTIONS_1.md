@@ -70,3 +70,23 @@ Address only R0-01 through R0-04. Preserve original finding IDs in the paired re
 - Refresh reason: `none`
 - Next action: Claim the fresh-context paired re-review and verify R0-01 through R0-04 against the landed correction.
 - Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: review-operator-2-5d-workbench-ingress-review-corrections-1
+- Reviewed on main: 667370e3443818253112980497e2ee0d71f21d68
+- Reviewer context: fresh
+- Reviewer provenance: same-agent-fresh-context
+- Review modes: code, architecture, asset-pipeline, workflow
+- Blocking defects: 1
+- Material evidence gaps: 0
+- Non-blocking issues: 0
+- Optional improvements: 0
+- Retained finding dispositions: R0-01 fixed; R0-02 unresolved; R0-03 fixed; R0-04 fixed
+- Correction finding IDs: R1-01, R0-02
+- Next-slice finding IDs: none
+- Human-decision finding IDs: none
+- Detailed review summary: REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md
+- Follow-up workstream: operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
