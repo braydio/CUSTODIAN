@@ -435,8 +435,9 @@ review eligibility before claim, then uses the dispatcher's claim receipt to
 start `codex exec --ephemeral` in that review worktree. Sanitized JSONL/stderr,
 final-message capture, run metadata, and recovery cards live under the shared
 Git directory at `custodian-review-runs/`, outside disposable worktrees. The
-default local permission profile is `workspace-write` with automatic approval
-routing and an additional write grant only for that run's evidence directory.
+default local permission profile uses `--approve-for-me`, which selects
+Codex's workspace-write approval policy; do not combine it with `--sandbox`.
+An additional write grant is limited to that run's evidence directory.
 The runner never selects global work, changes `workstream.py finish`, or takes
 over review landing authority. A post-claim process failure preserves the
 claimed branch/worktree and reports its durable recovery evidence.

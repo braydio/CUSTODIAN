@@ -87,7 +87,7 @@ def codex_preflight() -> str:
         raise RunnerError("codex executable unavailable; no review claim was created")
     probe = subprocess.run([executable, "exec", "--help"], text=True, capture_output=True)
     help_text = probe.stdout + probe.stderr
-    required = ("--ephemeral", "--json", "--output-last-message", "--sandbox", "--cd", "--add-dir", "--approve-for-me")
+    required = ("--ephemeral", "--json", "--output-last-message", "--cd", "--add-dir", "--approve-for-me")
     missing = [flag for flag in required if flag not in help_text]
     if probe.returncode or missing:
         raise RunnerError(f"codex exec preflight failed before claim (missing: {', '.join(missing) or 'exec help'})")
@@ -251,12 +251,12 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
                          "packet": actual_path, "codex": str(executable), "fresh": True})
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
         last_message = run_dir / "last-message.txt"
-        argv = [str(executable), "exec", "--ephemeral", "--json", "--sandbox", "workspace-write",
-                "--approve-for-me", "--cd", str(worktree), "--add-dir", str(run_dir),
+        argv = [str(executable), "exec", "--ephemeral", "--json", "--approve-for-me",
+                "--cd", str(worktree), "--add-dir", str(run_dir),
                 "--output-last-message", str(last_message), "-"]
         metadata["phase"] = "codex_running"
-        metadata["invocation"] = ["codex", "exec", "--ephemeral", "--json", "--sandbox", "workspace-write",
-                                  "--approve-for-me", "--cd", str(worktree), "--add-dir", "<run-dir>",
+        metadata["invocation"] = ["codex", "exec", "--ephemeral", "--json", "--approve-for-me",
+                                  "--cd", str(worktree), "--add-dir", "<run-dir>",
                                   "--output-last-message", "<run-dir>/last-message.txt", "-"]
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
         started = time.monotonic()
