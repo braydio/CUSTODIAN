@@ -1,0 +1,77 @@
+{
+  "agent_visual_adjudication": false,
+  "capture_mode": "evidence",
+  "captures": [
+    {
+      "capture": "seam_rois/01_dust_lung_undergate.png",
+      "order": 1,
+      "roi": [
+        440,
+        260,
+        400,
+        200
+      ],
+      "seam": "01_dust_lung_undergate",
+      "source_keyframe_filename": "tick_000330.png",
+      "tick": 330
+    },
+    {
+      "capture": "seam_rois/02_undergate_gate.png",
+      "order": 2,
+      "roi": [
+        440,
+        260,
+        400,
+        200
+      ],
+      "seam": "02_undergate_gate",
+      "source_keyframe_filename": "tick_000390.png",
+      "tick": 390
+    },
+    {
+      "capture": "seam_rois/03_gate_approach.png",
+      "order": 3,
+      "roi": [
+        440,
+        260,
+        400,
+        200
+      ],
+      "seam": "03_gate_approach",
+      "source_keyframe_filename": "tick_000450.png",
+      "tick": 450
+    },
+    {
+      "capture": "seam_rois/04_approach_road.png",
+      "order": 4,
+      "roi": [
+        440,
+        260,
+        400,
+        200
+      ],
+      "seam": "04_approach_road",
+      "source_keyframe_filename": "tick_000510.png",
+      "tick": 510
+    },
+    {
+      "capture": "seam_rois/05_approach_late_service.png",
+      "order": 5,
+      "roi": [
+        440,
+        260,
+        400,
+        200
+      ],
+      "seam": "05_approach_late_service",
+      "source_keyframe_filename": "tick_000570.png",
+      "tick": 570
+    }
+  ],
+  "contact_sheet": "awakening_handoff_seam_contact_sheet.png",
+  "human_approval_required": true,
+  "metrics": "awakening_handoff_seam_metrics.json",
+  "scenario": "traversal/awakening_late_seams_v1",
+  "schema": "custodian.awakening_handoff_seam_capture_manifest.v1",
+  "source_run_id": "20261009T112518-0400"
+}

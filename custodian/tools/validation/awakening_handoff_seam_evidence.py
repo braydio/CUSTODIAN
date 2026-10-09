@@ -56,9 +56,9 @@ def build(run_dir: Path, output_dir: Path) -> dict[str, Any]:
             "order": len(capture_entries) + 1,
             "seam": seam_id,
             "tick": tick,
-            "source_keyframe": str(source.resolve()),
+            "source_keyframe_filename": source.name,
             "roi": ROI,
-            "capture": str(crop_path.resolve()),
+            "capture": str(crop_path.relative_to(output_dir)),
         })
         checks.extend([
             {"type": "matte_void", "roi": seam_id},
@@ -74,9 +74,10 @@ def build(run_dir: Path, output_dir: Path) -> dict[str, Any]:
         "schema": "custodian.awakening_handoff_seam_capture_manifest.v1",
         "scenario": "traversal/awakening_late_seams_v1",
         "capture_mode": "evidence",
+        "source_run_id": run_dir.name,
         "captures": capture_entries,
-        "metrics": str(metrics_path.resolve()),
-        "contact_sheet": str(sheet.resolve()),
+        "metrics": metrics_path.name,
+        "contact_sheet": sheet.name,
         "human_approval_required": True,
         "agent_visual_adjudication": False,
     }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
