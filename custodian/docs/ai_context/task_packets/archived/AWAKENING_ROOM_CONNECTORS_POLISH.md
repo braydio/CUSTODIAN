@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `b3dd586bccd0e8560787a23aa8c163f21881a464`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Goal: Replace the live Dust Lung underlay, 04→05 connector, and Locker Reliquary underlay with the exact three user-approved production source files now stored in Dropbox; preserve the complete connector silhouette; and register the connector correctly between the fixed Dust Lung and Locker Reliquary gameplay anchors.
 - Completion boundary: Done when all three Dropbox inputs are hash-verified and preserved as source masters, each existing Asset V2 family publishes the intended runtime underlay state, the scene binds the resulting Dust/connector/Locker production art, the connector's final canvas/scale/position are derived from its complete source plus live room-contact geometry rather than the legacy 1024×576 plate, the old crop/reconstruction/feather path is no longer production authority, Locker foreground truth is reconciled rather than blindly overlaid on different composition, and forward/reverse traversal remains on the unchanged one-dogleg 04→05 gameplay footprint.
 - Current measured state: All three exact Dropbox sources are preserved and published through Asset V2. The connector is bound at full 1374×1076 with measured uniform scale 0.715951 and rotation -0.198826 rad, registered against the unchanged `(704,-2272)` Locker exit and `(0,-2656)` Dust Lung entry. Asset V2 doctor is healthy for all three families. Locker foreground support is 91.646% by opaque-pixel backing measurement, so it is unbound and explicitly deferred/not-ready pending parity-restoring source art. The separately landed four-state P-9 Designation Locker and gameplay interaction remain intact.
@@ -84,7 +84,7 @@
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Refresh reason: none
 - Next action: Claim the paired review from a fresh reviewer context, then continue the interaction-feedback/console activation successor after the review archives complete.
 - Blockers or open questions: Paired post-land review pending; Locker foreground source art remains deferred until underlay parity can be restored.
@@ -105,7 +105,7 @@
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
 - Detailed review summary: `REVIEW_AWAKENING_ROOM_CONNECTORS_POLISH_CLAUDE_SUMMARY.md`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Reviewer independence: `The paired review ran from a newly claimed worktree and reconstructed the landed implementation from this archived implementation packet, source receipts, the live scene and layout, Asset V2 contracts, and fresh focused validation. The reviewed runtime implementation was not modified.`
 - Focused evidence: `Exact Dropbox hashes match; Dust and connector runtime files are byte-identical to source; Locker normalization and foreground deferral pass the asset contract; source contacts map within 0.003 world units of the fixed room anchors; gameplay A/B/C geometry is unchanged; Asset V2 doctor is healthy; Awakening scene, Designation Locker presentation, progression, geometry, and bidirectional traversal checks pass.`
 - Follow-up workstream: `none`

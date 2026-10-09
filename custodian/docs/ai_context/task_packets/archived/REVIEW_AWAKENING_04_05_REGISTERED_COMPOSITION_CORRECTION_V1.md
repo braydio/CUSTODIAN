@@ -17,7 +17,7 @@
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Goal: Independently prove the runtime now preserves the user's exact axis-aligned 1502×2048 Dust→connector→Locker composition rather than the previously reviewed anchor-fit/rotated connector solution.
 - Reviewed implementation acceptance: Reuse every Acceptance clause from archived `AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1.md`.
 - Review evidence: `custodian/docs/ai_context/reports/assets/awakening_04_05_registered_composition_v1.json`; exact Dropbox registered references `/CUSTODIAN/implementation_inputs/awakening_04_05_registered_composition_v1/{composite_reference_1502x2048.png,dust_registered_1502x2048.png,connector_registered_1502x2048.png,locker_registered_1502x2048.png}` with SHA-256 values `521beec0…c9383`, `fa863799…4172e`, `489b4961…fd76`, `76cc103e…eb48d`;  exact runtime art rectangles; effective transforms; layer z-order; overlap pixel/rect metrics; renderer capture spanning all three pieces; bidirectional traversal; Asset V2/source receipts; Designation Locker regression proof.
@@ -34,7 +34,7 @@
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Refresh reason: `none`
 - Next action: Claim `awakening-lower-upper-spine-connection`; this exact-composition review passed and the interaction-feedback review is complete.
 - Blockers or open questions: `none`
