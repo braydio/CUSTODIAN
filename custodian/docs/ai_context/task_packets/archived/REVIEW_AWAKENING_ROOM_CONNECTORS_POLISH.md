@@ -17,7 +17,7 @@
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Goal: Independently verify that the landed correction consumes the exact three Dropbox production sources for Dust Lung, the direct 04→05 connector, and Locker Reliquary; preserves complete source composition/silhouette; derives connector runtime registration from the current source and room contacts rather than the legacy 1024×576 placement; and preserves gameplay plus the separately reauthored Designation Locker.
 - Reviewed implementation acceptance: Reuse every acceptance item from archived `AWAKENING_ROOM_CONNECTORS_POLISH.md`. Verify exact Dropbox hash provenance for all three sources; exact Dust publication; crop-free Locker normalization and truthful foreground disposition; complete connector silhouette with the formerly missing chunk present; measured connector transform; unchanged dogleg gameplay footprint; and unchanged specialized Designation Locker behavior.
 - Review evidence: Dropbox/source-work SHA receipts; source dimensions/modes/alpha; Asset V2 family/catalog/runtime receipts and realized job IDs; Dust exact-copy proof; Locker scale/pad and foreground-parity proof; connector source-vs-runtime full-silhouette comparison; measured room-contact registration; scene texture bindings; Designation Locker smoke; bidirectional traversal telemetry; compact join evidence only if machine checks cannot settle visible continuity.
@@ -34,7 +34,7 @@
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Refresh reason: `none`
 - Next action: The paired review passed; release the interaction prompt/readout + Crèche activation-FX correction for its own dispatch claim.
 - Blockers or open questions: `none`

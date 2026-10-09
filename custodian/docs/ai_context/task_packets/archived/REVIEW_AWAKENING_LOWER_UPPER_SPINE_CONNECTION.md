@@ -17,7 +17,7 @@
 - Review modes: `code, architecture, runtime, visual`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Goal: Independently prove that the lower and upper/later Awakening are one continuous playable route across a single 05→06 passage, with no hidden collision seam or presentation gap.
 - Reviewed implementation acceptance: Reuse every acceptance item from archived `AWAKENING_LOWER_UPPER_SPINE_CONNECTION.md`.
 - Review evidence: Layout diff; real-Operator traversal trace; collision/clearance evidence; Zone05/06 registration/alpha probes; late-seam no-capture report; compact 05→06 ROI only if needed.
@@ -34,7 +34,7 @@
 - Next packet state: `ready`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Refresh reason: `successor already carries claim-time live-state refresh`
 - Next action: Claim `awakening-handoff-readiness-art-convergence-v1-r1`; its claim-time refresh is execution-agent-owned.
 - Blockers or open questions: `none`

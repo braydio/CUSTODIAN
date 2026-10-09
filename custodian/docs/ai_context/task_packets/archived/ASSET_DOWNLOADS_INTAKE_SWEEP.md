@@ -15,8 +15,8 @@
 - Review cycle: `0`
 - Max automatic review cycles: `0`
 - Reviewed main: `c4c56d175d4e66528b450b6872d888d3ced7eab6`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Branch: `agent/asset-downloads-intake-sweep`
 - Goal: `Consume every currently actionable, unimplemented production asset handoff under /CUSTODIAN/implementation_inputs without treating the Dropbox folder itself as runtime authority, publish all valid supplied states through their existing Asset V2 families, preserve source provenance, and leave already-landed, partial, superseded, smoke-test, or design-ambiguous payloads with their existing owners.`
 - Completion boundary: `Twenty-one supplied required Awakening states across five existing families are hash-verified, source-preserved, ingested through Asset V2, imported, and reflected in current status/catalog truth; any objectively contaminated PNG is corrected only by the bounded alpha-island rule below or fails closed; the Dropbox audit receipt truthfully classifies every current implementation_inputs entry; no duplicate Operator/Alpine work or speculative scene binding is introduced.`
@@ -121,7 +121,7 @@ Before staging that state:
 8. apply the same objective island removal to the canonical source master only when its segmentation independently satisfies these exact source conditions;
 9. verify the corrected normalized image still matches the declared 256×192 RGBA runtime contract and then publish through the existing Asset V2 family normally.
 
-If the recomputed topology does not match those measured conditions, if any satellite intersects/attaches to the principal authored object, or if correction requires repainting/inpainting/resampling, fail closed and return the exact discrepancy to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9. Do not redraw, generatively repair, or otherwise alter authored pixels inside this workstream.
+If the recomputed topology does not match those measured conditions, if any satellite intersects/attaches to the principal authored object, or if correction requires repainting/inpainting/resampling, fail closed and return the exact discrepancy to https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a. Do not redraw, generatively repair, or otherwise alter authored pixels inside this workstream.
 
 No other A2 state may be artistically modified by this packet.
 
