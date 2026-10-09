@@ -2465,3 +2465,17 @@ focused Python checks and Godot reachability, melee point-blank, and modular-lay
 smokes pass; the changed-unit gate passed 24/24 checks with complete coverage.
 The authority smoke's 188-file legacy-runtime TODO remains separate migration
 debt. No production art was edited.
+
+## Operator 2.5D Workbench Cockpit Foundation (WB25-1, 2026-10-08)
+
+The animation workbench now distinguishes `legacy_96` and
+`operator_2_5d_128` authoring identities while preserving gameplay semantic
+identity and all legacy source paths. Implementation-plan v2 retains legacy
+rank/priority/state data and seeds 69 canonical 2.5D families, including the
+accepted first family plus 68 missing counterparts. One shared projection
+drives the generation-separated browser tree and the 2.5D action-by-direction
+matrix; missing, projected, fallback, canonical, and stale-reference states
+remain distinct. Runtime selectors/resources and New Animation behavior are
+unchanged. Focused checks and the changed-files validation gate passed (19/19
+selected, complete coverage). The paired fresh-context review is the immediate
+successor; WB25-2 remains gated on its findings and planning refresh.

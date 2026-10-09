@@ -1,9 +1,9 @@
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
 from textual.screen import Screen
-from textual.widgets import Input, Label, Static
+from textual.widgets import Input, Label, Static, TabbedContent, TabPane
 
-from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, ContextKeyBar, LayerTable,
+from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, AnimationMatrix, ContextKeyBar, LayerTable,
                        MotionCanvas, MotionControls, MotionMetrics, PlanTable,
                        PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
 
@@ -17,7 +17,11 @@ class MainScreen(Screen):
             yield PlanTable(id="plan-table")
         with Horizontal(id="workspace-row", classes="mode-pane"):
             with Container(id="navigation-pane"):
-                yield AnimationTree()
+                with TabbedContent(initial="browser-tab", id="animation-browser-tabs"):
+                    with TabPane("BROWSER", id="browser-tab"):
+                        yield AnimationTree()
+                    with TabPane("2.5D MATRIX", id="matrix-tab"):
+                        yield AnimationMatrix()
             with Container(id="detail-pane"):
                 yield AnimationDetail("Select an animation", id="animation-detail")
             with Container(id="layers-pane"):

@@ -20,7 +20,8 @@ def consume_frame_time(elapsed_sec: float, fps: float) -> tuple[bool, float]:
 PreviewSource = Literal["live", "workbench", "canonical", "runtime"]
 ZoomMode = Literal["auto", "1x", "2x", "3x", "fit"]
 CompositionMode = Literal["body", "fx", "body_fx"]
-PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v1"
+PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v2"
+PLAN_SCHEMAS = {"custodian.operator_animation_implementation_plan.v1", PLAN_SCHEMA}
 SEQUENCE_SCHEMA = "custodian.operator_animation_review_sequence.v1"
 
 
@@ -322,26 +323,41 @@ class AnimationPreviewProvider:
 
 
 def validate_plan(payload: dict, catalog: dict | None = None) -> list[dict]:
-    if payload.get("schema") != PLAN_SCHEMA: raise ValueError("unsupported implementation-plan schema")
+    schema_version = payload.get("schema")
+    if schema_version not in PLAN_SCHEMAS: raise ValueError("unsupported implementation-plan schema")
     items = payload.get("items")
     if not isinstance(items, list): raise ValueError("implementation plan items must be a list")
     ranks, ids, results = set(), set(), []
     allowed_states = {"planned", "active", "blocked", "deferred", "complete"}
     animations = (catalog or {}).get("animations", {})
     for item in items:
-        if item["rank"] in ranks: raise ValueError(f"duplicate plan rank: {item['rank']}")
+        generation = item.get("art_generation", "legacy_96")
+        if generation not in {"legacy_96", "operator_2_5d_128"}:
+            raise ValueError(f"invalid plan art generation: {generation}")
+        rank_key = (generation, item["rank"])
+        if rank_key in ranks: raise ValueError(f"duplicate plan rank: {item['rank']} ({generation})")
         if item["id"] in ids: raise ValueError(f"duplicate plan id: {item['id']}")
         if item["state"] not in allowed_states: raise ValueError(f"invalid plan state: {item['state']}")
-        ranks.add(item["rank"]); ids.add(item["id"])
+        ranks.add(rank_key); ids.add(item["id"])
         covered = 0; layer_coverage = {}; covered_directions = []
         for direction in item["directions"]:
-            entry = animations.get(f"{item['profile']}/{item['group']}/{item['action']}/{direction}", {})
-            present = set(entry.get("layers", {})); required = set(item["required_layers"])
-            ok = required <= present or ("full_body" in present and required == {"lower_body", "upper_body"})
+            if generation == "operator_2_5d_128":
+                authored = {str(value).lower() for value in item.get("canonical_source_directions", ())}
+                present = set(item.get("required_layers", ())) if direction.lower() in authored else set()
+                required = set(item.get("required_layers", ()))
+                ok = bool(required) and required <= present
+            else:
+                entry = animations.get(f"{item['profile']}/{item['group']}/{item['action']}/{direction}", {})
+                present = set(entry.get("layers", {})); required = set(item["required_layers"])
+                ok = required <= present or ("full_body" in present and required == {"lower_body", "upper_body"})
             covered += int(ok); layer_coverage[direction] = sorted(present)
             if ok: covered_directions.append(direction)
-        results.append({**item, "coverage": covered, "coverage_total": len(item["directions"]), "covered_directions": covered_directions, "layer_coverage": layer_coverage})
-    return sorted(results, key=lambda item: item["rank"])
+        results.append({**item, "art_generation": generation, "coverage": covered,
+                        "coverage_total": len(item["directions"]),
+                        "covered_directions": covered_directions,
+                        "layer_coverage": layer_coverage})
+    generation_order = {"operator_2_5d_128": 0, "legacy_96": 1}
+    return sorted(results, key=lambda item: (generation_order[item["art_generation"]], item["rank"]))
 
 
 def save_sequence(sequence: ReviewSequence, root: Path) -> Path:

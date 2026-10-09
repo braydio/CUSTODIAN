@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 DIRECTIONS = ("s", "se", "e", "ne", "n", "nw", "w", "sw", "omni")
+ART_GENERATIONS = ("legacy_96", "operator_2_5d_128")
 LAYERS = ("lower_body", "upper_body", "full_body", "head", "cape", "fx", "weapon")
 PROFILES = (
     "shared",
@@ -153,10 +154,23 @@ def _weapon_relative_path(key: OperatorAssetKey, filename: str) -> Path:
 
 
 def canonical_source_path(
-    key: OperatorAssetKey, *, allow_legacy_action: bool = False
+    key: OperatorAssetKey, *, allow_legacy_action: bool = False,
+    art_generation: str = "legacy_96",
 ) -> Path:
     filename = canonical_filename(key, allow_legacy_action=allow_legacy_action)
     if key.owner == "operator":
+        if art_generation not in ART_GENERATIONS:
+            raise ValueError(f"invalid Operator art generation: {art_generation}")
+        if art_generation == "operator_2_5d_128":
+            if (key.frame_width, key.frame_height) != (128, 128):
+                raise ValueError("operator_2_5d_128 source paths require 128x128 frame cells")
+            return (
+                Path("content/sprites/operator/source/generations/operator_2_5d_128/animations")
+                / key.animation_profile
+                / key.action_group
+                / key.action
+                / filename
+            )
         return (
             Path("content/sprites/operator/source/animations")
             / key.animation_profile

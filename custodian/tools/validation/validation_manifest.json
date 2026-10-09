@@ -1598,7 +1598,23 @@
       "owners": [
         "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json",
         "custodian/tools/operator/animation_preview.py",
-        "custodian/tools/validation/operator_animation_plan_smoke.py"
+        "custodian/tools/operator/operator_animation_targets.py",
+        "custodian/tools/validation/operator_animation_plan_smoke.py",
+        "custodian/tools/validation/operator_animation_targets_smoke.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
+      "id": "operator_asset_schema",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_asset_schema_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "asset_schema", "tooling"],
+      "owners": [
+        "custodian/tools/pipelines/operator_asset_schema.py",
+        "custodian/tools/validation/operator_asset_schema_smoke.py"
       ],
       "timeout_sec": 20,
       "needs_import": false

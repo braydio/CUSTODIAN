@@ -17,6 +17,7 @@ import animation_workbench_model as model
 import animation_preview
 import animation_motion_preview
 import operator_art_worktree
+import operator_animation_targets
 
 from .state import (
     AnimationRecord, AnimationSelection, CanvasMigrationView, ErrorView, ExistingContextView,
@@ -148,7 +149,15 @@ class WorkbenchService:
             if status == "SUPERSEDED":
                 detail = f"SUPERSEDED · {detail}"
             records.append(AnimationRecord(selection, frames, layers, completeness, detail, status))
-        return tuple(records)
+        legacy_records = tuple(records)
+        if not self.plan_path.is_file():
+            return legacy_records
+        payload = operator_animation_targets.load_plan(self.plan_path)
+        targets = operator_animation_targets.project_targets(
+            payload, repo_root=self.repo_root, workspace_root=self.workspace_root,
+            legacy_records=legacy_records,
+        )
+        return (*legacy_records, *targets)
 
     def browser_records(self, *, show_superseded: bool = False) -> tuple[AnimationRecord, ...]:
         records = self.discover_browser_records()
@@ -221,17 +230,39 @@ class WorkbenchService:
                 record.selection.profile == selection.profile
                 and record.selection.group == selection.group
                 and record.selection.action == selection.action
+                and record.selection.art_generation == selection.art_generation
             )
         }
         preferred = ("n", "e", "s", "w", "ne", "se", "sw", "nw", "omni")
         return tuple(direction for direction in preferred if direction in available)
 
     def animation_plan(self) -> list[dict[str, Any]]:
+        if not self.plan_path.is_file():
+            return []
         payload = json.loads(self.plan_path.read_text())
         catalog = json.loads(self.catalog_path.read_text())
-        return animation_preview.validate_plan(payload, catalog)
+        rows = animation_preview.validate_plan(payload, catalog)
+        projected = self.discover_browser_records()
+        families: dict[tuple[str, str, str], list[AnimationRecord]] = {}
+        for record in projected:
+            if record.selection.art_generation != "operator_2_5d_128":
+                continue
+            families.setdefault((record.selection.profile, record.selection.group, record.selection.action), []).append(record)
+        for row in rows:
+            if row["art_generation"] != "operator_2_5d_128":
+                continue
+            leaves = families.get((row["profile"], row["group"], row["action"]), [])
+            canonical = [leaf for leaf in leaves if leaf.canonical_complete]
+            row["coverage"] = len(canonical)
+            row["coverage_total"] = len(row["directions"])
+            row["covered_directions"] = [leaf.selection.direction for leaf in canonical]
+            row["coverage_by_direction"] = {leaf.selection.direction: leaf.coverage_status for leaf in leaves}
+            row["workflow_by_direction"] = {leaf.selection.direction: leaf.workflow_status for leaf in leaves}
+        return rows
 
     def preview(self, selection: AnimationSelection, source: str = "runtime"):
+        if selection.art_generation != "legacy_96":
+            raise ValueError("2.5D target previews do not read legacy runtime art; source intake and review are later workstream slices")
         if source == "workbench":
             self.workbench.export_preview(self.workspace(selection) / "workbench.json", self.aseprite)
         identity = animation_preview.SemanticIdentity(
@@ -394,8 +425,9 @@ class WorkbenchService:
         if not needle:
             return visible
         return [record for record in visible if needle in " ".join((
-            record.selection.profile, record.selection.group,
-            record.selection.action, record.selection.direction,
+            record.selection.art_generation, record.selection.profile,
+            record.selection.group, record.selection.action,
+            record.selection.direction, record.coverage_status, record.workflow_status,
         )).casefold()]
 
     def _plan(self, selection: AnimationSelection) -> dict[str, Any]:
@@ -415,6 +447,11 @@ class WorkbenchService:
         )
 
     def workspace(self, selection: AnimationSelection) -> Path:
+        if selection.art_generation != "legacy_96":
+            if selection.art_generation != "operator_2_5d_128":
+                raise ValueError(f"unsupported Operator art generation: {selection.art_generation}")
+            return (self.workspace_root / selection.art_generation / selection.profile
+                    / selection.group / selection.action / selection.direction)
         return self.workbench.workspace(self.workspace_root, {
             "profile": selection.profile, "group": selection.group,
             "action": selection.action, "direction": selection.direction,
@@ -445,6 +482,7 @@ class WorkbenchService:
         impl = json.loads(self.plan_path.read_text())
         planned = any(all(row.get(key) == identity[value] for key, value in
                           (("profile", "profile"), ("group", "group"), ("action", "action")))
+                      and row.get("art_generation", "legacy_96") == "legacy_96"
                       and options["direction"] in row.get("directions", ())
                       for row in impl.get("items", ()))
         catalog = json.loads(self.catalog_path.read_text()) if self.catalog_path.exists() else {}
@@ -498,6 +536,31 @@ class WorkbenchService:
 
     def session(self, selection: AnimationSelection) -> SessionView:
         ws = self.workspace(selection)
+        if selection.art_generation == "operator_2_5d_128":
+            projected = next((record for record in self.discover_browser_records()
+                if record.selection.authoring_identity == selection.authoring_identity), None)
+            if projected is None:
+                raise ValueError(f"unknown 2.5D animation target: {selection.authoring_identity}")
+            families = operator_animation_targets.target_families(
+                operator_animation_targets.load_plan(self.plan_path))
+            family = next((item for item in families if item.key == (
+                selection.art_generation, selection.profile, selection.group, selection.action)), None)
+            contract = family.frame_contract if family else {}
+            frame_count = int(contract.get("frames") or projected.frames or 0)
+            size = tuple(contract.get("frame_size") or (128, 128))
+            layers = tuple(LayerView(layer, "canonical_target", "operator", selection.profile,
+                frame_count, frame_count, frame_count, f"{size[0]}×{size[1]}", True)
+                for layer in projected.layers)
+            completeness, detail = self.classify_layers(projected.layers)
+            state = "2.5D SOURCE INTAKE" if projected.workflow_status == "INTAKE" else "2.5D TARGET PROJECTED"
+            display = str(ws.relative_to(self.repo_root)) if ws.is_relative_to(self.repo_root) else str(ws)
+            return SessionView(
+                selection, frame_count, frame_count, frame_count, state,
+                "NONE", "STALE REFERENCE" if projected.stale_reference else "GREEN",
+                ws, "not opened in WB25-1", layers, None, {}, completeness, detail,
+                display, (int(size[0]), int(size[1])), projected.coverage_status,
+                projected.workflow_status, projected.stale_reference,
+            )
         manifest_path, document_path = ws / "workbench.json", ws / "workbench.aseprite"
         data = self.workbench.load(manifest_path) if manifest_path.exists() else None
         if data and data.get("creation"):
