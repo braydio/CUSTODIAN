@@ -15,9 +15,13 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `paired fresh-context verification of live HUD geometry, visibility-state transitions and queue semantics; this review packet itself does not spawn another paired review`
+- Review target workstream: `loot-toast-hud-clearance-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/LOOT_TOAST_HUD_CLEARANCE_V1.md`
 - Reviewed main: `<fill at claim>`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
 - Goal: Independently verify that the production loot-toast queue clears the actual visible top-left HUD across normal/debug/terminal/viewport states without changing pickup semantics or creating a generic layout engine.
 - Completion boundary: Pass only when a fresh reviewer proves the production scene is wired to a live HUD-clearance provider, hidden controls do not reserve space, transitions cannot leave stale geometry, four entries stay on-screen at required desktop sizes, queue semantics remain unchanged, and no per-frame whole-UI scan or pickup-authority coupling was introduced.
 - Current measured state: Reconstruct from landed main at claim time. The pre-fix baseline is the human playtest where pickup toasts visually collide with the health/stamina HUD while `LootToastQueue` is fixed at top 126.
@@ -56,7 +60,7 @@
   - `pause_only_minimap_hud_smoke` if applicable
   - `python3 custodian/tools/validation/run_validation.py --changed --json`
   - `git diff --check`
-- Task overrides: `TASK OVERRIDE: review only; do not edit reviewed implementation. Commits are limited to the durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets required by confirmed findings.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: Broader HUD hierarchy/readability work remains separate.
 
 ## Review Receipt

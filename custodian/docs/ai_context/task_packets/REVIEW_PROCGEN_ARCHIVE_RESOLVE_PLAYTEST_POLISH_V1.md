@@ -15,9 +15,13 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `paired post-land fresh-context review of a substantial presentation/layering change; this review packet itself does not spawn another paired review`
+- Review target workstream: `procgen-archive-resolve-playtest-polish-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_PLAYTEST_POLISH_V1.md`
 - Reviewed main: `<fill at claim>`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Visual review: `required`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
 - Goal: Independently verify the post-playtest Archive Resolve polish preserves AR1-AR4 authority while fixing the actual gameplay composition: graphite unresolved world-space, readable slower registration/dither, no world props/mobs/structures/cliffs floating over unresolved cells, and ordinary settled world presentation afterward.
 - Completion boundary: Pass only when a fresh reviewer proves the landed implementation uses the existing Archive Resolve owner rather than a parallel scheduler, objectively verifies effective world layering and cliff companion coverage, reruns the focused AR/streaming/cliff/determinism contracts, confirms the human visual decision was recorded from the exact Authoring chat, and finds no material path where gameplay authority depends on presentation visibility.
 - Current measured state: Reconstruct from landed main at claim time. The pre-fix human baseline is the 2026-10-09 literal Contract sandbox playtest: black-square unresolved read, weak/too-fast VFX, props/mobs/structures above unresolved space, and cliff/fascia outside the effect.
@@ -68,7 +72,7 @@
   - implementation mutation proof
   - `python3 custodian/tools/validation/run_validation.py --changed --json`
   - `git diff --check`
-- Task overrides: `TASK OVERRIDE: review only; do not edit reviewed implementation. Commits are limited to the durable review receipt/summary/lifecycle metadata and bounded correction/re-review packets required by confirmed findings.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: Any additional purely subjective polish after a human pass is a new human-directed tuning slice, not an automatic review finding.
 
 ## Review Receipt
