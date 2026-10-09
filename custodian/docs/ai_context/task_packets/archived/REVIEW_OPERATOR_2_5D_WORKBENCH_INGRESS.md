@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-2-5d-workbench-ingress
 - Kind: review
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: operator-2-5d-workbench-ingress
@@ -11,11 +11,11 @@
 - Review: none
 - Review target workstream: operator-2-5d-workbench-ingress
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_INGRESS.md
-- Reviewed main: d6c94d38c99e58c96e5f5c7e46db8d290bfeb10f
+- Reviewed main: 0d4612f52e064b48c2cf5a157a6c95aec4a553a8
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Reviewer context: fresh
-- Reviewer provenance: different-agent
+- Reviewer provenance: same-agent-fresh-context
 - Review modes: code, architecture, asset-pipeline, workflow
 - Review cycle: 0
 - Max automatic review cycles: 2
@@ -49,14 +49,34 @@ Required review anchors:
 
 Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh context.
 
-## Handoff
+## Review Result
 
-- Next workstream: operator-2-5d-workbench-polish-automation
-- Next packet state: refresh-required
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: yes
+- Verdict: findings
+- Blocking defects: 4
+- Material evidence gaps: 0
+- Findings: R0-01, R0-02, R0-03, R0-04
+- Detailed review summary: REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS_CLAUDE_SUMMARY.md
+- Evidence: Seven focused smokes passed; disposable independent probes confirmed READY crash-resume refusal, stale/missing-document terminal reuse, blocked-direction head-of-line failure and the actual default-source-root alternate-frame collision gap.
+- Follow-up: operator-2-5d-workbench-ingress-review-corrections-1
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: Happy-path validation omitted four acceptance regressions; repeated --test options initially selected only the final filter.
+- Root cause / contributing factors: Helper-level resume/manual package completion fixtures and a nondefault source-root shape omitted production orchestration boundaries; runner accepts one test filter.
+- Prevention / pipeline improvement: Bounded correction requires all four independent reproductions and negative controls; required review tests were rerun as separate official invocations.
+- Tooling / docs drift discovered: none
+- Follow-up: operator-2-5d-workbench-ingress-review-corrections-1
+
+## Next Handoff
+
+- Next workstream: operator-2-5d-workbench-ingress-review-corrections-1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Summary backlink: include exact Authoring chat URL
-- Refresh reason: WB25-3 must consume the actual landed Source Session→Workbench handoff/session metadata and exact Art Agent seams.
-- Next action: Return implementation/review evidence to the authoring chat and refresh the successor before claim.
-- Blockers or open questions: successor intentionally draft until refresh
+- Refresh reason: none
+- Next action: Claim and complete the bounded correction, then start cycle-1 paired re-review from fresh context.
+- Blockers or open questions: none for correction; WB25-3 remains refresh-required after successful re-review.

@@ -188,3 +188,23 @@ Do not copy this pseudocode literally if live signatures change during implement
 - Refresh reason: `none`
 - Next action: Claim the paired review in a fresh reviewer context and independently verify the landed implementation against the archived packet.
 - Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: findings
+- Review workstream: review-operator-2-5d-workbench-ingress
+- Reviewed on main: 0d4612f52e064b48c2cf5a157a6c95aec4a553a8
+- Reviewer context: fresh
+- Reviewer provenance: same-agent-fresh-context
+- Review modes: code, architecture, asset-pipeline, workflow
+- Blocking defects: 4
+- Material evidence gaps: 0
+- Non-blocking issues: 0
+- Optional improvements: 0
+- Correction finding IDs: R0-01, R0-02, R0-03, R0-04
+- Next-slice finding IDs: none
+- Human-decision finding IDs: none
+- Detailed review summary: REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS_CLAUDE_SUMMARY.md
+- Follow-up workstream: operator-2-5d-workbench-ingress-review-corrections-1
+- Evidence: Seven required focused smokes pass. Independent real import probes confirm READY Source Session crash-resume refusal, completed hint reuse after changed source/missing document, first blocked direction preventing later package progress and default OPUI source/animations root missing a same-generation alternate-frame collision. Stable finding details and controls are in the closing summary.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb

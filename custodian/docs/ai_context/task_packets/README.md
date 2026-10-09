@@ -80,7 +80,8 @@ normal closeout.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
-- `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Independently verify the landed implementation against its archived packet and live behavior.
+- `OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_1.md` — Correct confirmed WB25-2 resume, terminal proof, mixed-direction progression and default-root collision findings R0-01 through R0-04.
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_1.md` — Fresh cycle-1 re-review of all four bounded ingress corrections.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
