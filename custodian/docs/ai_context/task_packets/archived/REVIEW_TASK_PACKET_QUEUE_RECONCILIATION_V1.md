@@ -12,7 +12,7 @@
 - Review target workstream: task-packet-queue-reconciliation-v1
 - Review target packet: custodian/docs/ai_context/task_packets/archived/TASK_PACKET_QUEUE_RECONCILIATION_V1.md
 - Reviewed main: 105c2541fd1c4dd7bf3dab688b64c3da76a4310b
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Visual review: none
 - Reviewer context: fresh
 - Reviewer provenance: same-agent-fresh-context
@@ -41,7 +41,7 @@
 
 - Next action: Claim only after task-packet-queue-reconciliation-v1 archives complete; perform a fresh-context paired review and land bounded findings.
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Blockers or open questions: Dependency on implementation completion only.
 
 
@@ -72,7 +72,7 @@
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Owner resolves upstream F14 pairing blocker; resume this checkpointed review, merge main and rerun required gates, finish landing, then dispatch-claim the bounded correction and execute R0-01/R0-02/R0-03; continue to its fresh paired re-review.
 - Blockers or open questions: Required review-pairing failure on unrelated upstream living-world-entity-reification-handoff blocks this review landing. Original implementation is not signed off until its three findings are resolved. Protected ownership and ambiguous legacy records remain preserved.

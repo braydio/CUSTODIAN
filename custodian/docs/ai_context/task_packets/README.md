@@ -261,7 +261,7 @@ Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE
 
 ### Active Awakening 04→05 Production Art Refresh
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` remains ready/auto but is now additionally gated on the paired review of `awakening-04-05-registered-composition-fade-repair-v1`; the user accepts the current registered layout/order but has rejected the live parent-envelope fade behavior.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is blocked/manual and superseded by the production fade-repair workstream. The fade repair now owns both the runtime correction and the needed bidirectional 04→05 evidence.

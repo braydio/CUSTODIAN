@@ -1,6 +1,6 @@
 # Task Packet Queue Reconciliation V1 Independent Review
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 Review status: findings. Three blocking findings require bounded correction `task-packet-queue-reconciliation-v1-review-corrections-1` and a fresh cycle-1 re-review. Reviewer context: fresh; provenance: same-agent-fresh-context. Reconstructed solely from durable packets, ledger, summary, Git trees, live code and independent temporary-repository proofs. Review target implementation landed at `7f43556150ca170f0d84f29771d5feb34dbabd18`; review checkout began at `8817908b1f32a26893785536a9d81ba053ea12c5` and synchronized to reviewed main `105c2541fd1c4dd7bf3dab688b64c3da76a4310b` before artifact authoring. No reviewed implementation was edited.
 
@@ -119,7 +119,14 @@ The newly landed `LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md` and paired review 
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Owner resolves upstream F14 pairing blocker; resume this checkpointed review, merge main and rerun required gates, finish landing, then dispatch-claim the bounded correction and execute R0-01/R0-02/R0-03; continue to its fresh paired re-review.
 - Blockers or open questions: Required review-pairing failure on unrelated upstream living-world-entity-reification-handoff blocks this review landing. Original implementation is not signed off until its three findings are resolved. Protected ownership and ambiguous legacy records remain preserved.
+
+## Resumption check — 2026-10-09 (post-checkpoint, not a review rerun)
+
+- **Planning and review conversation:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- **Evidence:** At `origin/main@aaa1236840884332b2759e029bb829bfa519fa97`, `LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md` is archived `complete`, and `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md` is active `ready/auto`, depending on the archived implementation. The F14 draft/manual pairing defect observed at `105c2541` is no longer present in those packet headers.
+- **Validation remains required:** This is a metadata inspection, **not** proof that the current full review-pairing or changed-file validation passes. Safely sync the preserved review worktree/branch to fresh `origin/main`, run the current repository-required gates (including `python3 custodian/tools/agent/validate_review_pairing.py`, changed-file validation and `git diff --check`), and land through `workstream.py finish` only after the checks pass. Do not bypass the validator, edit F14 as part of this review, reset local work, or touch the unrelated untracked Awakening sprite.
+- **Next after the review lands:** Claim `task-packet-queue-reconciliation-v1-review-corrections-1` through the dispatcher, implement only R0-01/R0-02/R0-03, then conduct its separate fresh-context re-review. The three original findings remain blocking until that correction is reviewed.
