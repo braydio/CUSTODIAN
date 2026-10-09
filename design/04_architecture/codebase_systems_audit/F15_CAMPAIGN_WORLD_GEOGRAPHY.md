@@ -51,6 +51,12 @@ The [F14 read-only local runtime characterization](F14_LIVING_WORLD_SIMULATION.m
 
 **F15 responsibility before F14 production integration:** choose stable `campaign/domain → geographic location/region/site → location-owned actor/group` identities and relationships, plus how those identities survive local scene/chunk unloading. The *initial* F14 two-location deterministic unit/lifecycle proof can use synthetic IDs with no new art or world-size expansion; full production reification cannot bind to undefined geographic ownership. Do not create duplicate simulation clocks, parallel procgen, or a new save silo for F14.
 
+## F14-C integration boundary after accepted abstract activity (2026-10-09)
+
+F14-B plus its R0-01 correction have now passed a separate fresh-context paired re-review, so their deterministic offscreen group state is a valid foundation. A **narrow F14-C1 one-real-Enemy physical↔abstract handoff proof** has been design-authorized against **synthetic** Domain/Location A/B IDs and will have its own independent review. This does **not** lock F15's production geographic regions, site registry, route coordinate system or streaming owner. Do not claim a synthetic-ID proof represents traversing a real continuous campaign area. See [F14-C1 boundary](F14_LIVING_WORLD_SIMULATION.md#f14-b-acceptance-and-f14-c-planning-refresh-2026-10-09).
+
+**Still an F15 responsibility before automatic physical residency:** production stable Domain→Region→Site location keys, matching playable geometry/anchors, repeatable locality ownership across actual F02 scene/streaming lifecycle, and reconciliation of `AmbientEnemyCamp`/`AmbientEnemySpawner` population slots. M6 distant-chunk eviction removes disposable presentation/cache, not actors, so it is **not** an actor unload event or an F14-C activation trigger. Archive Resolve is a visual presentation transition only. F14-C2 production reification and full route traversal remain design-gated until those APIs are approved. No new geography packet or art was created by the C1 lock.
+
 ## Player-facing travel and world-access decision lock (2026-10-09)
 
 **User-owned design choice:** **Continuous geography**. Within one accepted Campaign World, the Operator ordinarily walks, drives or otherwise traverses connected landscapes, changing biome, town, city district and political territory without an obligatory loading cutscene or switching campaign instances. This is a player-experience commitment, **not evidence that the present finite procgen map already supports it**.
