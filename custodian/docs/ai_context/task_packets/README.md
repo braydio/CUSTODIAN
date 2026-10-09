@@ -246,7 +246,7 @@ Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE
 
 ### Active Awakening 04→05 Production Art Refresh
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
 
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` is ready/auto and dependency-gated on the paired review of room-connectors polish. On claim it must self-refresh from the landed implementation + paired-review evidence and must not restore the retired Zone04/05 feather/fade contract.
 - `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is ready/auto and dependency-gated on the paired polish review; on claim it first checks whether the new committed bidirectional regression fully supersedes it, closing as superseded when no residual gap remains.
