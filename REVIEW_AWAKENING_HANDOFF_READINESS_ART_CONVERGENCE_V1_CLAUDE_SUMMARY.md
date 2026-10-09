@@ -26,12 +26,12 @@ The progression smoke proves console/P-9 gating, one production event and one co
 - Root cause / contributing factors: Godot's editor import and global-class scan had not run in the fresh worktree.
 - Prevention / pipeline improvement: Initialize the headless editor cache once before focused scripts and remove only known generated untracked `.import` sidecars.
 - Tooling / docs drift discovered: R0-01 captures the missing consolidated, Layout-derived registration proof. Repository-wide `check_ai_context.py` also reports 10 pre-existing findings in unrelated `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md`; those packet fields were left untouched.
-- Follow-up: awakening-handoff-readiness-art-registration-proof-corrections-1
+- Follow-up: awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1
 - What worked: Existing structured traversal, registration, and progression evidence kept the review objective and avoided subjective visual review.
 
 ## Next Handoff
 
-- Next workstream: awakening-handoff-readiness-art-registration-proof-corrections-1
+- Next workstream: awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no

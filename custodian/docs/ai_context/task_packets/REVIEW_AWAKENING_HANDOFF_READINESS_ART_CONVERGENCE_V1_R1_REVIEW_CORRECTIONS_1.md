@@ -1,16 +1,16 @@
 # REVIEW: Awakening Handoff Readiness Art Registration Proof — Review Corrections 1
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `review-awakening-handoff-readiness-art-registration-proof-corrections-1`
+- Workstream: `review-awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `awakening-handoff-readiness-art-registration-proof-corrections-1`
+- Depends on: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
 - Locks: `awakening-runtime, awakening-art-registration`
 - Review: `none`
-- Review target workstream: `awakening-handoff-readiness-art-registration-proof-corrections-1`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_HANDOFF_READINESS_ART_REGISTRATION_PROOF_CORRECTIONS_1.md`
+- Review target workstream: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1_R1_REVIEW_CORRECTIONS_1.md`
 - Reviewed main: `3374efec219d`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Visual review: `none`

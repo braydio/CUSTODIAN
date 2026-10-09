@@ -355,5 +355,5 @@ The already-queued Twin forensic/route-review/acquisition packets remain separat
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
 - Detailed review summary: `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1_CLAUDE_SUMMARY.md`
-- Follow-up workstream: `awakening-handoff-readiness-art-registration-proof-corrections-1`
+- Follow-up workstream: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`

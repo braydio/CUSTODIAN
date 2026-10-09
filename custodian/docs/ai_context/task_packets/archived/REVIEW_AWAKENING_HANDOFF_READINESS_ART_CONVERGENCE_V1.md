@@ -51,7 +51,7 @@ Aesthetic preferences beyond objective seam/registration correctness are not aut
 
 ## Handoff
 
-- Next workstream: `awakening-handoff-readiness-art-registration-proof-corrections-1`
+- Next workstream: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
@@ -77,7 +77,7 @@ Aesthetic preferences beyond objective seam/registration correctness are not aut
 
 ### Findings
 
-- **R0-01 — `evidence_gap`, domain `implementation`, disposition `correction`.** Affected acceptance: review acceptance #1 (derive all zone art rectangles from Layout and prove exact grow64 registration and underlay/foreground parity). `awakening_art_registration_smoke.gd` checks only zones 01–03 and 06–09 as standalone plates using hard-coded expected values. It does not derive their rectangles from `AwakeningLayout.ZONES`. Zones 04/05 are checked as the active shared composition, but no consolidated test/report states their explicit approved exception, hidden legacy plate status, and intentional Locker foreground deferral alongside the seven grow64 pairs. `awakening_04_05_registered_composition_v1.json` proves the accepted shared composition's source hashes, alpha bounds/overlaps, root transform, and 1,025 floor samples; it does not prove the acceptance's all-zone registration/parity statement. Existing `awakening_first_return_smoke.gd` hard-codes 1502×2048 legacy textures for Zones04/05, confirms they are hidden, and confirms the Locker foreground is deferred. The accepted prior human lock makes the shared composition an intentional exception; it does not resolve the missing exact machine-checkable contract. Correction pair: `awakening-handoff-readiness-art-registration-proof-corrections-1` and its paired review.
+- **R0-01 — `evidence_gap`, domain `implementation`, disposition `correction`.** Affected acceptance: review acceptance #1 (derive all zone art rectangles from Layout and prove exact grow64 registration and underlay/foreground parity). `awakening_art_registration_smoke.gd` checks only zones 01–03 and 06–09 as standalone plates using hard-coded expected values. It does not derive their rectangles from `AwakeningLayout.ZONES`. Zones 04/05 are checked as the active shared composition, but no consolidated test/report states their explicit approved exception, hidden legacy plate status, and intentional Locker foreground deferral alongside the seven grow64 pairs. `awakening_04_05_registered_composition_v1.json` proves the accepted shared composition's source hashes, alpha bounds/overlaps, root transform, and 1,025 floor samples; it does not prove the acceptance's all-zone registration/parity statement. Existing `awakening_first_return_smoke.gd` hard-codes 1502×2048 legacy textures for Zones04/05, confirms they are hidden, and confirms the Locker foreground is deferred. The accepted prior human lock makes the shared composition an intentional exception; it does not resolve the missing exact machine-checkable contract. Correction pair: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1` and its paired review.
 
 ### Verification
 
@@ -106,5 +106,5 @@ Aesthetic preferences beyond objective seam/registration correctness are not aut
 - Root cause / contributing factors: Fresh Godot worktrees have no project import/class cache; the validation recipe assumes one exists.
 - Prevention / pipeline improvement: Run one headless editor import before focused Godot checks in a fresh worktree, then remove only exact untracked generated `.import` sidecars.
 - Tooling / docs drift discovered: R0-01 is the remaining material registration-proof gap. Repository-wide `check_ai_context.py` reports 10 unrelated findings in `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md`; those were left untouched.
-- Follow-up: `awakening-handoff-readiness-art-registration-proof-corrections-1`
+- Follow-up: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
 - What worked: Existing structured evidence avoided any subjective image adjudication.

@@ -1,7 +1,7 @@
 # CORRECTION: Awakening Handoff Readiness Art Registration Proof — Review Corrections 1
 
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `awakening-handoff-readiness-art-registration-proof-corrections-1`
+- Workstream: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
@@ -11,7 +11,7 @@
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, runtime, asset-pipeline`
-- Paired review workstream: `review-awakening-handoff-readiness-art-registration-proof-corrections-1`
+- Paired review workstream: `review-awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
 - Review cycle: `1`
 - Max automatic review cycles: `2`
 - Reviewed main: `3374efec219d`
