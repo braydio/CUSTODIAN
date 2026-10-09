@@ -31,7 +31,6 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
-- `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1.md` — Independently verify that the 04→05 repair changes only fade ownership, preserves the accepted registered composition byte-for-byte and transform-for-transfo...
 - `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md` — Independently verify F14-C1 has a real physical Grunt ↔ abstract group handoff with precisely one gameplay authority at a time, stable ActorId/GroupId and st...
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
 - `REVIEW_TASK_PACKET_QUEUE_RECONCILIATION_V1.md` — Independently falsify the assertion that task packet recovery and dispatcher organization are now safe, complete, and consistently enforced.
