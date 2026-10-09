@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-08
+Last updated: 2026-10-09
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -31,15 +31,13 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
-- `AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1.md` — Repair the live 04→05 underlay fade ownership so the accepted 1502×2048 Dust→Connector→Locker composition stays visually stable in the correct room/connector...
-- `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1.md` — Independently verify that the 04→05 repair changes only fade ownership, preserves the accepted registered composition byte-for-byte and transform-for-transfo...
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
 - `REVIEW_TASK_PACKET_QUEUE_RECONCILIATION_V1_REVIEW_CORRECTIONS_1.md` — Independently verify resolution of R0-01, R0-02 and R0-03 from the parent review.
 - `STEALTH_PERCEPTION_FOUNDATION.md` — Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated...
 - `TASK_PACKET_QUEUE_RECONCILIATION_V1_REVIEW_CORRECTIONS_1.md` — Resolve the three confirmed review findings without expanding queue recovery scope.
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
-- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
+- `AWAKENING_PERIMETER_SUPPORT_FOUNDATION_V1.md` — Establish measured off-route camera-footprint coverage, an Asset V2-compatible ten-family pending-art contract, and a collision-free Awakening perimeter supp...
 - `CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md` — Make paired CUSTODIAN reviews actually launch in a mechanically fresh Codex context without user message relay, while preserving the existing dispatcher, wor...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
 - `HUB_AWAKENING_CONTEXT_HANDOFF.md` — Consume the reviewed one-shot Awakening completion seam and enter the reviewed persistent Hub first-set runtime at `Spawn_SouthReach` through one major-conte...
@@ -48,6 +46,7 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
+- `NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — Remove enemy reaction/posture and Grunt parry-critical victim state from `enemy.gd` without creating another god-object: one focused `EnemyReactionController...
 - `OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Turn the useful one-off Aseprite cleanup/registration tricks proven while authoring idle_relaxed_01 into safe Workbench/Art-Agent operations so a 2.5D strip...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
@@ -72,7 +71,8 @@ normal closeout.
 - `RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silen...
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
 - `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Independently verify the landed Ritualant runtime-truth repair against its packet and current authored-encounter authority.
-- `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Independently verify the landed Awakening convergence slice against its registration, seam, progression, asset-consumption, and South Reach handoff-readiness...
+- `REVIEW_ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Independently prove the 12 approved static Ritualant assets were fetched from the exact reviewed source packages, published through Asset Pipeline V2, bound...
+- `REVIEW_AWAKENING_PERIMETER_SUPPORT_FOUNDATION_V1.md` — Independently falsify perimeter support foundation completion, especially any false Asset V2 registration or gameplay/presentation authority breach.
 - `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — Independently verify the landed bidirectional Dropbox handoff against its own packet contract, especially fail-closed external-input handling, credential bou...
 - `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 without redesigning the generated-region lifecycle.
 - `REVIEW_BRIDGED_FALLS_LOWER_QUARTER_HANDOFF.md` — Independently verify the final Bridged Falls -> Lower Quarter production cutover and single-state-authority claim.
@@ -86,6 +86,7 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
+- `REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — Independently prove NPA-5 removed reaction/posture and critical-opportunity mutable state from `enemy.gd` into two focused authorities without changing hit t...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -165,7 +166,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 ### Completed Persistent Checkout Sync Hardening
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 - `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — complete: one fail-closed persistent-checkout sync authority owns safe coordination-main and Operator-art updates, with `csync` / `opui-sync` helpers, OPUI pre-authoring synchronization, and 25/25 changed-file validations passed.
 - `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context review found blocking R0-01: status/startup hashed all 134,037 ignored root files; cycle 1 correction removes that scan and bounds checks to incoming paths.
@@ -259,13 +260,6 @@ Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 ready/auto next implementation slice for movement-owned lower-body locomotion plus action-owned upper-body guard presentation.
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — P1 ready/auto, dependency-gated on F0 and mobile guard composition; it owns the three remaining weapon-definition runtime-state findings.
 
-### Active Awakening 04→05 Production Art Refresh
-
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
-
-- `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` remains ready/auto but is now additionally gated on the paired review of `awakening-04-05-registered-composition-fade-repair-v1`; the user accepts the current registered layout/order but has rejected the live parent-envelope fade behavior.
-- `AWAKENING_04_05_CONNECTOR_TRANSITION_REGRESSION_GUARD.md` is blocked/manual and superseded by the production fade-repair workstream. The fade repair now owns both the runtime correction and the needed bidirectional 04→05 evidence.
-
 ### Active Archive Resolve Presentation Series
 
 Design authority: `../../../design/02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md`.
@@ -309,7 +303,7 @@ AR packet set is refreshed.
 
 ### Active Non-Player Actor Runtime Refactor Series
 
-Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 - Program tracker / architecture authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Expected program size: 11 implementation packets spanning standard combat-agent decomplexification, then commanded allies, fauna, encounter/social NPCs, static autonomous agents, and final compatibility cleanup.
@@ -320,9 +314,10 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — fresh NPA-2 review passed with zero findings on branch `eec8419f6`; landing remains pending because an unrelated `living-world-abstract-activity-foundation` pairing defect blocks the required repository-wide check.
   - `archived/ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 implementation landed with its selected focused and changed-file checks passing; `SavageChain` owns six chain-only config values and three runtime fields while generic cadence/first-hit/contact authority remains available for NPA-4.
   - `archived/REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 fresh-context review passed with zero findings; implementation closeout recorded 31/31 changed-file checks.
-  - `NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` — NPA-4 ready/auto; extracts ordinary-melee commitment/windup/contact/hit-or-whiff/recovery state while leaving actor damage, shared hit resolution, reactions, presentation and special abilities external. Live remeasurement explicitly excludes `damage_timer/damage_interval` from ordinary-melee ownership.
-  - `REVIEW_NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` — paired NPA-4 review ready/auto and dependency-gated on NPA-4; passed review stops at the NPA-5 planning refresh.
-- Author NPA-5+ against reviewed landed predecessor seams rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
+  - `archived/NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` / archived paired review — NPA-4 complete; fresh review landed at `8817908b1` with zero defects/gaps/findings and nine focused runtime checks green. `StandardEnemyMelee` is the sole ordinary-melee transaction authority.
+  - `NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — NPA-5 ready/auto; extracts reaction/posture into `EnemyReactionController` and keeps Grunt critical-open / paired-execution victim state in a separate `EnemyParryCritical` authority rather than creating a new reaction god-object.
+  - `REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — paired NPA-5 review ready/auto and dependency-gated on NPA-5; passed review stops at the NPA-6 planning refresh.
+- Author NPA-6+ against reviewed landed predecessor seams rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
 ### Ash-Bell / Ritualant Scene Closeout
 
@@ -373,7 +368,7 @@ After step 4, autonomous execution stops at the recorded `non-player-fauna-bonde
 
 ## Completed Operator Workbench Preview Disconnect Ownership Correction
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 - `archived/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized R2-01 correction complete; live preview acceptance is bound to the issuing bridge connection/session, including same-document reconnects.
 - `archived/REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review passed actual disconnect and identical-session reconnect controls; `operator-workbench-fx-layer-adoption` is the ready immediate successor.

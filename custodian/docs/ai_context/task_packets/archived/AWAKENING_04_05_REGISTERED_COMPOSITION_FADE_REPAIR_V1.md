@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-04-05-registered-composition-fade-repair-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-awakening-04-05-registered-composition-correction-v1`
@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Reviewed main: `52135e3401a9efd49b011e676171373c3bef37b2`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
-- Visual review: `required`
+- Visual review: `none`
 - Goal: Repair the live 04→05 underlay fade ownership so the accepted 1502×2048 Dust→Connector→Locker composition stays visually stable in the correct room/connector neighborhoods without changing its approved layout, pixels, registration, draw order, traversal, or gameplay geometry.
 - Completion boundary: Done when the shared registered root remains an immutable placement container, each visible child layer owns only its correct fade neighborhood, the Dust layer remains readable through the 05→06 passage, forward/reverse traversal produces identical presentation state, and focused runtime + Moment Forge evidence proves no floor plate disappears merely because the Operator leaves the narrow 04→05 dogleg envelope.
 - Current measured state: The approved shared composition is visually correct: root `(349,-2585)`, scale `(1,1)`, rotation `0`, 1502×2048 shared canvas, exact Dust→Connector→Locker order and exact source/runtime pixels. The defect is runtime fade ownership. `_cache_zone_art_visibility_targets()` still sends Zone04/Zone05 fade alpha to their hidden legacy `ArtUnderlay` parents, while `_connector_fade_entries` contains the entire `RegisteredComposition04_05` parent. `_update_zone_art_visibility()` therefore fades/hides all three accepted registered children from the narrow merged A/B/C connector envelope. Because the legacy Zone04/05 underlay sprites are intentionally hidden, visible Dust/Locker floor can disappear even while the Operator remains in the corresponding room or lower→upper passage. Existing smoke coverage also contains two stale or vacuous assertions: it expects the whole registered composition to fade to zero away from the dogleg, and its 05→06 coverage probe samples the retired hidden Zone05 underlay texture rather than the live shared Dust child.
@@ -33,20 +33,41 @@
   7. Repair `awakening_first_return_smoke.gd` so it observes the live registered children. Delete the stale assertion that the whole composition root must fade away from the dogleg. Assert parent alpha remains 1.0 and child alphas/visibility follow their individual authorities.
   8. Repair the 05→06 presentation proof so the live registered Dust child, not the hidden legacy Zone05 sprite, supplies the Dust-side alpha/visibility coverage oracle.
   9. Extend the existing `traversal/awakening_late_seams_v1` Moment Forge fixture/scenario to include the 04→05 Reliquary interior, A, B, C, Dust interior, and reverse checkpoints. Reuse the existing registered child roles and probe `effective_alpha`; do not create another connector-specific capture framework unless the existing fixture cannot express the samples.
-  10. At equivalent forward/reverse positions, require identical Dust/Connector/Locker alpha and visibility. Capture the smallest useful contact sheet showing both interiors plus A/B/C. Human review answers only: “does the accepted layout remain unchanged and do floors stop evaporating/popping at the wrong locations?”
+  10. At equivalent forward/reverse positions, require identical Dust/Connector/Locker alpha and visibility. Capture the smallest useful contact sheet showing both interiors plus A/B/C as durable evidence for the paired fresh-context review. The implementation agent must not block landing on a second user approval: the human art-direction lock is already recorded. The paired reviewer should answer whether the accepted layout remains unchanged and whether floors stop evaporating/popping at the wrong locations; escalate back to the user only if the evidence is materially ambiguous or indicates an actual art-direction/layout change.
   10a. Add one Designation Locker interior regression at the live P-9 interaction position. While the Operator remains in the Locker Reliquary, capture the locker `closed`, authorization/opening, `open_loaded`, and post-take `empty` states. The registered Locker Reliquary child and surrounding room presentation must remain stable/opaque throughout; the locker state machine may not indirectly change room-art alpha or hide the shared registered presentation. This is direct user screenshot evidence from the recorded authoring chat, not a speculative edge case.
   11. Preserve exact registered asset hashes/bounds/order with `awakening_connector_asset_contract_smoke.py` and the compact renderer smoke. Any art-byte, transform, scale, rotation, z-order, overlap-count, or registration change is a failure in this workstream.
   12. Reconcile active docs that still say the registered-composition paired review is pending or describe the parent-envelope fade as correct current behavior.
 - Preserve: Exact 1502×2048 registered PNG bytes; shared root `(349,-2585)`; scale 1; rotation 0; Dust z0 → Connector z1 → Locker z2; accepted overlap counts; Layout A/B/C + 05→06 geometry; collision/walkability; P-9; progression; lighting; camera; all other zone fade behavior.
 - Non-goals: No art reauthor; no position/root fit changes; no connector topology change; no new foreground; no opacity-mask painting; no global zone streaming rewrite; no procgen performance fix; no Operator ranged/overheat/dodge changes; no Developer Observatory redesign.
-- Acceptance: (1) Scene/asset tests prove registered art bytes, root transform, 1502×2048 canvas, child order and overlap evidence are unchanged; (2) parent `RegisteredComposition04_05` stays visible at alpha 1 through all samples; (3) Locker child is 1.0 in Zone04 interior and A/B/C, Dust child is 1.0 in Zone05 interior, A/B/C, and the full 05→06 passage neighborhood, Connector is 1.0 across A/B/C, and distant unrelated children may independently fade/hide without collapsing siblings; (4) a real/live-equivalent forward + reverse sequence through Zone05→C→B→A→Zone04 and back produces identical presentation state at equivalent checkpoints; (5) no sampled walkable point in 04→05 or 05→06 loses all correct underlay coverage; (6) `awakening_first_return_smoke` no longer passes by inspecting hidden Zone05 art; (7) Moment Forge produces deterministic alpha telemetry + a compact visual contact sheet with no wrong-location floor disappearance/pop; (8) ordinary update code adds no tree scan/image read/resource load/event spam; (9) no unrelated gameplay/runtime behavior changes.
+- Acceptance: (1) Scene/asset tests prove registered art bytes, root transform, 1502×2048 canvas, child order and overlap evidence are unchanged; (2) parent `RegisteredComposition04_05` stays visible at alpha 1 through all samples; (3) Locker child is 1.0 in Zone04 interior and A/B/C, Dust child is 1.0 in Zone05 interior, A/B/C, and the full 05→06 passage neighborhood, Connector is 1.0 across A/B/C, and distant unrelated children may independently fade/hide without collapsing siblings; (4) a real/live-equivalent forward + reverse sequence through Zone05→C→B→A→Zone04 and back produces identical presentation state at equivalent checkpoints; (5) no sampled walkable point in 04→05 or 05→06 loses all correct underlay coverage; (6) `awakening_first_return_smoke` no longer passes by inspecting hidden Zone05 art; (7) Moment Forge produces deterministic alpha telemetry + a compact visual contact sheet with no wrong-location floor disappearance/pop; this evidence is consumed by the paired fresh-context review and does not create a pre-land human approval gate; (8) ordinary update code adds no tree scan/image read/resource load/event spam; (9) no unrelated gameplay/runtime behavior changes.
 - Validation: Start with a focused fade-state smoke or the repaired `awakening_first_return_smoke.gd`; run `awakening_registered_composition_traversal_smoke.gd`, `awakening_connector_asset_contract_smoke.py`, `awakening_registered_composition_render_smoke.py`/wrapper, and the 05→06 lower-upper passage coverage. Run `python3 custodian/tools/iteration/run_moment.py traversal/awakening_late_seams_v1 --capture-mode none` first, then one full/contact-sheet capture after objective probes pass. Finish with `python3 custodian/tools/validation/run_validation.py --changed --json` and `git diff --check`.
 - Task overrides: `none`
 - Deferred: The same user playtest report also exposed unrelated production issues: a wrapped Observatory event ring, a degraded procgen performance incident/rebuild storm, two “Operator modular ranged presentation unavailable” warnings, and ranged overheat dominating fire failures. They are recorded here so they are not lost, but this fade repair only consumes the first two as guardrails: acceptance must not depend on retained event-tail history, and the fade path must remain cache-only/lightweight. Combat/procgen fixes belong to their existing authorities/workstreams.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1_CLAUDE_SUMMARY.md`; focused Awakening smoke, P-9 progression, 1,025-sample traversal, connector asset contract, renderer smoke, 68 Moment Forge assertions, ROI metrics, and compact evidence pass; final changed-file validation selected 14 checks, passed 14 with complete coverage; git diff --check passes. The evidence handoff is `/CUSTODIAN/visual_review/awakening-04-05-registered-composition-fade-repair-v1/20261009T135021Z/REVIEW_MANIFEST.json`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The first Moment Forge attempts exposed an unregistered `show_checkpoint` fixture command, the runner's required sixth contact-sheet tick, and stale checkpoint comparisons. They were corrected before the final 68-assertion run. One initial validation-manifest edit became redundant after syncing current main, which already contained the ownership edge; it was removed before commit.
+- Root cause / contributing factors: The late-seam fixture's command allow-list and contact-sheet contract were not checked together with the first scenario draft, and the original worktree predated the packet/manifest updates later landed on main.
+- Prevention / pipeline improvement: Keep scenario timeline, fixture command allow-list, evidence adapter ticks, and cross-check snapshots aligned; refresh the claimed branch to current main before final lifecycle validation.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: The existing Moment Forge scenario and live child alpha probes provided deterministic state checks and a compact visual handoff without changing the accepted art composition.
+
 ## Agent Handoff / Planning Decisions
 
-- **Human visual lock:** the current 1502×2048 layout, placement and Dust→Connector→Locker order are good. Do not reauthor/reposition them.
+- **Human visual lock:** the current 1502×2048 layout, placement and Dust→Connector→Locker order are good. Do not reauthor/reposition them. This prior user decision satisfies the implementation-stage human art-direction gate; do not ask the user to approve the same lock again before commit/landing.
 - The earlier midpoint-fit concern is **not** a blocker and must not be reopened in this workstream.
 - The bug is fade ownership: the registered parent is being faded by the connector envelope while the child room plates are the real visible room underlays.
 - The user playtest report was captured from `res://scenes/game.tscn`, not `awakening_first_return.tscn`. It is not direct reproduction evidence for 04→05. It does prove that the event buffer can wrap heavily and that runtime is performance-sensitive; use deterministic probes/captures and cheap cached fade logic rather than event-tail archaeology or heavy per-frame diagnostics.
@@ -79,5 +100,24 @@ Use the persistent-root CRG only for baseline orientation; the claimed worktree 
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
-- Next action: Claim and implement this fade-only repair, then dispatch the paired fresh-context review.
-- Blockers or open questions: none. The human-owned visual decision is already locked: preserve layout/order; repair fade only.
+- Next action: Claim and complete the paired fresh-context review; inspect the supplied compact evidence and escalate only if it is materially ambiguous or contradicts the locked composition.
+- Blockers or open questions: none. The human-owned visual decision is already locked: preserve layout/order; repair fade only. Objective checks and the compact capture are sufficient to land the implementation. Only the paired reviewer may escalate a new human question if its fresh evidence is materially ambiguous or contradicts the locked composition.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-awakening-04-05-registered-composition-fade-repair-v1`
+- Reviewed on main: `aaa1236840884332b2759e029bb829bfa519fa97`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, runtime, visual, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `1`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `R0-01`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `awakening-handoff-readiness-art-convergence-v1-r1`
+- Visual evidence decision: The supplied hash-verified five-ROI sheet is clear and consistent with the previously locked composition; live registered-child probes and fresh traversal checks show no wrong-location floor disappearance. The existing human art-direction lock remains valid; no new human decision is required.

@@ -334,7 +334,7 @@ func _check_zone_art_fade(instance: Node) -> void:
 	var operator := instance.get_node_or_null("World/Operator") as Node2D
 	var creche := instance.get_node_or_null("World/AwakeningZones/Zone01_Creche/ArtUnderlay") as CanvasItem
 	var attestation := instance.get_node_or_null("World/AwakeningZones/Zone03_Attestation/ArtUnderlay") as CanvasItem
-	var reliquary := instance.get_node_or_null("World/AwakeningZones/Zone04_LockerReliquary/ArtUnderlay") as CanvasItem
+	var reliquary := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/LockerReliquary") as CanvasItem
 	if operator == null or creche == null or attestation == null or reliquary == null:
 		return
 	operator.global_position = Vector2(384, -1984)
@@ -357,21 +357,26 @@ func _check_zone_art_fade(instance: Node) -> void:
 	if composition == null:
 		_fail("04→05 registered composition is missing from the scene")
 		return
-	var dust_lung := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay") as CanvasItem
-	if dust_lung == null:
+	var dust_lung := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/DustLung") as CanvasItem
+	var connector := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/Connector") as CanvasItem
+	if dust_lung == null or connector == null:
 		_fail("Dust Lung room art is missing from the direct connector join")
 		return
 	for connector_id in ["04_05_A", "04_05_B", "04_05_C"]:
 		operator.global_position = Layout.CONNECTORS[connector_id].get_center()
 		instance.call("_update_zone_art_visibility")
-		if composition.modulate.a != 1.0:
-			_fail("registered composition must be fully revealed inside %s" % connector_id)
+		if not is_equal_approx(composition.modulate.a, 1.0) or not composition.visible:
+			_fail("registered composition parent must remain opaque inside %s" % connector_id)
 		if reliquary.modulate.a != 1.0 or dust_lung.modulate.a != 1.0:
 			_fail("both room underlays must remain opaque through connector %s" % connector_id)
+		if connector.modulate.a != 1.0:
+			_fail("registered connector layer must remain opaque inside %s" % connector_id)
 	operator.global_position = Layout.OPERATOR_WAKE_POSITION
 	instance.call("_update_zone_art_visibility")
-	if composition.modulate.a != 0.0:
-		_fail("04→05 registered composition must fade out away from the dogleg")
+	if not is_equal_approx(composition.modulate.a, 1.0) or not composition.visible:
+		_fail("registered composition parent must remain an opaque registration container")
+	if dust_lung.visible or reliquary.visible or connector.visible:
+		_fail("distant registered child layers must fade independently away from their owners")
 	var transition_points := [
 		{"name": "Reliquary end", "position": Layout.CONNECTORS["04_05_A"].get_center(), "reliquary_alpha": 1.0, "dust_alpha": 1.0},
 		{"name": "dogleg", "position": Layout.CONNECTORS["04_05_B"].get_center(), "reliquary_alpha": 1.0, "dust_alpha": 1.0},
@@ -384,8 +389,10 @@ func _check_zone_art_fade(instance: Node) -> void:
 			_fail("%s Reliquary art must remain opaque through the connector (expected %s, got %s)" % [transition["name"], transition["reliquary_alpha"], reliquary.modulate.a])
 		if not is_equal_approx(dust_lung.modulate.a, float(transition["dust_alpha"])):
 			_fail("%s Dust Lung art must remain opaque through the connector (expected %s, got %s)" % [transition["name"], transition["dust_alpha"], dust_lung.modulate.a])
-		if not is_equal_approx(composition.modulate.a, 1.0):
-			_fail("registered composition must remain visible through %s" % transition["name"])
+		if not is_equal_approx(composition.modulate.a, 1.0) or not composition.visible:
+			_fail("registered composition parent must remain fixed through %s" % transition["name"])
+		if not is_equal_approx(connector.modulate.a, 1.0):
+			_fail("registered connector layer must remain visible through %s" % transition["name"])
 	var edge_samples := [
 		{"name": "Reliquary interior", "position": Vector2(704, -2144), "room": reliquary, "alpha": 1.0},
 		{"name": "Reliquary threshold", "position": Vector2(704, -2272), "room": reliquary, "alpha": 1.0},
@@ -420,9 +427,9 @@ func _check_zone_art_fade(instance: Node) -> void:
 
 func _check_lower_upper_passage_art(instance: Node) -> void:
 	var operator := instance.get_node_or_null("World/Operator") as Node2D
-	var dust_layer := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay") as CanvasItem
+	var dust_layer := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/DustLung") as CanvasItem
 	var gate_layer := instance.get_node_or_null("World/AwakeningZones/Zone06_Undergate/ArtUnderlay") as CanvasItem
-	var dust_underlay := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/ArtUnderlay/Underlay") as Sprite2D
+	var dust_underlay := instance.get_node_or_null("World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/DustLung") as Sprite2D
 	var gate_underlay := instance.get_node_or_null("World/AwakeningZones/Zone06_Undergate/ArtUnderlay/Underlay") as Sprite2D
 	var dust_foreground_layer := instance.get_node_or_null("World/AwakeningZones/Zone05_DustLung/Occlusion") as CanvasItem
 	var gate_foreground_layer := instance.get_node_or_null("World/AwakeningZones/Zone06_Undergate/Occlusion") as CanvasItem

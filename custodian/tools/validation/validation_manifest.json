@@ -45,6 +45,27 @@
       "needs_import": false
     },
     {
+      "id": "world_simulation_actor_reification_handoff",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_simulation_actor_reification_handoff_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "simulation",
+        "actor_reification",
+        "determinism",
+        "snapshot"
+      ],
+      "owners": [
+        "custodian/game/state/world/abstract_activity_simulation_state.gd",
+        "custodian/game/state/world/simulation_snapshot_migration.gd",
+        "custodian/game/systems/simulation/simulation_kernel.gd",
+        "custodian/game/systems/simulation/actor_reification_coordinator.gd",
+        "custodian/tools/validation/world_simulation_actor_reification_handoff_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "awakening_connector_asset_contract",
       "type": "python",
       "script": "custodian/tools/validation/awakening_connector_asset_contract_smoke.py",
@@ -4333,6 +4354,65 @@
         "custodian/scenes/awakening_first_return.tscn"
       ],
       "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
+      "id": "awakening_staging_receipt",
+      "type": "python",
+      "script": "custodian/tools/validation/test_awakening_staging_receipt.py",
+      "tier": "unit",
+      "tags": [
+        "awakening",
+        "asset_pipeline",
+        "staging_manifest"
+      ],
+      "owners": [
+        "custodian/tools/art/stage_awakening_inbox.py",
+        "custodian/tools/validation/test_awakening_staging_receipt.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "awakening_handoff_seam_evidence_adapter",
+      "type": "python",
+      "script": "custodian/tools/validation/test_awakening_handoff_seam_evidence.py",
+      "tier": "unit",
+      "tags": [
+        "awakening",
+        "visual_evidence",
+        "seam_metrics"
+      ],
+      "owners": [
+        "custodian/tools/validation/awakening_handoff_seam_evidence.py",
+        "custodian/tools/validation/test_awakening_handoff_seam_evidence.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "awakening_art_registration",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_art_registration_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "art_registration",
+        "presentation",
+        "seams"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_art_registration_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/content/levels/awakening/**",
+        "custodian/content/metadata/assets/families/awakening_*_environment.asset.json"
+      ],
+      "timeout_sec": 45,
       "needs_import": false
     },
     {

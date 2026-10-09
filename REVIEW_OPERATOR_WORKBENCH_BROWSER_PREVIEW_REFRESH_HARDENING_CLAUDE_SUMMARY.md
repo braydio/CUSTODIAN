@@ -1,6 +1,6 @@
 # Independent review: Operator Workbench browser / PREVIEW refresh hardening
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 Disposition: `findings` — three blocking defects and one material evidence gap. Correction cycle 1 is ready after this review archives. Reviewed live main `83f5a9dcebf91df7e853a02fbaffbb652490b777`; implementation commit `ab6bfd008d871b63523cc23a2214d105b54d5ba4`, summary rename `328a46a76`, and later main changes were reconstructed independently. Reviewer context: `fresh`. Reviewer provenance: `same-agent-fresh-context`. No implementation files were modified.
 
@@ -202,7 +202,7 @@ asyncio.run(main())
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Claim correction cycle 1, resolve R0-01 through R0-04, then run its paired independent review before continuing the FX-adoption lane.
 - Blockers or open questions: none; the original production crash traceback remains unavailable and is not used to infer a crash root cause.

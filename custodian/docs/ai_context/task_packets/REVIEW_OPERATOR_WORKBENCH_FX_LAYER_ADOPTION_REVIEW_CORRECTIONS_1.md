@@ -12,7 +12,7 @@
 - Review target workstream: `operator-workbench-fx-layer-adoption-review-corrections-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md`
 - Reviewed main: `1e62ce7e2ff5dec8e1c76cff1850715f5a1e89dd`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
 - Summary backlink: Include the exact Authoring chat URL above in every durable review/correction/closeout summary and the final `## Next Handoff`.
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`

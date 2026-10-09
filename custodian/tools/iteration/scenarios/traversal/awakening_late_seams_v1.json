@@ -1,86 +1,1336 @@
 {
   "schema_version": 1,
   "id": "traversal/awakening_late_seams_v1",
-  "description": "Structured registration/alpha/order evidence for the late Awakening seams (04-10), including the shared registered 04-05 composition.",
+  "description": "Structured registration, per-child fade ownership, and route evidence for 04-10, including forward/reverse 04-05 checkpoints.",
   "scene": "res://tools/validation/fixtures/awakening_late_seams_moment.tscn",
   "seed": 1901,
-  "duration_ticks": 400,
-  "simulation": {"physics_hz": 60, "warmup_ticks": 8, "max_wall_seconds": 60, "pause_during_setup": true},
-  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 399, "contact_sheet_ticks": [30, 95, 160, 225, 290, 355], "required_keyframes": true, "background": "opaque"},
+  "duration_ticks": 800,
+  "simulation": {
+    "physics_hz": 60,
+    "warmup_ticks": 8,
+    "max_wall_seconds": 60,
+    "pause_during_setup": true
+  },
+  "capture": {
+    "width": 1280,
+    "height": 720,
+    "fps": 60,
+    "audio": false,
+    "start_tick": 0,
+    "end_tick": 799,
+    "contact_sheet_ticks": [
+      210,
+      330,
+      390,
+      450,
+      510,
+      570
+    ],
+    "required_keyframes": true,
+    "background": "opaque"
+  },
   "setup": {
     "remove_nodes": [],
     "roles": {
-      "fixture": {"node_path": "."},
-      "operator": {"node_path": "AwakeningFirstReturn/World/Operator"},
-      "z05_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/DustLung"},
-      "z05_connector": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/Connector"},
-      "z05_locker": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/LockerReliquary"},
-      "z05_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone05_DustLung/Occlusion/Foreground"},
-      "z06_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone06_Undergate/ArtUnderlay/Underlay"},
-      "z06_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone06_Undergate/Occlusion/Foreground"},
-      "z07_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone07_GateOfDust/ArtUnderlay/Underlay"},
-      "z07_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone07_GateOfDust/Occlusion/Foreground"},
-      "z08_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone08_CustodianApproach/ArtUnderlay/Underlay"},
-      "z08_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone08_CustodianApproach/Occlusion/Foreground"},
-      "z09_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone09_ChapelLateService/ArtUnderlay/Underlay"},
-      "z09_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone09_ChapelLateService/Occlusion/Foreground"},
-      "road_underlay": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype/EnvironmentModules/South Reach Civic Axis/Underlay"},
-      "road_foreground": {"node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype/EnvironmentModules/South Reach Civic Axis/Foreground"}
+      "fixture": {
+        "node_path": "."
+      },
+      "operator": {
+        "node_path": "AwakeningFirstReturn/World/Operator"
+      },
+      "z05_underlay": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/DustLung"
+      },
+      "z05_connector": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/Connector"
+      },
+      "z05_locker": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/LockerReliquary"
+      },
+      "z05_foreground": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone05_DustLung/Occlusion/Foreground"
+      },
+      "z06_underlay": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone06_Undergate/ArtUnderlay/Underlay"
+      },
+      "z06_foreground": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone06_Undergate/Occlusion/Foreground"
+      },
+      "z07_underlay": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone07_GateOfDust/ArtUnderlay/Underlay"
+      },
+      "z07_foreground": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone07_GateOfDust/Occlusion/Foreground"
+      },
+      "z08_underlay": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone08_CustodianApproach/ArtUnderlay/Underlay"
+      },
+      "z08_foreground": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone08_CustodianApproach/Occlusion/Foreground"
+      },
+      "z09_underlay": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone09_ChapelLateService/ArtUnderlay/Underlay"
+      },
+      "z09_foreground": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone09_ChapelLateService/Occlusion/Foreground"
+      },
+      "road_underlay": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype/EnvironmentModules/South Reach Civic Axis/Underlay"
+      },
+      "road_foreground": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Zone10_RoadSouthReach/RoadOfWitnessesPrototype/EnvironmentModules/South Reach Civic Axis/Foreground"
+      },
+      "registered_parent": {
+        "node_path": "AwakeningFirstReturn/World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05"
+      }
     },
     "spawns": [],
     "properties": [],
     "processing": [],
-    "fixture": {"id": "awakening_late_seams_v1", "config": {}}
+    "fixture": {
+      "id": "awakening_late_seams_v1",
+      "config": {}
+    }
   },
   "timeline": [
-    {"tick": 5, "action": "fixture_command", "name": "show_seam_05_06"},
-    {"tick": 70, "action": "fixture_command", "name": "show_seam_06_07"},
-    {"tick": 135, "action": "fixture_command", "name": "show_seam_07_08"},
-    {"tick": 200, "action": "fixture_command", "name": "show_seam_08_10"},
-    {"tick": 265, "action": "fixture_command", "name": "show_seam_08_09"},
-    {"tick": 330, "action": "fixture_command", "name": "show_seam_05_06"},
-    {"tick": 395, "action": "finish"}
+    {
+      "tick": 5,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "locker_interior",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 65,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "04_05_a",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 125,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "04_05_b",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 185,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "04_05_c",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 245,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "dust_interior",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 305,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "05_06",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 365,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "06_07",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 425,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "07_08",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 485,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "08_10",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 545,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "08_09",
+        "direction": "forward"
+      }
+    },
+    {
+      "tick": 605,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "dust_interior",
+        "direction": "reverse"
+      }
+    },
+    {
+      "tick": 645,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "04_05_c",
+        "direction": "reverse"
+      }
+    },
+    {
+      "tick": 685,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "04_05_b",
+        "direction": "reverse"
+      }
+    },
+    {
+      "tick": 725,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "04_05_a",
+        "direction": "reverse"
+      }
+    },
+    {
+      "tick": 765,
+      "action": "fixture_command",
+      "name": "show_checkpoint",
+      "args": {
+        "checkpoint": "locker_interior",
+        "direction": "reverse"
+      }
+    },
+    {
+      "tick": 795,
+      "action": "finish"
+    }
   ],
   "probes": [
-    {"id": "fixture_state", "role": "fixture", "snapshot": "debug", "fields": ["checkpoint"], "ticks": [30, 95, 160, 225, 290, 355], "required": true},
-    {"id": "operator_position", "role": "operator", "fields": ["global_position"], "ticks": [30, 95, 160, 225, 290, 355], "required": true},
-    {"id": "z05_underlay_facts", "role": "z05_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
-    {"id": "z05_connector_facts", "role": "z05_connector", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
-    {"id": "z05_locker_facts", "role": "z05_locker", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
-    {"id": "z05_foreground_facts", "role": "z05_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [30, 355], "required": true},
-    {"id": "z06_underlay_facts", "role": "z06_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [95], "required": true},
-    {"id": "z06_foreground_facts", "role": "z06_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [95], "required": true},
-    {"id": "z07_underlay_facts", "role": "z07_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [160], "required": true},
-    {"id": "z07_foreground_facts", "role": "z07_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [160], "required": true},
-    {"id": "z08_underlay_facts", "role": "z08_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [225], "required": true},
-    {"id": "z08_foreground_facts", "role": "z08_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [225], "required": true},
-    {"id": "z09_underlay_facts", "role": "z09_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [290], "required": true},
-    {"id": "z09_foreground_facts", "role": "z09_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [290], "required": true},
-    {"id": "road_underlay_facts", "role": "road_underlay", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [225], "required": true},
-    {"id": "road_foreground_facts", "role": "road_foreground", "fields": ["visible", "effective_alpha", "global_bounds", "z_index", "collision_shape_count"], "ticks": [225], "required": true}
+    {
+      "id": "fixture_state",
+      "role": "fixture",
+      "snapshot": "debug",
+      "fields": [
+        "checkpoint"
+      ],
+      "ticks": [
+        30,
+        90,
+        150,
+        210,
+        270,
+        330,
+        390,
+        450,
+        510,
+        570,
+        630,
+        670,
+        710,
+        750,
+        790
+      ],
+      "required": true
+    },
+    {
+      "id": "operator_position",
+      "role": "operator",
+      "fields": [
+        "global_position"
+      ],
+      "ticks": [
+        30,
+        90,
+        150,
+        210,
+        270,
+        330,
+        390,
+        450,
+        510,
+        570,
+        630,
+        670,
+        710,
+        750,
+        790
+      ],
+      "required": true
+    },
+    {
+      "id": "z05_underlay_facts",
+      "role": "z05_underlay",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        30,
+        90,
+        150,
+        210,
+        270,
+        330,
+        390,
+        450,
+        510,
+        570,
+        630,
+        670,
+        710,
+        750,
+        790
+      ],
+      "required": true
+    },
+    {
+      "id": "z05_connector_facts",
+      "role": "z05_connector",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        30,
+        90,
+        150,
+        210,
+        270,
+        330,
+        390,
+        450,
+        510,
+        570,
+        630,
+        670,
+        710,
+        750,
+        790
+      ],
+      "required": true
+    },
+    {
+      "id": "z05_locker_facts",
+      "role": "z05_locker",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        30,
+        90,
+        150,
+        210,
+        270,
+        330,
+        390,
+        450,
+        510,
+        570,
+        630,
+        670,
+        710,
+        750,
+        790
+      ],
+      "required": true
+    },
+    {
+      "id": "z06_underlay_facts",
+      "role": "z06_underlay",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        95
+      ],
+      "required": true
+    },
+    {
+      "id": "z06_foreground_facts",
+      "role": "z06_foreground",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        95
+      ],
+      "required": true
+    },
+    {
+      "id": "z07_underlay_facts",
+      "role": "z07_underlay",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        160
+      ],
+      "required": true
+    },
+    {
+      "id": "z07_foreground_facts",
+      "role": "z07_foreground",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        160
+      ],
+      "required": true
+    },
+    {
+      "id": "z08_underlay_facts",
+      "role": "z08_underlay",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        225
+      ],
+      "required": true
+    },
+    {
+      "id": "z08_foreground_facts",
+      "role": "z08_foreground",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        225
+      ],
+      "required": true
+    },
+    {
+      "id": "z09_underlay_facts",
+      "role": "z09_underlay",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        290
+      ],
+      "required": true
+    },
+    {
+      "id": "z09_foreground_facts",
+      "role": "z09_foreground",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        290
+      ],
+      "required": true
+    },
+    {
+      "id": "road_underlay_facts",
+      "role": "road_underlay",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        225
+      ],
+      "required": true
+    },
+    {
+      "id": "road_foreground_facts",
+      "role": "road_foreground",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        225
+      ],
+      "required": true
+    },
+    {
+      "id": "registered_parent_facts",
+      "role": "registered_parent",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_position",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        30,
+        90,
+        150,
+        210,
+        270,
+        330,
+        390,
+        450,
+        510,
+        570,
+        630,
+        670,
+        710,
+        750,
+        790
+      ],
+      "required": true
+    },
+    {
+      "id": "z05_foreground_facts",
+      "role": "z05_foreground",
+      "fields": [
+        "visible",
+        "effective_alpha",
+        "global_bounds",
+        "z_index",
+        "collision_shape_count"
+      ],
+      "ticks": [
+        330,
+        630
+      ],
+      "required": true
+    }
   ],
   "assertions": [
-    {"type": "role_exists", "role": "operator", "severity": "error"},
-    {"type": "role_exists", "role": "z05_underlay", "severity": "error"},
-    {"type": "role_exists", "role": "road_underlay", "severity": "error"},
-    {"type": "no_unreleased_inputs", "severity": "error"},
-    {"type": "output_exists", "path": "telemetry.json", "severity": "error"},
-    {"type": "probe_field_equal", "probe_a": "z05_underlay_facts", "tick_a": 30, "probe_b": "z05_connector_facts", "tick_b": 30, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "registered 04-05 layers must use one shared canvas and transform"},
-    {"type": "probe_field_equal", "probe_a": "z05_underlay_facts", "tick_a": 30, "probe_b": "z05_locker_facts", "tick_b": 30, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "registered 04-05 layers must use one shared canvas and transform"},
-    {"type": "probe_field_equal", "probe_a": "z06_underlay_facts", "tick_a": 95, "probe_b": "z06_foreground_facts", "tick_b": 95, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone06 underlay/foreground registration must match"},
-    {"type": "probe_field_equal", "probe_a": "z07_underlay_facts", "tick_a": 160, "probe_b": "z07_foreground_facts", "tick_b": 160, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone07 underlay/foreground registration must match"},
-    {"type": "probe_field_equal", "probe_a": "z08_underlay_facts", "tick_a": 225, "probe_b": "z08_foreground_facts", "tick_b": 225, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone08 underlay/foreground registration must match"},
-    {"type": "probe_field_equal", "probe_a": "z09_underlay_facts", "tick_a": 290, "probe_b": "z09_foreground_facts", "tick_b": 290, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "zone09 underlay/foreground registration must match"},
-    {"type": "probe_field_equal", "probe_a": "road_underlay_facts", "tick_a": 225, "probe_b": "road_foreground_facts", "tick_b": 225, "field": "global_bounds", "tolerance": 0.01, "severity": "error", "message": "Road South Reach civic axis underlay/foreground registration must match"},
-    {"type": "probe_sequence_equal", "field": "effective_alpha", "points": [{"probe": "z05_underlay_facts", "tick": 30}, {"probe": "z05_underlay_facts", "tick": 355}], "tolerance": 0.001, "severity": "error", "message": "revisiting zone05 must reproduce identical presentation alpha (forward/backtrack equivalence)"},
-    {"type": "probe_sequence_equal", "field": "effective_alpha", "points": [{"probe": "z05_foreground_facts", "tick": 30}, {"probe": "z05_foreground_facts", "tick": 355}], "tolerance": 0.001, "severity": "error", "message": "revisiting zone05 must reproduce identical foreground alpha (forward/backtrack equivalence)"},
-    {"type": "probe_compare", "probe": "z05_underlay_facts", "tick": 30, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"},
-    {"type": "probe_compare", "probe": "z06_underlay_facts", "tick": 95, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"},
-    {"type": "probe_compare", "probe": "z07_underlay_facts", "tick": 160, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"},
-    {"type": "probe_compare", "probe": "z08_underlay_facts", "tick": 225, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"},
-    {"type": "probe_compare", "probe": "z09_underlay_facts", "tick": 290, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"},
-    {"type": "probe_compare", "probe": "road_underlay_facts", "tick": 225, "field": "collision_shape_count", "op": "eq", "value": 0, "severity": "error"}
+    {
+      "type": "role_exists",
+      "role": "operator",
+      "severity": "error"
+    },
+    {
+      "type": "role_exists",
+      "role": "z05_underlay",
+      "severity": "error"
+    },
+    {
+      "type": "role_exists",
+      "role": "road_underlay",
+      "severity": "error"
+    },
+    {
+      "type": "no_unreleased_inputs",
+      "severity": "error"
+    },
+    {
+      "type": "output_exists",
+      "path": "telemetry.json",
+      "severity": "error"
+    },
+    {
+      "type": "probe_field_equal",
+      "probe_a": "z05_underlay_facts",
+      "tick_a": 30,
+      "probe_b": "z05_connector_facts",
+      "tick_b": 30,
+      "field": "global_bounds",
+      "tolerance": 0.01,
+      "severity": "error",
+      "message": "registered 04-05 layers must use one shared canvas and transform"
+    },
+    {
+      "type": "probe_field_equal",
+      "probe_a": "z05_underlay_facts",
+      "tick_a": 30,
+      "probe_b": "z05_locker_facts",
+      "tick_b": 30,
+      "field": "global_bounds",
+      "tolerance": 0.01,
+      "severity": "error",
+      "message": "registered 04-05 layers must use one shared canvas and transform"
+    },
+    {
+      "type": "probe_field_equal",
+      "probe_a": "z06_underlay_facts",
+      "tick_a": 95,
+      "probe_b": "z06_foreground_facts",
+      "tick_b": 95,
+      "field": "global_bounds",
+      "tolerance": 0.01,
+      "severity": "error",
+      "message": "zone06 underlay/foreground registration must match"
+    },
+    {
+      "type": "probe_field_equal",
+      "probe_a": "z07_underlay_facts",
+      "tick_a": 160,
+      "probe_b": "z07_foreground_facts",
+      "tick_b": 160,
+      "field": "global_bounds",
+      "tolerance": 0.01,
+      "severity": "error",
+      "message": "zone07 underlay/foreground registration must match"
+    },
+    {
+      "type": "probe_field_equal",
+      "probe_a": "z08_underlay_facts",
+      "tick_a": 225,
+      "probe_b": "z08_foreground_facts",
+      "tick_b": 225,
+      "field": "global_bounds",
+      "tolerance": 0.01,
+      "severity": "error",
+      "message": "zone08 underlay/foreground registration must match"
+    },
+    {
+      "type": "probe_field_equal",
+      "probe_a": "z09_underlay_facts",
+      "tick_a": 290,
+      "probe_b": "z09_foreground_facts",
+      "tick_b": 290,
+      "field": "global_bounds",
+      "tolerance": 0.01,
+      "severity": "error",
+      "message": "zone09 underlay/foreground registration must match"
+    },
+    {
+      "type": "probe_field_equal",
+      "probe_a": "road_underlay_facts",
+      "tick_a": 225,
+      "probe_b": "road_foreground_facts",
+      "tick_b": 225,
+      "field": "global_bounds",
+      "tolerance": 0.01,
+      "severity": "error",
+      "message": "Road South Reach civic axis underlay/foreground registration must match"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 30,
+      "field": "collision_shape_count",
+      "op": "eq",
+      "value": 0,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z06_underlay_facts",
+      "tick": 95,
+      "field": "collision_shape_count",
+      "op": "eq",
+      "value": 0,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z07_underlay_facts",
+      "tick": 160,
+      "field": "collision_shape_count",
+      "op": "eq",
+      "value": 0,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z08_underlay_facts",
+      "tick": 225,
+      "field": "collision_shape_count",
+      "op": "eq",
+      "value": 0,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z09_underlay_facts",
+      "tick": 290,
+      "field": "collision_shape_count",
+      "op": "eq",
+      "value": 0,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "road_underlay_facts",
+      "tick": 225,
+      "field": "collision_shape_count",
+      "op": "eq",
+      "value": 0,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 30,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 90,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 150,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 210,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 270,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 330,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 390,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 450,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 510,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 570,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 630,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 670,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 710,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 750,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "registered_parent_facts",
+      "tick": 790,
+      "field": "effective_alpha",
+      "op": "eq",
+      "value": 1.0,
+      "severity": "error",
+      "message": "registered composition parent must remain a fixed opaque placement container"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 90,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_connector_facts",
+      "tick": 90,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 90,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 150,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_connector_facts",
+      "tick": 150,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 150,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 210,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_connector_facts",
+      "tick": 210,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 210,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 670,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_connector_facts",
+      "tick": 670,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 670,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 710,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_connector_facts",
+      "tick": 710,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 710,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 750,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_connector_facts",
+      "tick": 750,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 750,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "Dust, Connector, and Locker layers stay opaque through A/B/C in both directions"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 30,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "registered Locker art stays opaque in the Reliquary interior"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_locker_facts",
+      "tick": 790,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "registered Locker art stays opaque in the Reliquary interior"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 270,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 630,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "z05_underlay_facts",
+      "tick": 330,
+      "field": "effective_alpha",
+      "op": "gte",
+      "value": 0.999,
+      "severity": "error",
+      "message": "registered Dust art stays opaque in Dust Lung and the 05-06 passage"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_locker_facts",
+          "tick": 30
+        },
+        {
+          "probe": "z05_locker_facts",
+          "tick": 790
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "Locker interior forward/reverse fade state is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 270
+        },
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 630
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "Dust interior forward/reverse fade state is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_locker_facts",
+          "tick": 90
+        },
+        {
+          "probe": "z05_locker_facts",
+          "tick": 750
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector A forward/reverse Locker fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_locker_facts",
+          "tick": 150
+        },
+        {
+          "probe": "z05_locker_facts",
+          "tick": 710
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector B forward/reverse Locker fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_locker_facts",
+          "tick": 210
+        },
+        {
+          "probe": "z05_locker_facts",
+          "tick": 670
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector C forward/reverse Locker fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 90
+        },
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 750
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector A forward/reverse Dust fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 150
+        },
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 710
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector B forward/reverse Dust fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 210
+        },
+        {
+          "probe": "z05_underlay_facts",
+          "tick": 670
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector C forward/reverse Dust fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_connector_facts",
+          "tick": 90
+        },
+        {
+          "probe": "z05_connector_facts",
+          "tick": 750
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector A forward/reverse Connector fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_connector_facts",
+          "tick": 150
+        },
+        {
+          "probe": "z05_connector_facts",
+          "tick": 710
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector B forward/reverse Connector fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_connector_facts",
+          "tick": 210
+        },
+        {
+          "probe": "z05_connector_facts",
+          "tick": 670
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "connector C forward/reverse Connector fade is deterministic"
+    },
+    {
+      "type": "probe_sequence_equal",
+      "field": "effective_alpha",
+      "points": [
+        {
+          "probe": "z05_foreground_facts",
+          "tick": 330
+        },
+        {
+          "probe": "z05_foreground_facts",
+          "tick": 630
+        }
+      ],
+      "tolerance": 0.001,
+      "severity": "error",
+      "message": "Zone05 foreground state is deterministic at passage and reverse Dust interior checkpoints"
+    }
   ],
-  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["fixture_state", "z05_underlay_facts", "z05_connector_facts", "z05_locker_facts", "z06_underlay_facts", "z07_underlay_facts", "z08_underlay_facts", "z09_underlay_facts", "road_underlay_facts"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
-  "tags": ["traversal", "awakening", "visual_review", "seam_evidence"]
+  "stable_fingerprint": {
+    "event_payload_fields": {},
+    "counters": [],
+    "probes": [
+      "fixture_state",
+      "z05_underlay_facts",
+      "z05_connector_facts",
+      "z05_locker_facts",
+      "z06_underlay_facts",
+      "z07_underlay_facts",
+      "z08_underlay_facts",
+      "z09_underlay_facts",
+      "road_underlay_facts",
+      "registered_parent_facts"
+    ],
+    "position_quantum_px": 0.25,
+    "float_quantum": 0.0001
+  },
+  "tags": [
+    "traversal",
+    "awakening",
+    "visual_review",
+    "seam_evidence"
+  ]
 }

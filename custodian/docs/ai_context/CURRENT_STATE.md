@@ -4,6 +4,10 @@
 
 Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `draft/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
 
+## Ash-Bell Ritualant Static Asset Intake (2026-10-09)
+
+Twelve reviewed static Ritualant source states are now available as a durable Dropbox source batch at `/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/`: 6 ritual props and 6 chamber-dressing/decals. They are **not live runtime yet**. `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` is ready/auto behind the fresh runtime-truth review and contains exact package hashes, zero-search rclone staging commands, repo-relative source/inbox paths, Asset Pipeline V2 commands, live scene consumer nodes, requirement migration, and validation. Its paired review gates the remaining broad Ritualant production-art closeout. The existing broken chapel bell remains production truth; the new `empty_bell_frame` is a support/frame layer, not a replacement Ninth Bell.
+
 ## Ash-Bell Bridged Falls / Lower Quarter Approach Program (2026-10-07)
 
 The geographic design is now locked at `design/05_levels/ASH_BELL_BRIDGED_FALLS_APPROACH.md`: after the authored Forlorn-Ritualant resolves, its future north egress leads to a **distinct generated Ash-Bell Alpine Highlands region**, which in turn contains a **generated Bridged Falls subregion**. Bridged Falls is not a fixed authored corridor: each accepted seed must compose a new large-scale, connected network of monumental ruined Meridian civic bridge spans, branches/overlooks, cliff descent and Lower Quarter terminal while preserving the first-basin reveal and bridge-commit beats. Waterfalls/mist remain presentation over real CHASM/exterior semantics; Lower Quarter / Station IX stay far visual attractors until the final approach.
@@ -1360,10 +1364,14 @@ Documentation updates this session:
   deliberately leaves that special/compatibility state outside ordinary melee.
   `StandardEnemyMelee` + typed `StandardEnemyMeleeConfig` now own the ordinary
   transaction, commitment/context, and recovery/redecision; Grunt/Marine/Savage/
-  Pursuit scene overrides remain explicit. The focused smoke verifies target-at-
-  resolution, strong whiff consumption, contact provenance, tracking lock, and
-  the variant cooldown negative control. The implementation is landed pending
-  its fresh paired review. Pounce-first selection and fixed-step priority remain preserved.
+  Pursuit scene overrides remain explicit. NPA-4's fresh paired review landed at
+  `8817908b1` with zero defects, evidence gaps or other findings and all nine
+  focused runtime checks passing. NPA-5 is now authored: ordinary incoming
+  reaction/posture moves to `EnemyReactionController`, while Grunt
+  critical-open/reservation/execution-victim state moves separately to
+  `EnemyParryCritical`; hit classification, health/death, presentation and
+  special abilities remain outside those modules. Pounce-first selection and
+  fixed-step priority remain preserved.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
@@ -2179,7 +2187,15 @@ all 1,025 sampled positions remained on Layout walkable floor with registered
 floor pixels beneath the Operator. The shared composition stays opaque through
 the connector fade envelope. The old Locker foreground remains preserved but
 unbound; Layout traversal/collision and the four-state interactive Designation
-Locker remain unchanged. Implementation is complete pending its paired review.
+Locker remain unchanged. The correction and its paired review are complete.
+The follow-up fade-ownership repair now keeps this shared parent fixed at full
+opacity and applies room/connector distance to the registered Locker, Dust, and
+Connector children independently. The live Dust child is also held opaque across
+the lower→upper passage; the hidden legacy underlay is no longer used as its
+coverage oracle. The P-9 state progression, 1,025-sample bidirectional traversal,
+and deterministic late-seam checkpoints all pass. Its compact visual evidence
+was reviewed in the fresh paired review; the accepted layout, pixels, root,
+order, and gameplay geometry remain unchanged.
 Separately, the lower and later halves connect through the single
 `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` authority at
 `Rect2(-64,-3840,128,96)`. It preserves the former connector/door union and the
@@ -2193,9 +2209,21 @@ The traversal connector/inlay blockout layer now yields to the production
 plates while Layout retains collision authority. Console and lift stations use
 Layout markers; camera reveal releases are generation-safe; debug reset cancels
 pending reveal/lift activity and leaves global inventory and the P-9 grant
-persistent. Published Crèche and Ambulatory fixture states are baked into the
-plates and remain unbound as separate sprites. Other audited fixture families
-have no standalone runtime files yet.
+persistent. All seven published Crèche fixture states and six Ambulatory fixture
+states, including `service_basin_b`, are baked into their plates and remain
+unbound as separate sprites. Attestation, Reliquary, Dust Lung Structures, and
+Undergate Machinery states are published/imported but remain `BAKED_ONLY` or
+`NOT_READY` for standalone placement. Approach and Late Service fixtures and the
+Late Service relay lamp remain unpublished. Specialized live consumers remain
+the recovery alcove, P-9 Designation Locker, Dust Lung lift, Gate components,
+route circle inlay, and required ambient effects.
+
+`AwakeningFirstReturn` emits the production `awakening_completed(snapshot)`
+signal after Crèche console acknowledgement and P-9 recovery when the Operator
+reaches South Reach. The data-only snapshot includes both prerequisites, the
+final zone identity, and Operator global position. Deprecated
+`blockout_completed` remains a once-only compatibility emission from the same
+decision. This does not implement the Hub transition.
 Gate technical capture confirmed the pylon components were materially wider
 and taller than their blockers; those two blockers now use 240×496 footprints
 at the original centers, with the central route still open. The central sealed
@@ -2508,3 +2536,7 @@ Per-direction publish state, sibling and generation isolation, stale-reference
 precedence, and no-write behavior are covered by focused regression fixtures.
 The correction's paired cycle-1 review is the immediate successor; later WB25
 work remains gated on that review and its recorded refresh.
+
+## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
+
+The ten-region off-route backdrop vision and 30 requested image prompts are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.

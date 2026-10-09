@@ -31,11 +31,11 @@
 
 ## Handoff
 
-- Next workstream: `ash-bell-forlorn-ritualant-production-art-closeout`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next workstream: `ash-bell-ritualant-static-asset-intake`
+- Next packet state: `ready / auto after this review archives complete`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
-- Refresh reason: The production-art closeout must be refreshed against the reviewed runtime/asset identity and this chat's scene-closeout decisions before becoming executable.
-- Next action: Return the review verdict and landed main SHA to this exact authoring chat, then refresh the production-art packet.
+- Refresh reason: none; the static asset intake is already authored against the reviewed source packages and is dependency-gated on this review.
+- Next action: Let `ash-bell-ritualant-static-asset-intake` auto-unblock and claim it; its packet contains exact Dropbox paths, hashes, staging commands, Asset V2 commands, consumer nodes, and validation.
 - Blockers or open questions: none unless review finds a correction-worthy defect.
