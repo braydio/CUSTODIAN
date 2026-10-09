@@ -195,6 +195,29 @@ def _fetch_main(root: Path) -> subprocess.CompletedProcess[str]:
     )
 
 
+def _refresh_coordination_graph(root: Path) -> None:
+    """Best-effort shared CRG refresh after a successful root fast-forward.
+
+    Agent worktrees intentionally do not maintain independent graphs by default.
+    This keeps the persistent coordination checkout useful as the shared baseline
+    without making synchronization fail when CRG is unavailable or slow.
+    """
+    script = root / "tools/crg-refresh.sh"
+    if not script.is_file():
+        return
+    try:
+        subprocess.run(
+            ["bash", str(script)],
+            cwd=root,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return
+
+
 def _art_context(coordination_root: Path):
     operator_dir = Path(__file__).resolve().parents[1] / "operator"
     if str(operator_dir) not in sys.path:
@@ -453,6 +476,8 @@ def _apply_one(profile: str, coordination_root: Path, art_root: Path | None) -> 
             before.blockers.append((merged.stderr or merged.stdout).strip())
             before.action = "blocked"
             return before
+        if profile == ROOT_PROFILE:
+            _refresh_coordination_graph(root)
     if can_repair_sparse and art is not None:
         try:
             art._apply_sparse_profile(root)

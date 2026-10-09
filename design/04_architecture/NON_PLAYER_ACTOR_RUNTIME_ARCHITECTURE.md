@@ -1,7 +1,7 @@
 # NON-PLAYER ACTOR RUNTIME ARCHITECTURE
 
 **Status:** active architecture authority and implementation tracker  
-**Reviewed baseline:** `main@02ca0025b8` (2026-10-01)  
+**Reviewed baseline:** `main@0c80f6a5a1` (2026-10-09)  
 **Program goal:** converge CUSTODIAN's autonomous non-player runtime around shared compositional actor contracts without creating a universal NPC base class or turning `enemy.gd` into the parent of unrelated actor families.
 
 ## Architecture Lock
@@ -46,6 +46,64 @@ Shared non-player actors may consume only the contracts they need:
 No actor is required to implement every capability.
 
 `ActorAllegianceComponent` and `ActorRelationshipResolver` remain the current relationship/targetability foundation. Species/archetype behavior remains local to the actor/controller. A future shared service must be introduced only after at least two real consumers demonstrate the same contract.
+
+## Actor Facet Model
+
+A non-player actor is **not** one giant behavior object. Treat each actor as an
+instance composed from independent facets with separate ownership. This is a
+conceptual architecture map, not a requirement to create one universal
+`ActorTraits`, `ActorBrain`, or base class. A family may implement a facet with
+an existing local controller/resource, a shared compositional component, or not
+at all.
+
+| Facet | Owns / answers | Current proof / example | Architecture rule |
+| --- | --- | --- | --- |
+| **Identity + provenance** | What persistent/runtime instance is this, what family/archetype/species does it belong to, and where did it come from? | Vaultwing stable creature ID + spawn provenance; Enemy archetype/profile IDs | Stable identity is introduced only when a real persistence/diagnostic consumer needs it; family and archetype are not allegiance. |
+| **Traits / profile** | Relatively stable behavioral tendencies, sensory tuning, movement tendencies, species/archetype parameters | `EnemyBehaviorProfile` aggression/curiosity/self-preservation/perception/movement tuning; `VaultwingBehaviorProfile` flight/combat/awareness tuning | Profiles own tuning, not live phase state. Do not collapse every species into one universal trait schema before repeated consumers prove common fields. |
+| **Relationship / allegiance** | Who is this actor allied, neutral, or hostile toward, and is it a valid target right now? | `ActorAllegianceComponent`, `ActorRelationshipResolver`, Vaultwing wild -> bonded mutation | Relationship is orthogonal runtime state. Bonding or faction change must not replace the actor instance/class. |
+| **Perception / observations** | What did this receiver legitimately sense, through which channel, with what salience/certainty? | Enemy perception plus the planned shared `PerceptionObservation`; Vaultwing is the second acoustic consumer | Shared sensing may produce observations; it never decides species behavior or hostility. Hearing is a stealth/perception concern, not a Vaultwing mechanic. |
+| **Working memory** | What transient facts does this actor remember about targets, objectives, recent stimuli, and local context? | `EnemyBlackboard`; Vaultwing target/interest/bond transient state in local controllers | Memory is local to the actor/family until at least two consumers justify a reusable contract. Do not put behavior policy into the memory container. |
+| **Decision / behavior policy** | Given traits, relationships, observations, memory, and world state, what should this actor attempt next? | `EnemyBehaviorStateMachine`; `VaultwingBehaviorController`; future social schedules/encounter policy | Behavior remains family/species/encounter local. Shared perception or combat services must not become a universal AI brain. |
+| **Capabilities** | What kinds of actions can this actor perform at all: locomotion, flight, dialogue, interaction, command reception, bonding, combat, etc.? | Vaultwing flight/bonding; turret static fire control; social NPC interaction; companion command policy | Capabilities are opt-in axes, not inheritance families. No actor is required to implement the complete capability set. |
+| **Abilities** | Bounded stateful action lifecycles such as Dash, Pounce, Dive, special attacks, heals, or authored interactions | `MarineDash`, `SavagePounce`, `GruntFalconPunch` | One ability, one mutable authority. Actor hosts/shared services may be requested through narrow APIs but must not retain parallel phase state. |
+| **Physical state** | Health, damage/death status, posture/reaction state, current locomotion application where relevant | Enemy/Vaultwing health; CharacterBody movement; future extracted reaction/death owners | Shared contracts may exist, but lifecycle-heavy state should have a focused owner rather than accumulating in the facade. |
+| **Presentation** | Which semantic body/FX/audio presentation represents current actor intent/state | `EnemyPresentationController`, Vaultwing ambient presentation controller | Presentation observes semantic state and requests; it never owns hit timing, target policy, behavior transitions, or persistence. |
+| **Lifecycle / persistence** | Spawn/despawn provenance, save identity, unload/reification state, corpse/loot policy, durable bond/relationship state | Vaultwing bond save data; Enemy corpse/loot; living-world work | Persistence owns durable facts, not active behavior. Restore/reification must reconcile runtime facets without replaying one-time transition side effects. |
+| **Command / interaction policy** | Who may issue commands/interact, what requests are valid, and how local policy interprets them | bonded Vaultwing future commands, Combat Drone, future social NPC dialogue/interaction | Command/interaction is optional. It must not imply Enemy inheritance or grant a global behavior controller. |
+
+The intended flow is therefore:
+
+```text
+identity + traits/profile + relationship
+        + observations + working memory
+        -> family/species decision policy
+        -> capability / ability requests
+        -> physical actor integration
+        -> semantic presentation
+
+durable lifecycle/persistence reconciles the same facets across spawn/save/unload;
+it does not replace them with a second actor model.
+```
+
+Examples:
+
+- A **Defense Turret** may need identity, relationship/targetability, perception,
+  health, fire-control abilities, presentation, and lifecycle, but no locomotion,
+  dialogue, or social schedule.
+- A **merchant/social NPC** may need identity, traits, relationship, working
+  memory, schedule/dialogue behavior, interaction, presentation, and persistence,
+  with no combat ability at all.
+- A **Vaultwing** may need identity/provenance, species traits, relationship,
+  shared observations, species-local memory/behavior, flight/combat capabilities,
+  bounded abilities, bond state, presentation, and persistence.
+- A **standard Enemy** may compose behavior profile, blackboard, perception,
+  locomotion/combat host services, actor-local abilities, reactions, presentation,
+  and loot/death policy without becoming the base class for any of the examples
+  above.
+
+This facet model is an **anti-godfile rule**. New work should move a coherent
+facet or mechanic behind one owner when repeated state/logic becomes substantial;
+it should not create a universal component merely to make the diagram literal.
 
 ## Standard Combat Agent Boundary
 
@@ -109,7 +167,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 | NPA-5 | TBD | Extract shared enemy reaction/posture/parry-critical authority where a coherent boundary exists | planned |
 | NPA-6 | TBD | Extract enemy death/corpse/loot lifecycle from combat coordinator | planned |
 | NPA-7 | TBD | Converge commanded allies/companions on shared relationship/targeting/identity contracts without inheriting `Enemy` | planned |
-| NPA-8 | TBD | Converge ambient/fauna and bonded-command seams, consuming the shared stealth-perception observation contract if landed, without moving species behavior into enemy AI | planned |
+| NPA-8 | `non-player-fauna-bonded-command-convergence` (planned identity; packet intentionally not authored yet) | Converge ambient/fauna and bonded-command seams, consuming the reviewed shared stealth-perception observation contract and reviewed Vaultwing runtime-hardening seam without moving species behavior into enemy AI | planned / author only after earlier NPA predecessor reviews permit |
 | NPA-9 | TBD | Define encounter/social NPC shared capability seams using Forlorn Ritualant as proof; preserve encounter-local phase authority | planned |
 | NPA-10 | TBD | Converge static autonomous agents (Defense Turret/sentries) on shared non-locomotion combat/relationship contracts | planned |
 | NPA-11 | TBD | Remove proven compatibility residue, audit legacy group fallbacks/private callers, close architecture docs/validation | planned |
@@ -118,7 +176,7 @@ Only NPA-1 through NPA-3 are authored now because their current authority and be
 
 NPA-1 implementation + paired-review evidence: `MarineDash` + typed `MarineDashConfig` are the sole Marine lifecycle/tuning authority; `request_marine_dash` is the public request seam; all 26 defaults and 26 Marine scene values match; current-main Marine, spatial telemetry, Sundered Keep ambush, and Falcon reversal gates pass; the implementation recorded a 23/23 changed-file closeout; and `enemy.gd` remains 343 lines below the 4,958-line recorded baseline. The paired review passed with 0 blockers and 0 material gaps. NPA-2 extracts pounce to `SavagePounce` + typed `SavagePounceConfig`, preserving its 13 defaults and the pounce-before-chain ordering. Focused pounce and Savage runtime smokes pass; paired review is pending. The two-hit chain remains actor-owned for NPA-3.
 
-Cross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. NPA-8 must reuse it if available rather than inventing Vaultwing-only hearing or importing Enemy behavior policy.
+Cross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. The approved pre-NPA-8 Vaultwing chain is `stealth-perception-foundation` -> its paired review -> `vaultwing-runtime-hardening` -> its paired review. That chain establishes shared acoustic observations first, then fixes Vaultwing-local fixed-step/bond/relationship residue. It deliberately stops before NPA-8. NPA-8 must then be authored against both those reviewed seams **and** the landed/reviewed earlier NPA program state rather than inventing Vaultwing-only hearing, importing Enemy behavior policy, or freezing a speculative universal actor API.
 
 Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
 
@@ -126,9 +184,9 @@ Author NPA-4+ against landed live main so the program learns from the actual ext
 
 NPA-3 remains refresh-gated. Bring the passed NPA-2 implementation/review evidence back to the planning chat before promoting the chain packet; do not let an execution agent silently freeze provisional private APIs.
 
-## Measured Baseline
+## Program-Start Measured Baseline
 
-Reviewed `main@02ca0025b8`:
+Historical migration baseline reviewed at `main@02ca0025b8`:
 
 - `enemy.gd`: ~4,958 lines.
 - `combat_drone.gd`: ~656 lines and independent `CharacterBody2D` ally runtime.

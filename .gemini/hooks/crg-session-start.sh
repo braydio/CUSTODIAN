@@ -9,16 +9,16 @@ MESSAGE=""
 
 if [ -z "$REPO_ROOT" ]; then
     MESSAGE="code-review-graph: not inside a Git repository"
-elif ! command -v uvx >/dev/null 2>&1; then
-    MESSAGE="code-review-graph: uvx not found"
+elif [ ! -x "$REPO_ROOT/tools/crg-refresh.sh" ]; then
+    MESSAGE="code-review-graph: shared refresh policy unavailable"
 else
-    if uvx code-review-graph update --repo "$REPO_ROOT" >&2; then
-        MESSAGE="$(
-            uvx code-review-graph status --repo "$REPO_ROOT" 2>&1 |
-            head -n 1
-        )"
+    "$REPO_ROOT/tools/crg-refresh.sh" --status >&2 || true
+    GIT_DIR="$(git -C "$REPO_ROOT" rev-parse --path-format=absolute --git-dir 2>/dev/null || true)"
+    COMMON_DIR="$(git -C "$REPO_ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
+    if [ -n "$GIT_DIR" ] && [ -n "$COMMON_DIR" ] && [ "$GIT_DIR" != "$COMMON_DIR" ]; then
+        MESSAGE="code-review-graph: linked worktree; use coordination-root graph for baseline only, then targeted worktree reads"
     else
-        MESSAGE="code-review-graph: startup update failed"
+        MESSAGE="code-review-graph: persistent checkout refresh/status attempted"
     fi
 fi
 

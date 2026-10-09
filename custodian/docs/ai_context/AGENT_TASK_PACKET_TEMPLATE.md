@@ -54,6 +54,28 @@ coherent effort.
 - Task overrides: `none` or list each as `TASK OVERRIDE: ...`
 - Deferred:
 
+## Context Pack
+
+Optional. Use this only when the work surface spans enough files/directories that
+one bounded Repomix snapshot will reduce repeated discovery. Omit it for narrow
+tasks.
+
+- Repomix: `recommended | none`
+- Include: `<comma-separated repo-relative files/globs; keep this bounded>`
+- Purpose: `<what architectural/source context this pack should provide>`
+
+When `recommended`, the execution agent runs:
+
+```bash
+scripts/ai/pack-context.sh task "<Include value>" "<workstream-id>"
+```
+
+The command runs in the **claimed worktree** and writes ignored output under
+`.ai/task-context/`. Do not point task-specific Repomix at the persistent
+coordination checkout. Do not use broad patterns such as `custodian/**` when
+the packet can name the actual owners/consumers/tests. The pack is a convenience
+snapshot; exact live files and the current worktree diff remain authority.
+
 ## Refresh Planning Authority
 
 Include this block when a packet is dependency/refresh-gated or when landed
@@ -103,6 +125,10 @@ Required quality:
   this task. Do not paste the generic repository reading list.
 - **Work surface** names the primary owner plus expected consumers/tests. It is a
   starting boundary, not permission to ignore a proven dependency.
+- **Context Pack** is optional and should be used when a bounded set of source,
+  design and test paths would materially reduce repeated discovery. Prefer a
+  handful of specific files/directories/globs over a whole-repository pack.
+  Repomix output is ignored task context, not evidence or repository authority.
 - **Change** defines behavior/contract to implement. Be exact about externally
   observable behavior and ownership; let Codex choose local private helpers when
   the repository offers a cleaner seam.
@@ -158,6 +184,42 @@ the user explicitly wants to control claim timing.
 Do not encode duplicate technical truth already owned by a schema/resource.
 Reference the authority and state the closure condition.
 
+### Publication Handoff after the Authoring Quality Gate
+
+**Do not stop at a successful local authoring preflight.** When a pair was
+previously `draft/manual` and its design decision is now approved, its next
+action is **promote → revalidate → index → land to `origin/main` → claim**.
+The validation command reports structural correctness of the *local* files,
+not dispatcher visibility or eligibility.
+
+1. Confirm authoring authority and no duplicate/claimed workstream on fetched
+   `origin/main`; retain `draft/manual` if the design/human gate is unresolved.
+2. Run the targeted authoring validator on the implementation and paired review
+   in their existing statuses.
+3. Set both packet headers to `Status: ready` / `Dispatch: auto` only if
+   authorized; retain `ready/manual` where the user explicitly holds claim
+   timing. Re-run the same targeted validator after the edits.
+4. Regenerate `custodian/docs/ai_context/task_packets/README.md` through the
+   bounded indexer, never by hand:
+   ```bash
+   python3 custodian/tools/agent/task_packet_index.py --write
+   python3 custodian/tools/agent/task_packet_index.py
+   ```
+5. Commit only the authorized packet pair and managed index (plus necessary
+   scoped design authority), and land them on remote `origin/main` through
+   the existing safe landing process. **The dispatcher does not read**
+   the authoring branch or unpublished checkout.
+6. Fetch and verify both target packet files and the managed index on
+   `origin/main`, then `dispatch.py claim <implementation-workstream-id>`
+   subject to dependency, lock, and freshness gates. The paired review is
+   dependency-gated until the implementation archives complete.
+
+The authoring validator prints the precise publication/claim handoff on
+`PASS`; it does not itself update packet status, index, git, or dispatcher
+claims. For details see root `AGENTS.md` → Task-Packet Promotion Before
+Dispatch. **Never turn a local preflight success into a silent bypass of the
+review or human approval policy.**
+
 ### Authoring Quality Gate
 
 Before setting `Status: ready`, run the targeted packet-authoring preflight on
@@ -186,6 +248,8 @@ Before setting `Status: ready`:
 [ ] Existing Workstream identity was reused when appropriate.
 [ ] Current measured state and Evidence are factual, not speculative.
 [ ] Task-specific authority and Work surface identify the real owners.
+[ ] If a Context Pack is present, its include globs are bounded to relevant
+    owners/consumers/tests and can be generated from the claimed worktree.
 [ ] Change, Preserve, and Non-goals bound the blast radius.
 [ ] Acceptance is measurable.
 [ ] Validation names focused checks before broad checks.

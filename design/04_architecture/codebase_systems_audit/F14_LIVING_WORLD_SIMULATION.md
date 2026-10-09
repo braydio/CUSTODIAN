@@ -2,7 +2,7 @@
 
 [← Systems audit overview](../CODEBASE_SYSTEMS_AUDIT.md) · [Conceptual packet roadmap](PACKET_ROADMAP.md#cs-f14-a)
 
-> **Status:** local Godot **baseline characterization received**; unloaded-area actor-continuity proof pending  
+> **Status:** local Godot baseline characterization received; F14-B abstract activity foundation implemented on its task branch and focused runtime checks passed; independent paired review pending. Physical actor continuity/reification proof remains pending.
 > **Priority:** P0 audit focus, NOT an automatic implementation/dispatch priority  
 > **Decision:** **F14 V1 behavioral boundary LOCKED** (user choice: bounded offscreen outcomes); specific B abstract-activity implementation slice approved for packet authoring. Full physical actor handoff, reification, REMAP-3 disk persistence and cross-world simulation rollout remain **NOT IMPLEMENTED / NOT LOCKED**.  
 > **Workstream:** `living-world-simulation-audit`; repository branch `agent/living-world-simulation-audit` for this documentation slice.  
@@ -149,7 +149,7 @@ The requested **read-only local source/test audit has been returned** and is rec
 
 ## Conceptual task-packet roadmap
 
-CS-F14-A read-only evidence is satisfied. **Only the narrow CS-F14-B abstract activity foundation is authorized** for packet authoring by the October 9 V1 behavioral decision; its new implementation/review pair remains **draft/manual pending local authoring preflight**. CS-F14-C/D/E are not yet authorized and still require evidence plus REMAP, procgen and NPA owner reconciliation.
+CS-F14-A read-only evidence is satisfied. **CS-F14-B is the authorized narrow abstract activity foundation.** Its implementation adds a bounded domain/location/group state owner, a 60-fixed-tick kernel stage, schema-v5 snapshot serialization with v4 migration, and a synthetic uninstantiated-location smoke. The paired independent review is the next lifecycle step; until it passes, this branch's implementation is not a reviewed/landed F14 capability. B does not implement physical handoff/reification, actual geographic-map binding, combat consequences, or REMAP-3 disk persistence. CS-F14-C/D/E remain gated and require evidence plus REMAP, procgen and NPA owner reconciliation.
 
 - [CS-F14-A: authority/interest/handoff parity and performance baseline](PACKET_ROADMAP.md#cs-f14-a) (proposed)
 - [CS-F14-B: deterministic abstract geographic-group activity](PACKET_ROADMAP.md#cs-f14-b) (design locked; [draft implementation packet](../../../custodian/docs/ai_context/task_packets/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) and [paired review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) awaiting authoring validator)
@@ -166,4 +166,4 @@ CS-F14-A read-only evidence is satisfied. **Only the narrow CS-F14-B abstract ac
 - **Design approval:** user explicitly approved **Bounded** offscreen consequences and continuous-geography target (October 9, 2026). F14 V1 adopts authoritative fixed-tick cadence, group-level abstractions with optional stable individual identity and bounded non-physical event types as engineering defaults. Real map identity schema, physical reification, casualty semantics, full restart state and UI reporting await later locks.
 - **Preserved contracts:** 60Hz fixed step, kernel macro ordering, loaded physical gameplay, one runtime authority, canonical procgen and campaign identity.
 - **Document drift:** interest tier behavior mismatch recorded and descriptive implementation notes reconciled in `design/01_systems/INTEREST_MANAGEMENT_SYSTEM.md`; further gameplay policy changes remain unapproved.
-- **Implementation decision:** **F14-B foundation authorized for packet authoring** as an isolated deterministic simulation-data slice. The broader F14 program is **not** automatically authorized: C reification, D REMAP-3 integration and E playable integration remain dependency/design-gated. Before dispatch, the specific new packet and paired review must pass the repository's targeted authoring preflight. Next: implement/review B before revisiting C.
+- **Implementation decision:** **F14-B foundation authorized and implemented as an isolated deterministic simulation-data slice; paired review remains required.** The broader F14 program is **not** automatically authorized: C reification, D REMAP-3 integration and E playable integration remain dependency/design-gated. Next: independently review B before revisiting C.

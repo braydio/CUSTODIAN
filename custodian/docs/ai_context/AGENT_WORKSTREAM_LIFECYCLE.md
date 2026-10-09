@@ -292,17 +292,26 @@ These are repository-default execution steps for claimed packet work; do not
 copy this list into individual task packets.
 
 1. Read the current packet.
-2. Read the immediate predecessor closing summary when the task depends on an
+2. If it contains a bounded `## Context Pack`, generate that Repomix pack once
+   from the **current claimed worktree** with `scripts/ai/pack-context.sh task`.
+   Do not generate a whole-repository pack as routine startup work.
+3. Read the immediate predecessor closing summary when the task depends on an
    architecture-shifting predecessor.
-3. Use the code-review graph first when available.
-4. Otherwise search exact symbols/paths before reading large files. For large
-   files, prefer targeted symbol/range retrieval over a default whole-file read.
-5. Read direct callers/callees only as needed.
-6. Do not reread completed packets or broad roadmaps unless a concrete
+4. Use code-review-graph opportunistically. In a linked worktree, use the
+   persistent coordination-root graph only for baseline orientation. If the
+   first graph call reports missing/not-ready/empty/stale/unmapped coverage,
+   immediately use targeted worktree reads; do not cold-build a local graph.
+5. Search exact symbols/paths before reading large files. For large files,
+   prefer targeted symbol/range retrieval over a default whole-file read.
+6. Read direct callers/callees only as needed.
+7. Treat the current worktree and its `git diff` as implementation/review truth;
+   neither a coordination-root graph nor a Repomix snapshot proves branch-local
+   behavior.
+8. Do not reread completed packets or broad roadmaps unless a concrete
    contradiction requires it.
-7. Reuse landed benchmark/validation evidence instead of rediscovering it.
-8. Run the highest-risk focused falsification first, then one normal closeout
-   sweep.
+9. Reuse landed benchmark/validation evidence instead of rediscovering it.
+10. Run the highest-risk focused falsification first, then one normal closeout
+    sweep.
 
 A packet's `Status: complete` is not itself proof that its stated Goal/
 Completion boundary hold; see `AGENT_TASK_PACKET_TEMPLATE.md`'s `## Completion

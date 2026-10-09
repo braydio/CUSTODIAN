@@ -2,7 +2,7 @@ class_name WorldSimulationState
 extends RefCounted
 
 const SNAPSHOT_SCHEMA := "custodian.world_simulation_state"
-const SNAPSHOT_VERSION := 4
+const SNAPSHOT_VERSION := 5
 const MAX_EVENTS := 32
 
 var seed: int = 0
@@ -40,6 +40,8 @@ var systemic_event_state: Dictionary = {
 	"recent_categories": [], "recent_keys": [], "history": [],
 }
 var rng_state: int = 1
+var abstract_activity: AbstractActivitySimulationState = AbstractActivitySimulationState.new()
+var snapshot_state_valid := true
 
 func _init(world_seed: int = 0, world_text_seed: int = -1) -> void:
 	seed = world_seed; text_seed = world_seed if world_text_seed < 0 else world_text_seed
@@ -77,7 +79,7 @@ func record_event(kind: StringName, data: Dictionary = {}) -> void:
 	while events.size() > MAX_EVENTS: events.pop_front()
 
 func to_dict() -> Dictionary:
-	return {"schema": SNAPSHOT_SCHEMA, "schema_version": SNAPSHOT_VERSION, "seed": seed, "text_seed": text_seed, "rng_state": rng_state, "fixed_tick": fixed_tick, "world_tick": world_tick, "ambient_threat": ambient_threat, "assaults_enabled": assaults_enabled, "failed": failed, "failure_reason": failure_reason, "resources": {"materials": materials}, "inventory": inventory.duplicate(true), "stocks": stocks.duplicate(true), "power_load": power_load, "logistics": {"throughput": logistics_throughput, "load": logistics_load, "pressure": logistics_pressure, "multiplier": logistics_multiplier}, "policies": policies.to_dict(), "assault": assault.to_dict(), "relay_knowledge_level": relay_knowledge_level, "relay_dormancy_pressure": relay_dormancy_pressure, "macro_fidelity": macro_fidelity, "ambient_fab_progress": ambient_fab_progress.duplicate(true), "signal_interference_ticks": signal_interference_ticks, "systemic_event_state": systemic_event_state.duplicate(true), "sectors": _objects_to_dict(sectors), "transit_states": _deep_dict(transit_states), "structures": _objects_to_dict(structures), "relays": _objects_to_dict(relays), "repairs": _object_array(repairs), "fabrication_queue": _object_array(fabrication_queue), "events": events.duplicate(true)}
+	return {"schema": SNAPSHOT_SCHEMA, "schema_version": SNAPSHOT_VERSION, "seed": seed, "text_seed": text_seed, "rng_state": rng_state, "fixed_tick": fixed_tick, "world_tick": world_tick, "ambient_threat": ambient_threat, "assaults_enabled": assaults_enabled, "failed": failed, "failure_reason": failure_reason, "resources": {"materials": materials}, "inventory": inventory.duplicate(true), "stocks": stocks.duplicate(true), "power_load": power_load, "logistics": {"throughput": logistics_throughput, "load": logistics_load, "pressure": logistics_pressure, "multiplier": logistics_multiplier}, "policies": policies.to_dict(), "assault": assault.to_dict(), "relay_knowledge_level": relay_knowledge_level, "relay_dormancy_pressure": relay_dormancy_pressure, "macro_fidelity": macro_fidelity, "ambient_fab_progress": ambient_fab_progress.duplicate(true), "signal_interference_ticks": signal_interference_ticks, "systemic_event_state": systemic_event_state.duplicate(true), "sectors": _objects_to_dict(sectors), "transit_states": _deep_dict(transit_states), "structures": _objects_to_dict(structures), "relays": _objects_to_dict(relays), "repairs": _object_array(repairs), "fabrication_queue": _object_array(fabrication_queue), "events": events.duplicate(true), "abstract_activity": abstract_activity.to_dict()}
 
 static func from_dict(data: Dictionary) -> WorldSimulationState:
 	var value := WorldSimulationState.new(int(data.get("seed", 0)), int(data.get("text_seed", data.get("seed", 0))))
@@ -93,6 +95,17 @@ static func from_dict(data: Dictionary) -> WorldSimulationState:
 			var relay: Dictionary = value.relays[relay_id]
 			relay.stability = float(relay.get("stability", 0.0)); relay.packets_pending = int(relay.get("packets_pending", 0))
 	value.repairs = (data.get("repairs", []) as Array).duplicate(true); value.fabrication_queue = (data.get("fabrication_queue", data.get("fabrication", [])) as Array).duplicate(true); value.events = _normalize_integer_values((data.get("events", []) as Array).duplicate(true))
+	if int(data.get("schema_version", 0)) >= SNAPSHOT_VERSION:
+		if not data.has("abstract_activity") or not data.get("abstract_activity") is Dictionary:
+			value.snapshot_state_valid = false
+		else:
+			var restored_activity := AbstractActivitySimulationState.from_dict(data.abstract_activity)
+			if restored_activity == null: value.snapshot_state_valid = false
+			else: value.abstract_activity = restored_activity
+	elif data.has("abstract_activity"):
+		var restored_activity := AbstractActivitySimulationState.from_dict(data.abstract_activity)
+		if restored_activity == null: value.snapshot_state_valid = false
+		else: value.abstract_activity = restored_activity
 	return value
 
 func clone() -> WorldSimulationState: return from_dict(to_dict())

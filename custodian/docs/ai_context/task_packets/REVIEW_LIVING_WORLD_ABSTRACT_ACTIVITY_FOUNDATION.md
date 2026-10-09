@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-living-world-abstract-activity-foundation`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `living-world-abstract-activity-foundation`
 - Locks: `world-simulation-runtime, living-world-abstract-activity`
@@ -31,14 +31,15 @@
 
 ## Procedure and authoring gate
 
-The implementation and this review are intentionally `draft/manual` until targeted repository preflight proves they can become `ready/auto`. Follow `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` and root/local AGENTS. Claim this review only after the implementation lands and archives `complete`. Begin a separate fresh context; review from public durable evidence. Confirm no duplicate population after repeated abstract ticks within this slice, and defer actual instantiated actor crossings to F14-C.
+The implementation and this review pair passed targeted repository preflight and were promoted to `ready/auto`. Follow `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` and root/local AGENTS. Claim this review only after the implementation lands and archives `complete`. Begin a separate fresh context; review from public durable evidence. Confirm no duplicate population after repeated abstract ticks within this slice, and defer actual instantiated actor crossings to F14-C.
 
-Authoring preflight (run from repository root before promoting both packets):
+Authoring preflight receipt (run from the implementation worktree before promotion):
 ```bash
 python3 custodian/tools/agent/validate_task_packet_authoring.py \
   custodian/docs/ai_context/task_packets/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md \
   custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md
 ```
+Result: PASS.
 
 ## Next Handoff
 

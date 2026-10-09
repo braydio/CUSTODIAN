@@ -172,6 +172,51 @@ When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `
 
 This applies whether the summary is written at repository root, beside archived packet evidence, or generated during workstream finish. `workstream.py finish` fails closed when a packet with a recorded authoring/refresh URL has a committed root closing summary that omits the exact `Authoring chat: <url>` line. The backlink is part of the durable handoff so the user can return to the exact planning/review conversation before a required refresh or human decision.
 
+## Task-Packet Promotion Before Dispatch (mandatory for newly authored or unparked packets)
+
+**A local authoring PASS does not publish a packet or authorize a dispatcher claim.**
+When an implementation/review pair has been authored as `draft/manual` (or materially
+refreshed), the agent assigned to promote it should complete this lifecycle
+*without requiring the user to supply the command*:
+
+1. Confirm the design/refresh lock and check that the target workstream is not
+   already claimed, archived, or superseded on fetched `origin/main`. Do not
+   silently convert a real human-held `ready/manual` packet into auto dispatch.
+2. Run the **targeted** authoring check against the implementation **and paired
+   review** while still unpromoted:
+   ```bash
+   python3 custodian/tools/agent/validate_task_packet_authoring.py \
+     custodian/docs/ai_context/task_packets/<IMPLEMENTATION>.md \
+     custodian/docs/ai_context/task_packets/REVIEW_<IMPLEMENTATION>.md
+   ```
+3. Only if the design lock explicitly permits execution, set both metadata headers
+   to `Status: ready`, `Dispatch: auto` (unless the user explicitly requested
+   manual claim timing). Re-run the same targeted preflight **after** editing
+   those headers, then regenerate and verify the managed queue index:
+   ```bash
+   python3 custodian/tools/agent/task_packet_index.py --write
+   python3 custodian/tools/agent/task_packet_index.py
+   ```
+4. Stage only the authorized implementation/review files and
+   `custodian/docs/ai_context/task_packets/README.md` (plus explicitly
+   required scoped authority changes). Commit and **land on `origin/main`**
+   using the safe repository landing process. Do not treat an unmerged branch,
+   local `main`, or locally generated README as dispatcher visibility. Never
+   overwrite another worker's changes or bypass claim/lock authority.
+5. `git fetch origin`; verify both packet headers **on `origin/main`**
+   and the managed index entry, then run
+   `python3 custodian/tools/agent/dispatch.py claim <implementation-workstream-id> --agent <agent-id>`
+   **only if eligible**. The paired post-land review waits for the implementation
+   to land and archive complete.
+
+If the requested packet does not exist on `origin/main`, stop trying to claim
+it and finish this publication sequence first. `validate_task_packet_authoring.py`
+prints these publication/claim instructions after PASS; its output never performs
+a promotion, commit, push, or claim. See
+`custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` for the full
+authoring contract. For standalone read-only audit packets, do not promote
+without actual user authorization.
+
 ## CUSTODIAN Task Dispatch
 
 Executable packet dispatch is automatic by default. Use `Status: ready` + `Dispatch: auto` even when declared dependencies are incomplete; the dispatcher keeps the packet blocked until those dependencies archive `complete`, then makes it claimable without a manual status flip. `Dispatch: manual` is reserved only for an explicit user instruction to hold an otherwise ready packet until the user chooses claim timing. Missing inputs, predecessor API drift, review ordering, and ordinary dependency waits are not manual-dispatch reasons; represent them with status/dependencies and fail-closed execution checks instead.
@@ -382,38 +427,51 @@ ambiguous artifact.
 <!-- code-review-graph MCP tools -->
 ## MCP Tools: code-review-graph
 
-**IMPORTANT: This project has a knowledge graph. ALWAYS use the
-code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
-the codebase.** The graph is faster, cheaper (fewer tokens), and gives
-you structural context (callers, dependents, test coverage) that file
-scanning cannot.
+Use code-review-graph as an **opportunistic structural accelerator**, not as a
+cold-start prerequisite for every ephemeral worktree.
 
-### When to use graph tools FIRST
+### CUSTODIAN worktree policy
 
-- **Exploring code**: `semantic_search_nodes_tool` or `query_graph_tool` instead of Grep
-- **Understanding impact**: `get_impact_radius_tool` instead of manually tracing imports
-- **Code review**: `detect_changes_tool` + `get_review_context_tool` instead of reading entire files
+- The persistent coordination checkout is the maintained/shared CRG baseline.
+  In a linked agent worktree, derive it with:
+  `COORD_ROOT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"`.
+- A linked/ephemeral worktree does **not** need its own graph by default. Do not
+  run `build_or_update_graph` or a full `code-review-graph update` merely
+  because the first graph call reports `missing_graph`, `not_ready`, an empty
+  graph, stale coverage, or no mapped symbols.
+- From a linked worktree, CRG may point at `$COORD_ROOT` for baseline
+  architecture, callers/dependents, and likely-test orientation. Treat that as
+  a hint only. Confirm every symbol/path used for implementation or review
+  against the **current worktree** and use the worktree diff as change truth.
+- Never use the coordination-root graph as proof of branch-local changes that
+  are not present in that checkout.
+- Build/maintain a worktree-local graph only when the task explicitly benefits
+  from it; opt in with `CRG_HOOK_WORKTREES=1`.
+- If one cheap graph attempt is unusable, fall back immediately to targeted
+  symbol/path reads. Do not spend task time repairing CRG ceremony.
+
+### Task-scoped Repomix context
+
+For broad multi-file tasks, a packet may provide a bounded `## Context Pack`
+with repo-relative Repomix include globs. Generate it **from the claimed
+worktree**, not the persistent coordination checkout:
+
+```bash
+scripts/ai/pack-context.sh task "<comma-separated include globs>" "<workstream-id>"
+```
+
+The output is ignored under `.ai/task-context/`. Generate it once at task
+start (and again only after a material scope change). It is a navigation/context
+snapshot, never repository authority; exact live files and `git diff` remain
+truth.
+
+### When the graph is usable
+
+- **Exploring code**: `semantic_search_nodes_tool` or `query_graph_tool`
+- **Understanding impact**: `get_impact_radius_tool`
+- **Code review**: `detect_changes_tool` + `get_review_context_tool`
 - **Finding relationships**: `query_graph_tool` with callers_of/callees_of/imports_of/tests_for
 - **Architecture questions**: `get_architecture_overview_tool` + `list_communities_tool`
 
-Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
-
-### Key Tools
-
-| Tool | Use when |
-| ------ | ---------- |
-| `detect_changes_tool` | Reviewing code changes — gives risk-scored analysis |
-| `get_review_context_tool` | Need source snippets for review — token-efficient |
-| `get_impact_radius_tool` | Understanding blast radius of a change |
-| `get_affected_flows_tool` | Finding which execution paths are impacted |
-| `query_graph_tool` | Tracing callers, callees, imports, tests, dependencies |
-| `semantic_search_nodes_tool` | Finding functions/classes by name or keyword |
-| `get_architecture_overview_tool` | Understanding high-level codebase structure |
-| `refactor_tool` | Planning renames, finding dead code |
-
-### Workflow
-
-1. The graph auto-updates on file changes (via hooks).
-2. Use `detect_changes_tool` for code review.
-3. Use `get_affected_flows_tool` to understand impact.
-4. Use `query_graph_tool` pattern="tests_for" to check coverage.
+Keep graph calls narrow and token-efficient. Prefer `detail_level="minimal"`
+and escalate only when needed.

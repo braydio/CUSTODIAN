@@ -54,12 +54,14 @@ def load(path,upgrade=True):
 def save(path,data): path.write_text(json.dumps(data,indent=2)+"\n")
 def state(manifest, wb):
     if manifest.get("creation"):
+        generation = manifest.get("creation", {}).get("art_generation", "legacy_96")
         for binding in manifest.get("layers", ()):
             source = m.REPO_ROOT / binding.get("source_path", "")
             runtime = m.REPO_ROOT / binding.get("runtime_path", "")
             collision = (source.exists() or Path(str(source)+".import").exists()
-                or m.BUILDER.timing_sidecar_path(source).exists() or runtime.exists()
-                or Path(str(runtime)+".import").exists() or m.BUILDER.timing_sidecar_path(runtime).exists())
+                or m.BUILDER.timing_sidecar_path(source).exists())
+            if generation == "legacy_96":
+                collision = collision or runtime.exists() or Path(str(runtime)+".import").exists() or m.BUILDER.timing_sidecar_path(runtime).exists()
             if collision: return "NEW / COLLISION"
         if not wb.exists(): return "NEW / UNSAVED"
         baseline = manifest.get("aseprite", {}).get("last_synced_sha256")
@@ -77,14 +79,16 @@ def state(manifest, wb):
 def create_animation(profile, action, direction, *, group, frames, frame_size=m.DEFAULT_FRAME_SIZE,
                      fps=8.0, loop=True, template="full_body", root=DEFAULT_ROOT,
                      aseprite=None, dry_run=False, source_root=None, weapon_root=None,
-                     repo_root=None):
+                     repo_root=None, art_generation="legacy_96", initial_sources=None):
     """Create an ignored authoring session for a new semantic animation."""
     repo = Path(repo_root or m.REPO_ROOT)
     plan = m.build_creation_plan(profile, group, action, direction, frames, frame_size,
         fps, loop, template, repo_root=repo,
-        source_root=Path(source_root or m.SOURCE_ROOT), weapon_root=Path(weapon_root or m.WEAPON_ROOT))
+        source_root=Path(source_root or m.SOURCE_ROOT), weapon_root=Path(weapon_root or m.WEAPON_ROOT),
+        art_generation=art_generation)
     identity = asdict(plan.identity)
-    ws = workspace(root, identity)
+    ws_root = Path(root) / art_generation if art_generation != "legacy_96" else Path(root)
+    ws = workspace(ws_root, identity)
     manifest = ws / "workbench.json"
     document = ws / "workbench.aseprite"
     targets = [row["source_path"] for row in plan.layers]
@@ -99,6 +103,16 @@ def create_animation(profile, action, direction, *, group, frames, frame_size=m.
         raise m.WorkbenchError("ANIMATION CREATE COLLISION\n" + "\n".join(plan.collisions))
     binary = resolve_aseprite(aseprite, True)
     if manifest.exists() or document.exists():
+        if manifest.is_file() and document.is_file() and initial_sources:
+            existing = load(manifest)
+            creation = existing.get("creation", {})
+            expected_identity = {"profile": profile, "group": group, "action": action, "direction": direction}
+            if (existing.get("identity") == expected_identity
+                    and creation.get("art_generation", "legacy_96") == art_generation
+                    and creation.get("import_sources") == dict(initial_sources)
+                    and creation.get("template") == template):
+                return existing, ws
+            raise m.WorkbenchError(f"import Workbench exists with a different target/source proof: {ws}")
         if manifest.is_file() and not document.exists():
             existing = load(manifest)
             expected = {"profile": profile, "group": group, "action": action, "direction": direction}
@@ -120,7 +134,8 @@ def create_animation(profile, action, direction, *, group, frames, frame_size=m.
     # after the read-only plan was shown.
     confirmed = m.build_creation_plan(profile, group, action, direction, frames, frame_size,
         fps, loop, template, repo_root=repo,
-        source_root=Path(source_root or m.SOURCE_ROOT), weapon_root=Path(weapon_root or m.WEAPON_ROOT))
+        source_root=Path(source_root or m.SOURCE_ROOT), weapon_root=Path(weapon_root or m.WEAPON_ROOT),
+        art_generation=art_generation)
     if confirmed.status != "READY":
         raise m.WorkbenchError("ANIMATION CREATE COLLISION\n" + "\n".join(confirmed.collisions))
     ws.mkdir(parents=True, exist_ok=True)
@@ -140,7 +155,7 @@ def create_animation(profile, action, direction, *, group, frames, frame_size=m.
             "source_contract": {"path": row["source_path"], "frames": int(frames), "frame_size": [width, height], "operation": "CREATE"},
             "workspace_contract": {"frames": int(frames), "frame_size": [width, height], "placement": [0, 0], "timeline_slots": list(range(1, int(frames) + 1))},
             "publish_contract": {"path": row["source_path"], "frames": int(frames), "frame_size": [width, height]},
-            "input_path": "",
+            "input_path": str(Path(initial_sources[layer]).resolve()) if initial_sources and layer in initial_sources else "",
         })
     reference_rows=[]
     baseline=ws/"baseline"; baseline.mkdir(parents=True,exist_ok=True)
@@ -157,7 +172,10 @@ def create_animation(profile, action, direction, *, group, frames, frame_size=m.
     context = {"weapon_id": "", "linked_profile": "", "presentation_mode": ""}
     context["fingerprint"] = m.context_fingerprint(ident, None)
     data = {"schema": m.SCHEMA_NAME, "identity": ident, "context": context,
-        "weapon_context": None, "creation": {"state": "NEW / UNSAVED", "template": template, "plan": {"layers": targets}},
+        "weapon_context": None, "creation": {"state": "NEW / UNSAVED", "template": template,
+            "art_generation": art_generation,
+            "authoring_identity": f"{art_generation}:{profile}/{group}/{action}/{direction}",
+            "import_sources": dict(initial_sources or {}), "plan": {"layers": targets}},
         "timeline": {"frames": int(frames), "source_clock_frames": int(frames),
             "workspace_clock_frames": int(frames), "document_frames": int(frames),
             "preview_fps": float(fps), "fps": float(fps), "loop": bool(loop),
@@ -365,16 +383,34 @@ def aseprite_run(binary, manifest, mode):
         message = detail[-4000:] or f"Aseprite exited with status {exc.returncode}"
         raise m.WorkbenchError("ASEPRITE WORKBENCH EXPORT FAILED\n" + message) from exc
 
+def inspect_saved_document_contract(manifest_path, aseprite=None):
+    """Read the physical saved Aseprite canvas, frames, and timing without repairing it."""
+    manifest_path=Path(manifest_path); wb=manifest_path.parent/"workbench.aseprite"
+    if not manifest_path.is_file() or not wb.is_file():
+        raise m.WorkbenchError("saved Workbench manifest or document is missing")
+    report_path=manifest_path.parent/".document_contract.json"
+    try:
+        aseprite_run(resolve_aseprite(aseprite,True),manifest_path,"inspect_contract")
+        report=json.loads(report_path.read_text(encoding="utf-8"))
+        if not isinstance(report,dict) or not isinstance(report.get("durations"),list):
+            raise ValueError("Aseprite returned an invalid document contract report")
+        report["frames"]=int(report["frames"])
+        report["width"]=int(report["width"])
+        report["height"]=int(report["height"])
+        report["durations"]=[float(value) for value in report["durations"]]
+        if report["frames"]<1 or report["width"]<1 or report["height"]<1:
+            raise ValueError("Aseprite returned non-positive document dimensions")
+        return report
+    except (OSError,ValueError,KeyError,TypeError,json.JSONDecodeError) as error:
+        raise m.WorkbenchError(f"saved Aseprite document contract is unreadable: {error}") from error
+    finally:
+        report_path.unlink(missing_ok=True)
+
 def reconcile_saved_document_contract(data, manifest_path, aseprite=None):
     """Inspect saved document timing and repair only a provably obsolete frame migration."""
     manifest_path=Path(manifest_path); ws=manifest_path.parent; wb=ws/"workbench.aseprite"
     if not wb.is_file(): return data
-    report_path=ws/".document_contract.json"
-    try:
-        aseprite_run(resolve_aseprite(aseprite,True),manifest_path,"inspect_contract")
-        report=json.loads(report_path.read_text(encoding="utf-8"))
-    finally:
-        report_path.unlink(missing_ok=True)
+    report=inspect_saved_document_contract(manifest_path,aseprite)
     timeline=data.get("timeline",{}); migration=data.get("pending_migration")
     physical=int(report.get("frames",0)); dimensions=(int(report.get("width",0)),int(report.get("height",0)))
     canvas=(int(data.get("canvas",{}).get("width",0)),int(data.get("canvas",{}).get("height",0)))
@@ -557,7 +593,10 @@ def _operator_scene_consistency():
 
 ## Counterpart promotion is opt-in and is also presented explicitly in UI review.
 def publish(manifest, aseprite=None, force_stale=False, dry_run=False,full_validate=False,requested=None,mirror_counterpart=False):
-    ws=manifest.parent; data=load(manifest); data=reconcile_saved_document_contract(data,manifest,aseprite); st=state(data,ws/"workbench.aseprite")
+    ws=manifest.parent; data=load(manifest)
+    if data.get("creation", {}).get("art_generation", "legacy_96") == "operator_2_5d_128":
+        raise m.WorkbenchError("2.5D runtime publication is disabled in guided ingress")
+    data=reconcile_saved_document_contract(data,manifest,aseprite); st=state(data,ws/"workbench.aseprite")
     if requested: m.assert_context(data,requested)
     if data.get("creation") and st != "NEW / READY TO PUBLISH":
         raise m.WorkbenchError("NEW ANIMATION IS NOT READY TO PUBLISH\nSave authored pixels in Aseprite, then retry.")

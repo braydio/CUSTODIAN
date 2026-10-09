@@ -31,7 +31,9 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
+- `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
 - `REVIEW_TASK_PACKET_QUEUE_RECONCILIATION_V1.md` — Independently falsify the assertion that task packet recovery and dispatcher organization are now safe, complete, and consistently enforced.
+- `STEALTH_PERCEPTION_FOUNDATION.md` — Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated...
 - `TASK_PACKET_QUEUE_RECONCILIATION_V1.md` — Recover and reconcile every outstanding CUSTODIAN packet/workstream, safely organize its active versus archived state, and make the existing dispatcher enfor...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
@@ -43,7 +45,6 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
-- `OPERATOR_2_5D_WORKBENCH_INGRESS.md` — From one missing 2.5D target leaf, let an artist choose NEW or IMPORT and reach an identity-bound editable Workbench without manual filenames, Source Session...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -79,8 +80,8 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
+- `REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md` — Independently verify the newly landed F14-B group activity slice against its design lock and actual test evidence, with a clean fresh context; do not impleme...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
-- `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -99,6 +100,7 @@ normal closeout.
 - `REVIEW_TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — Independently verify fail-closed Twin Solaria route adjudication without travel or presentation authority leakage.
 - `REVIEW_TWIN_SOLARIA_ROUTE_VISTA_SAMPLES_V1.md` — Independently verify the Route Vista sample ingest/presentation without replacing human visual approval or allowing presentation to become route authority.
 - `REVIEW_TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — Independently verify that Solarium I acquisition is presentation-only, Asset V2-compliant, fail-closed, and never becomes Crown passage.
+- `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — Independently prove Vaultwing bond timing, restore reconciliation and relationship compatibility are fixed-step and semantically correct without duplicating...
 - `REVIEW_VEHICLE_FIELD_SCOUT_BUGGY_ASSET_V2.md` — Independently verify that vehicle Asset V2 support is genuinely family/owner driven and the Scout family, directional seam, fallbacks, and required-assets tr...
 - `REVIEW_VEHICLE_FIELD_SCOUT_BUGGY_CLASS_V1_RECOVERY_1_REVIEW_CORRECTIONS_1.md` — Independently prove R0-01 is fixed and Scout R1 recovery consumes the exact fabricated assemblies through the production held interaction.
 - `REVIEW_VEHICLE_RECOVERY_PRESENTATION_MANIFESTS_V1.md` — Independently verify the shared recovery art contracts are exact, Asset V2-native, reusable, and truthfully remain missing until real production art arrives.
@@ -109,6 +111,7 @@ normal closeout.
 - `TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — Implement Twin Solaria Slice E so authorized route-review state drives a readable Solarium I observational-acquisition sequence through the Outbound/Reciproc...
 - `ULTRA_CODEX_PACKET_WORKER.md` — Bootstrap and prove a persistent, bandwidth-conservative Codex worker on the user's Ultra.cc "Speedboat Ops" seedbox that can autonomously claim explicitly e...
 - `VAULTWING_BONDING_LOCAL_HISTORY_RECOVERY.md` — Preserve and audit the clean attached Vaultwing bonding-art worktree without losing its exact HEAD, compare its branch history with current main and the prev...
+- `VAULTWING_RUNTIME_HARDENING.md` — Harden Vaultwing-local runtime ownership after shared hearing/perception lands, without recreating species-local sensing or redesigning wild combat/bond bala...
 - `VEHICLE_FIELD_SCOUT_BUGGY_ASSET_V2.md` — Give the Field Scout Buggy a real Asset Pipeline V2 family and replace hover-buggy-specific vehicle post-processing with an owner/family-driven seam that sup...
 - `VEHICLE_FIELD_SCOUT_BUGGY_CLASS_V1_RECOVERY_1_REVIEW_CORRECTIONS_1.md` — Make production Field Scout restoration use the reviewed R1 SERVICE fabricated-assembly recovery flow.
 - `VEHICLE_RECOVERY_PRESENTATION_MANIFESTS_V1.md` — Register the shared Asset Pipeline V2 contracts needed to present vehicle diagnosis, component requirements, installation, and bootstrap without creating fin...
@@ -189,7 +192,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
 - `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified.
 - WB25-1 is complete. Its first review found one blocking workflow-projection defect (R0-01); the bounded correction landed and its fresh re-review passed with no remaining findings. Generation-aware targets, 2.5D source paths, direction workspaces and backend-derived saved creation readiness are now accepted predecessor authority.
-- WB25-2 has consumed that landed state and is `ready/auto`. It owns guided NEW/IMPORT ingress, the narrow generation-aware New Animation adaptation, 128px SourceArtService production proof, target-bound Source Session provenance, resumable direction packages and a hard no-runtime-promotion boundary.
+- WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved the original Source Session, direction progress, collision, legacy-96, and publication boundaries. WB25-3 remains draft/refresh-required until the recorded authoring chat refreshes the accepted Source Session/Workbench handoff and Art Agent seams.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -200,7 +203,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is complete/reviewed after correction R0-01. WB25-2 is `ready/auto`; its paired review is `ready/auto` behind it. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-3 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction passed its fresh paired review. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-3 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
@@ -297,8 +300,8 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — paired NPA-1 review is ready after implementation landing; verifies the 26-value parity, public request seam, host-service boundary, and full selected closeout.
   - `archived/ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2 implementation landed with 25/25 selected changed-file checks passing; `SavagePounce` owns pounce state/timing and typed tuning, while the two-hit chain remains scoped to NPA-3.
   - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — paired NPA-2 review, ready/auto and dependency-gated on NPA-2.
-  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 ready/auto, blocked pending passed NPA-2 paired review and planning refresh.
-  - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review, ready/auto and dependency-gated on NPA-3.
+  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 remains blocked/manual until the NPA-2 paired review lands and this planning chat refreshes the chain against the reviewed pounce seam.
+  - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review remains blocked/manual with its implementation until that refresh.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
 ### Ash-Bell / Ritualant Scene Closeout
@@ -315,13 +318,19 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — draft/manual Asset V2 closeout for the remaining production art; unresolved human-owned cadence/direction/source decisions keep the packet parked. Known locked targets include an 8f 128×128 rise (1024×128), 32×48 procession-cell intent, 64×96 apparition intent, and static ritual props at 96×96 / 32×32 / 32×64 / 16×16. Walk/drag/turn/reaction direction/frame/FPS contracts remain deliberately unresolved and must be human-locked before claim.
 - The current required-assets registry remains the open-need authority. Do not resume the archived encounter packet or hand-copy new art into legacy runtime paths.
 
-### Cross-cutting Stealth Awareness Planning
+### Cross-cutting Stealth / Vaultwing Pre-NPA-8 Chain
 
 Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`.
+Actor/facet authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 
-- `STEALTH_PERCEPTION_FOUNDATION.md` - P0 draft/manual S0/S1 packet; authoring-chat refresh is required to accept the architecture boundary before implementation.
-- `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/manual dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership; it remains parked for the same design refresh.
-- Both remain intentionally non-claimable drafts until the stealth design boundary is accepted for implementation.
+The architecture boundary is now approved. Hearing is a shared perception facet, not a Vaultwing-owned mechanic. The executable chain is deliberately serial:
+
+1. `STEALTH_PERCEPTION_FOUNDATION.md` — P0 ready/auto; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
+2. `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — fresh-context paired review; no user refresh required when it passes.
+3. `VAULTWING_RUNTIME_HARDENING.md` — P1 ready/auto and dependency-gated on the reviewed stealth foundation; owns fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
+4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — fresh-context paired review and intentional stop boundary.
+
+After step 4, autonomous execution stops at the recorded `non-player-fauna-bonded-command-convergence` planning gate. NPA-8 is intentionally **not authored yet**; it must be re-derived from reviewed stealth + Vaultwing seams and the then-current earlier NPA program so no speculative universal actor API is frozen early.
 
 ## Completed Bidirectional Dropbox Handoff
 
