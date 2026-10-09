@@ -181,12 +181,14 @@
 **F11: [Agent execution, validation and paired review handoff](F11_AGENT_VALIDATION_AUTOMATION.md)**
 
 ### CS-F11-A
-- **Intent:** External reviewer-launch/supervision and bounded successor-loop feasibility proof.
-- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md` (**not created**, not a link to a file).
-- **Authorization:** BLOCKED pending F11 item-level audit, evidence and explicit decision lock.
-- **Do not implement before:** P0 queue-stranding correction plus existing dispatch/review contracts; implementation only after worker interface lock.
+- **Intent:** External paired-review launch/supervision using fresh Codex Exec contexts while preserving the existing dispatcher/workstream/review lineage.
+- **Status:** **AUTHORIZED / PACKET AUTHORED** by the F11 decision lock on 2026-10-09.
+- **Implementation packet:** [`CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md`](../../../custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md).
+- **Paired review:** [`REVIEW_CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md`](../../../custodian/docs/ai_context/task_packets/REVIEW_CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md).
+- **Dependency satisfied:** queue-stranding hardening and its correction/re-review chain are archived complete.
+- **Boundary:** synchronous wrapper above `workstream.py finish`; exact paired-review successor only; `codex exec --ephemeral`; no replacement queue, no daemon, no implicit global queue hopping.
 
-**Existing related packets:** [`TASK_PACKET_QUEUE_STRANDING_HARDENING`](https://github.com/braydio/CUSTODIAN/blob/main/custodian/docs/ai_context/task_packets/TASK_PACKET_QUEUE_STRANDING_HARDENING.md).
+**Existing related packets:** archived `TASK_PACKET_QUEUE_STRANDING_HARDENING*`, `AGENT_REVIEW_PIPELINE*`, `AGENT_DISPATCH_CLAIM_RECEIPT_HARDENING`, and active `ULTRA_CODEX_PACKET_WORKER` remain separate authority.
 
 
 **F12: [Cross-system game-feel opportunities](F12_GAME_FEEL.md)**
