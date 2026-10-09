@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-ingress-review-corrections-1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-ingress
@@ -40,18 +40,33 @@
 
 Address only R0-01 through R0-04. Preserve original finding IDs in the paired re-review as fixed/unresolved/regressed; new findings use cycle 1 IDs. No feature redesign.
 
-## Handoff
+## Completion Truth
 
-- Next workstream: review-operator-2-5d-workbench-ingress-review-corrections-1
-- Next packet state: ready
-- Refresh owner: none
-- ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh reason: none
-- Next action: Land the bounded correction and claim its paired re-review from fresh context.
-- Blockers or open questions: none
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: READY handoff sessions resume from the existing reviewed candidate, idempotent handoff proof, and exact target Workbench without reconversion or document rewrite. Terminal reuse and package closure revalidate current source, target/profile/reference/plan authority, Source Session candidate/review/handoff, and Workbench identity/frame contract/existence while retaining edited document bytes. Direction packages continue after per-cell failures and the UI reports aggregate plus selected-cell state without opening a missing Workbench. Creation collision scanning resolves source-parent, default `source/animations`, and generation-scoped roots. Focused regressions and all required changed-file checks passed; see `OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`.
 
 ## Execution Feedback
 
-Complete custodian.task_feedback.v1 before archive.
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The parent implementation's happy-path smokes did not exercise the four persistence/collision boundaries identified by fresh review. Direction-set UI expected one process return value, so partial progress needed a structured result path. The graph database was absent in the newly claimed worktree and required initialization before change analysis.
+- Root cause / contributing factors: Terminal package state was treated as proof; the interrupted handoff boundary was not modeled; a direction comprehension propagated the first exception; the default source root was already `source/animations` but the generation path was appended beneath it.
+- Prevention / pipeline improvement: Added direct crash-window recovery, terminal source/session/candidate/workbench verification, independent direction progression and UI no-open coverage, plus all three source-root shape controls and alternate-frame collision regression. Final changed-file sweep ran after the last code change.
+- Tooling / docs drift discovered: `none`
+- Follow-up: `review-operator-2-5d-workbench-ingress-review-corrections-1`
+- What worked: Focused fixtures used disposable source sessions and preserved the edited Workbench document byte-for-byte during READY recovery.
 
+## Handoff
+
+- Next workstream: `review-operator-2-5d-workbench-ingress-review-corrections-1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Refresh reason: `none`
+- Next action: Claim the fresh-context paired re-review and verify R0-01 through R0-04 against the landed correction.
+- Blockers or open questions: `none`
