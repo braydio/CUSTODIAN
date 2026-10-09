@@ -168,6 +168,14 @@ find Scout wreck
 
 This slice is pipeline/presentation infrastructure, not art creation.
 
+### Current drive-source availability
+
+Approved E / NE / SE 12-frame `drive_01` source masters plus normalized candidates are preserved in Dropbox:
+
+`/CUSTODIAN/implementation_inputs/custodian_field_scout_buggy_mk1_drive_3dir_asset_handoff_v2.zip`
+
+This is **source availability only**. Asset V2 ingest/binding is still pending, and authored N / S remain missing.
+
 It registers `custodian_field_scout_buggy_mk1`, removes hover-specific importer assumptions, and allows canonical Scout body states to replace compatibility art without changing gameplay.
 
 Body family:
@@ -177,7 +185,7 @@ Body family:
 - true alpha.
 
 States:
-- required: `parked_01` 1f, `drive_01` 6f @8fps, `disabled_01` 1f, `wreck_01` 1f;
+- required: `parked_01` 1f, `drive_01` 12f @12fps, `disabled_01` 1f, `wreck_01` 1f;
 - recommended: `engine_start_01` 7f @8fps, `engine_idle_01` 6f @6fps, `brake_01` 4f @10fps, `impact_01` 4f @12fps, `destroy_01` 8f @10fps, `restore_01` 8f @8fps, `restore_fx_01` 8f @8fps.
 
 ## V6 — Shared recovery presentation manifests
