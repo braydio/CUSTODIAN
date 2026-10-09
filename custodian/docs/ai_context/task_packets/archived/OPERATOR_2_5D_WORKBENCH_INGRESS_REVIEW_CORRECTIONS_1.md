@@ -88,5 +88,5 @@ Address only R0-01 through R0-04. Preserve original finding IDs in the paired re
 - Next-slice finding IDs: none
 - Human-decision finding IDs: none
 - Detailed review summary: REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md
-- Follow-up workstream: operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Follow-up workstream: operator-2-5d-workbench-ingress-review-corrections-2
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb

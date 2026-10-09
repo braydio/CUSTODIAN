@@ -47,16 +47,16 @@ Moment Forge: not run — tooling/workflow review, no runtime presentation chang
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: Green focused regressions changed only manifest contracts, leaving physical saved-document mismatch untested. Default Python skipped the optional Textual pilot; the enabled environment was required. Fresh worktree graph initialization took several minutes. The initial focused-report aggregation used results instead of the runner's tests key; no test outcome was lost.
+- What went wrong: Green focused regressions changed only manifest contracts, leaving physical saved-document mismatch untested. Default Python skipped the optional Textual pilot; the enabled environment was required. Fresh worktree graph initialization took several minutes. The initial focused-report aggregation used results instead of the runner's tests key; no test outcome was lost. First finish rejected historical nested correction naming; current lifecycle requires the flat lineage root plus cycle 2.
 - Root cause / contributing factors: Ingress proof validates the manifest while the actual saved Aseprite is only checked for nonempty existence; the tests mirror the manifest proof. Optional UI dependencies are installed in /tmp/custodian-wb25-venv rather than default Python.
 - Prevention / pipeline improvement: Cycle 2 acceptance requires real readable wrong-frame/wrong-canvas documents and actual saved pixel edits, plus read-only refusal. Reused the installed UI environment and aggregated the unchanged official records with the correct schema.
-- Tooling / docs drift discovered: none
-- Follow-up: operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Tooling / docs drift discovered: Historical browser review summary describes nested cycle-2 naming; current paired-review artifact gate explicitly rejects nested lineages and requires root-series cycle numbering. Packet IDs/paths were corrected in-scope.
+- Follow-up: operator-2-5d-workbench-ingress-review-corrections-2
 - What worked: Real direction-set service probes progressed six pending siblings around blocked N, and restart preserved all seven editable document hashes.
 
 ## Next Handoff
 
-- Next workstream: operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Next workstream: operator-2-5d-workbench-ingress-review-corrections-2
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no

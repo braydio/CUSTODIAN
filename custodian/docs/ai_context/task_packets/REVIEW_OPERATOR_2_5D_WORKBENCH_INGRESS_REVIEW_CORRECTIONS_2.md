@@ -1,16 +1,16 @@
 # REVIEW: WB25-2 Saved Aseprite Contract Proof
 
 - Packet schema: custodian.task_packet.v2
-- Workstream: review-operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Workstream: review-operator-2-5d-workbench-ingress-review-corrections-2
 - Kind: review
 - Status: ready
 - Dispatch: auto
 - Priority: P1
-- Depends on: operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Depends on: operator-2-5d-workbench-ingress-review-corrections-2
 - Locks: operator-workbench-ui, operator-workbench-publish, operator-source-normalization, operator-art-generation-schema
 - Review: none
-- Review target workstream: operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
-- Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_1_REVIEW_CORRECTIONS_2.md
+- Review target workstream: operator-2-5d-workbench-ingress-review-corrections-2
+- Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_INGRESS_REVIEW_CORRECTIONS_2.md
 - Reviewed main: 667370e3443818253112980497e2ee0d71f21d68
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none

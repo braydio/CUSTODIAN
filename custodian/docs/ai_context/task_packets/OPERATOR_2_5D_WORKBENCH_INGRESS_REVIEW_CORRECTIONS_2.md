@@ -1,7 +1,7 @@
 # CORRECTION: WB25-2 Saved Aseprite Contract Proof
 
 - Packet schema: custodian.task_packet.v2
-- Workstream: operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Workstream: operator-2-5d-workbench-ingress-review-corrections-2
 - Status: ready
 - Dispatch: auto
 - Priority: P1
@@ -11,7 +11,7 @@
 - Review: auto
 - Review stage: post-land
 - Review modes: code, architecture, asset-pipeline, workflow
-- Paired review workstream: review-operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Paired review workstream: review-operator-2-5d-workbench-ingress-review-corrections-2
 - Review cycle: 2
 - Max automatic review cycles: 2
 - Reviewed main: 667370e3443818253112980497e2ee0d71f21d68
@@ -42,7 +42,7 @@ Address only R1-01 and remaining R0-02. Retain stable finding IDs. This is the f
 
 ## Handoff
 
-- Next workstream: review-operator-2-5d-workbench-ingress-review-corrections-1-review-corrections-2
+- Next workstream: review-operator-2-5d-workbench-ingress-review-corrections-2
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
