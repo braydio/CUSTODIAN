@@ -43,6 +43,7 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
+- `OPERATOR_2_5D_WORKBENCH_INGRESS.md` — From one missing 2.5D target leaf, let an artist choose NEW or IMPORT and reach an identity-bound editable Workbench without manual filenames, Source Session...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -187,7 +188,9 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - isometric-2-5d-presentation-foundation is complete; its paired review still gates downstream showcase consumers.
 - `operator-workbench-animation-creation` is now reviewed through its bounded service-publication correction: correction `a26982b8d`, cycle-1 re-review artifacts `0ebea7b6`, no remaining findings. WB25 may rely on New Animation as a real backend capability, including exact-pixel full-body/modular publish and DORMANT unwired truth.
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
-- `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified. WB25-1 has consumed that review plus the completed viability counts and is now `ready/auto` on profile `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761`, reference `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`, first-family source `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`, and design lock `41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b`.
+- `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified.
+- WB25-1 is complete. Its first review found one blocking workflow-projection defect (R0-01); the bounded correction landed and its fresh re-review passed with no remaining findings. Generation-aware targets, 2.5D source paths, direction workspaces and backend-derived saved creation readiness are now accepted predecessor authority.
+- WB25-2 has consumed that landed state and is `ready/auto`. It owns guided NEW/IMPORT ingress, the narrow generation-aware New Animation adaptation, 128px SourceArtService production proof, target-bound Source Session provenance, resumable direction packages and a hard no-runtime-promotion boundary.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -198,7 +201,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is `ready/auto` and may be claimed. Its paired review is `ready/auto` behind it. The final planning seed is 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. Every later implementation remains draft until its predecessor and paired review return to the authoring chat.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is `ready/auto`; its paired review is `ready/auto` behind it. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-3 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
