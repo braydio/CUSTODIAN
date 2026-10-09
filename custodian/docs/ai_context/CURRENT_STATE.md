@@ -1350,8 +1350,10 @@ Documentation updates this session:
   `SavagePounceConfig` defaults bound by `enemy_savage.tscn`. The extracted
   authority retains the original launch band, windup/leap/recovery, travel,
   directional contact window, one-hit result handling, cooldown, and
-  interruption behavior. Pounce still has priority over the unchanged Savage
-  two-hit chain; the chain remains actor-owned for NPA-3.
+  interruption behavior. Its fresh paired review passed with zero findings but
+  has not landed because an unrelated review-pairing validator defect blocks
+  closeout. Pounce still has priority over the unchanged Savage two-hit chain;
+  NPA-3 has been remeasured and is ready/auto once that review lands.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring

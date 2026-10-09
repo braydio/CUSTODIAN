@@ -307,9 +307,9 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `archived/ENEMY_MARINE_DASH_ABILITY_EXTRACTION.md` — NPA-1 implementation landed after all 23 changed-file checks passed; `MarineDash` owns the complete lifecycle and typed tuning with exact 26-field parity.
   - `REVIEW_ENEMY_MARINE_DASH_ABILITY_EXTRACTION_RECOVERY_1.md` — paired NPA-1 review is ready after implementation landing; verifies the 26-value parity, public request seam, host-service boundary, and full selected closeout.
   - `archived/ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — NPA-2 implementation landed with 25/25 selected changed-file checks passing; `SavagePounce` owns pounce state/timing and typed tuning, while the two-hit chain remains scoped to NPA-3.
-  - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — paired NPA-2 review, ready/auto and dependency-gated on NPA-2.
-  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 remains blocked/manual until the NPA-2 paired review lands and this planning chat refreshes the chain against the reviewed pounce seam.
-  - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review remains blocked/manual with its implementation until that refresh.
+  - `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION.md` — fresh NPA-2 review passed with zero findings on branch `eec8419f6`; landing remains pending because an unrelated `living-world-abstract-activity-foundation` pairing defect blocks the required repository-wide check.
+  - `ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — NPA-3 planning refresh complete; packet is ready/auto but remains dependency-gated until the NPA-2 review actually lands/archives. The extraction moves six chain-only config values plus three mutable phase fields while deliberately leaving generic cadence/first-hit/contact authority for NPA-4.
+  - `REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 review is ready/auto and dependency-gated on NPA-3; after it passes, NPA-4 returns to the planning chat.
 - Author NPA-4+ against the landed live surface of predecessors rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
 ### Ash-Bell / Ritualant Scene Closeout
