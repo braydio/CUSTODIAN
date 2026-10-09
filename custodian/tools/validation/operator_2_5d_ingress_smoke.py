@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -28,6 +29,39 @@ from ui import service as ui_service
 
 
 REPO = Path(__file__).resolve().parents[3]
+
+
+def assemble_physical_document(manifest_path: Path, *, frames: int, canvas: tuple[int, int]) -> bytes:
+    """Create a real Aseprite document whose physical contract differs from its manifest."""
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    data["timeline"]["document_frames"] = frames
+    data["canvas"].update({"width": canvas[0], "height": canvas[1]})
+    for layer in data.get("layers", []):
+        contract = layer["workspace_contract"]
+        contract["frames"] = frames
+        contract["timeline_slots"] = list(range(1, frames + 1))
+    fixture_manifest = manifest_path.parent / ".physical_document_fixture.json"
+    fixture_manifest.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    try:
+        animation_workbench.aseprite_run(
+            animation_workbench.resolve_aseprite(required=True), fixture_manifest, "assemble")
+    finally:
+        fixture_manifest.unlink(missing_ok=True)
+    return (manifest_path.parent / "workbench.aseprite").read_bytes()
+
+
+def edit_saved_document_pixel(document_path: Path, script_path: Path) -> bytes:
+    """Make and save a valid Aseprite pixel edit through Aseprite's scripting API."""
+    script_path.write_text(
+        'local p=app.params["document"]; local s=app.open(p); '
+        'local cel=s.layers[1]:cel(1); cel.image:drawPixel(0,0,app.pixelColor.rgba(7,19,31,255)); '
+        's:saveAs(p); s:close()\n',
+        encoding="utf-8",
+    )
+    binary = animation_workbench.resolve_aseprite(required=True)
+    subprocess.run([str(binary), "-b", "--script-param", f"document={document_path.resolve()}",
+                    "--script", str(script_path)], check=True, capture_output=True, text=True)
+    return document_path.read_bytes()
 
 
 def main() -> None:
@@ -246,8 +280,9 @@ def main() -> None:
                 package_data["cells"]["ne"].pop(field, None)
             package_path.write_text(json.dumps(package_data, indent=2) + "\n")
             document_path = Path(imported["workbench"]) / "workbench.aseprite"
-            document_path.write_bytes(document_path.read_bytes() + b"\nartist-edit-marker")
-            edited_document = document_path.read_bytes()
+            edited_document = edit_saved_document_pixel(document_path, root / "artist_pixel_edit.lua")
+            assert animation_workbench.inspect_saved_document_contract(
+                Path(imported["workbench"]) / "workbench.json")["frames"] == 15
             conversion_calls = []
             handoff_calls = []
             original_convert = source_service.convert
@@ -280,6 +315,75 @@ def main() -> None:
             })
             single_package_path.write_text(json.dumps(single_package, indent=2) + "\n")
             assert ingress.validate_package(single_package_path)["complete"] is True
+            imported_manifest_path = Path(imported["workbench"]) / "workbench.json"
+            valid_manifest_bytes = imported_manifest_path.read_bytes()
+            valid_document_bytes = document_path.read_bytes()
+            candidate_path = Path(imported["source_session"]).parent / "production/crisp.png"
+            candidate_bytes = candidate_path.read_bytes()
+            handoff_path = Path(imported["handoff"])
+            handoff_bytes = handoff_path.read_bytes()
+
+            # Physical Aseprite files are inspected independently from manifest
+            # claims. Invalid, unreadable and wrong-canvas documents fail closed
+            # across completed reuse, package closure and READY recovery.
+            for label, bad_document in (
+                ("12f/128px", assemble_physical_document(
+                    imported_manifest_path, frames=12, canvas=(128, 128))),
+                ("15f/wrong-canvas", assemble_physical_document(
+                    imported_manifest_path, frames=15, canvas=(127, 128))),
+                ("unreadable", b"nonempty but not an Aseprite document"),
+            ):
+                document_path.write_bytes(bad_document)
+                package_state = json.loads(single_package_path.read_text(encoding="utf-8"))
+                package_state["cells"]["ne"]["terminal_state"] = "EDITABLE_WORKBENCH"
+                single_package_path.write_text(json.dumps(package_state, indent=2) + "\n")
+                try:
+                    ingress.validate_package(single_package_path)
+                except IngressError as error:
+                    assert "saved Workbench Aseprite contract" in str(error), (label, error)
+                else:
+                    raise AssertionError(f"package closure accepted physical {label} Aseprite document")
+
+                try:
+                    ingress.process_cell(package_path, "ne")
+                except IngressError as error:
+                    assert "saved Workbench Aseprite contract" in str(error), (label, error)
+                else:
+                    raise AssertionError(f"completed reuse accepted physical {label} Aseprite document")
+                assert document_path.read_bytes() == bad_document, f"{label} document changed during refusal"
+                assert candidate_path.read_bytes() == candidate_bytes, f"{label} refusal changed candidate bytes"
+                assert handoff_path.read_bytes() == handoff_bytes, f"{label} refusal changed handoff bytes"
+
+                package_state = json.loads(package_path.read_text(encoding="utf-8"))
+                package_state["cells"]["ne"]["terminal_state"] = "SOURCE_STAGED"
+                package_state["cells"]["ne"]["error"] = ""
+                package_path.write_text(json.dumps(package_state, indent=2) + "\n")
+                try:
+                    ingress.process_cell(package_path, "ne")
+                except IngressError as error:
+                    assert "saved Workbench Aseprite contract" in str(error), (label, error)
+                else:
+                    raise AssertionError(f"READY recovery accepted physical {label} Aseprite document")
+                assert document_path.read_bytes() == bad_document, f"READY refusal changed {label} document"
+                assert candidate_path.read_bytes() == candidate_bytes, f"READY refusal changed {label} candidate"
+                assert handoff_path.read_bytes() == handoff_bytes, f"READY refusal changed {label} handoff"
+
+                document_path.write_bytes(valid_document_bytes)
+                imported_manifest_path.write_bytes(valid_manifest_bytes)
+                package_state = json.loads(package_path.read_text(encoding="utf-8"))
+                package_state["cells"]["ne"].update({
+                    "terminal_state": "EDITABLE_WORKBENCH", "error": "",
+                    "workbench": imported["workbench"], "handoff": imported["handoff"],
+                    "reviewed_candidate_sha256": imported["reviewed_candidate_sha256"],
+                })
+                package_path.write_text(json.dumps(package_state, indent=2) + "\n")
+                assert ingress.process_cell(package_path, "ne")["terminal_state"] == "EDITABLE_WORKBENCH"
+                assert ingress.validate_package(single_package_path)["complete"] is True
+                assert document_path.read_bytes() == valid_document_bytes
+                assert imported_manifest_path.read_bytes() == valid_manifest_bytes
+                assert candidate_path.read_bytes() == candidate_bytes
+                assert handoff_path.read_bytes() == handoff_bytes
+
             original_plan_path = ingress.plan_path
             altered_plan = root / "altered-implementation-plan.json"
             altered_plan.write_bytes(original_plan_path.read_bytes() + b"\n")
@@ -291,7 +395,6 @@ def main() -> None:
             else:
                 raise AssertionError("package closure trusted a stale target-plan digest")
             ingress.plan_path = original_plan_path
-            candidate_path = Path(imported["source_session"]).parent / "production/crisp.png"
             candidate_bytes = candidate_path.read_bytes()
             candidate_path.write_bytes(candidate_bytes + b"stale")
             try:

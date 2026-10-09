@@ -383,16 +383,34 @@ def aseprite_run(binary, manifest, mode):
         message = detail[-4000:] or f"Aseprite exited with status {exc.returncode}"
         raise m.WorkbenchError("ASEPRITE WORKBENCH EXPORT FAILED\n" + message) from exc
 
+def inspect_saved_document_contract(manifest_path, aseprite=None):
+    """Read the physical saved Aseprite canvas, frames, and timing without repairing it."""
+    manifest_path=Path(manifest_path); wb=manifest_path.parent/"workbench.aseprite"
+    if not manifest_path.is_file() or not wb.is_file():
+        raise m.WorkbenchError("saved Workbench manifest or document is missing")
+    report_path=manifest_path.parent/".document_contract.json"
+    try:
+        aseprite_run(resolve_aseprite(aseprite,True),manifest_path,"inspect_contract")
+        report=json.loads(report_path.read_text(encoding="utf-8"))
+        if not isinstance(report,dict) or not isinstance(report.get("durations"),list):
+            raise ValueError("Aseprite returned an invalid document contract report")
+        report["frames"]=int(report["frames"])
+        report["width"]=int(report["width"])
+        report["height"]=int(report["height"])
+        report["durations"]=[float(value) for value in report["durations"]]
+        if report["frames"]<1 or report["width"]<1 or report["height"]<1:
+            raise ValueError("Aseprite returned non-positive document dimensions")
+        return report
+    except (OSError,ValueError,KeyError,TypeError,json.JSONDecodeError) as error:
+        raise m.WorkbenchError(f"saved Aseprite document contract is unreadable: {error}") from error
+    finally:
+        report_path.unlink(missing_ok=True)
+
 def reconcile_saved_document_contract(data, manifest_path, aseprite=None):
     """Inspect saved document timing and repair only a provably obsolete frame migration."""
     manifest_path=Path(manifest_path); ws=manifest_path.parent; wb=ws/"workbench.aseprite"
     if not wb.is_file(): return data
-    report_path=ws/".document_contract.json"
-    try:
-        aseprite_run(resolve_aseprite(aseprite,True),manifest_path,"inspect_contract")
-        report=json.loads(report_path.read_text(encoding="utf-8"))
-    finally:
-        report_path.unlink(missing_ok=True)
+    report=inspect_saved_document_contract(manifest_path,aseprite)
     timeline=data.get("timeline",{}); migration=data.get("pending_migration")
     physical=int(report.get("frames",0)); dimensions=(int(report.get("width",0)),int(report.get("height",0)))
     canvas=(int(data.get("canvas",{}).get("width",0)),int(data.get("canvas",{}).get("height",0)))

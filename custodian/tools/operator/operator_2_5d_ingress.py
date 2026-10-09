@@ -12,6 +12,7 @@ from typing import Any
 import operator_animation_targets
 import operator_asset_schema as schema
 import animation_workbench
+import animation_workbench_model as workbench_model
 from art_agent.source_service import SourceArtService, sha256, write_json
 from ui.state import AnimationSelection
 
@@ -214,9 +215,28 @@ class Operator2DIngress:
                 or creation.get("template") != "full_body"
                 or creation.get("import_sources", {}).get(binding["layer"]) != str(candidate.resolve())
                 or int(timeline.get("workspace_clock_frames", 0)) != int(binding["frames"])
+                or int(timeline.get("document_frames", 0)) != int(binding["frames"])
                 or [int(canvas.get("width", 0)), int(canvas.get("height", 0))] != size
                 or Path(manifest.get("aseprite", {}).get("path", "")).resolve() != document_path.resolve()):
             raise IngressError("target Workbench identity or frame contract does not match the package")
+        try:
+            physical = animation_workbench.inspect_saved_document_contract(manifest_path)
+            physical_frames = int(physical["frames"])
+            physical_canvas = [int(physical["width"]), int(physical["height"])]
+            durations = [float(value) for value in physical["durations"]]
+            expected_duration = 1.0 / float(timeline.get("preview_fps", timeline.get("fps", 0)) or 1)
+            timing_matches = (len(durations) == physical_frames
+                              and all(abs(value - expected_duration) <= 0.001 for value in durations))
+        except (workbench_model.WorkbenchError, OSError, ValueError, TypeError, KeyError) as error:
+            raise IngressError(f"saved Workbench Aseprite contract is unreadable: {error}") from error
+        if (physical_frames != int(binding["frames"])
+                or physical_frames != int(timeline["document_frames"])
+                or physical_canvas != size or not timing_matches):
+            raise IngressError(
+                "saved Workbench Aseprite contract does not match the target: "
+                f"document={physical_frames}f/{physical_canvas}, target={binding['frames']}f/{size}, "
+                f"uniform timing={'yes' if timing_matches else 'no'}; document bytes preserved"
+            )
         layers = manifest.get("layers", [])
         matching = [row for row in layers if row.get("layer") == binding["layer"]]
         if len(matching) != 1:
