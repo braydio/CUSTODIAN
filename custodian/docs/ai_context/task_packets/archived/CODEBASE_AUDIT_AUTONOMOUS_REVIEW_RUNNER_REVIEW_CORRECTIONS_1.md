@@ -45,7 +45,7 @@
 
 ## Authoring chat
 
-https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Execution Feedback
 
@@ -74,7 +74,7 @@ https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: After this correction lands and archives complete, invoke `python3 custodian/tools/agent/paired_review_runner.py review-codebase-audit-autonomous-review-runner-review-corrections-1` from the synchronized coordination checkout.
 - Blockers or open questions: none
@@ -87,4 +87,4 @@ https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-
 - Reviewed landed main: `0235357952c06c0b5f489811cb35d48c949300a4`
 - Findings: `R0-01` fixed; no cycle-1 findings.
 - Evidence: `REVIEW_CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`; installed Codex CLI help; captured implementation run `20261009T211138Z-1115421a9515`; runner/dispatcher/workstream/review-contract/task-packet-contract/task-packet-index suites (171 passed); changed-file validation; `git diff --check`.
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166

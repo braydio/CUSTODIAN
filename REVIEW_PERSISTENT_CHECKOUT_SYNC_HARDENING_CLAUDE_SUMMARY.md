@@ -1,6 +1,6 @@
 # Persistent Checkout Sync Hardening Review
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Fresh-context review of landed implementation commit `58bab17248d444315cd8fa7785fe295acf31eb14` found one blocking workflow-performance defect, `R0-01`. The implementation's `_ignored_manifest()` reads and hashes every ignored file on every snapshot. The persistent project root reports 134,037 ignored entries; a read-only root status probe remained in `path.read_bytes()` hashing after more than 60 seconds and was interrupted. The implementation summary records about eight minutes for the same ignored-tree scan. This affects `csync status`, root apply, and OPUI startup's coordination sync attempt.
 
@@ -32,7 +32,7 @@ The focused fixtures substantiate the sync safety claims, but they did not expos
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: Claim correction cycle 1, remove ignored-tree-wide hashing while retaining path-scoped collision safety, then run paired fresh-context re-review.
 - Blockers or open questions: none

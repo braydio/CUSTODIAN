@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `new process-spawning control-plane seam; independent review must falsify duplicate claims, non-fresh contexts, unsafe recovery, and accidental queue/finish coupling`
 - Reviewed main: `7eddb322aca7871a9146fe4e6952fe265039f8cd`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery/closeout summary and final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Make paired CUSTODIAN reviews actually launch in a mechanically fresh Codex context without user message relay, while preserving the existing dispatcher, workstream, review-lineage and human-gate authorities.
@@ -76,7 +76,7 @@
 - Detailed review summary: `REVIEW_CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER_CLAUDE_SUMMARY.md`
 - Follow-up workstream: `codebase-audit-autonomous-review-runner-review-corrections-1`
 - Reviewer independence: This review ran in the claimed fresh paired-review worktree, reconstructed from repository evidence only, and did not use implementation-session conversation content or edit reviewed implementation/runtime files.
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 
 ## Completion Truth
 
@@ -93,7 +93,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
 - Next action: After this implementation lands and archives complete, invoke `python3 custodian/tools/agent/paired_review_runner.py review-codebase-audit-autonomous-review-runner` from the synchronized coordination checkout. The child review must start fresh and inspect only durable repo evidence; it may use the runner itself because that code is already landed.
 - Blockers or open questions: `bootstrap self-review must not fake independence by reviewing the runner implementation in the same implementation context`

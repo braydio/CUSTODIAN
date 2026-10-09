@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `cross-family perception authority extraction and live typed-boundary repair; independent review should falsify behavioral drift and accidental behavior-policy centralization`
 - Reviewed main: `0c80f6a5a1c64168a39b841fa5de362d98728664`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery/closeout summary and final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated species/runtime behavior.
@@ -39,7 +39,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
 - Next action: After this implementation lands, continue autonomously into its fresh-context paired review.
 - Blockers or open questions: `none; current enemy-runtime lock holders may delay claim but do not change packet readiness`

@@ -15,7 +15,7 @@
 - Review cycle: 1
 - Max automatic review cycles: 2
 - Reviewed main: 105c2541fd1c4dd7bf3dab688b64c3da76a4310b
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Visual review: none
 - Parent implementation: task-packet-queue-reconciliation-v1; custodian/docs/ai_context/task_packets/archived/TASK_PACKET_QUEUE_RECONCILIATION_V1.md
 - Parent review: review-task-packet-queue-reconciliation-v1; custodian/docs/ai_context/task_packets/archived/REVIEW_TASK_PACKET_QUEUE_RECONCILIATION_V1.md
@@ -46,6 +46,6 @@ Address only R0-01, R0-02 and R0-03. Keep original review finding IDs and receip
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Next action: Land/archive this correction, then start the paired re-review in a fresh context.
 - Blockers or open questions: none; no human planning decision required.

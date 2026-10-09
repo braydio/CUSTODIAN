@@ -12,7 +12,7 @@
 - Review target workstream: `codebase-audit-autonomous-review-runner`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md`
 - Reviewed main: `7eddb322aca7871a9146fe4e6952fe265039f8cd`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -35,7 +35,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none; the parent review contract authorizes one bounded cycle-1 correction for R0-01`
 - Next action: Publish the targeted correction/re-review pair as ready/auto; after the parent review archives complete, claim and implement only R0-01.
 - Blockers or open questions: `none`

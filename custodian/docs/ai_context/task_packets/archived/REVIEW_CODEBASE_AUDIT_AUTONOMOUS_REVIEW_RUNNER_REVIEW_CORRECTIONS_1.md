@@ -12,7 +12,7 @@
 - Review target workstream: `codebase-audit-autonomous-review-runner-review-corrections-1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER_REVIEW_CORRECTIONS_1.md`
 - Reviewed main: `97703d85ea7111abfa7b71884813df543a555813`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
@@ -35,7 +35,7 @@
 - Next packet state: `none`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
 - Next action: Freshly review the correction after it lands and archives complete.
 - Blockers or open questions: `none`

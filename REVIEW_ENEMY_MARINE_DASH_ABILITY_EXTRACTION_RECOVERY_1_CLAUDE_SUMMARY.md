@@ -24,7 +24,7 @@ The review used a fresh paired-review workstream and reconstructed the target fr
 - Follow-up: manual-follow-up
 - What worked: Current-main focused gates, exact tuning parity, and source ownership inspection provided direct review evidence.
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Next Handoff
 
@@ -32,7 +32,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: NPA-1 paired review passed; remeasure current MarineDash/config ownership, public request seam, final enemy.gd shape, Savage pounce fields/callers/tuning, and stale ownership prose.
 - Next action: Return this passed receipt to the authoring conversation for the required planning refresh; leave NPA-2 blocked/manual until refreshed.
 - Blockers or open questions: none
