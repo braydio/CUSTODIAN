@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `codebase-audit-autonomous-review-runner-review-corrections-1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-codebase-audit-autonomous-review-runner`
 - Locks: `agent-workflow`

@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-codebase-audit-autonomous-review-runner`
 - Kind: `review`
-- Status: `blocked`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `codebase-audit-autonomous-review-runner`
@@ -15,7 +15,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
 - Visual review: `none`
 - Reviewer context: `fresh`
-- Reviewer provenance: `different-agent | same-agent-fresh-context`
+- Reviewer provenance: `same-agent-fresh-context`
 - Review modes: `code, architecture, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
@@ -31,23 +31,23 @@
 
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `codebase-audit-autonomous-review-runner-review-corrections-1`
+- Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
-- Refresh reason: `none`
-- Next action: If passed, make the runner the default paired-review launch path through the already-updated lifecycle instructions; subsequent same-series work continues normally.
+- Refresh reason: `none; the parent review contract authorizes one bounded cycle-1 correction for R0-01`
+- Next action: Publish the targeted correction/re-review pair as ready/auto; after the parent review archives complete, claim and implement only R0-01.
 - Blockers or open questions: `none`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `partial`
-- Friction severity: `medium`
-- What went wrong: Required changed-file validation selected the review-pairing contract but could not fetch because this claimed worktree's shared Git common-dir `FETCH_HEAD` is read-only in the managed sandbox. The review packet remains claimed and unarchived; finish was not run.
-- Root cause / contributing factors: The validation recipe fetches `origin` into shared checkout metadata outside this worktree's writable roots.
-- Prevention / pipeline improvement: Run changed-file validation from an authorized writable coordination checkout or provide a validation-safe Git metadata path before paired-review finish.
+- Friction severity: `low`
+- What went wrong: The child sandbox could not write shared Git metadata during changed-file validation, so the reviewer preserved the claim. The coordination context then ran the required review-pairing test successfully; changed-file validation over the review's docs-only delta selected no tests.
+- Root cause / contributing factors: The review sandbox's writable roots did not include shared Git metadata, and all review artifact changes are excluded documentation paths.
+- Prevention / pipeline improvement: Run metadata-fetching closeout checks from the writable coordination checkout; when a docs-only review delta selects zero tests, pair it with the explicit review-pairing contract check and the review's focused suites.
 - Tooling / docs drift discovered: none
-- Follow-up: manual-follow-up
+- Follow-up: `codebase-audit-autonomous-review-runner-review-corrections-1`
 - What worked: Direct focused suites and targeted packet-authoring preflight ran successfully; the failed closeout check preserved the review claim.
