@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `awakening-handoff-readiness-art-convergence-v1-r1, review-awakening-handoff-readiness-art-convergence-v1`
@@ -38,11 +38,20 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: success | partial | blocked
-- Friction severity: none | low | medium | high
-- What went wrong: none | ...
-- Root cause / contributing factors: none | ...
-- Prevention / pipeline improvement: none | ...
-- Tooling / docs drift discovered: none | ...
-- Follow-up: none | fixed-in-scope | <workstream-id> | manual-follow-up
-- What worked: optional
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: A fresh worktree required a full Godot editor import before the focused smoke could load textures; initial smoke iterations also exposed GDScript inference and JSON numeric-type issues, which were corrected. Repeating `--test` flags selects only the final ID, so the six required checks were rerun individually.
+- Root cause / contributing factors: The worktree had no editor import cache, the smoke used an inferred Transform2D×Rect2 result, JSON arrays contain numeric values with a distinct runtime type, and the validation CLI's `--test` argument is single-valued.
+- Prevention / pipeline improvement: Warm the Godot cache once per new worktree, explicitly type transformed bounds, normalize JSON coordinates before exact comparisons, and invoke single-test validation IDs individually.
+- Tooling / docs drift discovered: `run_validation.py --test` does not accumulate repeated flags; no broader tooling change was in this packet's scope.
+- Follow-up: `none`
+- What worked: Layout-derived world-bound comparisons and source-hash verification keep the 04/05 exception explicit without touching runtime or art.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: The registration smoke now derives exact grow-64 rectangles from all seven ordinary `AwakeningLayout.ZONES` entries and checks underlay/foreground canvas, global bounds, registration, and parity. It explicitly verifies the locked shared 04/05 composition root/layers, source identities and SHA-256 values, complete connector silhouette, hidden legacy plates, and absent Locker foreground. In-smoke negative controls reject Layout-envelope, sprite-transform, foreground-canvas, composition-child, and source-state mutations. All six correction-packet focused checks passed individually; `git diff --check` passed.
