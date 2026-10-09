@@ -186,3 +186,21 @@ Recommended v2 plan row:
 - Refresh reason: none
 - Next action: after implementation lands, claim the paired review in a fresh reviewer context and verify the archived packet contract.
 - Blockers or open questions: none
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-2-5d-workbench-cockpit-foundation`
+- Reviewed on main: `3c23a493992cdf8c20724d7d9c25c3235211c263`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-2-5d-workbench-cockpit-foundation-review-corrections-1`

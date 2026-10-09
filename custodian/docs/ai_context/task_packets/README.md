@@ -31,6 +31,8 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
+- `OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION_REVIEW_CORRECTIONS_1.md` — Correct R0-01 direction workspace/current creation workflow truth.
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION_REVIEW_CORRECTIONS_1.md` — Independently re-review R0-01 direction workflow truth.
 - `REVIEW_TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Independently verify that the dispatcher cannot silently strand active V2 work and that the new queue-state invariant does not accidentally make parked/manua...
 - `TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Eliminate ambiguous task-packet queue states that can make real work disappear from autonomous claiming, and make intentional parking versus dependency gatin...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
@@ -81,7 +83,6 @@ normal closeout.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
-- `REVIEW_OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_INGRESS.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
