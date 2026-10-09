@@ -41,6 +41,12 @@
 - Deferred: F14-C2/F15 production binding and all parent non-goals remain gated after independent correction acceptance.
 
 ## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `actor_reification_coordinator.gd` rejects nonfinite safe-anchor and staged actor positions before committing physical authority; `simulation_snapshot_migration.gd` checks the original schema-v5 state hash before abstract-v1 migration. The focused handoff smoke verifies NaN/Infinity rejection with unchanged group/projection and causal history, no leaked actor, valid finite reentry, valid dotted-ID legacy migration, corrupted-fingerprint rejection, and stale-hash payload-tamper rejection. Its 120-tick physical hold fails under a temporary representation-guard bypass with `abstract movement advanced while the actor was physical`. Import preflight passed; handoff, abstract-activity, kernel, macro-state, and snapshot-roundtrip smokes passed; changed-file validation passed 3/3; `git diff --check` passed.
 - Outcome: Complete. R0-01, R0-02, and R0-03 are fixed within the synthetic one-Grunt boundary.
 - R0-01 evidence: NaN and Infinity anchors reject before staged actor creation; canonical group/projection and causal history remain unchanged, no actor leaks, and finite B reification succeeds.
 - R0-02 evidence: schema-v5/abstract-v1 input validates its original raw state fingerprint before migration. Valid dotted-ID legacy input restores; corrupted fingerprint and stale-hash payload tampering both return no restored state. Existing schema-v4 migration remains covered by snapshot-roundtrip smoke.
