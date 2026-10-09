@@ -75,4 +75,3 @@ All bytes are preserved. The safe lifecycle sync must report pending; no reset, 
 - Refresh reason: WB25-2 must consume accepted WB25-1 APIs/state model and this passed R0-01 correction re-review before becoming claimable.
 - Next action: Open the authoring chat and refresh the existing WB25-2 packet in place using this summary and workstream ID.
 - Blockers or open questions: WB25-2 planning refresh; persistent-root synchronization separately remains pending because the coordination checkout contains preserved local import changes.
-
