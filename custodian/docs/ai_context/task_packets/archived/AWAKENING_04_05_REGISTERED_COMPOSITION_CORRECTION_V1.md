@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `ff1c3788409747dd0f74f70d100862acd6af139e`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Goal: Replace the independently fitted/rotated Dust Lung ↔ connector ↔ Locker Reliquary presentation with the user's exact precomposed three-layer registration. Preserve the supplied relative layout exactly; do not solve the connector as a separate anchor-fitting problem.
 - Completion boundary: Done when the three production layers reproduce the supplied 1502×2048 composition with one shared coordinate basis, zero per-piece rotation, exact layer bounds/overlaps/order, and no independent Dust/Locker/connector normalization that changes their relative registration. Gameplay geometry and the specialized Designation Locker remain unchanged.
 - Current measured state: The runtime now publishes and binds the exact registered RGBA 1502×2048 images through the three existing Asset V2 families. One shared root at `(349,-2585)`, native 1:1 scale, and zero rotation aligns the visible-bounds centers of Dust and Locker to their existing room-art centers with symmetric 33×10 world-unit residuals. Layer bounds, draw order, overlaps, and composition export-edge difference are asserted. The separate Designation Locker remains interactive; Layout and collision remain unchanged. Paired review is the remaining lifecycle step.
@@ -119,7 +119,7 @@
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
 - Detailed review summary: `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_CORRECTION_V1_CLAUDE_SUMMARY.md`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Reviewer independence: `The paired review ran from a newly claimed worktree and reconstructed the landed implementation from its archived packet, durable summary, active Awakening architecture authority, registration evidence, live scene, and focused validation. The reviewed implementation was not modified.`
 - Focused evidence: `Registered asset contract passed with exact source hashes, canvas dimensions, bounds, overlap counts, draw order, and expected export-edge mismatch. Awakening first-return scene, geometry, progression, 1025-sample bidirectional traversal, Designation Locker, Asset V2 doctor, and compact GL renderer validations passed. Renderer bounds were [65,12,575,708].`
 - Validation caveat: `The fresh worktree initially lacked Godot's generated import cache; after headless editor initialization/import, all focused runtime checks passed. Generated untracked import sidecars from that initialization were removed.`
@@ -131,7 +131,7 @@
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Refresh reason: none
 - Next action: land this validated implementation, then claim its paired review from a fresh reviewer context.
 - Blockers or open questions: none
