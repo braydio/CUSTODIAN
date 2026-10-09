@@ -25,7 +25,7 @@ coherent effort.
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<lowercase-kebab-id>`
 - Status: `draft`
-- Dispatch: `auto`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `none`
@@ -69,7 +69,15 @@ When the user supplied an authoring-chat URL, reuse that same URL for
 
 Status values: `draft`, `ready`, `in_progress`, `blocked`, `complete`.
 
-Executable packets default to `Dispatch: auto`. `Status`, dependencies, locks, and review pairing are the ordinary claim gates, so a `ready/auto` packet with incomplete dependencies remains blocked and becomes claimable automatically when those dependencies archive `complete`. Use `Dispatch: manual` only when the user explicitly wants to decide when an otherwise implementation-ready packet may be claimed. Priority is `P0` (highest)
+Use these queue states consistently:
+
+- `ready/auto`: mechanically executable; dependencies, locks, review pairing, and validation references provide the gates. Incomplete dependencies do not require changing packet status.
+- `ready/manual`: implementation-ready, but the user explicitly controls claim timing.
+- `draft/manual`: intentionally parked for a concrete refresh or human decision. State that reason in the body or handoff.
+- `draft/auto`: invalid for an active V2 packet. Use `ready/auto` for dependency-gated mechanical work, or `draft/manual` for a genuine refresh/human gate.
+- `complete`: closeout state; archive through the workstream lifecycle.
+
+Priority is `P0` (highest)
 through `P3` (lowest). Dependencies name workstream IDs that must have complete
 archived packets on `origin/main`. Locks are comma-separated narrow ownership
 IDs held for the duration of a published claim, or `none`.

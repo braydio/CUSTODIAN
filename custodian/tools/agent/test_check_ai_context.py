@@ -140,6 +140,26 @@ class CheckAiContextTestCase(unittest.TestCase):
         report = cac.run_checks(self.repo)
         self.assertTrue(report.ok, report.to_json())
 
+    def test_v2_draft_auto_is_reported_as_queue_stranding(self):
+        text = _v2_implementation_packet("stranded", status="draft")
+        self._write_active("STRANDED.md", text)
+        self._write_readme()
+        report = cac.run_checks(self.repo)
+        findings = [f for f in report.findings if f.check == "packet-queue"]
+        self.assertTrue(any("draft/auto" in f.message for f in findings), report.to_json())
+
+    def test_missing_dependency_identity_is_reported(self):
+        text = _v2_implementation_packet("missing-dep").replace(
+            "- Depends on: `none`", "- Depends on: `unlisted-predecessor`",
+        )
+        self._write_active("MISSING_DEP.md", text)
+        self._write_readme(ready_auto="- `MISSING_DEP.md` — missing predecessor.")
+        report = cac.run_checks(self.repo)
+        self.assertTrue(any(
+            f.check == "packet-queue" and "missing dependency identity" in f.message
+            for f in report.findings
+        ), report.to_json())
+
     def test_missing_required_context_fails(self):
         self._write_readme()
         (self.repo / "custodian" / "AGENTS.md").unlink()

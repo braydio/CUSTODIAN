@@ -131,8 +131,8 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("legacy-task", priority="P0")
         self.add_packet("manual-task", dispatch_value="manual", priority="P0")
         rendered = dispatch.status(self.repo, output=False)
-        self.assertIn("legacy-task", rendered.split("MANUAL (", 1)[1])
-        self.assertIn("manual-task", rendered.split("MANUAL (", 1)[1])
+        self.assertIn("legacy-task", rendered.split("MANUAL READY (", 1)[1])
+        self.assertIn("manual-task", rendered.split("MANUAL READY (", 1)[1])
         self.assertIn("NO ELIGIBLE AUTO TASK", self._claim_output())
 
     def test_ready_auto_packet_is_eligible(self):
@@ -165,6 +165,49 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("draft-task", status="draft", dispatch_value="auto")
         self.assertIn("status: draft", self._claim_output())
 
+    def test_v2_draft_auto_is_invalid_and_visible(self):
+        content = packet("draft-v2", status="draft", dispatch_value="auto").replace(
+            "# Packet\n\n", "# Packet\n\n- Packet schema: `custodian.task_packet.v2`\n", 1,
+        )
+        self.add_packet("draft-v2", text=content)
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("draft/auto", rendered.split("INVALID/RECOVERY (", 1)[1])
+        with self.assertRaisesRegex(dispatch.DispatchError, "draft/auto"):
+            dispatch.claim(self.repo, "draft-v2", "codex", True)
+
+    def test_queue_audit_classifies_canonical_states_and_fails_closed(self):
+        self.add_packet("free", dispatch_value="auto")
+        self.add_packet("base", dispatch_value="auto")
+        self.add_packet("gated", dispatch_value="auto", depends="base")
+        self.add_packet("manual-ready", dispatch_value="manual")
+        self.add_packet("parked", status="draft", dispatch_value="manual", text=(
+            packet("parked", status="draft", dispatch_value="manual").replace(
+                "# Packet\n\n", "# Packet\n\n- Packet schema: `custodian.task_packet.v2`\n", 1,
+            )
+            + "\nRefresh required after the human design decision.\n"
+        ))
+        self.add_packet("bad-draft", status="draft", dispatch_value="auto", text=(
+            packet("bad-draft", status="draft", dispatch_value="auto").replace(
+                "# Packet\n\n", "# Packet\n\n- Packet schema: `custodian.task_packet.v2`\n", 1,
+            )
+        ))
+        self.add_packet("missing-dep", dispatch_value="auto", depends="absent-workstream")
+        rendered = dispatch.status(self.repo, output=False)
+        self.assertIn("P2 free", rendered.split("READY (", 1)[1])
+        self.assertIn("manual-ready", rendered.split("MANUAL READY (", 1)[1])
+        self.assertIn("parked", rendered.split("PARKED DRAFT (", 1)[1])
+        self.assertIn("dependency: base", rendered.split("DEPENDENCY/LOCK BLOCKED (", 1)[1])
+        self.assertIn("draft/auto", rendered.split("INVALID/RECOVERY (", 1)[1])
+        self.assertIn("missing dependency identity: absent-workstream", rendered)
+        with self.assertRaisesRegex(dispatch.DispatchError, "dependency: base"):
+            dispatch.claim(self.repo, "gated", "codex", True)
+        with self.assertRaisesRegex(dispatch.DispatchError, "manual dispatch"):
+            dispatch.claim(self.repo, "manual-ready", "codex", True)
+        fake = mock.Mock(); fake.start.side_effect = publish_workstream
+        with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
+            dispatch.claim(self.repo, "manual-ready", "codex", False)
+        self.assertEqual(fake.start.call_args.args[0], "manual-ready")
+
     def test_priority_and_path_tiebreak_order(self):
         self.add_packet("late", dispatch_value="auto", priority="P2", filename="z-late.md")
         self.add_packet("first", dispatch_value="auto", priority="P1", filename="z-first.md")
@@ -182,6 +225,7 @@ class DispatchTests(unittest.TestCase):
 
     def test_archived_complete_dependency_satisfies_dependency(self):
         self.add_packet("depends-task", dispatch_value="auto", depends="base-task")
+        self.add_packet("base-task", status="in_progress", dispatch_value="auto")
         self.assertIn("dependency: base-task", self._claim_output())
         self.add_packet("base-task", status="complete", archived=True)
         self.assertIn("depends-task", dispatch.status(self.repo, output=False).split("READY", 1)[1])
@@ -324,6 +368,7 @@ class DispatchTests(unittest.TestCase):
         git(self.repo, "branch", "agent/holder", "origin/main"); git(self.repo, "push", "origin", "agent/holder"); git(self.repo, "fetch", "origin")
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("lock: asset-catalog held by holder", rendered)
+        self.assertIn("collision", rendered.split("DEPENDENCY/LOCK BLOCKED (", 1)[1])
         self.assertIn("independent", rendered.split("READY (", 1)[1])
 
     def test_cli_busy_dispatcher_fails_fast_without_claim_side_effects(self):
@@ -498,6 +543,7 @@ class DispatchTests(unittest.TestCase):
         with mock.patch.object(dispatch, "_load_workstream", return_value=fake), mock.patch("builtins.print"):
             dispatch.claim(self.repo, "manual-claim", "codex", False)
         self.assertEqual(fake.start.call_args.args[0], "manual-claim")
+        self.add_packet("missing", status="in_progress", dispatch_value="auto")
         self.add_packet("blocked-manual", dispatch_value="manual", depends="missing")
         with self.assertRaisesRegex(dispatch.DispatchError, "dependency: missing"):
             dispatch.claim(self.repo, "blocked-manual", "codex", False)
@@ -914,7 +960,7 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("bounded TASK OVERRIDE", errors.get("review-no-override", ""))
         rendered = dispatch.status(self.repo, output=False)
         self.assertIn("invalid review pairing", rendered)
-        self.assertIn("review-no-override", rendered.split("BLOCKED (", 1)[1])
+        self.assertIn("review-no-override", rendered.split("INVALID/RECOVERY (", 1)[1])
         with self.assertRaisesRegex(dispatch.DispatchError, "bounded TASK OVERRIDE"):
             dispatch.claim(self.repo, "review-no-override", "codex", False)
 

@@ -129,6 +129,17 @@ class TaskPacketIndexTests(unittest.TestCase):
         self.assertNotIn("BAD_WORK.md", text)
         self.assertIn("GOOD_WORK.md", text)
 
+    def test_invalid_v2_draft_auto_is_excluded_from_managed_ready_auto_index(self):
+        draft_auto = ready_auto_packet("draft-auto").replace(
+            "# Packet\n\n", "# Packet\n\n- Packet schema: `custodian.task_packet.v2`\n", 1,
+        ).replace("Status: `ready`", "Status: `draft`")
+        self._write("DRAFT_AUTO.md", draft_auto)
+        self._write("GOOD_WORK.md", ready_auto_packet("good-work"))
+        tpi.write(self.repo)
+        text = self._readme_text()
+        self.assertNotIn("DRAFT_AUTO.md", text)
+        self.assertIn("GOOD_WORK.md", text)
+
     def test_write_is_idempotent(self):
         self._write("ALPHA_WORK.md", ready_auto_packet("alpha-work"))
         first = tpi.write(self.repo)

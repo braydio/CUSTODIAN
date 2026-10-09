@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from task_packet_contract import PACKET_ROOT, PRIORITY, header_field, parse_packet
+from task_packet_contract import PACKET_ROOT, PRIORITY, header_field, parse_packet, validate_queue_contract
 
 MANAGED_BLOCK_START = "<!-- task_packet_index:managed:start -->"
 MANAGED_BLOCK_END = "<!-- task_packet_index:managed:end -->"
@@ -62,13 +62,20 @@ def discover_ready_auto_packets(repo: Path) -> list[tuple[Path, str]]:
     entries: list[tuple[Path, str]] = []
     if not active_root.is_dir():
         return entries
-    for md in sorted(active_root.glob("*.md")):
-        if md.name == "README.md":
-            continue
-        text = md.read_text()
+    active_files = [md for md in sorted(active_root.glob("*.md")) if md.name != "README.md"]
+    archived_root = active_root / "archived"
+    archived_files = sorted(archived_root.glob("*.md")) if archived_root.is_dir() else []
+    active_texts = {md.relative_to(repo).as_posix(): md.read_text() for md in active_files}
+    active_packets = [parse_packet(rel, text) for rel, text in active_texts.items()]
+    archived_packets = [
+        parse_packet(md.relative_to(repo).as_posix(), md.read_text()) for md in archived_files
+    ]
+    queue_errors = validate_queue_contract(active_packets, archived_packets, active_texts)
+    for md in active_files:
+        text = active_texts[md.relative_to(repo).as_posix()]
         rel = md.relative_to(repo).as_posix()
         packet = parse_packet(rel, text)
-        if packet.error or packet.status != "ready" or packet.dispatch != "auto":
+        if packet.error or packet.workstream in queue_errors or packet.status != "ready" or packet.dispatch != "auto":
             continue
         entries.append((md, packet.priority))
     entries.sort(key=lambda item: (PRIORITY.get(item[1], 9), item[0].name))
