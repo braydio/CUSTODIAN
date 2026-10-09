@@ -247,6 +247,31 @@
 **Existing related authorities (do not duplicate):** [Interest Management spec](../../01_systems/INTEREST_MANAGEMENT_SYSTEM.md); [Sector Activity Simulator candidate](../../90_codex/simulation/sector_activity_simulator.md); [Godot macro simulation migration](../PYTHON_SIM_TO_GODOT_MIGRATION.md) and [REMAP tracker](../PYTHON_SIM_REMAP_TRACKER.md); F02 world installation, F04 NPA, F06 campaign, F08 infrastructure. Existing queue rights/review gates remain unchanged.
 
 
+**F15: [Campaign-World Geographic Scale, Topology and Traversable Domain](F15_CAMPAIGN_WORLD_GEOGRAPHY.md)**
+
+> New P0 **design/audit** focus. [Discussion draft](../CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) records user intent for one broad explorable campaign geography, but does **not** lock infinite maps, numeric world sizes or rewrite existing Hub/Lattice/Procgen owners. These are NOT implementation packets.
+
+### CS-F15-A
+- **Intent:** Current finite-world scale and wayfinding benchmark, canonical Hub/Port/Domain terms, local procgen vs global geography owner map and three architectural alternatives evaluated.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_CAMPAIGN_WORLD_SCALE_AND_TOPOLOGY_EVIDENCE.md` (**not created**).
+- **Authorization:** BLOCKED pending F15 item-level evidence/decision lock and current F02 procgen authority check.
+- **Acceptance sketch:** fixed seeds, live traversal/time/density/biome measures, region/route API trace, clear old-doc drift disposition; no geometry rewrite.
+
+### CS-F15-B
+- **Intent:** Deterministic macro geographic backbone / stable location IDs and coherent route, water, biome-edge, settlement and domain-boundary metadata; preserve current procgen runtime ownership.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_CAMPAIGN_WORLD_GEOGRAPHIC_BACKBONE.md` (**not created**).
+- **Authorization:** BLOCKED pending A, explicit player-scale/extent/scene-seam choice, active GenerationGrid/procgen stage and one geographic data owner. May instead integrate with an existing procgen program packet.
+- **Acceptance sketch:** stable topology and boundary test without creating a huge TileMap, renderer authority or new persistence silo.
+
+### CS-F15-C
+- **Intent:** One-campaign connected traversal proof across multiple distinct localities with a meaningful intervening landscape, persistent campaign identity, stable re-entry and readable geography.
+- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_CAMPAIGN_WORLD_CONNECTED_TRAVERSAL_PROOF.md` (**not created**).
+- **Authorization:** BLOCKED pending architecture review, B or approved existing topology owner, RouteTraversal/WorldTransition/Operator ingress and F14 identity integration decisions.
+- **Acceptance sketch:** traverse two nonadjacent sites and one biome transition **without ending the accepted campaign**, preserve route/world state and Operator, validate perf/deterministic seed/seam, human review of wayfinding, no mandatory new assets.
+
+**Preexisting authority:** [Lattice Doctrine](../../03_world/LATTICE_DOCTRINE.md), [Hub First Set Blockout](../HUB_FIRST_SET_BLOCKOUT.md), [World Transition](../WORLD_TRANSITION_SYSTEM.md), [Region Generation](../REGION_GENERATION_SYSTEM.md), [Procgen Optimization Roadmap](../../02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md), F02 procgen and F14 unloaded-world activity. No new art family or task-packet DAG has been authorized.
+
+
 ## Promotion checklist for each slot
 - [ ] Current `main` and relevant active design/AGENTS reviewed.
 - [ ] Finding ID, evidence/callsite, measured before-state and severity recorded in focus doc.
