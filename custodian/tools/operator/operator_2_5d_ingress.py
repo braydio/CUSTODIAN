@@ -167,6 +167,99 @@ class Operator2DIngress:
             self.record_blocked(package_path, direction, f"{type(error).__name__}: {error}")
             raise
 
+    def process_package(self, package_path: Path | str, *,
+                        execution_env: dict[str, str] | None = None) -> dict[str, Any]:
+        """Advance every direction independently and persist each failure locally."""
+        path = Path(package_path)
+        package = json.loads(path.read_text(encoding="utf-8"))
+        outcomes: dict[str, dict[str, Any]] = {}
+        for binding in package.get("targets", []):
+            direction = binding["direction"]
+            try:
+                outcomes[direction] = self.process_cell(path, direction, execution_env=execution_env)
+            except Exception:
+                latest = json.loads(path.read_text(encoding="utf-8"))
+                outcomes[direction] = dict(latest["cells"][direction])
+        states = [cell.get("terminal_state", "PENDING") for cell in outcomes.values()]
+        counts = {state: states.count(state) for state in ("EDITABLE_WORKBENCH", "BLOCKED", "PENDING")}
+        complete = not counts["PENDING"] and not counts["BLOCKED"]
+        return {"complete": complete, "cells": outcomes, "counts": counts}
+
+    def _workbench_root(self, binding: dict[str, Any]) -> Path:
+        return self.workspace_root / binding["art_generation"] / binding["profile"] / binding["group"] / binding["action"] / binding["direction"]
+
+    def _validate_workbench(self, binding: dict[str, Any], candidate: Path,
+                            workbench_value: str | None = None) -> Path:
+        workspace = self._workbench_root(binding)
+        if workbench_value and Path(workbench_value).resolve() != workspace.resolve():
+            raise IngressError("saved Workbench path does not match the exact target workspace")
+        manifest_path = workspace / "workbench.json"
+        document_path = workspace / "workbench.aseprite"
+        if not manifest_path.is_file() or not document_path.is_file() or document_path.stat().st_size == 0:
+            raise IngressError("target Workbench document or manifest is missing")
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            raise IngressError(f"target Workbench manifest is unreadable: {error}") from error
+        identity = {key: manifest.get("identity", {}).get(key)
+                    for key in ("profile", "group", "action", "direction")}
+        expected_identity = {key: binding[key] for key in identity}
+        creation = manifest.get("creation", {})
+        timeline = manifest.get("timeline", {})
+        canvas = manifest.get("canvas", {})
+        size = list(binding["frame_size"])
+        if (identity != expected_identity
+                or creation.get("art_generation") != binding["art_generation"]
+                or creation.get("authoring_identity") != binding["authoring_identity"]
+                or creation.get("template") != "full_body"
+                or creation.get("import_sources", {}).get(binding["layer"]) != str(candidate.resolve())
+                or int(timeline.get("workspace_clock_frames", 0)) != int(binding["frames"])
+                or [int(canvas.get("width", 0)), int(canvas.get("height", 0))] != size
+                or Path(manifest.get("aseprite", {}).get("path", "")).resolve() != document_path.resolve()):
+            raise IngressError("target Workbench identity or frame contract does not match the package")
+        layers = manifest.get("layers", [])
+        matching = [row for row in layers if row.get("layer") == binding["layer"]]
+        if len(matching) != 1:
+            raise IngressError("target Workbench is missing its unique imported layer")
+        layer = matching[0]
+        contract = layer.get("workspace_contract", {})
+        if (int(contract.get("frames", 0)) != int(binding["frames"])
+                or list(contract.get("frame_size", ())) != size
+                or layer.get("input_path") != str(candidate.resolve())):
+            raise IngressError("target Workbench layer contract does not match the reviewed candidate")
+        return workspace
+
+    def _validate_ready_proof(self, package_path: Path, direction: str,
+                              cell: dict[str, Any], *, require_receipt: bool) -> dict[str, Any]:
+        package = json.loads(package_path.read_text(encoding="utf-8"))
+        binding = next(item for item in package["targets"] if item["direction"] == direction)
+        session_path = self.start_cell(package_path, direction)
+        session, session_root, _session_file = self.source.load(session_path)
+        if session.state != "READY" or session.target_binding != binding:
+            raise IngressError("completed intake requires the current READY Source Session target proof")
+        candidate = Path(session.selected_candidate).resolve(strict=True)
+        candidate_sha = sha256(candidate)
+        if not session.reviewed_candidate_sha256 or candidate_sha != session.reviewed_candidate_sha256:
+            raise IngressError("reviewed candidate proof changed after Source Session review")
+        if require_receipt and cell.get("reviewed_candidate_sha256") != candidate_sha:
+            raise IngressError("completed package candidate receipt does not match the current Source Session")
+        key = schema.OperatorAssetKey("operator", binding["layer"], binding["profile"], binding["group"],
+                                      binding["action"], direction, binding["frames"], 128, 128)
+        destination_name = schema.canonical_filename(key)
+        handoff = self.source.handoff(session_path, destination_name=destination_name,
+                                      art_generation=binding["art_generation"], dry_run=True)
+        if handoff.get("status") != "DRY_RUN" or handoff.get("operation") != "REUSE":
+            raise IngressError("READY Source Session does not prove the existing reviewed handoff")
+        candidate_path = str(Path(handoff["candidate"]).resolve())
+        if require_receipt and cell.get("handoff") != candidate_path:
+            raise IngressError("completed package handoff receipt does not match current source proof")
+        workspace = self._validate_workbench(binding, candidate, cell.get("workbench"))
+        if require_receipt and cell.get("workbench") != str(workspace):
+            raise IngressError("completed package has no exact target Workbench receipt")
+        return {"terminal_state": "EDITABLE_WORKBENCH", "source_session": str(session_root / "session.json"),
+                "workbench": str(workspace), "reviewed_candidate_sha256": candidate_sha,
+                "handoff": candidate_path, "error": ""}
+
     def _process_cell(self, package_path: Path | str, direction: str, *,
                       execution_env: dict[str, str] | None = None) -> dict[str, Any]:
         """Run the approved source proof, construct its editable Workbench, then stage handoff."""
@@ -176,10 +269,17 @@ class Operator2DIngress:
         if cell is None:
             raise IngressError("direction is not part of this package")
         if cell.get("terminal_state") == "EDITABLE_WORKBENCH":
+            self._validate_ready_proof(path, direction, cell, require_receipt=True)
             return dict(cell)
         session_path = self.start_cell(path, direction)
         session = self.source.status(session_path)
         state = session.get("state")
+        if state == "READY":
+            recovered = self._validate_ready_proof(path, direction, cell, require_receipt=False)
+            package = json.loads(path.read_text(encoding="utf-8"))
+            package["cells"][direction].update(recovered)
+            write_json(path, package)
+            return dict(package["cells"][direction])
         if state == "STAGED":
             self.source.analyze(session_path)
             state = "ANALYZED"
@@ -223,15 +323,27 @@ class Operator2DIngress:
                    "direction": direction, "frames": binding["frames"], "frame_size": tuple(binding["frame_size"]),
                    "fps": 8.0, "loop": True, "template": "full_body",
                    "art_generation": binding["art_generation"], "initial_sources": {binding["layer"]: str(candidate)}}
-        _manifest, workbench_root = animation_workbench.create_animation(
-            options["profile"], options["action"], options["direction"], group=options["group"],
-            frames=options["frames"], frame_size=options["frame_size"], fps=options["fps"],
-            loop=options["loop"], template=options["template"],
-            root=self.workspace_root, repo_root=self.repo_root,
-            source_root=self.repo_root / "custodian/content/sprites/operator/source",
-            weapon_root=self.repo_root / "custodian/content/sprites/weapons",
-            art_generation=target.art_generation, initial_sources=options["initial_sources"],
-        )
+        workbench_root = self._workbench_root(binding)
+        manifest_path = workbench_root / "workbench.json"
+        document_path = workbench_root / "workbench.aseprite"
+        manifest_exists, document_exists = manifest_path.is_file(), document_path.is_file()
+        if manifest_exists != document_exists:
+            raise IngressError("target Workbench is incomplete; refusing to rebuild or overwrite it")
+        if manifest_exists:
+            self._validate_workbench(binding, candidate, str(workbench_root))
+        else:
+            if state == "READY":
+                raise IngressError("READY Source Session has no existing target Workbench to resume")
+            _manifest, workbench_root = animation_workbench.create_animation(
+                options["profile"], options["action"], options["direction"], group=options["group"],
+                frames=options["frames"], frame_size=options["frame_size"], fps=options["fps"],
+                loop=options["loop"], template=options["template"],
+                root=self.workspace_root, repo_root=self.repo_root,
+                source_root=self.repo_root / "custodian/content/sprites/operator/source",
+                weapon_root=self.repo_root / "custodian/content/sprites/weapons",
+                art_generation=target.art_generation, initial_sources=options["initial_sources"],
+            )
+            self._validate_workbench(binding, candidate, str(workbench_root))
         key = schema.OperatorAssetKey("operator", binding["layer"], binding["profile"], binding["group"],
                                       binding["action"], direction, binding["frames"], 128, 128)
         destination_name = schema.canonical_filename(key)
@@ -248,10 +360,13 @@ class Operator2DIngress:
         return dict(cell)
 
     def validate_package(self, package_path: Path | str) -> dict[str, Any]:
-        package = json.loads(Path(package_path).read_text(encoding="utf-8"))
+        path = Path(package_path)
+        package = json.loads(path.read_text(encoding="utf-8"))
         for direction, cell in package["cells"].items():
             if cell["terminal_state"] not in {"EDITABLE_WORKBENCH", "BLOCKED"}:
                 raise IngressError(f"package direction {direction} is not terminal")
             if cell["terminal_state"] == "BLOCKED" and not cell.get("error"):
                 raise IngressError(f"package direction {direction} is blocked without a reason")
+            if cell["terminal_state"] == "EDITABLE_WORKBENCH":
+                self._validate_ready_proof(path, direction, cell, require_receipt=True)
         return {"complete": True, "cells": package["cells"]}

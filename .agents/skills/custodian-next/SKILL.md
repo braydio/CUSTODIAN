@@ -9,6 +9,30 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
 "continue the workstream", explicitly invokes `$custodian-next`, or selects
 **CUSTODIAN Next** from `/skills` / the slash picker.
 
+## Newly Authorized Packet Pair (publication before claim)
+
+When the user/authoring handoff specifically says an **approved** packet/review
+pair is still `draft/manual` or exists only in a local authoring branch,
+**do not call the dispatcher yet** and do not ask the user to provide the
+validator command. The normal dispatcher only reads `origin/main`.
+
+As the authorized authoring/promotion workstream (not ordinary `claim-next`):
+validate the *implementation + review pair*, promote both to `ready/auto`
+only if all human/design gates are resolved, validate again, run
+`python3 custodian/tools/agent/task_packet_index.py --write`, verify with
+the indexer in check mode, commit only the scoped pair + managed
+`task_packets/README.md`, and **land on `origin/main`** through safe
+repository procedure. Fetch and verify the remote packet identities before
+claiming the **exact** implementation workstream. Do not claim the paired
+review early. See root `AGENTS.md` → **Task-Packet Promotion Before
+Dispatch** and `AGENT_TASK_PACKET_TEMPLATE.md` for the copyable commands.
+
+This special case does not authorize promoting arbitrary parked drafts during
+general next-task routing; the human/ChatGPT decision and existing claims
+remain authoritative. If an exact named claim reports that the packet is not
+on `origin/main`, inspect whether an approved authored pair needs publication
+rather than treating a local PASS as remote queue availability.
+
 ## Routing
 
 1. **Do not create a second claim while already inside active work.**

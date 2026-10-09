@@ -7,6 +7,8 @@ import shutil
 import sys
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from PIL import Image, ImageDraw
 
@@ -22,6 +24,7 @@ from art_agent.source_models import SOURCE_SESSION_SCHEMA, SourceSession, Source
 from art_agent.source_service import SourceArtService
 from operator_2_5d_ingress import IngressError, Operator2DIngress
 from ui.state import AnimationSelection
+from ui import service as ui_service
 
 
 REPO = Path(__file__).resolve().parents[3]
@@ -60,6 +63,23 @@ def main() -> None:
         assert plan.status == "READY", plan.collisions
         assert "operator_2_5d_128" in plan.layers[0]["source_path"]
         assert plan.art_generation == "operator_2_5d_128"
+
+        # OPUI's default root already ends in animations; a 12f semantic peer
+        # must still collide with a requested 15f target for every root shape.
+        alternate_frame_key = schema.OperatorAssetKey(
+            "operator", "full_body", "unarmed", "locomotion", "new_ingress_02", "ne", 12, 128, 128)
+        alternate_frame_path = custodian / schema.canonical_source_path(
+            alternate_frame_key, art_generation="operator_2_5d_128")
+        alternate_frame_path.parent.mkdir(parents=True, exist_ok=True)
+        Image.new("RGBA", (12 * 128, 128), (24, 36, 48, 255)).save(alternate_frame_path)
+        generation_root = source_root / "generations/operator_2_5d_128/animations"
+        for scan_root in (source_root, source_root / "animations", generation_root):
+            root_collision = workbench_model.build_creation_plan(
+                "unarmed", "locomotion", "new_ingress_02", "ne", 15, (128, 128),
+                repo_root=root, source_root=scan_root, weapon_root=weapon_root,
+                art_generation="operator_2_5d_128",
+            )
+            assert root_collision.status == "COLLISION", (scan_root, root_collision)
         if shutil.which("aseprite"):
             created, created_workspace = animation_workbench.create_animation(
                 "unarmed", "new_ingress_01", "ne", group="locomotion", frames=15,
@@ -218,6 +238,169 @@ def main() -> None:
                 art_generation="operator_2_5d_128",
             )
             assert resumed_handoff["operation"] == "REUSE"
+
+            # Model interruption after handoff but before the package receipt.
+            package_data = json.loads(package_path.read_text())
+            package_data["cells"]["ne"]["terminal_state"] = "SOURCE_STAGED"
+            for field in ("workbench", "handoff", "reviewed_candidate_sha256"):
+                package_data["cells"]["ne"].pop(field, None)
+            package_path.write_text(json.dumps(package_data, indent=2) + "\n")
+            document_path = Path(imported["workbench"]) / "workbench.aseprite"
+            document_path.write_bytes(document_path.read_bytes() + b"\nartist-edit-marker")
+            edited_document = document_path.read_bytes()
+            conversion_calls = []
+            handoff_calls = []
+            original_convert = source_service.convert
+            original_handoff = source_service.handoff
+            source_service.convert = lambda *_args, **_kwargs: conversion_calls.append(True)
+            def counted_handoff(*args, **kwargs):
+                handoff_calls.append(True)
+                return original_handoff(*args, **kwargs)
+            source_service.handoff = counted_handoff
+            recovered = ingress.process_cell(package_path, "ne")
+            assert recovered["terminal_state"] == "EDITABLE_WORKBENCH"
+            assert not conversion_calls, "READY handoff recovery reran production conversion"
+            assert handoff_calls, "READY handoff proof was not checked during recovery"
+            assert document_path.read_bytes() == edited_document, "READY recovery overwrote Workbench edits"
+            source_service.convert = original_convert
+            source_service.handoff = original_handoff
+
+            # Package closure independently rechecks terminal proof rather than
+            # accepting a saved EDITABLE_WORKBENCH string.
+            single_package_path = ingress.create_package(
+                [next(item for item in selections if item.direction == "ne")],
+                source_paths={"ne": files["ne"]})
+            single_package = json.loads(single_package_path.read_text())
+            single_package["cells"]["ne"].update({
+                "terminal_state": "EDITABLE_WORKBENCH",
+                "source_session": imported["source_session"],
+                "workbench": imported["workbench"],
+                "reviewed_candidate_sha256": imported["reviewed_candidate_sha256"],
+                "handoff": imported["handoff"],
+            })
+            single_package_path.write_text(json.dumps(single_package, indent=2) + "\n")
+            assert ingress.validate_package(single_package_path)["complete"] is True
+            original_plan_path = ingress.plan_path
+            altered_plan = root / "altered-implementation-plan.json"
+            altered_plan.write_bytes(original_plan_path.read_bytes() + b"\n")
+            ingress.plan_path = altered_plan
+            try:
+                ingress.validate_package(single_package_path)
+            except IngressError as error:
+                assert "projection changed" in str(error)
+            else:
+                raise AssertionError("package closure trusted a stale target-plan digest")
+            ingress.plan_path = original_plan_path
+            candidate_path = Path(imported["source_session"]).parent / "production/crisp.png"
+            candidate_bytes = candidate_path.read_bytes()
+            candidate_path.write_bytes(candidate_bytes + b"stale")
+            try:
+                ingress.validate_package(single_package_path)
+            except Exception as error:
+                assert "candidate" in str(error).lower()
+            else:
+                raise AssertionError("package closure trusted a changed reviewed candidate")
+            candidate_path.write_bytes(candidate_bytes)
+            assert ingress.validate_package(single_package_path)["complete"] is True
+            imported_manifest_path = Path(imported["workbench"]) / "workbench.json"
+            valid_manifest_bytes = imported_manifest_path.read_bytes()
+            bad_contract_manifest = json.loads(valid_manifest_bytes)
+            bad_contract_manifest["canvas"]["width"] = 127
+            imported_manifest_path.write_text(json.dumps(bad_contract_manifest, indent=2) + "\n")
+            try:
+                ingress.validate_package(single_package_path)
+            except IngressError as error:
+                assert "identity or frame contract" in str(error)
+            else:
+                raise AssertionError("package closure trusted a mismatched Workbench frame contract")
+            imported_manifest_path.write_bytes(valid_manifest_bytes)
+            assert ingress.validate_package(single_package_path)["complete"] is True
+
+            # Terminal hints cannot outlive changed source or a missing/wrong
+            # Workbench contract; repairing the fixture restores resumability.
+            original_source = files["ne"].read_bytes()
+            files["ne"].write_bytes(original_source + b"stale")
+            try:
+                ingress.process_cell(package_path, "ne")
+            except IngressError as error:
+                assert "source PNG changed" in str(error)
+            else:
+                raise AssertionError("completed package trusted a changed source PNG")
+            files["ne"].write_bytes(original_source)
+            recovered = ingress.process_cell(package_path, "ne")
+            assert recovered["terminal_state"] == "EDITABLE_WORKBENCH"
+
+            document_bytes = document_path.read_bytes()
+            document_path.unlink()
+            try:
+                ingress.process_cell(package_path, "ne")
+            except IngressError as error:
+                assert "document or manifest is missing" in str(error)
+            else:
+                raise AssertionError("completed package trusted a missing Workbench document")
+            document_path.write_bytes(document_bytes)
+            recovered = ingress.process_cell(package_path, "ne")
+            assert recovered["terminal_state"] == "EDITABLE_WORKBENCH"
+
+            manifest_path = Path(imported["workbench"]) / "workbench.json"
+            manifest_bytes = manifest_path.read_bytes()
+            wrong_manifest = json.loads(manifest_bytes)
+            wrong_manifest["creation"]["authoring_identity"] += ":wrong"
+            manifest_path.write_text(json.dumps(wrong_manifest, indent=2) + "\n")
+            try:
+                ingress.process_cell(package_path, "ne")
+            except IngressError as error:
+                assert "identity or frame contract" in str(error)
+            else:
+                raise AssertionError("completed package trusted a wrong Workbench identity")
+            manifest_path.write_bytes(manifest_bytes)
+            recovered = ingress.process_cell(package_path, "ne")
+            assert recovered["terminal_state"] == "EDITABLE_WORKBENCH"
+
+            # A blocked first direction must not prevent later directions from
+            # being attempted and producing durable per-cell outcomes.
+            attempted = []
+            original_process = ingress._process_cell
+            def independent_cell(package_value, direction, *, execution_env=None):
+                attempted.append(direction)
+                if direction == "n":
+                    raise IngressError("fixture first direction blocked")
+                return {"terminal_state": "EDITABLE_WORKBENCH", "direction": direction}
+            ingress._process_cell = independent_cell
+            progress = ingress.process_package(package_path)
+            ingress._process_cell = original_process
+            assert attempted == list(family.directions), attempted
+            assert progress["cells"]["n"]["terminal_state"] == "BLOCKED"
+            assert progress["cells"]["n"]["error"]
+            assert progress["cells"]["e"]["terminal_state"] == "EDITABLE_WORKBENCH"
+            assert progress["counts"]["EDITABLE_WORKBENCH"] == 7
+            assert progress["counts"]["BLOCKED"] == 1
+
+            # The UI service must report a blocked selected cell without
+            # trying to open a nonexistent Workbench, even as other cells move.
+            class StubIngress:
+                def __init__(self, *_args, **_kwargs):
+                    pass
+                def create_package(self, *_args, **_kwargs):
+                    return root / "stub-package.json"
+                def process_package(self, _path):
+                    return {"complete": False, "counts": {"EDITABLE_WORKBENCH": 2,
+                            "BLOCKED": 1, "PENDING": 5},
+                            "cells": {"n": {"terminal_state": "BLOCKED"}}}
+            ui = ui_service.WorkbenchService.__new__(ui_service.WorkbenchService)
+            ui.repo_root = REPO
+            ui.workspace_root = workspace_root
+            ui.plan_path = REPO / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
+            ui.workbench = SimpleNamespace(resolve_aseprite=lambda *_args: (_ for _ in ()).throw(
+                AssertionError("blocked selected direction attempted to resolve Aseprite")))
+            ui.aseprite = None
+            ui._popen = lambda *_args: (_ for _ in ()).throw(
+                AssertionError("blocked selected direction attempted to open a missing Workbench"))
+            with patch.object(ui_service, "Operator2DIngress", StubIngress):
+                ui_result = ui.import_2_5d_direction_set(selections[0], files)
+            assert ui_result["selected_state"] == "BLOCKED"
+            assert ui_result["process"] is None
+            assert "selected n is BLOCKED; 2 editable, 1 blocked, 5 pending" in ui_result["summary"]
         ingress.record_blocked(package_path, "n", "fixture blocked before production proof")
         try:
             ingress.validate_package(package_path)

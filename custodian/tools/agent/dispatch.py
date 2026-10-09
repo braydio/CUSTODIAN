@@ -347,7 +347,17 @@ def claim(
                         reasons.append(f"{packet.workstream or packet.path}: {reason}")
                 if selected is None:
                     if workstream_id and not candidates:
-                        raise DispatchError(f"packet for workstream {workstream_id} does not exist on origin/main")
+                        raise DispatchError(
+                            f"packet for workstream {workstream_id} does not exist on origin/main. "
+                            "If the packet is only local or on an unmerged authoring branch, "
+                            "first validate the implementation/review pair with "
+                            "custodian/tools/agent/validate_task_packet_authoring.py, "
+                            "promote only if authorized, update the managed index using "
+                            "custodian/tools/agent/task_packet_index.py --write, "
+                            "and land the scoped queue changes on origin/main. "
+                            "Fetch and verify remote main before claiming; "
+                            "never claim a draft/unpublished packet."
+                        )
                     if workstream_id and workstream_id in claimed:
                         branch = f"agent/{workstream_id}"
                         attached = _attached_local_worktree(repo, branch)

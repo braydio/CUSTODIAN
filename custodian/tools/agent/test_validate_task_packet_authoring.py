@@ -1,6 +1,8 @@
 """Focused coverage for targeted task-packet authoring preflight."""
 
 import importlib.util
+import io
+import contextlib
 import sys
 import tempfile
 import unittest
@@ -87,6 +89,54 @@ class AuthoringPreflightTests(unittest.TestCase):
 
     def test_valid_pair_passes(self):
         self.assertEqual(self.validate(self.impl, self.rev), [])
+
+    def test_cli_pass_surfaces_main_publication_instead_of_claiming(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            status = preflight.main([
+                str(self.impl), str(self.rev), "--repo", str(self.repo),
+            ])
+        self.assertEqual(status, 0)
+        rendered = output.getvalue()
+        self.assertIn("task_packet_authoring_preflight: PASS", rendered)
+        self.assertIn("NEXT (required before a newly authorized packet can be claimed)", rendered)
+        self.assertIn("task_packet_index.py --write", rendered)
+        self.assertIn("origin/main", rendered)
+
+    def test_preflight_handoff_for_ready_pair_names_main_and_exact_claim(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            preflight.print_promotion_handoff(self.repo, [self.impl, self.rev])
+        rendered = output.getvalue()
+        self.assertIn("AUTHORING VALID", rendered)
+        self.assertIn("task_packet_index.py --write", rendered)
+        self.assertIn("origin/main, NOT your local checkout", rendered)
+        self.assertIn("dispatch.py claim sample-work --agent <agent-id>", rendered)
+        self.assertIn("Do not claim the paired post-land review", rendered)
+        self.assertNotIn("PROMOTION REQUIRED", rendered)
+
+    def test_preflight_handoff_draft_requires_design_authorization(self):
+        self.impl.write_text(implementation().replace("Status: `ready`", "Status: `draft`")
+                             .replace("Dispatch: `auto`", "Dispatch: `manual`"))
+        self.rev.write_text(review().replace("Status: `ready`", "Status: `draft`")
+                            .replace("Dispatch: `auto`", "Dispatch: `manual`"))
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            preflight.print_promotion_handoff(self.repo, [self.impl, self.rev])
+        rendered = output.getvalue()
+        self.assertIn("PROMOTION REQUIRED", rendered)
+        self.assertIn("Resolve any human/design gates", rendered)
+        self.assertIn("Status: ready", rendered)
+        self.assertIn("origin/main", rendered)
+        self.assertIn("sample-work", rendered)
+
+    def test_review_only_preflight_does_not_suggest_claiming_review_early(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            preflight.print_promotion_handoff(self.repo, [self.rev])
+        rendered = output.getvalue()
+        self.assertIn("claim <implementation-workstream-id>", rendered)
+        self.assertNotIn("claim review-sample-work --agent", rendered)
 
     def test_invalid_custom_review_mode_fails_with_allowed_modes(self):
         self.impl.write_text(implementation("code, architecture, visual-contract"))

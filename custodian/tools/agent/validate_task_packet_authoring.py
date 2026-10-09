@@ -183,6 +183,51 @@ def validate_authoring_paths(repo: Path, packet_paths: list[str | Path]) -> list
     return list(dict.fromkeys(findings))
 
 
+
+def print_promotion_handoff(repo: Path, packet_paths: list[str | Path]) -> None:
+    """Show the publication boundary after PASS, without changing files or dispatch."""
+    packets = []
+    for raw in packet_paths:
+        _, path = _normalize_target(repo, raw)
+        packets.append(parse_packet(str(path), path.read_text()))
+
+    if any(packet.status != "ready" for packet in packets):
+        print("PROMOTION REQUIRED: PASS validates the supplied draft/blocked "
+              "packet metadata, not approval to make it claimable.")
+        print("  Resolve any human/design gates before setting the authorized "
+              "implementation and paired review to Status: ready.")
+        print("  Use Dispatch: auto unless the user explicitly requested a manual hold.")
+    else:
+        print("AUTHORING VALID: supplied packets declare Status: ready; "
+              "remote publication and dispatch eligibility are NOT established.")
+
+    print("NEXT (required before a newly authorized packet can be claimed):")
+    print("  1. After any status/dispatch changes, rerun this targeted "
+          "authoring preflight against the implementation AND paired review.")
+    print("  2. python3 custodian/tools/agent/task_packet_index.py --write")
+    print("     python3 custodian/tools/agent/task_packet_index.py")
+    print("  3. Stage only the authorized packet(s) and the managed "
+          "task_packets/README.md (plus explicitly scoped changes); "
+          "commit and land them on origin/main through the safe repository workflow.")
+    print("  4. git fetch origin; verify BOTH packet files and the managed "
+          "ready/auto index exist on origin/main before claiming.")
+    print("  5. Dispatcher reads origin/main, NOT your local checkout or unmerged "
+          "authoring branch. Confirm dependency/review/lock eligibility, then claim.")
+
+    implementation_ids = [
+        packet.workstream for packet in packets
+        if packet.kind != "review" and packet.workstream
+    ]
+    if implementation_ids:
+        print("     python3 custodian/tools/agent/dispatch.py claim "
+              f"{implementation_ids[0]} --agent <agent-id>")
+    else:
+        print("     python3 custodian/tools/agent/dispatch.py claim "
+              "<implementation-workstream-id> --agent <agent-id>")
+    print("     (Do not claim the paired post-land review before implementation "
+          "lands and archives complete.)")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("packets", nargs="+", help="active task-packet paths to validate")
@@ -204,6 +249,7 @@ def main(argv: list[str] | None = None) -> int:
 
     rendered = ", ".join(str(path) for path in args.packets)
     print(f"task_packet_authoring_preflight: PASS: {rendered}")
+    print_promotion_handoff(repo, args.packets)
     return 0
 
 

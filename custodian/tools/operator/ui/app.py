@@ -1932,7 +1932,12 @@ class OperatorWorkbenchApp(App):
         self._activity(f"{operation.lower()} started")
         try:
             result = await self._thread(function, *args)
-            if operation in ("EDIT", "CREATE", "IMPORT"): self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
+            if operation == "IMPORT" and isinstance(result, dict) and result.get("kind") == "operator_2_5d_direction_set":
+                if result.get("process") is not None:
+                    self.state.aseprite_process = result["process"]
+                severity = "OK" if result.get("process") else "WARN"
+                self._activity(result.get("summary", "2.5D direction-set intake finished"), severity)
+            elif operation in ("EDIT", "CREATE", "IMPORT"): self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
             else: self._activity(f"{operation.lower()} complete", "OK")
             if operation == "PUBLISH" and isinstance(result, dict):
                 if result.get("status") == "landed":
