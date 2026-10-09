@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Iterable
 
 import operator_asset_schema as schema
+import animation_workbench
 from ui.state import AnimationRecord, AnimationSelection
 
 
@@ -122,12 +123,23 @@ def _workspace_state(path: Path) -> str:
         return "BLOCKED"
     if data.get("pending_land") or data.get("last_publish", {}).get("state") == "LAND_PENDING":
         return "LAND_PENDING"
-    creation = data.get("creation", {})
-    if creation:
-        state = str(creation.get("state", "")).upper()
-        return "READY_TO_PUBLISH" if "READY TO PUBLISH" in state else "EDITING"
     if data.get("pending_migration"):
         return "BLOCKED"
+    document = path / "workbench.aseprite"
+    try:
+        state = animation_workbench.state(data, document)
+    except (KeyError, OSError, TypeError, ValueError):
+        return "BLOCKED"
+    if data.get("creation"):
+        if state == "NEW / READY TO PUBLISH":
+            return "READY_TO_PUBLISH"
+        if state == "NEW / COLLISION":
+            return "BLOCKED"
+        return "EDITING"
+    if state in {"EDITED", "EDITED+STALE"}:
+        return "EDITING"
+    if state == "STALE":
+        return "STALE_REFERENCE"
     if data.get("last_publish", {}).get("validation_status") == "passed":
         return "RUNTIME_VERIFIED"
     return "REVIEW" if data.get("review_status") else "EDITING"
@@ -169,6 +181,7 @@ def project_targets(
             present = _generation_source_files(repo_root, family, direction)
             present_layers = tuple(layer for layer, paths in present.items() if paths)
             accepted_source = bool(family.source_sha256 and family.migration_verdict == "canonical_2_5d")
+            workflow = _workspace_state(family_ws / direction)
             if len(present_layers) == len(family.required_layers) and family.required_layers:
                 coverage = "CANONICAL_2_5D"
             elif present_layers:
@@ -184,12 +197,10 @@ def project_targets(
             else:
                 coverage = "MISSING"
             if coverage == "CANONICAL_2_5D":
-                workflow = _workspace_state(family_ws)
                 if workflow == "NONE" and accepted_source:
                     workflow = "INTAKE"
                 canonical_complete = True
             else:
-                workflow = _workspace_state(family_ws)
                 canonical_complete = False
             if stale:
                 workflow = "STALE_REFERENCE"

@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-cockpit-foundation-review-corrections-1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-cockpit-foundation
@@ -38,7 +38,7 @@
 
 ## Handoff
 - Next workstream: review-operator-2-5d-workbench-cockpit-foundation-review-corrections-1
-- Next packet state: dependency-gated
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
@@ -47,4 +47,20 @@
 - Blockers or open questions: none
 
 ## Execution Feedback
-Complete the standard custodian.task_feedback.v1 receipt before archive.
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: The paired review exposed two workflow-classification mismatches after the broad WB25-1 suite passed.
+- Root cause / contributing factors: The target projection used a family directory instead of each direction workspace and treated a persisted creation hint as current readiness.
+- Prevention / pipeline improvement: Added isolated direction/sibling/generation and saved-document regression cases to the target projection smoke.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: Existing `animation_workbench.state` remains the read-only owner of creation readiness; the correction preserves manifest and document bytes.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `operator_animation_targets_smoke.py` passes direction-level publish/workspace, sibling and legacy-generation isolation, saved versus unchanged creation document readiness, stale-reference precedence, and read-only byte-preservation probes; plan, asset-schema, and Textual UI smokes pass; `run_validation.py --changed --json` is green with complete coverage; `git diff --check` passes.
