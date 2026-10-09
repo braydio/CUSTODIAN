@@ -90,6 +90,19 @@ class AuthoringPreflightTests(unittest.TestCase):
     def test_valid_pair_passes(self):
         self.assertEqual(self.validate(self.impl, self.rev), [])
 
+    def test_cli_pass_surfaces_main_publication_instead_of_claiming(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            status = preflight.main([
+                str(self.impl), str(self.rev), "--repo", str(self.repo),
+            ])
+        self.assertEqual(status, 0)
+        rendered = output.getvalue()
+        self.assertIn("task_packet_authoring_preflight: PASS", rendered)
+        self.assertIn("NEXT (required before a newly authorized packet can be claimed)", rendered)
+        self.assertIn("task_packet_index.py --write", rendered)
+        self.assertIn("origin/main", rendered)
+
     def test_preflight_handoff_for_ready_pair_names_main_and_exact_claim(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
