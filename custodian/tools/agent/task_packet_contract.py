@@ -357,6 +357,54 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
     return {workstream: "; ".join(messages) for workstream, messages in errors.items()}
 
 
+def validate_queue_contract(
+    packets: list[Packet], archived: list[Packet] = (), texts: dict[str, str] | None = None,
+) -> dict[str, str]:
+    """Validate active queue metadata and dependency identities.
+
+    Archived packets are historical identity evidence only when complete; they
+    are deliberately not re-graded against today's queue rules.
+    """
+    errors: dict[str, list[str]] = {}
+
+    def add(workstream: str | None, message: str) -> None:
+        if workstream:
+            errors.setdefault(workstream, []).append(message)
+
+    by_id: dict[str, list[Packet]] = {}
+    for packet in packets:
+        if packet.workstream:
+            by_id.setdefault(packet.workstream, []).append(packet)
+        if is_v2_packet(packet) and packet.status == "draft" and packet.dispatch == "auto":
+            add(packet.workstream,
+                "invalid draft/auto queue state; use ready/auto for dependency-gated mechanical work or draft/manual for a genuine refresh/human gate")
+        if is_v2_packet(packet) and packet.status == "draft" and packet.dispatch == "manual" and texts is not None:
+            body = texts.get(packet.path, "").lower()
+            rationale = re.search(
+                r"refresh (?:required|instruction|reason)|human(?:-owned)? (?:decision|review|approval)|"
+                r"do not claim|must not claim|must not become ready|approval remains human-owned|"
+                r"exact art list intentionally remains human-reviewed",
+                body,
+            )
+            if not rationale:
+                add(packet.workstream,
+                    "draft/manual packet needs a concrete refresh or human-decision reason in its body or handoff")
+    for workstream, matches in by_id.items():
+        if len(matches) > 1:
+            for packet in matches:
+                add(workstream, f"duplicate Workstream identity: {workstream}")
+    known_ids = set(by_id)
+    known_ids.update(
+        packet.workstream for packet in archived
+        if packet.workstream and not packet.error and packet.status == "complete"
+    )
+    for packet in packets:
+        for dependency in packet.dependencies:
+            if dependency not in known_ids:
+                add(packet.workstream, f"missing dependency identity: {dependency} (not active or archived complete)")
+    return {workstream: "; ".join(dict.fromkeys(messages)) for workstream, messages in errors.items()}
+
+
 def _bounded_review_override_error(value: str | None) -> str | None:
     if not value or "TASK OVERRIDE:" not in value:
         return "auto review packet requires a bounded TASK OVERRIDE for review-artifact commits"

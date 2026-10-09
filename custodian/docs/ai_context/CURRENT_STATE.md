@@ -1,5 +1,9 @@
 # CURRENT STATE — CUSTODIAN
 
+## Task-Packet Queue Semantics (2026-10-09)
+
+Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `draft/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
+
 ## Ash-Bell Bridged Falls / Lower Quarter Approach Program (2026-10-07)
 
 The geographic design is now locked at `design/05_levels/ASH_BELL_BRIDGED_FALLS_APPROACH.md`: after the authored Forlorn-Ritualant resolves, its future north egress leads to a **distinct generated Ash-Bell Alpine Highlands region**, which in turn contains a **generated Bridged Falls subregion**. Bridged Falls is not a fixed authored corridor: each accepted seed must compose a new large-scale, connected network of monumental ruined Meridian civic bridge spans, branches/overlooks, cliff descent and Lower Quarter terminal while preserving the first-basin reveal and bridge-commit beats. Waterfalls/mist remain presentation over real CHASM/exterior semantics; Lower Quarter / Station IX stay far visual attractors until the final approach.

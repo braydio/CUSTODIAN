@@ -26,6 +26,7 @@ from task_packet_contract import (
     _bounded_review_override_error, _header_field_with_continuations,
     _validation_script_references, parse_packet, review_cycle_exhausted,
     validate_packet_validation_references, validate_review_pairing,
+    validate_queue_contract,
 )
 
 
@@ -62,6 +63,10 @@ def _archived_packets(repo: Path, tree: str = "origin/main") -> list[Packet]:
     return [parse_packet(p, git(repo, "show", f"{tree}:{p}")) for p in paths]
 
 
+def _packet_texts(repo: Path, packets: list[Packet], tree: str = "origin/main") -> dict[str, str]:
+    return {packet.path: git(repo, "show", f"{tree}:{packet.path}") for packet in packets}
+
+
 def _claimed(repo: Path) -> set[str]:
     # Remote refs are claim authority. A successful dispatcher claim always has
     # either a temporary dispatch-claim ref during acquisition or a published
@@ -86,6 +91,7 @@ def _decision(
     packet: Packet, packets: list[Packet], archived: list[Packet], claimed: set[str],
     *, auto_only: bool, pairing_errors: dict[str, str] | None = None,
     validation_errors: dict[str, str] | None = None,
+    queue_errors: dict[str, str] | None = None,
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
@@ -93,6 +99,8 @@ def _decision(
         return False, f"invalid review pairing: {pairing_errors[packet.workstream]}"
     if validation_errors and packet.workstream in validation_errors:
         return False, f"invalid validation references: {validation_errors[packet.workstream]}"
+    if queue_errors and packet.workstream in queue_errors:
+        return False, f"invalid queue contract: {queue_errors[packet.workstream]}"
     if packet.status != "ready":
         return False, f"status: {packet.status or 'missing'}"
     if auto_only and packet.dispatch != "auto":
@@ -211,12 +219,17 @@ def _packet_label(packet: Packet) -> str:
 
 
 def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], claimed: set[str]) -> str:
-    groups: dict[str, list[str]] = {key: [] for key in ("READY", "CLAIMED", "BLOCKED", "MANUAL")}
+    groups: dict[str, list[str]] = {key: [] for key in (
+        "READY", "CLAIMED", "DEPENDENCY/LOCK BLOCKED", "MANUAL READY",
+        "PARKED DRAFT", "INVALID/RECOVERY",
+    )}
     claims, branches = _remote_claim_state(repo)
     pairing_errors = validate_review_pairing(packets)
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
+    packet_texts = _packet_texts(repo, packets)
+    queue_errors = validate_queue_contract(packets, archived, packet_texts)
     for work_id in sorted(claims - branches):
-        groups["BLOCKED"].append(
+        groups["INVALID/RECOVERY"].append(
             f"{work_id} — remote dispatch claim interrupted; recovery required. "
             f"Inspect refs/heads/dispatch-claims/{work_id}; after verifying no live claimant, "
             f"an operator may explicitly delete it with git push origin :refs/heads/dispatch-claims/{work_id}."
@@ -228,22 +241,41 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
         if packet.workstream in claimed:
             cleanup_note = " (remote claim cleanup pending)" if packet.workstream in claims else ""
             groups["CLAIMED"].append(f"{name}{cleanup_note} [{packet.path}]")
-        elif not packet.dispatch_declared:
-            groups["MANUAL"].append(f"{name} [{packet.path}]")
         elif packet.error:
-            groups["BLOCKED"].append(f"{name} — invalid packet metadata: {packet.error} [{packet.path}]")
+            groups["INVALID/RECOVERY"].append(f"{name} — invalid packet metadata: {packet.error} [{packet.path}]")
+        elif packet.workstream in queue_errors:
+            groups["INVALID/RECOVERY"].append(f"{name} — {queue_errors[packet.workstream]} [{packet.path}]")
+        elif packet.status == "draft" and packet.dispatch == "manual":
+            parked_reason = (
+                _header_field_with_continuations(packet_texts.get(packet.path, ""), "Refresh instruction")
+                or _header_field_with_continuations(packet_texts.get(packet.path, ""), "Refresh reason")
+            )
+            if parked_reason and len(parked_reason) > 160:
+                parked_reason = parked_reason[:157].rstrip() + "..."
+            detail = f" — {parked_reason}" if parked_reason else " — refresh/human decision required"
+            groups["PARKED DRAFT"].append(f"{name}{detail} [{packet.path}]")
+        elif packet.status == "blocked":
+            groups["DEPENDENCY/LOCK BLOCKED"].append(f"{name} — status: blocked [{packet.path}]")
+        elif not packet.dispatch_declared:
+            groups["MANUAL READY"].append(f"{name} [{packet.path}]")
+        elif packet.status != "ready":
+            groups["INVALID/RECOVERY"].append(f"{name} — status: {packet.status or 'missing'} [{packet.path}]")
         elif packet.dispatch == "manual":
-            groups["MANUAL"].append(f"{name} [{packet.path}]")
+            groups["MANUAL READY"].append(f"{name} [{packet.path}]")
         else:
             ok, reason = _decision(
                 packet, packets, archived, claimed, auto_only=True,
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
+                queue_errors=queue_errors,
             )
             if ok:
                 groups["READY"].append(f"{packet.priority} {name} [{packet.path}]")
             else:
-                groups["BLOCKED"].append(f"{name} — {reason} [{packet.path}]")
-    for label in ("CLAIMED", "BLOCKED", "MANUAL"):
+                label = "DEPENDENCY/LOCK BLOCKED" if reason and (reason.startswith("dependency:") or reason.startswith("lock:")) else "INVALID/RECOVERY"
+                groups[label].append(f"{name} — {reason} [{packet.path}]")
+    for label in groups:
+        if label == "READY":
+            continue
         groups[label].sort()
     sections = []
     for label, values in groups.items():
@@ -286,6 +318,7 @@ def claim(
                 remote_claims, remote_branches = _remote_claim_state(repo)
                 pairing_errors = validate_review_pairing(packets)
                 validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
+                queue_errors = validate_queue_contract(packets, archived, _packet_texts(repo, packets))
                 ordered = sorted(packets, key=lambda p: (PRIORITY.get(p.priority, 9), p.path))
                 candidates = [p for p in ordered if p.workstream == workstream_id] if workstream_id else ordered
                 selected = None
@@ -294,6 +327,7 @@ def claim(
                     ok, reason = _decision(
                         packet, packets, archived, claimed, auto_only=auto_only,
                         pairing_errors=pairing_errors, validation_errors=validation_errors,
+                        queue_errors=queue_errors,
                     )
                     if ok:
                         selected = packet

@@ -29,6 +29,7 @@ from task_packet_contract import (
     COMPLETION_TRUTH_REQUIRED_KINDS, PACKET_ROOT, V2_CORRECTION_REQUIRED_FIELDS,
     V2_REQUIRED_FIELDS, Packet, completion_truth_required, is_v2_packet,
     parse_completion_truth, parse_packet, v2_required_field_values,
+    validate_queue_contract,
 )
 
 REQUIRED_CONTEXT_FILES = (
@@ -158,6 +159,22 @@ def check_packet_grammar(packets: list[DiscoveredPacket], report: Report) -> Non
     for entry in packets:
         if entry.packet.error and entry.packet.dispatch_declared:
             report.add("packet-grammar", entry.rel_path, entry.packet.error)
+
+
+def check_packet_queue_contract(packets: list[DiscoveredPacket], report: Report) -> None:
+    active = [entry for entry in packets if not entry.archived]
+    archived = [entry for entry in packets if entry.archived]
+    errors = validate_queue_contract(
+        [entry.packet for entry in active], [entry.packet for entry in archived],
+        {entry.rel_path: entry.text for entry in active},
+    )
+    paths_by_id: dict[str, list[str]] = {}
+    for entry in active:
+        if entry.packet.workstream:
+            paths_by_id.setdefault(entry.packet.workstream, []).append(entry.rel_path)
+    for workstream, message in errors.items():
+        for path in paths_by_id.get(workstream, [workstream]):
+            report.add("packet-queue", path, message)
 
 
 _SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
@@ -312,6 +329,7 @@ def run_checks(repo: Path) -> Report:
     check_authority_paths(repo, report)
     packets = discover_packets(repo)
     check_packet_grammar(packets, report)
+    check_packet_queue_contract(packets, report)
     for entry in packets:
         check_v2_contract(entry, report)
         check_completion_truth(entry, report)

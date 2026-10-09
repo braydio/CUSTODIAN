@@ -119,6 +119,31 @@ class ParsePacketTests(unittest.TestCase):
         self.assertIn("Paired review workstream", packet.error)
 
 
+class QueueContractTests(unittest.TestCase):
+    def test_rejects_v2_draft_auto_but_preserves_legacy_and_archived_history(self):
+        active = tpc.parse_packet("draft.md", v2_packet("draft-auto", status="draft").replace("Dispatch: `manual`", "Dispatch: `auto`"))
+        legacy = tpc.parse_packet("legacy.md", legacy_packet("legacy-draft", status="draft", dispatch="auto"))
+        archived = tpc.parse_packet("old.md", v2_packet("old-draft", status="draft").replace("Dispatch: `manual`", "Dispatch: `auto`"))
+        errors = tpc.validate_queue_contract([active, legacy], [archived])
+        self.assertIn("draft/auto", errors["draft-auto"])
+        self.assertNotIn("legacy-draft", errors)
+        self.assertNotIn("old-draft", errors)
+
+    def test_missing_dependency_identity_and_duplicate_workstream_are_reported(self):
+        first = tpc.parse_packet("one.md", legacy_packet("duplicate-id").replace("Depends on: `none`", "Depends on: `missing-id`"))
+        second = tpc.parse_packet("two.md", legacy_packet("duplicate-id"))
+        errors = tpc.validate_queue_contract([first, second])
+        self.assertIn("duplicate Workstream identity", errors["duplicate-id"])
+        self.assertIn("missing dependency identity: missing-id", errors["duplicate-id"])
+
+    def test_draft_manual_requires_concrete_park_reason(self):
+        draft = tpc.parse_packet("parked.md", v2_packet("parked", status="draft"))
+        self.assertIn("concrete refresh or human-decision reason", tpc.validate_queue_contract(
+            [draft], texts={"parked.md": "# Parked\n"})["parked"])
+        self.assertEqual(tpc.validate_queue_contract(
+            [draft], texts={"parked.md": "# Parked\n\nRefresh required after user decision.\n"}), {})
+
+
 class ReviewPairingTests(unittest.TestCase):
     def test_correctly_paired_auto_review_has_no_errors(self):
         impl_text = (

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `task-packet-queue-stranding-hardening`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -44,22 +44,22 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Evidence: `task_packet_contract.py` enforces active V2 queue semantics and dependency identity; dispatcher claim/status and README index consume the shared validator; focused tests cover valid, blocked, parked, invalid, duplicate, missing-dependency, lock, interrupted-claim, and paired-review states.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `check_ai_context.py` still reports 13 unrelated pre-existing packet grammar, index, and V2-field findings; the queue-specific contract reported no findings in the active corpus.
+- Root cause / contributing factors: `pre-existing packet metadata/index drift outside this queue-hardening workstream`
+- Prevention / pipeline improvement: `the shared queue contract now catches draft/auto, missing dependency identities, duplicate workstream IDs, and reasonless parked drafts before they can enter the queue index or claim path`
+- Tooling / docs drift discovered: `check_ai_context.py has 13 unrelated baseline findings; see the closing summary for categories`
+- Follow-up: `manual-follow-up`
 
 ## Handoff
 

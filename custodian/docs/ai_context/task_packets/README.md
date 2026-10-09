@@ -32,7 +32,6 @@ normal closeout.
 
 <!-- task_packet_index:managed:start -->
 - `REVIEW_TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Independently verify that the dispatcher cannot silently strand active V2 work and that the new queue-state invariant does not accidentally make parked/manua...
-- `TASK_PACKET_QUEUE_STRANDING_HARDENING.md` — Eliminate ambiguous task-packet queue states that can make real work disappear from autonomous claiming, and make intentional parking versus dependency gatin...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
@@ -44,6 +43,7 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
+- `OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION_REVIEW_CORRECTIONS_1.md` — Project each target direction's actual workspace workflow and current saved creation readiness truthfully.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -312,15 +312,15 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 ### Ash-Bell / Forlorn-Ritualant Production Art Closeout
 
 - `archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md` — authored-route migration and Encounter Completion V2 runtime are landed; historical mixed code+art packet is no longer executable.
-- `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — draft/auto Asset V2 closeout for the remaining production art; unresolved human-owned cadence/direction/source decisions keep the packet draft rather than abusing manual dispatch. Known locked targets include an 8f 128×128 rise (1024×128), 32×48 procession-cell intent, 64×96 apparition intent, and static ritual props at 96×96 / 32×32 / 32×64 / 16×16. Walk/drag/turn/reaction direction/frame/FPS contracts remain deliberately unresolved and must be human-locked before claim.
+- `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — draft/manual Asset V2 closeout for the remaining production art; unresolved human-owned cadence/direction/source decisions keep the packet parked. Known locked targets include an 8f 128×128 rise (1024×128), 32×48 procession-cell intent, 64×96 apparition intent, and static ritual props at 96×96 / 32×32 / 32×64 / 16×16. Walk/drag/turn/reaction direction/frame/FPS contracts remain deliberately unresolved and must be human-locked before claim.
 - The current required-assets registry remains the open-need authority. Do not resume the archived encounter packet or hand-copy new art into legacy runtime paths.
 
 ### Cross-cutting Stealth Awareness Planning
 
 Design authority: `../../../design/02_features/stealth/STEALTH_PERCEPTION_AND_ALARM_SYSTEM.md`.
 
-- `STEALTH_PERCEPTION_FOUNDATION.md` - P0 draft/auto S0/S1 packet for the typed NoiseEvent repair and shared Enemy + Vaultwing acoustic observation seam.
-- `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/auto dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership.
+- `STEALTH_PERCEPTION_FOUNDATION.md` - P0 draft/manual S0/S1 packet; authoring-chat refresh is required to accept the architecture boundary before implementation.
+- `VAULTWING_RUNTIME_HARDENING.md` - P1 draft/manual dependent cleanup for fixed-step bonding, restore reconciliation, allegiance-sensitive damage compatibility, and Vaultwing-local residue after hearing has moved to shared stealth ownership; it remains parked for the same design refresh.
 - Both remain intentionally non-claimable drafts until the stealth design boundary is accepted for implementation.
 
 ## Completed Bidirectional Dropbox Handoff
@@ -418,7 +418,8 @@ unpacketed tasks also leave process feedback.
 
 ## Dispatch
 
-Implementation-ready packets default to `Dispatch: auto`. `Status`, dependencies, locks, and paired-review consistency are the normal claim gates. A `ready/auto` packet with incomplete dependencies is shown as blocked by the dispatcher and becomes claimable automatically once every dependency archives `complete`. Use `Dispatch: manual` only when the user explicitly wants to decide when an otherwise ready packet may be claimed.
+Use the canonical queue states: `ready/auto` is executable once dependencies, locks, pairing, and validation clear; `ready/manual` is executable only by explicit claim; `draft/manual` is intentionally parked and records its concrete refresh or human-decision reason in the body/handoff. Active V2 `draft/auto` is invalid. Keep dependency-gated mechanical work `ready/auto` so it becomes claimable as soon as dependencies archive `complete`.
+`dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. The Ready/Auto README index lists valid ready/auto packets, including those waiting on ordinary dependencies.
 `dispatch.py status` reads packet truth from fetched `origin/main`; use
 `dispatch.py claim-next --agent <agent-id>` (for example `--agent claude` or
 `--agent codex`) to claim the highest-priority eligible auto packet, or
