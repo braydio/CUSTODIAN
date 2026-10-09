@@ -154,6 +154,12 @@ Recommended v2 plan row:
 - Blockers or open questions: none. Universal action-envelope fit and animation timing remain intentionally outside this slice.
 
 ## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `operator_animation_targets_smoke.py`; `operator_animation_plan_smoke.py`; `operator_asset_schema_smoke.py`; Textual-enabled `operator_workbench_ui_smoke.py`; `run_validation.py --changed --json` reported 26/26 selected checks passed with complete coverage; Python compile checks and `git diff --check` passed.
 - Outcome: complete
 - Implemented: generation-aware authoring identity and source/workspace namespace; plan schema v2 with preserved legacy ordering and corrected action groups; target-first projection for 69 families and 552 direction leaves; truthful canonical/fallback/projected/missing/stale workflow; separate browser roots and shared matrix/tree selection.
 - Preserved: legacy canonical source paths and semantic runtime identity; existing runtime selectors/resources and New Animation backend remain unchanged.
