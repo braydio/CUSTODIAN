@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-codebase-audit-autonomous-review-runner`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `codebase-audit-autonomous-review-runner`
@@ -39,3 +39,15 @@
 - Refresh reason: `none`
 - Next action: If passed, make the runner the default paired-review launch path through the already-updated lifecycle instructions; subsequent same-series work continues normally.
 - Blockers or open questions: `none`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: Required changed-file validation selected the review-pairing contract but could not fetch because this claimed worktree's shared Git common-dir `FETCH_HEAD` is read-only in the managed sandbox. The review packet remains claimed and unarchived; finish was not run.
+- Root cause / contributing factors: The validation recipe fetches `origin` into shared checkout metadata outside this worktree's writable roots.
+- Prevention / pipeline improvement: Run changed-file validation from an authorized writable coordination checkout or provide a validation-safe Git metadata path before paired-review finish.
+- Tooling / docs drift discovered: none
+- Follow-up: manual-follow-up
+- What worked: Direct focused suites and targeted packet-authoring preflight ran successfully; the failed closeout check preserved the review claim.
