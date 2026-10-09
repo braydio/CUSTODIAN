@@ -22,6 +22,7 @@ const GRUNT_FALCON_PUNCH_SCRIPT := preload(
 	"res://game/actors/enemies/abilities/grunt_falcon_punch.gd"
 )
 const SAVAGE_POUNCE_SCRIPT := preload("res://game/actors/enemies/abilities/savage_pounce.gd")
+const SAVAGE_CHAIN_SCRIPT := preload("res://game/actors/enemies/abilities/savage_chain.gd")
 const SAVAGE_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/savage_animation_library.gd")
 const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
 const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/enemy_blackboard.gd")
@@ -205,12 +206,9 @@ var melee_impact_audio_profile: String = "body"
 @export var enemy_spacing_radius_px: float = 34.0
 @export var enemy_spacing_strength: float = 0.65
 @export var savage_chain_enabled: bool = false
-@export var savage_chain_gap_time: float = 0.10
-@export var savage_chain_second_windup_time: float = 0.16
-@export var savage_chain_second_damage: float = 12.0
-@export var savage_chain_recovery_time: float = 0.55
-@export var savage_chain_first_guard_stamina_damage: float = 10.0
-@export var savage_chain_second_guard_stamina_damage: float = 22.0
+@export var savage_chain_config: SavageChainConfig = preload(
+	"res://game/actors/enemies/abilities/configs/savage_chain_default.tres"
+)
 @export var savage_pounce_enabled: bool = false
 @export var savage_pounce_config: SavagePounceConfig = preload(
 	"res://game/actors/enemies/abilities/configs/savage_pounce_default.tres"
@@ -313,9 +311,7 @@ var _last_movement_probe_position: Vector2 = Vector2.ZERO
 var _stuck_reroute_timer: float = 0.0
 var _stuck_repath_cooldown_timer: float = 0.0
 var _marine_dash_ability := MarineDash.new()
-var _savage_chain_phase: StringName = &""
-var _savage_chain_timer: float = 0.0
-var _savage_chain_direction: Vector2 = Vector2.RIGHT
+var _savage_chain_ability: SavageChain = SAVAGE_CHAIN_SCRIPT.new()
 var _savage_pounce_ability: SavagePounce = SAVAGE_POUNCE_SCRIPT.new()
 
 # Pathfinding
@@ -468,6 +464,8 @@ func _ready():
 	_marine_dash_ability.setup(self, marine_dash_config, damage_interval)
 	savage_pounce_config = savage_pounce_config.duplicate(true)
 	_savage_pounce_ability.setup(self, savage_pounce_config)
+	savage_chain_config = savage_chain_config.duplicate(true)
+	_savage_chain_ability.setup(self, savage_chain_config)
 	_refresh_target()
 	_initialize_navigation()
 	var stable_spawn_ordinal := int(get_meta("stable_spawn_ordinal", 0))
@@ -701,11 +699,11 @@ func _attack_target(delta: float):
 	if _should_use_savage_attacks():
 		if _attack_savage_pounce_target():
 			return
-		if _savage_chain_phase.is_empty():
+		if not _savage_chain_ability.is_active():
 			damage_timer += delta
 			if damage_timer >= damage_interval:
 				damage_timer = 0.0
-				_start_savage_chain()
+				_savage_chain_ability.start()
 		return
 	if _should_use_grunt_falcon_punch_attack():
 		if _attack_grunt_falcon_punch_target(delta):
@@ -748,103 +746,23 @@ func _attack_savage_pounce_target() -> bool:
 func _update_savage_attack(delta: float) -> bool:
 	if _savage_pounce_ability.tick(delta):
 		return true
-	if not _savage_chain_phase.is_empty():
-		_update_savage_chain(delta)
-		return true
-	return false
-
-
-func _start_savage_chain() -> void:
-	if not savage_chain_enabled:
-		return
-	_savage_chain_phase = &"windup_1"
-	_savage_chain_timer = maxf(0.01, attack_windup_duration)
-	_savage_chain_direction = global_position.direction_to((target as Node2D).global_position) if target is Node2D else _last_move_direction
-	if _savage_chain_direction.length_squared() <= 0.0001:
-		_savage_chain_direction = Vector2.RIGHT
-	_savage_chain_direction = _savage_chain_direction.normalized()
-	_last_move_direction = _savage_chain_direction
-	velocity = Vector2.ZERO
-	clear_path()
-	if _uses_custom_enemy_animation_set():
-		_update_custom_enemy_animation(_savage_chain_direction, false, true)
-	_log_savage_event(&"savage_chain_windup_1")
-
-
-func _update_savage_chain(delta: float) -> void:
-	_savage_chain_timer = maxf(0.0, _savage_chain_timer - delta)
-	velocity = Vector2.ZERO
-	if _savage_chain_timer > 0.0:
-		return
-	match _savage_chain_phase:
-		&"windup_1":
-			_resolve_savage_chain_hit(damage, &"savage_chain_1", savage_chain_first_guard_stamina_damage)
-			if _savage_chain_phase != &"windup_1":
-				return
-			_savage_chain_phase = &"gap"
-			_savage_chain_timer = maxf(0.01, savage_chain_gap_time)
-		&"gap":
-			_savage_chain_phase = &"windup_2"
-			_savage_chain_timer = maxf(0.01, savage_chain_second_windup_time)
-			_log_savage_event(&"savage_chain_windup_2")
-		&"windup_2":
-			_resolve_savage_chain_hit(savage_chain_second_damage, &"savage_chain_2", savage_chain_second_guard_stamina_damage)
-			if _savage_chain_phase != &"windup_2":
-				return
-			_savage_chain_phase = &"recovery"
-			_savage_chain_timer = maxf(0.01, savage_chain_recovery_time)
-			_log_savage_event(&"savage_chain_recovery")
-		&"recovery":
-			_finish_savage_chain()
-		_:
-			_finish_savage_chain()
-
-
-func _resolve_savage_chain_hit(hit_damage: float, hit_kind: StringName, guard_stamina_damage: float) -> void:
-	if target == null or not is_instance_valid(target) or _is_target_destroyed(target) or not (target is Node2D):
-		_log_savage_event(&"savage_chain_whiff")
-		return
-	var target_node := target as Node2D
-	var spatial := EnemyHitSpatialContract.radial_arc(global_position, target_node.global_position, _savage_chain_direction, 40.0, melee_hit_range_grace_multiplier, melee_hit_range_grace_px, melee_hit_arc_degrees)
-	if not bool(spatial.get("spatial_valid", false)):
-		_log_savage_event(&"savage_chain_whiff")
-		return
-	var hit_result := _apply_enemy_hit_to_target(target_node, hit_damage, hit_kind, guard_stamina_damage, "", spatial)
-	_log_savage_event(&"savage_chain_hit", hit_result)
-
-
-func _finish_savage_chain() -> void:
-	_savage_chain_phase = &""
-	_savage_chain_timer = 0.0
-	velocity = Vector2.ZERO
+	return _savage_chain_ability.tick(delta)
 
 
 func _cancel_savage_attack() -> void:
-	if _savage_chain_phase.is_empty() and not _savage_pounce_ability.is_active():
+	if not _savage_chain_ability.is_active() and not _savage_pounce_ability.is_active():
 		return
-	_savage_chain_phase = &""
-	_savage_chain_timer = 0.0
+	_savage_chain_ability.cancel()
 	_savage_pounce_ability.cancel()
 	velocity = Vector2.ZERO
 	set_threat_highlight(false)
-	_log_savage_event(&"savage_attack_interrupted")
-
-
-func _log_savage_event(event_name: StringName, result: Dictionary = {}) -> void:
-	_obs_log(event_name, {
-		"enemy": enemy_name,
-		"chain_phase": String(_savage_chain_phase),
-		"pounce_phase": String(_savage_pounce_ability.phase),
-		"position": global_position,
-		"target": target.name if target != null and is_instance_valid(target) else "",
-		"result": String(result.get("result", "")),
-	})
+	log_savage_event(&"savage_attack_interrupted", _savage_pounce_ability.phase)
 
 
 func log_savage_event(event_name: StringName, pounce_phase: StringName, result: Dictionary = {}) -> void:
 	_obs_log(event_name, {
 		"enemy": enemy_name,
-		"chain_phase": String(_savage_chain_phase),
+		"chain_phase": String(_savage_chain_ability.get_debug_state().get("phase", "")),
 		"pounce_phase": String(pounce_phase),
 		"position": global_position,
 		"target": target.name if target != null and is_instance_valid(target) else "",
@@ -925,11 +843,32 @@ func resolve_ability_hit(
 	amount: float,
 	hit_kind: StringName,
 	ability_attack_id: String,
-	spatial: Dictionary
+	spatial: Dictionary,
+	guard_stamina_cost_override: float = -1.0
 ) -> Dictionary:
 	return _apply_enemy_hit_to_target(
-		target_node, amount, hit_kind, -1.0, ability_attack_id, spatial
+		target_node, amount, hit_kind, guard_stamina_cost_override, ability_attack_id, spatial
 	)
+
+
+func get_ability_melee_spatial_context(target_node: Node2D, direction: Vector2) -> Dictionary:
+	if target_node == null or not is_instance_valid(target_node):
+		return {}
+	var contact_range := _get_standard_melee_contact_range(target_node)
+	var spatial := EnemyHitSpatialContract.radial_arc(
+		global_position,
+		target_node.global_position,
+		direction,
+		contact_range,
+		melee_hit_range_grace_multiplier,
+		melee_hit_range_grace_px,
+		melee_hit_arc_degrees
+	)
+	spatial["base_contact_range_px"] = contact_range
+	spatial["melee_range_grace_multiplier"] = melee_hit_range_grace_multiplier
+	spatial["melee_range_grace_px"] = melee_hit_range_grace_px
+	spatial["contact_range_source"] = String(_get_standard_melee_contact_range_source(target_node))
+	return spatial
 
 
 func separate_ability_from_target(target_node: Node2D, fallback_direction: Vector2) -> void:
@@ -1165,6 +1104,14 @@ func get_savage_pounce_ability() -> SavagePounce:
 
 func get_savage_pounce_debug_state() -> Dictionary:
 	return _savage_pounce_ability.get_debug_state()
+
+
+func get_savage_chain_ability() -> SavageChain:
+	return _savage_chain_ability
+
+
+func get_savage_chain_debug_state() -> Dictionary:
+	return _savage_chain_ability.get_debug_state()
 
 
 func get_ability_facing() -> Vector2:
@@ -3013,7 +2960,7 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 		_recoil_timer = maxf(_recoil_timer, 0.22)
 		_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
-		if _savage_chain_phase.is_empty() and not _savage_pounce_ability.is_active():
+		if not _savage_chain_ability.is_active() and not _savage_pounce_ability.is_active():
 			_recoil_timer = maxf(_recoil_timer, 0.20)
 			_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
 	elif attack_kind == "heavy":
@@ -4255,7 +4202,7 @@ func _update_savage_enemy_animation(direction: Vector2, is_moving: bool) -> void
 	or _stagger_timer > 0.0 \
 	or _recoil_timer > 0.0 \
 		or _savage_pounce_ability.is_active() \
-	or not _savage_chain_phase.is_empty():
+		or _savage_chain_ability.is_active():
 		return
 	var animation_name := &""
 	if is_moving:
