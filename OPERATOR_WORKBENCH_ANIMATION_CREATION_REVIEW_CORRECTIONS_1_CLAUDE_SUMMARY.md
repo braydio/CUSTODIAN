@@ -35,14 +35,14 @@ The service fixture mocks only the outer art-checkout/landing orchestration and 
 - Follow-up: none
 - What worked: The new service-level fixtures reproduced and then closed the precise UI/CLI publication boundary gap.
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 ## Next Handoff
 - Next workstream: review-operator-workbench-animation-creation-review-corrections-1
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Auto-dispatch the paired cycle-1 re-review; resume downstream cockpit/UX planning only after it passes.
 - Blockers or open questions: Optional Textual interactive pilot remains unrun because the dependency is absent.

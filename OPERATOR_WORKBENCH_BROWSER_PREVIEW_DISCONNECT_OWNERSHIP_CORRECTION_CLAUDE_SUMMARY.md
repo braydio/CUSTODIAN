@@ -40,7 +40,7 @@ The first `python3 ... run_validation.py --changed --json` attempt used the syst
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Claim the paired fresh-context review and verify the durable implementation evidence before any FX-layer adoption.
 - Blockers or open questions: none

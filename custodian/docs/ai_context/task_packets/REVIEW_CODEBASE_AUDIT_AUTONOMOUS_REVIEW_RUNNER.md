@@ -12,7 +12,7 @@
 - Review target workstream: `codebase-audit-autonomous-review-runner`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md`
 - Reviewed main: `7eddb322aca7871a9146fe4e6952fe265039f8cd`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent | same-agent-fresh-context`
@@ -35,7 +35,7 @@
 - Next packet state: `none`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
 - Refresh reason: `none`
 - Next action: If passed, make the runner the default paired-review launch path through the already-updated lifecycle instructions; subsequent same-series work continues normally.
 - Blockers or open questions: `none`

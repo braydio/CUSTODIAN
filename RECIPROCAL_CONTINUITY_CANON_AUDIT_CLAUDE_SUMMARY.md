@@ -1,6 +1,6 @@
 # Reciprocal Continuity Canon Audit — ChatGPT Summary
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 ## Audit target
 
@@ -57,7 +57,7 @@ The next slice is therefore `reciprocal-continuity-canon-drift-guard`: create on
 - Next packet state: ready
 - Refresh owner: execution-agent
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none; live authority and acceptance are sufficiently bounded for mechanical implementation.
 - Next action: Claim the ready packet, implement the fail-closed canon-drift guard, then run `review-reciprocal-continuity-canon-drift-guard`.
 - Blockers or open questions: none

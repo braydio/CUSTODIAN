@@ -1,6 +1,6 @@
 # Review Packet Override Alignment
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 Workstream: `review-packet-override-alignment`.
 
@@ -31,7 +31,7 @@ Workstream: `review-packet-override-alignment`.
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Claim and complete the paired cycle-2 review from a fresh reviewer context.
 - Blockers or open questions: Project-root fast-forward synchronization remains pending because the checkout contains an unrelated `BRANCH_ARCHIVE.md` edit.

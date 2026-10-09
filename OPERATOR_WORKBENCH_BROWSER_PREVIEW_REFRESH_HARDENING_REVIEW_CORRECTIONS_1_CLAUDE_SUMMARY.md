@@ -1,6 +1,6 @@
 # Operator Workbench Browser / Preview Refresh Hardening — Correction Cycle 1
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 Closed all four findings from the paired post-land review.
 
@@ -27,7 +27,7 @@ The pinned UI smoke passed, including the expanded Textual Pilot cases. Changed-
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Run the paired fresh-context correction review and verify dispositions for R0-01 through R0-04.
 - Blockers or open questions: none; historic crash traceback unavailable.
