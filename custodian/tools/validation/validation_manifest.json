@@ -4357,6 +4357,24 @@
       "needs_import": false
     },
     {
+      "id": "awakening_staging_receipt",
+      "type": "python",
+      "script": "custodian/tools/validation/test_awakening_staging_receipt.py",
+      "tier": "unit",
+      "tags": [
+        "awakening",
+        "asset_pipeline",
+        "staging_manifest"
+      ],
+      "owners": [
+        "custodian/tools/art/stage_awakening_inbox.py",
+        "custodian/tools/validation/test_awakening_staging_receipt.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "awakening_handoff_seam_evidence_adapter",
       "type": "python",
       "script": "custodian/tools/validation/test_awakening_handoff_seam_evidence.py",
