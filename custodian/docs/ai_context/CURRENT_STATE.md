@@ -4,6 +4,10 @@
 
 Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `draft/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
 
+## Ash-Bell Ritualant Static Asset Intake (2026-10-09)
+
+Twelve reviewed static Ritualant source states are now available as a durable Dropbox source batch at `/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/`: 6 ritual props and 6 chamber-dressing/decals. They are **not live runtime yet**. `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` is ready/auto behind the fresh runtime-truth review and contains exact package hashes, zero-search rclone staging commands, repo-relative source/inbox paths, Asset Pipeline V2 commands, live scene consumer nodes, requirement migration, and validation. Its paired review gates the remaining broad Ritualant production-art closeout. The existing broken chapel bell remains production truth; the new `empty_bell_frame` is a support/frame layer, not a replacement Ninth Bell.
+
 ## Ash-Bell Bridged Falls / Lower Quarter Approach Program (2026-10-07)
 
 The geographic design is now locked at `design/05_levels/ASH_BELL_BRIDGED_FALLS_APPROACH.md`: after the authored Forlorn-Ritualant resolves, its future north egress leads to a **distinct generated Ash-Bell Alpine Highlands region**, which in turn contains a **generated Bridged Falls subregion**. Bridged Falls is not a fixed authored corridor: each accepted seed must compose a new large-scale, connected network of monumental ruined Meridian civic bridge spans, branches/overlooks, cliff descent and Lower Quarter terminal while preserving the first-basin reveal and bridge-commit beats. Waterfalls/mist remain presentation over real CHASM/exterior semantics; Lower Quarter / Station IX stay far visual attractors until the final approach.
@@ -2512,3 +2516,7 @@ Per-direction publish state, sibling and generation isolation, stale-reference
 precedence, and no-write behavior are covered by focused regression fixtures.
 The correction's paired cycle-1 review is the immediate successor; later WB25
 work remains gated on that review and its recorded refresh.
+
+## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
+
+The ten-region off-route backdrop vision and 30 requested image prompts are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.

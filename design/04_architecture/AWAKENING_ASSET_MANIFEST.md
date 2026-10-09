@@ -546,3 +546,7 @@ scene bindings, collision, or interaction authority were added by the intake.
 The exact A2 `attestation_dais` alpha cleanup is limited to Dropbox revision
 `65d22e7369f4c915cdd61` and is documented in
 `custodian/docs/ai_context/reports/assets/attestation_dais_a2_correction_receipt.json`.
+
+## Planned, not registered: Awakening perimeter support families
+
+[AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md) specifies ten additional nonplayable support-backdrop families with proposed per-family static `structural_support` (512×512), `distant_structures` (1024×512), and `edge_transition` (256×256) states. Their 30 images are **not yet generated, registered, ingested or bound**; technical canvases may be amended from AP0 measured evidence before family creation. They must not replace the established `underlay`/`foreground` pairs. Exact prompts: [AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md](AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md). Implementation: [AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md](AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md).

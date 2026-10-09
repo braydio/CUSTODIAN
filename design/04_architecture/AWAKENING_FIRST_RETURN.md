@@ -815,3 +815,7 @@ Canonical one-liner for the docs:
 ```text
 The first objective is not “explore.” It is **RETURN TO POST**. The Custodian awakens in a grand institution ruin beneath a repeating command from a terminal carrying imported authority credentials from a physically adjacent continuity. The Custodian answers the command because responding to dead authority is what it was built to do. Authentication establishes the first local anchor of archive, repair, scanning, and future base progression — and confirms that the Custodian is not inheriting power, but refusing to relinquish residual authority.
 ```
+
+## Planned: Off-route perimeter underlay support (not yet implemented)
+
+The approved ten-region off-route scenery language and nonplayable structural/depth/atmospheric rules are owned by [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md); its implementation DAG and per-state art prompts are linked there. This is future visual presentation work only, **not** additional traversable regions or published art. Preserve current Layout/registered room plates, accepted 04→05 source composition and existing camera/visibility authority.

@@ -177,6 +177,14 @@ The current placeholder is a ColorRect band, so the need is real. **Frame count,
 
 ## A4 — Ritual props
 
+**Approved source batch:** `/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/`
+
+- primary package: `custodian_ash_bell_ritual_props_chamber_dressing_handoff_v1.zip`
+- SHA-256: `e814165c67a64ba93017c8b5651158ce118254d136050af9e4ce9ef07bd3d185`
+- intake owner: `ash-bell-ritualant-static-asset-intake`
+- status: 6/6 source masters + exact-canvas candidates approved; runtime publication/wiring pending Asset V2 intake
+
+
 **Proposed family id:** `ash_bell_ritual_props`  
 **Source-work:** `custodian/asset_drop/source_work/ash_bell/ash_bell_ritual_props/`  
 **Inbox:** `custodian/asset_drop/inbox/ash_bell_ritual_props/`  
@@ -196,6 +204,17 @@ The current placeholder is a ColorRect band, so the need is real. **Frame count,
 Runtime domain should be `props/ash_bell/ritual` or the exact current prop-domain convention selected at family registration.
 
 ## A5 — Chamber dressing / narrative decals
+
+**Approved source batch:** same Dropbox batch root as A4.
+
+- base package supplies 4 states: `black_banner_hanging`, `black_banner_torn`, `black_banner_floor`, `ash_child_handprints`
+- closeout package: `custodian_ash_bell_chamber_static_closeout_handoff_v1.zip`
+- closeout SHA-256: `697923fa8782355aa7ba0c7cb2b893f5517e355d88880869d97e3396540b0412`
+- closeout supplies 2 states: `west_gate_seal_marker`, `sealed_gate_scratches`
+- intake owner: `ash-bell-ritualant-static-asset-intake`
+- status: 6/6 source masters + exact-canvas candidates approved; runtime publication/wiring pending Asset V2 intake
+- the wrapped seal-marker alternate in the closeout package is reference-only and must not become a required runtime state
+
 
 **Proposed family id:** `ash_bell_chamber_dressing`  
 **Source-work:** `custodian/asset_drop/source_work/ash_bell/ash_bell_chamber_dressing/`  

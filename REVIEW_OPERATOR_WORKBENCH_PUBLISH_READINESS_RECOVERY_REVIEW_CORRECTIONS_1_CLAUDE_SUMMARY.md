@@ -1,6 +1,6 @@
 # Operator Workbench Publish Readiness Review Corrections 1
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 Workstream: `review-operator-workbench-publish-readiness-recovery-review-corrections-1` (finding `R0-01`).
 
@@ -41,7 +41,7 @@ No reviewed implementation files were modified. I created bounded cycle-2 correc
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Bind publication paths to the selected animation's trusted path set and reject manifest retargeting before canonical mutation.
 - Blockers or open questions: R0-01 remains unresolved pending cycle-2 correction and review.

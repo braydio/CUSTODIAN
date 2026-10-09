@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-08
+Last updated: 2026-10-09
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -31,6 +31,8 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
+- `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Dependency-gated ready/auto Asset V2 intake for the 12 approved Ritualant ritual-prop/chamber-dressing states; contains exact Dropbox paths/SHA-256, staging commands, family paths, live scene consumer nodes, requirement migration and validation.
+- `REVIEW_ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Paired fresh-context asset/runtime/visual review for the 12-state static Ritualant intake.
 - `AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1.md` — Repair the live 04→05 underlay fade ownership so the accepted 1502×2048 Dust→Connector→Locker composition stays visually stable in the correct room/connector...
 - `REVIEW_AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1.md` — Independently verify that the 04→05 repair changes only fade ownership, preserves the accepted registered composition byte-for-byte and transform-for-transfo...
 - `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md` — Independently verify F14-C1 has a real physical Grunt ↔ abstract group handoff with precisely one gameplay authority at a time, stable ActorId/GroupId and st...
@@ -40,6 +42,7 @@ normal closeout.
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
 - `AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registratio...
+- `AWAKENING_PERIMETER_SUPPORT_FOUNDATION_V1.md` — Establish measured off-route camera-footprint coverage, an Asset V2-compatible ten-family pending-art contract, and a collision-free Awakening perimeter supp...
 - `CODEBASE_AUDIT_AUTONOMOUS_REVIEW_RUNNER.md` — Make paired CUSTODIAN reviews actually launch in a mechanically fresh Codex context without user message relay, while preserving the existing dispatcher, wor...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
 - `HUB_AWAKENING_CONTEXT_HANDOFF.md` — Consume the reviewed one-shot Awakening completion seam and enter the reviewed persistent Hub first-set runtime at `Spawn_SouthReach` through one major-conte...
@@ -74,6 +77,7 @@ normal closeout.
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
 - `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Independently verify the landed Ritualant runtime-truth repair against its packet and current authored-encounter authority.
 - `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1.md` — Independently verify the landed Awakening convergence slice against its registration, seam, progression, asset-consumption, and South Reach handoff-readiness...
+- `REVIEW_AWAKENING_PERIMETER_SUPPORT_FOUNDATION_V1.md` — Independently falsify perimeter support foundation completion, especially any false Asset V2 registration or gameplay/presentation authority breach.
 - `REVIEW_BIDIRECTIONAL_DROPBOX_HANDOFF.md` — Independently verify the landed bidirectional Dropbox handoff against its own packet contract, especially fail-closed external-input handling, credential bou...
 - `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 without redesigning the generated-region lifecycle.
 - `REVIEW_BRIDGED_FALLS_LOWER_QUARTER_HANDOFF.md` — Independently verify the final Bridged Falls -> Lower Quarter production cutover and single-state-authority claim.
@@ -167,7 +171,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 ### Completed Persistent Checkout Sync Hardening
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 - `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — complete: one fail-closed persistent-checkout sync authority owns safe coordination-main and Operator-art updates, with `csync` / `opui-sync` helpers, OPUI pre-authoring synchronization, and 25/25 changed-file validations passed.
 - `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context review found blocking R0-01: status/startup hashed all 134,037 ignored root files; cycle 1 correction removes that scan and bounds checks to incoming paths.
@@ -311,7 +315,7 @@ AR packet set is refreshed.
 
 ### Active Non-Player Actor Runtime Refactor Series
 
-Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 - Program tracker / architecture authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Expected program size: 11 implementation packets spanning standard combat-agent decomplexification, then commanded allies, fauna, encounter/social NPCs, static autonomous agents, and final compatibility cleanup.
@@ -376,7 +380,7 @@ After step 4, autonomous execution stops at the recorded `non-player-fauna-bonde
 
 ## Completed Operator Workbench Preview Disconnect Ownership Correction
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 - `archived/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — P0 human-authorized R2-01 correction complete; live preview acceptance is bound to the issuing bridge connection/session, including same-document reconnects.
 - `archived/REVIEW_OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` — paired fresh-context review passed actual disconnect and identical-session reconnect controls; `operator-workbench-fx-layer-adoption` is the ready immediate successor.
