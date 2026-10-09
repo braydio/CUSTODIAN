@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `codebase-audit-autonomous-review-runner`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-task-packet-queue-stranding-hardening-review-corrections-1`
@@ -43,6 +43,27 @@
 - Task overrides: `none`
 - Deferred: General persistent packet worker/scheduler; remote/Ultra review execution; provider abstraction; resource-budget scheduling; parallel review pools; automatic model choice.
 
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: A first integration-test pass caught a summary-classification ordering bug; it was fixed and the test now covers zero-exit without a durable landed receipt. Godot validation initialized nine unrelated Operator `.import` sidecars in the worktree; they were classified as disposable generated metadata and removed.
+- Root cause / contributing factors: The active/blocked result path needed the durable summary loaded before checking its blocker explanation; a fresh validation worktree also lacked the editor import cache.
+- Prevention / pipeline improvement: The fake-Codex integration now exercises successful durable-state recognition and zero-exit fail-closed recovery. Existing worktree setup guidance should continue to expect Godot-generated import sidecars after validation.
+- Tooling / docs drift discovered: none
+- Follow-up: `review-codebase-audit-autonomous-review-runner`
+- What worked: Existing dispatcher receipts remain the sole claim authority; a temporary repository test exercises exact worktree launch without touching production implementation.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Added a synchronous runner that fetches and checks the exact ready/auto review and complete archived target before claim; checks installed Codex flags before claim; claims only through `dispatch.py`; verifies the structured receipt and exact packet/worktree; launches `codex exec --ephemeral` in that worktree; streams redacted JSONL/stderr into Git-common-dir evidence; and verifies the landed archived review + summary or emits a recovery card. Fake-Codex tests cover preflight failure, human/non-review rejection, target checks, duplicate local runner refusal, receipt identity, fresh cwd/prompt isolation, secret redaction, nonzero exit, launch failure recovery, durable success, missing durable state, and Next Handoff return. Existing dispatch (79), workstream (38), review-contract (5), queue/context (18), and runner (11) unit tests passed. Changed-file validation passed 23/23 with complete coverage and no infrastructure errors; `git diff --check` passed. A bounded temporary-Git-repository rehearsal used only a synthetic review packet and left no repository queue residue.
+
 ## Handoff
 
 - Next workstream: `review-codebase-audit-autonomous-review-runner`
@@ -51,5 +72,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
 - Refresh reason: `none`
-- Next action: After implementation lands, the normal successor logic should use the newly landed runner itself to launch this packet's fresh-context paired review if bootstrap mechanics safely permit; otherwise perform this one bootstrap review through the existing fresh-context method, then require the runner for subsequent paired reviews.
+- Next action: After this implementation lands and archives complete, invoke `python3 custodian/tools/agent/paired_review_runner.py review-codebase-audit-autonomous-review-runner` from the synchronized coordination checkout. The child review must start fresh and inspect only durable repo evidence; it may use the runner itself because that code is already landed.
 - Blockers or open questions: `bootstrap self-review must not fake independence by reviewing the runner implementation in the same implementation context`

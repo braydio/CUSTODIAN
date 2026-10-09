@@ -272,9 +272,15 @@ Semantics:
    decision** and the dispatcher says it is eligible, claim it and continue
    autonomously. `Refresh owner: execution-agent` is likewise an autonomous
    bounded refresh unless live evidence exposes a new human-owned choice.
-5. Paired review still requires a fresh reviewer context. Transition to a fresh
-   reviewer context and claim the review itself; do not ask the user to carry the
-   implementation recap into a new session.
+5. Paired review still requires a fresh reviewer context. Once the exact paired
+   review is eligible, invoke
+   `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
+   from the coordination checkout. The runner preflights Codex before claim,
+   claims only that review through the dispatcher, launches
+   `codex exec --ephemeral` in the receipt's exact worktree, and returns its
+   durable summary and `Next Handoff`. Do not directly claim the review in the
+   implementation context or ask the user to relay it. If execution fails after
+   claim, preserve the branch/worktree and use the emitted run-log recovery card.
 6. Stop only on a real human/ChatGPT refresh gate, human visual/design gate,
    explicit manual-dispatch hold, unresolved safety/validation blocker, failed
    prerequisite, or successor that remains ineligible after its eligible

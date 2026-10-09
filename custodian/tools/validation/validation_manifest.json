@@ -5622,6 +5622,25 @@
       "needs_import": false
     },
     {
+      "id": "paired_review_runner_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_paired_review_runner.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "paired_review",
+        "fresh_context"
+      ],
+      "owners": [
+        "custodian/tools/agent/paired_review_runner.py",
+        "custodian/tools/agent/test_paired_review_runner.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/tools/agent/workflow_control.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "workstream_artifact_contract_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_workstream_artifacts.py",
