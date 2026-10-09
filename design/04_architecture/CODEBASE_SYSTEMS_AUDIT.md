@@ -3,9 +3,9 @@
 **Date:** October 8, 2026  
 **Workstream:** `codebase-systems-audit`  
 **Evidence baseline:** [`main@e089e8b8a099`](https://github.com/braydio/CUSTODIAN/commit/e089e8b8a0993a0276596797e3a95798e33eb422)  
-**Program phase:** overview indexed; F03 source-level diagnostic completed, runtime/decision-lock gate outstanding; remaining focus audits pending  
+**Program phase:** overview indexed; F03 source-level diagnosis complete / decisions pending; F14 local read-only baseline received (six reported passing validations), new offscreen continuity proof + F15 geographic identity lock pending; other focus audits ongoing  
 **Decisions locked:** 0 of 15 · **New packets authorized/authored by this audit:** 0  
-**Current authoring chat URL:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31 (October 8, 2026 F03 continuation).
+**Current authoring chat URL:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31 (October 8, 2026 F03/F14/F15 continuation).
 
 ## Purpose and architecture
 Create a durable trail from system-level diagnosis through evidence-backed decisions to independently executable implementation contracts. This is **not** a mandate to rewrite major systems, and it does not override existing design, runtime, queue or review authorities.
@@ -26,7 +26,7 @@ CODEBASE_SYSTEMS_AUDIT.md         (overview, prioritization, index)
 4. **Enemy/non-player agents:** Marine Dash extracted; six-family composition roadmap exists; complete NPA slices without turning `Enemy` into a universal NPC superclass.
 5. **Campaign and continuity:** The first complete production campaign loop and R2 death/reintegration deserve integration priority over more detached features.
 6. **Game feel:** Motion-consistent upper/lower presentation, enemy telegraph readability, hit feedback, vehicle response, interaction acknowledgement and camera behavior have strong potential ROI, but require playtest/telemetry evidence.
-7. **Living world (F14 added October 8):** Strategic campaign systems and near/far actor-tier classification are already implemented, but unloaded-sector activity, actor identity handoff/reification and durable deterministic world history are not yet established as an end-to-end live capability. The old Sector Activity Simulator candidate is a design foundation, not a production subsystem. [Initial evidence and provisional roadmap](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md).
+7. **Living world (F14 local baseline validated by an agent report, October 8):** Six focused headless Godot runs were reported passing on runtime-matching fetched source. The interest-tier throttling and macro clock are real; root dormant suspension is not full subtree suspension; visual chunk unload does not establish actor handoff; macro snapshots and history do not yet provide full durable runtime continuation. No offscreen actor reification test passed because none of those smokes covers it. F14 remains **NOT LOCKED** and needs F15 geographic ID agreement. [Source plus local audit receipt](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md).
 8. **Campaign-world geography (F15 added October 8):** Hub is canonically the Historical City continuation; normal campaign ingress is Muster Court's Continuity Port, not the Awakening Gate of Dust. Current procgen is a finite local map revealed in chunks, not a large multi-biome, multi-settlement geographic campaign world. A distinct geographic topology/world-session design must precede F14 unloaded-actor continuity integration or new procgen world-scale work. [F15 audit](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md) · [design discussion draft](CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md).
 9. **Agent orchestration:** Native dispatcher, isolated worktrees, automatic landing and paired reviews already exist; independently launched reviewer process/supervision remains to be proven before designing a single unattended loop.
 
@@ -61,7 +61,7 @@ F10 | [Camera, streaming and environmental presentation](codebase_systems_audit/
 F11 | [Agent execution, validation and paired review handoff](codebase_systems_audit/F11_AGENT_VALIDATION_AUTOMATION.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F12 | [Cross-system game-feel opportunities](codebase_systems_audit/F12_GAME_FEEL.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F13 | [New-feature return on investment](codebase_systems_audit/F13_FEATURE_ROI.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
-F14 | [Living-world simulation / interest / unloaded sector continuity](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) | P0 | Source-level initial evidence; local runtime and decision lock pending | Not locked
+F14 | [Living-world simulation / interest / unloaded sector continuity](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) | P0 | Local read-only baseline and six reported Godot passes; lifecycle/reification proof pending | Not locked
 F15 | [Campaign-world geography and Domain-scale traversal](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md) | P0 | Source/design comparison and draft concept; local scale benchmark and decision lock pending | Not locked
 
 ## F03 detailed-audit update (October 8, 2026)
@@ -73,7 +73,7 @@ F15 | [Campaign-world geography and Domain-scale traversal](codebase_systems_aud
 
 ## F14 living-world audit addition (October 8, 2026)
 
-[The F14 item-level record](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) corrects an omitted top-level architecture/feature program: deterministic macro campaign simulation is not the same capability as unloaded actors and sectors experiencing causal state changes and being correctly reconstructed upon return. It records observed near/nearby/background/dormant code, strategic macro state, WorldHistory limitations, the old Sector Activity Simulator proposal, drift and a [five-slot conceptual roadmap](codebase_systems_audit/PACKET_ROADMAP.md#cs-f14-a). **F14 is NOT LOCKED; no executable implementation packets have been authored.** The next appropriate action is a focused local evidence/characterization audit, not a whole-repository sweep.
+[The F14 item-level record](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) corrects an omitted top-level architecture/feature program: deterministic macro campaign simulation is not the same capability as unloaded actors and sectors experiencing causal state changes and being correctly reconstructed upon return. It records observed near/nearby/background/dormant code, strategic macro state, WorldHistory limitations, the old Sector Activity Simulator proposal, drift, a received local audit receipt and a [five-slot conceptual roadmap](codebase_systems_audit/PACKET_ROADMAP.md#cs-f14-a). **F14 is NOT LOCKED; no executable implementation packets have been authored.** The local read-only characterization was returned with six reported passing checks. The next action is a **new**, focused dormant-child/actor-handoff lifecycle proof and F15 geographic identity/design agreement, not a redundant whole-repository sweep.
 
 ## F15 geography audit addition (October 8, 2026)
 
@@ -82,7 +82,7 @@ F15 separates the geography of a single broad physically traversable campaign fr
 ## Proposed work ordering
 **Audit lane F: geographic world scale.** F15 reconciles Historical City / Hub / Continuity Port canonical routing, defines a geographically coherent single-campaign experience, and compares global topology/streamed areas against mere one-canvas expansion. It can design before procgen hardening completes; implementation must consume F02 and current route/persistence owners.
 
-**Audit lane E: living-world continuity.** F14 is a distinct P0 audit of how campaign macro simulation, interest tiers, sector state, actor identity and unload/reload bridge. Run a focused characterization before deciding any simulation architecture changes, preserving existing REMAP, NPA and procgen owners.
+**Audit lane E: living-world continuity.** F14 is a distinct P0 audit of campaign macro simulation, interest tiers, geographic location state, actor identity and unload/reload bridge. Its first read-only characterization is received; further work needs a narrowly scoped lifecycle falsification and an F15-compatible geographic identity decision, preserving REMAP, NPA and procgen owners.
 
 **Audit lane A: existing-program reconciliation.** F01, F02, F04 and F06 map to active Operator, Procgen, NPA and Hub/Recovery programs. Determine whether any gap survives existing packet ownership; don't add duplicate scope.
 
