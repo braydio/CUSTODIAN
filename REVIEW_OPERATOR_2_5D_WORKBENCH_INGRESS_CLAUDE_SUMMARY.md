@@ -63,9 +63,9 @@ Moment Forge: not run — tooling/workflow review, no runtime presentation chang
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: Existing happy-path smokes passed despite four resume/collision acceptance failures; a repeated --test CLI option selected only the final test on the first review invocation.
-- Root cause / contributing factors: The ingress smoke verifies helper-level READY reuse rather than orchestrator interruption recovery, manually terminalizes pending package cells, and uses the source parent instead of OPUI's default animations root. The validation runner accepts one test filter.
-- Prevention / pipeline improvement: Correction acceptance explicitly requires the four independent regressions, including actual UI/default-root and persistence-boundary controls. Required focused tests were rerun with separate official invocations and aggregated unchanged test records.
+- What went wrong: Existing happy-path smokes passed despite four resume/collision acceptance failures; a repeated --test CLI option selected only the final test on the first review invocation; finish required the receipt Status value in its documented backtick syntax.
+- Root cause / contributing factors: The ingress smoke verifies helper-level READY reuse rather than orchestrator interruption recovery, manually terminalizes pending package cells, and uses the source parent instead of OPUI's default animations root. The validation runner accepts one test filter; the finish receipt parser enforces the template formatting.
+- Prevention / pipeline improvement: Correction acceptance explicitly requires the four independent regressions, including actual UI/default-root and persistence-boundary controls. Required focused tests were rerun with separate official invocations and aggregated unchanged test records; receipt formatting was corrected before landing.
 - Tooling / docs drift discovered: none
 - Follow-up: operator-2-5d-workbench-ingress-review-corrections-1
 - What worked: Disposable real Source Session/Aseprite fixtures exposed persistence gaps without mutating production art.

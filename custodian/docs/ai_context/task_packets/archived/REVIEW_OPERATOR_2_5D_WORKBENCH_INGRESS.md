@@ -64,9 +64,9 @@ Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh cont
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: Happy-path validation omitted four acceptance regressions; repeated --test options initially selected only the final filter.
+- What went wrong: Happy-path validation omitted four acceptance regressions; repeated --test options initially selected only the final filter; finish required documented backticks around receipt Status.
 - Root cause / contributing factors: Helper-level resume/manual package completion fixtures and a nondefault source-root shape omitted production orchestration boundaries; runner accepts one test filter.
-- Prevention / pipeline improvement: Bounded correction requires all four independent reproductions and negative controls; required review tests were rerun as separate official invocations.
+- Prevention / pipeline improvement: Bounded correction requires all four independent reproductions and negative controls; required review tests were rerun as separate official invocations and receipt formatting was corrected before landing.
 - Tooling / docs drift discovered: none
 - Follow-up: operator-2-5d-workbench-ingress-review-corrections-1
 

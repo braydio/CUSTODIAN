@@ -191,7 +191,7 @@ Do not copy this pseudocode literally if live signatures change during implement
 
 ## Independent Review
 
-- Status: findings
+- Status: `findings`
 - Review workstream: review-operator-2-5d-workbench-ingress
 - Reviewed on main: 0d4612f52e064b48c2cf5a157a6c95aec4a553a8
 - Reviewer context: fresh
