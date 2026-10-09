@@ -6,7 +6,7 @@
 > **Decision state:** **NOT LOCKED** · no new task-packet authoring authorized  
 > **Snapshot:** `main@e089e8b8a099` · October 8, 2026  
 > **Method:** live GitHub documentation/source/tree inspection; no Godot runtime tests or playable feel review in this pass.
-> **Provisional priority:** P2 · **Program maturity:** Lifecycle consolidation documented as complete
+> **Provisional priority:** P1 for long-range campaign traversal integration (user-affirmed October 9, 2026) · **Program maturity:** Lifecycle, first Scout class and vehicle recovery series already exist; F09 detailed handling/travel audit remains pending
 
 ## Focus boundary
 This item audits the named system's responsibility, integration seams, observed friction and relevant game-feel consequences. Existing architecture and implementation packets remain authoritative for already-claimed work. This document is a **diagnostic/decision record**, not a new feature spec or Codex execution instruction.
@@ -15,6 +15,16 @@ This item audits the named system's responsibility, integration seams, observed 
 - `PilotableVehicle` is the canonical lifecycle owner according to CURRENT_STATE; older unused vehicle scripts were removed.
 - The Field Scout Buggy Mk I has a class identity, durability, wreckage/restoration semantics and focused smoke coverage.
 - `pilotable_vehicle.gd` is approximately 26 KB; the basic lifecycle was recently consolidated, so further splitting is not an automatic priority.
+
+## F15 campaign traversal integration decision (2026-10-09)
+
+The user has made **vehicles and Ports major travel pillars** for the future broad, continuous Campaign World. F09 should explicitly test vehicle-assisted long-distance navigation, road continuity, biome/terrain handling, mounting/dismounting across streamed localities, approach/exit handoffs, parking/recovery and world-state persistence. This elevates the *travel architecture importance* of F09 without superseding its existing vehicle implementation DAG.
+
+**Existing authority protected:** `PilotableVehicle` / vehicle registry; [Vehicle System](../../02_features/vehicles/VEHICLES.md); [Field Scout Buggy Mk I](../../02_features/vehicles/FIELD_SCOUT_BUGGY_MK1.md); [Vehicle Recovery Roadmap](../../02_features/vehicles/VEHICLE_RECOVERY_IMPLEMENTATION_ROADMAP.md). That roadmap already includes fabricated assembly restoration, Asset V2 class visuals and staged class evolution. The active Scout recovery correction must finish under its current dependency chain; no replacement pilot system or duplicated vehicle task packets.
+
+**Dependency boundary:** F15 owns geographic routes/road network and hidden local stream/stitch semantics. F09 owns vehicle runtime, traversal handling and lifecycle. F14 owns offscreen actor/group state, and should not simulate cars as physical vehicles when uninstantiated without a separate explicit later rule. Port-to-Domain travel remains `WORLD_TRANSITION_SYSTEM.md`/route doctrine.
+
+**First proof:** Use the existing Scout (when dependencies permit) to drive between two geographically distinct sites in the same campaign, without an unsolicited reset of Operator/campaign/vehicle identity. Evaluate travel cadence via measured playtest before fixing world kilometers or speed scales. No new artwork authorized by this audit.
 
 ## Questions the deep audit must answer
 - Verify control ownership, entering/exiting, camera handback, invalid exit clearance, disable/destroy and recovery through literal production paths.

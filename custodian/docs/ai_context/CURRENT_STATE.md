@@ -1346,6 +1346,12 @@ Documentation updates this session:
   `Enemy` remains its shared movement/combat/presentation host; the Sundered Keep
   authored ambush requests the dash through an explicit ability seam. Quick and
   charged behavior, hit telemetry, and the scene's tuned values are preserved.
+- Savage pounce now lives in the actor-local `SavagePounce` module with typed
+  `SavagePounceConfig` defaults bound by `enemy_savage.tscn`. The extracted
+  authority retains the original launch band, windup/leap/recovery, travel,
+  directional contact window, one-hit result handling, cooldown, and
+  interruption behavior. Pounce still has priority over the unchanged Savage
+  two-hit chain; the chain remains actor-owned for NPA-3.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring

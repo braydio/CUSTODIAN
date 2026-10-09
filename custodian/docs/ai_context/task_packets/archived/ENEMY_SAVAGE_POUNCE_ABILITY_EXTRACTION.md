@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `enemy-savage-pounce-ability-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-marine-dash-ability-extraction-recovery-1, review-enemy-marine-dash-ability-extraction-recovery-1`
@@ -33,13 +33,32 @@
 - Task overrides: `none`
 - Deferred: Savage two-hit chain extraction; pounce authored body/FX wiring; reaction/loot/generic melee decomposition; cross-family actor convergence.
 
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION_CLAUDE_SUMMARY.md; focused enemy_savage_pounce and savage_runtime gates pass; run_validation.py --changed --json selects 25, passes 25, and reports complete changed-file coverage; git diff --check passes; pounce mutable phase fields and numeric exports are removed from enemy.gd`
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: Fresh worktree required a one-time editor import; the import produced unrelated `.import` sidecars that were removed. The pounce smoke initially coupled its mock target to full enemy perception and carried world coordinates between cases; the fixture was made a physics body, perception was disabled for the isolated cases, and each scenario now resets actor/target placement. The first lifecycle finish attempt also identified that the packet Completion Truth headings needed the repository’s exact machine-readable field schema; that receipt is now corrected.
+- Root cause / contributing factors: The old smoke directly controlled phase time and did not account for physics callback restrictions or physics-body requirements after switching to the extracted movement authority.
+- Prevention / pipeline improvement: Keep ability movement smokes on real physics frames with a `CharacterBody2D` target and reset world positions between independent cases.
+- Tooling / docs drift discovered: completion-truth field names/schema are enforced by workstream finish and were not explicit in the task packet template used at authoring time; the packet now follows the canonical receipt.
+- Follow-up: none
+- What worked: Existing public hit, movement, presentation, and diagnostic host services kept the extraction local without a generic ability base.
+
 ## Handoff
 
 - Next workstream: `review-enemy-savage-pounce-ability-extraction`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh reason: `none; NPA-2 has now been remeasured against the passed NPA-1 review and is executable`
-- Next action: `claim and implement NPA-2; after it lands, let the paired review run before any NPA-3 planning refresh`
+- Next action: `claim and run the paired review from a fresh reviewer context`
 - Blockers or open questions: `none`

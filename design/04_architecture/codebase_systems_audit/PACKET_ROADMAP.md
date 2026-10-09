@@ -212,7 +212,7 @@
 
 **F14: [Living-world simulation, interest management and unloaded-sector continuity](F14_LIVING_WORLD_SIMULATION.md)**
 
-> **Status:** P0 AUDIT FOCUS, NOT LOCKED. **Read-only local characterization received: six focused Godot runs reported passing; no unloaded actor continuity test exists in that set.** The first diagnostic purpose of CS-F14-A is fulfilled by this receipt and should not generate a duplicate agent packet. Remaining slots are conceptual and non-executable. See [F14 local evidence and gaps](F14_LIVING_WORLD_SIMULATION.md). F15 owns stable geographic location identity.
+> **Status:** F14 V1 **BOUNDED** behavior/owner choice locked by user (2026-10-09); six baseline tests agent-reported pass; full offscreen reification not proved. CS-F14-A baseline is fulfilled; B approved as the **next bounded implementation workstream**, packet + paired review drafted, awaiting official local authoring preflight before `ready/auto`. C–E remain conceptual and gated. See [F14 V1 lock and local evidence](F14_LIVING_WORLD_SIMULATION.md) and [F15 continuous geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md).
 
 ### CS-F14-A
 - **Intent:** Characterize interest tier, macro clock, actor serialization/identity, streaming, history, and current load/unload parity; profile baseline.
@@ -222,13 +222,14 @@
 - **Acceptance sketch:** exact current ownership map and falsifiable gap list, no new implementation or duplicate system.
 
 ### CS-F14-B
-- **Intent:** Create the smallest deterministic, sector-scoped abstract-activity model for unloaded areas only where existing macro owners cannot serve.
-- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_SECTOR_ACTIVITY_FOUNDATION.md` (**not created**).
-- **Gate:** A's baseline report accepted as evidence (not as implementation), explicit abstract state/schema/tick and **F15 geographic location-ID interface** lock; reuse current `WorldSimulationRuntime` and `SimulationKernel`. Initial synthetic two-location unit proof need not wait for full world art/procgen expansion.
-- **Acceptance sketch:** inactive sector changes reproducibly without loading scene; no autonomous second clock or parallel resource owner.
+- **Status:** **DESIGN AUTHORIZED; PAIRED PACKETS DRAFT/MANUAL, NOT YET CLAIMABLE** until local targeted validator passes and pair is promoted. No runtime implementation landed.
+- **Implementation packet:** [LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md](../../../custodian/docs/ai_context/task_packets/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) · [paired review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md).
+- **Intent:** Add a small deterministically stepped, serializable offscreen group model using stable synthetic geographic IDs and existing `SimulationKernel` 60-fixed-tick macro cadence; prove one uninstantiated patrol produces a bounded causal state change and snapshot continuation.
+- **Lock:** user approved Bounded offscreen simulation; foundation does **not** include physical→abstract handoff, combat casualties, procgen infinite world or REMAP-3 persistence. The local agent must run `validate_task_packet_authoring.py` against the exact pair **before** switching both to `ready/auto`.
+- **Acceptance sketch:** state-only B evolves while uninstantiated with reproducible event/snapshot, identity conserved, same-seed repeated run and legacy snapshot read green. No independent clock, actor double-spawn or parallel materials authority.
 
 ### CS-F14-C
-- **Intent:** Stable entity/group identity and active↔abstract representation handoff with no duplicate spawn or identity reset.
+- **Intent:** **After B lands and independent review passes**, preserve stable group/actor identity in physical↔abstract scene ownership and reification, with no duplicate spawn or identity reset.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_ENTITY_REIFICATION_HANDOFF.md` (**not created**).
 - **Gate:** accepted baseline report, B (if authorized), NPA/procgen scene lifecycle, **F15 stable geographic identity**, and exact reentry/state-ownership contract. Do not conflate presentation chunk unload with actor unload.
 - **Acceptance sketch:** deterministic loaded/unloaded crossings preserving consequences, goals and counts; no disabled physical actor still secretly doing loaded actions.
@@ -250,7 +251,7 @@
 
 **F15: [Campaign-World Geographic Scale, Topology and Traversable Domain](F15_CAMPAIGN_WORLD_GEOGRAPHY.md)**
 
-> New P0 **design/audit** focus. [Discussion draft](../CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) records user intent for one broad explorable campaign geography, but does **not** lock infinite maps, numeric world sizes or rewrite existing Hub/Lattice/Procgen owners. These are NOT implementation packets.
+> User **locked Continuous geography as the player-facing campaign traversal target**, and **Ports/vehicles as major travel infrastructure** (2026-10-09). Mountain passes are ordinary traversable geography, not cutscenes by default; Archive Resolve is visual presentation only and does not supply new world-scale generation. [Decision and draft](../CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) do **not** yet lock macro topology, numeric sizes, infinite extent or F15 implementation. F15-A/B/C remain conceptual and not claimable; keep existing F09 vehicle-series ownership.
 
 ### CS-F15-A
 - **Intent:** Current finite-world scale and wayfinding benchmark, canonical Hub/Port/Domain terms, local procgen vs global geography owner map and three architectural alternatives evaluated.
@@ -268,7 +269,7 @@
 - **Intent:** One-campaign connected traversal proof across multiple distinct localities with a meaningful intervening landscape, persistent campaign identity, stable re-entry and readable geography.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_CAMPAIGN_WORLD_CONNECTED_TRAVERSAL_PROOF.md` (**not created**).
 - **Authorization:** BLOCKED pending architecture review, B or approved existing topology owner, RouteTraversal/WorldTransition/Operator ingress and F14 identity integration decisions.
-- **Acceptance sketch:** traverse two nonadjacent sites and one biome transition **without ending the accepted campaign**, preserve route/world state and Operator, validate perf/deterministic seed/seam, human review of wayfinding, no mandatory new assets.
+- **Acceptance sketch:** traverse two nonadjacent sites and one biome transition **on foot, continuously within the accepted campaign** (no ordinary mountain-pass cutscene); preserve route/world state and Operator; validate deterministic geographic seams, streamed semantics and Archive Resolve **presentation-only** continuity. Following the existing Field Scout/recovery/Asset V2 dependency chain, run an independent **vehicle-assisted long-route** proof preserving vehicle, Operator and route identity, not a duplicate vehicle controller. No new F15 assets until the visual grammar is approved.
 
 **Preexisting authority:** [Lattice Doctrine](../../03_world/LATTICE_DOCTRINE.md), [Hub First Set Blockout](../HUB_FIRST_SET_BLOCKOUT.md), [World Transition](../WORLD_TRANSITION_SYSTEM.md), [Region Generation](../REGION_GENERATION_SYSTEM.md), [Procgen Optimization Roadmap](../../02_features/procgen/PROCGEN_RUNTIME_OPTIMIZATION_ROADMAP.md), F02 procgen and F14 unloaded-world activity. No new art family or task-packet DAG has been authorized.
 

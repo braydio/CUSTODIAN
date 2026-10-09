@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `0`
 - Reviewed main: `c4c56d175d4e66528b450b6872d888d3ced7eab6`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Branch: `agent/awakening-designation-locker-visual-reauthor-v1`
 - Goal: `Replace the live P-9 Designation Locker art with the approved reauthored four-state family while preserving the existing P0 Asset V2 contract, one-shot opening animation, wall-integrated placement, collision footprint, interaction flow, P-9 grant semantics, and Awakening progression.`
 - Completion boundary: `The approved Dropbox handoff is hash-verified, prior canonical source/runtime provenance is preserved, all four states are published through the existing awakening_designation_locker family, the 8-frame authorization strip remains 128×160 per frame at 10 FPS and one-shot, the live locker still transitions closed → authorize_open → open_loaded → empty and grants P-9 exactly once, and focused runtime plus in-scene visual evidence confirms the replacement remains correctly registered in Zone04 without gameplay/geometry drift.`
@@ -257,7 +257,7 @@ After this lands, return to the Awakening art-convergence review and compare onl
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Refresh reason: `none`
 - Next action: `After the declared Awakening paired reviews complete, claim the art-convergence packet and compare only the Recovery Alcove, Console, and Dust Lung Lift against this locker.`
 - Blockers or open questions: `The art-convergence packet remains gated on review-awakening-room-connectors-polish, review-awakening-interaction-feedback-console-activation, and review-awakening-lower-upper-spine-connection.`

@@ -17,7 +17,7 @@
 - Review modes: `code, architecture, runtime, visual, asset-pipeline`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Goal: Independently prove that Awakening interaction prompts remain readable for the full actionable interval, long readouts no longer die after the HUD's two-frame lease, and the already-ingested Crèche console activation FX actually plays once in the live scene.
 - Reviewed implementation acceptance: Verify every acceptance item in archived `AWAKENING_INTERACTION_FEEDBACK_CONSOLE_ACTIVATION.md`.
 - Review evidence: prompt lifetime traces before/after target loss; readout dwell timing; HUD suppression/modal behavior; console FX scene node/Asset V2 runtime path; 8-frame playback timing; first-vs-repeat interaction; unchanged progression/recovery alcove; generic readout/Sundered Keep compatibility.
@@ -34,7 +34,7 @@
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Refresh reason: `none`
 - Next action: Archive normally; the reviewed prompt/console feedback fix releases the lower→upper spine slice.
 - Blockers or open questions: `none`
