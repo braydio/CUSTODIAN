@@ -28,7 +28,8 @@ def main() -> int:
         destination = INBOX / args.family / f"{state}.png"; destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
         manifest["items"].append({"family": args.family, "state": state, "normalized": str(source), "destination": str(destination), "size": list(actual), "status": "staged"})
-    (INBOX / "awakening_ingest_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    manifest_path = INBOX / args.family / "awakening_staging_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
     return 0
 
 if __name__ == "__main__": raise SystemExit(main())

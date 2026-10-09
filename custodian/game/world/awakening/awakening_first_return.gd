@@ -48,6 +48,10 @@ const LOWER_UPPER_PASSAGE_ID := "lower_upper_spine_05_06"
 signal zone_entered(zone_id: StringName, index: int)
 signal console_acknowledged()
 signal sidearm_recovered()
+# Production handoff seam. This reports Awakening completion only; the next
+# world owner decides when and how to transition to the Hub.
+signal awakening_completed(snapshot: Dictionary)
+# Deprecated compatibility signal for existing blockout-era listeners.
 signal blockout_completed()
 
 @export var build_blockout_presentation := true
@@ -906,8 +910,16 @@ func _on_south_reach_reached(body: Node) -> void:
 		return
 	completed = true
 	if hud != null and OS.is_debug_build():
-		hud.call("show_interaction", "AWAKENING BLOCKOUT COMPLETE",
+		hud.call("show_interaction", "AWAKENING COMPLETE",
 			"ROAD OF WITNESSES // SOUTH REACH", "", Catalog.ICON_OBJECTIVE)
+	var snapshot := {
+		"completed": true,
+		"opening_console_acknowledged": opening_console_acknowledged,
+		"p9_recovered": p9_recovered,
+		"final_zone_id": &"zone10_road_south_reach",
+		"operator_global_position": (body as Node2D).global_position,
+	}
+	awakening_completed.emit(snapshot)
 	blockout_completed.emit()
 
 

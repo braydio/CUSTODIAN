@@ -2187,14 +2187,14 @@ all 1,025 sampled positions remained on Layout walkable floor with registered
 floor pixels beneath the Operator. The shared composition stays opaque through
 the connector fade envelope. The old Locker foreground remains preserved but
 unbound; Layout traversal/collision and the four-state interactive Designation
-Locker remain unchanged. Implementation is complete pending its paired review.
+Locker remain unchanged. The correction and its paired review are complete.
 The follow-up fade-ownership repair now keeps this shared parent fixed at full
 opacity and applies room/connector distance to the registered Locker, Dust, and
 Connector children independently. The live Dust child is also held opaque across
 the lower→upper passage; the hidden legacy underlay is no longer used as its
 coverage oracle. The P-9 state progression, 1,025-sample bidirectional traversal,
-and deterministic late-seam checkpoints all pass. The compact visual evidence
-is published for the fresh paired review; the accepted layout, pixels, root,
+and deterministic late-seam checkpoints all pass. Its compact visual evidence
+was reviewed in the fresh paired review; the accepted layout, pixels, root,
 order, and gameplay geometry remain unchanged.
 Separately, the lower and later halves connect through the single
 `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` authority at
@@ -2209,9 +2209,21 @@ The traversal connector/inlay blockout layer now yields to the production
 plates while Layout retains collision authority. Console and lift stations use
 Layout markers; camera reveal releases are generation-safe; debug reset cancels
 pending reveal/lift activity and leaves global inventory and the P-9 grant
-persistent. Published Crèche and Ambulatory fixture states are baked into the
-plates and remain unbound as separate sprites. Other audited fixture families
-have no standalone runtime files yet.
+persistent. All seven published Crèche fixture states and six Ambulatory fixture
+states, including `service_basin_b`, are baked into their plates and remain
+unbound as separate sprites. Attestation, Reliquary, Dust Lung Structures, and
+Undergate Machinery states are published/imported but remain `BAKED_ONLY` or
+`NOT_READY` for standalone placement. Approach and Late Service fixtures and the
+Late Service relay lamp remain unpublished. Specialized live consumers remain
+the recovery alcove, P-9 Designation Locker, Dust Lung lift, Gate components,
+route circle inlay, and required ambient effects.
+
+`AwakeningFirstReturn` emits the production `awakening_completed(snapshot)`
+signal after Crèche console acknowledgement and P-9 recovery when the Operator
+reaches South Reach. The data-only snapshot includes both prerequisites, the
+final zone identity, and Operator global position. Deprecated
+`blockout_completed` remains a once-only compatibility emission from the same
+decision. This does not implement the Hub transition.
 Gate technical capture confirmed the pylon components were materially wider
 and taller than their blockers; those two blockers now use 240×496 footprints
 at the original centers, with the central route still open. The central sealed

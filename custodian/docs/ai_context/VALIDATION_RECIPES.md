@@ -1498,6 +1498,22 @@ floor outside walls, ocean, and chasm. The save/restore smoke proves the
 versioned `InfrastructureRegistry` boundary. It does not imply project-wide
 save-manager integration.
 
+## Awakening Registration and Handoff
+
+Run after changing Awakening plate registration, seam probes, or South Reach
+completion. The evidence pass emits five authored-region captures in this order:
+05→06, 06→07, 07→08, 08→10, and optional 08↔09. Pixel metrics are technical
+measurements; the task packet owns any required human composition approval.
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/awakening_art_registration_smoke.gd
+godot --headless --path . --script res://tools/validation/awakening_first_return_progression_smoke.gd
+python3 tools/iteration/run_moment.py traversal/awakening_late_seams_v1 --capture-mode none
+python3 tools/iteration/run_moment.py traversal/awakening_late_seams_v1 --capture-mode evidence
+python3 tools/validation/awakening_handoff_seam_evidence.py <evidence-run-directory>
+```
+
 ## Custodian Wake Contract Prewarm
 
 Use after changing the Home-to-operational-world handoff, contract bootstrap,

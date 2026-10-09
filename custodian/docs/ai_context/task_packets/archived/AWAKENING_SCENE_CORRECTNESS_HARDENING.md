@@ -1,3 +1,5 @@
+> Historical planning record. Its A1–A5 hardening work is already live and is superseded by the current Awakening implementation, `design/04_architecture/AWAKENING_FIRST_RETURN.md`, and the archived completion/review packets. Do not dispatch or rerun this checklist as active work.
+
 # AWAKENING SCENE CORRECTNESS HARDENING
 
 Audit/fix the live Awakening scene in ONE pass where practical.

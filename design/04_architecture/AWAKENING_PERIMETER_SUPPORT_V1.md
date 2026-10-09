@@ -61,7 +61,7 @@ These are visual roles, not three extra playable regions. No physics, triggers, 
 
 - Current runtime already creates `AwakeningVoidBackdrop` beneath all underlays using `Layout.WORLD_BOUNDS.grow(1024)`; this remains the **last-resort neutral fallback**, not the full design. Do not globally delete/replace it until every camera-visible support region is complete and coverage-tested.
 - The **actual** underlays and foregrounds for Zones 01–09 remain untouched in their established canvases at the exact Layout-derived centers. Existing Road-of-Witnesses modular plates remain separate Road-owned art.
-- The accepted registered 04→05 Dust→connector→Locker art is a **single source-preserving 1502×2048 composition**, placed at shared root `(349,-2585)`, native 1:1, zero rotation, with order Dust → connector → Locker. All perimeter plates remain below that composition and cannot replace, crop, resize, feather or alter any of its source pixels or fade ownership. Resolve the pending narrow connector fade repair and handoff-convergence review first.
+- The accepted registered 04→05 Dust→connector→Locker art is a **single source-preserving 1502×2048 composition**, placed at shared root `(349,-2585)`, native 1:1, zero rotation, with order Dust → connector → Locker. All perimeter plates remain below that composition and cannot replace, crop, resize, feather or alter any of its source pixels or fade ownership. The narrow fade repair is complete and passed paired review; this handoff-convergence workstream owns the current scene-wide review boundary.
 - Lower-to-upper 05→06 is a single `Rect2(-64,-3840,128,96)` passage. No perimeter texture may cover its walkable samples or occlude the Operator.
 - Gate pylons, the authored central path, optional Chapel 08↔09 and Approach→Road south gate remain unchanged. The visually sealed Gate aperture is a separate known authored-state question; **do not fake an opened gate with perimeter art**.
 - The Road's five production modules are owned by `RoadOfWitnessesPrototype`. Zone 10 support only surrounds the South Reach relevant to Awakening; it does not paint future Hub playable streets or change the north barricade at `y=-6530`.
@@ -101,5 +101,5 @@ custodian/content/metadata/assets/families/<family>.asset.json
 
 - **Planning decision locked:** region identities and atmospheric progression.
 - **Technical/image production unfulfilled:** none of the 30 proposed perimeter images are claimed to exist or be ingested.
-- **Active prerequisite:** finish/review the 04→05 fade-ownership repair and the Awakening handoff/art-convergence workstream before touching shared registration/fade.
+- **Active prerequisite:** the 04→05 fade-ownership repair is complete and passed paired review. Complete the Awakening handoff/art-convergence workstream before touching shared registration/fade.
 - **Human gates:** actual generated art and aesthetic acceptance for each group; preserve draft/manual downstream packet states until reviewed source and manifest exist.
