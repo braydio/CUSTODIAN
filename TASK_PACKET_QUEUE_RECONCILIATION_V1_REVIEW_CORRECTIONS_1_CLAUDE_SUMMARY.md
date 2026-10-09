@@ -1,6 +1,6 @@
 # Queue Reconciliation V1 Review Corrections 1 Summary
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Findings addressed
 
@@ -41,7 +41,7 @@ One initial focused test command referenced a nonexistent module name and theref
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: After this correction lands and its packet archives complete, claim the paired re-review in a fresh independent reviewer context and resolve R0-01, R0-02, and R0-03 using the exact evidence.
 - Blockers or open questions: Independent re-review is required before the original review findings can close.
