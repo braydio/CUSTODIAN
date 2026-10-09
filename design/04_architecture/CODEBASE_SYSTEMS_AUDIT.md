@@ -3,8 +3,8 @@
 **Date:** October 8, 2026  
 **Workstream:** `codebase-systems-audit`  
 **Evidence baseline:** [`main@e089e8b8a099`](https://github.com/braydio/CUSTODIAN/commit/e089e8b8a0993a0276596797e3a95798e33eb422)  
-**Program phase:** overview indexed; F03 source-level diagnosis complete / decisions pending; F14 local read-only baseline received (six reported passing validations), new offscreen continuity proof + F15 geographic identity lock pending; other focus audits ongoing  
-**Decisions locked:** 0 of 15 · **New packets authorized/authored by this audit:** 0  
+**Program phase:** F14 V1 bounded offscreen activity and F15 continuous campaign travel user-locked; F14-B paired draft packet prepared (local authoring preflight required); F15 technical geography and reification decisions pending  
+**Full-focus decisions locked:** 0 of 15 · **Partial design locks:** F14 V1 bounded behavior + F15 continuous travel · **New implementation packet pairs:** 1 draft, 0 validated/claimable  
 **Current authoring chat URL:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31 (October 8, 2026 F03/F14/F15 continuation).
 
 ## Purpose and architecture
@@ -56,13 +56,13 @@ F05 | [Authored level and encounter coordinators](codebase_systems_audit/F05_AUT
 F06 | [Campaign, Hub, continuity, death and recovery](codebase_systems_audit/F06_CAMPAIGN_DEATH_RECOVERY.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F07 | [Inventory and equipment UI](codebase_systems_audit/F07_INVENTORY_EQUIPMENT_UI.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F08 | [Power, fabrication, defense and logistics](codebase_systems_audit/F08_INFRASTRUCTURE_SYSTEMS.md) | P2 | Initial evidence recorded; detailed audit pending | Not locked
-F09 | [Vehicle runtime, class identity and driving feel](codebase_systems_audit/F09_VEHICLES.md) | P2 | Initial evidence recorded; detailed audit pending | Not locked
+F09 | [Vehicle runtime, class identity and driving feel](codebase_systems_audit/F09_VEHICLES.md) | P1 | Existing Scout/lifecycle/recovery DAG; major campaign travel importance user-confirmed; detailed audit pending | Not locked
 F10 | [Camera, streaming and environmental presentation](codebase_systems_audit/F10_CAMERA_STREAMING_ENVIRONMENT.md) | P2 | Initial evidence recorded; detailed audit pending | Not locked
 F11 | [Agent execution, validation and paired review handoff](codebase_systems_audit/F11_AGENT_VALIDATION_AUTOMATION.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F12 | [Cross-system game-feel opportunities](codebase_systems_audit/F12_GAME_FEEL.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
 F13 | [New-feature return on investment](codebase_systems_audit/F13_FEATURE_ROI.md) | P1 | Initial evidence recorded; detailed audit pending | Not locked
-F14 | [Living-world simulation / interest / unloaded sector continuity](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) | P0 | Local read-only baseline and six reported Godot passes; lifecycle/reification proof pending | Not locked
-F15 | [Campaign-world geography and Domain-scale traversal](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md) | P0 | Source/design comparison and draft concept; local scale benchmark and decision lock pending | Not locked
+F14 | [Living-world simulation / interest / unloaded sector continuity](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) | P0 | V1 bounded activity lock; F14-B approved draft packet/review pending preflight; reification pending | Partially locked
+F15 | [Campaign-world geography and Domain-scale traversal](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md) | P0 | Continuous geography/Ports/vehicles player experience locked; topology/scale benchmark pending | Partially locked
 
 ## F03 detailed-audit update (October 8, 2026)
 
@@ -73,16 +73,16 @@ F15 | [Campaign-world geography and Domain-scale traversal](codebase_systems_aud
 
 ## F14 living-world audit addition (October 8, 2026)
 
-[The F14 item-level record](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) corrects an omitted top-level architecture/feature program: deterministic macro campaign simulation is not the same capability as unloaded actors and sectors experiencing causal state changes and being correctly reconstructed upon return. It records observed near/nearby/background/dormant code, strategic macro state, WorldHistory limitations, the old Sector Activity Simulator proposal, drift, a received local audit receipt and a [five-slot conceptual roadmap](codebase_systems_audit/PACKET_ROADMAP.md#cs-f14-a). **F14 is NOT LOCKED; no executable implementation packets have been authored.** The local read-only characterization was returned with six reported passing checks. The next action is a **new**, focused dormant-child/actor-handoff lifecycle proof and F15 geographic identity/design agreement, not a redundant whole-repository sweep.
+[The F14 item-level record](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md) corrects an omitted top-level architecture/feature program: deterministic macro campaign simulation is not the same capability as unloaded actors and sectors experiencing causal state changes and being correctly reconstructed upon return. It records observed near/nearby/background/dormant code, strategic macro state, WorldHistory limitations, the old Sector Activity Simulator proposal, drift, a received local audit receipt and a [five-slot conceptual roadmap](codebase_systems_audit/PACKET_ROADMAP.md#cs-f14-a). **F14 V1 bounded behavior LOCKED; an implementation packet plus paired review are DRAFT and cannot be claimed until local preflight + promotion.** The local read-only characterization was returned with six reported passing checks. The next action is F14-B packet authoring preflight and isolated synthetic-location activity implementation, not a redundant whole-repository sweep; real actor handoff follows the B review and F15 geographic owner decisions.
 
 ## F15 geography audit addition (October 8, 2026)
 
-F15 separates the geography of a single broad physically traversable campaign from F14's near/far actor simulation and F02's existing procgen data/streaming hardening. [Item-level audit](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md) and [discussion draft](CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) preserve Hub and Domain canon while proposing scale/wayfinding, global topology and streamed local materialization. [Three unapproved conceptual slots](codebase_systems_audit/PACKET_ROADMAP.md#cs-f15-a). **F15 NOT LOCKED; zero new executable packets.**
+F15 separates the geography of a single broad physically traversable campaign from F14's near/far actor simulation and F02's existing procgen data/streaming hardening. [Item-level audit](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md) and [discussion draft](CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) preserve Hub and Domain canon while proposing scale/wayfinding, global topology and streamed local materialization. [Three unapproved conceptual slots](codebase_systems_audit/PACKET_ROADMAP.md#cs-f15-a). **F15 continuous player experience LOCKED; technical streaming/topology architecture remains UNLOCKED, zero F15 executable packets.**
 
 ## Proposed work ordering
 **Audit lane F: geographic world scale.** F15 reconciles Historical City / Hub / Continuity Port canonical routing, defines a geographically coherent single-campaign experience, and compares global topology/streamed areas against mere one-canvas expansion. It can design before procgen hardening completes; implementation must consume F02 and current route/persistence owners.
 
-**Audit lane E: living-world continuity.** F14 is a distinct P0 audit of campaign macro simulation, interest tiers, geographic location state, actor identity and unload/reload bridge. Its first read-only characterization is received; further work needs a narrowly scoped lifecycle falsification and an F15-compatible geographic identity decision, preserving REMAP, NPA and procgen owners.
+**Audit lane E: living-world continuity.** F14 V1 bounded abstract activity is design-locked and its narrow synthetic two-location packet pair is drafted for local authoring preflight. Real physical identity/reification waits for B independent review and F15 geography contracts; preserve REMAP, NPA and procgen owners.
 
 **Audit lane A: existing-program reconciliation.** F01, F02, F04 and F06 map to active Operator, Procgen, NPA and Hub/Recovery programs. Determine whether any gap survives existing packet ownership; don't add duplicate scope.
 

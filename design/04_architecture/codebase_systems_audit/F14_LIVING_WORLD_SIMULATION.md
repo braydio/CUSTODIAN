@@ -4,7 +4,7 @@
 
 > **Status:** local Godot **baseline characterization received**; unloaded-area actor-continuity proof pending  
 > **Priority:** P0 audit focus, NOT an automatic implementation/dispatch priority  
-> **Decision:** **NOT LOCKED**. No new executable packets authorized or authored.  
+> **Decision:** **F14 V1 behavioral boundary LOCKED** (user choice: bounded offscreen outcomes); specific B abstract-activity implementation slice approved for packet authoring. Full physical actor handoff, reification, REMAP-3 disk persistence and cross-world simulation rollout remain **NOT IMPLEMENTED / NOT LOCKED**.  
 > **Workstream:** `living-world-simulation-audit`; repository branch `agent/living-world-simulation-audit` for this documentation slice.  
 > **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
 > **Evidence method:** initial live GitHub source/design inspection plus **user-supplied read-only local agent audit** of runtime source matching fetched `origin/main@1d19ec8fae15c6eb23604457e3da2adef596c19d`, October 8, 2026. Six reported headless runs passed; those commands were executed by the local agent, **not by this documentation editor**. Findings rechecked against current `main` where indicated. No physical→abstract→physical gameplay proof yet.
@@ -80,7 +80,26 @@ The target player promise is that areas the player leaves continue to evolve wit
 4. Process-restart persistence, exact-once event reconciliation and pending-command/clock-boundary semantics coordinated with REMAP-3.
 5. Only after geographic scale/interest policies are locked: representative population/performance budget and visibility-independent processing measurements.
 
-## Desired authority model to consider (not locked)
+## F14 V1 behavioral decision lock (user-approved 2026-10-09)
+
+**Decision authority:** The user selected **Bounded** offscreen simulation. This locks the gameplay ceiling/intent, not a new global world generator, encounter balance table, vehicle tuning, or fiction rule.
+
+| Concern | Locked F14 V1 decision |
+| --- | --- |
+| **Global owner** | Existing `WorldSimulationRuntime` / `SimulationKernel` and authoritative fixed ticks remain the sole campaign time/mutation owner. An abstract-activity component is invoked by the existing kernel, never a competing autoload clock. |
+| **Geographic identity** | Use stable **Domain ID + geographic location ID + group ID**. Group and individual IDs are domain-scoped, not nested under a temporary CampaignVisit or scene and may change location. A first isolated data test may use two synthetic locations `A` and `B` with an explicit seed. Do not key this to facility POWER/COMMS `Sector` nodes or streamed presentation chunks. |
+| **Levels of detail** | Near operator: physical gameplay/NPA owns combat. Far and unloaded: group-level causal abstract state; individual state only where meaningful and durable. The interest manager selects **resolution**, not consequences. |
+| **Bounded activity** | Legitimate offscreen outcomes may include patrol movement/route occupation, work progression, repairs/resources via their existing owners, pressure and warnings, retreat, encounter outcomes and bounded casualties *only under explicit later policy*. Offscreen actors do not run unseen physical bullet/animation/physics combat. |
+| **V1 foundation scope** | One stable named group in synthetic location B makes a deterministic, inspectable nonlethal state change (e.g. patrol objective/route progress) while no actor in B is instantiated; fixed-seed snapshots reconstruct the same abstract state and event. V1 is **not** full physical reification or material stock mutation. |
+| **Cadence** | Prototype group activity at **one update per 60 authoritative fixed ticks** (~1Hz at normal speed) as configurable/tunable policy; deterministic ID-sorted ordering, bounded work per update and event-driven idle behavior. Benchmark before freezing throughput/catch-up policies for production or distant domains. |
+| **Handoff law** | Exactly one representation owns a group at any moment: physical while loaded, abstract while genuinely absent, never both. Physical→abstract summary and abstract→physical reification must preserve stable ID, location, objective, relevant resources and condition and never double-spawn. This is the **locked target for F14-C**, not acceptance falsely attributed to F14-B. |
+| **Persistence and events** | Abstract state/event outputs must be serializable/deterministically replayable and have causal reason/tick. Integrate real disk persistence and once-only handling through **REMAP-3**, not an independent save subsystem. Existing WorldHistory telemetry is not authoritative save history. |
+| **Offscreen stakes** | Avoid out-of-camera surprise resolution of named story-critical characters, irreversible campaign failure, wholesale settlement destruction or contested extraordinary actions without a later explicitly approved rule/visibility policy. No infinite offscreen simulation when the campaign runtime is inactive. |
+| **Evidence** | Six user-supplied headless checks passed baseline code, **not** unloaded reification. New focused seeded offscreen foundation smoke required for B; real unload/re-enter/duplicate tests belong to C/E. |
+
+**Approvals:** F14 V1 owner/rule boundary and **CS-F14-B as next narrow implementation workstream** are design-authorized. B must be independently reviewable before physical adapter work. F15's continuous world geography is **the player-facing target**; physical streaming architecture, numeric scale, biome assets, seam technology and vehicle traversal tuning are separately pending. No global runtime execution or complete F14 implementation claim is implied by this lock.
+
+## Target ownership model (V1 boundaries locked; later integrations gated)
 
 ```text
 WorldSimulationRuntime + SimulationKernel
@@ -130,21 +149,21 @@ The requested **read-only local source/test audit has been returned** and is rec
 
 ## Conceptual task-packet roadmap
 
-All slots remain blocked pending this item's audit and lock, and existing REMAP, procgen and NPA program ownership checks.
+CS-F14-A read-only evidence is satisfied. **Only the narrow CS-F14-B abstract activity foundation is authorized** for packet authoring by the October 9 V1 behavioral decision; its new implementation/review pair remains **draft/manual pending local authoring preflight**. CS-F14-C/D/E are not yet authorized and still require evidence plus REMAP, procgen and NPA owner reconciliation.
 
 - [CS-F14-A: authority/interest/handoff parity and performance baseline](PACKET_ROADMAP.md#cs-f14-a) (proposed)
-- [CS-F14-B: deterministic sector-activity state and simulation rules](PACKET_ROADMAP.md#cs-f14-b) (proposed)
+- [CS-F14-B: deterministic abstract geographic-group activity](PACKET_ROADMAP.md#cs-f14-b) (design locked; [draft implementation packet](../../../custodian/docs/ai_context/task_packets/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) and [paired review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) awaiting authoring validator)
 - [CS-F14-C: entity identity, physical→abstract handoff and reification](PACKET_ROADMAP.md#cs-f14-c) (proposed)
 - [CS-F14-D: persistent history, save/restore and world consequence reconciliation](PACKET_ROADMAP.md#cs-f14-d) (proposed)
 - [CS-F14-E: two-sector playable proof, instrumentation, soak and integration closeout](PACKET_ROADMAP.md#cs-f14-e) (proposed)
 
-**A's read-only diagnostic purpose is now satisfied by the supplied local agent audit**; do not author a duplicate audit-only implementation packet. A may be re-scoped to newly required lifecycle tests **only after decision lock**. B and C may change sequence after F15 stable-location semantics are agreed; D must consume REMAP-3 rather than duplicate persistence. This is **not an executable packet sequence**.
+**A's read-only diagnostic purpose is satisfied. B is approved for the isolated synthetic-location state-only implementation after packet-pair authoring preflight.** C's real reification contract must be refreshed from reviewed B and F15's actual location/streaming owner; D must consume REMAP-3 rather than duplicate persistence. Do not mistake B design authorization for an implemented system, or authorize C–E automatically.
 
 ## Decision lock record
 
 - **Audit result:** read-only baseline runtime/source characterization and six focused local checks **reported complete/passing**. Full actor handoff/reification, descendant lifecycle and unloaded-area causal simulation tests **not yet proven**.
-- **Selected owner/seam:** proposed above, **undecided**.
-- **Design approval:** still needed for strategic update cadence (all time sourced from existing authoritative fixed clock), group-versus-individual stable identity, geographic ID contract with F15, actor reification/handback rules, unloaded hazard/combat limits, persistence/command-boundary behavior and player-facing reporting.
+- **Selected owner/seam:** F14 V1 boundary **LOCKED** below: `WorldSimulationRuntime`/`SimulationKernel` authoritative time and macro commands; a focused activity-state owner scoped by stable synthetic geographic keys; interest manager classifier only; loaded enemies own loaded combat. Real reification adapter and persistence schema remain later decision gates.
+- **Design approval:** user explicitly approved **Bounded** offscreen consequences and continuous-geography target (October 9, 2026). F14 V1 adopts authoritative fixed-tick cadence, group-level abstractions with optional stable individual identity and bounded non-physical event types as engineering defaults. Real map identity schema, physical reification, casualty semantics, full restart state and UI reporting await later locks.
 - **Preserved contracts:** 60Hz fixed step, kernel macro ordering, loaded physical gameplay, one runtime authority, canonical procgen and campaign identity.
 - **Document drift:** interest tier behavior mismatch recorded and descriptive implementation notes reconciled in `design/01_systems/INTEREST_MANAGEMENT_SYSTEM.md`; further gameplay policy changes remain unapproved.
-- **Implementation decision:** **UNLOCKED**; **0 new packets authored or activated**. Next: lock F15-compatible stable geographic identity and F14 abstract/handoff behavior, then authorize narrowly scoped new tests and implementation slices. Baseline audit does not need repeating.
+- **Implementation decision:** **F14-B foundation authorized for packet authoring** as an isolated deterministic simulation-data slice. The broader F14 program is **not** automatically authorized: C reification, D REMAP-3 integration and E playable integration remain dependency/design-gated. Before dispatch, the specific new packet and paired review must pass the repository's targeted authoring preflight. Next: implement/review B before revisiting C.

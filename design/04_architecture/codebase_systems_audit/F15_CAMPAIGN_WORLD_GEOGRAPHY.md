@@ -3,7 +3,7 @@
 [← Audit overview](../CODEBASE_SYSTEMS_AUDIT.md) · [Discussion draft](../CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) · [Conceptual roadmap](PACKET_ROADMAP.md#cs-f15-a)
 
 > **Audit status:** source/design comparison recorded; full runtime topology, regional playtest measurements and design lock pending  
-> **Decision status:** **NOT LOCKED**. No executable implementation task packets authorized or authored.  
+> **Decision status:** **PLAYER EXPERIENCE LOCKED** (continuous campaign geography; passes do not inherently trigger cutscenes; ports/vehicles are core travel). The actual F15 macro topology, chunk/region materialization, numeric scale, routes, vehicle feel, assets and implementation DAG remain **NOT LOCKED**; no F15 implementation packet authorized.  
 > **Priority:** P0 design/audit focus, not a new dispatcher priority  
 > **Workstream:** `campaign-world-geography-design-audit`  
 > **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
@@ -51,6 +51,30 @@ The [F14 read-only local runtime characterization](F14_LIVING_WORLD_SIMULATION.m
 
 **F15 responsibility before F14 production integration:** choose stable `campaign/domain → geographic location/region/site → location-owned actor/group` identities and relationships, plus how those identities survive local scene/chunk unloading. The *initial* F14 two-location deterministic unit/lifecycle proof can use synthetic IDs with no new art or world-size expansion; full production reification cannot bind to undefined geographic ownership. Do not create duplicate simulation clocks, parallel procgen, or a new save silo for F14.
 
+## Player-facing travel and world-access decision lock (2026-10-09)
+
+**User-owned design choice:** **Continuous geography**. Within one accepted Campaign World, the Operator ordinarily walks, drives or otherwise traverses connected landscapes, changing biome, town, city district and political territory without an obligatory loading cutscene or switching campaign instances. This is a player-experience commitment, **not evidence that the present finite procgen map already supports it**.
+
+**Passes and local thresholds:** A mountain pass, bridge, tunnel, canyon, district boundary, highway, valley, and ordinary town gate belong to the **same traversable geographic context** by default. They are not synonyms for cinematic loading gates. Exceptional authored interiors/transit events *may* use concealed technical scene handoff; if an explicit cinematic is appropriate, the design must justify it as a significant fiction/navigation event. Preserve consistent approach/exit geometry, Operator/campaign identity, route history, and means of travel on both sides.
+
+**Archive Resolve is presentation, not generation:** [Archive Resolve](../../02_features/procgen/STREAMING_REVEAL_PRESENTATION_V1.md) governs the visual settlement/frontier of newly available **already-authoritative** terrain. [Streaming Procgen Reveal](../../02_features/procgen/STREAMING_PROCGEN_REVEAL.md) currently builds a finite full map first and reveals/evicts **presentation** in chunks; it does **not** yet stream/generate an unbounded global landscape or unload/reify actors. F15's world-scale geographic topology, semantic cell materialization, world-boundary/route stitching, road continuity, navigation/residency and saved region identities need separate source-grounded design and testing. **Archive Resolve remains the visual treatment** wherever compatible; do not assign it geographic creation or route-transition authority.
+
+**Ports and special travel:** The Hub's ordinary campaign deployment uses the **Continuity Port** in Muster Court. Other Ports, apertures, relays and allowed Domain-to-Domain routes are meaningful transit infrastructure, with route/risk/return authority governed by the existing lore and major world transitions. They may legitimately carry cinematic travel, but are not “the way to cross between two hills.” Do not imply every Port can freely link arbitrary Domains.
+
+**Vehicles are a major campaign-world traversal system:** Long distance and topographic scale must make meaningful room for a vehicle's road choices, access restrictions, recovery, storage and on-foot/vehicle route planning. The project already has [Vehicle System](../../02_features/vehicles/VEHICLES.md), the [Field Scout Buggy Mk I](../../02_features/vehicles/FIELD_SCOUT_BUGGY_MK1.md), and an active [Vehicle Recovery Implementation Roadmap](../../02_features/vehicles/VEHICLE_RECOVERY_IMPLEMENTATION_ROADMAP.md). Their **PilotableVehicle + registry + restoration/Asset V2 owners remain canonical**. F09 must audit travel/handling and route suitability before proposing upgrades; no replacement controller, new unapproved vehicle class, or blanket art-manifest work is authorized here.
+
+### Minimum continuous-world proof
+
+A later authorized F15 prototype should prove:
+1. Two distinct recognizable sites/settlements separated by a meaningful wilderness/biome journey in **one** CampaignVisit.
+2. Operator travels continuously on foot across the full intervening route; any hidden technical handoff must preserve apparent world geometry and campaign/Operator continuity.
+3. A road-capable **existing** vehicle can traverse the same logical route after its active implementation dependencies are ready, with credible road/terrain interaction, collision/navigation and correct enter/exit/restore state. Treat this as a **distinct follow-on acceptance slice** rather than blocking initial foot-only topology proof.
+4. Archive Resolve can present correctly on newly materialized local terrain without visible chunk rectangles or implying the world was created by the Operator's approach.
+5. Landmarks, biome edges, watercourses, routes and local names remain repeatably recognizable across seed reload and physical reentry.
+6. F14 unloaded groups may remain active abstractly while the Operator travels, without assuming the entire Campaign World is physically loaded.
+
+**Not yet decided:** large finite versus expandable geographic extent; exact world-cell API; kilometers/minutes of travel; ground vehicle speed and fuel; crossing long-range Ports inside the same Campaign; optional explicit cinematic moments; later scope for airborne/waterborne vehicles. These are **engineering or subsequent content locks**, not reasons to overturn the selected continuous-geography player target.
+
 ## Audit and decision checklist
 
 - [ ] Local runtime crossing/time/biome/landmark/wayfinding benchmark for current accepted seeds and operator camera/speed.
@@ -63,4 +87,4 @@ The [F14 read-only local runtime characterization](F14_LIVING_WORLD_SIMULATION.m
 - [ ] Documentation drift: Hub remote-base ambiguity resolved against locked current geometry; old one-region wording explicitly classified for migration/deprecation rather than wholesale rewrite.
 - [ ] Only after decision lock, convert any conceptual F15 roadmap slot into authorable packet under existing queue/AGENTS, with paired validation/review and authoring-chat backlink.
 
-**Decision:** **UNLOCKED**, zero new implementation packets; next is benchmark + architectural choice. Design doc is a proposal and does not supersede canon or runtime specifications.
+**Decision:** **CONTINUOUS PLAYER EXPERIENCE LOCKED**; implementation architecture remains **UNLOCKED**, zero new F15 executable packets. Next: geographic scale/performance benchmark and coherent topology/streaming authority choice; vehicles follow their existing recovery/Asset V2/F09 progression. Design doc is a proposal and does not supersede canon or runtime specifications.

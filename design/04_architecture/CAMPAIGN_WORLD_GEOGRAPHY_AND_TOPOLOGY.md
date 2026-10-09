@@ -1,6 +1,6 @@
 # Campaign-World Geography and Topology · Design Discussion Draft
 
-**Status:** PROPOSAL / design discovery; **not canon-locked, not implementation authority, not an executable task packet**  
+**Status:** **continuous campaign geography PLAYER-EXPERIENCE LOCKED** (2026-10-09); exact topology/generation/scale, route seams, vehicle feel and implementation architecture remain **PROPOSAL**, not runtime authority or an executable task packet  
 **Date:** 2026-10-08  
 **Workstream:** `campaign-world-geography-design-audit`  
 **Audit focus:** [F15 Geographic Scale and Traversable Campaign-World Topology](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md)  
@@ -18,6 +18,16 @@ The intended player experience is:
 6. The current small, packed generated map and insufficiently distinct visual geography do **not** deliver this experience.
 
 Do not infer that “Campaign World” must be mathematically infinite or that the entire persistent Lattice Domain must be fully reachable. The extent and boundary rules remain a design decision, as do travel-time targets.
+
+## User decision: continuous travel, bounded offscreen simulation and major transport (2026-10-09)
+
+This discussion now has **two explicit user-owned choices**, captured in the [F14 V1 behavioral lock](codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md#f14-v1-behavioral-decision-lock-user-approved-2026-10-09) and [F15 continuous-geography decision](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md#player-facing-travel-and-world-access-decision-lock-2026-10-09):
+
+1. **Offscreen state is Bounded:** unloaded groups/patrols may move, work, retreat, consume resources and resolve suitably constrained causal encounters; full offscreen physical combat or unreviewed irreversible special-character deaths are not promised. Retain the existing kernel's deterministic time.
+2. **Campaign travel is continuous:** forests, terrain, passes, cities, districts and local biomes belong to one explorable Campaign World, without mandatory load-screen/cutscene segmentation. A **mountain pass is geography**, not a default teleport. Concealed engine scene stitching may be acceptable only if the player experiences geographic continuity.
+3. **Archive Resolve retains its existing visual-only role**: it can make local streamed/instantiated terrain settle into visibility, but it does not generate the macro world or preserve unloaded actors. Current finite-map reveal must not be advertised as infinite/large-world streaming.
+4. **Ports and vehicles are serious travel infrastructure.** The standard Hub departure is Muster Court's Continuity Port. Other Ports/routes are major lore-constrained transit mechanics, potentially cinematic. Existing [Vehicle System](../02_features/vehicles/VEHICLES.md), [Scout Mk I](../02_features/vehicles/FIELD_SCOUT_BUGGY_MK1.md), and the [Vehicle Recovery Roadmap](../02_features/vehicles/VEHICLE_RECOVERY_IMPLEMENTATION_ROADMAP.md) remain the production vehicle implementation authority. Long routes, road continuity and vehicle-friendly world traversal are a major later proof for F15, not license to spawn a second vehicle program.
+5. The player-experience direction is locked **without locking** physical world extent, map-coordinate architecture, area names, special travel cinematics, vehicle speeds, or additional art families. F15 still requires performance-scale evidence and a reviewed streaming/topology owner.
 
 ## 1. Existing locks to preserve, and explicit historical distinctions
 
