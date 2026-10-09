@@ -23,7 +23,7 @@ All vehicle recovery art uses Asset Pipeline V2. New/unprocessed files are saved
 | State | Tier | Frames | FPS | Per-direction sheet |
 |---|---|---:|---:|---:|
 | `parked_01` | required | 1 | n/a | 256×256 |
-| `drive_01` | required | 6 | 8 | 1536×256 |
+| `drive_01` | required | 12 | 12 | 3072×256 |
 | `disabled_01` | required | 1 | n/a | 256×256 |
 | `wreck_01` | required | 1 | n/a | 256×256 |
 | `engine_start_01` | recommended | 7 | 8 | 1792×256 |
@@ -34,6 +34,35 @@ All vehicle recovery art uses Asset Pipeline V2. New/unprocessed files are saved
 | `restore_01` | strongly recommended | 8 | 8 | 2048×256 |
 
 Normalized example: `custodian/asset_drop/inbox/custodian_field_scout_buggy_mk1/wreck_01__e.png`.
+
+## Current authored-source availability
+
+The Field Scout drive cycle has approved authored source for three of the five authored directions. These assets are **preserved externally in Dropbox but are not yet counted as ingested, bound, or runtime-complete**.
+
+Dropbox handoff:
+`/CUSTODIAN/implementation_inputs/custodian_field_scout_buggy_mk1_drive_3dir_asset_handoff_v2.zip`
+
+Handoff contents include:
+- untouched high-detail source masters for `drive_01__e_source.png`, `drive_01__ne_source.png`, and `drive_01__se_source.png`;
+- clean 12-frame 156×156-per-frame reference strips;
+- already-normalized 3072×256, 12×256×256 inbox candidates for E / NE / SE;
+- `MANIFEST.json`, `README.md`, and `CODEX_IMPLEMENTATION.md`.
+
+Directional source status:
+
+| Direction | Authored source | Normalized candidate | Runtime / Asset V2 status |
+|---|---|---|---|
+| `e` | available in Dropbox handoff | available | not yet ingested |
+| `ne` | available in Dropbox handoff | available | not yet ingested |
+| `se` | available in Dropbox handoff | available | not yet ingested |
+| `n` | missing | missing | missing |
+| `s` | missing | missing | missing |
+| `nw` | mirrored from NE after canonical ingest | n/a | pending |
+| `w` | mirrored from E after canonical ingest | n/a | pending |
+| `sw` | mirrored from SE after canonical ingest | n/a | pending |
+
+The approved `drive_01` source contract is now **12 frames at 12 FPS**. Do not regress it to the earlier 6-frame planning assumption when the family contract is registered.
+
 
 ## Family B — Shared Vehicle Recovery FX
 
