@@ -2,7 +2,7 @@
 
 [← Overview / index](../CODEBASE_SYSTEMS_AUDIT.md)
 
-> **State:** conceptual packet registry only, **not an implementation queue**. Baseline `main@e089e8b8a099`, October 8, 2026. All new slot decisions **unlocked**; **zero task packets created** by this audit. F03 expanded from 2 to 8 conceptual slices on October 8, 2026, without authorization.
+> **State:** audit roadmap and registry, **not implementation dispatch authority**. Initial baseline `main@e089e8b8a099` (2026-10-08), reconciled with F14-B + R0-01 landed correction and F11 locked runner (2026-10-09). Proposed slots remain conceptual unless explicitly linked to an authorized real packet. F03 expanded to eight unapproved slots; **F11 and F14-B have real packet workstreams**, not zero.
 >
 > **F03 audit refresh:** source inspection on `main@ac87c8ad`; eight proposed F03 slots, none executable. Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 >
@@ -214,7 +214,7 @@
 
 **F14: [Living-world simulation, interest management and unloaded-sector continuity](F14_LIVING_WORLD_SIMULATION.md)**
 
-> **Status:** F14 V1 **BOUNDED** behavior/owner choice locked by user (2026-10-09); six baseline tests agent-reported pass; F14-B implementation and focused checks complete on its task branch, with independent paired review pending. Full offscreen reification is not proved. CS-F14-A baseline is fulfilled; C–E remain conceptual and gated. See [F14 V1 lock and local evidence](F14_LIVING_WORLD_SIMULATION.md) and [F15 continuous geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md).
+> **Status:** F14 V1 **BOUNDED** behavior locked by user (2026-10-09); baseline evidence fulfilled; F14-B and its first review archived. The first fresh reviewer found blocking **R0-01** (ambiguous dotted causal event IDs); a bounded length-prefixed correction landed `origin/main@d67cf70e0` and focused checks passed, but its **fresh correction re-review is still ready/pending**. F14-C/D/E remain conceptual and unapproved; physical reification unproved. See [F14 implementation/review/correction ledger](F14_LIVING_WORLD_SIMULATION.md) and [F15 geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md).
 
 ### CS-F14-A
 - **Intent:** Characterize interest tier, macro clock, actor serialization/identity, streaming, history, and current load/unload parity; profile baseline.
@@ -224,14 +224,14 @@
 - **Acceptance sketch:** exact current ownership map and falsifiable gap list, no new implementation or duplicate system.
 
 ### CS-F14-B
-- **Status:** **IMPLEMENTATION COMPLETE; PAIRED INDEPENDENT REVIEW PENDING.** The implementation adds bounded synthetic geographic group activity, snapshot schema v5 with v4 migration, and focused validation. No physical handoff/reification, map binding, combat, or disk persistence is included.
-- **Implementation packet:** [LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md](../../../custodian/docs/ai_context/task_packets/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) · [paired review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md).
+- **Status:** **IMPLEMENTATION ARCHIVED COMPLETE; FIRST REVIEW ARCHIVED WITH R0-01; CORRECTION ARCHIVED COMPLETE; FRESH RE-REVIEW READY/PENDING.** Foundation adds deterministic synthetic geographic-group activity, schema v5 with v4 migration. R0-01 corrects ambiguous event IDs with length-prefixed encoding and legacy schema-v5 reader compatibility. No physical handoff/reification, map binding, combat, or disk persistence is included.
+- **Implementation evidence:** [archived F14-B](../../../custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) · [archived first review](../../../custodian/docs/ai_context/task_packets/archived/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) · [archived R0-01 correction](../../../custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_REVIEW_CORRECTIONS_1.md) · [active independent correction re-review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_REVIEW_CORRECTIONS_1.md).
 - **Intent:** Add a small deterministically stepped, serializable offscreen group model using stable synthetic geographic IDs and existing `SimulationKernel` 60-fixed-tick macro cadence; prove one uninstantiated patrol produces a bounded causal state change and snapshot continuation.
-- **Lock:** user approved Bounded offscreen simulation; foundation does **not** include physical→abstract handoff, combat casualties, procgen infinite world or REMAP-3 persistence. The exact implementation/review pair passed `validate_task_packet_authoring.py` before both packets were promoted to `ready/auto`.
+- **Lock:** user approved Bounded offscreen simulation; foundation does **not** include physical→abstract handoff, combat casualties, procgen infinite world or REMAP-3 persistence. First review exposed a real snapshot-restore defect now corrected in implementation; re-review must independently accept R0-01 before promoting B to fully reviewed status.
 - **Acceptance sketch:** state-only B evolves while uninstantiated with reproducible event/snapshot, identity conserved, same-seed repeated run and legacy snapshot read green. No independent clock, actor double-spawn or parallel materials authority.
 
 ### CS-F14-C
-- **Intent:** **After B lands and independent review passes**, preserve stable group/actor identity in physical↔abstract scene ownership and reification, with no duplicate spawn or identity reset.
+- **Intent:** **Only after R0-01 correction re-review passes and the design/API handoff is refreshed**, preserve stable group/actor identity in physical↔abstract scene ownership and reification, with no duplicate spawn or identity reset.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_ENTITY_REIFICATION_HANDOFF.md` (**not created**).
 - **Gate:** accepted baseline report, B (if authorized), NPA/procgen scene lifecycle, **F15 stable geographic identity**, and exact reentry/state-ownership contract. Do not conflate presentation chunk unload with actor unload.
 - **Acceptance sketch:** deterministic loaded/unloaded crossings preserving consequences, goals and counts; no disabled physical actor still secretly doing loaded actions.
