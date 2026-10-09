@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `living-world-entity-reification-handoff`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-living-world-abstract-activity-foundation-review-corrections-1`
@@ -34,17 +34,7 @@
 
 ## Planning authorization and promotion
 
-This first C1 **synthetic two-location real-Enemy handoff boundary is design-authorized** by the accepted B review and F14 V1 exclusive-ownership player lock. The broader production auto-streaming system is not. This pair is deliberately `draft/manual` only because this GitHub documentation session cannot execute the required local targeted packet-authoring preflight; this is a procedural preflight hold, not an invitation for an autonomous dispatcher to claim a draft. Execute the following first in a real checkout, then set BOTH implementation and paired review `Status: ready`, `Dispatch: auto`, rerun preflight, regenerate/check managed queue index, land exactly those queue-authority files on `origin/main`, fetch/verify, and only then `dispatch.py claim living-world-entity-reification-handoff --agent codex`:
-
-```bash
-python3 custodian/tools/agent/validate_task_packet_authoring.py \
-  custodian/docs/ai_context/task_packets/LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md \
-  custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md
-python3 custodian/tools/agent/task_packet_index.py --write
-python3 custodian/tools/agent/task_packet_index.py
-```
-
-See root `AGENTS.md` → Task-Packet Promotion Before Dispatch. Do not confuse local PASS with remote queue authority.
+The first C1 synthetic two-location real-Enemy handoff was design-authorized by the accepted F14-B review and F14 V1 exclusive-ownership lock. The paired packets passed targeted authoring preflight, were promoted to `ready/auto`, indexed and landed on `origin/main` before this implementation was claimed. The packet validation reference was repaired and republished before claim so its focused smoke is authored and manifest-registered by this workstream. The broader production auto-streaming system remains outside this authorization.
 
 ## Refresh Planning Authority
 
@@ -52,3 +42,25 @@ See root `AGENTS.md` → Task-Packet Promotion Before Dispatch. Do not confuse l
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh instruction: On claim inspect current `WorldSimulationState`, F14-B corrected event serialization, actual `Enemy` Grunt properties and live F02/F04 owners. Reconcile private adapter names locally without weakening the approved one-actor synthetic proof. If new material ownership conflict arises, return evidence to the Authoring chat rather than inventing production streaming.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Focused Grunt handoff smoke passed with two unload/reentry cycles, snapshot restore, deterministic replay, one abstract route event, physical tick suspension, identity and condition preservation, duplicate/pending/active-attack/dead/corpse/loot/invalid-site rejection, and non-destructive failed transfer/staging paths; F14-B abstract activity, kernel, macro-state and snapshot smokes passed; ambient real-world Enemy spawn smoke exited successfully; changed-file validation passed 15/15; import preflight and `git diff --check` passed.
+- Deferred work: F14-C2 production physical residency/spawner registration and F15 geography remain separate; no production streaming binding is claimed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first direct smoke run exposed an indentation error in the state deserializer edit; it was corrected before the focused validation pass.
+- Root cause / contributing factors: A narrow validation-state edit changed indentation inside the nested event validation loop.
+- Prevention / pipeline improvement: The focused parser/smoke pass ran immediately after the preflight and caught the issue before broader validation.
+- Tooling / docs drift discovered: none
+- Follow-up: `review-living-world-entity-reification-handoff` — required fresh-context independent post-land review.
+- What worked: The focused smoke exercised real Grunt ownership transitions and old v5 event-ID migration without broadening the production integration surface.

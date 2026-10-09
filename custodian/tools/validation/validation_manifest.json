@@ -45,6 +45,27 @@
       "needs_import": false
     },
     {
+      "id": "world_simulation_actor_reification_handoff",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_simulation_actor_reification_handoff_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "simulation",
+        "actor_reification",
+        "determinism",
+        "snapshot"
+      ],
+      "owners": [
+        "custodian/game/state/world/abstract_activity_simulation_state.gd",
+        "custodian/game/state/world/simulation_snapshot_migration.gd",
+        "custodian/game/systems/simulation/simulation_kernel.gd",
+        "custodian/game/systems/simulation/actor_reification_coordinator.gd",
+        "custodian/tools/validation/world_simulation_actor_reification_handoff_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "awakening_connector_asset_contract",
       "type": "python",
       "script": "custodian/tools/validation/awakening_connector_asset_contract_smoke.py",
