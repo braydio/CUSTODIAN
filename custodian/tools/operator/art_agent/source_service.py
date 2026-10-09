@@ -28,7 +28,7 @@ from .source_models import (
 from .source_normalization import build_plan, shared_transform_from_plan
 from .source_review import review_normalization
 from . import landmarks as landmark_store
-from .registration_profile import load_profile, profile_report
+from .registration_profile import load_active_authoring_profile, load_profile, profile_report
 from . import palette as palette_core
 from . import recolor as recolor_store
 
@@ -56,6 +56,12 @@ def sha256(path: Path) -> str:
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def profile_for_session(session: SourceSession) -> dict[str, Any]:
+    if (session.target_binding or {}).get("art_generation") == "operator_2_5d_128":
+        return load_active_authoring_profile()
+    return load_profile()
 
 
 class SourceArtService:
@@ -141,6 +147,26 @@ class SourceArtService:
         staged = require_under(session_root, Path(session.source_original), label="staged source").resolve(strict=True)
         if sha256(staged) != session.source_sha256:
             raise model.WorkbenchError("staged source changed after session creation")
+        if session.target_binding:
+            binding = session.target_binding
+            authority_path = self.canonical_root / "content/data/operator/authoring/operator_art_profile.json"
+            try:
+                authority = json.loads(authority_path.read_text(encoding="utf-8"))
+                profile_id = authority.get("active_authoring_profile", "operator_2_5d_128")
+                profile_hash = authority.get("profiles", {}).get(profile_id, {}).get("profile_sha256")
+                reference_hash = authority.get("canonical_visual_reference", {}).get("sha256")
+            except (OSError, json.JSONDecodeError, AttributeError) as error:
+                raise model.WorkbenchError(f"2.5D target authority cannot be read: {error}") from error
+            if (binding.get("art_generation") != "operator_2_5d_128"
+                    or binding.get("canonical_profile_sha256") != profile_hash
+                    or binding.get("normalized_reference_sha256") != reference_hash):
+                raise model.WorkbenchError("2.5D source session target authority is stale")
+            expected_identity = (f"{binding.get('art_generation')}:{binding.get('profile')}/"
+                                 f"{binding.get('group')}/{binding.get('action')}/{binding.get('direction')}")
+            if binding.get("authoring_identity") != expected_identity:
+                raise model.WorkbenchError("2.5D source session semantic identity is inconsistent")
+            if int(binding.get("frames", 0)) != session.geometry.frame_count or list(binding.get("frame_size", ())) != [session.target_width, session.target_height]:
+                raise model.WorkbenchError("2.5D source session target frame contract changed")
         return session, session_root, path
 
     def save(self, path: Path, session: SourceSession) -> None:
@@ -175,6 +201,28 @@ class SourceArtService:
         session.state = "ANALYZED"
         self.save(path, session)
         return result
+
+    def bind_target(self, session_path: Path | str, binding: dict[str, Any], *, donor_provenance: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Bind an intake session to the selected semantic target and its authority hashes."""
+        session, _root, path = self.load(session_path)
+        required = ("art_generation", "profile", "group", "action", "direction", "layer",
+                    "authoring_identity", "canonical_profile_sha256", "normalized_reference_sha256",
+                    "frames", "frame_size")
+        if any(key not in binding for key in required):
+            raise model.WorkbenchError("target binding is incomplete")
+        if binding["art_generation"] != "operator_2_5d_128":
+            raise model.WorkbenchError("target binding must name operator_2_5d_128")
+        expected_identity = (f"{binding['art_generation']}:{binding['profile']}/{binding['group']}/"
+                             f"{binding['action']}/{binding['direction']}")
+        if binding["authoring_identity"] != expected_identity:
+            raise model.WorkbenchError("target binding authoring_identity does not match its fields")
+        if int(binding["frames"]) != session.geometry.frame_count or list(binding["frame_size"]) != [session.target_width, session.target_height]:
+            raise model.WorkbenchError("target binding frame contract does not match source session")
+        session.target_binding = {key: binding[key] for key in required}
+        session.donor_provenance = dict(donor_provenance or {})
+        session.schema = "custodian.operator_art_source_session.v2"
+        self.save(path, session)
+        return session.to_json()
 
     def plan_normalization(
         self,
@@ -314,7 +362,7 @@ class SourceArtService:
             raise model.WorkbenchError("source must be analyzed before registration report")
         analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
         plan = self._load_plan(root, session=session) if (root / "normalization_plan.json").exists() else None
-        current_profile = load_profile()
+        current_profile = profile_for_session(session)
         if plan and plan.mode == "operator_profile" and plan.profile_sha256 != current_profile["sha256"]:
             raise model.WorkbenchError("registration profile changed after planning; create a new plan")
         report = profile_report(landmarks=self._load_source_landmarks(session, root), frames=analysis["frames"],
@@ -335,7 +383,7 @@ class SourceArtService:
         output = root / "production/crisp.png"
         command = ["pixelart", str(Path(session.source_original)), str(output), "--sheet", "--frames",
                    str(session.geometry.frame_count), "--source-cell", f"{session.geometry.source_cell_width}x{session.geometry.source_cell_height}",
-                   "--size", "96", "--choose", "1", "--force", "--normalization-plan", str(root / "normalization_plan.json")]
+                   "--size", str(session.target_width), "--choose", "1", "--force", "--normalization-plan", str(root / "normalization_plan.json")]
         command.extend(["--expected-normalization-plan-sha256", session.approved_normalization_plan_sha256])
         return {"command": command, "output": str(output.resolve()), "executes": False}
 
@@ -345,7 +393,7 @@ class SourceArtService:
         plan = self._load_plan(root, session=session)
         if plan.mode != "operator_profile" or plan.method != "crisp":
             raise model.WorkbenchError("production verification requires a crisp operator_profile plan")
-        if plan.profile_sha256 != load_profile()["sha256"]:
+        if plan.profile_sha256 != profile_for_session(session)["sha256"]:
             raise model.WorkbenchError("registration profile changed after planning")
         output = root / "production/crisp.png"
         if not output.is_file():
@@ -353,7 +401,7 @@ class SourceArtService:
         request = SheetConversionRequest(source=Path(session.source_original), columns=session.geometry.columns,
                                          rows=session.geometry.rows, frame_count=session.geometry.frame_count,
                                          source_cell=(session.geometry.source_cell_width, session.geometry.source_cell_height),
-                                         target_size=(96, 96), method="crisp", transform=shared_transform_from_plan(plan),
+                                         target_size=(session.target_width, session.target_height), method="crisp", transform=shared_transform_from_plan(plan),
                                          registrations=tuple((item.dx, item.dy) for item in plan.registrations))
         expected = convert_sheet_request(request)
         with Image.open(output) as actual:
@@ -522,9 +570,10 @@ class SourceArtService:
         destination_name: str,
         replace: bool = False,
         dry_run: bool = False,
+        art_generation: str = "legacy_96",
     ) -> dict[str, Any]:
         session, root, path = self.load(session_path)
-        if session.state != "REVIEWED":
+        if session.state not in {"REVIEWED", "READY"}:
             raise model.WorkbenchError("source must pass review before ingest handoff")
         if Path(destination_name).name != destination_name or not destination_name.lower().endswith(".png"):
             raise model.WorkbenchError("handoff destination must be a plain PNG filename")
@@ -546,12 +595,23 @@ class SourceArtService:
             destination_key = model.SCHEMA.parse_filename(destination_name)
         except ValueError as error:
             raise model.WorkbenchError(f"handoff destination is not a valid Operator V2 filename: {error}") from error
+        if art_generation == "operator_2_5d_128":
+            binding = session.target_binding or {}
+            if binding.get("art_generation") != art_generation:
+                raise model.WorkbenchError("2.5D handoff requires an exact 2.5D-bound Source Session")
+            if (destination_key.owner, destination_key.layer, destination_key.animation_profile,
+                    destination_key.action_group, destination_key.action, destination_key.direction) != (
+                    "operator", binding["layer"], binding["profile"], binding["group"],
+                    binding["action"], binding["direction"]):
+                raise model.WorkbenchError("handoff filename does not match the bound 2.5D target")
         if destination_key.frames != session.geometry.frame_count or (
             destination_key.frame_width,
             destination_key.frame_height,
         ) != (session.target_width, session.target_height):
             raise model.WorkbenchError("handoff filename frame contract does not match the reviewed candidate")
         destination = self.handoff_root / destination_name
+        if session.state == "READY" and not destination.is_file():
+            raise model.WorkbenchError("READY source session can only resume its existing handoff")
         destination.parent.mkdir(parents=True, exist_ok=True)
         incoming_identity = model.SCHEMA.semantic_identity(destination_key)
         existing_assets: list[dict[str, Any]] = []
@@ -565,6 +625,9 @@ class SourceArtService:
                 return
             if model.SCHEMA.semantic_identity(existing_key) != incoming_identity:
                 return
+            expected_cell_size = 128 if art_generation == "operator_2_5d_128" else 96
+            if (existing_key.frame_width, existing_key.frame_height) != (expected_cell_size, expected_cell_size):
+                return
             existing_assets.append({
                 "path": str(path_value.resolve()),
                 "sha256": sha256(path_value),
@@ -575,7 +638,7 @@ class SourceArtService:
         inspect_existing(destination)
         # A contract replacement changes the filename, so inspect the current
         # canonical semantic directory as well as the intake boundary.
-        canonical_relative = model.SCHEMA.canonical_source_path(destination_key)
+        canonical_relative = model.SCHEMA.canonical_source_path(destination_key, art_generation=art_generation)
         canonical_directory = self.canonical_root / canonical_relative.parent
         if canonical_directory.exists():
             for existing_candidate in sorted(canonical_directory.glob("*.png")):
@@ -584,6 +647,18 @@ class SourceArtService:
             inspect_existing(existing_candidate)
         unique_existing: dict[str, dict[str, Any]] = {item["path"]: item for item in existing_assets}
         existing_assets = list(unique_existing.values())
+        if (destination.is_file() and sha256(destination) == candidate_sha256
+                and len(existing_assets) == 1
+                and existing_assets[0]["path"] == str(destination.resolve())):
+            if not dry_run:
+                session.state = "READY"
+                self.save(path, session)
+            return {"status": "DRY_RUN" if dry_run else "READY_FOR_INGEST",
+                    "candidate": str(destination.resolve()), "frame_count": session.geometry.frame_count,
+                    "frame_size": [session.target_width, session.target_height],
+                    "source_session": str(path.resolve()), "operation": "REUSE",
+                    "semantic_identity": list(model.SCHEMA.semantic_identity(destination_key)),
+                    "superseded": [], "next_action": "existing identical reviewed handoff reused"}
         existing = existing_assets or None
         operation = "CREATE"
         if existing_assets:

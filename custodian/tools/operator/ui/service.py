@@ -18,6 +18,7 @@ import animation_preview
 import animation_motion_preview
 import operator_art_worktree
 import operator_animation_targets
+from operator_2_5d_ingress import Operator2DIngress
 
 from .state import (
     AnimationRecord, AnimationSelection, CanvasMigrationView, ErrorView, ExistingContextView,
@@ -459,13 +460,14 @@ class WorkbenchService:
 
     def create_animation(self, *, profile: str, group: str, action: str, direction: str,
                          frames: int, frame_size: tuple[int, int], fps: float,
-                         loop: bool, template: str):
+                         loop: bool, template: str, art_generation: str = "legacy_96",
+                         initial_sources: dict[str, str] | None = None):
         _data, ws = self.workbench.create_animation(
             profile, action, direction, group=group, frames=frames,
             frame_size=frame_size, fps=fps, loop=loop, template=template,
             root=self.workspace_root, aseprite=self.aseprite,
             source_root=self.source_root, weapon_root=self.weapon_root,
-            repo_root=self.repo_root,
+            repo_root=self.repo_root, art_generation=art_generation, initial_sources=initial_sources,
         )
         binary = self.workbench.resolve_aseprite(self.aseprite, True)
         return self._popen([str(binary), str(ws / "workbench.aseprite")])
@@ -476,13 +478,14 @@ class WorkbenchService:
             options["frames"], options["frame_size"], options["fps"], options["loop"],
             options["template"], repo_root=self.repo_root,
             source_root=self.source_root, weapon_root=self.weapon_root,
+            art_generation=options.get("art_generation", "legacy_96"),
         )
         identity = {"profile": options["profile"], "group": options["group"],
                     "action": options["action"], "direction": options["direction"]}
         impl = json.loads(self.plan_path.read_text())
         planned = any(all(row.get(key) == identity[value] for key, value in
                           (("profile", "profile"), ("group", "group"), ("action", "action")))
-                      and row.get("art_generation", "legacy_96") == "legacy_96"
+                      and row.get("art_generation", "legacy_96") == options.get("art_generation", "legacy_96")
                       and options["direction"] in row.get("directions", ())
                       for row in impl.get("items", ()))
         catalog = json.loads(self.catalog_path.read_text()) if self.catalog_path.exists() else {}
@@ -495,7 +498,61 @@ class WorkbenchService:
             "mirror": "OFF by default", "collision": "clear" if not plan.collisions else "COLLISION: " + ", ".join(plan.collisions),
             "collisions": list(plan.collisions), "status": plan.status, "implementation_plan_present": planned,
             "reachability": reachable or "unwired", "runtime_catalog_present": catalog_present,
-            "workspace": str(self.workspace_root / identity["profile"] / identity["group"] / identity["action"] / identity["direction"])}
+            "workspace": str(self.workspace_root / (options.get("art_generation", "legacy_96") if options.get("art_generation", "legacy_96") != "legacy_96" else "") / identity["profile"] / identity["group"] / identity["action"] / identity["direction"])}
+
+    def new_target_creation_options(self, selection: AnimationSelection) -> dict[str, Any]:
+        if selection.art_generation != "operator_2_5d_128":
+            raise ValueError("guided target creation requires an operator_2_5d_128 selection")
+        payload = operator_animation_targets.load_plan(
+            self.repo_root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
+        )
+        family = next((item for item in operator_animation_targets.target_families(payload)
+                       if (item.generation, item.profile, item.group, item.action) ==
+                       (selection.art_generation, selection.profile, selection.group, selection.action)), None)
+        if family is None or selection.direction not in family.directions:
+            raise ValueError("selection is not an exact target in the current 2.5D projection")
+        profile_hash, reference_hash = operator_animation_targets._profile_hashes(self.repo_root)
+        if family.canonical_profile_sha256 and profile_hash != family.canonical_profile_sha256:
+            raise ValueError("canonical 2.5D profile changed; refresh the target projection before creation")
+        if family.normalized_reference_sha256 and reference_hash != family.normalized_reference_sha256:
+            raise ValueError("normalized reference changed; refresh the target projection before creation")
+        contract = family.frame_contract
+        size = contract.get("frame_size", [128, 128])
+        if int(contract.get("frames", 0)) <= 0 or list(size) != [128, 128]:
+            raise ValueError("2.5D target has an unsupported frame contract")
+        return {"profile": selection.profile, "group": selection.group, "action": selection.action,
+                "direction": selection.direction, "frames": int(contract["frames"]),
+                "frame_size": tuple(size), "fps": float(contract.get("fps") or 8.0),
+                "loop": bool(contract.get("loop", True)), "template": "full_body",
+                "art_generation": selection.art_generation}
+
+    def import_2_5d_source(self, selection: AnimationSelection, source_path: Path) -> Any:
+        ingress = Operator2DIngress(self.repo_root, workspace_root=self.workspace_root)
+        package = ingress.create_package([selection], source_paths={selection.direction: source_path})
+        cell = ingress.process_cell(package, selection.direction)
+        manifest = Path(cell["workbench"]) / "workbench.json"
+        binary = self.workbench.resolve_aseprite(self.aseprite, True)
+        return self._popen([str(binary), str(manifest.with_name("workbench.aseprite"))])
+
+    def import_2_5d_direction_set(self, selection: AnimationSelection, source_paths: dict[str, Path]) -> Any:
+        if selection.art_generation != "operator_2_5d_128":
+            raise ValueError("direction-set intake requires a 2.5D target selection")
+        families = operator_animation_targets.target_families(operator_animation_targets.load_plan(self.plan_path))
+        family = next((item for item in families if
+                       (item.generation, item.profile, item.group, item.action) ==
+                       (selection.art_generation, selection.profile, selection.group, selection.action)), None)
+        if family is None:
+            raise ValueError("selected target family is absent from the current projection")
+        selections = [AnimationSelection(selection.profile, selection.group, selection.action, direction,
+                                         art_generation=selection.art_generation)
+                      for direction in family.directions]
+        ingress = Operator2DIngress(self.repo_root, workspace_root=self.workspace_root)
+        package = ingress.create_package(selections, source_paths=source_paths)
+        cells = {direction: ingress.process_cell(package, direction) for direction in family.directions}
+        selected_cell = cells[selection.direction]
+        manifest = Path(selected_cell["workbench"]) / "workbench.json"
+        binary = self.workbench.resolve_aseprite(self.aseprite, True)
+        return self._popen([str(binary), str(manifest.with_name("workbench.aseprite"))])
 
     @staticmethod
     def _context_view(context: dict[str, Any]) -> ExistingContextView:
@@ -682,6 +739,10 @@ class WorkbenchService:
         return self.migration_view(report)  # type: ignore[return-value]
 
     def publish_preview(self, selection: AnimationSelection, full_validate: bool = False) -> PublishView:
+        if selection.art_generation == "operator_2_5d_128":
+            return PublishView(selection, 0, 0, (), (), None, "GREEN", publish_enabled=False,
+                               publish_block_reason="2.5D runtime publication is reserved for the runtime-promotion workstream.",
+                               readiness_status="blocked", readiness_summary="2.5D publication is disabled")
         pending_path = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
         if pending_path.exists() and self.model is model and self.workbench is workbench:
             try:
@@ -833,6 +894,8 @@ class WorkbenchService:
         this in its Publish review step). ``force_stale`` only waives source-freshness; it
         never waives checkout identity, dirty state, dependencies, transactions, or landing.
         """
+        if selection.art_generation == "operator_2_5d_128":
+            raise self.model.WorkbenchError("2.5D runtime publication is disabled in guided ingress")
         pending_path = operator_art_worktree._pending_path(self.repo_root, self.workspace_root)
         if pending_path.exists() and self.model is model and self.workbench is workbench:
             checkout = self.checkout_identity()

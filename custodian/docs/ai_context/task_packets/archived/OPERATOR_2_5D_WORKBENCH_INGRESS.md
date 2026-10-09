@@ -5,7 +5,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-ingress
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-cockpit-foundation-review-corrections-1
@@ -158,14 +158,33 @@ Do not copy this pseudocode literally if live signatures change during implement
 - Refresh status: **consumed / final pre-claim refresh complete**
 - Refresh instruction: WB25-1, its R0-01 correction and fresh re-review have been consumed. WB25-2 is now `ready/auto`. Re-open planning only for a real contradiction in the landed generation/workspace/source-session authorities, not for implementation detail discovery.
 
-## Handoff
+## Completion Truth
 
-- Next workstream: review-operator-2-5d-workbench-ingress
-- Next packet state: ready/auto behind WB25-2
-- Refresh owner: none
-- ChatGPT/user planning refresh required: no
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: Guided NEW/IMPORT now binds to the exact projected `AnimationSelection`; NEW retains the reviewed creation backend while choosing generation-scoped source/workspace targets. IMPORT runs SourceArtService authorization through 128px proof, target-bound session provenance, generation-aware idempotent handoff, and editable Workbench opening. Explicit direction-set mapping and ignored resumable package manifests track per-cell terminal state. 2.5D publishing fails closed before legacy publication or reconciliation. Focused and changed-file validations passed; see `OPERATOR_2_5D_WORKBENCH_INGRESS_CLAUDE_SUMMARY.md`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The existing source normalizer assumed 96px scale segments, while the accepted 2.5D profile has none. The first full validation attempt stalled behind an already-running single Godot validation sweep; a competing sweep was stopped before running. The Textual UI smoke had one transient timer teardown failure and passed on retry.
+- Root cause / contributing factors: Legacy normalization encoded a 96px scale assumption; the accepted 128px profile intentionally does not declare inferred scale/root transforms. Validation lock serialization prevented parallel sweeps, as designed.
+- Prevention / pipeline improvement: Bound normalization now preserves exact 128×128 source cells with an identity transform and fails closed for other sizes rather than inferring registration from alpha. The ingress smoke sets an isolated temporary HOME with the required pixelart alias. Validation was rerun as one sweep and passed all 29 selected checks with complete coverage.
+- Tooling / docs drift discovered: Source normalization required explicit 128px identity handling for the accepted profile; the task packet did not call out its empty `scale_segments` constraint.
+- Follow-up: `review-operator-2-5d-workbench-ingress`
+- What worked: End-to-end ingress smoke covers exact target binding, replay-safe handoff, mixed eight-direction package resume, and no runtime mutation.
+
+## Next Handoff
+
+- Next workstream: `review-operator-2-5d-workbench-ingress`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Summary backlink: include exact Authoring chat URL
-- Refresh reason: WB25-2 is fully refreshed; paired review should claim automatically after the implementation lands.
-- Next action: claim and implement `operator-2-5d-workbench-ingress`; after landing, dispatch its paired fresh-context review.
-- Blockers or open questions: none at planning level. If the live specialized Operator pipeline cannot support generation-aware staging without runtime mutation, fail closed and report that concrete architectural conflict rather than inventing a second pipeline.
+- Refresh reason: `none`
+- Next action: Claim the paired review in a fresh reviewer context and independently verify the landed implementation against the archived packet.
+- Blockers or open questions: `none`

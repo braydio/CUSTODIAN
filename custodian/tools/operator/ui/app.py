@@ -14,7 +14,7 @@ from textual.widget import Widget
 from textual.widgets import DataTable, Input, Static, TextArea
 
 from .dialogs import (
-    AnimationCreationDialog, AnimationCreationPlanDialog, CanvasMigrationDialog, CanvasResizeDialog, ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog,
+    AnimationCreationDialog, AnimationCreationPlanDialog, CanvasMigrationDialog, CanvasResizeDialog, ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog, DirectionSetImportDialog, ImportSourceDialog,
     PublishDialog, RefreshDialog, ValidationDialog, WeaponContextDialog,
 )
 from .features import AnimationFeature
@@ -92,6 +92,7 @@ class OperatorWorkbenchApp(App):
     BINDINGS = [
         Binding("q", "quit", "Quit", show=False), Binding("slash", "search", "Search", priority=True, show=False),
         Binding("n", "new_animation", "New Animation", show=False),
+        Binding("i", "import_animation", "Import 2.5D", show=False),
         Binding("f5", "full_refresh", "Reload", show=False),
         Binding("question_mark", "help", "Help", show=False), Binding("e", "edit", "Edit", show=False),
         Binding("a", "add_frame", "Add Frame", show=False),
@@ -1910,9 +1911,9 @@ class OperatorWorkbenchApp(App):
 
     def _guard_authoring_generation(self, operation: str) -> bool:
         selection = self.state.selection
-        if selection and selection.art_generation != "legacy_96":
+        if selection and selection.art_generation == "operator_2_5d_128" and operation in {"Publish", "Validation"}:
             self._activity(
-                f"{operation} is unavailable for 2.5D targets in WB25-1; guided source intake is a later slice",
+                f"{operation} is unavailable for 2.5D targets until the runtime-promotion workstream",
                 "WARN",
             )
             return False
@@ -1931,7 +1932,7 @@ class OperatorWorkbenchApp(App):
         self._activity(f"{operation.lower()} started")
         try:
             result = await self._thread(function, *args)
-            if operation in ("EDIT", "CREATE"): self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
+            if operation in ("EDIT", "CREATE", "IMPORT"): self.state.aseprite_process = result; self._activity("ASEPRITE OPEN", "OK")
             else: self._activity(f"{operation.lower()} complete", "OK")
             if operation == "PUBLISH" and isinstance(result, dict):
                 if result.get("status") == "landed":
@@ -1967,7 +1968,48 @@ class OperatorWorkbenchApp(App):
     def action_new_animation(self) -> None:
         if self.state.mode != "workbench" or not self._guard_authoring_generation("New Animation") or not self._guard_preview():
             return
+        selected = self.state.selection
+        if selected and selected.art_generation == "operator_2_5d_128":
+            try:
+                options = self.service.new_target_creation_options(selected)
+                plan = self.service.animation_creation_plan(**options)
+            except Exception as error:
+                self._error(error)
+                return
+            self.push_screen(AnimationCreationPlanDialog(plan), lambda accepted: self._confirm_creation(accepted, options))
+            return
         self.push_screen(AnimationCreationDialog(self.service.model.DEFAULT_FRAME_SIZE), self._accept_creation_request)
+
+    def action_import_animation(self) -> None:
+        selection = self.state.selection
+        if (self.state.mode != "workbench" or not selection
+                or selection.art_generation != "operator_2_5d_128"
+                or not self._guard_authoring_generation("Import") or not self._guard_preview()):
+            return
+        self.push_screen(ImportSourceDialog(), lambda source: self._accept_import_source(source, selection))
+
+    def _accept_import_source(self, source: Path | None, selection: AnimationSelection) -> None:
+        if source is None:
+            return
+        if source == Path("__direction_set__"):
+            self.push_screen(DirectionSetImportDialog(),
+                             lambda sources: self._accept_direction_set_import(sources, selection))
+            return
+        if self.state.selection != selection:
+            self._error(RuntimeError("selected 2.5D target changed before import started"))
+            return
+        self.run_worker(self._mutate("IMPORT", partial(self.service.import_2_5d_source, selection, source)),
+                        group="mutation", exclusive=True)
+
+    def _accept_direction_set_import(self, sources: dict[str, Path] | None,
+                                     selection: AnimationSelection) -> None:
+        if sources is None:
+            return
+        if self.state.selection != selection:
+            self._error(RuntimeError("selected 2.5D target changed before direction-set import started"))
+            return
+        self.run_worker(self._mutate("IMPORT", partial(self.service.import_2_5d_direction_set, selection, sources)),
+                        group="mutation", exclusive=True)
 
     def _accept_creation_request(self, options: dict | None) -> None:
         if options is None:
@@ -1985,7 +2027,8 @@ class OperatorWorkbenchApp(App):
     def _confirm_creation(self, accepted: bool, options: dict) -> None:
         if not accepted:
             return
-        selection = AnimationSelection(options["profile"], options["group"], options["action"], options["direction"])
+        selection = AnimationSelection(options["profile"], options["group"], options["action"], options["direction"],
+                                       art_generation=options.get("art_generation", "legacy_96"))
         self.state.selection = selection
         self.state.preview_source = "workbench"
         self.state.preview_playing = False

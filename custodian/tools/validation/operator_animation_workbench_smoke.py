@@ -101,7 +101,7 @@ def creation_smoke():
     if Path(str(command[0])).name=="aseprite":return old_run(command,*args,**kwargs)
     return subprocess.CompletedProcess(command,0,stdout="",stderr="")
    repo_plan=repo/"design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
-   repo_plan.parent.mkdir(parents=True,exist_ok=True);repo_plan.write_text(json.dumps({"items":[]}))
+   repo_plan.parent.mkdir(parents=True,exist_ok=True);repo_plan.write_text(json.dumps({"schema":"custodian.operator_animation_implementation_plan.v2","items":[]}))
    catalog=custodian/"content/data/operator/generated/operator_animation_catalog.generated.json"
    catalog.parent.mkdir(parents=True,exist_ok=True);catalog.write_text(json.dumps({"animations":{},"weapons":{}}))
    service=WorkbenchService(repo_root=repo,source_root=source_root,weapon_root=weapon_root,

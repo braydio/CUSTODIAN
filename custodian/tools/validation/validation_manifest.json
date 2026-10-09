@@ -5538,6 +5538,20 @@
       ],
       "timeout_sec": 90,
       "needs_import": true
+    },
+    {
+      "id": "operator_2_5d_ingress",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_2_5d_ingress_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "2_5d", "source_intake"],
+      "owners": [
+        "custodian/tools/operator/operator_2_5d_ingress.py",
+        "custodian/tools/operator/art_agent/source_normalization.py",
+        "custodian/tools/validation/operator_2_5d_ingress_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
     }
   ]
 }

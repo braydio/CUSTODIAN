@@ -29,8 +29,9 @@ if mode=="assemble" then
   while #s.frames<p.timeline.document_frames do s:newEmptyFrame() end
   for _,frame in ipairs(s.frames) do frame.duration=1/p.timeline.preview_fps end
   s.layers[1].name=p.layers[1].aseprite_layer_name
-  if not p.creation then copy_strip(s,s.layers[1],p.layers[1],p.layers[1].input_path) end
-  for i=2,#p.layers do local b=p.layers[i]; local layer=s:newLayer(); layer.name=b.aseprite_layer_name; if not p.creation then copy_strip(s,layer,b,b.input_path) end end
+  local imported=p.creation and p.creation.import_sources
+  if not p.creation or (imported and imported[p.layers[1].layer]) then copy_strip(s,s.layers[1],p.layers[1],p.layers[1].input_path) end
+  for i=2,#p.layers do local b=p.layers[i]; local layer=s:newLayer(); layer.name=b.aseprite_layer_name; if not p.creation or (imported and imported[b.layer]) then copy_strip(s,layer,b,b.input_path) end end
   for _,r in ipairs(p.references or {}) do local layer=s:newLayer(); layer.name=r.aseprite_layer_name; layer.isVisible=false; layer.isEditable=false; copy_strip(s,layer,r,r.input_path) end
   if not p.creation then
     local baseline=s:newLayer(); baseline.name="__REFERENCE_SESSION_BASELINE"; baseline.isVisible=false; baseline.isEditable=false

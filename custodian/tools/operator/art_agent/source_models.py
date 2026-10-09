@@ -4,6 +4,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any, Literal
 
 SOURCE_SESSION_SCHEMA = "custodian.operator_art_source_session.v1"
+SOURCE_SESSION_SCHEMA_V2 = "custodian.operator_art_source_session.v2"
 SOURCE_ANALYSIS_SCHEMA = "custodian.operator_art_source_analysis.v1"
 NORMALIZATION_PLAN_SCHEMA = "custodian.operator_art_normalization_plan.v2"
 NORMALIZATION_PLAN_SCHEMA_V1 = "custodian.operator_art_normalization_plan.v1"
@@ -52,21 +53,33 @@ class SourceSession:
     selected_candidate: str = ""
     reviewed_candidate_sha256: str = ""
     approved_normalization_plan_sha256: str = ""
+    target_binding: dict[str, Any] | None = None
+    donor_provenance: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def create(cls, **kwargs: Any) -> "SourceSession":
-        return cls(schema=SOURCE_SESSION_SCHEMA, **kwargs)
+        schema = SOURCE_SESSION_SCHEMA_V2 if kwargs.get("target_binding") else SOURCE_SESSION_SCHEMA
+        return cls(schema=schema, **kwargs)
 
     @classmethod
     def from_json(cls, value: dict[str, Any]) -> "SourceSession":
-        if value.get("schema") != SOURCE_SESSION_SCHEMA:
+        if value.get("schema") not in {SOURCE_SESSION_SCHEMA, SOURCE_SESSION_SCHEMA_V2}:
             raise ValueError(f"unsupported source-session schema: {value.get('schema')}")
         payload = dict(value)
         payload["geometry"] = SourceGeometry(**payload["geometry"])
+        if payload.get("schema") == SOURCE_SESSION_SCHEMA:
+            payload.setdefault("target_binding", None)
+            payload.setdefault("donor_provenance", {})
+        elif not isinstance(payload.get("target_binding"), dict):
+            raise ValueError("v2 source session requires a target binding")
         return cls(**payload)
 
     def to_json(self) -> dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        if self.schema == SOURCE_SESSION_SCHEMA:
+            payload.pop("target_binding", None)
+            payload.pop("donor_provenance", None)
+        return payload
 
 
 @dataclass

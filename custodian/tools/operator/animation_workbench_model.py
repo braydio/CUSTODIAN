@@ -67,6 +67,7 @@ class AnimationCreationPlan:
     references: tuple[dict, ...]
     status: str
     collisions: tuple[str, ...] = ()
+    art_generation: str = "legacy_96"
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -75,7 +76,8 @@ def build_creation_plan(profile: str, group: str, action: str, direction: str,
                         frames: int, frame_size: tuple[int, int] = DEFAULT_FRAME_SIZE,
                         fps: float = 8.0, loop: bool = True,
                         template: str = "full_body", *, repo_root=REPO_ROOT,
-                        source_root=SOURCE_ROOT, weapon_root=WEAPON_ROOT) -> AnimationCreationPlan:
+                        source_root=SOURCE_ROOT, weapon_root=WEAPON_ROOT,
+                        art_generation: str = "legacy_96") -> AnimationCreationPlan:
     """Validate a new semantic identity and derive every target from schema authority."""
     if any(not isinstance(value, str) or not value for value in (profile, group, action, direction)):
         raise WorkbenchError("profile, action group, action name, and direction are required strings")
@@ -89,6 +91,8 @@ def build_creation_plan(profile: str, group: str, action: str, direction: str,
         raise WorkbenchError(f"invalid canonical Operator action name: {action}")
     if template not in {"full_body", "modular_body"}:
         raise WorkbenchError(f"unsupported creation template: {template}")
+    if art_generation not in {"legacy_96", "operator_2_5d_128"}:
+        raise WorkbenchError(f"unsupported Operator art generation: {art_generation}")
     if isinstance(frames, bool) or isinstance(fps, bool) or not isinstance(loop, bool):
         raise WorkbenchError("frame count and FPS must be numeric, and loop must be a boolean")
     if not isinstance(frame_size, (tuple, list)) or len(frame_size) != 2 or any(isinstance(value, bool) for value in frame_size):
@@ -108,13 +112,30 @@ def build_creation_plan(profile: str, group: str, action: str, direction: str,
         raise WorkbenchError("FPS must be between 0.1 and 120")
     layers = ("full_body",) if template == "full_body" else ("lower_body", "upper_body")
     identity = ActionIdentity(profile, group, action, direction)
-    index = source_index(Path(source_root), Path(weapon_root))
+    groups = {}
+    operator_sources = Path(source_root)
+    if art_generation == "operator_2_5d_128":
+        if not operator_sources.as_posix().endswith("/generations/operator_2_5d_128/animations"):
+            operator_sources = operator_sources / "generations/operator_2_5d_128/animations"
+    elif operator_sources.name != "animations" and (operator_sources / "animations").is_dir():
+        operator_sources = operator_sources / "animations"
+    for path, key in BUILDER.scan_sources(operator_sources, Path(weapon_root)):
+        if key.owner != "operator":
+            continue
+        groups.setdefault(SCHEMA.semantic_identity(key), []).append((path, key))
+    duplicates = [(identity, rows) for identity, rows in groups.items() if len(rows) > 1]
+    if duplicates:
+        raise WorkbenchError("ambiguous canonical source identity\n" + "\n".join(
+            f"{identity}: " + ", ".join(str(path) for path, _ in rows)
+            for identity, rows in duplicates
+        ))
+    index = {identity: rows[0] for identity, rows in groups.items()}
     entries = []
     collisions = []
     for layer in layers:
         key = SCHEMA.OperatorAssetKey("operator", layer, profile, group, action, direction, count, width, height)
         try:
-            source = Path("custodian") / SCHEMA.canonical_source_path(key)
+            source = Path("custodian") / SCHEMA.canonical_source_path(key, art_generation=art_generation)
             runtime = Path("custodian") / SCHEMA.canonical_runtime_path(key)
         except ValueError as error:
             raise WorkbenchError(f"invalid animation creation contract: {error}") from error
@@ -122,10 +143,13 @@ def build_creation_plan(profile: str, group: str, action: str, direction: str,
         runtime_relative = runtime.as_posix()
         existing = index.get(("operator", layer, profile, group, action, direction))
         if existing:
-            collisions.append(rel(Path(existing[0]), Path(repo_root)))
-        timing_relative = SCHEMA.canonical_source_path(key).with_suffix(".animation.json")
-        for candidate in (relative, relative + ".import", (Path("custodian") / timing_relative).as_posix(),
-                          runtime_relative, runtime_relative + ".import"):
+            existing_path = Path(existing[0])
+            collisions.append(rel(existing_path, Path(repo_root)))
+        timing_relative = SCHEMA.canonical_source_path(key, art_generation=art_generation).with_suffix(".animation.json")
+        candidates = [relative, relative + ".import", (Path("custodian") / timing_relative).as_posix()]
+        if art_generation == "legacy_96":
+            candidates.extend((runtime_relative, runtime_relative + ".import"))
+        for candidate in candidates:
             if (Path(repo_root) / candidate).exists(): collisions.append(candidate)
         entries.append({"layer": layer, "key": key, "source_path": relative,
                         "runtime_path": runtime_relative})
@@ -155,7 +179,8 @@ def build_creation_plan(profile: str, group: str, action: str, direction: str,
         references = rows
     collisions = tuple(sorted(set(collisions)))
     return AnimationCreationPlan(identity, count, (width, height), rate, bool(loop), template,
-                                 tuple(entries), tuple(references), "COLLISION" if collisions else "READY", collisions)
+                                 tuple(entries), tuple(references), "COLLISION" if collisions else "READY", collisions,
+                                 art_generation)
 
 def file_sha256(path: Path) -> str:
     h=hashlib.sha256()
