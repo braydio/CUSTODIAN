@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default`
-- Reviewed main: `58350dbc1be155b3b4ffbd3ef537eed598d98ca0`
+- Reviewed main: `dbe29e53bc4b5c304ba9bae54102a0cd5c2ad45b`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Visual review: `none`
 - Goal: Establish deterministic bounded offscreen group activity in one Campaign World using existing simulation time, so a named group in a genuinely uninstantiated geographic location changes objective/route progress and produces inspectable causal evidence without a second scene or clock.
