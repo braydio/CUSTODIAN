@@ -54,6 +54,7 @@ func _run() -> void:
 	_assert_true(savage.get("behavior_profile_id") == &"raider_savage", "savage runtime scene should select its distinct behavior profile")
 	_assert_true(bool(savage.get("savage_chain_enabled")), "savage runtime scene should enable its two-hit chain")
 	_assert_true(bool(savage.get("savage_pounce_enabled")), "savage runtime scene should enable its pounce")
+	_assert_true(savage.get("savage_pounce_config") != null, "savage runtime scene should bind the typed pounce config")
 	_assert_true(float(savage.get("health_bar_vertical_offset")) <= -80.0, "savage health bar should clear the tall mixed-canvas art")
 	_assert_true(sprite != null and sprite.sprite_frames.has_animation("idle_e"), "savage scene should build runtime SpriteFrames")
 	savage.call("_update_custom_enemy_animation", Vector2.LEFT, true, false)
@@ -67,15 +68,22 @@ func _run() -> void:
 	savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
 	_assert_true(String(sprite.animation) == "idle_e", "missing movement art should retain directional idle fallback")
 	sprite.sprite_frames = frames
-	for commitment in [&"windup", &"chain"]:
+	var pounce_target := Node2D.new()
+	pounce_target.add_to_group("player")
+	root.add_child(pounce_target)
+	pounce_target.global_position = savage.global_position + Vector2(50.0, 0.0)
+	savage.set("target", pounce_target)
+	var pounce: SavagePounce = savage.get_savage_pounce_ability()
+	_assert_true(pounce.try_start(), "typed pounce ability should start for a valid player target")
+	sprite.play(&"idle_s")
+	savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
+	_assert_true(String(sprite.animation) == "idle_s", "movement must not overwrite active pounce presentation")
+	pounce.cancel()
+	for commitment in [&"chain"]:
 		sprite.play(&"idle_s")
-		if commitment == &"windup":
-			savage.set("_savage_pounce_phase", commitment)
-		else:
-			savage.set("_savage_chain_phase", commitment)
+		savage.set("_savage_chain_phase", commitment)
 		savage.call("_update_custom_enemy_animation", Vector2.RIGHT, true, false)
 		_assert_true(String(sprite.animation) == "idle_s", "movement must not overwrite active %s presentation" % commitment)
-		savage.set("_savage_pounce_phase", &"")
 		savage.set("_savage_chain_phase", &"")
 	sprite.play(&"idle_n")
 	savage.set("_recoil_timer", 0.1)

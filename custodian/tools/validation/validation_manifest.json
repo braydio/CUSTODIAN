@@ -1611,7 +1611,12 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_asset_schema_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "asset_schema", "tooling"],
+      "tags": [
+        "operator",
+        "animation",
+        "asset_schema",
+        "tooling"
+      ],
       "owners": [
         "custodian/tools/pipelines/operator_asset_schema.py",
         "custodian/tools/validation/operator_asset_schema_smoke.py"
@@ -2985,7 +2990,10 @@
         "custodian/game/systems/combat/enemy_hit_spatial_contract.gd",
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/enemies/abilities/marine_dash.gd",
-        "custodian/game/actors/enemies/abilities/marine_dash_config.gd"
+        "custodian/game/actors/enemies/abilities/marine_dash_config.gd",
+        "custodian/game/actors/enemies/abilities/savage_pounce.gd",
+        "custodian/game/actors/enemies/abilities/savage_pounce_config.gd",
+        "custodian/game/actors/enemies/abilities/configs/savage_pounce_default.tres"
       ],
       "timeout_sec": 40,
       "needs_import": false
@@ -5538,6 +5546,50 @@
       ],
       "timeout_sec": 90,
       "needs_import": true
+    },
+    {
+      "id": "enemy_savage_pounce",
+      "type": "godot_script",
+      "script": "res://tools/validation/enemy_savage_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "enemy",
+        "savage",
+        "pounce"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/abilities/savage_pounce.gd",
+        "custodian/game/actors/enemies/abilities/savage_pounce_config.gd",
+        "custodian/game/actors/enemies/abilities/configs/savage_pounce_default.tres",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/enemy_savage.tscn",
+        "custodian/tools/validation/enemy_savage_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
+      "id": "savage_runtime",
+      "type": "godot_script",
+      "script": "res://tools/validation/savage_runtime_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "enemy",
+        "savage",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/abilities/savage_pounce.gd",
+        "custodian/game/actors/enemies/abilities/savage_pounce_config.gd",
+        "custodian/game/actors/enemies/abilities/configs/savage_pounce_default.tres",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/enemy_savage.tscn",
+        "custodian/tools/validation/savage_runtime_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
     }
   ]
 }

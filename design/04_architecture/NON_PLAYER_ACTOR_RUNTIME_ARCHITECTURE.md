@@ -55,7 +55,6 @@ At the reviewed baseline it is approximately **4,958 lines** and still owns or h
 
 - shared combat/locomotion integration;
 - Marine Dash phase/timer/target/reset state;
-- Savage pounce state;
 - Savage two-hit chain state;
 - generic melee execution;
 - reaction/parry/critical state;
@@ -104,7 +103,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 | Slice | Workstream | Scope | Status |
 | --- | --- | --- | --- |
 | NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **complete / paired review passed** |
-| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the reviewed ability seam | **ready/auto after ChatGPT planning refresh** |
+| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the reviewed ability seam | **implementation complete; paired review pending** |
 | NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **blocked/manual / ChatGPT refresh after passed NPA-2 review** |
 | NPA-4 | TBD after NPA-3 | Extract ordinary standard-enemy melee execution/cadence authority | planned |
 | NPA-5 | TBD | Extract shared enemy reaction/posture/parry-critical authority where a coherent boundary exists | planned |
@@ -117,7 +116,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete.
 
-NPA-1 implementation + paired-review evidence: `MarineDash` + typed `MarineDashConfig` are the sole Marine lifecycle/tuning authority; `request_marine_dash` is the public request seam; all 26 defaults and 26 Marine scene values match; current-main Marine, spatial telemetry, Sundered Keep ambush, and Falcon reversal gates pass; the implementation recorded a 23/23 changed-file closeout; and `enemy.gd` remains 343 lines below the 4,958-line recorded baseline. The paired review passed with 0 blockers and 0 material gaps. NPA-2 was then remeasured against that reviewed seam: Savage pounce remains actor-owned as 13 numeric tuning values plus six mutable runtime fields, cleanly separable from the two-hit chain.
+NPA-1 implementation + paired-review evidence: `MarineDash` + typed `MarineDashConfig` are the sole Marine lifecycle/tuning authority; `request_marine_dash` is the public request seam; all 26 defaults and 26 Marine scene values match; current-main Marine, spatial telemetry, Sundered Keep ambush, and Falcon reversal gates pass; the implementation recorded a 23/23 changed-file closeout; and `enemy.gd` remains 343 lines below the 4,958-line recorded baseline. The paired review passed with 0 blockers and 0 material gaps. NPA-2 extracts pounce to `SavagePounce` + typed `SavagePounceConfig`, preserving its 13 defaults and the pounce-before-chain ordering. Focused pounce and Savage runtime smokes pass; paired review is pending. The two-hit chain remains actor-owned for NPA-3.
 
 Cross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. NPA-8 must reuse it if available rather than inventing Vaultwing-only hearing or importing Enemy behavior policy.
 
@@ -125,7 +124,7 @@ Author NPA-4+ against landed live main so the program learns from the actual ext
 
 **Planning / refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
-NPA-2 and NPA-3 are intentionally refresh-gated. Bring the passed predecessor implementation/review evidence back to this chat before promoting either packet; do not let an execution agent silently freeze provisional private APIs.
+NPA-3 remains refresh-gated. Bring the passed NPA-2 implementation/review evidence back to the planning chat before promoting the chain packet; do not let an execution agent silently freeze provisional private APIs.
 
 ## Measured Baseline
 
@@ -137,7 +136,7 @@ Reviewed `main@02ca0025b8`:
 - `forlorn_ritualant_npc.gd`: ~385 lines with encounter-local phases and combat.
 - `turret.gd`: ~441 lines, extends `Damageable`, uses `ActorRelationshipResolver`, and has no locomotion requirement.
 - Marine Dash is extracted and reviewed under `abilities/marine_dash.gd` + typed `MarineDashConfig`; `enemy.gd` retains only the enable/config binding, fixed-step integration, public request/diagnostic seam, and shared actor/combat services.
-- Savage pounce and Savage two-hit chain phase machines still live in `enemy.gd`; NPA-2 is the next executable extraction.
+- Savage pounce is extracted to `SavagePounce` with typed tuning; the Savage two-hit chain phase machine remains in `enemy.gd` and is the NPA-3 target.
 - Falcon Punch and reviewed Marine Dash are the concrete actor-local ability seams; neither justifies a generic universal ability base.
 - The active relationship architecture explicitly says it is **not** a universal NPC base class.
 

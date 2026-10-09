@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_objective_sensor.gd" id="4_sensor"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_loot_carrier.gd" id="5_carrier"]
 [ext_resource type="Script" path="res://game/actors/enemies/enemy_behavior_state_machine.gd" id="6_behavior"]
+[ext_resource type="Resource" path="res://game/actors/enemies/abilities/configs/savage_pounce_default.tres" id="7_pounce_config"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_savage"]
 size = Vector2(34, 38)
@@ -33,6 +34,7 @@ behavior_state_machine_enabled = true
 behavior_profile_id = &"raider_savage"
 savage_chain_enabled = true
 savage_pounce_enabled = true
+savage_pounce_config = ExtResource("7_pounce_config")
 
 [node name="Visual" type="ColorRect" parent="."]
 offset_left = -17.0

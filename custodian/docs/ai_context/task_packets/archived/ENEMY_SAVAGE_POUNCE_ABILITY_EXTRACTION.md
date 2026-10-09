@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `enemy-savage-pounce-ability-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-marine-dash-ability-extraction-recovery-1, review-enemy-marine-dash-ability-extraction-recovery-1`
@@ -33,13 +33,30 @@
 - Task overrides: `none`
 - Deferred: Savage two-hit chain extraction; pounce authored body/FX wiring; reaction/loot/generic melee decomposition; cross-family actor convergence.
 
+## Completion Truth
+- Goal achieved: yes — `SavagePounce` owns pounce lifecycle/contact/cooldown and `SavagePounceConfig` owns all 13 original pounce tuning defaults.
+- Completion boundary achieved: yes — host delegation, scene binding, focused validation ownership, and stale architecture/context statements are updated. Savage two-hit chain remains unchanged and actor-owned.
+- Acceptance evidence: focused `enemy_savage_pounce` and `savage_runtime` gates pass; the changed-file sweep passes all selected tests with complete coverage; static review confirms pounce mutable phase fields and numeric exports were removed from `enemy.gd`.
+- Deferred work remains as listed under `Deferred`.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: Fresh worktree required a one-time editor import; the import produced unrelated `.import` sidecars that were removed. The pounce smoke initially coupled its mock target to full enemy perception and carried world coordinates between cases; the fixture was made a physics body, perception was disabled for the isolated cases, and each scenario now resets actor/target placement.
+- Root cause / contributing factors: The old smoke directly controlled phase time and did not account for physics callback restrictions or physics-body requirements after switching to the extracted movement authority.
+- Prevention / pipeline improvement: Keep ability movement smokes on real physics frames with a `CharacterBody2D` target and reset world positions between independent cases.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Existing public hit, movement, presentation, and diagnostic host services kept the extraction local without a generic ability base.
+
 ## Handoff
 
 - Next workstream: `review-enemy-savage-pounce-ability-extraction`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh reason: `none; NPA-2 has now been remeasured against the passed NPA-1 review and is executable`
-- Next action: `claim and implement NPA-2; after it lands, let the paired review run before any NPA-3 planning refresh`
+- Next action: `claim and run the paired review from a fresh reviewer context`
 - Blockers or open questions: `none`
