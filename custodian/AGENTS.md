@@ -263,6 +263,38 @@ Minimum adjacency check:
 - the relevant task packet when the work requires one
 - the validation recipe and prompt template when the work matches one
 
+## New Packet Publication Gate
+
+If an agent is given an authorized **draft packet pair** or asked to unpark
+a workstream, the work is not claimable merely because both local files pass
+authoring validation. **Dispatch reads fetched `origin/main`, never the
+authoring branch or local working-tree index.** The authoring/promoting agent
+must, without asking the user for a missing command:
+
+1. Run `python3 custodian/tools/agent/validate_task_packet_authoring.py`
+   on the implementation **and** paired review. Respect any genuine
+   design/human hold before changing state.
+2. Promote authorized pairs to `Status: ready`, `Dispatch: auto`
+   together (unless the user requested manual claim timing); **rerun
+   the targeted preflight** on the promoted files.
+3. Run `python3 custodian/tools/agent/task_packet_index.py --write`,
+   followed by the same command **without** `--write` to verify the managed
+   ready/auto README block.
+4. Commit only these scoped queue-authority files, safely land them on
+   `origin/main`, fetch, and verify the exact workstream and review
+   metadata are visible there before using `dispatch.py claim <id>`.
+   Do not directly edit other agents' claim state or bypass ownership locks.
+5. Do not claim the review before the implementation lands and archives
+   complete. If publication/eligibility is blocked, report the concrete
+   reason instead of quietly downgrading status or skipping to unrelated work.
+
+The successful preflight prints the next commands but **does not perform**
+any of these mutations. Root [`AGENTS.md`](../AGENTS.md)
+owns the longer publication checklist; `AGENT_TASK_PACKET_TEMPLATE.md`
+owns exact schema/pairing checks. Existing auto/ready dependency-gated packets
+do not need redundant publication if the current `origin/main` already
+contains them.
+
 ## Agent Task Packets
 
 For packet metadata, executable work defaults to `Dispatch: auto`. Dependency ordering belongs in `Depends on`; incomplete design belongs in `Status: draft`; runtime/input failures belong in fail-closed execution evidence. Do not use `Dispatch: manual` as a generic blocker or refresh gate. It is valid only when the user explicitly asks to decide when an otherwise ready packet may be claimed.
