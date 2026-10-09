@@ -40,6 +40,23 @@ BUILDER = _load("operator_runtime_builder_workbench", PIPELINES / "sync_operator
 
 class WorkbenchError(RuntimeError): pass
 
+
+def _operator_source_scan_root(source_root: Path, art_generation: str) -> Path:
+    """Resolve either the source parent or animations root to one generation."""
+    root = Path(source_root)
+    if art_generation == "legacy_96":
+        return root / "animations" if root.name != "animations" and (root / "animations").is_dir() else root
+    if art_generation != "operator_2_5d_128":
+        raise WorkbenchError(f"unsupported Operator art generation: {art_generation}")
+    if (root.name == "animations" and root.parent.name == art_generation
+            and root.parent.parent.name == "generations"):
+        return root
+    if root.name == art_generation and root.parent.name == "generations":
+        return root / "animations"
+    if root.name == "animations":
+        root = root.parent
+    return root / "generations" / art_generation / "animations"
+
 @dataclass(frozen=True)
 class ActionIdentity:
     profile: str; group: str; action: str; direction: str
@@ -113,12 +130,7 @@ def build_creation_plan(profile: str, group: str, action: str, direction: str,
     layers = ("full_body",) if template == "full_body" else ("lower_body", "upper_body")
     identity = ActionIdentity(profile, group, action, direction)
     groups = {}
-    operator_sources = Path(source_root)
-    if art_generation == "operator_2_5d_128":
-        if not operator_sources.as_posix().endswith("/generations/operator_2_5d_128/animations"):
-            operator_sources = operator_sources / "generations/operator_2_5d_128/animations"
-    elif operator_sources.name != "animations" and (operator_sources / "animations").is_dir():
-        operator_sources = operator_sources / "animations"
+    operator_sources = _operator_source_scan_root(Path(source_root), art_generation)
     for path, key in BUILDER.scan_sources(operator_sources, Path(weapon_root)):
         if key.owner != "operator":
             continue

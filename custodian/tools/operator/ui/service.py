@@ -548,11 +548,23 @@ class WorkbenchService:
                       for direction in family.directions]
         ingress = Operator2DIngress(self.repo_root, workspace_root=self.workspace_root)
         package = ingress.create_package(selections, source_paths=source_paths)
-        cells = {direction: ingress.process_cell(package, direction) for direction in family.directions}
-        selected_cell = cells[selection.direction]
-        manifest = Path(selected_cell["workbench"]) / "workbench.json"
-        binary = self.workbench.resolve_aseprite(self.aseprite, True)
-        return self._popen([str(binary), str(manifest.with_name("workbench.aseprite"))])
+        result = ingress.process_package(package)
+        selected_cell = result["cells"][selection.direction]
+        process = None
+        if selected_cell.get("terminal_state") == "EDITABLE_WORKBENCH":
+            manifest = Path(selected_cell["workbench"]) / "workbench.json"
+            binary = self.workbench.resolve_aseprite(self.aseprite, True)
+            process = self._popen([str(binary), str(manifest.with_name("workbench.aseprite"))])
+        counts = result["counts"]
+        status = "complete" if result["complete"] else "partial" if counts["EDITABLE_WORKBENCH"] else "blocked"
+        summary = (f"2.5D direction set {status}: selected {selection.direction} is "
+                   f"{selected_cell.get('terminal_state', 'PENDING')}; "
+                   f"{counts['EDITABLE_WORKBENCH']} editable, {counts['BLOCKED']} blocked, "
+                   f"{counts['PENDING']} pending")
+        return {"kind": "operator_2_5d_direction_set", **result,
+                "status": status, "selected_direction": selection.direction,
+                "selected_state": selected_cell.get("terminal_state", "PENDING"),
+                "summary": summary, "process": process}
 
     @staticmethod
     def _context_view(context: dict[str, Any]) -> ExistingContextView:
