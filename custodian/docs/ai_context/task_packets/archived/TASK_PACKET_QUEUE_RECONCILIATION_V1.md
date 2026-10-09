@@ -16,7 +16,7 @@
 - Max automatic review cycles: 2
 - Review rationale: shared control-plane recovery and bulk queue lifecycle changes warrant an independent safety and eligibility audit
 - Reviewed main: ca678018d2a44299f82d424a752a5955e6d63188
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Visual review: none
 - Goal: Recover and reconcile every outstanding CUSTODIAN packet/workstream, safely organize its active versus archived state, and make the existing dispatcher enforce one auditable, durable organization contract so real work cannot silently strand again.
 - Completion boundary: Done when fresh live inventory and actual dispatcher eligibility agree; all five known malformed ready packets are repaired; recoverable orphaned work is restored or protected with an actionable disposition; abandoned claims and historical completed-packet debris are safely reconciled where affirmative evidence permits; a shared-authority queue audit and preventative checks exist; packet index, agent guidance and durable ledger match the resulting truth; focused validation and paired review can prove no work was lost.
@@ -85,13 +85,33 @@
 
 - Refresh owner: execution-agent
 - ChatGPT/user planning refresh required: no
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh instruction: Recalculate all counts, dependency eligibility and claim/worktree ownership from latest origin/main at claim time. Resolve mechanical queue drift without another planning round. Stop only on a genuinely ambiguous destructive ownership decision or new user-owned manual/design gate; complete independent safe repairs despite protected blockers.
 
 ## Handoff
 
 - Next workstream: review-task-packet-queue-reconciliation-v1
 - Next packet state: dependency-gated
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Next action: After this implementation lands and archives complete, claim review-task-packet-queue-reconciliation-v1 in a fresh reviewer context.
 - Blockers or open questions: No planning blocker to claiming. Ambiguous claim ownership is an item-specific safety stop, never permission to delete work.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: review-task-packet-queue-reconciliation-v1
+- Reviewed on main: 105c2541fd1c4dd7bf3dab688b64c3da76a4310b
+- Reviewer context: fresh
+- Reviewer provenance: same-agent-fresh-context
+- Review modes: code, architecture, workflow
+- Blocking defects: 2
+- Material evidence gaps: 1
+- Non-blocking issues: 0
+- Optional improvements: 0
+- Correction finding IDs: R0-01, R0-02, R0-03
+- Next-slice finding IDs: none
+- Human-decision finding IDs: none
+- Detailed review summary: REVIEW_TASK_PACKET_QUEUE_RECONCILIATION_V1_CLAUDE_SUMMARY.md
+- Follow-up workstream: task-packet-queue-reconciliation-v1-review-corrections-1
+
+R0-01: interrupted remote claim is falsely eligible in audit and counted twice; named claim/status reject it. R0-02: exact committed CI invocation fails combined-process trace capture. R0-03: ledger before/final counts do not identify actual before/repaired-result trees. Full independent byte/identity preservation checks and live inventory are recorded in the review summary; reviewer did not patch the implementation.
